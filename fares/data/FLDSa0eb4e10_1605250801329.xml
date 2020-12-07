@@ -1,0 +1,2432 @@
+<PublicationDelivery xmlns="http://www.netex.org.uk/netex" xmlns:siri="http://www.siri.org.uk/siri" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1" xsi:schemaLocation="http://www.netex.org.uk/netex http://netex.uk/netex/schema/1.10/xsd/NeTEx_publication.xsd">
+  <PublicationTimestamp>2020-11-13T07:00:07.158Z</PublicationTimestamp>
+  <ParticipantRef>SYS001</ParticipantRef>
+  <PublicationRequest version="1.0">
+    <RequestTimestamp>2020-11-13T07:00:07.158Z</RequestTimestamp>
+    <ParticipantRef>SYS002</ParticipantRef>
+    <Description>Request for FLDS bus pass fares</Description>
+    <topics>
+      <NetworkFrameTopic>
+        <selectionValidityConditions>
+          <AvailabilityCondition version="any" id="r1">
+            <FromDate>2017-01-01T00:00:00Z</FromDate>
+          </AvailabilityCondition>
+        </selectionValidityConditions>
+        <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP"/>
+        <NetworkFilterByValue>
+          <objectReferences>
+            <OperatorRef version="1.0" ref="noc:FLDS">noc:136364</OperatorRef>
+            <TypeOfFareProductRef version="fxc:v1.0" ref="fxc:standard_product@pass@period"/>
+            <PreassignedFareProductRef version="1.0" ref="op:Pass@FLAT_TEST_adult"/>
+            <BrandingRef version="1.0" ref="op:FLDS@brand"/>
+          </objectReferences>
+        </NetworkFilterByValue>
+      </NetworkFrameTopic>
+    </topics>
+    <RequestPolicy>
+      <RequestDetail>AllWithXref</RequestDetail>
+    </RequestPolicy>
+  </PublicationRequest>
+  <PublicationRefreshInterval>P1M</PublicationRefreshInterval>
+  <Description>Example of simple zonal pass fares.</Description>
+  <dataObjects>
+    <CompositeFrame version="1.0" id="epd:UK:FLDS:CompositeFrame_UK_PI_LINE_FARE_OFFER:Pass@FLDS_products:op" dataSourceRef="op:src" responsibilitySetRef="op:tariffs">
+      <Name>Fares for First Leeds</Name>
+      <Description>Period ticket for First Leeds</Description>
+      <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP"/>
+      <codespaces>
+        <CodespaceRef ref="epd_data"/>
+        <CodespaceRef ref="fxc_metadata"/>
+        <CodespaceRef ref="naptStop_data"/>
+        <CodespaceRef ref="nptgLocality_data"/>
+        <CodespaceRef ref="noc_data"/>
+        <CodespaceRef ref="op_data"/>
+      </codespaces>
+      <FrameDefaults>
+        <DefaultCodespaceRef ref="op_data"/>
+        <DefaultDataSourceRef version="1.0" ref="op:src"/>
+        <DefaultResponsibilitySetRef version="1.0" ref="op:tariffs"/>
+        <DefaultCurrency>GBP</DefaultCurrency>
+      </FrameDefaults>
+      <prerequisites>
+        <CompositeFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA_OFFER:FXCP:fxc"/>
+      </prerequisites>
+      <frames>
+        <ResourceFrame version="1.0" id="epd:UK:FLDS:ResourceFrame_UK_PI_COMMON:FLDS:op" dataSourceRef="op:src" responsibilitySetRef="op:network_data">
+          <Name>Operator specific common resources</Name>
+          <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_COMMON:FXCP" version="fxc:v1.0"/>
+          <codespaces>
+            <Codespace id="op_data">
+              <Xmlns>op</Xmlns>
+              <XmlnsUrl>https://www.firstgroup.com/leeds</XmlnsUrl>
+              <Description>Operator data</Description>
+            </Codespace>
+          </codespaces>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="op_data"/>
+            <DefaultResponsibilitySetRef version="1.0" ref="op:network_data"/>
+            <DefaultCurrency>GBP</DefaultCurrency>
+          </FrameDefaults>
+          <dataSources>
+            <DataSource id="op:src" version="1.0"/>
+          </dataSources>
+          <responsibilitySets>
+            <ResponsibilitySet version="1.0" id="op:tariffs">
+              <Name>Operator Tariffs</Name>
+              <roles>
+                <ResponsibilityRoleAssignment version="1.0" id="op:tariff_data@creates">
+                  <DataRoleType>creates</DataRoleType>
+                  <StakeholderRoleType>FareManagement</StakeholderRoleType>
+                  <ResponsibleOrganisationRef ref="noc:FLDS" version="1.0">First Leeds</ResponsibleOrganisationRef>
+                </ResponsibilityRoleAssignment>
+              </roles>
+            </ResponsibilitySet>
+            <ResponsibilitySet version="1.0" id="op:network_data">
+              <Name>Operator Network data</Name>
+              <roles>
+                <ResponsibilityRoleAssignment version="1.0" id="op:network_data@creates">
+                  <DataRoleType>creates</DataRoleType>
+                  <StakeholderRoleType>Planning</StakeholderRoleType>
+                  <ResponsibleOrganisationRef ref="noc:FLDS" version="1.0">First Leeds</ResponsibleOrganisationRef>
+                </ResponsibilityRoleAssignment>
+              </roles>
+            </ResponsibilitySet>
+          </responsibilitySets>
+          <typesOfValue>
+            <ValueSet version="1.0" id="op:Branding" classOfValues="Branding">
+              <Name>Operator Branding</Name>
+              <values>
+                <Branding version="1.0" id="op:FLDS@brand">
+                  <Name>First Leeds</Name>
+                  <Url>https://www.firstgroup.com/leeds</Url>
+                </Branding>
+              </values>
+            </ValueSet>
+            <ValueSet version="1.0" id="op:TypeOfTravelDocument" nameOfClass="TypeOfTravelDocument">
+              <values>
+                <TypeOfTravelDocument version="1.0" id="op:p-ticket">
+                  <Name>Bought on the bus with Cash</Name>
+                  <Description>Paper ticket</Description>
+                  <IsSmartCard>false</IsSmartCard>
+                  <MediaType>paperTicket</MediaType>
+                </TypeOfTravelDocument>
+                <TypeOfTravelDocument version="1.0" id="op:m-ticket">
+                  <Name>Stored on your mobile phone as m-tickets</Name>
+                  <IsSmartCard>false</IsSmartCard>
+                  <MediaType>mobileApp</MediaType>
+                </TypeOfTravelDocument>
+              </values>
+            </ValueSet>
+          </typesOfValue>
+          <organisations>
+            <Operator version="1.0" id="noc:FLDS">
+              <PublicCode>FLDS</PublicCode>
+              <PrivateCode type="nocn">nocn:00000</PrivateCode>
+              <Name>First Leeds</Name>
+              <ShortName>First Leeds</ShortName>
+              <TradingName>First West Yorkshire Ltd</TradingName>
+              <ContactDetails>
+                <Phone>03456460707</Phone>
+                <Url>https://www.firstgroup.com/leeds</Url>
+              </ContactDetails>
+              <OrganisationType>operator</OrganisationType>
+              <Address>
+                <Street>First West Yorkshire, Donisthorpe Street, Leeds LS10 1PL</Street>
+              </Address>
+              <PrimaryMode>bus</PrimaryMode>
+            </Operator>
+          </organisations>
+        </ResourceFrame>
+        <FareFrame version="1.0" id="epd:UK:FLDS:FareFrame_UK_PI_FARE_PRODUCT:FLDS_products@pass:op" responsibilitySetRef="op:tariffs">
+          <Name>Fare products</Name>
+          <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRODUCT:FXCP"/>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="op_data"/>
+            <DefaultResponsibilitySetRef version="1.0" ref="op:tariffs"/>
+          </FrameDefaults>
+          <tariffs>
+            <Tariff version="1.0" id="op:Tariff@FLDS_products">
+              <validityConditions>
+                <ValidBetween>
+                  <FromDate>2020-11-13T07:00:01.326Z</FromDate>
+                  <ToDate>2120-11-13T07:00:01.327Z</ToDate>
+                </ValidBetween>
+              </validityConditions>
+              <Name>FLDS_products - Tariff</Name>
+              <Description>FLDS_products single zone tariff</Description>
+              <OperatorRef version="1.0" ref="noc:FLDS">noc:136364</OperatorRef>
+              <TypeOfTariffRef version="fxc:v1.0" ref="fxc:zonal"/>
+              <fareStructureElements>
+                <FareStructureElement version="1.0" id="op:Tariff@FLAT_TEST@access_lines">
+                  <Name>Available zones</Name>
+                  <Description>single zone.</Description>
+                  <TypeOfFareStructureElementRef version="fxc:v1.0" ref="fxc:access"/>
+                  <GenericParameterAssignment id="Tariff@FLAT_TEST@access_lines" version="1.0" order="1">
+                    <TypeOfAccessRightAssignmentRef version="fxc:v1.0" ref="fxc:can_access"/>
+                    <ValidityParameterGroupingType>OR</ValidityParameterGroupingType>
+                    <validityParameters>
+                      <LineRef version="1.0" ref="op:1#YWAO001#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:2#YWAO002#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:3#YWAO003#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:3A#YWAO003A#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:4#YWAO004#26/07/2020"/>
+                      <LineRef version="1.0" ref="op:4G#YWAO004G#26/07/2020"/>
+                      <LineRef version="1.0" ref="op:5#YWAO005#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:5A#YWAO005A#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:6#YWAO006#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:7#YWAO007#01/11/2020"/>
+                      <LineRef version="1.0" ref="op:7A#YWAO007A#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:7S#YWAO007S#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:8#YWCO008#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:9#YWAO009#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:9A#YWAO009A#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:11#YWAO011#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:11A#YWAO011A#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:12#YWAO012#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:13#YWAO013#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:13A#YWAO013A#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:14#YWAO014#12/07/2020"/>
+                      <LineRef version="1.0" ref="op:14#YWAO014#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:15#YWAO015#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:15#YWAO015#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:16#YWAO016#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:16#YWAO016#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:16A#YWAO016A#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:16A#YWAO016A#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:19#YWAO019#12/07/2020"/>
+                      <LineRef version="1.0" ref="op:19#YWAO019#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:19A#YWAO019A#12/07/2020"/>
+                      <LineRef version="1.0" ref="op:19A#YWAO019A#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:27#YWAO027#01/11/2020"/>
+                      <LineRef version="1.0" ref="op:28#YWAO028#01/11/2020"/>
+                      <LineRef version="1.0" ref="op:29#YWAO029#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:33#YWAO033#01/11/2020"/>
+                      <LineRef version="1.0" ref="op:34#YWAO034#01/11/2020"/>
+                      <LineRef version="1.0" ref="op:40#YWAO040#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:42#YWAO042#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:46#YWAO046#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:47#YWAO047#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:47A#YWAO047A#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:48#YWAO048#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:49#YWAO049#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:50#YWAO050#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:50A#YWAO050A#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:51#YWAO051#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:52#YWAO052#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:55C#YWAO055C#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:55C#YWAO055C#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:56#YWAO056#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:56#YWAO056#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:62#YWBO062#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:64#YWAO064#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:65#YWAO065#12/07/2020"/>
+                      <LineRef version="1.0" ref="op:74#YWAO074#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:75#YWAO075#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:85#YWAO085#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:86#YWAO086#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:87#YWAO087#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:91#YWAO091#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:PR1#YWAP0R1#24/08/2020"/>
+                      <LineRef version="1.0" ref="op:X14#YWAX014#12/07/2020"/>
+                      <LineRef version="1.0" ref="op:X14#YWAX014#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:X26#YWAX026#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:X26#YWAX026#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:X27#YWAX027#28/06/2020"/>
+                      <LineRef version="1.0" ref="op:X27#YWAX027#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:X56#YWAX056#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:X56#YWAX056#08/11/2020"/>
+                      <LineRef version="1.0" ref="op:X7#YWAX007#31/05/2020"/>
+                      <LineRef version="1.0" ref="op:X84#YWAX084#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:X98#YWAX098#04/10/2020"/>
+                      <LineRef version="1.0" ref="op:X99#YWAX099#04/10/2020"/>
+                    </validityParameters>
+                  </GenericParameterAssignment>
+                </FareStructureElement>
+                <FareStructureElement id="op:Tariff@FLAT_TEST@conditions_of_travel" version="1.0">
+                  <Name>Conditions of travel</Name>
+                  <GenericParameterAssignment version="1.0" order="1" id="op:Tariff@FLAT_TEST@conditions_of_travel">
+                    <TypeOfAccessRightAssignmentRef version="fxc:v1.0" ref="fxc:condition_of_use"/>
+                    <LimitationGroupingType>AND</LimitationGroupingType>
+                    <limitations>
+                      <Transferability version="1.0" id="op:Pass@FLAT_TEST@transferability">
+                        <Name>Ticket is not transferable</Name>
+                        <CanTransfer>false</CanTransfer>
+                      </Transferability>
+                      <FrequencyOfUse version="1.0" id="op:Pass@FLAT_TEST@frequency">
+                        <FrequencyOfUseType>unlimited</FrequencyOfUseType>
+                      </FrequencyOfUse>
+                      <Interchanging version="1.0" id="op:Pass@FLAT_TEST@interchanging">
+                        <CanInterchange>true</CanInterchange>
+                      </Interchanging>
+                    </limitations>
+                  </GenericParameterAssignment>
+                </FareStructureElement>
+                <FareStructureElement version="1.0" id="op:Tariff@eligibility@adult">
+                  <Name>Eligible user types</Name>
+                  <TypeOfFareStructureElementRef version="fxc:v1.0" ref="fxc:eligibility"/>
+                  <GenericParameterAssignment id="op:Tariff@adult" version="1.0" order="0">
+                    <TypeOfAccessRightAssignmentRef version="fxc:v1.0" ref="fxc:eligible"/>
+                    <LimitationGroupingType>XOR</LimitationGroupingType>
+                    <limitations>
+                      <UserProfile version="1.0" id="op:adult">
+                        <Name>adult</Name>
+                        <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:none"/>
+                        <MinimumAge>18</MinimumAge>
+                      </UserProfile>
+                    </limitations>
+                  </GenericParameterAssignment>
+                </FareStructureElement>
+              </fareStructureElements>
+            </Tariff>
+          </tariffs>
+          <fareProducts>
+            <PreassignedFareProduct version="1.0" id="op:Pass@FLAT_TEST_adult">
+              <Name>FLAT TEST Pass - adult</Name>
+              <ChargingMomentType>beforeTravel</ChargingMomentType>
+              <typesOfFareProduct>
+                <TypeOfFareProductRef version="fxc:v1.0" ref="fxc:standard_product@pass@period"/>
+              </typesOfFareProduct>
+              <OperatorRef version="1.0" ref="noc:FLDS">noc:136364</OperatorRef>
+              <validableElements>
+                <ValidableElement version="1.0" id="op:Pass@FLAT_TEST_adult@travel">
+                  <Name>Unlimited rides available for specified durations</Name>
+                  <fareStructureElements>
+                    <FareStructureElementRef version="1.0" ref="op:Tariff@FLAT_TEST@access_lines"/>
+                    <FareStructureElementRef version="1.0" ref="op:Tariff@FLAT_TEST@conditions_of_travel"/>
+                    <FareStructureElementRef version="1.0" ref="op:Tariff@eligibility@adult"/>
+                  </fareStructureElements>
+                </ValidableElement>
+              </validableElements>
+              <accessRightsInProduct>
+                <AccessRightInProduct version="1.0" id="op:Pass@FLAT_TEST_adult@travel" order="1">
+                  <ValidableElementRef version="1.0" ref="op:Pass@FLAT_TEST_adult@travel"/>
+                </AccessRightInProduct>
+              </accessRightsInProduct>
+              <ProductType>periodPass</ProductType>
+            </PreassignedFareProduct>
+          </fareProducts>
+          <salesOfferPackages>
+            <SalesOfferPackage version="1.0" id="Trip@flatFare_adult-FLAT_TEST-SOP@Mobile_App">
+              <Name>FLAT TEST - adult - Mobile App</Name>
+              <Description>Purchasable on a mobile device application, with a debit/credit card or direct debit transaction, stored on the mobile application.</Description>
+              <distributionAssignments>
+                <DistributionAssignment version="any" id="Trip@flatFare_adult-FLAT_TEST-SOP@Mobile_App@mobileDevice" order="1">
+                  <DistributionChannelRef ref="fxc:mobileDevice" version="fxc:v1.0"/>
+                  <DistributionChannelType>mobileDevice</DistributionChannelType>
+                  <PaymentMethods>debitCard creditCard mobilePhone directDebit</PaymentMethods>
+                </DistributionAssignment>
+              </distributionAssignments>
+              <salesOfferPackageElements>
+                <SalesOfferPackageElement id="Trip@flatFare_adult-FLAT_TEST-Mobile_App@mobileApp" version="1.0" order="1">
+                  <TypeOfTravelDocumentRef version="fxc:v1.0" ref="fxc:mobileApp"/>
+                  <PreassignedFareProductRef version="1.0" ref="op:Pass@FLAT_TEST_adult"/>
+                </SalesOfferPackageElement>
+              </salesOfferPackageElements>
+            </SalesOfferPackage>
+          </salesOfferPackages>
+        </FareFrame>
+        <FareFrame version="1.0" id="epd:UK:FLDS:FareFrame_UK_PI_FARE_PRICE:FLDS_products@pass:op" responsibilitySetRef="op:tariffs">
+          <Name>FLDS_products Prices</Name>
+          <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRICE:FXCP"/>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="op_data"/>
+            <DefaultResponsibilitySetRef version="1.0" ref="op:tariffs"/>
+          </FrameDefaults>
+          <prerequisites>
+            <FareFrameRef version="1.0" ref="epd:UK:FLDS:FareFrame_UK_PI_FARE_PRODUCT:FLDS_products@pass:op"/>
+          </prerequisites>
+          <fareTables>
+            <FareTable version="1.0" id="op:FLAT_TEST">
+              <Name>FLAT TEST</Name>
+              <includes>
+                <FareTable version="1.0" id="op:FLAT_TEST@p-ticket@adult">
+                  <Name>FLAT TEST</Name>
+                  <pricesFor>
+                    <SalesOfferPackageRef version="1.0" ref="Trip@flatFare_adult-FLAT_TEST-SOP@Mobile_App"/>
+                  </pricesFor>
+                  <limitations>
+                    <UserProfileRef version="1.0" ref="op:adult"/>
+                  </limitations>
+                  <prices>
+                    <DistanceMatrixElementPrice version="1.0" id="op:FLAT_TEST@p-ticket@adult">
+                      <Amount>3.00</Amount>
+                    </DistanceMatrixElementPrice>
+                  </prices>
+                </FareTable>
+              </includes>
+            </FareTable>
+          </fareTables>
+        </FareFrame>
+        <ServiceFrame version="1.0" id="epd:UK:FLDS:ServiceFrame_UK_PI_NETWORK:FLDS_products:op" dataSourceRef="op:operator" responsibilitySetRef="tariffs">
+          <Description>This frame contains the stop and line definitions for the service. It could also be exchanged separately.</Description>
+          <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK:FXCP" version="fxc:v1.0"/>
+          <lines>
+            <Line version="1.0" id="op:1#YWAO001#04/10/2020">
+              <Name>Line 1</Name>
+              <Description>Leeds - Lawnswood</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>1</PublicCode>
+              <PrivateCode type="noc">FLDS_1</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:2#YWAO002#28/06/2020">
+              <Name>Line 2</Name>
+              <Description>Middleton - Roundhay Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>2</PublicCode>
+              <PrivateCode type="noc">FLDS_2</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:3#YWAO003#28/06/2020">
+              <Name>Line 3</Name>
+              <Description>White Rose Centre - Brackenwood</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>3</PublicCode>
+              <PrivateCode type="noc">FLDS_3</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:3A#YWAO003A#28/06/2020">
+              <Name>Line 3A</Name>
+              <Description>White Rose Centre - Harehills</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>3A</PublicCode>
+              <PrivateCode type="noc">FLDS_3A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:4#YWAO004#26/07/2020">
+              <Name>Line 4</Name>
+              <Description>Seacroft - Pudsey</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>4</PublicCode>
+              <PrivateCode type="noc">FLDS_4</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:4G#YWAO004G#26/07/2020">
+              <Name>Line 4G</Name>
+              <Description>Seacroft - Pudsey</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>4G</PublicCode>
+              <PrivateCode type="noc">FLDS_4G</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:5#YWAO005#04/10/2020">
+              <Name>Line 5</Name>
+              <Description>Leeds - Halton Moor Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>5</PublicCode>
+              <PrivateCode type="noc">FLDS_5</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:5A#YWAO005A#04/10/2020">
+              <Name>Line 5A</Name>
+              <Description>Leeds - Halton Moor Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>5A</PublicCode>
+              <PrivateCode type="noc">FLDS_5A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:6#YWAO006#04/10/2020">
+              <Name>Line 6</Name>
+              <Description>Leeds - Holt Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>6</PublicCode>
+              <PrivateCode type="noc">FLDS_6</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:7#YWAO007#01/11/2020">
+              <Name>Line 7</Name>
+              <Description>Leeds - Primley Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>7</PublicCode>
+              <PrivateCode type="noc">FLDS_7</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:7A#YWAO007A#04/10/2020">
+              <Name>Line 7A</Name>
+              <Description>Leeds - Alwoodley Avenue</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>7A</PublicCode>
+              <PrivateCode type="noc">FLDS_7A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:7S#YWAO007S#04/10/2020">
+              <Name>Line 7S</Name>
+              <Description>Leeds - Shadwell</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>7S</PublicCode>
+              <PrivateCode type="noc">FLDS_7S</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:8#YWCO008#04/10/2020">
+              <Name>Line 8</Name>
+              <Description>Leeds - Holt Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>8</PublicCode>
+              <PrivateCode type="noc">FLDS_8</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:9#YWAO009#31/05/2020">
+              <Name>Line 9</Name>
+              <Description>White Rose Centre - Horsforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>9</PublicCode>
+              <PrivateCode type="noc">FLDS_9</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:9A#YWAO009A#31/05/2020">
+              <Name>Line 9A</Name>
+              <Description>Seacroft - Horsforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>9A</PublicCode>
+              <PrivateCode type="noc">FLDS_9A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:11#YWAO011#04/10/2020">
+              <Name>Line 11</Name>
+              <Description>Leeds - Cross Gates</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>11</PublicCode>
+              <PrivateCode type="noc">FLDS_11</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:11A#YWAO011A#04/10/2020">
+              <Name>Line 11A</Name>
+              <Description>Leeds - Cross Gates</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>11A</PublicCode>
+              <PrivateCode type="noc">FLDS_11A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:12#YWAO012#28/06/2020">
+              <Name>Line 12</Name>
+              <Description>White Rose Centre - Roundhay</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>12</PublicCode>
+              <PrivateCode type="noc">FLDS_12</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:13#YWAO013#28/06/2020">
+              <Name>Line 13</Name>
+              <Description>Middleton - Brackenwood</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>13</PublicCode>
+              <PrivateCode type="noc">FLDS_13</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:13A#YWAO013A#28/06/2020">
+              <Name>Line 13A</Name>
+              <Description>Middleton - Gledhow</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>13A</PublicCode>
+              <PrivateCode type="noc">FLDS_13A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:14#YWAO014#12/07/2020">
+              <Name>Line 14</Name>
+              <Description>Pudsey - Leeds</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>14</PublicCode>
+              <PrivateCode type="noc">FLDS_14</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:14#YWAO014#08/11/2020">
+              <Name>Line 14</Name>
+              <Description>Pudsey - Leeds</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>14</PublicCode>
+              <PrivateCode type="noc">FLDS_14</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:15#YWAO015#04/10/2020">
+              <Name>Line 15</Name>
+              <Description>Old Farnley - Logic Business Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>15</PublicCode>
+              <PrivateCode type="noc">FLDS_15</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:15#YWAO015#08/11/2020">
+              <Name>Line 15</Name>
+              <Description>Old Farnley - Logic Business Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>15</PublicCode>
+              <PrivateCode type="noc">FLDS_15</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:16#YWAO016#28/06/2020">
+              <Name>Line 16</Name>
+              <Description>Whinmoor - Pudsey</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>16</PublicCode>
+              <PrivateCode type="noc">FLDS_16</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:16#YWAO016#08/11/2020">
+              <Name>Line 16</Name>
+              <Description>Whinmoor - Pudsey</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>16</PublicCode>
+              <PrivateCode type="noc">FLDS_16</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:16A#YWAO016A#28/06/2020">
+              <Name>Line 16A</Name>
+              <Description>Whinmoor - Pudsey</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>16A</PublicCode>
+              <PrivateCode type="noc">FLDS_16A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:16A#YWAO016A#08/11/2020">
+              <Name>Line 16A</Name>
+              <Description>Whinmoor - Pudsey</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>16A</PublicCode>
+              <PrivateCode type="noc">FLDS_16A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:19#YWAO019#12/07/2020">
+              <Name>Line 19</Name>
+              <Description>Ireland Wood - Garforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>19</PublicCode>
+              <PrivateCode type="noc">FLDS_19</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:19#YWAO019#08/11/2020">
+              <Name>Line 19</Name>
+              <Description>Ireland Wood - Garforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>19</PublicCode>
+              <PrivateCode type="noc">FLDS_19</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:19A#YWAO019A#12/07/2020">
+              <Name>Line 19A</Name>
+              <Description>Tinshill - Garforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>19A</PublicCode>
+              <PrivateCode type="noc">FLDS_19A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:19A#YWAO019A#08/11/2020">
+              <Name>Line 19A</Name>
+              <Description>Tinshill - Garforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>19A</PublicCode>
+              <PrivateCode type="noc">FLDS_19A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:27#YWAO027#01/11/2020">
+              <Name>Line 27</Name>
+              <Description>Leeds - Guiseley</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>27</PublicCode>
+              <PrivateCode type="noc">FLDS_27</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:28#YWAO028#01/11/2020">
+              <Name>Line 28</Name>
+              <Description>Leeds - Adel</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>28</PublicCode>
+              <PrivateCode type="noc">FLDS_28</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:29#YWAO029#04/10/2020">
+              <Name>Line 29</Name>
+              <Description>Leeds Dock - University Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>29</PublicCode>
+              <PrivateCode type="noc">FLDS_29</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:33#YWAO033#01/11/2020">
+              <Name>Line 33</Name>
+              <Description>Leeds - Otley</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>33</PublicCode>
+              <PrivateCode type="noc">FLDS_33</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:34#YWAO034#01/11/2020">
+              <Name>Line 34</Name>
+              <Description>Leeds - Otley</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>34</PublicCode>
+              <PrivateCode type="noc">FLDS_34</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:40#YWAO040#28/06/2020">
+              <Name>Line 40</Name>
+              <Description>Leeds - Seacroft</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>40</PublicCode>
+              <PrivateCode type="noc">FLDS_40</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:42#YWAO042#04/10/2020">
+              <Name>Line 42</Name>
+              <Description>Old Farnley - Fearnville</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>42</PublicCode>
+              <PrivateCode type="noc">FLDS_42</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:46#YWAO046#04/10/2020">
+              <Name>Line 46</Name>
+              <Description>White Rose Centre - Leeds</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>46</PublicCode>
+              <PrivateCode type="noc">FLDS_46</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:47#YWAO047#04/10/2020">
+              <Name>Line 47</Name>
+              <Description>White Rose Centre - Leeds</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>47</PublicCode>
+              <PrivateCode type="noc">FLDS_47</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:47A#YWAO047A#04/10/2020">
+              <Name>Line 47A</Name>
+              <Description>White Rose Centre - Leeds</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>47A</PublicCode>
+              <PrivateCode type="noc">FLDS_47A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:48#YWAO048#04/10/2020">
+              <Name>Line 48</Name>
+              <Description>Leeds - Wigton Moor</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>48</PublicCode>
+              <PrivateCode type="noc">FLDS_48</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:49#YWAO049#04/10/2020">
+              <Name>Line 49</Name>
+              <Description>Monkswood Gate - Bramley</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>49</PublicCode>
+              <PrivateCode type="noc">FLDS_49</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:50#YWAO050#04/10/2020">
+              <Name>Line 50</Name>
+              <Description>Seacroft - Horsforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>50</PublicCode>
+              <PrivateCode type="noc">FLDS_50</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:50A#YWAO050A#04/10/2020">
+              <Name>Line 50A</Name>
+              <Description>Seacroft - Horsforth</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>50A</PublicCode>
+              <PrivateCode type="noc">FLDS_50A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:51#YWAO051#28/06/2020">
+              <Name>Line 51</Name>
+              <Description>Moor Allerton - Morley</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>51</PublicCode>
+              <PrivateCode type="noc">FLDS_51</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:52#YWAO052#28/06/2020">
+              <Name>Line 52</Name>
+              <Description>Moor Allerton - Morley</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>52</PublicCode>
+              <PrivateCode type="noc">FLDS_52</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:55C#YWAO055C#31/05/2020">
+              <Name>Line 55C</Name>
+              <Description>Leeds - Cottingley Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>55C</PublicCode>
+              <PrivateCode type="noc">FLDS_55C</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:55C#YWAO055C#08/11/2020">
+              <Name>Line 55C</Name>
+              <Description>Leeds - Cottingley Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>55C</PublicCode>
+              <PrivateCode type="noc">FLDS_55C</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:56#YWAO056#04/10/2020">
+              <Name>Line 56</Name>
+              <Description>Whinmoor - Moor Grange</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>56</PublicCode>
+              <PrivateCode type="noc">FLDS_56</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:56#YWAO056#08/11/2020">
+              <Name>Line 56</Name>
+              <Description>Whinmoor - Moor Grange</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>56</PublicCode>
+              <PrivateCode type="noc">FLDS_56</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:62#YWBO062#31/05/2020">
+              <Name>Line 62</Name>
+              <Description>Leeds - East End Park Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>62</PublicCode>
+              <PrivateCode type="noc">FLDS_62</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:64#YWAO064#31/05/2020">
+              <Name>Line 64</Name>
+              <Description>Leeds - Aberford</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>64</PublicCode>
+              <PrivateCode type="noc">FLDS_64</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:65#YWAO065#12/07/2020">
+              <Name>Line 65</Name>
+              <Description>Leeds - Gildersome</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>65</PublicCode>
+              <PrivateCode type="noc">FLDS_65</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:74#YWAO074#04/10/2020">
+              <Name>Line 74</Name>
+              <Description>Middleton - Leeds Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>74</PublicCode>
+              <PrivateCode type="noc">FLDS_74</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:75#YWAO075#04/10/2020">
+              <Name>Line 75</Name>
+              <Description>Leeds - Middleton</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>75</PublicCode>
+              <PrivateCode type="noc">FLDS_75</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:85#YWAO085#04/10/2020">
+              <Name>Line 85</Name>
+              <Description>Leeds - Pool</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>85</PublicCode>
+              <PrivateCode type="noc">FLDS_85</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:86#YWAO086#31/05/2020">
+              <Name>Line 86</Name>
+              <Description>Rodley - Middleton</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>86</PublicCode>
+              <PrivateCode type="noc">FLDS_86</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:87#YWAO087#31/05/2020">
+              <Name>Line 87</Name>
+              <Description>Bramley - St. James's Hospital</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>87</PublicCode>
+              <PrivateCode type="noc">FLDS_87</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:91#YWAO091#31/05/2020">
+              <Name>Line 91</Name>
+              <Description>Pudsey - Halton Moor</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>91</PublicCode>
+              <PrivateCode type="noc">FLDS_91</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:PR1#YWAP0R1#24/08/2020">
+              <Name>Line PR1</Name>
+              <Description>Leeds - Elland Road Park and Ride Circular</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>PR1</PublicCode>
+              <PrivateCode type="noc">FLDS_PR1</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X14#YWAX014#12/07/2020">
+              <Name>Line X14</Name>
+              <Description>Pudsey - Leeds</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X14</PublicCode>
+              <PrivateCode type="noc">FLDS_X14</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X14#YWAX014#08/11/2020">
+              <Name>Line X14</Name>
+              <Description>Pudsey - Leeds</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X14</PublicCode>
+              <PrivateCode type="noc">FLDS_X14</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X26#YWAX026#28/06/2020">
+              <Name>Line X26</Name>
+              <Description>Leeds - Thorpe Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X26</PublicCode>
+              <PrivateCode type="noc">FLDS_X26</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X26#YWAX026#08/11/2020">
+              <Name>Line X26</Name>
+              <Description>Leeds - Thorpe Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X26</PublicCode>
+              <PrivateCode type="noc">FLDS_X26</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X27#YWAX027#28/06/2020">
+              <Name>Line X27</Name>
+              <Description>Leeds - Thorpe Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X27</PublicCode>
+              <PrivateCode type="noc">FLDS_X27</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X27#YWAX027#08/11/2020">
+              <Name>Line X27</Name>
+              <Description>Leeds - Thorpe Park</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X27</PublicCode>
+              <PrivateCode type="noc">FLDS_X27</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X56#YWAX056#04/10/2020">
+              <Name>Line X56</Name>
+              <Description>Whinmoor - Leeds Eastgate</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X56</PublicCode>
+              <PrivateCode type="noc">FLDS_X56</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X56#YWAX056#08/11/2020">
+              <Name>Line X56</Name>
+              <Description>Whinmoor - Leeds Eastgate</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X56</PublicCode>
+              <PrivateCode type="noc">FLDS_X56</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X7#YWAX007#31/05/2020">
+              <Name>Line X7</Name>
+              <Description>Leeds - Alwoodley Gates</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X7</PublicCode>
+              <PrivateCode type="noc">FLDS_X7</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X84#YWAX084#04/10/2020">
+              <Name>Line X84</Name>
+              <Description>Leeds - Ilkley</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X84</PublicCode>
+              <PrivateCode type="noc">FLDS_X84</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X98#YWAX098#04/10/2020">
+              <Name>Line X98</Name>
+              <Description>Leeds - Deighton Bar</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X98</PublicCode>
+              <PrivateCode type="noc">FLDS_X98</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+            <Line version="1.0" id="op:X99#YWAX099#04/10/2020">
+              <Name>Line X99</Name>
+              <Description>Leeds - Deighton Bar</Description>
+              <Url>https://www.firstgroup.com/leeds</Url>
+              <PublicCode>X99</PublicCode>
+              <PrivateCode type="noc">FLDS_X99</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:FLDS"/>
+              <LineType>local</LineType>
+            </Line>
+          </lines>
+        </ServiceFrame>
+      </frames>
+    </CompositeFrame>
+    <CompositeFrame id="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA_OFFER:FXCP:fxc" version="fxc:v1.0" responsibilitySetRef="fxc:FXC_metadata" dataSourceRef="fxc:dft">
+      <ValidBetween>
+        <FromDate>2019-05-01T00:00:00</FromDate>
+        <ToDate>2022-12-31T12:00:00</ToDate>
+      </ValidBetween>
+      <Name>UK FXCP Passenger Information Profile common resources</Name>
+      <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA_OFFER:FXCP:fxc"/>
+      <codespaces>
+        <Codespace id="naptStop_data">
+          <Xmlns>naptStop</Xmlns>
+          <XmlnsUrl>http://www.naptan.org.uk/stops</XmlnsUrl>
+          <Description>UK National Public Transport Access Nodes: Stops.</Description>
+        </Codespace>
+        <Codespace id="noc_data">
+          <Xmlns>noc</Xmlns>
+          <XmlnsUrl>http://www.traveline.co.uk/noc</XmlnsUrl>
+          <Description>UK national operator codes</Description>
+        </Codespace>
+      </codespaces>
+      <FrameDefaults>
+        <DefaultCodespaceRef ref="fxc_metadata"/>
+        <DefaultDataSourceRef ref="fxc:dft" version="fxc:v1.0"/>
+        <DefaultResponsibilitySetRef ref="fxc:FXC_metadata" version="fxc:v1.0"/>
+      </FrameDefaults>
+      <frames>
+        <ResourceFrame id="fxc:UK:DFT:ResourceFrame_UK_PI_METADATA_FRAMES:FXCP:fxc" version="fxc:v1.0" responsibilitySetRef="fxc:FXC_metadata" dataSourceRef="fxc:dft">
+          <Name>UK FXCP  Fare profile Frame types and codepaces</Name>
+          <codespaces>
+            <Codespace id="fxc_metadata">
+              <Xmlns>fxc</Xmlns>
+              <XmlnsUrl>netex.org.uk/fxc</XmlnsUrl>
+              <Description>UK FareXChange Profile metadata</Description>
+            </Codespace>
+            <Codespace id="epd_data">
+              <Xmlns>epd</Xmlns>
+              <XmlnsUrl>http://fnetex-cen.eu/epd</XmlnsUrl>
+              <Description>European Passenger Information profile data -use for UK frame names</Description>
+            </Codespace>
+          </codespaces>
+          <dataSources>
+            <DataSource id="fxc:dft" version="fxc:v1.0">
+              <Email>standards@netex.org.uk</Email>
+            </DataSource>
+          </dataSources>
+          <responsibilitySets>
+            <ResponsibilitySet version="fxc:v1.0" id="fxc:FXC_metadata">
+              <Name>Common</Name>
+              <roles>
+                <ResponsibilityRoleAssignment version="fxc:v1.0" id="fxc:FXC_metadata:DfT">
+                  <DataRoleType>creates distributes</DataRoleType>
+                  <StakeholderRoleType>DataRegistrar</StakeholderRoleType>
+                  <ResponsibleOrganisationRef ref="nptg:DfT" versionRef="nptg:v2.1"/>
+                  <ResponsibleAreaRef ref="nptgUkRegion:GB" versionRef="nptg:v2.1"/>
+                </ResponsibilityRoleAssignment>
+              </roles>
+            </ResponsibilitySet>
+          </responsibilitySets>
+          <typesOfValue>
+            <ValueSet version="fxc:1.0" id="fxc:Types_of_Specific_Frame_Basic" classOfValues="TypeOfFrame">
+              <Name>Types of FXC Specific  Frame Basic</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_COMMON:FXCP">
+                  <Name>UK FXCP  common Local resources</Name>
+                  <FrameClassRef nameOfClass="ResourceFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_CALENDAR:FXCP">
+                  <Name>UK FXCP  Service calendar</Name>
+                  <FrameClassRef nameOfClass="ServiceCalendarFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP:FXCP">
+                  <Name>UK FXCP Stops: NapTAN Stop Place  and NPTG Locations Frame</Name>
+                  <FrameClassRef nameOfClass="SiteFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK:FXCP">
+                  <Name>UK FXCP Network</Name>
+                  <FrameClassRef nameOfClass="ServiceFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_TIMETABLE:FXCP">
+                  <Name>UK FXCP Tietable: N</Name>
+                  <FrameClassRef nameOfClass="TimetableFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA:FXCP">
+                  <Name>UK Bus Profile common resources</Name>
+                  <FrameClassRef nameOfClass="ResourceFrame"/>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc::v2.4" id="fxc:Types_of_Offer_Frame_Basic" classOfValues="TypeOfFrame">
+              <Name>Types of UK Offer Frame</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP_OFFER:FXCP">
+                  <Name>UK FXCP   composite container STOP OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container LINE OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK_OFFER:FXCP">
+                  <Name>UK FXCP   composite container LINE OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA_OFFER:FXCP:fxc">
+                  <Name>UK FXCP composite used to group other UKmetadta</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"/>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:1.0" id="fxc:Types_of_Specific_Frame_for_Fares" classOfValues="TypeOfFrame">
+              <Name>Types of FXC Specific  Frame</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_COMMON:FXCP">
+                  <Name>UK Bus Profile fare common paramaters</Name>
+                  <FrameClassRef nameOfClass="FareFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_NETWORK:FXCP">
+                  <Name>UK Bus Profile fare network</Name>
+                  <FrameClassRef nameOfClass="ServiceFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRODUCT:FXCP">
+                  <Name>UK FXCP Fare Porducts Frame</Name>
+                  <FrameClassRef nameOfClass="FareFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRICE:FXCP">
+                  <Name>UK FXCP Fare Prices Frame</Name>
+                  <FrameClassRef nameOfClass="FareFrame"/>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Offer_Frame_for_Fares" classOfValues="TypeOfFrame">
+              <Name>Types of UK Offer Frame</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP_FARE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container STOP OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container LINE OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"/>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK_FARE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container NETWORK OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"/>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Transaction_Frame" classOfValues="TypeOfFrame">
+              <Name>Types of UK Trasnaction  Frame</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_TRANSACTIONS:FXCP">
+                  <Name>UK Bus Profile Operator sample transactions</Name>
+                  <FrameClassRef nameOfClass="SalesTransactionFrame"/>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+          </typesOfValue>
+        </ResourceFrame>
+        <ResourceFrame id="fxc:UK:DFT:ResourceFrame_UK_PI_METADATA:FareXChange:fxc" version="fxc:v1.0" responsibilitySetRef="fxc:FXC_metadata" dataSourceRef="fxc:dft">
+          <Name>FXCP - Fare profile  metadata</Name>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="fxc_metadata"/>
+            <DefaultDataSourceRef ref="fxc:dft" version="fxc:v1.0"/>
+            <DefaultResponsibilitySetRef ref="fxc:FXC_metadata" version="fxc:v1.0"/>
+            <DefaultLocale>
+              <TimeZoneOffset>0</TimeZoneOffset>
+              <TimeZone>GMT</TimeZone>
+              <SummerTimeZoneOffset>+1</SummerTimeZoneOffset>
+              <SummerTimeZone>BST</SummerTimeZone>
+              <DefaultLanguage>en</DefaultLanguage>
+            </DefaultLocale>
+            <DefaultLocationSystem>WGS84</DefaultLocationSystem>
+            <DefaultSystemOfUnits>SiKilometresAndMetres</DefaultSystemOfUnits>
+            <DefaultCurrency>GBP</DefaultCurrency>
+          </FrameDefaults>
+          <versions>
+            <Version id="fxc:v1.0" version="any">
+              <ValidBetween>
+                <FromDate>2019-01-01T01:01:01Z</FromDate>
+              </ValidBetween>
+              <Description>FXC version 2.1</Description>
+              <VersionType>baseline</VersionType>
+            </Version>
+          </versions>
+          <typesOfValue>
+            <ValueSet version="fxc:v1.0" id="fxc:PointsOfInterest_Classifications" classOfValues="PointOfInterestClassification">
+              <Name>Types of POI</Name>
+              <values>
+                <PointOfInterestClassification version="fxc:v1.0" id="fxc:operator_travel_shop">
+                  <Name>Travel Shop</Name>
+                </PointOfInterestClassification>
+                <PointOfInterestClassification version="fxc:v1.0" id="fxc:tourist_information_centre">
+                  <Name>Tourist Information Centre</Name>
+                </PointOfInterestClassification>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareZone" classOfValues="TypeOfZone">
+              <Name>Types of FARE ZONE</Name>
+              <values>
+                <TypeOfZone version="fxc:v1.0" id="fxc:fare_zone@operator">
+                  <Name>Operator defined zone</Name>
+                </TypeOfZone>
+                <TypeOfZone version="fxc:v1.0" id="fxc:fare_zone@multi_operator">
+                  <Name>MultiOperator defined zone</Name>
+                </TypeOfZone>
+                <TypeOfZone version="fxc:v1.0" id="fxc:fare_zone@concessionary">
+                  <Name>Concessionary scheme zone</Name>
+                </TypeOfZone>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_ProductCategory" classOfValues="TypeOfProductCategory">
+              <Name>Types of PRODUCT CATEGORY</Name>
+              <values>
+                <TypeOfProductCategory version="fxc:v1.0" id="fxc:urban_bus">
+                  <Name>Urban Bus</Name>
+                </TypeOfProductCategory>
+                <TypeOfProductCategory version="fxc:v1.0" id="fxc:rural_bus">
+                  <Name>Rural Bus</Name>
+                </TypeOfProductCategory>
+                <TypeOfProductCategory version="fxc:v1.0" id="fxc:park_and_ride">
+                  <Name>Rural Bus</Name>
+                </TypeOfProductCategory>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:PurposesOfGrouping" classOfValues="PurposeOfGrouping">
+              <Name>Purposes of Grouping</Name>
+              <values>
+                <PurposeOfGrouping version="fxc:v1.0" id="fxc:route_exclusion">
+                  <Name>Routes to be ommitted</Name>
+                </PurposeOfGrouping>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:ChargingMoments" classOfValues="ChargingMoment">
+              <Name>Types of CHARGING MOMENT</Name>
+              <values>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment">
+                  <Name>Prepaid</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment@pay_as_you_go">
+                  <Name>Prepaid - pay as you go</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment@bundled">
+                  <Name>Prepaid - paid along with a base product</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment@free">
+                  <Name>Prepaid - free issue</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc::post_payment">
+                  <Name>Postpaid</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc::post_payment_periodic">
+                  <Name>Postpaid</Name>
+                </ChargingMoment>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareProduct@trip" classOfValues="TypeOfFareProduct">
+              <Name>Types of FARE PRODUCT - Trip</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@trip@short_hop">
+                  <Name>Short hop fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@trip@single">
+                  <Name>Single fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:era:standard_product@trip@time_limited">
+                  <Name>Time Limited fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:special_product@trip@period_return">
+                  <Name>Period return fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:era:special_produc@trip@day_return">
+                  <Name>Day return fare</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareProduct@pass" classOfValues="TypeOfFareProduct">
+              <Name>Types of FARE PRODUCT - Pass</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@pass@day">
+                  <Name>day pass - till end of fare day</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@pass@24H">
+                  <Name>24H from time of activation</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@pass@period">
+                  <Name>Pass for a specifed period</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareProduct@carnet" classOfValues="TypeOfFareProduct">
+              <Name>Types Of FARE PRODUCT- Pass</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@carnet@trips">
+                  <Name>Carnet of trips.</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@carnet@days">
+                  <Name>Carnet of 1 day' passes.</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareProduct@discount" classOfValues="TypeOfFareProduct">
+              <Name>Types Of FARE PRODUCT - Pass</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@discount@sales">
+                  <Name>Sales discount righty</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@discount@usage">
+                  <Name>Usage discount rights</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareProduct@stored_value" classOfValues="TypeOfFareProduct">
+              <Name>Types of FARE PRODUCT - Epurse</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@stored_value@epurse">
+                  <Name>Epurse</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_SalesOfferPackage" classOfValues="TypeOfSalesOfferPackage">
+              <Name>Types of SALES OFFER PACKAGE.</Name>
+              <values>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:standard_product@all_operators">
+                  <Name>Product is standard and supported by all operators</Name>
+                </TypeOfSalesOfferPackage>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:standard_product@multi_operator">
+                  <Name>Product is standrad and supported by all operators</Name>
+                </TypeOfSalesOfferPackage>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:standard_product@operator">
+                  <Name>Single operator standard product</Name>
+                </TypeOfSalesOfferPackage>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:special_product@operator">
+                  <Name>Single operator special product</Name>
+                </TypeOfSalesOfferPackage>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Classes_of_Use" classOfValues="ClassOfUse">
+              <Name>Types of CLASS OF USE.</Name>
+              <values>
+                <ClassOfUse version="fxc:v1.0" id="fxc:first">
+                  <Name>First Class</Name>
+                </ClassOfUse>
+                <ClassOfUse version="fxc:v1.0" id="fxc:second">
+                  <Name>Second Class</Name>
+                </ClassOfUse>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Projection" classOfValues="TypeOfProjection">
+              <Name>Types of PROJECTION</Name>
+              <values>
+                <TypeOfProjection version="fxc:v1.0" id="fxc:tariff_zone_border">
+                  <Name>The boundary stops for a fare_zone</Name>
+                </TypeOfProjection>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareContractEntry" classOfValues="TypeOfFareContractEntry">
+              <Name>Types of FARE CONTRACT ENTRY</Name>
+              <values>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:product_purchase">
+                  <Name>Purchase</Name>
+                </TypeOfFareContractEntry>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:product_refund">
+                  <Name>Refund</Name>
+                </TypeOfFareContractEntry>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:online_purchase">
+                  <Name>Online Purchase</Name>
+                </TypeOfFareContractEntry>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:on_board_purchase">
+                  <Name>Cash Purchase</Name>
+                </TypeOfFareContractEntry>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Concession" classOfValues="TypeOfConcession">
+              <Name>Types of CONCESSION</Name>
+              <values>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:none">
+                  <Name>Adult</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:child">
+                  <Name>Child</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:infant">
+                  <Name>Infant</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:senior">
+                  <Name>Senior</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:school_pupil">
+                  <Name>School pupil</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:student">
+                  <Name>Student</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:young_person">
+                  <Name>Young Person</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:disabled">
+                  <Name>Disabled</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:disabled_companion">
+                  <Name>Disabled Companion</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:employee">
+                  <Name>Employee</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:military">
+                  <Name>Military</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:job_seeker">
+                  <Name>Job Seeker</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:guide_dog">
+                  <Name>Guide Dog</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:animal">
+                  <Name>Animal</Name>
+                </TypeOfConcession>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Tariff" classOfValues="TypeOfTariff">
+              <Name>Spatial Types of Tariff</Name>
+              <values>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:Distance_kilometers">
+                  <Name>Kilometer Distance Kilometers</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:flat">
+                  <Name>Flat</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:point_to_point">
+                  <Name>Point to point</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:zone_to_zone">
+                  <Name>Zone to Zone</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:zonal">
+                  <Name>Zonal</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:section">
+                  <Name>Section</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:banded">
+                  <Name>Section</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:stored_value">
+                  <Name>Stored value</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:discount">
+                  <Name>Discount value</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:multitrip">
+                  <Name>Multitrip carnet</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:identity_card">
+                  <Name>SIdentity</Name>
+                </TypeOfTariff>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareStructureElement" classOfValues="TypeOfFareStructureElement">
+              <Name>FXCP: Types of FARE STRUCTURE ELEMENT.</Name>
+              <values>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:access">
+                  <Name>Access rights</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:access_when">
+                  <Name>Fare demand :peak /off peak etc access rights to use or travel during some period</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:accepted_by">
+                  <Name>Accepted by operator</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:eligibility">
+                  <Name>Eligibility to purchase</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:groups">
+                  <Name>Group tickets available</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:durations">
+                  <Name>Time intervals</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:prerequisites">
+                  <Name>Defines required entitlements</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:entitles">
+                  <Name>Gives right to other products</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:sale_conditions">
+                  <Name>Defines a condition or restriction on purchase</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:travel_conditions">
+                  <Name>Condition on use</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:carnet_units">
+                  <Name>Specifies units for purchase</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:outlets">
+                  <Name>Specifies where a purchase can be made</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:quotas">
+                  <Name>Quota applies</Name>
+                </TypeOfFareStructureElement>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_AccessRightAssignment" classOfValues="TypeOfAccessRightAssignment">
+              <Name>Types of Access Right Assignment</Name>
+              <values>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:eligible">
+                  <Name>Eligible for a product or discount</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_access">
+                  <Name>Grants access rights to use or travel on</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:cannot_access">
+                  <Name>Revokes access rights to use or travel on</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:must_access">
+                  <Name>Requires access rights to use or travel on</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_access_when">
+                  <Name>Grants access rights to use or travel during some period</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_access_if_purchased">
+                  <Name>Right defines a property that may be Accessed if purchased</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_use_with_type_of_travel_document">
+                  <Name>Right defines tyoe travel document condition</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:condition_of_use">
+                  <Name>Defines a condition or restriction on use</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:condition_of_sale">
+                  <Name>Defines a condition or restriction on purchase</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_purchase">
+                  <Name>Gives right to purchase</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_purchase_when">
+                  <Name>Specifies when a purchase can be made</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_purchase_where">
+                  <Name>Specifies where a purchase can be made</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:gives_entitlement">
+                  <Name>Gives right to other products</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:prerequisites">
+                  <Name>Requires right to other products</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:penalties">
+                  <Name>Penalties for misuuse</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_use_to_pay_for">
+                  <Name>Gives ability to purchase automatically using</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:payment_schedules">
+                  <Name>Specifices if subscription or single payment</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:reservation_condition">
+                  <Name>Indicates need for reservation</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:distribution_channel_restriction">
+                  <Name>Constrains availability for distribution by a channel</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:use_before">
+                  <Name>Takes properties from group package</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:quota_applies">
+                  <Name>Quota applies</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:promotion_applies">
+                  <Name>Promotion applies</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:validity_chaining">
+                  <Name>Quota applies</Name>
+                </TypeOfAccessRightAssignment>
+              </values>
+            </ValueSet>
+          </typesOfValue>
+          <organisations>
+            <GeneralOrganisation version="fxc:v1.0" id="fxc:DfT">
+              <Name>Department for Transport</Name>
+              <ShortName>DfT</ShortName>
+              <OrganisationType>statutoryBody</OrganisationType>
+            </GeneralOrganisation>
+            <Operator version="fxc:v1.0" id="uic:operator:1170">
+              <PublicCode>ATOC</PublicCode>
+              <Name>Association of Train Operating Companies Limited</Name>
+              <ShortName>UIC</ShortName>
+              <ValidityPeriod>
+                <FromDate>2001-01-01T00:00:00Z</FromDate>
+                <ToDate>2020-01-01T00:00:00Z</ToDate>
+              </ValidityPeriod>
+              <CountryRef ref="uk" refPrincipality="iso3166-2:GB-UKM"/>
+            </Operator>
+            <Operator version="fxc:v1.0" id="uicStation_Management:0070">
+              <PublicCode>NR</PublicCode>
+              <Name>Network Rail Limited</Name>
+              <ShortName>Network Rail</ShortName>
+              <ValidityPeriod>
+                <FromDate>2003-09-22T00:00:00Z</FromDate>
+                <ToDate>2020-01-01T00:00:00Z</ToDate>
+              </ValidityPeriod>
+              <CountryRef ref="uk" refPrincipality="iso3166-2:GB-UKM"/>
+            </Operator>
+          </organisations>
+          <groupsOfEntities>
+            <Layer version="fxc:v1.0" id="fxc:fare_network+fare_products+fare_prices">
+              <Name>Fares and fare prices</Name>
+            </Layer>
+            <Layer version="fxc:v1.0" id="fxc:fare_network">
+              <Name>Fares networks</Name>
+            </Layer>
+            <Layer version="fxc:v1.0" id="fxc:fare_products">
+              <Name>Fares ad fare prices</Name>
+            </Layer>
+            <Layer version="fxc:v1.0" id="fxc:fare_prices">
+              <Name>Fares and fare prices</Name>
+            </Layer>
+          </groupsOfEntities>
+        </ResourceFrame>
+        <ResourceFrame version="nptg:v2.1" id="fxc:UK:DFT:ResourceFrame_UK_PI_METADATA:NPTG:nptg" responsibilitySetRef="nptg:NPTG_metadata" dataSourceRef="nptg:dft">
+          <ValidBetween>
+            <FromDate>2004-01-01T00:00:00</FromDate>
+          </ValidBetween>
+          <Name>Static code values for UK NPTG data</Name>
+          <Description>This frame contains code  valuesused to validate the NPTG</Description>
+          <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA:FXCP"/>
+          <codespaces>
+            <Codespace id="nptg_metadata">
+              <Xmlns>nptg</Xmlns>
+              <XmlnsUrl>http://www.nptg.org.uk/nptg</XmlnsUrl>
+              <Description>UK National Public Transport gazetteer     fixed codes.   .</Description>
+            </Codespace>
+            <Codespace id="nptgLocality_data">
+              <Xmlns>nptgLocality</Xmlns>
+              <XmlnsUrl>http://nptg.org.uk/locations</XmlnsUrl>
+              <Description>National Public Transport gazetteer locations</Description>
+            </Codespace>
+            <Codespace id="nptgTariffZone_data">
+              <Xmlns>nptgTariffZone</Xmlns>
+              <XmlnsUrl>http://nptg.org.uk/tariffZones</XmlnsUrl>
+              <Description>National Public Transport gazetteer plus bus zones</Description>
+            </Codespace>
+            <Codespace id="nptgAdminArea_data">
+              <Xmlns>nptgAdminArea</Xmlns>
+              <XmlnsUrl>http://www.nptg.org.uk/adminAreas</XmlnsUrl>
+              <Description>UK National Public Transport gazetteer. Codes of administrative areas, are unique within the UK.</Description>
+            </Codespace>
+          </codespaces>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="nptg_metadata"/>
+            <DefaultDataSourceRef ref="nptg:dft" version="nptg:v2.1"/>
+            <DefaultResponsibilitySetRef ref="nptg:NPTG_metadata" version="nptg:v2.1"/>
+          </FrameDefaults>
+          <versions>
+            <Version id="nptg:v2.1" version="any">
+              <Description>NPTG version 2.1</Description>
+              <VersionType>baseline</VersionType>
+            </Version>
+          </versions>
+          <dataSources>
+            <DataSource id="nptg:dft" version="nptg:v2.1">
+              <Email>standards@nptg.org.uk</Email>
+            </DataSource>
+          </dataSources>
+          <responsibilitySets>
+            <ResponsibilitySet version="nptg:v2.1" id="nptg:NPTG_metadata">
+              <Name>Common</Name>
+              <roles>
+                <ResponsibilityRoleAssignment version="nptg:v2.1" id="nptg:NPTG_metadata">
+                  <DataRoleType>creates distributes</DataRoleType>
+                  <StakeholderRoleType>DataRegistrar</StakeholderRoleType>
+                  <ResponsibleOrganisationRef ref="nptg:DfT" version="nptg:v2.1"/>
+                  <ResponsibleAreaRef ref="nptgUkRegion:GB" nameOfRefClass="TransportAdministrativeZone" versionRef="0" xsi:type="TransportAdministrativeZoneRefStructure">UK</ResponsibleAreaRef>
+                </ResponsibilityRoleAssignment>
+              </roles>
+            </ResponsibilitySet>
+            <ResponsibilitySet version="nptg:v2.1" id="nptg:NPTG_data">
+              <Name>Common</Name>
+              <roles>
+                <ResponsibilityRoleAssignment version="nptg:v2.1" id="nptg:NPTG_data">
+                  <DataRoleType>creates distributes</DataRoleType>
+                  <StakeholderRoleType>EntityLegalOwnership</StakeholderRoleType>
+                  <ResponsibleOrganisationRef ref="nptg:DfT" version="nptg:v2.1"/>
+                  <ResponsibleAreaRef ref="nptg:UK">TODO</ResponsibleAreaRef>
+                </ResponsibilityRoleAssignment>
+              </roles>
+            </ResponsibilitySet>
+          </responsibilitySets>
+          <typesOfValue>
+            <ValueSet version="nptg:v2.1" id="nptg:UK_NPTG_profile@Types_of_frame" classOfValues="TypeOfFrame">
+              <Name>Types of frame for UK NKTG profile</Name>
+              <values>
+                <TypeOfFrame version="nptg:v2.1" id="nptg:UK_NPTG_profile_payload">
+                  <Name>NPTG Locations and  Tariff Zones Frame</Name>
+                  <FrameClassRef nameOfClass="SiteeFrame"/>
+                  <classes>
+                    <ClassInFrame nameOfClass="TopographicPlace">
+                      <Mandatory>required</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="_id">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_version">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_created">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_changed">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_modification">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_status">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Name">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Name.lang">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Centroid.Location.Longitude">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Centroid.Location.Latitude">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Centroid.Location.gml.pos">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Centroid.Location.Precision">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Descriptor.Name">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Descriptor.Name._lang">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Descriptor.ShortName">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Descriptor.ShortName._lang">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Descriptor.Qualifier">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Descriptor.Qualifier.Name._lang">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="TypeOfTopographicPlace">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                      <relationships>
+                        <ClassRelationshipInFrame name="responsibilitySet">
+                          <RelationshipRef nameOfClass="ResponsibilitySetRef"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>byReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="parentZone">
+                          <RelationshipRef nameOfClass="ParentZoneRef"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="placeTypes">
+                          <RelationshipRef nameOfClass="TypeOfPlaceRef"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="country">
+                          <RelationshipRef nameOfClass="CountryRef"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="parentTopographicPlace">
+                          <RelationshipRef nameOfClass="ParentTopographicPlaceRef"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="alternativeDescriptors">
+                          <RelationshipRef nameOfClass="TopographicPlaceDescriptior"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="adjacentLocalities">
+                          <RelationshipRef nameOfClass="TopographicPlaceRef"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="containedIn">
+                          <RelationshipRef nameOfClass="TopographicPlaceRef"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                      </relationships>
+                    </ClassInFrame>
+                    <ClassInFrame nameOfClass="TopographicDescriptor">
+                      <Mandatory>required</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="_id">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_version">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_created">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_changed">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_modification">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Name">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="ShortName">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Qualifier">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                      <relationships>
+                        <ClassRelationshipInFrame name="responsibilitySet">
+                          <RelationshipRef nameOfClass="ResponsibilitySetRef"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>byReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="containedIn">
+                          <RelationshipRef nameOfClass="TopographicPlaceRef"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                      </relationships>
+                    </ClassInFrame>
+                    <ClassInFrame nameOfClass="TariffZone">
+                      <Mandatory>required</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="_id">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_version">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_created">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_changed">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_modification">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Name">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Name._lang">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="PrivateCode">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                      <relationships>
+                        <ClassRelationshipInFrame name="types">
+                          <RelationshipRef nameOfClass="TypeOfZoneRef"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="country">
+                          <RelationshipRef nameOfClass="CountryRef"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>byReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="projection">
+                          <RelationshipRef nameOfClass="Polygon"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>inline</Containment>
+                        </ClassRelationshipInFrame>
+                      </relationships>
+                    </ClassInFrame>
+                    <ClassInFrame nameOfClass="Polygon">
+                      <Mandatory>required</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="_gml.id">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_srsName">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="gml.exterior.LinearRIng.pos">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                    </ClassInFrame>
+                  </classes>
+                  <ModificationSet>all</ModificationSet>
+                </TypeOfFrame>
+                <TypeOfFrame version="nptg:v2.1" id="nptg:UK_NPTG_profile_admin_context">
+                  <Name>NPTG Admin areas for NPTG</Name>
+                  <classes>
+                    <ClassInFrame nameOfClass="GeneralOrganisation">
+                      <Mandatory>required</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="Name">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                      <relationships>
+                        <ClassRelationshipInFrame name="parts">
+                          <RelationshipRef nameOfClass="OrganisationPart"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>inline</Containment>
+                        </ClassRelationshipInFrame>
+                      </relationships>
+                    </ClassInFrame>
+                    <ClassInFrame nameOfClass="OrganisationPart">
+                      <Mandatory>required</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="Name">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="PublicCode">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                      <relationships>
+                        <ClassRelationshipInFrame name="administrativeZones">
+                          <RelationshipRef nameOfClass="TransportAdministrativeZone"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>inline</Containment>
+                        </ClassRelationshipInFrame>
+                      </relationships>
+                    </ClassInFrame>
+                    <ClassInFrame nameOfClass="TransportAdministrativeZone">
+                      <Mandatory>required</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="_id">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_version">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_created">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_changed">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_modification">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="Name">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="ShortName">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="PrivateCode">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                      <relationships>
+                        <ClassRelationshipInFrame name="types">
+                          <RelationshipRef nameOfClass="TypeOfZoneRef"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="projections">
+                          <RelationshipRef nameOfClass="TopographicProjection"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>inline</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="subzones">
+                          <RelationshipRef nameOfClass="TransportAdministrativeZone"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>inline</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="codespaceAssignments">
+                          <RelationshipRef nameOfClass="CodespaceAssignment"/>
+                          <Mandatory>optional</Mandatory>
+                          <Containment>inline</Containment>
+                        </ClassRelationshipInFrame>
+                      </relationships>
+                    </ClassInFrame>
+                    <ClassInFrame nameOfClass="CodespaceAssignment">
+                      <Mandatory>optional</Mandatory>
+                      <attributes>
+                        <ClassAttributeInFrame name="_id">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="_version">
+                          <Mandatory>required</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="CodePrefix">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="StartValue">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                        <ClassAttributeInFrame name="EndValue">
+                          <Mandatory>optional</Mandatory>
+                        </ClassAttributeInFrame>
+                      </attributes>
+                      <relationships>
+                        <ClassRelationshipInFrame name="codespace">
+                          <RelationshipRef nameOfClass="CodespaceRef"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>byReference</Containment>
+                        </ClassRelationshipInFrame>
+                        <ClassRelationshipInFrame name="typeOfCodespaceAssignment">
+                          <RelationshipRef nameOfClass="TypeOfCodespaceAssignmentRef"/>
+                          <Mandatory>required</Mandatory>
+                          <Containment>byVersionedReference</Containment>
+                        </ClassRelationshipInFrame>
+                      </relationships>
+                    </ClassInFrame>
+                  </classes>
+                  <ModificationSet>all</ModificationSet>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="nptg:v2.1" id="nptg:UK_NPTG_profile@Place_types" classOfValues="TypeOfPlace">
+              <Name>NPTG Place Types   s</Name>
+              <values>
+                <TypeOfPlace version="nptg:v2.1" id="nptg:SourceLocalityType@Lo">
+                  <Name>NPTG Source Loc  = Lo</Name>
+                </TypeOfPlace>
+                <TypeOfPlace version="nptg:v2.1" id="nptg:SourceLocalityType@Co">
+                  <Name>NPTG Source Loc  = Co</Name>
+                </TypeOfPlace>
+                <TypeOfPlace version="nptg:v2.1" id="nptg:SourceLocalityType@Pa">
+                  <Name>NPTG Source Loc  = Pa</Name>
+                </TypeOfPlace>
+                <TypeOfPlace version="nptg:v2.1" id="nptg:SourceLocalityType@ar">
+                  <Name>NPTG Source Loc  = ar</Name>
+                </TypeOfPlace>
+                <TypeOfPlace version="nptg:v2.1" id="nptg:SourceLocalityType@Add">
+                  <Name>NPTG Source Loc  = Add</Name>
+                </TypeOfPlace>
+                <TypeOfPlace version="nptg:v2.1" id="nptg:SourceLocalityType@U">
+                  <Name>NPTG Source Loc  = U</Name>
+                </TypeOfPlace>
+              </values>
+            </ValueSet>
+            <ValueSet version="nptg:v2.1" id="nptg:UK_NPTG_profile@Organisation_part_types" classOfValues="TypeOfZone">
+              <Name>NPTG Organisation Part Types   s</Name>
+              <values>
+                <TypeOfZone version="nptg:v2.1" id="nptg:UkRegion">
+                  <Name>An NPTG Region</Name>
+                </TypeOfZone>
+                <TypeOfZone version="nptg:v2.1" id="nptg:AdministrativeArea@National">
+                  <Name>An NPTG Administrative Area with National scope (e.g. 910, 920 etc)</Name>
+                </TypeOfZone>
+                <TypeOfZone version="nptg:v2.1" id="nptg:AdministrativeArea@Local">
+                  <Name>An NPTG Administrative Area with Local scope</Name>
+                </TypeOfZone>
+                <TypeOfZone version="nptg:v2.1" id="nptg:UkDistrict">
+                  <Name>An NPTG District</Name>
+                </TypeOfZone>
+                <TypeOfZone version="nptg:v2.1" id="nptg:UkLocality">
+                  <Name>An NPTG Locality</Name>
+                </TypeOfZone>
+                <TypeOfZone version="nptg:v2.1" id="nptg:PlusBusZone">
+                  <Name>An PlusBus Tariff Zone</Name>
+                </TypeOfZone>
+              </values>
+            </ValueSet>
+            <ValueSet version="nptg:v2.1" id="nptg:UK_NPTG_profile@Sms_codes" classOfValues="TypeOfCodespaceAssignment">
+              <Name>NPTG Codespace Assignment Types</Name>
+              <values>
+                <TypeOfCodespaceAssignment version="nptg:v2.1" id="nptg:naptan_prefix">
+                  <Name>NPTG Stop prefix</Name>
+                </TypeOfCodespaceAssignment>
+                <TypeOfCodespaceAssignment version="nptg:v2.1" id="nptg:naptan_sms">
+                  <Name>NPTG  Stop SMS prefix</Name>
+                </TypeOfCodespaceAssignment>
+                <TypeOfCodespaceAssignment version="nptg:v2.1" id="nptg:naptan_cleardown">
+                  <Name>NPTG  stop cleardown range</Name>
+                </TypeOfCodespaceAssignment>
+              </values>
+            </ValueSet>
+          </typesOfValue>
+          <organisations>
+            <GeneralOrganisation id="nptg:DfT" modification="new" status="active" responsibilitySetRef="nptg:NPTG" version="nptg:v2.1">
+              <Name>Department for Transport</Name>
+            </GeneralOrganisation>
+          </organisations>
+        </ResourceFrame>
+        <FareFrame id="fxc:UK:DFT:FareFrame_UK_PI_METADATA:FareXChange:fxc" version="fxc:v1.0" responsibilitySetRef="fxc:FXC_metadata" dataSourceRef="fxc:dft">
+          <Name>FXCP Values for Farexchange</Name>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="fxc_metadata"/>
+            <DefaultDataSourceRef ref="fxc:dft" version="fxc:v1.0"/>
+            <DefaultResponsibilitySetRef ref="fxc:FXC_metadata" version="fxc:v1.0"/>
+          </FrameDefaults>
+          <PricingParameterSet id="fxc:Common_Resources" version="fxc:v1.0">
+            <priceUnits>
+              <PriceUnit id="fxc:GBP" version="fxc:v1.0">
+                <Name>Pound Sterling</Name>
+                <Precision>2</Precision>
+              </PriceUnit>
+              <PriceUnit id="fxc:EUR" version="fxc:v1.0">
+                <Name>Euro</Name>
+                <Precision>2</Precision>
+              </PriceUnit>
+            </priceUnits>
+          </PricingParameterSet>
+          <geographicalUnits>
+            <GeographicalUnit id="fxc:mi" version="fxc:v1.0">
+              <Name>Distance Unit Miles</Name>
+            </GeographicalUnit>
+            <GeographicalUnit id="fxc:km" version="fxc:v1.0">
+              <Name>Distance Unit Kilometres</Name>
+            </GeographicalUnit>
+            <GeographicalUnit id="fxc:unit_stage" version="fxc:v1.0">
+              <Name>Distance Unit Stage</Name>
+            </GeographicalUnit>
+          </geographicalUnits>
+          <usageParameters>
+            <UserProfile version="fxc:v1.0" id="fxc:adult">
+              <Name>Adult</Name>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:none"/>
+              <UserType>adult</UserType>
+              <DiscountBasis>none</DiscountBasis>
+              <companionProfiles>
+                <CompanionProfile version="fxc:v1.0" id="fxc:adult@infant">
+                  <UserProfileRef ref="fxc:infant" version="fxc:v1.0"/>
+                  <MinimumNumberOfPersons>0</MinimumNumberOfPersons>
+                  <MaximumNumberOfPersons>3</MaximumNumberOfPersons>
+                </CompanionProfile>
+              </companionProfiles>
+            </UserProfile>
+            <UserProfile version="fxc:v1.0" id="fxc:child">
+              <Name>Child</Name>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:child"/>
+              <UserType>child</UserType>
+              <MinimumAge>5</MinimumAge>
+              <MaximumAge>15</MaximumAge>
+            </UserProfile>
+            <UserProfile version="fxc:v1.0" id="fxc:infant">
+              <Name>Infant</Name>
+              <Description>Up to three children under 5 years of age, accompanied by a fare paying adult or child passenger, and not occupying a seat, may travel free of charge on the Companys services.</Description>
+              <prices>
+                <UsageParameterPrice version="fxc:v1.0" id="fxc:infant">
+                  <Amount>0</Amount>
+                </UsageParameterPrice>
+              </prices>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:infant"/>
+              <UserType>infant</UserType>
+              <MinimumAge>0</MinimumAge>
+              <MaximumAge>4</MaximumAge>
+              <DiscountBasis>free</DiscountBasis>
+              <companionProfiles>
+                <CompanionProfile id="fxc:infant@adult" version="fxc:v1.0">
+                  <UserProfileRef ref="fxc:adult" version="fxc:v1.0"/>
+                  <MinimumNumberOfPersons>1</MinimumNumberOfPersons>
+                  <MaximumNumberOfPersons>1</MaximumNumberOfPersons>
+                  <DiscountBasis>none</DiscountBasis>
+                </CompanionProfile>
+              </companionProfiles>
+            </UserProfile>
+            <UserProfile version="fxc:v1.0" id="fxc:student">
+              <Name>Student</Name>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:student"/>
+              <UserType>student</UserType>
+              <ProofRequired>membershipCard</ProofRequired>
+              <DiscountBasis>discount</DiscountBasis>
+            </UserProfile>
+            <UserProfile version="fxc:v1.0" id="fxc:senior">
+              <Name>Senior</Name>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:child"/>
+              <UserType>senior</UserType>
+              <MinimumAge>60</MinimumAge>
+            </UserProfile>
+          </usageParameters>
+          <distributionChannels>
+            <DistributionChannel id="fxc:online" version="fxc:v1.0">
+              <ShortName>Internet sales</ShortName>
+              <alternativeNames>
+                <AlternativeName order="1" id="fxc:online_de" version="fxc:v1.0">
+                  <Name lang="de">Internetverkauf</Name>
+                </AlternativeName>
+                <AlternativeName order="1" id="fxc:online_fr" version="fxc:v1.0">
+                  <Name lang="fr">A vendre par l'internet</Name>
+                </AlternativeName>
+              </alternativeNames>
+              <DistributionChannelType>online</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:online_subscription" version="fxc:v1.0">
+              <ShortName>online autonatic subscription to renew</ShortName>
+              <DistributionChannelType>online</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:atStop" version="fxc:v1.0">
+              <ShortName>In station sale by machine, counter or payg</ShortName>
+              <DistributionChannelType>atStop</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:self_service_ticket_machine" version="fxc:v1.0">
+              <ShortName>Automatic Ticket Machine</ShortName>
+              <DistributionChannelType>atStop</DistributionChannelType>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:pay_as_you_go_device" version="fxc:v1.0">
+              <ShortName>Pay as you go device - eg smartcard</ShortName>
+              <DistributionChannelType>atStop</DistributionChannelType>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:at_counter" version="fxc:v1.0">
+              <ShortName>Ticket counter sale</ShortName>
+              <alternativeNames>
+                <AlternativeName order="1" id="fxc:at_counter_de" version="fxc:v1.0">
+                  <Name lang="de">Schalter</Name>
+                </AlternativeName>
+                <AlternativeName order="1" id="fxc:at_counter_fr" version="fxc:v1.0">
+                  <Name lang="fr">A vendre par le guichet</Name>
+                </AlternativeName>
+              </alternativeNames>
+              <DistributionChannelType>atStop</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:onBoard" version="fxc:v1.0">
+              <ShortName>on_board</ShortName>
+              <DistributionChannelType>onBoard</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:mobileDevice" version="fxc:v1.0">
+              <ShortName>Mobile Device</ShortName>
+              <DistributionChannelType>mobileDevice</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:call_centre" version="fxc:v1.0">
+              <ShortName>Call Centre</ShortName>
+              <DistributionChannelType>telephone</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:operator_travel_shop" version="fxc:v1.0">
+              <ShortName>Operator Travel Shop</ShortName>
+              <DistributionChannelType>telephone</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:travel_agent" version="fxc:v1.0">
+              <ShortName>Travel Agent</ShortName>
+              <DistributionChannelType>agency</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:employee_organisation" version="fxc:v1.0">
+              <ShortName>Employee Organisation</ShortName>
+              <DistributionChannelType>other</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:statutory_organisation" version="fxc:v1.0">
+              <ShortName>Statutory Organisation</ShortName>
+              <DistributionChannelType>other</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+          </distributionChannels>
+          <fulfilmentMethods>
+            <FulfilmentMethod id="fxc:collect_on_board" version="fxc:v1.0">
+              <Name>Collect on board</Name>
+              <FulfilmentMethodType>conductor</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:paperTicket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:hand_written_ticket" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:collect_from_machine" version="fxc:v1.0">
+              <Name>Collect from machine</Name>
+              <FulfilmentMethodType>ticketMachine</FulfilmentMethodType>
+              <RequiresBookingReference>true</RequiresBookingReference>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:paperTicket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:collect_at_counter" version="fxc:v1.0">
+              <Name>Collect at counter</Name>
+              <FulfilmentMethodType>ticketOffice</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:paperTicket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:pass" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:smartCard" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:hand_written_ticket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:smartCard" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:collect_from_agent" version="fxc:v1.0">
+              <Name>Travel agent issues ticket directly</Name>
+              <FulfilmentMethodType>agent</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:paperTicket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:electronic_document" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:mobile_app" version="fxc:v1.0">
+              <Name>Mobile App</Name>
+              <FulfilmentMethodType>mobileApp</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:mobileApp" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:self_print" version="fxc:v1.0">
+              <Name>Self Print</Name>
+              <FulfilmentMethodType>selfprint</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:self_print_ticket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:electronic_document" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:online_propagation" version="fxc:v1.0">
+              <Name>Online propagation</Name>
+              <FulfilmentMethodType>validator</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:mobileApp" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:smartCard" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:email" version="fxc:v1.0">
+              <Name>EMAIL</Name>
+              <FulfilmentMethodType>email</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:self_print_ticket" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:post" version="fxc:v1.0">
+              <Name>Send ticket by post</Name>
+              <FulfilmentMethodType>post</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:paperTicket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:pass" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:smartCard" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:courier" version="fxc:v1.0">
+              <Name>Send ticket by courier</Name>
+              <FulfilmentMethodType>other</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:paperTicket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:pass" version="fxc:v1.0"/>
+                <TypeOfTravelDocumentRef ref="fxc:smartCard" version="fxc:v1.0"/>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+          </fulfilmentMethods>
+          <typesOfTravelDocuments>
+            <TypeOfTravelDocument id="fxc:distribution_channel_dependent" version="fxc:v1.0">
+              <Name>Depends on channel used</Name>
+              <MediaType>other</MediaType>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:paperTicket" version="fxc:v1.0">
+              <Name>Printed Ticket</Name>
+              <MediaType>paperTicket</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:hand_written_ticket" version="fxc:v1.0">
+              <Name>Hand written ticket</Name>
+              <MediaType>paperTicket</MediaType>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:magstripe_printed_ticket" version="fxc:v1.0">
+              <Name>Printed Ticket with magnetic Stripe</Name>
+              <MediaType>paperTicket</MediaType>
+              <MachineReadable>magneticStrip</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:self_print_ticket" version="fxc:v1.0">
+              <MediaType>selfPrintPaperTicket</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:pass" version="fxc:v1.0">
+              <MediaType>card</MediaType>
+              <MachineReadable>barCode</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:mobileApp" version="fxc:v1.0">
+              <MediaType>mobileApp</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:smartCard" version="fxc:v1.0">
+              <MediaType>card</MediaType>
+              <MachineReadable>chip</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:electronic_document" version="fxc:v1.0">
+              <MediaType>none</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:membership_card" version="fxc:v1.0">
+              <MediaType>card</MediaType>
+              <MachineReadable>none</MachineReadable>
+            </TypeOfTravelDocument>
+          </typesOfTravelDocuments>
+        </FareFrame>
+      </frames>
+    </CompositeFrame>
+  </dataObjects>
+</PublicationDelivery>
