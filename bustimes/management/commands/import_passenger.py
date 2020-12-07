@@ -9,7 +9,6 @@ from datetime import timedelta
 from requests_html import HTMLSession
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import transaction
 from django.utils import timezone, dateparse
 from busstops.models import DataSource, Service, ServiceColour
 from .import_bod import handle_file

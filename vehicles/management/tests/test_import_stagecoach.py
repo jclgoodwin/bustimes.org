@@ -47,6 +47,6 @@ class StagecoachTest(TestCase):
         self.assertEqual(command.operators, {
             'SCOX': Operator(id='SCOX'),
             'SCCM': None,
-            'SCEK': None, 
+            'SCEK': None,
         })
         self.assertEqual(VehicleLocation.objects.count(), 1)
