@@ -327,7 +327,7 @@
                 });
             }
             vehicles[item.i] = marker.addTo(vehiclesGroup)
-                .bindPopup({
+                .bindPopup('', {
                     autoPan: false
                 })
                 .on('popupopen', handlePopupOpen)
