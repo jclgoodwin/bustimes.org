@@ -49,6 +49,12 @@ td:hover {
 
     <h1>{{ object }}</h1>
 
+    <form>
+        {{ form.as_p }}
+
+        <input type="submit" value="Find fare">
+    </form>
+
     {% for table in object.faretable_set.all %}
 
         {% ifchanged table.name %}<h2>{{ table }}</h2>{% endifchanged %}
