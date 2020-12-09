@@ -603,7 +603,7 @@ class Command(BaseCommand):
                         Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
                     )
                 else:
-                    existing.filter(description=description)
+                    existing = existing.filter(description=description)
 
                 existing = existing.filter(line_name__iexact=line_name).order_by('-current', 'id').first()
 
@@ -635,11 +635,11 @@ class Command(BaseCommand):
                     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                         pass
 
-                if parts:  # Ticketer or Stagecoach
-                    if not existing:
-                        existing = self.source.service_set.filter(
-                            line_name=line_name, route__code__contains=f'/{parts}_'
-                        ).order_by('-current', 'id').first()
+                # if parts:  # Ticketer or Stagecoach
+                #     if not existing:
+                #         existing = self.source.service_set.filter(
+                #             line_name=line_name, route__code__contains=f'/{parts}_'
+                #         ).order_by('-current', 'id').first()
 
             if existing:
                 service = existing

@@ -198,7 +198,7 @@ def stagecoach(operator=None):
     command = get_command()
 
     for region_id, noc, name, operators in settings.STAGECOACH_OPERATORS:
-        if operator and operator != noc:
+        if operator and operator != noc:  # something like 'sswl'
             continue
 
         filename = f'stagecoach-{noc}-route-schedule-data-transxchange.zip'
@@ -212,7 +212,7 @@ def stagecoach(operator=None):
         if modified and command.source.datetime and command.source.datetime >= last_modified:
             modified = False
 
-        if modified:
+        if modified or operator:
             print(url, last_modified)
 
             command.operators = operators
