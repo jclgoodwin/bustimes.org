@@ -58,7 +58,7 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 @shared_task
 def log_vehicle_journey(service, data, time, destination, source_name, url):
     operator_ref = data.get('OperatorRef')
-    if operator_ref and operator_ref in {'UNIB', 'GCB', 'PLYC', 'OBC', 'SOX', 'MCG', '753BDR', 'FECS'}:
+    if operator_ref and operator_ref == 'MCG':
         return
 
     if not time:
@@ -72,8 +72,6 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         vehicle = vehicle[len(operator_ref) + 1:]
     elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
         vehicle = vehicle[4:]
-    elif vehicle[:5] in {'ASES-', 'CTNY-'}:
-        vehicle = vehicle[5:]
 
     if not vehicle or vehicle == '-':
         return
@@ -82,9 +80,6 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         journey_ref = data['FramedVehicleJourneyRef']['DatedVehicleJourneyRef']
     else:
         journey_ref = None
-
-    if operator_ref == 'FB' and not vehicle.isdigit():
-        operator_ref = 'ABUS'
 
     operator = None
     if operator_ref:
@@ -124,10 +119,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         vehicles = vehicles.filter(Q(code=vehicle)
                                    | Q(code__endswith=f'-{vehicle}') | Q(code__startswith=f'{vehicle}_-_'))
     else:
-        if operator.id == 'COMT':
-            vehicles = vehicles.filter(Q(code=vehicle) | Q(reg=vehicle))
-        else:
-            vehicles = vehicles.filter(code=vehicle)
+        vehicles = vehicles.filter(code=vehicle)
 
     vehicle, created = vehicles.get_or_create(defaults)
 

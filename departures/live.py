@@ -714,18 +714,17 @@ def get_departures(stop, services):
                     # Record some information about the vehicle and journey,
                     # for enthusiasts,
                     # because the source doesn't support vehicle locations
-                    if 'sslink' not in source.url and 'SIRIHandler' not in source.url:
-                        if source.name not in {'Reading', 'Surrey'}:
-                            for row in departures:
-                                if 'data' in row and 'VehicleRef' in row['data']:
-                                    log_vehicle_journey.delay(
-                                        row['service'].pk if type(row['service']) is Service else None,
-                                        row['data'],
-                                        str(row['origin_departure_time']) if 'origin_departure_time' in row else None,
-                                        str(row['destination']),
-                                        source.name,
-                                        source.url
-                                    )
+                    if source.name in {'Aberdeen', 'Dundee', 'SPT'}:
+                        for row in departures:
+                            if 'data' in row and 'VehicleRef' in row['data']:
+                                log_vehicle_journey.delay(
+                                    row['service'].pk if type(row['service']) is Service else None,
+                                    row['data'],
+                                    str(row['origin_departure_time']) if 'origin_departure_time' in row else None,
+                                    str(row['destination']),
+                                    source.name,
+                                    source.url
+                                )
 
                     # Create a "service code",
                     # because the source supports vehicle locations.
