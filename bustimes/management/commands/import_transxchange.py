@@ -570,7 +570,7 @@ class Command(BaseCommand):
     def is_tnds(self):
         return self.source.url.startswith('ftp://ftp.tnds.basemap.co.uk/')
 
-    def handle_service(self, filename, parts, transxchange, txc_service, today, stops):
+    def handle_service(self, filename, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end:
             if self.source.name.startswith('Coach Services'):
                 txc_service.operating_period.end = None
@@ -587,6 +587,9 @@ class Command(BaseCommand):
         linked_services = []
 
         description = self.get_description(txc_service)
+
+        if description == 'Origin - Destination':
+            description = ''
 
         for line_id, line_name, line_brand in txc_service.lines:
             existing = None
@@ -634,12 +637,6 @@ class Command(BaseCommand):
                                                        line_name__iexact=line_name)
                     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                         pass
-
-                # if parts:  # Ticketer or Stagecoach
-                #     if not existing:
-                #         existing = self.source.service_set.filter(
-                #             line_name=line_name, route__code__contains=f'/{parts}_'
-                #         ).order_by('-current', 'id').first()
 
             if existing:
                 service = existing
@@ -878,19 +875,6 @@ class Command(BaseCommand):
 
         return stops
 
-    def get_filename_parts(self, filename):
-        if self.source.name.startswith('Stagecoach'):
-            parts = os.path.basename(filename)[:-4].split('_')
-            if len(parts[-1]) < 3:
-                parts = parts[:-1]
-            assert len(parts[-1]) >= 8
-            assert parts[-1].isdigit()
-            return '_'.join(parts[:-1])
-        if 'opendata.ticketer' in self.source.url:
-            parts = os.path.basename(filename).split('_')
-            assert len(parts) == 7
-            return '_'.join(parts[:2])
-
     def handle_file(self, open_file, filename):
         transxchange = TransXChange(open_file)
 
@@ -898,10 +882,8 @@ class Command(BaseCommand):
 
         stops = self.do_stops(transxchange.stops)
 
-        parts = self.get_filename_parts(filename)
-
         for txc_service in transxchange.services.values():
             if txc_service.mode == 'underground':
                 continue
 
-            self.handle_service(filename, parts, transxchange, txc_service, today, stops)
+            self.handle_service(filename, transxchange, txc_service, today, stops)
