@@ -19,7 +19,8 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
-from disruptions.models import Situation, Consequence, StopSuspension
+from disruptions.models import Situation, Consequence
+from fares.forms import FaresForm
 from .utils import format_gbp, get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
                      Service, Place, ServiceColour, DataSource)
@@ -401,8 +402,6 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if nearby is not None:
             context['nearby'] = nearby.exclude(pk=self.object.pk).prefetch_related(prefetch_stop_services).defer('osm')
 
-        context['suspensions'] = self.object.stopsuspension_set.filter(service=None)
-
         consequences = Consequence.objects.filter(stops=self.object)
         context['situations'] = Situation.objects.filter(
             publication_window__contains=Now(),
@@ -580,26 +579,31 @@ class ServiceDetailView(DetailView):
                 for stop in consequence.stops.all():
                     stop_situations[stop.atco_code] = situation
 
-        suspensions = StopSuspension.objects.filter(Q(service=None) | Q(service=self.object))
-
         if not context.get('timetable') or not context['timetable'].groupings:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer(
                 'stop__osm', 'stop__locality__latlong'
-            ).prefetch_related(Prefetch('stop__stopsuspension_set', to_attr='suspended', queryset=suspensions))
-            context['has_minor_stops'] = any(s.is_minor() for s in context['stopusages'])
+            )
+            context['has_minor_stops'] = any(stop_usage.is_minor() for stop_usage in context['stopusages'])
+            for stop_usage in context['stopusages']:
+                if stop_usage.stop_id in stop_situations:
+                    if stop_situations[stop_usage.stop_id].text == 'Does not stop here':
+                        stop_usage.suspended = True
+                    else:
+                        stop_usage.situation = True
+
         else:
             stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
             context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings if grouping.rows]
             stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
-            stops = stops.prefetch_related(
-                Prefetch('stopsuspension_set', to_attr='suspended', queryset=suspensions)
-            )
             stops = stops.in_bulk(stop_codes)
             for atco_code in stops:
                 if atco_code in stop_situations:
-                    stops[atco_code].situation = True
+                    if stop_situations[atco_code].text == 'Does not stop here':
+                        stops[atco_code].suspended = True
+                    else:
+                        stops[atco_code].situation = True
             for grouping in context['timetable'].groupings:
                 grouping.apply_stops(stops)
 
@@ -629,6 +633,13 @@ class ServiceDetailView(DetailView):
                         'url': operator.get_national_express_url(),
                         'text': 'Buy tickets at nationalexpress.com'
                     })
+
+        tariffs = self.object.tariff_set.all()
+        if tariffs.exists():
+            if self.request.GET:
+                context['fares'] = FaresForm(tariffs, self.request.GET)
+            else:
+                context['fares'] = FaresForm(tariffs)
 
         for url, text in self.object.get_traveline_links(date):
             context['links'].append({

@@ -14,11 +14,11 @@
         {% endif %}
         <ul class="route">
     {% endifchanged %}
-    {% ifchanged stopusage.stop %}
+    {% ifchanged stopusage.stop %}{% if not stopusage.suspended %}
         <li{% if stopusage.is_minor %} class="minor"{% endif %}>
-            <a href="{{ stopusage.stop.get_absolute_url }}">{% if stopusage.stop.suspended %}🚧 {% endif %}{{ stopusage.stop.get_qualified_name }}</a>
+            <a href="{{ stopusage.stop.get_absolute_url }}">{% if stopusage.situation %}🚧 {% endif %}{{ stopusage.stop.get_qualified_name }}</a>
         </li>
-    {% endifchanged %}
+    {% endif %}{% endifchanged %}
     {% if forloop.last %}
         </ul>
     {% endif %}

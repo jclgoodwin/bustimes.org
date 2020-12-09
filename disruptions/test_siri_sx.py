@@ -794,6 +794,6 @@ Services will observe all bus stops on the diverted route. </Details>
                             '-(haydock)/" rel="nofollow">www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
                             '-(haydock)</a>')
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(7):
             response = self.client.get('/stops/2800S11031B')
         self.assertContains(response, 'subjected to restrictions, at Liverpool Road, from Monday 17 February 2020')

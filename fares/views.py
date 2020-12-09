@@ -6,6 +6,20 @@ from .models import DataSet, Tariff
 class DataSetDetailView(DetailView):
     model = DataSet
 
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        context_data['breadcrumb'] = self.object.operators.all()
+
+        if self.request.GET:
+            form = FaresForm(self.object.tariff_set.all(), self.request.GET)
+            if form.is_valid():
+                context_data['results'] = form.get_results()
+        else:
+            form = FaresForm(self.object.tariff_set.all())
+
+        context_data['form'] = form
+        return context_data
+
 
 class TariffDetailView(DetailView):
     model = Tariff
@@ -21,8 +35,11 @@ class TariffDetailView(DetailView):
         context_data['breadcrumb'] = [self.object.source]
 
         if self.request.GET:
-            context_data['form'] = FaresForm(self.object, self.request.GET)
+            form = FaresForm([self.object], self.request.GET)
+            if form.is_valid():
+                context_data['results'] = form.get_results()
         else:
-            context_data['form'] = FaresForm(self.object)
+            form = FaresForm([self.object])
 
+        context_data['form'] = form
         return context_data

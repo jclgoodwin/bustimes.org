@@ -49,11 +49,20 @@ td:hover {
 
     <h1>{{ object }}</h1>
 
+    {% for service in object.services.all %}
+        <p><a href="{{ service.get_absolute_url }}">{{ service }}</a></p>
+    {% endfor %}
+
     <form>
         {{ form.as_p }}
 
         <input type="submit" value="Find fare">
     </form>
+
+    {% for result in results %}
+        {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
+        <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price_group.amount }}</p>
+    {% endfor %}
 
     {% for table in object.faretable_set.all %}
 

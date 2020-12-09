@@ -12,7 +12,7 @@ class FaresTest(TestCase):
         path = os.path.join(base_dir, 'data')
 
         for filename in os.listdir(path):
-            source, created = DataSet.objects.get_or_create(name=filename)
+            source = DataSet.objects.create(name=filename, datetime='2017-01-01T00:00:00Z')
             with open(os.path.join(path, filename), "rb") as open_file:
                 command.handle_file(source, open_file)
 

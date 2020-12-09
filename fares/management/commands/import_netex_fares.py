@@ -71,30 +71,33 @@ class Command(BaseCommand):
         tariffs = {}
         distance_matrix_elements = {}
         for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
-            tariff, created = models.Tariff.objects.get_or_create(
-                code=tariff_element.attrib['id'], name=tariff_element.findtext("Name"), source=source,
+            user_profile = tariff_element.find(
+                "fareStructureElements/GenericParameterAssignment/limitations/UserProfile"
+            )
+            user_profile, created = get_user_profile(user_profile)
+            user_profiles[user_profile.code] = user_profile
+
+            round_trip = tariff_element.find("fareStructureElements/GenericParameterAssignment/limitations/RoundTrip")
+            trip_type = round_trip.findtext('TripType')
+
+            tariff = models.Tariff.objects.create(
+                code=tariff_element.attrib['id'], name=tariff_element.findtext("Name"),
+                source=source, trip_Type=trip_type, user_profile=user_profile
             )
 
-            for fare_structure_element in tariff_element.find("fareStructureElements"):
-                distance_matrix_element_elements = fare_structure_element.find("distanceMatrixElements")
-                if distance_matrix_element_elements:
-                    for distance_matrix_element in distance_matrix_element_elements:
-                        start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
-                        end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
-                        price_group = distance_matrix_element.find("priceGroups/PriceGroupRef").attrib['ref']
-                        distance_matrix_element, created = models.DistanceMatrixElement.objects.get_or_create(
-                            code=distance_matrix_element.attrib["id"],
-                            start_zone=fare_zones[start_zone],
-                            end_zone=fare_zones[end_zone],
-                            price_group=price_groups[price_group],
-                            tariff=tariff,
-                        )
-                        distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
-
-                user_profile = fare_structure_element.find("GenericParameterAssignment/limitations/UserProfile")
-                if user_profile:
-                    user_profile, created = get_user_profile(user_profile)
-                    user_profiles[user_profile.code] = user_profile
+            distance_matrix_element_elements = tariff_element.find("fareStructureElements/distanceMatrixElements")
+            for distance_matrix_element in distance_matrix_element_elements:
+                start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
+                end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
+                price_group = distance_matrix_element.find("priceGroups/PriceGroupRef").attrib['ref']
+                distance_matrix_element, created = models.DistanceMatrixElement.objects.get_or_create(
+                    code=distance_matrix_element.attrib["id"],
+                    start_zone=fare_zones[start_zone],
+                    end_zone=fare_zones[end_zone],
+                    price_group=price_groups[price_group],
+                    tariff=tariff,
+                )
+                distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
 
             tariffs[tariff.code] = tariff
 
@@ -109,11 +112,11 @@ class Command(BaseCommand):
             sales_offer_package_ref = fare_table_element.find("pricesFor/SalesOfferPackageRef").attrib["ref"]
             table, created = models.FareTable.objects.update_or_create(
                 {
-                    "tariff": tariffs[tariff_ref],
                     "user_profile": user_profiles[user_profile_ref],
                     "sales_offer_package": sales_offer_packages[sales_offer_package_ref],
                     "description": fare_table_element.findtext("Description")
                 },
+                tariff=tariffs[tariff_ref],
                 code=fare_table_element.attrib["id"],
                 name=fare_table_element.findtext("Name")
             )
@@ -150,15 +153,20 @@ class Command(BaseCommand):
                     price_ref = distance_matrix_element_price.find("GeographicalIntervalPriceRef")
                     distance_matrix_element_ref = distance_matrix_element_price.find("DistanceMatrixElementRef")
 
-                    try:
-                        models.Cell.objects.create(
-                            column=columns[columnn_ref],
-                            row=rows[row_ref],
-                            price_group=price_group_prices[price_ref.attrib["ref"]],
-                            distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
-                        )
-                    except KeyError:
-                        print(rows, row_ref)
+                    if row_ref in rows:
+                        row = rows[row_ref]
+                    else:
+                        row_ref_suffix = row_ref.split('@')[-1]
+                        row_ref_suffix = f'@{row_ref_suffix}'
+                        row_refs = [row_ref for row_ref in rows if row_ref.endswith(row_ref_suffix)]
+                        assert len(row_refs) == 1
+                        row = rows[row_refs[0]]
+                    models.Cell.objects.create(
+                        column=columns[columnn_ref],
+                        row=row,
+                        price_group=price_group_prices[price_ref.attrib["ref"]],
+                        distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
+                    )
 
     @staticmethod
     def add_arguments(parser):
@@ -181,7 +189,7 @@ class Command(BaseCommand):
                 print(dataset_url)
                 try:
                     dataset = models.DataSet.objects.get(url=dataset_url)
-                    # continue
+                    dataset.tariff_set.all().delete()
                 except models.DataSet.DoesNotExist:
                     dataset = models.DataSet(name=item["name"], description=item["description"], url=dataset_url)
                     dataset.save()

@@ -154,6 +154,10 @@
     {% include 'route.html' %}
 {% endif %}
 
+{% if fares %}
+    {% include 'fares.html' with form=fares %}
+{% endif %}
+
 {% if payment_methods %}
     <p>
         {% for method in payment_methods %}

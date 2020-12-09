@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
 
 
@@ -19,6 +20,7 @@ class DataSet(models.Model):
     url = models.URLField(blank=True)
     description = models.CharField(max_length=255)
     operators = models.ManyToManyField('busstops.Operator')
+    datetime = models.DateTimeField()
 
     def __str__(self):
         return self.name
@@ -56,20 +58,6 @@ class SalesOfferPackage(models.Model):
         return self.name
 
 
-class Tariff(models.Model):
-    code = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    services = models.ManyToManyField('busstops.Service', blank=True)
-    operators = models.ManyToManyField('busstops.Operator', blank=True)
-    source = models.ForeignKey(DataSet, models.CASCADE)
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('tariff_detail', args=(self.id,))
-
-
 class UserProfile(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
@@ -81,6 +69,24 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Tariff(models.Model):
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    services = models.ManyToManyField('busstops.Service', blank=True)
+    operators = models.ManyToManyField('busstops.Operator', blank=True)
+    source = models.ForeignKey(DataSet, models.CASCADE)
+    filename = models.CharField(max_length=255)
+    user_profile = models.ForeignKey(UserProfile, models.CASCADE)
+    trip_type = models.CharField(max_length=255)
+    valid_between = DateTimeRangeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('tariff_detail', args=(self.id,))
 
 
 class FareTable(models.Model):

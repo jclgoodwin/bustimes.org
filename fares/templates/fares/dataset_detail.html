@@ -6,10 +6,19 @@
 
     <h1>{{ object }}</h1>
 
+    <form>
+        {{ form.as_p }}
+
+        <input type="submit" value="Find fare">
+    </form>
+
+    {% for result in results %}
+        {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
+        <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price_group.amount }}</p>
+    {% endfor %}
+
     {% for tariff in object.tariff_set.all %}
-
-        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}</a></p>
-
+        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }} ({{ tariff.user_profile }} {{ tariff.trip_type }})</a></p>
     {% endfor %}
 
     <p>{{ object.url | urlize }}</p>

@@ -1,6 +1,7 @@
 {% load urlise %}
 
 {% for situation in situations %}
+    {% if situation.text != 'Does not stop here' %}
     <div class="situation">
         {% if situation.summary %}
             <div class="summary">
@@ -27,4 +28,5 @@
             {{ link.url|urlise }}
         {% endfor %}
     </div>
+    {% endif %}
 {% endfor %}
