@@ -78,17 +78,9 @@ class Command(ImportLiveVehiclesCommand):
             if latest_location.journey.destination == journey.destination:
                 return latest_location.journey
 
+        operator = self.operators[item['operator']]
         try:
-            try:
-                service_code = item['service']['code']
-                if '-' in service_code:
-                    service_code = '-'.join(service_code.split('-')[:-1])
-                    journey.service = Service.objects.get(service_code__endswith='_' + service_code)
-                else:
-                    journey.service = Service.objects.get(service_code=service_code)
-            except Service.DoesNotExist:
-                journey.service = Service.objects.get(operator=self.operators[item['operator']],
-                                                      line_name=journey.route_name)
+            journey.service = Service.objects.get(operator=operator, current=True, line_name__iexact=journey.route_name)
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             logger.error(e, exc_info=True)
 
