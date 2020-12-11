@@ -86,7 +86,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             with patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
                 'AllBankHolidays': [date(2020, 8, 31)],
             }):
-                with self.assertNumQueries(186):
+                with self.assertNumQueries(183):
                     with patch('builtins.print') as mocked_print:
                         call_command('import_bod', 'stagecoach')
                 download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
