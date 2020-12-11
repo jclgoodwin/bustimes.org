@@ -3,6 +3,7 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
     - uses: actions/checkout@v1
     - uses: huaxk/postgis-action@v1
