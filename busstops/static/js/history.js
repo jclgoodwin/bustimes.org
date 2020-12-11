@@ -147,7 +147,7 @@
             line = L.polyline(line, {
                 weight: 4,
                 color: '#87f',
-                opacity: .5
+                opacity: .5,
                 interactive: false
             });
             line.addTo(layerGroup);
