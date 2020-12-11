@@ -302,9 +302,9 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
         response = self.client.get('/vehicles/history')
-        self.assertContains(response, '<td>operator</td>')
-        self.assertContains(response, '<td>Lynx</td>')
-        self.assertContains(response, '<td>Bova and Over</td>')
+        self.assertContains(response, 'operator')
+        self.assertContains(response, 'LYNX')
+        self.assertContains(response, 'BOVA')
 
         revision = response.context['revisions'][0]
         self.assertEqual(revision.from_operator, self.lynx)
@@ -312,9 +312,9 @@ class VehiclesTests(TestCase):
         self.assertEqual(str(revision), 'operator: Lynx → Bova and Over, depot: Long Sutton → Holt')
 
         response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
-        self.assertContains(response, '<td>operator</td>')
-        self.assertContains(response, '<td>Lynx</td>')
-        self.assertContains(response, '<td>Bova and Over</td>')
+        self.assertContains(response, 'operator')
+        self.assertContains(response, 'LYNX')
+        self.assertContains(response, 'BOVA')
 
         with self.assertNumQueries(13):
             response = self.client.get(url)

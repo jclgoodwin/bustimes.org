@@ -37,7 +37,7 @@ class PasswordResetView(auth_views.PasswordResetView):
 def user_detail(request, pk):
     user = get_object_or_404(UserModel, pk=pk)
 
-    revisions = user.vehiclerevision_set.select_related('vehicle', 'from_operator', 'to_operator')
+    revisions = user.vehiclerevision_set.select_related('vehicle', 'from_livery', 'to_livery', 'from_type', 'to_type')
     revisions = revisions.order_by('-id')
     paginator = Paginator(revisions, 100)
     page = request.GET.get('page')

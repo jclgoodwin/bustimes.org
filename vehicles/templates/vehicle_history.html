@@ -24,23 +24,34 @@
         <th scope="col">Date</th>
         {% if not vehicle %}<th scope="col">Vehicle</th>{% endif %}
         <th scope="col">Changed</th>
-        <th scope="col">From</th>
-        <th scope="col">To</th>
     </thead>
     <tbody>
         {% for revision in revisions %}
-            {% for key, from, to in revision.list_changes %}
-                <tr>
-                    <td>{% if revision.user %}<a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>{% endif %}</td>
-                    <td>{{ revision.datetime }}</td>
-                    {% if not vehicle %}
-                        <td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
+        <tr>
+            <td>{% if revision.user %}<a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>{% endif %}</td>
+            <td>{{ revision.datetime }}</td>
+            {% if not vehicle %}
+                <td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
+            {% endif %}
+            <td>
+                {% for key, from, to in revision.list_changes %}
+                    {{ key }}
+                    {% if from %}
+                        from
+                        {% if from.left_css %}
+                            <div class="livery" style="background:{{ from.left_css }}"></div>
+                        {% else %}{{ from }}{% endif %}
                     {% endif %}
-                    <td>{{ key }}</td>
-                    <td>{{ from }}</td>
-                    <td>{{ to }}</td>
-                </tr>
-            {% endfor %}
+                    {% if to %}
+                        to
+                        {% if to.left_css %}
+                            <div class="livery" style="background:{{ to.left_css }}"></div>
+                        {% else %}{{ to }}{% endif %}
+                    {% endif %}
+                    <br>
+                {% endfor %}
+            </td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>

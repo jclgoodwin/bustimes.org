@@ -651,14 +651,19 @@ table {
     width: 2.25em;
 }
 
+table .livery {
+    margin: 0;
+}
+
 .leaflet-marker-icon {
     // journey history
     &.just-arrow {
         .arrow {
-            border: 2px solid #000;
+            border: 1px solid #000;
             border-left-color: transparent;
             border-top-color: transparent;
-            height: 6px;
+            box-shadow: 2px 2px #fff, 3px 3px #000;
+            height: 5px;
             transform-origin: 8px 8px;
             width: 6px;
         }
@@ -859,12 +864,12 @@ table {
         padding-left: 3.25em;
         position: relative;
         max-width: 0;
-    }
 
-    .livery {
-        left: .5em;
-        position: absolute;
-        top: .2em;
+        .livery {
+            left: .5em;
+            position: absolute;
+            top: .2em;
+        }
     }
 
     .trivia {

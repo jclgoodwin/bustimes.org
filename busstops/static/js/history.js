@@ -145,15 +145,16 @@
                 previousCoordinates = coordinates;
             }
             line = L.polyline(line, {
-                style: {
-                    weight: 3,
-                    color: '#87f'
-                },
+                weight: 4,
+                color: '#87f',
+                opacity: .5
                 interactive: false
             });
             line.addTo(layerGroup);
             bounds = line.getBounds();
-            map.fitBounds(bounds);
+            map.fitBounds(bounds, {
+                maxZoom: 14
+            });
             map.setMaxBounds(bounds.pad(.5));
             line.bringToBack();
         });
