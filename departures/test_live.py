@@ -60,7 +60,7 @@ class LiveDeparturesTest(TestCase):
             region=cls.region
         )
         siri_source = SIRISource.objects.create(
-            name='Worcestershire',
+            name='SPT',
             url='http://worcestershire-rt-http.trapezenovus.co.uk:8080',
             requestor_ref='Traveline_To_Trapeze',
         )
@@ -408,6 +408,7 @@ class LiveDeparturesTest(TestCase):
         """, html=True)
         self.assertContains(response, 'EVESHAM Bus Station')
         self.assertNotContains(response, 'WORCESTER')
+
         log_vehicle_journey.assert_called_with(
             None,
             {
@@ -432,7 +433,7 @@ class LiveDeparturesTest(TestCase):
                     'DepartureStatus': 'onTime',
                 },
             },
-            None, 'EVESHAM Bus Station', 'Worcestershire', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080'
+            None, 'EVESHAM Bus Station', 'SPT', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080'
         )
         self.assertEqual(0, VehicleJourney.objects.count())
 

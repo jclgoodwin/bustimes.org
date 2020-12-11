@@ -90,14 +90,3 @@ class VehiclesTasksTests(TestCase):
             }, None, 'EVESHAM Bus Station', 'Worcestershire', 'http://example.com')
         vehicle = Vehicle.objects.get(code='POOP-11111')
         self.assertEqual(1, vehicle.vehiclejourney_set.count())
-
-    def test_log_vehicle_journey_3(self):
-        tasks.log_vehicle_journey(self.service_2.id, {
-            'VehicleRef': 'ASES-SPMK',
-            'LineRef': '5',
-            'OriginAimedDepartureTime': '2020-06-09T13:47:00+01:00',
-            'FramedVehicleJourneyRef': {
-                'DatedVehicleJourneyRef': '4621265',
-            },
-        }, None, 'CMK & Wolverton', 'Milton Keynes', 'http://example.com')
-        Vehicle.objects.get(code='SPMK')
