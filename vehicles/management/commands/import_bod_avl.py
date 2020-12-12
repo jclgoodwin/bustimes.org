@@ -323,16 +323,17 @@ class Command(ImportLiveVehiclesCommand):
                 if not journey.destination:
                     journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
 
-        if (
-            latest_location and latest_location.journey.service
-            and latest_location.journey.code == journey.code
-            and latest_location.journey.route_name == journey.route_name
-        ):
-            journey.service = latest_location.journey.service
-        else:
+        if not journey.service:
             operator_ref = monitored_vehicle_journey["OperatorRef"]
             operator = self.get_operator(operator_ref)
             journey.service = self.get_service(operator, item, vehicle.operator_id)
+
+            if journey.service and vehicle_journey_ref and '_' not in vehicle_journey_ref:
+                try:
+                    trips = Trip.objects.filter(route__service=journey.service, ticket_machine_code=vehicle_journey_ref)
+                    journey.trip = trips.distinct('start').get()
+                except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                    pass
 
         return journey
 
