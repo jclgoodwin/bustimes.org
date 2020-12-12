@@ -88,6 +88,7 @@ class Command(ImportLiveVehiclesCommand):
         cache_key = f'{operator_ref}-{vehicle_ref}'
         try:
             return self.vehicles.get(id=self.vehicle_cache[cache_key]), False
+            return self.vehicles.using(settings.READ_DATABASE).get(id=self.vehicle_cache[cache_key]), False
         except (KeyError, Vehicle.DoesNotExist):
             pass
 
