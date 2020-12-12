@@ -21,7 +21,7 @@ class RegistrationTest(TestCase):
                 },
             )
         self.assertContains(response, "Check your email (rufus@herring.pizza")
-        self.assertEquals("bustimes.org account", mail.outbox[0].subject)
+        self.assertEqual("bustimes.org account", mail.outbox[0].subject)
         self.assertIn("a bustimes.org account", mail.outbox[0].body)
 
         with self.assertNumQueries(1):
@@ -78,7 +78,7 @@ class RegistrationTest(TestCase):
                     "email": "rufus@herring.pizza",
                 },
             )
-        self.assertEquals(response.url, "/accounts/password_reset/done/")
+        self.assertEqual(response.url, "/accounts/password_reset/done/")
 
         with self.assertNumQueries(0):
             response = self.client.get(response.url)
@@ -87,4 +87,4 @@ class RegistrationTest(TestCase):
             "<p>We’ve emailed you instructions for setting your password, if an account exists with the email you "
             "entered. You should receive them shortly.</p>",
         )
-        self.assertEquals([], mail.outbox)
+        self.assertEqual([], mail.outbox)
