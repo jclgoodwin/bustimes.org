@@ -4,9 +4,7 @@ from django.conf import settings
 from django.db.models import Prefetch
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse
-from django.utils import timezone
-from busstops.models import Service, SIRISource
-from vehicles.siri_one_shot import siri_one_shot, Poorly
+from busstops.models import Service
 from .models import Route, Trip
 
 
@@ -22,18 +20,6 @@ class ServiceDebugView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        now = timezone.localtime()
-
-        context['codes'] = self.object.servicecode_set.all()
-        for code in context['codes']:
-            if code.scheme.endswith(' SIRI'):
-                try:
-                    code.siri_one_shot = siri_one_shot(code, now, False)
-                except SIRISource.DoesNotExist:
-                    pass
-                except Poorly:
-                    code.siri_one_shot = 'Poorly'
 
         context['breadcrumb'] = [self.object]
 
