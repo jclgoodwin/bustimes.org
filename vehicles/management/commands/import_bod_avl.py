@@ -290,28 +290,29 @@ class Command(ImportLiveVehiclesCommand):
                 datetime=origin_aimed_departure_time,
             )
 
-        destination = monitored_vehicle_journey.get('DestinationName')
-        if destination:
-            if route_name and destination.startswith(f'{route_name} '):  # TGTC
-                destination = destination[len(route_name) + 1:]
-            journey.destination = destination
 
         if vehicle_journey_ref:
             journey.code = vehicle_journey_ref
 
         if not journey.destination:
-            destination_ref = monitored_vehicle_journey.get('DestinationRef')
-            if destination_ref:
-                cache_key = f'stop{destination_ref}locality'
-                journey.destination = cache.get(cache_key)
-                if journey.destination is None:
-                    try:
-                        journey.destination = Locality.objects.get(stoppoint=destination_ref).name
-                    except Locality.DoesNotExist:
-                        journey.destination = ''
-                    cache.set(cache_key, journey.destination)
-            if not journey.destination:
-                journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
+            destination = monitored_vehicle_journey.get('DestinationName')
+            if destination:
+                if route_name and destination.startswith(f'{route_name} '):  # TGTC
+                    destination = destination[len(route_name) + 1:]
+                journey.destination = destination
+            else:
+                destination_ref = monitored_vehicle_journey.get('DestinationRef')
+                if destination_ref:
+                    cache_key = f'stop{destination_ref}locality'
+                    journey.destination = cache.get(cache_key)
+                    if journey.destination is None:
+                        try:
+                            journey.destination = Locality.objects.get(stoppoint=destination_ref).name
+                        except Locality.DoesNotExist:
+                            journey.destination = ''
+                        cache.set(cache_key, journey.destination)
+                if not journey.destination:
+                    journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
 
         if not journey.service:
             operator_ref = monitored_vehicle_journey["OperatorRef"]
