@@ -87,7 +87,7 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
         cache_key = f'{operator_ref}-{vehicle_ref}'
         try:
-            return self.vehicles.using(settings.READ_DATABASE).get(id=self.vehicle_cache[cache_key]), False
+            return self.vehicles.get(id=self.vehicle_cache[cache_key]), False
         except (KeyError, Vehicle.DoesNotExist):
             pass
 
