@@ -10,7 +10,7 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
@@ -231,7 +231,10 @@ def get_locations(request):
 
 
 def vehicles_json(request):
-    locations = get_locations(request).order_by()
+    try:
+        locations = get_locations(request).order_by()
+    except ValueError:
+        return HttpResponseBadRequest()
     locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
 
     if 'service' in request.GET:

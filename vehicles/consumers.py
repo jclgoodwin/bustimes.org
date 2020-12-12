@@ -43,7 +43,10 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         })
 
     def receive_json(self, content):
-        new_bounds = Polygon.from_bbox(content)
+        try:
+            new_bounds = Polygon.from_bbox(content)
+        except ValueError:
+            return
         bounds = new_bounds
         if self.channel.bounds:
             bounds -= self.channel.bounds  # difference between new and old bounds

@@ -143,7 +143,7 @@ def stops(request):
     """
     try:
         bounding_box = get_bounding_box(request)
-    except KeyError:
+    except (KeyError, ValueError):
         return HttpResponseBadRequest()
 
     results = StopPoint.objects.filter(
