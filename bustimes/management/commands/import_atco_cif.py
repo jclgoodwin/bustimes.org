@@ -246,9 +246,11 @@ class Command(BaseCommand):
                 timing_status = line[26:28]
                 if timing_status == b'T1':
                     timing_status = 'PTP'
-                else:
-                    assert timing_status == b'T0'
+                elif timing_status == b'T0':
                     timing_status = 'OTH'
+                else:
+                    print(line)
+                    return
                 self.stop_times.append(
                     StopTime(
                         arrival=parse_time(line[14:18]),
