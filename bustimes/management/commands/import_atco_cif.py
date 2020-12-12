@@ -33,12 +33,8 @@ class Command(BaseCommand):
             self.handle_archive(archive_name)
 
     def handle_archive(self, archive_name):
-        self.route = None
-        self.trip = None
         self.routes = {}
         self.calendars = {}
-        self.stop_times = []
-        self.notes = []
         if 'ulb' in archive_name.lower():
             source_name = 'ULB'
         else:
@@ -88,6 +84,11 @@ class Command(BaseCommand):
         self.source.save(update_fields=['datetime'])
 
     def handle_file(self, open_file):
+        self.route = None
+        self.trip = None
+        self.stop_times = []
+        self.notes = []
+
         # detect encoding
         detector = UniversalDetector()
         for line in open_file:
