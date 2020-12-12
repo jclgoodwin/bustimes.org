@@ -418,10 +418,7 @@ class Row:
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
 
     def permanently_suspended(self):
-        if type(self.stop) is not Stop:
-            for suspension in self.stop.suspended:
-                if suspension.service_id and not suspension.dates:
-                    return True
+        return hasattr(self.stop, 'suspended') and self.stop.suspended
 
 
 class Stop:

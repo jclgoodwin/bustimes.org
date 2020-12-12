@@ -568,7 +568,7 @@ class ImportTransXChangeTest(TestCase):
         service.save(update_fields=['geometry'])
 
         with freeze_time('1 September 2017'):
-            with self.assertNumQueries(11):
+            with self.assertNumQueries(12):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
         self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
         self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
