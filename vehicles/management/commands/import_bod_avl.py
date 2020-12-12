@@ -161,12 +161,8 @@ class Command(ImportLiveVehiclesCommand):
         self.vehicle_cache[cache_key] = vehicle.id
         return vehicle, created
 
-    def get_service(self, operator, item, vehicle_operator_id):
+    def get_service(self, operator, item, line_ref, vehicle_operator_id):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
-
-        line_ref = monitored_vehicle_journey.get('LineRef')
-        if not line_ref:
-            return
 
         destination_ref = monitored_vehicle_journey.get("DestinationRef")
 
@@ -250,22 +246,13 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle_journey_ref == 'UNKNOWN':
             vehicle_journey_ref = None
 
-        route_name = monitored_vehicle_journey.get('LineRef') or ''
+        route_name = monitored_vehicle_journey.get('PublishedLineName') or monitored_vehicle_journey.get('LineRef')
 
         origin_aimed_departure_time = monitored_vehicle_journey.get('OriginAimedDepartureTime')
         if origin_aimed_departure_time:
             origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
 
         journey = None
-
-        # do destination now, in case the route name is in the destination field
-        destination = monitored_vehicle_journey.get('DestinationName') or ''
-        if vehicle.operator_id == 'TGTC' and destination and not route_name:
-            parts = destination.split()
-            if parts[0].isdigit() or parts[0][:-1].isdigit():
-                route_name = parts[0]
-                destination = ' '.join(parts[1:])
-                monitored_vehicle_journey['LineRef'] = route_name
 
         journeys = vehicle.vehiclejourney_set
 
@@ -296,42 +283,45 @@ class Command(ImportLiveVehiclesCommand):
 
         if not journey:
             journey = VehicleJourney(
-                route_name=route_name,
+                route_name=route_name or '',
                 vehicle=vehicle,
                 source=self.source,
                 data=item,
                 datetime=origin_aimed_departure_time,
             )
 
+        destination = monitored_vehicle_journey.get('DestinationName')
+        if destination:
+            if route_name and destination.startswith(f'{route_name} '):  # TGTC
+                destination = destination[len(route_name) + 1:]
+            journey.destination = destination
+
         if vehicle_journey_ref:
             journey.code = vehicle_journey_ref
 
         if not journey.destination:
-            if destination:
-                journey.destination = destination
-            else:
-                destination_ref = monitored_vehicle_journey.get('DestinationRef')
-                if destination_ref:
-                    cache_key = f'stop{destination_ref}locality'
-                    journey.destination = cache.get(cache_key)
-                    if journey.destination is None:
-                        try:
-                            journey.destination = Locality.objects.get(stoppoint=destination_ref).name
-                        except Locality.DoesNotExist:
-                            journey.destination = ''
-                        cache.set(cache_key, journey.destination)
-                if not journey.destination:
-                    journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
+            destination_ref = monitored_vehicle_journey.get('DestinationRef')
+            if destination_ref:
+                cache_key = f'stop{destination_ref}locality'
+                journey.destination = cache.get(cache_key)
+                if journey.destination is None:
+                    try:
+                        journey.destination = Locality.objects.get(stoppoint=destination_ref).name
+                    except Locality.DoesNotExist:
+                        journey.destination = ''
+                    cache.set(cache_key, journey.destination)
+            if not journey.destination:
+                journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
 
         if not journey.service:
             operator_ref = monitored_vehicle_journey["OperatorRef"]
             operator = self.get_operator(operator_ref)
-            journey.service = self.get_service(operator, item, vehicle.operator_id)
+            journey.service = self.get_service(operator, item, route_name, vehicle.operator_id)
 
             if journey.service and vehicle_journey_ref and '_' not in vehicle_journey_ref:
                 try:
                     trips = Trip.objects.filter(route__service=journey.service, ticket_machine_code=vehicle_journey_ref)
-                    journey.trip = trips.distinct('start').get()
+                    journey.trip = trips.distinct('start', 'end', 'destination').get()
                 except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                     pass
 
