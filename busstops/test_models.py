@@ -183,6 +183,9 @@ class StopPointTests(TestCase):
         self.cardiff_airport_stop.indicator = 'Stop M'
         self.assertEqual('Cardiff Airport (Stop M)', self.cardiff_airport_stop.get_qualified_name())
 
+        stop = StopPoint(common_name='Bus Station stand V', indicator='Stand V')
+        self.assertEqual('Bus Station stand V', stop.get_qualified_name())
+
     def test_admin(self):
         self.client.force_login(self.user)
 

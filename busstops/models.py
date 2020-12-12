@@ -387,6 +387,8 @@ class StopPoint(models.Model):
 
     def get_unqualified_name(self):
         if self.indicator:
+            if ' ' in self.indicator and self.indicator.lower() in self.common_name.lower():
+                return self.common_name  # not 'Bus Station stand V (Stand V)'
             return f'{self.common_name} ({self.indicator})'
         if self.atco_code[:3] == '940':
             return self.common_name.replace(' Underground Station', '')
