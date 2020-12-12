@@ -13,7 +13,10 @@ from ...timetables import get_journey_patterns, get_stop_usages
 def parse_date(string):
     if string == b'99999999':
         return
-    return date(year=int(string[:4]), month=int(string[4:6]), day=int(string[6:]))
+    try:
+        return date(year=int(string[:4]), month=int(string[4:6]), day=int(string[6:]))
+    except ValueError:
+        print(string)
 
 
 def parse_time(string):
