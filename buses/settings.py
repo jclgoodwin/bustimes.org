@@ -337,9 +337,8 @@ PASSENGER_OPERATORS = [
 ]
 BOD_OPERATORS = [
     ('UNOE', 'SE', {
-        'UBL': 'UNOE',
         'UBN': 'UNOE',
-        'OP': 'UNOE',
+        'UNIB': 'UNOE'
     }, True),
     ('TBTN', 'EM', {
         '574T': 'TBTN',
@@ -347,10 +346,6 @@ BOD_OPERATORS = [
     ('KBUS', 'EM', {
         'KN': 'KBUS',
     }, False),
-    ('HNTS', 'EM', {}, False),
-    ('PULH', 'SE', {}, False),
-    ('CNTY', 'SW', {}, False),
-    ('HGCO', 'SW', {}, False),
     ('GPLM', 'SE', {
         'OP': 'GPLM',
         'GP': 'GPLM'
@@ -365,14 +360,42 @@ BOD_OPERATORS = [
         'OP': 'HIPK',
         'HPB': 'HIPK',
     }, False),
-    ('AVMT', 'SW', {}, False),
-    ('OTSS', 'SW', {}, False),
-    ('LODG', 'SE', {}, False),
+    ('HNTS', 'EM', {}, False),
     # ('SLBS', 'WM', {}, True),
     ('DAGC', 'NW', {}, False),
     ('RLNE', 'SE', {}, True),
     ('GOGO', 'NW', {}, False),
     ('BRYL', 'EM', {}, False),
+    ('LODG', 'SE', {}, False),
+    ('BDRB', 'EA', {}, False),
+
+    ('AVMT', 'SW', {}, False),
+    ('BZCO', 'SW', {}, False),
+    ('C2WI', 'SW', {}, False),
+    ('CNTY', 'SW', {}, False),
+    ('COAC', 'SW', {}, False),
+    ('COTS', 'SW', {}, False),
+    ('CRYC', 'SW', {}, False),
+    ('DTCO', 'SW', {}, False),
+    ('FRMN', 'SW', {}, False),
+    ('FSRV', 'SW', {}, False),
+    ('FTZL', 'SW', {}, False),
+    ('GWIL', 'SW', {}, False),
+    ('HGCO', 'SW', {}, False),
+    ('HOPE', 'SW', {}, False),
+    ('JACK', 'SW', {}, False),
+    ('LTRV', 'SW', {}, False),
+    ('NAKL', 'SW', {}, False),
+    ('OTSS', 'SW', {}, False),
+    ('PULH', 'SW', {}, False),
+    ('RIDL', 'SW', {}, False),
+    ('RSLN', 'SW', {}, False),
+    ('SMST', 'SW', {}, False),
+    ('SWCO', 'SW', {}, False),
+    ('TAWT', 'SW', {}, False),
+    ('TLYH', 'SW', {}, False),
+    ('TOTN', 'SW', {}, False),
+    ('YEOS', 'SW', {}, False),
 ]
 STAGECOACH_OPERATORS = [
     ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),

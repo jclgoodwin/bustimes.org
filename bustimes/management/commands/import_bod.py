@@ -58,7 +58,8 @@ def handle_file(command, path):
                             fake_file = StringIO(content)
                             command.handle_file(fake_file, qualified_filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
-                        logger.error(e, exc_info=True)
+                        if filename.endswith('.xml'):
+                            logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
         with open(os.path.join(settings.DATA_DIR, path)) as open_file:
             try:
@@ -70,33 +71,33 @@ def handle_file(command, path):
 def bus_open_data(api_key, operator):
     command = get_command()
 
+    if operator:
+        nocs = [operator]
+    else:
+        nocs = [operator_id for operator_id, _, _, _ in settings.BOD_OPERATORS]
+
+    url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
+    params = {
+        'api_key': api_key,
+        'status': ['published', 'expiring'],
+        'noc': ','.join(nocs)
+    }
+
+    datasets = []
+    while url:
+        response = session.get(url, params=params)
+        json = response.json()
+        for dataset in json['results']:
+            dataset['source'], created = DataSource.objects.get_or_create(url=dataset['url'])
+            dataset['modified'] = parse_datetime(dataset['modified'])
+            datasets.append(dataset)
+        url = json['next']
+        params = None
+
     for operator_id, region_id, operators, incomplete in settings.BOD_OPERATORS:
-        if operator and operator_id != operator:
-            continue
+        operator_datasets = [item for item in datasets if operator_id in item['noc']]
 
-        datasets = []
-
-        url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
-        params = {
-            'api_key': api_key,
-            'status': ['published', 'expiring']
-        }
-        if operator_id.isupper():
-            params['noc'] = operator_id
-        else:
-            params['search'] = operator_id
-
-        while url:
-            response = session.get(url, params=params)
-            json = response.json()
-            for dataset in json['results']:
-                dataset['source'], created = DataSource.objects.get_or_create(url=dataset['url'])
-                dataset['modified'] = parse_datetime(dataset['modified'])
-                datasets.append(dataset)
-            url = json['next']
-            params = None
-
-        if any(dataset['source'].datetime != dataset['modified'] for dataset in datasets):
+        if operator or any(item['source'].datetime != item['modified'] for item in operator_datasets):
             command.operators = operators
             command.region_id = region_id
             command.service_descriptions = {}
@@ -106,14 +107,14 @@ def bus_open_data(api_key, operator):
 
             sources = []
 
-            for dataset in datasets:
+            for dataset in operator_datasets:
                 filename = dataset['name']
                 url = dataset['url']
                 path = os.path.join(settings.DATA_DIR, filename)
 
                 command.source = dataset['source']
 
-                print(response.url, filename)
+                print(filename)
                 command.source.name = filename
                 command.source.datetime = dataset['modified']
                 download(path, url)
