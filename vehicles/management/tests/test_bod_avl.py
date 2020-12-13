@@ -89,6 +89,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "RecordedAtTime": "2020-10-30T05:06:29+00:00",
             "ValidUntilTime": "2020-10-30T05:11:31.887243",
             "MonitoredVehicleJourney": {
+                "LineRef": "TGTC:PD1050400:19:242",
+                "PublishedLineName": "843X",
                 "OriginRef": "43000575801",
                 "OriginName": "843X Roughley",
                 "VehicleRef": "SN56 AFE",
