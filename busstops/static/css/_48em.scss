@@ -64,3 +64,16 @@ h1 {
         display: table-cell;
     }
 }
+
+.journey {
+    .trip + .map {
+        bottom: 0;
+        left: 30em;
+    }
+
+    .trip {
+        top: 6.125em;
+        height: auto;
+        width: 24.25em;
+    }
+}

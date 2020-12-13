@@ -2,6 +2,7 @@ import datetime
 from difflib import Differ
 from functools import cmp_to_key
 from django.db.models import Prefetch
+from .utils import format_timedelta
 from .models import get_calendars, Calendar, Trip, StopTime
 
 differ = Differ(charjunk=lambda _: True)
@@ -429,14 +430,6 @@ class Stop:
 
     def __str__(self):
         return self.atco_code
-
-
-def format_timedelta(timedelta):
-    timedelta = str(timedelta)[:-3]
-    timedelta = timedelta.replace('1 day, ', '', 1)
-    if len(timedelta) == 4:
-        return '0' + timedelta
-    return timedelta
 
 
 class Cell:

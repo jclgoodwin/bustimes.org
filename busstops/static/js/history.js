@@ -29,9 +29,13 @@
         interactive: false
     };
 
+    var date = document.getElementById('date').value;
+
     function closeMap() {
-        window.location.hash = '';
-        return false;
+        if (lastRequest) {
+            lastRequest.abort();
+        }
+        window.location.hash = ''; // triggers hashchange event
     }
 
     window.onkeydown = function(event) {
@@ -42,15 +46,14 @@
 
     var lastRequest;
 
-    window.onhashchange = function(event) {
-        maybeOpenMap();
-        event.preventDefault();
-        return false;
-    };
+    window.onhashchange = maybeOpenMap;
 
     function maybeOpenMap() {
-        var journey = window.location.hash.slice(1),
-            element = document.getElementById(journey);
+        var journey = window.location.hash.slice(1);
+
+        if (journey) {
+            var element = document.getElementById(journey);
+        }
 
         if (!element) {
             return;
@@ -65,10 +68,42 @@
             map = null;
         }
 
-        lastRequest = reqwest('/' + journey + '.json', function(locations) {
+        if (element.dataset.trip && !element.querySelector('.trip')) {
+            var tripElement = document.createElement('div');
+            tripElement.className = 'trip';
+            element.appendChild(tripElement);
 
-            var mapContainer = element.getElementsByClassName('map')[0],
-                layerGroup = L.layerGroup();
+            reqwest('/trips/' + element.dataset.trip + '.json', function(trip) {
+                var table = document.createElement('table');
+                var thead = document.createElement('thead');
+                thead.innerHTML = '<tr><th>Stop</th><th>Timetable</th></tr>';
+                table.appendChild(thead);
+
+                var tbody = document.createElement('tbody');
+                var tr, stop, time;
+                for (var i = 0; i < trip.stops.length; i++) {
+                    tr = document.createElement('tr');
+                    stop = trip.stops[i];
+                    time = stop.aimed_departure_time || stop.aimed_arrival_time || '';
+                    tr.innerHTML = '<td>' + stop.name + '</th><td>' + time + '</td>';
+                    tbody.appendChild(tr);
+                }
+                table.appendChild(tbody);
+                tripElement.appendChild(table);
+            });
+        }
+
+        var mapContainer = element.querySelector('.map');
+        if (!mapContainer) {
+            if (!mapContainer) {
+                mapContainer = document.createElement('div');
+                mapContainer.className = 'map';
+                element.appendChild(mapContainer);
+            }
+        }
+
+        reqwest('/' + journey + '.json', function(locations) {
+            var layerGroup = L.layerGroup();
 
             map =  L.map(mapContainer);
 
@@ -80,7 +115,8 @@
                 attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
             }).addTo(map);
 
-            var j,
+            var i,
+                j,
                 dateTime,
                 popup,
                 delta,
@@ -97,7 +133,7 @@
                 lngSpeed;
 
 
-            for (var i = locations.length - 1; i >= 0; i -= 1) {
+            for (i = locations.length - 1; i >= 0; i -= 1) {
                 dateTime = new Date(locations[i].datetime);
                 popup = dateTime.toTimeString().slice(0, 8);
                 delta = locations[i].delta;
@@ -161,5 +197,14 @@
     }
 
     window.addEventListener('load', maybeOpenMap);
+
+    function handleClick(event) {
+        window.history.replaceState(null, null, window.location.pathname + '?date=' + date + event.target.hash);
+        maybeOpenMap();
+    }
+
+    document.querySelectorAll('a[href^="#journeys/"]').forEach(function(link) {
+        link.addEventListener('click', handleClick);
+    });
 
 })();

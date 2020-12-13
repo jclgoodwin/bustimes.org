@@ -59,7 +59,7 @@
 {% if date %}
 
     <form class="timetable-date">
-        <select onchange="this.form.submit()" name="date" aria-label="Date">
+        <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
             {% for option in dates %}
                 <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
             {% endfor %}
@@ -112,10 +112,9 @@
 
         {% for journey in journeys %}
             {% if journey.locations %}
-                <div class="journey" id="journeys/{{ journey.id }}">
-                    <div class="map"></div>
+                <div class="journey" id="journeys/{{ journey.id }}"{% if journey.trip_id %} data-trip="{{ journey.trip_id }}"{% endif %}>
                     <div class="details">
-                        <a class="button next" href="#">Close</a>
+                        <a class="button" href="#">Close</a>
                         <p>{% if not vehicle %}
                                 {{ journey.vehicle }}{% else %}{% firstof journey.service.get_line_name_and_brand journey.route_name %}
                             {% endif %} – {{ journey.datetime|time }}

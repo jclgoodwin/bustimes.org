@@ -5,4 +5,6 @@ from . import views
 urlpatterns = [
     path('services/<slug>/debug', views.ServiceDebugView.as_view()),
     re_path(r'^sources/(?P<source>\d+)/routes/(?P<code>.+)', views.route_xml, name='route_xml'),
+    path('trips/<int:pk>.json', views.trip_json),
+
 ]

@@ -45,3 +45,11 @@ def download_if_changed(path, url, params=None):
         last_modified = datetime.fromtimestamp(parse_http_date(last_modified), utc)
 
     return modified, last_modified
+
+
+def format_timedelta(timedelta):
+    timedelta = str(timedelta)[:-3]
+    timedelta = timedelta.replace('1 day, ', '', 1)
+    if len(timedelta) == 4:
+        return '0' + timedelta
+    return timedelta

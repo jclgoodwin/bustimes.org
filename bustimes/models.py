@@ -3,6 +3,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.fields import DateRangeField
 from django.urls import reverse
 from .fields import SecondsField
+from .utils import format_timedelta
 
 
 def get_calendars(when, calendar_ids=None):
@@ -176,7 +177,7 @@ class Trip(models.Model):
     end = SecondsField()
 
     def __str__(self):
-        return f'{self.start}'
+        return format_timedelta(self.start)
 
     class Meta:
         index_together = (
