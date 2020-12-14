@@ -456,8 +456,8 @@ class ImportTransXChangeTest(TestCase):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
         self.handle_files('W.zip', ['TCAT009.xml'])
         service = Service.objects.get()
-        self.assertEqual(service.inbound_description, 'Cardiff  - Cardiff Airport')
-        self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff ')
+        self.assertEqual(service.inbound_description, 'Cardiff - Cardiff Airport')
+        self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff')
 
         self.assertEqual(17, service.stopusage_set.count())
 
