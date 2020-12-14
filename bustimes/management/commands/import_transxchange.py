@@ -570,6 +570,16 @@ class Command(BaseCommand):
     def is_tnds(self):
         return self.source.url.startswith('ftp://ftp.tnds.basemap.co.uk/')
 
+    def should_defer_to_other_source(self, operators, line_name):
+        if self.source.name == 'L':
+            return False
+        if operators and all(operator.id in self.incomplete_operators for operator in operators):
+            services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
+            if services.filter(operator__in=operators).exists():
+                return True
+            if any(operator.id == 'SCLI' for operator in operators):
+                return services.filter(operator__parent='Stagecoach').exists()
+
     def handle_service(self, filename, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end:
             if self.source.name.startswith('Coach Services'):
@@ -581,8 +591,9 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
-        if self.is_tnds() and operators and all(operator.id in self.open_data_operators for operator in operators):
-            return
+        if self.is_tnds() and self.source.name != 'L':
+            if operators and all(operator.id in self.open_data_operators for operator in operators):
+                return
 
         linked_services = []
 
@@ -612,16 +623,8 @@ class Command(BaseCommand):
                 existing = existing.filter(line_name__iexact=line_name).order_by('-current', 'id').first()
 
             if self.is_tnds():
-                if operators and all(operator.id in self.incomplete_operators for operator in operators):
-                    if Service.objects.filter(
-                        operator__in=operators, line_name__iexact=line_name, current=True
-                    ).exclude(source=self.source).exists():
-                        continue
-                    if any(operator.id == 'SCLI' for operator in operators):
-                        if Service.objects.filter(
-                            operator__parent='Stagecoach', line_name__iexact=line_name, current=True
-                        ).exclude(source=self.source).exists():
-                            continue
+                if self.should_defer_to_other_source(operators, line_name):
+                    continue
 
                 service_code = get_service_code(filename)
                 if service_code is None:
