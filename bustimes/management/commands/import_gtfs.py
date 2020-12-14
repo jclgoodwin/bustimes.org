@@ -44,8 +44,9 @@ def read_file(archive, name):
                     break
             detector.close()
             open_file.seek(0)
-            for line in csv.DictReader(io.TextIOWrapper(open_file, encoding=detector.result['encoding'])):
-                yield(line)
+            with io.TextIOWrapper(open_file, encoding=detector.result['encoding']) as wrapped_file:
+                for line in csv.DictReader(wrapped_file):
+                    yield(line)
     except KeyError:
         # file doesn't exist
         return
