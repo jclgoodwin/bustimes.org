@@ -540,9 +540,9 @@ class Service:
 
         self.marketing_name = element.findtext('MarketingName')
 
-        description_element = element.find('Description')
-        if description_element is not None:
-            self.set_description(description_element.text)
+        description = element.findtext('Description')
+        if description:
+            self.set_description(description.strip())
 
         self.origin = element.findtext('StandardService/Origin')
         if self.origin:

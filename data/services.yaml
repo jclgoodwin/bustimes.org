@@ -10,33 +10,15 @@ FWAO266:
     description: Newmains or Shotts - Hamilon
 FWAO267:
     description: Hamilton - Glasgow
-set_2-210-_-y08:
+swe_49-210-_-y10:
     description: The Wychwoods - Witney
-ea_21-D-_-y08:
-    description: Dereham - Norwich
+SW_FG_FBRI_20_2:
+    description: Weston-super-Mare - Burnham-on-Sea
+    outbound_description: Weston-super-Mare - Burnham-on-Sea
+    inbound_description: Burnham-on-Sea - Weston-super-Mare
 sro-288:
     current: false
 expressbus-787:
-    current: false
-534-LYNX-n48:
-    description: King's Lynn - Grimston
-    outbound_description: King's Lynn - Grimston
-    inbound_description: Grimston - King's Lynn
-bed_42-36-_-y08:
-    description: King's Lynn - Hunstanton - Wells - Fakenham
-    outbound_description: King's Lynn - Hunstanton - Wells - Fakenham
-    inbound_description: Fakenham - Wells - Hunstanton - King's Lynn
-em_12-40-A-y08:
-    description: Leicester Outer Circle
-    inbound_description: Clockwise
-    outbound_description: Anticlockwise
-HIDO001:  # Transport for Tongue Durness
-    current: false
-BOBO131:  # Peter Hogg cross-border
-    current: false
-NE_310_PM6161_131:
-    description: Jedburgh - Newcastle upon Tyne
-swe_41-633-_-y10:  # Hatch Green Coaches
     current: false
 swe_38-m1-_-y10:
     operator:
