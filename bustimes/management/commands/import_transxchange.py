@@ -582,9 +582,8 @@ class Command(BaseCommand):
 
     def handle_service(self, filename, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end:
-            if self.source.name.startswith('Coach Services'):
-                txc_service.operating_period.end = None
-            elif txc_service.operating_period.end < today:
+            if txc_service.operating_period.end < today:
+                print(filename, txc_service.operating_period.end)
                 return
             elif txc_service.operating_period.end < txc_service.operating_period.start:
                 return
