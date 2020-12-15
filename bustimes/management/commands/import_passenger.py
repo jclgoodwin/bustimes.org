@@ -97,7 +97,7 @@ class Command(BaseCommand):
 
         session = HTMLSession()
 
-        sources = [source[0] for source in settings.PASSENGER_OPERATORS]
+        sources = []
 
         for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
             if operator and operator != name:
@@ -110,6 +110,7 @@ class Command(BaseCommand):
                 continue
 
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
+            sources.append(command.source)
             command.source.datetime = timezone.now()
             command.operators = operators
             command.region_id = region_id
@@ -146,7 +147,7 @@ class Command(BaseCommand):
 
             # delete route data from TNDS
             routes = Route.objects.filter(service__operator__in=operators.values())
-            print('other source routes:', routes.exclude(source__name__in=sources).delete())
+            print('other source routes:', routes.exclude(source__in=sources).delete())
 
             services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
             print('other source services:', services.update(current=False))
