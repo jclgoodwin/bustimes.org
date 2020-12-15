@@ -144,15 +144,16 @@ class CalendarDate(models.Model):
         return True
 
     def __str__(self):
+        string = self.start_date
+        if self.end_date != self.start_date:
+            string = f'{string}–{self.end_date}'
         if not self.operation:
-            prefix = 'Not'
-        elif self.special:
-            prefix = 'Also'
-        else:
-            prefix = 'Only'
-        if self.start_date == self.end_date:
-            return f'{prefix} {self.start_date}'
-        return f'{prefix} {self.start_date} to {self.end_date}'
+            string = f'not {string}'
+        if self.special:
+            string = f'also {string}'
+        if self.summary:
+            string = f'{string} ({self.summary})'
+        return string
 
 
 class Note(models.Model):
@@ -178,6 +179,12 @@ class Trip(models.Model):
 
     def __str__(self):
         return format_timedelta(self.start)
+
+    def start_time(self):
+        return format_timedelta(self.start)
+
+    def end_time(self):
+        return format_timedelta(self.end)
 
     class Meta:
         index_together = (

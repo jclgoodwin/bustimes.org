@@ -15,13 +15,23 @@ class ServiceDebugView(DetailView):
     queryset = model.objects.prefetch_related(
         Prefetch(
             'route_set__trip_set',
-            queryset=Trip.objects.prefetch_related('calendar__calendardate_set').order_by('calendar', 'inbound')
+            queryset=Trip.objects.prefetch_related('calendar__calendardate_set').order_by('calendar', 'inbound', 'start')
         )
     )
     template_name = 'service_debug.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        for route in self.object.route_set.all():
+            previous_trip = None
+
+            for trip in route.trip_set.all():
+                if previous_trip is None or trip.calendar_id != previous_trip.calendar_id:
+                    trip.rowspan = 1
+                    previous_trip = trip
+                else:
+                    previous_trip.rowspan += 1
 
         context['breadcrumb'] = [self.object]
 

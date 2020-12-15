@@ -1,6 +1,8 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ object }} – bustimes.org{% endblock %}
+{% block title %}Debug – {{ object }} – bustimes.org{% endblock %}
+
+{% block bodyclass %}{% endblock %}
 
 {% block content %}
 
@@ -47,7 +49,8 @@
             <th scope="col">block</th>
             <th scope="col">code</th>
             <th scope="col">direction</th>
-            <th scope="col">time</th>
+            <th scope="col">start</th>
+            <th scope="col">end</th>
             <th scope="col">dates</th>
             <th scope="col">days</th>
             <th scope="col">dates</th>
@@ -55,20 +58,21 @@
     </thead>
     <tbody>
 {% for trip in route.trip_set.all %}
-<tr>
+<tr style="vertical-align:top">
     <td>{{ trip.block }}</td>
     <td>{{ trip.ticket_machine_code }}</td>
-    <td>{% if trip.inbound %}In{% else %}Out{% endif %}bound</td>
-    <td>{{ trip.start }}–{{ trip.end }}</td>
-    <td>{{ trip.calendar.start_date }}–{{ trip.calendar.end_date }}</td>
-    <td>{{ trip.calendar }}</td>
-    <td>
-        <ul class="bulleted">
-        {% for d in trip.calendar.calendardate_set.all %}
-            <li>{% if d.special %}Also {% endif %}{% if not d.operation %}Not {% endif %}{{ d.start_date }}{% if d.start_date != d.end_date %}–{{ d.end_date }}{% endif %}</li>
+    <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
+    <td>{{ trip.start_time }}</td>
+    <td>{{ trip.end_time }}</td>
+    {% if trip.rowspan %}
+    <td rowspan="{{ trip.rowspan }}">{{ trip.calendar.start_date }}–<br>{{ trip.calendar.end_date }}</td>
+    <td rowspan="{{ trip.rowspan }}">{{ trip.calendar }}</td>
+    <td rowspan="{{ trip.rowspan }}">
+        {% for calendar_date in trip.calendar.calendardate_set.all %}
+            {{ calendar_date }}<br>
         {% endfor %}
-        </ul>
     </td>
+    {% endif %}
 </tr>
 {% endfor %}
 </tbody>

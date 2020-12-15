@@ -61,7 +61,7 @@ BANK_HOLIDAYS = {
     'BoxingDay':        [datetime.date(2020, 12, 26)],
     'BoxingDayHoliday': [datetime.date(2020, 12, 28)],
     'NewYearsEve':      [datetime.date(2020, 12, 31)],
-    'NewYearsDay':      [datetime.date(2021, 1, 2)],
+    'NewYearsDay':      [datetime.date(2021, 1, 1)],
     'Jan2ndScotland':   [datetime.date(2021, 1, 2)],
     # 'GoodFriday': date(2021, 4, 2),
     # 'EasterMonday': date(2021, 4, 5),
