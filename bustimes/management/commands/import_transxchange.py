@@ -544,7 +544,7 @@ class Command(BaseCommand):
         if not description:
             origin = txc_service.origin
             destination = txc_service.destination
-            if origin and destination and origin != 'Origin' and destination != 'Destination':
+            if origin and destination and (origin != 'Origin' and destination != 'Destination' or txc_service.vias):
                 if origin.isupper() and destination.isupper():
                     origin = titlecase(origin)
                     destination = titlecase(destination)
@@ -617,8 +617,14 @@ class Command(BaseCommand):
                         Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id'))) |
                         Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
                     )
-                else:
+                elif description:
                     existing = existing.filter(description=description)
+                elif len(txc_service.lines) == 1:
+                    existing = existing.filter(
+                        Exists(
+                            Route.objects.filter(code__endswith=f'#{txc_service.service_code}', service=OuterRef('id'))
+                        )
+                    )
 
                 existing = existing.filter(line_name__iexact=line_name).order_by('-current', 'id').first()
 

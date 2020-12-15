@@ -330,7 +330,7 @@ PASSENGER_OPERATORS = [
     ('Go North East', 'https://www.gonortheast.co.uk/open-data', 'NE', {
         'GNE': 'GNEL',
     }),
-    ('McGill\'s', 'https://data.discoverpassenger.com/operator/mcgills', 'S', {
+    ('McGill’s', 'https://data.discoverpassenger.com/operator/mcgills', 'S', {
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
@@ -338,8 +338,9 @@ PASSENGER_OPERATORS = [
 BOD_OPERATORS = [
     ('UNOE', 'SE', {
         'UBN': 'UNOE',
-        'UNIB': 'UNOE'
-    }, True),
+        'UNIB': 'UNOE',
+        'OP': 'UNOE'
+    }, False),
     ('TBTN', 'EM', {
         '574T': 'TBTN',
     }, False),

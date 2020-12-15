@@ -8,9 +8,9 @@
 
 <ul class="tabs">
     <li><a href="{{ object.get_absolute_url }}">Timetable</a></li>
-    <li><a href="{{ object.get_absolute_url }}/debug">Vehicles</a></li>
+    <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a></li>
     <li>Debug</li>
-    <li><a href="{% url 'admin:busstops_service_change' object.pk %}">Edit</a></li>>
+    <li><a href="{% url 'admin:busstops_service_change' object.pk %}">Edit</a></li>
 </ul>
 
 <pre>{{ object.yaml }}</pre>
