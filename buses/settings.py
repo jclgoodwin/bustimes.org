@@ -369,6 +369,11 @@ BOD_OPERATORS = [
     ('BRYL', 'EM', {}, False),
     ('LODG', 'SE', {}, False),
     ('BDRB', 'EA', {}, False),
+    ('SIMO', 'EA', {}, False),
+    ('SULV', 'SE', {
+        'SN': 'SULV'
+    }, False),
+    ('FRDS', 'SE', {}, False),
 
     ('AVMT', 'SW', {}, False),
     ('BZCO', 'SW', {}, False),
