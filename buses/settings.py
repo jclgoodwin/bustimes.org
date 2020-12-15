@@ -374,6 +374,7 @@ BOD_OPERATORS = [
         'SN': 'SULV'
     }, False),
     ('FRDS', 'SE', {}, False),
+    ('BEES', 'EA', {}, False),
 
     ('AVMT', 'SW', {}, False),
     ('BZCO', 'SW', {}, False),
