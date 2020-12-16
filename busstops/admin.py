@@ -4,7 +4,7 @@ from django.contrib.gis.db.models import PointField
 from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Count, Q, F
+from django.db.models import Count, Q, F, Exists, OuterRef
 from bustimes.models import Route
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
@@ -78,7 +78,7 @@ class OperatorAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            service_count = Count('service', filter=Q(service__current=True))
+            service_count = Count('service', filter=Q(current=True))
             return queryset.annotate(
                 service_count=service_count
             ).prefetch_related('operatorcode_set')
@@ -95,7 +95,7 @@ class OperatorAdmin(admin.ModelAdmin):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
         if request.path.endswith('/autocomplete/'):
-            queryset = queryset.filter(service__current=True)
+            queryset = queryset.filter(Exists(Service.objects.filter(operator=OuterRef('pk'), current=True)))
 
         return queryset, use_distinct
 
@@ -201,7 +201,8 @@ class DataSourceAdmin(admin.ModelAdmin):
             return queryset.annotate(operators=StringAgg('route__service__operator', ', ', distinct=True))
         return queryset
 
-    def operators(self, obj):
+    @staticmethod
+    def operators(obj):
         return obj.operators
 
 
@@ -211,12 +212,32 @@ class SIRISourceAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            return queryset.prefetch_related('admin_areas')
+            return queryset.annotate(areas=StringAgg('admin_area__atco_code', ', ', distinct=True))
         return queryset
 
     @staticmethod
     def areas(obj):
-        return ', '.join(f'{area} ({area.atco_code})' for area in obj.admin_areas.all())
+        return obj.areas
+
+
+class PaymentMethodOperatorInline(admin.TabularInline):
+    model = PaymentMethod.operator_set.through
+    autocomplete_fields = ['operator']
+
+
+class PaymentMethodAdmin(admin.ModelAdmin):
+    list_display = ('name', 'url', 'operators')
+    inlines = [PaymentMethodOperatorInline]
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.annotate(operators=StringAgg('operator', ', ', distinct=True))
+        return queryset
+
+    @staticmethod
+    def operators(obj):
+        return obj.operators
 
 
 admin.site.register(Region)
@@ -235,4 +256,4 @@ admin.site.register(ServiceCode, ServiceCodeAdmin)
 admin.site.register(DataSource, DataSourceAdmin)
 admin.site.register(Place, PlaceAdmin)
 admin.site.register(SIRISource, SIRISourceAdmin)
-admin.site.register(PaymentMethod)
+admin.site.register(PaymentMethod, PaymentMethodAdmin)
