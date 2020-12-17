@@ -40,22 +40,4 @@
             maybeHighlight(ths[i].parentNode);
         }
     }
-
-    document.onclick = function(e) {
-        if (e.target.href) {
-            if (e.target.href.indexOf('clickref=links') > -1) {
-                var eventLabel = 'megabus';
-            } else if (e.target.href.indexOf('pvnsolutions') > -1) {
-                eventLabel = 'nationalexpress';
-            } else {
-                return;
-            }
-            ga('send', 'event', {
-                eventCategory: 'Outbound Link',
-                eventAction: 'click',
-                eventLabel: eventLabel,
-                transport: 'beacon'
-            });
-        }
-    };
 }());
