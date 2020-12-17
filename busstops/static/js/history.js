@@ -154,18 +154,20 @@
                 if (previousCoordinates) {
                     var time = timestamp - previousTimestamp;  
 
-                    var latDistance = coordinates.lat - previousCoordinates.lat;
-                    var lngDistance = coordinates.lng - previousCoordinates.lng;
-                    var latSpeed = latDistance / time;
-                    var lngSpeed = lngDistance / time;
+                    if (time) {
+                        var latDistance = coordinates.lat - previousCoordinates.lat;
+                        var lngDistance = coordinates.lng - previousCoordinates.lng;
+                        var latSpeed = latDistance / time;
+                        var lngSpeed = lngDistance / time;
 
-                    var minute = Math.ceil(previousTimestamp / 60000) * 60000 - previousTimestamp;
 
-                    for (; minute <= time; minute += 60000) {
-                        L.circleMarker(L.latLng(
-                            previousCoordinates.lat + latSpeed * minute,
-                            previousCoordinates.lng + lngSpeed * minute
-                        ), circleMarkerOptions).addTo(map);
+                        var minute = Math.ceil(previousTimestamp / 60000) * 60000 - previousTimestamp;
+                        for (; minute <= time; minute += 60000) {
+                            L.circleMarker(L.latLng(
+                                previousCoordinates.lat + latSpeed * minute,
+                                previousCoordinates.lng + lngSpeed * minute
+                            ), circleMarkerOptions).addTo(map);
+                        }
                     }
                 }
 
