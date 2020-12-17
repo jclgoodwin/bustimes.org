@@ -78,7 +78,7 @@ class OperatorAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            service_count = Count('service', filter=Q(current=True))
+            service_count = Count('service', filter=Q(service__current=True))
             return queryset.annotate(
                 service_count=service_count
             ).prefetch_related('operatorcode_set')
