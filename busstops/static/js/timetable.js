@@ -3,9 +3,6 @@
 /*jslint
     browser: true
 */
-/*global
-    ga
-*/
 
 (function() {
     var i,
