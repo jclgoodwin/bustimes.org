@@ -3,10 +3,8 @@ import zipfile
 from django.conf import settings
 from django.db.models import Prefetch
 from django.views.generic.detail import DetailView
-from django.http import FileResponse, Http404, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.http import FileResponse, Http404, HttpResponse
 from busstops.models import Service
-from .utils import format_timedelta
 from .models import Route, Trip
 
 
@@ -65,17 +63,3 @@ def route_xml(request, source, code):
 
     # FileResponse automatically closes the file
     return FileResponse(open(path, 'rb'), content_type='text/xml')
-
-
-def trip_json(request, pk):
-    trip = get_object_or_404(Trip, pk=pk)
-    print('trip')
-    stops = [{
-        'name': stop_time.stop.get_qualified_name() if stop_time.stop else stop_time.stop_code,
-        'aimed_arrival_time': format_timedelta(stop_time.arrival) if stop_time.arrival else None,
-        'aimed_departure_time': format_timedelta(stop_time.departure) if stop_time.departure else None,
-    } for stop_time in trip.stoptime_set.select_related('stop__locality')]
-
-    return JsonResponse({
-        'stops': stops,
-    })

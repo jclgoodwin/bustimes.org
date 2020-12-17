@@ -4,7 +4,7 @@ import xml.etree.cElementTree as ET
 import datetime
 from django.db.models import Exists, OuterRef, Prefetch, Subquery
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
@@ -17,6 +17,7 @@ from django.utils import timezone
 # from django.utils.safestring import mark_safe
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
+from bustimes.utils import format_timedelta
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
@@ -478,21 +479,35 @@ def vehicles_history(request):
 
 
 def journey_json(request, pk):
+    data = {}
+
+    journey = get_object_or_404(VehicleJourney, pk=pk)
+
+    if journey.trip_id:
+        try:
+            data['stops'] = [{
+                'name': stop_time.stop.get_qualified_name() if stop_time.stop else stop_time.stop_code,
+                'aimed_arrival_time': format_timedelta(stop_time.arrival) if stop_time.arrival else None,
+                'aimed_departure_time': format_timedelta(stop_time.departure) if stop_time.departure else None,
+            } for stop_time in journey.trip.stoptime_set.select_related('stop__locality')]
+        except ObjectDoesNotExist:
+            pass
+
     try:
         r = redis.from_url(settings.REDIS_URL)
         locations = r.lrange(f'journey{pk}', 0, -1)
         if locations:
-            locations = [json.loads(location) for location in locations]
-        else:
-            locations = ()
+            locations = (json.loads(location) for location in locations)
+            data['locations'] = [{
+                'coordinates': location[1],
+                'delta': location[3],
+                'direction': location[2],
+                'datetime': location[0]
+            } for location in locations]
     except redis.exceptions.ConnectionError:
-        locations = ()
-    return JsonResponse([{
-        'coordinates': location[1],
-        'delta': location[3],
-        'direction': location[2],
-        'datetime': location[0]
-    } for location in locations], safe=False)
+        pass
+
+    return JsonResponse(data)
 
 
 def location_detail(request, location_id):

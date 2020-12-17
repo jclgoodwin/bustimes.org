@@ -10,23 +10,22 @@
 
     var map;
 
-    function getMarker(latLng, direction) {
+    function arrowMarker(latLng, direction) {
         direction = (direction || 0) - 135;
         return L.marker(latLng, {
             icon: L.divIcon({
                 iconSize: [16, 16],
                 html: '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>',
-                className: 'just-arrow'
+                className: 'just-arrow',
             })
         });
     }
 
-    var timeMarkerOptions = {
-        radius: 3,
+    var circleMarkerOptions = {
+        radius: 2,
         fillColor: '#000',
         fillOpacity: 1,
         weight: 0,
-        interactive: false
     };
 
     var date = document.getElementById('date').value;
@@ -48,6 +47,31 @@
 
     window.onhashchange = maybeOpenMap;
 
+    function getTooltip(delta) {
+        if (delta) {
+            var tooltip = 'About ';
+            if (delta > 0) {
+                tooltip += delta;
+            } else {
+                tooltip += delta * -1;
+            }
+            tooltip += ' minute';
+            if (delta !== 1 && delta !== -1) {
+                tooltip += 's';
+            }
+            if (delta > 0) {
+                tooltip += ' early';
+            } else {
+                tooltip += ' late';
+            }
+            return '<br>' + tooltip;
+        } else if (delta === 0) {
+            return '<br>On time';
+        } else {
+            return '';
+        }
+    }
+
     function maybeOpenMap() {
         var journey = window.location.hash.slice(1);
 
@@ -68,12 +92,13 @@
             map = null;
         }
 
-        if (element.dataset.trip && !element.querySelector('.trip')) {
-            var tripElement = document.createElement('div');
-            tripElement.className = 'trip';
-            element.appendChild(tripElement);
+        reqwest('/' + journey + '.json', function(response) {
 
-            reqwest('/trips/' + element.dataset.trip + '.json', function(trip) {
+            if (response.stops) {
+                var tripElement = document.createElement('div');
+                tripElement.className = 'trip';
+                element.appendChild(tripElement);
+
                 var table = document.createElement('table');
                 var thead = document.createElement('thead');
                 thead.innerHTML = '<tr><th>Stop</th><th>Timetable</th></tr>';
@@ -81,33 +106,27 @@
 
                 var tbody = document.createElement('tbody');
                 var tr, stop, time;
-                for (var i = 0; i < trip.stops.length; i++) {
+                for (var i = 0; i < response.stops.length; i++) {
                     tr = document.createElement('tr');
-                    stop = trip.stops[i];
+                    stop = response.stops[i];
                     time = stop.aimed_departure_time || stop.aimed_arrival_time || '';
                     tr.innerHTML = '<td>' + stop.name + '</th><td>' + time + '</td>';
                     tbody.appendChild(tr);
                 }
                 table.appendChild(tbody);
                 tripElement.appendChild(table);
-            });
-        }
+            }
 
-        var mapContainer = element.querySelector('.map');
-        if (!mapContainer) {
+            var mapContainer = element.querySelector('.map');
             if (!mapContainer) {
                 mapContainer = document.createElement('div');
                 mapContainer.className = 'map';
                 element.appendChild(mapContainer);
             }
-        }
 
-        reqwest('/' + journey + '.json', function(locations) {
-            var layerGroup = L.layerGroup();
+            var locations = response.locations;
 
             map =  L.map(mapContainer);
-
-            layerGroup.addTo(map);
 
             map.attributionControl.setPrefix('');
 
@@ -115,84 +134,58 @@
                 attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
             }).addTo(map);
 
-            var i,
-                j,
-                dateTime,
-                popup,
-                delta,
-                coordinates,
-                line = [],
-                bounds,
-                latDistance,
-                lngDistance,
-                timeDistance,
-                previousCoordinates,
-                minutes,
-                previousTimestamp,
-                latSpeed,
-                lngSpeed;
+            var line = [];
 
+            var previousCoordinates,
+                previousTimestamp;
 
-            for (i = locations.length - 1; i >= 0; i -= 1) {
-                dateTime = new Date(locations[i].datetime);
-                popup = dateTime.toTimeString().slice(0, 8);
-                delta = locations[i].delta;
-                if (delta) {
-                    popup += '<br>About ';
-                    if (delta > 0) {
-                        popup += delta;
-                    } else {
-                        popup += delta * -1;
-                    }
-                    popup += ' minute';
-                    if (delta !== 1 && delta !== -1) {
-                        popup += 's';
-                    }
-                    if (delta > 0) {
-                        popup += ' early';
-                    } else {
-                        popup += ' late';
-                    }
-                } else if (delta === 0) {
-                    popup += '<br>On time';
-                }
-                coordinates = L.latLng(locations[i].coordinates[1], locations[i].coordinates[0]);
-                getMarker(coordinates, locations[i].direction).bindTooltip(popup).addTo(layerGroup);
+            locations.forEach(function(location) {
+                var dateTime = new Date(location.datetime);
+                var popup = dateTime.toTimeString().slice(0, 8);
+                var timestamp = dateTime.getTime();
+                popup += getTooltip(location.delta);
+
+                var coordinates = L.latLng(location.coordinates[1], location.coordinates[0]);
+
+                arrowMarker(coordinates, location.direction).bindTooltip(popup).addTo(map);
+
+                line.push(coordinates);
 
                 if (previousCoordinates) {
-                    latDistance = previousCoordinates.lat - coordinates.lat;
-                    lngDistance = previousCoordinates.lng - coordinates.lng;
-                    minutes = Math.floor(previousTimestamp / 60000) * 60000;
-                    timeDistance = previousTimestamp - dateTime.getTime();
-                    if (timeDistance) {
-                        latSpeed = latDistance / timeDistance;
-                        lngSpeed = lngDistance / timeDistance;
+                    var time = timestamp - previousTimestamp;  
 
-                        for (j = previousTimestamp - minutes; j <= timeDistance; j += 60000) {
-                            L.circleMarker(L.latLng(
-                                previousCoordinates.lat - latSpeed * j,
-                                previousCoordinates.lng - lngSpeed * j
-                            ), timeMarkerOptions).addTo(layerGroup);
-                        }
+                    var latDistance = coordinates.lat - previousCoordinates.lat;
+                    var lngDistance = coordinates.lng - previousCoordinates.lng;
+                    var latSpeed = latDistance / time;
+                    var lngSpeed = lngDistance / time;
+
+                    var minute = Math.ceil(previousTimestamp / 60000) * 60000 - previousTimestamp;
+
+                    for (; minute <= time; minute += 60000) {
+                        L.circleMarker(L.latLng(
+                            previousCoordinates.lat + latSpeed * minute,
+                            previousCoordinates.lng + lngSpeed * minute
+                        ), circleMarkerOptions).addTo(map);
                     }
                 }
-                line.push(coordinates);
-                previousTimestamp = dateTime.getTime();
+
                 previousCoordinates = coordinates;
-            }
+                previousTimestamp = timestamp;
+            });
+
+
             line = L.polyline(line, {
                 weight: 4,
                 color: '#87f',
-                opacity: .5,
-                interactive: false
+                opacity: .5
             });
-            line.addTo(layerGroup);
-            bounds = line.getBounds();
+            line.addTo(map);
+
+            var bounds = line.getBounds();
+
             map.fitBounds(bounds, {
                 maxZoom: 14
-            });
-            map.setMaxBounds(bounds.pad(.5));
-            line.bringToBack();
+            }).setMaxBounds(bounds.pad(.5));
         });
     }
 
