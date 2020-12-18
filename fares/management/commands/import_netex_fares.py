@@ -72,12 +72,12 @@ class Command(BaseCommand):
         distance_matrix_elements = {}
         for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
             user_profile = tariff_element.find(
-                "fareStructureElements/GenericParameterAssignment/limitations/UserProfile"
+                "fareStructureElements/FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
             )
             user_profile, created = get_user_profile(user_profile)
             user_profiles[user_profile.code] = user_profile
 
-            round_trip = tariff_element.find("fareStructureElements/GenericParameterAssignment/limitations/RoundTrip")
+            round_trip = tariff_element.find("fareStructureElements/FareStructureElement/GenericParameterAssignment/limitations/RoundTrip")
             trip_type = round_trip.findtext('TripType')
 
             tariff = models.Tariff.objects.create(
