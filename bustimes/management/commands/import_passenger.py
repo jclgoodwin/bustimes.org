@@ -97,7 +97,7 @@ class Command(BaseCommand):
 
         session = HTMLSession()
 
-        sources = []
+        sources = DataSource.objects.filter(url__in=[values[1] for values in settings.PASSENGER_OPERATORS])
 
         for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
             if operator and operator != name:
@@ -110,7 +110,6 @@ class Command(BaseCommand):
                 continue
 
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
-            sources.append(command.source)
             command.source.datetime = timezone.now()
             command.operators = operators
             command.region_id = region_id
