@@ -77,22 +77,24 @@ def bus_open_data(api_key, operator):
         nocs = [operator_id for operator_id, _, _, _ in settings.BOD_OPERATORS]
 
     url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
-    params = {
-        'api_key': api_key,
-        'status': ['published', 'expiring'],
-        'noc': ','.join(nocs)
-    }
 
     datasets = []
-    while url:
-        response = session.get(url, params=params)
-        json = response.json()
-        for dataset in json['results']:
-            dataset['source'], created = DataSource.objects.get_or_create(url=dataset['url'])
-            dataset['modified'] = parse_datetime(dataset['modified'])
-            datasets.append(dataset)
-        url = json['next']
-        params = None
+
+    for nocs in [nocs[i:i+20] for i in range(0, len(nocs), 20)]:
+        params = {
+            'api_key': api_key,
+            'status': ['published', 'expiring'],
+            'noc': ','.join(nocs)
+        }
+        while url:
+            response = session.get(url, params=params)
+            json = response.json()
+            for dataset in json['results']:
+                dataset['source'], created = DataSource.objects.get_or_create(url=dataset['url'])
+                dataset['modified'] = parse_datetime(dataset['modified'])
+                datasets.append(dataset)
+            url = json['next']
+            params = None
 
     for operator_id, region_id, operators, incomplete in settings.BOD_OPERATORS:
         operator_datasets = [item for item in datasets if operator_id in item['noc']]
