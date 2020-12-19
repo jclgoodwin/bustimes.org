@@ -484,6 +484,22 @@ STAGECOACH_OPERATORS = [
     ('W', 'sswl', 'Stagecoach South Wales', {'SSWL': 'SSWL'}),
     ('Y', 'tram', 'Stagecoach Supertram', {'SCST': 'SCST'}),
 ]
+FIRST_OPERATORS = [
+    ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
+
+    ('FirstColchester', 'SE', {'FESX': 'FESX'}),
+    ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
+    ('FirstHadleigh', 'SE', {'FESX': 'FESX'}),
+    ('FirstChelmsford', 'SE', {'FESX': 'FESX'}),
+
+    ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
+    ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
+    ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
+
+    ('FirstSoton', 'SW', {'FHAM': 'FHAM'}),
+    ('FirstHoeford', 'SW', {'FHAM': 'FHAM'}),
+    ('FirstHilsea', 'SW', {'FHAM': 'FHAM'}),
+]
 TICKETER_OPERATORS = [
     ('NW', ['WBTR'], 'Warrington’s Own Buses'),
     ('EA', ['LYNX'], 'Lynx'),

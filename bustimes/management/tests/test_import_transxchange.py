@@ -19,6 +19,7 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 
 @override_settings(
     TNDS_DIR=FIXTURES_DIR,
+    FIRST_OPERATORS=()
 )
 class ImportTransXChangeTest(TestCase):
     @classmethod
