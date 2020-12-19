@@ -117,6 +117,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "Latitude": "51.2135",
                     "Longitude": "0.285348"
                 },
+                "Bearing": "92.0",
                 "PublishedLineName": "C",
                 "VehicleJourneyRef": "C_20201015_05_53"
             }
@@ -133,7 +134,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(location.journey.vehicle.reg, 'SN56AFE')
 
         location = VehicleLocation.objects.all()[2]
+        self.assertEqual(location.heading, 92)
         self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')
+        self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
 
         self.assertEqual(

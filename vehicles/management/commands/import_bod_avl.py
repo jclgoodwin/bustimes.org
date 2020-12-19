@@ -333,8 +333,12 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
         location = monitored_vehicle_journey['VehicleLocation']
         latlong = Point(float(location['Longitude']), float(location['Latitude']))
+        bearing = monitored_vehicle_journey.get('Bearing')
+        if bearing:
+            bearing = float(bearing)
         return VehicleLocation(
             latlong=latlong,
+            heading=bearing
         )
 
     @async_to_sync
