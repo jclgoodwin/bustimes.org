@@ -416,9 +416,13 @@ class TimetableDepartures(Departures):
     def get_row(self, stop_time, midnight):
         trip = stop_time.trip
         destination = trip.destination
+        if stop_time.departure is not None:
+            time = midnight + stop_time.departure
+        else:
+            time = midnight + stop_time.arrival
         return {
             'origin_departure_time': midnight + trip.start,
-            'time': midnight + (stop_time.departure or stop_time.arrival),
+            'time': time,
             'destination': destination.locality or destination.town or destination,
             'service': stop_time.trip.route.service,
         }
