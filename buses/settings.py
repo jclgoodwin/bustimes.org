@@ -339,7 +339,8 @@ BOD_OPERATORS = [
     ('UNOE', 'SE', {
         'UBN': 'UNOE',
         'UNIB': 'UNOE',
-        'OP': 'UNOE'
+        'OP': 'UNOE',
+        'UN': 'UNOE',
     }, False),
     ('TBTN', 'EM', {
         '574T': 'TBTN',

@@ -90,7 +90,10 @@ def bus_open_data(api_key, operator):
             response = session.get(url, params=params)
             json = response.json()
             for dataset in json['results']:
-                dataset['source'], created = DataSource.objects.get_or_create(url=dataset['url'])
+                dataset['source'], created = DataSource.objects.get_or_create(
+                    {'name': dataset['name']},
+                    url=dataset['url']
+                )
                 dataset['modified'] = parse_datetime(dataset['modified'])
                 datasets.append(dataset)
             url = json['next']
