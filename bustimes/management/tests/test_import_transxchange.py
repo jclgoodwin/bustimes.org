@@ -571,7 +571,7 @@ class ImportTransXChangeTest(TestCase):
             with self.assertNumQueries(12):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
         self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
-        self.assertContains(res, 'Timetable changes from Sunday 3 September 2017')
+        self.assertContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         self.assertContains(res, f'data-service="{service.id},{duplicate.id}"></div')
 
         with freeze_time('1 October 2017'):
@@ -587,7 +587,7 @@ class ImportTransXChangeTest(TestCase):
                 </thead>
         """, html=True)
         self.assertEqual(str(res.context_data['timetable'].date), '2017-10-01')
-        self.assertNotContains(res, 'Timetable changes from Sunday 3 September 2017')
+        self.assertNotContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         self.assertEqual(18, len(res.context_data['timetable'].groupings[0].trips))
 
         with freeze_time('1 October 2017'):
