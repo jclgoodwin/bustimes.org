@@ -1,6 +1,15 @@
 from django.views.generic.detail import DetailView
+from django.shortcuts import render
 from .forms import FaresForm
 from .models import DataSet, Tariff
+
+
+def index(request):
+    datasets = DataSet.objects.all()
+
+    return render(request, 'fares/index.html', {
+        'datasets': datasets,
+    })
 
 
 class DataSetDetailView(DetailView):

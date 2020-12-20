@@ -21,7 +21,7 @@
         <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }} ({{ tariff.user_profile }} {{ tariff.trip_type }})</a></p>
     {% endfor %}
 
-    <p>{{ object.url | urlize }}</p>
+    <p>{{ object.url | urlize }} {{ object.datetime }}</p>
 
 {% endblock %}
 

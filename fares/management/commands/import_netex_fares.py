@@ -191,18 +191,22 @@ class Command(BaseCommand):
             'status': 'published'
         }
         while url:
+            print(url)
             response = session.get(url, params=params)
+
             data = response.json()
 
             for item in data['results']:
                 dataset_url = f"https://data.bus-data.dft.gov.uk/fares/dataset/{item['id']}/"
-                print(dataset_url)
                 try:
                     dataset = models.DataSet.objects.get(url=dataset_url)
+                    continue
                     dataset.tariff_set.all().delete()
                 except models.DataSet.DoesNotExist:
-                    dataset = models.DataSet(name=item["name"], description=item["description"], url=dataset_url)
+                    dataset = models.DataSet(name=item["name"], description=item["description"],
+                                             url=dataset_url, datetime=item['modified'])
                     dataset.save()
+                print(dataset_url)
                 try:
                     dataset.operators.set(item["noc"])
                 except IntegrityError:
@@ -220,3 +224,4 @@ class Command(BaseCommand):
                             self.handle_file(dataset, archive.open(filename))
 
             url = data['next']
+            params = None

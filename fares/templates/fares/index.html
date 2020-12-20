@@ -1,0 +1,25 @@
+{% extends 'page.html' %}
+
+{% block title %}Fares – bustimes.org{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>Fares</h1>
+
+<p>An overview of fares data. This page isn’t very useful – eventually, fares data will be integrated into other parts of the website.</p>
+
+<p>Known issues:</p>
+
+<ul class="bulleted">
+    <li>Some data confuses pounds and pence – e.g. a £3 fare is given as £0.03</li>
+    <li>Fare stages may have slightly different names in different bits of data. bustimes.org isn’t clever enough to work out they’re the same yet</li>
+    <li>bustimes.org only supports point to point fares so far, not day/week/month/zone tickets</li>
+</ul>
+
+{% for dataset in datasets %}
+    <p><a href="{{ dataset.get_absolute_url }}">{{ dataset }}<br>{{ dataset.description }}</a></p>
+{% endfor %}
+
+{% endblock %}
