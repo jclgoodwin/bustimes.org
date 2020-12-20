@@ -71,33 +71,43 @@ class Command(BaseCommand):
         tariffs = {}
         distance_matrix_elements = {}
         for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
-            user_profile = tariff_element.find(
-                "fareStructureElements/FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
+            fare_structre_elements = tariff_element.find("fareStructureElements")
+
+            user_profile = fare_structre_elements.find(
+                "FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
             )
             user_profile, created = get_user_profile(user_profile)
             user_profiles[user_profile.code] = user_profile
 
-            round_trip = tariff_element.find("fareStructureElements/FareStructureElement/GenericParameterAssignment/limitations/RoundTrip")
-            trip_type = round_trip.findtext('TripType')
+            round_trip = fare_structre_elements.find(
+                "FareStructureElement/GenericParameterAssignment/limitations/RoundTrip"
+            )
+            if round_trip:
+                trip_type = round_trip.findtext('TripType')
+            else:
+                trip_type = ''
 
             tariff = models.Tariff.objects.create(
                 code=tariff_element.attrib['id'], name=tariff_element.findtext("Name"),
-                source=source, trip_Type=trip_type, user_profile=user_profile
+                source=source, trip_type=trip_type, user_profile=user_profile
             )
 
-            distance_matrix_element_elements = tariff_element.find("fareStructureElements/distanceMatrixElements")
-            for distance_matrix_element in distance_matrix_element_elements:
-                start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
-                end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
-                price_group = distance_matrix_element.find("priceGroups/PriceGroupRef").attrib['ref']
-                distance_matrix_element, created = models.DistanceMatrixElement.objects.get_or_create(
-                    code=distance_matrix_element.attrib["id"],
-                    start_zone=fare_zones[start_zone],
-                    end_zone=fare_zones[end_zone],
-                    price_group=price_groups[price_group],
-                    tariff=tariff,
-                )
-                distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
+            distance_matrix_element_elements = fare_structre_elements.find(
+                "FareStructureElement/distanceMatrixElements"
+            )
+            if distance_matrix_element_elements:
+                for distance_matrix_element in distance_matrix_element_elements:
+                    start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
+                    end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
+                    price_group = distance_matrix_element.find("priceGroups/PriceGroupRef").attrib['ref']
+                    distance_matrix_element, created = models.DistanceMatrixElement.objects.get_or_create(
+                        code=distance_matrix_element.attrib["id"],
+                        start_zone=fare_zones[start_zone],
+                        end_zone=fare_zones[end_zone],
+                        price_group=price_groups[price_group],
+                        tariff=tariff,
+                    )
+                    distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
 
             tariffs[tariff.code] = tariff
 

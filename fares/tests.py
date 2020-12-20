@@ -23,3 +23,13 @@ class FaresTest(TestCase):
         self.assertContains(response, "A C Williams WM06 - single fares")
         self.assertContains(response, "<td>£1.70</td>")
         self.assertContains(response, "RAF Cranwell")
+
+        origins = list(response.context_data['form'].fields['origin'].choices)
+        destinations = list(response.context_data['form'].fields['destination'].choices)
+
+        origin = origins[2][0].value
+        destination = destinations[3][0].value
+        response = self.client.get(f'{tariff.get_absolute_url()}?origin={origin}&destination={destination}')
+
+        self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")
+        self.assertContains(response, "<p>adult single: £1.50</p>")
