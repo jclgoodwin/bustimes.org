@@ -588,7 +588,7 @@ class ServiceDetailView(DetailView):
             context['has_minor_stops'] = any(stop_usage.is_minor() for stop_usage in context['stopusages'])
             for stop_usage in context['stopusages']:
                 if stop_usage.stop_id in stop_situations:
-                    if stop_situations[stop_usage.stop_id].text == 'Does not stop here':
+                    if stop_situations[stop_usage.stop_id].summary == 'Does not stop here':
                         stop_usage.suspended = True
                     else:
                         stop_usage.situation = True
@@ -600,7 +600,7 @@ class ServiceDetailView(DetailView):
             stops = stops.in_bulk(stop_codes)
             for atco_code in stops:
                 if atco_code in stop_situations:
-                    if stop_situations[atco_code].text == 'Does not stop here':
+                    if stop_situations[atco_code].summary == 'Does not stop here':
                         stops[atco_code].suspended = True
                     else:
                         stops[atco_code].situation = True
@@ -674,7 +674,12 @@ class ServiceDetailView(DetailView):
 @cache_control(max_age=86400)
 def service_map_data(request, service_id):
     service = get_object_or_404(Service.objects.only('geometry'), id=service_id)
-    stops = StopPoint.objects.filter(service=service, latlong__isnull=False)
+    stops = service.stops.filter(
+        ~Exists(Situation.objects.filter(summary='Does not stop here',
+                                         consequence__stops=OuterRef('pk'),
+                                         consequence__services=service)),
+        latlong__isnull=False
+    )
     stops = stops.distinct().order_by().select_related('locality')
     data = {
         "stops": {

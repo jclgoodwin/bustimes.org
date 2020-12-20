@@ -1,7 +1,7 @@
 {% load urlise %}
 
 {% for situation in situations %}
-    {% if situation.text != 'Does not stop here' %}
+    {% if situation.summary != 'Does not stop here' %}
     <div class="situation">
         {% if situation.summary %}
             <div class="summary">
