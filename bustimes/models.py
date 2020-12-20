@@ -144,7 +144,7 @@ class CalendarDate(models.Model):
         return True
 
     def __str__(self):
-        string = self.start_date
+        string = str(self.start_date)
         if self.end_date != self.start_date:
             string = f'{string}–{self.end_date}'
         if not self.operation:
