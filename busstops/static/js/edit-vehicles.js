@@ -11,7 +11,7 @@
 
     // checkbox ranges of rows
     var lastInput,
-        checkboxes = Array.from(document.querySelectorAll('.fleet input'));
+        checkboxes = document.querySelectorAll('.fleet input');
 
     function handleBoxCheck(event) {
         if (event.shiftKey && lastInput) {
@@ -19,23 +19,23 @@
                 to = lastInput.parentNode.parentNode.rowIndex - 1,
                 min = Math.min(from, to),
                 max = Math.max(from, to);
-            checkboxes.forEach(function(checkbox, i) {
-                if (i > min && i < max) {
-                    checkbox.checked = lastInput.checked;
-                    checkbox.parentNode.parentNode.style.background = checkbox.checked ? '#ef9' : '';
-                }
-            });
+            for (var i = min; i =< max; i += 1) {
+                var checkbox = checkboxes[i];
+                checkbox.checked = lastInput.checked;
+                checkbox.parentNode.parentNode.style.background = checkbox.checked ? '#ef9' : '';
+            }
         }
         lastInput = event.target;
         lastInput.parentNode.parentNode.style.background = lastInput.checked ? '#ef9' : '';
     }
 
-    checkboxes.forEach(function(checkbox) {
+    for (var i = checkboxes.length - 1; i >= 0; i -= 1) {
+        var checkbox = checkboxes[i];
         checkbox.addEventListener('click', handleBoxCheck);
         if (checkbox.checked) {
             checkbox.parentNode.parentNode.style.background = '#ef9';
         }
-    });
+    }
 
     // other colour
     function toggleOtherColour() {
@@ -43,8 +43,9 @@
         var display = otherCheckbox.checked ? '' : 'none';
         document.getElementById('id_other_colour').parentNode.style.display = display;
     }
-    Array.from(document.querySelectorAll('#id_colours [type="radio"]')).forEach(function(radio) {
-        radio.addEventListener('change', toggleOtherColour);
-    });
+    var radios = document.querySelectorAll('#id_colours [type="radio"]');
+    for (var i = radios.length - 1; i >= 0; i -= 1) {
+        radios[i].addEventListener('change', toggleOtherColour);
+    }
     toggleOtherColour();
 })();

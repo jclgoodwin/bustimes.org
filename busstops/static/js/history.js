@@ -198,8 +198,9 @@
         maybeOpenMap();
     }
 
-    Array.from(document.querySelectorAll('a[href^="#journeys/"]')).forEach(function(link) {
-        link.addEventListener('click', handleClick);
-    });
+    var links = document.querySelectorAll('a[href^="#journeys/"]');
+    for (var i = links.length - 1; i >= 0; i -= 1) {
+        links[i].addEventListener('click', handleClick);
+    }
 
 })();
