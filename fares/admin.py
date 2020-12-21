@@ -19,6 +19,9 @@ class DataSetAdmin(admin.ModelAdmin):
 
 class TariffAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators", "services"]
+    list_filter = [
+       ('source__operators', admin.RelatedOnlyFieldListFilter)
+    ]
 
 
 class FareZoneAdmin(admin.ModelAdmin):
@@ -26,6 +29,8 @@ class FareZoneAdmin(admin.ModelAdmin):
 
 
 class FareTableAdmin(admin.ModelAdmin):
+    list_display = ["__str__", "description"]
+    list_filter = ["tariff__source"]
     raw_id_fields = ["user_profile", "sales_offer_package", "tariff"]
 
 

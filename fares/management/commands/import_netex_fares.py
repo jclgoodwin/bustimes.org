@@ -25,8 +25,11 @@ def get_user_profile(element):
 
 
 class Command(BaseCommand):
-    def handle_file(self, source, open_file):
+    def handle_file(self, source, open_file, filename=None):
         iterator = ET.iterparse(open_file)
+
+        if not filename:
+            filename = open_file.name
 
         for _, element in iterator:
             if element.tag[:31] == '{http://www.netex.org.uk/netex}':
@@ -89,7 +92,8 @@ class Command(BaseCommand):
 
             tariff = models.Tariff.objects.create(
                 code=tariff_element.attrib['id'], name=tariff_element.findtext("Name"),
-                source=source, trip_type=trip_type, user_profile=user_profile
+                source=source, filename=filename,
+                trip_type=trip_type, user_profile=user_profile
             )
 
             distance_matrix_element_elements = fare_structre_elements.find(
@@ -215,7 +219,8 @@ class Command(BaseCommand):
                 response = session.get(download_url, stream=True)
 
                 if response.headers['Content-Type'] == 'text/xml':
-                    self.handle_file(dataset, response.raw)
+                    filename = response.headers['Content-Disposition'].split('filename', 1)[1]
+                    self.handle_file(dataset, response.raw, filename)
                 else:
                     assert response.headers['Content-Type'] == 'application/zip'
                     with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
