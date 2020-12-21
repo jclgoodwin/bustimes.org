@@ -2,9 +2,10 @@ import os
 import zipfile
 from django.conf import settings
 from django.db.models import Prefetch
+from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse
-from busstops.models import Service
+from busstops.models import Service, DataSource
 from .models import Route, Trip
 
 
@@ -36,15 +37,19 @@ class ServiceDebugView(DetailView):
         return context
 
 
-def route_xml(request, source, code):
-    route = Route.objects.filter(source=source, code__startswith=code).select_related('source').first()
+def route_xml(request, source, code=''):
+    source = get_object_or_404(DataSource, id=source)
+
+    if 'tnds' in source.url:
+        path = os.path.join(settings.TNDS_DIR, f'{source}.zip')
+        with zipfile.ZipFile(path) as archive:
+            if code:
+                return FileResponse(archive.open(code), content_type='text/xml')
+            return HttpResponse('\n'.join(archive.namelist()), content_type='text/plain')
+
+    route = Route.objects.filter(source=source, code__startswith=code).first()
     if not route:
         raise Http404
-
-    if 'tnds' in route.source.url:
-        path = os.path.join(settings.TNDS_DIR, f'{route.source}.zip')
-        with zipfile.ZipFile(path) as archive:
-            return FileResponse(archive.open(code), content_type='text/xml')
 
     if '/' in code:
         path = code.split('/')[0]
