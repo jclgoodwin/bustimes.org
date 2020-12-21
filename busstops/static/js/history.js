@@ -198,7 +198,7 @@
         maybeOpenMap();
     }
 
-    document.querySelectorAll('a[href^="#journeys/"]').forEach(function(link) {
+    Array.from(document.querySelectorAll('a[href^="#journeys/"]')).forEach(function(link) {
         link.addEventListener('click', handleClick);
     });
 

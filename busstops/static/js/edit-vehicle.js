@@ -13,7 +13,7 @@
     var withdrawnElement = document.getElementById('id_withdrawn');
     function handleWithdrawn() {
         var display = withdrawnElement.checked ? 'none' : '';
-        document.querySelectorAll('.edit-vehicle > *').forEach(function(element) {
+        Array.from(document.querySelectorAll('.edit-vehicle > *')).forEach(function(element) {
             if ((element.querySelector('input, label')) && !element.querySelector('#id_withdrawn, #id_url, #id_user')) {
                 element.style.display = display;
             }
@@ -31,7 +31,7 @@
         var display = otherCheckbox.checked ? '' : 'none';
         document.getElementById('id_other_colour').parentNode.style.display = display;
     }
-    document.querySelectorAll('#id_colours [type="radio"]').forEach(function(radio) {
+    Array.from(document.querySelectorAll('#id_colours [type="radio"]')).forEach(function(radio) {
         radio.addEventListener('change', toggleOtherColour);
     });
     toggleOtherColour();

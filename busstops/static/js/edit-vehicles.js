@@ -11,7 +11,7 @@
 
     // checkbox ranges of rows
     var lastInput,
-        checkboxes = document.querySelectorAll('.fleet input');
+        checkboxes = Array.from(document.querySelectorAll('.fleet input'));
 
     function handleBoxCheck(event) {
         if (event.shiftKey && lastInput) {
@@ -43,7 +43,7 @@
         var display = otherCheckbox.checked ? '' : 'none';
         document.getElementById('id_other_colour').parentNode.style.display = display;
     }
-    document.querySelectorAll('#id_colours [type="radio"]').forEach(function(radio) {
+    Array.from(document.querySelectorAll('#id_colours [type="radio"]')).forEach(function(radio) {
         radio.addEventListener('change', toggleOtherColour);
     });
     toggleOtherColour();
