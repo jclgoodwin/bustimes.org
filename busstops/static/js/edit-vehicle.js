@@ -31,8 +31,10 @@
     // other colour
     function toggleOtherColour() {
         var otherCheckbox = document.querySelector('#id_colours [value="Other"]');
-        var display = otherCheckbox.checked ? '' : 'none';
-        document.getElementById('id_other_colour').parentNode.style.display = display;
+        if (otherCheckbox) {
+            var display = otherCheckbox.checked ? '' : 'none';
+            document.getElementById('id_other_colour').parentNode.style.display = display;
+        }
     }
     var radios = document.querySelectorAll('#id_colours [type="radio"]');
     for (var i = radios.length - 1; i >= 0; i -= 1) {
