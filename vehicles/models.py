@@ -530,11 +530,14 @@ class VehicleLocation(models.Model):
             Index(name='datetime_latlong', fields=('datetime', 'latlong'), condition=Q(current=True)),
         )
 
+    def get_appendage(self):
+        appendage = [self.datetime, tuple(self.latlong), self.heading, self.early]
+        return (f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
+
     def redis_append(self):
         r = redis.from_url(settings.REDIS_URL)
-        appendage = [self.datetime, tuple(self.latlong), self.heading, self.early]
         try:
-            r.rpush(f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
+            r.rpush(*self.get_appendage())
         except redis.exceptions.ConnectionError:
             pass
 

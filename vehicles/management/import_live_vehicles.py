@@ -2,6 +2,7 @@ import math
 import requests
 import logging
 import pid
+import redis
 from aioredis import ReplyError
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -252,6 +253,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         channels = Channel.objects.using(settings.READ_DATABASE).defer('bounds')
 
+        r = redis.from_url(settings.REDIS_URL)
+        pipeline = r.pipeline(transaction=False)
+
         for location, latest, vehicle in self.to_save:
             if not vehicle.latest_location_id:
                 vehicle.latest_location = location
@@ -259,7 +263,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             self.current_location_ids.add(location.id)
 
-            location.redis_append()
+            pipeline.rpush(location.get_appendage())
 
             message = location.get_message(vehicle)
 
@@ -309,7 +313,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 except ChannelFull:
                     pass
         except ReplyError:
-            return
+            pass
+
+        try:
+            pipeline.execute()
+        except redis.exceptions.ConnectionError:
+            pass
 
         self.to_save = []
 
