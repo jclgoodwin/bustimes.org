@@ -74,6 +74,10 @@ class Command(ImportFromCSVCommand):
         if operator_id in self.removed_operator_ids:
             return
         operator_name = self.get_name(row).replace('\'', '\u2019').strip()  # Fancy apostrophe
+
+        if operator_name.startswith('Stagecoach '):
+            operator_name = f'{operator_name} ({operator_id})'
+
         region_id = self.get_region_id(row['TLRegOwn'])
 
         mode = row['Mode'].lower()

@@ -190,68 +190,6 @@ VISB:
     phone: 01204 468288
     url: http://www.visionbus.co.uk/
     email: info@visionbus.co.uk
-SCHU:
-    name: Stagecoach in the Fens
-NFKG:
-    name: Stagecoach Norfolk
-SCPY:
-    name: Stagecoach in Portsmouth
-SCSU:
-    name: Stagecoach Sunderland
-SCSS:
-    name: Stagecoach South Shields
-SCCM:
-    name: Stagecoach in Cambridge
-SCBD:
-    name: Stagecoach in Bedford
-SCPB:
-    name: Stagecoach in Peterborough
-YSYC:
-    name: Stagecoach in Chesterfield
-SCGL:
-    name: Stagecoach in Gloucester
-SCLI:
-    name: Stagecoach Lincolnshire
-SCGR:
-    name: Stagecoach Grimsby-Cleethorpes
-SCBL:
-    name: Stagecoach Bassetlaw
-CLTL:
-    name: Stagecoach Hull
-STSY:
-    name: Stagecoach Strathtay
-SCGS:
-    name: Stagecoach in Glasgow
-SCHI:
-    name: Stagecoach Highlands
-SBLB:
-    name: Stagecoach Bluebird
-SCPE:
-    name: Stagecoach Perth
-SCFI:
-    name: Stagecoach Fife
-STCR:
-    name: Stagecoach in Chester
-SCWW:
-    name: Stagecoach Warwickshire
-SWIG:
-    name: Stagecoach Wigan
-SCNH:
-    name: Stagecoach Northamptonshire
-SCTE:
-    name: Stagecoach Teesside
-SCCO:
-    name: Stagecoach in Hants & Surrey
-SCHM:
-    name: Stagecoach in Hampshire
-SCHT:
-    name: Stagecoach in Hastings
-SCEK:
-    name: Stagecoach in East Kent
-SCEB:
-    name: Stagecoach in Eastbourne
-SCHA:
-    name: Stagecoach in Hartlepool
 CBBH:
     name: Centrebus (South)
 CBNL:
