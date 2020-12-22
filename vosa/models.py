@@ -1,5 +1,7 @@
 from django.db import models
+from django.db.models import Exists, OuterRef
 from django.urls import reverse
+from busstops.models import Service
 
 
 class Licence(models.Model):
@@ -12,6 +14,10 @@ class Licence(models.Model):
     description = models.CharField(max_length=255)
     granted_date = models.DateField(null=True)
     address = models.TextField()
+
+    def get_operator(self):
+        operators = self.operator_set.filter(Exists(Service.objects.filter(operator=OuterRef('pk'), current=True)))
+        return operators.select_related('region').first()
 
     def __str__(self):
         return self.licence_number

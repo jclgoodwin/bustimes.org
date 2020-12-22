@@ -21,7 +21,7 @@ class LicenceView(DetailView):
         context['cancelled'] = registrations.filter(registration_status__in=cancelled_statuses)
         context['registrations'] = registrations.exclude(pk__in=context['cancelled'])
 
-        context['operator'] = self.object.operator_set.select_related('region').first()
+        context['operator'] = self.object.get_operator()
         if context['operator']:
             context['breadcrumb'] = [context['operator'].region, context['operator']]
 
@@ -40,7 +40,7 @@ class RegistrationView(DetailView):
 
         context['breadcrumb'] = [self.object.licence]
 
-        context['operator'] = self.object.licence.operator_set.select_related('region').first()
+        context['operator'] = self.object.licence.get_operator()
 
         if context['operator']:
             context['breadcrumb'] = [
