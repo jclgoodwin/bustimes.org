@@ -19,7 +19,7 @@
                 to = lastInput.parentNode.parentNode.rowIndex - 1,
                 min = Math.min(from, to),
                 max = Math.max(from, to);
-            for (var i = min; i =< max; i += 1) {
+            for (var i = min + 1; i < max; i += 1) {
                 var checkbox = checkboxes[i];
                 checkbox.checked = lastInput.checked;
                 checkbox.parentNode.parentNode.style.background = checkbox.checked ? '#ef9' : '';
@@ -44,7 +44,7 @@
         document.getElementById('id_other_colour').parentNode.style.display = display;
     }
     var radios = document.querySelectorAll('#id_colours [type="radio"]');
-    for (var i = radios.length - 1; i >= 0; i -= 1) {
+    for (i = radios.length - 1; i >= 0; i -= 1) {
         radios[i].addEventListener('change', toggleOtherColour);
     }
     toggleOtherColour();
