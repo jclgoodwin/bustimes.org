@@ -263,7 +263,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             self.current_location_ids.add(location.id)
 
-            pipeline.rpush(location.get_appendage())
+            pipeline.rpush(*location.get_appendage())
 
             message = location.get_message(vehicle)
 
