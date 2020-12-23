@@ -191,23 +191,15 @@ def operator_map(request, slug):
 
     services = operator.service_set.filter(current=True)
     extent = services.aggregate(Extent('geometry'))['geometry__extent']
-
-    # services = mark_safe(json.dumps({
-    #     'type': 'FeatureCollection',
-    #     'features': [{
-    #         'type': 'Feature',
-    #         'geometry': json.loads(service.geometry.simplify().json),
-    #         'properties': {
-    #             'name': str(service)
-    #         }
-    #     } for service in services]
-    # }))
+    if not extent:
+        extent = operator.vehicle_set.aggregate(Extent('latest_location__latlong'))['latest_location__latlong__extent']
+    if not extent:
+        raise Http404
 
     return render(request, 'operator_map.html', {
         'object': operator,
         'operator': operator,
         'breadcrumb': [operator.region, operator],
-        # 'services': services
         'operator_id': operator.id,
         'extent': extent
     })
