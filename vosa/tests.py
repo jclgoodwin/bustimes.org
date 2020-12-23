@@ -1,6 +1,6 @@
 import os
 from django.test import TestCase
-from busstops.models import Region, Operator
+from busstops.models import Region, Operator, Service
 from .models import Licence
 from .management.commands import import_variations
 
@@ -53,6 +53,9 @@ Other details: Daily Service Every Twenty Minutes""",
         Region.objects.create(id='SW', name='South West')
         operator = Operator.objects.create(region_id='SW', id='AINS', name="Ainsley's Chariots")
         operator.licences.add(Licence.objects.get())
+
+        service = Service.objects.create(current=True, date='2020-10-10')
+        service.operator.add(operator)
 
     def test_licence_view(self):
         with self.assertNumQueries(4):
