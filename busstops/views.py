@@ -393,9 +393,6 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                 nearby = nearby.filter(admin_area=self.object.admin_area)
                 if self.object.town:
                     nearby = nearby.filter(town=self.object.town)
-        elif self.object.atco_code[:3] in {'je-', 'gg-'}:
-            nearby = nearby.filter(common_name__iexact=self.object.common_name,
-                                   atco_code__startswith=self.object.atco_code[:3])
         else:
             nearby = None
 

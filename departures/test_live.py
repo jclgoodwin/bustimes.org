@@ -113,8 +113,6 @@ class LiveDeparturesTest(TestCase):
             )
         )
 
-        cls.jersey_stop = StopPoint.objects.create(atco_code='je-2734', active=True, locality_centre=False)
-
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
                                            start_date='2019-02-09', end_date='2019-02-09')
         worcester_route = Route.objects.create(service=worcester_44, start_date='2017-03-04', source=source, code='44')
@@ -379,14 +377,6 @@ class LiveDeparturesTest(TestCase):
                 </tbody></table>
             </div>
         """, html=True)
-
-    def test_jersey(self):
-        with vcr.use_cassette('data/vcr/jersey_live.yaml'):
-            with self.assertNumQueries(5):
-                response = self.client.get(self.jersey_stop.get_absolute_url())
-        self.assertEqual(len(response.context_data['departures']), 9)
-        self.assertEqual(response.context_data['departures'][0]['service'], '16')
-        self.assertEqual(str(response.context_data['departures'][0]['destination']), 'St Helier')
 
     @patch('vehicles.tasks.log_vehicle_journey.delay')
     def test_worcestershire(self, log_vehicle_journey):

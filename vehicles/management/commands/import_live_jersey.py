@@ -45,10 +45,6 @@ class Command(ImportLiveVehiclesCommand):
         journey.code = parts[-2]
         journey.route_name = item['line']
 
-        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
-            journey.service = vehicle.latest_location.journey.service
-            return journey
-
         if item['cat'] != 'School Bus':
             try:
                 line_name = item['line'].lower()

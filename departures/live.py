@@ -140,25 +140,6 @@ class Departures:
         self.set_poorly(1800)  # back off for 30 minutes
 
 
-class JerseyDepartures(Departures):
-    def get_request_url(self):
-        return 'http://sojbuslivetimespublic.azurewebsites.net/api/Values/v1/BusStop/' + self.stop.atco_code[3:]
-
-    def departures_from_response(self, response):
-        departures = []
-        for item in response.json():
-            time = ciso8601.parse_datetime(item['ETA'])
-            row = {
-                'time': time,
-                'destination': item['Destination'],
-                'service': self.get_service(item['ServiceNumber'])
-            }
-            if item['IsTracked']:
-                row['live'] = time
-            departures.append(row)
-        return departures
-
-
 class TflDepartures(Departures):
     """Departures from the Transport for London API"""
     @staticmethod
@@ -644,13 +625,6 @@ def get_departures(stop, services):
         departures = TflDepartures(stop, services)
         return ({
             'departures': departures,
-            'today': datetime.date.today(),
-        }, 60)
-
-    # Jersey
-    if stop.atco_code[:3] == 'je-':
-        return ({
-            'departures': JerseyDepartures(stop, services).get_departures(),
             'today': datetime.date.today(),
         }, 60)
 
