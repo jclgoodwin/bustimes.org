@@ -5,9 +5,7 @@
         L, reqwest
     */
 
-    var map = L.map('hugemap', {
-            minZoom: 10
-        }),
+    var map = L.map('hugemap'),
         stopsGroup = L.layerGroup(),
         vehiclesGroup = L.layerGroup();
 
