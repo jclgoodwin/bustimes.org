@@ -484,6 +484,7 @@ STAGECOACH_OPERATORS = [
 FIRST_OPERATORS = [
     ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
     ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
+    ('FirstAvon', 'SW', {'FBRI': 'FBRI'}),
 
     ('FirstColchester', 'SE', {'FESX': 'FESX'}),
     ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
