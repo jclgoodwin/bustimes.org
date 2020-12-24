@@ -1,7 +1,7 @@
 import datetime
 from django.contrib.gis.geos import Point
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import VehicleLocation, VehicleJourney, Service
+from ...models import VehicleLocation, VehicleJourney
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -41,17 +41,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
-        parts = item['bus'].split('-')
-        journey.code = parts[-2]
         journey.route_name = item['line']
-
-        if item['cat'] != 'School Bus':
-            try:
-                line_name = item['line'].lower()
-                journey.service = Service.objects.get(line_name=line_name, current=True, operator=self.operator)
-            except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
-                print(e, line_name)
-
         return journey
 
     def create_vehicle_location(self, item):

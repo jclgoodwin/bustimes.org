@@ -1,11 +1,6 @@
 import os
-import vcr
-from mock import patch
 from unittest import skip
-from requests.exceptions import RequestException
 from django.test import TestCase
-from django.conf import settings
-from django.core.management import call_command
 from ...models import Region, Operator, Service
 from ..commands import import_operators
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -82,36 +77,3 @@ class ImportOperatorsTest(TestCase):
     def test_operator_ignore(self):
         """Were some rows correctly ignored?"""
         self.assertFalse(len(Operator.objects.filter(id='TVSR')))
-
-    def test_operator_twitter(self):
-        bluebus = Operator.objects.get(id='BLUE')
-        bluebus.url = 'http://sanderscoaches.com'
-        bluebus.save()
-
-        self.assertEqual(bluebus.twitter, '')
-
-        # is a Twitter username correctly imported?
-        with vcr.use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'operator_twitter.yaml')):
-            from ..commands import import_operator_twitter
-            call_command('import_operator_twitter')
-
-        Command = import_operator_twitter.Command
-
-        bluebus.refresh_from_db()
-        self.assertEqual(bluebus.twitter, 'sanderscoaches')
-
-        # if there's an error connecting to the website, operator.url = ''
-        bluebus.twitter = ''  # ensure website will be crawled again
-        bluebus.save()
-
-        with patch.object(import_operator_twitter.HTMLSession, 'get') as get:
-            get.side_effect = RequestException
-            Command().handle()
-
-        bluebus.refresh_from_db()
-        self.assertEqual(bluebus.url, '')
-
-        self.assertIsNone(Command.get_from_link('https://twitter.com/search'))
-        self.assertIsNone(Command.get_from_link('https://twitter.com/intent/tweet'))
-        self.assertIsNone(Command.get_from_link('/search'))
-        self.assertEqual(Command.get_from_link('https://twitter.com/@LoachesCoaches'), 'LoachesCoaches')
