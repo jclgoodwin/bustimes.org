@@ -1,22 +1,24 @@
 import os
 import zipfile
+from datetime import timedelta
+from ciso8601 import parse_datetime
 from django.conf import settings
 from django.db.models import Prefetch
+from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.views.generic.detail import DetailView
-from django.http import FileResponse, Http404, HttpResponse
-from busstops.models import Service, DataSource
+from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
+from busstops.models import Service, DataSource, StopPoint
+from departures.live import TimetableDepartures
+from .utils import format_timedelta
 from .models import Route, Trip
 
 
 class ServiceDebugView(DetailView):
     model = Service
-    queryset = model.objects.prefetch_related(
-        Prefetch(
-            'route_set__trip_set',
-            queryset=Trip.objects.prefetch_related('calendar__calendardate_set').order_by('calendar', 'inbound', 'start')
-        )
-    )
+    trips = Trip.objects.prefetch_related('calendar__calendardate_set').order_by('calendar', 'inbound', 'start')
+    prefetch = Prefetch('route_set__trip_set', queryset=trips)
+    queryset = model.objects.prefetch_related(prefetch)
     template_name = 'service_debug.html'
 
     def get_context_data(self, **kwargs):
@@ -68,3 +70,73 @@ def route_xml(request, source, code=''):
 
     # FileResponse automatically closes the file
     return FileResponse(open(path, 'rb'), content_type='text/xml')
+
+
+def stop_times_json(request, pk):
+    stop = get_object_or_404(StopPoint, atco_code=pk)
+    times = []
+    if 'when' in request.GET:
+        try:
+            when = parse_datetime(request.GET['when'])
+        except ValueError:
+            raise HttpResponseBadRequest()
+    else:
+        when = timezone.now()
+    services = stop.service_set.filter(current=True).defer('geometry', 'search_vector')
+    departures = TimetableDepartures(stop, services, when)
+    time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
+                                    microseconds=when.microsecond)
+    midnight = when - time_since_midnight
+
+    for stop_time in departures.get_times(when).prefetch_related("trip__route__service__operator"):
+        service = {
+            "line_name": stop_time.trip.route.service.line_name,
+            "operators": [{
+                "id": operator.id,
+                "name": operator.name,
+                "parent": operator.parent,
+            } for operator in stop_time.trip.route.service.operator.all()]
+        }
+        destination = {
+            "atco_code": stop_time.trip.destination_id,
+            "name": stop_time.trip.destination.get_qualified_name()
+        }
+        arrival = stop_time.arrival
+        departure = stop_time.departure
+        if arrival:
+            arrival = midnight + stop_time.arrival
+        if departure:
+            departure = midnight + stop_time.departure
+        times.append({
+            "service": service,
+            "trip_id":  stop_time.trip_id,
+            "destination": destination,
+            "aimed_arrival_time": arrival,
+            "aimed_departure_time": departure
+        })
+
+    return JsonResponse({
+        "times": times
+    })
+
+
+def trip_json(_, pk):
+    trip = get_object_or_404(Trip, id=pk)
+    times = []
+    for stop_time in trip.stoptime_set.select_related('stop__locality'):
+        stop = {}
+        if stop_time.stop:
+            stop['atco_code'] = stop_time.stop_id
+            stop['name'] = stop_time.stop.get_qualified_name()
+        else:
+            stop['name'] = stop_time.stop_code
+
+        times.append({
+            "stop": stop,
+            "aimed_arrival_time": format_timedelta(stop_time.arrival) if stop_time.arrival else None,
+            "aimed_departure_time": format_timedelta(stop_time.departure) if stop_time.departure else None,
+        })
+
+    return JsonResponse({
+        "times": times
+    })

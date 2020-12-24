@@ -4,7 +4,6 @@ import ciso8601
 import datetime
 import requests
 import pytz
-import dateutil.parser
 import logging
 import xmltodict
 import xml.etree.cElementTree as ET
