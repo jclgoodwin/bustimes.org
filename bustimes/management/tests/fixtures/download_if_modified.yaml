@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.25.0
+      - bustimes.org
     method: GET
     uri: https://bustimes.org/static/js/global.js
   response:
@@ -64,7 +64,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.25.0
+      - bustimes.org
       if-modified-since:
       - Sat, 04 Jul 2020 13:55:09 GMT
     method: HEAD
@@ -104,7 +104,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.25.0
+      - bustimes.org
       if-modified-since:
       - Sat, 04 Jul 2020 13:55:09 GMT
     method: GET

@@ -17,7 +17,9 @@ def download(path, url):
 
 
 def download_if_changed(path, url, params=None):
-    headers = {}
+    headers = {
+        "User-Agent": "bustimes.org"
+    }
     modified = True
     if os.path.exists(path):
         headers['if-modified-since'] = http_date(os.path.getmtime(path))
