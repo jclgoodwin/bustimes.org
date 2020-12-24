@@ -263,99 +263,6 @@ class AcisHorizonDepartures(Departures):
             return row
 
 
-class TransportApiDepartures(Departures):
-    """Departures from Transport API"""
-    def __init__(self, stop, services, today):
-        self.today = today
-        super().__init__(stop, services)
-
-    @staticmethod
-    def _get_destination(item):
-        destination = item['direction']
-        destination_matches = DESTINATION_REGEX.match(destination)
-        if destination_matches is not None:
-            destination = destination_matches.groups()[0]
-        elif item['source'] == 'VIX' and ',' in destination:
-            destination = destination.split(',', 1)[0]
-        return destination
-
-    @staticmethod
-    def _get_time(string):
-        if string:
-            hour = int(string[:2])
-            while hour > 23:
-                hour -= 24
-                string = '%02d%s' % (hour, string[2:])
-        return string
-
-    def get_row(self, item):
-        live_time = self._get_time(item.get('expected_departure_time'))
-        time = self._get_time(item['aimed_departure_time'])
-        if not time:
-            time = live_time
-        if not time:
-            return
-        if item.get('date') is not None:
-            time = timezone.make_aware(ciso8601.parse_datetime(item['date'] + ' ' + time))
-            if live_time:
-                live_time = timezone.make_aware(ciso8601.parse_datetime(item['date'] + ' ' + live_time))
-            if (item['source'].startswith('Traveline timetable') and time.date() > self.today):
-                return
-        else:
-            time = timezone.make_aware(datetime.datetime.combine(
-                self.today, dateutil.parser.parse(time).time()
-            ))
-            if live_time:
-                live_time = timezone.make_aware(datetime.datetime.combine(
-                    self.today, dateutil.parser.parse(live_time).time()
-                ))
-        return {
-            'time': time,
-            'live': live_time,
-            'service': self.get_service(item.get('line').split('--', 1)[0].split('|', 1)[0]),
-            'destination': self._get_destination(item),
-        }
-
-    def get_request_url(self):
-        return 'http://transportapi.com/v3/uk/bus/stop/%s/live.json' % self.stop.atco_code
-
-    def get_request_params(self):
-        return {
-            **settings.TRANSPORTAPI,
-            'group': 'no',
-            'nextbuses': 'no'
-        }
-
-    def departures_from_response(self, res):
-        departures = res.json().get('departures')
-        if departures and 'all' in departures:
-            return [row for row in map(self.get_row, departures['all']) if row]
-
-
-class UKTrainDepartures(Departures):
-    def get_request_url(self):
-        return 'http://transportapi.com/v3/uk/train/station/tiploc:%s/live.json' % self.stop.atco_code[4:]
-
-    def get_request_params(self):
-        return settings.TRANSPORTAPI
-
-    @staticmethod
-    def get_time(res, item, key):
-        if item[key]:
-            return ciso8601.parse_datetime(res['date'] + ' ' + item[key])
-        if item['status'] == 'CANCELLED':
-            return 'Cancelled'
-
-    def departures_from_response(self, res):
-        res = res.json()
-        return [{
-            'time': self.get_time(res, item, 'aimed_departure_time'),
-            'live': self.get_time(res, item, 'expected_departure_time'),
-            'service': item['operator_name'],
-            'destination': item['destination_name']
-        } for item in res['departures']['all']]
-
-
 class NorfolkDepartures(Departures):
     request_url = 'https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable'
 
@@ -611,14 +518,6 @@ def get_departures(stop, services):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
-
-    # 🚂
-    if stop.atco_code[:3] == '910':
-        departures = UKTrainDepartures(stop, ())
-        return ({
-            'departures': departures,
-            'today': datetime.date.today(),
-        }, 30)
 
     # Transport for London
     if any(service.service_code[:4] == 'tfl_' for service in services):

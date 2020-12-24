@@ -224,10 +224,6 @@ else:
         },
     }
 
-TRANSPORTAPI = {
-   'app_id': os.environ.get('TRANSPORTAPI_APP_ID'),
-   'app_key': os.environ.get('TRANSPORTAPI_APP_KEY')
-}
 TFL = {
     'app_id': os.environ.get('TFL_APP_ID'),
     'app_key': os.environ.get('TFL_APP_KEY')

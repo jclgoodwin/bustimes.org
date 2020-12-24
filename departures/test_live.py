@@ -2,7 +2,7 @@
 """Tests for live departures
 """
 import vcr
-from datetime import date, time, datetime
+from datetime import time, datetime
 from unittest.mock import patch
 from django.test import TestCase
 from django.shortcuts import render
@@ -11,14 +11,6 @@ from busstops.models import StopPoint, Service, Region, Operator, StopUsage, Adm
 from bustimes.models import Route, Trip, Calendar, StopTime
 from vehicles.models import VehicleJourney
 from . import live
-
-
-class DummyResponse:
-    def __init__(self, data):
-        self.data = data
-
-    def json(self):
-        return self.data
 
 
 class LiveDeparturesTest(TestCase):
@@ -208,119 +200,6 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(str(res.context_data['departures'][0]['time']), '2017-03-28 18:53:00+01:00')
         self.assertEqual(str(res.context_data['departures'][2]['time']), '2017-03-28 19:08:00+01:00')
         self.assertEqual(str(res.context_data['departures'][2]['live']), '2017-03-28 19:08:25+01:00')
-
-    def test_transportapi(self):
-        """Test the get_row and other methods for Transport API departures
-        """
-        departures = live.TransportApiDepartures(self.yorkshire_stop, (), date(2016, 6, 10))
-        rows = departures.departures_from_response(DummyResponse({'departures': {'all': [{
-            'direction': 'Gunton,Weston Road,',
-            'expected_departure_time': None,
-            'line_name': '101',
-            'aimed_departure_time': None,
-            'source': 'VIX',
-            'best_departure_estimate': None,
-            'mode': 'bus',
-            'operator': 'FECS',
-            'line': '101'
-        }, {
-            'direction': 'Hellesdon, Bush Roa',
-            'expected_departure_time': '22:15',
-            'line_name': '37',
-            'aimed_departure_time': '22:17',
-            'source': 'VIX',
-            'best_departure_estimate': '22:15',
-            'mode': 'bus',
-            'operator': 'FECS',
-            'line': '37'
-        }, {
-            'direction': 'Railway Approach (Sheringham)',
-            'source': 'Traveline timetable (nextbuses disabled)',
-            'line_name': '44A',
-            'aimed_departure_time': '22:47',
-            'date': '2016-06-10',
-            'best_departure_estimate': '22:47',
-            'mode': 'bus',
-            'operator': 'SNDR',
-            'line': '44A',
-            'dir': 'inbound'
-        }, {
-            'direction': 'Railway Approach (Sheringham)',
-            'source': 'Traveline timetable (nextbuses disabled)',
-            'line_name': '44A',
-            'aimed_departure_time': '06:47',
-            'date': '2016-06-11',
-            'best_departure_estimate': '06:47',
-            'mode': 'bus',
-            'operator': 'SNDR',
-            'line': '44A',
-            'dir': 'inbound'
-        }]}}))
-        self.assertEqual(len(rows), 2)
-        tzinfo = live.parse_datetime('2019-04-20T18:30:00+01:00').tzinfo
-        self.assertEqual(rows[0], {
-            'destination': 'Hellesdon',
-            'service': '37',
-            'time': datetime(2016, 6, 10, 22, 17, tzinfo=tzinfo),
-            'live': datetime(2016, 6, 10, 22, 15, tzinfo=tzinfo)
-        })
-        self.assertEqual(rows[1], {
-            'destination': 'Sheringham',
-            'service': '44A',
-            'time': datetime(2016, 6, 10, 22, 47, tzinfo=tzinfo),
-            'live': None
-        })
-
-        self.assertEqual(departures._get_time('27:02'), '03:02')
-        east_scotland_row = departures.get_row({
-            'mode': 'bus',
-            'line': 'N55',
-            'line_name': 'N55',
-            'direction': 'Edinburgh',
-            'operator': 'Stagecoach',
-            'aimed_departure_time': None,
-            'expected_departure_time': '27:02',
-            'best_departure_estimate': '27:02',
-            'source': 'Scotland East'
-        })
-        self.assertEqual(east_scotland_row['destination'], 'Edinburgh')
-        self.assertEqual(east_scotland_row['live'].time(), time(3, 2))
-
-        east_scotland_row_date = departures.get_row({
-            'mode': 'bus',
-            'line': '38',
-            'line_name': '38',
-            'direction': 'Stirling',
-            'operator': 'First',
-            'date': '2016-10-07',
-            'expected_departure_date': '2016-10-07',
-            'aimed_departure_time': '24:32',
-            'expected_departure_time': '24:32',
-            'best_departure_estimate': '24:32',
-            'source': 'Scotland East'
-        })
-        self.assertEqual(east_scotland_row_date['destination'], 'Stirling')
-        self.assertEqual(east_scotland_row_date['live'].time(), time(0, 32))
-
-        self.assertEqual(
-            departures.get_request_url(),
-            'http://transportapi.com/v3/uk/bus/stop/3290YYA00215/live.json'
-        )
-        self.assertEqual(departures.get_request_params(), {
-            'app_id': None,
-            'app_key': None,
-            'group': 'no',
-            'nextbuses': 'no'
-        })
-
-    def test_uk_train(self):
-        stop = StopPoint(atco_code='9100FLKSTNC')
-        with vcr.use_cassette('data/vcr/uk_train.yaml'):
-            departures, max_age = live.get_departures(stop, ())
-            departures = departures['departures'].get_departures()
-        self.assertEqual(30, max_age)
-        self.assertEqual(departures[0]['live'], 'Cancelled')
-        self.assertEqual(departures[2]['live'], 'Cancelled')
 
     def test_blend(self):
         service = Service(line_name='X98')
