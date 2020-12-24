@@ -244,6 +244,9 @@ FECS:
         NR1 3DE
 FHUD:
     name: First Huddersfield
+TRST:
+    name: TrustyBus
+
 GECL:
     twitter: GallowayLive
 JOHS:
@@ -324,7 +327,6 @@ EOSB:
     address: ""
     phone: ""
 KCTB:
-    aka: konect konnect bus
     url: https://www.konectbus.co.uk/
     phone: 03300 539358
     address: |
@@ -350,12 +352,10 @@ CHAM:
         CO15 4XA
 ENSB:
     name: Ensignbus
-    aka: Ensign Bus
 NOTB:
     twitter: NottsCC
 EYMS:
     name: East Yorkshire
-    aka: EYMS Motor Services
     url: https://www.eastyorkshirebuses.co.uk/
 FSCE:
     url: https://www.firstgroup.com/south-east-and-central-scotland
@@ -365,7 +365,6 @@ BHBC:
     name: Brighton & Hove
 CT4N:
     name: CT4N
-    aka: Nottingham Community Transport
 EDWC:
     address: |
         Edwards Busnes Parc
@@ -374,7 +373,6 @@ EDWC:
         CF72 8QZ
 WNCT:
     url: https://www.gtt-online.co.uk/timetables/
-    aka: WNCT
     address: |
         Unit 7 & 8
         Merchants Close
