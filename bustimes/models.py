@@ -85,14 +85,21 @@ class Calendar(models.Model):
         )
 
     def allows(self, date):
+        if not self.contains(date):
+            return False
+
         if getattr(self, date.strftime('%a').lower()):
             for calendar_date in self.calendardate_set.all():
                 if not calendar_date.operation and calendar_date.contains(date):
                     return False
             return True
+
         for calendar_date in self.calendardate_set.all():
             if calendar_date.operation and calendar_date.special and calendar_date.contains(date):
                 return True
+
+    def contains(self, date):
+        return self.start_date <= date and (not self.end_date or self.end_date >= date)
 
     def __str__(self):
         day_keys = (
@@ -130,8 +137,7 @@ class CalendarDate(models.Model):
     special = models.BooleanField(default=False, db_index=True)
     summary = models.CharField(max_length=255, blank=True)
 
-    def contains(self, date):
-        return self.start_date <= date and (not self.end_date or self.end_date >= date)
+    contains = Calendar.contains
 
     def relevant(self, operating_period):
         if self.end_date:
