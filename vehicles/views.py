@@ -453,7 +453,7 @@ def vehicle_history(request, vehicle_id):
         'vehicle', 'from_livery', 'to_livery', 'from_type', 'to_type', 'user'
     ).order_by('-id')
     return render(request, 'vehicle_history.html', {
-        'breadcrumb': [vehicle.operator, Vehicles(vehicle.operator), vehicle],
+        'breadcrumb': [vehicle.operator, vehicle.operator and Vehicles(vehicle.operator), vehicle],
         'vehicle': vehicle,
         'revisions': revisions
     })
