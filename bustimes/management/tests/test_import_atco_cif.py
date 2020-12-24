@@ -1,5 +1,6 @@
 import os
 import zipfile
+from tempfile import TemporaryDirectory
 from freezegun import freeze_time
 from django.test import TestCase
 from django.core.management import call_command
@@ -9,13 +10,6 @@ from ...models import Route
 
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
-
-
-def clean_up():
-    # clean up
-    path = os.path.join(FIXTURES_DIR, 'ulb.zip')
-    if os.path.exists(path):
-        os.remove(path)
 
 
 def write_file_to_zipfile(open_zipfile, filename):
@@ -44,14 +38,15 @@ class ImportAtcoCifTest(TestCase):
         )
 
     def test_ulsterbus(self):
-        zipfile_path = os.path.join(FIXTURES_DIR, 'ulb.zip')
 
-        clean_up()
-        write_files_to_zipfile(zipfile_path, ['218 219.cif'])
-        with freeze_time('2019-10-09'):
-            call_command('import_atco_cif', zipfile_path)
-            call_command('import_atco_cif', zipfile_path)
-        clean_up()
+        with TemporaryDirectory() as directory:
+            zipfile_path = os.path.join(directory, 'ulb.zip')
+
+            write_files_to_zipfile(zipfile_path, ['218 219.cif'])
+
+            with freeze_time('2019-10-09'):
+                call_command('import_atco_cif', zipfile_path)
+                call_command('import_atco_cif', zipfile_path)
 
         self.assertEqual(5, Route.objects.count())
         self.assertEqual(5, Service.objects.count())
@@ -89,15 +84,8 @@ class ImportAtcoCifTest(TestCase):
         self.assertContains(response, '<option selected value="2019-12-25">Wednesday 25 December 2019</option>')
         self.assertNotContains(response, 'Sunday')
 
-        # no journeys on this date - CalendarDate with operation = False
+        # no journeys on this date - CalendarDate with operation = False - so should skip to next date of operation
         with freeze_time('2019-07-20'):
-            with self.assertNumQueries(13):
-                response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
-                self.assertEqual('2019-07-20', str(response.context_data['timetable'].date))
-                self.assertEqual(0, len(response.context_data['timetable'].groupings))
-        self.assertNotContains(response, 'sets down only')
-
-        with freeze_time('2019-07-27'):
             with self.assertNumQueries(16):
                 response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
                 self.assertEqual('2019-07-27', str(response.context_data['timetable'].date))
