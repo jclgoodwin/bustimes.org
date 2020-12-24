@@ -165,6 +165,9 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         destination_ref = monitored_vehicle_journey.get("DestinationRef")
+        if destination_ref:
+            if destination_ref.startswith('NT'):
+                destination_ref = destination_ref[2:]
 
         cache_key = f"{operator}:{vehicle_operator_id}:{line_ref}:{destination_ref}"
         if cache_key in self.service_cache:
@@ -290,7 +293,6 @@ class Command(ImportLiveVehiclesCommand):
                 datetime=origin_aimed_departure_time,
             )
 
-
         if vehicle_journey_ref:
             journey.code = vehicle_journey_ref
 
@@ -303,6 +305,8 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 destination_ref = monitored_vehicle_journey.get('DestinationRef')
                 if destination_ref:
+                    if destination_ref.startswith('NT'):
+                        destination_ref = destination_ref[2:]
                     cache_key = f'stop{destination_ref}locality'
                     journey.destination = cache.get(cache_key)
                     if journey.destination is None:
