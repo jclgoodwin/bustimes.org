@@ -79,7 +79,7 @@ def stop_times_json(request, pk):
         try:
             when = parse_datetime(request.GET['when'])
         except ValueError:
-            raise HttpResponseBadRequest()
+            return HttpResponseBadRequest()
     else:
         when = timezone.now()
     services = stop.service_set.filter(current=True).defer('geometry', 'search_vector')
