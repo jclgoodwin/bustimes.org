@@ -4,7 +4,7 @@ import re
 import time
 import logging
 import yaml
-from urllib.parse import urlencode, quote
+from urllib.parse import urlencode
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import LineString, MultiLineString
@@ -785,10 +785,10 @@ class Service(models.Model):
                 pass
 
     def get_linked_services_cache_key(self):
-        return f'{quote(self.service_code)}linked_services{self.date}'
+        return f'{self.id}linked_services{self.date}'
 
     def get_similar_services_cache_key(self):
-        return f'{quote(self.service_code)}similar_services{self.date}'
+        return f'{self.id}similar_services{self.date}'
 
     def get_linked_services(self):
         key = self.get_linked_services_cache_key()
