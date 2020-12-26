@@ -21,7 +21,7 @@ class RouteAdmin(admin.ModelAdmin):
     list_filter = [
         ('source', admin.RelatedOnlyFieldListFilter)
     ]
-    raw_id_fields = ['service']
+    raw_id_fields = ['service', 'registration']
     search_fields = ['line_name', 'line_brand', 'description']
     inlines = [TripInline]
     formfield_overrides = {
