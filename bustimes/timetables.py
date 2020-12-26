@@ -163,7 +163,7 @@ class Timetable:
         if self.date and self.date < date:
             yield self.date
         while date <= end_date:
-            if any(calendar.allows(date) for calendar in self.calendars):
+            if any(calendar.allows(date) for calendar in self.calendars) or date == self.date:
                 yield date
             date += datetime.timedelta(days=1)
         if self.date and self.date > end_date:

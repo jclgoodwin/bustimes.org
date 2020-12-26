@@ -114,7 +114,7 @@ class Calendar(models.Model):
         day_values = (self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun)
         days = [day_keys[i] for i, value in enumerate(day_values) if value]
         if not days:
-            return ''
+            return self.summary
         if len(days) == 1:
             days = f'{days[0]}s only'
         elif days[0] == 'Monday' and days[-1] == day_keys[len(days)-1]:
