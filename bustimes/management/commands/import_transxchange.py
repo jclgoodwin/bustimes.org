@@ -739,6 +739,8 @@ class Command(BaseCommand):
                 'end_date': txc_service.operating_period.end,
                 'dates': txc_service.operating_period.dates(),
                 'service': service,
+                'revision_number': transxchange.attributes['RevisionNumber'],
+                'service_code': txc_service.service_code
             }
             if description:
                 route_defaults['description'] = description

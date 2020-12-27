@@ -1,5 +1,4 @@
 import os
-import shutil
 import boto3
 from ftplib import FTP
 from django.core.management.base import BaseCommand

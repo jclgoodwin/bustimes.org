@@ -491,6 +491,9 @@ FIRST_OPERATORS = [
     ('FirstHadleigh', 'SE', {'FESX': 'FESX'}),
     ('FirstChelmsford', 'SE', {'FESX': 'FESX'}),
 
+    ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
+    ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
+
     ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
     ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
     ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
