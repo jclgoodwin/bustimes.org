@@ -86,14 +86,22 @@ class Timetable:
     start_date = None
 
     def __init__(self, routes, date):
-        self.routes = list(routes)
+        routes = list(routes)
+        self.routes = routes
 
         self.date = date
 
         self.groupings = [Grouping(), Grouping(True)]
 
-        if not self.routes:
+        if not routes:
             return
+
+        if date:
+            if len(routes) > 1 and any(route.revision_number for route in self.routes):
+                routes = [route for route in self.routes if route.start_date <= date]
+                if len(routes) > 1:
+                    max_revision_number = max(route.revision_number for route in routes)
+                    routes = [route for route in routes if route.revision_number == max_revision_number]
 
         self.calendars = Calendar.objects.filter(
             trip__route__in=self.routes
@@ -103,7 +111,7 @@ class Timetable:
             calendar = self.calendars[0]
             if (calendar.summary or not calendar.calendardate_set.all()) and str(calendar):
                 if calendar.start_date > datetime.date.today():
-                    self.start_date = calendar.start_date
+                    self.start_date = calendar.start_date  # ???
                 self.calendar = calendar
 
         if not self.calendar:
@@ -114,7 +122,7 @@ class Timetable:
             if not self.date:
                 return
 
-        trips = Trip.objects.filter(route__in=self.routes)
+        trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:
             calendar_ids = [calendar.id for calendar in self.calendars]
             trips = trips.filter(calendar__in=get_calendars(self.date, calendar_ids))

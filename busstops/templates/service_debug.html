@@ -38,10 +38,12 @@
 
 <details{% if forloop.first and forloop.last %} open{% endif %}>
     <summary>
-        <a href="{{ route.get_absolute_url }}">{{ route.code }}</a><br>{{ route.start_date }}–{{ route.end_date }}
+        <a href="{{ route.get_absolute_url }}">{{ route.code }}</a>
+        <br>{{ route.service_code }}
+        <br>{{ route.revision_number }}
+        <br>{{ route.start_date }}–{{ route.end_date }}
+        <br><a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a>
     </summary>
-
-    <a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a>
 
 <table>
     <thead>

@@ -475,10 +475,14 @@ class Command(BaseCommand):
                 if timing_status is None:
                     timing_status = ''
                     blank = True
-                elif timing_status == 'otherPoint':
-                    timing_status = 'OTH'
-                elif timing_status == 'principleTimingPoint':
-                    timing_status = 'PTP'
+                elif len(timing_status) > 3:
+                    if timing_status == 'otherPoint':
+                        timing_status = 'OTH'
+                    elif timing_status == 'principleTimingPoint' or timing_status == 'principalTimingPoint':
+                        timing_status = 'PTP'
+                    else:
+                        print(timing_status)
+
                 stop_time = StopTime(
                     trip=trip,
                     sequence=i,
