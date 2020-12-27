@@ -24,6 +24,7 @@
             <span class="description">
                 {{ service.description }}
             </span>
+            {% if service.start_date > today %}<small>From {{ service.start_date|date:"j M" }}</small>{% endif %}
         </a>
     </li>
 {% endfor %}

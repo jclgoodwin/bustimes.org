@@ -523,7 +523,7 @@ def get_departures(stop, services):
         departures = TflDepartures(stop, services)
         return ({
             'departures': departures,
-            'today': datetime.date.today(),
+            'today': timezone.localdate(),
         }, 60)
 
     now = timezone.localtime()

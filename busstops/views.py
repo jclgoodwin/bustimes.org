@@ -9,7 +9,7 @@ from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Q, Prefetch, F, Exists, OuterRef, Count
+from django.db.models import Q, Prefetch, F, Exists, OuterRef, Count, Min
 from django.db.models.functions import Now
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
@@ -484,8 +484,10 @@ class OperatorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['services'] = sorted(self.object.service_set.filter(current=True).defer('geometry'),
-                                     key=Service.get_order)
+        services = self.object.service_set.filter(current=True).defer('geometry', 'search_vector')
+        services = services.annotate(start_date=Min('route__start_date'))
+        context['services'] = sorted(services, key=Service.get_order)
+        context['today'] = timezone.localdate()
 
         context['vehicles'] = self.object.vehicle_set.filter(withdrawn=False).exists()
 

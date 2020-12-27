@@ -1,4 +1,5 @@
 import datetime
+from django.utils.timezone import localdate
 from difflib import Differ
 from functools import cmp_to_key
 from django.db.models import Prefetch
@@ -110,7 +111,7 @@ class Timetable:
         if not date and len(self.calendars) == 1:
             calendar = self.calendars[0]
             if (calendar.summary or not calendar.calendardate_set.all()) and str(calendar):
-                if calendar.start_date > datetime.date.today():
+                if calendar.start_date > localdate():
                     self.start_date = calendar.start_date  # ???
                 self.calendar = calendar
 
@@ -152,7 +153,7 @@ class Timetable:
             grouping.do_heads_and_feet()
 
     def date_options(self):
-        date = datetime.date.today()
+        date = localdate()
 
         for calendar in self.calendars:
             for calendar_date in calendar.calendardate_set.all():

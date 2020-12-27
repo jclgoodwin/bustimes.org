@@ -531,6 +531,12 @@ table {
         display: flex;
         margin-bottom: 1em;
         white-space: normal;
+
+        small {
+            color: $text-color;
+            white-space: nowrap;
+            margin-left: 1em;
+        }
     }
 
     a:hover {
