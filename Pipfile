@@ -38,6 +38,7 @@ channels-redis = "*"
 django-rest-framework = "*"
 django-filter = "*"
 django-multidb-router = "*"
+boto3 = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
