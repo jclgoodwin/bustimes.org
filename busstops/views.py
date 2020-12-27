@@ -5,9 +5,10 @@ import requests
 import datetime
 from ukpostcodeutils import validation
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models.functions import Distance
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, Prefetch, F, Exists, OuterRef, Count
 from django.db.models.functions import Now
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -27,12 +28,11 @@ from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
 from .forms import ContactForm, SearchForm
 
 
-prefetch_stop_services = Prefetch(
-    'service_set', to_attr='current_services',
-    queryset=Service.objects.filter(current=True).distinct('line_name', 'stops').order_by().defer('geometry')
-)
-has_current_services = Exists(
+operator_has_current_services = Exists(
     Service.objects.filter(current=True, operator=OuterRef('pk'))
+)
+stop_has_current_services = Exists(
+    Service.objects.filter(current=True, stops=OuterRef('pk'))
 )
 
 
@@ -148,10 +148,10 @@ def stops(request):
         return HttpResponseBadRequest()
 
     results = StopPoint.objects.filter(
-        latlong__intersects=bounding_box, active=True, service__current=True
-    ).prefetch_related(
-        prefetch_stop_services
-    ).select_related('locality').defer('osm', 'locality__latlong').distinct()
+        latlong__intersects=bounding_box, active=True
+    ).annotate(
+        line_names=ArrayAgg('service__line_name', filter=Q(service__current=True))
+    ).filter(line_names__isnull=False).select_related('locality').defer('osm', 'locality__latlong')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -199,7 +199,7 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
             del context['areas']
 
         context['operators'] = Operator.objects.filter(
-            has_current_services,
+            operator_has_current_services,
             Q(region=self.object) | Q(regions=self.object)
         ).distinct()
 
@@ -314,9 +314,10 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             adjacent=self.object
         ).defer('latlong')
 
-        services = Service.objects.filter(current=True, stops=OuterRef('pk'))
-        stops = self.object.stoppoint_set.filter(Exists(services))
-        context['stops'] = stops.prefetch_related(prefetch_stop_services).defer('osm', 'latlong')
+        stops = self.object.stoppoint_set
+        context['stops'] = stops.annotate(
+            line_names=ArrayAgg('service__line_name', filter=Q(service__current=True))
+        ).filter(line_names__isnull=False).defer('osm', 'latlong')
 
         if not (context['localities'] or context['stops']):
             raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
@@ -324,7 +325,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             context['services'] = sorted(Service.objects.filter(
                 Exists(self.object.stoppoint_set.filter(service=OuterRef('pk'))),
                 current=True
-            ).prefetch_related('operator').defer('geometry'), key=Service.get_order)
+            ).annotate(operators=ArrayAgg('operator__name')).defer('geometry'), key=Service.get_order)
             context['modes'] = {service.mode for service in context['services'] if service.mode}
             context['colours'] = get_colours(context['services'])
         context['breadcrumb'] = [crumb for crumb in [
@@ -350,8 +351,9 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         services = self.object.service_set.filter(current=True).defer('geometry')
-        services = services.annotate(direction=F('stopusage__direction')).distinct('pk').order_by()
-        context['services'] = sorted(services.prefetch_related('operator'), key=Service.get_order)
+        # services = services.annotate(direction=F('stopusage__direction'))
+        services = services.annotate(operators=ArrayAgg('operator__name', distinct=True))
+        context['services'] = sorted(services, key=Service.get_order)
 
         if not (self.object.active or context['services']):
             raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
@@ -381,7 +383,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         region = self.object.get_region()
 
-        nearby = StopPoint.objects.filter(active=True, service__current=True).distinct()
+        nearby = StopPoint.objects.filter(active=True)
 
         if self.object.stop_area_id is not None:
             nearby = nearby.filter(stop_area=self.object.stop_area_id)
@@ -397,7 +399,9 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             nearby = None
 
         if nearby is not None:
-            context['nearby'] = nearby.exclude(pk=self.object.pk).prefetch_related(prefetch_stop_services).defer('osm')
+            context['nearby'] = nearby.exclude(pk=self.object.pk).annotate(
+                line_names=ArrayAgg('service__line_name', filter=Q(service__current=True))
+            ).filter(line_names__isnull=False).defer('osm')
 
         consequences = Consequence.objects.filter(stops=self.object)
         context['situations'] = Situation.objects.filter(
@@ -501,7 +505,7 @@ class OperatorDetailView(DetailView):
     def render_to_response(self, context):
         if not context['services'] and not context['vehicles']:
             alternative = Operator.objects.filter(
-                has_current_services,
+                operator_has_current_services,
                 name=self.object.name,
             ).first()
             if alternative:
@@ -705,7 +709,7 @@ class OperatorSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return Operator.objects.filter(has_current_services).defer('search_vector')
+        return Operator.objects.filter(operator_has_current_services).defer('search_vector')
 
 
 class ServiceSitemap(Sitemap):
@@ -748,14 +752,14 @@ def search(request):
             rank = SearchRank(F('search_vector'), query)
 
             localities = Locality.objects.filter()
-            operators = Operator.objects.filter(service__current=True).distinct()
+            operators = Operator.objects.filter(operator_has_current_services)
             services = Service.objects.filter(current=True)
 
             localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
             operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
             services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
 
-            services = services.prefetch_related('operator')
+            services = services.annotate(operators=ArrayAgg('operator__name'))
 
             context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
             context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))

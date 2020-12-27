@@ -9,7 +9,7 @@ from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.contrib.postgres.search import SearchVector, SearchVectorField
-from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db.models import Q
@@ -436,7 +436,7 @@ class StopPoint(models.Model):
         return reverse('stoppoint_detail', args=(self.atco_code,))
 
     def get_line_names(self):
-        return [service.line_name for service in sorted(self.current_services, key=Service.get_order)]
+        return sorted(self.line_names, key=Service.get_line_name_order)
 
 
 class OperatorManager(models.Manager):
@@ -585,6 +585,9 @@ class ServiceManager(models.Manager):
         vector += SearchVector(StringAgg('stops__common_name', delimiter=' '), weight='D', config='english')
         return self.get_queryset().annotate(document=vector)
 
+    def with_operators(self):
+        return self.get_queryset().annotate(operators=ArrayAgg('operator_name'))
+
 
 class Service(models.Model):
     """A bus service"""
@@ -669,7 +672,11 @@ class Service(models.Model):
         return reverse('service_detail', args=(self.slug,))
 
     def get_order(self):
-        groups = SERVICE_ORDER_REGEX.match(self.line_name).groups()
+        return self.get_line_name_order(self.line_name)
+
+    @staticmethod
+    def get_line_name_order(line_name):
+        groups = SERVICE_ORDER_REGEX.match(line_name).groups()
         return (groups[0], int(groups[1]) if groups[1] else 0, groups[2])
 
     @staticmethod
@@ -810,7 +817,7 @@ class Service(models.Model):
                 q |= Q(description=self.description)
                 q |= Q(line_name=self.line_name, operator__in=self.operator.all())
             services = Service.objects.filter(~Q(pk=self.pk), q, current=True).order_by().defer('geometry')
-            services = sorted(services.distinct().prefetch_related('operator'), key=Service.get_order)
+            services = sorted(services.distinct().annotate(operators=ArrayAgg('operator__name')), key=Service.get_order)
             cache.set(key, services)
         return services
 

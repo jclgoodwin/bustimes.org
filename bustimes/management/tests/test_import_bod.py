@@ -106,7 +106,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
 
         Route.objects.filter(code__endswith='/E1_SIS_PB_E1E2_20200614.xml#8980').delete()
 
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(15):
             response = self.client.get('/services/e2-sunderland-south-shields')
         self.assertContains(response, '<option selected value="2020-06-10">Wednesday 10 June 2020</option>')
         self.assertContains(response, '<a href="/operators/sunderland">Sunderland</a>')

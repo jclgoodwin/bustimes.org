@@ -538,18 +538,23 @@ def get_departures(stop, services):
 
         operators = set()
         for service in services:
-            for operator in service.operator.all():
+            for operator in service.operators:
                 operators.add(operator)
 
         live_rows = None
 
         # Belfast
-        if stop.atco_code[0] == '7' and any(operator.id == 'MET' or operator.id == 'GDR' for operator in operators):
+        if stop.atco_code[0] == '7' and ('Translink Metro' in operators or 'Translink Glider' in operators):
             live_rows = AcisHorizonDepartures(stop, services).get_departures()
             if live_rows:
                 blend(departures, live_rows)
         elif departures:
-            if any(operator.id in {'LOTH', 'LCBU', 'NELB', 'EDTR'} for operator in operators):
+            if (
+                'Lothian Buses' in operators
+                or 'Lothian Country Buses' in operators
+                or 'East Coast Buses' in operators
+                or 'Edinburgh Trams' in operators
+            ):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
             if live_rows:
                 blend(departures, live_rows)
@@ -573,7 +578,7 @@ def get_departures(stop, services):
             elif stop.atco_code[:3] == '290':
                 live_rows = NorfolkDepartures(stop, services, now).get_departures()
 
-            if any(operator.name[:11] == 'Stagecoach ' for operator in operators):
+            if any(operator[:11] == 'Stagecoach ' for operator in operators):
                 if not (live_rows and any(
                     row.get('live') and type(row['service']) is Service and any(
                         operator.name[:11] == 'Stagecoach ' for operator in row['service'].operator.all()

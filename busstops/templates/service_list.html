@@ -23,8 +23,8 @@
         <span class="description">
             {{ service.description }}
         </span>
-        {% if service.operator %}
-            <small>{{ service.operator.all|join:", " }}</small>
+        {% if service.operators %}
+            <small>{{ service.operators|join:", " }}</small>
         {% endif %}
     </a></li>
 {% endfor %}
