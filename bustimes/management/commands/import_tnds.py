@@ -19,18 +19,21 @@ class Command(BaseCommand):
             if file['Key'] == key:
                 return file
 
+    def list_files(self):
+        files = [(name, details) for name, details in self.ftp.mlsd() if name.endswith('.zip')]
+        files.sort(key=lambda item: int(item[1]['size']))  # smallest files first
+        return {
+            name: details for name, details in files
+        }
+
     def do_files(self, files):
         for name in files:
-            if not name.endswith('.zip'):
-                continue
-
             details = files[name]
             version = details['modify']
             versioned_name = f"{version}_{name}"
 
             s3_key = f'TNDS/{versioned_name}'
             existing = self.get_existing_file(s3_key)
-            print(name)
 
             if not existing or existing['Size'] != int(details['size']):
                 path = os.path.join(settings.TNDS_DIR, name)
@@ -38,23 +41,12 @@ class Command(BaseCommand):
                 if not os.path.exists(path) or os.path.getsize(path) != int(details['size']):
                     with open(path, 'wb') as open_file:
                         self.ftp.retrbinary(f"RETR {name}", open_file.write)
-                print(s3_key)
-                print(self.client.upload_file(path, 'bustimes-data', s3_key))
+                self.client.upload_file(path, 'bustimes-data', s3_key)
 
                 self.changed_files.append(path)
 
     def handle(self, username, password, *args, **options):
         self.client = boto3.client('s3', endpoint_url='https://ams3.digitaloceanspaces.com')
-
-        for filename in os.listdir(settings.TNDS_DIR):
-            if '_' in filename:
-                s3_key = f'TNDS/{filename}'
-                existing = self.get_existing_file(s3_key)
-                path = os.path.join(settings.TNDS_DIR, s3_key)
-                if not existing or existing['Size'] != os.path.getsize(path):
-                    print(s3_key)
-                    print(self.client.upload_file(path, 'bustimes-data', s3_key))
-                os.remove(path)
 
         self.existing_files = self.client.list_objects_v2(Bucket='bustimes-data')
 
@@ -66,13 +58,13 @@ class Command(BaseCommand):
 
         # do the 'TNDSV2.5' version if possible
         self.ftp.cwd('TNDSV2.5')
-        print(self.ftp.mlsd())
-        v2_files = {name: details for name, details in self.ftp.mlsd()}
+        v2_files = self.list_files()
         self.do_files(v2_files)
 
         # add any missing regions (NCSD)
         self.ftp.cwd('..')
-        files = {name: details for name, details in self.ftp.mlsd() if name not in v2_files}
+        files = self.list_files()
+        files = {name: files[name] for name in files if name not in v2_files}
         self.do_files(files)
 
         self.ftp.quit()
