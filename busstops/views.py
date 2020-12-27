@@ -31,9 +31,6 @@ from .forms import ContactForm, SearchForm
 operator_has_current_services = Exists(
     Service.objects.filter(current=True, operator=OuterRef('pk'))
 )
-stop_has_current_services = Exists(
-    Service.objects.filter(current=True, stops=OuterRef('pk'))
-)
 
 
 def get_colours(services):
