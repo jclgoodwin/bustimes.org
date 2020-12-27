@@ -93,9 +93,9 @@ class FareTable(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, blank=True)
-    user_profile = models.ForeignKey(UserProfile, models.CASCADE)
-    sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE)
-    tariff = models.ForeignKey(Tariff, models.CASCADE)
+    user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
+    sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE, null=True, blank=True)
+    tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name

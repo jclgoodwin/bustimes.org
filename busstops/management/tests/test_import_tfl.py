@@ -13,7 +13,7 @@ class ImportTfLTest(TestCase):
         source = DataSource.objects.create(name='L')
         cls.service = Service.objects.create(service_code='tfl_64-RV1-A-y05', line_name='RV1',
                                              description='Covent Garden - Waterloo - Tower Gateway',
-                                             date='2017-01-01', region=region, source=source, current=True)
+                                             region=region, source=source, current=True)
         stop = StopPoint.objects.create(atco_code='490002076RV', locality_centre=False, active=True)
         StopUsage.objects.create(service=cls.service, stop=stop, order=1)
 

@@ -682,9 +682,7 @@ class TransXChange:
             elif tag == 'Garages':
                 element.clear()
 
-        self.transxchange_date = max(
-            element.attrib['CreationDateTime'], element.attrib['ModificationDateTime']
-        )[:10]
+        self.attributes = element.attrib
 
 
 class Cell:

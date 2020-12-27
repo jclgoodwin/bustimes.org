@@ -138,7 +138,7 @@ class ImportNaptanTest(TestCase):
         })
 
         cls.service = Service.objects.create(line_name='44', description='Port Talbot Circular',
-                                             date='2004-04-04', region_id='GB', service_code='44')
+                                             service_code='44')
         StopUsage.objects.create(service=cls.service, stop_id='5820AWN26274', order=0)  # Legion
         StopUsage.objects.create(service=cls.service, stop_id='5820AWN26361', order=1)  # Parkway
         StopUsage.objects.create(service=cls.service, stop_id='5820AWN26438', order=2)

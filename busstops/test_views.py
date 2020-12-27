@@ -106,7 +106,6 @@ class ViewsTests(TestCase):
         cls.inactive_service = Service.objects.create(
             service_code='45A',
             line_name='45A',
-            date='1984-01-01',
             region=cls.north,
             current=False
         )
@@ -115,7 +114,6 @@ class ViewsTests(TestCase):
             service_code='45B',
             line_name='45B',
             description='Holt - Norwich',
-            date='1984-01-01',
             region=cls.north,
             current=False
         )
@@ -123,7 +121,6 @@ class ViewsTests(TestCase):
             service_code='ea_21-45-A-y08',
             line_name='45C',
             description='Holt - Norwich',
-            date='1984-01-01',
             region=cls.north
         )
 

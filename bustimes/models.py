@@ -30,9 +30,12 @@ def get_calendars(when, calendar_ids=None):
 
 class Route(models.Model):
     source = models.ForeignKey('busstops.DataSource', models.CASCADE)
-    code = models.CharField(max_length=255)
+    code = models.CharField(max_length=255)  # qualified filename
+    service_code = models.CharField(max_length=255, blank=True)
+    registration = models.ForeignKey('vosa.Registration', models.SET_NULL, null=True, blank=True)
     line_brand = models.CharField(max_length=255, blank=True)
-    line_name = models.CharField(max_length=255)
+    line_name = models.CharField(max_length=255, blank=True)
+    revision_number = models.PositiveSmallIntegerField(null=True, blank=True)
     description = models.CharField(max_length=255, blank=True)
     origin = models.CharField(max_length=255, blank=True)
     destinaton = models.CharField(max_length=255, blank=True)

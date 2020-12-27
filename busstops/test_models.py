@@ -81,14 +81,11 @@ class OperatorTests(TestCase):
 class ServiceTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.region = Region.objects.create(id='L', name='London')
         cls.london_service = Service.objects.create(
             service_code='tfl_8-N41-_-y05', line_name='N41',
-            date='2000-1-1', region_id='L'
         )
         source = DataSource.objects.create(name='EA')
-        cls.service = Service.objects.create(service_code='ea_21-1A-_-y08', source=source, region=cls.region,
-                                             date='2018-01-01')
+        cls.service = Service.objects.create(service_code='ea_21-1A-_-y08', source=source)
         Route.objects.create(code='ea_21-1A-_-y08-2.xml', service=cls.service, start_date='2012-05-01', source=source)
         Route.objects.create(code='ea_21-1A-_-y08-1.xml', service=cls.service, start_date='2012-01-01', source=source)
         cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True)

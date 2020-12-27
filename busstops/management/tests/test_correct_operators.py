@@ -24,8 +24,7 @@ class CorrectOperatorsTest(TestCase):
 
         cls.west_midlands_service = Service.objects.create(
             service_code='1',
-            region=cls.west,
-            date='2016-05-05'
+            region=cls.west
         )
         cls.west_midlands_service.operator.set([cls.goodwins])
 

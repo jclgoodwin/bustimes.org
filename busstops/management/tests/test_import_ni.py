@@ -23,7 +23,7 @@ class ImportNornIronTest(TestCase):
         cls.ni = Region(id='NI', name='Northern Ireland').save()
 
         # Create a dummy active service
-        cls.service = Service.objects.create(service_code='DUMMY', date='2016-12-27', region_id='NI')
+        cls.service = Service.objects.create(service_code='DUMMY', region_id='NI')
         # Use a stop which is near a landmark
         StopUsage.objects.create(service=cls.service, stop_id='700000000007', order=0)
 

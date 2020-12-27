@@ -600,7 +600,7 @@ class Service(models.Model):
     region = models.ForeignKey(Region, models.CASCADE, null=True, blank=True)
     stops = models.ManyToManyField(StopPoint, editable=False,
                                    through=StopUsage)
-    date = models.DateField()
+    date = models.DateField(null=True, blank=True)
     current = models.BooleanField(default=True, db_index=True)
     show_timetable = models.BooleanField(default=False)
     timetable_wrong = models.BooleanField(default=False)
