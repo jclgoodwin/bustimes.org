@@ -147,7 +147,7 @@ def stops(request):
     results = StopPoint.objects.filter(
         latlong__intersects=bounding_box, active=True
     ).annotate(
-        line_names=ArrayAgg('service__line_name', filter=Q(service__current=True))
+        line_names=ArrayAgg('service__line_name', filter=Q(service__current=True), distinct=True)
     ).filter(line_names__isnull=False).select_related('locality').defer('osm', 'locality__latlong')
 
     return JsonResponse({
@@ -313,7 +313,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         stops = self.object.stoppoint_set
         context['stops'] = stops.annotate(
-            line_names=ArrayAgg('service__line_name', filter=Q(service__current=True))
+            line_names=ArrayAgg('service__line_name', filter=Q(service__current=True), distinct=True)
         ).filter(line_names__isnull=False).defer('osm', 'latlong')
 
         if not (context['localities'] or context['stops']):
@@ -397,7 +397,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         if nearby is not None:
             context['nearby'] = nearby.exclude(pk=self.object.pk).annotate(
-                line_names=ArrayAgg('service__line_name', filter=Q(service__current=True))
+                line_names=ArrayAgg('service__line_name', filter=Q(service__current=True), distinct=True)
             ).filter(line_names__isnull=False).defer('osm')
 
         consequences = Consequence.objects.filter(stops=self.object)
