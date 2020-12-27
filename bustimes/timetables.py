@@ -97,13 +97,6 @@ class Timetable:
         if not routes:
             return
 
-        if date:
-            if len(routes) > 1 and any(route.revision_number for route in self.routes):
-                routes = [route for route in self.routes if route.start_date <= date]
-                if len(routes) > 1:
-                    max_revision_number = max(route.revision_number for route in routes)
-                    routes = [route for route in routes if route.revision_number == max_revision_number]
-
         self.calendars = Calendar.objects.filter(
             trip__route__in=self.routes
         ).distinct().prefetch_related('calendardate_set')
@@ -122,6 +115,16 @@ class Timetable:
                     break
             if not self.date:
                 return
+
+        if len(routes) > 1 and any(route.revision_number for route in routes):
+            routes = [route for route in self.routes if route.start_date <= self.date]
+            if len(routes) > 1:
+                max_revision_number = max(route.revision_number for route in routes)
+                routes = [route for route in routes if route.revision_number == max_revision_number]
+        else:
+            override_routes = [route for route in routes if route.start_date == route.end_date == self.date]
+            if override_routes:  # e.g. Lynx BoxingDayHoliday
+                routes = override_routes
 
         trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:
