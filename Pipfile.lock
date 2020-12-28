@@ -173,11 +173,11 @@
         },
         "channels": {
             "hashes": [
-                "sha256:74db79c9eca616be69d38013b22083ab5d3f9ccda1ab5e69096b1bb7da2d9b18",
-                "sha256:f50a6e79757a64c1e45e95e144a2ac5f1e99ee44a0718ab182c501f5e5abd268"
+                "sha256:056b72e51080a517a0f33a0a30003e03833b551d75394d6636c885d4edb8188f",
+                "sha256:3f15bdd2138bb4796e76ea588a0a344b12a7964ea9b2e456f992fddb988a4317"
             ],
             "index": "pypi",
-            "version": "==3.0.2"
+            "version": "==3.0.3"
         },
         "channels-redis": {
             "hashes": [
@@ -1396,10 +1396,10 @@
         },
         "ptyprocess": {
             "hashes": [
-                "sha256:923f299cc5ad920c68f2bc0bc98b75b9f838b93b599941a6b63ddbc2476394c0",
-                "sha256:d7cc528d76e76342423ca640335bd3633420dc1366f258cb31d05e865ef5ca1f"
+                "sha256:4b41f3967fce3af57cc7e94b888626c18bf37a083e3651ca8feeb66d492fef35",
+                "sha256:5c5d0a3b48ceee0b48485e0c26037c0acd7d29765ca3fbb5cb3831d347423220"
             ],
-            "version": "==0.6.0"
+            "version": "==0.7.0"
         },
         "py": {
             "hashes": [
