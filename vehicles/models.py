@@ -266,7 +266,7 @@ class Vehicle(models.Model):
             if self.fleet_number and self.fleet_number != int(self.code):
                 return True
         elif self.reg:
-            code = self.code.replace('-', '').replace('_', '').replace(' ', '')
+            code = self.code.replace('-', '').replace('_', '').replace(' ', '').upper()
             if self.reg not in code:
                 fleet_code = self.fleet_code.replace(' ', '') or self.fleet_number
                 if not fleet_code or str(fleet_code) not in code:
