@@ -145,7 +145,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
                 existing_journey.datetime = time
                 existing_journey.save(update_fields=['datetime'])
         except VehicleJourney.DoesNotExist:
-            VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name,
+            VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name, data=data,
                                           code=journey_ref, datetime=time, source=data_source, destination=destination)
         except VehicleJourney.MultipleObjectsReturned:
             return
