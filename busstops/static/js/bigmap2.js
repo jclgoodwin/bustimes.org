@@ -45,9 +45,11 @@
             localStorage.removeItem('hideStops');
         }
     }).on('remove', function() {
-        showStops = false;
-        if (localStorage) {
-            localStorage.setItem('hideStops', '1');
+        if (showStops) {  // box was unchecked (not just a zoom out)
+            showStops = false;
+            if (localStorage) {
+                localStorage.setItem('hideStops', '1');
+            }
         }
     });
 
@@ -252,7 +254,7 @@
         if (agoTimeout) {
             clearTimeout(agoTimeout);
         }
-        var marker = vehicles[clickedMarker];
+        var marker = markers[clickedMarker];
         if (marker) {
             var item = marker.options.item;
             marker.getPopup().setContent((marker.options.popupContent || '') + getPopupContent(item, true));
@@ -291,15 +293,15 @@
         }
     }
 
-    var vehicles;
+    var markers, items;
 
     function handleVehicle(item) {
         var isClickedMarker = item.i === clickedMarker,
             latLng = L.latLng(item.l[1], item.l[0]),
             marker;
 
-        if (item.i in vehicles) {
-            marker = vehicles[item.i];
+        if (item.i in markers) {
+            marker = markers[item.i];
             marker.setLatLng(latLng);
             if (zoomedIn) {
                 marker.setIcon(getBusIcon(item, isClickedMarker));
@@ -324,7 +326,7 @@
                     item: item,
                 });
             }
-            vehicles[item.i] = marker.addTo(vehiclesGroup)
+            markers[item.i] = marker.addTo(vehiclesGroup)
                 .bindPopup('', {
                     autoPan: false
                 })
@@ -376,16 +378,18 @@
         };
 
         socket.onmessage = function(event) {
-            var items = JSON.parse(event.data);
+            var data = JSON.parse(event.data);
             if (newSocket) {
-                if (vehicles) {
+                if (markers) {
                     vehiclesGroup.clearLayers();
                 }
-                vehicles = {};
+                markers = {};
+                items = {};
             }
             newSocket = false;
-            for (var i = items.length - 1; i >= 0; i--) {
-                handleVehicle(items[i]);
+            for (var i = data.length - 1; i >= 0; i--) {
+                handleVehicle(data[i]);
+                items[data[i].i] = data[i];
             }
         };
     }
@@ -414,15 +418,25 @@
     var first = true;
 
     map.on('moveend', function() {
-        // zoomedIn = (map.getZoom() > 10);
+        var wasZoomedIn = zoomedIn;
+        zoomedIn = (map.getZoom() > 10);
 
         var bounds = map.getBounds();
 
-        for (var id in vehicles) {
-            var vehicle = vehicles[id];
-            if (id !== clickedMarker && !bounds.contains(vehicle.getLatLng())) {
-                vehiclesGroup.removeLayer(vehicle);
-                delete vehicles[id];
+        for (var id in markers) {
+            var marker = markers[id];
+            if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
+                vehiclesGroup.removeLayer(marker);
+                delete items[id];
+                delete markers[id];
+            }
+        }
+
+        if (zoomedIn && !wasZoomedIn || !zoomedIn && wasZoomedIn) {
+            markers = {};
+            vehiclesGroup.clearLayers();
+            for (id in items) {
+                handleVehicle(items[id]);
             }
         }
 
@@ -436,15 +450,11 @@
         }
 
         if (showStops) {
-            if (map.getZoom() < 14) {
+            if (map.getZoom() < 14) { // zoomed out
+                showStops = false;  // indicate that it wasn't an explicit box uncheck
                 stopsGroup.remove();
                 showStops = true;
             } else {
-                if (map.getZoom() > 14) {
-                    document.getElementById('hugemap').classList.add('zoomed-in');
-                } else {
-                    document.getElementById('hugemap').classList.remove('zoomed-in');
-                }
                 stopsGroup.addTo(map);
                 loadStops();
             }
