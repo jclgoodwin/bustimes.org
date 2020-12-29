@@ -4,6 +4,7 @@
 import os
 import requests
 import zipfile
+from urllib.parse import urljoin
 from time import sleep
 from datetime import timedelta
 from requests_html import HTMLSession
@@ -63,8 +64,9 @@ def get_versions(session, url):
             heading = element.text
         elif element.tag == 'a':
             url = element.attrs['href']
-            if '/txc/' in url:
+            if '/txc' in url:
                 url = element.attrs['href']
+                url = urljoin(response.url, url)  # in case the URL is relative
                 filename = url.split('/')[-1]
                 path = os.path.join(settings.DATA_DIR, filename)
                 modified = download_if_new(path, url)
