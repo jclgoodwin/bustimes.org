@@ -76,15 +76,14 @@ def bus_open_data(api_key, operator):
     else:
         nocs = [operator_id for operator_id, _, _, _ in settings.BOD_OPERATORS]
 
-    url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
-
     datasets = []
 
-    for nocs in [nocs[i:i+20] for i in range(0, len(nocs), 20)]:
+    for noc in [nocs[i:i+20] for i in range(0, len(nocs), 20)]:
+        url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
         params = {
             'api_key': api_key,
             'status': ['published', 'expiring'],
-            'noc': ','.join(nocs)
+            'noc': ','.join(noc)
         }
         while url:
             response = session.get(url, params=params)
