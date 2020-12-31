@@ -279,7 +279,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     group_messages[group].append(message)
                 else:
                     group_messages[group] = [message]
-            for channel in channels.filter(bounds__intersects=location.latlong):
+            for channel in channels.filter(bounds__bboverlaps=location.latlong):
                 if channel.name in channel_messages:
                     channel_messages[channel.name].append(message)
                 else:

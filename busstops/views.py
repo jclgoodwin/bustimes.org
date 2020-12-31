@@ -145,7 +145,7 @@ def stops(request):
         return HttpResponseBadRequest()
 
     results = StopPoint.objects.filter(
-        latlong__intersects=bounding_box, active=True
+        latlong__bboverlaps=bounding_box, active=True
     ).annotate(
         line_names=ArrayAgg('service__line_name', filter=Q(service__current=True), distinct=True)
     ).filter(line_names__isnull=False).select_related('locality').defer('osm', 'locality__latlong')
@@ -738,7 +738,7 @@ def search(request):
                 bbox = Polygon.from_bbox((point.x - .05, point.y - .05, point.x + .05, point.y + .05))
 
                 context['postcode'] = Locality.objects.filter(
-                    latlong__intersects=bbox
+                    latlong__bboverlaps=bbox
                 ).filter(
                     Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)
                 ).distinct().annotate(

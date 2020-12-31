@@ -214,7 +214,7 @@ def get_locations(request):
 
     try:
         bounding_box = get_bounding_box(request)
-        locations = locations.filter(latlong__intersects=bounding_box)
+        locations = locations.filter(latlong__bboverlaps=bounding_box)
     except KeyError:
         pass
 
