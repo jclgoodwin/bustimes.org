@@ -174,7 +174,7 @@ class Command(ImportLiveVehiclesCommand):
             return self.service_cache[cache_key]
 
         services = Service.objects.using(settings.READ_DATABASE).filter(
-            Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith=' SIRI', code=line_ref))
+            Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith='SIRI', code=line_ref))
             | Q(line_name__iexact=line_ref),
             current=True
         )

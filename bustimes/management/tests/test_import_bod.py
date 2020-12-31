@@ -51,7 +51,7 @@ class ImportBusOpenDataTest(TestCase):
         # a TicketMachineServiceCode should have been created
         service_code = ServiceCode.objects.get()
         self.assertEqual(service_code.code, '1')
-        self.assertEqual(service_code.scheme, ' SIRI')
+        self.assertEqual(service_code.scheme, 'SIRI')
 
         response = self.client.get('/services/54-kings-lynn-the-walpoles-via-clenchwarton')
 

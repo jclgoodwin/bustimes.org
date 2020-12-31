@@ -724,7 +724,7 @@ class Command(BaseCommand):
                 if ticket_machine_service_code and ticket_machine_service_code != line_name:
                     ServiceCode.objects.update_or_create({
                         'code': ticket_machine_service_code
-                    }, service=service, scheme=' SIRI')
+                    }, service=service, scheme='SIRI')
 
                 # a code used in Traveline Cymru URLs:
                 if self.source.name == 'W':

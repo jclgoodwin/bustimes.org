@@ -75,7 +75,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         now = self.source.datetime
 
-        for source in DataSource.objects.filter(name__endswith=' SIRI'):
+        for source in DataSource.objects.filter(name__endswith='SIRI'):
             if source.settings and source.settings['RequestorRef']:
                 requestor_ref = source.settings['RequestorRef']
                 requestor_ref = f'<RequestorRef>{requestor_ref}</RequestorRef>'
@@ -258,7 +258,7 @@ class Command(ImportLiveVehiclesCommand):
         services = Service.objects.filter(current=True)
 
         services = services.filter(Q(line_name__iexact=service)
-                                   | Q(servicecode__scheme__endswith=' SIRI', servicecode__code=service))
+                                   | Q(servicecode__scheme__endswith='SIRI', servicecode__code=service))
 
         operator, operator_options = self.get_operator(operator_ref)
 
