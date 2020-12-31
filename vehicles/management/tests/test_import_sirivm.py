@@ -47,7 +47,7 @@ class SiriVMImportTest(TestCase):
 
         locations = VehicleLocation.objects.filter(journey__source=self.command.source)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(7):
             self.command.handle_item(item)
             self.command.save()
         self.assertIsNone(locations.get().heading)

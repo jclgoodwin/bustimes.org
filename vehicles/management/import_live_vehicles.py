@@ -127,7 +127,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except queryset.model.MultipleObjectsReturned:
                 continue
 
-    def handle_item(self, item, now=None, service_code=None):
+    def handle_item(self, item, now=None):
         datetime = self.get_datetime(item)
         location = None
         try:
@@ -217,16 +217,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if journey.service and not journey.service.tracking:
                 journey.service.tracking = True
                 journey.service.save(update_fields=['tracking'])
-            if journey.service_id:
-                if service_code and journey.service_id != service_code.service_id or self.source.name.endswith(' SIRI'):
-                    if not journey.service.servicecode_set.filter(scheme__endswith=' SIRI').exists():
-                        if service_code:
-                            # doppelgänger
-                            ServiceCode.objects.create(scheme=service_code.scheme, service=journey.service,
-                                                       code=service_code.code)
-                        else:
-                            ServiceCode.objects.create(scheme=self.source.name, service=journey.service,
-                                                       code=journey.route_name)
+
             location.journey = journey
         if latest:
             location.id = latest.id
