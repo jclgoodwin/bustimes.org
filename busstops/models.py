@@ -12,7 +12,7 @@ from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, OuterRef, Exists
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.html import format_html, escape
@@ -802,8 +802,10 @@ class Service(models.Model):
         services = cache.get(key)
         if services is None:
             services = list(Service.objects.filter(
-                Q(link_from__to_service=self, link_from__how='parallel')
-                | Q(link_to__from_service=self, link_to__how='parallel')
+                Exists(ServiceLink.objects.filter(
+                    Q(from_service=self, to_service=OuterRef('pk')) | Q(from_service=OuterRef('pk'), to_service=self),
+                    how='parallel'
+                ))
             ).order_by().defer('geometry'))
             cache.set(key, services)
         return services
@@ -812,12 +814,14 @@ class Service(models.Model):
         key = self.get_similar_services_cache_key()
         services = cache.get(key)
         if services is None:
-            q = Q(link_from__to_service=self) | Q(link_to__from_service=self)
+            q = Exists(ServiceLink.objects.filter(
+                Q(from_service=self, to_service=OuterRef('pk')) | Q(from_service=OuterRef('pk'), to_service=self),
+            ))
             if self.description and self.line_name:
                 q |= Q(description=self.description)
                 q |= Q(line_name=self.line_name, operator__in=self.operator.all())
             services = Service.objects.filter(~Q(pk=self.pk), q, current=True).order_by().defer('geometry')
-            services = sorted(services.distinct().annotate(operators=ArrayAgg('operator__name')), key=Service.get_order)
+            services = sorted(services.annotate(operators=ArrayAgg('operator__name')), key=Service.get_order)
             cache.set(key, services)
         return services
 
