@@ -615,7 +615,17 @@ class Command(BaseCommand):
             service_code = None
 
             if operators and line_name:
-                if all(operator.parent == 'Go South Coast' for operator in operators):
+                if self.source.name in {'Go South West', 'Oxford Bus Company'}:
+                    assert operators[0].parent
+                    existing = Service.objects.filter(operator__parent=operators[0].parent)
+
+                    if self.source.name == 'Oxford Bus Company':
+                        if txc_service.service_code.startswith('T'):
+                            operators = Operator.objects.filter(id='THTR')
+                        elif txc_service.service_code.startswith('C'):
+                            operators = Operator.objects.filter(id='CSLB')
+
+                elif all(operator.parent == 'Go South Coast' for operator in operators):
                     existing = Service.objects.filter(operator__parent='Go South Coast')
                 else:
                     existing = Service.objects.filter(operator__in=operators)
@@ -647,14 +657,6 @@ class Command(BaseCommand):
                 if not existing:
                     # assume service code is at least unique within a TNDS region
                     existing = self.source.service_set.filter(service_code=service_code).first()
-
-            else:
-                if self.source.name in {'Go East Anglia', 'Go South West'} and not existing:
-                    try:
-                        existing = Service.objects.get(operator__parent=self.source.name, current=True,
-                                                       line_name__iexact=line_name)
-                    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                        pass
 
             if existing:
                 service = existing
@@ -706,7 +708,7 @@ class Command(BaseCommand):
                 if '_' in service.slug or '-' not in service.slug or existing and not existing.current:
                     service.slug = ''
                     service.save(update_fields=['slug'])
-                if self.source.name in {'Go East Anglia', 'Go South West'}:
+                if self.source.name in {'Oxford Bus Company', 'Go South West'}:
                     pass
                 elif service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
                     service.operator.add(*operators)

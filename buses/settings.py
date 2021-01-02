@@ -512,7 +512,7 @@ TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     # ('SW', ['PLYC', 'TFCN'], 'Go South West'),
     ('SE', ['METR'], 'Metrobus'),
-    # ('SE', ['OXBC', 'CSLB', 'THTR'], 'Go-Ahead'),
+    ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     # ('NW', ['GONW'], 'Go North West'),
     ('W', ['ACYM'], 'Arriva Cymru'),
     ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
