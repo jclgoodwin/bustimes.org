@@ -119,8 +119,9 @@ class Timetable:
         if len(routes) > 1 and any(route.revision_number for route in routes):
             routes = [route for route in self.routes if route.start_date <= self.date]
             if len(routes) > 1:
-                max_revision_number = max(route.revision_number for route in routes)
-                routes = [route for route in routes if route.revision_number == max_revision_number]
+                max_revision_number = max(route.revision_number or 0 for route in routes)
+                if max_revision_number:
+                    routes = [route for route in routes if route.revision_number == max_revision_number]
         else:
             override_routes = [route for route in routes if route.start_date == route.end_date == self.date]
             if override_routes:  # e.g. Lynx BoxingDayHoliday
