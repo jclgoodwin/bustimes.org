@@ -82,6 +82,7 @@ class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     double_decker = models.BooleanField(null=True)
     coach = models.BooleanField(null=True)
+    electric = models.BooleanField(null=True)
 
     class Meta:
         ordering = ('name',)
@@ -512,6 +513,13 @@ class JourneyCode(models.Model):
 class Channel(models.Model):
     name = models.CharField(max_length=100, unique=True)
     bounds = models.PolygonField()
+    datetime = models.DateTimeField(null=True, blank=True)
+
+
+class Occupancy(models.TextChoices):
+    SEATS_AVAILABLE = 'seatsAvailable', 'Seats available'
+    STANDING_AVAILABLE = 'standingAvailable', 'Standing available'
+    FULL = 'full', 'Full'
 
 
 class VehicleLocation(models.Model):
@@ -522,6 +530,11 @@ class VehicleLocation(models.Model):
     early = models.SmallIntegerField(null=True, blank=True)
     delay = models.SmallIntegerField(null=True, blank=True)
     current = models.BooleanField(default=False)
+    occupancy = models.CharField(
+        max_length=17,
+        choices=Occupancy.choices,
+        blank=True
+    )
 
     class Meta:
         ordering = ('id',)

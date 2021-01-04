@@ -342,7 +342,8 @@ class Command(ImportLiveVehiclesCommand):
             bearing = float(bearing)
         return VehicleLocation(
             latlong=latlong,
-            heading=bearing
+            heading=bearing,
+            occupancy=monitored_vehicle_journey.get('occupancy', '')
         )
 
     @async_to_sync
