@@ -46,6 +46,11 @@ class Route(models.Model):
     service = models.ForeignKey('busstops.Service', models.CASCADE)
     geometry = models.MultiLineStringField(null=True, blank=True)
 
+    def contains(self, date):
+        if not self.start_date or self.start_date <= date:
+            if not self.end_date or self.end_date >= date:
+                return True
+
     class Meta:
         unique_together = ('source', 'code')
         index_together = (
@@ -82,6 +87,8 @@ class Calendar(models.Model):
     dates = DateRangeField(null=True)
     summary = models.CharField(max_length=255, blank=True)
 
+    contains = Route.contains
+
     class Meta:
         index_together = (
             ('start_date', 'end_date'),
@@ -100,9 +107,6 @@ class Calendar(models.Model):
         for calendar_date in self.calendardate_set.all():
             if calendar_date.operation and calendar_date.special and calendar_date.contains(date):
                 return True
-
-    def contains(self, date):
-        return self.start_date <= date and (not self.end_date or self.end_date >= date)
 
     def __str__(self):
         day_keys = (
@@ -140,7 +144,7 @@ class CalendarDate(models.Model):
     special = models.BooleanField(default=False, db_index=True)
     summary = models.CharField(max_length=255, blank=True)
 
-    contains = Calendar.contains
+    contains = Route.contains
 
     def relevant(self, operating_period):
         if self.end_date:

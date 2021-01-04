@@ -117,7 +117,7 @@ class Timetable:
                 return
 
         if len(routes) > 1 and any(route.revision_number for route in routes):
-            routes = [route for route in self.routes if route.start_date <= self.date]
+            routes = [route for route in self.routes if route.contains(self.date)]
             if len(routes) > 1:
                 max_revision_number = max(route.revision_number or 0 for route in routes)
                 if max_revision_number:
