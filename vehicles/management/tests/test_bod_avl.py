@@ -123,7 +123,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }]
 
-        with self.assertNumQueries(30):
+        with self.assertNumQueries(28):
             consumer.sirivm({
                 'items': items
             })

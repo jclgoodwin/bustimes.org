@@ -92,7 +92,7 @@ class SiriSubscriptionReceiveTest(TestCase):
         </Siri>
         """
 
-        with self.assertNumQueries(22):
+        with self.assertNumQueries(21):
             with patch('builtins.print') as mocked_print:
                 handle_siri_vm(xml)
         mocked_print.assert_called()

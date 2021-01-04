@@ -12,13 +12,13 @@ from time import sleep
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
-from django.db import IntegrityError
+from django.db import connections, IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
 from django.utils import timezone
 from bustimes.models import Route
-from busstops.models import DataSource, ServiceCode
-from ..models import Vehicle, VehicleLocation, Channel
+from busstops.models import DataSource
+from ..models import Vehicle, VehicleLocation
 
 
 logger = logging.getLogger(__name__)
@@ -226,6 +226,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         self.to_save.append((location, latest, vehicle))
 
     def save(self):
+        if not self.to_save:
+            return
+
         to_create = []
         to_update = []
         for location, latest, vehicle in self.to_save:
@@ -242,11 +245,17 @@ class ImportLiveVehiclesCommand(BaseCommand):
         group_messages = {}
         channel_messages = {}
 
-        channels = Channel.objects.using(settings.READ_DATABASE).defer('bounds')
-
         r = redis.from_url(settings.REDIS_URL)
         pipeline = r.pipeline(transaction=False)
 
+        query = ", ".join("bounds && %s" for location in self.to_save)
+        query = f"SELECT name, {query} FROM vehicles_channel"
+
+        with connections[settings.READ_DATABASE].cursor() as cursor:
+            cursor.execute(query, [location.latlong.wkt for location, _, _ in self.to_save])
+            channels = cursor.fetchall()
+
+        i = 1
         for location, latest, vehicle in self.to_save:
             if not vehicle.latest_location_id:
                 vehicle.latest_location = location
@@ -264,17 +273,22 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     group_messages[group].append(message)
                 else:
                     group_messages[group] = [message]
+
             if vehicle.operator_id:
                 group = f'operator{vehicle.operator_id}'
                 if group in group_messages:
                     group_messages[group].append(message)
                 else:
                     group_messages[group] = [message]
-            for channel in channels.filter(bounds__bboverlaps=location.latlong):
-                if channel.name in channel_messages:
-                    channel_messages[channel.name].append(message)
-                else:
-                    channel_messages[channel.name] = [message]
+
+            for channel in channels:
+                if channel[i]:
+                    name = channel[0]
+                    if name in channel_messages:
+                        channel_messages[name].append(message)
+                    else:
+                        channel_messages[name] = [message]
+            i += 1
 
             if vehicle.withdrawn:
                 vehicle.withdrawn = False
