@@ -10,6 +10,7 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
+from django.contrib.postgres.aggregates import StringAgg
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
 from django.urls import reverse
@@ -505,6 +506,7 @@ def journey_json(request, pk):
 
 def location_detail(request, location_id):
     locations = VehicleLocation.objects.select_related('journey__vehicle__vehicle_type', 'journey__service')
+    locations = locations.annotate(features=StringAgg('journey__vehicle__features__name', ', '))
     locations = locations.defer('journey__service__geometry', 'journey__service__search_vector')
     location = get_object_or_404(locations, id=location_id)
     return render(request, 'location_detail.html', {

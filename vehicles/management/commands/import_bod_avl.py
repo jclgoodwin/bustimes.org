@@ -343,7 +343,7 @@ class Command(ImportLiveVehiclesCommand):
         return VehicleLocation(
             latlong=latlong,
             heading=bearing,
-            occupancy=monitored_vehicle_journey.get('occupancy', '')
+            occupancy=monitored_vehicle_journey.get('Occupancy', '')
         )
 
     @async_to_sync

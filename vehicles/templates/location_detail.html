@@ -22,3 +22,11 @@
         Coach<br>
     {% endif %}
 {% endif %}
+
+{% if location.features %}
+    {{ location.features }}<br>
+{% endif %}
+
+{% if location.occupancy %}
+    {{ location.get_occupancy_display }}<br>
+{% endif %}

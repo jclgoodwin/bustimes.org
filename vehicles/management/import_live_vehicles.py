@@ -239,7 +239,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         VehicleLocation.objects.bulk_create(to_create)
         if to_update:
-            VehicleLocation.objects.bulk_update(to_update, fields=['datetime', 'latlong', 'journey',
+            VehicleLocation.objects.bulk_update(to_update, fields=['datetime', 'latlong', 'journey', 'occupancy',
                                                                    'heading', 'early', 'delay', 'current'])
 
         group_messages = {}
