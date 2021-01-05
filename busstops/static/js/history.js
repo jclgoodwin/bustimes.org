@@ -194,7 +194,7 @@
     window.addEventListener('load', maybeOpenMap);
 
     function handleClick(event) {
-        window.history.replaceState(null, null, window.location.pathname + '?date=' + date + event.target.hash);
+        window.history.replaceState(null, null, '?date=' + date + event.target.hash);
         maybeOpenMap();
     }
 

@@ -401,7 +401,7 @@
 
         if (history.replaceState) {
             try {
-                history.replaceState(null, null, location.pathname + '#' + string);
+                history.replaceState(null, null, '#' + string);
             } catch (error) {
                 // probably SecurityError (document is not fully active)
             }

@@ -19,7 +19,7 @@
     function setLocationHash(hash) {
         if (history.replaceState) {
             try {
-                history.replaceState(null, null, window.location.pathname + window.location.search + hash);
+                history.replaceState(null, null, hash || '#');
             } catch (error) {
                 // probably SecurityError (document is not fully active)
             }
