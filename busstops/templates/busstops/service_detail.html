@@ -36,123 +36,9 @@
     <div class="service-map" id="map" data-service="{{ object.id }}{% for s in linked_services %},{{ s.id }}{% endfor %}"></div>
 {% endif %}
 
-{% if object.timetable_change %}
-    <p class="message">Timetable changes from <a href="?date={{ object.timetable_change|date:"c" }}">{{ object.timetable_change }}</a></p>
-{% endif %}
-
-{% if timetable %}
-    {% if timetable.calendar %}
-        <p>{{ timetable.calendar }}{% if timetable.start_date %} from {{ timetable.start_date }}{% endif %}</p>
-    {% else %}
-        <form class="timetable-date">
-            <select onchange="this.form.submit()" name="date" aria-label="Date">
-                {% for option in timetable.date_options %}
-                    <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
-                {% endfor %}
-            </select>
-            <noscript><input type="submit"></noscript>
-        </form>
-    {% endif %}
-
-    {% for grouping in timetable.groupings %}
-
-        {% if forloop.first != forloop.last %}
-            <h2>{% if grouping.inbound %}{% firstof service.inbound_description 'Inbound' %}{% else %}{% firstof service.outbound_description 'Outbound' %}{% endif %}</h2>
-        {% endif %}
-
-        <div class="timetable-wrapper-wrapper">
-            {% if grouping.has_minor_stops %}
-                <input type="checkbox" id="show-all-stops-{{ forloop.counter }}">
-                <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
-            {% endif %}
-            <div class="timetable-wrapper{% if grouping.width > 3 %} wide{% endif %}">
-                <table class="timetable">
-                    {% if grouping.heads %}
-                        <thead>
-                            <tr>
-                                <th></th>
-                                {% for head in grouping.heads %}
-                                    <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
-                                        {% if object != head.service %}
-                                            <a href="{{ head.service.get_absolute_url }}">{{ head.service.line_name }}</a>
-                                        {% else %}
-                                            {{ head.service.line_name }}
-                                        {% endif %}
-                                    </td>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                    {% endif %}
-                    <tbody>
-                        {% for row in grouping.rows %}
-                            <tr{% if row.is_minor %} class="minor"{% endif %}>
-                                <th>
-                                    {% if row.stop.pk %}
-                                        <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.suspended %}🚧 {% elif row.stop.situation %}⚠️ {% endif %}{{ row.stop.get_qualified_name }}</a>
-                                    {% else %}{{ row.stop }}{% endif %}
-                                </th>
-                            {% for cell in row.times %}
-                                {% if cell.colspan %}
-                                    <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>
-                                {% else %}
-                                    <td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if not cell.last and cell.stoptime.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
-                                {% endif %}
-                            {% endfor %}
-                            </tr>
-                            {% if row.has_waittimes %}
-                                <tr class="dep">
-                                    <th>
-                                        {% if row.stop.pk %}
-                                            <a href="{{ row.stop.get_absolute_url }}">{{ row.stop.get_qualified_name }}</a>
-                                        {% else %}
-                                            {{ row.stop }}
-                                        {% endif %}
-                                    </th>
-                                    {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}
-                                        <td>{% if cell.wait_time or not cell.last %}{{ cell.departure_time }}{% if not cell.last and cell.stoptime.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
-                                    {% endif %}{% endfor %}
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                    {% if grouping.column_feet %}
-                        <tfoot>
-                            {% for row in grouping.column_feet.values %}
-                                <tr>
-                                    <td></td>
-                                    {% for foot in row %}
-                                        <td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>
-                                            {% if foot.notes %}
-                                                {{ foot.notes|urlise }}
-                                            {% endif %}
-                                        </td>
-                                    {% endfor %}
-                                </tr>
-                            {% endfor %}
-                    </tfoot>
-                {% endif %}
-                </table>
-            </div>
-        </div>
-
-        {% if not forloop.last and grouping.min_height > 10 %}
-            {% include 'ad.html' %}
-        {% endif %}
-
-    {% empty %}
-        <p>Sorry, no journeys found for {{ timetable.date }}</p>
-
-        {% include 'route.html' %}
-    {% endfor %}
-
-    {% if timetable.has_set_down_only %}
-        <p>Times marked <strong>s</strong> – “sets down only” – the {{ object.mode }} will only stop to drop passengers off</p>
-    {% endif %}
-
-    {{ service.source.credit }}
-{% else %}
-    {% include 'route.html' %}
-{% endif %}
+<div id="timetable">
+{% include 'timetable.html' %}
+</div>
 
 {% if fares %}
     {% include 'fares.html' with form=fares %}
@@ -206,17 +92,19 @@
 {% block foot %}
     {% load static %}
 
-    {% if object.geometry %}
-        <script>
+    <script>
+        SERVICE_ID = {{ object.id }};
+        {% if object.geometry %}
             EXTENT = [{{ object.geometry.extent|join:"," }}];
             LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
             LEAFLET_JS_URL = '{% static 'js/leaflet/leaflet.js' %}';
         </script>
         <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
         <script src="{% static 'js/reqwest.min.js' %}"></script>
-        <script async src="{% static 'js/servicemap2.js' %}"></script>
-    {% endif %}
-
+        <script async src="{% static 'js/servicemap2.js' %}">
+    {% elif timetable %}
+        <script src="{% static 'js/reqwest.min.js' %}">
+    {% endif %}</script>
     {% if timetable %}
         <script async src="{% static 'js/timetable.js' %}"></script>
     {% endif %}

@@ -532,7 +532,6 @@ class ServiceDetailView(DetailView):
             return context
 
         context['operators'] = self.object.operator.all()
-        context['links'] = []
 
         context['related'] = self.object.get_similar_services()
 
@@ -579,7 +578,7 @@ class ServiceDetailView(DetailView):
                 for stop in consequence.stops.all():
                     stop_situations[stop.atco_code] = situation
 
-        if not context.get('timetable') or not context['timetable'].groupings:
+        if not context.get('timetable'):
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer(
@@ -611,6 +610,8 @@ class ServiceDetailView(DetailView):
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):
             context['breadcrumb'] = [self.object.region]
+
+        context['links'] = []
 
         if self.object.is_megabus():
             context['links'].append({
@@ -669,6 +670,28 @@ class ServiceDetailView(DetailView):
             return redirect(self.object)
 
         return super().render_to_response(context)
+
+
+def service_timetable(request, service_id):
+    service = get_object_or_404(Service.objects.defer('geometry'), id=service_id)
+    date = request.GET.get('date')
+    if date:
+        date = datetime.date.fromisoformat(date)
+    parallel = service.get_linked_services()
+    timetable = service.get_timetable(date, parallel)
+    if not parallel:
+        for grouping in timetable.groupings:
+            del grouping.heads
+    stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
+    timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
+    stop_codes = (row.stop.atco_code for grouping in timetable.groupings for row in grouping.rows)
+    stops = stops.in_bulk(stop_codes)
+    for grouping in timetable.groupings:
+        grouping.apply_stops(stops)
+    return render(request, 'timetable.html', {
+        'object': service,
+        'timetable': timetable
+    })
 
 
 @cache_control(max_age=86400)
