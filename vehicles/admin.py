@@ -7,7 +7,7 @@ from django.db.models import Count, Q
 from django.db.utils import ConnectionDoesNotExist
 from django.contrib.auth import get_user_model
 from busstops.models import Operator
-from .models import (VehicleType, VehicleFeature, Vehicle, VehicleEdit,
+from .models import (VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleLocation,
                      VehicleJourney, Livery, JourneyCode, VehicleRevision)
 
 UserModel = get_user_model()
@@ -439,6 +439,11 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
+class VehicleLocationAdmin(admin.ModelAdmin):
+    raw_id_fields = ['journey']
+    list_filter = ['occupancy']
+
+
 class JourneyCodeAdmin(admin.ModelAdmin):
     list_display = ['code', 'service', 'destination']
     list_select_related = ['service']
@@ -531,6 +536,7 @@ admin.site.register(VehicleFeature)
 admin.site.register(Vehicle, VehicleAdmin)
 admin.site.register(VehicleEdit, VehicleEditAdmin)
 admin.site.register(VehicleJourney, VehicleJourneyAdmin)
+admin.site.register(VehicleLocation, VehicleLocationAdmin)
 admin.site.register(JourneyCode, JourneyCodeAdmin)
 admin.site.register(Livery, LiveryAdmin)
 admin.site.register(VehicleRevision, VehicleRevisionAdmin)
