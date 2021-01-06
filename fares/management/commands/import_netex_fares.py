@@ -127,19 +127,34 @@ class Command(BaseCommand):
         for fare_table_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/fareTables"):
             tariff_ref = fare_table_element.find("usedIn/TariffRef")
             if tariff_ref is None:
-                continue
-            tariff_ref = tariff_ref.attrib["ref"]
-            user_profile_ref = fare_table_element.find("pricesFor/UserProfileRef").attrib["ref"]
-            if user_profile_ref not in user_profiles:
-                user_profile_ref = f"fxc:{user_profile_ref}"
-            sales_offer_package_ref = fare_table_element.find("pricesFor/SalesOfferPackageRef").attrib["ref"]
+                pass
+            else:
+                tariff_ref = tariff_ref.attrib["ref"]
+                tariff = tariffs[tariff_ref]
+
+            user_profile_ref = fare_table_element.find("pricesFor/UserProfileRef")
+            if user_profile_ref is not None:
+                user_profile_ref = user_profile_ref.attrib["ref"]
+                if user_profile_ref not in user_profiles:
+                    user_profile_ref = f"fxc:{user_profile}"
+                user_profile = user_profiles[user_profile_ref]
+            else:
+                user_profile = None
+
+            sales_offer_package_ref = fare_table_element.find("pricesFor/SalesOfferPackageRef")
+            if sales_offer_package_ref is not None:
+                sales_offer_package_ref = sales_offer_package_ref.attrib["ref"]
+                sales_offer_package = sales_offer_packages[sales_offer_package_ref]
+            else:
+                sales_offer_package = None
+
             table, created = models.FareTable.objects.update_or_create(
                 {
-                    "user_profile": user_profiles[user_profile_ref],
-                    "sales_offer_package": sales_offer_packages[sales_offer_package_ref],
+                    "user_profile": user_profile,
+                    "sales_offer_package": sales_offer_package,
                     "description": fare_table_element.findtext("Description", "")
                 },
-                tariff=tariffs[tariff_ref],
+                tariff=tariff,
                 code=fare_table_element.attrib["id"],
                 name=fare_table_element.findtext("Name", "")
             )
@@ -149,30 +164,34 @@ class Command(BaseCommand):
                 table.row_set.all().delete()
 
             columns = {}
-            for column in fare_table_element.find('columns'):
-                column = models.Column.objects.create(
-                    table=table,
-                    code=column.attrib['id'],
-                    name=column.findtext('Name'),
-                    order=column.attrib['order']
-                )
-                columns[column.code] = column
+            columns_element = fare_table_element.find('columns')
+            if columns_element:
+                for column in columns_element:
+                    column = models.Column.objects.create(
+                        table=table,
+                        code=column.attrib['id'],
+                        name=column.findtext('Name'),
+                        order=column.attrib.get('order')
+                    )
+                    columns[column.code] = column
 
             rows = {}
-            for row in fare_table_element.find('rows'):
-                row = models.Row.objects.create(
-                    table=table,
-                    code=row.attrib['id'],
-                    name=row.findtext('Name'),
-                    order=row.attrib['order']
-                )
-                rows[row.code] = row
+            rows_element = fare_table_element.find('rows')
+            if rows_element:
+                for row in rows_element:
+                    row = models.Row.objects.create(
+                        table=table,
+                        code=row.attrib['id'],
+                        name=row.findtext('Name'),
+                        order=row.attrib.get('order')
+                    )
+                    rows[row.code] = row
 
             for table in fare_table_element.find('includes'):
-                cells = table.find('cells')
-                if not cells:
+                cells_element = table.find('cells')
+                if not cells_element:
                     continue
-                for cell_element in cells:
+                for cell_element in cells_element:
                     columnn_ref = cell_element.find('ColumnRef').attrib['ref']
                     row_ref = cell_element.find('RowRef').attrib['ref']
                     distance_matrix_element_price = cell_element.find("DistanceMatrixElementPrice")
@@ -182,6 +201,7 @@ class Command(BaseCommand):
                     if row_ref in rows:
                         row = rows[row_ref]
                     else:
+                        # sometimes the RowRef doesn't correspond exactly to a Row id
                         row_ref_suffix = row_ref.split('@')[-1]
                         row_ref_suffix = f'@{row_ref_suffix}'
                         row_refs = [row_ref for row_ref in rows if row_ref.endswith(row_ref_suffix)]
