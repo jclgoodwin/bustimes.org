@@ -72,6 +72,8 @@ def get_versions(session, url):
                 modified = download_if_new(path, url)
                 gtfs_path = f'{path[:-3]}gtfs.zip'
                 download_if_new(gtfs_path, url.replace('/txc/', '/gtfs/'))
+                if '(' in heading:
+                    heading = heading.split('(')[-1][:-1]
                 dates = heading.split(' to ')
                 versions.append({
                     'filename': filename,
