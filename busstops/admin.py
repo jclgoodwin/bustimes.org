@@ -41,9 +41,10 @@ class StopPointAdmin(admin.ModelAdmin):
 
         query = SearchQuery(search_term, search_type="websearch", config="english")
         rank = SearchRank(F('locality__search_vector'), query)
-        queryset = (
-            queryset.annotate(rank=rank).filter(locality__search_vector=query).order_by("-rank")
-        )
+        query = Q(locality__search_vector=query)
+        if ' ' not in search_term:
+            query |= Q(atco_code=search_term)
+        queryset = queryset.annotate(rank=rank).filter(query).order_by("-rank")
         return queryset, False
 
 
@@ -115,18 +116,20 @@ class ServiceCodeInline(admin.TabularInline):
 class RouteInline(admin.StackedInline):
     model = Route
     show_change_link = True
-    readonly_fields = ['geometry']
+    autocomplete_fields = ['registration']
 
 
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('service_code', '__str__', 'mode', 'region_id', 'current', 'show_timetable', 'timetable_wrong')
+    list_display = ('service_code', '__str__', 'mode', 'region_id',
+                    'current', 'show_timetable', 'timetable_wrong', 'colour', 'line_brand')
     list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'region',
                    ('source', admin.RelatedOnlyFieldListFilter),
                    ('operator', admin.RelatedOnlyFieldListFilter))
     search_fields = ('service_code', 'line_name', 'line_brand', 'description')
     raw_id_fields = ('operator', 'stops')
     inlines = [ServiceCodeInline, RouteInline]
-    readonly_fields = ['geometry', 'search_vector']
+    readonly_fields = ['search_vector']
+    list_editable = ['colour', 'line_brand']
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:
@@ -142,6 +145,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 class ServiceLinkAdmin(admin.ModelAdmin):
     list_display = ('from_service', 'from_service__current', 'to_service', 'to_service__current', 'how')
+    list_filter = ('from_service__current', 'to_service__current', 'from_service__source', 'to_service__source')
     autocomplete_fields = ('from_service', 'to_service')
 
     @staticmethod

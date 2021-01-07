@@ -1,22 +1,12 @@
 from django.contrib import admin
 from django.db.models import Count, Q
-from vehicles.admin import VehicleEditInline
-from vehicles.models import VehicleRevision
 from .models import User
-
-
-class VehicleRevisionInline(admin.TabularInline):
-    model = VehicleRevision
-    fields = ['datetime', 'vehicle_id', 'from_operator_id', 'to_operator_id', 'changes']
-    readonly_fields = fields
-    show_change_link = True
 
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'email', 'last_login', 'is_active', 'trusted',
                     'approved', 'disapproved', 'pending']
     raw_id_fields = ['user_permissions']
-    inlines = [VehicleEditInline, VehicleRevisionInline]
     actions = ['trust', 'distrust']
 
     def approved(self, obj):

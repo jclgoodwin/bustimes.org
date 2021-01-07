@@ -9,6 +9,7 @@ class LicenceAdmin(admin.ModelAdmin):
 
 
 class RegistrationAdmin(admin.ModelAdmin):
+    search_fields = ['registration_number']
     list_display = ['registration_number']
 
 

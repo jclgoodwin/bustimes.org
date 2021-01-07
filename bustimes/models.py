@@ -44,7 +44,7 @@ class Route(models.Model):
     end_date = models.DateField(null=True, blank=True)
     dates = DateRangeField(null=True, blank=True)
     service = models.ForeignKey('busstops.Service', models.CASCADE)
-    geometry = models.MultiLineStringField(null=True, blank=True)
+    geometry = models.MultiLineStringField(null=True, blank=True, editable=False)
 
     def contains(self, date):
         if not self.start_date or self.start_date <= date:

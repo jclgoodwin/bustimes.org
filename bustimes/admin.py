@@ -1,6 +1,4 @@
 from django.contrib import admin
-from django.contrib.gis.forms import OSMWidget
-from django.contrib.gis.db.models import MultiLineStringField
 from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime
 
 
@@ -23,10 +21,7 @@ class RouteAdmin(admin.ModelAdmin):
     ]
     raw_id_fields = ['service', 'registration']
     search_fields = ['line_name', 'line_brand', 'description']
-    inlines = [TripInline]
-    formfield_overrides = {
-        MultiLineStringField: {'widget': OSMWidget}
-    }
+    # inlines = [TripInline]
 
 
 class TripAdmin(admin.ModelAdmin):
