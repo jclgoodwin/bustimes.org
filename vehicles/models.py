@@ -693,10 +693,10 @@ class VehicleLocation(models.Model):
             }
         else:
             return 0
-        if delay['number'] < 60:
-            delay['number'] = int(delay['number'])
-            delay['unit'] = 'second'
-        else:
-            delay['number'] = int(delay['number'] / 60)
-            delay['unit'] = 'minute'
+        if delay['number'] < 50:  # basically on time
+            return 0
+        delay['number'] = round(delay['number'] / 60)
+        if delay['number'] > 10:
+            return  # probably a red herring
+        delay['unit'] = 'minute'
         return delay
