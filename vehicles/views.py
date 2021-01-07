@@ -509,8 +509,10 @@ def location_detail(request, location_id):
     locations = locations.annotate(features=StringAgg('journey__vehicle__features__name', ', '))
     locations = locations.defer('journey__service__geometry', 'journey__service__search_vector')
     location = get_object_or_404(locations, id=location_id)
+
     return render(request, 'location_detail.html', {
-        'location': location
+        'location': location,
+        'delay': location.get_delay()
     })
 
 

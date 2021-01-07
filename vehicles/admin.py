@@ -422,8 +422,13 @@ class ServiceIsNullFilter(admin.SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(service__isnull=self.value() == '1')
+            return queryset.filter(**{self.parameter_name: self.value() == '1'})
         return queryset
+
+
+class TripIsNullFilter(ServiceIsNullFilter):
+    title = 'trip is null'
+    parameter_name = 'trip__isnull'
 
 
 class VehicleJourneyAdmin(admin.ModelAdmin):
@@ -432,6 +437,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     raw_id_fields = ('vehicle', 'service', 'source', 'trip')
     list_filter = (
         ServiceIsNullFilter,
+        TripIsNullFilter,
         'source',
         'vehicle__operator',
     )
@@ -441,6 +447,8 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
 
 class VehicleLocationAdmin(admin.ModelAdmin):
     raw_id_fields = ['journey']
+    list_display = ['__str__', 'get_delay']
+    list_select_related = ['journey']
     list_filter = ['occupancy']
 
 

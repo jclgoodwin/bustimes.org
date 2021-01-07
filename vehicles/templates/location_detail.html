@@ -30,3 +30,11 @@
 {% if location.occupancy %}
     {{ location.get_occupancy_display }}<br>
 {% endif %}
+
+{% if delay is not None %}
+    {% if delay %}
+        About {{ delay.number }} {{ delay.unit }}{{ delay.number|pluralize }} {{ delay.what }}
+    {% else %}
+        On time
+    {% endif %}<br>
+{% endif %}

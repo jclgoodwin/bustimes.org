@@ -1,5 +1,6 @@
 import re
 import redis
+from datetime import timedelta
 from aioredis import ReplyError
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -9,8 +10,10 @@ from urllib.parse import quote
 from webcolors import html5_parse_simple_color
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db.models import Index, Q
 from django.urls import reverse
 from django.utils.html import escape, format_html
@@ -540,6 +543,9 @@ class VehicleLocation(models.Model):
         blank=True
     )
 
+    def get_absolute_url(self):
+        return reverse('vehiclelocation_detail', args=(self.id,))
+
     def __str__(self):
         return self.datetime.strftime('%-d %b %y %H:%M')
 
@@ -637,3 +643,60 @@ class VehicleLocation(models.Model):
         else:
             json['properties']['vehicle']['features'] = list(vehicle.get_feature_emojis())
         return json
+
+    def get_delay(self):
+        if not self.journey.trip_id:
+            return
+        try:
+            stops = self.journey.trip.stoptime_set.select_related('stop').annotate(
+                distance=Distance('stop__latlong', self.latlong),
+            ).order_by('distance')[:2]
+        except ObjectDoesNotExist:
+            return
+        if len(stops) < 2:
+            return
+        difference = stops[0].sequence - stops[1].sequence
+        if difference == -1:
+            previous_stop = stops[0]
+            next_stop = stops[1]
+        elif difference == 1:
+            previous_stop = stops[1]
+            next_stop = stops[0]
+        else:
+            return
+
+        midpoint = Point(
+            (previous_stop.stop.latlong.x + next_stop.stop.latlong.x) / 2,
+            (previous_stop.stop.latlong.y + next_stop.stop.latlong.y) / 2
+        )
+        mid_distance = midpoint.distance(self.latlong)
+        previous_distance = previous_stop.stop.latlong.distance(self.latlong)
+        next_distance = next_stop.stop.latlong.distance(self.latlong)
+        if mid_distance > previous_distance or mid_distance > next_distance:
+            # midpoint is further than one of the stops
+            return
+
+        previous_time = previous_stop.departure or previous_stop.arrival
+        if previous_time > timedelta(days=1):
+            previous_time -= timedelta(days=1)
+        next_time = next_stop.arrival or next_stop.departure
+        now = timedelta(hours=self.datetime.hour, minutes=self.datetime.minute, seconds=self.datetime.second)
+        if now > next_time:
+            delay = {
+                'number': (now - next_time).total_seconds(),
+                'what': 'late'
+            }
+        elif now < previous_time:
+            delay = {
+                'number': (previous_time - now).total_seconds(),
+                'what': 'early'
+            }
+        else:
+            return 0
+        if delay['number'] < 60:
+            delay['number'] = int(delay['number'])
+            delay['unit'] = 'second'
+        else:
+            delay['number'] = int(delay['number'] / 60)
+            delay['unit'] = 'minute'
+        return delay
