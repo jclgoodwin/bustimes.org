@@ -113,7 +113,10 @@
         <p>Times marked <strong>s</strong> – “sets down only” – the {{ object.mode }} will only stop to drop passengers off</p>
     {% endif %}
 
-    {{ object.source.credit }}
+    {% for credit in timetable.credits %}
+        {{ credit }}
+    {% endfor %}
+
 {% else %}
     {% include 'route.html' %}
 {% endif %}

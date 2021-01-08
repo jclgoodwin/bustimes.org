@@ -841,7 +841,7 @@ class Service(models.Model):
             logger.error(e, exc_info=True)
             return
         if timetable.date and self.source and not self.source.url.endswith('/open-data'):
-            for route in routes:
+            for route in timetable.routes:
                 if route.start_date > timetable.date:
                     self.timetable_change = route.start_date
                     break

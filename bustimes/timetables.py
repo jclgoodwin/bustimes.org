@@ -87,7 +87,7 @@ class Timetable:
     start_date = None
 
     def __init__(self, routes, date):
-        routes = list(routes)
+        routes = list(routes.select_related('source'))
         self.routes = routes
 
         self.date = date
@@ -117,11 +117,15 @@ class Timetable:
                 return
 
             if len(routes) > 1 and any(route.revision_number for route in routes):
-                routes = [route for route in self.routes if route.contains(self.date)]
-                if len(routes) > 1:
-                    max_revision_number = max(route.revision_number or 0 for route in routes)
+                revision_numbers = set(route.revision_number or 0 for route in routes)
+                if len(revision_numbers) > 1:
+                    max_revision_number = max(revision_numbers)
                     if max_revision_number:
                         routes = [route for route in routes if route.revision_number == max_revision_number]
+                elif all('/first/' in route.source.url for route in routes):
+                    start_dates = set(route.start_date for route in routes)
+                    max_start_date = max(start_dates)
+                    routes = [route for route in routes if route.start_date == max_start_date]
             else:
                 override_routes = [route for route in routes if route.start_date == route.end_date == self.date]
                 if override_routes:  # e.g. Lynx BoxingDayHoliday
@@ -188,6 +192,10 @@ class Timetable:
                 for cell in row.times:
                     if type(cell) is Cell and not cell.last and cell.stoptime.activity == 'setDown':
                         return True
+
+    def credits(self):
+        sources = set(route.source for route in self.routes)
+        return [source.credit() for source in sources]
 
 
 class Repetition:
