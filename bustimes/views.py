@@ -10,7 +10,6 @@ from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
 from busstops.models import Service, DataSource, StopPoint
 from departures.live import TimetableDepartures
-from .utils import format_timedelta
 from .models import Route, Trip
 
 
@@ -133,10 +132,24 @@ def trip_json(_, pk):
 
         times.append({
             "stop": stop,
-            "aimed_arrival_time": format_timedelta(stop_time.arrival) if stop_time.arrival else None,
-            "aimed_departure_time": format_timedelta(stop_time.departure) if stop_time.departure else None,
+            "aimed_arrival_time": stop_time.arrival_time() if stop_time.arrival else None,
+            "aimed_departure_time": stop_time.departure_time() if stop_time.departure else None,
         })
 
     return JsonResponse({
         "times": times
     })
+
+
+class TripDetailView(DetailView):
+    model = Trip
+    queryset = model.objects.select_related('route__service')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['stops'] = self.object.stoptime_set.select_related('stop__locality')
+
+        context['breadcrumb'] = [self.object.route.service]
+
+        return context

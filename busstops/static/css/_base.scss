@@ -1195,6 +1195,27 @@ tfoot a {
     }
 }
 
+.trip-timetable {
+    td {
+        padding: .25rem .5rem;
+    }
+
+    td:first-child {
+        padding-left: 0;
+    }
+
+    td:first-child a {
+        margin: -.25rem -.5rem;
+        margin-left: 0;
+        padding: .25rem .5rem;
+        padding-left: 0;
+    }
+
+    .minor {
+        font-size: .875em;
+    }
+}
+
 .credit {
     font-size: .875em;
 }

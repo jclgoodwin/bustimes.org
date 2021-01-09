@@ -272,3 +272,12 @@ class StopTime(models.Model):
         index_together = (
             ('stop', 'departure'),
         )
+
+    def arrival_time(self):
+        return format_timedelta(self.arrival)
+
+    def departure_time(self):
+        return format_timedelta(self.departure)
+
+    def is_minor(self):
+        return self.timing_status == 'OTH' or self.timing_status == 'TIP'

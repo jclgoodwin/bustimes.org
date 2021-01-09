@@ -1,0 +1,33 @@
+{% extends 'page.html' %}
+
+{% block title %}{{ object.route.service }} – bustimes.org{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+
+<p>
+
+<table class="trip-timetable">
+    <th></th><th>Timetable</th>
+    <tbody>
+{% for stop in stops %}
+    {% if stop.arrival %}
+        <tr{% if stop.is_minor %} class="minor"{% endif %}>
+            <td><a href="{{ stop.stop.get_absolute_url }}">{{ stop.stop.get_qualified_name }}</a></td>
+            <td>{{ stop.arrival_time }}</td>
+        </tr>
+    {% endif %}
+    {% if stop.departure and stop.departure != stop.arrival %}
+        <tr{% if stop.is_minor %} class="minor"{% endif %}>
+            <td><a href="{{ stop.stop.get_absolute_url }}">{{ stop.stop.get_qualified_name }}</a></td>
+            <td>{{ stop.departure_time }}</td>
+        </tr>
+    {% endif %}
+{% endfor %}
+</tbody>
+</table>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
