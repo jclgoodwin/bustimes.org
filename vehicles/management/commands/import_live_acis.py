@@ -4,7 +4,7 @@ from datetime import timedelta
 from random import shuffle
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Extent
-from bustimes.models import get_calendars, Trip
+from bustimes.models import Trip
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import VehicleLocation, VehicleJourney, Service
 
@@ -58,8 +58,7 @@ class Command(ImportLiveVehiclesCommand):
             longitude = extent[0]
             time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
                                             microseconds=now.microsecond)
-            trips = Trip.objects.filter(calendar__in=get_calendars(now),
-                                        start__lte=time_since_midnight + timedelta(minutes=5),
+            trips = Trip.objects.filter(start__lte=time_since_midnight + timedelta(minutes=5),
                                         end__gte=time_since_midnight - timedelta(minutes=30))
             services = services.filter(route__trip__in=trips)
             while longitude <= extent[2]:
@@ -81,9 +80,6 @@ class Command(ImportLiveVehiclesCommand):
                 yield item
             self.save()
             sleep(1)
-
-    def get_old_locations(self):
-        return super().get_old_locations().filter(datetime__lt=self.source.datetime - timedelta(minutes=10))
 
     def get_vehicle(self, item):
         operator = item.find('a:VehicleOperatorName', NS).text

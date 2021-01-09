@@ -100,11 +100,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if response.ok:
             return response.json()
 
-    def get_old_locations(self):
-        return VehicleLocation.objects.filter(
-            current=True, journey__source=self.source, latest_vehicle__isnull=False
-        ).exclude(id__in=self.current_location_ids)
-
     @staticmethod
     def get_service(queryset, latlong):
         for filtered_queryset in (
@@ -354,7 +349,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         logger.error(e, exc_info=True)
                 self.save()
                 # mark any vehicles that have gone offline as not current
-                self.get_old_locations().update(current=False)
+                # self.get_old_locations().update(current=False)
             else:
                 return 300  # no items - wait five minutes
         except requests.exceptions.RequestException as e:
