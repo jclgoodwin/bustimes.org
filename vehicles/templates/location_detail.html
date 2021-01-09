@@ -17,7 +17,7 @@
     <a href="{{ location.journey.vehicle.get_absolute_url }}">{{ location.journey.vehicle }}</a>
 
     {% if location.journey.vehicle.vehicle_type.double_decker %}
-        Double decker<br>
+        Double decker{% if location.journey.vehicle.vehicle_type.coach %} coach{% endif %}<br>
     {% elif location.journey.vehicle.vehicle_type.coach %}
         Coach<br>
     {% endif %}
