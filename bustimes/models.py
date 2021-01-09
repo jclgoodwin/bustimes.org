@@ -16,8 +16,9 @@ def get_routes(routes, when):
                 routes = [route for route in routes if route.revision_number == max_revision_number]
         elif all('/first/' in route.source.url for route in routes):
             start_dates = set(route.start_date for route in routes)
-            max_start_date = max(start_dates)
-            routes = [route for route in routes if route.start_date == max_start_date]
+            if start_dates:
+                max_start_date = max(start_dates)
+                routes = [route for route in routes if route.start_date == max_start_date]
     else:
         override_routes = [route for route in routes if route.start_date == route.end_date == when]
         if override_routes:  # e.g. Lynx BoxingDayHoliday
