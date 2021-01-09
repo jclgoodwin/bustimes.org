@@ -71,8 +71,8 @@ def route_xml(request, source, code=''):
     return FileResponse(open(path, 'rb'), content_type='text/xml')
 
 
-def stop_times_json(request, pk):
-    stop = get_object_or_404(StopPoint, atco_code=pk)
+def stop_times_json(request, atco_code):
+    stop = get_object_or_404(StopPoint, atco_code=atco_code)
     times = []
     if 'when' in request.GET:
         try:
@@ -127,8 +127,8 @@ def stop_times_json(request, pk):
     })
 
 
-def trip_json(_, pk):
-    trip = get_object_or_404(Trip, id=pk)
+def trip_json(_, id):
+    trip = get_object_or_404(Trip, id=id)
     times = []
     for stop_time in trip.stoptime_set.select_related('stop__locality'):
         stop = {}
