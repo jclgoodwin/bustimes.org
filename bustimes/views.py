@@ -82,7 +82,15 @@ def stop_times_json(request, pk):
     else:
         when = timezone.now()
     services = stop.service_set.filter(current=True).defer('geometry', 'search_vector')
-    departures = TimetableDepartures(stop, services, when)
+
+    routes = {}
+    for route in Route.objects.filter(service__in=services).select_related('source'):
+        if route.service_id in services:
+            routes[route.service_id].append(route)
+        else:
+            routes[route.service_id] = [route]
+
+    departures = TimetableDepartures(stop, services, when, routes)
     time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                     microseconds=when.microsecond)
     midnight = when - time_since_midnight

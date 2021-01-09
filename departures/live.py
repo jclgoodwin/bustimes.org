@@ -10,10 +10,11 @@ import xml.etree.cElementTree as ET
 from pytz.exceptions import AmbiguousTimeError
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef, Value
+from django.db.models.functions import Concat
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, SIRISource
-from bustimes.models import get_calendars, StopTime
+from bustimes.models import get_calendars, get_routes, Route, StopTime
 from vehicles.tasks import create_service_code, create_journey_code, log_vehicle_journey
 
 
@@ -312,10 +313,11 @@ class TimetableDepartures(Departures):
             'time': time,
             'destination': destination.locality or destination.town or destination,
             'service': stop_time.trip.route.service,
+            # 'trip_id': trip.id
         }
 
     def get_times(self, when):
-        times = get_stop_times(when, self.stop.atco_code, self.services)
+        times = get_stop_times(when, self.stop.atco_code, self.services, self.routes)
         times = times.select_related('trip__route__service', 'trip__destination__locality')
         times = times.defer('trip__route__service__geometry', 'trip__route__service__search_vector',
                             'trip__destination__locality__latlong', 'trip__destination__locality__search_vector')
@@ -339,6 +341,10 @@ class TimetableDepartures(Departures):
             max_age = (times[0]['time'] - self.now).seconds + 60
             cache.set(key, times, max_age)
         return times
+
+    def __init__(self, stop, services, now, routes):
+        self.routes = routes
+        super().__init__(stop, services, now)
 
 
 def parse_datetime(string):
@@ -504,13 +510,17 @@ def blend(departures, live_rows, stop=None):
         departures.sort(key=get_departure_order)
 
 
-def get_stop_times(when, stop, services):
+def get_stop_times(when, stop, services, services_routes):
     time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
     times = StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop)
     if time_since_midnight:
         times = times.filter(departure__gte=time_since_midnight)
     services = [service for service in services if not service.timetable_wrong]
-    return times.filter(trip__route__service__in=services, trip__calendar__in=get_calendars(when))
+    services = {}
+    routes = []
+    for service_routes in services_routes.values():
+        routes += get_routes(service_routes, when.date())
+    return times.filter(trip__route__in=routes, trip__calendar__in=get_calendars(when))
 
 
 def get_departures(stop, services):
@@ -528,13 +538,21 @@ def get_departures(stop, services):
 
     now = timezone.localtime()
 
-    departures = TimetableDepartures(stop, services, now)
+    routes = {}
+    for route in Route.objects.filter(service__in=services).select_related('source'):
+        if route.service_id in services:
+            routes[route.service_id].append(route)
+        else:
+            routes[route.service_id] = [route]
+
+    departures = TimetableDepartures(stop, services, now, routes)
     departures = departures.get_departures()
 
     one_hour = datetime.timedelta(hours=1)
-    times_one_hour_ago = get_stop_times(now - one_hour, stop.atco_code, services)
 
-    if not departures or (departures[0]['time'] - now) < one_hour or times_one_hour_ago.exists():
+    if not departures or (departures[0]['time'] - now) < one_hour or (
+        get_stop_times(now - one_hour, stop.atco_code, services, routes)
+    ).exists():
 
         operators = set()
         for service in services:
@@ -561,11 +579,12 @@ def get_departures(stop, services):
                 live_rows = None
 
             source = None
-            schemes = ServiceCode.objects.filter(service__current=True, service__stops=stop)
-            schemes = schemes.values_list('scheme', flat=True).distinct()
-            if stop.admin_area:
-                schemes = [scheme.replace(' SIRI', '') for scheme in schemes]
-                possible_sources = SIRISource.objects.filter(Q(name__in=schemes) | Q(admin_areas=stop.admin_area))
+
+            if stop.admin_area_id:
+                service_code_exists = Exists(
+                    ServiceCode.objects.filter(service__in=services, scheme=Concat(OuterRef('name'), Value(' SIRI')))
+                )
+                possible_sources = SIRISource.objects.filter(service_code_exists | Q(admin_areas=stop.admin_area_id))
                 for possible_source in possible_sources:
                     if not possible_source.get_poorly():
                         source = possible_source

@@ -4,7 +4,7 @@ from difflib import Differ
 from functools import cmp_to_key
 from django.db.models import Prefetch
 from .utils import format_timedelta
-from .models import get_calendars, Calendar, Trip, StopTime
+from .models import get_calendars, get_routes, Calendar, Trip, StopTime
 
 differ = Differ(charjunk=lambda _: True)
 
@@ -89,6 +89,7 @@ class Timetable:
     def __init__(self, routes, date):
         routes = list(routes.select_related('source'))
         self.routes = routes
+        self.current_routes = routes
 
         self.date = date
 
@@ -116,21 +117,9 @@ class Timetable:
             if not self.date:
                 return
 
-            if len(routes) > 1 and any(route.revision_number for route in routes):
-                routes = [route for route in self.routes if route.contains(self.date)]
-                revision_numbers = set(route.revision_number or 0 for route in routes)
-                if len(revision_numbers) > 1:
-                    max_revision_number = max(revision_numbers)
-                    if max_revision_number:
-                        routes = [route for route in routes if route.revision_number == max_revision_number]
-                elif all('/first/' in route.source.url for route in routes):
-                    start_dates = set(route.start_date for route in routes)
-                    max_start_date = max(start_dates)
-                    routes = [route for route in routes if route.start_date == max_start_date]
-            else:
-                override_routes = [route for route in routes if route.start_date == route.end_date == self.date]
-                if override_routes:  # e.g. Lynx BoxingDayHoliday
-                    routes = override_routes
+            if len(routes) > 1:
+                routes = get_routes(routes, self.date)
+                self.current_routes = routes
 
         trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:
@@ -195,7 +184,7 @@ class Timetable:
                         return True
 
     def credits(self):
-        sources = set(route.source for route in self.routes)
+        sources = set(route.source for route in self.current_routes)
         return [source.credit() for source in sources]
 
 

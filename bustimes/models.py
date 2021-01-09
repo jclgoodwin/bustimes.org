@@ -6,6 +6,25 @@ from .fields import SecondsField
 from .utils import format_timedelta
 
 
+def get_routes(routes, when):
+    if any(route.revision_number for route in routes):
+        routes = [route for route in routes if route.contains(when)]
+        revision_numbers = set(route.revision_number or 0 for route in routes)
+        if len(revision_numbers) > 1:
+            max_revision_number = max(revision_numbers)
+            if max_revision_number:
+                routes = [route for route in routes if route.revision_number == max_revision_number]
+        elif all('/first/' in route.source.url for route in routes):
+            start_dates = set(route.start_date for route in routes)
+            max_start_date = max(start_dates)
+            routes = [route for route in routes if route.start_date == max_start_date]
+    else:
+        override_routes = [route for route in routes if route.start_date == route.end_date == when]
+        if override_routes:  # e.g. Lynx BoxingDayHoliday
+            routes = override_routes
+    return list(routes)
+
+
 def get_calendars(when, calendar_ids=None):
     calendars = Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
                                         start_date__lte=when)
