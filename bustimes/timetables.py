@@ -102,7 +102,7 @@ class Timetable:
             trip__route__in=self.routes
         ).distinct().prefetch_related('calendardate_set')
 
-        if not date and len(self.calendars) == 1:
+        if not date and len(self.calendars) == 1 and len(routes) == 1:
             calendar = self.calendars[0]
             if (calendar.summary or not calendar.calendardate_set.all()) and str(calendar):
                 if calendar.start_date > localdate():

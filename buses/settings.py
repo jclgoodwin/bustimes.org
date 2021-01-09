@@ -331,7 +331,36 @@ PASSENGER_OPERATORS = [
         'McG': 'MCGL',
     }),
 ]
+FIRST_OPERATORS = [
+]
 BOD_OPERATORS = [
+    ('FECS', None, {
+        'FYOR': 'FYOR',
+        'FPOT': 'FPOT',
+        'FSYO': 'FSYO',
+        'FMAN': 'FMAN',
+        'FLDS': 'FLDS',
+        'FHUD': 'FHUD',
+        'FSMR': 'FSMR',
+        'FHAL': 'FHAL',
+        'FBRA': 'FBRA',
+        'FESX': 'FESX',
+        'FECS': 'FECS',
+        'FCWL': 'FCWL',
+        'FHDO': 'FHDO',
+        'FTVA': 'FTVA',
+        'FHAM': 'FHAM',
+        'FDOR': 'FDOR',
+        'FBOS': 'FBOS',
+        'FLEI': 'FLEI',
+        'RRAR': 'RRAR',
+        'FBRI': 'FBRI',
+        'FWYO': 'FWYO',
+    }, False),
+    ('TNXB', 'WM', {
+        'TNXB': 'NXWM',
+        'TCVW': 'TCVW',
+    }, False),
     ('UNOE', 'SE', {
         'UBN': 'UNOE',
         'UNIB': 'UNOE',
@@ -480,28 +509,6 @@ STAGECOACH_OPERATORS = [
     }),
     ('W', 'sswl', 'Stagecoach South Wales', {'SSWL': 'SSWL'}),
     ('Y', 'tram', 'Stagecoach Supertram', {'SCST': 'SCST'}),
-]
-FIRST_OPERATORS = [
-    ('FirstCornwall', 'SW', {'FCWL': 'FCWL'}),
-    ('FirstBristol', 'SW', {'FBRI': 'FBRI'}),
-    ('FirstAvon', 'SW', {'FBRI': 'FBRI'}),
-
-    ('FirstColchester', 'SE', {'FESX': 'FESX'}),
-    ('FirstBasildon', 'SE', {'FESX': 'FESX'}),
-    ('FirstHadleigh', 'SE', {'FESX': 'FESX'}),
-    ('FirstChelmsford', 'SE', {'FESX': 'FESX'}),
-
-    ('FirstNorwich', 'EA', {'FECS': 'FECS'}),
-    ('FirstIpswich', 'EA', {'FECS': 'FECS'}),
-    ('FirstCoastal', 'EA', {'FECS': 'FECS'}),
-
-    ('FirstSlough', 'SE', {'FTVA': 'FTVA'}),
-    ('FirstSomerset', 'SW', {'FBOS': 'FBOS'}),
-    ('FirstDorset', 'SW', {'FDOR': 'FDOR'}),
-
-    ('FirstSoton', 'SW', {'FHAM': 'FHAM'}),
-    ('FirstHoeford', 'SW', {'FHAM': 'FHAM'}),
-    ('FirstHilsea', 'SW', {'FHAM': 'FHAM'}),
 ]
 TICKETER_OPERATORS = [
     ('NW', ['WBTR'], 'Warrington’s Own Buses'),

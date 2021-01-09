@@ -536,6 +536,8 @@ class Service:
 
         self.operating_period = OperatingPeriod(element.find('OperatingPeriod'))
 
+        self.public_use = element.findtext('PublicUse')
+
         self.service_code = element.find('ServiceCode').text
 
         self.marketing_name = element.findtext('MarketingName')
@@ -563,22 +565,24 @@ class Service:
             ) if journey_pattern.sections
         }
 
-        self.lines = get_lines(element)
+        self.lines = [
+            Line(line_element) for line_element in element.find('Lines')
+        ]
 
 
-def get_lines(service_element):
-    lines = []
-    for line_element in service_element.find('Lines'):
-        line_id = line_element.attrib['id']
-        line_name = (line_element.find('LineName').text or '')
+class Line:
+    def __init__(self, element):
+        self.id = element.attrib['id']
+        line_name = element.findtext('LineName') or ''
         if '|' in line_name:
             line_name, line_brand = line_name.split('|', 1)
-            line_brand = line_brand.strip()
+            self.line_brand = line_brand.strip()
         else:
-            line_brand = ''
-        line_name = line_name.strip()
-        lines.append((line_id, line_name, line_brand))
-    return lines
+            self.line_brand = ''
+        self.line_name = line_name.strip()
+
+        self.outbound_description = element.findtext('OutboundDescription/Description')
+        self.inbound_description = element.findtext('InboundDescription/Description')
 
 
 class TransXChange:
@@ -629,6 +633,7 @@ class TransXChange:
         self.stops = {}
         self.routes = {}
         self.route_sections = {}
+        self.journeys = []
 
         serviced_organisations = None
 

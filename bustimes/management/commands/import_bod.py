@@ -59,6 +59,7 @@ def handle_file(command, path):
                             command.handle_file(fake_file, qualified_filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         if filename.endswith('.xml'):
+                            print(filename)
                             logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
         with open(os.path.join(settings.DATA_DIR, path)) as open_file:
@@ -120,16 +121,18 @@ def bus_open_data(api_key, operator):
 
                 print(filename)
                 command.source.name = filename
-                command.source.datetime = dataset['modified']
-                download(path, url)
-                handle_file(command, filename)
+                if dataset['source'].datetime != dataset['modified']:
+                    command.source.datetime = dataset['modified']
 
-                command.source.save(update_fields=['name', 'datetime'])
+                    download(path, url)
+                    handle_file(command, filename)
 
-                print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
+                    command.source.save(update_fields=['name', 'datetime'])
 
-                command.update_geometries()
-                command.mark_old_services_as_not_current()
+                    print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
+
+                    command.update_geometries()
+                    command.mark_old_services_as_not_current()
 
                 sources.append(command.source)
 

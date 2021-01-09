@@ -56,20 +56,27 @@ ________________________________________________________________________________
 """
 
 BANK_HOLIDAYS = {
-    'ChristmasEve':     [datetime.date(2020, 12, 24)],
-    'ChristmasDay':     [datetime.date(2020, 12, 25)],
-    'BoxingDay':        [datetime.date(2020, 12, 26)],
-    'BoxingDayHoliday': [datetime.date(2020, 12, 28)],
-    'NewYearsEve':      [datetime.date(2020, 12, 31)],
-    'NewYearsDay':      [datetime.date(2021, 1, 1)],
-    'Jan2ndScotland':   [datetime.date(2021, 1, 2)],
-    # 'GoodFriday': date(2021, 4, 2),
-    # 'EasterMonday': date(2021, 4, 5),
+    # 'ChristmasEve':     [datetime.date(2020, 12, 24)],
+    # 'ChristmasDay':     [datetime.date(2020, 12, 25)],
+    # 'BoxingDay':        [datetime.date(2020, 12, 26)],
+    # 'BoxingDayHoliday': [datetime.date(2020, 12, 28)],
+    # 'NewYearsEve':      [datetime.date(2020, 12, 31)],
+    # 'NewYearsDay':      [datetime.date(2021, 1, 1)],
+    # 'Jan2ndScotland':   [datetime.date(2021, 1, 2)],
+    'GoodFriday':       [datetime.date(2021, 4, 2)],
+    'EasterMonday':     [datetime.date(2021, 4, 5)],
+    'MayDay':           [datetime.date(2021, 5, 3)],
+    'SpringBank':       [datetime.date(2021, 5, 31)],
 }
 
-BANK_HOLIDAYS['EarlyRunOffDays'] = BANK_HOLIDAYS['ChristmasEve'] + BANK_HOLIDAYS['NewYearsEve']
-BANK_HOLIDAYS['Christmas'] = BANK_HOLIDAYS['ChristmasDay'] + BANK_HOLIDAYS['BoxingDay']
-BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['NewYearsDay']
+# BANK_HOLIDAYS['EarlyRunOffDays'] = BANK_HOLIDAYS['ChristmasEve'] + BANK_HOLIDAYS['NewYearsEve']
+# BANK_HOLIDAYS['Christmas'] = BANK_HOLIDAYS['ChristmasDay'] + BANK_HOLIDAYS['BoxingDay']
+# BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['NewYearsDay'] + BANK_HOLIDAYS[]
+# BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
+BANK_HOLIDAYS['EarlyRunOffDays'] = []
+BANK_HOLIDAYS['Christmas'] = []
+BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['GoodFriday'] + BANK_HOLIDAYS['EasterMonday'] + \
+                                              BANK_HOLIDAYS['MayDay'] + BANK_HOLIDAYS['SpringBank']
 BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 
 
@@ -612,11 +619,11 @@ class Command(BaseCommand):
         if description == 'Origin - Destination':
             description = ''
 
-        for line_id, line_name, line_brand in txc_service.lines:
+        for line in txc_service.lines:
             existing = None
             service_code = None
 
-            if operators and line_name:
+            if operators and line.line_name:
                 if self.source.name in {'Go South West', 'Oxford Bus Company'}:
                     assert operators[0].parent
                     existing = Service.objects.filter(operator__parent=operators[0].parent)
@@ -646,10 +653,10 @@ class Command(BaseCommand):
                 elif description:
                     existing = existing.filter(description=description)
 
-                existing = existing.filter(line_name__iexact=line_name).order_by('-current', 'id').first()
+                existing = existing.filter(line_name__iexact=line.line_name).order_by('-current', 'id').first()
 
             if self.is_tnds():
-                if self.should_defer_to_other_source(operators, line_name):
+                if self.should_defer_to_other_source(operators, line.line_name):
                     continue
 
                 service_code = get_service_code(filename)
@@ -665,7 +672,7 @@ class Command(BaseCommand):
             else:
                 service = Service()
 
-            service.line_name = line_name
+            service.line_name = line.line_name
             service.date = today
             service.current = True
             service.source = self.source
@@ -677,12 +684,13 @@ class Command(BaseCommand):
             if description:
                 service.description = description
 
-            if txc_service.marketing_name:
+            line_brand = line.line_brand
+            if txc_service.marketing_name and txc_service.marketing_name != 'CornwallbyKernow':
                 line_brand = txc_service.marketing_name
-                if line_name in line_brand:
+                if line.line_name in line_brand:
                     line_brand_parts = line_brand.split()
-                    if line_name in line_brand_parts:
-                        line_brand_parts.remove(line_name)
+                    if line.line_name in line_brand_parts:
+                        line_brand_parts.remove(line.line_name)
                         line_brand = ' '.join(line_brand_parts)
                 print(line_brand)
             if line_brand:
@@ -719,13 +727,13 @@ class Command(BaseCommand):
             self.service_ids.add(service.id)
             linked_services.append(service.id)
 
-            journeys = transxchange.get_journeys(txc_service.service_code, line_id)
+            journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
             if journeys:
                 journey = journeys[0]
 
                 ticket_machine_service_code = journey.ticket_machine_service_code
-                if ticket_machine_service_code and ticket_machine_service_code != line_name:
+                if ticket_machine_service_code and ticket_machine_service_code != line.line_name:
                     ServiceCode.objects.update_or_create({
                         'code': ticket_machine_service_code
                     }, service=service, scheme='SIRI')
@@ -741,7 +749,7 @@ class Command(BaseCommand):
             # timetable data:
 
             route_defaults = {
-                'line_name': line_name,
+                'line_name': line.line_name,
                 'line_brand': line_brand,
                 'start_date': txc_service.operating_period.start,
                 'end_date': txc_service.operating_period.end,
@@ -789,7 +797,7 @@ class Command(BaseCommand):
             if len(transxchange.services) > 1:
                 route_code += f'#{txc_service.service_code}'
             if len(txc_service.lines) > 1:
-                route_code += f'#{line_id}'
+                route_code += f'#{line.id}'
 
             route, route_created = Route.objects.update_or_create(route_defaults,
                                                                   source=self.source, code=route_code)
@@ -799,7 +807,7 @@ class Command(BaseCommand):
                 #     continue
                 route.trip_set.all().delete()
 
-            self.handle_journeys(route, stops, journeys, txc_service, line_id)
+            self.handle_journeys(route, stops, journeys, txc_service, line.id)
 
             service.stops.clear()
             outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
