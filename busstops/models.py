@@ -886,8 +886,8 @@ class ServiceCode(models.Model):
 
 
 class ServiceLink(models.Model):
-    from_service = models.ForeignKey(Service, models.CASCADE, 'link_from')
-    to_service = models.ForeignKey(Service, models.CASCADE, 'link_to')
+    from_service = models.ForeignKey(Service, models.CASCADE, 'link_from', limit_choices_to={'current': True})
+    to_service = models.ForeignKey(Service, models.CASCADE, 'link_to', limit_choices_to={'current': True})
     how = models.CharField(max_length=10, choices=(
         ('parallel', 'Combine timetables'),
         ('also', 'Just list'),
