@@ -557,7 +557,8 @@ def get_departures(stop, services):
         operators = set()
         for service in services:
             for operator in service.operators:
-                operators.add(operator)
+                if operator:
+                    operators.add(operator)
 
         live_rows = None
 
