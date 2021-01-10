@@ -547,7 +547,7 @@ class VehicleLocation(models.Model):
         return reverse('vehiclelocation_detail', args=(self.id,))
 
     def __str__(self):
-        return self.datetime.strftime('%-d %b %y %H:%M')
+        return self.datetime.strftime('%-d %b %Y %H:%M:%S')
 
     class Meta:
         ordering = ('id',)

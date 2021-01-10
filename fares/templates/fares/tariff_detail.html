@@ -49,6 +49,8 @@ td:hover {
 
     <h1>{{ object }}</h1>
 
+    <p>For testing purposes only</p>
+
     {% for service in object.services.all %}
         <p><a href="{{ service.get_absolute_url }}">{{ service }}</a></p>
     {% endfor %}
@@ -90,7 +92,7 @@ td:hover {
 
     {% endfor %}
 
-    <p>{{ object.source.url | urlize }}</p>
+    <p>{{ object.source.url | urlize }} {{ object.source.datetime }}</p>
 
 {% endblock %}
 

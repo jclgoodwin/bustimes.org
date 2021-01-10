@@ -5,6 +5,8 @@ from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Count, Q, F, Exists, OuterRef
+from django.urls import reverse
+from django.utils.safestring import mark_safe
 from bustimes.models import Route
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
@@ -213,8 +215,8 @@ class PlaceAdmin(admin.ModelAdmin):
 @admin.register(DataSource)
 class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
-    list_display = ('name', 'url', 'datetime', 'settings', 'operators')
-    list_editable = ('datetime', 'settings')
+    list_display = ('name', 'url', 'datetime', 'settings', 'operators', 'routes')
+    list_editable = ['datetime']
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -225,6 +227,11 @@ class DataSourceAdmin(admin.ModelAdmin):
     @staticmethod
     def operators(obj):
         return obj.operators
+
+    @staticmethod
+    def routes(obj):
+        url = reverse('admin:bustimes_route_changelist')
+        return mark_safe(f'<a href="{url}?source={obj.id}">Routes</a>')
 
 
 @admin.register(SIRISource)
