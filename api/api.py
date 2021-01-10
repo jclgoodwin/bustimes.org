@@ -16,7 +16,7 @@ class VehicleFilter(FilterSet):
 
     class Meta:
         model = Vehicle
-        fields = ['operator', 'vehicle_type', 'livery', 'withdrawn', 'reg', 'fleet_code']
+        fields = ['id', 'operator', 'vehicle_type', 'livery', 'withdrawn', 'reg', 'fleet_code']
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
