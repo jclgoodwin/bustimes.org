@@ -13,6 +13,7 @@ from .models import (VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleL
 UserModel = get_user_model()
 
 
+@admin.register(VehicleType)
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name', 'double_decker', 'coach')
@@ -33,18 +34,18 @@ class VehicleAdminForm(forms.ModelForm):
 
 def user(obj):
     if obj.user_id:
-        url = reverse('admin:accounts_user_change', args=(obj.user_id,))
-        return mark_safe(f'<a href="{url}">{obj.user_id}</a>')
+        return mark_safe(f'<a href="?user={obj.user_id}">{obj.user_id}</a>')
 
 
 class VehicleEditInline(admin.TabularInline):
     model = VehicleEdit
     fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery_id', 'colours', 'branding',
-              'notes', 'changes', user]
+              'notes', 'changes', 'user']
     readonly_fields = fields[1:]
     show_change_link = True
 
 
+@admin.register(Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
                     'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
@@ -339,6 +340,7 @@ class UserFilter(admin.SimpleListFilter):
         return queryset
 
 
+@admin.register(VehicleEdit)
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
                     'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', user, url]
@@ -431,6 +433,7 @@ class TripIsNullFilter(ServiceIsNullFilter):
     parameter_name = 'trip__isnull'
 
 
+@admin.register(VehicleJourney)
 class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'code', 'vehicle', 'route_name', 'service', 'destination')
     list_select_related = ('vehicle', 'service')
@@ -445,6 +448,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
+@admin.register(VehicleLocation)
 class VehicleLocationAdmin(admin.ModelAdmin):
     raw_id_fields = ['journey']
     list_display = ['__str__', 'get_delay']
@@ -452,6 +456,7 @@ class VehicleLocationAdmin(admin.ModelAdmin):
     list_filter = ['occupancy']
 
 
+@admin.register(JourneyCode)
 class JourneyCodeAdmin(admin.ModelAdmin):
     list_display = ['code', 'service', 'destination']
     list_select_related = ['service']
@@ -463,6 +468,8 @@ class JourneyCodeAdmin(admin.ModelAdmin):
 
 
 class LiveryAdminForm(forms.ModelForm):
+    save_as = True
+
     class Meta:
         widgets = {
             'colours': forms.Textarea,
@@ -472,6 +479,7 @@ class LiveryAdminForm(forms.ModelForm):
         }
 
 
+@admin.register(Livery)
 class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
@@ -515,6 +523,7 @@ class RevisionChangeFilter(admin.SimpleListFilter):
         return queryset
 
 
+@admin.register(VehicleRevision)
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
     list_display = ['datetime', 'vehicle', '__str__', user]
@@ -539,12 +548,4 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
                     self.message_user(request, f'Reverted {after} to {before}')
 
 
-admin.site.register(VehicleType, VehicleTypeAdmin)
 admin.site.register(VehicleFeature)
-admin.site.register(Vehicle, VehicleAdmin)
-admin.site.register(VehicleEdit, VehicleEditAdmin)
-admin.site.register(VehicleJourney, VehicleJourneyAdmin)
-admin.site.register(VehicleLocation, VehicleLocationAdmin)
-admin.site.register(JourneyCode, JourneyCodeAdmin)
-admin.site.register(Livery, LiveryAdmin)
-admin.site.register(VehicleRevision, VehicleRevisionAdmin)

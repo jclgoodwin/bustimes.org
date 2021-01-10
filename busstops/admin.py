@@ -12,6 +12,7 @@ from .models import (
 )
 
 
+@admin.register(AdminArea)
 class AdminAreaAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'atco_code', 'region_id')
     list_filter = ('region_id',)
@@ -22,6 +23,7 @@ class StopCodeInline(admin.TabularInline):
     model = StopCode
 
 
+@admin.register(StopPoint)
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
     list_select_related = ('locality', 'admin_area')
@@ -48,6 +50,7 @@ class StopPointAdmin(admin.ModelAdmin):
         return queryset, False
 
 
+@admin.register(StopCode)
 class StopCodeAdmin(admin.ModelAdmin):
     list_display = ['stop', 'code', 'source']
     raw_id_fields = ['stop']
@@ -65,6 +68,7 @@ class OperatorAdminForm(forms.ModelForm):
         }
 
 
+@admin.register(Operator)
 class OperatorAdmin(admin.ModelAdmin):
     form = OperatorAdminForm
     list_display = ['name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region',
@@ -119,6 +123,7 @@ class RouteInline(admin.StackedInline):
     autocomplete_fields = ['registration']
 
 
+@admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('service_code', '__str__', 'mode', 'region_id',
                     'current', 'show_timetable', 'timetable_wrong', 'colour', 'line_brand')
@@ -146,7 +151,9 @@ class ServiceAdmin(admin.ModelAdmin):
         return queryset, False
 
 
+@admin.register(ServiceLink)
 class ServiceLinkAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = ('from_service', 'from_service__current', 'to_service', 'to_service__current', 'how')
     list_filter = ('from_service__current', 'to_service__current', 'from_service__source', 'to_service__source')
     autocomplete_fields = ('from_service', 'to_service')
@@ -160,6 +167,7 @@ class ServiceLinkAdmin(admin.ModelAdmin):
         return obj.to_service.current
 
 
+@admin.register(Locality)
 class LocalityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
     search_fields = ('id', 'name')
@@ -167,7 +175,9 @@ class LocalityAdmin(admin.ModelAdmin):
     list_filter = ('admin_area', 'admin_area__region')
 
 
+@admin.register(OperatorCode)
 class OperatorCodeAdmin(admin.ModelAdmin):
+    save_as = True
     list_display = ('id', 'operator', 'source', 'code')
     list_filter = [
         ('source', admin.RelatedOnlyFieldListFilter)
@@ -176,6 +186,7 @@ class OperatorCodeAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator',)
 
 
+@admin.register(ServiceCode)
 class ServiceCodeAdmin(admin.ModelAdmin):
     list_display = ('id', 'service', 'scheme', 'code')
     list_filter = (
@@ -188,15 +199,18 @@ class ServiceCodeAdmin(admin.ModelAdmin):
     autocomplete_fields = ['service']
 
 
+@admin.register(ServiceColour)
 class ServiceColourAdmin(admin.ModelAdmin):
     list_display = ('preview', 'foreground', 'background')
 
 
+@admin.register(Place)
 class PlaceAdmin(admin.ModelAdmin):
     list_filter = ('source',)
     search_fields = ('name',)
 
 
+@admin.register(DataSource)
 class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
     list_display = ('name', 'url', 'datetime', 'settings', 'operators')
@@ -213,6 +227,7 @@ class DataSourceAdmin(admin.ModelAdmin):
         return obj.operators
 
 
+@admin.register(SIRISource)
 class SIRISourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'requestor_ref', 'areas', 'get_poorly')
 
@@ -232,6 +247,7 @@ class PaymentMethodOperatorInline(admin.TabularInline):
     autocomplete_fields = ['operator']
 
 
+@admin.register(PaymentMethod)
 class PaymentMethodAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'operators')
     inlines = [PaymentMethodOperatorInline]
@@ -248,19 +264,5 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Region)
-admin.site.register(AdminArea, AdminAreaAdmin)
 admin.site.register(District)
-admin.site.register(Locality, LocalityAdmin)
 admin.site.register(StopArea)
-admin.site.register(StopCode, StopCodeAdmin)
-admin.site.register(StopPoint, StopPointAdmin)
-admin.site.register(Operator, OperatorAdmin)
-admin.site.register(ServiceColour, ServiceColourAdmin)
-admin.site.register(Service, ServiceAdmin)
-admin.site.register(ServiceLink, ServiceLinkAdmin)
-admin.site.register(OperatorCode, OperatorCodeAdmin)
-admin.site.register(ServiceCode, ServiceCodeAdmin)
-admin.site.register(DataSource, DataSourceAdmin)
-admin.site.register(Place, PlaceAdmin)
-admin.site.register(SIRISource, SIRISourceAdmin)
-admin.site.register(PaymentMethod, PaymentMethodAdmin)
