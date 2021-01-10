@@ -840,7 +840,7 @@ class Service(models.Model):
         except (IndexError, UnboundLocalError) as e:
             logger.error(e, exc_info=True)
             return
-        if timetable.date and len(set(route.source_id for route in timetable.routes)) == 1:
+        if timetable.date and len(set(route.code.split('/', 1)[0] for route in timetable.routes)) == 1:
             for route in timetable.routes:
                 if route.start_date > timetable.date:
                     self.timetable_change = route.start_date
