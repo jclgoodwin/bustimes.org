@@ -541,6 +541,7 @@ def get_departures(stop, services):
     routes = {}
     for route in Route.objects.filter(service__in=services).select_related('source'):
         if route.service_id in services:
+        if route.service_id in routes:
             routes[route.service_id].append(route)
         else:
             routes[route.service_id] = [route]
