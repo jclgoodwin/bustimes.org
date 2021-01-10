@@ -22,6 +22,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
+from vehicles.models import Vehicle
 from .utils import format_gbp, get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
                      Service, Place, ServiceColour, DataSource)
@@ -786,6 +787,14 @@ def search(request):
             context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
             context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))
             context['services'] = Paginator(services, 20).get_page(request.GET.get('page'))
+
+            vehicles = Vehicle.objects.select_related('operator')
+            query_text = query_text.replace(' ', '')
+            if len(query_text) >= 5:
+                if query_text.isdigit():
+                    context['vehicles'] = vehicles.filter(fleet_code=query_text)
+                elif not query_text.isalpha():
+                    context['vehicles'] = vehicles.filter(reg=query_text.upper())
 
     return render(request, 'search.html', context)
 

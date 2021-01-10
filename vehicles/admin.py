@@ -355,7 +355,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         OperatorFilter,
         UserFilter,
     ]
-    raw_id_fields = ['vehicle', 'livery']
+    raw_id_fields = ['vehicle', 'livery', 'user']
     actions = ['apply_edits', 'approve', 'disapprove', 'delete_vehicles']
 
     def get_queryset(self, request):

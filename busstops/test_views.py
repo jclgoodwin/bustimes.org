@@ -208,7 +208,7 @@ class ViewsTests(TestCase):
             self.assertNotContains(response, 'results found for')
 
             # postcode looks valid but doesn't exist
-            with self.assertNumQueries(3):
+            with self.assertNumQueries(4):
                 response = self.client.get('/search?q=w1a 1aj')
             self.assertContains(response, '0 places')
 

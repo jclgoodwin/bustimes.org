@@ -23,6 +23,23 @@
             {% endfor %}
         </ul>
     {% else %}
+        {% if vehicles %}
+            <h2>{{ vehicles|length }} vehicle{{ vehicles|length|pluralize }}</h2>
+
+            <ul class="has-smalls">
+                {% for result in vehicles %}
+                    <li>
+                        <a href="{{ result.get_absolute_url }}">
+                            <span>{{ result }}</span>
+                            {% if result.operator %}
+                                <small>{{ result.operator }}</small>
+                            {% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
 
         <h2 id="places">{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
 
