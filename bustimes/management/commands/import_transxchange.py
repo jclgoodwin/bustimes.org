@@ -80,6 +80,11 @@ BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['GoodFriday'] + BANK
 BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 
 
+def initialisms(word, **kwargs):
+    if word in ('YMCA', 'PH'):
+        return word
+
+
 def get_summary(summary):
     # London wtf
     if summary == 'not School vacation in free public holidays regulation holidays':
@@ -564,8 +569,8 @@ class Command(BaseCommand):
             destination = txc_service.destination
             if origin and destination and (origin != 'Origin' and destination != 'Destination' or txc_service.vias):
                 if origin.isupper() and destination.isupper():
-                    origin = titlecase(origin)
-                    destination = titlecase(destination)
+                    origin = titlecase(origin, callback=initialisms)
+                    destination = titlecase(destination, callback=initialisms)
 
                 # for the outbound and inbound descriptions
                 txc_service.description_parts = [origin, destination]
