@@ -65,7 +65,8 @@ class EditVehiclesForm(forms.Form):
 
             if user.trusted:
                 depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
-                depots = [(depot, depot) for depot in sorted(depots) if depot]
+                depots = [(depot, depot) for depot in depots if depot]
+                depots.sort()
             elif vehicle and vehicle.data and 'Depot' in vehicle.data:
                 depots = [(vehicle.data['Depot'], vehicle.data['Depot'])]
 
