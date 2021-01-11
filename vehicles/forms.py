@@ -54,22 +54,31 @@ class EditVehiclesForm(forms.Form):
             return False
         return True
 
-    def __init__(self, *args, operator=None, user=None, **kwargs):
+    def __init__(self, *args, operator=None, user=None, vehicle=None, **kwargs):
         super().__init__(*args, **kwargs)
+
+        colours = None
+        depots = None
 
         if operator:
             colours = get_livery_choices(operator)
-            if colours:
-                self.fields['colours'].choices = colours
-            else:
-                del self.fields['colours']
-                del self.fields['other_colour']
-            depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
-            depots = [(depot, depot) for depot in depots if depot]
-            if depots:
-                self.fields['depot'].choices = [('', '')] + sorted(depots)
-            else:
-                del self.fields['depot']
+
+            if user.trusted:
+                depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
+                depots = [(depot, depot) for depot in sorted(depots) if depot]
+            elif vehicle and vehicle.data and 'Depot' in vehicle.data:
+                depots = [(vehicle.data['Depot'], vehicle.data['Depot'])]
+
+        if colours:
+            self.fields['colours'].choices = colours
+        else:
+            del self.fields['colours']
+            del self.fields['other_colour']
+
+        if depots:
+            self.fields['depot'].choices = [('', '')] + depots
+        else:
+            del self.fields['depot']
 
         operators = None
         if operator and operator.parent:
@@ -90,7 +99,8 @@ class EditVehicleForm(EditVehiclesForm):
     name = forms.CharField(label='Name', required=False, max_length=255)
     previous_reg = RegField(required=False, max_length=14)
     depot = forms.ChoiceField(required=False)
-    notes = forms.CharField(help_text="Please <strong>don’t</strong> add information about depots, previous operators, etc",
+    notes = forms.CharField(  # help_text="""Please <strong>don’t</strong>
+                              # add information about depots, previous operators, etc""",
                             required=False, max_length=255)
     url = forms.URLField(label='URL', help_text="Optional link to a public (not Facebook) web page or photo "
                          "showing repaint", required=False, max_length=255)
@@ -98,7 +108,7 @@ class EditVehicleForm(EditVehiclesForm):
                    'previous_reg', 'features', 'depot', 'notes']
 
     def __init__(self, *args, vehicle=None, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs, vehicle=vehicle)
 
         if str(vehicle.fleet_number) in vehicle.code:
             self.fields['fleet_number'].disabled = True
