@@ -52,18 +52,12 @@ class Command(ImportLiveVehiclesCommand):
 
         defaults = {'fleet_number': fleet_number, 'source': self.source, 'operator_id': item['OperatorRef']}
 
-        if item['OperatorRef'] in {'NXHH', 'WNGS', 'GTRI', 'DIAM', 'PBLT'}:
-            return self.vehicles.get_or_create(defaults, code=code, operator__parent='Rotala')
-
         if item['OperatorRef'] == 'SESX':
             operators = ['SESX', 'NIBS', 'GECL']
         else:
             operators = [item['OperatorRef']]
 
         try:
-            if item['OperatorRef'] == 'WBSV' and code.isdigit():
-                defaults['code'] = code
-                return self.vehicles.filter(Q(code=code) | Q(fleet_code=code), operator='WBSV').get_or_create(defaults)
             return self.vehicles.get_or_create(defaults, code=code, operator__in=operators)
         except self.vehicles.model.MultipleObjectsReturned:
             return self.vehicles.filter(code=code, operator__in=operators).first(), False

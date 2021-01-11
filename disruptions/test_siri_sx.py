@@ -82,7 +82,6 @@ class SiriSXTest(TestCase):
         StopUsage.objects.create(service=service, stop_id='2800S11053A', order=69)
         DataSource.objects.create(name='Transport for the North',
                                   settings={'app_id': 'hen hom', 'app_key': 'roger poultry'})
-        DataSource.objects.create(name='Arriva')
 
     def test_get(self):
         self.assertFalse(self.client.get('/siri').content)
@@ -97,8 +96,6 @@ class SiriSXTest(TestCase):
         with use_cassette(cassette, match_on=['body']):
             with self.assertRaises(ValueError):
                 call_command('subscribe', 'tfn')
-            with self.assertRaises(ValueError):
-                call_command('subscribe', 'arriva')
 
         response = self.client.post('/siri', """<?xml version="1.0" ?>
 <Siri xmlns:ns1="http://www.siri.org.uk/siri" xmlns="http://www.siri.org.uk/siri" version="1.3">
@@ -117,7 +114,6 @@ class SiriSXTest(TestCase):
         cache.set('Heartbeat:TransportAPI', True)
         with use_cassette(cassette, match_on=['body']):
             call_command('subscribe', 'tfn')
-            call_command('subscribe', 'arriva')
 
     def test_siri_sx_post(self):
         xml = """<?xml version="1.0" encoding="UTF-8" standalone="yes"?>

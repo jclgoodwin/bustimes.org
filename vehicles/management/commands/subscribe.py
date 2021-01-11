@@ -3,7 +3,6 @@ import uuid
 from base64 import b64encode
 from django.core.cache import cache
 from datetime import timedelta
-from requests_toolbelt.adapters.source import SourceAddressAdapter
 from django.utils import timezone
 from django.core.management.base import BaseCommand
 from busstops.models import DataSource
@@ -89,48 +88,6 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
             </SituationExchangeSubscriptionRequest>
         """)
 
-    def arriva(self, terminate):
-        if not terminate and cache.get('Heartbeat:HAConTest'):
-            return  # received a heartbeat recently, no need to resubscribe
-
-        self.source = DataSource.objects.get(name='Arriva')
-
-        now = timezone.now()
-
-        self.session = requests.Session()
-
-        timestamp = now.isoformat()
-        requestor_ref = 'HAConToBusTimesET'
-
-        # Access to the subscription endpoint is restricted to certain IP addresses,
-        # so use a Digital Ocean floating IP address
-        self.session.mount('http://', SourceAddressAdapter('10.16.0.7'))
-
-        # terminate any previous subscription just in case
-        self.terminate_subscription(timestamp, requestor_ref)
-
-        # (re)subscribe
-        if not terminate:
-            termination_time = (now + timedelta(hours=24)).isoformat()
-
-            self.subscribe(timestamp, requestor_ref, f"""
-                <SubscriptionContext>
-                    <HeartbeatInterval>PT2M</HeartbeatInterval>
-                </SubscriptionContext>
-                <EstimatedTimetableSubscriptionRequest>
-                    <SubscriberRef>{requestor_ref}</SubscriberRef>
-                    <SubscriptionIdentifier>{requestor_ref}</SubscriptionIdentifier>
-                    <InitialTerminationTime>{termination_time}</InitialTerminationTime>
-                    <EstimatedTimetableRequest version="1.3">
-                        <RequestTimestamp>{timestamp}</RequestTimestamp>
-                        <PreviewInterval>PT2H</PreviewInterval>
-                    </EstimatedTimetableRequest>
-                    <ChangeBeforeUpdates>PT1M</ChangeBeforeUpdates>
-                </EstimatedTimetableSubscriptionRequest>
-            """)
-
     def handle(self, source, **options):
-        if source == 'tfn':
-            self.tfn(options['terminate'])
-        elif source == 'arriva':
-            self.arriva(options['terminate'])
+        assert source == 'tfn'
+        self.tfn(options['terminate'])

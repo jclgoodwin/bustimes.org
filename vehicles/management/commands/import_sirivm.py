@@ -137,11 +137,6 @@ class Command(ImportLiveVehiclesCommand):
                     operator = Operator.objects.get(id='RBUS')
             elif operator.id == 'SESX':
                 operator_options = ('SESX', 'NIBS', 'GECL')
-            elif operator.id == 'FBRI':
-                if len(vehicle_code) < 4:
-                    return None, None
-                if not vehicle_code.isdigit():
-                    operator = Operator.objects.get(id='ABUS')
 
         defaults = {
             'source': self.source,
@@ -265,8 +260,6 @@ class Command(ImportLiveVehiclesCommand):
         if operator_options:
             services = services.filter(operator__in=operator_options).distinct()
         elif operator:
-            if operator.id == 'FBRI' and vehicle.operator_id == 'ABUS':
-                operator = vehicle.operator
             services = services.filter(operator=operator)
         else:
             return journey

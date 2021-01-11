@@ -27,7 +27,6 @@ sentry-sdk = "*"
 gtfs-realtime-bindings = "*"
 # django-multidb-router = "*"
 celery = {extras = ["redis"],version = "*"}
-requests-toolbelt = "*"
 pyyaml = "*"
 asgiref = "*"
 polyline = "*"

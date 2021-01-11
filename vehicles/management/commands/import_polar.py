@@ -67,10 +67,7 @@ class Command(ImportLiveVehiclesCommand):
             if 'number_plate' in item['properties']['meta']:
                 defaults['reg'] = item['properties']['meta']['number_plate']
 
-        if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:
-            vehicles = self.vehicles.filter(operator__parent='Go South Coast')
-        else:
-            vehicles = self.vehicles.filter(operator__in=self.operators.values())
+        vehicles = self.vehicles.filter(operator__in=self.operators.values())
 
         if fleet_number.isdigit():
             vehicle = vehicles.get_or_create(
@@ -87,9 +84,6 @@ class Command(ImportLiveVehiclesCommand):
                 defaults,
                 code=code,
             )
-
-        if vehicle[0].operator_id == 'METR':  # ignore Metrobus vehicles in Brighton & Hove feed
-            return None, None
 
         if vehicle[0].code.isdigit() and not code.isdigit():
             vehicle[0].code = code
