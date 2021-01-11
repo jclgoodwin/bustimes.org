@@ -31,7 +31,7 @@ class ImportBusOpenDataTest(TestCase):
         ('LYNX', 'EA', {
             'CO': 'LYNX',
         }, False),
-    ])
+    ], TICKETER_OPERATORS=[])
     @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {})
     def test_import_bod(self):
         with TemporaryDirectory() as directory:
