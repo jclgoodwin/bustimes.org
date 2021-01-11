@@ -6,6 +6,18 @@
 
     <h1>User {{ object.id }}</h1>
 
+    {% if object.trusted is False %}
+        <p>This user has been banned. Shame on them.</p>
+    {% else %}
+        <p>{% if object.trusted %}This user appears to be trustworthy, so they have the power to edit various information without moderation.
+        If you think they’re abusing that power{% else %}If this user has been doing vandalism{% endif %}, you can <a href="/contact?message=User+{{ object.id }}">report them</a>.</p>
+    {% endif %}
+
+    <p>As well as the activity listed below, they have done {{ edits }} other edit{{ edits|pluralize }},
+    of which {{ approved }} ha{{ approved|pluralize:"s,ve" }} been approved,
+    {{ disapproved }} ha{{ disapproved|pluralize:"s,ve" }} been disapproved,
+    and {{ pending }} {{ pending|pluralize:"is,are" }} pending.</p>
+
     <table>
         <thead>
             <th scope="col">Date</th>

@@ -93,7 +93,8 @@ def contact(request):
     else:
         referrer = request.META.get('HTTP_REFERER')
         form = ContactForm(initial={
-            'referrer': referrer
+            'referrer': referrer,
+            'message': request.GET.get('message')
         })
     return render(request, 'contact.html', {
         'form': form,

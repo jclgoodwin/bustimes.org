@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model, views as auth_views
 from django.shortcuts import render, get_object_or_404
+from django.http import Http404
 from django.core.paginator import Paginator
 from . import forms
 
@@ -41,8 +42,16 @@ def user_detail(request, pk):
     revisions = revisions.order_by('-id')
     paginator = Paginator(revisions, 100)
     page = request.GET.get('page')
+    revisions = paginator.get_page(page)
+
+    if not revisions:
+        raise Http404
 
     return render(request, 'user_detail.html', {
         'object': user,
-        'revisions': paginator.get_page(page)
+        'revisions': revisions,
+        'edits': user.vehicleedit_set.count(),
+        'approved': user.vehicleedit_set.filter(approved=True).count(),
+        'disapproved': user.vehicleedit_set.filter(approved=False).count(),
+        'pending': user.vehicleedit_set.filter(approved=None).count()
     })
