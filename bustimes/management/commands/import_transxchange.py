@@ -642,6 +642,9 @@ class Command(BaseCommand):
                             operators = Operator.objects.filter(id='THTR')
                         elif txc_service.service_code.startswith('C'):
                             operators = Operator.objects.filter(id='CSLB')
+                    elif self.source.name == 'Go South West':
+                        if txc_service.service_code.startswith('GC'):
+                            operators = Operator.objects.filter(id='TFCN')
 
                 elif all(operator.parent == 'Go South Coast' for operator in operators):
                     existing = Service.objects.filter(operator__parent='Go South Coast')
