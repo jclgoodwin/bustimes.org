@@ -50,8 +50,8 @@ def user_detail(request, pk):
     return render(request, 'user_detail.html', {
         'object': user,
         'revisions': revisions,
-        'edits': user.vehicleedit_set.count(),
-        'approved': user.vehicleedit_set.filter(approved=True).count(),
-        'disapproved': user.vehicleedit_set.filter(approved=False).count(),
-        'pending': user.vehicleedit_set.filter(approved=None).count()
+        'edits': user.edits_count(),
+        'approved': user.approved_count(),
+        'disapproved': user.disapproved_count(),
+        'pending': user.pending_count()
     })

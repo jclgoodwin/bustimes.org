@@ -217,6 +217,7 @@ class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
     list_display = ('name', 'url', 'datetime', 'settings', 'operators', 'routes')
     list_editable = ['datetime']
+    actions = ['delete_routes', 'remove_datetimes']
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -232,6 +233,14 @@ class DataSourceAdmin(admin.ModelAdmin):
     def routes(obj):
         url = reverse('admin:bustimes_route_changelist')
         return mark_safe(f'<a href="{url}?source={obj.id}">Routes</a>')
+
+    def delete_routes(self, request, queryset):
+        result = Route.objects.filter(source__in=queryset).delete()
+        self.message_user(request, result)
+
+    def remove_datetimes(self, request, queryset):
+        result = queryset.update(datetime=None)
+        self.message_user(request, result)
 
 
 @admin.register(SIRISource)
