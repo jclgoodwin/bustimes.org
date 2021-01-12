@@ -2,15 +2,17 @@
 
 {% block title %}User {{ object.id }} – bustimes.org{% endblock %}
 
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
 {% block content %}
 
     <h1>User {{ object.id }}</h1>
 
     {% if object.trusted is False %}
-        <p>This user has been banned. Shame on them.</p>
+        <p>This user has been banned.</p>
     {% else %}
         <p>{% if object.trusted %}This user appears to be trustworthy, so they have the power to edit various information without moderation.
-        If you think they’re abusing that power{% else %}If this user has been doing vandalism{% endif %}, you can <a href="/contact?message=User+{{ object.id }}">report them</a>.</p>
+        If you think they’re abusing that power{% else %}If this user has been doing vandalism{% endif %}, please <a href="/contact?message=User+{{ object.id }}">report it</a>.</p>
     {% endif %}
 
     <p>As well as the activity listed below, they have done {{ edits }} other edit{{ edits|pluralize }},

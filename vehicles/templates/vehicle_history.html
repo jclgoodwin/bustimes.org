@@ -2,6 +2,8 @@
 
 {% block title %}{% if vehicle %}History – {{ vehicle }}{% else %}Recent changes {% endif %} – bustimes.org{% endblock %}
 
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
 {% block bodyclass %}{% endblock %}
     
 {% block content %}

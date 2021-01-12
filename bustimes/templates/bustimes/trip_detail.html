@@ -2,11 +2,15 @@
 
 {% block title %}{{ object.route.service }} – bustimes.org{% endblock %}
 
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
 
-<p>
+{% for note in trip.notes_set.all %}
+    <p>{{ note }}</p>
+{% endfor %}
 
 <table class="trip-timetable">
     <th></th><th>Timetable</th>
