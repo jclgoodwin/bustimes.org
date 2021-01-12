@@ -20,9 +20,9 @@
             {{ situation.text|linebreaks }}
         {% endif %}
         {% for consequence in situation.consequences %}
-            {% if consequence.text %}
+            {% ifchanged consequence.text %}{% if consequence.text %}
                 {{ consequence.text|linebreaks }}
-            {% endif %}
+            {% endif %}{% endifchanged %}
         {% endfor %}
         {% for link in situation.link_set.all %}
             {{ link.url|urlise }}
