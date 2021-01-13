@@ -1,10 +1,14 @@
 import io
+import logging
 import xml.etree.cElementTree as ET
 import requests
 import zipfile
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from ... import models
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_atco_code(stop):
@@ -220,13 +224,19 @@ class Command(BaseCommand):
 
                 if response.headers['Content-Type'] == 'text/xml':
                     filename = response.headers['Content-Disposition'].split('filename', 1)[1]
-                    self.handle_file(dataset, response.raw, filename)
+                    try:
+                        self.handle_file(dataset, response.raw, filename)
+                    except AttributeError as e:
+                        logger.error(e, exc_info=True)
                 else:
                     assert response.headers['Content-Type'] == 'application/zip'
                     with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
                         for filename in archive.namelist():
                             print(' ', filename)
-                            self.handle_file(dataset, archive.open(filename))
+                            try:
+                                self.handle_file(dataset, archive.open(filename))
+                            except AttributeError as e:
+                                logger.error(e, exc_info=True)
 
             url = data['next']
             params = None
