@@ -133,6 +133,10 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
                         call_command('import_bod', 'stagecoach')
                 mocked_print.assert_called_with({'ChristmasDay', 'NewYearsDay', 'BoxingDay'})
 
+        source = DataSource.objects.get(name='Stagecoach North East')
+        response = self.client.get(f'/sources/{source.id}/routes/{archive_name}')
+        self.assertEqual(response.content.decode(), 'E1_SIS_PB_E1E2_20200531.xml\nE1_SIS_PB_E1E2_20200614.xml')
+
         self.assertEqual(3, Service.objects.count())
         self.assertEqual(6, Route.objects.count())
 
