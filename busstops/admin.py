@@ -218,14 +218,13 @@ class DataSourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'datetime', 'settings', 'operators', 'routes', 'services')
     list_editable = ['datetime']
     actions = ['delete_routes', 'remove_datetimes']
+    show_full_result_count = False
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
             return queryset.annotate(
-                operators=StringAgg('route__service__operator', ', ', distinct=True),
-                routes=Count('route', distinct=True),
-                services=Count('service', filter=Q(service__current=True), distinct=True),
+                operators=StringAgg('route__service__operator', ', ', distinct=True)
             )
         return queryset
 
@@ -236,12 +235,14 @@ class DataSourceAdmin(admin.ModelAdmin):
     @staticmethod
     def routes(obj):
         url = reverse('admin:bustimes_route_changelist')
-        return mark_safe(f'<a href="{url}?source={obj.id}">{obj.routes}</a>')
+        routes = obj.route_set.count()
+        return mark_safe(f'<a href="{url}?source={obj.id}">{routes}</a>')
 
     @staticmethod
     def services(obj):
         url = reverse('admin:busstops_service_changelist')
-        return mark_safe(f'<a href="{url}?source={obj.id}">{obj.services}</a>')
+        services = obj.service_set.count()
+        return mark_safe(f'<a href="{url}?source={obj.id}">{services}</a>')
 
     def delete_routes(self, request, queryset):
         result = Route.objects.filter(source__in=queryset).delete()
