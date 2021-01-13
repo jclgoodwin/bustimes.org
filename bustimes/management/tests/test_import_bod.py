@@ -83,7 +83,7 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             {
                 'times': [
                     {'service': {'line_name': '54', 'operators': [{'id': 'LYNX', 'name': 'Lynx', 'parent': ''}]},
-                     'trip_id': 1, 'destination': {'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'},
+                     'trip_id': trip.id, 'destination': {'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'},
                      'aimed_arrival_time': None, 'aimed_departure_time': '2020-05-01T09:15:00Z'}
                 ]
             }
