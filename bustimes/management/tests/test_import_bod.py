@@ -77,6 +77,27 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
             <td>09:33</td>
         </tr>""")
 
+        response = self.client.get('/stops/2900W0321/times.json')
+        self.assertEqual(
+            response.json(),
+            {
+                'times': [
+                    {'service': {'line_name': '54', 'operators': [{'id': 'LYNX', 'name': 'Lynx', 'parent': ''}]},
+                     'trip_id': 1, 'destination': {'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'},
+                     'aimed_arrival_time': None, 'aimed_departure_time': '2020-05-01T09:15:00Z'}
+                ]
+            }
+        )
+
+        response = self.client.get('/stops/2900W0321/times.json?limit=10')
+        self.assertEqual(1, len(response.json()['times']))
+
+        response = self.client.get('/stops/2900W0321/times.json?limit=nine')
+        self.assertEqual(400, response.status_code)
+
+        response = self.client.get('/stops/2900W0321/times.json?when=yesterday')
+        self.assertEqual(400, response.status_code)
+
     @override_settings(STAGECOACH_OPERATORS=[('NE', 'scne', 'Stagecoach North East', {
         'SCNE': 'SCNE',
         'SCSS': 'SCSS',

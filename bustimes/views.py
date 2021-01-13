@@ -78,14 +78,21 @@ def stop_times_json(request, atco_code):
         try:
             when = parse_datetime(request.GET['when'])
         except ValueError:
-            return HttpResponseBadRequest()
+            return HttpResponseBadRequest("'when' isn't in the right format")
     else:
         when = timezone.now()
     services = stop.service_set.filter(current=True).defer('geometry', 'search_vector')
 
+    try:
+        limit = int(request.GET['limit'])
+    except KeyError:
+        limit = 10
+    except ValueError:
+        return HttpResponseBadRequest("'limit' isn't in the right format (an integer or nothing)")
+
     routes = {}
     for route in Route.objects.filter(service__in=services).select_related('source'):
-        if route.service_id in services:
+        if route.service_id in routes:
             routes[route.service_id].append(route)
         else:
             routes[route.service_id] = [route]
@@ -95,7 +102,7 @@ def stop_times_json(request, atco_code):
                                     microseconds=when.microsecond)
     midnight = when - time_since_midnight
 
-    for stop_time in departures.get_times(when).prefetch_related("trip__route__service__operator"):
+    for stop_time in departures.get_times(when).prefetch_related("trip__route__service__operator")[:limit]:
         service = {
             "line_name": stop_time.trip.route.service.line_name,
             "operators": [{
@@ -127,7 +134,7 @@ def stop_times_json(request, atco_code):
     })
 
 
-def trip_json(_, id):
+def trip_json(request, id):
     trip = get_object_or_404(Trip, id=id)
     times = []
     for stop_time in trip.stoptime_set.select_related('stop__locality'):

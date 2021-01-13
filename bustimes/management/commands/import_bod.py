@@ -164,7 +164,7 @@ def update_ticketer_source_settings_url(dataset, operator):
         source = DataSource.objects.get(url__contains=operator)
     except DataSource.DoesNotExist:
         return
-    dataset_url = dataset['url'].replace('download/', '') 
+    dataset_url = dataset['url'].replace('download/', '')
     if source.settings:
         if 'url' in source.settings and source.settings['url'] == dataset_url:
             return
