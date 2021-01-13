@@ -680,6 +680,8 @@ class Command(BaseCommand):
                 if not existing:
                     # assume service code is at least unique within a TNDS region
                     existing = self.source.service_set.filter(service_code=service_code).first()
+            elif re.match(r'^P[BCDFGHKM]\d+:\d+.*.$', txc_service.service_code):
+                service_code = txc_service.service_code
 
             if existing:
                 service = existing
