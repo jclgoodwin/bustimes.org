@@ -128,11 +128,11 @@ class Command(BaseCommand):
                 {
                     "user_profile": user_profiles[user_profile_ref],
                     "sales_offer_package": sales_offer_packages[sales_offer_package_ref],
-                    "description": fare_table_element.findtext("Description")
+                    "description": fare_table_element.findtext("Description", "")
                 },
                 tariff=tariffs[tariff_ref],
                 code=fare_table_element.attrib["id"],
-                name=fare_table_element.findtext("Name")
+                name=fare_table_element.findtext("Name", "")
             )
 
             if not created:
