@@ -5,7 +5,8 @@ from busstops.templatetags.date_range import date_range
 
 
 class Situation(models.Model):
-    source = models.ForeignKey('busstops.DataSource', models.CASCADE)
+    source = models.ForeignKey('busstops.DataSource', models.CASCADE,
+                               limit_choices_to={'name__in': ['Transport for the North', 'bustimes.org']})
     situation_number = models.CharField(max_length=36, blank=True)
     reason = models.CharField(max_length=25, blank=True)
     summary = models.CharField(max_length=255, blank=True)
@@ -16,7 +17,7 @@ class Situation(models.Model):
     current = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.summary
+        return self.summary or self.text
 
     def get_absolute_url(self):
         return reverse('situation', args=(self.id,))
