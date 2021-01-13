@@ -401,6 +401,7 @@ BOD_OPERATORS = [
     }, False),
     ('FRDS', 'SE', {}, False),
     ('BEES', 'EA', {}, False),
+    ('COTY', 'NE', {}, False),
 
     ('AVMT', 'SW', {}, False),
     ('BZCO', 'SW', {}, False),
