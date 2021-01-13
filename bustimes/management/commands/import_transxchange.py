@@ -18,7 +18,7 @@ from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction, DataError
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
@@ -648,10 +648,12 @@ class Command(BaseCommand):
 
                 elif all(operator.parent == 'Go South Coast' for operator in operators):
                     existing = Service.objects.filter(operator__parent='Go South Coast')
+                elif self.source.name.startswith('Stagecoach'):
+                    existing = Service.objects.filter(Q(source=self.source) | Q(operator__in=operators))
                 else:
                     existing = Service.objects.filter(operator__in=operators)
 
-                if len(transxchange.services) == 1 and len(txc_service.lines) == 1:
+                if len(transxchange.services) == 1:
                     existing = existing.filter(
                         Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id'))) |
                         Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
@@ -659,7 +661,7 @@ class Command(BaseCommand):
                 elif len(txc_service.lines) == 1:
                     existing = existing.filter(
                         Exists(
-                            Route.objects.filter(code__endswith=f'#{txc_service.service_code}', service=OuterRef('id'))
+                            Route.objects.filter(service_code=txc_service.service_code, service=OuterRef('id'))
                         )
                     )
                 elif description:
