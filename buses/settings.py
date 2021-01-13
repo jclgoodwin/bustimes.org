@@ -358,7 +358,7 @@ BOD_OPERATORS = [
         'FWYO': 'FWYO',
     }, False),
     ('TNXB', 'WM', {
-        'TNXB': 'NXWM',
+        'TNXB': 'TNXB',
         'TCVW': 'TCVW',
     }, False),
     ('UNOE', 'SE', {
