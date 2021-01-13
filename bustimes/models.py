@@ -270,6 +270,9 @@ class Trip(models.Model):
     def __repr__(self):
         return str(self.start)
 
+    def get_absolute_url(self):
+        return reverse('trip_detail', args=(self.id,))
+
 
 class StopTime(models.Model):
     id = models.BigAutoField(primary_key=True)

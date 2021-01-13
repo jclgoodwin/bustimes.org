@@ -53,7 +53,7 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(service_code.code, '1')
         self.assertEqual(service_code.scheme, 'SIRI')
 
-        response = self.client.get('/services/54-kings-lynn-the-walpoles-via-clenchwarton')
+        response = self.client.get(f'/services/{route.service_id}/timetable')
 
         self.assertContains(response, """
             <tr>
@@ -65,6 +65,17 @@ class ImportBusOpenDataTest(TestCase):
 
         self.assertContains(response, """<p class="credit">Timetable data from <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/\
 Bus Open Data Service</a>, 1 April 2020</p>""")
+
+        trip = route.trip_set.first()
+        response = self.client.get(f'/trips/{trip.id}.json')
+        self.assertEqual(27, len(response.json()['times']))
+
+        response = self.client.get(trip.get_absolute_url())
+
+        self.assertContains(response, """<tr class="minor">
+            <td><a href="/stops/2900C1814">Clenchwarton Post Box</a></td>
+            <td>09:33</td>
+        </tr>""")
 
     @override_settings(STAGECOACH_OPERATORS=[('NE', 'scne', 'Stagecoach North East', {
         'SCNE': 'SCNE',
