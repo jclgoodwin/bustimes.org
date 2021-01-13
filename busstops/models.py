@@ -844,7 +844,7 @@ class Service(models.Model):
             previous_route = None
             for route in timetable.routes:
                 if previous_route and route.source_id == previous_route.source_id:
-                    if '/' not in route.code or route.code.split('/', 1)[0] != previous_route.code.split('/', 1)[0]:
+                    if '/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0]:
                         if route.start_date > timetable.date:
                             self.timetable_change = route.start_date
                     break
