@@ -446,9 +446,13 @@ class Cell:
 
     def __init__(self, stoptime, arrival, departure):
         self.stoptime = stoptime
-        self.arrival = arrival or departure
-        self.departure = departure or arrival
-        self.wait_time = arrival and departure and arrival != departure
+        self.arrival = arrival
+        self.departure = departure
+        if arrival is None:
+            self.arrival = departure
+        elif departure is None:
+            self.departure = arrival
+        self.wait_time = arrival and departure and departure - arrival
 
     def __repr__(self):
         return format_timedelta(self.arrival)
