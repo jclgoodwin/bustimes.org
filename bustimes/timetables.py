@@ -328,11 +328,16 @@ class Grouping:
                     row.times.append('')
 
     def do_heads_and_feet(self):
+        if not self.trips:
+            return
+
         previous_trip = None
         previous_notes = None
         previous_note_ids = None
         in_a_row = 0
         prev_difference = None
+
+        max_notes = max(len(trip.notes.all()) for trip in self.trips)
 
         for i, trip in enumerate(self.trips):
             difference = None
@@ -344,8 +349,13 @@ class Grouping:
                         self.column_feet[note.id][-1].span += 1
                     else:
                         self.column_feet[note.id].append(ColumnFoot(note))
-                elif i:
-                    self.column_feet[note.id] = [ColumnFoot(None, i), ColumnFoot(note)]
+                elif i:  # not the first trip
+                    if max_notes == 1 and self.column_feet:
+                        # assert len(self.column_feet) == 1
+                        for note_id in self.column_feet:
+                            self.column_feet[note_id].append(ColumnFoot(note))
+                    else:
+                        self.column_feet[note.id] = [ColumnFoot(None, i), ColumnFoot(note)]
                 else:
                     self.column_feet[note.id] = [ColumnFoot(note)]
             for key in self.column_feet:
