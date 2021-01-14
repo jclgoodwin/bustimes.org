@@ -34,13 +34,17 @@ class VehicleAdminForm(forms.ModelForm):
 
 def user(obj):
     if obj.user_id:
-        return mark_safe(f'<a href="?user={obj.user_id}">{obj.user_id}</a>')
+        return format_html(
+            '<a href="{}">{}</a>',
+            reverse('admin:accounts_user_change', args=(obj.user_id,)),
+            obj.user_id
+        )
 
 
 class VehicleEditInline(admin.TabularInline):
     model = VehicleEdit
     fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery_id', 'colours', 'branding',
-              'notes', 'changes', 'user']
+              'notes', 'changes', user]
     readonly_fields = fields[1:]
     show_change_link = True
 
@@ -528,7 +532,7 @@ class RevisionChangeFilter(admin.SimpleListFilter):
 
 @admin.register(VehicleRevision)
 class VehicleRevisionAdmin(admin.ModelAdmin):
-    raw_id_fields = ['from_operator', 'to_operator', 'vehicle']
+    raw_id_fields = ['from_operator', 'to_operator', 'from_livery', 'to_livery', 'vehicle', 'user']
     list_display = ['datetime', 'vehicle', '__str__', user]
     actions = ['revert']
     list_filter = [

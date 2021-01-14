@@ -26,7 +26,7 @@ class User(AbstractUser):
         return f'{self.id}'
 
     def revisions_count(self):
-        return self.vehicle_revision_set.count()
+        return self.vehiclerevision_set.count()
 
     def edits_count(self):
         return self.vehicleedit_set.count()
