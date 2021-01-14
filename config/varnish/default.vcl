@@ -8,13 +8,26 @@ backend default {
     .port = "8080";
 }
 
+acl purge {
+    "localhost";
+    "10.131.0.0"/16;
+}
+
 sub vcl_recv {
     # Happens before we check if we have this in cache already.
     #
     # Typically you clean up the request here, removing cookies you don't need,
     # rewriting the request, etc.
 
-    if (req.url ~ "^/(admin/|contact|awin-transaction)" || req.url ~ "/edit") {
+    if (req.method == "BAN") {
+        if (!client.ip ~ purge) {
+            return(synth(405,"Not allowed."));
+        }
+        ban("obj.http.url ~ ^" + req.url);
+        return (synth(200, "Ban added"));
+    }
+
+    if (req.url ~ "^/(admin/|accounts/|siri|contact|awin-transaction)" || req.url ~ "/edit") {
         return (pass);
     }
 
@@ -32,16 +45,21 @@ sub vcl_backend_response {
     # Here you clean the response headers, removing silly Set-Cookie headers
     # and other mistakes your backend does.
 
-    if (bereq.url !~ "^/(admin/|contact)" && bereq.url !~ "/edit") {
+    if (bereq.url !~ "^/(admin/|accounts/|contact)" && bereq.url !~ "/edit") {
         unset beresp.http.set-cookie;
+
+        set beresp.http.url = bereq.url;
 
         if (beresp.status >= 200 && beresp.status < 400) {
             if (bereq.url ~ "^/stops/") {
-                set beresp.ttl = 50s;
-            } elif (bereq.url ~ "/(vehicles|journeys/)") {
-                set beresp.ttl = 6s;
+                set beresp.ttl = 1m;
+            } elif (bereq.url ~ "/(journeys|locations)") {
+                set beresp.ttl = 10s;
+            } elif (bereq.url ~ "/vehicles") {
+                set beresp.ttl = 5m;
             } else {
-                set beresp.ttl = 1h;
+                set beresp.ttl = 30m;
+                set beresp.grace = 10m;
             }
         }
     }
