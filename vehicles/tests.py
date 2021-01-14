@@ -251,8 +251,15 @@ class VehiclesTests(TestCase):
         self.assertEqual(1, VehicleEdit.objects.all().count())
 
         response = self.client.get('/admin/accounts/user/')
-        self.assertContains(response, '<td class="field-approved">0</td><td class="field-disapproved">0</td>'
-                            '<td class="field-pending">1</td>')
+        self.assertContains(
+            response,
+            '<td class="field-approved">'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.user.id}&approved__exact=1">0</a></td>'
+            '<td class="field-disapproved">'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.user.id}&approved__exact=0">0</a></td>'
+            '<td class="field-pending">'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.user.id}&approved__isnull=True">1</a></td>'
+        )
 
         with self.assertNumQueries(9):
             response = self.client.get('/admin/vehicles/vehicleedit/')
