@@ -555,7 +555,7 @@ class ServiceDetailView(DetailView):
             else:
                 parallel = []
             timetable = self.object.get_timetable(date, parallel)
-            if timetable and (timetable.date or timetable.calendar):
+            if timetable and timetable.routes and (timetable.date or timetable.calendar):
                 if not parallel:
                     for grouping in timetable.groupings:
                         del grouping.heads

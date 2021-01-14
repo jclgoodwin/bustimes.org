@@ -198,14 +198,16 @@ class ImportTransXChangeTest(TestCase):
         # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
 
         # Test the fallback version without a timetable (just a list of stops)
-        service.show_timetable = False
-        service.save(update_fields=['show_timetable'])
-        res = self.client.get(service.get_absolute_url())
+        service.route_set.all().delete()
+        res = self.client.get(service.get_absolute_url() + '?date=2020-01-01')
         self.assertContains(res, """<li>
             <a href="/stops/2900A181"></a>
         </li>""")
         self.assertContains(res, 'Norwich - Wymondham - Attleborough')
         # self.assertContains(res, 'Attleborough - Wymondham - Norwich')
+
+        res = self.client.get(f'/services/{service.id}/timetable?date=2020-01-01')
+        self.assertContains(res, 'Sorry, no journeys found for Wednesday 1 January 2020')
 
     @freeze_time('30 October 2017')
     def test_service_with_empty_pattern(self):

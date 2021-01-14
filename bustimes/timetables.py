@@ -83,6 +83,7 @@ def get_stop_usages(trips):
 
 
 class Timetable:
+    calendars = ()
     calendar = None
     start_date = None
 
