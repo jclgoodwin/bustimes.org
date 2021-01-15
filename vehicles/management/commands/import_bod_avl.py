@@ -213,7 +213,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if destination_ref:
             try:
-                stops = StopPoint.objects.filter(service=OuterRef("pk"), locality__stoppoint=destination_ref)
+                stops = StopPoint.objects.filter(service=OuterRef("pk"), atco_code__startswith=destination_ref[:3])
                 return services.get(Exists(stops))
             except Service.DoesNotExist:
                 self.service_cache[cache_key] = None
