@@ -79,6 +79,9 @@ class Command(ImportFromCSVCommand):
             operator_name = f'{operator_name} ({operator_id})'
 
         region_id = self.get_region_id(row['TLRegOwn'])
+        if len(region_id) > 2:
+            print(row)
+            return
 
         mode = row['Mode'].lower()
         if mode == 'airline':

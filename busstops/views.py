@@ -533,7 +533,8 @@ class ServiceDetailView(DetailView):
         if not self.object.current or self.object.slug != self.kwargs['slug']:
             return context
 
-        context['operators'] = self.object.operator.all()
+        operators = self.object.operator.all()
+        context['operators'] = operators
 
         context['related'] = self.object.get_similar_services()
 
@@ -566,8 +567,8 @@ class ServiceDetailView(DetailView):
 
         consequences = Consequence.objects.filter(services=self.object)
         context['situations'] = Situation.objects.filter(
+            Q(consequence__services=self.object) | Q(consequence__services=None, consequence__operators__in=operators),
             publication_window__contains=Now(),
-            consequence__services=self.object,
             current=True
         ).distinct().prefetch_related(
             Prefetch('consequence_set', queryset=consequences.prefetch_related('stops'), to_attr='consequences'),
@@ -621,8 +622,8 @@ class ServiceDetailView(DetailView):
                 'text': 'Buy tickets at megabus.com'
             })
 
-        if context['operators']:
-            operator = context['operators'][0]
+        if operators:
+            operator = operators[0]
             context['breadcrumb'].append(operator)
             context['payment_methods'] = []
             for method in operator.payment_methods.all():
@@ -630,7 +631,7 @@ class ServiceDetailView(DetailView):
                     context['app'] = method
                 else:
                     context['payment_methods'].append(method)
-            for operator in context['operators']:
+            for operator in operators:
                 if operator.is_national_express() or self.object.service_code == 'DNAX090':
                     context['links'].append({
                         'url': operator.get_national_express_url(),
