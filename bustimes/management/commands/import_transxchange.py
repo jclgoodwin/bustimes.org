@@ -17,7 +17,7 @@ from titlecase import titlecase
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
-from django.db import transaction, DataError
+from django.db import transaction, DataError, IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
@@ -750,9 +750,10 @@ class Command(BaseCommand):
 
                 ticket_machine_service_code = journey.ticket_machine_service_code
                 if ticket_machine_service_code and ticket_machine_service_code != line.line_name:
-                    ServiceCode.objects.update_or_create({
-                        'code': ticket_machine_service_code
-                    }, service=service, scheme='SIRI')
+                    try:
+                        ServiceCode.objects.create(scheme='SIRI', code=ticket_machine_service_code, service=service)
+                    except IntegrityError:
+                        pass
 
                 # a code used in Traveline Cymru URLs:
                 if self.source.name == 'W':
