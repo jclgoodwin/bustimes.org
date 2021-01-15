@@ -461,6 +461,7 @@ class DateRange:
         self.end = element.findtext("EndDate")
         if self.end:
             self.end = datetime.date.fromisoformat(self.end)
+        self.note = element.findtext("Note", "")
 
     def __str__(self):
         if self.start == self.end:
