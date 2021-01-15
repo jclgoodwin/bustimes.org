@@ -1,4 +1,5 @@
 import os
+import zipfile
 from datetime import date
 from ciso8601 import parse_datetime
 from tempfile import TemporaryDirectory
@@ -14,16 +15,24 @@ from ...models import Route
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
 
 
+class MockZipFile:
+    def __init__(self):
+        pass
+
+
 class ImportBusOpenDataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         ea = Region.objects.create(pk='EA', name='East Anglia')
-        ne = Region.objects.create(pk='NE', name='North East')
         lynx = Operator.objects.create(id='LYNX', region=ea, name='Lynx')
-        sund = Operator.objects.create(id='SCSU', region=ne, name='Sunderland')
+        scpb = Operator.objects.create(id='SCPB', region=ea, name='Peterborough')
+        schu = Operator.objects.create(id='SCHU', region=ea, name='Huntingdon')
         source = DataSource.objects.create(name='National Operator Codes')
-        OperatorCode.objects.create(operator=lynx, source=source, code='LYNX')
-        OperatorCode.objects.create(operator=sund, source=source, code='SCSU')
+        OperatorCode.objects.bulk_create([
+            OperatorCode(operator=lynx, source=source, code='LYNX'),
+            OperatorCode(operator=scpb, source=source, code='SCPB'),
+            OperatorCode(operator=schu, source=source, code='SCHU')
+        ])
 
     @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
     @freeze_time('2020-05-01')
@@ -98,56 +107,67 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
         response = self.client.get('/stops/2900W0321/times.json?when=yesterday')
         self.assertEqual(400, response.status_code)
 
-    @override_settings(STAGECOACH_OPERATORS=[('NE', 'scne', 'Stagecoach North East', {
-        'SCNE': 'SCNE',
-        'SCSS': 'SCSS',
-        'SCSU': 'SCSU',
-        'SCTE': 'SCTE',
-        'SCHA': 'SCHA'
-    })], DATA_DIR=FIXTURES_DIR)
+    @override_settings(STAGECOACH_OPERATORS=[('EA', 'sccm', 'Stagecoach East', {
+        'SCHU': 'SCHU',
+        'SCPB': 'SCPB',
+    })])
     @freeze_time('2020-06-10')
+    @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
+        'AllBankHolidays': [date(2020, 8, 31)],
+    })
     def test_import_stagecoach(self):
 
-        archive_name = 'stagecoach-scne-route-schedule-data-transxchange.zip'
-        path = os.path.join(FIXTURES_DIR, archive_name)
+        undefined_holidays = {
+            'ChristmasDay', 'NewYearsDay', 'MayDay', 'BoxingDay', 'ChristmasDayHoliday', 'GoodFriday',
+            'NewYearsEve', 'EasterMonday', 'SpringBank', 'NewYearsDayHoliday', 'BoxingDayHoliday',
+            'LateSummerBankHolidayNotScotland', 'ChristmasEve'
+        }
 
-        with patch(
-            'bustimes.management.commands.import_bod.download_if_changed',
-            return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00'))
-        ) as download_if_changed:
-            with patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
-                'AllBankHolidays': [date(2020, 8, 31)],
-            }):
-                with self.assertNumQueries(183):
-                    with patch('builtins.print') as mocked_print:
+        with TemporaryDirectory() as directory:
+            with override_settings(DATA_DIR=directory):
+                archive_name = 'stagecoach-sccm-route-schedule-data-transxchange.zip'
+                path = os.path.join(directory, archive_name)
+
+                with zipfile.ZipFile(path, 'a') as open_zipfile:
+                    for filename in (
+                        '904_FE_PF_904_20210102.xml',
+                        '904_VI_PF_904_20200830.xml',
+                    ):
+                        open_zipfile.write(os.path.join(FIXTURES_DIR, filename), filename)
+
+                with patch(
+                    'bustimes.management.commands.import_bod.download_if_changed',
+                    return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
+                ) as download_if_changed:
+                    with self.assertNumQueries(71):
+                        with patch('builtins.print') as mocked_print:
+                            call_command('import_bod', 'stagecoach')
+                    download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+                    mocked_print.assert_called_with(undefined_holidays)
+
+                    with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
-                download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
-                mocked_print.assert_called_with({'ChristmasDay', 'NewYearsDay', 'BoxingDay'})
 
-                with self.assertNumQueries(1):
-                    call_command('import_bod', 'stagecoach')
+                    with self.assertNumQueries(72):
+                        with patch('builtins.print') as mocked_print:
+                            call_command('import_bod', 'stagecoach', 'sccm')
+                    mocked_print.assert_called_with(undefined_holidays)
 
-                DataSource.objects.update(datetime=None)
-                with self.assertNumQueries(182):
-                    with patch('builtins.print') as mocked_print:
-                        call_command('import_bod', 'stagecoach')
-                mocked_print.assert_called_with({'ChristmasDay', 'NewYearsDay', 'BoxingDay'})
+                source = DataSource.objects.get(name='Stagecoach East')
+                response = self.client.get(f'/sources/{source.id}/routes/{archive_name}')
+                self.assertEqual(response.content.decode(), '904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml')
 
-        source = DataSource.objects.get(name='Stagecoach North East')
-        response = self.client.get(f'/sources/{source.id}/routes/{archive_name}')
-        self.assertEqual(response.content.decode(), 'E1_SIS_PB_E1E2_20200531.xml\nE1_SIS_PB_E1E2_20200614.xml')
+                route = Route.objects.first()
+                response = self.client.get(route.get_absolute_url())
+                self.assertEqual(200, response.status_code)
+                self.assertEqual('', response.filename)
 
-        self.assertEqual(3, Service.objects.count())
-        self.assertEqual(6, Route.objects.count())
+        self.assertEqual(1, Service.objects.count())
+        self.assertEqual(2, Route.objects.count())
 
-        Route.objects.filter(code__endswith='/E1_SIS_PB_E1E2_20200614.xml#8980').delete()
-
-        with self.assertNumQueries(15):
-            response = self.client.get('/services/e2-sunderland-south-shields')
-        self.assertContains(response, '<option selected value="2020-06-10">Wednesday 10 June 2020</option>')
-        self.assertContains(response, '<a href="/operators/sunderland">Sunderland</a>')
-
-        route = Route.objects.first()
-        response = self.client.get(route.get_absolute_url())
-        self.assertEqual(200, response.status_code)
-        self.assertEqual('', response.filename)
+        with self.assertNumQueries(14):
+            response = self.client.get('/services/904-huntingdon-peterborough')
+        print(response.content.decode())
+        self.assertContains(response, '<option selected value="2020-08-31">Monday 31 August 2020</option>')
+        self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
+        self.assertContains(response, '<a href="/operators/peterborough">Peterborough</a>')
