@@ -114,6 +114,12 @@ class Calendar(models.Model):
             ('start_date', 'end_date'),
         )
 
+    def is_sufficiently_simple(self):
+        if self.summary or not self.calendardate_set.all():
+            if str(self):
+                return True
+        return False
+
     def allows(self, date):
         if not self.contains(date):
             return False

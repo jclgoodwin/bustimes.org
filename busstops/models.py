@@ -846,8 +846,15 @@ class Service(models.Model):
                 if previous_route and route.source_id == previous_route.source_id:
                     if '/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0]:
                         if route.start_date > timetable.date:
-                            self.timetable_change = route.start_date
-                    break
+                            timetable_change = route.start_date
+                            if timetable_change not in timetable.date_options:
+                                # change 'from Sunday' to 'from Monday' if no Sunday service
+                                for date in timetable.date_options:
+                                    if timetable_change < date:
+                                        timetable_change = date
+                                        break
+                            self.timetable_change = timetable_change
+                            break
                 previous_route = route
 
         return timetable

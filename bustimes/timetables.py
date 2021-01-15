@@ -88,6 +88,8 @@ class Timetable:
     start_date = None
 
     def __init__(self, routes, date):
+        self.today = localdate()
+
         routes = list(routes.select_related('source'))
         self.routes = routes
         self.current_routes = routes
@@ -105,20 +107,21 @@ class Timetable:
 
         if not date and len(self.calendars) == 1 and len(routes) == 1:
             calendar = self.calendars[0]
-            if (calendar.summary or not calendar.calendardate_set.all()) and str(calendar):
-                if calendar.start_date > localdate():
-                    self.start_date = calendar.start_date  # ???
+            if calendar.is_sufficiently_simple():
                 self.calendar = calendar
+                if calendar.start_date > self.today:  # starts in the future
+                    self.start_date = calendar.start_date
 
         if not self.calendar:
+            self.date_options = list(self.get_date_options())
             if not self.date:
-                for date in self.date_options():
-                    self.date = date
-                    break
-            if not self.date:
-                return
+                if self.date_options:
+                    self.date = self.date_options[0]
+                else:
+                    return
 
             if len(routes) > 1:
+                # consider revision numbers:
                 routes = get_routes(routes, self.date)
                 self.current_routes = routes
 
@@ -151,8 +154,8 @@ class Timetable:
                 row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
             grouping.do_heads_and_feet()
 
-    def date_options(self):
-        date = localdate()
+    def get_date_options(self):
+        date = self.today
 
         for calendar in self.calendars:
             for calendar_date in calendar.calendardate_set.all():
@@ -166,7 +169,18 @@ class Timetable:
         end_date = date + datetime.timedelta(days=21)
         end_dates = [route.end_date for route in self.routes]
         if end_dates and all(end_dates):
-            end_date = min(end_date, max(end_dates))
+            max_end_date = max(end_dates)
+            end_date = min(end_date, max_end_date)  # 21 days in the future, or the end date, whichever is sooner
+        else:
+            max_end_date = None
+
+        if start_dates:
+            max_start_date = max(start_dates)
+            week = datetime.timedelta(days=7)
+            if max_start_date - end_date > week:
+                end_date = max_start_date + week
+                if max_end_date:
+                    end_date = min(max_end_date, end_date)
 
         if self.date and self.date < date:
             yield self.date
