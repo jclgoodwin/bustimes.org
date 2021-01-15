@@ -447,10 +447,10 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(timetable.groupings[0].rows[0].times),
                          "['', '', 09:48, 10:28, 11:08, 11:48, 12:28, 13:08, 13:48, 14:28, 15:08, '', '']")
 
-        with freeze_time('21 Feb 2016'):  # Sunday
-            date_options = list(timetable.get_date_options())
-            self.assertEqual(date_options[0], date(2016, 2, 22))  # Monday
-            self.assertEqual(date_options[-1], date(2017, 1, 27))
+        timetable.today = date(2016, 2, 21)  # Sunday
+        date_options = list(timetable.get_date_options())
+        self.assertEqual(date_options[0], date(2016, 2, 22))  # Monday
+        self.assertEqual(date_options[-1], date(2017, 1, 27))
 
         self.assertEqual(37, service.stopusage_set.count())
 
