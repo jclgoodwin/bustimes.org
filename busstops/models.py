@@ -819,7 +819,6 @@ class Service(models.Model):
             ))
             if self.description and self.line_name:
                 q |= Q(description=self.description)
-                q |= Q(line_name=self.line_name, operator__in=self.operator.all())
             services = Service.objects.filter(~Q(pk=self.pk), q, current=True).order_by().defer('geometry')
             services = sorted(services.annotate(operators=ArrayAgg('operator__name')), key=Service.get_order)
             cache.set(key, services)
