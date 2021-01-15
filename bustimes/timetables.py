@@ -107,7 +107,8 @@ class Timetable:
 
         if not date and len(self.calendars) == 1 and len(routes) == 1:
             calendar = self.calendars[0]
-            if calendar.is_sufficiently_simple():
+            # calendar has a summary like 'school days only', or no exceptions within 21 days
+            if calendar.is_sufficiently_simple(self.today + datetime.timedelta(days=21)):
                 self.calendar = calendar
                 if calendar.start_date > self.today:  # starts in the future
                     self.start_date = calendar.start_date
