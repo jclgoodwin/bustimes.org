@@ -101,6 +101,7 @@ class Livery(models.Model):
     left_css = models.CharField(max_length=255, blank=True)
     right_css = models.CharField(max_length=255, blank=True)
     white_text = models.BooleanField(default=False)
+    text_colour = models.CharField(max_length=7, blank=True)
     horizontal = models.BooleanField(default=False)
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
 

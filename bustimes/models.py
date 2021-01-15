@@ -215,6 +215,7 @@ class Trip(models.Model):
     notes = models.ManyToManyField(Note, blank=True)
     start = SecondsField()
     end = SecondsField()
+    garage = models.ForeignKey('Garage', models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return format_timedelta(self.start)
@@ -310,3 +311,16 @@ class StopTime(models.Model):
 
     def is_minor(self):
         return self.timing_status == 'OTH' or self.timing_status == 'TIP'
+
+
+class Garage(models.Model):
+    operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
+    code = models.CharField(max_length=50, blank=True)
+    name = models.CharField(max_length=100, blank=True)
+    location = models.PointField(null=True, blank=True)
+    address = models.CharField(max_length=255, blank=True)
+
+
+class VehicleType(models.Model):
+    code = models.CharField(max_length=50, blank=True)
+    description = models.CharField(max_length=100, blank=True)
