@@ -240,12 +240,11 @@ class VehicleJourney:
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
 
-        departure_time = datetime.datetime.strptime(
-            element.find('DepartureTime').text, '%H:%M:%S'
-        )
-        self.departure_time = datetime.timedelta(hours=departure_time.hour,
-                                                 minutes=departure_time.minute,
-                                                 seconds=departure_time.second)
+        hours, minutes, seconds = element.find('DepartureTime').text.split(':')
+        self.departure_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
+        departure_day_shift = element.findtext('DepartureDayShift')
+        if departure_day_shift:
+            self.departure_time += datetime.timedelta(days=int(departure_day_shift))
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
