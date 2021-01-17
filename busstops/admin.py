@@ -119,24 +119,37 @@ class ServiceCodeInline(admin.TabularInline):
     model = ServiceCode
 
 
-class RouteInline(admin.StackedInline):
+class RouteInline(admin.TabularInline):
     model = Route
     show_change_link = True
-    autocomplete_fields = ['registration']
+    fields = ['source', 'code', 'service_code']
+    raw_id_fields = ['source']
+
+
+class FromServiceLinkInline(admin.TabularInline):
+    model = ServiceLink
+    fk_name = 'from_service'
+    autocomplete_fields = ['to_service']
+
+
+class ToServiceLinkInline(FromServiceLinkInline):
+    fk_name = 'to_service'
+    autocomplete_fields = ['from_service']
 
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('service_code', '__str__', 'mode', 'region_id',
+    list_display = ('__str__', 'service_code', 'mode', 'region_id',
                     'current', 'show_timetable', 'timetable_wrong', 'colour', 'line_brand')
     list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'region',
                    ('source', admin.RelatedOnlyFieldListFilter),
                    ('operator', admin.RelatedOnlyFieldListFilter))
     search_fields = ('service_code', 'line_name', 'line_brand', 'description')
-    raw_id_fields = ('operator', 'stops')
-    inlines = [ServiceCodeInline, RouteInline]
+    raw_id_fields = ('operator', 'stops', 'colour', 'source')
+    inlines = [ServiceCodeInline, RouteInline, FromServiceLinkInline, ToServiceLinkInline]
     readonly_fields = ['search_vector']
     list_editable = ['colour', 'line_brand']
+    list_select_related = ['colour']
 
     def get_search_results(self, request, queryset, search_term):
         if not search_term:
@@ -204,6 +217,7 @@ class ServiceCodeAdmin(admin.ModelAdmin):
 @admin.register(ServiceColour)
 class ServiceColourAdmin(admin.ModelAdmin):
     list_display = ('preview', 'foreground', 'background')
+    search_fields = ['name']
 
 
 @admin.register(Place)
