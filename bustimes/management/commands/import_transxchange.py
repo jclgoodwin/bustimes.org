@@ -664,8 +664,7 @@ class Command(BaseCommand):
 
                 if len(transxchange.services) == 1:
                     existing = existing.filter(
-                        Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id'))) |
-                        Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
+                        Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
                     )
                 elif len(txc_service.lines) == 1:
                     existing = existing.filter(
