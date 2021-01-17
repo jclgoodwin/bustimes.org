@@ -21,7 +21,7 @@ from django.db import transaction, DataError, IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
-from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
+from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note, Garage
 from ...timetables import get_stop_usages
 from transxchange.txc import TransXChange, sanitize_description_part, Grouping
 
@@ -146,11 +146,17 @@ class Command(BaseCommand):
         parser.add_argument('archives', nargs=1, type=str)
         parser.add_argument('files', nargs='*', type=str)
 
-    def handle(self, *args, **options):
+    def set_up(self):
         self.calendar_cache = {}
         self.undefined_holidays = set()
         self.missing_operators = []
         self.notes = {}
+        self.corrections = {}
+        self.garages = {}
+
+    def handle(self, *args, **options):
+        self.set_up()
+
         open_data_operators = []
         incomplete_operators = []
         for operator_code, _, operators, incomplete in settings.BOD_OPERATORS:
@@ -486,6 +492,9 @@ class Command(BaseCommand):
                 ticket_machine_code=journey.ticket_machine_journey_code or '',
                 block=journey.block or ''
             )
+
+            if journey.garage_ref:
+                trip.garage = self.garages[journey.garage_ref]
 
             blank = False
             for i, cell in enumerate(journey.get_times()):
@@ -930,6 +939,16 @@ class Command(BaseCommand):
         today = self.source.datetime.date()
 
         stops = self.do_stops(transxchange.stops)
+
+        for garage_code in transxchange.garages:
+            if garage_code not in self.garages:
+                garage = transxchange.garages[garage_code]
+                name = garage.findtext('GarageName', '')
+                try:
+                    garage = Garage.objects.get(code=garage_code, name=name)
+                except Garage.DoesNotExist:
+                    garage = Garage.objects.create(code=garage_code, name=name)
+                self.garages[garage_code] = garage
 
         for txc_service in transxchange.services.values():
             if txc_service.mode == 'underground':

@@ -320,6 +320,13 @@ class Garage(models.Model):
     location = models.PointField(null=True, blank=True)
     address = models.CharField(max_length=255, blank=True)
 
+    def __str__(self):
+        if self.name:
+            if self.name.isupper():
+                return self.name.title()
+            return self.name
+        return self.code
+
 
 class VehicleType(models.Model):
     code = models.CharField(max_length=50, blank=True)

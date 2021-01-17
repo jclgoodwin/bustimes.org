@@ -32,11 +32,7 @@ def clean_up(operators, sources, incomplete=False):
 
 def get_command():
     command = TransXChangeCommand()
-    command.undefined_holidays = set()
-    command.missing_operators = []
-    command.notes = {}
-    command.corrections = {}
-
+    command.set_up()
     return command
 
 
@@ -108,7 +104,6 @@ def bus_open_data(api_key, operator):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
-            command.calendar_cache = {}
 
             sources = []
 
@@ -195,7 +190,6 @@ def first():
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
-            command.calendar_cache = {}
 
             command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
             command.source.datetime = timezone.now()
@@ -255,7 +249,6 @@ def ticketer(operator=None):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
-            command.calendar_cache = {}
 
             # avoid importing old data
             command.source.datetime = timezone.now()
@@ -303,7 +296,6 @@ def stagecoach(operator=None):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
-            command.calendar_cache = {}
 
             # avoid importing old data
             command.source.datetime = timezone.now()

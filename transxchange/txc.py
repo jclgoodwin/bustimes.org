@@ -199,12 +199,19 @@ class VehicleJourneyTimingLink:
             self.to_wait_time = parse_duration(self.to_wait_time.text)
 
 
+class VehicleType:
+    def __init__(self, element):
+        self.code = element.findtext('VehicleTypeCode')
+        self.description = element.findtext('Description')
+
+
 class VehicleJourney:
     """A scheduled journey that happens at most once per day"""
     operating_profile = None
     journey_pattern = None
     journey_ref = None
     block = None
+    garage_ref = None
 
     def __str__(self):
         return str(self.departure_time)
@@ -216,6 +223,7 @@ class VehicleJourney:
         self.ticket_machine_journey_code = element.findtext('Operational/TicketMachine/JourneyCode')
         self.ticket_machine_service_code = element.findtext('Operational/TicketMachine/TicketMachineServiceCode')
         self.block = element.findtext('Operational/Block/BlockNumber')
+        self.garage_ref = element.findtext('GarageRef')
 
         self.service_ref = element.find('ServiceRef').text
         self.line_ref = element.find('LineRef').text
@@ -634,6 +642,7 @@ class TransXChange:
         self.routes = {}
         self.route_sections = {}
         self.journeys = []
+        self.garages = {}
 
         serviced_organisations = None
 
@@ -685,6 +694,8 @@ class TransXChange:
                 service = Service(element, serviced_organisations, journey_pattern_sections)
                 self.services[service.service_code] = service
             elif tag == 'Garages':
+                for garage_element in element:
+                    self.garages[garage_element.findtext('GarageCode')] = garage_element
                 element.clear()
 
         self.attributes = element.attrib
