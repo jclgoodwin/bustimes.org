@@ -109,6 +109,13 @@ class Command(BaseCommand):
 
             versions = get_versions(session, url)
 
+            if versions:
+                prefix = versions[0]['filename'].split('_')[0]
+                for filename in os.listdir(settings.DATA_DIR):
+                    if filename.startswith(f'{prefix}_'):
+                        if not any(filename == version['filename'] for version in versions):
+                            os.remove(os.path.join(settings.DATA_DIR, filename))
+
             if not versions or not any(version['modified'] for version in versions):
                 sleep(2)
                 continue
