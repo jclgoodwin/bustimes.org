@@ -371,14 +371,13 @@ textarea {
 }
 
 select {
-    background: none;
+    appearance: none;
+    background: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 4,8 8,0'/%3E%3C/svg%3E") no-repeat;
+    background-position: right;
     border: 1px solid $border-color;
-    border-radius: .5em;
+    border-radius: 0;
     font: inherit;
-    height: 2.5em;
-    padding: 0 1.5em 0 .5em;
-    position: relative;
-    vertical-align: top;
+    padding: .25em 1.5em .25em .25em;
 
     &::-ms-expand {
         display: none;
@@ -386,10 +385,8 @@ select {
 }
 
 form p select {
-    border-radius: 0;
     box-sizing: border-box;
     display: block;
-    height: 2em;
     width: 100%;
 }
 
@@ -402,22 +399,9 @@ form p select {
 }
 
 .timetable-date {
-    display: inline-block;
-    position: relative;
-
     select {
-        appearance: none;
-    }
-
-    &:after {
-        border: .25em solid $background-color;
-        border-bottom: 0;
-        border-top: .5em solid $text-color;
-        content: '';
-        height: 0;
-        position: absolute;
-        right: .5em;
-        top: 1em;
+        border-radius: .5em;
+        padding: .5em 1.5em .5em .5em;
     }
 
     + .table-wrapper {
@@ -1213,6 +1197,13 @@ tfoot a {
 
     .minor {
         font-size: .875em;
+
+        + .minor {
+            th,
+            td {
+                border-top: 0;
+            }
+        }
     }
 }
 
