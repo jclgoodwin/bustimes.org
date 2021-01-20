@@ -476,6 +476,8 @@ class Command(BaseCommand):
             calendar = None
             if journey.operating_profile:
                 calendar = self.get_calendar(journey.operating_profile, txc_service.operating_period)
+            elif journey.journey_pattern.operating_profile:
+                calendar = self.get_calendar(journey.journey_pattern.operating_profile, txc_service.operating_period)
             else:
                 if not default_calendar:
                     default_calendar = self.get_calendar(txc_service.operating_profile, txc_service.operating_period)
@@ -575,7 +577,11 @@ class Command(BaseCommand):
         description = txc_service.description
         if description and ('timetable' in description.lower() or 'Database Refresh' in description):
             description = None
-        elif self.source.name.startswith('Stagecoach') or self.source.name.startswith('Coach Services'):
+        elif (
+            self.source.name.startswith('Stagecoach')
+            or self.source.name.startswith('Coach Services')
+            or self.source.name.startswith('Sanders')
+        ):
             description = None
         if not description:
             origin = txc_service.origin

@@ -99,7 +99,7 @@ class RouteLink:
 
 class JourneyPattern:
     """A collection of JourneyPatternSections, in order."""
-    def __init__(self, element, sections):
+    def __init__(self, element, sections, serviced_organisations):
         self.id = element.attrib.get('id')
         self.sections = [
             sections[section_element.text]
@@ -108,8 +108,11 @@ class JourneyPattern:
         ]
 
         self.route_ref = element.findtext('RouteRef')
-
         self.direction = element.findtext('Direction')
+
+        self.operating_profile = element.find('OperatingProfile')
+        if self.operating_profile is not None:
+            self.operating_profile = OperatingProfile(self.operating_profile, serviced_organisations)
 
     def get_timinglinks(self):
         for section in self.sections:
@@ -567,7 +570,7 @@ class Service:
 
         self.journey_patterns = {
             journey_pattern.id: journey_pattern for journey_pattern in (
-               JourneyPattern(journey_pattern, journey_pattern_sections)
+               JourneyPattern(journey_pattern, journey_pattern_sections, serviced_organisations)
                for journey_pattern in element.findall('StandardService/JourneyPattern')
             ) if journey_pattern.sections
         }
