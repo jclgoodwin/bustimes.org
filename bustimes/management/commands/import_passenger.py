@@ -4,7 +4,7 @@
 import os
 import requests
 import zipfile
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from time import sleep
 from datetime import timedelta
 from requests_html import HTMLSession
@@ -19,15 +19,20 @@ from ...utils import write_file
 from ...models import Route, Calendar
 
 
-def download_if_new(path, url):
-    if not os.path.exists(path):
-        response = requests.get(url, stream=True)
-        write_file(path, response)
-        return True
-    return False
+def handle_gtfs(operators, url):
+    gtfs_dir = os.path.join(settings.DATA_DIR, 'gtfs')
+    if not os.path.exists(gtfs_dir):
+        os.mkdir(gtfs_dir)
 
+    filename = os.path.basename(urlparse(url).path)
+    path = os.path.join(gtfs_dir, filename)
 
-def handle_gtfs(operators, path):
+    if os.path.exists(path):
+        return
+
+    response = requests.get(url, stream=True)
+    write_file(path, response)
+
     with zipfile.ZipFile(path) as archive:
         for line in read_file(archive, 'routes.txt'):
             foreground = line['route_text_color']
@@ -47,6 +52,33 @@ def handle_gtfs(operators, path):
             service.save(update_fields=['colour'])
 
 
+def get_version(url, element, heading):
+    modified = False
+
+    filename = os.path.basename(urlparse(url).path)
+    path = os.path.join(settings.DATA_DIR, filename)
+
+    if not os.path.exists(path):
+        response = requests.get(url, stream=True)
+        url = response.url  # in case there was a redirect
+        filename = os.path.basename(urlparse(url).path)
+        path = os.path.join(settings.DATA_DIR, filename)
+
+        if not os.path.exists(path):
+            write_file(path, response)
+            modified = True
+
+    if '(' in heading:
+        heading = heading.split('(')[-1][:-1]
+    dates = heading.split(' to ')
+
+    return {
+        'filename': filename,
+        'modified': modified,
+        'dates': dates
+    }
+
+
 def get_versions(session, url):
     versions = []
     try:
@@ -63,24 +95,11 @@ def get_versions(session, url):
         if element.tag == 'h3':
             heading = element.text
         elif element.tag == 'a':
-            url = element.attrs['href']
+            url = urljoin(element.base_url, element.attrs['href'])
             if '/txc' in url:
-                url = element.attrs['href']
-                url = urljoin(response.url, url)  # in case the URL is relative
-                filename = url.split('/')[-1]
-                path = os.path.join(settings.DATA_DIR, filename)
-                modified = download_if_new(path, url)
-                gtfs_path = f'{path[:-3]}gtfs.zip'
-                download_if_new(gtfs_path, url.replace('/txc/', '/gtfs/'))
-                if '(' in heading:
-                    heading = heading.split('(')[-1][:-1]
-                dates = heading.split(' to ')
-                versions.append({
-                    'filename': filename,
-                    'gtfs_path': gtfs_path,
-                    'modified': modified,
-                    'dates': dates
-                })
+                versions.append(get_version(url, element, heading))
+            elif '/gtfs' in url:
+                versions[-1]['gtfs'] = url
 
     versions.sort(key=lambda v: (v['dates'][0], v['filename']), reverse=True)
 
@@ -94,10 +113,7 @@ class Command(BaseCommand):
 
     def handle(self, operator, *args, **options):
         command = TransXChangeCommand()
-        command.undefined_holidays = set()
-        command.missing_operators = []
-        command.notes = {}
-        command.corrections = {}
+        command.set_up()
 
         session = HTMLSession()
 
@@ -175,7 +191,8 @@ class Command(BaseCommand):
             command.update_geometries()
 
             for version in versions:
-                handle_gtfs(list(operators.values()), version['gtfs_path'])
+                if 'gtfs' in version:
+                    handle_gtfs(list(operators.values()), version['gtfs'])
 
             command.source.save(update_fields=['datetime'])
 

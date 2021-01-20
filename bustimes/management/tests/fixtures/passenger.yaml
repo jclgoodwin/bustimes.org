@@ -338,4 +338,28 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941265.zip
+  response:
+    body:
+      string: ''
+    headers: {}
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers: {}
+    method: GET
+    uri: https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941252.zip
+  response:
+    body:
+      string: ''
+    headers: {}
+    status:
+      code: 200
+      message: OK
 version: 1

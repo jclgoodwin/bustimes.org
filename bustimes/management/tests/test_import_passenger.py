@@ -3,7 +3,6 @@ from mock import patch
 from vcr import use_cassette
 from freezegun import freeze_time
 from django.test import TestCase, override_settings
-from django.conf import settings
 from django.core.management import call_command
 from busstops.models import Region, Operator
 from ...models import Route
@@ -29,13 +28,14 @@ class ImportPassengerTest(TestCase):
     @use_cassette(os.path.join(FIXTURES_DIR, 'passenger.yaml'))
     def test_import(self):
 
-        with patch('bustimes.management.commands.import_passenger.download_if_new',
-                   return_value=False) as download_if_new:
-            call_command('import_passenger')
+        with patch('bustimes.management.commands.import_passenger.write_file'):
+            with self.assertRaises(FileNotFoundError):
+                with patch('builtins.print') as mocked_print:
+                    call_command('import_passenger')
 
-            download_if_new.assert_called_with(
-                os.path.join(settings.DATA_DIR, 'unilink_1586941252.gtfs.zip'),
-                'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/gtfs/unilink_1586941252.zip'
-            )
+        mocked_print.assert_called_with(
+            {'filename': 'unilink_1586941265.zip', 'modified': True, 'dates': ['2020-05-10', '2020-06-01'],
+             'gtfs': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/gtfs/unilink_1586941265.zip'}
+        )
 
         self.assertFalse(Route.objects.all())
