@@ -56,6 +56,9 @@ class Command(BaseCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, operator, item['line_name'])
                 service = None
+            if service and not service.tracking:
+                service.tracking = True
+                service.save(update_fields=['tracking'])
             journey = VehicleJourney.objects.create(
                 route_name=item['line_name'],
                 direction=item['dir'],

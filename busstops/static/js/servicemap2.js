@@ -263,6 +263,10 @@
         newSocket;
 
     function connect() {
+        if (!window.SERVICE_TRACKING) {
+            return;
+        }
+
         if (socket && socket.readyState < 2) { // already CONNECTING or OPEN
             return; // no need to reconnect
         }

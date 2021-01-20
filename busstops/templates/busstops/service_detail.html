@@ -94,6 +94,7 @@
 
     <script>
         SERVICE_ID = {{ object.id }};
+        {% if object.tracking %}SERVICE_TRACKING = true;{% endif %}
         {% if object.geometry %}
             EXTENT = [{{ object.geometry.extent|join:"," }}];
             LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
