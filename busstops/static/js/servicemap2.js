@@ -338,7 +338,9 @@
         document.body.style.overflow = '';
         setLocationHash('');
 
-        socket.close(1000);
+        if (socket) {
+            socket.close(1000);
+        }
 
         return false;
     }
@@ -361,7 +363,9 @@
 
     function handleVisibilityChange(event) {
         if (event.target.hidden) {
-            socket.close(1000);
+            if (socket) {
+                socket.close(1000);
+            }
         } else {
             connect();
         }
