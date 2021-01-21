@@ -26,25 +26,29 @@ class Command(ImportLiveVehiclesCommand):
 
         identifiers = {}
         i = 0
-        chunks = [[]]
+        to_send = []
 
         for item in items:
             monitored_vehicle_journey = item['MonitoredVehicleJourney']
             key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
             if self.identifiers.get(key) != item['RecordedAtTime']:
                 identifiers[key] = item['RecordedAtTime']
+                to_send.append(item)
                 i += 1
                 if i == 50:
-                    chunks.append([])
+                    try:
+                        self.send_items(to_send)
+                    except ChannelFull:
+                        break
+                    self.identifiers.update(identifiers)
+                    identifiers = {}
                     i = 0
-                chunks[-1].append(item)
+                    to_send = []
         try:
-            for chunk in chunks:
-                self.send_items(chunk)
+            self.send_items(to_send)
+            self.identifiers.update(identifiers)
         except ChannelFull:
             pass
-
-        self.identifiers.update(identifiers)  # channel wasn't full
 
         time_taken = timezone.now() - now
         print(time_taken)
