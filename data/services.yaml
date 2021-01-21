@@ -12,17 +12,10 @@ FWAO267:
     description: Hamilton - Glasgow
 swe_49-210-_-y10:
     description: The Wychwoods - Witney
-SW_FG_FBRI_20_2:
-    description: Weston-super-Mare - Burnham-on-Sea
-    outbound_description: Weston-super-Mare - Burnham-on-Sea
-    inbound_description: Burnham-on-Sea - Weston-super-Mare
 sro-288:
     current: false
 expressbus-787:
     current: false
-swe_38-m1-_-y10:
-    operator:
-        - FBRI
 swe_41-31-A-y10:
     line_name: 31A
 swe_41-31-B-y10:
