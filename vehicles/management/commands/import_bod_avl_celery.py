@@ -22,7 +22,7 @@ class Command(ImportLiveVehiclesCommand):
                 key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
                 if self.identifiers.get(key) != item['RecordedAtTime']:
                     identifiers[key] = item['RecordedAtTime']
-                    if i == 100:
+                    if i % 50:
                         chunks.append([])
                     chunks[-1].append(item)
                     i += 1
