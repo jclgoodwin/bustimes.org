@@ -1,10 +1,9 @@
 from channels.testing import WebsocketCommunicator
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from busstops.models import Region, Service, Operator
 from vehicles.routing import application
 
 
-@override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
 class WebsocketConsumerTest(TestCase):
     @classmethod
     def setUpTestData(cls):

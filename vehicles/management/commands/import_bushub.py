@@ -2,7 +2,6 @@ from datetime import datetime
 from ciso8601 import parse_datetime
 from django.utils import timezone
 from django.contrib.gis.geos import Point
-from django.db.models import Q
 from busstops.models import Service, DataSource
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand

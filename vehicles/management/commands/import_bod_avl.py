@@ -33,6 +33,7 @@ class Command(ImportLiveVehiclesCommand):
         'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],
     }
     operator_cache = {}
+    vehicle_id_cache = {}
     vehicle_cache = {}
     service_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
@@ -75,16 +76,24 @@ class Command(ImportLiveVehiclesCommand):
         except Operator.DoesNotExist:
             self.operator_cache[operator_ref] = None
 
+    @staticmethod
+    def get_vehicle_cache_key(item):
+        monitored_vehicle_journey = item['MonitoredVehicleJourney']
+        operator_ref = monitored_vehicle_journey['OperatorRef']
+        vehicle_ref = monitored_vehicle_journey['VehicleRef'].replace(' ', '')
+        return f'{operator_ref}-{vehicle_ref}'
+
     def get_vehicle(self, item):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
-
         operator_ref = monitored_vehicle_journey['OperatorRef']
-
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
-        cache_key = f'{operator_ref}-{vehicle_ref}'
+        cache_key = f'{operator_ref}-{vehicle_ref}'.replace(' ', '')
+
+        if cache_key in self.vehicle_cache:
+            return self.vehicle_cache[cache_key], False
+
         try:
-            return self.vehicles.get(id=self.vehicle_cache[cache_key]), False
-            return self.vehicles.using(settings.READ_DATABASE).get(id=self.vehicle_cache[cache_key]), False
+            return self.vehicles.get(id=self.vehicle_id_cache[cache_key]), False
         except (KeyError, Vehicle.DoesNotExist):
             pass
 
@@ -154,7 +163,7 @@ class Command(ImportLiveVehiclesCommand):
             vehicle = vehicles.first()
             created = False
 
-        self.vehicle_cache[cache_key] = vehicle.id
+        self.vehicle_id_cache[cache_key] = vehicle.id
         return vehicle, created
 
     def get_service(self, operator, item, line_ref, vehicle_operator_id):

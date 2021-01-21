@@ -2,8 +2,9 @@ import xml.etree.cElementTree as ET
 from io import StringIO
 from ciso8601 import parse_datetime
 from celery import shared_task
-from busstops.models import DataSource, ServiceCode, Operator
 from django.db.models import Q
+from django.core.cache import cache
+from busstops.models import DataSource, ServiceCode, Operator
 from disruptions.management.commands.import_siri_sx import handle_item as siri_sx
 from .management.commands import import_sirivm, import_bod_avl
 from .models import JourneyCode, Vehicle, VehicleJourney
@@ -12,9 +13,23 @@ from .models import JourneyCode, Vehicle, VehicleJourney
 @shared_task
 def bod_avl(items):
     command = import_bod_avl.Command().do_source()
+    vehicle_cache_keys = [command.get_vehicle_cache_key(item) for item in items]
+    vehicle_ids = cache.get_many(vehicle_cache_keys)  # code: id
+    vehicles = command.vehicles.in_bulk(vehicle_ids.values())  # id: vehicle
+    command.vehicle_cache = {
+        key: vehicles[vehicle_id] for key, vehicle_id in vehicle_ids.items() if vehicle_id in vehicles  # code: vehicle
+    }
+
     for item in items:
         command.handle_item(item)
+
     command.save()
+
+    cache.set_many({
+        key: value
+        for key, value in command.vehicle_id_cache.items()
+        if key not in vehicle_ids or value != vehicle_ids
+    })
 
 
 @shared_task

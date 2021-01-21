@@ -2,7 +2,7 @@ import os
 from mock import patch
 from freezegun import freeze_time
 from vcr import use_cassette
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney
 from ...tasks import bod_avl
@@ -60,6 +60,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
     #     self.assertEqual(command.identifiers, {'HAMSTRA-DW18_HAM': '2020-10-15T07:46:08+00:00'})
 
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_task(self):
         items = [{
             'RecordedAtTime': '2020-06-17T08:34:00+00:00',
@@ -122,6 +123,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }]
 
         with self.assertNumQueries(28):
+            bod_avl(items)
+        with self.assertNumQueries(2):
             bod_avl(items)
 
         location = VehicleLocation.objects.all()[1]
