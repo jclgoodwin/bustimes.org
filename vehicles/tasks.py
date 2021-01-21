@@ -30,12 +30,11 @@ def bod_avl(items):
 
     command.save()
 
-    if vehicles:
-        cache.set_many({
-            key: value
-            for key, value in command.vehicle_id_cache.items()
-            if key not in vehicle_ids or value != vehicle_ids
-        })
+    cache.set_many({
+        key: value
+        for key, value in command.vehicle_id_cache.items()
+        if key not in vehicle_ids or value != vehicle_ids
+    })
 
 
 @shared_task
