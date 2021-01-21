@@ -665,13 +665,16 @@ class Command(BaseCommand):
                     existing = Service.objects.filter(operator__parent='Go South Coast')
                 elif self.source.name.startswith('Stagecoach'):
                     existing = Service.objects.filter(Q(source=self.source) | Q(operator__in=operators))
+                    if description:
+                        existing = existing.filter(description=description)
                 else:
                     existing = Service.objects.filter(operator__in=operators)
 
                 if len(transxchange.services) == 1:
-                    existing = existing.filter(
-                        Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
-                    )
+                    has_stop_time = Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
+                    has_stop_usage = Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
+                    has_no_route = ~Exists(Route.objects.filter(service=OuterRef('id')))
+                    existing = existing.filter(has_stop_time | (has_stop_usage & has_no_route))
                 elif len(txc_service.lines) == 1:
                     existing = existing.filter(
                         Exists(
