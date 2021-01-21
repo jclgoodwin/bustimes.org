@@ -5,8 +5,16 @@ from celery import shared_task
 from busstops.models import DataSource, ServiceCode, Operator
 from django.db.models import Q
 from disruptions.management.commands.import_siri_sx import handle_item as siri_sx
-from .management.commands import import_sirivm
+from .management.commands import import_sirivm, import_bod_avl
 from .models import JourneyCode, Vehicle, VehicleJourney
+
+
+@shared_task
+def bod_avl(items):
+    command = import_bod_avl.Command().do_source()
+    for item in items:
+        command.handle_item(item)
+    command.save()
 
 
 @shared_task

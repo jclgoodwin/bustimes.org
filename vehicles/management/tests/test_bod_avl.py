@@ -5,8 +5,8 @@ from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney
-from ...workers import SiriConsumer
-from ..commands import import_bod_avl
+from ...tasks import bod_avl
+from ..commands import import_bod_avl, import_bod_avl_celery
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -41,7 +41,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(841, len(items))
 
     def test_update(self):
-        command = import_bod_avl.Command()
+        command = import_bod_avl_celery.Command()
         with patch('vehicles.management.commands.import_bod_avl.Command.get_items', return_value=[]):
             self.assertEqual(300, command.update())
 
@@ -60,9 +60,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
     #     self.assertEqual(command.identifiers, {'HAMSTRA-DW18_HAM': '2020-10-15T07:46:08+00:00'})
 
-    def test_handle(self):
-        consumer = SiriConsumer()
-
+    def test_task(self):
         items = [{
             'RecordedAtTime': '2020-06-17T08:34:00+00:00',
             'ItemIdentifier': '13505681-c482-451d-a089-ee805e196e7e',
@@ -124,9 +122,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }]
 
         with self.assertNumQueries(28):
-            consumer.sirivm({
-                'items': items
-            })
+            bod_avl(items)
 
         location = VehicleLocation.objects.all()[1]
         self.assertEqual(location.journey.route_name, '843X')
@@ -138,11 +134,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
-
-        self.assertEqual(
-            consumer.command.service_cache,
-            {'WHIP:WHIP:U:0500CCITY544': None, 'TGTC:TGTC:843X:43000280301': None, 'HAMS:HAMS:C:2400103099': None}
-        )
 
     def test_handle_item(self):
         command = import_bod_avl.Command()
@@ -191,3 +182,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         journey = VehicleJourney.objects.get()
         self.assertEqual(journey.direction, 'inbound')
         self.assertEqual(journey.destination, 'Southwold')
+
+        self.assertEqual(
+            command.service_cache,
+            {'None:None:146:390071066': None}
+        )

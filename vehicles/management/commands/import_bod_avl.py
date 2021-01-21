@@ -6,15 +6,11 @@ from django.conf import settings
 from datetime import timedelta
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from channels.exceptions import ChannelFull
-from django.utils import timezone
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
-from ..import_live_vehicles import ImportLiveVehiclesCommand
 from busstops.models import Operator, Service, Locality, StopPoint, ServiceCode
 from bustimes.models import Trip
+from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
@@ -345,51 +341,6 @@ class Command(ImportLiveVehiclesCommand):
             heading=bearing,
             occupancy=monitored_vehicle_journey.get('Occupancy', '')
         )
-
-    @async_to_sync
-    async def send_items(self, items):
-        identifiers = {}
-        changed_items = []
-        for item in items:
-            monitored_vehicle_journey = item['MonitoredVehicleJourney']
-            key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
-            if self.identifiers.get(key) != item['RecordedAtTime']:
-                identifiers[key] = item['RecordedAtTime']
-                changed_items.append(item)
-        await get_channel_layer().send('sirivm', {
-            'type': 'sirivm',
-            'items': changed_items,
-            'when': self.when
-        })
-        self.identifiers.update(identifiers)  # channel wasn't full
-
-    def update(self):
-        now = timezone.now()
-
-        items = self.get_items()
-        if items:
-            # encourage items to be grouped by operator
-            items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])
-
-            chunk = []
-            try:
-                for item in items:
-                    chunk.append(item)
-                    if len(chunk) == 200:
-                        self.send_items(chunk)
-                        chunk = []
-                self.send_items(chunk)
-            except ChannelFull:
-                pass
-        else:
-            return 300  # no items - wait five minutes
-
-        time_taken = timezone.now() - now
-        print(time_taken)
-        time_taken = time_taken.total_seconds()
-        if time_taken < self.wait:
-            return self.wait - time_taken
-        return 0  # took longer than self.wait
 
     @staticmethod
     def items_from_response(response):
