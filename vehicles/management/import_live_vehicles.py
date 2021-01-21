@@ -342,11 +342,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
         try:
             items = self.get_items()
             if items:
+                i = 0
                 for item in items:
                     try:
                         self.handle_item(item, now)
                     except IntegrityError as e:
                         logger.error(e, exc_info=True)
+                    i += 1
+                    if i == 50:
+                       self.save()
+                       i = 0
                 self.save()
                 # mark any vehicles that have gone offline as not current
                 # self.get_old_locations().update(current=False)
