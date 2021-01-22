@@ -123,7 +123,7 @@ class Command(ImportLiveVehiclesCommand):
         elif latest_location and latest_location.current and latest_location.journey.route_name == journey.route_name:
             journey.service = latest_location.journey.service
         else:
-            services = Service.objects.filter(current=True, line_name=line_name)
+            services = Service.objects.filter(current=True, line_name__iexact=line_name)
             if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:
                 services = services.filter(operator=vehicle.operator_id)
             else:
