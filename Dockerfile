@@ -10,6 +10,8 @@ RUN pipenv sync --dev
 
 COPY . /app/
 
-ENV PGHOST=host.docker.internal:8000
-
-CMD ['pipenv run ./manage.py runserver']
+ENV PGHOST=host.docker.internal
+ENV PGUSER=josh
+ENV DEBUG=1
+ENV SECRET_KEY=wenceslas
+CMD pipenv run ./manage.py runserver 0.0.0.0:8000
