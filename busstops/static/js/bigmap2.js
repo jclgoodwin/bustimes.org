@@ -230,22 +230,26 @@
         var ago = Math.round((now.getTime() - then.getTime()) / 1000);
 
         if (ago >= 1800) {
-            content += 'Updated at ' + then.toTimeString().slice(0, 5);
-        } else if (ago >= 59) {
-            var minutes = Math.round(ago / 60);
-            if (minutes === 1) {
-                content += '1 minute ago';
-            } else {
-                content += minutes + ' minutes ago';
-            }
-            agoTimeout = setTimeout(updatePopupContent, (61 - ago % 60) * 1000);
+            content += 'Updated at ' + then.toTimeString().slice(0, 8);
         } else {
-            if (ago === 1) {
-                content += '1 second ago';
+            content += '<time datetime="' + item.d + '" title="' + then.toTimeString().slice(0, 8) + '">';
+            if (ago >= 59) {
+                var minutes = Math.round(ago / 60);
+                if (minutes === 1) {
+                    content += '1 minute';
+                } else {
+                    content += minutes + ' minutes';
+                }
+                agoTimeout = setTimeout(updatePopupContent, (61 - ago % 60) * 1000);
             } else {
-                content += ago + ' seconds ago';
+                if (ago === 1) {
+                    content += '1 second';
+                } else {
+                    content += ago + ' seconds';
+                }
+                agoTimeout = setTimeout(updatePopupContent, 1000);
             }
-            agoTimeout = setTimeout(updatePopupContent, 1000);
+            content += ' ago</time>'
         }
         return content;
     }
