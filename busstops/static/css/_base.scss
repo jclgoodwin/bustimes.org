@@ -1050,10 +1050,6 @@ input:not(:checked) + label {
         }
     }
 
-    td:first-child {
-        padding: 0;
-    }
-
     .referrer {
         td,
         th {
@@ -1139,6 +1135,12 @@ input:not(:checked) + label {
         overflow: hidden;
         position: sticky;
         max-width: calc(100vw - 12em);
+    }
+
+    td:first-child {
+        background: #fff;
+        left: 0;
+        position: sticky;
     }
 }
 
