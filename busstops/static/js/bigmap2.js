@@ -2,18 +2,14 @@
     'use strict';
 
     /*global
-        L, reqwest
+        L, reqwest, bustimes
     */
 
     var map = L.map('hugemap'),
         stopsGroup = L.layerGroup(),
         vehiclesGroup = L.layerGroup();
 
-    map.attributionControl.setPrefix('');
-
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-        attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
-    }).addTo(map);
+    bustimes.doTileLayer(map);
 
     L.control.locate().addTo(map);
 
@@ -55,20 +51,6 @@
 
     vehiclesGroup.addTo(map);
 
-    function getTransform(heading, scale) {
-        if (heading === null && !scale) {
-            return '';
-        }
-        var transform = 'transform:';
-        if (heading !== null) {
-            transform += ' rotate(' + heading + 'deg)';
-        }
-        if (scale) {
-            transform += ' scale(1.5)';
-        }
-        return '-webkit-' + transform + ';' + transform;
-    }
-
     function getStopIcon(indicator, bearing) {
         var html = '';
         if (indicator) {
@@ -84,7 +66,7 @@
         }
         var className = 'stop stop-' + html.length;
         if (bearing !== null) {
-            html += '<div class="stop-arrow" style="' + getTransform(bearing + 45) + '"></div>';
+            html += '<div class="stop-arrow" style="' + bustimes.getTransform(bearing + 45) + '"></div>';
         } else {
             html += '<div class="stop-arrow no-direction"></div>';
         }
@@ -155,76 +137,10 @@
         });
     }
 
-    function getBusIcon(item, active) {
-        var heading = item.h;
-        if (heading !== null) {
-            var arrow = '<div class="arrow" style="' + getTransform(heading, active) + '"></div>';
-            if (heading < 180) {
-                heading -= 90;
-            } else {
-                heading -= 270;
-            }
-        }
-        var className = 'bus';
-        if (active) {
-            className += ' selected';
-        }
-        if (item.c) {
-            var style = 'background:' + item.c;
-            className += ' coloured';
-            if (item.t) {
-                className += ' white-text';
-            }
-            style += ';';
-        } else {
-            style = '';
-        }
-        style += getTransform(heading, active);
-        var html = '<div class="' + className + '" style="' + style + '">';
-        if (item.r) {
-            html += item.r;
-        }
-        html += '</div>';
-        if (arrow) {
-            html += arrow;
-        }
-        return L.divIcon({
-            iconSize: [20, 20],
-            html: html,
-            popupAnchor: [0, -5],
-        });
-    }
-
     var clickedMarker, agoTimeout;
 
-    function getDelay(item) {
-        if (item.e === 0) {
-            return 'On time<br>';
-        }
-        if (item.e) {
-            var content = 'About ';
-            if (item.e > 0) {
-                content += item.e;
-            } else {
-                content += item.e * -1;
-            }
-            content += ' minute';
-            if (item.e !== 1 && item.e !== -1) {
-                content += 's';
-            }
-            if (item.e > 0) {
-                content += ' early';
-            } else {
-                content += ' late';
-            }
-            content += '<br>';
-            return content;
-        }
-        return '';
-    }
-
     function getPopupContent(item) {
-        var content = getDelay(item);
+        var content = bustimes.getDelay(item);
         var now = new Date();
         var then = new Date(item.d);
         var ago = Math.round((now.getTime() - then.getTime()) / 1000);
@@ -249,7 +165,7 @@
                 }
                 agoTimeout = setTimeout(updatePopupContent, 1000);
             }
-            content += ' ago</time>'
+            content += ' ago</time>';
         }
         return content;
     }
@@ -273,7 +189,7 @@
         updatePopupContent();
 
         if (zoomedIn) {
-            marker.setIcon(getBusIcon(item, true));
+            marker.setIcon(bustimes.getBusIcon(item, true));
             marker.setZIndexOffset(2000);
         }
 
@@ -291,7 +207,7 @@
             clickedMarker = null;
             if (zoomedIn) {
                 // make the icon small again
-                event.target.setIcon(getBusIcon(event.target.options.item));
+                event.target.setIcon(bustimes.getBusIcon(event.target.options.item));
                 event.target.setZIndexOffset(1000);
             }
         }
@@ -308,7 +224,7 @@
             marker = markers[item.i];
             marker.setLatLng(latLng);
             if (zoomedIn) {
-                marker.setIcon(getBusIcon(item, isClickedMarker));
+                marker.setIcon(bustimes.getBusIcon(item, isClickedMarker));
             }
             marker.options.item = item;
             if (isClickedMarker) {
@@ -317,7 +233,7 @@
         } else {
             if (zoomedIn) {
                 marker = L.marker(latLng, {
-                    icon: getBusIcon(item, isClickedMarker),
+                    icon: bustimes.getBusIcon(item, isClickedMarker),
                     zIndexOffset: 1000,
                     item: item,
                 });

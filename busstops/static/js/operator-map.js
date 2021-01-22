@@ -5,7 +5,7 @@
         browser: true
     */
     /*global
-        L, reqwest
+        L, reqwest, bustimes
     */
 
     var container = document.getElementById('map'),
@@ -13,90 +13,14 @@
         vehicles = {},
         vehicleMarkers = {};
 
-    L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-        attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
-    }).addTo(map);
+    bustimes.doTileLayer(map);
 
     map.fitBounds([[window.EXTENT[1], window.EXTENT[0]], [window.EXTENT[3], window.EXTENT[2]]]);
-
-    function getTransform(heading, scale) {
-        if (heading === null && !scale) {
-            return '';
-        }
-        var transform = 'transform:';
-        if (heading !== null) {
-            transform += ' rotate(' + heading + 'deg)';
-        }
-        if (scale) {
-            transform += ' scale(1.5)';
-        }
-        return '-webkit-' + transform + ';' + transform;
-    }
-
-    function getBusIcon(item, active) {
-        var heading = item.h;
-        if (heading !== null) {
-            var arrow = '<div class="arrow" style="' + getTransform(heading, active) + '"></div>';
-            if (heading < 180) {
-                heading -= 90;
-            } else {
-                heading -= 270;
-            }
-        }
-        var className = 'bus';
-        if (active) {
-            className += ' selected';
-        }
-        if (item.c) {
-            var style = 'background:' + item.c;
-            className += ' coloured';
-            if (item.t) {
-                className += ' white-text';
-            }
-            style += ';';
-        } else {
-            style = '';
-        }
-        style += getTransform(heading, active);
-        var html = '<div class="' + className + '" style="' + style + '">';
-        if (item.r) {
-            html += item.r;
-        }
-        html += '</div>';
-        if (arrow) {
-            html += arrow;
-        }
-        return L.divIcon({
-            iconSize: [20, 20],
-            html: html,
-            popupAnchor: [0, -5],
-        });
-    }
 
     var clickedMarker;
 
     function getPopupContent(item) {
-        var delta = '';
-        if (item.e === 0) {
-            delta = 'On time<br>';
-        } else if (item.e) {
-            delta += 'About ';
-            if (item.e > 0) {
-                delta += item.e;
-            } else {
-                delta += item.e * -1;
-            }
-            delta += ' minute';
-            if (item.e !== 1 && item.e !== -1) {
-                delta += 's';
-            }
-            if (item.e > 0) {
-                delta += ' early';
-            } else {
-                delta += ' late';
-            }
-            delta += '<br>';
-        }
+        var delta = bustimes.getDelay(item);
 
         var datetime = new Date(item.d);
 
@@ -110,7 +34,7 @@
 
         clickedMarker = item.i;
 
-        marker.setIcon(getBusIcon(item, true));
+        marker.setIcon(bustimes.getBusIcon(item, true));
         marker.setZIndexOffset(2000);
 
         reqwest({
@@ -126,7 +50,7 @@
         if (map.hasLayer(event.target)) {
             clickedMarker = null;
             // make the icon small again
-            event.target.setIcon(getBusIcon(event.target.options.item));
+            event.target.setIcon(bustimes.getBusIcon(event.target.options.item));
             event.target.setZIndexOffset(1000);
         }
     }
@@ -134,7 +58,7 @@
     function handleVehicle(item) {
         if (map) {
             var isClickedMarker = item.i === clickedMarker,
-                icon = getBusIcon(item, isClickedMarker),
+                icon = bustimes.getBusIcon(item, isClickedMarker),
                 latLng = L.latLng(item.l[1], item.l[0]);
 
             if (item.i in vehicleMarkers) {
