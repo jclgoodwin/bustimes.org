@@ -18,6 +18,7 @@ urlpatterns = [
     path('journeys/<int:pk>/debug', views.journey_debug),
     path('journeys/<int:pk>.json', views.journey_json),
     path('vehicles/locations/<int:location_id>', views.location_detail, name='vehiclelocation_detail'),
+    path('liveries.css', views.liveries_css),
     path('siri', views.siri),
     path('map', views.map),
 ]

@@ -19,7 +19,7 @@ from django.utils import timezone
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from bustimes.utils import format_timedelta
-from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision
+from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
 from .tasks import handle_siri_vm, handle_siri_sx
@@ -44,6 +44,20 @@ def vehicles(request):
 
 def map(request):
     return render(request, 'map.html')
+
+
+def liveries_css(request):
+    styles = []
+    liveries = Livery.objects.all()
+    for livery in liveries:
+        selector = f'.livery-{livery.id}'
+        css = f'background:{livery.left_css}'
+        if livery.white_text:
+            css = f'{css};color:#fff'
+        styles.append(f'{selector}{{{css}}}')
+        if livery.right_css != livery.left_css:
+            styles.append(f'{selector}.right{{background:{livery.right_css}}}')
+    return HttpResponse(''.join(styles), content_type='text/css')
 
 
 def operator_vehicles(request, slug=None, parent=None):
