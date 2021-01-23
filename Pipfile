@@ -38,6 +38,7 @@ django-rest-framework = "*"
 django-filter = "*"
 django-multidb-router = "*"
 boto3 = "*"
+honeycomb-beeline = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
