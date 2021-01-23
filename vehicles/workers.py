@@ -1,8 +1,10 @@
 import beeline
+from contextlib import ExitStack
 from ciso8601 import parse_datetime
 from django.utils.timezone import now
 from channels.consumer import SyncConsumer
 from django.core.cache import cache
+from django.db import connections
 from django.db.utils import OperationalError
 from .management.commands import import_bod_avl
 
@@ -11,12 +13,14 @@ class SiriConsumer(SyncConsumer):
     command = None
 
     def sirivm(self, message):
-        if self.command is None:
-            self.command = import_bod_avl.Command().do_source()
-
-        age = now() - parse_datetime(message["when"])
-
         with beeline.tracer(name="sirivm"):
+            if self.command is None:
+                self.command = import_bod_avl.Command().do_source()
+
+            beeline.add_context({
+                "items_count": len(message["items"]),
+                "age": (now() - parse_datetime(message["when"])).total_seconds()
+            })
 
             vehicle_cache_keys = [self.command.get_vehicle_cache_key(item) for item in message["items"]]
 
@@ -33,15 +37,15 @@ class SiriConsumer(SyncConsumer):
                     vehicles = None
 
             with beeline.tracer(name="handle items"):
-                beeline.add_context({
-                    "items_count": len(message["items"]),
-                    "age": age
-                })
                 for item in message["items"]:
                     self.command.handle_item(item)
 
             with beeline.tracer(name="save"):
-                self.command.save()
+                db_wrapper = beeline.middleware.django.HoneyDBWrapper()
+                with ExitStack() as stack:
+                    for connection in connections.all():
+                        stack.enter_context(connection.execute_wrapper(db_wrapper))
+                    self.command.save()
 
             with beeline.tracer(name="set many"):
                 cache.set_many({
