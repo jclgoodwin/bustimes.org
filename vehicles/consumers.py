@@ -51,6 +51,7 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
         if self.channel.bounds:
             bounds -= self.channel.bounds  # difference between new and old bounds
         self.channel.bounds = new_bounds
+        self.channel.datetime = timezone.now()
         self.channel.save()
         if bounds:  # if new bounds not completely covered by old bounds
             locations = get_vehicle_locations(latlong__bboverlaps=bounds)
