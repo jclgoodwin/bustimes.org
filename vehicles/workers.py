@@ -1,4 +1,6 @@
 import beeline
+from ciso8601 import parse_datetime
+from django.utils.timezone import now
 from channels.consumer import SyncConsumer
 from django.core.cache import cache
 from django.db.utils import OperationalError
@@ -12,9 +14,11 @@ class SiriConsumer(SyncConsumer):
         if self.command is None:
             self.command = import_bod_avl.Command().do_source()
 
+        age = now() - parse_datetime(message["when"])
+
         with beeline.tracer(name="sirivm"):
 
-            vehicle_cache_keys = [self.command.get_vehicle_cache_key(item) for item in message['items']]
+            vehicle_cache_keys = [self.command.get_vehicle_cache_key(item) for item in message["items"]]
 
             with beeline.tracer(name="cache get many"):
                 vehicle_ids = cache.get_many(vehicle_cache_keys)  # code: id
@@ -28,8 +32,12 @@ class SiriConsumer(SyncConsumer):
                 except OperationalError:
                     vehicles = None
 
-            for item in message['items']:
-                with beeline.tracer(name="handle item"):
+            with beeline.tracer(name="handle items"):
+                beeline.add_context({
+                    "items_count": len(message["items"]),
+                    "age": age
+                })
+                for item in message["items"]:
                     self.command.handle_item(item)
 
             with beeline.tracer(name="save"):
