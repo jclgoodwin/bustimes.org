@@ -35,7 +35,7 @@ class Command(ImportLiveVehiclesCommand):
                 identifiers[key] = item['RecordedAtTime']
                 to_send.append(item)
                 i += 1
-                if i == 50:
+                if i == 1000:
                     try:
                         self.send_items(to_send)
                     except ChannelFull:
@@ -44,11 +44,12 @@ class Command(ImportLiveVehiclesCommand):
                     identifiers = {}
                     i = 0
                     to_send = []
-        try:
-            self.send_items(to_send)
-            self.identifiers.update(identifiers)
-        except ChannelFull:
-            pass
+        if to_send:
+            try:
+                self.send_items(to_send)
+                self.identifiers.update(identifiers)
+            except ChannelFull:
+                pass
 
         time_taken = timezone.now() - now
         print(time_taken)

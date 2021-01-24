@@ -1,11 +1,11 @@
 import beeline
+from beeline.middleware.django import HoneyDBWrapper
 from contextlib import ExitStack
 from ciso8601 import parse_datetime
 from django.utils.timezone import now
 from channels.consumer import SyncConsumer
 from django.core.cache import cache
 from django.db import connections
-from django.db.utils import OperationalError
 from .management.commands import import_bod_avl
 
 
@@ -28,20 +28,17 @@ class SiriConsumer(SyncConsumer):
                 vehicle_ids = cache.get_many(vehicle_cache_keys)  # code: id
 
             with beeline.tracer(name="vehicles in bulk"):
-                try:
-                    vehicles = self.command.vehicles.in_bulk(vehicle_ids.values())  # id: vehicle
-                    self.command.vehicle_cache = {  # code: vehicle
-                        key: vehicles[vehicle_id] for key, vehicle_id in vehicle_ids.items() if vehicle_id in vehicles
-                    }
-                except OperationalError:
-                    vehicles = None
+                vehicles = self.command.vehicles.in_bulk(vehicle_ids.values())  # id: vehicle
+                self.command.vehicle_cache = {  # code: vehicle
+                    key: vehicles[vehicle_id] for key, vehicle_id in vehicle_ids.items() if vehicle_id in vehicles
+                }
 
             with beeline.tracer(name="handle items"):
                 for item in message["items"]:
                     self.command.handle_item(item)
 
             with beeline.tracer(name="save"):
-                db_wrapper = beeline.middleware.django.HoneyDBWrapper()
+                db_wrapper = HoneyDBWrapper()
                 with ExitStack() as stack:
                     for connection in connections.all():
                         stack.enter_context(connection.execute_wrapper(db_wrapper))
@@ -51,5 +48,5 @@ class SiriConsumer(SyncConsumer):
                 cache.set_many({
                     key: value
                     for key, value in self.command.vehicle_id_cache.items()
-                    if key not in vehicle_ids or value != vehicle_ids
-                })
+                    if key not in vehicle_ids or value != vehicle_ids[key]
+                }, 43200)

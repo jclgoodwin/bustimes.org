@@ -807,7 +807,7 @@ class Service(models.Model):
                     how='parallel'
                 ))
             ).order_by().defer('geometry'))
-            cache.set(key, services)
+            cache.set(key, services, 86400)
         return services
 
     def get_similar_services(self):
@@ -821,7 +821,7 @@ class Service(models.Model):
                 q |= Q(description=self.description)
             services = Service.objects.filter(~Q(pk=self.pk), q, current=True).order_by().defer('geometry')
             services = sorted(services.annotate(operators=ArrayAgg('operator__name')), key=Service.get_order)
-            cache.set(key, services)
+            cache.set(key, services, 86400)
         return services
 
     def get_timetable(self, day=None, related=()):
