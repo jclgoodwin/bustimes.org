@@ -8,4 +8,5 @@ urlpatterns = [
     path('stops/<atco_code>/times.json', views.stop_times_json),
     path('trips/<int:pk>', views.TripDetailView.as_view(), name='trip_detail'),
     path('trips/<int:id>.json', views.trip_json),
+    path('services-debug', views.services_debug),
 ]

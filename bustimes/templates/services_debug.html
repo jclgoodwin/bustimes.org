@@ -1,0 +1,19 @@
+{% extends 'page.html' %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>debuggery</h1>
+
+<h2>SpecialDaysOperation</h2>
+
+<p>that are probably intended to be treated like ServicedOrganisations, despite what the TransXChange spec says</p>
+
+<ul>
+    {% for service in services %}
+        <li><a href="{{ service.get_absolute_url }}/debug">{{ service }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

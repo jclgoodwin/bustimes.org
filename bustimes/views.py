@@ -3,14 +3,14 @@ import zipfile
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.conf import settings
-from django.db.models import Prefetch
+from django.db.models import Prefetch, F, Exists, OuterRef
 from django.utils import timezone
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
 from busstops.models import Service, DataSource, StopPoint
 from departures.live import TimetableDepartures
-from .models import Route, Trip
+from .models import Route, Trip, CalendarDate
 
 
 class ServiceDebugView(DetailView):
@@ -36,6 +36,16 @@ class ServiceDebugView(DetailView):
         context['breadcrumb'] = [self.object]
 
         return context
+
+
+def services_debug(request):
+    dates = CalendarDate.objects.filter(special=True, operation=True, end_date__gt=F('start_date'))
+    services = Service.objects.filter(
+        Exists(Route.objects.filter(service=OuterRef('id'), trip__calendar__calendardate__in=dates))
+    )
+    return render(request, 'services_debug.html', {
+        'services': services
+    })
 
 
 def route_xml(request, source, code=''):
