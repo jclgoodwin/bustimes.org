@@ -24,7 +24,7 @@ def not_found_redirect_middleware(get_response):
             suggestion = None
 
             if request.path.startswith('/services/'):
-                service_code = request.path.split('/')[-1]
+                service_code = request.path.split('/')[2]
                 service_code_parts = service_code.split('-')
 
                 if len(service_code_parts) >= 4:
@@ -37,7 +37,7 @@ def not_found_redirect_middleware(get_response):
                             slug__startswith='-'.join(service_code_parts[:-1]),
                             current=True
                         ).first()
-                if suggestion is None:
+                if suggestion is None and service_code:
                     suggestion = Service.objects.filter(
                         service_code__iexact=service_code,
                         current=True
