@@ -40,11 +40,11 @@ class ServiceDebugView(DetailView):
 
 def services_debug(request):
     dates = CalendarDate.objects.filter(special=True, operation=True, end_date__gt=F('start_date'))
-    services = Service.objects.filter(
-        Exists(Route.objects.filter(service=OuterRef('id'), trip__calendar__calendardate__in=dates))
-    )
+    routes = Route.objects.filter(
+        Exists(Trip.objects.filter(route=OuterRef('id'), calendar__calendardate__in=dates))
+    ).order_by('source', 'code').select_related('service', 'source')
     return render(request, 'services_debug.html', {
-        'services': services
+        'routes': routes
     })
 
 
