@@ -8,7 +8,7 @@ from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
-from busstops.models import Operator, Service, Locality, StopPoint, ServiceCode
+from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
 from bustimes.models import Trip
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
@@ -74,7 +74,7 @@ class Command(ImportLiveVehiclesCommand):
             self.operator_cache[operator_ref] = operator
             return operator
         except Operator.DoesNotExist:
-            self.operator_cache[operator_ref] = None
+            pass
 
     @staticmethod
     def get_vehicle_cache_key(item):
@@ -102,6 +102,8 @@ class Command(ImportLiveVehiclesCommand):
         if operator and vehicle_ref.startswith(f'{operator_ref}-'):
             vehicle_ref = vehicle_ref[len(operator_ref) + 1:]
 
+        assert vehicle_ref
+
         defaults = {
             'code': vehicle_ref,
             'source': self.source
@@ -128,8 +130,6 @@ class Command(ImportLiveVehiclesCommand):
             vehicles = self.vehicles.filter(operator__in=operator)
         else:
             vehicles = self.vehicles.filter(operator=None)
-
-        assert vehicle_ref
 
         condition = Q(code=vehicle_ref)
         if operator:
@@ -327,6 +327,12 @@ class Command(ImportLiveVehiclesCommand):
             operator_ref = monitored_vehicle_journey["OperatorRef"]
             operator = self.get_operator(operator_ref)
             journey.service = self.get_service(operator, item, route_name, vehicle.operator_id)
+
+            if not operator and journey.service and journey.service.operator.all():
+                operator = journey.service.operator.all()[0]
+                OperatorCode.objects.create(source=self.source, operator=operator, code=operator_ref)
+                vehicle.operator = operator
+                vehicle.save(update_fields=['operator'])
 
             if journey.service and vehicle_journey_ref and '_' not in vehicle_journey_ref:
                 try:
