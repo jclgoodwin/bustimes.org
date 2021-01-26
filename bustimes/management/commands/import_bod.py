@@ -66,6 +66,8 @@ def handle_file(command, path):
 
 
 def bus_open_data(api_key, operator):
+    assert len(api_key) == 40
+
     command = get_command()
 
     if operator:
@@ -136,7 +138,7 @@ def bus_open_data(api_key, operator):
             else:
                 operators = [operator_id]
 
-            if Service.objects.filter(source__in=sources, operator__in=operators).exists():
+            if Service.objects.filter(source__in=sources, operator__in=operators, current=True).exists():
                 clean_up(operators, sources, incomplete)
 
     command.debrief()
@@ -236,9 +238,7 @@ def ticketer(operator=None):
             print(url, last_modified)
 
             command.operators = {code: code for code in operators}
-            if noc == 'GOEA':
-                command.operators['GEA'] = 'KCTB'
-            elif noc == 'ACYM':
+            if noc == 'ACYM':
                 command.operators['ANW'] = noc
             elif noc == 'AMID':
                 command.operators['AMD'] = noc

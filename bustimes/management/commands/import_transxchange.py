@@ -745,18 +745,21 @@ class Command(BaseCommand):
                 service_created = True
             service.save()
 
-            if service_created:
-                service.operator.set(operators)
-            else:
+            if not service_created:
                 if '_' in service.slug or '-' not in service.slug or existing and not existing.current:
                     service.slug = ''
                     service.save(update_fields=['slug'])
-                if self.source.name in {'Oxford Bus Company', 'Go South West'}:
-                    pass
-                elif service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
-                    service.operator.add(*operators)
-                else:
+
+            if operators:
+                if service_created:
                     service.operator.set(operators)
+                else:
+                    if self.source.name in {'Oxford Bus Company', 'Go South West'}:
+                        pass
+                    elif service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
+                        service.operator.add(*operators)
+                    else:
+                        service.operator.set(operators)
             self.service_ids.add(service.id)
             linked_services.append(service.id)
 
