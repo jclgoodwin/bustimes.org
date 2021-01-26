@@ -117,7 +117,7 @@ def bus_open_data(api_key, operator):
                 command.source = dataset['source']
 
                 print(filename)
-                if dataset['source'].datetime != dataset['modified']:
+                if operator or dataset['source'].datetime != dataset['modified']:
                     command.source.datetime = dataset['modified']
                     command.source.name = filename
 

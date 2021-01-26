@@ -46,13 +46,13 @@ class ImportBusOpenDataTest(TestCase):
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=directory):
                 with patch('builtins.print') as mocked_print:
-                    call_command('import_bod', '')
+                    call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
                 mocked_print.assert_called_with({'GoodFriday', 'NewYearsDay', 'EasterMonday', 'BoxingDay', 'MayDay',
                                                  'BoxingDayHoliday', 'ChristmasDay', 'ChristmasDayHoliday',
                                                  'NewYearsDayHoliday', 'LateSummerBankHolidayNotScotland',
                                                  'SpringBank'})
 
-                call_command('import_bod', '')
+                call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
 
         route = Route.objects.get()
         self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
