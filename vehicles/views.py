@@ -512,6 +512,7 @@ def journey_json(request, pk):
                 'direction': location[2],
                 'datetime': location[0]
             } for location in locations]
+            data['locations'].sort(key=lambda location: location['datetime'])
     except redis.exceptions.ConnectionError:
         pass
 
