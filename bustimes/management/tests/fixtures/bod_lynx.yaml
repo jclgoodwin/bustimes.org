@@ -4387,7 +4387,7 @@ interactions:
       User-Agent:
       - python-requests/2.23.0
     method: GET
-    uri: https://data.bus-data.dft.gov.uk/api/v1/dataset/?api_key=&noc=LYNX&status=published&status=expiring
+    uri: https://data.bus-data.dft.gov.uk/api/v1/dataset/?api_key=0123456789abc19abc190123456789abc19abc19&noc=LYNX&status=published&status=expiring
   response:
     body:
       string: '{"count":1,"next":null,"previous":null,"results":[{"id":35,"created":"2020-02-14T11:01:53.572735Z","modified":"2020-04-01T15:14:24.912585+01:00","operatorName":"Lynx","noc":["LYNX"],"name":"Lynx_Clenchwarton_54_20200330","description":"Service
