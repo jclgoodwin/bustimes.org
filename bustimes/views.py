@@ -3,7 +3,7 @@ import zipfile
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.conf import settings
-from django.db.models import Prefetch, F, Exists, OuterRef
+from django.db.models import Prefetch, F, Exists, OuterRef, DurationField, ExpressionWrapper
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
@@ -40,9 +40,12 @@ class ServiceDebugView(DetailView):
 
 def services_debug(request):
     dates = CalendarDate.objects.filter(special=True, operation=True, end_date__gt=F('start_date'))
+    dates = dates.annotate(duration=ExpressionWrapper(F('end_date') - F('start_date'), output_field=DurationField()))
+    dates = dates.filter(duration__gt=timedelta(days=5))
     routes = Route.objects.filter(
         Exists(Trip.objects.filter(route=OuterRef('id'), calendar__calendardate__in=dates))
     ).order_by('source', 'code').select_related('service', 'source')
+
     return render(request, 'services_debug.html', {
         'routes': routes
     })
