@@ -337,7 +337,7 @@ class ViewsTests(TestCase):
 
     def test_service_not_found(self):
         """An inactive service with no replacement should show a 404 page"""
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             response = self.client.get('/services/45A')
         self.assertEqual(response.status_code, 404)
 

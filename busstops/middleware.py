@@ -12,42 +12,49 @@ def real_ip_middleware(get_response):
 
 
 def not_found_redirect_middleware(get_response):
-    """
-    Redirects from /services/17-N4-_-y08-1 to /services/17-N4-_-y08-2, for example,
-    if the former doesn't exist (any more) and the latter does.
-    """
-
     def middleware(request):
         response = get_response(request)
 
-        if response.status_code == 404:
-            suggestion = None
+        if response.status_code == 404 and request.resolver_match:
+            if request.resolver_match.url_name == 'service_detail':
+                code = request.resolver_match.kwargs['slug']
+                services = Service.objects.filter(current=True)
 
-            if request.path.startswith('/services/'):
-                service_code = request.path.split('/')[2]
-                service_code_parts = service_code.split('-')
+                if code.lower():
+                    try:
+                        return redirect(services.get(servicecode__scheme='slug', servicecode__code=code))
+                    except Service.DoesNotExist:
+                        pass
+                try:
+                    return redirect(services.get(servicecode__scheme='ServiceCode', servicecode__code=code))
+                except Service.DoesNotExist:
+                    pass
 
+                service_code_parts = code.split('-')
                 if len(service_code_parts) >= 4:
-                    suggestion = Service.objects.filter(
+                    suggestion = None
+
+                    # e.g. from '17-N4-_-y08-1' to '17-N4-_-y08':
+                    suggestion = services.filter(
                         service_code__icontains='_' + '-'.join(service_code_parts[:4]),
-                        current=True
-                    ).first()
-                    if suggestion is None:
-                        suggestion = Service.objects.filter(
-                            slug__startswith='-'.join(service_code_parts[:-1]),
-                            current=True
-                        ).first()
-                if suggestion is None and service_code:
-                    suggestion = Service.objects.filter(
-                        service_code__iexact=service_code,
-                        current=True
                     ).first()
 
-            elif request.path.startswith('/stops/'):
-                suggestion = StopPoint.objects.only('atco_code').filter(naptan_code=request.path.split('/')[-1]).first()
+                    # e.g. from '46-holt-circular-1' to '46-holt-circular-2':
+                    if not suggestion and code.lower():
+                        if service_code_parts[-1].isdigit():
+                            slug = '-'.join(service_code_parts[:-1])
+                        else:
+                            slug = '-'.join(service_code_parts)
+                        suggestion = services.filter(slug__startswith=slug).first()
 
-            if suggestion is not None:
-                return redirect(suggestion)
+                    if suggestion:
+                        return redirect(suggestion)
+
+            elif request.resolver_match.url_name == 'stoppoint_detail':
+                try:
+                    return redirect(StopPoint.objects.get(naptan_code=request.resolver_match.kwargs['pk']))
+                except StopPoint.DoesNotExist:
+                    pass
 
         return response
 
