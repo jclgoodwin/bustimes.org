@@ -350,8 +350,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         logger.error(e, exc_info=True)
                     i += 1
                     if i == 50:
-                       self.save()
-                       i = 0
+                        self.save()
+                        i = 0
                 self.save()
                 # mark any vehicles that have gone offline as not current
                 # self.get_old_locations().update(current=False)
