@@ -50,6 +50,47 @@ def index(request):
 def not_found(request, exception):
     """Custom 404 handler view"""
     if request.resolver_match:
+        if request.resolver_match.url_name == 'service_detail' and exception.args:
+            code = request.resolver_match.kwargs['slug']
+
+            services = Service.objects.filter(current=True)
+
+            if code.lower():
+                try:
+                    return redirect(services.get(servicecode__scheme='slug', servicecode__code=code))
+                except Service.DoesNotExist:
+                    pass
+            try:
+                return redirect(services.get(servicecode__scheme='ServiceCode', servicecode__code=code))
+            except Service.DoesNotExist:
+                pass
+
+            service_code_parts = code.split('-')
+            if len(service_code_parts) >= 4:
+                suggestion = None
+
+                # e.g. from '17-N4-_-y08-1' to '17-N4-_-y08':
+                suggestion = services.filter(
+                    service_code__icontains='_' + '-'.join(service_code_parts[:4]),
+                ).first()
+
+                # e.g. from '46-holt-circular-1' to '46-holt-circular-2':
+                if not suggestion and code.lower():
+                    if service_code_parts[-1].isdigit():
+                        slug = '-'.join(service_code_parts[:-1])
+                    else:
+                        slug = '-'.join(service_code_parts)
+                    suggestion = services.filter(slug__startswith=slug).first()
+
+                if suggestion:
+                    return redirect(suggestion)
+
+        elif request.resolver_match.url_name == 'stoppoint_detail':
+            try:
+                return redirect(StopPoint.objects.get(naptan_code=request.resolver_match.kwargs['pk']))
+            except StopPoint.DoesNotExist:
+                pass
+
         context = {
             'exception': exception
         }
@@ -655,16 +696,31 @@ class ServiceDetailView(DetailView):
 
     def render_to_response(self, context):
         if not self.object.current:
-            alternatives = Service.objects.filter(current=True).only('slug')
-            alternative = alternatives.filter(
-                line_name=self.object.line_name, stopusage__stop__service=self.object
-            ).first() or alternatives.filter(
-                line_name=self.object.line_name, operator__service=self.object
-            ).first() or alternatives.filter(
-                description=self.object.description
-            ).first()
+            services = Service.objects.filter(current=True).only('slug')
+            alternative = None
 
-            if alternative is not None:
+            if self.object.line_name:
+                alternative = services.filter(
+                    line_name__iexact=self.object.line_name,
+                    operator__in=self.object.operator.all(), stops__service=self.object
+                ).first()
+                if not alternative:
+                    alternative = services.filter(
+                        line_name__iexact=self.object.line_name,
+                        stops__service=self.object
+                    ).first()
+                if not alternative:
+                    alternative = services.filter(
+                        line_name__iexact=self.object.line_name,
+                        operator__in=self.object.operator.all()
+                    ).first()
+
+            if not alternative and self.object.description:
+                alternative = services.filter(
+                    description=self.object.description
+                ).first()
+
+            if alternative:
                 return redirect(alternative)
 
             raise Http404()

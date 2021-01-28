@@ -331,13 +331,13 @@ class ViewsTests(TestCase):
 
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get('/services/45B')
         self.assertEqual(response.status_code, 302)
 
     def test_service_not_found(self):
         """An inactive service with no replacement should show a 404 page"""
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             response = self.client.get('/services/45A')
         self.assertEqual(response.status_code, 404)
 
