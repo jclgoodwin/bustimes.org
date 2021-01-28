@@ -71,7 +71,6 @@ class Command(ImportLiveVehiclesCommand):
         'SCEM': 'SCGH',
         'SCSO': 'SCCO'
     }
-    vehicles_ids = {}
     services = {}
 
     def get_items(self):
@@ -137,7 +136,6 @@ class Command(ImportLiveVehiclesCommand):
                 defaults['operator'] = operator
                 vehicles = self.vehicles.filter(operator__in=self.operators)
                 vehicle, created = vehicles.get_or_create(defaults, code=vehicle_code)
-                self.vehicles_ids[vehicle_code] = vehicle.id
             else:
                 return None, None
 

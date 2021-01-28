@@ -169,6 +169,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     return  # defer to other source
         if not location:
             location = self.create_vehicle_location(item)
+            if not location.latlong and (location.latlong.x or location.latlong.y):  # (0, 0) - null island
+                return
+
         if location.heading == -1:
             location.heading = None
         location.datetime = datetime
