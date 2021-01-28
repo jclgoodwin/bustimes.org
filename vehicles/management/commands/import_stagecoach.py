@@ -105,6 +105,9 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         vehicle_code = item['fn']
 
+        if 'lo' not in item or len(vehicle_code) != 5:
+            return None, None
+
         if vehicle_code in self.vehicles_cache:
             vehicle = self.vehicles_cache[vehicle_code]
             if vehicle.latest_location:
@@ -211,9 +214,6 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
-        if 'lo' not in item:
-            return
-
         bearing = item.get('hg')
 
         aimed = item.get('an') or item.get('ax')
