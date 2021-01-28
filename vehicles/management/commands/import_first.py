@@ -172,13 +172,10 @@ class Command(BaseCommand):
         await asyncio.wait(futures, return_when=asyncio.FIRST_EXCEPTION)
 
     def handle(self, operator, *args, **options):
-        try:
-            with pid.PidFile(f'First{operator}'):
-                self.source = DataSource.objects.get(name='First')
+        with pid.PidFile(f'First{operator}'):
+            self.source = DataSource.objects.get(name='First')
 
-                extent = self.get_extent(operator)
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.sock_it(operator, extent))
-                loop.close()
-        except pid.PidFileError:
-            return
+            extent = self.get_extent(operator)
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self.sock_it(operator, extent))
+            loop.close()

@@ -371,11 +371,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle(self, *args, **options):
         sleep(self.wait)
-        try:
-            with pid.PidFile(self.source_name):
-                self.do_source()
-                while True:
-                    wait = self.update()
-                    sleep(wait)
-        except pid.PidFileError:
-            return
+        with pid.PidFile(self.source_name):
+            self.do_source()
+            while True:
+                wait = self.update()
+                sleep(wait)
