@@ -520,6 +520,8 @@ class RevisionChangeFilter(admin.SimpleListFilter):
     def lookups(self, request, model_admin):
         return (
             ('changes__reg', 'reg'),
+            ('changes__name', 'name'),
+            ('changes__branding', 'branding'),
             ('changes__depot', 'depot'),
         )
 
@@ -543,16 +545,26 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
     list_select_related = ['from_operator', 'to_operator', 'vehicle']
 
     def revert(self, request, queryset):
+        supported_keys = ('reg', 'name', 'branding')
         for revision in queryset.prefetch_related('vehicle'):
-            if list(revision.changes.keys()) == ['reg']:
-                before, after = revision.changes['reg'].split('\n+')
+            messages = []
+            for key in revision.changes:
+                if key not in supported_keys:
+                    self.message_user(request, f'Reverting {key} not supported yet')
+                    return
+                before, after = revision.changes[key].split('\n+')
                 after = after.replace(' ', '').upper()
                 before = before[1:]
-                if revision.vehicle.reg == after:
-                    revision.vehicle.reg = before
-                    revision.vehicle.save(update_fields=['reg'])
-                    revision.delete()
-                    self.message_user(request, f'Reverted {after} to {before}')
+                if getattr(revision.vehicle, key) == after:
+                    setattr(revision.vehicle, key, before)
+                    messages.append(f'Reverted {after} to {before}')
+                else:
+                    self.message_user(request, f'Couldn’t revert {after} to {before}')
+                    return
+            revision.vehicle.save(update_fields=revision.changes.keys())
+            revision.delete()
+            for message in messages:
+                self.message_user(request, message)
 
 
 admin.site.register(VehicleFeature)
