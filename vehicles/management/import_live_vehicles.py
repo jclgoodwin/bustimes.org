@@ -169,7 +169,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     return  # defer to other source
         if not location:
             location = self.create_vehicle_location(item)
-            if not location.latlong and (location.latlong.x or location.latlong.y):  # (0, 0) - null island
+            if not location.latlong or not (location.latlong.x or location.latlong.y):  # (0, 0) - null island
                 return
 
         if location.heading == -1:
@@ -370,7 +370,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 0  # took longer than self.wait
 
     def handle(self, *args, **options):
-        sleep(self.wait)
+        # sleep(self.wait)
         with pid.PidFile(self.source_name):
             self.do_source()
             while True:
