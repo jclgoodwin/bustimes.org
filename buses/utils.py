@@ -14,6 +14,7 @@ def minify(template_source):
 def varnish_ban(url):
     if settings.VARNISH:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(2)  # 2 seconds
         try:
             sock.connect(settings.VARNISH)
         except socket.error:
