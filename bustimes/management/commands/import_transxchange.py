@@ -632,6 +632,16 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
+        if not operators:
+            basename = os.path.basename(filename)  # e.g. 'KCTB_'
+            if basename[4] == '_':
+                maybe_operator_code = basename[:4]
+                if maybe_operator_code.isupper() and maybe_operator_code.isalpha():
+                    try:
+                        operators = [Operator.objects.get(id=maybe_operator_code)]
+                    except Operator.DoesNotExist:
+                        pass
+
         if self.is_tnds() and self.source.name != 'L':
             if operators and all(operator.id in self.open_data_operators for operator in operators):
                 return
