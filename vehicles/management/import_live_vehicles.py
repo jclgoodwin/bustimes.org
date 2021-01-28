@@ -370,7 +370,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return 0  # took longer than self.wait
 
     def handle(self, *args, **options):
-        # sleep(self.wait)
+        sleep(self.wait)
         with pid.PidFile(self.source_name):
             self.do_source()
             while True:
