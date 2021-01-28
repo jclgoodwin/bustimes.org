@@ -51,7 +51,7 @@ def get_latlong(item):
     return Point(float(item['lo']), float(item['la']))
 
 
-def get_datetime(timestamp):
+def parse_timestamp(timestamp):
     if timestamp:
         return datetime.fromtimestamp(int(timestamp) / 1000, timezone.utc)
 
@@ -83,8 +83,15 @@ class Command(ImportLiveVehiclesCommand):
             }
             try:
                 response = self.session.get(self.url, params=params, timeout=5)
-                # print(response.url)
-                for item in response.json()['services']:
+                items = response.json()['services']
+                vehicle_fleet_numbers = [item['fn'] for item in items]
+                self.vehicles_cache = {
+                    vehicle.code: vehicle for vehicle in self.vehicles.filter(
+                        operator__in=self.operators,
+                        code__in=vehicle_fleet_numbers
+                    )
+                }
+                for item in items:
                     yield item
                 self.save()
                 sleep(1)
@@ -94,15 +101,19 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return get_datetime(item['ut'])
+        return parse_timestamp(item['ut'])
 
     def get_vehicle(self, item):
         vehicle_code = item['fn']
-        if len(vehicle_code) > 5:
-            return None, None
-        if vehicle_code in self.vehicles_ids:
-            vehicle = self.vehicles.get(id=self.vehicles_ids[vehicle_code])
-            created = False
+
+        if vehicle_code in self.vehicles_cache:
+            vehicle = self.vehicles_cache[vehicle_code]
+            if vehicle.latest_location:
+                if vehicle.latest_location.journey.source_id != self.source.id:
+                    when = self.get_datetime(item)
+                    if (when - vehicle.latest_location.datetime).total_seconds() < 600:
+                        # other source is less than 10 minutes out of date, defer to it
+                        return None, None
         else:
             operator_id = self.operator_ids.get(item['oc'], item['oc'])
             if operator_id in self.operators:
@@ -130,17 +141,11 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 return None, None
 
-        # if vehicle.latest_location:
-        #    if vehicle.latest_location.journey.source_id != self.source.id:
-        #        if (self.source.datetime - vehicle.latest_location.datetime).total_seconds() < 300:
-        #            print(vehicle)
-        #            return None, None
-
-        return vehicle, created
+        return vehicle, False
 
     def get_journey(self, item, vehicle):
         if item['ao']:  # aimed origin departure time
-            departure_time = get_datetime(item['ao'])
+            departure_time = parse_timestamp(item['ao'])
             code = item.get('td', '')  # trip id
         else:
             departure_time = None
@@ -213,8 +218,8 @@ class Command(ImportLiveVehiclesCommand):
         aimed = item.get('an') or item.get('ax')
         expected = item.get('en') or item.get('ex')
         if aimed and expected:
-            aimed = get_datetime(aimed)
-            expected = get_datetime(expected)
+            aimed = parse_timestamp(aimed)
+            expected = parse_timestamp(expected)
             early = (aimed - expected).total_seconds() / 60
             early = round(early)
             delay = -early

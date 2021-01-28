@@ -37,7 +37,7 @@ class StagecoachTest(TestCase):
 
         with vcr.use_cassette(os.path.join(DIR, 'vcr', 'stagecoach_vehicles.yaml')):
             with self.assertLogs(level='ERROR'):
-                with self.assertNumQueries(18):
+                with self.assertNumQueries(19):
                     with patch('builtins.print'):
                         with self.assertRaises(MockException):
                             command.handle()
