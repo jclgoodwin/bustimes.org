@@ -710,7 +710,10 @@ class Cell:
         self.stopusage = stopusage
         self.arrival_time = arrival_time
         self.departure_time = departure_time
-        self.wait_time = arrival_time and departure_time and arrival_time != departure_time
+        if arrival_time is not None and departure_time is not None and arrival_time != departure_time:
+            self.wait_time = True
+        else:
+            self.wait_time = None
 
 
 def stop_is_at(stop, text):

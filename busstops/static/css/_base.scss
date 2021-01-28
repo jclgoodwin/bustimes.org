@@ -647,12 +647,12 @@ table {
             table-layout: fixed;
         }
 
-        th {
-            border: 0;
+        th,
+        td {
+            border-left: 0;
         }
 
         td {
-            border: 0;
             padding: .25em 0;
             text-align: right;
             vertical-align: bottom;

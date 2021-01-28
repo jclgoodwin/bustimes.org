@@ -100,6 +100,7 @@
                 element.appendChild(tripElement);
 
                 var table = document.createElement('table');
+                table.className = 'trip-timetable';
                 var thead = document.createElement('thead');
                 thead.innerHTML = '<tr><th>Stop</th><th>Timetable</th></tr>';
                 table.appendChild(thead);
@@ -109,6 +110,9 @@
                 for (var i = 0; i < response.stops.length; i++) {
                     tr = document.createElement('tr');
                     stop = response.stops[i];
+                    if (stop.minor) {
+                        tr.className = 'minor';
+                    }
                     time = stop.aimed_departure_time || stop.aimed_arrival_time || '';
                     tr.innerHTML = '<td>' + stop.name + '</th><td>' + time + '</td>';
                     tbody.appendChild(tr);

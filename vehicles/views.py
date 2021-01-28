@@ -18,7 +18,6 @@ from django.utils import timezone
 # from django.utils.safestring import mark_safe
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
-from bustimes.utils import format_timedelta
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
@@ -495,8 +494,9 @@ def journey_json(request, pk):
         try:
             data['stops'] = [{
                 'name': stop_time.stop.get_qualified_name() if stop_time.stop else stop_time.stop_code,
-                'aimed_arrival_time': format_timedelta(stop_time.arrival) if stop_time.arrival else None,
-                'aimed_departure_time': format_timedelta(stop_time.departure) if stop_time.departure else None,
+                'aimed_arrival_time': stop_time.arrival_time(),
+                'aimed_departure_time': stop_time.departure_time(),
+                'minor': stop_time.is_minor()
             } for stop_time in journey.trip.stoptime_set.select_related('stop__locality')]
         except ObjectDoesNotExist:
             pass

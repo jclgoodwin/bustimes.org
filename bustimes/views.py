@@ -160,8 +160,8 @@ def trip_json(request, id):
 
         times.append({
             "stop": stop,
-            "aimed_arrival_time": stop_time.arrival_time() if stop_time.arrival else None,
-            "aimed_departure_time": stop_time.departure_time() if stop_time.departure else None,
+            "aimed_arrival_time": stop_time.arrival_time(),
+            "aimed_departure_time": stop_time.departure_time(),
         })
 
     return JsonResponse({
