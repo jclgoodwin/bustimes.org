@@ -211,7 +211,10 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
-        bearing = item['hg']
+        if 'lo' not in item:
+            return
+
+        bearing = item.get('hg')
 
         aimed = item.get('an') or item.get('ax')
         expected = item.get('en') or item.get('ex')
