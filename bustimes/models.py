@@ -246,12 +246,12 @@ class Trip(models.Model):
                     a_time = a.end
                     b_time = b.end
                 else:
-                    times = {time.get_key(): time.arrival or time.departure for time in a_times}
+                    times = {time.get_key(): time.arrival_or_departure() for time in a_times}
                     for time in b_times:
                         key = time.get_key()
                         if key in times:
                             a_time = times[key]
-                            b_time = time.arrival or time.departure
+                            b_time = time.arrival_or_departure()
                             break
         if a_time > b_time:
             return 1
@@ -302,6 +302,16 @@ class StopTime(models.Model):
         index_together = (
             ('stop', 'departure'),
         )
+
+    def arrival_or_departure(self):
+        if self.arrival_time is not None:
+            return self.arrival_time
+        return self.departure_time
+
+    def departure_or_arrival(self):
+        if self.departure_time is not None:
+            return self.departure_time
+        return self.arrival_time
 
     def arrival_time(self):
         return format_timedelta(self.arrival)

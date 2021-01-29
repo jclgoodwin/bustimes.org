@@ -677,10 +677,12 @@ class VehicleLocation(models.Model):
             # midpoint is further than one of the stops
             return
 
-        previous_time = previous_stop.departure or previous_stop.arrival
+        previous_time = previous_stop.departure_or_arrival()
         if previous_time > timedelta(days=1):
             previous_time -= timedelta(days=1)
-        next_time = next_stop.arrival or next_stop.departure
+
+        next_time = next_stop.arrival_or_departure()
+
         now = timedelta(hours=self.datetime.hour, minutes=self.datetime.minute, seconds=self.datetime.second)
         if now > next_time:
             delay = {
