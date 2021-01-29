@@ -48,7 +48,7 @@ class Command(BaseCommand):
         departure_time = timezone.make_aware(datetime.strptime(departure_time, '%Y-%m-%d %H:%M'))
 
         if not created:
-            if vehicle.latest_location and vehicle.latest_location.journey.datetime == datetime:
+            if vehicle.latest_location and vehicle.latest_location.journey.datetime == departure_time:
                 journey = vehicle.latest_location.journey
             else:
                 journey = VehicleJourney.objects.filter(vehicle=vehicle, datetime=departure_time).first()
