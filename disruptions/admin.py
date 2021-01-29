@@ -18,7 +18,7 @@ class LinkInline(admin.TabularInline):
 
 class SituationAdmin(admin.ModelAdmin):
     inlines = [ValidityPeriodInline, LinkInline, ConsequenceInline]
-    list_display = ['summary', 'reason', 'source', 'current']
+    list_display = ['__str__', 'reason', 'source', 'current']
     list_filter = ['reason', 'source', 'current']
 
 
