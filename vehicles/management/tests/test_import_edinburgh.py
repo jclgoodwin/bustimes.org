@@ -36,6 +36,7 @@ class EdinburghImportTest(TestCase):
         self.assertEqual('1135', journey.code)
         self.assertEqual('Yoker', journey.destination)
         self.assertEqual(self.service, journey.service)
+        self.assertTrue(journey.service.tracking)
 
         with self.assertNumQueries(1):
             vehicle, created = self.command.get_vehicle(item)

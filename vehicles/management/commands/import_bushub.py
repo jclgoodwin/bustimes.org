@@ -104,7 +104,7 @@ class Command(ImportLiveVehiclesCommand):
         journey.code = code
         journey.route_name = item['PublishedLineName']
 
-        if not journey.service:
+        if not journey.service_id:
             journey.service = self.get_service(item)
 
         journey.destination = item['DestinationStopLocality']

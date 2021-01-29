@@ -159,7 +159,7 @@ class Command(ImportLiveVehiclesCommand):
                 return latest_location.journey
             else:
                 try:
-                    return vehicle.vehiclejourney_set.select_related('service').get(datetime=departure_time)
+                    return vehicle.vehiclejourney_set.get(datetime=departure_time)
                 except VehicleJourney.DoesNotExist:
                     pass
 
@@ -171,7 +171,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.route_name = item.get('sn', '')
 
-        if not journey.service and journey.route_name:
+        if not journey.service_id and journey.route_name:
             service = journey.route_name
             alternatives = {
                 'PULS': 'Pulse',

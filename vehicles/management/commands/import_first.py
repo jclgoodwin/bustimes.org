@@ -16,7 +16,7 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 class Command(BaseCommand):
     operators = {}
-    vehicles = Vehicle.objects.select_related('latest_location__journey__service', 'livery')
+    vehicles = Vehicle.objects.select_related('latest_location__journey', 'livery')
 
     @staticmethod
     def add_arguments(parser):
@@ -47,7 +47,13 @@ class Command(BaseCommand):
         departure_time = item['stops'][0]['date'] + ' ' + item['stops'][0]['time']
         departure_time = timezone.make_aware(datetime.strptime(departure_time, '%Y-%m-%d %H:%M'))
 
-        journey = VehicleJourney.objects.filter(vehicle=vehicle, datetime=departure_time).first()
+        if not created:
+            if vehicle.latest_location and vehicle.latest_location.journey.datetime == datetime:
+                journey = vehicle.latest_location.journey
+            else:
+                journey = VehicleJourney.objects.filter(vehicle=vehicle, datetime=departure_time).first()
+        else:
+            journey = None
 
         if not journey:
             try:

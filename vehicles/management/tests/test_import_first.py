@@ -28,7 +28,7 @@ class FirstImportTest(TestCase):
         command = import_first.Command()
         command.source = self.source
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(item, 'FYOR')
         mocked_print.assert_called()

@@ -18,7 +18,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from bustimes.models import Route
 from busstops.models import DataSource
-from ..models import Vehicle, VehicleLocation
+from ..models import Vehicle, VehicleLocation, VehicleJourney
 
 
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ def same_journey(latest_location, journey, when):
 
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ''
-    vehicles = Vehicle.objects.select_related('latest_location__journey__service', 'livery')
+    vehicles = Vehicle.objects.select_related('latest_location__journey', 'livery')
     wait = 60
 
     def __init__(self, *args, **kwargs):
@@ -150,7 +150,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
                 # take a snapshot here, to see if they have changed later,
                 # cos get_journey() might return latest.journey
-                original_service = latest.journey.service
+                original_service_id = latest.journey.service_id
                 original_destination = latest.journey.destination
 
         try:
@@ -190,8 +190,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest.journey.source_id != self.source.id:
                 latest.journey.source = self.source
                 changed = True
-            if journey.service and not original_service:
-                latest.journey.service = journey.service
+            if journey.service_id and not original_service_id:
+                latest.journey.service_id = journey.service_id
                 changed = True
             if journey.destination and not original_destination:
                 latest.journey.destination = journey.destination
@@ -212,9 +212,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except IntegrityError:
                 journey = vehicle.vehiclejourney_set.using('default').get(datetime=journey.datetime)
 
-            if journey.service and not journey.service.tracking:
-                journey.service.tracking = True
-                journey.service.save(update_fields=['tracking'])
+            if journey.service_id and VehicleJourney.service.is_cached(journey):
+                if not journey.service.tracking:
+                    journey.service.tracking = True
+                    journey.service.save(update_fields=['tracking'])
 
             location.journey = journey
         if latest:

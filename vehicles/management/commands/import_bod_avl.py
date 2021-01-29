@@ -323,7 +323,7 @@ class Command(ImportLiveVehiclesCommand):
                 if not journey.destination:
                     journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
 
-        if not journey.service:
+        if not journey.service_id:
             operator_ref = monitored_vehicle_journey["OperatorRef"]
             operator = self.get_operator(operator_ref)
             journey.service = self.get_service(operator, item, route_name, vehicle.operator_id)

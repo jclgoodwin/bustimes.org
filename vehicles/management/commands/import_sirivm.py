@@ -231,7 +231,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if latest_location and latest_location.journey.code == journey.code:
             if latest_location.journey.route_name == journey.route_name:
-                journey.service = latest_location.journey.service
+                journey.service_id = latest_location.journey.service_id
                 if latest_location.journey.destination:
                     journey.destination = latest_location.journey.destination
                 return journey
