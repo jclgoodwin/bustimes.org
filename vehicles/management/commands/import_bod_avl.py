@@ -31,7 +31,7 @@ class Command(ImportLiveVehiclesCommand):
         'UNIB': ['UNOE', 'UNIB'],
         'TBTN': ['TBTN', 'KBUS'],
         'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],
-        'MTRA': ['MPTR']  # MP Travel using M Travel code (no relation!)
+        'MTRL': ['MPTR']  # MP Travel using M Travel code (no relation!)
     }
     operator_cache = {}
     vehicle_id_cache = {}
