@@ -152,18 +152,17 @@ class ServiceAdmin(admin.ModelAdmin):
     list_select_related = ['colour']
 
     def get_search_results(self, request, queryset, search_term):
-        if not search_term:
-            return super().get_search_results(request, queryset, search_term)
-
-        if request.path.endswith('/autocomplete/'):
+        if search_term and request.path.endswith('/autocomplete/'):
             queryset = queryset.filter(current=True)
 
-        query = SearchQuery(search_term, search_type="websearch", config="english")
-        rank = SearchRank(F('search_vector'), query)
-        queryset = (
-            queryset.annotate(rank=rank).filter(Q(search_vector=query) | Q(service_code=search_term)).order_by("-rank")
-        )
-        return queryset, False
+            query = SearchQuery(search_term, search_type="websearch", config="english")
+            rank = SearchRank(F('search_vector'), query)
+            queryset = (
+                queryset.annotate(rank=rank).filter(Q(search_vector=query) | Q(service_code=search_term)).order_by("-rank")
+            )
+            return queryset, False
+
+        return super().get_search_results(request, queryset, search_term)
 
 
 @admin.register(ServiceLink)
