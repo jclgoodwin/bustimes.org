@@ -4,7 +4,8 @@ from django.contrib.gis.db.models import PointField
 from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Count, Q, F, Exists, OuterRef
+from django.db.models import Count, Q, F, Exists, OuterRef, CharField
+from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from bustimes.models import Route
@@ -273,7 +274,9 @@ class SIRISourceAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            return queryset.annotate(areas=StringAgg('admin_area__atco_code', ', ', distinct=True))
+            return queryset.annotate(
+                areas=StringAgg(Cast('admin_areas__atco_code', output_field=CharField()), ', ')
+            )
         return queryset
 
     @staticmethod
