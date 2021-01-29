@@ -77,7 +77,7 @@ fi
 
 # Ulsterbus
 ulb_old=$(shasum ulb--goldline-opendata.zip)
-wget -qN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/291cbb54-7bb3-4df7-8599-0c8f49a20be6/download/ulb--goldline-opendata.zip
+wget -qN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/6c040b78-9fbe-439f-b359-38fb21c882ca/download/ulb--goldline-opendata.zip
 ulb_new=$(shasum ulb--goldline-opendata.zip)
 if [[ "$ulb_old" != "$ulb_new" ]]; then
     ../manage.py import_atco_cif ulb--goldline-opendata.zip
