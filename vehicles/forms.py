@@ -9,10 +9,11 @@ from .fields import RegField
 
 def get_livery_choices(operator):
     choices = {}
-    liveries = Livery.objects.filter(vehicle__operator=operator).annotate(popularity=Count('vehicle'))
+    vehicles = operator.vehicle_set.filter(withdrawn=False)
+    liveries = Livery.objects.filter(vehicle__in=vehicles).annotate(popularity=Count('vehicle'))
     for livery in liveries.order_by('-popularity').distinct():
         choices[livery.id] = livery
-    for vehicle in operator.vehicle_set.distinct('colours'):
+    for vehicle in vehicles.distinct('colours'):
         if not vehicle.livery_id and vehicle.colours and vehicle.colours != 'Other':
             choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
