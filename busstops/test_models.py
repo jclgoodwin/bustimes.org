@@ -154,7 +154,10 @@ class ServiceTests(TestCase):
         self.assertEqual(2, response.context_data['cl'].result_count)
 
         response = self.client.get('/admin/busstops/service/?q=21')
-        self.assertEqual(0, response.context_data['cl'].result_count)
+        self.assertEqual(1, response.context_data['cl'].result_count)
+
+        response = self.client.get('/admin/busstops/service/autocomplete/?term=21')
+        self.assertEqual({'results': [], 'pagination': {'more': False}}, response.json())
 
 
 class StopPointTests(TestCase):
