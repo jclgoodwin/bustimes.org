@@ -32,6 +32,9 @@ from .forms import ContactForm, SearchForm
 operator_has_current_services = Exists(
     Service.objects.filter(current=True, operator=OuterRef('pk'))
 )
+operator_has_current_services_or_vehicles = operator_has_current_services | Exists(
+    Vehicle.objects.filter(withdrawn=False, operator=OuterRef('pk'))
+)
 
 
 def get_colours(services):
@@ -239,7 +242,7 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
             del context['areas']
 
         context['operators'] = Operator.objects.filter(
-            operator_has_current_services,
+            operator_has_current_services_or_vehicles,
             Q(region=self.object) | Q(regions=self.object)
         ).distinct()
 
@@ -790,7 +793,7 @@ class OperatorSitemap(Sitemap):
     protocol = 'https'
 
     def items(self):
-        return Operator.objects.filter(operator_has_current_services).defer('search_vector')
+        return Operator.objects.filter(operator_has_current_services_or_vehicles).defer('search_vector')
 
 
 class ServiceSitemap(Sitemap):
@@ -833,7 +836,7 @@ def search(request):
             rank = SearchRank(F('search_vector'), query)
 
             localities = Locality.objects.filter()
-            operators = Operator.objects.filter(operator_has_current_services)
+            operators = Operator.objects.filter(operator_has_current_services_or_vehicles)
             services = Service.objects.filter(current=True)
 
             localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
