@@ -164,9 +164,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not journey:
             return
         if latest and latest.current and latest.journey.source_id != self.source.id:
-            if ((datetime or now) - latest.datetime).total_seconds() < 300:  # less than 5 minutes old
-                if latest.journey.service_id or not journey.service:
-                    return  # defer to other source
+            if self.source.name != 'Bus Open Data':
+                if ((datetime or now) - latest.datetime).total_seconds() < 300:  # less than 5 minutes old
+                    if latest.journey.service_id or not journey.service_id:
+                        return  # defer to other source
         if not location:
             location = self.create_vehicle_location(item)
             if not location.latlong or not (location.latlong.x or location.latlong.y):  # (0, 0) - null island
