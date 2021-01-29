@@ -22,7 +22,7 @@
         if (scale) {
             transform += ' scale(1.5)';
         }
-        return '-webkit-' + transform + ';' + transform;
+        return '-webkit-' + transform + ';' + transform + ';';
     }
 
     function getBusIcon(item, active) {
@@ -39,16 +39,17 @@
         if (active) {
             className += ' selected';
         }
+        var style = getTransform(heading, active);
         if (item.c) {
-            var style = 'background:' + item.c;
-            if (item.t) {
-                className += ' white-text';
+            if (typeof(item.c) == 'number') {
+                className += ' livery-' + item.c;
+            } else {
+                style += 'background:' + item.c;
+                if (item.t) {
+                    className += ' white-text';
+                }
             }
-            style += ';';
-        } else {
-            style = '';
         }
-        style += getTransform(heading, active);
         var html = '<div class="' + className + '" style="' + style + '">';
         if (item.r) {
             html += item.r;

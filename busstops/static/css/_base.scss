@@ -689,6 +689,15 @@ table .livery {
     margin: 0;
 }
 
+.bus {
+    background: $white;
+    border: 1px solid $white;
+    height: 12px;
+    line-height: 12px;
+    margin-top: 3px;
+    overflow: hidden;
+}
+
 .leaflet-marker-icon {
     // journey history
     &.just-arrow {
@@ -710,15 +719,6 @@ table .livery {
         font-size: 10px;
         text-align: center;
         white-space: nowrap;
-
-        .bus {
-            background: $white;
-            border: 1px solid $white;
-            height: 12px;
-            line-height: 12px;
-            margin-top: 3px;
-            overflow: hidden;
-        }
 
         &:hover .bus,
         .selected {
