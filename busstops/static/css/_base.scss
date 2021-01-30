@@ -741,7 +741,7 @@ table .livery {
     }
 
     .stop-arrow {
-        background: $black;
+        background: rgba(0, 0, 0, .6);
         border: 1px solid $white;
         border-radius: 0 8px 8px;
         height: 9px;
@@ -756,8 +756,10 @@ table .livery {
 #hugemap {
     .stop-arrow {
         position: absolute;
-        left: 3px;
-        top: 3px;
+        top: 0;
+        z-index: -1; // reveal indicator
+        width: 14px;
+        height: 14px;
     }
 
     .stop {
@@ -766,28 +768,17 @@ table .livery {
         line-height: 16px;
         text-align: center;
 
-        .zoomed-in &,
-        &:hover {
+        &.stop-0 {
             .stop-arrow {
-                height: 14px;
-                left: 0px;
-                top: 0px;
-                width: 14px;
-                z-index: -1;
+                height: 10px;
+                left: 2px;
+                top: 2px;
+                width: 10px;
             }
-
-            &.stop-0 {
-                .stop-arrow {
-                    height: 13px;
-                    left: 1px;
-                    top: 1px;
-                    width: 13px;
-                }
-            }
+        }
         
-            &.stop-1 {
-                font-size: 11px;
-            }
+        &.stop-1 {  // one character - bigger text
+            font-size: 11px;
         }
     }
 }
@@ -858,6 +849,10 @@ body {
     .leaflet-container {
         font-family: inherit;
         font-size: .875em;
+
+        // a {
+        //     color: $link-color;
+        // }
     }
 }
 

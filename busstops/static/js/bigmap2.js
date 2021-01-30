@@ -22,17 +22,18 @@
     var lastStopsReq,
         highWater,
         showStops = true,
-        zoomedIn = true;
+        bigStopMarkers,
+        bigVehicleMarkers = true;
 
     if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
-        var referrerStop = '/stops/' + document.referrer.split('/stops/')[1];
+        var clickedStopMarker = '/stops/' + document.referrer.split('/stops/')[1];
     } else if (localStorage && localStorage.hideStops) {
         showStops = false;
     }
 
     stopsGroup.on('add', function() {
-        if (map.getZoom() < 14) {
-            map.setZoom(14); // loadStops will be called by moveend handler
+        if (map.getZoom() < 13) {
+            map.setZoom(13); // loadStops will be called by moveend handler
         } else if (!showStops) {
             loadStops();
         }
@@ -78,31 +79,51 @@
         });
     }
 
-    var oldStops = {},
-        newStops = {};
+    var stops = {};
+    // var oldStops = {},
+    //     newStops = {};
 
     function handleStop(data) {
-        if (data.properties.url in oldStops) {
-            var marker = oldStops[data.properties.url];
-            newStops[data.properties.url] = marker;
-            return;
+        var latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
+        if (bigStopMarkers) {
+            var marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
+                icon: getStopIcon(data.properties.indicator, data.properties.bearing),
+                url: data.properties.url
+            });
+        } else {
+            marker = L.circleMarker(latLng, {
+                stroke: false,
+                fillColor: '#000',
+                fillOpacity: .5,
+                radius: 3,
+                url: data.properties.url
+            });
         }
-
         var a = document.createElement('a');
-        marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
-            icon: getStopIcon(data.properties.indicator, data.properties.bearing)
-        });
 
         a.innerHTML = '<span>' + data.properties.name + '</span><small>' + data.properties.services.join('</small><small>') + '</small>';
         a.href = data.properties.url;
 
         marker.bindPopup(a.outerHTML, {
-            autoPan: false
-        });
+                autoPan: false
+            })
+            .on('popupopen', handleStopPopupOpen)
+            .on('popupclose', handleStopPopupClose);
 
         marker.addTo(stopsGroup);
-        newStops[data.properties.url] = marker;
+        stops[data.properties.url] = marker;
     }
+
+    function handleStopPopupOpen(event) {
+        var marker = event.target;
+        clickedStopMarker = marker.options.url;
+    }
+
+    function handleStopPopupClose(event) {
+        if (map.hasLayer(event.target)) {
+            clickedStopMarker = null;
+        }
+    }    
 
     function loadStops() {
         var bounds = map.getBounds();
@@ -112,27 +133,24 @@
             lastStopsReq.abort();
         }
         if (highWater && highWater.contains(bounds)) {
-            return;
+            if (!bigStopMarkers) {
+                return;
+            }
         }
         lastStopsReq = reqwest('/stops.json' + params, function(data) {
             if (data && data.features) {
                 highWater = bounds;
+                stopsGroup.clearLayers();
+                stops = {};
                 for (var i = data.features.length - 1; i >= 0; i -= 1) {
                     handleStop(data.features[i]);
                 }
-                for (var stop in oldStops) {
-                    if (!(stop in newStops)) {
-                        stopsGroup.removeLayer(oldStops[stop]);
-                    }
-                }
-                if (referrerStop) {
-                    stop = newStops[referrerStop];
+                if (clickedStopMarker) {
+                    var stop = stops[clickedStopMarker];
                     if (stop) {
                         stop.openPopup();
                     }
                 }
-                oldStops = newStops;
-                newStops = {};
             }
         });
     }
@@ -188,7 +206,7 @@
         clickedMarker = item.i;
         updatePopupContent();
 
-        if (zoomedIn) {
+        if (bigVehicleMarkers) {
             marker.setIcon(bustimes.getBusIcon(item, true));
             marker.setZIndexOffset(2000);
         }
@@ -205,7 +223,7 @@
     function handlePopupClose(event) {
         if (map.hasLayer(event.target)) {
             clickedMarker = null;
-            if (zoomedIn) {
+            if (bigVehicleMarkers) {
                 // make the icon small again
                 event.target.setIcon(bustimes.getBusIcon(event.target.options.item));
                 event.target.setZIndexOffset(1000);
@@ -223,7 +241,7 @@
         if (item.i in markers) {
             marker = markers[item.i];
             marker.setLatLng(latLng);
-            if (zoomedIn) {
+            if (bigVehicleMarkers) {
                 marker.setIcon(bustimes.getBusIcon(item, isClickedMarker));
             }
             marker.options.item = item;
@@ -231,7 +249,7 @@
                 updatePopupContent();
             }
         } else {
-            if (zoomedIn) {
+            if (bigVehicleMarkers) {
                 marker = L.marker(latLng, {
                     icon: bustimes.getBusIcon(item, isClickedMarker),
                     zIndexOffset: 1000,
@@ -338,43 +356,46 @@
     var first = true;
 
     map.on('moveend', function() {
-        var wasZoomedIn = zoomedIn;
-        zoomedIn = (map.getZoom() > 10);
+        var wasZoomedIn = bigVehicleMarkers;
+        bigVehicleMarkers = (map.getZoom() > 10);
 
         var bounds = map.getBounds();
 
-        for (var id in markers) {
-            var marker = markers[id];
-            if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
-                vehiclesGroup.removeLayer(marker);
-                delete items[id];
-                delete markers[id];
+        if (!first) {
+            for (var id in markers) {
+                var marker = markers[id];
+                if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
+                    vehiclesGroup.removeLayer(marker);
+                    delete items[id];
+                    delete markers[id];
+                }
             }
-        }
 
-        if (zoomedIn && !wasZoomedIn || !zoomedIn && wasZoomedIn) {
-            markers = {};
-            vehiclesGroup.clearLayers();
-            for (id in items) {
-                handleVehicle(items[id]);
+            if (bigVehicleMarkers && !wasZoomedIn || !bigVehicleMarkers && wasZoomedIn) {
+                markers = {};
+                vehiclesGroup.clearLayers();
+                for (id in items) {
+                    handleVehicle(items[id]);
+                }
             }
-        }
 
-        if (!first && socket && socket.readyState === socket.OPEN) {
-            socket.send(JSON.stringify([
-                bounds.getWest(),
-                bounds.getSouth(),
-                bounds.getEast(),
-                bounds.getNorth()
-            ]));
+            if (socket && socket.readyState === socket.OPEN) {
+                socket.send(JSON.stringify([
+                    bounds.getWest(),
+                    bounds.getSouth(),
+                    bounds.getEast(),
+                    bounds.getNorth()
+                ]));
+            }
         }
 
         if (showStops) {
-            if (map.getZoom() < 14) { // zoomed out
+            if (map.getZoom() < 13) { // zoomed out
                 showStops = false;  // indicate that it wasn't an explicit box uncheck
                 stopsGroup.remove();
                 showStops = true;
             } else {
+                bigStopMarkers = (map.getZoom() > 14);
                 stopsGroup.addTo(map);
                 loadStops();
             }
@@ -409,8 +430,6 @@
     if (!map._loaded) {
         map.setView([51.9, 0.9], 9);
     }
-
-    // zoomedIn = (map.getZoom() > 10);
 
     connect();
 

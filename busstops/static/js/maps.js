@@ -26,18 +26,19 @@
     }
 
     function getBusIcon(item, active) {
+        var className = 'bus';
+        if (active) {
+            className += ' selected';
+        }
         var heading = item.h;
         if (heading !== null) {
             var arrow = '<div class="arrow" style="' + getTransform(heading, active) + '"></div>';
             if (heading < 180) {
+                className += ' right';
                 heading -= 90;
             } else {
                 heading -= 270;
             }
-        }
-        var className = 'bus';
-        if (active) {
-            className += ' selected';
         }
         var style = getTransform(heading, active);
         if (item.c) {
