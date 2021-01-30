@@ -82,7 +82,7 @@ def same_journey(latest_location, journey, when):
 
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ''
-    vehicles = Vehicle.objects.select_related('latest_location__journey', 'livery')
+    vehicles = Vehicle.objects.select_related('latest_location__journey')
     wait = 60
 
     def __init__(self, *args, **kwargs):

@@ -568,19 +568,36 @@ class VehicleLocation(models.Model):
         except redis.exceptions.ConnectionError:
             pass
 
+    def get_websocket_json(self, vehicle=None):
+        json = {
+            'i': self.id,
+            'd': DjangoJSONEncoder.default(None, self.datetime),
+            'l': tuple(self.latlong),
+            'h': self.heading,
+            'r': self.journey.route_name,
+        }
+
+        if not vehicle:
+            vehicle = self.journey.vehicle
+
+        if vehicle.livery_id:
+            json['c'] = vehicle.livery_id
+        else:
+            json['c'] = vehicle.get_livery(self.heading),
+            json['t'] = vehicle.get_text_colour(),
+
+        if self.early is not None:
+            json['e'] = self.early
+
+        return json
+
     def get_message(self, vehicle):
         if self.heading:
             self.heading = int(self.heading)
-        return {
-            'id': self.id,
-            'datetime': DjangoJSONEncoder.default(None, self.datetime),
-            'latlong': tuple(self.latlong),
-            'heading': self.heading,
-            'route': self.journey.route_name,
-            'css': vehicle.get_livery(self.heading),
-            'text_colour': vehicle.get_text_colour(),
-            'early': self.early
-        }
+
+        json = self.get_websocket_json(vehicle)
+
+        return json
 
     def channel_send(self, vehicle):
         message = self.get_message(vehicle)

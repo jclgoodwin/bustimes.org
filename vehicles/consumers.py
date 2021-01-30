@@ -1,7 +1,6 @@
 from asgiref.sync import async_to_sync
 from datetime import timedelta
 from channels.generic.websocket import JsonWebsocketConsumer
-from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.gis.geos import Polygon
 from django.utils import timezone
 from .models import VehicleLocation, Channel
@@ -12,7 +11,7 @@ def get_vehicle_locations(**kwargs):
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(**kwargs)
     locations = locations.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
-    locations = locations.select_related('journey__vehicle__livery')
+    locations = locations.select_related('journey__vehicle')
     return locations.defer('journey__data', 'journey__vehicle__data')
 
 
@@ -26,16 +25,7 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
             self.channel.delete()
 
     def move_vehicles(self, message):
-        self.send_json([{
-            'i': item['id'],
-            'd': item['datetime'],
-            'l': item['latlong'],
-            'h': item['heading'],
-            'r': item['route'],
-            'c': item['css'],
-            't': item['text_colour'],
-            'e': item['early']
-        } for item in message['items']])
+        self.send_json(message['items'])
 
     def move_vehicle(self, message):
         self.move_vehicles({
@@ -60,18 +50,7 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
     def send_locations(self, locations):
         if locations:
             for chunk in (locations[i:i+1000] for i in range(0, len(locations), 1000)):
-                self.send_json(
-                    [{
-                        'i': location.id,
-                        'd': DjangoJSONEncoder.default(None, location.datetime),
-                        'l': tuple(location.latlong),
-                        'h': location.heading,
-                        'r': location.journey.route_name,
-                        'c': location.journey.vehicle.get_livery(location.heading),
-                        't': location.journey.vehicle.get_text_colour(),
-                        'e': location.early
-                    } for location in chunk]
-                )
+                self.send_json([location.get_websocket_json() for location in chunk])
 
 
 class ServiceMapConsumer(VehicleMapConsumer):

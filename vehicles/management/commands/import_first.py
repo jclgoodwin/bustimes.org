@@ -16,7 +16,7 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 class Command(BaseCommand):
     operators = {}
-    vehicles = Vehicle.objects.select_related('latest_location__journey', 'livery')
+    vehicles = Vehicle.objects.select_related('latest_location__journey')
 
     @staticmethod
     def add_arguments(parser):
