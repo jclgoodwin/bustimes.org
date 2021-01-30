@@ -80,8 +80,6 @@
     }
 
     var stops = {};
-    // var oldStops = {},
-    //     newStops = {};
 
     function handleStop(data) {
         var latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
@@ -105,8 +103,8 @@
         a.href = data.properties.url;
 
         marker.bindPopup(a.outerHTML, {
-                autoPan: false
-            })
+            autoPan: false
+        })
             .on('popupopen', handleStopPopupOpen)
             .on('popupclose', handleStopPopupClose);
 
