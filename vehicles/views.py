@@ -15,7 +15,6 @@ from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequ
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
-# from django.utils.safestring import mark_safe
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
@@ -295,9 +294,7 @@ def service_vehicles_history(request, slug):
         raise Http404()
     if not date:
         date = dates[-1]
-    # calls = Call.objects.filter(journey=OuterRef('pk'))
-    # journeys = journeys.annotate(calls=Exists(calls))
-    journeys = journeys.filter(datetime__date=date).select_related('vehicle').order_by('datetime')
+    journeys = journeys.filter(datetime__date=date).select_related('vehicle', 'trip').order_by('datetime')
     try:
         r = redis.from_url(settings.REDIS_URL)
         pipe = r.pipeline()
@@ -355,9 +352,7 @@ class VehicleDetailView(DetailView):
             context['date'] = date
 
             journeys = journeys.filter(datetime__date=date).order_by('datetime')
-            # calls = Call.objects.filter(journey=OuterRef('pk'))
-            # locations = VehicleLocation.objects.filter(journey=OuterRef('pk'))
-            journeys = journeys.select_related('service')
+            journeys = journeys.select_related('service', 'trip')
 
             try:
                 r = redis.from_url(settings.REDIS_URL)
