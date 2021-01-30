@@ -312,8 +312,8 @@ class TimetableDepartures(Departures):
             'origin_departure_time': midnight + trip.start,
             'time': time,
             'destination': destination.locality or destination.town or destination,
-            'service': stop_time.trip.route.service,
-            # 'trip_id': trip.id
+            'service': trip.route.service,
+            'trip_id': trip.id
         }
 
     def get_times(self, when):

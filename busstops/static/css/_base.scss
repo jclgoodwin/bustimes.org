@@ -1195,11 +1195,23 @@ tfoot a {
     .minor {
         font-size: .875em;
 
+        td a {
+            padding-left: 1em;
+        }
+
         + .minor {
             th,
             td {
                 border-top: 0;
             }
+        }
+    }
+
+    .referrer {
+        background: $brand-color;
+
+        a {
+            color: $active-link-color;
         }
     }
 }

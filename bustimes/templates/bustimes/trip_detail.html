@@ -8,6 +8,10 @@
 
 {% block content %}
 
+<h2>{% for stop in stops %}{% if forloop.first or forloop.last %}{{ stop.stop.locality }}{% if forloop.first %} to {% endif %}{% endif %}{% endfor %}</h2>
+
+<p>{{ trip.calendar }}</p>
+
 {% for note in trip.notes_set.all %}
     <p>{{ note }}</p>
 {% endfor %}
@@ -31,6 +35,24 @@
 {% endfor %}
 </tbody>
 </table>
+
+{% if trip.garage %}
+    <p>Depot: {{ trip.garage }}</p>
+{% endif %}
+
+<script>
+    (function() {
+        if (document.referrer.indexOf('/stops/') > -1) {
+            var links = document.querySelectorAll('.trip-timetable a');
+            links.forEach(function(link) {
+                if (link.href === document.referrer) {
+                    link.parentNode.parentNode.classList.add('referrer');
+                }
+            });
+        }
+    })();
+
+</script>
 
 {% endblock %}
 
