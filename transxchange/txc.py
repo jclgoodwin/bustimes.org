@@ -354,38 +354,42 @@ class ServicedOrganisation:
 
 
 class ServicedOrganisationDayType:
-    def __init__(self, element, serviced_organisations):
-        self.nonoperation_holidays = None
-        self.nonoperation_workingdays = None
-        self.operation_holidays = None
-        self.operation_workingdays = None
+    non_operation_holidays = None
+    non_operation_working_days = None
+    operation_holidays = None
+    operation_working_days = None
 
+    def __init__(self, element, serviced_organisations):
         if not serviced_organisations:
             return
 
-        # Days of non-operation:
-        noop_element = element.find('DaysOfNonOperation')
-        if noop_element is not None:
-            noop_hols_element = noop_element.find('Holidays/ServicedOrganisationRef')
-            noop_workingdays_element = noop_element.find('WorkingDays/ServicedOrganisationRef')
+        organisation_ref = element.findtext('DaysOfOperation/Holidays/ServicedOrganisationRef')
+        if organisation_ref:
+            self.operation_holidays = serviced_organisations[organisation_ref]
+            if not self.operation_holidays.holidays and self.operation_holidays.working_days:
+                self.non_operation_working_days = self.operation_holidays
+                self.operation_holidays = None
 
-            if noop_hols_element is not None:
-                self.nonoperation_holidays = serviced_organisations[noop_hols_element.text]
+        organisation_ref = element.findtext('DaysOfNonOperation/Holidays/ServicedOrganisationRef')
+        if organisation_ref:
+            self.non_operation_holidays = serviced_organisations[organisation_ref]
+            if not self.non_operation_holidays.holidays and self.non_operation_holidays.working_days:
+                self.operation_working_days = self.non_operation_holidays
+                self.non_operation_holidays = None
 
-            if noop_workingdays_element is not None:
-                self.nonoperation_workingdays = serviced_organisations[noop_workingdays_element.text]
+        organisation_ref = element.findtext('DaysOfOperation/WorkingDays/ServicedOrganisationRef')
+        if organisation_ref:
+            self.operation_working_days = serviced_organisations[organisation_ref]
+            if not self.operation_working_days.working_days and self.operation_working_days.holidays:
+                self.non_operation_holidays = self.operation_working_days
+                self.operation_working_days = None
 
-        # Days of operation:
-        op_element = element.find('DaysOfOperation')
-        if op_element is not None:
-            op_hols_element = op_element.find('Holidays/ServicedOrganisationRef')
-            op_workingdays_element = op_element.find('WorkingDays/ServicedOrganisationRef')
-
-            if op_hols_element is not None:
-                self.operation_holidays = serviced_organisations[op_hols_element.text]
-
-            if op_workingdays_element is not None:
-                self.operation_workingdays = serviced_organisations[op_workingdays_element.text]
+        organisation_ref = element.findtext('DaysOfNonOperation/WorkingDays/ServicedOrganisationRef')
+        if organisation_ref:
+            self.non_operation_working_days = serviced_organisations[organisation_ref]
+            if not self.non_operation_working_days.working_days and self.non_operation_working_days.holidays:
+                self.operation_holidays = self.non_operation_working_days
+                self.non_operation_working_days = None
 
 
 class DayOfWeek:

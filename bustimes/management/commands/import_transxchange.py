@@ -369,28 +369,28 @@ class Command(BaseCommand):
         sodt = operating_profile.serviced_organisation_day_type
         summary = ''
         if sodt:
-            if sodt.nonoperation_workingdays:
-                if sodt.nonoperation_workingdays.name:
-                    summary = f'not {sodt.nonoperation_workingdays.name} days'
-                nonoperation_days = sodt.nonoperation_workingdays.working_days
-            elif sodt.nonoperation_holidays:
-                if sodt.nonoperation_holidays.name:
-                    summary = f'not {sodt.nonoperation_holidays.name} holidays'
-                nonoperation_days = sodt.nonoperation_holidays.holidays
+            if sodt.non_operation_working_days:
+                if sodt.non_operation_working_days.name:
+                    summary = f'not {sodt.non_operation_working_days.name} days'
+                non_operation_days = sodt.non_operation_working_days.working_days
+            elif sodt.non_operation_holidays:
+                if sodt.non_operation_holidays.name:
+                    summary = f'not {sodt.non_operation_holidays.name} holidays'
+                non_operation_days = sodt.non_operation_holidays.holidays
             else:
-                nonoperation_days = None
+                non_operation_days = None
 
-            if nonoperation_days:
+            if non_operation_days:
                 calendar_dates += [
                     CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
                                  operation=False)
-                    for date_range in nonoperation_days
+                    for date_range in non_operation_days
                 ]
 
-            if sodt.operation_workingdays:
-                if sodt.operation_workingdays.name:
-                    summary = f'{sodt.operation_workingdays.name} days only'
-                operation_days = sodt.operation_workingdays.working_days
+            if sodt.operation_working_days:
+                if sodt.operation_working_days.name:
+                    summary = f'{sodt.operation_working_days.name} days only'
+                operation_days = sodt.operation_working_days.working_days
             elif sodt.operation_holidays:
                 if sodt.operation_holidays.name:
                     summary = f'{sodt.operation_holidays.name} holidays only'
