@@ -583,8 +583,8 @@ class VehicleLocation(models.Model):
         if vehicle.livery_id:
             json['c'] = vehicle.livery_id
         else:
-            json['c'] = vehicle.get_livery(self.heading),
-            json['t'] = vehicle.get_text_colour(),
+            json['c'] = vehicle.get_livery(self.heading)
+            json['t'] = vehicle.get_text_colour()
 
         if self.early is not None:
             json['e'] = self.early
