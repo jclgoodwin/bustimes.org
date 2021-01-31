@@ -190,7 +190,7 @@ class LiveDeparturesTest(TestCase):
             with self.assertNumQueries(9):
                 res = self.client.get('/stops/64801092')
         self.assertEqual(6, len(res.context_data['departures']))
-        self.assertEqual(res.context_data['departures'][0]['destination'].common_name, 'Wood Street')
+        self.assertEqual(res.context_data['departures'][0]['destination'], 'Wood Street')
         self.assertEqual(res.context_data['departures'][1]['destination'], 'Hillend')
         self.assertEqual(res.context_data['departures'][2]['destination'], 'Hillend')
 
