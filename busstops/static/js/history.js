@@ -93,6 +93,12 @@
         }
 
         reqwest('/' + journey + '.json', function(response) {
+            var i;
+
+            for (i = 0; i < response.locations.length; i++) {
+                var location = response.locations[i];
+                location.coordinates = L.latLng(location.coordinates[1], location.coordinates[0]);
+            }
 
             if (response.stops) {
                 var tripElement = document.createElement('div');
@@ -107,7 +113,7 @@
 
                 var tbody = document.createElement('tbody');
                 var tr, stop, time;
-                for (var i = 0; i < response.stops.length; i++) {
+                for (i = 0; i < response.stops.length; i++) {
                     tr = document.createElement('tr');
                     stop = response.stops[i];
                     if (stop.minor) {
@@ -116,6 +122,10 @@
                     time = stop.aimed_departure_time || stop.aimed_arrival_time || '';
                     tr.innerHTML = '<td>' + stop.name + '</th><td>' + time + '</td>';
                     tbody.appendChild(tr);
+
+                    if (stop.coordinates) {
+                        stop.coordinates = L.latLng(stop.coordinates[1], stop.coordinates[0]);
+                    }
                 }
                 table.appendChild(tbody);
                 tripElement.appendChild(table);
@@ -128,9 +138,7 @@
                 element.appendChild(mapContainer);
             }
 
-            var locations = response.locations;
-
-            map =  L.map(mapContainer);
+            map = L.map(mapContainer);
 
             map.attributionControl.setPrefix('');
 
@@ -138,20 +146,23 @@
                 attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
             }).addTo(map);
 
-            var line = [];
-
-            var previousCoordinates,
+            var line = [],
+                arrowMarkers = [],
+                previousCoordinates,
                 previousTimestamp;
 
-            locations.forEach(function(location) {
+            response.locations.forEach(function(location) {
                 var dateTime = new Date(location.datetime);
                 var popup = dateTime.toTimeString().slice(0, 8);
                 var timestamp = dateTime.getTime();
                 popup += getTooltip(location.delta);
 
-                var coordinates = L.latLng(location.coordinates[1], location.coordinates[0]);
+                var coordinates = location.coordinates;
 
-                arrowMarker(coordinates, location.direction).bindTooltip(popup).addTo(map);
+                var marker = arrowMarker(coordinates, location.direction);
+
+                marker.bindTooltip(popup).addTo(map);
+                arrowMarkers.push(marker);
 
                 line.push(coordinates);
 
@@ -178,6 +189,38 @@
                 previousCoordinates = coordinates;
                 previousTimestamp = timestamp;
             });
+
+            if (response.stops) {
+                for (i = 0; i < tbody.children.length; i++) {
+                    tr = tbody.children[i];
+                    tr.addEventListener('mouseover', function() {
+                        var stop = response.stops[this.rowIndex - 1];
+
+                        map.eachLayer(function(layer) {
+                            if (layer.options.pane === 'tooltipPane') layer.removeFrom(map);
+                        });
+
+                        if (!stop.coordinates) {
+                            return;
+                        }
+
+                        var min = 1000, minIndex, location, distance;
+
+                        for (var i = 0; i < response.locations.length; i++) {
+                            location = response.locations[i];
+                            distance = stop.coordinates.distanceTo(location.coordinates);
+                            if (distance < min) {
+                                min = distance;
+                                minIndex = i;
+                            }
+                        }
+
+                        if (minIndex != null) {
+                            arrowMarkers[minIndex].openTooltip();
+                        }
+                    });
+                }
+            }
 
 
             line = L.polyline(line, {

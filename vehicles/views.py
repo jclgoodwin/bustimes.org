@@ -484,7 +484,8 @@ def journey_json(request, pk):
                 'name': stop_time.stop.get_qualified_name() if stop_time.stop else stop_time.stop_code,
                 'aimed_arrival_time': stop_time.arrival_time(),
                 'aimed_departure_time': stop_time.departure_time(),
-                'minor': stop_time.is_minor()
+                'minor': stop_time.is_minor(),
+                'coordinates': stop_time.stop and tuple(stop_time.stop.latlong)
             } for stop_time in journey.trip.stoptime_set.select_related('stop__locality')]
         except ObjectDoesNotExist:
             pass
