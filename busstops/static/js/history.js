@@ -191,34 +191,38 @@
             });
 
             if (response.stops) {
+
+                function showStopOnMap() {
+                    var stop = response.stops[this.rowIndex - 1];
+
+                    map.eachLayer(function(layer) {
+                        if (layer.options.pane === 'tooltipPane') layer.removeFrom(map);
+                    });
+
+                    if (!stop.coordinates) {
+                        return;
+                    }
+
+                    var min = 1000, minIndex, location, distance;
+
+                    for (var i = 0; i < response.locations.length; i++) {
+                        location = response.locations[i];
+                        distance = stop.coordinates.distanceTo(location.coordinates);
+                        if (distance < min) {
+                            min = distance;
+                            minIndex = i;
+                        }
+                    }
+
+                    if (minIndex != null) {
+                        arrowMarkers[minIndex].openTooltip();
+                    }
+
+                }
                 for (i = 0; i < tbody.children.length; i++) {
                     tr = tbody.children[i];
-                    tr.addEventListener('mouseover', function() {
-                        var stop = response.stops[this.rowIndex - 1];
-
-                        map.eachLayer(function(layer) {
-                            if (layer.options.pane === 'tooltipPane') layer.removeFrom(map);
-                        });
-
-                        if (!stop.coordinates) {
-                            return;
-                        }
-
-                        var min = 1000, minIndex, location, distance;
-
-                        for (var i = 0; i < response.locations.length; i++) {
-                            location = response.locations[i];
-                            distance = stop.coordinates.distanceTo(location.coordinates);
-                            if (distance < min) {
-                                min = distance;
-                                minIndex = i;
-                            }
-                        }
-
-                        if (minIndex != null) {
-                            arrowMarkers[minIndex].openTooltip();
-                        }
-                    });
+                    tr.addEventListener('mouseover', showStopOnMap);
+                    tr.addEventListener('touchstart', showStopOnMap);
                 }
             }
 
