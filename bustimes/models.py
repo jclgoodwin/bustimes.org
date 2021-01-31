@@ -149,7 +149,7 @@ class Calendar(models.Model):
         if not days:
             return self.summary
         if len(days) == 1:
-            days = f'{days[0]}s only'
+            days = f'{days[0]}s'
         elif days[0] == 'Monday' and days[-1] == day_keys[len(days)-1]:
             days = f'{days[0]} to {days[-1]}'
         else:

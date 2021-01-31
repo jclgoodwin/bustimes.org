@@ -280,45 +280,63 @@ def get_dates(journeys, vehicle=None, service=None):
     return dates
 
 
+def journeys_list(request, journeys, service=None, vehicle=None):
+    dates = get_dates(journeys, service=service, vehicle=vehicle)
+    if service and not dates:
+        raise Http404
+
+    context = {}
+
+    if dates:
+        context['dates'] = dates
+        date = request.GET.get('date')
+        if date:
+            try:
+                date = datetime.date.fromisoformat(date)
+            except ValueError:
+                date = None
+        if not date:
+            date = context['dates'][-1]
+        context['date'] = date
+
+        journeys = journeys.filter(datetime__date=date).select_related('trip').order_by('datetime')
+
+        try:
+            r = redis.from_url(settings.REDIS_URL)
+            pipe = r.pipeline()
+            for journey in journeys:
+                pipe.exists(f'journey{journey.id}')
+            locations = pipe.execute()
+            previous = None
+            for i, journey in enumerate(journeys):
+                journey.locations = locations[i]
+                if journey.locations:
+                    if previous:
+                        previous.next = journey
+                        journey.previous = previous
+                    previous = journey
+        except redis.exceptions.ConnectionError:
+            pass
+
+        context['journeys'] = journeys
+
+    return context
+
+
 def service_vehicles_history(request, slug):
     service = get_object_or_404(Service, slug=slug)
-    journeys = service.vehiclejourney_set
-    date = request.GET.get('date')
-    if date:
-        try:
-            date = datetime.date.fromisoformat(date)
-        except ValueError:
-            date = None
-    dates = get_dates(journeys, service=service)
-    if not dates:
-        raise Http404()
-    if not date:
-        date = dates[-1]
-    journeys = journeys.filter(datetime__date=date).select_related('vehicle', 'trip').order_by('datetime')
-    try:
-        r = redis.from_url(settings.REDIS_URL)
-        pipe = r.pipeline()
-        for journey in journeys:
-            pipe.exists(f'journey{journey.id}')
-        locations = pipe.execute()
-        previous = None
-        for i, journey in enumerate(journeys):
-            journey.locations = locations[i]
-            if journey.locations:
-                if previous:
-                    previous.next = journey
-                    journey.previous = previous
-                previous = journey
-    except redis.exceptions.ConnectionError:
-        pass
+
+    context = journeys_list(
+        request,
+        service.vehiclejourney_set.select_related('vehicle'),
+        service=service
+    )
 
     operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
+        **context,
         'breadcrumb': [operator, service],
-        'date': date,
-        'dates': dates,
         'object': service,
-        'journeys': journeys,
     })
 
 
@@ -330,48 +348,23 @@ class VehicleDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        journeys = self.object.vehiclejourney_set
+
+        context = {
+            **context,
+            **journeys_list(
+                self.request,
+                self.object.vehiclejourney_set.select_related('service'),
+                vehicle=self.object
+            )
+        }
+
         context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
-        dates = get_dates(journeys, vehicle=self.object)
+
         if self.object.operator:
             context['breadcrumb'] = [self.object.operator, Vehicles(self.object.operator)]
 
             context['previous'] = self.object.get_previous()
             context['next'] = self.object.get_next()
-
-        if dates:
-            context['dates'] = dates
-            date = self.request.GET.get('date')
-            if date:
-                try:
-                    date = datetime.date.fromisoformat(date)
-                except ValueError:
-                    date = None
-            if not date:
-                date = context['dates'][-1]
-            context['date'] = date
-
-            journeys = journeys.filter(datetime__date=date).order_by('datetime')
-            journeys = journeys.select_related('service', 'trip')
-
-            try:
-                r = redis.from_url(settings.REDIS_URL)
-                pipe = r.pipeline()
-                for journey in journeys:
-                    pipe.exists(f'journey{journey.id}')
-                locations = pipe.execute()
-                previous = None
-                for i, journey in enumerate(journeys):
-                    journey.locations = locations[i]
-                    if journey.locations:
-                        if previous:
-                            previous.next = journey
-                            journey.previous = previous
-                        previous = journey
-            except redis.exceptions.ConnectionError:
-                pass
-
-            context['journeys'] = journeys
 
         return context
 
