@@ -174,6 +174,8 @@ class Command(ImportLiveVehiclesCommand):
         if destination_ref:
             if destination_ref.startswith('NT'):
                 destination_ref = destination_ref[2:]
+            if ' ' in destination_ref:  # a postcode or suttin
+                destination_ref = None
 
         cache_key = f"{operator}:{vehicle_operator_id}:{line_ref}:{destination_ref}"
         if cache_key in self.service_cache:
@@ -225,9 +227,12 @@ class Command(ImportLiveVehiclesCommand):
                 self.service_cache[cache_key] = None
                 return
             except Service.MultipleObjectsReturned:
+                has_trips = Exists(Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref))
+                origin_ref = monitored_vehicle_journey.get("OriginRef")
+                if origin_ref:
+                    has_trips &= Exists(StopPoint.objects.filter(service=OuterRef("pk"), origin_ref=origin_ref))
                 try:
-                    trips = Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref)
-                    return services.get(Exists(trips))
+                    return services.get(has_trips)
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     pass
 
