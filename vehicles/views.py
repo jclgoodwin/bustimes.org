@@ -478,17 +478,21 @@ def journey_json(request, pk):
 
     journey = get_object_or_404(VehicleJourney, pk=pk)
 
+    trip = None
     if journey.trip_id:
         try:
-            data['stops'] = [{
-                'name': stop_time.stop.get_qualified_name() if stop_time.stop else stop_time.stop_code,
-                'aimed_arrival_time': stop_time.arrival_time(),
-                'aimed_departure_time': stop_time.departure_time(),
-                'minor': stop_time.is_minor(),
-                'coordinates': stop_time.stop and tuple(stop_time.stop.latlong)
-            } for stop_time in journey.trip.stoptime_set.select_related('stop__locality')]
+            trip = journey.trip
         except ObjectDoesNotExist:
             pass
+
+    if trip:
+        data['stops'] = [{
+            'name': stop_time.stop.get_name_for_timetable() if stop_time.stop else stop_time.stop_code,
+            'aimed_arrival_time': stop_time.arrival_time(),
+            'aimed_departure_time': stop_time.departure_time(),
+            'minor': stop_time.is_minor(),
+            'coordinates': stop_time.stop and stop_time.stop.latlong and tuple(stop_time.stop.latlong)
+        } for stop_time in trip.stoptime_set.select_related('stop__locality')]
 
     try:
         r = redis.from_url(settings.REDIS_URL)
@@ -500,7 +504,7 @@ def journey_json(request, pk):
                 'delta': location[3],
                 'direction': location[2],
                 'datetime': location[0]
-            } for location in locations]
+            } for location in locations if location[1][0] and location[1][1]]
             data['locations'].sort(key=lambda location: location['datetime'])
     except redis.exceptions.ConnectionError:
         pass

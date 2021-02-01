@@ -15,7 +15,7 @@
         return L.marker(latLng, {
             icon: L.divIcon({
                 iconSize: [16, 16],
-                html: '<div class="arrow" style="-ms-transform: rotate(' + direction + 'deg);-webkit-transform: rotate(' + direction + 'deg);-moz-transform: rotate(' + direction + 'deg);-o-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>',
+                html: '<div class="arrow" style="-webkit-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>',
                 className: 'just-arrow',
             })
         });
@@ -69,6 +69,35 @@
             return '<br>On time';
         } else {
             return '';
+        }
+    }
+
+    var stops, locations, arrowMarkers;
+
+    function showStopOnMap() {
+        var stop = stops[this.rowIndex - 1];
+
+        map.eachLayer(function(layer) {
+            if (layer.options.pane === 'tooltipPane') layer.removeFrom(map);
+        });
+
+        if (!stop.coordinates) {
+            return;
+        }
+
+        var min = 1000, minIndex, location, distance;
+
+        for (var i = 0; i < locations.length; i++) {
+            location = locations[i];
+            distance = stop.coordinates.distanceTo(location.coordinates);
+            if (distance < min) {
+                min = distance;
+                minIndex = i;
+            }
+        }
+
+        if (minIndex != null) {
+            arrowMarkers[minIndex].openTooltip();
         }
     }
 
@@ -140,16 +169,13 @@
 
             map = L.map(mapContainer);
 
-            map.attributionControl.setPrefix('');
-
-            L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
-                attribution: '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>',
-            }).addTo(map);
+            window.bustimes.doTileLayer(map);
 
             var line = [],
-                arrowMarkers = [],
                 previousCoordinates,
                 previousTimestamp;
+
+            arrowMarkers = [];
 
             response.locations.forEach(function(location) {
                 var dateTime = new Date(location.datetime);
@@ -191,41 +217,14 @@
             });
 
             if (response.stops) {
-
-                function showStopOnMap() {
-                    var stop = response.stops[this.rowIndex - 1];
-
-                    map.eachLayer(function(layer) {
-                        if (layer.options.pane === 'tooltipPane') layer.removeFrom(map);
-                    });
-
-                    if (!stop.coordinates) {
-                        return;
-                    }
-
-                    var min = 1000, minIndex, location, distance;
-
-                    for (var i = 0; i < response.locations.length; i++) {
-                        location = response.locations[i];
-                        distance = stop.coordinates.distanceTo(location.coordinates);
-                        if (distance < min) {
-                            min = distance;
-                            minIndex = i;
-                        }
-                    }
-
-                    if (minIndex != null) {
-                        arrowMarkers[minIndex].openTooltip();
-                    }
-
-                }
+                stops = response.stops;
+                locations = response.locations;
                 for (i = 0; i < tbody.children.length; i++) {
                     tr = tbody.children[i];
                     tr.addEventListener('mouseover', showStopOnMap);
                     tr.addEventListener('touchstart', showStopOnMap);
                 }
             }
-
 
             line = L.polyline(line, {
                 weight: 4,
