@@ -424,6 +424,13 @@ class StopPoint(models.Model):
             return f'{self.town} {name}'
         return name
 
+    def get_name_for_timetable(self):
+        if self.locality:
+            locality_name = self.locality.name.replace(' Town Centre', '') \
+                                                .replace(' City Centre', '')
+            return f'{locality_name} {self.common_name}'
+        return self.common_name
+
     def get_long_name(self):
         return self.get_qualified_name(short=False)
 
