@@ -9,7 +9,7 @@ from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
 from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
-from bustimes.models import Trip
+from bustimes.models import Trip, StopTime
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -227,12 +227,14 @@ class Command(ImportLiveVehiclesCommand):
                 self.service_cache[cache_key] = None
                 return
             except Service.MultipleObjectsReturned:
-                has_trips = Exists(Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref))
+                trips = Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref)
                 origin_ref = monitored_vehicle_journey.get("OriginRef")
                 if origin_ref:
-                    has_trips &= Exists(StopPoint.objects.filter(service=OuterRef("pk"), origin_ref=origin_ref))
+                    trips = trips.filter(
+                        Exists(StopTime.objects.filter(trip=OuterRef("pk"), sequence=0, stop=origin_ref))
+                    )
                 try:
-                    return services.get(has_trips)
+                    return services.get(Exists(trips))
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     pass
 

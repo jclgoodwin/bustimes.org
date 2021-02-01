@@ -124,6 +124,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle_item(self, item, now=None):
         datetime = self.get_datetime(item)
+        if now and datetime and now < datetime:
+            datetime = now  # datetime was in the future (probably The Green Bus)
+
         location = None
         try:
             vehicle, vehicle_created = self.get_vehicle(item)

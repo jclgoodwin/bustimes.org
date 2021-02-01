@@ -17,9 +17,10 @@ class SiriConsumer(SyncConsumer):
             if self.command is None:
                 self.command = import_bod_avl.Command().do_source()
 
+            response_timestamp = parse_datetime(message["when"])
             beeline.add_context({
                 "items_count": len(message["items"]),
-                "age": (now() - parse_datetime(message["when"])).total_seconds()
+                "age": (now() - response_timestamp).total_seconds()
             })
 
             vehicle_cache_keys = [self.command.get_vehicle_cache_key(item) for item in message["items"]]
@@ -35,7 +36,7 @@ class SiriConsumer(SyncConsumer):
 
             with beeline.tracer(name="handle items"):
                 for item in message["items"]:
-                    self.command.handle_item(item)
+                    self.command.handle_item(item, response_timestamp)
 
             with beeline.tracer(name="save"):
                 db_wrapper = HoneyDBWrapper()
