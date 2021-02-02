@@ -1,6 +1,6 @@
 from mock import patch
 from django.test import TestCase
-from busstops.models import Region, Operator, DataSource, Service
+from busstops.models import Region, Operator, Service
 from ...models import VehicleLocation, Vehicle
 from ..commands import import_bushub
 
@@ -18,12 +18,11 @@ class BusHubTest(TestCase):
         cls.service_c = Service.objects.create(service_code='44', line_name='44', date='2018-08-06', tracking=True)
         cls.service_c.operator.add('WNGS')
         cls.vehicle = Vehicle.objects.create(code='20052', operator_id='WNGS')
-        now = '2018-08-06T22:41:15+01:00'
-        cls.source = DataSource.objects.create(datetime=now)
 
     def test_handle(self):
         command = import_bushub.Command()
-        command.source = self.source
+        command.source_name = ''
+        command.do_source()
 
         item = {
             "RouteDescription": None,
@@ -63,13 +62,13 @@ class BusHubTest(TestCase):
 
         with self.assertNumQueries(12):
             with patch('builtins.print') as mocked_print:
-                command.handle_item(item, self.source.datetime)
+                command.handle_item(item)
                 command.save()
 
         mocked_print.assert_called()
 
         with self.assertNumQueries(1):
-            command.handle_item(item, self.source.datetime)
+            command.handle_item(item)
             command.save()
 
         location = VehicleLocation.objects.get()
@@ -82,7 +81,7 @@ class BusHubTest(TestCase):
         item['VehicleRef'] = '20052'
         item['Bearing'] = '-1'
         with self.assertNumQueries(7):
-            command.handle_item(item, self.source.datetime)
+            command.handle_item(item)
             command.save()
         self.assertEqual(2, Vehicle.objects.count())
         self.vehicle.refresh_from_db()
@@ -92,5 +91,5 @@ class BusHubTest(TestCase):
 
         item["RecordedAtTime"] = "31/08/2018 23:10:33"
         with self.assertNumQueries(3):
-            command.handle_item(item, self.source.datetime)
+            command.handle_item(item)
             command.save()
