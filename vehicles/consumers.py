@@ -10,7 +10,7 @@ def get_vehicle_locations(**kwargs):
     now = timezone.now()
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(**kwargs)
-    locations = locations.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
+    locations = locations.filter(vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
     locations = locations.select_related('journey__vehicle')
     return locations.defer('journey__data', 'journey__vehicle__data')
 
@@ -78,7 +78,7 @@ class OperatorMapConsumer(ServiceMapConsumer):
     def connect(self):
         self.accept()
         operator_id = self.scope['url_route']['kwargs']['operator_id']
-        locations = get_vehicle_locations(latest_vehicle__operator=operator_id)
+        locations = get_vehicle_locations(vehicle__operator=operator_id)
         self.send_locations(locations)
         group = f'operator{operator_id}'
         self.groups.append(group)

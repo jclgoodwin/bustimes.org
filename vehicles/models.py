@@ -170,7 +170,7 @@ class Vehicle(models.Model):
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
     fleet_code = models.CharField(max_length=24, blank=True, db_index=True)
     reg = models.CharField(max_length=24, blank=True, db_index=True)
-    source = models.ForeignKey(DataSource, models.CASCADE, null=True, blank=True)
+    source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
     colours = models.CharField(max_length=255, blank=True)
@@ -178,8 +178,7 @@ class Vehicle(models.Model):
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
-    latest_location = models.ForeignKey('VehicleLocation', models.SET_NULL, null=True, blank=True,
-                                        related_name='latest_vehicle', editable=False)
+    latest_location = models.OneToOneField('VehicleLocation', models.SET_NULL, null=True, blank=True, editable=False)
     features = models.ManyToManyField(VehicleFeature, blank=True)
     withdrawn = models.BooleanField(default=False)
     data = models.JSONField(null=True, blank=True)

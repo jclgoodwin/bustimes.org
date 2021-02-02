@@ -222,7 +222,7 @@ def operator_map(request, slug):
 def get_locations(request):
     now = timezone.now()
     fifteen_minutes_ago = now - datetime.timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(latest_vehicle__isnull=False, datetime__gte=fifteen_minutes_ago,
+    locations = VehicleLocation.objects.filter(vehicle__isnull=False, datetime__gte=fifteen_minutes_ago,
                                                current=True)
 
     try:
