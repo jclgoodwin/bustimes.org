@@ -1,6 +1,4 @@
-from django.shortcuts import redirect
 from multidb.pinning import pin_this_thread, unpin_this_thread
-from .models import Service, StopPoint
 
 
 def real_ip_middleware(get_response):
