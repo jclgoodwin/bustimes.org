@@ -1,4 +1,5 @@
 import math
+import beeline
 import requests
 import logging
 import pid
@@ -307,26 +308,29 @@ class ImportLiveVehiclesCommand(BaseCommand):
         send = async_to_sync(channel_layer.send)
 
         try:
-            for group in group_messages:
-                group_send(group, {
-                    'type': 'move_vehicles',
-                    'items': group_messages[group]
-                })
-            for channel_name in channel_messages:
-                try:
-                    send(channel_name, {
+            with beeline.tracer(name="group messages"):
+                for group in group_messages:
+                    group_send(group, {
                         'type': 'move_vehicles',
-                        'items': channel_messages[channel_name]
+                        'items': group_messages[group]
                     })
-                except ChannelFull:
-                    pass
+            with beeline.tracer(name="channel messages"):
+                for channel_name in channel_messages:
+                    try:
+                        send(channel_name, {
+                            'type': 'move_vehicles',
+                            'items': channel_messages[channel_name]
+                        })
+                    except ChannelFull:
+                        pass
         except ReplyError:
             pass
 
-        try:
-            pipeline.execute()
-        except redis.exceptions.ConnectionError:
-            pass
+        with beeline.tracer(name="pipeline"):
+            try:
+                pipeline.execute()
+            except redis.exceptions.ConnectionError:
+                pass
 
         self.to_save = []
 
