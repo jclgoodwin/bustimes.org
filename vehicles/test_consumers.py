@@ -1,5 +1,5 @@
 import pytest
-from freezegun import freeze_time
+from django.utils.timezone import now
 from django.contrib.gis.geos import Point
 from channels.testing import WebsocketCommunicator
 from busstops.models import DataSource
@@ -12,8 +12,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
     with django_db_blocker.unblock():
         source = DataSource.objects.create(name='Source')
         vehicle = Vehicle.objects.create(code='SA60 TWP')
-        journey = VehicleJourney.objects.create(route_name='69', vehicle=vehicle, source=source,
-                                                datetime='2018-12-25 19:47+00:00')
+        journey = VehicleJourney.objects.create(route_name='69', vehicle=vehicle, source=source, datetime=now())
         vehicle.latest_location = VehicleLocation.objects.create(current=True, journey=journey,
                                                                  latlong=Point(1.3, 52.64),
                                                                  datetime=journey.datetime)
@@ -22,9 +21,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
 
 @pytest.mark.asyncio
 @pytest.mark.django_db
-@freeze_time('2018-12-25 19:47+00:00')
 async def test_my_consumer():
-
     communicator = WebsocketCommunicator(VehicleMapConsumer.as_asgi(), "/ws/vehicle_positions")
     connected, subprotocol = await communicator.connect()
     assert connected
@@ -44,20 +41,4 @@ async def test_my_consumer():
     )
     await communicator.receive_nothing()
 
-    await communicator.send_input({
-        'type': 'move_vehicle',
-        'id': 13,
-        'datetime': '3',
-        'latlong': (1.31, 52.644),
-        'heading': 2,
-        'route': '33',
-        'css': '',
-        'text_colour': '',
-        'early': -1
-    })
-    message_b = await communicator.receive_json_from()
-    assert message_b == [
-        {'i': 13, 'd': '3', 'l': [1.31, 52.644], 'h': 2, 'r': '33', 'c': '', 't': '', 'e': -1}
-    ]
-    await communicator.receive_nothing()
     await communicator.disconnect()
