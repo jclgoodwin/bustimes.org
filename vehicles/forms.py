@@ -18,7 +18,7 @@ def get_livery_choices(operator):
             choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
     if choices:
-        choices = [('', 'None')] + choices + [('Other', 'Other')]
+        choices = [('', 'None/mostly white')] + choices + [('Other', 'Other')]
     return choices
 
 
