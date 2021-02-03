@@ -171,6 +171,8 @@
 
             window.bustimes.doTileLayer(map);
 
+            L.control.locate().addTo(map);
+
             var line = [],
                 previousCoordinates,
                 previousTimestamp;

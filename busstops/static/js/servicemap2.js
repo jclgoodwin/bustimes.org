@@ -73,6 +73,10 @@
 
         bustimes.doTileLayer(map);
 
+        loadjs(window.LOCATE_JS_URL, function() {
+            L.control.locate().addTo(map);
+        });
+
         var closeButton = L.control();
 
         closeButton.onAdd = function() {

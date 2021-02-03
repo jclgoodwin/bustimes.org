@@ -15,6 +15,8 @@
 
     bustimes.doTileLayer(map);
 
+    L.control.locate().addTo(map);
+
     map.fitBounds([[window.EXTENT[1], window.EXTENT[0]], [window.EXTENT[3], window.EXTENT[2]]]);
 
     var clickedMarker;
@@ -37,12 +39,9 @@
         marker.setIcon(bustimes.getBusIcon(item, true));
         marker.setZIndexOffset(2000);
 
-        reqwest({
-            url: '/vehicles/locations/' + item.i,
-            success: function(content) {
-                marker.options.popupContent = content;
-                marker.getPopup().setContent(content + getPopupContent(item));
-            }
+        reqwest('/vehicles/locations/' + item.i, function(content) {
+            marker.options.popupContent = content;
+            marker.getPopup().setContent(content + getPopupContent(item));
         });
     }
 

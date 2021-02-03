@@ -97,9 +97,10 @@
         {% if object.geometry %}
             {% if object.tracking %}SERVICE_TRACKING = true;{% endif %}
             EXTENT = [{{ object.geometry.extent|join:"," }}];
-            MAPS_JS_URL = '{% static 'js/maps.js' %}';
-            LEAFLET_CSS_URL = '{% static 'js/leaflet/leaflet.css' %}';
-            LEAFLET_JS_URL = '{% static 'js/leaflet/leaflet.js' %}';
+            MAPS_JS_URL = "{% static 'js/maps.js' %}";
+            LEAFLET_CSS_URL = "{% static 'js/leaflet/leaflet.css' %}";
+            LEAFLET_JS_URL = "{% static 'js/leaflet/leaflet.js' %}";
+            LOCATE_JS_URL = "{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}";
         </script>
         <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
         <script src="{% static 'js/reqwest.min.js' %}"></script>
