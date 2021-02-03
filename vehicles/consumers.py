@@ -11,8 +11,8 @@ def get_vehicle_locations(**kwargs):
     fifteen_minutes_ago = now - timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(**kwargs)
     locations = locations.filter(vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
-    locations = locations.select_related('journey__vehicle')
-    return locations.defer('journey__data', 'journey__vehicle__data')
+    locations = locations.select_related('journey', 'vehicle')
+    return locations.defer('journey__data', 'vehicle__data')
 
 
 class VehicleMapConsumer(JsonWebsocketConsumer):

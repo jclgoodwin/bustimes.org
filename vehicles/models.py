@@ -577,7 +577,7 @@ class VehicleLocation(models.Model):
         }
 
         if not vehicle:
-            vehicle = self.journey.vehicle
+            vehicle = self.vehicle
 
         if vehicle.livery_id:
             json['c'] = vehicle.livery_id
