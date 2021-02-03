@@ -551,10 +551,6 @@ class VehicleLocation(models.Model):
 
     class Meta:
         ordering = ('id',)
-        indexes = (
-            Index(name='datetime', fields=('datetime',), condition=Q(current=True)),
-            Index(name='datetime_latlong', fields=('datetime', 'latlong'), condition=Q(current=True)),
-        )
 
     def get_appendage(self):
         appendage = [self.datetime, tuple(self.latlong), self.heading, self.early]
