@@ -85,14 +85,18 @@
                 {% if code_column %}
                     <td class="number">{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
                 {% endif %}
-                <td class="number">
-                    {% if vehicle.fleet_code or vehicle.fleet_number %}
-                        <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ vehicle.get_absolute_url }}">{% if vehicle.reg %}{{ vehicle.get_reg }}{% elif not vehicle.fleet_number and not vehicle.fleet_code %}{{ vehicle }}{% endif %}</a>
-                </td>
+                {% if not vehicle.fleet_code and not vehicle.fleet_number and not vehicle.reg %}
+                    <td colspan="2">
+                        <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
+                    </td>
+                {% else %}
+                    <td class="number">
+                        {% if vehicle.fleet_code or vehicle.fleet_number %}
+                            <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
+                        {% endif %}
+                    </td>
+                    <td>{% if vehicle.reg %}<a href="{{ vehicle.get_absolute_url }}">{{ vehicle.get_reg }}</a>{% endif %}</td>
+                {% endif %}
                 {% if not parent %}<td class="last-seen">
                     {{ vehicle.last_seen.service }}
                 </td>
