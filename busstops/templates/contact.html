@@ -34,21 +34,16 @@
         <p>You can find links to most bus operating companies’ websites, and contact details, elsewhere on this website.</p>
     </details>
 
-    <details>
-        <summary>Ticket prices</summary>
-
-        <p>I don’t have any information about ticket prices – sorry.</p>
-
-        <p>However, a few bus operating companies do offer this information on their websites. You can find links to their websites elsewhere on this website.</p>
-    </details>
-
     <details{% if form.is_bound or form.initial.message %} open{% endif %}>
         <summary>This website, bustimes.org</summary>
 
         {% load email_obfuscator %}
 
         <p>To contact me about this website,
-        you can email {{ 'contact@bustimes.org'|obfuscate_mailto }} or use this form:</p>
+        you can email {{ 'contact@bustimes.org'|obfuscate_mailto }},
+        tweet <a href="https://twitter.com/bustimes_org">@bustimes_org</a>, or use the form below.</p>
+
+        <p>I’m often shamefully slow to reply, if I reply at all, but do I read every email.</p>
 
         <form action="/contact" method="post">
             {{ form.as_p }}
