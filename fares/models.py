@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 
 # class Currency(models.TextChoices):
@@ -19,14 +21,29 @@ class DataSet(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(blank=True)
     description = models.CharField(max_length=255)
-    operators = models.ManyToManyField('busstops.Operator')
-    datetime = models.DateTimeField()
+    operators = models.ManyToManyField('busstops.Operator', blank=True)
+    datetime = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('dataset_detail', args=(self.id,))
+
+    def credit(self):
+        text = self.name.split("_", 1)[0]
+
+        if self.url:
+            if "bus-data.dft.gov.uk" in self.url:
+                text = f"{text}/Bus Open Data Service"
+
+            text = format_html('<a href="{}">{}</a>', self.url, text)
+
+        if self.datetime:
+            date = self.datetime.strftime('%-d %B %Y')
+            text = f'{text}, {date}'
+
+        return mark_safe(f'<p class="credit">Fares data from {text}</p>')
 
 
 class PriceGroup(models.Model):
@@ -107,7 +124,7 @@ class FareTable(models.Model):
 class FareZone(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    stops = models.ManyToManyField("busstops.StopPoint")
+    stops = models.ManyToManyField("busstops.StopPoint", blank=True)
 
     def __str__(self):
         return self.name

@@ -6,6 +6,10 @@
 
     <h1>{{ object }}</h1>
 
+    {{ object.credit }}
+
+    {{ object.description|linebreaks }}
+
     <form>
         {{ form.as_p }}
 
@@ -20,8 +24,6 @@
     {% for tariff in object.tariff_set.all %}
         <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }} ({{ tariff.user_profile }} {{ tariff.trip_type }})</a></p>
     {% endfor %}
-
-    <p>{{ object.url | urlize }} {{ object.datetime }}</p>
 
 {% endblock %}
 

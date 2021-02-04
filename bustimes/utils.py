@@ -6,9 +6,9 @@ from django.utils.http import http_date, parse_http_date
 
 
 def write_file(path, response):
-    with open(path, 'wb') as zip_file:
+    with open(path, 'wb') as open_file:
         for chunk in response.iter_content(chunk_size=102400):
-            zip_file.write(chunk)
+            open_file.write(chunk)
 
 
 def download(path, url):

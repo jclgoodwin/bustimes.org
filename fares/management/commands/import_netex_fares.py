@@ -1,10 +1,13 @@
 import io
+# import os
 import logging
 import xml.etree.cElementTree as ET
 import requests
 import zipfile
+from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
+# from bustimes.utils import write_file
 from ... import models
 
 
@@ -29,6 +32,8 @@ def get_user_profile(element):
 
 
 class Command(BaseCommand):
+    base_url = "https://data.bus-data.dft.gov.uk"
+
     def handle_file(self, source, open_file, filename=None):
         iterator = ET.iterparse(open_file)
 
@@ -164,7 +169,10 @@ class Command(BaseCommand):
                 rows[row.code] = row
 
             for table in fare_table_element.find('includes'):
-                for cell_element in table.find('cells'):
+                cells = table.find('cells')
+                if not cells:
+                    continue
+                for cell_element in cells:
                     columnn_ref = cell_element.find('ColumnRef').attrib['ref']
                     row_ref = cell_element.find('RowRef').attrib['ref']
                     distance_matrix_element_price = cell_element.find("DistanceMatrixElementPrice")
@@ -190,53 +198,88 @@ class Command(BaseCommand):
     def add_arguments(parser):
         parser.add_argument('api_key', type=str)
 
-    def handle(self, api_key, **kwargs):
-        session = requests.Session()
+    def handle_dataset(self, item):
+        dataset_url = f"{self.base_url}/fares/dataset/{item['id']}/"
+        modified = parse_datetime(item["modified"])
+        try:
+            dataset = models.DataSet.objects.get(url=dataset_url)
+            if dataset.datetime == modified:
+                return
+            # has changed
+            dataset.tariff_set.all().delete()
+        except models.DataSet.DoesNotExist:
+            dataset = models.DataSet(name=item["name"], description=item["description"], url=dataset_url)
+            dataset.save()
+        print(dataset_url)
 
-        url = 'https://data.bus-data.dft.gov.uk/api/v1/fares/dataset/'
+        try:
+            dataset.operators.set(item["noc"])
+        except IntegrityError:
+            print(item["noc"])
+
+        download_url = f"{dataset_url}download/"
+        response = self.session.get(download_url, stream=True)
+
+        if response.headers['Content-Type'] == 'text/xml':
+            # maybe not fully RFC 6266 compliant
+            filename = response.headers['Content-Disposition'].split('filename', 1)[1][2:-1]
+            print(filename)
+            try:
+                self.handle_file(dataset, response.raw, filename)
+            except AttributeError as e:
+                logger.error(e, exc_info=True)
+                return
+        else:
+            assert response.headers['Content-Type'] == 'application/zip'
+            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                for filename in archive.namelist():
+                    print(' ', filename)
+                    try:
+                        self.handle_file(dataset, archive.open(filename), filename)
+                    except AttributeError as e:
+                        logger.error(e, exc_info=True)
+                        return
+
+        dataset.datetime = modified
+        dataset.save(update_fields=["datetime"])
+
+    def handle(self, api_key=None, **kwargs):
+        # url = 'https://data.bus-data.dft.gov.uk/fares/download/bulk_archive'
+
+        # with requests.get(url, stream=True) as response:
+        #     # maybe not fully RFC 6266 compliant
+        #     filename = response.headers['Content-Disposition'].split('filename', 1)[1][2:-1]
+
+        #     if not os.path.exists(filename):
+        #         write_file(filename, response)
+
+        # print(filename)
+
+        # with zipfile.ZipFile(filename) as archive:
+        #     for filename in archive.namelist():
+        #         print(' ', filename)
+        #         # try:
+        #         #     self.handle_file(dataset, archive.open(filename))
+        #         # except AttributeError as e:
+        #         #     logger.error(e, exc_info=True)
+
+        # return
+
+        self.session = requests.Session()
+
+        url = f"{self.base_url}/api/v1/fares/dataset/"
         params = {
             'api_key': api_key,
             'status': 'published'
         }
         while url:
             print(url)
-            response = session.get(url, params=params)
+            response = self.session.get(url, params=params)
 
             data = response.json()
 
             for item in data['results']:
-                dataset_url = f"https://data.bus-data.dft.gov.uk/fares/dataset/{item['id']}/"
-                try:
-                    dataset = models.DataSet.objects.get(url=dataset_url)
-                    continue
-                    dataset.tariff_set.all().delete()
-                except models.DataSet.DoesNotExist:
-                    dataset = models.DataSet(name=item["name"], description=item["description"],
-                                             url=dataset_url, datetime=item['modified'])
-                    dataset.save()
-                print(dataset_url)
-                try:
-                    dataset.operators.set(item["noc"])
-                except IntegrityError:
-                    print(item["noc"])
-                download_url = f"{dataset_url}download/"
-                response = session.get(download_url, stream=True)
-
-                if response.headers['Content-Type'] == 'text/xml':
-                    filename = response.headers['Content-Disposition'].split('filename', 1)[1]
-                    try:
-                        self.handle_file(dataset, response.raw, filename)
-                    except AttributeError as e:
-                        logger.error(e, exc_info=True)
-                else:
-                    assert response.headers['Content-Type'] == 'application/zip'
-                    with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                        for filename in archive.namelist():
-                            print(' ', filename)
-                            try:
-                                self.handle_file(dataset, archive.open(filename))
-                            except AttributeError as e:
-                                logger.error(e, exc_info=True)
+                self.handle_dataset(item)
 
             url = data['next']
             params = None
