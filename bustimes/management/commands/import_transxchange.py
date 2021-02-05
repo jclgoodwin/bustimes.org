@@ -653,11 +653,23 @@ class Command(BaseCommand):
         if description == 'Origin - Destination':
             description = ''
 
+        if re.match(r'^P[BCDFGHKM]\d+:\d+.*.$', txc_service.service_code):
+            unique_service_code = txc_service.service_code
+        else:
+            unique_service_code = None
+
         for line in txc_service.lines:
             existing = None
             service_code = None
 
-            if operators and line.line_name:
+            if unique_service_code:
+                # first try getting by BODS profile compliant service code
+                existing = existing.filter(
+                    service_code=unique_service_code,
+                    line_name__iexact=line.line_name
+                ).order_by('-current', 'id').first()
+
+            if not existing and operators and line.line_name:
                 if self.source.name in {'Go South West', 'Oxford Bus Company'}:
                     assert operators[0].parent
                     existing = Service.objects.filter(operator__parent=operators[0].parent)
@@ -707,8 +719,8 @@ class Command(BaseCommand):
                 if not existing:
                     # assume service code is at least unique within a TNDS region
                     existing = self.source.service_set.filter(service_code=service_code).first()
-            elif re.match(r'^P[BCDFGHKM]\d+:\d+.*.$', txc_service.service_code):
-                service_code = txc_service.service_code
+            elif unique_service_code:
+                service_code = unique_service_code
 
             if existing:
                 service = existing
