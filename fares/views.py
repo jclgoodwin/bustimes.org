@@ -1,11 +1,15 @@
 from django.views.generic.detail import DetailView
 from django.shortcuts import render
+from django.db.models import Min, Max
 from .forms import FaresForm
 from .models import DataSet, Tariff
 
 
 def index(request):
-    datasets = DataSet.objects.all()
+    datasets = DataSet.objects.order_by('-datetime').annotate(
+        min_amount=Min('tariff__distancematrixelement__price_group__amount'),
+        max_amount=Max('tariff__distancematrixelement__price_group__amount')
+    )
 
     return render(request, 'fares/index.html', {
         'datasets': datasets,

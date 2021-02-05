@@ -2,7 +2,7 @@
 
 {% block title %}Fares – bustimes.org{% endblock %}
 
-{% block bodyclass %}narrow{% endblock %}
+{% block bodyclass %}{% endblock %}
 
 {% block content %}
 
@@ -18,8 +18,29 @@
     <li>bustimes.org only supports point to point fares so far, not day/week/month/zone tickets</li>
 </ul>
 
-{% for dataset in datasets %}
-    <p><a href="{{ dataset.get_absolute_url }}">{{ dataset }}<br>{{ dataset.description }}</a></p>
-{% endfor %}
+<style>
+    td {
+        vertical-align: top;
+    }
+</style>
+
+<table>
+    <thead>
+        <th scope="col">Name</th>
+        <th scope="col">Modified</th>
+        <th scope="col">Amounts</th>
+        <th scope="col">Description</th>
+    </thead>
+    <tbody>
+        {% for dataset in datasets %}
+            <tr>
+                <td style="white-space:nowrap"><a href="{{ dataset.get_absolute_url }}">{{ dataset.nice_name }}</a></td>
+                <td style="white-space:nowrap">{{ dataset.datetime }}</td>
+                <td style="white-space:nowrap">{% if dataset.min_amount is not None %}£{{ dataset.min_amount }}–£{{ dataset.max_amount }}{% endif %}</td>
+                <td>{{ dataset.description|linebreaksbr }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}

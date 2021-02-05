@@ -1,7 +1,7 @@
 import os
 from django.test import TestCase
 from .management.commands import import_netex_fares
-from .models import Tariff, DataSet
+from .models import Tariff, DataSet, TimeInterval
 
 
 class FaresTest(TestCase):
@@ -33,3 +33,5 @@ class FaresTest(TestCase):
 
         self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
+
+        self.assertEqual(TimeInterval.objects.count(), 7)

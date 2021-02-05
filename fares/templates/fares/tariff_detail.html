@@ -84,7 +84,7 @@ td:hover {
                     <tr>
                         <th>{{ row.name }}</th>
                         {% for cell in row.cell_set.all %}
-                            <td>£{{ cell.price_group.amount }}</td>
+                            <td>£{% firstof cell.price_group.amount cell.time_interval_price.amount %}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}

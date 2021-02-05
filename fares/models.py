@@ -30,8 +30,11 @@ class DataSet(models.Model):
     def get_absolute_url(self):
         return reverse('dataset_detail', args=(self.id,))
 
+    def nice_name(self):
+        return self.name.split("_", 1)[0]
+
     def credit(self):
-        text = self.name.split("_", 1)[0]
+        text = self.nice_name()
 
         if self.url:
             if "bus-data.dft.gov.uk" in self.url:
@@ -58,6 +61,9 @@ class TimeInterval(models.Model):
     code = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.description
 
 
 class TimeIntervalPrice(models.Model):

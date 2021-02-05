@@ -31,6 +31,14 @@ def get_user_profile(element):
     )
 
 
+def get_sales_offer_package(element):
+    return models.SalesOfferPackage.objects.get_or_create(
+        code=element.attrib["id"],
+        name=element.findtext("Name", ""),
+        description=element.findtext("Description", "")
+    )
+
+
 class Command(BaseCommand):
     base_url = "https://data.bus-data.dft.gov.uk"
 
@@ -51,11 +59,7 @@ class Command(BaseCommand):
 
         sales_offer_packages = {}
         for sales_offer_package in element.find("dataObjects/CompositeFrame/frames/FareFrame/salesOfferPackages"):
-            sales_offer_package, created = models.SalesOfferPackage.objects.get_or_create(
-                code=sales_offer_package.attrib["id"],
-                name=sales_offer_package.findtext("Name", ""),
-                description=sales_offer_package.findtext("Description", "")
-            )
+            sales_offer_package, created = get_sales_offer_package(sales_offer_package)
             sales_offer_packages[sales_offer_package.code] = sales_offer_package
 
         price_groups = {}
@@ -76,12 +80,14 @@ class Command(BaseCommand):
         if fare_zones_element:
             for fare_zone in fare_zones_element:
                 fare_zone, created = models.FareZone.objects.get_or_create(
-                    code=fare_zone.attrib['id'], name=fare_zone.findtext("Name")
+                    code=fare_zone.attrib['id'],
+                    name=fare_zone.findtext("Name")
                 )
                 fare_zones[fare_zone.code] = fare_zone
 
         tariffs = {}
         distance_matrix_elements = {}
+        time_intervals = {}
         for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
             fare_structre_elements = tariff_element.find("fareStructureElements")
 
@@ -104,6 +110,7 @@ class Command(BaseCommand):
                 source=source, filename=filename,
                 trip_type=trip_type, user_profile=user_profile
             )
+            tariffs[tariff.code] = tariff
 
             distance_matrix_element_elements = fare_structre_elements.find(
                 "FareStructureElement/distanceMatrixElements"
@@ -122,7 +129,15 @@ class Command(BaseCommand):
                     )
                     distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
 
-            tariffs[tariff.code] = tariff
+            time_intervals_element = tariff_element.find("timeIntervals")
+            if time_intervals_element:
+                for time_interval in time_intervals_element:
+                    time_interval, _ = models.TimeInterval.objects.get_or_create(
+                        code=time_interval.attrib["id"],
+                        name=time_interval.findtext("Name"),
+                        description=time_interval.findtext("Description")
+                    )
+                    time_intervals[time_interval.code] = time_interval
 
         for fare_table_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/fareTables"):
             tariff_ref = fare_table_element.find("usedIn/TariffRef")
@@ -148,71 +163,139 @@ class Command(BaseCommand):
             else:
                 sales_offer_package = None
 
-            table, created = models.FareTable.objects.update_or_create(
-                {
-                    "user_profile": user_profile,
-                    "sales_offer_package": sales_offer_package,
-                    "description": fare_table_element.findtext("Description", "")
-                },
-                tariff=tariff,
-                code=fare_table_element.attrib["id"],
-                name=fare_table_element.findtext("Name", "")
-            )
-
-            if not created:
-                table.column_set.all().delete()
-                table.row_set.all().delete()
-
-            columns = {}
             columns_element = fare_table_element.find('columns')
-            if columns_element:
-                for column in columns_element:
-                    column = models.Column.objects.create(
-                        table=table,
-                        code=column.attrib['id'],
-                        name=column.findtext('Name'),
-                        order=column.attrib.get('order')
-                    )
-                    columns[column.code] = column
-
-            rows = {}
             rows_element = fare_table_element.find('rows')
-            if rows_element:
-                for row in rows_element:
-                    row = models.Row.objects.create(
-                        table=table,
-                        code=row.attrib['id'],
-                        name=row.findtext('Name'),
-                        order=row.attrib.get('order')
-                    )
-                    rows[row.code] = row
 
-            for table in fare_table_element.find('includes'):
-                cells_element = table.find('cells')
-                if not cells_element:
-                    continue
-                for cell_element in cells_element:
-                    columnn_ref = cell_element.find('ColumnRef').attrib['ref']
-                    row_ref = cell_element.find('RowRef').attrib['ref']
-                    distance_matrix_element_price = cell_element.find("DistanceMatrixElementPrice")
-                    price_ref = distance_matrix_element_price.find("GeographicalIntervalPriceRef")
-                    distance_matrix_element_ref = distance_matrix_element_price.find("DistanceMatrixElementRef")
+            if columns_element and rows_element:
+                table, created = models.FareTable.objects.update_or_create(
+                    {
+                        "user_profile": user_profile,
+                        "sales_offer_package": sales_offer_package,
+                        "description": fare_table_element.findtext("Description", "")
+                    },
+                    tariff=tariff,
+                    code=fare_table_element.attrib["id"],
+                    name=fare_table_element.findtext("Name", "")
+                )
 
-                    if row_ref in rows:
-                        row = rows[row_ref]
-                    else:
-                        # sometimes the RowRef doesn't correspond exactly to a Row id
-                        row_ref_suffix = row_ref.split('@')[-1]
-                        row_ref_suffix = f'@{row_ref_suffix}'
-                        row_refs = [row_ref for row_ref in rows if row_ref.endswith(row_ref_suffix)]
-                        assert len(row_refs) == 1
-                        row = rows[row_refs[0]]
-                    models.Cell.objects.create(
-                        column=columns[columnn_ref],
-                        row=row,
-                        price_group=price_group_prices[price_ref.attrib["ref"]],
-                        distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
-                    )
+                if not created:
+                    table.column_set.all().delete()
+                    table.row_set.all().delete()
+
+                columns = {}
+                if columns_element:
+                    for column in columns_element:
+                        column = models.Column.objects.create(
+                            table=table,
+                            code=column.attrib['id'],
+                            name=column.findtext('Name'),
+                            order=column.attrib.get('order')
+                        )
+                        columns[column.code] = column
+
+                rows = {}
+                if rows_element:
+                    for row in rows_element:
+                        row = models.Row.objects.create(
+                            table=table,
+                            code=row.attrib['id'],
+                            name=row.findtext('Name'),
+                            order=row.attrib.get('order')
+                        )
+                        rows[row.code] = row
+            else:
+                table = None
+
+            for sub_fare_table_element in fare_table_element.find('includes'):  # fare tables within fare tables
+                cells_element = sub_fare_table_element.find('cells')
+                if cells_element:
+                    for cell_element in cells_element:
+                        columnn_ref = cell_element.find('ColumnRef').attrib['ref']
+                        row_ref = cell_element.find('RowRef').attrib['ref']
+                        distance_matrix_element_price = cell_element.find("DistanceMatrixElementPrice")
+                        price_ref = distance_matrix_element_price.find("GeographicalIntervalPriceRef")
+                        distance_matrix_element_ref = distance_matrix_element_price.find("DistanceMatrixElementRef")
+
+                        if row_ref in rows:
+                            row = rows[row_ref]
+                        else:
+                            # sometimes the RowRef doesn't correspond exactly to a Row id
+                            row_ref_suffix = row_ref.split('@')[-1]
+                            row_ref_suffix = f'@{row_ref_suffix}'
+                            row_refs = [row_ref for row_ref in rows if row_ref.endswith(row_ref_suffix)]
+                            assert len(row_refs) == 1
+                            row = rows[row_refs[0]]
+                        models.Cell.objects.create(
+                            column=columns[columnn_ref],
+                            row=row,
+                            price_group=price_group_prices[price_ref.attrib["ref"]],
+                            distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
+                        )
+
+                sales_offer_package_ref = sub_fare_table_element.find("pricesFor/SalesOfferPackageRef")
+                if sales_offer_package_ref is not None:
+                    sales_offer_package_ref = sales_offer_package_ref.attrib["ref"]
+                    sales_offer_package = sales_offer_packages[sales_offer_package_ref]
+                else:
+                    sales_offer_package = None
+
+                if sub_fare_table_element.find("includes"):
+                    for sub_sub_fare_table_element in sub_fare_table_element.find("includes"):
+                        subl_sub_fare_table, created = models.FareTable.objects.update_or_create(
+                            {
+                                "sales_offer_package": sales_offer_package,
+                                "description": sub_fare_table_element.findtext("Description", "")
+                            },
+                            tariff=tariff,
+                            code=sub_fare_table_element.attrib["id"],
+                            name=sub_fare_table_element.findtext("Name", "")
+                        )
+                        if not created:
+                            subl_sub_fare_table.column_set.all().delete()
+                            subl_sub_fare_table.row_set.all().delete()
+
+                        columns = {}
+                        columns_element = sub_sub_fare_table_element.find('columns')
+                        if columns_element:
+                            for column in columns_element:
+                                column = models.Column.objects.create(
+                                    table=subl_sub_fare_table,
+                                    code=column.attrib['id'],
+                                    name=column.findtext('Name'),
+                                    order=column.attrib.get('order')
+                                )
+                                columns[column.code] = column
+
+                        rows = {}
+                        rows_element = sub_sub_fare_table_element.find('rows')
+                        if rows_element:
+                            for row in rows_element:
+                                row = models.Row.objects.create(
+                                    table=subl_sub_fare_table,
+                                    code=row.attrib['id'],
+                                    name=row.findtext('Name'),
+                                    order=row.attrib.get('order')
+                                )
+                                rows[row.code] = row
+
+                        cells_element = sub_sub_fare_table_element.find('cells')
+                        if cells_element:
+                            for cell_element in cells_element:
+                                columnn_ref = cell_element.find('ColumnRef').attrib['ref']
+                                row_ref = cell_element.find('RowRef').attrib['ref']
+                                time_interval_price = cell_element.find("TimeIntervalPrice")
+                                if time_interval_price:
+                                    time_interval_ref = time_interval_price.find("TimeIntervalRef").attrib['ref']
+                                    time_interval_price, created = models.TimeIntervalPrice.objects.get_or_create(
+                                        code=time_interval_price.attrib["id"],
+                                        amount=time_interval_price.findtext("Amount"),
+                                        time_interval=time_intervals[time_interval_ref]
+                                    )
+                                models.Cell.objects.create(
+                                    column=columns[columnn_ref],
+                                    row=rows[row_ref],
+                                    time_interval_price=time_interval_price
+                                )
 
     @staticmethod
     def add_arguments(parser):
