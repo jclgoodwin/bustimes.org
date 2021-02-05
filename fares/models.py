@@ -49,14 +49,6 @@ class DataSet(models.Model):
         return mark_safe(f'<p class="credit">Fares data from {text}</p>')
 
 
-class PriceGroup(models.Model):
-    code = models.CharField(max_length=255, blank=True)
-    amount = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
-
-    def __str__(self):
-        return self.code
-
-
 class TimeInterval(models.Model):
     code = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255)
@@ -64,12 +56,6 @@ class TimeInterval(models.Model):
 
     def __str__(self):
         return self.description
-
-
-class TimeIntervalPrice(models.Model):
-    code = models.CharField(max_length=255, blank=True)
-    amount = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
-    time_interval = models.ForeignKey(TimeInterval, models.CASCADE)
 
 
 class SalesOfferPackage(models.Model):
@@ -94,6 +80,16 @@ class UserProfile(models.Model):
         return self.name
 
 
+class TypeOfTariff(models.TextChoices):
+    # DISTANCE_KILOMETERS = "Distance_kilometers", "Kilometer Distance Kilometers"
+    # FLAT = "flat", "Flat"
+    POINT_TO_PONT = "point_to_point", "Point to point"
+    ZONAL = "zonal", "Zonal"
+    # SECTION = "section", "Section"    # BANDED = "banded", "Section"
+    # STORED_VALUE = "stored_value", "Stored value"
+    # MULTITRIP = "multitrip", "Multitrip carnet"
+
+
 class Tariff(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
@@ -104,12 +100,24 @@ class Tariff(models.Model):
     user_profile = models.ForeignKey(UserProfile, models.CASCADE)
     trip_type = models.CharField(max_length=255)
     valid_between = DateTimeRangeField(null=True, blank=True)
+    type_of_tariff = models.CharField(
+        max_length=19,
+        choices=TypeOfTariff.choices,
+    )
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse('tariff_detail', args=(self.id,))
+
+
+class Price(models.Model):
+    amount = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
+    time_interval = models.ForeignKey(TimeInterval, models.CASCADE, null=True, blank=True)
+    user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
+    sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE, null=True, blank=True)
+    tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
 
 
 class FareTable(models.Model):
@@ -138,7 +146,7 @@ class FareZone(models.Model):
 
 class DistanceMatrixElement(models.Model):
     code = models.CharField(max_length=255)
-    price_group = models.ForeignKey(PriceGroup, models.CASCADE)
+    price = models.ForeignKey(Price, models.CASCADE)
     start_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='starting')
     end_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='ending')
     tariff = models.ForeignKey(Tariff, models.CASCADE)
@@ -168,5 +176,4 @@ class Cell(models.Model):
     column = models.ForeignKey(Column, models.CASCADE)
     row = models.ForeignKey(Row, models.CASCADE)
     distance_matrix_element = models.ForeignKey(DistanceMatrixElement, models.CASCADE, null=True)
-    price_group = models.ForeignKey(PriceGroup, models.CASCADE, null=True)
-    time_interval_price = models.ForeignKey(TimeIntervalPrice, models.CASCADE, null=True)
+    price = models.ForeignKey(Price, models.CASCADE, null=True)

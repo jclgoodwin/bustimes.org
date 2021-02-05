@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.postgres.aggregates import StringAgg
-from .models import DataSet, Tariff, PriceGroup, FareZone, UserProfile, DistanceMatrixElement, FareTable
+from .models import DataSet, Tariff, Price, FareZone, UserProfile, DistanceMatrixElement, FareTable
 
 
 class DataSetAdmin(admin.ModelAdmin):
@@ -36,7 +36,7 @@ class FareTableAdmin(admin.ModelAdmin):
 
 admin.site.register(DataSet, DataSetAdmin)
 admin.site.register(Tariff, TariffAdmin)
-admin.site.register(PriceGroup)
+admin.site.register(Price)
 admin.site.register(UserProfile)
 admin.site.register(FareTable, FareTableAdmin)
 admin.site.register(DistanceMatrixElement)

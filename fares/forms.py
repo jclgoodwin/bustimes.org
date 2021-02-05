@@ -29,4 +29,4 @@ class FaresForm(forms.Form):
             Q(start_zone=self.cleaned_data['origin'], end_zone=self.cleaned_data['destination']) |
             Q(start_zone=self.cleaned_data['destination'], end_zone=self.cleaned_data['origin']),
             tariff__in=self.tariffs
-        )
+        ).select_related('price')

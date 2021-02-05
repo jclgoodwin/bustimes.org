@@ -7,8 +7,8 @@ from .models import DataSet, Tariff
 
 def index(request):
     datasets = DataSet.objects.order_by('-datetime').annotate(
-        min_amount=Min('tariff__distancematrixelement__price_group__amount'),
-        max_amount=Max('tariff__distancematrixelement__price_group__amount')
+        min_amount=Min('tariff__distancematrixelement__price__amount'),
+        max_amount=Max('tariff__distancematrixelement__price__amount')
     )
 
     return render(request, 'fares/index.html', {
@@ -37,7 +37,7 @@ class DataSetDetailView(DetailView):
 class TariffDetailView(DetailView):
     model = Tariff
     queryset = model.objects.prefetch_related(
-        'faretable_set__row_set__cell_set__price_group',
+        'faretable_set__row_set__cell_set__price',
         'faretable_set__column_set',
         'faretable_set__user_profile',
         'faretable_set__sales_offer_package'
