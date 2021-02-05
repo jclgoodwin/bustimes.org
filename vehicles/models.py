@@ -14,7 +14,6 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.db.models import Index, Q
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, DataSource, SIRISource

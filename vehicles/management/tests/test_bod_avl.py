@@ -185,8 +185,3 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         journey = VehicleJourney.objects.get()
         self.assertEqual(journey.direction, 'inbound')
         self.assertEqual(journey.destination, 'Southwold')
-
-        self.assertEqual(
-            command.service_cache,
-            {'None:None:146:390071066': None}
-        )

@@ -37,7 +37,6 @@ class Command(ImportLiveVehiclesCommand):
     operator_cache = {}
     vehicle_id_cache = {}
     vehicle_cache = {}
-    service_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
     identifiers = {}
 
@@ -179,8 +178,9 @@ class Command(ImportLiveVehiclesCommand):
                 destination_ref = None
 
         cache_key = f"{operator}:{vehicle_operator_id}:{line_ref}:{destination_ref}"
-        if cache_key in self.service_cache:
-            return self.service_cache[cache_key]
+        service = cache.get(cache_key)
+        if service is not None:
+            return service or None
 
         services = Service.objects.using(settings.READ_DATABASE).filter(
             Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith='SIRI', code=line_ref))
@@ -215,7 +215,7 @@ class Command(ImportLiveVehiclesCommand):
                 try:
                     return services.get()
                 except Service.DoesNotExist:
-                    self.service_cache[cache_key] = None
+                    cache.set(cache_key, None, 3600)  # cache 'service not found' for an hour
                     return
                 except Service.MultipleObjectsReturned:
                     pass
@@ -225,7 +225,7 @@ class Command(ImportLiveVehiclesCommand):
                 stops = StopPoint.objects.filter(service=OuterRef("pk"), atco_code__startswith=destination_ref[:3])
                 return services.get(Exists(stops))
             except Service.DoesNotExist:
-                self.service_cache[cache_key] = None
+                cache.set(cache_key, False, 3600)
                 return
             except Service.MultipleObjectsReturned:
                 trips = Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref)
