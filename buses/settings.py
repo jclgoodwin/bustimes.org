@@ -432,6 +432,8 @@ BOD_OPERATORS = [
     ('TOTN', 'SW', {}, False),
     ('YEOS', 'SW', {}, False),
 
+    ('NATX', 'GB', {}, False),
+
     ('RDRT', 'SE', {
         'RR': 'RDRT',
         'RR1': 'RDRT'
