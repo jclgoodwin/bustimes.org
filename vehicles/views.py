@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.utils import timezone
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
+from bustimes.models import Garage, Trip
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
@@ -335,6 +336,7 @@ def service_vehicles_history(request, slug):
     operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
         **context,
+        'garages': Garage.objects.filter(Exists(Trip.objects.filter(route__service=service, garage=OuterRef('id')))),
         'breadcrumb': [operator, service],
         'object': service,
     })

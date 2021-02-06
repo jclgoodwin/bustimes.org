@@ -50,6 +50,10 @@
         </ul>
     {% endif %}
 {% else %}
+    {% if garages %}
+        <p>{% for garage in garages %}{{ garage }}{% if not forloop.last %}/{% endif %}{% endfor %}</p>
+    {% endif %}
+
     <ul class="tabs">
         <li><a href="{{ object.get_absolute_url }}">Timetable</a></li>
         <li>Vehicles</li>

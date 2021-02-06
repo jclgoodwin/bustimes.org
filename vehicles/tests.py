@@ -460,14 +460,14 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh"> </a>', html=True)
 
     def test_service_vehicle_history(self):
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=poop')
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')
         self.assertContains(response, '<option selected value="2020-10-20">Tuesday 20 October 2020</option>')
         self.assertContains(response, '1 - FD54\xa0JYA')
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=2004-04-04')
         self.assertNotContains(response, '1 - FD54\xa0JYA')
 
