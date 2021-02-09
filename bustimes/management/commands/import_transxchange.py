@@ -197,7 +197,7 @@ class Command(BaseCommand):
 
     def set_region(self, archive_name):
         archive_name = os.path.basename(archive_name)
-        self.region_id, _ = os.path.splitext(archive_name)
+        self.region_id, _ = os.path.splitext(archive_name).upper()
 
         self.source, created = DataSource.objects.get_or_create(
             {
