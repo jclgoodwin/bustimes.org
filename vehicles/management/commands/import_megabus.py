@@ -55,9 +55,10 @@ class Command(ImportLiveVehiclesCommand):
             ticket_name = service['ticketName']
             response = self.session.get(f'{self.url}/getServices.php/{ticket_name}/0/service/', timeout=5)
             sleep(1)
-            for trip in response.json()['services']:
-                yield trip
-                self.trips.append(trip)
+            if response.ok:
+                for trip in response.json()['services']:
+                    yield trip
+                    self.trips.append(trip)
         self.last_got_trips = now
 
     def get_items(self):
