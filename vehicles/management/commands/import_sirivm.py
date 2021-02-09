@@ -75,7 +75,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         now = self.source.datetime
 
-        for source in DataSource.objects.filter(name__endswith='SIRI'):
+        for source in DataSource.objects.filter(name__in=('Staffordshire SIRI', 'Gatwick SIRI', 'Essex SIRI')):
             if source.settings and source.settings['RequestorRef']:
                 requestor_ref = source.settings['RequestorRef']
                 requestor_ref = f'<RequestorRef>{requestor_ref}</RequestorRef>'
