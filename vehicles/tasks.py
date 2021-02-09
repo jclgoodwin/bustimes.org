@@ -100,6 +100,8 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         vehicle = vehicle[len(operator_ref) + 1:]
     elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
         vehicle = vehicle[4:]
+    elif operator_ref == 'GCB' and vehicle.startswith('WCM-'):  # Aberdeen
+        vehicle = vehicle[4:]
 
     if not vehicle or vehicle == '-':
         return
@@ -178,5 +180,5 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         except VehicleJourney.MultipleObjectsReturned:
             return
     else:
-        VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name,
+        VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name, data=data,
                                       datetime=time, source=data_source, destination=destination)

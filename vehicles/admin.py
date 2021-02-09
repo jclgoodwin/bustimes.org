@@ -67,6 +67,12 @@ class VehicleAdmin(admin.ModelAdmin):
     ordering = ('-id',)
     actions = ('copy_livery', 'copy_type', 'make_livery')
     inlines = [VehicleEditInline]
+    readonly_fields = ['latest_journey_data']
+
+    def latest_journey_data(self, obj):
+        journey = obj.vehiclejourney_set.last()
+        if journey:
+            return journey.data
 
     def copy_livery(self, request, queryset):
         livery = Livery.objects.filter(vehicle__in=queryset).first()
