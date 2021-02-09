@@ -90,8 +90,13 @@ class Command(ImportLiveVehiclesCommand):
                         code__in=vehicle_fleet_numbers
                     )
                 }
+                i = 0
                 for item in items:
                     yield item
+                    i += 1
+                    if i == 100:
+                       self.save()
+                       i = 0
                 self.save()
                 sleep(1)
             except (RequestException, KeyError) as e:
