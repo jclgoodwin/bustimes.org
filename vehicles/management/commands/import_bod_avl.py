@@ -21,16 +21,16 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'Bus Open Data'
     wait = 20
     operators = {
-        'ASC': ['AKSS', 'ARHE', 'AMTM', 'GLAR'],
-        'ANE': ['ARDU', 'ANUM', 'ANEA'],
-        'ANW': ['ANWE', 'AMSY', 'ACYM'],
-        'ATS': ['ARBB', 'ASES', 'GLAR'],
-        'AMD': ['AMID', 'AMNO', 'AFCL'],
-        'CBBH': ['CBBH', 'CBNL'],
-        'UNO': ['UNOE', 'UNIB'],
+        'ASC': ['AKSS', 'ARHE', 'AMTM', 'GLAR'],  # Arriva Southern Counties
+        'ANE': ['ARDU', 'ANUM', 'ANEA'],  # Arriva North East
+        'ANW': ['ANWE', 'AMSY', 'ACYM'],  # Arriva North West
+        'ATS': ['ARBB', 'ASES', 'GLAR'],  # Arriva the Shires
+        'AMD': ['AMID', 'AMNO', 'AFCL'],  # Arriva Midlands
+        'CBBH': ['CBBH', 'CBNL'],  # Centrebus
+        'UNO': ['UNOE', 'UNIB'],  # Uno/Universitybus
         'UNIB': ['UNOE', 'UNIB'],
-        'TBTN': ['TBTN', 'KBUS'],
-        'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],
+        'TBTN': ['TBTN', 'KBUS'],  # trentbarton/Kinchbus
+        'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],  # Transdev Blazefield
         'MTRL': ['MPTR'],  # MP Travel using M Travel code (no relation!)
         'HUNT': ['HNTC'],  # Hunts using Hunters code
     }
