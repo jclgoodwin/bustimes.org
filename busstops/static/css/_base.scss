@@ -1003,7 +1003,7 @@ thead {
     overflow: auto;
     position: relative;
 
-    &.wide {
+    &--wide {
         margin-left: 0;
     }
 }
@@ -1025,7 +1025,7 @@ input:not(:checked) + label {
     padding-left: calc(env(safe-area-inset-left) + 1.14em);
     padding-right: calc(env(safe-area-inset-right) + 1.14em);
 
-    .wide & {
+    .timetable-wrapper--wide & {
         padding-left: 0;
     }
 
@@ -1109,7 +1109,6 @@ input:not(:checked) + label {
         }
     }
 
-
     th {
         background: #fff;
         border-right: 1px solid $border-color;
@@ -1124,7 +1123,7 @@ input:not(:checked) + label {
     }
 }
 
-.wide {
+.timetable-wrapper--wide {
     th {
         left: 0;
         overflow: hidden;

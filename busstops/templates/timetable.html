@@ -29,7 +29,7 @@
                 <input type="checkbox" id="show-all-stops-{{ forloop.counter }}">
                 <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
             {% endif %}
-            <div class="timetable-wrapper{% if grouping.width > 3 %} wide{% endif %}">
+            <div class="timetable-wrapper{% if grouping.width > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
                     {% if grouping.heads %}
                         <thead>
