@@ -100,8 +100,8 @@ class Command(ImportLiveVehiclesCommand):
 
         operator = self.get_operator(operator_ref)
 
-        if operator and vehicle_ref.startswith(f'{operator_ref}-'):
-            vehicle_ref = vehicle_ref[len(operator_ref) + 1:]
+        if operator:
+            vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
 
         assert vehicle_ref
 
@@ -172,8 +172,7 @@ class Command(ImportLiveVehiclesCommand):
 
         destination_ref = monitored_vehicle_journey.get("DestinationRef")
         if destination_ref:
-            if destination_ref.startswith('NT'):
-                destination_ref = destination_ref[2:]
+            destination_ref.removeprefix('NT')  # nottingham
             if ' ' in destination_ref:  # a postcode or suttin
                 destination_ref = None
 
@@ -316,14 +315,13 @@ class Command(ImportLiveVehiclesCommand):
         if not journey.destination:
             destination = monitored_vehicle_journey.get('DestinationName')
             if destination:
-                if route_name and destination.startswith(f'{route_name} '):  # TGTC
-                    destination = destination[len(route_name) + 1:]
+                if route_name:
+                    destination = destination.removeprefix(f'{route_name} ')  # TGTC
                 journey.destination = destination
             else:
                 destination_ref = monitored_vehicle_journey.get('DestinationRef')
                 if destination_ref:
-                    if destination_ref.startswith('NT'):
-                        destination_ref = destination_ref[2:]
+                    destination_ref.removeprefix('NT')
                     cache_key = f'stop{destination_ref}locality'
                     journey.destination = cache.get(cache_key)
                     if journey.destination is None:

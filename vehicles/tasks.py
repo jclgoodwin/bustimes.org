@@ -96,12 +96,12 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     vehicle = data['VehicleRef']
 
-    if operator_ref and vehicle.startswith(f'{operator_ref}-'):
-        vehicle = vehicle[len(operator_ref) + 1:]
-    elif operator_ref == 'FAB' and vehicle.startswith('111-'):  # Aberdeen
-        vehicle = vehicle[4:]
-    elif operator_ref == 'GCB' and vehicle.startswith('WCM-'):  # Aberdeen
-        vehicle = vehicle[4:]
+    if operator_ref:
+        vehicle = vehicle.removeprefix(f'{operator_ref}-')
+        if operator_ref == 'FAB':  # Aberdeen
+            vehicle = vehicle.removeprefix('111-')
+        elif operator_ref == 'GCB':
+            vehicle = vehicle.removeprefix('WCM-')
 
     if not vehicle or vehicle == '-':
         return

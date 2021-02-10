@@ -22,10 +22,10 @@ This documentation is incomplete and out of date. And that's OK (?) because I do
 
 ## Installing
 
-I'm using Python 3.8 and I don't know if any lower versions still work.
+Python 3.9 is required.
 Use [Pipenv](https://docs.pipenv.org/en/latest/) to install the Python dependencies (Django, etc):
 
-    pipenv --python 3.8
+    pipenv --python 3.9
     pipenv install --dev
 
 There are also some JavaScript dependencies:
