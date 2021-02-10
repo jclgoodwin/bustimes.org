@@ -260,9 +260,7 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         try:
-            journey_code = (
-                monitored_vehicle_journey['Extensions']['VehicleJourney']['Operational']['TicketMachine']['JourneyCode']
-            )
+            journey_code = item['Extensions']['VehicleJourney']['Operational']['TicketMachine']['JourneyCode']
         except KeyError:
             journey_code = monitored_vehicle_journey.get('VehicleJourneyRef')
             if journey_code == 'UNKNOWN':
