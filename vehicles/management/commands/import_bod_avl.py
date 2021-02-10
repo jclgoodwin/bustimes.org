@@ -259,9 +259,14 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
-        vehicle_journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
-        if vehicle_journey_ref == 'UNKNOWN':
-            vehicle_journey_ref = None
+        try:
+            journey_code = (
+                monitored_vehicle_journey['Extensions']['VehicleJourney']['Operational']['TicketMachine']['JourneyCode']
+            )
+        except KeyError:
+            journey_code = monitored_vehicle_journey.get('VehicleJourneyRef')
+            if journey_code == 'UNKNOWN':
+                journey_code = None
 
         route_name = monitored_vehicle_journey.get('PublishedLineName') or monitored_vehicle_journey.get('LineRef')
 
@@ -280,21 +285,21 @@ class Command(ImportLiveVehiclesCommand):
                     journey = latest_location.journey
                 else:
                     journey = journeys.filter(datetime=origin_aimed_departure_time).first()
-            elif vehicle_journey_ref:
-                if '_' in vehicle_journey_ref:
-                    if vehicle_journey_ref == latest_location.journey.code:
+            elif journey_code:
+                if '_' in journey_code:
+                    if journey_code == latest_location.journey.code:
                         journey = latest_location.journey
                     else:
-                        journey = journeys.filter(route_name=route_name, code=vehicle_journey_ref).first()
+                        journey = journeys.filter(route_name=route_name, code=journey_code).first()
                 else:
                     datetime = self.get_datetime(item)
-                    if vehicle_journey_ref == latest_location.journey.code:
+                    if journey_code == latest_location.journey.code:
                         if datetime - latest_location.journey.datetime < TWELVE_HOURS:
                             journey = latest_location.journey
                     else:
                         twelve_hours_ago = datetime - TWELVE_HOURS
                         journey = journeys.filter(
-                            route_name=route_name, code=vehicle_journey_ref,
+                            route_name=route_name, code=journey_code,
                             datetime__gt=twelve_hours_ago
                         ).last()
 
@@ -307,8 +312,8 @@ class Command(ImportLiveVehiclesCommand):
                 datetime=origin_aimed_departure_time,
             )
 
-        if vehicle_journey_ref:
-            journey.code = vehicle_journey_ref
+        if journey_code:
+            journey.code = journey_code
 
         if not journey.destination:
             destination = monitored_vehicle_journey.get('DestinationName')
@@ -343,9 +348,9 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.operator = operator
                 vehicle.save(update_fields=['operator'])
 
-            if journey.service and vehicle_journey_ref and '_' not in vehicle_journey_ref:
+            if journey.service and journey_code and '_' not in journey_code:
                 try:
-                    trips = Trip.objects.filter(route__service=journey.service, ticket_machine_code=vehicle_journey_ref)
+                    trips = Trip.objects.filter(route__service=journey.service, ticket_machine_code=journey_code)
                     journey.trip = trips.distinct('start', 'end', 'destination').get()
                 except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                     pass
