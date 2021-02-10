@@ -63,7 +63,7 @@ td:hover {
 
     {% for result in results %}
         {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
-        <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price_group.amount }}</p>
+        <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price.amount }}</p>
     {% endfor %}
 
     {% for table in object.faretable_set.all %}
@@ -84,7 +84,7 @@ td:hover {
                     <tr>
                         <th>{{ row.name }}</th>
                         {% for cell in row.cell_set.all %}
-                            <td>£{{ cell.price_group.amount }}</td>
+                            <td>£{{ cell.price.amount }}</td>
                         {% endfor %}
                     </tr>
                 {% endfor %}
