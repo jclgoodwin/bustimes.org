@@ -9,7 +9,7 @@ from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
 from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
-from bustimes.models import Trip, StopTime
+from bustimes.models import Trip, StopTime, get_calendars
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -259,12 +259,17 @@ class Command(ImportLiveVehiclesCommand):
     def get_journey(self, item, vehicle):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
+        journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
+        if journey_ref == 'UNKNOWN':
+            journey_ref = None
+
         try:
             journey_code = item['Extensions']['VehicleJourney']['Operational']['TicketMachine']['JourneyCode']
         except KeyError:
-            journey_code = monitored_vehicle_journey.get('VehicleJourneyRef')
-            if journey_code == 'UNKNOWN':
-                journey_code = None
+            journey_code = journey_ref
+        else:
+            if not journey_ref or '_' in journey_ref:
+                journey_ref = journey_code  # what we will use for finding matching trip
 
         route_name = monitored_vehicle_journey.get('PublishedLineName') or monitored_vehicle_journey.get('LineRef')
 
@@ -275,6 +280,8 @@ class Command(ImportLiveVehiclesCommand):
         journey = None
 
         journeys = vehicle.vehiclejourney_set
+
+        datetime = None
 
         latest_location = vehicle.latest_location
         if latest_location:
@@ -345,11 +352,23 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.operator = operator
                 vehicle.save(update_fields=['operator'])
 
-            if journey.service and journey_code and '_' not in journey_code:
+            if journey.service and journey_ref and '_' not in journey_ref:
+                if not datetime:
+                    datetime = self.get_datetime(item)
+                trips = Trip.objects.filter(
+                    Q(route__start_date__lte=datetime) | Q(route__start_date=None),
+                    Q(route__end_date__gte=datetime) | Q(route__end_date=None),
+                    route__service=journey.service
+                ).distinct('start', 'end', 'destination')
                 try:
-                    trips = Trip.objects.filter(route__service=journey.service, ticket_machine_code=journey_code)
-                    journey.trip = trips.distinct('start', 'end', 'destination').get()
-                except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                    journey.trip = trips.get(ticket_machine_code=journey_ref)
+                except Trip.MultipleObjectsReturned:
+                    trips = trips.filter(calendar__in=get_calendars(datetime))
+                    try:
+                        journey.trip = trips.get(ticket_machine_code=journey_ref)
+                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                        pass
+                except Trip.DoesNotExist:
                     pass
 
         return journey
