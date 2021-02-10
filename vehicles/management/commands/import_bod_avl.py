@@ -84,6 +84,13 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_ref = monitored_vehicle_journey['VehicleRef'].replace(' ', '')
         return f'{operator_ref}-{vehicle_ref}'
 
+    @staticmethod
+    def get_line_name_query(line_ref):
+        return (
+            Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith='SIRI', code=line_ref))
+            | Q(line_name__iexact=line_ref)
+        )
+
     def get_vehicle(self, item):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
         operator_ref = monitored_vehicle_journey['OperatorRef']
@@ -182,11 +189,19 @@ class Command(ImportLiveVehiclesCommand):
         if service is not None:
             return service or None
 
-        services = Service.objects.using(settings.READ_DATABASE).filter(
-            Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith='SIRI', code=line_ref))
-            | Q(line_name__iexact=line_ref),
-            current=True
-        )
+        # filter by LineRef or (if present and different) TicketMachineServiceCode
+        line_name_query = self.get_line_name_query(line_ref)
+        try:
+            ticket_machine_service_code = (
+                item['Extensions']['VehicleJourney']['Operational']['TicketMachine']['TicketMachineServiceCode']
+            )
+        except KeyError:
+            pass
+        else:
+            if ticket_machine_service_code.lower() != line_ref.lower():
+                line_name_query |= self.get_line_name_query(ticket_machine_service_code)
+
+        services = Service.objects.using(settings.READ_DATABASE).filter(line_name_query, current=True)
 
         if type(operator) is Operator and operator.parent and destination_ref:
             condition = Q(parent=operator.parent)
