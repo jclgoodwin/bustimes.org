@@ -172,9 +172,10 @@ class Command(ImportLiveVehiclesCommand):
 
         destination_ref = monitored_vehicle_journey.get("DestinationRef")
         if destination_ref:
-            destination_ref.removeprefix('NT')  # nottingham
             if ' ' in destination_ref:  # a postcode or suttin
                 destination_ref = None
+            else:
+                destination_ref = destination_ref.removeprefix('NT')  # nottingham
 
         cache_key = f"{vehicle_operator_id}:{line_ref}:{destination_ref}".replace(' ', '')
         service = cache.get(cache_key)
@@ -321,7 +322,7 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 destination_ref = monitored_vehicle_journey.get('DestinationRef')
                 if destination_ref:
-                    destination_ref.removeprefix('NT')
+                    destination_ref = destination_ref.removeprefix('NT')
                     cache_key = f'stop{destination_ref}locality'
                     journey.destination = cache.get(cache_key)
                     if journey.destination is None:
