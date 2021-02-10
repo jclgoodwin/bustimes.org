@@ -541,6 +541,11 @@ class VehicleLocation(models.Model):
         choices=Occupancy.choices,
         blank=True
     )
+    seated_occupancy = models.PositiveSmallIntegerField(null=True, blank=True)
+    seated_capacity = models.PositiveSmallIntegerField(null=True, blank=True)
+    wheelchair_occupancy = models.PositiveSmallIntegerField(null=True, blank=True)
+    wheelchair_capacity = models.PositiveSmallIntegerField(null=True, blank=True)
+    occupancy_thresholds = models.CharField(max_length=10, blank=True)
 
     def get_absolute_url(self):
         return reverse('vehiclelocation_detail', args=(self.id,))
