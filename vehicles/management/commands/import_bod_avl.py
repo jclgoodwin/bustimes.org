@@ -177,7 +177,7 @@ class Command(ImportLiveVehiclesCommand):
             if ' ' in destination_ref:  # a postcode or suttin
                 destination_ref = None
 
-        cache_key = f"{operator}:{vehicle_operator_id}:{line_ref}:{destination_ref}"
+        cache_key = f"{vehicle_operator_id}:{line_ref}:{destination_ref}".replace(' ', '')
         service = cache.get(cache_key)
         if service is not None:
             return service or None
