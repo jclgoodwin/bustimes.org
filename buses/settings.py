@@ -81,7 +81,8 @@ DATABASES = {
         'DISABLE_SERVER_SIDE_CURSORS': True,
         'OPTIONS': {
             'application_name': os.environ.get('APPLICATION_NAME') or ' '.join(sys.argv)[:63],
-            'connect_timeout': 3
+            'connect_timeout': 3,
+            'options': '-c statement_timeout=5000',
         },
         'TEST': {
             'SERIALIZE': False
