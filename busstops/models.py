@@ -565,7 +565,7 @@ class StopUsage(models.Model):
         ordering = ('direction', 'order')
 
     def is_minor(self):
-        return self.timing_status == 'OTH' or self.timing_status == 'TIP'
+        return self.timing_status == 'OTH'
 
 
 class ServiceColour(models.Model):

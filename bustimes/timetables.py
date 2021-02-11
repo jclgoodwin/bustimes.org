@@ -268,6 +268,9 @@ class Grouping:
     def has_minor_stops(self):
         return any(row.is_minor() for row in self.rows)
 
+    def has_major_stops(self):
+        return any(not row.is_minor() for row in self.rows)
+
     def get_order(self):
         if self.trips:
             return self.trips[0].start
@@ -433,6 +436,11 @@ class Grouping:
                 cell.min_height = min_height
                 cell.rowspan = rowspan
 
+        if self.has_minor_stops() and not self.has_major_stops():
+            for row in self.rows:
+                if row.stop:
+                    row.timing_status = row.stop.timing_status
+
 
 class ColumnHead:
     def __init__(self, service, span):
@@ -452,7 +460,7 @@ class Row:
         self.times = times
 
     def is_minor(self):
-        return self.timing_status == 'OTH' or self.timing_status == 'TIP'
+        return self.timing_status == 'OTH'
 
     def permanently_suspended(self):
         return hasattr(self.stop, 'suspended') and self.stop.suspended

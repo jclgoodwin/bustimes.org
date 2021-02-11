@@ -320,7 +320,7 @@ class StopTime(models.Model):
         return format_timedelta(self.departure)
 
     def is_minor(self):
-        return self.timing_status == 'OTH' or self.timing_status == 'TIP'
+        return self.timing_status == 'OTH'
 
 
 class Garage(models.Model):
