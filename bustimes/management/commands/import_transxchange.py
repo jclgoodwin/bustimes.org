@@ -279,9 +279,9 @@ class Command(BaseCommand):
         return outbound, inbound
 
     def mark_old_services_as_not_current(self):
-        old_services = self.source.service_set.filter(current=True).exclude(id__in=self.service_ids)
-        old_services.update(current=False)
         self.source.route_set.exclude(id__in=self.route_ids).delete()
+        old_services = self.source.service_set.filter(current=True, route=None).exclude(id__in=self.service_ids)
+        old_services.update(current=False)
 
     def handle_archive(self, archive_name, filenames):
         self.service_ids = set()
