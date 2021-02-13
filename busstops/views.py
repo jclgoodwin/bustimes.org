@@ -202,7 +202,7 @@ def stops(request):
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': tuple(stop.latlong)
+                'coordinates': stop.latlong.coords,
             },
             'properties': {
                 'name': stop.get_qualified_name(),
@@ -493,7 +493,7 @@ def stop_json(_, pk):
         'street': stop.street,
         'crossing': stop.crossing,
         'indicator': stop.indicator,
-        'latlong': tuple(stop.latlong),
+        'latlong': stop.latlong.coords,
         'stop_area': stop.stop_area_id,
         'locality': stop.locality_id,
         'suburb': stop.suburb,
@@ -773,7 +773,7 @@ def service_map_data(request, service_id):
                 'type': 'Feature',
                 'geometry': {
                     'type': 'Point',
-                    'coordinates': tuple(stop.latlong)
+                    'coordinates': stop.latlong.coords,
                 },
                 'properties': {
                     'name': stop.get_qualified_name(),

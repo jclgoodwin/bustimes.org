@@ -311,12 +311,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         send = async_to_sync(channel_layer.send)
 
         try:
-            with beeline.tracer(name="group messages"):
-                for group in group_messages:
-                    group_send(group, {
-                        'type': 'move_vehicles',
-                        'items': group_messages[group]
-                    })
             with beeline.tracer(name="channel messages"):
                 for channel_name in channel_messages:
                     try:
@@ -326,6 +320,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         })
                     except ChannelFull:
                         pass
+            with beeline.tracer(name="group messages"):
+                for group in group_messages:
+                    group_send(group, {
+                        'type': 'move_vehicles',
+                        'items': group_messages[group]
+                    })
         except ReplyError:
             pass
 

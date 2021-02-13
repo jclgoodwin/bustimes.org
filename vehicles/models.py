@@ -557,7 +557,7 @@ class VehicleLocation(models.Model):
         ordering = ('id',)
 
     def get_appendage(self):
-        appendage = [self.datetime, tuple(self.latlong), self.heading, self.early]
+        appendage = [self.datetime, self.latlong.coords, self.heading, self.early]
         return (f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
 
     def redis_append(self):
@@ -571,7 +571,7 @@ class VehicleLocation(models.Model):
         json = {
             'i': self.id,
             'd': DjangoJSONEncoder.default(None, self.datetime),
-            'l': tuple(self.latlong),
+            'l': self.latlong.coords,
             'h': self.heading,
             'r': self.journey.route_name,
         }
@@ -598,26 +598,6 @@ class VehicleLocation(models.Model):
 
         return json
 
-    def channel_send(self, vehicle):
-        message = self.get_message(vehicle)
-        message['type'] = 'move_vehicle'
-
-        channel_layer = get_channel_layer()
-        group_send = async_to_sync(channel_layer.group_send)
-        send = async_to_sync(channel_layer.send)
-
-        try:
-            if self.journey.service_id:
-                group_send(f'service{self.journey.service_id}', message)
-            if vehicle.operator_id:
-                group_send(f'operator{vehicle.operator_id}', message)
-            for channel in Channel.objects.filter(bounds__bboverlaps=self.latlong).defer('bounds'):
-                try:
-                    send(channel.name, message)
-                except ChannelFull:
-                    channel.delete()
-        except ReplyError:
-            return
 
     def get_json(self, extended=False):
         journey = self.journey
@@ -626,7 +606,7 @@ class VehicleLocation(models.Model):
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': tuple(self.latlong),
+                'coordinates': self.latlong.coords,
             },
             'properties': {
                 'vehicle': {

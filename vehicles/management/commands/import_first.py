@@ -7,16 +7,15 @@ from uuid import uuid4
 from datetime import datetime
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
-from django.core.management.base import BaseCommand
 from django.contrib.gis.db.models import Extent
 from django.utils import timezone
 from busstops.models import Service, DataSource
 from ...models import Vehicle, VehicleJourney, VehicleLocation
+from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
-class Command(BaseCommand):
+class Command(ImportLiveVehiclesCommand):
     operators = {}
-    vehicles = Vehicle.objects.select_related('latest_location__journey')
 
     @staticmethod
     def add_arguments(parser):
@@ -90,18 +89,13 @@ class Command(BaseCommand):
         if not created and vehicle.latest_location_id:
             location.id = vehicle.latest_location_id
 
-        location.save()
-        location.redis_append()
-        location.channel_send(vehicle)
-
-        if not vehicle.latest_location_id:
-            vehicle.latest_location = location
-            vehicle.save(update_fields=['latest_location'])
+        self.to_save.append((location, vehicle.latest_location, vehicle))
 
     @sync_to_async
     def handle_data(self, data, operator):
         for item in data['params']['resource']['member']:
             self.handle_item(item, operator)
+        self.save()
 
     @staticmethod
     def get_extent(operator):

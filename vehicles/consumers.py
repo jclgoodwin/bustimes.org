@@ -27,11 +27,6 @@ class VehicleMapConsumer(JsonWebsocketConsumer):
     def move_vehicles(self, message):
         self.send_json(message['items'])
 
-    def move_vehicle(self, message):
-        self.move_vehicles({
-            'items': [message]
-        })
-
     def receive_json(self, content):
         try:
             new_bounds = Polygon.from_bbox(content)

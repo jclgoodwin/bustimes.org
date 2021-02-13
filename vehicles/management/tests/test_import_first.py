@@ -31,11 +31,13 @@ class FirstImportTest(TestCase):
         with self.assertNumQueries(10):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(item, 'FYOR')
+                command.save()
         mocked_print.assert_called()
 
         with self.assertNumQueries(2):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(item, 'FYOR')
+                command.save()
         mocked_print.assert_not_called()
 
         vehicle = Vehicle.objects.get(code=69375)

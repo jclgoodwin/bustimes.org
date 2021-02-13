@@ -49,10 +49,6 @@ class WebsocketConsumerTest(TestCase):
         message_b = await communicator.receive_json_from()
         self.assertEqual(items, message_b)
 
-        message_c = {'type': 'move_vehicle', **items[0]}
-        await communicator.send_input(message_c)
-        message_d = await communicator.receive_json_from()
-        self.assertEqual([message_c], message_d)
 
         await communicator.receive_nothing()
         await communicator.disconnect()
