@@ -598,48 +598,22 @@ class VehicleLocation(models.Model):
 
         return json
 
-
-    def get_json(self, extended=False):
+    def get_json(self):
         journey = self.journey
-        vehicle = journey.vehicle
-        json = {
-            'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': self.latlong.coords,
+        vehicle = self.vehicle
+        return {
+            'id': self.id,
+            'coordinates': self.latlong.coords,
+            'vehicle': {
+                'url': vehicle.get_absolute_url(),
+                'name': str(vehicle),
             },
-            'properties': {
-                'vehicle': {
-                    'url': vehicle.get_absolute_url(),
-                    'name': str(vehicle),
-                    'text_colour': vehicle.get_text_colour(),
-                    'livery': vehicle.get_livery(self.heading),
-                },
-                'delta': self.early,
-                'direction': self.heading,
-                'datetime': self.datetime,
-                'destination': journey.destination,
-                'source': journey.source_id
-            }
+            'delta': self.early,
+            'direction': self.heading,
+            'datetime': self.datetime,
+            'destination': journey.destination,
+            'route_name': journey.route_name,
         }
-        if vehicle.vehicle_type:
-            json['properties']['vehicle']['coach'] = vehicle.vehicle_type.coach
-            json['properties']['vehicle']['decker'] = vehicle.vehicle_type.double_decker
-        if extended:
-            if journey.service:
-                json['properties']['service'] = {
-                    'line_name': journey.service.line_name,
-                    'url': journey.service.get_absolute_url()
-                }
-            else:
-                json['properties']['service'] = {
-                    'line_name': journey.route_name
-                }
-            if vehicle.operator:
-                json['properties']['operator'] = str(vehicle.operator)
-        else:
-            json['properties']['vehicle']['features'] = list(vehicle.get_feature_emojis())
-        return json
 
     def get_delay(self):
         if not self.journey.trip_id:

@@ -223,8 +223,7 @@ def operator_map(request, slug):
 def get_locations(request):
     now = timezone.now()
     fifteen_minutes_ago = now - datetime.timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(vehicle__isnull=False, datetime__gte=fifteen_minutes_ago,
-                                               current=True)
+    locations = VehicleLocation.objects.filter(current=True, vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
 
     try:
         bounding_box = get_bounding_box(request)
@@ -234,6 +233,8 @@ def get_locations(request):
 
     if 'service' in request.GET:
         locations = locations.filter(journey__service=request.GET['service'])
+    elif 'operator' in request.GET:
+        locations = locations.filter(vehicle__operator=request.GET['operator'])
 
     return locations
 
@@ -243,20 +244,10 @@ def vehicles_json(request):
         locations = get_locations(request).order_by()
     except ValueError:
         return HttpResponseBadRequest()
-    locations = locations.select_related('journey__vehicle__livery', 'journey__vehicle__vehicle_type')
 
-    if 'service' in request.GET:
-        extended = False
-        locations = locations.prefetch_related('journey__vehicle__features')
-    else:
-        extended = True
-        locations = locations.select_related('journey__service', 'journey__vehicle__operator')
-        locations = locations.defer('journey__service__geometry', 'journey__service__search_vector')
+    locations = locations.select_related('journey', 'vehicle')
 
-    return JsonResponse({
-        'type': 'FeatureCollection',
-        'features': [location.get_json(extended=extended) for location in locations]
-    })
+    return JsonResponse([location.get_json() for location in locations], safe=False)
 
 
 def get_dates(journeys, vehicle=None, service=None):
@@ -493,7 +484,7 @@ def journey_json(request, pk):
             'aimed_arrival_time': stop_time.arrival_time(),
             'aimed_departure_time': stop_time.departure_time(),
             'minor': stop_time.is_minor(),
-            'coordinates': stop_time.stop and stop_time.stop.latlong and tuple(stop_time.stop.latlong)
+            'coordinates': stop_time.stop and stop_time.stop.latlong and stop_time.stop.latlong.coords
         } for stop_time in trip.stoptime_set.select_related('stop__locality')]
 
     try:
