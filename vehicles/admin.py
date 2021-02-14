@@ -70,7 +70,7 @@ class VehicleAdmin(admin.ModelAdmin):
     readonly_fields = ['latest_journey_data']
 
     def latest_journey_data(self, obj):
-        journey = obj.vehiclejourney_set.last()
+        journey = obj.vehiclejourney_set.latest('datetime')
         if journey:
             return journey.data
 
