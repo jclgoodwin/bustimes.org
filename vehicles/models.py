@@ -601,19 +601,24 @@ class VehicleLocation(models.Model):
     def get_json(self):
         journey = self.journey
         vehicle = self.vehicle
-        return {
+        json = {
             'id': self.id,
             'coordinates': self.latlong.coords,
             'vehicle': {
                 'url': vehicle.get_absolute_url(),
                 'name': str(vehicle),
             },
-            'delta': self.early,
-            'direction': self.heading,
+            # 'delta': self.early,
+            'heading': self.heading,
             'datetime': self.datetime,
             'destination': journey.destination,
             'route_name': journey.route_name,
         }
+        if vehicle.livery_id:
+            json['vehicle']['livery'] = vehicle.livery_id
+        else:
+            json['vehicle']['css'] = ''
+        return json
 
     def get_delay(self):
         if not self.journey.trip_id:

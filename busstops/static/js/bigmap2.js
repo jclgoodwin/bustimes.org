@@ -124,12 +124,11 @@
     }    
 
     function loadStops() {
-        var bounds = map.getBounds();
-        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
-
         if (lastStopsReq) {
             lastStopsReq.abort();
         }
+        var bounds = map.getBounds();
+        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
         if (highWater && highWater.contains(bounds)) {
             if (!bigStopMarkers) {
                 return;
@@ -151,6 +150,76 @@
                 }
             }
         });
+    }
+
+    var lastVehiclesReq, loadVehiclesTimeout;
+
+    function loadVehicles() {
+        if (lastVehiclesReq) {
+            lastVehiclesReq.abort();
+        }
+        if (loadVehiclesTimeout) {
+            clearTimeout(loadVehiclesTimeout);
+        }
+        var bounds = map.getBounds();
+        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
+        lastVehiclesReq = reqwest(
+            '/vehicles.json' + params,
+            function(data) {
+                if (data) {
+                    if (markers) {
+                        vehiclesGroup.clearLayers();
+                    }
+                    markers = {};
+                    processVehiclesData(data);
+                }
+                loadVehiclesTimeout = setTimeout(loadVehicles, 20000);
+            }
+        );
+    }
+
+    function processVehiclesData(data) {
+        bigVehicleMarkers = data.length < 500;
+        for (var i = data.length - 1; i >= 0; i--) {
+            processVehicle(data[i]);
+        }
+    }
+
+    function processVehicle(item) {
+        var isClickedMarker = item.id === clickedMarker;
+        var latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
+        var legacyItem = {
+            i: item.id,
+            d: item.datetime,
+            h: item.heading,
+            r: item.route_name,
+            c: item.vehicle.livery || ''
+        };
+        if (bigVehicleMarkers) {
+            var marker = L.marker(latLng, {
+                icon: bustimes.getBusIcon(legacyItem, isClickedMarker),
+                zIndexOffset: 1000,
+                item: legacyItem,
+            });
+        } else {
+            marker = L.circleMarker(latLng, {
+                stroke: false,
+                fillColor: '#111',
+                fillOpacity: .6,
+                radius: 3,
+                item: legacyItem,
+            });
+        }
+        markers[item.id] = marker;
+        marker.addTo(vehiclesGroup)
+            .bindPopup('', {
+                autoPan: false
+            })
+            .on('popupopen', handlePopupOpen)
+            .on('popupclose', handlePopupClose);
+        if (isClickedMarker) {
+            marker.openPopup();
+        }
     }
 
     var clickedMarker, agoTimeout;
@@ -209,12 +278,9 @@
             marker.setZIndexOffset(2000);
         }
 
-        reqwest({
-            url: '/vehicles/locations/' + item.i,
-            success: function(content) {
-                marker.options.popupContent = content;
-                updatePopupContent();
-            }
+        reqwest('/vehicles/locations/' + item.i, function(content) {
+            marker.options.popupContent = content;
+            updatePopupContent();
         });
     }
 
@@ -360,31 +426,32 @@
         var bounds = map.getBounds();
 
         if (!first) {
-            for (var id in markers) {
-                var marker = markers[id];
-                if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
-                    vehiclesGroup.removeLayer(marker);
-                    delete items[id];
-                    delete markers[id];
-                }
-            }
+            loadVehicles();
+            // for (var id in markers) {
+            //     var marker = markers[id];
+            //     if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
+            //         vehiclesGroup.removeLayer(marker);
+            //         delete items[id];
+            //         delete markers[id];
+            //     }
+            // }
 
-            if (bigVehicleMarkers && !wasZoomedIn || !bigVehicleMarkers && wasZoomedIn) {
-                markers = {};
-                vehiclesGroup.clearLayers();
-                for (id in items) {
-                    handleVehicle(items[id]);
-                }
-            }
+            // if (bigVehicleMarkers && !wasZoomedIn || !bigVehicleMarkers && wasZoomedIn) {
+            //     markers = {};
+            //     vehiclesGroup.clearLayers();
+            //     for (id in items) {
+            //         handleVehicle(items[id]);
+            //     }
+            // }
 
-            if (socket && socket.readyState === socket.OPEN) {
-                socket.send(JSON.stringify([
-                    bounds.getWest(),
-                    bounds.getSouth(),
-                    bounds.getEast(),
-                    bounds.getNorth()
-                ]));
-            }
+            // if (socket && socket.readyState === socket.OPEN) {
+            //     socket.send(JSON.stringify([
+            //         bounds.getWest(),
+            //         bounds.getSouth(),
+            //         bounds.getEast(),
+            //         bounds.getNorth()
+            //     ]));
+            // }
         }
 
         if (showStops) {
@@ -429,14 +496,15 @@
         map.setView([51.9, 0.9], 9);
     }
 
-    connect();
+    // connect();
+    loadVehicles();
 
     function handleVisibilityChange(event) {
-        if (event.target.hidden) {
-            socket.close(1000);
-        } else {
-            connect();
-        }
+        // if (event.target.hidden) {
+        //     socket.close(1000);
+        // } else {
+        //     connect();
+        // }
     }
 
     if (document.addEventListener) {
