@@ -86,7 +86,7 @@ def create_journey_code(destination, service_id, journey_ref, source_id):
 @shared_task
 def log_vehicle_journey(service, data, time, destination, source_name, url):
     operator_ref = data.get('OperatorRef')
-    if operator_ref and operator_ref == 'MCG':
+    if operator_ref and operator_ref == 'McG':
         return
 
     if not time:
