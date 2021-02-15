@@ -210,13 +210,6 @@ class Vehicle(models.Model):
             return str(fleet_code)
         return self.code.replace('_', ' ')
 
-    def get_feature_emojis(self):
-        for feature in self.features.all():
-            if feature.name == 'USB charging':
-                yield '🔌'
-            elif feature.name == 'bike storage':
-                yield '🚲'
-
     def get_previous(self):
         if self.fleet_number and self.operator:
             vehicles = self.operator.vehicle_set.filter(withdrawn=False, fleet_number__lt=self.fleet_number)

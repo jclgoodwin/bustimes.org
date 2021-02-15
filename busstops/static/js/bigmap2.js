@@ -273,6 +273,10 @@
 
         content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
 
+        if (item.vehicle.features) {
+            content += item.vehicle.features + '<br>';
+        }
+
         if (ago >= 1800) {
             content += 'Updated at ' + then.toTimeString().slice(0, 8);
         } else {
