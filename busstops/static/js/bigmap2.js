@@ -127,6 +127,7 @@
         if (lastStopsReq) {
             lastStopsReq.abort();
         }
+        bigStopMarkers = (map.getZoom() > 14);
         var bounds = map.getBounds();
         var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
         if (highWater && highWater.contains(bounds)) {
@@ -167,22 +168,52 @@
             '/vehicles.json' + params,
             function(data) {
                 if (data) {
-                    if (markers) {
-                        vehiclesGroup.clearLayers();
-                    }
-                    markers = {};
                     processVehiclesData(data);
                 }
-                loadVehiclesTimeout = setTimeout(loadVehicles, 20000);
+                loadVehiclesTimeout = setTimeout(loadVehicles, 15000);
             }
         );
     }
 
     function processVehiclesData(data) {
-        bigVehicleMarkers = data.length < 500;
-        for (var i = data.length - 1; i >= 0; i--) {
-            processVehicle(data[i]);
+        var newMarkers = {};
+        var wasZoomedIn = bigVehicleMarkers;
+        bigVehicleMarkers = (map.getZoom() > 12) || (data.length < 500);
+        if (bigVehicleMarkers !== wasZoomedIn) {
+            vehiclesGroup.clearLayers();
+            markers = {};
         }
+        for (var i = data.length - 1; i >= 0; i--) {
+            var item = data[i];
+            newMarkers[item.id] = processVehicle(item);
+        }
+        // remove old markers
+        for (i in markers) {
+            if (!(i in newMarkers)) {
+                vehiclesGroup.removeLayer(markers[i]);
+            }
+        }
+        markers = newMarkers;
+    }
+
+    function getVehicleMarker(latLng, legacyItem, isClickedMarker) {
+        if (bigVehicleMarkers) {
+            var marker = L.marker(latLng, {
+                icon: bustimes.getBusIcon(legacyItem, isClickedMarker),
+                zIndexOffset: 1000,
+            });
+        } else {
+            marker = L.circleMarker(latLng, {
+                stroke: false,
+                fillColor: '#111',
+                fillOpacity: .6,
+                radius: 3,
+            });
+        }
+        marker.addTo(vehiclesGroup)
+            .on('popupopen', handlePopupOpen)
+            .on('popupclose', handlePopupClose);
+        return marker;
     }
 
     function processVehicle(item) {
@@ -192,48 +223,60 @@
             i: item.id,
             d: item.datetime,
             h: item.heading,
-            r: item.route_name,
-            c: item.vehicle.livery || ''
+            c: item.vehicle.livery || item.vehicle.css,
+            t: item.vehicle.text_colour
         };
-        if (bigVehicleMarkers) {
-            var marker = L.marker(latLng, {
-                icon: bustimes.getBusIcon(legacyItem, isClickedMarker),
-                zIndexOffset: 1000,
-                item: legacyItem,
-            });
+        if (item.service) {
+            legacyItem.r = item.service.line_name;
+        }
+        if (item.id in markers) {
+            var marker = markers[item.id];  // existing marker
+            if (bigVehicleMarkers) {
+                marker.setIcon(bustimes.getBusIcon(legacyItem, isClickedMarker));
+            }
+            marker.setLatLng(latLng);
         } else {
-            marker = L.circleMarker(latLng, {
-                stroke: false,
-                fillColor: '#111',
-                fillOpacity: .6,
-                radius: 3,
-                item: legacyItem,
+            marker = getVehicleMarker(latLng, legacyItem, isClickedMarker);
+            marker.bindPopup('', {
+                autoPan: false
             });
         }
-        markers[item.id] = marker;
-        marker.addTo(vehiclesGroup)
-            .bindPopup('', {
-                autoPan: false
-            })
-            .on('popupopen', handlePopupOpen)
-            .on('popupclose', handlePopupClose);
+        marker.options.legacyItem = legacyItem;
+        marker.options.item = item;
         if (isClickedMarker) {
+            markers[item.id] = marker;
             marker.openPopup();
+            updatePopupContent();
         }
+        return marker;
+
     }
 
     var clickedMarker, agoTimeout;
 
     function getPopupContent(item) {
-        var content = bustimes.getDelay(item);
         var now = new Date();
-        var then = new Date(item.d);
+        var then = new Date(item.datetime);
         var ago = Math.round((now.getTime() - then.getTime()) / 1000);
+
+        if (item.service) {
+            var content = item.service.line_name;
+            if (item.destination) {
+                content += ' to ' + item.destination;
+            }
+            if (item.service.url) {
+                content = '<a href="' + item.service.url + '">' + content + '</a>';
+            }
+        } else {
+            content = '';
+        }
+
+        content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
 
         if (ago >= 1800) {
             content += 'Updated at ' + then.toTimeString().slice(0, 8);
         } else {
-            content += '<time datetime="' + item.d + '" title="' + then.toTimeString().slice(0, 8) + '">';
+            content += '<time datetime="' + item.datetime + '" title="' + then.toTimeString().slice(0, 8) + '">';
             if (ago >= 59) {
                 var minutes = Math.round(ago / 60);
                 if (minutes === 1) {
@@ -270,18 +313,13 @@
         var marker = event.target;
         var item = marker.options.item;
 
-        clickedMarker = item.i;
+        clickedMarker = item.id;
         updatePopupContent();
 
         if (bigVehicleMarkers) {
-            marker.setIcon(bustimes.getBusIcon(item, true));
+            marker.setIcon(bustimes.getBusIcon(marker.options.legacyItem, true));
             marker.setZIndexOffset(2000);
         }
-
-        reqwest('/vehicles/locations/' + item.i, function(content) {
-            marker.options.popupContent = content;
-            updatePopupContent();
-        });
     }
 
     function handlePopupClose(event) {
@@ -289,14 +327,15 @@
             clickedMarker = null;
             if (bigVehicleMarkers) {
                 // make the icon small again
-                event.target.setIcon(bustimes.getBusIcon(event.target.options.item));
+                event.target.setIcon(bustimes.getBusIcon(event.target.options.legacyItem));
                 event.target.setZIndexOffset(1000);
             }
         }
     }
 
-    var markers, items;
+    var markers = {};
 
+    /*
     function handleVehicle(item) {
         var isClickedMarker = item.i === clickedMarker,
             latLng = L.latLng(item.l[1], item.l[0]),
@@ -340,9 +379,11 @@
             }
         }
     }
+    */
 
     // websocket
 
+    /*
     var socket,
         backoff = 1000,
         newSocket;
@@ -395,11 +436,12 @@
             }
         };
     }
+    */
 
     // update window location hash
     function updateLocation() {
         var latLng = map.getCenter(),
-            string = map.getZoom() + '/' + Math.round(latLng.lat * 10000) / 10000 + '/' + Math.round(latLng.lng * 10000) / 10000;
+            string = map.getZoom() + '/' + Math.round(latLng.lat * 1000) / 1000 + '/' + Math.round(latLng.lng * 1000) / 1000;
 
         if (history.replaceState) {
             try {
@@ -420,38 +462,40 @@
     var first = true;
 
     map.on('moveend', function() {
-        var wasZoomedIn = bigVehicleMarkers;
-        bigVehicleMarkers = (map.getZoom() > 10);
+        // var wasZoomedIn = bigVehicleMarkers;
+        // bigVehicleMarkers = (map.getZoom() > 10);
 
-        var bounds = map.getBounds();
+        // var bounds = map.getBounds();
 
         if (!first) {
             loadVehicles();
-            // for (var id in markers) {
-            //     var marker = markers[id];
-            //     if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
-            //         vehiclesGroup.removeLayer(marker);
-            //         delete items[id];
-            //         delete markers[id];
-            //     }
-            // }
+            /*
+            for (var id in markers) {
+                var marker = markers[id];
+                if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
+                    vehiclesGroup.removeLayer(marker);
+                    delete items[id];
+                    delete markers[id];
+                }
+            }
 
-            // if (bigVehicleMarkers && !wasZoomedIn || !bigVehicleMarkers && wasZoomedIn) {
-            //     markers = {};
-            //     vehiclesGroup.clearLayers();
-            //     for (id in items) {
-            //         handleVehicle(items[id]);
-            //     }
-            // }
+            if (bigVehicleMarkers && !wasZoomedIn || !bigVehicleMarkers && wasZoomedIn) {
+                markers = {};
+                vehiclesGroup.clearLayers();
+                for (id in items) {
+                    handleVehicle(items[id]);
+                }
+            }
 
-            // if (socket && socket.readyState === socket.OPEN) {
-            //     socket.send(JSON.stringify([
-            //         bounds.getWest(),
-            //         bounds.getSouth(),
-            //         bounds.getEast(),
-            //         bounds.getNorth()
-            //     ]));
-            // }
+            if (socket && socket.readyState === socket.OPEN) {
+                socket.send(JSON.stringify([
+                    bounds.getWest(),
+                    bounds.getSouth(),
+                    bounds.getEast(),
+                    bounds.getNorth()
+                ]));
+            }
+            */
         }
 
         if (showStops) {
@@ -460,7 +504,6 @@
                 stopsGroup.remove();
                 showStops = true;
             } else {
-                bigStopMarkers = (map.getZoom() > 14);
                 stopsGroup.addTo(map);
                 loadStops();
             }
@@ -500,11 +543,20 @@
     loadVehicles();
 
     function handleVisibilityChange(event) {
-        // if (event.target.hidden) {
-        //     socket.close(1000);
-        // } else {
-        //     connect();
-        // }
+        /*        
+        if (event.target.hidden) {
+            socket.close(1000);
+        } else {
+            connect();
+        }
+        */
+        if (event.target.hidden) {
+            if (loadVehiclesTimeout) {
+                clearTimeout(loadVehiclesTimeout);
+            }
+        } else {
+            loadVehicles();
+        }
     }
 
     if (document.addEventListener) {

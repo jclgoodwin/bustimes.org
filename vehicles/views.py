@@ -245,7 +245,13 @@ def vehicles_json(request):
     except ValueError:
         return HttpResponseBadRequest()
 
-    locations = locations.select_related('journey', 'vehicle')
+    locations = locations.select_related(
+        'journey__service', 'vehicle__vehicle_type'
+    ).defer(
+        'journey__data', 'journey__service__geometry', 'journey__service__search_vector'
+    ).annotate(
+        features=StringAgg('vehicle__features__name', ', ')
+    )
 
     return JsonResponse([location.get_json() for location in locations], safe=False)
 
