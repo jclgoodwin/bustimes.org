@@ -456,8 +456,8 @@ class VehicleRevision(models.Model):
                         vehicle.reg = before
                         fields.append('reg')
                 elif key == 'withdrawn':
-                    if vehicle.withdrawn and key == 'Yes':
-                        vehicle.widthdrawn = False
+                    if vehicle.withdrawn and after == 'Yes':
+                        vehicle.withdrawn = False
                         fields.append('withdrawn')
                 else:
                     if message_user and request:
