@@ -600,22 +600,40 @@ class VehicleLocation(models.Model):
             'vehicle': {
                 'url': vehicle.get_absolute_url(),
                 'name': str(vehicle),
-                'features': self.features,
             },
             'heading': self.heading,
             'datetime': self.datetime,
+            'service': {
+                'line_name': journey.route_name,
+            },
             'destination': journey.destination,
+            'occupancy': self.get_occupancy_display()
         }
         if vehicle.livery_id:
             json['vehicle']['livery'] = vehicle.livery_id
         else:
             json['vehicle']['css'] = vehicle.get_livery(self.heading)
             json['vehicle']['text_colour'] = vehicle.get_text_colour()
+
+        features = self.features
+        if vehicle.vehicle_type:
+            if vehicle.vehicle_type.double_decker:
+                vehicle_type = 'Double decker'
+                if vehicle.vehicle_type.coach:
+                    vehicle_type = f'{vehicle_type} coach'
+            elif vehicle.vehicle_type.coach:
+                vehicle_type = 'Coach'
+            else:
+                vehicle_type = None
+            if vehicle_type:
+                if features:
+                    features = f'{vehicle_type}<br>{features}'
+                else:
+                    features = vehicle_type
+        json['vehicle']['features'] = features
+
         if journey.service:
-            json['service'] = {
-                'url': journey.service.get_absolute_url(),
-                'line_name': journey.service.get_line_name_and_brand(),
-            }
+            json['service']['url'] = journey.service.get_absolute_url()
         return json
 
     def get_delay(self):
