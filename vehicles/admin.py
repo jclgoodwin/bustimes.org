@@ -552,7 +552,7 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
 
     def revert(self, request, queryset):
         for revision in queryset.prefetch_related('vehicle'):
-            revision.revert()
+            revision.revert(self.message_user, request)
 
 
 admin.site.register(VehicleFeature)

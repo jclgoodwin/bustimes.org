@@ -424,7 +424,7 @@ class VehicleRevision(models.Model):
                 before = before[1:]
                 yield (key, before, after)
 
-    def revert(self):
+    def revert(self, message_user=None, request=None):
         vehicle = self.vehicle
         fields = []
 
@@ -455,12 +455,22 @@ class VehicleRevision(models.Model):
                     if vehicle.reg == after:
                         vehicle.reg = before
                         fields.append('reg')
+                elif key == 'withdrawn':
+                    if vehicle.withdrawn and key == 'Yes':
+                        vehicle.widthdrawn = False
+                        fields.append('withdrawn')
                 else:
-                    print(f'vehicle {vehicle.id} not reverted {key}')
+                    if message_user and request:
+                        message_user(request, f'vehicle {vehicle.id} {key} not reverted')
+                    else:
+                        print(f'vehicle {vehicle.id} {key} not reverted')
 
         if fields:
             self.vehicle.save(update_fields=fields)
-            print(f'vehicle {vehicle.id} reverted {fields}')
+            if message_user and request:
+                message_user(request, f'vehicle {vehicle.id} reverted {fields}')
+            else:
+                print(f'vehicle {vehicle.id} reverted {fields}')
 
 
 class VehicleJourney(models.Model):
