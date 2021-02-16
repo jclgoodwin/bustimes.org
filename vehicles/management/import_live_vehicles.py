@@ -84,6 +84,7 @@ def same_journey(latest_location, journey, when):
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ''
     vehicles = Vehicle.objects.select_related('latest_location__journey')
+    vehicle_location_update_fields = ('datetime', 'latlong', 'journey', 'heading', 'early', 'current')
     wait = 60
 
     def __init__(self, *args, **kwargs):
@@ -246,8 +247,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 VehicleLocation.objects.bulk_create(to_create)
         if to_update:
             with beeline.tracer(name="bulk update"):
-                VehicleLocation.objects.bulk_update(to_update, fields=['datetime', 'latlong', 'journey', 'occupancy',
-                                                                       'heading', 'early', 'delay', 'current'])
+                VehicleLocation.objects.bulk_update(to_update, fields=self.vehicle_location_update_fields)
 
         group_messages = {}
         channel_messages = {}

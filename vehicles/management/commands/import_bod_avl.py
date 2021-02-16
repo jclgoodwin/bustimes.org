@@ -39,6 +39,11 @@ class Command(ImportLiveVehiclesCommand):
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
     identifiers = {}
+    vehicle_location_update_fields = (
+        'datetime', 'latlong', 'journey', 'heading', 'current',
+        'occupancy', 'seated_occupancy', 'seated_capacity',
+        'wheelchair_occupancy', 'wheelchair_capacity', 'occupancy_thresholds'
+    )
 
     @staticmethod
     def get_datetime(item):
@@ -396,11 +401,21 @@ class Command(ImportLiveVehiclesCommand):
         bearing = monitored_vehicle_journey.get('Bearing')
         if bearing:
             bearing = float(bearing)
-        return VehicleLocation(
+        location = VehicleLocation(
             latlong=latlong,
             heading=bearing,
             occupancy=monitored_vehicle_journey.get('Occupancy', '')
         )
+        try:
+            extensions = item['Extensions']['VehicleJourney']
+            location.seated_occupancy = extensions['SeatedOccupancy']
+            location.seated_capacity = extensions['SeatedCapacity']
+            location.wheelchair_occupancy = extensions['WheelchairOccupancy']
+            location.wheelchair_capacity = extensions['WheelchairCapacity']
+            location.occupancy_thresholds = extensions['OccupancyThresholds']
+        except KeyError:
+            pass
+        return location
 
     @staticmethod
     def items_from_response(response):

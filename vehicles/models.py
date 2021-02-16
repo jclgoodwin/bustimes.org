@@ -617,7 +617,6 @@ class VehicleLocation(models.Model):
                 'line_name': journey.route_name,
             },
             'destination': journey.destination,
-            'occupancy': self.get_occupancy_display()
         }
         if vehicle.livery_id:
             json['vehicle']['livery'] = vehicle.livery_id
@@ -641,6 +640,14 @@ class VehicleLocation(models.Model):
                 else:
                     features = vehicle_type
         json['vehicle']['features'] = features
+
+        if self.occupancy_thresholds:
+            thresholds = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
+            occupancy = f'💺{thresholds[0] - self.seated_occupancy}–{self.seated_capacity - self.seated_occupancy} free'
+            if self.wheelchair_capacity:
+                if self.wheelchair_occupancy < self.wheelchair_capacity:
+                    occupancy = f'{occupancy}<br>🦽free'
+            json['occupancy'] = occupancy
 
         if journey.service:
             json['service']['url'] = journey.service.get_absolute_url()

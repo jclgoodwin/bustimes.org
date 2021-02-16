@@ -277,6 +277,10 @@
             content += item.vehicle.features + '<br>';
         }
 
+        if (item.occupancy) {
+            content += item.occupancy + '<br>';
+        }
+
         if (ago >= 1800) {
             content += 'Updated at ' + then.toTimeString().slice(0, 8);
         } else {
