@@ -19,6 +19,11 @@ def get_routes(routes, when):
             if start_dates:
                 max_start_date = max(start_dates)
                 routes = [route for route in routes if route.start_date == max_start_date]
+        elif all(route.source.name.startswith('First Bus') for route in routes):
+            routes_by_service_code = {}  # remove duplicates
+            for route in routes:
+                routes_by_service_code[route.service_code] = route
+            routes = routes_by_service_code.values()
     else:
         override_routes = [route for route in routes if route.start_date == route.end_date == when]
         if override_routes:  # e.g. Lynx BoxingDayHoliday
