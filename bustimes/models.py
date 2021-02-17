@@ -209,16 +209,6 @@ class CalendarDate(models.Model):
 
     contains = Route.contains
 
-    def relevant(self, operating_period):
-        if self.end_date:
-            if self.end_date < self.start_date:
-                return False
-            if operating_period.start > self.end_date:
-                return False
-        if operating_period.end and operating_period.end < self.start_date:
-            return False
-        return True
-
     def __str__(self):
         string = str(self.start_date)
         if self.end_date != self.start_date:

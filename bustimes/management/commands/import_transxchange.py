@@ -368,46 +368,45 @@ class Command(BaseCommand):
                 self.undefined_holidays.add(holiday)
 
         sodt = operating_profile.serviced_organisation_day_type
-        summary = ''
+        summary = []
+        non_operation_days = []
+        operation_days = []
         if sodt:
-            if sodt.non_operation_working_days:
+            if sodt.non_operation_working_days is sodt.non_operation_holidays:
+                pass
+            elif sodt.non_operation_working_days:
                 if sodt.non_operation_working_days.name:
-                    summary = f'not {sodt.non_operation_working_days.name} days'
-                non_operation_days = sodt.non_operation_working_days.working_days
+                    summary.append(f'not {sodt.non_operation_working_days.name} days')
+                non_operation_days += sodt.non_operation_working_days.working_days
             elif sodt.non_operation_holidays:
                 if sodt.non_operation_holidays.name:
-                    summary = f'not {sodt.non_operation_holidays.name} holidays'
-                non_operation_days = sodt.non_operation_holidays.holidays
-            else:
-                non_operation_days = None
+                    summary.append(f'not {sodt.non_operation_holidays.name} holidays')
+                non_operation_days += sodt.non_operation_holidays.holidays
 
-            if non_operation_days:
-                calendar_dates += [
-                    CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
-                                 operation=False)
-                    for date_range in non_operation_days
-                ]
+            calendar_dates += [
+                CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                             operation=False)
+                for date_range in non_operation_days
+            ]
 
-            if sodt.operation_working_days:
+            if sodt.operation_working_days is sodt.operation_holidays:
+                pass
+            elif sodt.operation_working_days:
                 if sodt.operation_working_days.name:
-                    summary = f'{sodt.operation_working_days.name} days only'
-                operation_days = sodt.operation_working_days.working_days
+                    summary.append(f'{sodt.operation_working_days.name} days')
+                operation_days += sodt.operation_working_days.working_days
             elif sodt.operation_holidays:
                 if sodt.operation_holidays.name:
-                    summary = f'{sodt.operation_holidays.name} holidays only'
-                operation_days = sodt.operation_holidays.holidays
-            else:
-                operation_days = None
+                    summary.append(f'{sodt.operation_holidays.name} holidays')
+                operation_days += sodt.operation_holidays.holidays
 
-            if operation_days:
-                calendar_dates += [
-                    CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
-                                 operation=True)
-                    for date_range in operation_days
-                ]
+            calendar_dates += [
+                CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                             operation=True)
+                for date_range in operation_days
+            ]
 
-        # remove date ranges which end before they start?! etc
-        calendar_dates = [dates for dates in calendar_dates if dates.relevant(operating_period)]
+        summary = ', '.join(summary)
 
         if operating_period.start == operating_period.end:
             if summary:
