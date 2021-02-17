@@ -340,6 +340,8 @@ class Command(ImportLiveVehiclesCommand):
         if journey_code:
             journey.code = journey_code
 
+        destination_ref = monitored_vehicle_journey.get('DestinationRef')
+
         if not journey.destination:
             destination = monitored_vehicle_journey.get('DestinationName')
             if destination:
@@ -347,7 +349,6 @@ class Command(ImportLiveVehiclesCommand):
                     destination = destination.removeprefix(f'{route_name} ')  # TGTC
                 journey.destination = destination
             else:
-                destination_ref = monitored_vehicle_journey.get('DestinationRef')
                 if destination_ref:
                     destination_ref = destination_ref.removeprefix('NT')
                     cache_key = f'stop{destination_ref}locality'
