@@ -357,10 +357,11 @@ class VehicleDetailView(DetailView):
             )
         }
 
-        garages = set(journey.trip.garage_id for journey in context['journeys']
-                      if journey.trip and journey.trip.garage_id)
-        if len(garages) == 1:
-            context['garage'] = Garage.objects.get(id=garages.pop())
+        if 'journeys' in context:
+            garages = set(journey.trip.garage_id for journey in context['journeys']
+                          if journey.trip and journey.trip.garage_id)
+            if len(garages) == 1:
+                context['garage'] = Garage.objects.get(id=garages.pop())
 
         context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
 
