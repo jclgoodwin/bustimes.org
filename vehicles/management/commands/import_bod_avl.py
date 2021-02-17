@@ -9,7 +9,7 @@ from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
 from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
-from bustimes.models import Trip, StopTime, get_calendars
+from bustimes.models import Trip, StopTime, get_trip
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -375,21 +375,7 @@ class Command(ImportLiveVehiclesCommand):
             if journey.service and journey_ref and '_' not in journey_ref:
                 if not datetime:
                     datetime = self.get_datetime(item)
-                trips = Trip.objects.filter(
-                    Q(route__start_date__lte=datetime) | Q(route__start_date=None),
-                    Q(route__end_date__gte=datetime) | Q(route__end_date=None),
-                    route__service=journey.service
-                ).distinct('start', 'end', 'destination')
-                try:
-                    journey.trip = trips.get(ticket_machine_code=journey_ref)
-                except Trip.MultipleObjectsReturned:
-                    trips = trips.filter(calendar__in=get_calendars(datetime))
-                    try:
-                        journey.trip = trips.get(ticket_machine_code=journey_ref)
-                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                        pass
-                except Trip.DoesNotExist:
-                    pass
+                journey.trip = get_trip(journey.service, journey_ref, datetime, destination_ref)
 
         return journey
 

@@ -17,7 +17,7 @@ from django.urls import reverse
 from django.utils import timezone
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
-from bustimes.models import Garage, Trip
+from bustimes.models import Garage, Trip, get_trip
 from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
@@ -489,6 +489,8 @@ def journey_json(request, pk):
             trip = journey.trip
         except ObjectDoesNotExist:
             pass
+    if not trip and journey.service_id and journey.code and '_' not in journey.code:
+        trip = get_trip(journey.service_id, journey.code, journey.datetime)
 
     if trip:
         data['stops'] = [{

@@ -95,8 +95,8 @@ class Command(ImportLiveVehiclesCommand):
                     yield item
                     i += 1
                     if i == 100:
-                       self.save()
-                       i = 0
+                        self.save()
+                        i = 0
                 self.save()
                 sleep(1)
             except (RequestException, KeyError) as e:

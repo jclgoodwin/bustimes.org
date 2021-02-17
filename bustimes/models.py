@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db.models import Q, Exists, OuterRef
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import DateRangeField
@@ -51,6 +52,37 @@ def get_calendars(when, calendar_ids=None):
     ).filter(
         Q(**{when.strftime('%a').lower(): True}) | Q(calendardate__in=special_inclusions)
     )
+
+
+def get_trip(service, journey_ref, when, destination_ref=None):
+    trips = Trip.objects.filter(
+        Q(route__start_date__lte=when) | Q(route__start_date=None),
+        Q(route__end_date__gte=when) | Q(route__end_date=None),
+        route__service=service
+    ).distinct('start', 'end')
+
+    if destination_ref and ' ' not in destination_ref and destination_ref[:3].isdigit():
+        trips = trips.filter(destination=destination_ref)
+    else:
+        trips = trips.distinct('destination')
+
+    try:
+        return trips.get(ticket_machine_code=journey_ref)
+    except Trip.MultipleObjectsReturned:
+        trips = trips.filter(calendar__in=get_calendars(when))
+        try:
+            return trips.get(ticket_machine_code=journey_ref)
+        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+            pass
+    except Trip.DoesNotExist:
+        if len(journey_ref) == 4 and journey_ref.isdigit() and int(journey_ref) < 2400:
+            hours = int(journey_ref[:-2])
+            minutes = int(journey_ref[-2:])
+            start = timedelta(hours=hours, minutes=minutes)
+            try:
+                return trips.get(start=start)
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                pass
 
 
 class Route(models.Model):
