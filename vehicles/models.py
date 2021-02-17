@@ -642,11 +642,17 @@ class VehicleLocation(models.Model):
         json['vehicle']['features'] = features
 
         if self.occupancy_thresholds:
-            thresholds = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
-            occupancy = f'💺{thresholds[0] - self.seated_occupancy}–{self.seated_capacity - self.seated_occupancy} free'
+            green, amber = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
+            if self.seated_occupancy < green:
+                occupancy = '🟢'
+            elif self.seated_occupancy < amber:
+                occupancy = '🟠'
+            else:
+                occupancy = '🔴'
+            occupancy = f'{occupancy}{self.seated_capacity - self.seated_occupancy} seats free'
             if self.wheelchair_capacity:
                 if self.wheelchair_occupancy < self.wheelchair_capacity:
-                    occupancy = f'{occupancy}<br>🦽free'
+                    occupancy = f'{occupancy}<br>🦽space free'
             json['occupancy'] = occupancy
 
         if journey.service:
