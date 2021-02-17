@@ -40,6 +40,10 @@
         <p>Features: {{ vehicle.features.all|join:", " }}</p>
     {% endif %}
 
+    {% if garage %}
+        <p>{{ garage }}</p>
+    {% endif %}
+
     {% if vehicle.editable %}
         <ul class="horizontal">
             <li><a href="{{ vehicle.get_absolute_url }}/edit">Edit</a>{% if pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</li>
