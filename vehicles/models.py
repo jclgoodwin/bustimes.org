@@ -455,6 +455,10 @@ class VehicleRevision(models.Model):
                     if vehicle.reg == after:
                         vehicle.reg = before
                         fields.append('reg')
+                elif key == 'name':
+                    if vehicle.name == after:
+                        vehicle.name = before
+                        fields.append('name')
                 elif key == 'withdrawn':
                     if vehicle.withdrawn and after == 'Yes':
                         vehicle.withdrawn = False
