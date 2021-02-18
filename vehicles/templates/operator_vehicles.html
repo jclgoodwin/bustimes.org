@@ -120,7 +120,7 @@
                 {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td class="trivia">{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
-                {% if features_column %}<td class="trivia">{{ vehicle.features.all|join:", " }}</td>{% endif %}
+                {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if vehicle.editable %}

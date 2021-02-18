@@ -114,14 +114,14 @@ class VehiclesTests(TestCase):
 
         # last seen today - should only show time
         with freeze_time('2020-10-20 12:00+01:00'):
-            with self.assertNumQueries(4):
+            with self.assertNumQueries(2):
                 response = self.client.get('/operators/lynx/vehicles')
         self.assertNotContains(response, '20 Oct')
         self.assertContains(response, '00:47')
 
         # last seen yesterday - should show date
         with freeze_time('2020-10-21 00:10+01:00'):
-            with self.assertNumQueries(4):
+            with self.assertNumQueries(2):
                 response = self.client.get('/operators/lynx/vehicles')
         self.assertContains(response, '20 Oct 00:47')
 
@@ -361,12 +361,12 @@ class VehiclesTests(TestCase):
     def test_vehicles_edit(self):
         self.client.force_login(self.user)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(9):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
 
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(14):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,
@@ -380,7 +380,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'FD54\xa0JYA')
 
         # just updating operator should not create a VehicleEdit, but update the vehicle immediately
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(15):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.bova.id,

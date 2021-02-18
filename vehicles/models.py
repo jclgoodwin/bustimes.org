@@ -178,9 +178,13 @@ class Vehicle(models.Model):
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     latest_location = models.OneToOneField('VehicleLocation', models.SET_NULL, null=True, blank=True, editable=False)
+    latest_journey = models.OneToOneField(
+        'VehicleJourney', models.SET_NULL, null=True, blank=True, editable=False, related_name='latest_vehicle'
+    )
     features = models.ManyToManyField(VehicleFeature, blank=True)
     withdrawn = models.BooleanField(default=False)
     data = models.JSONField(null=True, blank=True)
+    garage = models.ForeignKey('bustimes.Garage', models.SET_NULL, null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, **kwargs):
         if 'update_fields' not in kwargs or 'fleet_number' in kwargs:

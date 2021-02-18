@@ -2,7 +2,7 @@ import redis
 import json
 import xml.etree.cElementTree as ET
 import datetime
-from django.db.models import Exists, OuterRef, Prefetch, Subquery
+from django.db.models import Exists, OuterRef
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -76,14 +76,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
     if not parent:
-        latest_journeys = Subquery(VehicleJourney.objects.filter(
-            vehicle=OuterRef('pk')
-        ).order_by('-datetime').values('pk')[:1])
-        latest_journeys = vehicles.filter(latest_location=None).annotate(latest_journey=latest_journeys)
-        latest_journeys = VehicleJourney.objects.filter(id__in=latest_journeys.values('latest_journey'))
-        prefetch = Prefetch('vehiclejourney_set',
-                            queryset=latest_journeys.select_related('service'), to_attr='latest_journeys')
-        vehicles = vehicles.prefetch_related(prefetch, 'features')
+        vehicles = vehicles.annotate(feature_names=StringAgg('features__name', ', '))
         pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id')).only('id')
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
         vehicles = vehicles.select_related('latest_location__journey__service')
@@ -148,7 +141,7 @@ def operator_vehicles(request, slug=None, parent=None):
     page = request.GET.get('page')
     vehicles = paginator.get_page(page)
 
-    features_column = not parent and any(vehicle.features.all() for vehicle in vehicles)
+    features_column = not parent and any(vehicle.feature_names for vehicle in vehicles)
 
     columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
     for vehicle in vehicles:
@@ -160,8 +153,8 @@ def operator_vehicles(request, slug=None, parent=None):
             if vehicle.latest_location:
                 journey = vehicle.latest_location.journey
                 when = vehicle.latest_location.datetime
-            elif vehicle.latest_journeys:
-                journey = vehicle.latest_journeys[0]
+            elif vehicle.latest_journey:
+                journey = vehicle.latest_journey
                 when = journey.datetime
             else:
                 continue
