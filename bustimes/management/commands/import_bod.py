@@ -106,6 +106,7 @@ def bus_open_data(api_key, operator):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
+            command.garages = {}
 
             sources = []
 
@@ -192,6 +193,7 @@ def first():
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
+            command.garages = {}
 
             command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
             command.source.datetime = timezone.now()
@@ -249,6 +251,7 @@ def ticketer(operator=None):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
+            command.garages = {}
 
             # avoid importing old data
             command.source.datetime = timezone.now()
@@ -296,6 +299,7 @@ def stagecoach(operator=None):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
+            command.garages = {}
 
             # avoid importing old data
             command.source.datetime = timezone.now()
