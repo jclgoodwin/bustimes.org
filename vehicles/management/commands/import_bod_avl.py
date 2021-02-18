@@ -33,7 +33,7 @@ class Command(ImportLiveVehiclesCommand):
         'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],  # Transdev Blazefield
         'MTRL': ['MPTR'],  # MP Travel using M Travel code (no relation!)
         'HUNT': ['HNTC'],  # Hunts using Hunters code
-        'PB': ['MTLN', 'NXWM'],  # NWWM Perry Barr or Metroline. Nothing has any meaning.
+        'PB': ['MTLN', 'TNXB'],  # NWWM Perry Barr or Metroline. Nothing has any meaning.
     }
     operator_cache = {}
     vehicle_id_cache = {}
