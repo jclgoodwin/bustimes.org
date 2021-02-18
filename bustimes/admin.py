@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.db.models import Exists, OuterRef
+from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
 from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime, Garage
 
@@ -53,8 +54,23 @@ class NoteAdmin(admin.ModelAdmin):
     search_fields = ['code', 'text']
 
 
+class GarageAdmin(admin.ModelAdmin):
+    list_display = ['code', 'name', 'operators']
+
+    def operators(self, obj):
+        return obj.operators
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.annotate(
+                operators=StringAgg('trip__route__service__operator', ', ', distinct=True)
+            )
+        return queryset
+
+
 admin.site.register(Route, RouteAdmin)
 admin.site.register(Trip, TripAdmin)
 admin.site.register(Calendar, CalendarAdmin)
 admin.site.register(Note, NoteAdmin)
-admin.site.register(Garage)
+admin.site.register(Garage, GarageAdmin)
