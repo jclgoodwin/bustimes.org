@@ -331,6 +331,9 @@ PASSENGER_OPERATORS = [
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
+    ('Sanders Coaches', 'https://data.discoverpassenger.com/operator/sanderscoaches', 'EA', {
+        'SA': 'SNDR',
+    }),
 ]
 FIRST_OPERATORS = [
 ]
@@ -390,7 +393,10 @@ BOD_OPERATORS = [
     }, False),
     ('HNTS', 'EM', {}, False),
     # ('SLBS', 'WM', {}, True),
-    ('DAGC', 'NW', {}, False),
+    ('DAGC', 'NW', {
+        'DAGC': 'DAGC',
+        'CRDR': 'CRDR'
+    }, False),
     ('RLNE', 'SE', {}, True),
     ('GOGO', 'NW', {}, False),
     ('BRYL', 'EM', {}, False),
