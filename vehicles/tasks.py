@@ -136,13 +136,12 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
         'code': vehicle
     }
 
-    vehicles = Vehicle.objects
     if operator.parent:
         vehicles = Vehicle.objects.filter(operator__parent=operator.parent)
     else:
         vehicles = operator.vehicle_set
 
-    vehicles = vehicles.select_related('latest_location')
+    vehicles = vehicles.select_related('latest_location', 'latest_journey')
 
     if vehicle.isdigit():
         defaults['fleet_number'] = vehicle
@@ -158,27 +157,27 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     time = parse_datetime(time)
 
+    if vehicle.latest_journey and vehicle.latest_journey.datetime == time:
+        return
+
     if vehicle.latest_location and (time - vehicle.latest_location.datetime).total_seconds() < 7200:
-        # vehicle tracked 2 hours ago (or more recently)
+        # vehicle tracked less than 2 hours ago
         return
 
     destination = destination or ''
     route_name = data.get('LineName') or data.get('LineRef')
-    if VehicleJourney.objects.filter(vehicle=vehicle, datetime=time).exists():
+
+    journeys = vehicle.vehiclejourney_set
+    if journeys.filter(datetime=time).exists():
+        return
+    if journey_ref and journeys.filter(route_name=route_name, code=journey_ref, datetime__date=time.date()).exists():
         return
 
-    if journey_ref:
-        try:
-            existing_journey = VehicleJourney.objects.get(vehicle=vehicle, route_name=route_name, code=journey_ref,
-                                                          datetime__date=time.date())
-            if existing_journey.datetime != time:
-                existing_journey.datetime = time
-                existing_journey.save(update_fields=['datetime'])
-        except VehicleJourney.DoesNotExist:
-            VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name, data=data,
-                                          code=journey_ref, datetime=time, source=data_source, destination=destination)
-        except VehicleJourney.MultipleObjectsReturned:
-            return
-    else:
-        VehicleJourney.objects.create(vehicle=vehicle, service_id=service, route_name=route_name, data=data,
-                                      datetime=time, source=data_source, destination=destination)
+    journey = VehicleJourney.objects.create(
+        vehicle=vehicle, service_id=service, route_name=route_name, data=data, code=journey_ref,
+        datetime=time, source=data_source, destination=destination
+    )
+
+    if not vehicle.latest_journey or vehicle.latest_journey.datetime < journey.datetime:
+        vehicle.latest_journey = journey
+        vehicle.save(update_fields=['latest_journey'])
