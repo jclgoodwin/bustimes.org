@@ -8,23 +8,22 @@ from .utils import format_timedelta
 
 
 def get_routes(routes, when):
-    if any(route.revision_number for route in routes):
-        routes = [route for route in routes if route.contains(when)]
-        revision_numbers = set(route.revision_number or 0 for route in routes)
-        if len(revision_numbers) > 1:
-            max_revision_number = max(revision_numbers)
-            if max_revision_number:
-                routes = [route for route in routes if route.revision_number == max_revision_number]
-        elif all('/first/' in route.source.url for route in routes):
-            start_dates = set(route.start_date for route in routes)
-            if start_dates:
-                max_start_date = max(start_dates)
-                routes = [route for route in routes if route.start_date == max_start_date]
-        elif all(route.source.name.startswith('First Bus') for route in routes):
-            routes_by_service_code = {}  # remove duplicates
-            for route in routes:
-                routes_by_service_code[route.service_code] = route
-            routes = routes_by_service_code.values()
+    routes = [route for route in routes if route.contains(when)]
+    revision_numbers = set(route.revision_number or 0 for route in routes)
+    if len(revision_numbers) > 1:
+        max_revision_number = max(revision_numbers)
+        if max_revision_number:
+            routes = [route for route in routes if route.revision_number == max_revision_number]
+    # elif all('/first/' in route.source.url for route in routes):
+    #     start_dates = set(route.start_date for route in routes)
+    #     if start_dates:
+    #         max_start_date = max(start_dates)
+    #         routes = [route for route in routes if route.start_date == max_start_date]
+    elif all(route.source.name.startswith('First Bus') for route in routes):
+        routes_by_service_code = {}  # remove duplicates
+        for route in routes:
+            routes_by_service_code[route.service_code] = route
+        routes = routes_by_service_code.values()
     else:
         override_routes = [route for route in routes if route.start_date == route.end_date == when]
         if override_routes:  # e.g. Lynx BoxingDayHoliday
