@@ -20,7 +20,7 @@
     }).addTo(map);
 
     var lastStopsReq,
-        highWater,
+        stopsHighWater,
         showStops = true,
         bigStopMarkers,
         bigVehicleMarkers = true;
@@ -127,17 +127,17 @@
         if (lastStopsReq) {
             lastStopsReq.abort();
         }
-        bigStopMarkers = (map.getZoom() > 14);
         var bounds = map.getBounds();
-        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
-        if (highWater && highWater.contains(bounds)) {
+        bigStopMarkers = (map.getZoom() > 14);
+        if (stopsHighWater && stopsHighWater.contains(bounds)) {
             if (!bigStopMarkers) {
                 return;
             }
         }
+        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
         lastStopsReq = reqwest('/stops.json' + params, function(data) {
             if (data && data.features) {
-                highWater = bounds;
+                stopsHighWater = bounds;
                 stopsGroup.clearLayers();
                 stops = {};
                 for (var i = data.features.length - 1; i >= 0; i -= 1) {
@@ -153,21 +153,25 @@
         });
     }
 
-    var lastVehiclesReq, loadVehiclesTimeout;
+    var lastVehiclesReq, loadVehiclesTimeout, vehiclesHighWater;
 
-    function loadVehicles() {
+    function loadVehicles(onMoveEnd) {
         if (lastVehiclesReq) {
             lastVehiclesReq.abort();
+        }
+        var bounds = map.getBounds();
+        if (onMoveEnd && vehiclesHighWater && vehiclesHighWater.contains(bounds) && bigVehicleMarkers) {
+            return;
         }
         if (loadVehiclesTimeout) {
             clearTimeout(loadVehiclesTimeout);
         }
-        var bounds = map.getBounds();
         var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
         lastVehiclesReq = reqwest(
             '/vehicles.json' + params,
             function(data) {
                 if (data) {
+                    vehiclesHighWater = bounds;
                     processVehiclesData(data);
                 }
                 loadVehiclesTimeout = setTimeout(loadVehicles, 15000);
@@ -476,7 +480,7 @@
         // var bounds = map.getBounds();
 
         if (!first) {
-            loadVehicles();
+            loadVehicles(true);
             /*
             for (var id in markers) {
                 var marker = markers[id];
