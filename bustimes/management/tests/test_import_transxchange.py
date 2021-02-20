@@ -1,10 +1,10 @@
 import os
 import zipfile
 import xml.etree.cElementTree as ET
+import time_machine
 from mock import patch
 from tempfile import TemporaryDirectory
 from datetime import date
-from freezegun import freeze_time
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.core.management import call_command
@@ -95,7 +95,7 @@ class ImportTransXChangeTest(TestCase):
     def write_file_to_zipfile(open_zipfile, filename):
         open_zipfile.write(os.path.join(FIXTURES_DIR, filename), filename)
 
-    @freeze_time('3 October 2016')
+    @time_machine.travel('3 October 2016')
     def test_east_anglia(self):
         self.handle_files('EA.zip', ['ea_20-12-_-y08-1.xml', 'ea_21-13B-B-y08-1.xml'])
 
@@ -209,7 +209,7 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(f'/services/{service.id}/timetable?date=2020-01-01')
         self.assertContains(res, 'Sorry, no journeys found for Wednesday 1 January 2020')
 
-    @freeze_time('30 October 2017')
+    @time_machine.travel('30 October 2017')
     def test_service_with_empty_pattern(self):
         self.handle_files('EA.zip', ['swe_33-9A-A-y10-2.xml'])
 
@@ -223,7 +223,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(157, route.service.stopusage_set.count())
 
-    @freeze_time('23 January 2017')
+    @time_machine.travel('23 January 2017')
     def test_do_service_wales(self):
         """Test a timetable from Wales (with SequenceNumbers on Journeys),
         with a university ServicedOrganisation
@@ -262,7 +262,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(19, service.stopusage_set.count())
 
-    @freeze_time('2016-12-15')
+    @time_machine.travel('2016-12-15')
     def test_timetable_ne(self):
         """Test timetable with some abbreviations"""
         self.handle_files('NE.zip', ['NE_03_SCC_X6_1.xml'])
@@ -287,7 +287,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(149, service.stopusage_set.order_by().distinct('stop_id').count())
 
-    @freeze_time('2017-08-29')
+    @time_machine.travel('2017-08-29')
     def test_timetable_abbreviations_notes(self):
         """Test a timetable with a note which should determine the bounds of an abbreviation"""
 
@@ -314,7 +314,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(138, service.stopusage_set.count())
 
-    @freeze_time('2017-12-10')
+    @time_machine.travel('2017-12-10')
     def test_timetable_derby_alvaston_circular(self):
         """Test a weird timetable where 'Wilmorton Ascot Drive' is visited twice consecutively on on one journey"""
 
@@ -326,7 +326,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(60, len(timetable.groupings[0].rows))
 
-    @freeze_time('2017-04-13')
+    @time_machine.travel('2017-04-13')
     def test_timetable_deadruns(self):
         """Test a timetable with some dead runs which should be respected"""
 
@@ -383,7 +383,7 @@ class ImportTransXChangeTest(TestCase):
         # deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 14))
         # self.assertEqual(7, len(deadruns.groupings[0].rows[0].times))
 
-    @freeze_time('2017-08-30')
+    @time_machine.travel('2017-08-30')
     def test_timetable_servicedorg(self):
         """Test a timetable with a ServicedOrganisation"""
 
@@ -407,7 +407,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(114, service.stopusage_set.count())
 
-    @freeze_time('2017-01-23')
+    @time_machine.travel('2017-01-23')
     def test_timetable_holidays_only(self):
         """Test a service with a HolidaysOnly operating profile
         """
@@ -418,7 +418,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertNotIn('timetable', response.context_data)
 
         # Has some journeys that operate on 1 May 2017
-        with freeze_time(date(2017, 4, 28)):
+        with time_machine.travel(date(2017, 4, 28)):
             response = self.client.get(service.get_absolute_url())
             timetable = response.context_data['timetable']
             self.assertEqual(timetable.date, date(2017, 5, 1))
@@ -427,7 +427,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(107, service.stopusage_set.count())
 
-    @freeze_time('2012-06-27')
+    @time_machine.travel('2012-06-27')
     def test_timetable_goole(self):
         self.handle_files('W.zip', ['SVRYEAGT00.xml'])
         service = Service.objects.get()
@@ -454,7 +454,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(37, service.stopusage_set.count())
 
-    @freeze_time('2017-01-01')
+    @time_machine.travel('2017-01-01')
     def test_cardiff_airport(self):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
         self.handle_files('W.zip', ['TCAT009.xml'])
@@ -464,7 +464,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(17, service.stopusage_set.count())
 
-    @freeze_time('2018-09-24')
+    @time_machine.travel('2018-09-24')
     def test_timetable_plymouth(self):
         self.handle_files('EA.zip', ['20-plymouth-city-centre-plympton.xml'])
         service = Service.objects.get()
@@ -569,14 +569,14 @@ class ImportTransXChangeTest(TestCase):
         service.geometry = 'SRID=4326;MULTILINESTRING((1.31326925542 51.1278853356,1.08276947772 51.2766792559))'
         service.save(update_fields=['geometry'])
 
-        with freeze_time('1 September 2017'):
+        with time_machine.travel('1 September 2017'):
             with self.assertNumQueries(11):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
         self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
         self.assertContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         self.assertContains(res, f'data-service="{service.id},{duplicate.id}"></div')
 
-        with freeze_time('1 October 2017'):
+        with time_machine.travel('1 October 2017'):
             with self.assertNumQueries(14):
                 res = self.client.get(service.get_absolute_url())  # + '?date=2017-10-01')
         self.assertContains(res, """
@@ -592,7 +592,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertNotContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         self.assertEqual(18, len(res.context_data['timetable'].groupings[0].trips))
 
-        with freeze_time('1 October 2017'):
+        with time_machine.travel('1 October 2017'):
             with self.assertNumQueries(14):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
         self.assertContains(res, """
@@ -612,7 +612,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(87, service.stopusage_set.all().count())
         # self.assertEqual(121, duplicate.stopusage_set.all().count())
 
-    @freeze_time('25 June 2016')
+    @time_machine.travel('25 June 2016')
     def test_do_service_scotland(self):
         # simulate a Scotland zipfile:
         self.handle_files('S.zip', ['SVRABBN017.xml'])
@@ -662,7 +662,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(88, service.stopusage_set.count())
 
-    @freeze_time('22 January 2017')
+    @time_machine.travel('22 January 2017')
     def test_megabus(self):
         # simulate a National Coach Service Database zip file
         with TemporaryDirectory() as directory:
@@ -722,7 +722,7 @@ class ImportTransXChangeTest(TestCase):
 
         service = Service.objects.get(service_code='M12_MEGA')
 
-        with freeze_time('1 January 2017'):
+        with time_machine.travel('1 January 2017'):
             res = self.client.get(service.get_absolute_url())
 
         self.assertContains(res, '<option selected value="2017-01-01">Sunday 1 January 2017</option>')

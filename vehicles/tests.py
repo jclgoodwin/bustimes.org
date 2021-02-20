@@ -1,4 +1,4 @@
-from freezegun import freeze_time
+import time_machine
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
@@ -113,14 +113,14 @@ class VehiclesTests(TestCase):
         self.assertFalse(str(response.context['exception']))
 
         # last seen today - should only show time
-        with freeze_time('2020-10-20 12:00+01:00'):
+        with time_machine.travel('2020-10-20 12:00+01:00'):
             with self.assertNumQueries(2):
                 response = self.client.get('/operators/lynx/vehicles')
         self.assertNotContains(response, '20 Oct')
         self.assertContains(response, '00:47')
 
         # last seen yesterday - should show date
-        with freeze_time('2020-10-21 00:10+01:00'):
+        with time_machine.travel('2020-10-21 00:10+01:00'):
             with self.assertNumQueries(2):
                 response = self.client.get('/operators/lynx/vehicles')
         self.assertContains(response, '20 Oct 00:47')
@@ -392,7 +392,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(1, VehicleEdit.objects.count())
 
     def test_vehicles_json(self):
-        with freeze_time(self.datetime):
+        with time_machine.travel(self.datetime):
             with self.assertNumQueries(1):
                 response = self.client.get('/vehicles.json?ymax=52&xmax=2&ymin=51&xmin=1')
             self.assertEqual(200, response.status_code)

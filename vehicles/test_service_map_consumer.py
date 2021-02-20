@@ -49,6 +49,5 @@ class WebsocketConsumerTest(TestCase):
         message_b = await communicator.receive_json_from()
         self.assertEqual(items, message_b)
 
-
         await communicator.receive_nothing()
         await communicator.disconnect()

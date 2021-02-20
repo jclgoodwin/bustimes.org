@@ -1,11 +1,11 @@
 import os
 import zipfile
-from datetime import date
+import datetime
 from ciso8601 import parse_datetime
 from tempfile import TemporaryDirectory
 from vcr import use_cassette
 from mock import patch
-from freezegun import freeze_time
+import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode
@@ -35,7 +35,7 @@ class ImportBusOpenDataTest(TestCase):
         ])
 
     @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
-    @freeze_time('2020-05-01')
+    @time_machine.travel(datetime.datetime(2020, 5, 1))
     @override_settings(BOD_OPERATORS=[
         ('LYNX', 'EA', {
             'CO': 'LYNX',
@@ -72,8 +72,12 @@ class ImportBusOpenDataTest(TestCase):
                 <td>12:19</td>
             </tr>""", html=True)
 
-        self.assertContains(response, """<p class="credit">Timetable data from <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/\
-Bus Open Data Service</a>, 1 April 2020</p>""")
+        self.assertContains(
+            response,
+            '<p class="credit">Timetable data from '
+            '<a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/Bus Open Data Service</a>, '
+            '1 April 2020</p>'
+        )
 
         trip = route.trip_set.first()
         response = self.client.get(f'/trips/{trip.id}.json')
@@ -88,12 +92,16 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
 
         response = self.client.get('/stops/2900W0321/times.json')
         self.assertEqual(
-            response.json(),
-            {
+            response.json(), {
                 'times': [
-                    {'service': {'line_name': '54', 'operators': [{'id': 'LYNX', 'name': 'Lynx', 'parent': ''}]},
-                     'trip_id': trip.id, 'destination': {'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'},
-                     'aimed_arrival_time': None, 'aimed_departure_time': '2020-05-01T09:15:00Z'}
+                    {
+                        'service': {'line_name': '54', 'operators': [{'id': 'LYNX', 'name': 'Lynx', 'parent': ''}]},
+                        'trip_id': trip.id,
+                        'destination': {
+                            'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'
+                        },
+                        'aimed_arrival_time': None, 'aimed_departure_time': '2020-05-01T09:15:00Z'
+                    }
                 ]
             }
         )
@@ -111,9 +119,9 @@ Bus Open Data Service</a>, 1 April 2020</p>""")
         'SCHU': 'SCHU',
         'SCPB': 'SCPB',
     })])
-    @freeze_time('2020-06-10')
+    @time_machine.travel(datetime.datetime(2020, 6, 10))
     @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
-        'AllBankHolidays': [date(2020, 8, 31)],
+        'AllBankHolidays': [datetime.date(2020, 8, 31)],
     })
     def test_import_stagecoach(self):
 

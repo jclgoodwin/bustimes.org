@@ -1,5 +1,6 @@
 import os
-from freezegun import freeze_time
+import time_machine
+import datetime
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import Region, Operator, DataSource
@@ -16,7 +17,7 @@ class JerseyImportTest(TestCase):
         Operator.objects.create(id='libertybus', region_id='JE')
 
     @use_cassette(os.path.join(DIR, 'vcr', 'import_live_jersey.yaml'), decode_compressed_response=True)
-    @freeze_time('2018-08-21 00:00:09')
+    @time_machine.travel(datetime.datetime(2018, 8, 21, 0, 0, 9))
     def test_handle(self):
         command = import_live_jersey.Command()
         items = command.get_items()

@@ -1,5 +1,5 @@
 from mock import patch
-from freezegun import freeze_time
+import time_machine
 from django.test import TestCase
 from django.utils import timezone
 from busstops.models import DataSource, Region, Operator
@@ -8,7 +8,7 @@ from ..commands.import_aircoach import Command as AircoachCommand, NatExpCommand
 from ..commands.import_kings_ferry import Command as KingsFerryCommand
 
 
-@freeze_time("2019-11-17T16:17:49.000Z")
+@time_machine.travel("2019-11-17T16:17:49.000Z")
 class NatExpTest(TestCase):
     @classmethod
     def setUpTestData(cls):

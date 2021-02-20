@@ -1,7 +1,7 @@
 import os
 import zipfile
 from tempfile import TemporaryDirectory
-from freezegun import freeze_time
+import time_machine
 from django.test import TestCase
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
@@ -44,7 +44,7 @@ class ImportAtcoCifTest(TestCase):
 
             write_files_to_zipfile(zipfile_path, ['218 219.cif'])
 
-            with freeze_time('2019-10-09'):
+            with time_machine.travel('2019-10-09'):
                 call_command('import_atco_cif', zipfile_path)
                 call_command('import_atco_cif', zipfile_path)
 
@@ -57,7 +57,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual('Belfast, Europa Buscentre - Antrim, Buscentre', service.outbound_description)
         self.assertEqual('Antrim, Buscentre - Belfast, Europa Buscentre', service.inbound_description)
 
-        with freeze_time('2019-10-01'):
+        with time_machine.travel('2019-10-01'):
             with self.assertNumQueries(14):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-10-01')
         self.assertContains(response, '<option selected value="2019-10-01">Tuesday 1 October 2019</option>')
@@ -65,27 +65,27 @@ class ImportAtcoCifTest(TestCase):
         self.assertContains(response, '<label for="show-all-stops-1">Show all stops</label>')
         self.assertContains(response, '<h1>219a - Belfast, Europa Buscentre - Antrim, Buscentre</h1>')
 
-        with freeze_time('2019-08-12'):
+        with time_machine.travel('2019-08-12'):
             with self.assertNumQueries(11):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-08-12')
         self.assertContains(response, '<option selected value="2019-08-12">Monday 12 August 2019</option>')
         self.assertNotContains(response, 'Sunday')
         self.assertContains(response, 'Sorry, no journeys found for Monday 12 August 2019')
 
-        with freeze_time('2019-08-12'):
+        with time_machine.travel('2019-08-12'):
             with self.assertNumQueries(14):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-12-25')
         self.assertContains(response, '<option selected value="2019-12-25">Wednesday 25 December 2019</option>')
         self.assertNotContains(response, 'Sunday')
 
-        with freeze_time('2019-08-12'):
+        with time_machine.travel('2019-08-12'):
             with self.assertNumQueries(14):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-12-25')
         self.assertContains(response, '<option selected value="2019-12-25">Wednesday 25 December 2019</option>')
         self.assertNotContains(response, 'Sunday')
 
         # no journeys on this date - CalendarDate with operation = False - so should skip to next date of operation
-        with freeze_time('2019-07-20'):
+        with time_machine.travel('2019-07-20'):
             with self.assertNumQueries(15):
                 response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
                 self.assertEqual('2019-07-27', str(response.context_data['timetable'].date))
@@ -93,7 +93,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertContains(response, 'sets down only')
 
         service = Service.objects.get(service_code='218_GLE')
-        with freeze_time('2019-10-01'):
+        with time_machine.travel('2019-10-01'):
             with self.assertNumQueries(14):
                 response = self.client.get(service.get_absolute_url() + '?date=2019-10-01')
         self.assertContains(response, 'sets down only')

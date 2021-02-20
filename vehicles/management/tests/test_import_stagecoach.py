@@ -1,7 +1,7 @@
 import vcr
 import os
+import time_machine
 from mock import patch
-from freezegun import freeze_time
 from django.test import TestCase
 from django.utils import timezone
 from busstops.models import DataSource, Region, Operator, Service
@@ -16,7 +16,7 @@ class MockException(Exception):
 DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-@freeze_time('2019-11-17T16:17:49.000Z')
+@time_machine.travel('2019-11-17T16:17:49.000Z')
 class StagecoachTest(TestCase):
     @classmethod
     def setUpTestData(cls):

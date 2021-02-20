@@ -1,7 +1,7 @@
 import os
 from mock import patch
 from vcr import use_cassette
-from freezegun import freeze_time
+import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator
@@ -24,7 +24,7 @@ class ImportPassengerTest(TestCase):
         Operator.objects.create(id='BLUS', region=sw, name='Bluestar')
         Operator.objects.create(id='UNIL', region=sw, name='Unilink')
 
-    @freeze_time('2020-05-01')
+    @time_machine.travel('2020-05-01')
     @use_cassette(os.path.join(FIXTURES_DIR, 'passenger.yaml'))
     def test_import(self):
 

@@ -1,6 +1,6 @@
 import os
 from mock import patch
-from freezegun import freeze_time
+import time_machine
 from vcr import use_cassette
 from django.test import TestCase, override_settings
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
@@ -30,7 +30,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
         StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
 
-    @freeze_time('2020-05-01')
+    @time_machine.travel('2020-05-01')
     def test_get_items(self):
         command = import_bod_avl.Command()
         command.source = self.source

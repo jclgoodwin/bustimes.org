@@ -1,5 +1,5 @@
 import os
-from freezegun import freeze_time
+import time_machine
 from vcr import use_cassette
 from mock import patch
 from django.test import TestCase, override_settings
@@ -22,7 +22,7 @@ class TfWMImportTest(TestCase):
         ])
 
     @use_cassette(os.path.join(DIR, 'vcr', 'import_tfwm.yaml'), decode_compressed_response=True)
-    @freeze_time('2018-08-21 00:00:09')
+    @time_machine.travel('2018-08-21 00:00:09')
     def test_handle(self):
         command = import_tfwm.Command()
         command.do_source()

@@ -1,7 +1,7 @@
 """Tests for timetables and date ranges"""
 import xml.etree.cElementTree as ET
 from datetime import date
-from freezegun import freeze_time
+import time_machine
 from django.test import TestCase
 from . import txc
 
@@ -68,7 +68,7 @@ class OperatingPeriodTest(TestCase):
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 September 2021')
 
-    @freeze_time('1 May 2004')
+    @time_machine.travel('1 May 2004')
     def test_future_long_range(self):
         """Test an OperatingPeriod starting and ending in different years in the future"""
         element = ET.fromstring("""
@@ -80,7 +80,7 @@ class OperatingPeriodTest(TestCase):
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 September 2021')
 
-    @freeze_time('1 May 2004')
+    @time_machine.travel('1 May 2004')
     def test_future_medium_range(self):
         """Test an OperatingPeriod starting and ending in the same year in the future"""
         element = ET.fromstring("""
@@ -92,7 +92,7 @@ class OperatingPeriodTest(TestCase):
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 February 2056')
 
-    @freeze_time('1 January 2056')
+    @time_machine.travel('1 January 2056')
     def test_short_range(self):
         """Test an OperatingPeriod starting and ending in the same month in the present"""
         element = ET.fromstring("""
@@ -104,7 +104,7 @@ class OperatingPeriodTest(TestCase):
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'from 1 to 5 February 2056')
 
-    @freeze_time('29 December 2056')
+    @time_machine.travel('29 December 2056')
     def test_short_range_cross_year(self):
         """Test an OperatingPeriod starting and ending in different years in the present"""
         element = ET.fromstring("""
@@ -127,7 +127,7 @@ class OperatingPeriodTest(TestCase):
         operating_period = txc.OperatingPeriod(element)
         self.assertEqual(str(operating_period), 'until 1 March 2015')
 
-    @freeze_time('2 February 2015')
+    @time_machine.travel('2 February 2015')
     def test_long_range(self):
         """An OperatingPeriod longer than 7 days should not be displayed"""
         element = ET.fromstring("""

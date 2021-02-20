@@ -159,7 +159,9 @@ class ServiceAdmin(admin.ModelAdmin):
             query = SearchQuery(search_term, search_type="websearch", config="english")
             rank = SearchRank(F('search_vector'), query)
             queryset = (
-                queryset.annotate(rank=rank).filter(Q(search_vector=query) | Q(service_code=search_term)).order_by("-rank")
+                queryset.annotate(rank=rank)
+                .filter(Q(search_vector=query) | Q(service_code=search_term))
+                .order_by("-rank")
             )
             return queryset, False
 

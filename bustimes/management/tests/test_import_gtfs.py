@@ -1,10 +1,10 @@
 import os
 import zipfile
 import vcr
-from freezegun import freeze_time
+import time_machine
+import datetime
 from mock import patch
 from tempfile import TemporaryDirectory
-from datetime import date
 from django.test import TestCase, override_settings
 from django.conf import settings
 from django.core.management import call_command
@@ -17,7 +17,7 @@ FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixture
 
 
 @override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons', 'seamusdoherty'])
-@freeze_time('2019-08-30')
+@time_machine.travel(datetime.datetime(2019, 8, 30))
 class GTFSTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -83,7 +83,7 @@ class GTFSTest(TestCase):
         self.assertEqual(Operator.objects.filter(service__current=True).distinct().count(), 2)
 
     def test_small_timetable(self):
-        with freeze_time('2017-06-07'):
+        with time_machine.travel('2017-06-07'):
             response = self.client.get('/services/165')
         timetable = response.context_data['timetable']
         self.assertEqual(str(timetable.groupings[0]), 'Outbound')
@@ -104,8 +104,13 @@ class GTFSTest(TestCase):
             '<a href="https://www.transportforireland.ie/transitData/PT_Data.html">Transport for Ireland</a>'
         )
 
-        for day in (date(2017, 6, 11), date(2017, 12, 25), date(2015, 12, 3), date(2020, 12, 3)):
-            with freeze_time(day):
+        for day in (
+            datetime.date(2017, 6, 11),
+            datetime.date(2017, 12, 25),
+            datetime.date(2015, 12, 3),
+            datetime.date(2020, 12, 3)
+        ):
+            with time_machine.travel(day):
                 with self.assertNumQueries(11):
                     response = self.client.get(f'/services/165?date={day}')
                 timetable = response.context_data['timetable']
@@ -114,7 +119,7 @@ class GTFSTest(TestCase):
 
     def test_big_timetable(self):
         service = Service.objects.get(route__code='21-963-1-y11-1')
-        timetable = service.get_timetable(date(2017, 6, 7))
+        timetable = service.get_timetable(datetime.date(2017, 6, 7))
         self.assertEqual(str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]")
         self.assertEqual(str(timetable.groupings[0].rows[1].times), "['', 10:20, '', 14:20, 17:50]")
         self.assertEqual(str(timetable.groupings[0].rows[2].times), "['', 10:22, '', 14:22, 17:52]")
@@ -137,11 +142,11 @@ class GTFSTest(TestCase):
 
         with vcr.use_cassette(cassette, match_on=['uri', 'headers']):
             self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
-                             '(True, FakeDatetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
+                             '(True, datetime.datetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
 
             with patch('os.path.getmtime', return_value=1593870909.0) as getmtime:
                 self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
-                                 '(True, FakeDatetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
+                                 '(True, datetime.datetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
                 getmtime.assert_called_with('poop.txt')
 
         self.assertTrue(os.path.exists(path))

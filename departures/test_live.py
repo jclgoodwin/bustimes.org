@@ -2,11 +2,11 @@
 """Tests for live departures
 """
 import vcr
-from datetime import time, datetime
+import time_machine
+import datetime
 from unittest.mock import patch
 from django.test import TestCase
 from django.shortcuts import render
-from freezegun import freeze_time
 from busstops.models import StopPoint, Service, Region, Operator, StopUsage, AdminArea, DataSource, SIRISource
 from bustimes.models import Route, Trip, Calendar, StopTime
 from vehicles.models import VehicleJourney
@@ -156,7 +156,7 @@ class LiveDeparturesTest(TestCase):
             </div>
         """, html=True)
 
-    @freeze_time('27 October 2018')
+    @time_machine.travel(datetime.date(2018, 10, 27))
     def test_translink_metro(self):
         with vcr.use_cassette('data/vcr/translink_metro.yaml'):
             res = self.client.get(self.translink_metro_stop.get_absolute_url())
@@ -169,75 +169,79 @@ class LiveDeparturesTest(TestCase):
             departures = live.AcisHorizonDepartures(StopPoint(pk='700000000748'), ())
             self.assertEqual([], departures.get_departures())
 
-    @freeze_time('14 Mar 2017 20:00')
+    @time_machine.travel(datetime.datetime(2017, 3, 14, 20))
     def test_stagecoach(self):
         with vcr.use_cassette('data/vcr/stagecoach.yaml'):
             with self.assertNumQueries(9):
                 res = self.client.get('/stops/64801092')
         self.assertContains(res, '<td><a href="/services/15">15</a></td>', html=True)
         self.assertContains(res, '<td>Hillend</td>')
-        self.assertEqual(3, len(res.context_data['departures']))
-        self.assertEqual(res.context_data['departures'][0]['service'], self.stagecoach_service)
-        self.assertEqual(res.context_data['departures'][0]['live'].time(), time(20, 37, 51))
-        self.assertEqual(res.context_data['departures'][1]['service'], self.stagecoach_service)
-        self.assertEqual(res.context_data['departures'][1]['live'].time(), time(21, 38, 21))
-        self.assertEqual(res.context_data['departures'][2]['service'], '7')
-        self.assertEqual(res.context_data['departures'][2]['live'].time(), time(21, 17, 28))
+        departures = res.context_data['departures']
+        self.assertEqual(3, len(departures))
+        self.assertEqual(departures[0]['service'], self.stagecoach_service)
+        self.assertEqual(departures[0]['live'].time(), datetime.time(20, 37, 51))
 
-    @freeze_time('28 Mar 2017 17:00')
+        self.assertEqual(departures[1]['service'], '7')
+        self.assertEqual(departures[1]['live'].time(), datetime.time(21, 17, 28))
+
+        self.assertEqual(departures[2]['service'], self.stagecoach_service)
+        self.assertEqual(departures[2]['live'].time(), datetime.time(21, 38, 21))
+
+    @time_machine.travel(datetime.datetime(2017, 3, 28, 17))
     def test_stagecoach_timezone(self):
         with vcr.use_cassette('data/vcr/stagecoach_timezone.yaml'):
             with self.assertNumQueries(9):
                 res = self.client.get('/stops/64801092')
-        self.assertEqual(6, len(res.context_data['departures']))
-        self.assertEqual(res.context_data['departures'][0]['destination'], 'Wood Street')
-        self.assertEqual(res.context_data['departures'][1]['destination'], 'Hillend')
-        self.assertEqual(res.context_data['departures'][2]['destination'], 'Hillend')
+        departures = res.context_data['departures']
+        self.assertEqual(6, len(departures))
+        self.assertEqual(departures[0]['destination'], 'Wood Street')
+        self.assertEqual(departures[1]['destination'], 'Hillend')
+        self.assertEqual(departures[2]['destination'], 'Hillend')
 
-        self.assertEqual(res.context_data['departures'][1]['service'], '7')
-        self.assertEqual(res.context_data['departures'][0]['service'].line_name, '15')
-        self.assertEqual(res.context_data['departures'][0]['service'].line_name, '15')
-        self.assertEqual(str(res.context_data['departures'][0]['time']), '2017-03-28 18:53:00+01:00')
-        self.assertEqual(str(res.context_data['departures'][2]['time']), '2017-03-28 19:08:00+01:00')
-        self.assertEqual(str(res.context_data['departures'][2]['live']), '2017-03-28 19:08:25+01:00')
+        self.assertEqual(departures[1]['service'], '7')
+        self.assertEqual(departures[0]['service'].line_name, '15')
+        self.assertEqual(departures[0]['service'].line_name, '15')
+        self.assertEqual(str(departures[0]['time']), '2017-03-28 18:53:00+01:00')
+        self.assertEqual(str(departures[2]['time']), '2017-03-28 19:08:00+01:00')
+        self.assertEqual(str(departures[2]['live']), '2017-03-28 19:08:25+01:00')
 
     def test_blend(self):
         service = Service(line_name='X98')
         a = [{
             'service': 'X98',
-            'time': datetime(2017, 4, 21, 20, 10),
-            'live': datetime(2017, 4, 21, 20, 2)
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 2)
         }]
         b = [{
             'service': service,
-            'time': datetime(2017, 4, 21, 20, 10),
-            'live': datetime(2017, 4, 21, 20, 5)
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 5)
         }]
 
         live.blend(a, b)
         self.assertEqual(a, [{
             'service': 'X98',
-            'time': datetime(2017, 4, 21, 20, 10),
-            'live': datetime(2017, 4, 21, 20, 5)
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 5)
         }])
 
         live.blend(b, a)
         self.assertEqual(b, [{
             'service': service,
-            'time': datetime(2017, 4, 21, 20, 10),
-            'live': datetime(2017, 4, 21, 20, 5)
+            'time': datetime.datetime(2017, 4, 21, 20, 10),
+            'live': datetime.datetime(2017, 4, 21, 20, 5)
         }])
 
     def test_render(self):
         response = render(None, 'departures.html', {
             'departures': [
                 {
-                    'time': datetime(1994, 5, 4, 11, 53),
+                    'time': datetime.datetime(1994, 5, 4, 11, 53),
                     'service': 'X98',
                     'destination': 'Bratislava'
                 },
                 {
-                    'time': datetime(1994, 5, 7, 11, 53),
+                    'time': datetime.datetime(1994, 5, 7, 11, 53),
                     'service': '9',
                     'destination': 'Shilbottle'
                 }
@@ -259,7 +263,7 @@ class LiveDeparturesTest(TestCase):
 
     @patch('vehicles.tasks.log_vehicle_journey.delay')
     def test_worcestershire(self, log_vehicle_journey):
-        with freeze_time('Sat Feb 09 10:45:45 GMT 2019'):
+        with time_machine.travel('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
                 with self.assertNumQueries(10):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
