@@ -57,7 +57,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'busstops.middleware.real_ip_middleware',
 ]
 
 SECURE_REFERRER_POLICY = None

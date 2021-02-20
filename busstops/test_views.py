@@ -300,7 +300,7 @@ class ViewsTests(TestCase):
             self.assertEqual(response.status_code, 404)
 
     def test_service(self):
-        response = self.client.get(self.service.get_absolute_url())
+        response = self.client.get('/service/45c-holt-norwich')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'ouibus')
         self.assertContains(response, '@dril on Twitter')
@@ -334,6 +334,14 @@ class ViewsTests(TestCase):
         with self.assertNumQueries(6):
             response = self.client.get('/services/45B')
         self.assertEqual(response.status_code, 302)
+
+        response = self.client.get('/services/1-45-A-y08-9')
+        self.assertEqual(response.status_code, 404)
+
+    def test_not_found_redirect(self):
+        """Redirect from url missing 'ea_' prefix"""
+        response = self.client.get('/services/21-45-A-y08-9')
+        self.assertRedirects(response, '/services/45c-holt-norwich')
 
     def test_service_not_found(self):
         """An inactive service with no replacement should show a 404 page"""
