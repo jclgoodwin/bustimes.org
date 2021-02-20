@@ -300,7 +300,7 @@ class ViewsTests(TestCase):
             self.assertEqual(response.status_code, 404)
 
     def test_service(self):
-        response = self.client.get('/service/45c-holt-norwich')
+        response = self.client.get('/services/45c-holt-norwich')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'ouibus')
         self.assertContains(response, '@dril on Twitter')
