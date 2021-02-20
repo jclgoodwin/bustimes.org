@@ -639,7 +639,7 @@ table {
         background: #fff;
         bottom: 0;
         height: 168px;
-        overflow: auto;
+        overflow-y: auto;
         position: absolute;
         padding: 1em;
 
@@ -974,7 +974,7 @@ thead {
 .table-wrapper {
     margin-left: calc(env(safe-area-inset-left) * -1 - 1em);
     margin-right: calc(env(safe-area-inset-right) * -1 - 1em);
-    overflow: auto;
+    overflow-x: auto;
 
     table {
         border-collapse: separate;
@@ -1000,7 +1000,7 @@ thead {
     margin-right: -1.14em;
     margin-right: calc(env(safe-area-inset-right) * -1 - 1.14em);
     margin-top: 1em;
-    overflow: auto;
+    overflow-x: auto;
     position: relative;
 
     &--wide {
