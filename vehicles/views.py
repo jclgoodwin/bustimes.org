@@ -79,7 +79,7 @@ def operator_vehicles(request, slug=None, parent=None):
         vehicles = vehicles.annotate(feature_names=StringAgg('features__name', ', '))
         pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id')).only('id')
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
-        vehicles = vehicles.select_related('latest_location__journey__service')
+        vehicles = vehicles.select_related('latest_location__journey', 'latest_journey')
 
     vehicles = vehicles.select_related('livery', 'vehicle_type')
 
@@ -158,10 +158,7 @@ def operator_vehicles(request, slug=None, parent=None):
                 when = journey.datetime
             else:
                 continue
-            if journey.service:
-                service = journey.service.get_line_name_and_brand()
-            else:
-                service = journey.route_name
+            service = journey.route_name
             vehicle.last_seen = {
                 'service': service,
                 'when': when,

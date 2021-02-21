@@ -6,6 +6,10 @@
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
 {% endblock %}
 
+{% block head %}
+    <link rel="stylesheet" href="/liveries.css">
+{% endblock %}
+
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
@@ -112,7 +116,7 @@
                     {% if vehicle.colours == 'Other' %}
                         {{ vehicle.colours }}
                     {% elif vehicle.colours or vehicle.livery %}
-                        <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
+                        <div class="livery{% if vehicle.livery_id %} livery-{{ vehicle.livery_id }}{% else %}" style="background:{{ vehicle.get_livery }}{% endif %}"></div>
                         {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
                     {% endif %}
                 </td>
