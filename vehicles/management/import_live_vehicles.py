@@ -7,13 +7,12 @@ import redis
 from aioredis import ReplyError
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from channels.exceptions import ChannelFull
 from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
-from django.db import connections, IntegrityError
+from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
 from django.utils import timezone
@@ -249,20 +248,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
             with beeline.tracer(name="bulk update"):
                 VehicleLocation.objects.bulk_update(to_update, fields=self.vehicle_location_update_fields)
 
-        group_messages = {}
-        channel_messages = {}
-
         r = redis.from_url(settings.REDIS_URL)
+
         pipeline = r.pipeline(transaction=False)
 
-        query = ", ".join("bounds && %s" for location in self.to_save)
-        query = f"SELECT name, {query} FROM vehicles_channel"
 
-        with connections[settings.READ_DATABASE].cursor() as cursor:
-            cursor.execute(query, [location.latlong.wkt for location, _, _ in self.to_save])
-            channels = cursor.fetchall()
+        group_messages = {}
 
-        i = 1
         for location, latest, vehicle in self.to_save:
             if not vehicle.latest_location_id:
                 vehicle.latest_location = location
@@ -288,15 +280,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 else:
                     group_messages[group] = [message]
 
-            for channel in channels:
-                if channel[i]:
-                    name = channel[0]
-                    if name in channel_messages:
-                        channel_messages[name].append(message)
-                    else:
-                        channel_messages[name] = [message]
-            i += 1
-
             if vehicle.withdrawn:
                 vehicle.withdrawn = False
                 vehicle.save(update_fields=['withdrawn'])
@@ -308,18 +291,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         channel_layer = get_channel_layer()
         group_send = async_to_sync(channel_layer.group_send)
-        send = async_to_sync(channel_layer.send)
 
         try:
-            with beeline.tracer(name="channel messages"):
-                for channel_name in channel_messages:
-                    try:
-                        send(channel_name, {
-                            'type': 'move_vehicles',
-                            'items': channel_messages[channel_name]
-                        })
-                    except ChannelFull:
-                        pass
             with beeline.tracer(name="group messages"):
                 for group in group_messages:
                     group_send(group, {

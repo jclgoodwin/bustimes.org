@@ -122,7 +122,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }]
 
-        with self.assertNumQueries(28):
+        with self.assertNumQueries(27):
             bod_avl(items)
         with self.assertNumQueries(2):
             bod_avl(items)

@@ -30,13 +30,13 @@ class TfWMImportTest(TestCase):
         with override_settings(TFWM={}):
             items = command.get_items()
 
-        with self.assertNumQueries(11):  # X12
+        with self.assertNumQueries(10):  # X12
             with patch('builtins.print') as mocked_print:
                 command.handle_item(items[0])
                 command.save()
         mocked_print.assert_called()
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(items[217])
                 command.save()
@@ -48,7 +48,7 @@ class TfWMImportTest(TestCase):
                 command.save()
         mocked_print.assert_called()
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(11):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(items[216])
                 command.save()

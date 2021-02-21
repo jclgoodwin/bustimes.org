@@ -1,10 +1,6 @@
 import re
 import redis
 from datetime import timedelta
-from aioredis import ReplyError
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from channels.exceptions import ChannelFull
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
@@ -609,9 +605,10 @@ class VehicleLocation(models.Model):
 
         return json
 
-    def get_json(self):
+    def get_redis_json(self):
         journey = self.journey
         vehicle = self.vehicle
+
         json = {
             'id': self.id,
             'coordinates': self.latlong.coords,
@@ -621,16 +618,37 @@ class VehicleLocation(models.Model):
             },
             'heading': self.heading,
             'datetime': self.datetime,
-            'service': {
-                'line_name': journey.route_name,
-            },
+            'service': journey.service_id,
             'destination': journey.destination,
         }
+
         if vehicle.livery_id:
             json['vehicle']['livery'] = vehicle.livery_id
         else:
             json['vehicle']['css'] = vehicle.get_livery(self.heading)
             json['vehicle']['text_colour'] = vehicle.get_text_colour()
+
+        if self.occupancy_thresholds:
+            green, amber = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
+            if self.seated_occupancy < green:
+                occupancy = '🟢'
+            elif self.seated_occupancy < amber:
+                occupancy = '🟠'
+            else:
+                occupancy = '🔴'
+            occupancy = f'{occupancy}{self.seated_capacity - self.seated_occupancy} seats free'
+            if self.wheelchair_capacity:
+                if self.wheelchair_occupancy < self.wheelchair_capacity:
+                    occupancy = f'{occupancy}<br>🦽space free'
+            json['occupancy'] = occupancy
+
+        return json
+
+    def get_json(self):
+        json = self.get_redis_json()
+
+        journey = self.journey
+        vehicle = self.vehicle
 
         features = self.features
         if vehicle.vehicle_type:
@@ -649,22 +667,12 @@ class VehicleLocation(models.Model):
                     features = vehicle_type
         json['vehicle']['features'] = features
 
-        if self.occupancy_thresholds:
-            green, amber = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
-            if self.seated_occupancy < green:
-                occupancy = '🟢'
-            elif self.seated_occupancy < amber:
-                occupancy = '🟠'
-            else:
-                occupancy = '🔴'
-            occupancy = f'{occupancy}{self.seated_capacity - self.seated_occupancy} seats free'
-            if self.wheelchair_capacity:
-                if self.wheelchair_occupancy < self.wheelchair_capacity:
-                    occupancy = f'{occupancy}<br>🦽space free'
-            json['occupancy'] = occupancy
-
         if journey.service:
-            json['service']['url'] = journey.service.get_absolute_url()
+            json['service'] = {
+                'line_name': journey.service.line_name,
+                'url': journey.service.get_absolute_url()
+            }
+
         return json
 
     def get_delay(self):

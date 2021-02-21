@@ -60,7 +60,7 @@ class BusHubTest(TestCase):
             "Destination": None
         }
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(11):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(item)
                 command.save()
@@ -80,7 +80,7 @@ class BusHubTest(TestCase):
         item['OperatorRef'] = 'WNGS'
         item['VehicleRef'] = '20052'
         item['Bearing'] = '-1'
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             command.handle_item(item)
             command.save()
         self.assertEqual(2, Vehicle.objects.count())
@@ -90,6 +90,6 @@ class BusHubTest(TestCase):
         self.assertEqual(self.service_c, self.vehicle.latest_location.journey.service)
 
         item["RecordedAtTime"] = "31/08/2018 23:10:33"
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(2):
             command.handle_item(item)
             command.save()
