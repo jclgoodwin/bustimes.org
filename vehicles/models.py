@@ -672,6 +672,10 @@ class VehicleLocation(models.Model):
                 'line_name': journey.service.line_name,
                 'url': journey.service.get_absolute_url()
             }
+        else:
+            json['service'] = {
+                'line_name': journey.route_name
+            }
 
         return json
 
