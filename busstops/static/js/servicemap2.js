@@ -12,9 +12,7 @@
         service = container.getAttribute('data-service'),
         map,
         busesOnline = document.getElementById('buses-online'),
-        button = busesOnline.getElementsByTagName('a')[0],
-        vehicles = {},
-        vehicleMarkers = {};
+        button = busesOnline.getElementsByTagName('a')[0];
 
     function setLocationHash(hash) {
         if (history.replaceState) {
@@ -27,7 +25,6 @@
     }
 
     function openMap() {
-        connect();
         container.className += ' expanded';
         if (document.body.style.paddingTop) {
             container.style.top = document.body.style.paddingTop;
@@ -50,7 +47,7 @@
 
     function getStopMarker(feature, latlng) {
         if (feature.properties.bearing !== null) {
-            var html = '<div class="stop-arrow" style="' + getTransform(feature.properties.bearing + 45) + '"></div>';
+            var html = '<div class="stop-arrow" style="' + bustimes.getTransform(feature.properties.bearing + 45) + '"></div>';
         } else {
             html = '<div class="stop-arrow no-direction"></div>';
         }
@@ -115,49 +112,23 @@
             }).addTo(map);
         });
 
-        for (var id in vehicles) {
-            handleVehicle(vehicles[id]);
-        }
+        loadVehicles();
     }
-
-    function getTransform(heading, scale) {
-        if (heading === null && !scale) {
-            return '';
-        }
-        var transform = 'transform:';
-        if (heading !== null) {
-            transform += ' rotate(' + heading + 'deg)';
-        }
-        if (scale) {
-            transform += ' scale(1.5)';
-        }
-        return '-webkit-' + transform + ';' + transform;
-    }
-
-
-    var clickedMarker;
 
     function handlePopupOpen(event) {
         var marker = event.target;
         var item = marker.options.item;
 
-        clickedMarker = item.i;
+        bustimes.clickedMarker = item.id;
+        bustimes.updatePopupContent();
 
         marker.setIcon(bustimes.getBusIcon(item, true));
         marker.setZIndexOffset(2000);
-
-        reqwest({
-            url: '/vehicles/locations/' + item.i,
-            success: function(content) {
-                marker.options.popupContent = content;
-                marker.getPopup().setContent(content + bustimes.getPopupContent(item));
-            }
-        });
     }
 
     function handlePopupClose(event) {
         if (map.hasLayer(event.target)) {
-            clickedMarker = null;
+            bustimes.clickedMarker = null;
             // make the icon small again
             event.target.setIcon(bustimes.getBusIcon(event.target.options.item));
             event.target.setZIndexOffset(1000);
@@ -165,109 +136,88 @@
     }
 
     function handleVehicle(item) {
-        if (map) {
-            var isClickedMarker = item.i === clickedMarker,
-                icon = bustimes.getBusIcon(item, isClickedMarker),
-                latLng = L.latLng(item.l[1], item.l[0]);
+        var isClickedMarker = item.id === bustimes.clickedMarker,
+            icon = bustimes.getBusIcon(item, isClickedMarker),
+            latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
 
-            if (item.i in vehicleMarkers) {
-                var marker = vehicleMarkers[item.i];
-                marker.setLatLng(latLng);
-                marker.setIcon(icon);
-                marker.options.item = item;
-                marker.getPopup().setContent((marker.options.popupContent || '') + bustimes.getPopupContent(item));
-            } else {
-                vehicleMarkers[item.i] = L.marker(latLng, {
-                    icon: icon,
-                    item: item,
-                    zIndexOffset: 1000
-                }).addTo(map)
-                    .bindPopup(bustimes.getPopupContent(item))
-                    .on('popupopen', handlePopupOpen)
-                    .on('popupclose', handlePopupClose);
-
+        if (item.id in bustimes.vehicleMarkers) {
+            // update existing
+            var marker = bustimes.vehicleMarkers[item.id];
+            marker.setLatLng(latLng);
+            marker.setIcon(icon);
+            marker.options.item = item;
+            if (isClickedMarker) {
+                bustimes.vehicleMarkers[item.id] = marker;  // make updatePopupContent work
+                bustimes.updatePopupContent();
             }
+        } else {
+            marker = L.marker(latLng, {
+                icon: bustimes.getBusIcon(item, isClickedMarker),
+                zIndexOffset: 1000,
+                item: item
+            });
+            marker.addTo(map)
+                .bindPopup('', {
+                    autoPan: false
+                })
+                .on('popupopen', handlePopupOpen)
+                .on('popupclose', handlePopupClose);
         }
-        vehicles[item.i] = item;
+        return marker;
     }
 
-    var busesOnlineCount;
+    var vehiclesCount = 0;
 
-    // websocket
+    function handleVehicles(items) {
+        if (items.length !== vehiclesCount) {
+            vehiclesCount = items.length;
 
-    var socket,
-        backoff = 1000,
-        newSocket;
+            if (!busesOnlineCount) { // first load
+                busesOnlineCount = document.createElement('span');
+                busesOnline.appendChild(busesOnlineCount);
+            }
+            if (vehiclesCount === 1) {
+                busesOnlineCount.innerHTML = 'Tracking 1 bus';
+            } else {
+                busesOnlineCount.innerHTML = 'Tracking ' + vehiclesCount + ' buses';
+            }
+        }
 
-    function connect() {
+        if (map) {
+            var newMarkers = {};
+            for (var i = items.length - 1; i >= 0; i--) {
+                var item = items[i];
+                newMarkers[item.id] = handleVehicle(item);
+            }
+            // remove old markers
+            for (i in bustimes.vehicleMarkers) {
+                if (!(i in newMarkers)) {
+                    map.removeLayer(bustimes.vehicleMarkers[i]);
+                }
+            }
+            bustimes.vehicleMarkers = newMarkers;
+        }
+    }
+
+    var busesOnlineCount, loadVehiclesTimeout;
+
+    function loadVehicles() {
         if (!window.SERVICE_TRACKING) {
             return;
         }
 
-        if (socket && socket.readyState < 2) { // already CONNECTING or OPEN
-            return; // no need to reconnect
-        }
-        var url = (window.location.protocol === 'http:' ? 'ws' : 'wss') + '://' + window.location.host + '/ws/vehicle_positions/services/' + service;
-        socket = new WebSocket(url);
-
-        socket.onopen = function() {
-            backoff = 1000;
-            newSocket = true;
-        };
-
-        socket.onclose = function(event) {
-            if (event.code > 1000) {  // not 'normal closure'
-                window.setTimeout(connect, backoff);
-                backoff += 500;
-            }
-        };
-
-        socket.onerror = function(event) {
-            console.error(event);
-        };
-
-        socket.onmessage = function(event) {
-            var items = JSON.parse(event.data);
-
-            if (!busesOnlineCount) { // first load
-                if (items.length) {
-                    busesOnlineCount = document.createElement('span');
-                    busesOnline.appendChild(busesOnlineCount);
-                    if (items.length === 1) {
-                        busesOnlineCount.innerHTML = 'Tracking 1 bus';
-                    } else {
-                        busesOnlineCount.innerHTML = 'Tracking ' + items.length + ' buses';
-                    }
-                } else {
-                    if (!map) {
-                        socket.close(1000);
-                    }
-                    return;
+        var params = '?service=' + service;
+        reqwest(
+            '/vehicles.json' + params,
+            function(data) {
+                if (data) {
+                    handleVehicles(data);
+                }
+                if (map && data.length) {
+                    loadVehiclesTimeout = setTimeout(loadVehicles, 10000);
                 }
             }
-
-            if (newSocket) {
-                var newVehicles = {};
-            }
-            newSocket = false;
-            for (var i = items.length - 1; i >= 0; i--) {
-                handleVehicle(items[i]);
-                if (newVehicles) {
-                    newVehicles[items[i].i] = true;
-                }
-            }
-            if (newVehicles) {
-                for (var id in vehicles) {
-                    if (!(id in newVehicles)) {
-                        if (map) {
-                            map.removeLayer(vehicles[id]);
-                            delete vehicleMarkers[id];
-                        }
-                        delete vehicles[id];
-                    }
-                }
-            }
-        };
+        );
     }
 
     function closeMap() {
@@ -275,8 +225,8 @@
         document.body.style.overflow = '';
         setLocationHash('');
 
-        if (socket) {
-            socket.close(1000);
+        if (loadVehiclesTimeout) {
+            clearTimeout(loadVehiclesTimeout);
         }
 
         return false;
@@ -296,15 +246,13 @@
         }
     };
 
-    connect();
-
     function handleVisibilityChange(event) {
         if (event.target.hidden) {
-            if (socket) {
-                socket.close(1000);
+            if (loadVehiclesTimeout) {
+                clearTimeout(loadVehiclesTimeout);
             }
         } else {
-            connect();
+            loadVehicles();
         }
     }
 
@@ -314,6 +262,8 @@
 
     if (window.location.hash === '#map') {
         openMap();
+    } else {
+        loadVehicles();
     }
 
 })();

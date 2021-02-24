@@ -30,7 +30,7 @@
         if (active) {
             className += ' selected';
         }
-        var heading = item.h;
+        var heading = item.heading;
         if (heading !== null) {
             var arrow = '<div class="arrow" style="' + getTransform(heading, active) + '"></div>';
             if (heading < 180) {
@@ -41,19 +41,17 @@
             }
         }
         var style = getTransform(heading, active);
-        if (item.c) {
-            if (typeof(item.c) == 'number') {
-                className += ' livery-' + item.c;
-            } else {
-                style += 'background:' + item.c;
-                if (item.t) {
-                    className += ' white-text';
-                }
+        if (item.vehicle.livery) {
+            className += ' livery-' + item.vehicle.livery;
+        } else if (item.vehicle.css) {
+            style += 'background:' + item.vehicle.css;
+            if (item.vehicle.text_colour) {
+                className += ' white-text';
             }
         }
         var html = '<div class="' + className + '" style="' + style + '">';
-        if (item.r) {
-            html += item.r;
+        if (item.service) {
+            html += item.service.line_name;
         }
         html += '</div>';
         if (arrow) {
@@ -66,30 +64,69 @@
         });
     }
 
-    function getDelay(item) {
-        if (item.e === 0) {
-            return 'On time<br>';
+    var agoTimeout;
+
+    function getPopupContent(item) {
+        var now = new Date();
+        var then = new Date(item.datetime);
+        var ago = Math.round((now.getTime() - then.getTime()) / 1000);
+
+        if (item.service) {
+            var content = item.service.line_name;
+            if (item.destination) {
+                content += ' to ' + item.destination;
+            }
+            if (item.service.url) {
+                content = '<a href="' + item.service.url + '">' + content + '</a>';
+            }
+        } else {
+            content = '';
         }
-        if (item.e) {
-            var content = 'About ';
-            if (item.e > 0) {
-                content += item.e;
-            } else {
-                content += item.e * -1;
-            }
-            content += ' minute';
-            if (item.e !== 1 && item.e !== -1) {
-                content += 's';
-            }
-            if (item.e > 0) {
-                content += ' early';
-            } else {
-                content += ' late';
-            }
-            content += '<br>';
-            return content;
+
+        content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
+
+        if (item.vehicle.features) {
+            content += item.vehicle.features + '<br>';
         }
-        return '';
+
+        if (item.occupancy) {
+            content += item.occupancy + '<br>';
+        }
+
+        if (ago >= 1800) {
+            content += 'Updated at ' + then.toTimeString().slice(0, 8);
+        } else {
+            content += '<time datetime="' + item.datetime + '" title="' + then.toTimeString().slice(0, 8) + '">';
+            if (ago >= 59) {
+                var minutes = Math.round(ago / 60);
+                if (minutes === 1) {
+                    content += '1 minute';
+                } else {
+                    content += minutes + ' minutes';
+                }
+                agoTimeout = setTimeout(updatePopupContent, (61 - ago % 60) * 1000);
+            } else {
+                if (ago === 1) {
+                    content += '1 second';
+                } else {
+                    content += ago + ' seconds';
+                }
+                agoTimeout = setTimeout(updatePopupContent, 1000);
+            }
+            content += ' ago</time>';
+        }
+        return content;
+    }
+
+    function updatePopupContent() {
+        if (agoTimeout) {
+            clearTimeout(agoTimeout);
+        }
+        var marker = window.bustimes.vehicleMarkers[window.bustimes.clickedMarker];
+        if (marker) {
+            var item = marker.options.item;
+            marker.getPopup().setContent(getPopupContent(item));
+        }
     }
 
     window.bustimes = {
@@ -100,17 +137,14 @@
             }).addTo(map);
         },
 
-        getDelay: getDelay,
+        getPopupContent: getPopupContent,
 
-        getPopupContent: function(item) {
-            var delta = getDelay(item);
-
-            var datetime = new Date(item.d);
-
-            return delta + 'Updated at ' + datetime.toTimeString().slice(0, 5);
-        },
+        updatePopupContent: updatePopupContent,
 
         getBusIcon: getBusIcon,
+
         getTransform: getTransform,
+
+        vehicleMarkers: {},
     };
 })();

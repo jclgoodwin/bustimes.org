@@ -185,25 +185,25 @@
         bigVehicleMarkers = (map.getZoom() > 12) || (data.length < 500);
         if (bigVehicleMarkers !== wasZoomedIn) {
             vehiclesGroup.clearLayers();
-            markers = {};
+            bustimes.vehicleMarkers = {};
         }
         for (var i = data.length - 1; i >= 0; i--) {
             var item = data[i];
             newMarkers[item.id] = processVehicle(item);
         }
         // remove old markers
-        for (i in markers) {
+        for (i in bustimes.vehicleMarkers) {
             if (!(i in newMarkers)) {
-                vehiclesGroup.removeLayer(markers[i]);
+                vehiclesGroup.removeLayer(bustimes.vehicleMarkers[i]);
             }
         }
-        markers = newMarkers;
+        bustimes.vehicleMarkers = newMarkers;
     }
 
-    function getVehicleMarker(latLng, legacyItem, isClickedMarker) {
+    function getVehicleMarker(latLng, item, isClickedMarker) {
         if (bigVehicleMarkers) {
             var marker = L.marker(latLng, {
-                icon: bustimes.getBusIcon(legacyItem, isClickedMarker),
+                icon: bustimes.getBusIcon(item, isClickedMarker),
                 zIndexOffset: 1000,
             });
         } else {
@@ -215,240 +215,59 @@
             });
         }
         marker.addTo(vehiclesGroup)
+            .bindPopup('', {
+                autoPan: false
+            })
             .on('popupopen', handlePopupOpen)
             .on('popupclose', handlePopupClose);
         return marker;
     }
 
     function processVehicle(item) {
-        var isClickedMarker = item.id === clickedMarker;
+        var isClickedMarker = item.id === bustimes.clickedMarker;
         var latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
-        var legacyItem = {
-            i: item.id,
-            d: item.datetime,
-            h: item.heading,
-            c: item.vehicle.livery || item.vehicle.css,
-            t: item.vehicle.text_colour
-        };
-        if (item.service) {
-            legacyItem.r = item.service.line_name;
-        }
-        if (item.id in markers) {
-            var marker = markers[item.id];  // existing marker
+        if (item.id in bustimes.vehicleMarkers) {
+            var marker = bustimes.vehicleMarkers[item.id];  // existing marker
             if (bigVehicleMarkers) {
-                marker.setIcon(bustimes.getBusIcon(legacyItem, isClickedMarker));
+                marker.setIcon(bustimes.getBusIcon(item, isClickedMarker));
             }
             marker.setLatLng(latLng);
         } else {
-            marker = getVehicleMarker(latLng, legacyItem, isClickedMarker);
-            marker.bindPopup('', {
-                autoPan: false
-            });
+            marker = getVehicleMarker(latLng, item, isClickedMarker);
         }
-        marker.options.legacyItem = legacyItem;
         marker.options.item = item;
         if (isClickedMarker) {
-            markers[item.id] = marker;
-            marker.openPopup();
-            updatePopupContent();
+            bustimes.vehicleMarkers[item.id] = marker;  // make updatePopupContent work
+            marker.openPopup(); // just in case
+            bustimes.updatePopupContent();
         }
         return marker;
 
-    }
-
-    var clickedMarker, agoTimeout;
-
-    function getPopupContent(item) {
-        var now = new Date();
-        var then = new Date(item.datetime);
-        var ago = Math.round((now.getTime() - then.getTime()) / 1000);
-
-        if (item.service) {
-            var content = item.service.line_name;
-            if (item.destination) {
-                content += ' to ' + item.destination;
-            }
-            if (item.service.url) {
-                content = '<a href="' + item.service.url + '">' + content + '</a>';
-            }
-        } else {
-            content = '';
-        }
-
-        content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
-
-        if (item.vehicle.features) {
-            content += item.vehicle.features + '<br>';
-        }
-
-        if (item.occupancy) {
-            content += item.occupancy + '<br>';
-        }
-
-        if (ago >= 1800) {
-            content += 'Updated at ' + then.toTimeString().slice(0, 8);
-        } else {
-            content += '<time datetime="' + item.datetime + '" title="' + then.toTimeString().slice(0, 8) + '">';
-            if (ago >= 59) {
-                var minutes = Math.round(ago / 60);
-                if (minutes === 1) {
-                    content += '1 minute';
-                } else {
-                    content += minutes + ' minutes';
-                }
-                agoTimeout = setTimeout(updatePopupContent, (61 - ago % 60) * 1000);
-            } else {
-                if (ago === 1) {
-                    content += '1 second';
-                } else {
-                    content += ago + ' seconds';
-                }
-                agoTimeout = setTimeout(updatePopupContent, 1000);
-            }
-            content += ' ago</time>';
-        }
-        return content;
-    }
-
-    function updatePopupContent() {
-        if (agoTimeout) {
-            clearTimeout(agoTimeout);
-        }
-        var marker = markers[clickedMarker];
-        if (marker) {
-            var item = marker.options.item;
-            marker.getPopup().setContent((marker.options.popupContent || '') + getPopupContent(item, true));
-        }
     }
 
     function handlePopupOpen(event) {
         var marker = event.target;
         var item = marker.options.item;
 
-        clickedMarker = item.id;
-        updatePopupContent();
+        bustimes.clickedMarker = item.id;
+        bustimes.updatePopupContent();
 
         if (bigVehicleMarkers) {
-            marker.setIcon(bustimes.getBusIcon(marker.options.legacyItem, true));
+            marker.setIcon(bustimes.getBusIcon(item, true));
             marker.setZIndexOffset(2000);
         }
     }
 
     function handlePopupClose(event) {
         if (map.hasLayer(event.target)) {
-            clickedMarker = null;
+            bustimes.clickedMarker = null;
             if (bigVehicleMarkers) {
                 // make the icon small again
-                event.target.setIcon(bustimes.getBusIcon(event.target.options.legacyItem));
+                event.target.setIcon(bustimes.getBusIcon(event.target.options.item));
                 event.target.setZIndexOffset(1000);
             }
         }
     }
-
-    var markers = {};
-
-    /*
-    function handleVehicle(item) {
-        var isClickedMarker = item.i === clickedMarker,
-            latLng = L.latLng(item.l[1], item.l[0]),
-            marker;
-
-        if (item.i in markers) {
-            marker = markers[item.i];
-            marker.setLatLng(latLng);
-            if (bigVehicleMarkers) {
-                marker.setIcon(bustimes.getBusIcon(item, isClickedMarker));
-            }
-            marker.options.item = item;
-            if (isClickedMarker) {
-                updatePopupContent();
-            }
-        } else {
-            if (bigVehicleMarkers) {
-                marker = L.marker(latLng, {
-                    icon: bustimes.getBusIcon(item, isClickedMarker),
-                    zIndexOffset: 1000,
-                    item: item,
-                });
-            } else {
-                marker = L.circleMarker(latLng, {
-                    stroke: false,
-                    fillColor: '#111',
-                    fillOpacity: .6,
-                    radius: 3,
-                    item: item,
-                });
-            }
-            markers[item.i] = marker.addTo(vehiclesGroup)
-                .bindPopup('', {
-                    autoPan: false
-                })
-                .on('popupopen', handlePopupOpen)
-                .on('popupclose', handlePopupClose);
-
-            if (isClickedMarker) {
-                marker.openPopup();
-            }
-        }
-    }
-    */
-
-    // websocket
-
-    /*
-    var socket,
-        backoff = 1000,
-        newSocket;
-
-    function connect() {
-        if (socket && socket.readyState < 2) { // already CONNECTING or OPEN
-            return; // no need to reconnect
-        }
-        var url = (window.location.protocol === 'http:' ? 'ws' : 'wss') + '://' + window.location.host + '/ws/vehicle_positions';
-        // url = 'wss://bustimes.org/ws/vehicle_positions';
-        socket = new WebSocket(url);
-
-        socket.onopen = function() {
-            backoff = 1000;
-            newSocket = true;
-
-            var bounds = map.getBounds();
-            socket.send(JSON.stringify([
-                bounds.getWest(),
-                bounds.getSouth(),
-                bounds.getEast(),
-                bounds.getNorth()
-            ]));
-        };
-
-        socket.onclose = function(event) {
-            if (event.code > 1000) {  // not 'normal closure'
-                window.setTimeout(connect, backoff);
-                backoff += 500;
-            }
-        };
-
-        socket.onerror = function(event) {
-            console.error(event);
-        };
-
-        socket.onmessage = function(event) {
-            var data = JSON.parse(event.data);
-            if (newSocket) {
-                if (markers) {
-                    vehiclesGroup.clearLayers();
-                }
-                markers = {};
-                items = {};
-            }
-            newSocket = false;
-            for (var i = data.length - 1; i >= 0; i--) {
-                handleVehicle(data[i]);
-                items[data[i].i] = data[i];
-            }
-        };
-    }
-    */
 
     // update window location hash
     function updateLocation() {
@@ -474,40 +293,8 @@
     var first = true;
 
     map.on('moveend', function() {
-        // var wasZoomedIn = bigVehicleMarkers;
-        // bigVehicleMarkers = (map.getZoom() > 10);
-
-        // var bounds = map.getBounds();
-
         if (!first) {
             loadVehicles(true);
-            /*
-            for (var id in markers) {
-                var marker = markers[id];
-                if (id !== clickedMarker && !bounds.contains(marker.getLatLng())) {
-                    vehiclesGroup.removeLayer(marker);
-                    delete items[id];
-                    delete markers[id];
-                }
-            }
-
-            if (bigVehicleMarkers && !wasZoomedIn || !bigVehicleMarkers && wasZoomedIn) {
-                markers = {};
-                vehiclesGroup.clearLayers();
-                for (id in items) {
-                    handleVehicle(items[id]);
-                }
-            }
-
-            if (socket && socket.readyState === socket.OPEN) {
-                socket.send(JSON.stringify([
-                    bounds.getWest(),
-                    bounds.getSouth(),
-                    bounds.getEast(),
-                    bounds.getNorth()
-                ]));
-            }
-            */
         }
 
         if (showStops) {
@@ -551,17 +338,9 @@
         map.setView([51.9, 0.9], 9);
     }
 
-    // connect();
     loadVehicles();
 
     function handleVisibilityChange(event) {
-        /*        
-        if (event.target.hidden) {
-            socket.close(1000);
-        } else {
-            connect();
-        }
-        */
         if (event.target.hidden) {
             if (loadVehiclesTimeout) {
                 clearTimeout(loadVehiclesTimeout);

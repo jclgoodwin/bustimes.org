@@ -222,7 +222,7 @@ def get_locations(request):
         pass
 
     if 'service' in request.GET:
-        locations = locations.filter(journey__service=request.GET['service'])
+        locations = locations.filter(journey__service__in=request.GET['service'].split(','))
     elif 'operator' in request.GET:
         locations = locations.filter(vehicle__operator=request.GET['operator'])
 
