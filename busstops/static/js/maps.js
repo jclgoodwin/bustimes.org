@@ -129,6 +129,73 @@
         }
     }
 
+
+    function handlePopupOpen(event) {
+        var marker = event.target;
+        var item = marker.options.item;
+
+        window.bustimes.clickedMarker = item.id;
+        updatePopupContent();
+
+        marker.setIcon(getBusIcon(item, true));
+        marker.setZIndexOffset(2000);
+    }
+
+    function handlePopupClose(event) {
+        if (window.bustimes.map.hasLayer(event.target)) {
+            window.bustimes.clickedMarker = null;
+            // make the icon small again
+            event.target.setIcon(getBusIcon(event.target.options.item));
+            event.target.setZIndexOffset(1000);
+        }
+    }
+
+    function handleVehicle(item) {
+        var isClickedMarker = item.id === window.bustimes.clickedMarker,
+            icon = getBusIcon(item, isClickedMarker),
+            latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
+
+        if (item.id in window.bustimes.vehicleMarkers) {
+            // update existing
+            var marker = window.bustimes.vehicleMarkers[item.id];
+            marker.setLatLng(latLng);
+            marker.setIcon(icon);
+            marker.options.item = item;
+            if (isClickedMarker) {
+                window.bustimes.vehicleMarkers[item.id] = marker;  // make updatePopupContent work
+                updatePopupContent();
+            }
+        } else {
+            marker = L.marker(latLng, {
+                icon: getBusIcon(item, isClickedMarker),
+                zIndexOffset: 1000,
+                item: item
+            });
+            marker.addTo(window.bustimes.map)
+                .bindPopup('', {
+                    autoPan: false
+                })
+                .on('popupopen', handlePopupOpen)
+                .on('popupclose', handlePopupClose);
+        }
+        return marker;
+    }
+
+    function handleVehicles(items) {
+        var newMarkers = {};
+        for (var i = items.length - 1; i >= 0; i--) {
+            var item = items[i];
+            newMarkers[item.id] = handleVehicle(item);
+        }
+        // remove old markers
+        for (i in window.bustimes.vehicleMarkers) {
+            if (!(i in newMarkers)) {
+                window.bustimes.map.removeLayer(window.bustimes.vehicleMarkers[i]);
+            }
+        }
+        window.bustimes.vehicleMarkers = newMarkers;
+    }
+
     window.bustimes = {
         doTileLayer: function(map) {
             map.attributionControl.setPrefix('');
@@ -144,6 +211,8 @@
         getBusIcon: getBusIcon,
 
         getTransform: getTransform,
+
+        handleVehicles: handleVehicles,
 
         vehicleMarkers: {},
     };
