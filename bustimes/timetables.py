@@ -438,7 +438,7 @@ class Grouping:
 
         if self.has_minor_stops() and not self.has_major_stops():
             for row in self.rows:
-                if row.stop:
+                if row.stop and row.stop.timing_status:
                     row.timing_status = row.stop.timing_status
 
 
@@ -467,6 +467,8 @@ class Row:
 
 
 class Stop:
+    timing_status = None
+
     def __init__(self, atco_code):
         self.atco_code = atco_code
 
