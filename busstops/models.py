@@ -428,7 +428,8 @@ class StopPoint(models.Model):
         if self.locality:
             locality_name = self.locality.name.replace(' Town Centre', '') \
                                                 .replace(' City Centre', '')
-            return f'{locality_name} {self.common_name}'
+            if locality_name not in self.common_name:
+                return f'{locality_name} {self.common_name}'
         return self.common_name
 
     def get_long_name(self):
