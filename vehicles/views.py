@@ -137,9 +137,12 @@ def operator_vehicles(request, slug=None, parent=None):
     if not vehicles:
         raise Http404
 
-    paginator = Paginator(vehicles, 1000)
-    page = request.GET.get('page')
-    vehicles = paginator.get_page(page)
+    if parent:
+        paginator = Paginator(vehicles, 1000)
+        page = request.GET.get('page')
+        vehicles = paginator.get_page(page)
+    else:
+        paginator = None
 
     features_column = not parent and any(vehicle.feature_names for vehicle in vehicles)
 
