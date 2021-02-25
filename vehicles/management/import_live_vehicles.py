@@ -4,6 +4,7 @@ import requests
 import logging
 import pid
 import redis
+import json
 from aioredis import ReplyError
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -11,6 +12,7 @@ from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
@@ -252,8 +254,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         pipeline = r.pipeline(transaction=False)
 
+        for location, latest, vehicle in self.to_save:
+            pipeline.geoadd('vehicle_location_locations', location.latlong.x, location.latlong.y, vehicle.id)
+            redis_json = location.get_redis_json(vehicle)
+            redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
+            pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
+        pipeline.execute()
 
         group_messages = {}
+
+        pipeline = r.pipeline(transaction=False)
 
         for location, latest, vehicle in self.to_save:
             if not vehicle.latest_location_id:
