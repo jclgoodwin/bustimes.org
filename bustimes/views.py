@@ -68,18 +68,19 @@ def route_xml(request, source, code=''):
 
     if '/' in code:
         path = code.split('/')[0]
-        with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
-            code = code[len(path) + 1:]
-            return FileResponse(archive.open(code), content_type='text/xml')
-
-    path = os.path.join(settings.DATA_DIR, code)
-
-    if code.endswith('.zip'):
-        try:
+        code = code[len(path) + 1:]
+        path = os.path.join(settings.DATA_DIR, path)
+        if code:
             with zipfile.ZipFile(path) as archive:
-                return HttpResponse('\n'.join(archive.namelist()), content_type='text/plain')
-        except zipfile.BadZipFile:
-            pass
+                return FileResponse(archive.open(code), content_type='text/xml')
+    else:
+        path = os.path.join(settings.DATA_DIR, code)
+
+    try:
+        with zipfile.ZipFile(path) as archive:
+            return HttpResponse('\n'.join(archive.namelist()), content_type='text/plain')
+    except zipfile.BadZipFile:
+        pass
 
     # FileResponse automatically closes the file
     return FileResponse(open(path, 'rb'), content_type='text/xml')
