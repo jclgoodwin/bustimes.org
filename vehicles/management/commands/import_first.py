@@ -1,7 +1,6 @@
 import asyncio
 import websockets
 import json
-import pid
 from asgiref.sync import sync_to_async
 from uuid import uuid4
 from datetime import datetime
@@ -172,10 +171,9 @@ class Command(ImportLiveVehiclesCommand):
         await asyncio.wait(futures, return_when=asyncio.FIRST_EXCEPTION)
 
     def handle(self, operator, *args, **options):
-        with pid.PidFile(f'First{operator}'):
-            self.source = DataSource.objects.get(name='First')
+        self.source = DataSource.objects.get(name='First')
 
-            extent = self.get_extent(operator)
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(self.sock_it(operator, extent))
-            loop.close()
+        extent = self.get_extent(operator)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.sock_it(operator, extent))
+        loop.close()

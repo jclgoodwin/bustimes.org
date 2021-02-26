@@ -27,7 +27,6 @@ gtfs-realtime-bindings = "*"
 celery = {extras = ["redis"],version = "*"}
 pyyaml = "*"
 asgiref = "*"
-pid = "*"
 xmltodict = "*"
 channels = "*"
 channels-redis = "*"

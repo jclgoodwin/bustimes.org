@@ -2,7 +2,6 @@ import math
 import beeline
 import requests
 import logging
-import pid
 import redis
 from aioredis import ReplyError
 from asgiref.sync import async_to_sync
@@ -355,8 +354,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle(self, *args, **options):
         sleep(self.wait)
-        with pid.PidFile(self.source_name):
-            self.do_source()
-            while True:
-                wait = self.update()
-                sleep(wait)
+        self.do_source()
+        while True:
+            wait = self.update()
+            sleep(wait)
