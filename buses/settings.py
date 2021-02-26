@@ -441,6 +441,13 @@ BOD_OPERATORS = [
     ('JOHS', 'WM', {}, False),
     # ('NATX', 'GB', {}, False),
 
+    ('OBUS', 'EA', {
+        'OURH': 'OURH',
+        'OBUS': 'OBUS',
+    }, False),
+
+    ('MDCL', 'EM', {}, False),
+
     ('RDRT', 'SE', {
         'RR': 'RDRT',
         'RR1': 'RDRT'
@@ -533,7 +540,7 @@ TICKETER_OPERATORS = [
     ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
     ('Y', ['RELD'], 'Reliance Motor Services'),
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
-    ('SW', ['PLYC', 'TFCN'], 'Go South West'),
+    # ('SW', ['PLYC', 'TFCN'], 'Go South West'),
     ('SE', ['METR'], 'Metrobus'),
     ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     # ('NW', ['GONW'], 'Go North West'),

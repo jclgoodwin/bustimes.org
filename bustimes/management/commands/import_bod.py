@@ -65,25 +65,44 @@ def handle_file(command, path):
                 logger.error(e, exc_info=True)
 
 
+def get_bus_open_data_paramses(api_key, operator):
+    if operator:
+        nocs = [operator]
+    else:
+        nocs = [operator[0] for operator in settings.BOD_OPERATORS]
+
+    searches = [noc for noc in nocs if ' ' in noc]  # e.g. 'TM Travel'
+    nocs = [noc for noc in nocs if ' ' not in noc]  # e.g. 'TMTL'
+
+    nocses = [nocs[i:i+20] for i in range(0, len(nocs), 20)]
+
+    base_params = {
+        'api_key': api_key,
+        'status': ['published', 'expiring'],
+    }
+
+    for search in searches:
+        yield {
+            **base_params,
+            'search': search
+        }
+
+    for nocs in nocses:
+        yield {
+            **base_params,
+            'noc': ','.join(nocs)
+        }
+
+
 def bus_open_data(api_key, operator):
     assert len(api_key) == 40
 
     command = get_command()
 
-    if operator:
-        nocs = [operator]
-    else:
-        nocs = [operator_id for operator_id, _, _, _ in settings.BOD_OPERATORS]
-
     datasets = []
 
-    for noc in [nocs[i:i+20] for i in range(0, len(nocs), 20)]:
+    for params in get_bus_open_data_paramses(api_key, operator):
         url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
-        params = {
-            'api_key': api_key,
-            'status': ['published', 'expiring'],
-            'noc': ','.join(noc)
-        }
         while url:
             response = session.get(url, params=params)
             json = response.json()

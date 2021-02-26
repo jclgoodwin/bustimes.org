@@ -114,7 +114,7 @@
     {% endif %}
 
     {% for credit in timetable.credits %}
-        {{ credit }}
+        {% ifchanged credit %}{{ credit }}{% endifchanged %}
     {% endfor %}
 
 {% else %}

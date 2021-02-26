@@ -140,6 +140,35 @@ def get_operator_by(scheme, code):
             pass
 
 
+def get_open_data_operators():
+    open_data_operators = []
+    incomplete_operators = []
+    for operator_code, _, operators, incomplete in settings.BOD_OPERATORS:
+        if operators:
+            operators = operators.values()
+        else:
+            operators = [operator_code]
+        if incomplete:
+            incomplete_operators += operators
+        else:
+            open_data_operators += operators
+    for _, _, _, operators in settings.PASSENGER_OPERATORS:
+        open_data_operators += operators.values()
+    for _, _, operators in settings.FIRST_OPERATORS:
+        open_data_operators += operators.values()
+    for _, _, _, operators in settings.STAGECOACH_OPERATORS:
+        open_data_operators += operators.values()
+    for _, operators, _ in settings.TICKETER_OPERATORS:
+        open_data_operators += operators
+
+    if 'SCLI' in open_data_operators:  # stagecoach lincs – cos a bloke complained about missing school services
+        open_data_operators.remove('SCLI')
+        incomplete_operators.append('SCLI')
+    incomplete_operators.append('SEMM')  # h semmence & co
+
+    return set(open_data_operators), set(incomplete_operators)
+
+
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
@@ -157,33 +186,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.set_up()
 
-        open_data_operators = []
-        incomplete_operators = []
-        for operator_code, _, operators, incomplete in settings.BOD_OPERATORS:
-            if operators:
-                operators = operators.values()
-            else:
-                operators = [operator_code]
-            if incomplete:
-                incomplete_operators += operators
-            else:
-                open_data_operators += operators
-        for _, _, _, operators in settings.PASSENGER_OPERATORS:
-            open_data_operators += operators.values()
-        for _, _, operators in settings.FIRST_OPERATORS:
-            open_data_operators += operators.values()
-        for _, _, _, operators in settings.STAGECOACH_OPERATORS:
-            open_data_operators += operators.values()
-        for _, operators, _ in settings.TICKETER_OPERATORS:
-            open_data_operators += operators
+        self.open_data_operators, self.incomplete_operators = get_open_data_operators()
 
-        if 'SCLI' in open_data_operators:  # stagecoach lincs – cos a bloke complained about missing school services
-            open_data_operators.remove('SCLI')
-            incomplete_operators.append('SCLI')
-        incomplete_operators.append('SEMM')  # h semmence & co
-
-        self.open_data_operators = set(open_data_operators)
-        self.incomplete_operators = set(incomplete_operators)
         for archive_name in options['archives']:
             self.handle_archive(archive_name, options['files'])
 
