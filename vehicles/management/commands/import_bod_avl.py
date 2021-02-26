@@ -289,7 +289,9 @@ class Command(ImportLiveVehiclesCommand):
         except KeyError:
             journey_code = journey_ref
         else:
-            if not journey_ref or '_' in journey_ref:
+            if journey_code == '0000':
+                journey_code = journey_ref
+            elif not journey_ref or '_' in journey_ref:
                 journey_ref = journey_code  # what we will use for finding matching trip
 
         route_name = monitored_vehicle_journey.get('PublishedLineName') or monitored_vehicle_journey.get('LineRef')
