@@ -9,26 +9,43 @@ from .utils import format_timedelta
 
 def get_routes(routes, when):
     routes = [route for route in routes if route.contains(when)]
-    revision_numbers = set(route.revision_number or 0 for route in routes)
+
+    if len(routes) == 1:
+        return routes
+
+    # use maximum revision number for each service_code
+    revision_numbers = set(route.revision_number for route in routes)
     if len(revision_numbers) > 1:
-        max_revision_number = max(revision_numbers)
-        if max_revision_number:
-            routes = [route for route in routes if route.revision_number == max_revision_number]
-    # elif all('/first/' in route.source.url for route in routes):
-    #     start_dates = set(route.start_date for route in routes)
-    #     if start_dates:
-    #         max_start_date = max(start_dates)
-    #         routes = [route for route in routes if route.start_date == max_start_date]
-    elif all(route.source.name.startswith('First Bus') for route in routes):
-        routes_by_service_code = {}  # remove duplicates
+        revision_numbers = {}
+        for route in routes:
+            if (
+                route.service_code not in revision_numbers
+                or route.revision_number > revision_numbers[route.service_code]
+            ):
+                revision_numbers[route.service_code] = route.revision_number
+        routes = [route for route in routes if route.revision_number == revision_numbers[route.service_code]]
+
+    sources = set(route.source_id for route in routes)
+
+    # remove duplicates
+    if len(sources) > 1 and all(route.source.name.startswith('First Bus') for route in routes):
+        routes_by_service_code = {}
         for route in routes:
             routes_by_service_code[route.service_code] = route
-        routes = routes_by_service_code.values()
-    else:
-        override_routes = [route for route in routes if route.start_date == route.end_date == when]
-        if override_routes:  # e.g. Lynx BoxingDayHoliday
-            routes = override_routes
-    return list(routes)
+        return list(routes_by_service_code.values())
+
+    if len(sources) == 1:
+        prefixes = set(route.code.split('/')[0] for route in routes if '.zip/' in route.code)
+        # use latest passenger zipfile filename
+        if len(prefixes) > 1:
+            latest_prefix = max(prefixes)
+            routes = [route for route in routes if route.code.startswith(latest_prefix)]
+        else:
+            override_routes = [route for route in routes if route.start_date == route.end_date == when]
+            if override_routes:  # e.g. Lynx BoxingDayHoliday
+                routes = override_routes
+
+    return routes
 
 
 def get_calendars(when, calendar_ids=None):

@@ -6,17 +6,17 @@ import requests
 import zipfile
 from urllib.parse import urljoin, urlparse
 from time import sleep
-from datetime import timedelta
 from requests_html import HTMLSession
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils import timezone, dateparse
+from django.utils import timezone
+from django.db.models import Q
 from busstops.models import DataSource, Service, ServiceColour
 from .import_bod import handle_file
 from .import_transxchange import Command as TransXChangeCommand
 from .import_gtfs import read_file
 from ...utils import write_file
-from ...models import Route, Calendar
+from ...models import Route
 
 
 def handle_gtfs(operators, url):
@@ -127,8 +127,9 @@ class Command(BaseCommand):
 
             if versions:
                 prefix = versions[0]['filename'].split('_')[0]
+                prefix = f'{prefix}_'  # eg 'transdevblazefield_'
                 for filename in os.listdir(settings.DATA_DIR):
-                    if filename.startswith(f'{prefix}_'):
+                    if filename.startswith(prefix):
                         if not any(filename == version['filename'] for version in versions):
                             os.remove(os.path.join(settings.DATA_DIR, filename))
 
@@ -143,27 +144,12 @@ class Command(BaseCommand):
             command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
-
-            previous_date = None
+            command.calendar_cache = {}
 
             for version in versions:  # newest first
-                print(version)
-
-                command.calendar_cache = {}
-                handle_file(command, version['filename'])
-
-                start_date = dateparse.parse_date(version['dates'][0])
-
-                routes = command.source.route_set.filter(code__startswith=version['filename'])
-                calendars = Calendar.objects.filter(trip__route__in=routes)
-                calendars.filter(start_date__lt=start_date).update(start_date=start_date)
-                routes.filter(start_date__lt=start_date).update(start_date=start_date)
-
-                if previous_date:  # if there is a newer dataset, set end date
-                    new_end_date = previous_date - timedelta(days=1)
-                    calendars.update(end_date=new_end_date)
-                    routes.update(end_date=new_end_date)
-                previous_date = start_date
+                if version['modified']:
+                    print(version)
+                    handle_file(command, version['filename'])
 
                 if version['dates'][0] <= str(command.source.datetime.date()):
                     break
@@ -181,13 +167,15 @@ class Command(BaseCommand):
             # delete route data from old versions
             routes = command.source.route_set
             for version in versions:
-                routes = routes.exclude(code__startswith=version['filename'])
+                routes = routes.filter(~Q(code__startswith=version['filename']))
                 if version['dates'][0] <= str(command.source.datetime.date()):
                     break
             print('old routes:', routes.delete())
 
             # mark old services as not current
-            print('old services:', command.mark_old_services_as_not_current())
+            old_services = command.source.service_set.filter(current=True, route=None)
+            old_services.update(current=False)
+
             command.update_geometries()
 
             for version in versions:

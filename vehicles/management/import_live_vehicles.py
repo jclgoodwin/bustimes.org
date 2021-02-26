@@ -252,7 +252,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         pipeline = r.pipeline(transaction=False)
 
-
         group_messages = {}
 
         for location, latest, vehicle in self.to_save:

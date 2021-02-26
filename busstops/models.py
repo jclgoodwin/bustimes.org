@@ -4,6 +4,7 @@ import re
 import time
 import logging
 import yaml
+from datetime import datetime
 from urllib.parse import urlencode
 from autoslug import AutoSlugField
 from django.contrib.gis.db import models
@@ -212,7 +213,7 @@ class DataSource(models.Model):
             return format_html('<a href="{}">{}</a>', url, name)
         return name
 
-    def credit(self):
+    def credit(self, route=None):
         url = self.get_nice_url()
         text = None
         date = None
@@ -240,6 +241,14 @@ class DataSource(models.Model):
 
         if url and 'bus-data.dft.gov.uk' in url:
             text = f'{text}/Bus Open Data Service'
+
+        if route:
+            # get date from 'bluestar_1611829131.zip/Bluestar 31 01 2021_SER2.xml'
+            timestamp = route.code.split('/')[0].split('_')[-1].removesuffix('.zip')
+            if timestamp.isdigit():
+                timestamp = int(timestamp)
+                if timestamp > 1600000000:
+                    date = datetime.fromtimestamp(int(timestamp))
 
         if text:
             if url:
