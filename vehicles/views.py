@@ -218,35 +218,71 @@ def get_locations(request):
     fifteen_minutes_ago = now - datetime.timedelta(minutes=15)
     locations = VehicleLocation.objects.filter(current=True, vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
 
-    try:
-        bounding_box = get_bounding_box(request)
-        locations = locations.filter(latlong__bboverlaps=bounding_box)
-    except KeyError:
-        pass
-
     if 'service' in request.GET:
         locations = locations.filter(journey__service__in=request.GET['service'].split(','))
     elif 'operator' in request.GET:
         locations = locations.filter(vehicle__operator=request.GET['operator'])
+    else:
+        locations = None
+
+    if locations is not None:
+        locations = locations.select_related(
+            'journey__service', 'vehicle__vehicle_type'
+        ).defer(
+            'journey__data', 'journey__service__geometry', 'journey__service__search_vector'
+        ).annotate(
+            features=StringAgg('vehicle__features__name', ', ')
+        ).order_by()
+
+        return [location.get_json() for location in locations]
+
+    r = redis.from_url(settings.REDIS_URL)
+
+    try:
+        bounds = get_bounding_box(request)
+    except KeyError:
+        bounds = None
+
+    if bounds is not None:
+        # ids of vehicles within radius
+        radius = max(
+            bounds.coords[0][2][0] - bounds.coords[0][0][0],
+            bounds.coords[0][1][1] - bounds.coords[0][0][1]
+        ) / 2
+
+        vehicle_ids = r.georadius(
+            'vehicle_location_locations',
+            bounds.centroid.x,
+            bounds.centroid.y,
+            radius * 111,
+            unit='km'
+        )
+    else:
+        # ids of all vehicles
+        vehicle_ids = r.zrange('vehicle_location_locations', 0, -1)
+
+    pipeline = r.pipeline(transaction=False)
+    for vehicle_id in vehicle_ids:
+        pipeline.get(f'vehicle{int(vehicle_id)}')
+    vehicles = pipeline.execute()
+
+    locations = []
+    for i, vehicle in enumerate(vehicles):
+        if vehicle:
+            vehicle = json.loads(vehicle)
+            del vehicle['service']
+            locations.append(vehicle)
 
     return locations
 
 
 def vehicles_json(request):
     try:
-        locations = get_locations(request).order_by()
+        locations = get_locations(request)
     except ValueError:
         return HttpResponseBadRequest()
 
-    locations = locations.select_related(
-        'journey__service', 'vehicle__vehicle_type'
-    ).defer(
-        'journey__data', 'journey__service__geometry', 'journey__service__search_vector'
-    ).annotate(
-        features=StringAgg('vehicle__features__name', ', ')
-    )
-
-    return JsonResponse([location.get_json() for location in locations], safe=False)
+    return JsonResponse(locations, safe=False)
 
 
 def get_dates(journeys, vehicle=None, service=None):

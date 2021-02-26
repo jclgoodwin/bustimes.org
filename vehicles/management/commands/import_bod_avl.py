@@ -398,11 +398,11 @@ class Command(ImportLiveVehiclesCommand):
         )
         try:
             extensions = item['Extensions']['VehicleJourney']
-            location.seated_occupancy = extensions['SeatedOccupancy']
-            location.seated_capacity = extensions['SeatedCapacity']
-            location.wheelchair_occupancy = extensions['WheelchairOccupancy']
-            location.wheelchair_capacity = extensions['WheelchairCapacity']
             location.occupancy_thresholds = extensions['OccupancyThresholds']
+            location.seated_occupancy = int(extensions['SeatedOccupancy'])
+            location.seated_capacity = int(extensions['SeatedCapacity'])
+            location.wheelchair_occupancy = int(extensions['WheelchairOccupancy'])
+            location.wheelchair_capacity = int(extensions['WheelchairCapacity'])
         except KeyError:
             pass
         return location
