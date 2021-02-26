@@ -605,8 +605,9 @@ class VehicleLocation(models.Model):
 
         return json
 
-    def get_redis_json(self, vehicle):
+    def get_redis_json(self):
         journey = self.journey
+        vehicle = self.vehicle
 
         json = {
             'id': self.id,
@@ -644,10 +645,10 @@ class VehicleLocation(models.Model):
         return json
 
     def get_json(self):
-        vehicle = self.vehicle
-        journey = self.journey
+        json = self.get_redis_json()
 
-        json = self.get_redis_json(vehicle)
+        journey = self.journey
+        vehicle = self.vehicle
 
         features = self.features
         if vehicle.vehicle_type:
