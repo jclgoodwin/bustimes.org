@@ -4,7 +4,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-
     services:
       postgres:
         image: postgis
@@ -13,7 +12,7 @@ jobs:
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
+    steps:
     - name: Cache virtualenv
       uses: actions/cache@v2
       with:
