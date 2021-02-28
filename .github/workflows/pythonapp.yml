@@ -60,6 +60,7 @@ jobs:
         SECRET_KEY: wormprovision
         PGHOST: localhost
         PGUSER: postgres
+        PGPASSWORD: postgres
         DB_NAME: postgres
       run: |
        pipenv run coverage run ./manage.py collectstatic --noinput
