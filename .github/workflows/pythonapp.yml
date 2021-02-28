@@ -67,7 +67,7 @@ jobs:
     - name: Test
       env:
         SECRET_KEY: wormprovision
-        PGHOST: localhost
+        PGHOST: postgres
         PGUSER: postgres
         PGPASSWORD: postgres
         DB_NAME: postgres
