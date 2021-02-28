@@ -62,12 +62,6 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: JavaScript
-      run: |
-        npm install
-        make lint
-        make build-static
-
     - name: Test
       env:
         SECRET_KEY: wormprovision
@@ -80,6 +74,12 @@ jobs:
        pipenv run coverage run --append -m pytest
        pipenv run coverage run --append ./manage.py test
        pipenv run coverage html
+
+    - name: JavaScript
+      run: |
+        npm install
+        make lint
+        make build-static
 
     - name: Upload coverage
       uses: idlefingers/do-space-sync-action@0.1.0
