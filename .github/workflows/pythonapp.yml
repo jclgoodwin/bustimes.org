@@ -6,7 +6,7 @@ jobs:
     timeout-minutes: 10
     services:
       postgres:
-        image: postgis
+        image: postgis/postgis
         env:
           POSTGRES_PASSWORD: postgres
         ports:
