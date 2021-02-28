@@ -138,24 +138,6 @@ class VehiclesTests(TestCase):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 
-        with self.assertNumQueries(1):
-            response = self.client.get(f'/journeys/{self.journey.id}.json')
-        self.assertEqual(response.json(), {
-            'locations': [
-                {
-                    'coordinates': [-5.95233833, 54.56286944],
-                    'datetime': '2021-02-19T15:00:37.029Z',
-                    'delta': None,
-                    'direction': None
-                }, {
-                    'coordinates': [-6.02815833, 54.54649611],
-                    'datetime': '2021-02-21T21:10:42.053Z',
-                    'delta': None,
-                    'direction': None
-                }
-            ]
-        })
-
         # can't connect to redis - no drama
         with override_settings(REDIS_URL='redis://localhose:69'):
             with self.assertNumQueries(1):

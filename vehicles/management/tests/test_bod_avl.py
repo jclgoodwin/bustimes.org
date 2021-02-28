@@ -1,7 +1,9 @@
 import os
-from mock import patch
+import redis
 import time_machine
+from mock import patch
 from vcr import use_cassette
+from django.conf import settings
 from django.test import TestCase, override_settings
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney
@@ -29,6 +31,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         suffolk = AdminArea.objects.create(region=region, id=1, atco_code=390, name='Suffolk')
         southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
         StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
+
+        r = redis.from_url(settings.REDIS_URL)
+        r.flushall()
 
     @time_machine.travel('2020-05-01')
     def test_get_items(self):
@@ -185,3 +190,15 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         journey = VehicleJourney.objects.get()
         self.assertEqual(journey.direction, 'inbound')
         self.assertEqual(journey.destination, 'Southwold')
+
+        with self.assertNumQueries(1):
+            response = self.client.get(f'/journeys/{journey.id}.json')
+        self.assertEqual(response.json(), {'locations': [
+            {'coordinates': [1.296443, 52.62269],
+             'datetime': '2020-11-28T12:58:25Z',
+             'delta': None,
+             'direction': None},
+            {'coordinates': [1.675893, 52.328398],
+             'datetime': '2020-11-28T15:07:06Z',
+             'delta': None,
+             'direction': 142}]})
