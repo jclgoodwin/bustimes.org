@@ -617,9 +617,15 @@ class VehicleLocation(models.Model):
             },
             'heading': self.heading,
             'datetime': self.datetime,
-            'service': journey.service_id,
             'destination': journey.destination,
         }
+
+        if not journey.service_id:
+            json['service_id'] = journey.service_id
+        elif journey.route_name:
+            json['service'] = {
+                'line_name': journey.route_name
+            }
 
         if vehicle.livery_id:
             json['vehicle']['livery'] = vehicle.livery_id
@@ -627,7 +633,7 @@ class VehicleLocation(models.Model):
             json['vehicle']['css'] = vehicle.get_livery(self.heading)
             json['vehicle']['text_colour'] = vehicle.get_text_colour()
 
-        if self.occupancy_thresholds:
+        if self.occupancy_thresholds and self.seated_occupancy is not None:
             green, amber = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
             if self.seated_occupancy < green:
                 occupancy = '🟢'
@@ -670,10 +676,6 @@ class VehicleLocation(models.Model):
             json['service'] = {
                 'line_name': journey.service.line_name,
                 'url': journey.service.get_absolute_url()
-            }
-        else:
-            json['service'] = {
-                'line_name': journey.route_name
             }
 
         return json

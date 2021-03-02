@@ -11,7 +11,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
 from django.contrib.postgres.aggregates import StringAgg
-from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
@@ -264,23 +264,33 @@ def get_locations(request):
     pipeline = r.pipeline(transaction=False)
     for vehicle_id in vehicle_ids:
         pipeline.get(f'vehicle{int(vehicle_id)}')
-    vehicles = pipeline.execute()
+    vehicle_locations = pipeline.execute()
 
     locations = []
-    for i, vehicle in enumerate(vehicles):
-        if vehicle:
-            vehicle = json.loads(vehicle)
-            del vehicle['service']
-            locations.append(vehicle)
+    service_ids = set()
+    for item in vehicle_locations:
+        if item:
+            item = json.loads(item)
+            locations.append(item)
+            if 'service_id' in item and item['service_id']:
+                service_ids.add(item['service_id'])
+
+    services = Service.objects.only('line_name', 'line_brand', 'slug').in_bulk(service_ids)
+    for item in locations:
+        if 'service_id' in item:
+            if item['service_id']:
+                service = services[item['service_id']]
+                item['service'] = {
+                    'line_name': service.line_name,
+                    'url': service.get_absolute_url()
+                }
+            del item['service_id']
 
     return locations
 
 
 def vehicles_json(request):
-    try:
-        locations = get_locations(request)
-    except ValueError:
-        return HttpResponseBadRequest()
+    locations = get_locations(request)
 
     return JsonResponse(locations, safe=False)
 
