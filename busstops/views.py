@@ -675,12 +675,6 @@ class ServiceDetailView(DetailView):
                     context['app'] = method
                 else:
                     context['payment_methods'].append(method)
-            for operator in operators:
-                if operator.is_national_express() or self.object.service_code == 'DNAX090':
-                    context['links'].append({
-                        'url': operator.get_national_express_url(),
-                        'text': 'Buy tickets at nationalexpress.com'
-                    })
 
         tariffs = self.object.tariff_set.all()
         if tariffs.exists():

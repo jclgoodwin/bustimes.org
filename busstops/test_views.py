@@ -3,6 +3,7 @@ import os
 import json
 import vcr
 from django.test import TestCase
+from unittest import skip
 from django.core import mail
 from django.contrib.gis.geos import Point
 from django.shortcuts import render
@@ -306,6 +307,7 @@ class ViewsTests(TestCase):
         self.assertContains(response, '@dril on Twitter')
         self.assertContains(response, 'twitter.com/dril"')
 
+    @skip
     def test_national_express_service(self):
         self.chariots.name = 'Hotel Hoppa'
         self.chariots.url = 'http://nationalexpress.com'
