@@ -258,22 +258,33 @@ class ImportLiveVehiclesCommand(BaseCommand):
             redis_json = location.get_redis_json(vehicle)
             redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
             pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
-        pipeline.execute()
+
+        with beeline.tracer(name="pipeline"):
+            pipeline.execute()
 
         pipeline = r.pipeline(transaction=False)
 
         for location, latest, vehicle in self.to_save:
+
+            update_fields = []
+
             if not vehicle.latest_location_id:
                 vehicle.latest_location = location
-                vehicle.save(update_fields=['latest_location'])
+                update_fields.append('latest_location')
+
+            if vehicle.latest_journey_id != location.journey_id:
+                vehicle.latest_journey_id = location.journey_id
+                update_fields.append('latest_journey')
+
+            if vehicle.withdrawn:
+                vehicle.withdrawn = False
+                update_fields.append('withdrawn')
+
+            vehicle.save(update_fields=update_fields)
 
             self.current_location_ids.add(location.id)
 
             pipeline.rpush(*location.get_appendage())
-
-            if vehicle.withdrawn:
-                vehicle.withdrawn = False
-                vehicle.save(update_fields=['withdrawn'])
 
             if latest:
                 speed = calculate_speed(latest, location)
@@ -281,10 +292,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     print('{} mph\t{}'.format(speed, vehicle.get_absolute_url()))
 
         with beeline.tracer(name="pipeline"):
-            try:
-                pipeline.execute()
-            except redis.exceptions.ConnectionError:
-                pass
+            pipeline.execute()
 
         self.to_save = []
 
