@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, DataSource, SIRISource
-from buses.utils import varnish_ban
 import json
 
 
@@ -196,9 +195,6 @@ class Vehicle(models.Model):
                 self.reg = self.code.replace(' ', '').replace('_', '').replace('-', '')
 
         super().save(force_insert, force_update, **kwargs)
-
-        if update_fields is None or update_fields:
-            varnish_ban(f'/vehicles/{self.id}')
 
     class Meta:
         unique_together = ('code', 'operator')
@@ -624,7 +620,7 @@ class VehicleLocation(models.Model):
             'destination': journey.destination,
         }
 
-        if not journey.service_id:
+        if journey.service_id:
             json['service_id'] = journey.service_id
         elif journey.route_name:
             json['service'] = {
@@ -681,5 +677,6 @@ class VehicleLocation(models.Model):
                 'line_name': journey.service.line_name,
                 'url': journey.service.get_absolute_url()
             }
+            del json['service_id']
 
         return json

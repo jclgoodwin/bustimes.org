@@ -4,9 +4,6 @@ import requests
 import logging
 import redis
 import json
-from aioredis import ReplyError
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
 from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
