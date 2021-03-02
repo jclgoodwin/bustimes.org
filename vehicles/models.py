@@ -182,18 +182,23 @@ class Vehicle(models.Model):
     garage = models.ForeignKey('bustimes.Garage', models.SET_NULL, null=True, blank=True)
 
     def save(self, force_insert=False, force_update=False, **kwargs):
-        if 'update_fields' not in kwargs or 'fleet_number' in kwargs:
+        update_fields = kwargs.get('update_fields')
+
+        if update_fields is None or 'fleet_number' in update_fields:
             if self.fleet_number and (not self.fleet_code or self.fleet_code.isdigit()):
                 self.fleet_code = str(self.fleet_number)
-                if 'update_fields' in kwargs and 'fleet_code' not in kwargs['update_fields']:
-                    kwargs['update_fields'].append('fleet_code')
-        if 'update_fields' not in kwargs and not self.reg:
+                if update_fields and 'fleet_code' not in update_fields:
+                    update_fields.append('fleet_code')
+
+        if update_fields is None and not self.reg:
             reg = re.match(r"^[A-Z]\w_?\d\d?[ _-]?[A-Z]{3}$", self.code)
             if reg:
                 self.reg = self.code.replace(' ', '').replace('_', '').replace('-', '')
+
         super().save(force_insert, force_update, **kwargs)
 
-        varnish_ban(f'/vehicles/{self.id}')
+        if update_fields is None or update_fields:
+            varnish_ban(f'/vehicles/{self.id}')
 
     class Meta:
         unique_together = ('code', 'operator')
