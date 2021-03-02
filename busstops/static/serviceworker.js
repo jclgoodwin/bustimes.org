@@ -67,7 +67,6 @@ self.addEventListener('fetch', event => {
 
     if (url.origin !== location.origin && url.host !== 'tiles.stadiamaps.com'
         || url.pathname.endsWith('.json')
-        || url.pathname.includes('/locations/')
         || url.pathname.includes('/edit')
         || url.pathname == '/contact'
         || url.pathname.startsWith('/admin/')

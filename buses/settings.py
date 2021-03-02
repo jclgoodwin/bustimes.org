@@ -120,20 +120,14 @@ CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', REDIS_URL)
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 CHANNEL_LAYERS = {
-    'default': {}
-}
-if TEST:
-    CHANNEL_LAYERS['default'] = {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
-else:
-    CHANNEL_LAYERS['default'] = {
+    'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             'hosts': [CELERY_BROKER_URL],
             'expiry': 20
         }
     }
+}
 
 
 STATIC_URL = '/static/'

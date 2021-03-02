@@ -438,11 +438,6 @@ class VehiclesTests(TestCase):
             response = self.client.get(f'/journeys/{self.journey.id}/debug')
         self.assertEqual({}, response.json())
 
-    def test_location_detail(self):
-        with self.assertNumQueries(1):
-            response = self.client.get(f'/vehicles/locations/{self.location.id}')
-        self.assertContains(response, '<a href="/services/spixworth-hunworth-happisburgh"> </a>', html=True)
-
     def test_service_vehicle_history(self):
         with self.assertNumQueries(5):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=poop')

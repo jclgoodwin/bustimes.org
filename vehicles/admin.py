@@ -461,7 +461,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
 @admin.register(VehicleLocation)
 class VehicleLocationAdmin(admin.ModelAdmin):
     raw_id_fields = ['journey']
-    list_display = ['datetime', '__str__', 'get_delay']
+    list_display = ['datetime', '__str__']
     list_select_related = ['journey']
     list_filter = [
         'occupancy',

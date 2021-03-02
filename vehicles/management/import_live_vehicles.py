@@ -260,8 +260,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
             pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
         pipeline.execute()
 
-        group_messages = {}
-
         pipeline = r.pipeline(transaction=False)
 
         for location, latest, vehicle in self.to_save:
@@ -273,22 +271,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             pipeline.rpush(*location.get_appendage())
 
-            message = location.get_message(vehicle)
-
-            if location.journey.service_id:
-                group = f'service{location.journey.service_id}'
-                if group in group_messages:
-                    group_messages[group].append(message)
-                else:
-                    group_messages[group] = [message]
-
-            if vehicle.operator_id:
-                group = f'operator{vehicle.operator_id}'
-                if group in group_messages:
-                    group_messages[group].append(message)
-                else:
-                    group_messages[group] = [message]
-
             if vehicle.withdrawn:
                 vehicle.withdrawn = False
                 vehicle.save(update_fields=['withdrawn'])
@@ -297,19 +279,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 speed = calculate_speed(latest, location)
                 if speed > 90:
                     print('{} mph\t{}'.format(speed, vehicle.get_absolute_url()))
-
-        channel_layer = get_channel_layer()
-        group_send = async_to_sync(channel_layer.group_send)
-
-        try:
-            with beeline.tracer(name="group messages"):
-                for group in group_messages:
-                    group_send(group, {
-                        'type': 'move_vehicles',
-                        'items': group_messages[group]
-                    })
-        except ReplyError:
-            pass
 
         with beeline.tracer(name="pipeline"):
             try:
