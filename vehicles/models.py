@@ -1,15 +1,12 @@
 import re
 import redis
-from datetime import timedelta
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, DataSource, SIRISource
@@ -32,6 +29,8 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
         return colours[0]
     if direction is None:
         direction = 180
+    else:
+        direction = int(direction)
     background = 'linear-gradient('
     if horizontal:
         background += 'to top'
