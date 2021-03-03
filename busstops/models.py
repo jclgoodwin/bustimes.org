@@ -41,12 +41,10 @@ class SearchMixin:
         instance.search_vector = instance.document
         instance.save(update_fields=['search_vector'])
 
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        if 'update_fields' in kwargs:
-            if 'search_vector' in kwargs['update_fields']:
-                return
-        self.update_search_vector()
+    def save(self, *args, update_fields=None, **kwargs):
+        super().save(*args, update_fields=update_fields, **kwargs)
+        if update_fields is None or 'search_vector' not in update_fields:
+            self.update_search_vector()
 
 
 class Region(models.Model):

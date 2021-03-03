@@ -79,7 +79,7 @@ def operator_vehicles(request, slug=None, parent=None):
         vehicles = vehicles.annotate(feature_names=StringAgg('features__name', ', '))
         pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id')).only('id')
         vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
-        vehicles = vehicles.select_related('latest_location__journey', 'latest_journey')
+        vehicles = vehicles.select_related('latest_journey')
 
     vehicles = vehicles.select_related('livery', 'vehicle_type')
 
@@ -153,20 +153,13 @@ def operator_vehicles(request, slug=None, parent=None):
     if not parent:
         today = timezone.localdate()
         for vehicle in vehicles:
-            if vehicle.latest_location:
-                journey = vehicle.latest_location.journey
-                when = vehicle.latest_location.datetime
-            elif vehicle.latest_journey:
-                journey = vehicle.latest_journey
-                when = journey.datetime
-            else:
-                continue
-            service = journey.route_name
-            vehicle.last_seen = {
-                'service': service,
-                'when': when,
-                'today': timezone.localdate(when) == today,
-            }
+            if vehicle.latest_journey:
+                when = vehicle.latest_journey.datetime
+                vehicle.last_seen = {
+                    'service': vehicle.latest_journey.route_name,
+                    'when': when,
+                    'today': timezone.localdate(when) == today,
+                }
 
     context = {
         'breadcrumb': breadcrumb,
@@ -308,11 +301,12 @@ def get_dates(journeys, vehicle=None, service=None):
         if dates:
             now = timezone.localtime()
             if dates[-1] == now.date():
-                time_until_midnight = datetime.timedelta(days=1)
-                time_until_midnight -= datetime.timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
-                time_until_midnight = time_until_midnight.total_seconds()
-                if time_until_midnight > 0:
-                    cache.set(key, dates, time_until_midnight)
+                time_to_midnight = (
+                    datetime.timedelta(days=1)
+                    - datetime.timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
+                ).total_seconds()
+                if time_to_midnight > 0:
+                    cache.set(key, dates, time_to_midnight)
 
     return dates
 

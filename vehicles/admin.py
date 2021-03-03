@@ -58,7 +58,7 @@ class VehicleAdmin(admin.ModelAdmin):
         ('source', admin.RelatedOnlyFieldListFilter),
         ('operator', admin.RelatedOnlyFieldListFilter),
     )
-    list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_location']
+    list_select_related = ['operator', 'livery', 'vehicle_type', 'latest_journey']
     list_editable = ('fleet_number', 'fleet_code', 'reg', 'operator',
                      'branding', 'name', 'notes')
     autocomplete_fields = ('vehicle_type', 'livery')
@@ -95,9 +95,9 @@ class VehicleAdmin(admin.ModelAdmin):
             self.message_user(request, 'Select a vehicle with colours and branding.')
 
     def last_seen(self, obj):
-        if obj.latest_location:
-            return obj.latest_location.datetime
-    last_seen.admin_order_field = 'latest_location__datetime'
+        if obj.latest_journey:
+            return obj.latest_journey.datetime
+    last_seen.admin_order_field = 'latest_journey__datetime'
 
     def get_changelist_form(self, request, **kwargs):
         kwargs.setdefault('form', VehicleAdminForm)

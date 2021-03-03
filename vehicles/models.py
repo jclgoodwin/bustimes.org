@@ -140,13 +140,12 @@ class Livery(models.Model):
                 'colours': str(e)
             })
 
-    def save(self, force_insert=False, force_update=False, **kwargs):
-        if 'update_fields' not in kwargs:
-            if self.css or self.colours:
-                self.set_css()
-                if self.colours and not self.id:
-                    self.white_text = (get_text_colour(self.colours) == '#fff')
-        super().save(force_insert, force_update, **kwargs)
+    def save(self, *args, update_fields=None, **kwargs):
+        if update_fields is None and (self.css or self.colours):
+            self.set_css()
+            if self.colours and not self.id:
+                self.white_text = (get_text_colour(self.colours) == '#fff')
+        super().save(*args, update_fields=update_fields, **kwargs)
 
 
 class VehicleFeature(models.Model):
@@ -180,9 +179,7 @@ class Vehicle(models.Model):
     data = models.JSONField(null=True, blank=True)
     garage = models.ForeignKey('bustimes.Garage', models.SET_NULL, null=True, blank=True)
 
-    def save(self, force_insert=False, force_update=False, **kwargs):
-        update_fields = kwargs.get('update_fields')
-
+    def save(self, *args, update_fields=None, **kwargs):
         if update_fields is None or 'fleet_number' in update_fields:
             if self.fleet_number and (not self.fleet_code or self.fleet_code.isdigit()):
                 self.fleet_code = str(self.fleet_number)
@@ -194,7 +191,7 @@ class Vehicle(models.Model):
             if reg:
                 self.reg = self.code.replace(' ', '').replace('_', '').replace('-', '')
 
-        super().save(force_insert, force_update, **kwargs)
+        super().save(*args, update_fields=update_fields, **kwargs)
 
     class Meta:
         unique_together = ('code', 'operator')

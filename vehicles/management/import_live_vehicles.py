@@ -277,7 +277,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 vehicle.withdrawn = False
                 update_fields.append('withdrawn')
 
-            vehicle.save(update_fields=update_fields)
+            if update_fields:
+                vehicle.save(update_fields=update_fields)
 
             self.current_location_ids.add(location.id)
 
