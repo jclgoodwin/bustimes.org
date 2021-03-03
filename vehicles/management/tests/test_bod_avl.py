@@ -207,7 +207,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         location = VehicleLocation.objects.get()
 
         with self.assertNumQueries(0):
-            response = self.client.get('/vehicles.json?ymax=52&xmax=2&ymin=52&xmin=1')
+            response = self.client.get('/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
              'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS', 'css': None, 'text_colour': None},
