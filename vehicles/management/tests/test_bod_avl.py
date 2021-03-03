@@ -202,3 +202,24 @@ class BusOpenDataVehicleLocationsTest(TestCase):
              'datetime': '2020-11-28T15:07:06Z',
              'delta': None,
              'direction': 142}]})
+
+        vehicle = journey.vehicle
+        location = VehicleLocation.objects.get()
+
+        with self.assertNumQueries(0):
+            response = self.client.get('/vehicles.json?ymax=52&xmax=2&ymin=52&xmin=1')
+        self.assertEqual(response.json(), [
+            {'id': location.id, 'coordinates': [1.675893, 52.328398],
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS', 'css': None, 'text_colour': None},
+             'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
+             'service': {'line_name': '146'}}
+        ])
+
+        with self.assertNumQueries(0):
+            response = self.client.get('/vehicles.json')
+        self.assertEqual(response.json(), [
+            {'id': location.id, 'coordinates': [1.675893, 52.328398],
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS', 'css': None, 'text_colour': None},
+             'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
+             'service': {'line_name': '146'}}
+        ])

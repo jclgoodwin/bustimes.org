@@ -45,7 +45,8 @@ class VehiclesTests(TestCase):
 
         cls.location = VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51),
                                                       journey=cls.journey, current=True)
-        cls.vehicle_1.latest_location = cls.location
+        # cls.vehicle_1.latest_location = cls.location
+        cls.vehicle_1.latest_journey = cls.journey
         cls.vehicle_1.save()
 
         cls.vehicle_1.features.set([cls.wifi])
@@ -392,31 +393,6 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '1 vehicle updated')
         self.assertEqual(1, VehicleEdit.objects.count())
 
-    def test_vehicles_json(self):
-        with time_machine.travel(self.datetime):
-            with self.assertNumQueries(0):
-                response = self.client.get('/vehicles.json?ymax=52&xmax=2&ymin=51&xmin=1')
-            self.assertEqual(200, response.status_code)
-            self.assertEqual([], response.json())
-            self.assertIsNone(response.get('last-modified'))
-
-            # this is dependent the content previously run different tests being in Redis. not proper
-
-            with self.assertNumQueries(0):
-                response = self.client.get('/vehicles.json')
-            features = response.json()
-            self.assertEqual(features[0]['vehicle']['name'], '102')
-
-            VehicleJourney.objects.update(service=None)
-            with self.assertNumQueries(0):
-                response = self.client.get('/vehicles.json')
-            features = response.json()
-            self.assertEqual(features[0]['coordinates'], [-3.5089750591636, 50.5476417184896])
-
-    def test_location_json(self):
-        location = VehicleLocation.objects.get()
-        self.assertTrue(location)
-
     def test_validation(self):
         vehicle = Vehicle(colours='ploop')
         with self.assertRaises(ValidationError):
@@ -453,15 +429,36 @@ class VehiclesTests(TestCase):
     def test_api(self):
         with self.assertNumQueries(2):
             response = self.client.get('/api/vehicles/')
-        data = response.json()
-        self.assertEqual(2, data['count'])
+        self.assertEqual(
+            response.json(),
+            {'count': 2, 'next': None, 'previous': None, 'results': [
+                {'id': self.vehicle_1.id,
+                    'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
+                    'livery': {'id': None, 'name': None, 'left': '#FF0000', 'right': '#FF0000'},
+                    'fleet_number': 1, 'fleet_code': '1', 'reg': 'FD54JYA', 'name': '',
+                    'branding': '', 'notes': 'Trent Barton', 'withdrawn': False, 'data': {'Depot': 'Holt'},
+                    'vehicle_type': {
+                        'id': self.vehicle_1.vehicle_type_id,
+                        'name': 'Optare Tempo', 'double_decker': False, 'coach': False, 'electric': None},
+                    'garage': None},
+                {'id': self.vehicle_2.id,
+                    'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
+                    'livery': {'id': self.vehicle_2.livery_id, 'name': '',
+                               'left': 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)',
+                               'right': 'linear-gradient(to left,#FF0000 50%,#0000FF 50%)'},
+                    'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': '', 'branding': '', 'notes': '',
+                    'withdrawn': False, 'data': {'Depot': 'Long Sutton'},
+                    'vehicle_type': {
+                        'id': self.vehicle_2.vehicle_type_id,
+                        'name': 'Optare Spectra', 'double_decker': True, 'coach': False, 'electric': None},
+                    'garage': None}
+            ]}
+        )
 
         with self.assertNumQueries(1):
             response = self.client.get('/api/vehicles/?reg=sa60twp')
-        data = response.json()
-        self.assertEqual(0, data['count'])
+        self.assertEqual(0, response.json()['count'])
 
         with self.assertNumQueries(2):
             response = self.client.get('/api/vehicles/?search=fd54jya')
-        data = response.json()
-        self.assertEqual(1, data['count'])
+        self.assertEqual(1, response.json()['count'])
