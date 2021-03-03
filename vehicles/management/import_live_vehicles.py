@@ -257,7 +257,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
 
         with beeline.tracer(name="pipeline"):
-            pipeline.execute()
+            try:
+                pipeline.execute()
+            except redis.exceptions.ConnectionError:
+                pass
 
         pipeline = r.pipeline(transaction=False)
 
@@ -290,7 +293,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     print('{} mph\t{}'.format(speed, vehicle.get_absolute_url()))
 
         with beeline.tracer(name="pipeline"):
-            pipeline.execute()
+            try:
+                pipeline.execute()
+            except redis.exceptions.ConnectionError:
+                pass
 
         self.to_save = []
 
