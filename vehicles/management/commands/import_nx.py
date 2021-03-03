@@ -65,7 +65,7 @@ class Command(ImportLiveVehiclesCommand):
 
         latest_journey = vehicle.latest_journey
         if latest_journey and journey.datetime == latest_journey.datetime:
-            journey = latest_journey.journey
+            journey = latest_journey
         else:
             try:
                 journey = VehicleJourney.objects.get(vehicle=vehicle, datetime=journey.datetime)
