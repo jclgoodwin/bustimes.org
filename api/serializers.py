@@ -26,7 +26,7 @@ class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
         depth = 1
-        exclude = ['code', 'source', 'latest_location', 'features', 'colours']
+        exclude = ['code', 'source', 'latest_location', 'latest_journey', 'features', 'colours']
 
 
 class VehicleTypeSerializer(serializers.ModelSerializer):
