@@ -564,44 +564,6 @@ class VehicleLocation(models.Model):
         appendage = [self.datetime, self.latlong.coords, self.heading, self.early]
         return (f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
 
-    def redis_append(self):
-        r = redis.from_url(settings.REDIS_URL)
-        try:
-            r.rpush(*self.get_appendage())
-        except redis.exceptions.ConnectionError:
-            pass
-
-    def get_websocket_json(self, vehicle=None):
-        json = {
-            'i': self.id,
-            'd': DjangoJSONEncoder.default(None, self.datetime),
-            'l': self.latlong.coords,
-            'h': self.heading,
-            'r': self.journey.route_name,
-        }
-
-        if not vehicle:
-            vehicle = self.vehicle
-
-        if vehicle.livery_id:
-            json['c'] = vehicle.livery_id
-        else:
-            json['c'] = vehicle.get_livery(self.heading)
-            json['t'] = vehicle.get_text_colour()
-
-        if self.early is not None:
-            json['e'] = self.early
-
-        return json
-
-    def get_message(self, vehicle):
-        if self.heading:
-            self.heading = int(self.heading)
-
-        json = self.get_websocket_json(vehicle)
-
-        return json
-
     def get_redis_json(self, vehicle):
         journey = self.journey
 
