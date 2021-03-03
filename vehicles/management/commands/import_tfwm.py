@@ -97,8 +97,8 @@ class Command(ImportLiveVehiclesCommand):
                 datetime.strptime(item.vehicle.trip.start_date + item.vehicle.trip.start_time, '%Y%m%d%H:%M:%S')
             )
 
-            if vehicle.latest_location and vehicle.latest_location.journey.datetime == journey.datetime:
-                return vehicle.latest_location.journey
+            if vehicle.latest_journey and vehicle.latest_journey.datetime == journey.datetime:
+                return vehicle.latest_journey
 
             try:
                 journey = vehicle.vehiclejourney_set.get(datetime=journey.datetime)

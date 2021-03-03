@@ -4,19 +4,19 @@ import requests
 import logging
 import redis
 import json
-from datetime import timedelta
+from ciso8601 import parse_datetime
 from time import sleep
 from django.core.management.base import BaseCommand
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
 from django.utils import timezone
 from bustimes.models import Route
 from busstops.models import DataSource
-from ..models import Vehicle, VehicleLocation, VehicleJourney
+from ..models import Vehicle, VehicleJourney
 
 
 logger = logging.getLogger(__name__)
@@ -43,43 +43,41 @@ def calculate_bearing(a, b):
     return int(round(bearing_degrees))
 
 
-def same_journey(latest_location, journey, when):
-    if not latest_location:
+def same_journey(latest_journey, journey, when):
+    if not latest_journey:
         return False
-    latest_journey = latest_location.journey
+
     if journey.id:
         return journey.id == latest_journey.id
-    time_since_last_location = when - latest_location.datetime
-    if time_since_last_location > timedelta(hours=1):
-        return False
+
     if latest_journey.route_name and journey.route_name:
         same_route = latest_journey.route_name == journey.route_name
     else:
         same_route = latest_journey.service_id == journey.service_id
+
     if same_route:
         if latest_journey.datetime == journey.datetime:
             return True
-        elif latest_journey.code and journey.code:
+        if latest_journey.code and journey.code:
             return str(latest_journey.code) == str(journey.code)
-        elif latest_journey.direction and journey.direction:
+        if latest_journey.direction and journey.direction:
             if latest_journey.direction != journey.direction:
                 return False
         elif latest_journey.destination and journey.destination:
             return latest_journey.destination == journey.destination
-        return time_since_last_location < timedelta(minutes=15)
+
     return False
 
 
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ''
-    vehicles = Vehicle.objects.select_related('latest_location__journey')
-    vehicle_location_update_fields = ('datetime', 'latlong', 'journey', 'heading', 'early', 'current')
+    vehicles = Vehicle.objects.select_related('latest_location__journey', 'latest_journey')
     wait = 60
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
-        self.current_location_ids = set()
+        self.redis = redis.from_url(settings.REDIS_URL)
         self.to_save = []
 
     @staticmethod
@@ -127,77 +125,74 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not vehicle:
             return
 
-        if vehicle_created:
-            latest = None
-        else:
-            latest = vehicle.latest_location
+        latest = None
+        if vehicle.latest_location_id:
+            latest = self.redis.get(f'vehicle{vehicle.id}')
             if latest:
+                latest = json.loads(latest)
+                latest_datetime = parse_datetime(latest['datetime'])
+                latest_latlong = Point(*latest['coordinates'])
+
                 if datetime:
-                    if latest.datetime >= datetime:
-                        self.current_location_ids.add(latest.id)
+                    if latest_datetime >= datetime:
+                        # timestamp hasn't changed/is older
                         return
                 else:
                     location = self.create_vehicle_location(item)
-                    if location.latlong.equals_exact(latest.latlong, 0.001):
-                        self.current_location_ids.add(latest.id)
+                    if location.latlong.equals_exact(latest_latlong, 0.001):
+                        # position haven't changed
                         return
 
-                # take a snapshot here, to see if they have changed later,
-                # cos get_journey() might return latest.journey
-                original_service_id = latest.journey.service_id
-                original_destination = latest.journey.destination
+        latest_journey = vehicle.latest_journey
+        if latest_journey:
+            # take a snapshot here, to see if they have changed later,
+            # cos get_journey() might return same object
+            original_service_id = latest_journey.service_id
+            original_destination = latest_journey.destination
 
-        try:
-            journey = self.get_journey(item, vehicle)
-        except ObjectDoesNotExist:
-            vehicle.latest_location_id = None
-            vehicle.save(update_fields=['latest_location'])
-            latest = None
-            journey = self.get_journey(item, vehicle)
-        journey.vehicle = vehicle
+        journey = self.get_journey(item, vehicle)
         if not journey:
             return
-        if latest and latest.current and latest.journey.source_id != self.source.id:
-            if self.source.name != 'Bus Open Data':
-                if ((datetime or now) - latest.datetime).total_seconds() < 300:  # less than 5 minutes old
-                    if latest.journey.service_id or not journey.service_id:
-                        return  # defer to other source
+        journey.vehicle = vehicle
+
+        if latest and latest_journey.source_id != self.source.id and self.source.name != 'Bus Open Data':
+            if ((datetime or now) - latest_datetime).total_seconds() < 300:  # less than 5 minutes old
+                if latest_journey.service_id or not journey.service_id:
+                    return  # defer to other source
+
         if not location:
             location = self.create_vehicle_location(item)
-            if not location.latlong or not (location.latlong.x or location.latlong.y):  # (0, 0) - null island
-                return
+
+        if not location.latlong or not (location.latlong.x or location.latlong.y):  # (0, 0) - null island
+            return
 
         if location.heading == -1:
             location.heading = None
+
         location.datetime = datetime
-        if latest:
-            if location.datetime:
-                if location.datetime == latest.datetime:
-                    self.current_location_ids.add(latest.id)
-                    return
-            elif location.latlong == latest.latlong and location.heading == latest.heading:
-                self.current_location_ids.add(latest.id)
-                return
         if not location.datetime:
             location.datetime = now
-        if same_journey(latest, journey, location.datetime):
-            changed = False
-            if latest.journey.source_id != self.source.id:
-                latest.journey.source = self.source
-                changed = True
+
+        if same_journey(latest_journey, journey, location.datetime):
+            changed = []
+            if latest_journey.source_id != self.source.id:
+                latest_journey.source = self.source
+                changed.append('source')
             if journey.service_id and not original_service_id:
-                latest.journey.service_id = journey.service_id
-                changed = True
+                latest_journey.service_id = journey.service_id
+                changed.append('service')
             if journey.destination and not original_destination:
-                latest.journey.destination = journey.destination
-                changed = True
+                latest_journey.destination = journey.destination
+                changed.append('destination')
             if changed:
-                latest.journey.save()
-            location.journey = latest.journey
-            if location.heading is None:
-                location.heading = calculate_bearing(latest.latlong, location.latlong)
+                latest_journey.save(update_fields=changed)
+
+            journey = latest_journey
+
+            if latest and location.heading is None:
+                location.heading = calculate_bearing(latest_latlong, location.latlong)
                 if location.heading is None:
-                    location.heading = latest.heading
+                    location.heading = latest['heading']
         else:
             journey.source = self.source
             if not journey.datetime:
@@ -212,55 +207,19 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     journey.service.tracking = True
                     journey.service.save(update_fields=['tracking'])
 
-            location.journey = journey
-        if latest:
-            location.id = latest.id
+        if vehicle.latest_location_id:
+            location.id = vehicle.latest_location_id
+
+        location.journey = journey
         location.current = True
 
-        self.to_save.append((location, latest, vehicle))
+        if not location.id:
+            location.save()
 
-    def save(self):
-        if not self.to_save:
-            return
-
-        to_create = []
-        to_update = []
-        for location, latest, vehicle in self.to_save:
-            if location.id:
-                to_update.append(location)
-            else:
-                to_create.append(location)
-
-        if to_create:
-            with beeline.tracer(name="bulk create"):
-                VehicleLocation.objects.bulk_create(to_create)
-        if to_update:
-            with beeline.tracer(name="bulk update"):
-                VehicleLocation.objects.bulk_update(to_update, fields=self.vehicle_location_update_fields)
-
-        r = redis.from_url(settings.REDIS_URL)
-
-        pipeline = r.pipeline(transaction=False)
-
-        for location, latest, vehicle in self.to_save:
-            pipeline.geoadd('vehicle_location_locations', location.latlong.x, location.latlong.y, vehicle.id)
-            redis_json = location.get_redis_json(vehicle)
-            redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
-            pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
-
-        with beeline.tracer(name="pipeline"):
-            try:
-                pipeline.execute()
-            except redis.exceptions.ConnectionError:
-                pass
-
-        pipeline = r.pipeline(transaction=False)
-
-        for location, latest, vehicle in self.to_save:
-
+        if vehicle.latest_journey_id != journey.id:
             update_fields = []
 
-            if not vehicle.latest_location_id:
+            if vehicle.latest_location_id != location.id:
                 vehicle.latest_location = location
                 update_fields.append('latest_location')
 
@@ -275,8 +234,29 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if update_fields:
                 vehicle.save(update_fields=update_fields)
 
-            self.current_location_ids.add(location.id)
+        self.to_save.append((location, vehicle))
 
+    def save(self):
+        if not self.to_save:
+            return
+
+        pipeline = self.redis.pipeline(transaction=False)
+
+        for location, vehicle in self.to_save:
+            pipeline.geoadd('vehicle_location_locations', location.latlong.x, location.latlong.y, vehicle.id)
+            redis_json = location.get_redis_json(vehicle)
+            redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
+            pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
+
+        with beeline.tracer(name="pipeline"):
+            try:
+                pipeline.execute()
+            except redis.exceptions.ConnectionError:
+                pass
+
+        pipeline = self.redis.pipeline(transaction=False)
+
+        for location, vehicle in self.to_save:
             pipeline.rpush(*location.get_appendage())
 
         with beeline.tracer(name="pipeline"):
@@ -302,8 +282,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
         now = timezone.now()
         self.source.datetime = now
 
-        self.current_location_ids = set()
-
         try:
             items = self.get_items()
             if items:
@@ -318,8 +296,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         self.save()
                         i = 0
                 self.save()
-                # mark any vehicles that have gone offline as not current
-                # self.get_old_locations().update(current=False)
             else:
                 return 300  # no items - wait five minutes
         except requests.exceptions.RequestException as e:

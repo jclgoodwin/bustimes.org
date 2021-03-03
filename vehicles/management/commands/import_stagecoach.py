@@ -115,12 +115,8 @@ class Command(ImportLiveVehiclesCommand):
 
         if vehicle_code in self.vehicles_cache:
             vehicle = self.vehicles_cache[vehicle_code]
-            if vehicle.latest_location:
-                if vehicle.latest_location.journey.source_id != self.source.id:
-                    when = self.get_datetime(item)
-                    if (when - vehicle.latest_location.datetime).total_seconds() < 600:
-                        # other source is less than 10 minutes out of date, defer to it
-                        return None, None
+            if vehicle.latest_journey and vehicle.latest_journey.source_id != self.source.id:
+                return None, None
         else:
             operator_id = self.operator_ids.get(item['oc'], item['oc'])
             if operator_id in self.operators:
@@ -157,11 +153,11 @@ class Command(ImportLiveVehiclesCommand):
             departure_time = None
             code = ''
 
-        latest_location = vehicle.latest_location
+        latest_journey = vehicle.latest_journey
 
         if departure_time:
-            if latest_location and latest_location.journey.datetime == departure_time:
-                return latest_location.journey
+            if latest_journey and latest_journey.datetime == departure_time:
+                return latest_journey
             else:
                 try:
                     return vehicle.vehiclejourney_set.get(datetime=departure_time)

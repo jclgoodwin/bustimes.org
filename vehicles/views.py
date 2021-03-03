@@ -11,7 +11,6 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
-from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
@@ -208,29 +207,7 @@ def operator_map(request, slug):
     })
 
 
-def get_locations(request):
-    now = timezone.now()
-    fifteen_minutes_ago = now - datetime.timedelta(minutes=15)
-    locations = VehicleLocation.objects.filter(current=True, vehicle__isnull=False, datetime__gte=fifteen_minutes_ago)
-
-    if 'service' in request.GET:
-        locations = locations.filter(journey__service__in=request.GET['service'].split(','))
-    elif 'operator' in request.GET:
-        locations = locations.filter(vehicle__operator=request.GET['operator'])
-    else:
-        locations = None
-
-    if locations is not None:
-        locations = locations.select_related(
-            'journey__service', 'vehicle__vehicle_type'
-        ).defer(
-            'journey__data', 'journey__service__geometry', 'journey__service__search_vector'
-        ).annotate(
-            features=StringAgg('vehicle__features__name', ', ')
-        ).order_by()
-
-        return [location.get_json() for location in locations]
-
+def vehicles_json(request):
     r = redis.from_url(settings.REDIS_URL)
 
     try:
@@ -252,9 +229,19 @@ def get_locations(request):
             'FROMLONLAT', (xmax + xmin) / 2, (ymax + ymin) / 2,
             'BYBOX', width, height, 'km'
         )
+
     else:
-        # ids of all vehicles
-        vehicle_ids = r.zrange('vehicle_location_locations', 0, -1)
+        if 'service' in request.GET:
+            vehicle_ids = Vehicle.objects.filter(
+                latest_journey__service__in=request.GET['service'].split(',')
+            ).values_list('id', flat=True)
+        elif 'operator' in request.GET:
+            vehicle_ids = Vehicle.objects.filter(
+                operator__in=request.GET['operator'].split(',')
+            ).values_list('id', flat=True)
+        else:
+            # ids of all vehicles
+            vehicle_ids = r.zrange('vehicle_location_locations', 0, -1)
 
     pipeline = r.pipeline(transaction=False)
     for vehicle_id in vehicle_ids:
@@ -280,12 +267,6 @@ def get_locations(request):
                     'url': service.get_absolute_url()
                 }
             del item['service_id']
-
-    return locations
-
-
-def vehicles_json(request):
-    locations = get_locations(request)
 
     return JsonResponse(locations, safe=False)
 

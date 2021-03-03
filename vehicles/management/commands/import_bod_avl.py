@@ -40,11 +40,6 @@ class Command(ImportLiveVehiclesCommand):
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
     identifiers = {}
-    vehicle_location_update_fields = (
-        'datetime', 'latlong', 'journey', 'heading', 'current',
-        'occupancy', 'seated_occupancy', 'seated_capacity',
-        'wheelchair_occupancy', 'wheelchair_capacity', 'occupancy_thresholds'
-    )
 
     @staticmethod
     def get_datetime(item):
@@ -306,24 +301,24 @@ class Command(ImportLiveVehiclesCommand):
 
         datetime = None
 
-        latest_location = vehicle.latest_location
-        if latest_location:
+        latest_journey = vehicle.latest_journey
+        if latest_journey:
             if origin_aimed_departure_time:
-                if latest_location.journey.datetime == origin_aimed_departure_time:
-                    journey = latest_location.journey
+                if latest_journey.datetime == origin_aimed_departure_time:
+                    journey = latest_journey
                 else:
                     journey = journeys.filter(datetime=origin_aimed_departure_time).first()
             elif journey_code:
                 if '_' in journey_code:
-                    if journey_code == latest_location.journey.code:
-                        journey = latest_location.journey
+                    if journey_code == latest_journey.code:
+                        journey = latest_journey
                     else:
                         journey = journeys.filter(route_name=route_name, code=journey_code).first()
                 else:
                     datetime = self.get_datetime(item)
-                    if journey_code == latest_location.journey.code:
-                        if datetime - latest_location.journey.datetime < TWELVE_HOURS:
-                            journey = latest_location.journey
+                    if journey_code == latest_journey.code:
+                        if datetime - latest_journey.datetime < TWELVE_HOURS:
+                            journey = latest_journey
                     else:
                         twelve_hours_ago = datetime - TWELVE_HOURS
                         journey = journeys.filter(

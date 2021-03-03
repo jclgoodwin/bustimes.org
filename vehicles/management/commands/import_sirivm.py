@@ -198,20 +198,19 @@ class Command(ImportLiveVehiclesCommand):
             ).first(), False
 
     def get_journey(self, item, vehicle):
-        latest_location = vehicle.latest_location
-
         journey = VehicleJourney()
 
         mvj = item.find('siri:MonitoredVehicleJourney', NS)
         operator_ref = mvj.find('siri:OperatorRef', NS).text
         service = mvj.find('siri:LineRef', NS).text
 
+        latest_journey = vehicle.latest_journey
         departure_time = mvj.find('siri:OriginAimedDepartureTime', NS)
         if departure_time is not None:
             journey.datetime = ciso8601.parse_datetime(departure_time.text)
 
-            if latest_location and latest_location.datetime == journey.datetime:
-                journey = latest_location.journey
+            if latest_journey and latest_journey.datetime == journey.datetime:
+                journey = latest_journey
             else:
                 try:
                     journey = vehicle.vehiclejourney_set.select_related('service').get(datetime=journey.datetime)
@@ -229,11 +228,11 @@ class Command(ImportLiveVehiclesCommand):
         if service:
             journey.route_name = service
 
-        if latest_location and latest_location.journey.code == journey.code:
-            if latest_location.journey.route_name == journey.route_name:
-                journey.service_id = latest_location.journey.service_id
-                if latest_location.journey.destination:
-                    journey.destination = latest_location.journey.destination
+        if latest_journey and latest_journey.code == journey.code:
+            if latest_journey.route_name == journey.route_name:
+                journey.service_id = latest_journey.service_id
+                if latest_journey.destination:
+                    journey.destination = latest_journey.destination
                 return journey
 
         destination_ref = mvj.find('siri:DestinationRef', NS)

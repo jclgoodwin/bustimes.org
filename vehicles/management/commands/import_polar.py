@@ -114,14 +114,10 @@ class Command(ImportLiveVehiclesCommand):
         elif vehicle.operator_id == 'WDBC' and line_name == '1':
             line_name = 'ONE'
 
-        latest_location = vehicle.latest_location
+        latest_journey = vehicle.latest_journey
 
-        if latest_location and latest_location.datetime == self.source.datetime:
-            maybe_journey = vehicle.vehiclejourney_set.filter(route_name=journey.route_name).last()
-            if maybe_journey:
-                journey = maybe_journey
-        elif latest_location and latest_location.current and latest_location.journey.route_name == journey.route_name:
-            journey.service_id = latest_location.journey.service_id
+        if latest_journey and latest_journey.route_name == journey.route_name:
+            journey.service_id = latest_journey.service_id
         else:
             services = Service.objects.filter(current=True, line_name__iexact=line_name)
             if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:

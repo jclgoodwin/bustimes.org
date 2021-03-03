@@ -115,9 +115,9 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.datetime = parse_datetime(item['startTime']['dateTime'])
 
-        latest_location = vehicle.latest_location
-        if latest_location and journey.datetime == latest_location.journey.datetime:
-            journey = latest_location.journey
+        latest_journey = vehicle.latest_journey
+        if latest_journey and journey.datetime == latest_journey.datetime:
+            journey = latest_journey
         else:
             try:
                 journey = VehicleJourney.objects.get(vehicle=vehicle, datetime=journey.datetime)
@@ -127,10 +127,9 @@ class Command(ImportLiveVehiclesCommand):
         journey.route_name = item['route']
         journey.destination = item['arrival']
 
-        latest_location = vehicle.latest_location
-        if latest_location and journey.route_name == latest_location.journey.route_name:
-            if latest_location.journey.service_id:
-                journey.service_id = vehicle.latest_location.journey.service_id
+        if latest_journey and journey.route_name == latest_journey.route_name:
+            if latest_journey.service_id:
+                journey.service_id = latest_journey.service_id
                 return journey
 
         route_name = journey.route_name

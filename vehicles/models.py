@@ -1,5 +1,4 @@
 import re
-import redis
 from math import ceil
 from urllib.parse import quote
 from webcolors import html5_parse_simple_color

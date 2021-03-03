@@ -70,9 +70,8 @@ class VehicleAdmin(admin.ModelAdmin):
     readonly_fields = ['latest_journey_data']
 
     def latest_journey_data(self, obj):
-        journey = obj.vehiclejourney_set.latest('datetime')
-        if journey:
-            return journey.data
+        if obj.latest_journey:
+            return obj.latest_journey.data
 
     def copy_livery(self, request, queryset):
         livery = Livery.objects.filter(vehicle__in=queryset).first()
@@ -354,7 +353,7 @@ class UserFilter(admin.SimpleListFilter):
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
                     'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', user, url]
-    list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_location',
+    list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_journey',
                            'livery']
     list_filter = [
         'approved',
@@ -416,9 +415,9 @@ class VehicleEditAdmin(admin.ModelAdmin):
     edit_count.short_description = 'edits'
 
     def last_seen(self, obj):
-        if obj.vehicle.latest_location:
-            return obj.vehicle.latest_location.datetime
-    last_seen.admin_order_field = 'vehicle__latest_location__datetime'
+        if obj.vehicle.latest_journey:
+            return obj.vehicle.latest_journey.datetime
+    last_seen.admin_order_field = 'vehicle__latest_journey__datetime'
     last_seen.short_description = 'seen'
 
 

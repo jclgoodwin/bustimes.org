@@ -92,9 +92,9 @@ class Command(ImportLiveVehiclesCommand):
         code = item['JourneyCode']
         datetime = get_datetime(item['DepartureTime'])
 
-        latest_location = vehicle.latest_location
-        if latest_location and latest_location.journey.code == code and latest_location.journey.datetime == datetime:
-            journey = latest_location.journey
+        latest_journey = vehicle.latest_journey
+        if latest_journey and latest_journey.code == code and latest_journey.datetime == datetime:
+            journey = latest_journey
         else:
             try:
                 journey = VehicleJourney.objects.select_related('service').get(vehicle=vehicle, datetime=datetime)

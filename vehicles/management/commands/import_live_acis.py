@@ -110,9 +110,8 @@ class Command(ImportLiveVehiclesCommand):
         journey.code = item.find('a:VehicleJourneyId', NS).text
         journey.route_name = item.find('a:VehiclePublicServiceCode', NS).text
 
-        latest_location = vehicle.latest_location
-        if latest_location:
-            latest_journey = latest_location.journey
+        latest_journey = vehicle.latest_journey
+        if latest_journey:
             if latest_journey.code == journey.code and latest_journey.route_name == journey.route_name:
                 return latest_journey
 

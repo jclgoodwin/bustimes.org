@@ -63,9 +63,9 @@ class Command(ImportLiveVehiclesCommand):
         except AmbiguousTimeError:
             journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']), is_dst=True)
 
-        latest_location = vehicle.latest_location
-        if latest_location and journey.datetime == latest_location.journey.datetime:
-            journey = latest_location.journey
+        latest_journey = vehicle.latest_journey
+        if latest_journey and journey.datetime == latest_journey.datetime:
+            journey = latest_journey.journey
         else:
             try:
                 journey = VehicleJourney.objects.get(vehicle=vehicle, datetime=journey.datetime)
@@ -79,10 +79,9 @@ class Command(ImportLiveVehiclesCommand):
         journey.destination = item['arrival']
         journey.code = item['journeyId']
 
-        latest_location = vehicle.latest_location
-        if latest_location and journey.route_name == latest_location.journey.route_name:
-            if latest_location.journey.service_id:
-                journey.service_id = vehicle.latest_location.journey.service_id
+        if latest_journey and journey.route_name == latest_journey.route_name:
+            if latest_journey.service_id:
+                journey.service_id = latest_journey.service_id
                 return journey
 
         try:

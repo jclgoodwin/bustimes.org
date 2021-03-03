@@ -90,6 +90,6 @@ class BusHubTest(TestCase):
         self.assertEqual(self.service_c, self.vehicle.latest_location.journey.service)
 
         item["RecordedAtTime"] = "31/08/2018 23:10:33"
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             command.handle_item(item)
             command.save()

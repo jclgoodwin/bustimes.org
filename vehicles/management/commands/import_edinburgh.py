@@ -40,8 +40,8 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.route_name = item['service_name']
 
-        if vehicle.latest_location and vehicle.latest_location.journey.route_name == journey.route_name:
-            journey.service_id = vehicle.latest_location.journey.service_id
+        if vehicle.latest_journey and vehicle.latest_journey.route_name == journey.route_name:
+            journey.service_id = vehicle.latest_journey.service_id
         else:
             try:
                 journey.service = self.services.get(line_name=item['service_name'])

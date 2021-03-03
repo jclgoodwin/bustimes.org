@@ -46,8 +46,8 @@ class Command(ImportLiveVehiclesCommand):
         departure_time = timezone.make_aware(datetime.strptime(departure_time, '%Y-%m-%d %H:%M'))
 
         if not created:
-            if vehicle.latest_location and vehicle.latest_location.journey.datetime == departure_time:
-                journey = vehicle.latest_location.journey
+            if vehicle.latest_journey and vehicle.latest_journey.datetime == departure_time:
+                journey = vehicle.latest_journey
             else:
                 journey = VehicleJourney.objects.filter(vehicle=vehicle, datetime=departure_time).first()
         else:
@@ -88,7 +88,7 @@ class Command(ImportLiveVehiclesCommand):
         if not created and vehicle.latest_location_id:
             location.id = vehicle.latest_location_id
 
-        self.to_save.append((location, vehicle.latest_location, vehicle))
+        self.to_save.append((location, vehicle))
 
     @sync_to_async
     def handle_data(self, data, operator):

@@ -127,7 +127,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }]
 
-        with self.assertNumQueries(27):
+        with self.assertNumQueries(29):
             bod_avl(items)
         with self.assertNumQueries(2):
             bod_avl(items)
@@ -142,6 +142,23 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(location.journey.vehicle.operator_id, 'HAMS')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
+
+        with self.assertNumQueries(1):
+            response = self.client.get('/vehicles.json?operator=HAMS')
+        self.assertEqual(response.json(), [{
+            "id": location.id,
+            "coordinates": [0.285348, 51.2135],
+            "vehicle": {
+                "url": f"/vehicles/{location.vehicle.id}",
+                "name": "DW18\u00a0HAM",
+                "css": None,
+                "text_colour": None
+            },
+            "heading": 92.0,
+            "datetime": "2020-10-15T07:46:08Z",
+            "destination": "",
+            "service": {"line_name": "C"}
+        }])
 
     def test_handle_item(self):
         command = import_bod_avl.Command()
