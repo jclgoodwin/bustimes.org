@@ -237,18 +237,15 @@ def get_locations(request):
         bounds = None
 
     if bounds is not None:
-        # ids of vehicles within radius
-        radius = max(
-            bounds.coords[0][2][0] - bounds.coords[0][0][0],
-            bounds.coords[0][1][1] - bounds.coords[0][0][1]
-        ) / 2
+        # ids of vehicles within box
+        width = bounds.coords[0][2][0] - bounds.coords[0][0][0]
+        height = bounds.coords[0][1][1] - bounds.coords[0][0][1]
 
-        vehicle_ids = r.georadius(
+        vehicle_ids = r.execute_command(
+            'GEOSEARCH',
             'vehicle_location_locations',
-            bounds.centroid.x,
-            bounds.centroid.y,
-            radius * 111,
-            unit='km'
+            'FROMLONLAT', bounds.centroid.x, bounds.centroid.y,
+            'BYBOX', width * 110, height * 110, 'km'
         )
     else:
         # ids of all vehicles
