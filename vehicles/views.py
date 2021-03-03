@@ -2,6 +2,7 @@ import redis
 import json
 import xml.etree.cElementTree as ET
 import datetime
+from haversine import haversine
 from django.db.models import Exists, OuterRef
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
@@ -10,6 +11,7 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
+from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.http import HttpResponse, JsonResponse, Http404
 from django.views.generic.detail import DetailView
@@ -238,14 +240,17 @@ def get_locations(request):
 
     if bounds is not None:
         # ids of vehicles within box
-        width = bounds.coords[0][2][0] - bounds.coords[0][0][0]
-        height = bounds.coords[0][1][1] - bounds.coords[0][0][1]
+        xmin, ymin, xmax, ymax = bounds.extent
+
+        # convert to kilometres (only for redis to convert back to degrees)
+        width = haversine((ymin, xmax), (ymin, xmin))
+        height = haversine((ymin, xmax), (ymax, xmax))
 
         vehicle_ids = r.execute_command(
             'GEOSEARCH',
             'vehicle_location_locations',
-            'FROMLONLAT', bounds.centroid.x, bounds.centroid.y,
-            'BYBOX', width * 110, height * 110, 'km'
+            'FROMLONLAT', (xmax + xmin) / 2, (ymax + ymin) / 2,
+            'BYBOX', width, height, 'km'
         )
     else:
         # ids of all vehicles

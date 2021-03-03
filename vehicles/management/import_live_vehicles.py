@@ -43,14 +43,6 @@ def calculate_bearing(a, b):
     return int(round(bearing_degrees))
 
 
-def calculate_speed(a, b):
-    time = b.datetime - a.datetime
-    if time:
-        distance = a.latlong.distance(b.latlong) * 69  # approximate miles
-        return distance / time.total_seconds() * 60 * 60
-    return 0
-
-
 def same_journey(latest_location, journey, when):
     if not latest_location:
         return False
@@ -286,11 +278,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.current_location_ids.add(location.id)
 
             pipeline.rpush(*location.get_appendage())
-
-            if latest:
-                speed = calculate_speed(latest, location)
-                if speed > 90:
-                    print('{} mph\t{}'.format(speed, vehicle.get_absolute_url()))
 
         with beeline.tracer(name="pipeline"):
             try:

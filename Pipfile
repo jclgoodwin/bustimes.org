@@ -41,6 +41,7 @@ coverage = "*"
 django-coverage-plugin = "*"
 django-slowtests = "*"
 honeycomb-beeline = "*"
+haversine = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
