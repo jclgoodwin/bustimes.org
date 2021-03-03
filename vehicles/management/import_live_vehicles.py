@@ -160,6 +160,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if latest_journey.service_id or not journey.service_id:
                     return  # defer to other source
 
+        if not latest and now and datetime:
+            if (now - datetime).total_seconds() > 900:
+                return  # more than 15 minutes old
+
         if not location:
             location = self.create_vehicle_location(item)
 
@@ -217,22 +221,18 @@ class ImportLiveVehiclesCommand(BaseCommand):
             location.save()
 
         if vehicle.latest_journey_id != journey.id:
-            update_fields = []
+            vehicle.latest_journey = journey
+            update_fields = ['latest_journey']
 
             if vehicle.latest_location_id != location.id:
                 vehicle.latest_location = location
                 update_fields.append('latest_location')
 
-            if vehicle.latest_journey_id != location.journey_id:
-                vehicle.latest_journey_id = location.journey_id
-                update_fields.append('latest_journey')
-
             if vehicle.withdrawn:
                 vehicle.withdrawn = False
                 update_fields.append('withdrawn')
 
-            if update_fields:
-                vehicle.save(update_fields=update_fields)
+            vehicle.save(update_fields=update_fields)
 
         self.to_save.append((location, vehicle))
 
