@@ -53,7 +53,10 @@
     {% endif %}
 
     {% if user.is_staff %}
-        <p><a href="{% url 'admin:vehicles_vehicle_changelist' %}?o=2&amp;operator__id__exact={{ object.id }}">Edit</a></p>
+        <ul class="horizontal">
+            <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}?o=2&amp;operator__id__exact={{ object.id }}">Vehicles</a></li>
+            <li><a href="{% url 'admin:vehicles_vehicleedit_changelist' %}?approved__isnull=True&amp;o=-3.2.-1&amp;operator={{ object.id }}">Vehicle edits</a></li>
+        </ul>
     {% endif %}
 {% endif %}
 
