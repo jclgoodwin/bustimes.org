@@ -448,4 +448,4 @@ class Command(ImportLiveVehiclesCommand):
         self.when = data['Siri']['ServiceDelivery']['ResponseTimestamp']
         self.source.datetime = parse_datetime(self.when)
 
-        return data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']
+        return data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery'].get('VehicleActivity')

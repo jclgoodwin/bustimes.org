@@ -35,5 +35,7 @@ class Command(BaseCommand):
 
                 self.source.datetime = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
 
-                for item in data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']:
-                    yield item
+                items = data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery'].get('VehicleActivity')
+                if items:
+                    for item in items:
+                        yield item
