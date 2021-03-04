@@ -1,7 +1,6 @@
-from mock import patch
 from django.test import TestCase
 from busstops.models import DataSource, Region, Operator
-# from .models import VehicleLocation, Call
+from .models import VehicleLocation
 from .tasks import handle_siri_vm
 
 
@@ -92,7 +91,8 @@ class SiriSubscriptionReceiveTest(TestCase):
         </Siri>
         """
 
-        with self.assertNumQueries(21):
-            with patch('builtins.print') as mocked_print:
-                handle_siri_vm(xml)
-        mocked_print.assert_called()
+        with self.assertNumQueries(18):
+            handle_siri_vm(xml)
+
+        location = VehicleLocation.objects.first()
+        self.assertEqual(location.journey.code, '2')

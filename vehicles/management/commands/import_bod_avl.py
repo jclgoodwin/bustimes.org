@@ -279,6 +279,12 @@ class Command(ImportLiveVehiclesCommand):
         if journey_ref == 'UNKNOWN':
             journey_ref = None
 
+        if not journey_ref:
+            try:
+                journey_ref = monitored_vehicle_journey['FramedVehicleJourneyRef']['DatedVehicleJourneyRef']
+            except KeyError:
+                pass
+
         try:
             journey_code = item['Extensions']['VehicleJourney']['Operational']['TicketMachine']['JourneyCode']
         except KeyError:

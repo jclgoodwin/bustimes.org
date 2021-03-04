@@ -1,4 +1,5 @@
 import xml.etree.cElementTree as ET
+import xmltodict
 from io import StringIO
 from ciso8601 import parse_datetime
 from celery import shared_task
@@ -7,7 +8,7 @@ from django.db.utils import OperationalError
 from django.core.cache import cache
 from busstops.models import DataSource, ServiceCode, Operator
 from disruptions.management.commands.import_siri_sx import handle_item as siri_sx
-from .management.commands import import_sirivm, import_bod_avl
+from .management.commands import import_bod_avl
 from .models import JourneyCode, Vehicle, VehicleJourney
 
 
@@ -39,15 +40,20 @@ def bod_avl(items):
 
 @shared_task
 def handle_siri_vm(request_body):
-    command = import_sirivm.Command()
-    command.source = DataSource.objects.get(name='TransMach')
-    iterator = ET.iterparse(StringIO(request_body))
-    for _, element in iterator:
-        if element.tag[:5] != '{http':
-            element.tag = '{http://www.siri.org.uk/siri}' + element.tag
-        if element.tag[-15:] == 'VehicleActivity':
-            command.handle_item(element)
-            element.clear()
+    command = import_bod_avl.Command()
+    command.source_name = 'TransMach'
+    command.do_source()
+
+    data = xmltodict.parse(
+        request_body,
+        dict_constructor=dict,
+        force_list=['VehicleActivity']
+    )
+    response_timestamp = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
+
+    for item in data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']:
+        command.handle_item(item, response_timestamp)
+
     command.save()
 
 

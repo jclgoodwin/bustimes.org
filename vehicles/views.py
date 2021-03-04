@@ -19,7 +19,7 @@ from django.utils import timezone
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from bustimes.models import Garage, Trip, get_trip
-from .models import Vehicle, VehicleLocation, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
+from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
 from .tasks import handle_siri_vm, handle_siri_sx
