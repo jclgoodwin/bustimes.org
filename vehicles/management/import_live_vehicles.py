@@ -43,7 +43,7 @@ def calculate_bearing(a, b):
     return int(round(bearing_degrees))
 
 
-def same_journey(latest_journey, journey, when):
+def same_journey(latest_journey, journey, latest_datetime, when):
     if not latest_journey:
         return False
 
@@ -65,6 +65,10 @@ def same_journey(latest_journey, journey, when):
                 return False
         elif latest_journey.destination and journey.destination:
             return latest_journey.destination == journey.destination
+
+        # last time was less than 15 minutes ago
+        if latest_datetime and (when - latest_datetime).total_seconds() < 900:
+            return True
 
     return False
 
@@ -126,6 +130,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             return
 
         latest = None
+        latest_datetime = None
         if vehicle.latest_location_id:
             latest = self.redis.get(f'vehicle{vehicle.id}')
             if latest:
@@ -177,7 +182,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not location.datetime:
             location.datetime = now
 
-        if same_journey(latest_journey, journey, location.datetime):
+        if same_journey(latest_journey, journey, latest_datetime, location.datetime):
             changed = []
             if latest_journey.source_id != self.source.id:
                 latest_journey.source = self.source
