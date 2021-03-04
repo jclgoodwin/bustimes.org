@@ -21,7 +21,7 @@
     <tbody>
         {% for item in bod_avl_status %}
             <tr>
-                <td>{{ item.0 }}</td>
+                <td>{{ item.0|date:'j M H:i:s' }}</td>
                 <td>{{ item.1 }}</td>
                 <td>{{ item.2 }}</td>
             </tr>
