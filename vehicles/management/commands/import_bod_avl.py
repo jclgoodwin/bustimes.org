@@ -111,6 +111,9 @@ class Command(ImportLiveVehiclesCommand):
         if operator:
             vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
 
+            if operator_ref == 'AKE':
+                vehicle_ref = vehicle_ref.removeprefix('ASC-')
+
         assert vehicle_ref
 
         defaults = {
@@ -391,7 +394,8 @@ class Command(ImportLiveVehiclesCommand):
         latlong = Point(float(location['Longitude']), float(location['Latitude']))
         bearing = monitored_vehicle_journey.get('Bearing')
         if bearing:
-            bearing = float(bearing)
+            # Assume '0' means None. There's only a 1/360 chance the bus is actually facing exactly north
+            bearing = float(bearing) or None
         location = VehicleLocation(
             latlong=latlong,
             heading=bearing,
