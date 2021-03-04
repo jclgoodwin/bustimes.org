@@ -180,6 +180,21 @@ def data(request):
     })
 
 
+def status(request):
+    sources = DataSource.objects.annotate(
+        count=Count('route__service', filter=Q(route__service__current=True), distinct=True),
+    ).order_by('url')
+
+    tnds = sources.filter(url__contains='tnds.basemap')
+
+    return render(request, 'status.html', {
+        'bod_avl_updated': cache.get('bod_avl_updated', ''),
+        'bod_avl_items': cache.get('bod_avl_items', ''),
+        'bod_avl_updated_items': cache.get('bod_avl_updated_items', ''),
+        'tnds': tnds
+    })
+
+
 def stops(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,

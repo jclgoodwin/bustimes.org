@@ -28,27 +28,6 @@ the Open Government Licence</a>:</p>
 
 <p>Some information has been taken from <a href="https://www.bus-data.dft.gov.uk/">the bus open data digital service internet site</a>. While the Secretary of State for Transport strives to preserve the integrity and quality of information on the bus open data digital service internet site, the Secretary of State cannot warrant the accuracy or quality of the information on the site. bustimes.org does not have the endorsement, affiliation, support or approval of the Secretary of State.</p>
 
-<p>As operators in England prepare for the bus open data regulations, we’re using more of their data.
-This table shows the amount of timetable data taken from different sources:</p>
-
-<table>
-    <thead>
-        <th scope="col">Source</th>
-        <th scope="col">Count</th>
-        <th scope="col">Updated</th>
-    </thead>
-    <tbody>
-        {% for source in sources %}
-            <tr>
-                <td>{{ source.get_nice_link }}</td>
-                <td>{{ source.count }}</td>
-                <td>{{ source.datetime|date:"j M"|default:"" }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-
 <p>Live vehicle tracking data comes from a number of different sources, including:</p>
 
 <ul class="bulleted">

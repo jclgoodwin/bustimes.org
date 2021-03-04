@@ -1,5 +1,6 @@
-from django.utils import timezone
 from asgiref.sync import async_to_sync
+from django.utils import timezone
+from django.core.cache import cache
 from channels.layers import get_channel_layer
 from channels.exceptions import ChannelFull
 from .import_bod_avl import Command as ImportLiveVehiclesCommand
@@ -21,6 +22,9 @@ class Command(ImportLiveVehiclesCommand):
         if not items:
             return 300  # wait five minutes
 
+        cache.set('bod_avl_updated', self.when)
+        cache.set('bod_avl_items', len(items))
+
         # encourage items to be grouped by operator
         items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])
 
@@ -35,14 +39,13 @@ class Command(ImportLiveVehiclesCommand):
                 identifiers[key] = item['RecordedAtTime']
                 to_send.append(item)
                 i += 1
-                if i == 1000:
+                if i % 1000 == 0:
                     try:
                         self.send_items(to_send)
                     except ChannelFull:
                         break
                     self.identifiers.update(identifiers)
                     identifiers = {}
-                    i = 0
                     to_send = []
         if to_send:
             try:
@@ -50,6 +53,8 @@ class Command(ImportLiveVehiclesCommand):
                 self.identifiers.update(identifiers)
             except ChannelFull:
                 pass
+
+        cache.set('bod_avl_updated_items', i)
 
         time_taken = timezone.now() - now
         print(time_taken)

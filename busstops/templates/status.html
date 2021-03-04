@@ -1,0 +1,52 @@
+{% extends 'page.html' %}
+
+{% block title %}Site status – bustimes.org{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>Site status</h1>
+
+<h2>Bus Open Data AVL</h2>
+
+<table>
+    <tr>
+        <th>Fetched</th>
+        <td>{{ bod_avl_updated }}</td>
+    </tr>
+    <tr>
+        <th>Vehicles</th>
+        <td>{{ bod_avl_items }}</td>
+    </tr>
+    <tr>
+        <th>Updated vehicles</th>
+        <td>{{ bod_avl_updated_items }}</td>
+    </tr>
+</table>
+
+<h2>TNDS timetables</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Services</th>
+            <th scope="col">Updated</th>
+            <!-- <th scope="col">URL</th> -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for source in tnds %}
+            <tr>
+                <td>{{ source.get_nice_link }}</td>
+                <td>{{ source.count }}</td>
+                <td>{{ source.datetime|date:"j M"|default:"" }}</td>
+                <!-- <td>{{ source.url }}</td> -->
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
