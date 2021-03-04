@@ -188,9 +188,7 @@ def status(request):
     tnds = sources.filter(url__contains='tnds.basemap')
 
     return render(request, 'status.html', {
-        'bod_avl_updated': cache.get('bod_avl_updated', ''),
-        'bod_avl_items': cache.get('bod_avl_items', ''),
-        'bod_avl_updated_items': cache.get('bod_avl_updated_items', ''),
+        'bod_avl_status': cache.get('bod_avl_status', []),
         'tnds': tnds
     })
 

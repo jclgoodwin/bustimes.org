@@ -11,18 +11,22 @@
 <h2>Bus Open Data AVL</h2>
 
 <table>
-    <tr>
-        <th>Fetched</th>
-        <td>{{ bod_avl_updated }}</td>
-    </tr>
-    <tr>
-        <th>Vehicles</th>
-        <td>{{ bod_avl_items }}</td>
-    </tr>
-    <tr>
-        <th>Updated vehicles</th>
-        <td>{{ bod_avl_updated_items }}</td>
-    </tr>
+    <thead>
+        <tr>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Items</th>
+            <th scope="col">Changed items</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in bods_stats %}
+            <tr>
+                <td>{{ item.0 }}</td>
+                <td>{{ item.1 }}</td>
+                <td>{{ item.2 }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
 </table>
 
 <h2>TNDS timetables</h2>
@@ -47,6 +51,5 @@
         {% endfor %}
     </tbody>
 </table>
-
 
 {% endblock %}

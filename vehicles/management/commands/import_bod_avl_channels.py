@@ -22,9 +22,6 @@ class Command(ImportLiveVehiclesCommand):
         if not items:
             return 300  # wait five minutes
 
-        cache.set('bod_avl_updated', self.when)
-        cache.set('bod_avl_items', len(items))
-
         # encourage items to be grouped by operator
         items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])
 
@@ -54,7 +51,11 @@ class Command(ImportLiveVehiclesCommand):
             except ChannelFull:
                 pass
 
-        cache.set('bod_avl_updated_items', i)
+        # stats for last 10 updates
+        bod_status = cache.get('bod_avl_status', [])
+        bod_status.append((self.source.datetime, len(items), i))
+        bod_status = bod_status[-10:]
+        cache.set('bod_avl_status', bod_status)
 
         time_taken = timezone.now() - now
         print(time_taken)
