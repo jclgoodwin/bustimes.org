@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
             name='Price',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=5)),
+                ('amount', models.DecimalField(decimal_places=2, max_digits=6)),
                 ('sales_offer_package', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='fares.salesofferpackage')),
                 ('tariff', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='fares.tariff')),
                 ('time_interval', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='fares.timeinterval')),

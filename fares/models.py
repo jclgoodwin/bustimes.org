@@ -113,7 +113,7 @@ class Tariff(models.Model):
 
 
 class Price(models.Model):
-    amount = models.DecimalField(max_digits=5, decimal_places=2)  # maximum £999.99
+    amount = models.DecimalField(max_digits=6, decimal_places=2)  # maximum £9999.99
     time_interval = models.ForeignKey(TimeInterval, models.CASCADE, null=True, blank=True)
     user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
     sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE, null=True, blank=True)
