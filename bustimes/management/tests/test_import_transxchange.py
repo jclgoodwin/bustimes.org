@@ -3,6 +3,7 @@ import zipfile
 import xml.etree.cElementTree as ET
 import time_machine
 from mock import patch
+from unittest import skip
 from tempfile import TemporaryDirectory
 from datetime import date
 from django.test import TestCase, override_settings
@@ -474,6 +475,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(37, service.stopusage_set.count())
 
+    @skip
     @time_machine.travel('2017-01-01')
     def test_cardiff_airport(self):
         """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""

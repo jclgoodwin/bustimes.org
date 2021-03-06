@@ -23,7 +23,7 @@ from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note, Garage
 from ...timetables import get_stop_usages
-from transxchange.txc import TransXChange, sanitize_description_part, Grouping
+from transxchange.txc import TransXChange, sanitize_description_part
 
 
 logger = logging.getLogger(__name__)
@@ -909,34 +909,16 @@ class Command(BaseCommand):
             route, route_created = Route.objects.update_or_create(route_defaults,
                                                                   source=self.source, code=route_code)
             self.route_ids.add(route.id)
+            # TODO: reuse route ids
             if not route_created:
-                # if 'opendata.ticketer' in self.source.url and route.service_id == service_id:
-                #     continue
                 route.trip_set.all().delete()
 
             self.handle_journeys(route, stops, journeys, txc_service, line.id)
 
+            # TODO: move everything below this point, cos it's wasteful if a service is split across multiple files
+
             service.stops.clear()
             outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
-
-            changed_fields = []
-
-            if self.source.name.startswith('Arriva ') or self.source.name == 'Yorkshire Tiger':
-                if outbound:
-                    changed = 0
-                    origin_stop = outbound[0].stop
-                    destination_stop = outbound[-1].stop
-                    if txc_service.origin in origin_stop.common_name:
-                        if origin_stop.locality.name not in txc_service.origin:
-                            txc_service.origin = f'{origin_stop.locality.name} {txc_service.origin}'
-                        changed += 1
-                    if txc_service.destination in destination_stop.common_name:
-                        if destination_stop.locality.name not in txc_service.destination:
-                            txc_service.destination = f'{destination_stop.locality.name} {txc_service.destination}'
-                        changed += 1
-                    if changed == 2:
-                        service.description = f'{txc_service.origin} - {txc_service.destination}'
-                        changed_fields.append('description')
 
             stop_usages = [
                 StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
@@ -948,21 +930,6 @@ class Command(BaseCommand):
                 for i, stop_time in enumerate(inbound)
             ]
             StopUsage.objects.bulk_create(stop_usages)
-
-            if outbound:
-                outbound = Grouping(txc_service, outbound[0].stop, outbound[-1].stop)
-                outbound_description = str(outbound)
-                if outbound_description != service.outbound_description:
-                    service.outbound_description = outbound_description
-                    changed_fields.append('outbound_description')
-            if inbound:
-                inbound = Grouping(txc_service, inbound[0].stop, inbound[-1].stop)
-                inbound_description = str(inbound)
-                if inbound_description != service.inbound_description:
-                    service.inbound_description = inbound_description
-                    changed_fields.append('inbound_description')
-            if changed_fields:
-                service.save(update_fields=changed_fields)
 
             service_code = service.service_code
             if service_code in self.corrections:
