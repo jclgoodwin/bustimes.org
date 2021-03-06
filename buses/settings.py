@@ -158,8 +158,6 @@ else:
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache'
-    } if TEST else {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': os.environ.get('MEMCACHED_LOCATION', '127.0.0.1:11211')
     }
@@ -434,6 +432,8 @@ BOD_OPERATORS = [
     ('KJTR', 'Y', {}, False),
     ('JOHS', 'WM', {}, False),
     # ('NATX', 'GB', {}, False),
+
+    ('KETR', 'SE', {}, False),
 
     ('OBUS', 'EA', {
         'OURH': 'OURH',
