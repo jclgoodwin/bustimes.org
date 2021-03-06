@@ -315,7 +315,7 @@ class VehiclesTests(TestCase):
         # self.assertContains(response, 'LYNX')
         # self.assertContains(response, 'BOVA')
 
-        revision = response.context['revisions'][0]
+        # revision = response.context['revisions'][0]
         # self.assertEqual(revision.from_operator, self.lynx)
         # self.assertEqual(revision.to_operator, self.bova)
         # self.assertEqual(str(revision), 'operator: Lynx → Bova and Over, depot: Long Sutton → ')

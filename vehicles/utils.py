@@ -14,9 +14,12 @@ def get_vehicle_edit(vehicle, fields, now, request):
             else:
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
 
+    if 'withdrawn' in fields:
+        edit.withdrawn = fields['withdrawn']
+
     changes = {}
     if 'previous_reg' in fields:
-        changes['Previous reg'] = fields['previous_reg'].upper()
+        changes['Previous reg'] = fields['previous_reg']
     if changes:
         edit.changes = changes
 
@@ -56,25 +59,26 @@ def do_revisions(vehicle_ids, data, user):
         changed_fields.append('data')
         del data['depot']
 
-    if data.get('withdrawn'):
-        for revision in revisions:
-            revision.vehicle.withdrawn = True
-            revision.changes['withdrawn'] = "-No\n+Yes"
-        changed_fields.append('withdrawn')
-        del data['withdrawn']
-
-    for field in ('notes', 'branding'):
-        if field in data and not data[field]:
-            to_value = data[field]
-            for revision in revisions:
-                from_value = getattr(revision.vehicle, field)
-                if from_value != to_value:
-                    revision.changes[field] = f"-{from_value}\n+{to_value}"
-                    setattr(revision.vehicle, field, to_value)
-            changed_fields.append(field)
-            del data[field]
-
     if user.trusted:
+
+        if data.get('withdrawn'):
+            for revision in revisions:
+                revision.vehicle.withdrawn = True
+                revision.changes['withdrawn'] = "-No\n+Yes"
+            changed_fields.append('withdrawn')
+            del data['withdrawn']
+
+        for field in ('notes', 'branding'):
+            if field in data and not data[field]:
+                to_value = data[field]
+                for revision in revisions:
+                    from_value = getattr(revision.vehicle, field)
+                    if from_value != to_value:
+                        revision.changes[field] = f"-{from_value}\n+{to_value}"
+                        setattr(revision.vehicle, field, to_value)
+                changed_fields.append(field)
+                del data[field]
+
         if 'vehicle_type' in data:
             vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
             for revision in revisions:

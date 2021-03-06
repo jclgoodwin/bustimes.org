@@ -2,8 +2,8 @@ import requests
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q, Exists, OuterRef
-from busstops.models import Operator
-from .models import VehicleType, VehicleFeature, Livery
+from busstops.models import Operator, Service
+from .models import VehicleType, VehicleFeature, Livery, Vehicle
 from .fields import RegField
 
 
@@ -84,14 +84,20 @@ class EditVehiclesForm(forms.Form):
 
         operators = None
         if vehicle and (not operator or operator.parent):
-            has_journeys = Exists(vehicle.vehiclejourney_set.filter(service__operator=OuterRef('pk')))
-            if operator:
-                operators = Operator.objects.filter(has_journeys | Q(pk=operator.pk), parent=operator.parent)
+            operators = Operator.objects
+            if user.trusted and operator:
+                # any sibling operator
+                operators = operators.filter(parent=operator.parent)
+                condition = Exists(Service.objects.filter(current=True, operator=OuterRef('pk')).only('id'))
+                condition |= Exists(Vehicle.objects.filter(operator=OuterRef('pk')).only('id'))
             else:
-                operators = Operator.objects.filter(has_journeys)
-            self.fields['operator'].queryset = operators
+                # only operators whose services the vehicle has operated
+                condition = Exists(vehicle.vehiclejourney_set.filter(service__operator=OuterRef('pk')))
+            if operator:
+                condition |= Q(pk=operator.pk)
+            self.fields['operator'].queryset = operators.filter(condition)
         else:
-            del(self.fields['operator'])
+            del self.fields['operator']
 
 
 class EditVehicleForm(EditVehiclesForm):
@@ -124,7 +130,3 @@ class EditVehicleForm(EditVehiclesForm):
                 del self.fields['notes']
             if not vehicle.branding:
                 del self.fields['branding']
-            if not vehicle.name:
-                del self.fields['name']
-            if not (vehicle.data and 'Previous reg' in vehicle.data):
-                del self.fields['previous_reg']
