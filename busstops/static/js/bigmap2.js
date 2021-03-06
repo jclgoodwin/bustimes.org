@@ -5,7 +5,9 @@
         L, reqwest, bustimes
     */
 
-    var map = L.map('hugemap'),
+    var map = L.map('hugemap', {
+        worldCopyJump: true
+    }),
         stopsGroup = L.layerGroup(),
         vehiclesGroup = L.layerGroup();
 
