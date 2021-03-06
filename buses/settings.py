@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'beeline.middleware.django.HoneyMiddleware',
 ]
 
 SECURE_REFERRER_POLICY = None

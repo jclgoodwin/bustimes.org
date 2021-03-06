@@ -14,5 +14,6 @@ class BusTimesConfig(AppConfig):
             beeline.init(
                 writekey=os.environ['HONEYCOMB_KEY'],
                 dataset='bustimes',
-                service_name='bustimes'
+                service_name='bustimes',
+                sample_rate=40
             )
