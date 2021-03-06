@@ -55,7 +55,7 @@ class EditVehiclesForm(forms.Form):
             return False
         return True
 
-    def __init__(self, *args, operator=None, user=None, vehicle=None, **kwargs):
+    def __init__(self, *args, operator=None, user, vehicle=None, **kwargs):
         super().__init__(*args, **kwargs)
 
         colours = None
@@ -83,9 +83,12 @@ class EditVehiclesForm(forms.Form):
             del self.fields['depot']
 
         operators = None
-        if vehicle and operator and operator.parent:
+        if vehicle and (not operator or operator.parent):
             has_journeys = Exists(vehicle.vehiclejourney_set.filter(service__operator=OuterRef('pk')))
-            operators = Operator.objects.filter(has_journeys | Q(pk=operator.pk), parent=operator.parent)
+            if operator:
+                operators = Operator.objects.filter(has_journeys | Q(pk=operator.pk), parent=operator.parent)
+            else:
+                operators = Operator.objects.filter(has_journeys)
             self.fields['operator'].queryset = operators
         else:
             del(self.fields['operator'])
