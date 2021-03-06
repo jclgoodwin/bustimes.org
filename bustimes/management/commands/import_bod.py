@@ -107,6 +107,7 @@ def bus_open_data(api_key, operator):
             response = session.get(url, params=params)
             json = response.json()
             for dataset in json['results']:
+                assert '/category/' in dataset['url']  # will fail when the URL scheme changes
                 dataset['source'], created = DataSource.objects.get_or_create(
                     {'name': dataset['name']},
                     url=dataset['url']
