@@ -2,8 +2,8 @@ import requests
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q, Exists, OuterRef
-from busstops.models import Operator, Service
-from .models import Vehicle, VehicleType, VehicleFeature, Livery
+from busstops.models import Operator
+from .models import VehicleType, VehicleFeature, Livery
 from .fields import RegField
 
 
@@ -83,10 +83,9 @@ class EditVehiclesForm(forms.Form):
             del self.fields['depot']
 
         operators = None
-        if operator and operator.parent:
-            has_services = Exists(Service.objects.filter(current=True, operator=OuterRef('pk')).only('id'))
-            has_vehicles = Exists(Vehicle.objects.filter(operator=OuterRef('pk')).only('id'))
-            operators = Operator.objects.filter(has_services | has_vehicles | Q(pk=operator.pk), parent=operator.parent)
+        if vehicle and operator and operator.parent:
+            has_journeys = Exists(vehicle.vehiclejourney_set.filter(service__operator=OuterRef('pk')))
+            operators = Operator.objects.filter(has_journeys | Q(pk=operator.pk), parent=operator.parent)
             self.fields['operator'].queryset = operators
         else:
             del(self.fields['operator'])
@@ -109,19 +108,20 @@ class EditVehicleForm(EditVehiclesForm):
     field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
 
-    def __init__(self, *args, vehicle=None, **kwargs):
-        super().__init__(*args, **kwargs, vehicle=vehicle)
+    def __init__(self, *args, user, vehicle=None, **kwargs):
+        super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
         if str(vehicle.fleet_number) in vehicle.code:
             self.fields['fleet_number'].disabled = True
         if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
             self.fields['reg'].disabled = True
 
-        if not vehicle.notes:
-            del self.fields['notes']
-        if not vehicle.branding:
-            del self.fields['branding']
-        if not vehicle.name:
-            del self.fields['name']
-        if not (vehicle.data and 'Previous reg' in vehicle.data):
-            del self.fields['previous_reg']
+        if not user.is_staff:
+            if not vehicle.notes:
+                del self.fields['notes']
+            if not vehicle.branding:
+                del self.fields['branding']
+            if not vehicle.name:
+                del self.fields['name']
+            if not (vehicle.data and 'Previous reg' in vehicle.data):
+                del self.fields['previous_reg']

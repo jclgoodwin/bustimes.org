@@ -606,35 +606,3 @@ class VehicleLocation(models.Model):
             json['occupancy'] = occupancy
 
         return json
-
-    def get_json(self):
-        vehicle = self.vehicle
-        journey = self.journey
-
-        json = self.get_redis_json(vehicle)
-
-        features = self.features
-        if vehicle.vehicle_type:
-            if vehicle.vehicle_type.double_decker:
-                vehicle_type = 'Double decker'
-                if vehicle.vehicle_type.coach:
-                    vehicle_type = f'{vehicle_type} coach'
-            elif vehicle.vehicle_type.coach:
-                vehicle_type = 'Coach'
-            else:
-                vehicle_type = None
-            if vehicle_type:
-                if features:
-                    features = f'{vehicle_type}<br>{features}'
-                else:
-                    features = vehicle_type
-        json['vehicle']['features'] = features
-
-        if journey.service:
-            json['service'] = {
-                'line_name': journey.service.line_name,
-                'url': journey.service.get_absolute_url()
-            }
-            del json['service_id']
-
-        return json
