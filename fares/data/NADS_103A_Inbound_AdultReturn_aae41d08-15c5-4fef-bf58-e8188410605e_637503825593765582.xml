@@ -1,0 +1,2106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PublicationDelivery version="1.1" xmlns="http://www.netex.org.uk/netex" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.netex.org.uk/netex http://netex.uk/netex/schema/1.09c/xsd/NeTEx_publication.xsd">
+  <PublicationTimestamp>2021-03-03T15:35:59Z</PublicationTimestamp>
+  <ParticipantRef>SYS001</ParticipantRef>
+  <PublicationRequest version="1.0">
+    <RequestTimestamp>2021-03-03T15:35:59Z</RequestTimestamp>
+    <ParticipantRef>SYS002</ParticipantRef>
+    <topics>
+      <NetworkFrameTopic>
+        <selectionValidityConditions>
+          <AvailabilityCondition version="1.0" id="r1">
+            <FromDate>2019-04-21T00:00:00Z</FromDate>
+          </AvailabilityCondition>
+        </selectionValidityConditions>
+        <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP" />
+        <NetworkFilterByValue>
+          <objectReferences>
+            <OperatorRef version="1.0" ref="noc:NADS" />
+            <LineRef version="1.0" ref="103A_Inbound" />
+          </objectReferences>
+        </NetworkFilterByValue>
+      </NetworkFrameTopic>
+    </topics>
+  </PublicationRequest>
+  <Description>Request for Reading Transport 103A Inbound</Description>
+  <dataObjects>
+    <CompositeFrame version="1.0" id="epd:UK:NADS:CompositeFrame_UK_PI_LINE_FARE_OFFER:Trip@Line_103A_Inbound:op" dataSourceRef="data_source" responsibilitySetRef="tariffs">
+      <ValidBetween>
+        <FromDate>2019-04-21T00:00:00Z</FromDate>
+      </ValidBetween>
+      <Name>Fares for Line 103A Inbound</Name>
+      <Description>Adult Return zone to zone fare triangle for Reading Transport (NADS) 103A Inbound</Description>
+      <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP" />
+      <codespaces>
+        <CodespaceRef ref="atco_cs" />
+        <CodespaceRef ref="op_cs" />
+        <CodespaceRef ref="nptgLocality" />
+        <CodespaceRef ref="noc" />
+      </codespaces>
+      <FrameDefaults>
+        <DefaultCodespaceRef ref="op_cs" />
+        <DefaultDataSourceRef ref="data_source" version="1.0" />
+        <DefaultCurrency>GBP</DefaultCurrency>
+      </FrameDefaults>
+      <frames>
+        <ResourceFrame version="1.0" id="epd:UK:NADS:ResourceFrame_UK_PI_COMMON:op" dataSourceRef="data_source" responsibilitySetRef="network_data">
+          <Name>Operator specific common resources</Name>
+          <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_COMMON:FXCP" version="fxc:v1.0" />
+          <codespaces>
+            <Codespace id="op_cs">
+              <Xmlns>op</Xmlns>
+              <Description>Operator data</Description>
+            </Codespace>
+            <Codespace id="atco_cs">
+              <Xmlns>atco</Xmlns>
+              <Description>ATCO stop data (ATCO)</Description>
+            </Codespace>
+          </codespaces>
+          <dataSources>
+            <DataSource id="data_source" version="1.0">
+              <Email>TODO</Email>
+            </DataSource>
+          </dataSources>
+          <organisations>
+            <Operator id="noc:NADS" version="1.0">
+              <Name>Reading Transport</Name>
+            </Operator>
+          </organisations>
+        </ResourceFrame>
+        <ServiceFrame version="1.0" id="epd:UK:NADS:ServiceFrame_UK_PI_NETWORK:103A_Inbound:op" dataSourceRef="data_source" responsibilitySetRef="tariffs">
+          <Description>This frame contains the stop and line definitions for the service.</Description>
+          <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK:FXCP" version="fxc:v1.0" />
+          <lines>
+            <Line version="1.0" id="103A_Inbound">
+              <Name>Reading Transport 103A Inbound</Name>
+              <Description>Newbury Wharf - Greenham Business Park</Description>
+              <PublicCode>103A</PublicCode>
+              <PrivateCode>NADS_103A</PrivateCode>
+              <OperatorRef version="1.0" ref="noc:NADS" />
+              <LineType>local</LineType>
+            </Line>
+          </lines>
+          <scheduledStopPoints>
+            <ScheduledStopPoint version="any" id="atco:030050560003">
+              <Name>Bishops Green Turn</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:N0060362" />
+                <Name>Greenham Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030053810002">
+              <Name>First Street</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:N0060362" />
+                <Name>Greenham Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030051530001">
+              <Name>Coffee Exchange</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:N0060362" />
+                <Name>Greenham Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030058510002">
+              <Name>Watson Technology Centre</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:N0060362" />
+                <Name>Greenham Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030058520001">
+              <Name>Venture West</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:N0060362" />
+                <Name>Greenham Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030059120007">
+              <Name>Newbury Wharf</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030054200002">
+              <Name>Newbury Post Office</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030059130001">
+              <Name>Market Street</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030052250002">
+              <Name>Fair Close</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030054170001">
+              <Name>Old Newtown Road</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030050950002">
+              <Name>Buckingham Road</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030057350001">
+              <Name>Bartlemy Road east</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030058490001">
+              <Name>Valley Road Crescent</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030052530002">
+              <Name>Garford Crescent</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030053990001">
+              <Name>Middle Close</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030052090001">
+              <Name>Elizabeth Avenue</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030052280001">
+              <Name>The Gun</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030054590003">
+              <Name>Park House School Rear Entrance</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0043212" />
+                <Name>Wash Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030057170001">
+              <Name>Monks Lane Surgery</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030057180003">
+              <Name>Monks Lane east</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030057180001">
+              <Name>Newbury College</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0055208" />
+                <Name>Newbury</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030054720002">
+              <Name>Pinchington Lane Roundabout</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0053843" />
+                <Name>Greenham</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030051750002">
+              <Name>Deadmans Lane</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0053843" />
+                <Name>Greenham</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030055500002">
+              <Name>St Gabriels School</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0053843" />
+                <Name>Greenham</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030054270002">
+              <Name>Newtown Roundabout</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0043177" />
+                <Name>Sandleford Place</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030050030002">
+              <Name>Adbury turn</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:N0060362" />
+                <Name>Greenham Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:030050560002">
+              <Name>Bishops Green Turn</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:N0060362" />
+                <Name>Greenham Common</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:1900HA010139">
+              <Name>Four Oaks</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0012536" />
+                <Name>Bishop's Green</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:1900HA010136">
+              <Name>Ash Road</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0012536" />
+                <Name>Bishop's Green</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:1900HA010137">
+              <Name>Ash Road</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0012536" />
+                <Name>Bishop's Green</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+            <ScheduledStopPoint version="any" id="atco:1900HA010138">
+              <Name>Four Oaks</Name>
+              <TopographicPlaceView>
+                <TopographicPlaceRef versionRef="nptg:2.4" ref="nptgLocality:E0012536" />
+                <Name>Bishop's Green</Name>
+              </TopographicPlaceView>
+            </ScheduledStopPoint>
+          </scheduledStopPoints>
+        </ServiceFrame>
+        <FareFrame id="epd:UK:NADS:FareFrame_UK_PI_FARE_NETWORK:103A_Inbound:op" version="1.0" dataSourceRef="data_source" responsibilitySetRef="network_data">
+          <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK:FXCP" version="fxc:v1.0" />
+          <fareZones>
+            <FareZone id="fs@1" version="1.0">
+              <Name>Newbury Wharf</Name>
+            </FareZone>
+            <FareZone id="fs@669" version="1.0">
+              <Name>St John's</Name>
+              <members>
+                <ScheduledStopPointRef ref="atco:030054200002" version="any">Newbury Post Office, St John's</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030054170001" version="any">Old Newtown Road, St John's</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030052250002" version="any">Fair Close, St John's</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030050950002" version="any">Buckingham Road, St John's</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030059120007" version="any">Newbury Wharf, St John's</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030059130001" version="any">Market Street, St John's</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone id="fs@670" version="1.0">
+              <Name>Valley Road</Name>
+              <members>
+                <ScheduledStopPointRef ref="atco:030053990001" version="any">Middle Close, Valley Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030052530002" version="any">Garford Crescent, Valley Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030052090001" version="any">Elizabeth Avenue, Valley Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030058490001" version="any">Valley Road Crescent, Valley Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030057350001" version="any">Bartlemy Road east, Valley Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030054590003" version="any">Park House School Rear Entrance, Valley Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030057170001" version="any">Monks Lane Surgery, Valley Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030052280001" version="any">The Gun, Valley Road</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone id="fs@587" version="1.0">
+              <Name>Newbury College</Name>
+              <members>
+                <ScheduledStopPointRef ref="atco:030057180001" version="any">Newbury College, Newbury College</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030057180003" version="any">Monks Lane east, Newbury College</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone id="fs@665" version="1.0">
+              <Name>Swan Roundabout</Name>
+              <members>
+                <ScheduledStopPointRef ref="atco:030054720002" version="any">Pinchington Lane Roundabout, Swan Roundabout</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030051750002" version="any">Deadmans Lane, Swan Roundabout</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030055500002" version="any">St Gabriels School, Swan Roundabout</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030054270002" version="any">Newtown Roundabout, Swan Roundabout</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone id="fs@666" version="1.0">
+              <Name>Norma Roundabout</Name>
+              <members>
+                <ScheduledStopPointRef ref="atco:030050030002" version="any">Adbury turn, Norma Roundabout</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030050560002" version="any">Bishops Green Turn, Norma Roundabout</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone id="fs@667" version="1.0">
+              <Name>Bishops Green</Name>
+              <members>
+                <ScheduledStopPointRef ref="atco:1900HA010139" version="any">Four Oaks, Bishops Green</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:1900HA010136" version="any">Ash Road, Bishops Green</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:1900HA010137" version="any">Ash Road, Bishops Green</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:1900HA010138" version="any">Four Oaks, Bishops Green</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone id="fs@668" version="1.0">
+              <Name>Greenham Business Park</Name>
+              <members>
+                <ScheduledStopPointRef ref="atco:030050560003" version="any">Bishops Green Turn, Greenham Business Park</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030053810002" version="any">First Street, Greenham Business Park</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030051530001" version="any">Coffee Exchange, Greenham Business Park</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030058510002" version="any">Watson Technology Centre, Greenham Business Park</ScheduledStopPointRef>
+                <ScheduledStopPointRef ref="atco:030058520001" version="any">Venture West, Greenham Business Park</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+          </fareZones>
+        </FareFrame>
+        <FareFrame version="1.0" id="epd:UK:NADS:FareFrame_UK_PI_FARE_PRODUCT:Line_103A_Inbound:op" dataSourceRef="data_source" responsibilitySetRef="tariffs">
+          <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRODUCT:FXCP" version="fxc:v1.0" />
+          <tariffs>
+            <Tariff id="Tariff@AdultReturn@Line_103A_Inbound" version="1.0">
+              <validityConditions>
+                <ValidBetween>
+                  <FromDate>2021-03-03T00:00:00</FromDate>
+                  <ToDate>2121-03-03T00:00:00</ToDate>
+                </ValidBetween>
+              </validityConditions>
+              <Name>Reading Transport 103A Inbound - Adult Return fares</Name>
+              <OperatorRef version="1.0" ref="noc:NADS" />
+              <LineRef ref="103A_Inbound" version="1.0" />
+              <TariffBasis>zoneToZone</TariffBasis>
+              <timeIntervals>
+                <TimeInterval id="Tariff@AdultReturn@1d" version="1.0">
+                  <Name>1 day</Name>
+                  <Description>P1d</Description>
+                </TimeInterval>
+              </timeIntervals>
+              <qualityStructureFactors>
+                <FareDemandFactor id="op@Tariff@Demand" version="1.0">
+                  <validityConditions>
+                    <AvailabilityCondition id="op@Tariff@Condition@aae41d08-15c5-4fef-bf58-e8188410605e" version="1.0">
+                      <IsAvailable>true</IsAvailable>
+                      <dayTypes>
+                        <FareDayType id="op@Tariff@DayType@aae41d08-15c5-4fef-bf58-e8188410605e" version="1.0">
+                          <properties>
+                            <PropertyOfDay>
+                              <DaysOfWeek>Monday Tuesday Wednesday Thursday Friday Saturday Sunday</DaysOfWeek>
+                            </PropertyOfDay>
+                          </properties>
+                        </FareDayType>
+                      </dayTypes>
+                    </AvailabilityCondition>
+                  </validityConditions>
+                </FareDemandFactor>
+              </qualityStructureFactors>
+              <fareStructureElements>
+                <FareStructureElement id="Tariff@AdultReturn@access" version="1.0">
+                  <Name>O/D pairs for Line 103A Inbound</Name>
+                  <TypeOfFareStructureElementRef ref="fxc:access" version="fxc:v1.0" />
+                  <distanceMatrixElements>
+                    <DistanceMatrixElement id="1+668" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@1" />
+                      <EndTariffZoneRef version="1.0" ref="fs@668" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="1+667" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@1" />
+                      <EndTariffZoneRef version="1.0" ref="fs@667" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="1+666" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@1" />
+                      <EndTariffZoneRef version="1.0" ref="fs@666" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="1+665" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@1" />
+                      <EndTariffZoneRef version="1.0" ref="fs@665" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="1+587" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@1" />
+                      <EndTariffZoneRef version="1.0" ref="fs@587" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="1+670" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@1" />
+                      <EndTariffZoneRef version="1.0" ref="fs@670" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="1+669" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@1" />
+                      <EndTariffZoneRef version="1.0" ref="fs@669" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="669+668" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@669" />
+                      <EndTariffZoneRef version="1.0" ref="fs@668" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="669+667" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@669" />
+                      <EndTariffZoneRef version="1.0" ref="fs@667" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="667+669" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@667" />
+                      <EndTariffZoneRef version="1.0" ref="fs@669" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="669+666" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@669" />
+                      <EndTariffZoneRef version="1.0" ref="fs@666" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="666+669" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@666" />
+                      <EndTariffZoneRef version="1.0" ref="fs@669" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="669+665" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@669" />
+                      <EndTariffZoneRef version="1.0" ref="fs@665" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="665+669" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@665" />
+                      <EndTariffZoneRef version="1.0" ref="fs@669" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="669+587" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@669" />
+                      <EndTariffZoneRef version="1.0" ref="fs@587" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="587+669" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@587" />
+                      <EndTariffZoneRef version="1.0" ref="fs@669" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="669+670" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.80" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@669" />
+                      <EndTariffZoneRef version="1.0" ref="fs@670" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="670+669" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.80" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@670" />
+                      <EndTariffZoneRef version="1.0" ref="fs@669" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="669+669" version="1.0">
+                      <StartTariffZoneRef version="1.0" ref="fs@669" />
+                      <EndTariffZoneRef version="1.0" ref="fs@669" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="670+668" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@670" />
+                      <EndTariffZoneRef version="1.0" ref="fs@668" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="670+667" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@670" />
+                      <EndTariffZoneRef version="1.0" ref="fs@667" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="667+670" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@667" />
+                      <EndTariffZoneRef version="1.0" ref="fs@670" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="670+666" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@670" />
+                      <EndTariffZoneRef version="1.0" ref="fs@666" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="666+670" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_4.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@666" />
+                      <EndTariffZoneRef version="1.0" ref="fs@670" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="670+665" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@670" />
+                      <EndTariffZoneRef version="1.0" ref="fs@665" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="665+670" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@665" />
+                      <EndTariffZoneRef version="1.0" ref="fs@670" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="670+587" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.80" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@670" />
+                      <EndTariffZoneRef version="1.0" ref="fs@587" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="587+670" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.80" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@587" />
+                      <EndTariffZoneRef version="1.0" ref="fs@670" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="670+670" version="1.0">
+                      <StartTariffZoneRef version="1.0" ref="fs@670" />
+                      <EndTariffZoneRef version="1.0" ref="fs@670" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="587+668" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@587" />
+                      <EndTariffZoneRef version="1.0" ref="fs@668" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="587+667" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@587" />
+                      <EndTariffZoneRef version="1.0" ref="fs@667" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="667+587" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@667" />
+                      <EndTariffZoneRef version="1.0" ref="fs@587" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="587+666" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@587" />
+                      <EndTariffZoneRef version="1.0" ref="fs@666" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="666+587" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_3.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@666" />
+                      <EndTariffZoneRef version="1.0" ref="fs@587" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="587+665" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@587" />
+                      <EndTariffZoneRef version="1.0" ref="fs@665" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="665+587" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@665" />
+                      <EndTariffZoneRef version="1.0" ref="fs@587" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="587+587" version="1.0">
+                      <StartTariffZoneRef version="1.0" ref="fs@587" />
+                      <EndTariffZoneRef version="1.0" ref="fs@587" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="665+668" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@665" />
+                      <EndTariffZoneRef version="1.0" ref="fs@668" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="665+667" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@665" />
+                      <EndTariffZoneRef version="1.0" ref="fs@667" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="667+665" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@667" />
+                      <EndTariffZoneRef version="1.0" ref="fs@665" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="665+666" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@665" />
+                      <EndTariffZoneRef version="1.0" ref="fs@666" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="666+665" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@666" />
+                      <EndTariffZoneRef version="1.0" ref="fs@665" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="665+665" version="1.0">
+                      <StartTariffZoneRef version="1.0" ref="fs@665" />
+                      <EndTariffZoneRef version="1.0" ref="fs@665" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="666+668" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@666" />
+                      <EndTariffZoneRef version="1.0" ref="fs@668" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="666+667" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@666" />
+                      <EndTariffZoneRef version="1.0" ref="fs@667" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="667+666" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.50" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@667" />
+                      <EndTariffZoneRef version="1.0" ref="fs@666" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="666+666" version="1.0">
+                      <StartTariffZoneRef version="1.0" ref="fs@666" />
+                      <EndTariffZoneRef version="1.0" ref="fs@666" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="667+668" version="1.0">
+                      <priceGroups>
+                        <PriceGroupRef version="1.0" ref="price_band_2.00" />
+                      </priceGroups>
+                      <StartTariffZoneRef version="1.0" ref="fs@667" />
+                      <EndTariffZoneRef version="1.0" ref="fs@668" />
+                    </DistanceMatrixElement>
+                    <DistanceMatrixElement id="667+667" version="1.0">
+                      <StartTariffZoneRef version="1.0" ref="fs@667" />
+                      <EndTariffZoneRef version="1.0" ref="fs@667" />
+                    </DistanceMatrixElement>
+                  </distanceMatrixElements>
+                  <GenericParameterAssignment version="1.0" order="01" id="Tariff@AdultReturn@access">
+                    <TypeOfAccessRightAssignmentRef version="fxc:v1.0" ref="fxc:can_access" />
+                    <ValidityParameterAssignmentType>EQ</ValidityParameterAssignmentType>
+                    <validityParameters>
+                      <LineRef version="1.0" ref="103A_Inbound" />
+                    </validityParameters>
+                  </GenericParameterAssignment>
+                </FareStructureElement>
+                <FareStructureElement id="Tariff@AdultReturn@conditions_of_travel" version="1.0">
+                  <Name>Conditions of travel</Name>
+                  <GenericParameterAssignment version="1.0" order="1" id="Tariff@AdultReturn@conditions_of_travel">
+                    <TypeOfAccessRightAssignmentRef version="fxc:v1.0" ref="fxc:condition_of_use" />
+                    <LimitationGroupingType>AND</LimitationGroupingType>
+                    <limitations>
+                      <PurchaseWindow version="1.0" id="Tariff@AdultReturn@conditions_of_travel@purchase">
+                        <PurchaseMoment>onBoarding</PurchaseMoment>
+                      </PurchaseWindow>
+                    </limitations>
+                  </GenericParameterAssignment>
+                </FareStructureElement>
+                <FareStructureElement id="Tariff@AdultReturn@durations" version="1.0">
+                  <Name>Available duration ticket</Name>
+                  <Description></Description>
+                  <TypeOfFareStructureElementRef version="fxc:v1.0" ref="fxc:durations" />
+                  <timeIntervals>
+                    <TimeIntervalRef ref="Tariff@AdultReturn@1d" />
+                  </timeIntervals>
+                  <GenericParameterAssignment version="1.0" order="1" id="Tariff@AdultReturn@durations">
+                    <Description>Adult Return for 1 day</Description>
+                    <TypeOfAccessRightAssignmentRef version="fxc:v1.0" ref="fxc:eligible" />
+                  </GenericParameterAssignment>
+                </FareStructureElement>
+                <FareStructureElement id="Tariff@AdultReturn@access_when" version="1.0">
+                  <Name>Access When</Name>
+                  <GenericParameterAssignment version="1.0" order="1" id="Tariff@AdultReturn@access_when">
+                    <TypeOfAccessRightAssignmentRef version="fxc:v1.0" ref="fxc:can_access_when" />
+                    <FareDemandFactorRef version="1.0" ref="op@Tariff@Demand" />
+                  </GenericParameterAssignment>
+                </FareStructureElement>
+              </fareStructureElements>
+            </Tariff>
+          </tariffs>
+          <fareProducts>
+            <PreassignedFareProduct id="Trip@AdultReturn" version="1.0">
+              <Name>Adult Return</Name>
+              <ChargingMomentRef version="fxc:v1.0" ref="fxc:prepayment" />
+              <ChargingMomentType>beforeTravel</ChargingMomentType>
+              <OperatorRef version="1.0" ref="noc:NADS" />
+              <ConditionSummary>
+                <FareStructureType>zonalFare</FareStructureType>
+                <TariffBasis>zone</TariffBasis>
+                <IsPersonal>true</IsPersonal>
+              </ConditionSummary>
+              <validableElements>
+                <ValidableElement id="Trip@AdultReturn@travel" version="1.0">
+                  <Name>Adult Return</Name>
+                  <fareStructureElements>
+                    <FareStructureElementRef version="1.0" ref="Tariff@AdultReturn@access" />
+                    <FareStructureElementRef version="1.0" ref="Tariff@AdultReturn@conditions_of_travel" />
+                    <FareStructureElementRef version="1.0" ref="Tariff@AdultReturn@durations" />
+                    <FareStructureElementRef version="1.0" ref="Tariff@AdultReturn@access_when" />
+                  </fareStructureElements>
+                </ValidableElement>
+              </validableElements>
+              <accessRightsInProduct>
+                <AccessRightInProduct id="Trip@AdultReturn@travel@accessRight" version="1.0" order="1">
+                  <ValidableElementRef version="1.0" ref="Trip@AdultReturn@travel" />
+                </AccessRightInProduct>
+              </accessRightsInProduct>
+              <ProductType>other</ProductType>
+            </PreassignedFareProduct>
+          </fareProducts>
+          <salesOfferPackages>
+            <SalesOfferPackage id="Trip@AdultReturn-SOP@Onboard" version="1.0">
+              <Name>Onboard</Name>
+              <Description>Purchasable on board the bus, with TODO, as a paper ticket.</Description>
+              <distributionAssignments>
+                <DistributionAssignment id="Trip@AdultReturn-SOP@Onboard@OnBoard" version="any" order="1">
+                  <DistributionChannelRef version="fxc:v1.0" ref="fxc:on_board" />
+                  <DistributionChannelType>onBoard</DistributionChannelType>
+                  <PaymentMethods>cash contactlessPaymentCard</PaymentMethods>
+                </DistributionAssignment>
+              </distributionAssignments>
+              <salesOfferPackageElements>
+                <SalesOfferPackageElement id="Trip@AdultReturn-SOP@Onboard@printed_ticket" version="1.0" order="1">
+                  <TypeOfTravelDocumentRef version="fxc:v1.0" ref="fxc:printed_ticket" />
+                  <PreassignedFareProductRef version="1.0" ref="Trip@AdultReturn" />
+                </SalesOfferPackageElement>
+              </salesOfferPackageElements>
+            </SalesOfferPackage>
+          </salesOfferPackages>
+        </FareFrame>
+        <FareFrame version="1.0" id="epd:UK:NADS:FareFrame_UK_PI_FARE_PRICE:Line_103A_Inbound:op" dataSourceRef="data_source" responsibilitySetRef="tariffs">
+          <TypeOfFrameRef ref="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRICE:FXCP" version="fxc:v1.0" />
+          <FrameDefaults>
+            <DefaultCurrency>GBP</DefaultCurrency>
+          </FrameDefaults>
+          <priceGroups>
+            <PriceGroup id="price_band_2.00" version="1.0">
+              <members>
+                <GeographicalIntervalPrice version="1.0" id="price_band_2.00@AdultReturn">
+                  <Amount>2.00</Amount>
+                </GeographicalIntervalPrice>
+              </members>
+            </PriceGroup>
+            <PriceGroup id="price_band_4.00" version="1.0">
+              <members>
+                <GeographicalIntervalPrice version="1.0" id="price_band_4.00@AdultReturn">
+                  <Amount>4.00</Amount>
+                </GeographicalIntervalPrice>
+              </members>
+            </PriceGroup>
+            <PriceGroup id="price_band_3.50" version="1.0">
+              <members>
+                <GeographicalIntervalPrice version="1.0" id="price_band_3.50@AdultReturn">
+                  <Amount>3.50</Amount>
+                </GeographicalIntervalPrice>
+              </members>
+            </PriceGroup>
+            <PriceGroup id="price_band_2.50" version="1.0">
+              <members>
+                <GeographicalIntervalPrice version="1.0" id="price_band_2.50@AdultReturn">
+                  <Amount>2.50</Amount>
+                </GeographicalIntervalPrice>
+              </members>
+            </PriceGroup>
+            <PriceGroup id="price_band_2.80" version="1.0">
+              <members>
+                <GeographicalIntervalPrice version="1.0" id="price_band_2.80@AdultReturn">
+                  <Amount>2.80</Amount>
+                </GeographicalIntervalPrice>
+              </members>
+            </PriceGroup>
+            <PriceGroup id="price_band_3.00" version="1.0">
+              <members>
+                <GeographicalIntervalPrice version="1.0" id="price_band_3.00@AdultReturn">
+                  <Amount>3.00</Amount>
+                </GeographicalIntervalPrice>
+              </members>
+            </PriceGroup>
+          </priceGroups>
+          <fareTables>
+            <FareTable id="Trip@AdultReturn-SOP@p-ticket@Line_103A_Inbound" version="1.0">
+              <Name>Newbury Wharf - Greenham Business Park Inbound</Name>
+              <Description>Fares arranged as a fare triangle</Description>
+              <pricesFor>
+                <PreassignedFareProductRef version="1.0" ref="Trip@AdultReturn" />
+                <SalesOfferPackageRef version="1.0" ref="Trip@AdultReturn-SOP@Onboard" />
+              </pricesFor>
+              <usedIn>
+                <TariffRef version="1.0" ref="Tariff@AdultReturn@Line_103A_Inbound" />
+              </usedIn>
+              <specifics>
+                <LineRef version="1.0" ref="103A_Inbound" />
+                <TypeOfTravelDocumentRef version="fxc:v1.0" ref="fxc:printed_ticket" />
+              </specifics>
+              <columns>
+                <FareTableColumn id="Trip@AdultReturn-SOP@Line_103A@c1@1" version="1.0" order="1">
+                  <Name>Newbury Wharf</Name>
+                  <representing>
+                    <FareZoneRef version="1.0" ref="fs@1" />
+                  </representing>
+                </FareTableColumn>
+                <FareTableColumn id="Trip@AdultReturn-SOP@Line_103A@c2@669" version="1.0" order="2">
+                  <Name>St John's</Name>
+                  <representing>
+                    <FareZoneRef version="1.0" ref="fs@669" />
+                  </representing>
+                </FareTableColumn>
+                <FareTableColumn id="Trip@AdultReturn-SOP@Line_103A@c3@670" version="1.0" order="3">
+                  <Name>Valley Road</Name>
+                  <representing>
+                    <FareZoneRef version="1.0" ref="fs@670" />
+                  </representing>
+                </FareTableColumn>
+                <FareTableColumn id="Trip@AdultReturn-SOP@Line_103A@c4@587" version="1.0" order="4">
+                  <Name>Newbury College</Name>
+                  <representing>
+                    <FareZoneRef version="1.0" ref="fs@587" />
+                  </representing>
+                </FareTableColumn>
+                <FareTableColumn id="Trip@AdultReturn-SOP@Line_103A@c5@665" version="1.0" order="5">
+                  <Name>Swan Roundabout</Name>
+                  <representing>
+                    <FareZoneRef version="1.0" ref="fs@665" />
+                  </representing>
+                </FareTableColumn>
+                <FareTableColumn id="Trip@AdultReturn-SOP@Line_103A@c6@666" version="1.0" order="6">
+                  <Name>Norma Roundabout</Name>
+                  <representing>
+                    <FareZoneRef version="1.0" ref="fs@666" />
+                  </representing>
+                </FareTableColumn>
+                <FareTableColumn id="Trip@AdultReturn-SOP@Line_103A@c7@667" version="1.0" order="7">
+                  <Name>Bishops Green</Name>
+                  <representing>
+                    <FareZoneRef version="1.0" ref="fs@667" />
+                  </representing>
+                </FareTableColumn>
+              </columns>
+              <rows>
+                <FareTableRow id="Trip@AdultReturn-SOP@Line_103A@r1@668" version="1.0" order="1">
+                  <Name>Greenham Business Park</Name>
+                </FareTableRow>
+                <FareTableRow id="Trip@AdultReturn-SOP@Line_103A@r2@667" version="1.0" order="2">
+                  <Name>Bishops Green</Name>
+                </FareTableRow>
+                <FareTableRow id="Trip@AdultReturn-SOP@Line_103A@r3@666" version="1.0" order="3">
+                  <Name>Norma Roundabout</Name>
+                </FareTableRow>
+                <FareTableRow id="Trip@AdultReturn-SOP@Line_103A@r4@665" version="1.0" order="4">
+                  <Name>Swan Roundabout</Name>
+                </FareTableRow>
+                <FareTableRow id="Trip@AdultReturn-SOP@Line_103A@r5@587" version="1.0" order="5">
+                  <Name>Newbury College</Name>
+                </FareTableRow>
+                <FareTableRow id="Trip@AdultReturn-SOP@Line_103A@r6@670" version="1.0" order="6">
+                  <Name>Valley Road</Name>
+                </FareTableRow>
+                <FareTableRow id="Trip@AdultReturn-SOP@Line_103A@r7@669" version="1.0" order="7">
+                  <Name>St John's</Name>
+                </FareTableRow>
+              </rows>
+              <includes>
+                <FareTable id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0">
+                  <Name>Newbury Wharf</Name>
+                  <Description>Column 1</Description>
+                  <cells>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0" order="1">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@1+669">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="1+669" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c1@1" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r7@669" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0" order="2">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@1+670">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="1+670" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c1@1" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r6@670" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0" order="3">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@1+587">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="1+587" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c1@1" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r5@587" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0" order="4">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@1+665">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="1+665" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c1@1" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r4@665" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0" order="5">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@1+666">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_4.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="1+666" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c1@1" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r3@666" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0" order="6">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@1+667">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_4.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="1+667" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c1@1" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r2@667" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@1" version="1.0" order="7">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@1+668">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="1+668" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c1@1" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r1@668" />
+                    </Cell>
+                  </cells>
+                </FareTable>
+                <FareTable id="Trip@AdultReturn-SOP@Line_103A@669" version="1.0">
+                  <Name>St John's</Name>
+                  <Description>Column 2</Description>
+                  <cells>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@669" version="1.0" order="1">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@669+670">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.80@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="669+670" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c2@669" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r6@670" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@669" version="1.0" order="2">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@669+587">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="669+587" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c2@669" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r5@587" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@669" version="1.0" order="3">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@669+665">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="669+665" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c2@669" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r4@665" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@669" version="1.0" order="4">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@669+666">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_4.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="669+666" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c2@669" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r3@666" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@669" version="1.0" order="5">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@669+667">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_4.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="669+667" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c2@669" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r2@667" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@669" version="1.0" order="6">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@669+668">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="669+668" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c2@669" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r1@668" />
+                    </Cell>
+                  </cells>
+                </FareTable>
+                <FareTable id="Trip@AdultReturn-SOP@Line_103A@670" version="1.0">
+                  <Name>Valley Road</Name>
+                  <Description>Column 3</Description>
+                  <cells>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@670" version="1.0" order="1">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@670+587">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.80@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="670+587" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c3@670" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r5@587" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@670" version="1.0" order="2">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@670+665">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="670+665" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c3@670" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r4@665" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@670" version="1.0" order="3">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@670+666">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_4.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="670+666" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c3@670" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r3@666" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@670" version="1.0" order="4">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@670+667">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_4.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="670+667" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c3@670" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r2@667" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@670" version="1.0" order="5">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@670+668">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="670+668" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c3@670" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r1@668" />
+                    </Cell>
+                  </cells>
+                </FareTable>
+                <FareTable id="Trip@AdultReturn-SOP@Line_103A@587" version="1.0">
+                  <Name>Newbury College</Name>
+                  <Description>Column 4</Description>
+                  <cells>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@587" version="1.0" order="1">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@587+665">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="587+665" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c4@587" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r4@665" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@587" version="1.0" order="2">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@587+666">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="587+666" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c4@587" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r3@666" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@587" version="1.0" order="3">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@587+667">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_3.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="587+667" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c4@587" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r2@667" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@587" version="1.0" order="4">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@587+668">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="587+668" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c4@587" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r1@668" />
+                    </Cell>
+                  </cells>
+                </FareTable>
+                <FareTable id="Trip@AdultReturn-SOP@Line_103A@665" version="1.0">
+                  <Name>Swan Roundabout</Name>
+                  <Description>Column 5</Description>
+                  <cells>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@665" version="1.0" order="1">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@665+666">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="665+666" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c5@665" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r3@666" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@665" version="1.0" order="2">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@665+667">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="665+667" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c5@665" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r2@667" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@665" version="1.0" order="3">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@665+668">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="665+668" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c5@665" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r1@668" />
+                    </Cell>
+                  </cells>
+                </FareTable>
+                <FareTable id="Trip@AdultReturn-SOP@Line_103A@666" version="1.0">
+                  <Name>Norma Roundabout</Name>
+                  <Description>Column 6</Description>
+                  <cells>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@666" version="1.0" order="1">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@666+667">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.50@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="666+667" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c6@666" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r2@667" />
+                    </Cell>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@666" version="1.0" order="2">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@666+668">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="666+668" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c6@666" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r1@668" />
+                    </Cell>
+                  </cells>
+                </FareTable>
+                <FareTable id="Trip@AdultReturn-SOP@Line_103A@667" version="1.0">
+                  <Name>Bishops Green</Name>
+                  <Description>Column 7</Description>
+                  <cells>
+                    <Cell id="Trip@AdultReturn-SOP@Line_103A@667" version="1.0" order="1">
+                      <DistanceMatrixElementPrice version="1.0" id="Trip@AdultReturn-SOP@Line_103A@667+668">
+                        <GeographicalIntervalPriceRef version="1.0" ref="price_band_2.00@AdultReturn" />
+                        <DistanceMatrixElementRef version="1.0" ref="667+668" />
+                      </DistanceMatrixElementPrice>
+                      <ColumnRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@c7@667" />
+                      <RowRef versionRef="1.0" ref="Trip@AdultReturn-SOP@Line_103A@r1@668" />
+                    </Cell>
+                  </cells>
+                </FareTable>
+              </includes>
+            </FareTable>
+          </fareTables>
+        </FareFrame>
+      </frames>
+    </CompositeFrame>
+    <CompositeFrame id="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA_OFFER:FXCP:fxc" version="fxc:v1.0" responsibilitySetRef="fxc:FXC_metadata" dataSourceRef="fxc:common">
+      <ValidBetween>
+        <FromDate>2015-02-01T00:00:00</FromDate>
+        <ToDate>2020-12-31T12:00:00</ToDate>
+      </ValidBetween>
+      <Name>UK FXCP Passenger Information Profile common resources</Name>
+      <TypeOfFrameRef version="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA_OFFER:FXCP:fxc"></TypeOfFrameRef>
+      <FrameDefaults>
+        <DefaultCodespaceRef ref="fxc"></DefaultCodespaceRef>
+        <DefaultDataSourceRef ref="fxc:common" version="fxc:v1.0"></DefaultDataSourceRef>
+        <DefaultResponsibilitySetRef ref="fxc:FXC_metadata" version="fxc:v1.0"></DefaultResponsibilitySetRef>
+      </FrameDefaults>
+      <frames>
+        <FareFrame id="fxc:Common_UK_Fare_Components" version="fxc:v1.0" responsibilitySetRef="fxc:FXC_metadata">
+          <Name>Common Country independent fare component</Name>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="fxc"></DefaultCodespaceRef>
+            <DefaultDataSourceRef ref="fxc:common" version="fxc:v1.0"></DefaultDataSourceRef>
+            <DefaultResponsibilitySetRef ref="fxc:FXC_metadata" version="fxc:v1.0"></DefaultResponsibilitySetRef>
+          </FrameDefaults>
+          <PricingParameterSet id="fxc:Common_Resources" version="fxc:v1.0">
+            <priceUnits>
+              <PriceUnit id="fxc:GBP" version="fxc:v1.0">
+                <Name>Pound Sterling</Name>
+                <PrivateCode>£</PrivateCode>
+                <Precision>2</Precision>
+              </PriceUnit>
+              <PriceUnit id="fxc:EUR" version="fxc:v1.0">
+                <Name>Euro</Name>
+                <PrivateCode>€</PrivateCode>
+                <Precision>2</Precision>
+              </PriceUnit>
+            </priceUnits>
+          </PricingParameterSet>
+          <geographicalUnits>
+            <GeographicalUnit id="fxc:mi" version="fxc:v1.0">
+              <Name>Distance Unit Miles</Name>
+            </GeographicalUnit>
+            <GeographicalUnit id="fxc:km" version="fxc:v1.0">
+              <Name>Distance Unit Kilometres</Name>
+            </GeographicalUnit>
+            <GeographicalUnit id="fxc:unit_stage" version="fxc:v1.0">
+              <Name>Distance Unit Stage</Name>
+            </GeographicalUnit>
+          </geographicalUnits>
+          <usageParameters>
+            <UserProfile version="fxc:v1.0" id="fxc:adult">
+              <Name>Adult</Name>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:none"></TypeOfConcessionRef>
+              <companionProfiles>
+                <CompanionProfile version="fxc:v1.0" id="fxc:adult@infant">
+                  <UserProfileRef ref="fxc:infant" version="fxc:v1.0"></UserProfileRef>
+                  <MinimumNumberOfPersons>0</MinimumNumberOfPersons>
+                  <MaximumNumberOfPersons>3</MaximumNumberOfPersons>
+                </CompanionProfile>
+              </companionProfiles>
+            </UserProfile>
+            <UserProfile version="fxc:v1.0" id="fxc:child">
+              <Name>Child</Name>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:child"></TypeOfConcessionRef>
+              <MinimumAge>5</MinimumAge>
+              <MaximumAge>15</MaximumAge>
+            </UserProfile>
+            <UserProfile version="fxc:v1.0" id="fxc:infant">
+              <Name>Infant</Name>
+              <Description>Up to three children under 5 years of age, accompanied by a fare paying adult or child passenger, and not occupying a seat, may travel free of charge on the Company's services.</Description>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:infant"></TypeOfConcessionRef>
+              <MinimumAge>0</MinimumAge>
+              <MaximumAge>4</MaximumAge>
+              <DiscountBasis>free</DiscountBasis>
+              <companionProfiles>
+                <CompanionProfile id="fxc:infant@adult" version="fxc:v1.0">
+                  <UserProfileRef ref="fxc:adult" version="fxc:v1.0"></UserProfileRef>
+                  <MinimumNumberOfPersons>1</MinimumNumberOfPersons>
+                  <MaximumNumberOfPersons>1</MaximumNumberOfPersons>
+                  <DiscountBasis>none</DiscountBasis>
+                </CompanionProfile>
+              </companionProfiles>
+            </UserProfile>
+            <UserProfile version="fxc:v1.0" id="fxc:senior">
+              <Name>Senior</Name>
+              <TypeOfConcessionRef version="fxc:v1.0" ref="fxc:senior"></TypeOfConcessionRef>
+              <ProofRequired>membershipCard</ProofRequired>
+              <DiscountBasis>discount</DiscountBasis>
+            </UserProfile>
+          </usageParameters>
+          <distributionChannels>
+            <DistributionChannel id="fxc:online" version="fxc:v1.0">
+              <ShortName>Internet sales</ShortName>
+              <alternativeNames>
+                <AlternativeName order="1" id="fxc:online_de" version="fxc:v1.0">
+                  <Name lang="de">Internetverkauf</Name>
+                </AlternativeName>
+                <AlternativeName order="1" id="fxc:online_fr" version="fxc:v1.0">
+                  <Name lang="fr">A vendre par l'internet</Name>
+                </AlternativeName>
+              </alternativeNames>
+              <DistributionChannelType>online</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:at_stop" version="fxc:v1.0">
+              <ShortName>In station sale by machine, counter or payg</ShortName>
+              <DistributionChannelType>atStop</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:self_service_ticket_machine" version="fxc:v1.0">
+              <ShortName>Automatic Ticket Machine</ShortName>
+              <DistributionChannelType>atStop</DistributionChannelType>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:pay_as_you_go_device" version="fxc:v1.0">
+              <ShortName>Automatic Ticket Machine</ShortName>
+              <DistributionChannelType>atStop</DistributionChannelType>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:at_counter" version="fxc:v1.0">
+              <ShortName>Ticket counter sale</ShortName>
+              <alternativeNames>
+                <AlternativeName order="1" id="fxc:at_counter_de" version="fxc:v1.0">
+                  <Name lang="de">Schalter</Name>
+                </AlternativeName>
+                <AlternativeName order="1" id="fxc:at_counter_fr" version="fxc:v1.0">
+                  <Name lang="fr">A vendre par le guichet</Name>
+                </AlternativeName>
+              </alternativeNames>
+              <DistributionChannelType>atStop</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:on_board" version="fxc:v1.0">
+              <ShortName>on_board</ShortName>
+              <DistributionChannelType>onBoard</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:call_centre" version="fxc:v1.0">
+              <ShortName>Call Centre</ShortName>
+              <DistributionChannelType>telephone</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:operator_travel_shop" version="fxc:v1.0">
+              <ShortName>Operator Travel Shop</ShortName>
+              <DistributionChannelType>telephone</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:travel_agent" version="fxc:v1.0">
+              <ShortName>Travel Agent</ShortName>
+              <DistributionChannelType>agency</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:employee_organisation" version="fxc:v1.0">
+              <ShortName>Employee Organisation</ShortName>
+              <DistributionChannelType>other</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+            <DistributionChannel id="fxc:statutory_organisation" version="fxc:v1.0">
+              <ShortName>Statutory Organisation</ShortName>
+              <DistributionChannelType>other</DistributionChannelType>
+              <IsObligatory>false</IsObligatory>
+            </DistributionChannel>
+          </distributionChannels>
+          <fulfilmentMethods>
+            <FulfilmentMethod id="fxc:collect_on_board" version="fxc:v1.0">
+              <Name>Collect on board</Name>
+              <FulfilmentMethodType>conductor</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:hand_written_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:collect_from_machine" version="fxc:v1.0">
+              <Name>Collect from machine</Name>
+              <FulfilmentMethodType>ticketMachine</FulfilmentMethodType>
+              <RequiresBookingReference>true</RequiresBookingReference>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:collect_at_counter" version="fxc:v1.0">
+              <Name>Collect at counter</Name>
+              <FulfilmentMethodType>ticketOffice</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:pass" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:smart_card" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:hand_written_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:smart_card" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:collect_from_agent" version="fxc:v1.0">
+              <Name>Travel agent issues ticket directly</Name>
+              <FulfilmentMethodType>agent</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:electronic_document" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:mobile_app" version="fxc:v1.0">
+              <Name>Mobile App</Name>
+              <FulfilmentMethodType>mobileApp</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:mobile_app_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:self_print" version="fxc:v1.0">
+              <Name>Self Print</Name>
+              <FulfilmentMethodType>selfprint</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:self_print_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:electronic_document" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:online_propagation" version="fxc:v1.0">
+              <Name>Online propagation</Name>
+              <FulfilmentMethodType>validator</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:mobile_app_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:smart_card" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:email" version="fxc:v1.0">
+              <Name>EMAIL</Name>
+              <FulfilmentMethodType>email</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:self_print_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:post" version="fxc:v1.0">
+              <Name>Send ticket by post</Name>
+              <FulfilmentMethodType>post</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:pass" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:smart_card" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+            <FulfilmentMethod id="fxc:courier" version="fxc:v1.0">
+              <Name>Send ticket by courier</Name>
+              <FulfilmentMethodType>other</FulfilmentMethodType>
+              <typesOfTravelDocument>
+                <TypeOfTravelDocumentRef ref="fxc:printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:magstripe_printed_ticket" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:pass" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+                <TypeOfTravelDocumentRef ref="fxc:smart_card" version="fxc:v1.0"></TypeOfTravelDocumentRef>
+              </typesOfTravelDocument>
+            </FulfilmentMethod>
+          </fulfilmentMethods>
+          <typesOfTravelDocuments>
+            <TypeOfTravelDocument id="fxc:distribution_channel_dependent" version="fxc:v1.0">
+              <Name>Depends on channel used</Name>
+              <MediaType>other</MediaType>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:printed_ticket" version="fxc:v1.0">
+              <Name>Printed Ticket</Name>
+              <MediaType>paperTicket</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:hand_written_ticket" version="fxc:v1.0">
+              <Name>Hand written ticket</Name>
+              <MediaType>paperTicket</MediaType>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:magstripe_printed_ticket" version="fxc:v1.0">
+              <Name>Printed Ticket with magnetic Stripe</Name>
+              <MediaType>paperTicket</MediaType>
+              <MachineReadable>magneticStrip</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:self_print_ticket" version="fxc:v1.0">
+              <MediaType>selfPrintPaperTicket</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:pass" version="fxc:v1.0">
+              <MediaType>card</MediaType>
+              <MachineReadable>barCode</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:mobile_app_ticket" version="fxc:v1.0">
+              <MediaType>mobileApp</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:smart_card" version="fxc:v1.0">
+              <MediaType>card</MediaType>
+              <MachineReadable>chip</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:electronic_document" version="fxc:v1.0">
+              <MediaType>none</MediaType>
+              <MachineReadable>ocr</MachineReadable>
+            </TypeOfTravelDocument>
+            <TypeOfTravelDocument id="fxc:membership_card" version="fxc:v1.0">
+              <MediaType>card</MediaType>
+              <MachineReadable>none</MachineReadable>
+            </TypeOfTravelDocument>
+          </typesOfTravelDocuments>
+        </FareFrame>
+        <ResourceFrame id="fxc:UK_Bus_Tariffs@Common_Resources" version="fxc:v1.0" responsibilitySetRef="fxc:FXC_metadata" dataSourceRef="fxc:common">
+          <Name>NaBT Common Country independent code values</Name>
+          <codespaces>
+            <Codespace id="fxc">
+              <Xmlns>fxc</Xmlns>
+              <XmlnsUrl>http://farexchange.org.uk/fxc</XmlnsUrl>
+              <Description>National Bus Tariff Profile metadata</Description>
+            </Codespace>
+            <Codespace id="napt">
+              <Xmlns>napt</Xmlns>
+              <XmlnsUrl>http://naptan.org.uk/napt</XmlnsUrl>
+              <Description>NaPTAN metadata</Description>
+            </Codespace>
+            <Codespace id="naptStop">
+              <Xmlns>naptStop"&gt;</Xmlns>
+              <XmlnsUrl>http://naptan.org.uk/stops</XmlnsUrl>
+              <Description>T stop data</Description>
+            </Codespace>
+            <Codespace id="nptg">
+              <Xmlns>nptg</Xmlns>
+              <XmlnsUrl>http://nptg.org.uk/</XmlnsUrl>
+              <Description>National Public Transport gazetteer</Description>
+            </Codespace>
+            <Codespace id="nptgLocality">
+              <Xmlns>nptgLocality</Xmlns>
+              <XmlnsUrl>http://nptg.org.uk/locations</XmlnsUrl>
+              <Description>National Public Transport gazetteer locations</Description>
+            </Codespace>
+            <Codespace id="nptgTariffZone">
+              <Xmlns>nptgTariffZone</Xmlns>
+              <XmlnsUrl>http://nptg.org.uk/tariffZones</XmlnsUrl>
+              <Description>National Public Transport gazetteer plus bus zones</Description>
+            </Codespace>
+            <Codespace id="nptgUkAdministrativeArea">
+              <Xmlns>nptgUkAdministrativeArea</Xmlns>
+              <XmlnsUrl>http://www.nptg.org.uk/adminAreas</XmlnsUrl>
+              <Description>UK National Public Transport gazetteer. Codes of administrative areas, are unique within the UK.</Description>
+            </Codespace>
+            <Codespace id="noc">
+              <Xmlns>noc</Xmlns>
+              <XmlnsUrl>http://www.traveline.co.uk/noc</XmlnsUrl>
+              <Description>UKnational operator codes</Description>
+            </Codespace>
+          </codespaces>
+          <FrameDefaults>
+            <DefaultCodespaceRef ref="fxc"></DefaultCodespaceRef>
+            <DefaultDataSourceRef ref="fxc:common" version="fxc:v1.0"></DefaultDataSourceRef>
+            <DefaultResponsibilitySetRef ref="fxc:FXC_metadata" version="fxc:v1.0"></DefaultResponsibilitySetRef>
+            <DefaultLocale>
+              <TimeZoneOffset>0</TimeZoneOffset>
+              <TimeZone>GMT</TimeZone>
+              <SummerTimeZoneOffset>+1</SummerTimeZoneOffset>
+              <SummerTimeZone>BST</SummerTimeZone>
+              <DefaultLanguage>en</DefaultLanguage>
+            </DefaultLocale>
+            <DefaultLocationSystem>WGS84</DefaultLocationSystem>
+            <DefaultSystemOfUnits>SiKilometresAndMetres</DefaultSystemOfUnits>
+            <DefaultCurrency>GBP</DefaultCurrency>
+          </FrameDefaults>
+          <versions>
+            <Version id="fxc:v1.0" version="any">
+              <Description>NPTG version 2.1</Description>
+              <VersionType>baseline</VersionType>
+            </Version>
+          </versions>
+          <dataSources>
+            <DataSource id="fxc:common" version="fxc:v1.0">
+              <Email>standards@nptg.org.uk</Email>
+            </DataSource>
+          </dataSources>
+          <responsibilitySets>
+            <ResponsibilitySet version="fxc:v1.0" id="fxc:FXC_metadata">
+              <Name>Common</Name>
+              <roles>
+                <ResponsibilityRoleAssignment version="fxc:v1.0" id="fxc:FXC_metadata:DfT">
+                  <DataRoleType>creates distributes</DataRoleType>
+                  <StakeholderRoleType>DataRegistrar</StakeholderRoleType>
+                  <ResponsibleOrganisationRef ref="fxc:DfT" version="fxc:v1.0"></ResponsibleOrganisationRef>
+                  <ResponsibleAreaRef ref="fxc:UK">TODO</ResponsibleAreaRef>
+                </ResponsibilityRoleAssignment>
+              </roles>
+            </ResponsibilitySet>
+          </responsibilitySets>
+          <typesOfValue>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Specific_Frame_Basic" classOfValues="TypeOfFrame">
+              <Name>Types of FXC Specific  Frame Basic</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_COMMON:FXCP">
+                  <Name>UK FXCP  common Local resources</Name>
+                  <FrameClassRef nameOfClass="ResourceFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_CALENDAR:FXCP">
+                  <Name>UK FXCP  Service calendar</Name>
+                  <FrameClassRef nameOfClass="ServiceCalendarFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP:FXCP">
+                  <Name>UK FXCP Stops: NapTAN Stop Place  and NPTG Locations Frame</Name>
+                  <FrameClassRef nameOfClass="SiteFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK:FXCP">
+                  <Name>UK FXCP Network</Name>
+                  <FrameClassRef nameOfClass="ServiceFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_TIMETABLE:FXCP">
+                  <Name>UK FXCP Tietable: N</Name>
+                  <FrameClassRef nameOfClass="TimetableFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA:FXCP">
+                  <Name>UK Bus Profile common resources</Name>
+                  <FrameClassRef nameOfClass="ResourceFrame"></FrameClassRef>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc::v2.4" id="fxc:Types_of_Offer_Frame_Basic" classOfValues="TypeOfFrame">
+              <Name>Types of UK Offer Frame</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP_OFFER:FXCP">
+                  <Name>UK FXCP   composite container STOP OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container LINE OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK_OFFER:FXCP">
+                  <Name>UK FXCP   composite container LINE OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_METADATA_OFFER:FXCP:fxc">
+                  <Name>UK FXCP composite used to group other UKmetadta</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"></FrameClassRef>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Specific_Frame_for_Fares" classOfValues="TypeOfFrame">
+              <Name>Types of FXC Specific  Frame</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_COMMON:FXCP">
+                  <Name>UK Bus Profile fare common paramaters</Name>
+                  <FrameClassRef nameOfClass="FareFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_NETWORK:FXCP">
+                  <Name>UK Bus Profile fare network</Name>
+                  <FrameClassRef nameOfClass="ServiceFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRODUCT:FXCP">
+                  <Name>UK FXCP Fare Porducts Frame</Name>
+                  <FrameClassRef nameOfClass="FareFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_PRICE:FXCP">
+                  <Name>UK FXCP Fare Prices Frame</Name>
+                  <FrameClassRef nameOfClass="FareFrame"></FrameClassRef>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_Offer_Frame_for_Fares" classOfValues="TypeOfFrame">
+              <Name>Types of UK Offer Frame</Name>
+              <values>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_STOP_FARE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container STOP OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container LINE OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"></FrameClassRef>
+                </TypeOfFrame>
+                <TypeOfFrame version="fxc:v1.0" id="fxc:UK:DFT:TypeOfFrame_UK_PI_NETWORK_FARE_OFFER:FXCP">
+                  <Name>UK FXCP   composite container NETWORK OFFER</Name>
+                  <FrameClassRef nameOfClass="CompositeFrame"></FrameClassRef>
+                </TypeOfFrame>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:PointOfInterestClassification" classOfValues="PointOfInterestClassification">
+              <Name>Types of POI</Name>
+              <values>
+                <PointOfInterestClassification version="fxc:v1.0" id="fxc:operator_travel_shop">
+                  <Name>Travel Shop</Name>
+                </PointOfInterestClassification>
+                <PointOfInterestClassification version="fxc:v1.0" id="fxc:tourist_information_centre">
+                  <Name>Tourist Information Centre</Name>
+                </PointOfInterestClassification>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypeOfFareZone" classOfValues="TypeOfZone">
+              <Name>Types of Fare Zone</Name>
+              <values>
+                <TypeOfZone version="fxc:v1.0" id="fxc:fare_zone@operator">
+                  <Name>Operator defined zone</Name>
+                </TypeOfZone>
+                <TypeOfZone version="fxc:v1.0" id="fxc:fare_zone@multi_operator">
+                  <Name>MultiOperator defined zone</Name>
+                </TypeOfZone>
+                <TypeOfZone version="fxc:v1.0" id="fxc:fare_zone@concessionary">
+                  <Name>Concessionary scheme zone</Name>
+                </TypeOfZone>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfProductCategory" classOfValues="TypeOfProductCategory">
+              <Name>Types of Product Category</Name>
+              <values>
+                <TypeOfProductCategory version="fxc:v1.0" id="fxc:urban_bus">
+                  <Name>Urban Bus</Name>
+                </TypeOfProductCategory>
+                <TypeOfProductCategory version="fxc:v1.0" id="fxc:rural_bus">
+                  <Name>Rural Bus</Name>
+                </TypeOfProductCategory>
+                <TypeOfProductCategory version="fxc:v1.0" id="fxc:park_and_ride">
+                  <Name>Rural Bus</Name>
+                </TypeOfProductCategory>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:PurposesOfGrouping" classOfValues="PurposeOfGrouping">
+              <Name>Purposes of Grouping</Name>
+              <values>
+                <PurposeOfGrouping version="fxc:v1.0" id="fxc:route_exclusion">
+                  <Name>Routes to be ommited</Name>
+                </PurposeOfGrouping>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:ChargingMoments" classOfValues="ChargingMoment">
+              <Name>Charging Moments</Name>
+              <values>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment">
+                  <Name>Prepaid</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment@pay_as_you_go">
+                  <Name>Prepaid - pay as you go</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment@bundled">
+                  <Name>Prepaid - paid along with a base product</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc:prepayment@free">
+                  <Name>Prepaid - free issue</Name>
+                </ChargingMoment>
+                <ChargingMoment version="fxc:v1.0" id="fxc::post_payment">
+                  <Name>Prepaid</Name>
+                </ChargingMoment>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfFareProduct@trip" classOfValues="TypeOfFareProduct">
+              <Name>Types Of Fare Product - Trip</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@trip@short_hop">
+                  <Name>Short hop fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@trip@single">
+                  <Name>single fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:era:standard_product@trip@time_limited">
+                  <Name>Time Limited fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:special_product@Trip@period_single">
+                  <Name>Period single fare</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:era:special_produc@tript@day_single">
+                  <Name>Day retirn fare</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfFareProduct@pass" classOfValues="TypeOfFareProduct">
+              <Name>Types Of Fare Product - Pass</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@pass@day">
+                  <Name>day pass - till end of fare day</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@pass@24H">
+                  <Name>24H from time of activation</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@pass@period">
+                  <Name>Pass for a specifed period</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfFareProduct@carnet" classOfValues="TypeOfFareProduct">
+              <Name>Types Of Fare Product - Pass</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@carnet@trips">
+                  <Name>Carnet of trips.</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@carnet@days">
+                  <Name>Carnet of 1 day' passes.</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfFareProduct@discount" classOfValues="TypeOfFareProduct">
+              <Name>Types Of Fare Product - Pass</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@discount@sales">
+                  <Name>Sales discount righty</Name>
+                </TypeOfFareProduct>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@discount@usage">
+                  <Name>Usage discount rights</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfFareProduct@stored_value" classOfValues="TypeOfFareProduct">
+              <Name>Types Of Fare Product  - Epurse</Name>
+              <values>
+                <TypeOfFareProduct version="fxc:v1.0" id="fxc:standard_product@stored_value@epurse">
+                  <Name>Epurse</Name>
+                </TypeOfFareProduct>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfSalesOfferPackage" classOfValues="TypeOfSalesOfferPackage">
+              <Name>Types Of Sales Offer  Product</Name>
+              <values>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:standard_product@all_operators">
+                  <Name>Product is standrad and supported by all operators</Name>
+                </TypeOfSalesOfferPackage>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:standard_product@multi_operator">
+                  <Name>Product is standrad and supported by all operators</Name>
+                </TypeOfSalesOfferPackage>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:standard_product@operator">
+                  <Name>single operator standard product</Name>
+                </TypeOfSalesOfferPackage>
+                <TypeOfSalesOfferPackage version="fxc:v1.0" id="fxc:special_product@operator">
+                  <Name>single operator special product</Name>
+                </TypeOfSalesOfferPackage>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:ClassesOfUse" classOfValues="ClassOfUse">
+              <Name>Classes of Use</Name>
+              <values>
+                <ClassOfUse version="fxc:v1.0" id="fxc:first">
+                  <Name>First Class</Name>
+                </ClassOfUse>
+                <ClassOfUse version="fxc:v1.0" id="fxc:second">
+                  <Name>Second Class</Name>
+                </ClassOfUse>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfProjection" classOfValues="TypeOfProjection">
+              <Name>TypesOf Projection</Name>
+              <values>
+                <TypeOfProjection version="fxc:v1.0" id="fxc:tariff_zone_border">
+                  <Name>The boundary stops for a fare_zone</Name>
+                </TypeOfProjection>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfFareContractEntry" classOfValues="TypeOfFareContractEntry">
+              <Name>Types of fare contract entry</Name>
+              <values>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:product_purchase">
+                  <Name>Purchase</Name>
+                </TypeOfFareContractEntry>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:product_refund">
+                  <Name>Refund</Name>
+                </TypeOfFareContractEntry>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:online_purchase">
+                  <Name>Online Purchase</Name>
+                </TypeOfFareContractEntry>
+                <TypeOfFareContractEntry version="fxc:v1.0" id="fxc:on_board_purchase">
+                  <Name>Cash Purchase</Name>
+                </TypeOfFareContractEntry>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfConcession" classOfValues="TypeOfConcession">
+              <Name>Types of concession</Name>
+              <values>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:none">
+                  <Name>Adult</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:infant">
+                  <Name>Infant</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:child">
+                  <Name>Child</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:youth">
+                  <Name>Youth</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:school_pupil">
+                  <Name>School pupil</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:student">
+                  <Name>Student</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:young_adult">
+                  <Name>Youth</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:senior">
+                  <Name>Senior</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:registered_disabled">
+                  <Name>Registered disabled</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:animal">
+                  <Name>Animal</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:social">
+                  <Name>Social</Name>
+                </TypeOfConcession>
+                <TypeOfConcession version="fxc:v1.0" id="fxc:statutory">
+                  <Name>Statutory</Name>
+                </TypeOfConcession>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfTariff" classOfValues="TypeOfTariff">
+              <Name>Types of Tariff</Name>
+              <values>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:Distance_kilometers">
+                  <Name>Kilometer Distance Kilometers</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:flat">
+                  <Name>Flat</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:point_to_point">
+                  <Name>Point to point</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:zonal">
+                  <Name>Zonal</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:section">
+                  <Name>Section</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:banded">
+                  <Name>Section</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:stored_value">
+                  <Name>Stored value</Name>
+                </TypeOfTariff>
+                <TypeOfTariff version="fxc:v1.0" id="fxc:multitrip">
+                  <Name>Multitrip carnet</Name>
+                </TypeOfTariff>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:TypesOfAccessRightAssignment" classOfValues="TypeOfAccessRightAssignment">
+              <Name>Types of Access right Assignment</Name>
+              <values>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:eligible">
+                  <Name>Eligible for a product or discount</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_access">
+                  <Name>Grants access rights to use or travel on</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:cannot_access">
+                  <Name>Revokes access rights to use or travel on</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:must_access">
+                  <Name>Requires access rights to use or travel on</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_access_when">
+                  <Name>Grants access rights to use or travel during some period</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_access_if_purchased">
+                  <Name>Right defines a property that may be Accessed if purchased</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_use_with_type_of_travel_document">
+                  <Name>Right defines tyoe travel document condition</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:condition_of_use">
+                  <Name>Defines a condition or restriction on use</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:condition_of_sale">
+                  <Name>Defines a condition or restriction on purchase</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_purchase">
+                  <Name>Gives right to purchase</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_purchase_when">
+                  <Name>Specifies when a purchase can be made</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_purchase_where">
+                  <Name>Specifies where a purchase can be made</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:gives_entitlement">
+                  <Name>Gives right to other products</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:prerequisites">
+                  <Name>Requires right to other products</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:penalties">
+                  <Name>Penalties for misuuse</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:can_use_to_pay_for">
+                  <Name>Gives ability to purchase automatically using</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:payment_schedule">
+                  <Name>Specifices if subscription or single payment</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:reservation_condition">
+                  <Name>Indicates need for reservation</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:distribution_channel_restriction">
+                  <Name>Constrains availability for distribution by a channel</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:takes_properties_from_group">
+                  <Name>Takes properties from group package</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:quota_applies">
+                  <Name>Quota applies</Name>
+                </TypeOfAccessRightAssignment>
+                <TypeOfAccessRightAssignment version="fxc:v1.0" id="fxc:validity_chaining">
+                  <Name>Quota applies</Name>
+                </TypeOfAccessRightAssignment>
+              </values>
+            </ValueSet>
+            <ValueSet version="fxc:v1.0" id="fxc:Types_of_FareStructureElement" classOfValues="TypeOfFareStructureElement">
+              <Name>FXCP: Types of FARE STRUCTURE ELEMENT.</Name>
+              <values>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:access">
+                  <Name>Access rights</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:access_when">
+                  <Name>Fare demand :peak /off peak etc access rights to use or travel during some period</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:accepted_by">
+                  <Name>Accepted by operator</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:eligibility">
+                  <Name>Eligibility to purchase</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:groups">
+                  <Name>Group tickets available</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:durations">
+                  <Name>Time intervals</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:prerequisites">
+                  <Name>Defines required entitlements</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:entitles">
+                  <Name>Gives right to other products</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:sale_conditions">
+                  <Name>Defines a condition or restriction on purchase</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:travel_conditions">
+                  <Name>Condition on use</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:carnet_units">
+                  <Name>Specifies units for purchase</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:outlets">
+                  <Name>Specifies where a purchase can be made</Name>
+                </TypeOfFareStructureElement>
+                <TypeOfFareStructureElement version="fxc:v1.0" id="fxc:quotas">
+                  <Name>Quota applies</Name>
+                </TypeOfFareStructureElement>
+              </values>
+            </ValueSet>
+          </typesOfValue>
+          <organisations>
+            <GeneralOrganisation version="fxc:v1.0" id="fxc:DfT">
+              <Name>Department for Transport</Name>
+              <ShortName>DfT</ShortName>
+              <OrganisationType>statutoryBody</OrganisationType>
+            </GeneralOrganisation>
+            <Operator version="fxc:v1.0" id="uic:operator:1170">
+              <PublicCode>ATOC</PublicCode>
+              <Name>Association of Train Operating Companies Limited</Name>
+              <ShortName>UIC</ShortName>
+              <ValidityPeriod>
+                <FromDate>2001-01-01T00:00:00Z</FromDate>
+                <ToDate>2020-01-01T00:00:00Z</ToDate>
+              </ValidityPeriod>
+              <CountryRef ref="uk" refPrincipality="GB-UKM"></CountryRef>
+            </Operator>
+            <Operator version="fxc:v1.0" id="uic:Station_Management:0070">
+              <PublicCode>NR</PublicCode>
+              <Name>Network Rail Limited</Name>
+              <ShortName>Network Rail</ShortName>
+              <ValidityPeriod>
+                <FromDate>2003-09-22T00:00:00Z</FromDate>
+                <ToDate>2020-01-01T00:00:00Z</ToDate>
+              </ValidityPeriod>
+              <CountryRef ref="uk" refPrincipality="GB-UKM"></CountryRef>
+            </Operator>
+          </organisations>
+        </ResourceFrame>
+      </frames>
+    </CompositeFrame>
+  </dataObjects>
+</PublicationDelivery>

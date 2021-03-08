@@ -157,12 +157,17 @@ else:
         'template_minifier.template.loaders.app_directories.Loader'
     ])]
 
-CACHES = {
-    'default': {
+CACHES = {}
+if TEST:
+    CACHES["default"] = {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache"
+    }
+else:
+    CACHES["default"] = {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': os.environ.get('MEMCACHED_LOCATION', '127.0.0.1:11211')
     }
-}
+
 
 VARNISH_HOST = os.environ.get('VARNISH_HOST')
 VARNISH_PORT = os.environ.get('VARNISH_PORT')

@@ -34,4 +34,4 @@ class FaresTest(TestCase):
         self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
-        self.assertEqual(TimeInterval.objects.count(), 7)
+        self.assertEqual(TimeInterval.objects.count(), 8)

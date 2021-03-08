@@ -97,7 +97,7 @@ class Tariff(models.Model):
     operators = models.ManyToManyField('busstops.Operator', blank=True)
     source = models.ForeignKey(DataSet, models.CASCADE)
     filename = models.CharField(max_length=255)
-    user_profile = models.ForeignKey(UserProfile, models.CASCADE)
+    user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
     trip_type = models.CharField(max_length=255)
     valid_between = DateTimeRangeField(null=True, blank=True)
     type_of_tariff = models.CharField(
