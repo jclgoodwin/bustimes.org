@@ -151,8 +151,6 @@ class VehicleFeature(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
-        if self.name[1:].islower():
-            return self.name.lower()
         return self.name
 
 
@@ -549,9 +547,6 @@ class VehicleLocation(models.Model):
     wheelchair_occupancy = models.PositiveSmallIntegerField(null=True, blank=True)
     wheelchair_capacity = models.PositiveSmallIntegerField(null=True, blank=True)
     occupancy_thresholds = models.CharField(max_length=10, blank=True)
-
-    def get_absolute_url(self):
-        return reverse('vehiclelocation_detail', args=(self.id,))
 
     def __str__(self):
         return self.datetime.strftime('%-d %b %Y %H:%M:%S')

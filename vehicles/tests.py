@@ -145,6 +145,16 @@ class VehiclesTests(TestCase):
                 response = self.client.get(f'/journeys/{self.journey.id}.json')
         self.assertEqual({}, response.json())
 
+        self.journey.refresh_from_db()
+        self.assertEqual(str(self.journey), '19 Oct 20 23:47 2  ')
+        self.assertEqual(
+            self.journey.get_absolute_url(),
+            f'/vehicles/{self.vehicle_1.id}?date=2020-10-19#journeys/{self.journey.id}'
+        )
+
+        self.location.refresh_from_db()
+        self.assertEqual(str(self.location), '19 Oct 2020 23:47:00')
+
     def test_livery(self):
         livery = Livery(name='Go-Coach')
         self.assertEqual('Go-Coach', str(livery))

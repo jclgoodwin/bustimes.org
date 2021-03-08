@@ -8,7 +8,7 @@ from django.test import TestCase, override_settings
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney
 from ...tasks import bod_avl
-from ..commands import import_bod_avl, import_bod_avl_celery
+from ..commands import import_bod_avl, import_bod_avl_celery, import_bod_avl_channels
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -34,13 +34,30 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
     @time_machine.travel('2020-05-01')
     def test_get_items(self):
-        command = import_bod_avl.Command()
+        command = import_bod_avl_channels.Command()
         command.source = self.source
 
         with use_cassette(os.path.join(DIR, 'vcr', 'bod_avl.yaml')):
-            items = list(command.get_items())
+            command.update()
 
-        self.assertEqual(841, len(items))
+        with use_cassette(os.path.join(DIR, 'vcr', 'bod_avl.yaml')):
+            command.update()
+
+        self.assertEqual(841, len(command.identifiers))
+
+        response = self.client.get('/status')
+        self.assertContains(response, """
+            <tr>
+                <td>24 Jul 15:14:46</td>
+                <td>841</td>
+                <td>841</td>
+            </tr>""")
+        self.assertContains(response, """
+            <tr>
+                <td>24 Jul 15:14:46</td>
+                <td>841</td>
+                <td>0</td>
+            </tr>""")
 
     def test_update(self):
         command = import_bod_avl_celery.Command()
