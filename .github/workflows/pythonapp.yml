@@ -86,4 +86,4 @@ jobs:
         echo "[default]" > ~/.aws/credentials
         echo "aws_access_key_id = ${{ secrets.SPACE_ACCESS_KEY_ID }}" >> ~/.aws/credentials
         echo "aws_secret_access_key = ${{ secrets.SPACE_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
-        pipenv run aws s3 sync htmlcov s3://${{ secrets.SPACE_NAME }} --delete --endpoint https://ams3.digitaloceanspaces.com
+        pipenv run aws s3 sync htmlcov s3://${{ secrets.SPACE_NAME }} --delete --endpoint https://ams3.digitaloceanspaces.com --debug

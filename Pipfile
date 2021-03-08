@@ -42,6 +42,7 @@ django-coverage-plugin = "*"
 django-slowtests = "*"
 honeycomb-beeline = "*"
 haversine = "*"
+boto3 = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
@@ -50,5 +51,4 @@ ipython = "*"
 setproctitle = "*"
 gunicorn = "*"
 polyline = "*"
-boto3 = "*"
 ipdb = "*"
