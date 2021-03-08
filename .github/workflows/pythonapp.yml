@@ -81,9 +81,8 @@ jobs:
        pipenv run coverage html
 
     - name: Upload coverage
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
       run: |
-        mkdir ~/.aws
-        echo "[default]" > ~/.aws/credentials
-        echo "aws_access_key_id = ${{ secrets.SPACE_ACCESS_KEY_ID }}" >> ~/.aws/credentials
-        echo "aws_secret_access_key = ${{ secrets.SPACE_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
-        pipenv run aws s3 sync htmlcov s3://${{ secrets.SPACE_NAME }} --delete --endpoint https://ams3.digitaloceanspaces.com --debug
+        pipenv run aws s3 sync htmlcov s3://bustimes-coverage --delete --debug --endpoint-url=https://ams3.digitaloceanspaces.com
