@@ -1,8 +1,7 @@
 from asgiref.sync import async_to_sync
-from django.utils import timezone
 from django.core.cache import cache
 from channels.layers import get_channel_layer
-from channels.exceptions import ChannelFull
+# from channels.exceptions import ChannelFull
 from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
@@ -16,8 +15,6 @@ class Command(ImportLiveVehiclesCommand):
         })
 
     def update(self):
-        now = timezone.now()
-
         items = self.get_items()
         if not items:
             return 300  # wait five minutes
@@ -37,29 +34,23 @@ class Command(ImportLiveVehiclesCommand):
                 to_send.append(item)
                 i += 1
                 if i % 1000 == 0:
-                    try:
-                        self.send_items(to_send)
-                    except ChannelFull:
-                        break
+                    self.send_items(to_send)
                     self.identifiers.update(identifiers)
                     identifiers = {}
                     to_send = []
         if to_send:
-            try:
-                self.send_items(to_send)
-                self.identifiers.update(identifiers)
-            except ChannelFull:
-                pass
+            self.send_items(to_send)
+            self.identifiers.update(identifiers)
+
+        count = len(items)
 
         # stats for last 10 updates
         bod_status = cache.get('bod_avl_status', [])
-        bod_status.append((self.source.datetime, len(items), i))
+        bod_status.append((self.source.datetime, count, i))
         bod_status = bod_status[-10:]
         cache.set('bod_avl_status', bod_status)
 
-        time_taken = timezone.now() - now
-        print(time_taken)
-        time_taken = time_taken.total_seconds()
-        if time_taken < self.wait:
-            return self.wait - time_taken
-        return 0  # took longer than self.wait
+        if count < 1000:  # suspiciously few items, try again sooner
+            return 15
+
+        return 30

@@ -37,10 +37,7 @@ class Command(ImportLiveVehiclesCommand):
                 print(e, operator)
                 return None, None
 
-        if operator == 'NCTR' and len(code) == 6:
-            # Trent Barton vehicles
-            return None, None
-        elif operator == 'MCGL' and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
+        if operator == 'MCGL' and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
             # Borders Buses or First vehicles
             print(code)
             return None, None
@@ -51,9 +48,6 @@ class Command(ImportLiveVehiclesCommand):
             parts = code.split('_-_')
             if parts[0].isdigit():
                 fleet_number = parts[0]
-
-        if operator == 'CTNY':
-            code = code.replace('_', '')
 
         defaults = {
             'source': self.source,
@@ -73,11 +67,6 @@ class Command(ImportLiveVehiclesCommand):
             vehicle = vehicles.get_or_create(
                 defaults,
                 fleet_number=fleet_number,
-            )
-        elif fleet_number.isupper() and operator == 'GNEL':
-            vehicle = vehicles.get_or_create(
-                defaults,
-                reg=code.replace('_', ''),
             )
         else:
             vehicle = vehicles.get_or_create(
@@ -108,38 +97,20 @@ class Command(ImportLiveVehiclesCommand):
                 print(e, operator)
                 return journey
 
-        line_name = journey.route_name
-        if operator == 'BLAC' and line_name == 'PRM':
-            line_name = '1'
-        elif vehicle.operator_id == 'WDBC' and line_name == '1':
-            line_name = 'ONE'
-
         latest_journey = vehicle.latest_journey
 
         if latest_journey and latest_journey.route_name == journey.route_name:
             journey.service_id = latest_journey.service_id
         else:
-            services = Service.objects.filter(current=True, line_name__iexact=line_name)
-            if self.source.name in {'salisburyreds', 'morebus', 'swindonbus', 'bluestar'}:
-                services = services.filter(operator=vehicle.operator_id)
-            else:
-                if operator == 'BORD':
-                    services = services.filter(operator__in=('BORD', 'PERY'))
-                elif operator == 'CTNY':
-                    services = services.filter(operator__in=('CTNY', 'THVB'))
-                else:
-                    services = services.filter(operator=operator)
-
-                if vehicle.operator_id != operator:
-                    vehicle.operator_id = operator
-                    vehicle.save()
+            services = Service.objects.filter(current=True, line_name__iexact=journey.route_name)
+            services = services.filter(operator=operator)
 
             try:
                 journey.service = self.get_service(services, Point(item['geometry']['coordinates']))
             except Service.DoesNotExist:
                 pass
             if not journey.service:
-                print(operator, vehicle.operator_id, line_name)
+                print(operator, vehicle.operator_id, journey.route_name)
 
         return journey
 

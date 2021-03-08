@@ -32,9 +32,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
         StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
 
-        r = redis.from_url(settings.REDIS_URL)
-        r.flushall()
-
     @time_machine.travel('2020-05-01')
     def test_get_items(self):
         command = import_bod_avl.Command()
@@ -67,6 +64,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_task(self):
+        r = redis.from_url(settings.REDIS_URL)
+        r.flushall()
+
         items = [{
             'RecordedAtTime': '2020-06-17T08:34:00+00:00',
             'ItemIdentifier': '13505681-c482-451d-a089-ee805e196e7e',
@@ -150,9 +150,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "coordinates": [0.285348, 51.2135],
             "vehicle": {
                 "url": f"/vehicles/{location.vehicle.id}",
-                "name": "DW18\u00a0HAM",
-                "css": None,
-                "text_colour": None
+                "name": "DW18\u00a0HAM"
             },
             "heading": 92.0,
             "datetime": "2020-10-15T07:46:08Z",
@@ -163,6 +161,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_handle_item(self):
         command = import_bod_avl.Command()
         command.source = self.source
+
+        r = redis.from_url(settings.REDIS_URL)
+        r.flushall()
 
         command.handle_item({
             "ItemIdentifier": "2cb5543a-add1-4e14-ae7a-a1ee730d9814",
@@ -231,7 +232,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get('/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
-             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS', 'css': None, 'text_colour': None},
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS'},
              'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
              'service': {'line_name': '146'}}
         ])
@@ -240,7 +241,72 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get('/vehicles.json')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
-             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS', 'css': None, 'text_colour': None},
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS'},
              'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
              'service': {'line_name': '146'}}
         ])
+
+    @time_machine.travel('2021-03-05T14:20:40+00:00')
+    def test_handle_extensions(self):
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        r = redis.from_url(settings.REDIS_URL)
+        r.flushall()
+
+        command.handle_item({
+            "Extensions": {
+                "VehicleJourney": {
+                    "DriverRef": "98119",
+                    "Operational": {
+                        "TicketMachine": {
+                            "JourneyCode": "1426",
+                            "TicketMachineServiceCode": "42"
+                        }
+                    },
+                    "SeatedCapacity": "27",
+                    "SeatedOccupancy": "0",
+                    "VehicleUniqueId": "626",
+                    "WheelchairCapacity": "1",
+                    "OccupancyThresholds": "14,16",
+                    "WheelchairOccupancy": "0"
+                }
+            },
+            "ItemIdentifier": "4f61f0ab-0976-41e1-a899-044bb78618e4",
+            "RecordedAtTime": "2021-03-05T14:26:43+00:00",
+            "ValidUntilTime": "2021-03-05T14:32:12.638839",
+            "MonitoredVehicleJourney": {
+                "Bearing": "189.0",
+                "LineRef": "42",
+                "BlockRef": "52",
+                "Occupancy": "seatsAvailable",
+                "VehicleRef": "626",
+                "OperatorRef": "GNEL",
+                "DirectionRef": "inbound",
+                "DestinationRef": "41000010WALB",
+                "VehicleLocation": {
+                    "Latitude": "55.084628",
+                    "Longitude": "-1.586568"
+                },
+                "PublishedLineName": "42",
+                "VehicleJourneyRef": "4237"
+            }
+        })
+
+        command.save()
+
+        location = VehicleLocation.objects.get()
+
+        response = self.client.get('/vehicles.json')
+        self.assertEqual(response.json(), [{
+            "id": location.id, "coordinates": [-1.586568, 55.084628],
+            "vehicle": {
+                "url": f"/vehicles/{location.vehicle.id}",
+                "name": "626"
+            },
+            "heading": 189.0,
+            "datetime": "2021-03-05T14:26:43Z",
+            "destination": "",
+            "service": {"line_name": "42"},
+            "occupancy": "🟢27 seats free<br>🦽space free"
+        }])

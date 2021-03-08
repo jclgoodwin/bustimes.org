@@ -587,7 +587,7 @@ class VehicleLocation(models.Model):
 
         if vehicle.livery_id:
             json['vehicle']['livery'] = vehicle.livery_id
-        else:
+        elif vehicle.colours:
             json['vehicle']['css'] = vehicle.get_livery(self.heading)
             json['vehicle']['text_colour'] = vehicle.get_text_colour()
 
