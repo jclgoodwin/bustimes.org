@@ -33,6 +33,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
 
     @time_machine.travel('2020-05-01')
+    @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_get_items(self):
         command = import_bod_avl_channels.Command()
         command.source = self.source
@@ -63,21 +64,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl_celery.Command()
         with patch('vehicles.management.commands.import_bod_avl.Command.get_items', return_value=[]):
             self.assertEqual(300, command.update())
-
-    # def test_send(self):
-    #     def send(_, __):
-    #         pass
-
-    #     command = import_bod_avl.Command()
-    #     command.send_items(send, [{
-    #         "RecordedAtTime": "2020-10-15T07:46:08+00:00",
-    #         "MonitoredVehicleJourney": {
-    #             "VehicleRef": "DW18_HAM",
-    #             "OperatorRef": "HAMSTRA",
-    #         }
-    #     }])
-
-    #     self.assertEqual(command.identifiers, {'HAMSTRA-DW18_HAM': '2020-10-15T07:46:08+00:00'})
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_task(self):

@@ -158,7 +158,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_static(self):
-        for route in ('/cookies', '/data', '/settings', '/status'):
+        for route in ('/cookies', '/data', '/settings'):
             response = self.client.get(route)
             self.assertEqual(response.status_code, 200)
 
