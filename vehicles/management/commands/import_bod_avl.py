@@ -83,6 +83,7 @@ class Command(ImportLiveVehiclesCommand):
                 return
 
         self.operator_cache[operator_ref] = operator
+        return operator
 
     @staticmethod
     def get_vehicle_cache_key(item):
