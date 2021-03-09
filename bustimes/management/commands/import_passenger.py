@@ -132,56 +132,69 @@ class Command(BaseCommand):
                     if filename.startswith(prefix):
                         if not any(filename == version['filename'] for version in versions):
                             os.remove(os.path.join(settings.DATA_DIR, filename))
-
-            if not versions or not any(version['modified'] for version in versions):
+            else:
                 sleep(2)
                 continue
 
+            new_versions = any(version['modified'] for version in versions)
+
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
-            command.source.datetime = timezone.now()
-            command.operators = operators
-            command.region_id = region_id
-            command.service_descriptions = {}
-            command.service_ids = set()
-            command.route_ids = set()
-            command.calendar_cache = {}
 
-            for version in versions:  # newest first
-                if version['modified']:
-                    print(version)
-                    handle_file(command, version['filename'])
+            if new_versions:
+                print(name)
 
-                if version['dates'][0] <= str(command.source.datetime.date()):
-                    break
+                command.source.datetime = timezone.now()
+                command.operators = operators
+                command.region_id = region_id
+                command.service_descriptions = {}
+                command.service_ids = set()
+                command.route_ids = set()
+                command.calendar_cache = {}
 
-            routes = Route.objects.filter(service__source=command.source)
-            print('duplicate routes:', routes.exclude(source=command.source).delete())
+                for version in versions:  # newest first
+                    if version['modified']:
+                        print(version)
+                        handle_file(command, version['filename'])
 
-            # delete route data from TNDS
-            routes = Route.objects.filter(service__operator__in=operators.values())
-            print('other source routes:', routes.exclude(source__in=sources).delete())
+                    if version['dates'][0] <= str(command.source.datetime.date()):
+                        break
 
-            services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
-            print('other source services:', services.update(current=False))
+                routes = Route.objects.filter(service__source=command.source)
+                print('  duplicate routes:', routes.exclude(source=command.source).delete())
 
-            # delete route data from old versions
+                # delete route data from TNDS
+                routes = Route.objects.filter(service__operator__in=operators.values())
+                print('  other source routes:', routes.exclude(source__in=sources).delete())
+
+                services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
+                print('  other source services:', services.update(current=False))
+
+            # even if there are no new versions, delete old routes from expired versions
             routes = command.source.route_set
             for version in versions:
                 routes = routes.filter(~Q(code__startswith=version['filename']))
                 if version['dates'][0] <= str(command.source.datetime.date()):
                     break
-            print('old routes:', routes.delete())
+            old_routes = routes.delete()
+            if not new_versions:
+                if old_routes[0]:
+                    print(name)
+                else:
+                    sleep(2)
+                    continue
+            print('  old routes:', old_routes)
 
             # mark old services as not current
             old_services = command.source.service_set.filter(current=True, route=None)
-            old_services.update(current=False)
+            print('  old services:', old_services.update(current=False))
 
-            command.update_geometries()
+            if new_versions:
+                command.update_geometries()
 
-            for version in versions:
-                if 'gtfs' in version:
-                    handle_gtfs(list(operators.values()), version['gtfs'])
+                for version in versions:
+                    if 'gtfs' in version:
+                        handle_gtfs(list(operators.values()), version['gtfs'])
 
-            command.source.save(update_fields=['datetime'])
+                command.source.save(update_fields=['datetime'])
 
         command.debrief()
