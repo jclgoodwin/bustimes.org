@@ -4,6 +4,7 @@
 config/gunicorn.py
 data/TNDS/*.zip
 data/*.zip
+data/gtfs/*.zip
 data/*.xml
 data/*_*_*_*
 data/*.csv
