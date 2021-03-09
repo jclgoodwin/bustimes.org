@@ -86,4 +86,4 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
       run: |
-        pipenv run aws s3 sync htmlcov s3://bustimes-coverage --delete --debug --endpoint-url=https://ams3.digitaloceanspaces.com
+        pipenv run aws s3 sync htmlcov s3://bustimes-coverage --delete --endpoint-url=https://ams3.digitaloceanspaces.com --acl=public-read
