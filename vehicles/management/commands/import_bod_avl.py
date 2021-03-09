@@ -79,7 +79,8 @@ class Command(ImportLiveVehiclesCommand):
                     operator = operators.get(id=operator_ref)
                 except Operator.DoesNotExist:
                     return
-            return
+            else:
+                return
 
         self.operator_cache[operator_ref] = operator
 
