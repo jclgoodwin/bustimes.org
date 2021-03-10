@@ -604,11 +604,13 @@ class Command(BaseCommand):
                     description = f'{origin} - {destination}'
                     vias = txc_service.vias
                     if vias:
-                        if len(txc_service.vias) == 1 and (',' in vias[0] or ' and ' in vias[0] or '&' in vias[0]):
-                            description = f"{description} via {', '.join(vias)}"
+                        if len(vias) == 1:
+                            if 'via ' in vias[0]:
+                                return f"{description} {vias[0]}"
+                            elif (',' in vias[0] or ' and ' in vias[0] or '&' in vias[0]):
+                                return f"{description} via {vias[0]}"
                         else:
-                            description = [origin] + vias + [destination]
-                            description = ' - '.join(description)
+                            description = ' - '.join([origin] + vias + [destination])
         if description and self.source.name == 'NE':
             description = sanitize_description(description)
         return description

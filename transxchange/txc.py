@@ -471,10 +471,17 @@ class OperatingProfile:
 
 class DateRange:
     def __init__(self, element):
-        self.start = datetime.date.fromisoformat(element.findtext("StartDate"))
+        self.start = element.findtext("StartDate")
         self.end = element.findtext("EndDate")
-        if self.end:
-            self.end = datetime.date.fromisoformat(self.end)
+        try:
+            self.start = datetime.date.fromisoformat(self.start)
+        except ValueError:  # Sanders Coaches. There's no way this is valid
+            self.start = datetime.datetime.strptime(self.start, '%m/%d/%Y').date()
+            if self.end:
+                self.end = datetime.datetime.strptime(self.end, '%m/%d/%Y').date()
+        else:
+            if self.end:
+                self.end = datetime.date.fromisoformat(self.end)
         self.note = element.findtext("Note", "")
 
     def __str__(self):
