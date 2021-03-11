@@ -80,7 +80,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('immediate', type=bool)
+        parser.add_argument('--immediate', action='store_true')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
