@@ -38,7 +38,7 @@ class PolarTest(TestCase):
             "properties": {
                 "direction": "outbound",
                 "line": "POO",
-                "vehicle": "YCD-3635",
+                "vehicle": "3635",
             }
         }
         with patch('builtins.print') as mocked_print:

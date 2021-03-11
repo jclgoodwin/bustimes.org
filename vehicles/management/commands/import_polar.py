@@ -1,4 +1,5 @@
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 from busstops.models import Service, DataSource
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -21,21 +22,23 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         return super().get_items()['features']
 
+    def get_operator(self, item):
+        if len(self.operators) == 1:
+            return list(self.operators.values())[0]
+        operator = item['_embedded']['transmodel:line']['href'].split('/')[3]
+        try:
+            operator = self.operators[operator]
+        except KeyError:
+            if len(operator) != 4:
+                return None
+        return operator
+
     def get_vehicle(self, item):
         code = item['properties']['vehicle']
-        if '-' in code and code[0].isalpha():
-            operator, code = code.split('-', 1)
-        else:
-            operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
 
-        if len(self.operators) == 1:
-            operator = list(self.operators.values())[0]
-        else:
-            try:
-                operator = self.operators[operator]
-            except KeyError as e:
-                print(e, operator)
-                return None, None
+        operator = self.get_operator(item)
+        if not operator:
+            return None, None
 
         if operator == 'MCGL' and (len(code) >= 7 or len(code) >= 5 and code.isdigit()):
             # Borders Buses or First vehicles
@@ -61,7 +64,8 @@ class Command(ImportLiveVehiclesCommand):
             if 'number_plate' in item['properties']['meta']:
                 defaults['reg'] = item['properties']['meta']['number_plate']
 
-        vehicles = self.vehicles.filter(operator__in=self.operators.values())
+        condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
+        vehicles = self.vehicles.filter(condition)
 
         if fleet_number.isdigit():
             vehicle = vehicles.get_or_create(
@@ -87,15 +91,9 @@ class Command(ImportLiveVehiclesCommand):
         )
         journey.data = item
 
-        if len(self.operators) == 1:
-            operator = list(self.operators.values())[0]
-        else:
-            operator = item['_embedded']['transmodel:line']['id'].split(':')[0]
-            try:
-                operator = self.operators[operator]
-            except KeyError as e:
-                print(e, operator)
-                return journey
+        operator = self.get_operator(item)
+        if not operator:
+            return journey
 
         latest_journey = vehicle.latest_journey
 
