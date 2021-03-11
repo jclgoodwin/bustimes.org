@@ -123,10 +123,6 @@ def bus_open_data(api_key, operator):
         if operator or any(item['source'].datetime != item['modified'] for item in operator_datasets):
             command.operators = operators
             command.region_id = region_id
-            command.service_descriptions = {}
-            command.service_ids = set()
-            command.route_ids = set()
-            command.garages = {}
 
             sources = []
 
@@ -138,7 +134,13 @@ def bus_open_data(api_key, operator):
                 command.source = dataset['source']
 
                 print(filename)
+
                 if operator or dataset['source'].datetime != dataset['modified']:
+                    command.service_descriptions = {}
+                    command.service_ids = set()
+                    command.route_ids = set()
+                    command.garages = {}
+
                     command.source.datetime = dataset['modified']
                     command.source.name = filename
 
