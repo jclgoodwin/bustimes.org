@@ -76,7 +76,11 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         code = item['JourneyCode']
-        datetime = parse_datetime(item['DepartureTime'])
+        datetime = item['DepartureTime']
+        if datetime:
+            datetime = parse_datetime(datetime)
+        else:
+            datetime = None
 
         latest_journey = vehicle.latest_journey
         if latest_journey and latest_journey.code == code and latest_journey.datetime == datetime:
