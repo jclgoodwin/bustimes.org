@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 continue
 
             if noc_code in FIRST_OPERATORS:
-                operator.url = 'https://www.firstgroup.com/%s' % FIRST_OPERATORS[noc_code]
+                operator.url = 'https://www.firstbus.co.uk/%s' % FIRST_OPERATORS[noc_code]
                 operator.email = ''
                 operator.phone = ''
                 operator.save()
