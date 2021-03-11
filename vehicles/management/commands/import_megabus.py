@@ -1,32 +1,18 @@
-import ciso8601
 from time import sleep
 from datetime import timedelta
-from pytz.exceptions import AmbiguousTimeError
 from django.db.models import Q
-from django.contrib.gis.geos import Point
-from django.utils import timezone
 from busstops.models import Service
-from ...models import VehicleLocation, VehicleJourney
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ...models import VehicleJourney
+from .import_nx import parse_datetime, Command as BaseCommand
 
 
-def parse_datetime(string):
-    try:
-        return timezone.make_aware(ciso8601.parse_datetime(string))
-    except AmbiguousTimeError:
-        return timezone.make_aware(ciso8601.parse_datetime(string), is_dst=True)
-
-
-class Command(ImportLiveVehiclesCommand):
+class Command(BaseCommand):
     source_name = 'Megabus'
     operators = ['MEGA', 'SCMG', 'SCLK']
+    url = ''
     dead_trips = set()
     last_got_services = None
     last_got_trips = None
-
-    @staticmethod
-    def get_datetime(item):
-        return parse_datetime(item['live']['timestamp']['dateTime'])
 
     def get_services(self):
         now = self.source.datetime
@@ -39,6 +25,7 @@ class Command(ImportLiveVehiclesCommand):
             url = f'{self.url}/getLookup.php/{string}?byservice=true'
             response = self.session.get(url, timeout=1)
             sleep(1)
+            print(response.content.decode())
             for service in response.json():
                 yield service
                 self.services.append(service)
@@ -144,10 +131,3 @@ class Command(ImportLiveVehiclesCommand):
             print(journey.route_name, e)
 
         return journey
-
-    def create_vehicle_location(self, item):
-        heading = item['live']['bearing']
-        return VehicleLocation(
-            latlong=Point(item['live']['lon'], item['live']['lat']),
-            heading=heading
-        )

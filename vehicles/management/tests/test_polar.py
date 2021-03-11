@@ -9,7 +9,7 @@ from ..commands.import_polar import Command
 class PolarTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        DataSource.objects.create(name='Loaches’ Coaches', url='https://loachescoaches.arcticapi.com/network/vehicles',
+        DataSource.objects.create(name='Loaches',
                                   settings={'operators': {'YCD': 'LCHS'}})
 
         region = Region.objects.create(id='WM')
@@ -17,13 +17,14 @@ class PolarTest(TestCase):
 
     def test_do_source(self):
         command = Command()
+        command.source_name = ''
         command.wait = 0
         with self.assertRaises(DataSource.DoesNotExist):
-            command.handle('loaches')
+            command.handle("Loach's Coaches")
 
     def test_handle_items(self):
         command = Command()
-        command.source_name = 'loachescoaches'
+        command.source_name = 'Loaches'
         command.do_source()
 
         item = {

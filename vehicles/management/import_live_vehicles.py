@@ -78,6 +78,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
     vehicles = Vehicle.objects.select_related('latest_location__journey', 'latest_journey')
     wait = 60
 
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('immediate', type=bool)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
@@ -279,7 +283,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 url=self.url
             )
         else:
-            self.source, _ = DataSource.objects.get_or_create(name=self.source_name)
+            self.source = DataSource.objects.get(name=self.source_name)
             self.url = self.source.url
         return self
 
@@ -312,8 +316,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             return self.wait - time_taken
         return 0  # took longer than self.wait
 
-    def handle(self, *args, **options):
-        sleep(self.wait)
+    def handle(self, immediate=False, *args, **options):
+        if not immediate:
+            sleep(self.wait)
         self.do_source()
         while True:
             wait = self.update()

@@ -1,6 +1,6 @@
 from mock import patch
 from django.test import TestCase
-from busstops.models import Region, Operator, Service
+from busstops.models import Region, Operator, Service, DataSource
 from ...models import VehicleLocation, Vehicle
 from ..commands import import_bushub
 
@@ -8,6 +8,7 @@ from ..commands import import_bushub
 class BusHubTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        DataSource.objects.create()
         Region.objects.create(id='WM')
         Operator.objects.create(id='DIAM', name='Graphite Buses', region_id='WM', parent='Rotala')
         Operator.objects.create(id='WNGS', name='Paul McCartney & Wings', region_id='WM', parent='Rotala')

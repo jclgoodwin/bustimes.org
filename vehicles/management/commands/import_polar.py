@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import Point
 from django.db.models import Q
-from busstops.models import Service, DataSource
+from busstops.models import Service
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -15,8 +15,7 @@ class Command(ImportLiveVehiclesCommand):
         super().handle(**options)
 
     def do_source(self):
-        self.url = f'https://{self.source_name}.arcticapi.com/network/vehicles'
-        self.source = DataSource.objects.get(url=self.url)  # we can't rely on the source name being unique
+        super().do_source()
         self.operators = self.source.settings['operators']
 
     def get_items(self):

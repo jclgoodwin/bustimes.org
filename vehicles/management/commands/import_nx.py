@@ -1,7 +1,7 @@
+import ciso8601
 from time import sleep
 from datetime import timedelta
-from pytz.exceptions import AmbiguousTimeError
-from ciso8601 import parse_datetime
+from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 from requests import RequestException
 from django.contrib.gis.geos import Point
 from django.utils import timezone
@@ -9,6 +9,16 @@ from busstops.models import Service
 from bustimes.models import get_calendars, Trip
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
+
+
+def parse_datetime(string):
+    datetime = ciso8601.parse_datetime(string)
+    try:
+        return timezone.make_aware(datetime)
+    except AmbiguousTimeError:
+        return timezone.make_aware(datetime, is_dst=True)
+    except NonExistentTimeError:
+        return timezone.make_aware(datetime + timedelta(hours=1))
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -19,10 +29,7 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        try:
-            return timezone.make_aware(parse_datetime(item['live']['timestamp']['dateTime']))
-        except AmbiguousTimeError:
-            return timezone.make_aware(parse_datetime(item['live']['timestamp']['dateTime']), is_dst=True)
+        return parse_datetime(item['live']['timestamp']['dateTime'])
 
     def get_items(self):
         now = self.source.datetime
@@ -56,12 +63,10 @@ class Command(ImportLiveVehiclesCommand):
                                            code=item['live']['vehicle'])
 
     def get_journey(self, item, vehicle):
+        print(item)
         journey = VehicleJourney()
 
-        try:
-            journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']))
-        except AmbiguousTimeError:
-            journey.datetime = timezone.make_aware(parse_datetime(item['startTime']['dateTime']), is_dst=True)
+        journey.datetime = parse_datetime(item['startTime']['dateTime'])
 
         latest_journey = vehicle.latest_journey
         if latest_journey and journey.datetime == latest_journey.datetime:
