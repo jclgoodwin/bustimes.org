@@ -1,22 +1,8 @@
-from datetime import datetime
-from ciso8601 import parse_datetime
-from django.utils import timezone
 from django.contrib.gis.geos import Point
 from busstops.models import Service, DataSource
 from ...models import VehicleLocation, VehicleJourney
+from .import_nx import parse_datetime
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-
-
-def get_datetime(string):
-    if string:
-        try:
-            when = parse_datetime(string)
-        except ValueError:
-            when = datetime.strptime(string, '%d/%m/%Y %H:%M:%S')
-        try:
-            return timezone.make_aware(when)
-        except ValueError:
-            return when
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -37,7 +23,7 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return get_datetime(item['RecordedAtTime'])
+        return parse_datetime(item['RecordedAtTime'])
 
     def get_vehicle(self, item):
         code = item['VehicleRef']
@@ -90,7 +76,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         code = item['JourneyCode']
-        datetime = get_datetime(item['DepartureTime'])
+        datetime = parse_datetime(item['DepartureTime'])
 
         latest_journey = vehicle.latest_journey
         if latest_journey and latest_journey.code == code and latest_journey.datetime == datetime:

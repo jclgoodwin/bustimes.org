@@ -28,5 +28,7 @@ class MegabusTest(TestCase):
         self.command.handle_item(item)
         vehicle = Vehicle.objects.get()
         self.assertEqual('54123', str(vehicle))
-        self.assertEqual('11 Mar 2021 01:17:03', str(vehicle.latest_location))
-        self.assertEqual('28 Mar 21 22:30 M9   to Aberdeen', str(vehicle.latest_journey))
+        self.assertEqual('28 Mar 2021 01:17:03', str(vehicle.latest_location))
+        self.assertEqual('10 Mar 21 22:30 M9   to Aberdeen', str(vehicle.latest_journey))
+
+        # item['live']['timestamp']['dateTime'] = '2021-03-28 01:17:03'

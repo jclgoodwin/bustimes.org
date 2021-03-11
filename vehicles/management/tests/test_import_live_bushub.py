@@ -30,12 +30,12 @@ class BusHubTest(TestCase):
             "DestinationStopName": "Bus Station",
             "DestinationStopLocality": "Redditch",
             "DestinationStopFullName": "Bus Station, Redditch",
-            "LastUpdated": "0001-01-01T00:00:00",
-            "DepartureTime": "31/08/2018 22:45:00",
+            "LastUpdated": "2018-08-31T22:49:11",
+            "DepartureTime": "2018-08-31T22:45:00",
             "Latitude": "52.30236",
             "Longitude": "-1.926653",
-            "RecordedAtTime": "2018-08-31T22:49:33+01:00",
-            "ValidUntilTime": "2018-08-31T22:49:33+01:00",
+            "RecordedAtTime": "2018-08-31T22:49:33",
+            "ValidUntilTime": "2018-08-31T22:49:33",
             "LineRef": "R57",
             "DirectionRef": "outbound",
             "PublishedLineName": "44a",
@@ -56,7 +56,6 @@ class BusHubTest(TestCase):
             "CurrentStopFullName": "",
             "VehicleAtStop": False,
             "VisitNumber": "",
-            "Distance": None,
             "VehicleRef": "11111",
             "Destination": None
         }
@@ -89,8 +88,3 @@ class BusHubTest(TestCase):
         self.assertIsNotNone(self.vehicle.latest_location)
         self.assertIsNone(self.vehicle.latest_location.heading)
         self.assertEqual(self.service_c, self.vehicle.latest_location.journey.service)
-
-        item["RecordedAtTime"] = "31/08/2018 23:10:33"
-        with self.assertNumQueries(1):
-            command.handle_item(item)
-            command.save()
