@@ -34,7 +34,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
     @time_machine.travel('2020-05-01')
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
-    def test_get_items(self):
+    def test_channels_update(self):
         command = import_bod_avl_channels.Command()
         command.source = self.source
 
@@ -60,7 +60,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 <td>0</td>
             </tr>""")
 
-    def test_update(self):
+    def test_celery_update(self):
         command = import_bod_avl_celery.Command()
         with patch('vehicles.management.commands.import_bod_avl.Command.get_items', return_value=[]):
             self.assertEqual(300, command.update())
@@ -130,7 +130,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }]
 
-        with self.assertNumQueries(29):
+        with self.assertNumQueries(31):
             bod_avl(items)
         with self.assertNumQueries(2):
             bod_avl(items)

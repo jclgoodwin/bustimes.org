@@ -91,7 +91,7 @@ class SiriSubscriptionReceiveTest(TestCase):
         </Siri>
         """
 
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(19):
             handle_siri_vm(xml)
 
         location = VehicleLocation.objects.first()
