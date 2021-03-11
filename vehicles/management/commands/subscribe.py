@@ -9,7 +9,7 @@ from busstops.models import DataSource
 
 
 class Command(BaseCommand):
-    consumer_address = 'http://68.183.252.225/siri'
+    consumer_address = 'https://bustimes.org/siri'
 
     @staticmethod
     def add_arguments(parser):
