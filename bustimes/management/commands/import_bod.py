@@ -30,6 +30,11 @@ def clean_up(operators, sources, incomplete=False):
     Calendar.objects.filter(trip=None).delete()
 
 
+def get_operator_ids(source):
+    operators = Operator.objects.filter(service__route__source=source).distinct().values('id')
+    return [operator['id'] for operator in operators]
+
+
 def get_command():
     command = TransXChangeCommand()
     command.set_up()
@@ -117,52 +122,51 @@ def bus_open_data(api_key, operator):
             url = json['next']
             params = None
 
-    for operator_id, region_id, operators, incomplete in settings.BOD_OPERATORS:
-        operator_datasets = [item for item in datasets if operator_id in item['noc']]
+    for noc, region_id, operator_codes_dict, incomplete in settings.BOD_OPERATORS:
+        operator_datasets = [item for item in datasets if noc in item['noc']]
 
-        if operator or any(item['source'].datetime != item['modified'] for item in operator_datasets):
-            command.operators = operators
-            command.region_id = region_id
+        command.operators = operator_codes_dict
+        command.region_id = region_id
 
-            sources = []
+        if operator_codes_dict:
+            operators = operator_codes_dict.values()
+        else:
+            operators = [noc]
 
-            for dataset in operator_datasets:
-                filename = dataset['name']
-                url = dataset['url']
-                path = os.path.join(settings.DATA_DIR, filename)
+        sources = []
 
-                command.source = dataset['source']
+        for dataset in operator_datasets:
+            filename = dataset['name']
+            url = dataset['url']
+            path = os.path.join(settings.DATA_DIR, filename)
 
+            command.source = dataset['source']
+            sources.append(command.source)
+
+            if operator or dataset['source'].datetime != dataset['modified']:
                 print(filename)
+                command.service_ids = set()
+                command.route_ids = set()
+                command.garages = {}
 
-                if operator or dataset['source'].datetime != dataset['modified']:
-                    command.service_descriptions = {}
-                    command.service_ids = set()
-                    command.route_ids = set()
-                    command.garages = {}
+                command.source.datetime = dataset['modified']
+                command.source.name = filename
 
-                    command.source.datetime = dataset['modified']
-                    command.source.name = filename
+                download(path, url)
+                handle_file(command, filename)
 
-                    download(path, url)
-                    handle_file(command, filename)
+                command.source.save(update_fields=['name', 'datetime'])
 
-                    command.source.save(update_fields=['name', 'datetime'])
+                operator_ids = get_operator_ids(command.source)
+                print('  ', operator_ids)
+                print('  ', [o for o in operator_ids if o not in operators])
 
-                    print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
+                command.update_geometries()
+                command.mark_old_services_as_not_current()
 
-                    command.update_geometries()
-                    command.mark_old_services_as_not_current()
-
-                sources.append(command.source)
-
-            if operators:
-                operators = operators.values()
-            else:
-                operators = [operator_id]
-
-            if Service.objects.filter(source__in=sources, operator__in=operators, current=True).exists():
-                clean_up(operators, sources, incomplete)
+        # delete routes from any sources that have been made inactive
+        if Service.objects.filter(source__in=sources, operator__in=operators, current=True).exists():
+            clean_up(operators, sources, incomplete)
 
     command.debrief()
 
@@ -196,52 +200,6 @@ def update_ticketer_source_settings_url(dataset, operator):
     source.save(update_fields=['settings'])
 
 
-def first():
-    command = get_command()
-
-    url_prefix = 'http://travelinedatahosting.basemap.co.uk/data/first/'
-    sources = DataSource.objects.filter(url__startswith=url_prefix)
-
-    for operator, region_id, operators in settings.FIRST_OPERATORS:
-        filename = operator + '.zip'
-        url = url_prefix + filename
-        modified, last_modified = download_if_changed(os.path.join(settings.DATA_DIR, filename), url)
-
-        if modified:
-            print(url)
-
-            command.operators = operators
-            command.region_id = region_id
-            command.service_descriptions = {}
-            command.service_ids = set()
-            command.route_ids = set()
-            command.garages = {}
-
-            command.source, created = DataSource.objects.get_or_create({'name': operator}, url=url)
-            command.source.datetime = timezone.now()
-
-            handle_file(command, filename)
-
-            if not command.service_ids:  # nothing was imported
-                continue
-
-            command.update_geometries()
-            command.mark_old_services_as_not_current()
-
-            clean_up(operators.values(), sources)
-
-            command.source.datetime = last_modified
-            command.source.save(update_fields=['datetime'])
-
-            routes = command.source.route_set
-            date_ranges = routes.distinct('start_date', 'end_date')
-            date_ranges = date_ranges.values('start_date', 'end_date')
-            print(' ', date_ranges)
-            print(' ', Operator.objects.filter(service__route__source=command.source).distinct().values('id'))
-
-    command.debrief()
-
-
 def ticketer(operator=None):
     command = get_command()
 
@@ -270,7 +228,6 @@ def ticketer(operator=None):
                 command.operators['ASC'] = noc
 
             command.region_id = region_id
-            command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
             command.garages = {}
@@ -288,9 +245,8 @@ def ticketer(operator=None):
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
 
-            print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
-            print(' ', {o['id']: o['id'] for o in
-                  Operator.objects.filter(service__route__source=command.source).distinct().values('id')})
+            print('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            print('  ', get_operator_ids(command.source))
 
     command.debrief()
 
@@ -298,7 +254,7 @@ def ticketer(operator=None):
 def stagecoach(operator=None):
     command = get_command()
 
-    for region_id, noc, name, operators in settings.STAGECOACH_OPERATORS:
+    for region_id, noc, name, nocs in settings.STAGECOACH_OPERATORS:
         if operator and operator != noc:  # something like 'sswl'
             continue
 
@@ -316,9 +272,8 @@ def stagecoach(operator=None):
         if modified or operator:
             print(url, last_modified)
 
-            command.operators = operators
+            command.operators = {o: o for o in nocs}
             command.region_id = region_id
-            command.service_descriptions = {}
             command.service_ids = set()
             command.route_ids = set()
             command.garages = {}
@@ -336,10 +291,10 @@ def stagecoach(operator=None):
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
 
-            print(' ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
-            operators = Operator.objects.filter(service__route__source=command.source).distinct().values('id')
-            operators = {o['id']: o['id'] for o in operators}
-            print(' ', operators)
+            print('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            operators = get_operator_ids(command.source)
+            print('  ', operators)
+            print('  ', [o for o in operators if o not in nocs])
             if 'ANEA' in operators or 'OXBC' in operators:
                 print(command.source.service_set.filter(operator__in=['ANEA', 'OXBC']).delete())
 
@@ -355,8 +310,6 @@ class Command(BaseCommand):
     def handle(self, api_key, operator, **options):
         if api_key == 'stagecoach':
             stagecoach(operator)
-        elif api_key == 'first':
-            first()
         elif api_key == 'ticketer':
             ticketer(operator)
         else:

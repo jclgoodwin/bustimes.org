@@ -115,10 +115,7 @@ class ImportBusOpenDataTest(TestCase):
         response = self.client.get('/stops/2900W0321/times.json?when=yesterday')
         self.assertEqual(400, response.status_code)
 
-    @override_settings(STAGECOACH_OPERATORS=[('EA', 'sccm', 'Stagecoach East', {
-        'SCHU': 'SCHU',
-        'SCPB': 'SCPB',
-    })])
+    @override_settings(STAGECOACH_OPERATORS=[('EA', 'sccm', 'Stagecoach East', ['SCHU', 'SCPB'])])
     @time_machine.travel(datetime.datetime(2020, 6, 10))
     @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
         'AllBankHolidays': [datetime.date(2020, 8, 31)],

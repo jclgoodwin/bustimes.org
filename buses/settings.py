@@ -434,12 +434,39 @@ BOD_OPERATORS = [
     ('TLYH', 'SW', {}, False),
     ('TOTN', 'SW', {}, False),
     ('YEOS', 'SW', {}, False),
+    ('SMMC', 'SW', {}, False),
+    ('GYLC', 'SW', {}, False),
+    ('SWAN', 'SW', {}, False),
+    ('CTCO', 'SW', {}, False),
+    ('EBLY', 'SW', {}, False),
+    ('SGLC', 'SW', {}, False),
+    ('BYCO', 'SW', {}, False),
+    ('NEJH', 'SW', {}, False),
+    ('BNNT', 'SW', {}, False),
+    ('XLBL', 'SW', {}, False),
+    ('NCSL', 'SW', {}, False),
+    ('AMKC', 'SW', {}, False),
+    ('WTSW', 'SW', {}, False),
+    ('EUTX', 'SW', {}, False),
+    ('CHCB', 'SW', {}, False),
+    ('DJWA', 'SW', {}, False),
+    ('BNSC', 'SW', {}, False),
+    ('MARC', 'SW', {}, False),
+    ('NRTL', 'SW', {}, False),
+    ('PRIC', 'SW', {}, False),
+    ('LIHO', 'SW', {}, False),
+    ('DPCR', 'SW', {}, False),
 
     ('KJTR', 'Y', {}, False),
     ('JOHS', 'WM', {}, False),
     # ('NATX', 'GB', {}, False),
-
     ('KETR', 'SE', {}, False),
+    ('WNCT', 'EA', {}, False),
+    # ('HACO', 'EA', {}, False),
+    # ('PCCO', 'EM', {}, False),
+    ('HCCL', 'NE', {
+        'HCC': 'WGHC'
+    }, False),
 
     ('OBUS', 'EA', {
         'OURH': 'OURH',
@@ -454,84 +481,25 @@ BOD_OPERATORS = [
     }, False),
 ]
 STAGECOACH_OPERATORS = [
-    ('S', 'sblb', 'Stagecoach Bluebird', {'SBLB': 'SBLB'}),
-    ('S', 'scfi', 'Stagecoach East Scotland', {
-        'SCPE': 'SCPE',
-        'SSPH': 'SSPH',  # (code not used in data)
-        'STSY': 'STSY',
-        'SSTY': 'SSTY',  # (code not used in data)
-        'SCFI': 'SCFI',
-    }),
-    ('S', 'schi', 'Stagecoach Highlands', {
-        'SCHI': 'SCHI',
-        'SCOR': 'SCOR',
-        'SINV': 'SINV',  # (code not used in data)
-    }),
-    ('NE', 'scne', 'Stagecoach North East', {
-        'SCNE': 'SCNE',
-        'SCSS': 'SCSS',
-        'SCSU': 'SCSU',
-        'SCTE': 'SCTE',
-        'SCHA': 'SCHA'
-    }),
-    ('S', 'stws', 'Stagecoach West Scotland', {
-        'SCGS': 'SCGS',
-        'STGS': 'STGS',  # (code not used in data)
-        'STWS': 'STWS'
-    }),
-    ('EM', 'scem', 'Stagecoach East Midlands', {
-        'SCGH': 'SCGH',
-        'SCGR': 'SCGR',  # (code not used in data)
-        'SCLI': 'SCLI',
-        'NFKG': 'NFKG'
-    }),
-    ('SE', 'scso', 'Stagecoach South', {
-        'SCPY': 'SCPY',
-        'SCHM': 'SCHM',
-        'SCHW': 'SCHW',  # (code not used in data)
-        'SCCO': 'SCCO',
-        'SMSO': 'SMSO',  # (code not used in data)
-    }),
-    ('SE', 'scek', 'Stagecoach South East', {
-        'SCEK': 'SCEK',
-        'SCEB': 'SCEB',
-        'SCHT': 'SCHT'
-    }),
-    ('Y', 'syrk', 'Stagecoach Yorkshire', {
-        'SYRK': 'SYRK',
-        'YSYC': 'YSYC',
-        'CLTL': 'CLTL',  # (code not used in data)
-    }),
-    ('NW', 'sccu', 'Stagecoach Cumbria', {
-        # 'ANEA': 'ANEA',
-        'SCMB': 'SCMB',
-        'SCCU': 'SCCU',  # (code not used in data)
-    }),
-    ('NW', 'scmn', 'Stagecoach Manchester', {
-        'SCMN': 'SCMN',
-        'SWIG': 'SWIG'
-    }),
-    ('NW', 'scmy', 'Stagecoach Merseyside', {
-        'SCMY': 'SCMY'
-    }),
-    ('SW', 'sdvn', 'Stagecoach South West', {'SDVN': 'SDVN'}),
-    ('SE', 'sccm', 'Stagecoach East', {
-        'SCBD': 'SCBD',
-        'SCCM': 'SCCM',
-        'SCPB': 'SCPB',
-        'SCHU': 'SCHU'
-    }),
-    ('EM', 'scnh', 'Stagecoach Midlands', {
-        'SCNH': 'SCNH',
-        'SCWW': 'SCWW'
-    }),
-    ('SE', 'scox', 'Stagecoach Oxfordshire', {'SCOX': 'SCOX'}),
-    ('SW', 'scgl', 'Stagecoach West', {
-        'SSWN': 'SSWN',
-        'SCGL': 'SCGL'
-    }),
-    ('W', 'sswl', 'Stagecoach South Wales', {'SSWL': 'SSWL'}),
-    ('Y', 'tram', 'Stagecoach Supertram', {'SCST': 'SCST'}),
+    ('S',  'sblb', 'Stagecoach Bluebird',      ['SBLB']),
+    ('S',  'scfi', 'Stagecoach East Scotland', ['SCPE', 'SSPH', 'STSY', 'SSTY', 'SCFI']),
+    ('S',  'schi', 'Stagecoach Highlands',     ['SCHI', 'SCOR', 'SINV']),
+    ('NE', 'scne', 'Stagecoach North East',    ['SCNE', 'SCSS', 'SCSU', 'SCTE', 'SCHA']),
+    ('S',  'stws', 'Stagecoach West Scotland', ['SCGS', 'STGS', 'STWS']),
+    ('EM', 'scem', 'Stagecoach East Midlands', ['SCGH', 'SCGR', 'SCLI', 'NFKG']),
+    ('SE', 'scso', 'Stagecoach South',         ['SCPY', 'SCHM', 'SCHW', 'SCCO', 'SMSO']),
+    ('SE', 'scek', 'Stagecoach South East',    ['SCEK', 'SCEB', 'SCHT']),
+    ('Y',  'syrk', 'Stagecoach Yorkshire',     ['SYRK', 'YSYC', 'CLTL']),
+    ('NW', 'sccu', 'Stagecoach Cumbria',       ['SCMB', 'SCCU']),
+    ('NW', 'scmn', 'Stagecoach Manchester',    ['SCMN', 'SWIG']),
+    ('NW', 'scmy', 'Stagecoach Merseyside',    ['SCMY']),
+    ('SW', 'sdvn', 'Stagecoach South West',    ['SDVN', 'SDVN']),
+    ('SE', 'sccm', 'Stagecoach East',          ['SCBD', 'SCCM', 'SCPB', 'SCHU']),
+    ('EM', 'scnh', 'Stagecoach Midlands',      ['SCNH', 'SCWW']),
+    ('SE', 'scox', 'Stagecoach Oxfordshire',   ['SCOX']),
+    ('SW', 'scgl', 'Stagecoach West',          ['SSWN', 'SCGL']),
+    ('W',  'sswl', 'Stagecoach South Wales',   ['SSWL']),
+    ('Y',  'tram', 'Stagecoach Supertram',     ['SCST']),
 ]
 TICKETER_OPERATORS = [
     ('NW', ['WBTR'], 'Warrington’s Own Buses'),

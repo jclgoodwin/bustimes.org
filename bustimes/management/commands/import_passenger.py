@@ -146,10 +146,8 @@ class Command(BaseCommand):
                 command.source.datetime = timezone.now()
                 command.operators = operators
                 command.region_id = region_id
-                command.service_descriptions = {}
                 command.service_ids = set()
                 command.route_ids = set()
-                command.calendar_cache = {}
 
                 for version in versions:  # newest first
                     if version['modified']:

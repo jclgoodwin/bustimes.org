@@ -64,16 +64,11 @@ class ImportTransXChangeTest(TestCase):
     @staticmethod
     def handle_files(archive_name, filenames):
         command = import_transxchange.Command()
-        command.service_descriptions = {}
+        command.set_up()
         command.service_ids = set()
         command.route_ids = set()
-        command.undefined_holidays = set()
-        command.missing_operators = []
-        command.calendar_cache = {}
-        command.corrections = {}
         command.open_data_operators = set()
         command.incomplete_operators = set()
-        command.notes = {}
 
         command.set_region(archive_name)
         command.source.datetime = timezone.now()

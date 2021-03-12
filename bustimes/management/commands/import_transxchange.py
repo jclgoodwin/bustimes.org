@@ -157,7 +157,7 @@ def get_open_data_operators():
     for _, _, operators in settings.FIRST_OPERATORS:
         open_data_operators += operators.values()
     for _, _, _, operators in settings.STAGECOACH_OPERATORS:
-        open_data_operators += operators.values()
+        open_data_operators += operators
     for _, operators, _ in settings.TICKETER_OPERATORS:
         open_data_operators += operators
 
@@ -176,6 +176,7 @@ class Command(BaseCommand):
         parser.add_argument('files', nargs='*', type=str)
 
     def set_up(self):
+        self.service_descriptions = {}
         self.calendar_cache = {}
         self.undefined_holidays = set()
         self.missing_operators = []
@@ -194,12 +195,18 @@ class Command(BaseCommand):
         self.debrief()
 
     def debrief(self):
+        """
+        Log the names of any undefined public holiday names, and operators that couldn't be found
+        """
         if self.undefined_holidays:
             print(self.undefined_holidays)
         for operator in self.missing_operators:
             print(operator)
 
     def set_region(self, archive_name):
+        """
+        Set region_id and source based on the name of the TNDS archive, creating a DataSource if necessary
+        """
         archive_name = os.path.basename(archive_name)
         region_id, _ = os.path.splitext(archive_name)
         self.region_id = region_id.upper()
@@ -217,7 +224,9 @@ class Command(BaseCommand):
             self.region_id = 'IM'
 
     def get_operator(self, operator_element):
-        "Given an Operator element, returns an operator code for an operator that exists."
+        """
+        Given an Operator element, returns an operator code for an operator that exists
+        """
 
         operator_code = operator_element.findtext('NationalOperatorCode')
         operator = get_operator_by('National Operator Codes', operator_code)
@@ -263,8 +272,9 @@ class Command(BaseCommand):
         return [operator for operator in operators if operator]
 
     def set_service_descriptions(self, archive):
-        # the NCSD has service descriptions in a separate file:
-        self.service_descriptions = {}
+        """
+        If there's a file named 'IncludedServices.csv', as there is in 'NCSD.zip', use it
+        """
         if 'IncludedServices.csv' in archive.namelist():
             with archive.open('IncludedServices.csv') as csv_file:
                 reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
