@@ -446,7 +446,10 @@ BOD_OPERATORS = [
     ('XLBL', 'SW', {}, False),
     ('NCSL', 'SW', {}, False),
     ('AMKC', 'SW', {}, False),
-    ('WTSW', 'SW', {}, False),
+    ('WTSW', 'SW', {
+        'WSTW': 'WSTW',
+        'NWDL': 'NWDL'
+    }, False),
     ('EUTX', 'SW', {}, False),
     ('CHCB', 'SW', {}, False),
     ('DJWA', 'SW', {}, False),
@@ -467,6 +470,36 @@ BOD_OPERATORS = [
     ('HCCL', 'NE', {
         'HCC': 'WGHC'
     }, False),
+
+    ('WBSV', 'SE', {}, False),
+    ('SPSV', 'SE', {}, False),
+    ('GOCH', 'SE', {
+        'GO': 'GOCH'
+    }, False),
+
+    ('HATT', 'NW', {}, False),
+    ('REDE', 'SE', {}, False),
+
+    ('CBBH', 'EM', {
+        'CBBH': 'CBBH',
+        'CBNL': 'CBNL',
+        'CBL': 'CBNL',
+    }, False),
+    # ('BULL', 'NW', {}, False),
+    ('SELT', 'NW', {}, False),
+    ('HCTY', 'Y',  {}, False),
+    ('ROSS', 'Y',  {}, False),
+
+    ('RBTS', 'EM',  {}, False),
+    ('GRYC', 'EM',  {}, False),
+
+    # ('A2BR', 'EA',  {}, False),
+    # ('A2BV', 'NE',  {}, False),
+
+    ('CLNB', 'SE',  {}, False),
+    ('STNE', 'NE',  {}, False),
+    ('LAWS', 'EM',  {}, False),
+    ('BMCS', 'SE',  {}, False),
 
     ('OBUS', 'EA', {
         'OURH': 'OURH',
