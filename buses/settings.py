@@ -479,6 +479,7 @@ BOD_OPERATORS = [
 
     ('HATT', 'NW', {}, False),
     ('REDE', 'SE', {}, False),
+    ('LAKC', 'SE', {}, False),
 
     ('CBBH', 'EM', {
         'CBBH': 'CBBH',
