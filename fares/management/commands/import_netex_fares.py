@@ -218,6 +218,8 @@ class Command(BaseCommand):
                         row_ref = cell_element.find('RowRef').attrib['ref']
                         distance_matrix_element_price = cell_element.find("DistanceMatrixElementPrice")
                         price_ref = distance_matrix_element_price.find("GeographicalIntervalPriceRef")
+                        if price_ref is None:
+                            continue
                         distance_matrix_element_ref = distance_matrix_element_price.find("DistanceMatrixElementRef")
 
                         if row_ref in rows:
