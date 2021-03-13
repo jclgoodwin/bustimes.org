@@ -288,6 +288,10 @@ PASSENGER_OPERATORS = [
         'RB': 'RBUS',
         'THVB': 'THVB'
     }),
+    ('Newbury & District', 'https://data.discoverpassenger.com/operator/kennections', 'SE', {
+        'ND': 'NADS',
+        'KC': 'NADS',
+    }),
     ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
         'WCM': 'WCMO',
         'GCB': 'GCTB',  # Glasgow Citybus
@@ -479,7 +483,7 @@ BOD_OPERATORS = [
 
     ('HATT', 'NW', {}, False),
     ('REDE', 'SE', {}, False),
-    ('LAKC', 'SE', {}, False),
+    ('LAKC', 'WM', {}, False),
 
     ('CBBH', 'EM', {
         'CBBH': 'CBBH',

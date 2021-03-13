@@ -229,6 +229,11 @@ class Command(BaseCommand):
         """
 
         operator_code = operator_element.findtext('NationalOperatorCode')
+        if not self.is_tnds():
+            if not operator_code:
+                operator_code = operator_element.findtext('OperatorCode')
+            operator_code = self.operators.get(operator_code, operator_code)
+
         operator = get_operator_by('National Operator Codes', operator_code)
         if operator:
             return operator
@@ -252,8 +257,6 @@ class Command(BaseCommand):
         # Get by regional operator code
         operator_code = operator_element.findtext('OperatorCode')
         if operator_code:
-            if not self.is_tnds():
-                operator_code = self.operators.get(operator_code, operator_code)
             operator = get_operator_by(self.region_id, operator_code)
             if not operator:
                 operator = get_operator_by('National Operator Codes', operator_code)
