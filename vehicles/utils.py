@@ -41,6 +41,10 @@ def do_revisions(vehicle_ids, data, user):
     revisions = [VehicleRevision(vehicle=vehicle, user=user, changes={}) for vehicle in vehicles]
     changed_fields = []
 
+    # actually edit some vehicle fields, depending on how trusted the user is,
+    # create a VehicleRevision record,
+    # and remove fields from the 'data' dict so they're not part of any VehicleEdits created in the next step
+
     if 'depot' in data:
         to_depot = data['depot']
         for revision in revisions:
@@ -100,6 +104,7 @@ def do_revisions(vehicle_ids, data, user):
             del data['colours']
 
     if 'operator' in data:
+        assert False
         for revision in revisions:
             revision.from_operator_id = revision.vehicle.operator_id
             revision.to_operator = data['operator']
@@ -123,17 +128,17 @@ def do_revision(vehicle, data, user):
             changed_fields.append('reg')
             del data['reg']
 
-    if 'withdrawn' in data:
-        from_value = 'Yes' if vehicle.withdrawn else 'No'
-        to_value = 'Yes' if data['withdrawn'] else 'No'
-        changes['withdrawn'] = f"-{from_value}\n+{to_value}"
-        vehicle.withdrawn = data['withdrawn']
-        changed_fields.append('withdrawn')
-        del data['withdrawn']
+        if 'withdrawn' in data:
+            from_value = 'Yes' if vehicle.withdrawn else 'No'
+            to_value = 'Yes' if data['withdrawn'] else 'No'
+            changes['withdrawn'] = f"-{from_value}\n+{to_value}"
+            vehicle.withdrawn = data['withdrawn']
+            changed_fields.append('withdrawn')
+            del data['withdrawn']
 
-    for field in ('notes', 'branding', 'name'):
-        if field in data:
-            if not data[field]:
+    if user.is_staff:
+        for field in ('notes', 'branding', 'name'):
+            if field in data:
                 from_value = getattr(vehicle, field)
                 to_value = data[field]
                 changes[field] = f"-{from_value}\n+{to_value}"

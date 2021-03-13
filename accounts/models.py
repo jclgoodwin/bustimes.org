@@ -22,7 +22,9 @@ class User(AbstractUser):
 
     def __str__(self):
         if self.is_staff:
-            return self.username
+            return f'👮{self.username}'
+        if self.trusted:
+            return f'✨{self.id}'
         return f'{self.id}'
 
     def revisions_count(self):
