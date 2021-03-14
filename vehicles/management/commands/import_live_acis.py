@@ -98,10 +98,6 @@ class Command(ImportLiveVehiclesCommand):
 
         vehicle, created = self.vehicles.get_or_create(defaults, operator_id=operator, code=vehicle, source=self.source)
 
-        if not created and not vehicle.notes and 'notes' in defaults:
-            vehicle.notes = defaults['notes']
-            vehicle.save()
-
         return vehicle, created
 
     def get_journey(self, item, vehicle):
