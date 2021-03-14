@@ -16,8 +16,18 @@ UserModel = get_user_model()
 @admin.register(VehicleType)
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
-    list_display = ('name', 'double_decker', 'coach')
-    list_editable = list_display[1:]
+    list_display = ('id', 'name', 'vehicles', 'double_decker', 'coach')
+    list_editable = ('name', 'double_decker', 'coach')
+
+    def vehicles(self, obj):
+        return obj.vehicles
+    vehicles.admin_order_field = 'vehicles'
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.annotate(vehicles=Count('vehicle'))
+        return queryset
 
 
 class VehicleAdminForm(forms.ModelForm):
@@ -507,9 +517,7 @@ class LiveryAdmin(admin.ModelAdmin):
             return format_html('<div style="height:1.5em;width:2.25em;background:{}"></div>', obj.left_css)
     left.admin_order_field = 'left_css'
 
-    def vehicles(self, obj):
-        return obj.vehicles
-    vehicles.admin_order_field = 'vehicles'
+    vehicles = VehicleTypeAdmin.vehicles
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
