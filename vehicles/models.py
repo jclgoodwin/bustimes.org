@@ -339,7 +339,10 @@ class VehicleEdit(models.Model):
                     edit = edit.upper().replace(' ', '')
                 if edit.startswith('-'):
                     edit = ''
-                vehicle = str(getattr(self.vehicle, field) or '')
+                if field == 'fleet_number' and self.vehicle.fleet_code:
+                    vehicle = self.vehicle.fleet_code
+                else:
+                    vehicle = str(getattr(self.vehicle, field) or '')
                 if edit != vehicle:
                     changes[field] = edit
         changed_features = self.vehicleeditfeature_set.all()

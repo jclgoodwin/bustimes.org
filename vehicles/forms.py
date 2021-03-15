@@ -106,7 +106,7 @@ class EditVehicleForm(EditVehiclesForm):
     fleet_number = forms.CharField(required=False, max_length=14)
     reg = RegField(label='Number plate', required=False, max_length=10)
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
-    name = forms.CharField(label='Name', required=False, max_length=255)
+    name = forms.CharField(label='Name', help_text="Not your name", required=False, max_length=255)
     previous_reg = RegField(required=False, max_length=14)
     depot = forms.ChoiceField(required=False)
     notes = forms.CharField(  # help_text="""Please <strong>don’t</strong>
