@@ -112,6 +112,9 @@ class VehicleAdmin(admin.ModelAdmin):
                 vehicle.vehiclejourney_set.update(vehicle=first)
                 first.latest_location = vehicle.latest_location
                 first.latest_journey = vehicle.latest_journey
+                vehicle.latest_location = None
+                vehicle.latest_journey = None
+                vehicle.save(update_fields=['latest_location', 'latest_journey'])
                 first.save(update_fields=['latest_location', 'latest_journey'])
                 vehicle.delete()
                 first.code = vehicle.code
