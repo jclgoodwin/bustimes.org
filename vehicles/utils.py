@@ -66,8 +66,9 @@ def do_revisions(vehicle_ids, data, user):
     if user.trusted:
 
         if data.get('withdrawn'):
+            # assume vehicles can't be un-withdrawn in bulk
             for revision in revisions:
-                revision.vehicle.withdrawn = True
+                revision.vehicle.withdrawn = data['withdrawn']
                 revision.changes['withdrawn'] = "-No\n+Yes"
             changed_fields.append('withdrawn')
             del data['withdrawn']

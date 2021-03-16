@@ -1,5 +1,6 @@
 import os
 import zipfile
+import requests
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.conf import settings
@@ -183,3 +184,12 @@ class TripDetailView(DetailView):
         context['breadcrumb'] = [self.object.route.service]
 
         return context
+
+
+def tfl_vehicle(request, reg):
+    data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals').json()
+    for item in data:
+        item['expectedArrival'] = parse_datetime(item['expectedArrival'])
+    return render(request, 'tfl_vehicle.html', {
+        'data': data
+    })

@@ -541,6 +541,8 @@ def journey_debug(request, pk):
 
 
 def siri(request):
+    if request.method != 'POST':
+        return HttpResponseNotAllowed(['POST'])
     body = request.body.decode()
     if not body:
         return HttpResponse()
