@@ -1,14 +1,17 @@
 import re
 from math import ceil
 from urllib.parse import quote
+from datetime import timedelta
 from webcolors import html5_parse_simple_color
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, DataSource, SIRISource
+from bustimes.models import get_calendars, Trip
 import json
 
 
@@ -504,6 +507,40 @@ class VehicleJourney(models.Model):
         unique_together = (
             ('vehicle', 'datetime'),
         )
+
+    def get_trip(self, datetime=None, destination_ref=None):
+        if not datetime:
+            datetime = self.datetime
+        trips = Trip.objects.filter(
+            Q(route__start_date__lte=datetime) | Q(route__start_date=None),
+            Q(route__end_date__gte=datetime) | Q(route__end_date=None),
+            route__service=self.service_id
+        ).distinct('start', 'end')
+
+        if destination_ref and ' ' not in destination_ref and destination_ref[:3].isdigit():
+            trips = trips.filter(destination=destination_ref)
+        else:
+            trips = trips.distinct('destination')
+
+        if len(self.code) == 4 and self.code.isdigit() and int(self.code) < 2400:
+            hours = int(self.code[:-2])
+            minutes = int(self.code[-2:])
+            start = timedelta(hours=hours, minutes=minutes)
+            try:
+                return trips.get(start=start)
+            except (Trip.DoesNotEpassxist, Trip.MultipleObjectsReturned):
+                return
+
+        try:
+            return trips.get(ticket_machine_code=self.code)
+        except Trip.MultipleObjectsReturned:
+            trips = trips.filter(calendar__in=get_calendars(datetime))
+            try:
+                return trips.get(ticket_machine_code=self.code)
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                pass
+        except Trip.DoesNotExist:
+            pass
 
 
 class JourneyCode(models.Model):
