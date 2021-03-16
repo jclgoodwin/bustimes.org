@@ -1,0 +1,43 @@
+{% extends 'page.html' %}
+
+{% block title %}{{ data.0.lineName }} to {{ data.0.destinationName }} – bustimes.org{% endblock %}
+
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+
+<h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
+
+<p>{{ data.0.vehicleId }}</p>
+
+<table class="trip-timetable">
+    <th></th><th>Expected</th>
+    <tbody>
+{% for item in data %}
+    <tr>
+        <td><a href="/stops/{{ item.naptanId }}">{{ item.stationName }}{% if item.platformName %} ({{ item.platformName }}){% endif %}</a></td>
+        <td>{{ item.expectedArrival|time }}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+
+<script>
+    (function() {
+        if (document.referrer.indexOf('/stops/') > -1) {
+            var links = document.querySelectorAll('.trip-timetable a');
+            links.forEach(function(link) {
+                if (link.href === document.referrer) {
+                    link.parentNode.parentNode.classList.add('referrer');
+                }
+            });
+        }
+    })();
+
+</script>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
