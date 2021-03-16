@@ -9,6 +9,7 @@ import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode
+from vehicles.models import VehicleJourney
 from ...models import Route
 
 
@@ -114,6 +115,23 @@ class ImportBusOpenDataTest(TestCase):
 
         response = self.client.get('/stops/2900W0321/times.json?when=yesterday')
         self.assertEqual(400, response.status_code)
+
+        # test get_trip
+        journey = VehicleJourney(
+            datetime=datetime.datetime(2020, 11, 2, 15, 7, 6),
+            service=Service.objects.get(),
+            code='1'
+        )
+        trip = journey.get_trip()
+        self.assertEqual(trip.ticket_machine_code, '1')
+
+        journey.code = '0915'
+        trip = journey.get_trip()
+        self.assertEqual(trip.ticket_machine_code, '1')
+
+        journey.code = '0916'
+        trip = journey.get_trip()
+        self.assertIsNone(trip)
 
     @override_settings(STAGECOACH_OPERATORS=[('EA', 'sccm', 'Stagecoach East', ['SCHU', 'SCPB'])])
     @time_machine.travel(datetime.datetime(2020, 6, 10))

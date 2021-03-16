@@ -528,7 +528,7 @@ class VehicleJourney(models.Model):
             start = timedelta(hours=hours, minutes=minutes)
             try:
                 return trips.get(start=start)
-            except (Trip.DoesNotEpassxist, Trip.MultipleObjectsReturned):
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                 return
 
         try:
