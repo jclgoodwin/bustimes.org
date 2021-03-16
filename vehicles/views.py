@@ -12,7 +12,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
 from django.contrib.postgres.aggregates import StringAgg
-from django.http import HttpResponse, JsonResponse, Http404
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseNotAllowed
 from django.views.generic.detail import DetailView
 from django.urls import reverse
 from django.utils import timezone
