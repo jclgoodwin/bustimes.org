@@ -75,7 +75,7 @@ class VehicleAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator', 'source')
     search_fields = ('code', 'fleet_code', 'reg')
     ordering = ('-id',)
-    actions = ('copy_livery', 'copy_type', 'make_livery')
+    actions = ('copy_livery', 'copy_type', 'make_livery', 'merge')
     inlines = [VehicleEditInline]
     readonly_fields = ['latest_journey_data']
 
@@ -102,6 +102,18 @@ class VehicleAdmin(admin.ModelAdmin):
             self.message_user(request, f'Updated {count} vehicles.')
         else:
             self.message_user(request, 'Select a vehicle with colours and branding.')
+
+    def merge(self, request, queryset):
+        first = None
+        for vehicle in queryset:
+            if not first:
+                first = vehicle
+            else:
+                vehicle.vehiclejourney_set.update(vehicle=first)
+                first.latest_location = vehicle.latest_location
+                first.latest_journey = vehicle.latest_journey
+                first.save(update_fields=['latest_location', 'latest_journey'])
+                vehicle.delete()
 
     def last_seen(self, obj):
         if obj.latest_journey:
