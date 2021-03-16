@@ -114,6 +114,8 @@ class VehicleAdmin(admin.ModelAdmin):
                 first.latest_journey = vehicle.latest_journey
                 first.save(update_fields=['latest_location', 'latest_journey'])
                 vehicle.delete()
+                first.code = vehicle.code
+                first.save(update_fields=['code'])
 
     def last_seen(self, obj):
         if obj.latest_journey:
