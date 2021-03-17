@@ -188,6 +188,8 @@ class TripDetailView(DetailView):
 
 def tfl_vehicle(request, reg):
     data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals').json()
+    if not data:
+        raise Http404
     for item in data:
         item['expectedArrival'] = parse_datetime(item['expectedArrival'])
     return render(request, 'tfl_vehicle.html', {

@@ -162,6 +162,7 @@ class TflDepartures(Departures):
             'live': parse_datetime(item.get('expectedArrival')),
             'service': self.get_service(item.get('lineName')),
             'destination': item.get('destinationName'),
+            'link': f"/vehicles/tfl/{item['vehicleId']}",
         } for item in rows], key=lambda d: d['live'])
 
 
@@ -313,7 +314,7 @@ class TimetableDepartures(Departures):
             'time': time,
             'destination': destination.locality or destination.town or destination.common_name,
             'service': trip.route.service,
-            'trip_id': trip.id
+            'link': trip.get_absolute_url()
         }
 
     def get_times(self, when):

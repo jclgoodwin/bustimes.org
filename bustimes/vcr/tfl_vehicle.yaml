@@ -1,0 +1,215 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+    method: GET
+    uri: https://api.tfl.gov.uk/vehicle/LTZ1243/arrivals
+  response:
+    body:
+      string: '[{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"1566189989","operationType":1,"vehicleId":"LTZ1243","naptanId":"490004215M","stationName":"Bow
+        Church","lineId":"8","lineName":"8","platformName":"M","direction":"outbound","bearing":"61","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":582,"currentLocation":"","towards":"Stratford
+        or Bromley-By-Bow Station.","expectedArrival":"2021-03-17T18:49:40Z","timeToLive":"2021-03-17T18:50:10Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1541400","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:01.46Z","read":"2021-03-17T18:40:05.617Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"-81658957","operationType":1,"vehicleId":"LTZ1243","naptanId":"490011654N","stationName":"Roman
+        Road Market","lineId":"8","lineName":"8","platformName":"OA","direction":"outbound","bearing":"325","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":862,"currentLocation":"","towards":"Bethnal
+        Green or Hackney Wick","expectedArrival":"2021-03-17T18:54:20Z","timeToLive":"2021-03-17T18:54:50Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1484870","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:39:41.431Z","read":"2021-03-17T18:39:45.586Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"322263428","operationType":1,"vehicleId":"LTZ1243","naptanId":"490010552N","stationName":"Old
+        Ford Road","lineId":"8","lineName":"8","platformName":"OB","direction":"outbound","bearing":"338","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":944,"currentLocation":"","towards":"Bethnal
+        Green or Hackney Wick","expectedArrival":"2021-03-17T18:55:42Z","timeToLive":"2021-03-17T18:56:12Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1353491","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:11.523Z","read":"2021-03-17T18:40:15.68Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"-1309714041","operationType":1,"vehicleId":"LTZ1243","naptanId":"490010561W","stationName":"Parnell
+        Road","lineId":"8","lineName":"8","platformName":"OC","direction":"outbound","bearing":"259","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":998,"currentLocation":"","towards":"Bethnal
+        Green","expectedArrival":"2021-03-17T18:56:36Z","timeToLive":"2021-03-17T18:57:06Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1398239","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:01.46Z","read":"2021-03-17T18:40:05.617Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"1607068922","operationType":1,"vehicleId":"LTZ1243","naptanId":"490012461S","stationName":"Alice
+        Lane","lineId":"8","lineName":"8","platformName":"A","direction":"outbound","bearing":"154","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1085,"currentLocation":"","towards":"Bethnal
+        Green","expectedArrival":"2021-03-17T18:58:03Z","timeToLive":"2021-03-17T18:58:33Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1443005","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:11.523Z","read":"2021-03-17T18:40:15.68Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"-1070783395","operationType":1,"vehicleId":"LTZ1243","naptanId":"490006904W","stationName":"Ford
+        Road","lineId":"8","lineName":"8","platformName":"B","direction":"outbound","bearing":"254","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1177,"currentLocation":"","towards":"Bethnal
+        Green or Mile End","expectedArrival":"2021-03-17T18:59:35Z","timeToLive":"2021-03-17T19:00:05Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1338879","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:41.545Z","read":"2021-03-17T18:40:45.695Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"381640889","operationType":1,"vehicleId":"LTZ1243","naptanId":"490009786W","stationName":"Medway
+        Road","lineId":"8","lineName":"8","platformName":"C","direction":"outbound","bearing":"253","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1240,"currentLocation":"","towards":"Bethnal
+        Green or Mile End","expectedArrival":"2021-03-17T19:00:38Z","timeToLive":"2021-03-17T19:01:08Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1497250","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:31.545Z","read":"2021-03-17T18:40:35.695Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"1531126877","operationType":1,"vehicleId":"LTZ1243","naptanId":"490007914W","stationName":"Haverfield
+        Green / Grove Road","lineId":"8","lineName":"8","platformName":"D","direction":"outbound","bearing":"248","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1360,"currentLocation":"","towards":"Bethnal
+        Green","expectedArrival":"2021-03-17T19:02:38Z","timeToLive":"2021-03-17T19:03:08Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1456740","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:11.523Z","read":"2021-03-17T18:40:15.68Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"-1015600825","operationType":1,"vehicleId":"LTZ1243","naptanId":"490012204W","stationName":"Bonner
+        Street","lineId":"8","lineName":"8","platformName":"HD","direction":"outbound","bearing":"252","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1443,"currentLocation":"","towards":"Hackney
+        or Shoreditch","expectedArrival":"2021-03-17T19:04:01Z","timeToLive":"2021-03-17T19:04:31Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1401516","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:21.545Z","read":"2021-03-17T18:40:25.695Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"229609333","operationType":1,"vehicleId":"LTZ1243","naptanId":"490004144W","stationName":"Morpeth
+        Street","lineId":"8","lineName":"8","platformName":"HE","direction":"outbound","bearing":"246","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1480,"currentLocation":"","towards":"Hackney
+        or Shoreditch","expectedArrival":"2021-03-17T19:04:38Z","timeToLive":"2021-03-17T19:05:08Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1422519","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:39:51.445Z","read":"2021-03-17T18:39:55.602Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"353773988","operationType":1,"vehicleId":"LTZ1243","naptanId":"490007242W","stationName":"Globe
+        Road","lineId":"8","lineName":"8","platformName":"HF","direction":"outbound","bearing":"237","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1529,"currentLocation":"","towards":"Hackney
+        or Shoreditch","expectedArrival":"2021-03-17T19:05:27Z","timeToLive":"2021-03-17T19:05:57Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1458637","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:41.545Z","read":"2021-03-17T18:40:45.695Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,
+        Tfl.Api.Presentation.Entities","id":"-1324809490","operationType":1,"vehicleId":"LTZ1243","naptanId":"490000022B","stationName":"Bethnal
+        Green Station","lineId":"8","lineName":"8","platformName":"B","direction":"outbound","bearing":"258","destinationNaptanId":"","destinationName":"Tottenham
+        Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":1584,"currentLocation":"","towards":"Hackney
+        or Shoreditch","expectedArrival":"2021-03-17T19:06:22Z","timeToLive":"2021-03-17T19:06:52Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
+        Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1549640","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:21.545Z","read":"2021-03-17T18:40:25.695Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}}]'
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - GET,POST,PUT,DELETE,OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Age:
+      - '0'
+      Api-Entity-Payload:
+      - Prediction
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 63185a00596753c1-LHR
+      Cache-Control:
+      - public, must-revalidate, max-age=30, s-maxage=60
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 17 Mar 2021 18:40:47 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=db5458d909550836b98d242b1857b6c4d1616006446; expires=Fri, 16-Apr-21
+        18:40:46 GMT; path=/; domain=.tfl.gov.uk; HttpOnly; SameSite=Lax
+      Via:
+      - 1.1 varnish
+      X-API:
+      - Vehicle
+      X-AspNet-Version:
+      - 4.0.30319
+      X-Backend:
+      - api
+      X-Cache:
+      - MISS
+      X-Cacheable:
+      - Yes. Cacheable
+      X-Frame-Options:
+      - deny
+      X-Operation:
+      - Vehicle_GetByPathIds
+      X-Proxy-Connection:
+      - unset
+      X-TTL:
+      - '60.000'
+      X-TTL-RULE:
+      - '0'
+      X-Varnish:
+      - '2122575242'
+      cf-request-id:
+      - 08e3169433000053c15101d000000001
+      content-length:
+      - '10524'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+    method: GET
+    uri: https://api.tfl.gov.uk/vehicle/LJ53NHP/arrivals
+  response:
+    body:
+      string: '[]'
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - GET,POST,PUT,DELETE,OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Age:
+      - '0'
+      Api-Entity-Payload:
+      - Prediction
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 63185a0aaf2a5416-LHR
+      Cache-Control:
+      - public, must-revalidate, max-age=30, s-maxage=60
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 17 Mar 2021 18:40:47 GMT
+      Expect-CT:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Set-Cookie:
+      - __cfduid=de0172b67352ba96611aaa30176662ca81616006447; expires=Fri, 16-Apr-21
+        18:40:47 GMT; path=/; domain=.tfl.gov.uk; HttpOnly; SameSite=Lax
+      Via:
+      - 1.1 varnish
+      X-API:
+      - Vehicle
+      X-AspNet-Version:
+      - 4.0.30319
+      X-Backend:
+      - api
+      X-Cache:
+      - MISS
+      X-Cacheable:
+      - Yes. Cacheable
+      X-Frame-Options:
+      - deny
+      X-Operation:
+      - Vehicle_GetByPathIds
+      X-Proxy-Connection:
+      - unset
+      X-TTL:
+      - '60.000'
+      X-TTL-RULE:
+      - '0'
+      X-Varnish:
+      - '1075483570'
+      cf-request-id:
+      - 08e3169aa60000541621109000000001
+      content-length:
+      - '2'
+    status:
+      code: 200
+      message: OK
+version: 1

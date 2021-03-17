@@ -140,17 +140,28 @@ class LiveDeparturesTest(TestCase):
             <div class="aside">
                 <h2>Next departures</h2>
                 <table><tbody>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:22⚡</td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:23⚡</td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:26⚡</td></tr>
-                    <tr><td>388</td><td>Stratford City</td><td>18:26⚡</td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:33⚡</td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:33⚡</td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:37⚡</td></tr>
-                    <tr><td>388</td><td>Stratford City</td><td>18:44⚡</td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td><td>18:44⚡</td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:44⚡</td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td><td>18:49⚡</td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                        <td><a href="/vehicles/tfl/LTZ1414">18:22⚡</a></td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
+                        <td><a href="/vehicles/tfl/LX59AOM">18:23⚡</a></td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                        <td><a href="/vehicles/tfl/LTZ1243">18:26⚡</a></td></tr>
+                    <tr><td>388</td><td>Stratford City</td>
+                        <td><a href="/vehicles/tfl/YR59NPF">18:26⚡</a></td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                        <td><a href="/vehicles/tfl/LTZ1407">18:33⚡</a></td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
+                        <td><a href="/vehicles/tfl/LX59AOL">18:33⚡</a></td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                        <td><a href="/vehicles/tfl/LTZ1412">18:37⚡</a></td></tr>
+                    <tr><td>388</td><td>Stratford City</td>
+                        <td><a href="/vehicles/tfl/PF52TFX">18:44⚡</a></td></tr>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
+                        <td><a href="/vehicles/tfl/LX59AOA">18:44⚡</a></td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                        <td><a href="/vehicles/tfl/LTZ1269">18:44⚡</a></td></tr>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                        <td><a href="/vehicles/tfl/LTZ1393">18:49⚡</a></td></tr>
                 </tbody></table>
                 <p class="credit">⚡ denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations </p>
             </div>

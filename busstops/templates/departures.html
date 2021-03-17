@@ -22,12 +22,12 @@
             {% elif item.service %}{{ item.service }}{% endif %}
             </td>
             <td>{{ item.destination }}</td>
-            <td>{% if item.trip_id %}<a href="/trips/{{ item.trip_id }}">{% endif %}
+            <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
                 {% if item.live %}
                     {{ item.live.time }}⚡
                 {% else %}
                     {% firstof item.time.time item.time %}
-                {% endif %}{% if item.trip_id %}</a>{% endif %}
+                {% endif %}{% if item.link %}</a>{% endif %}
             </td>
         </tr>
         {% if forloop.last %}
