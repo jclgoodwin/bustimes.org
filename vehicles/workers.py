@@ -1,5 +1,5 @@
 import beeline
-import logging
+from sentry_sdk import capture_exception
 from beeline.middleware.django import HoneyDBWrapper
 from contextlib import ExitStack
 from ciso8601 import parse_datetime
@@ -8,9 +8,6 @@ from channels.consumer import SyncConsumer
 from django.core.cache import cache
 from django.db import connections
 from .management.commands import import_bod_avl
-
-
-logger = logging.getLogger(__name__)
 
 
 class SiriConsumer(SyncConsumer):
@@ -57,5 +54,5 @@ class SiriConsumer(SyncConsumer):
                         if key not in vehicle_ids or value != vehicle_ids[key]
                     }, 43200)
         except Exception as e:
-            logger.error(e, exc_info=True)
+            capture_exception(e)
             raise Exception
