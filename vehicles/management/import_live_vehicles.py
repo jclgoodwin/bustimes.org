@@ -5,6 +5,7 @@ import logging
 import redis
 import json
 from ciso8601 import parse_datetime
+from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
@@ -20,6 +21,8 @@ from ..models import Vehicle, VehicleJourney
 
 
 logger = logging.getLogger(__name__)
+fifteen_minutes = timedelta(minutes=15)
+twelve_hours = timedelta(hours=12)
 
 
 def calculate_bearing(a, b):
@@ -50,25 +53,32 @@ def same_journey(latest_journey, journey, latest_datetime, when):
     if journey.id:
         return journey.id == latest_journey.id
 
+    if latest_journey.datetime == journey.datetime:
+        return True
+
     if latest_journey.route_name and journey.route_name:
         same_route = latest_journey.route_name == journey.route_name
     else:
         same_route = latest_journey.service_id == journey.service_id
 
-    if same_route:
-        if latest_journey.datetime == journey.datetime:
-            return True
-        if latest_journey.code and journey.code:
-            return str(latest_journey.code) == str(journey.code)
-        if latest_journey.direction and journey.direction:
-            if latest_journey.direction != journey.direction:
-                return False
-        elif latest_journey.destination and journey.destination:
-            return latest_journey.destination == journey.destination
+    if not same_route:
+        return False
 
-        # last time was less than 15 minutes ago
-        if latest_datetime and (when - latest_datetime).total_seconds() < 900:
-            return True
+    if (when - latest_journey.datetime) > twelve_hours:
+        return False
+
+    if latest_journey.code and journey.code:
+        return str(latest_journey.code) == str(journey.code)
+
+    if latest_journey.direction and journey.direction:
+        if latest_journey.direction != journey.direction:
+            return False
+    elif latest_journey.destination and journey.destination:
+        return latest_journey.destination == journey.destination
+
+    # last time was less than 15 minutes ago
+    if latest_datetime and (when - latest_datetime) < fifteen_minutes:
+        return True
 
     return False
 
