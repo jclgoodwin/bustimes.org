@@ -195,9 +195,10 @@
                 line.push(coordinates);
 
                 if (previousCoordinates) {
-                    var time = timestamp - previousTimestamp;  
+                    var time = timestamp - previousTimestamp;
 
-                    if (time) {
+
+                    if (time && time < 6000000) {
                         var latDistance = coordinates.lat - previousCoordinates.lat;
                         var lngDistance = coordinates.lng - previousCoordinates.lng;
                         var latSpeed = latDistance / time;
