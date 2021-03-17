@@ -6,8 +6,8 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    @staticmethod
-    def add_arguments(parser):
+    def add_arguments(self, parser):
+        super().add_arguments(parser)
         parser.add_argument('source_name', type=str)
 
     def handle(self, source_name, **options):
@@ -63,25 +63,35 @@ class Command(ImportLiveVehiclesCommand):
             if 'number_plate' in item['properties']['meta']:
                 defaults['reg'] = item['properties']['meta']['number_plate']
 
+        if len(code) > 4 and code[0].isalpha() and code[1] == '_':  # McGill
+            fleet_number = code[2:]
+            defaults['fleet_code'] = code.replace('_', ' ')
+
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)
 
         if fleet_number.isdigit():
-            vehicle = vehicles.get_or_create(
+            vehicle, created = vehicles.get_or_create(
                 defaults,
                 fleet_number=fleet_number,
             )
         else:
-            vehicle = vehicles.get_or_create(
+            vehicle, created = vehicles.get_or_create(
                 defaults,
                 code=code,
             )
 
-        if vehicle[0].code.isdigit() and not code.isdigit():
-            vehicle[0].code = code
-            vehicle[0].save()
+        if 'fleet_code' in defaults:  # McGill
+            if vehicle.code != code:
+                vehicle.code = code
+                vehicle.fleet_code = defaults['fleet_code']
+                vehicle.save(update_fields=['code', 'fleet_code'])
 
-        return vehicle
+        elif vehicle.code.isdigit() and not code.isdigit():
+            vehicle.code = code
+            vehicle.save(update_fields=['code'])
+
+        return vehicle, created
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
