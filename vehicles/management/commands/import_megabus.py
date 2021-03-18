@@ -2,7 +2,7 @@ from time import sleep
 from datetime import timedelta
 from django.db.models import Q
 from busstops.models import Service
-from ...models import VehicleJourney
+from ...models import VehicleJourney, Vehicle
 from .import_nx import parse_datetime, Command as BaseCommand
 
 
@@ -96,7 +96,10 @@ class Command(BaseCommand):
         if vehicle.isupper() and not vehicle.isdigit() and len(vehicle) > 5:
             defaults['code'] = vehicle
             defaults['reg'] = vehicle.replace(' ', '')
-            return vehicles.get_or_create(defaults, reg=defaults['reg'])
+            try:
+                return vehicles.get_or_create(defaults, reg=defaults['reg'])
+            except Vehicle.MultipleObjectsReturned:
+                return vehicles.filter(reg=defaults['reg']).first(), False
         return vehicles.get_or_create(defaults, code=vehicle)
 
     def get_journey(self, item, vehicle):
