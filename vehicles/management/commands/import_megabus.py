@@ -91,26 +91,29 @@ class Command(BaseCommand):
             'source': self.source
         }
         vehicle = item['live']['vehicle']
-        if vehicle.isupper() and len(vehicle) == 8:
-            defaults['reg'] = vehicle.replace(' ', '')
         defaults['operator_id'] = self.operators[0]
         vehicles = self.vehicles.filter(Q(operator__parent='Stagecoach') | Q(operator__in=['MEGA', 'SCLK']))
+        if vehicle.isupper() and not vehicle.isdigit() and len(vehicle) > 5:
+            defaults['code'] = vehicle
+            defaults['reg'] = vehicle.replace(' ', '')
+            return vehicles.get_or_create(defaults, reg=defaults['reg'])
         return vehicles.get_or_create(defaults, code=vehicle)
 
     def get_journey(self, item, vehicle):
-        journey = VehicleJourney()
-
-        journey.datetime = parse_datetime(item['startTime']['dateTime'])
+        journey = VehicleJourney(
+            datetime=parse_datetime(item['startTime']['dateTime'])
+        )
 
         latest_journey = vehicle.latest_journey
         if latest_journey and journey.datetime == latest_journey.datetime:
-            journey = latest_journey
+            return latest_journey
         else:
             try:
-                journey = VehicleJourney.objects.get(vehicle=vehicle, datetime=journey.datetime)
+                return VehicleJourney.objects.get(vehicle=vehicle, datetime=journey.datetime)
             except VehicleJourney.DoesNotExist:
                 pass
 
+        journey.data = item
         journey.route_name = item['route']
         journey.destination = item['arrival']
 
