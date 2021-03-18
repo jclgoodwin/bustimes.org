@@ -155,6 +155,15 @@ class Command(ImportLiveVehiclesCommand):
                 defaults['fleet_number'] = vehicle_ref
                 condition |= Q(code__endswith=f'-{vehicle_ref}') | Q(code__startswith=f'{vehicle_ref}_')
             else:
+                try:
+                    fleet_number = item['Extensions']['VehicleJourney']['VehicleUniqueId']
+                    if len(fleet_number) < len(vehicle_ref):
+                        defaults['fleet_code'] = fleet_number
+                    if fleet_number.isdigit():
+                        defaults['fleet_number'] = fleet_number
+                except KeyError:
+                    pass
+
                 if '_-_' in vehicle_ref:
                     fleet_number, reg = vehicle_ref.split('_-_', 2)
                     if fleet_number.isdigit():
@@ -176,6 +185,9 @@ class Command(ImportLiveVehiclesCommand):
             if operator_ref in self.reg_operators and vehicle.code != vehicle_ref:
                 vehicle.code = vehicle_ref
                 vehicle.save(update_fields=['code'])
+            elif 'fleet_code' in defaults and not vehicle.fleet_code:
+                vehicle.fleet_code = defaults['fleet_code']
+                vehicle.save(update_fields=['fleet_code'])
         except Vehicle.MultipleObjectsReturned as e:
             print(e, operator, vehicle_ref)
             vehicle = vehicles.first()
