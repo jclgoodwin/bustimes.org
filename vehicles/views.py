@@ -394,7 +394,10 @@ class VehicleDetailView(DetailView):
 def edit_vehicle(request, vehicle_id):
     if request.user.trusted is False:
         raise PermissionDenied
-    vehicle = get_object_or_404(Vehicle.objects.select_related('vehicle_type', 'livery', 'operator'), id=vehicle_id)
+    vehicle = get_object_or_404(
+        Vehicle.objects.select_related('vehicle_type', 'livery', 'operator', 'latest_journey'),
+        id=vehicle_id
+    )
     if not vehicle.editable():
         raise Http404
     submitted = False

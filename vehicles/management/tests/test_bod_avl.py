@@ -169,6 +169,12 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         r.flushall()
 
         command.handle_item({
+            "Extensions": {
+                "VehicleJourney": {
+                    "DriverRef": "105",
+                    "VehicleUniqueId": "104"
+                }
+            },
             "ItemIdentifier": "2cb5543a-add1-4e14-ae7a-a1ee730d9814",
             "RecordedAtTime": "2020-11-28T12:58:25+00:00",
             "ValidUntilTime": "2020-11-28T13:04:06.989808",
@@ -235,7 +241,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get('/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
-             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS'},
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': '104 - BB62\xa0BUS'},
              'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
              'service': {'line_name': '146'}}
         ])
@@ -244,7 +250,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get('/vehicles.json')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
-             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': 'BB62\xa0BUS'},
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': '104 - BB62\xa0BUS'},
              'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
              'service': {'line_name': '146'}}
         ])
