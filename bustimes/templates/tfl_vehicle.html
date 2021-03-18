@@ -1,12 +1,18 @@
 {% extends 'page.html' %}
 
+{% if data %}
 {% block title %}{{ data.0.lineName }} to {{ data.0.destinationName }} – bustimes.org{% endblock %}
+{% else %}
+{% block title %}No data available – bustimes.org{% endblock %}
+{% endif %}
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
+
+{% if data %}
 
 <h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
 
@@ -23,6 +29,13 @@
 {% endfor %}
 </tbody>
 </table>
+
+{% else %}
+
+<h2>No data available</h2>
+<p>It's likely the vehicle is not in service at this time</p>
+
+{% endif %}
 
 <script>
     (function() {
