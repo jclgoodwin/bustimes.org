@@ -509,7 +509,8 @@ class Command(BaseCommand):
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
                 ticket_machine_code=journey.ticket_machine_journey_code or '',
-                block=journey.block or ''
+                block=journey.block or '',
+                sequence=journey.sequencenumber
             )
 
             if journey.garage_ref:
@@ -531,7 +532,7 @@ class Command(BaseCommand):
 
                 stop_time = StopTime(
                     trip=trip,
-                    sequence=i,
+                    sequence=cell.stopusage.sequencenumber or i,
                     timing_status=timing_status,
                     activity=cell.stopusage.activity or ''
                 )
