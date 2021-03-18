@@ -187,7 +187,7 @@ class TripDetailView(DetailView):
 
 
 def tfl_vehicle(request, reg):
-    data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals').json()
+    data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals', params=settings.TFL).json()
     if not data:
         raise Http404
     for item in data:
