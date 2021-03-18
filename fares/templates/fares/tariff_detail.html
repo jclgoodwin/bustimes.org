@@ -66,6 +66,12 @@ td:hover {
         <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price.amount }}</p>
     {% endfor %}
 
+    {% for price in object.price_set.all %}
+
+        <p>{{ price.time_interval.name }} ({{ price.time_interval }}): {{ price.amount }}</p>
+
+    {% endfor %}
+
     {% for table in object.faretable_set.all %}
 
         {% ifchanged table.name %}<h2>{{ table }}</h2>{% endifchanged %}
