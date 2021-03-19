@@ -79,7 +79,7 @@ BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['GoodFriday'] + BANK
                                               BANK_HOLIDAYS['MayDay'] + BANK_HOLIDAYS['SpringBank']
 BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 
-BODS_SERVICE_CODE_REGEX = r'^P[BCDFGHKM]\d+:\d+.*.$'
+BODS_SERVICE_CODE_REGEX = re.compile(r'^P[BCDFGHKM]\d+:\d+.*.$')
 
 
 def initialisms(word, **kwargs):
