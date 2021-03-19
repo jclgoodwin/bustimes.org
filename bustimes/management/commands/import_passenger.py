@@ -12,7 +12,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db.models import Q
 from busstops.models import DataSource, Service, ServiceColour
-from .import_bod import handle_file
+from .import_bod import handle_file, get_operator_ids
 from .import_transxchange import Command as TransXChangeCommand
 from .import_gtfs import read_file
 from ...utils import write_file
@@ -166,6 +166,10 @@ class Command(BaseCommand):
 
                 services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
                 print('  other source services:', services.update(current=False))
+
+                operator_ids = get_operator_ids(command.source)
+                print('  ', operator_ids)
+                print('  ', [o for o in operator_ids if o not in operators])
 
             # even if there are no new versions, delete old routes from expired versions
             routes = command.source.route_set

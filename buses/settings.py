@@ -273,6 +273,7 @@ PASSENGER_OPERATORS = [
     }),
     ('Salisbury Reds', 'https://www.salisburyreds.co.uk/open-data', 'SW', {
         'SQ': 'SWWD',
+        'SR': 'SWWD',
         'DAM': 'DAMY',
     }),
     ('Southern Vectis', 'https://www.islandbuses.info/open-data', 'SW', {
@@ -306,6 +307,7 @@ PASSENGER_OPERATORS = [
     ('Swindon’s Bus Company', 'https://www.swindonbus.co.uk/open-data', 'SW', {
         'TT': 'TDTR',
         'SBCR': 'TDTR',  # rural
+        'SR': 'TDTR',  # rural
         'NATI': 'TDTR',  # Nationwide Building Society
     }),
     ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
