@@ -79,6 +79,8 @@ BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['GoodFriday'] + BANK
                                               BANK_HOLIDAYS['MayDay'] + BANK_HOLIDAYS['SpringBank']
 BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 
+BODS_SERVICE_CODE_REGEX = r'^P[BCDFGHKM]\d+:\d+.*.$'
+
 
 def initialisms(word, **kwargs):
     if word in ('YMCA', 'PH'):
@@ -514,7 +516,7 @@ class Command(BaseCommand):
             )
 
             if journey.garage_ref:
-                trip.garage = self.garages[journey.garage_ref]
+                trip.garage = self.garages.get(journey.garage_ref)
 
             blank = False
             for i, cell in enumerate(journey.get_times()):
@@ -673,7 +675,7 @@ class Command(BaseCommand):
         if description == 'Origin - Destination':
             description = ''
 
-        if re.match(r'^P[BCDFGHKM]\d+:\d+.*.$', txc_service.service_code):
+        if re.match(BODS_SERVICE_CODE_REGEX, txc_service.service_code):
             unique_service_code = txc_service.service_code
         else:
             unique_service_code = None
@@ -727,6 +729,11 @@ class Command(BaseCommand):
                     existing = existing.filter(description=description)
 
                 existing = existing.filter(line_name__iexact=line.line_name).order_by('-current', 'id').first()
+
+                if existing and existing.service_code and unique_service_code:
+                    if re.match(BODS_SERVICE_CODE_REGEX, existing):
+                        # matched service has a different BODS profile compliant service code - oh no
+                        existing = None
 
             if self.is_tnds():
                 if self.should_defer_to_other_source(operators, line.line_name):
