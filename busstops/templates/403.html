@@ -1,0 +1,25 @@
+{% extends 'page.html' %}
+
+{% block title %}Forbidden – bustimes.org{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>Forbidden</h1>
+
+{% if exception.args %}
+    <p>{{ exception }}</p>
+{% else %}
+    <p>Sorry, you don’t have permission to see this page</p>
+{% endif %}
+
+<form method="get" action="/search" class="search">
+    <h2><label for="q">Search</label></h2>
+    <input name="q" id="q" type="search" required>
+    <input type="submit" value="Search">
+</form>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
