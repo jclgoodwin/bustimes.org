@@ -119,7 +119,7 @@ class Command(BaseCommand):
 
         sources = DataSource.objects.filter(url__in=[values[1] for values in settings.PASSENGER_OPERATORS])
 
-        for name, url, region_id, operators in settings.PASSENGER_OPERATORS:
+        for name, url, region_id, operators_dict in settings.PASSENGER_OPERATORS:
             if operator and operator != name:
                 continue
 
@@ -138,13 +138,15 @@ class Command(BaseCommand):
 
             new_versions = any(version['modified'] for version in versions)
 
+            operators = operators_dict.values()
+
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
 
             if new_versions:
                 print(name)
 
                 command.source.datetime = timezone.now()
-                command.operators = operators
+                command.operators = operators_dict
                 command.region_id = region_id
                 command.service_ids = set()
                 command.route_ids = set()
@@ -161,10 +163,10 @@ class Command(BaseCommand):
                 print('  duplicate routes:', routes.exclude(source=command.source).delete())
 
                 # delete route data from TNDS
-                routes = Route.objects.filter(service__operator__in=operators.values())
+                routes = Route.objects.filter(service__operator__in=operators)
                 print('  other source routes:', routes.exclude(source__in=sources).delete())
 
-                services = Service.objects.filter(operator__in=operators.values(), current=True, route=None)
+                services = Service.objects.filter(operator__in=operators, current=True, route=None)
                 print('  other source services:', services.update(current=False))
 
                 operator_ids = get_operator_ids(command.source)
@@ -195,7 +197,7 @@ class Command(BaseCommand):
 
                 for version in versions:
                     if 'gtfs' in version:
-                        handle_gtfs(list(operators.values()), version['gtfs'])
+                        handle_gtfs(list(operators), version['gtfs'])
 
                 command.source.save(update_fields=['datetime'])
 
