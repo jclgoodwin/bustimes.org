@@ -1,4 +1,5 @@
 import io
+import os
 import logging
 import xml.etree.cElementTree as ET
 import requests
@@ -312,41 +313,39 @@ class Command(BaseCommand):
         dataset.save(update_fields=["datetime"])
 
     def handle(self, api_key=None, **kwargs):
-        # base_dir = os.path.dirname(os.path.abspath(__file__))
-        # path = os.path.join(base_dir, '..', '..', 'data')
 
-        # models.DataSet.objects.all().delete()
+        if api_key == 'test':
+            models.DataSet.objects.all().delete()
 
-        # for filename in os.listdir(path):
-        #     print(filename)
-        #     source = models.DataSet.objects.create(name=filename, datetime='2017-01-01T00:00:00Z')
-        #     with open(os.path.join(path, filename), "rb") as open_file:
-        #         self.handle_file(source, open_file)
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            path = os.path.join(base_dir, '..', '..', 'data')
 
-        # return
-
-        # url = 'https://data.bus-data.dft.gov.uk/fares/download/bulk_archive'
-
-        # with requests.get(url, stream=True) as response:
-        #     # maybe not fully RFC 6266 compliant
-        #     filename = response.headers['Content-Disposition'].split('filename', 1)[1][2:-1]
-
-        #     if not os.path.exists(filename):
-        #         write_file(filename, response)
-
-        # print(filename)
-
-        # with zipfile.ZipFile(filename) as archive:
-        #     for filename in archive.namelist():
-        #         print(' ', filename)
-        #         # try:
-        #         #     self.handle_file(dataset, archive.open(filename))
-        #         # except AttributeError as e:
-        #         #     logger.error(e, exc_info=True)
-
-        # return
+            for filename in os.listdir(path):
+                print(filename)
+                source = models.DataSet.objects.create(name=filename, datetime='2017-01-01T00:00:00Z')
+                with open(os.path.join(path, filename), "rb") as open_file:
+                    self.handle_file(source, open_file)
+            return
 
         self.session = requests.Session()
+
+        for noc in ('FECS', 'LYNX'):
+            print(noc)
+            download_url = f"https://opendata.ticketer.com/uk/{noc}/fares/current.zip"
+            try:
+                source = models.DataSet.objects.get(url=download_url)
+            except models.DataSet.DoesNotExist:
+                source = models.DataSet(name=f"{noc} Ticketer fares", url=download_url)
+                source.save()
+            response = self.session.get(download_url, stream=True)
+            assert response.headers['Content-Type'] == 'application/zip'
+            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                for filename in archive.namelist():
+                    print(' ', filename)
+                    try:
+                        self.handle_file(source, archive.open(filename), filename)
+                    except AttributeError as e:
+                        logger.error(e, exc_info=True)
 
         url = f"{self.base_url}/api/v1/fares/dataset/"
         params = {
