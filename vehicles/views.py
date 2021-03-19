@@ -215,6 +215,10 @@ def vehicles_json(request):
     except KeyError:
         bounds = None
 
+    vehicles = Vehicle.objects.select_related('vehicle_type').annotate(
+        feature_names=StringAgg('features__name', ', ')
+    )
+
     if bounds is not None:
         # ids of vehicles within box
         xmin, ymin, xmax, ymax = bounds.extent
@@ -229,19 +233,22 @@ def vehicles_json(request):
             'FROMLONLAT', (xmax + xmin) / 2, (ymax + ymin) / 2,
             'BYBOX', width, height, 'km'
         )
-
+        vehicles = vehicles.in_bulk(vehicle_ids)
     else:
         if 'service' in request.GET:
-            vehicle_ids = Vehicle.objects.filter(
+            vehicles = vehicles.filter(
                 latest_journey__service__in=request.GET['service'].split(',')
-            ).values_list('id', flat=True)
+            ).in_bulk()
+            vehicle_ids = list(vehicles.keys())
         elif 'operator' in request.GET:
-            vehicle_ids = Vehicle.objects.filter(
+            vehicles = vehicles.filter(
                 operator__in=request.GET['operator'].split(',')
-            ).values_list('id', flat=True)
+            ).in_bulk()
+            vehicle_ids = list(vehicles.keys())
         else:
             # ids of all vehicles
             vehicle_ids = r.zrange('vehicle_location_locations', 0, -1)
+            vehicles = vehicles.in_bulk(vehicle_ids)
 
     pipeline = r.pipeline(transaction=False)
     for vehicle_id in vehicle_ids:
@@ -250,12 +257,14 @@ def vehicles_json(request):
 
     locations = []
     service_ids = set()
-    for item in vehicle_locations:
+    for i, item in enumerate(vehicle_locations):
         if item:
             item = json.loads(item)
             locations.append(item)
             if 'service_id' in item and item['service_id']:
                 service_ids.add(item['service_id'])
+            vehicle = vehicles[int(vehicle_ids[i])]
+            item['vehicle'] = vehicle.get_json(item['heading'])
 
     services = Service.objects.only('line_name', 'line_brand', 'slug').in_bulk(service_ids)
     for item in locations:
