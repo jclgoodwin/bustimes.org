@@ -301,6 +301,37 @@ class Vehicle(models.Model):
             return False
         return True
 
+    def get_json(self, heading):
+        json = {
+            'url': self.get_absolute_url(),
+            'name': str(self),
+        }
+
+        features = self.feature_names
+        if self.vehicle_type:
+            if self.vehicle_type.double_decker:
+                vehicle_type = 'Double decker'
+                if self.vehicle_type.coach:
+                    vehicle_type = f'{vehicle_type} coach'
+            elif self.vehicle_type.coach:
+                vehicle_type = 'Coach'
+            else:
+                vehicle_type = None
+            if vehicle_type:
+                if features:
+                    features = f'{vehicle_type}<br>{features}'
+                else:
+                    features = vehicle_type
+        if features:
+            json['features'] = features
+
+        if self.livery_id:
+            json['livery'] = self.livery_id
+        elif self.colours:
+            json['css'] = self.get_livery(heading)
+            json['text_colour'] = self.get_text_colour()
+        return json
+
 
 class VehicleEditFeature(models.Model):
     feature = models.ForeignKey(VehicleFeature, models.CASCADE)
@@ -604,10 +635,6 @@ class VehicleLocation(models.Model):
         json = {
             'id': self.id,
             'coordinates': self.latlong.coords,
-            'vehicle': {
-                'url': vehicle.get_absolute_url(),
-                'name': str(vehicle),
-            },
             'heading': self.heading,
             'datetime': self.datetime,
             'destination': journey.destination,
@@ -619,12 +646,6 @@ class VehicleLocation(models.Model):
             json['service'] = {
                 'line_name': journey.route_name
             }
-
-        if vehicle.livery_id:
-            json['vehicle']['livery'] = vehicle.livery_id
-        elif vehicle.colours:
-            json['vehicle']['css'] = vehicle.get_livery(self.heading)
-            json['vehicle']['text_colour'] = vehicle.get_text_colour()
 
         if self.occupancy_thresholds and self.seated_occupancy is not None:
             green, amber = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]

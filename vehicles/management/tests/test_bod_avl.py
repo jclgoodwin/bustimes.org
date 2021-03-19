@@ -237,7 +237,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get('/vehicles.json?ymax=52.3&xmax=1.7&ymin=52.3&xmin=1.6')
         self.assertEqual(response.json(), [])
 
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(1):
             response = self.client.get('/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
@@ -246,7 +246,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
              'service': {'line_name': '146'}}
         ])
 
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(1):
             response = self.client.get('/vehicles.json')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
