@@ -272,7 +272,7 @@ class Command(ImportLiveVehiclesCommand):
                 origin_ref = monitored_vehicle_journey.get("OriginRef")
                 if origin_ref:
                     trips = trips.filter(
-                        Exists(StopTime.objects.filter(trip=OuterRef("pk"), sequence=0, stop=origin_ref))
+                        Exists(StopTime.objects.filter(trip=OuterRef("pk"), stop=origin_ref))
                     )
                 try:
                     return services.get(Exists(trips))
