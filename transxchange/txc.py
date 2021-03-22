@@ -112,10 +112,14 @@ class JourneyPattern:
         if self.direction and self.direction != 'inbound' and self.direction != 'outbound':
             # clockwise/anticlockwise? Not supported, not sure if that's a problem
             print(self.direction)
+            self.direction == self.direction.lower()
 
         self.operating_profile = element.find('OperatingProfile')
         if self.operating_profile is not None:
             self.operating_profile = OperatingProfile(self.operating_profile, serviced_organisations)
+
+    def is_inbound(self):
+        return self.direction in ('inbound', 'anticlockwise')
 
     def get_timinglinks(self):
         for section in self.sections:

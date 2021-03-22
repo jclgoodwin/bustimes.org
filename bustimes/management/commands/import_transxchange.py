@@ -506,7 +506,7 @@ class Command(BaseCommand):
                 continue
 
             trip = Trip(
-                inbound=journey.journey_pattern.direction == 'inbound',
+                inbound=journey.journey_pattern.is_inbound(),
                 calendar=calendar,
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
