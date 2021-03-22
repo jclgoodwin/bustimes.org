@@ -362,6 +362,7 @@ BOD_OPERATORS = [
         'FLEI': 'FLEI',
         'RRAR': 'RRAR',
         'FBRI': 'FBRI',
+        'ABUS': 'ABUS',
         'FWYO': 'FWYO',
     }, False),
     ('TNXB', 'WM', {

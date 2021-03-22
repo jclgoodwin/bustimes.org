@@ -133,11 +133,8 @@ class Command(ImportLiveVehiclesCommand):
                 condition = Q(operator__parent=operator.parent)
 
                 if not vehicle_ref.isdigit() and vehicle_ref.isupper():
-                    # Abus operate the 349 using First ticket machines
-                    if operator.id == "FBRI":
-                        condition |= Q(operator="ABUS")
                     # Connexions Buses 64
-                    elif operator.id == "FWYO":
+                    if operator.id == "FWYO":
                         condition |= Q(operator="HCTY")
 
                 vehicles = self.vehicles.filter(condition)
@@ -231,7 +228,7 @@ class Command(ImportLiveVehiclesCommand):
         if type(operator) is Operator and operator.parent and destination_ref:
             condition = Q(parent=operator.parent)
 
-            # in case the vehicle operator has a different parent (e.g. ABUS or HCTY)
+            # in case the vehicle operator has a different parent (e.g. HCTY)
             if vehicle_operator_id != operator.id:
                 condition |= Q(id=vehicle_operator_id)
 
