@@ -8,6 +8,66 @@
 
 <h1>Site status</h1>
 
+<h2>Vehicle journeys</h2>
+
+<svg id="journeys" width="600" height="400"></svg>
+
+<h2>Pending vehicle edits</h2>
+
+<svg id="edits" width="600" height="400"></svg>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+    fetch("/stats.json").then(response => response.json()).then(data => {
+        var journeys = d3.select("#journeys");
+        var edits = d3.select("#edits");
+
+        data = data.map(item => {
+            item.datetime = new Date(item.datetime);
+            return item;
+        });
+
+        var datetimes = data.map(item => item.datetime);
+
+        var xScale = d3.scaleTime().domain([
+            datetimes.reduce((a, b) => Math.min(a, b)),
+            datetimes.reduce((a, b) => Math.max(a, b)),
+        ]).range([0, 500]);
+
+        var editsScale = d3.scaleLinear().domain([
+            0,
+            data.map(item => item.pending_vehicle_edits).reduce((a, b) => Math.max(a, b))
+        ]).range([350, 0]);
+        var journeysScale = d3.scaleLinear().domain([
+            0,
+            data.map(item => item.vehicle_journeys).reduce((a, b) => Math.max(a, b))
+        ]).range([350, 0]);
+
+        var xAxis = d3.axisBottom(xScale);
+        var editsAxis = d3.axisLeft(editsScale);
+        var journeysAxis = d3.axisLeft(journeysScale);
+
+        journeys.append("g").attr("transform", "translate(50, 360)").call(xAxis);
+        edits.append("g").attr("transform", "translate(50, 360)").call(xAxis);
+
+        journeys.append("g").attr("transform", "translate(50, 10)").call(journeysAxis);
+        edits.append("g").attr("transform", "translate(50, 10)").call(editsAxis);
+
+        var line = d3.line().x(item => xScale(item.datetime)).y(item => editsScale(item.pending_vehicle_edits));
+        edits.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line);
+
+        line = d3.line().x(item => xScale(item.datetime)).y(item => journeysScale(item.vehicle_journeys));
+        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line);
+
+        line = d3.line().x(item => xScale(item.datetime)).y(item => journeysScale(item.service_vehicle_journeys));
+        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line);
+
+        line = d3.line().x(item => xScale(item.datetime)).y(item => journeysScale(item.trip_vehicle_journeys));
+        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line);
+
+    });
+</script>
+
 <h2>Bus Open Data AVL</h2>
 
 <table>
