@@ -146,6 +146,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
 
+        # test operator map
         with self.assertNumQueries(1):
             response = self.client.get('/vehicles.json?operator=HAMS')
         self.assertEqual(response.json(), [{
@@ -160,6 +161,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "destination": "",
             "service": {"line_name": "C"}
         }])
+
+        response = self.client.get('/operators/hams/map')
+        self.assertContains(response, 'EXTENT = [0.285348,51.2135,0.285348,51.2135];OPERATOR_ID="HAMS";')
 
     def test_handle_item(self):
         command = import_bod_avl.Command()

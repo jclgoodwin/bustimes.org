@@ -155,6 +155,10 @@ class VehiclesTests(TestCase):
         self.location.refresh_from_db()
         self.assertEqual(str(self.location), '19 Oct 2020 23:47:00')
 
+    def test_search(self):
+        response = self.client.get('/search?q=fd54jya')
+        self.assertContains(response, '1 vehicle')
+
     def test_livery(self):
         livery = Livery(name='Go-Coach')
         self.assertEqual('Go-Coach', str(livery))
@@ -369,6 +373,11 @@ class VehiclesTests(TestCase):
         self.assertIsNone(vehicle.fleet_number)
         self.assertEqual('', vehicle.fleet_code)
         self.assertEqual('', vehicle.reg)
+
+        # test user view
+        response = self.client.get(self.user.get_absolute_url())
+        self.assertContains(response, '1 other edit,')
+        self.assertContains(response, 'Trent Barton')
 
     def test_vehicles_edit(self):
         self.client.force_login(self.user)

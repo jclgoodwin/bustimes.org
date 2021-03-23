@@ -9,10 +9,10 @@
     <h1>User {{ object.id }}</h1>
 
     {% if object.trusted is False %}
-        <p>This user has been banned.</p>
+        <p>They have been banned.</p>
     {% else %}
-        <p>{% if object.trusted %}This user appears to be trustworthy, so they have the power to edit various information without moderation.
-        If you think they’re abusing that power{% else %}If this user has been doing vandalism{% endif %}, please <a href="/contact?message=User+{{ object.id }}">report it</a>.</p>
+        <p>{% if object.trusted %}They appear to be trustworthy, so they have the power to edit various information without moderation.
+        If you disagree{% else %}If you notice any vandalism etc{% endif %}, please <a href="/contact?message=User+{{ object.id }}">let us know</a>.</p>
     {% endif %}
 
     <p>As well as the activity listed below, they have done {{ edits }} other edit{{ edits|pluralize }},
