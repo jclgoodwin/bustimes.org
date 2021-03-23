@@ -417,6 +417,75 @@ class VehicleEdit(models.Model):
                     return format_html('<ins>{}</ins>', edit)
         return original
 
+    def apply(self, save=True):
+        ok = True
+        vehicle = self.vehicle
+        update_fields = []
+        if self.withdrawn is not None:
+            vehicle.withdrawn = self.withdrawn
+            update_fields.append('withdrawn')
+        if self.fleet_number:
+            if self.fleet_number.startswith('-'):
+                if self.fleet_number == f'-{vehicle.fleet_code or vehicle.fleet_number}':
+                    vehicle.fleet_code = ''
+                    vehicle.fleet_number = None
+            else:
+                vehicle.fleet_code = self.fleet_number
+                if self.fleet_number.isdigit():
+                    vehicle.fleet_number = self.fleet_number
+                else:
+                    vehicle.fleet_number = None
+            update_fields.append('fleet_code')
+            update_fields.append('fleet_number')
+        if self.changes:
+            if vehicle.data:
+                vehicle.data = {
+                    **vehicle.data, **self.changes
+                }
+                for field in self.changes:
+                    if not self.changes[field]:
+                        del vehicle.data[field]
+            else:
+                vehicle.data = self.changes
+            update_fields.append('data')
+        for field in ('branding', 'name', 'notes', 'reg'):
+            new_value = getattr(self, field)
+            if new_value:
+                if new_value.startswith('-'):
+                    if new_value == f'-{getattr(vehicle, field)}':
+                        setattr(vehicle, field, '')
+                    else:
+                        continue
+                else:
+                    setattr(vehicle, field, new_value)
+                update_fields.append(field)
+        if self.vehicle_type:
+            try:
+                vehicle.vehicle_type = VehicleType.objects.get(name__iexact=self.vehicle_type)
+                update_fields.append('vehicle_type')
+            except VehicleType.DoesNotExist:
+                ok = False
+        if self.livery_id:
+            vehicle.livery_id = self.livery_id
+            vehicle.colours = ''
+            update_fields.append('livery')
+            update_fields.append('colours')
+        elif self.colours and self.colours != 'Other':
+            vehicle.livery = None
+            vehicle.colours = self.colours
+            update_fields.append('livery')
+            update_fields.append('colours')
+        if save:
+            vehicle.save(update_fields=update_fields)
+            for feature in self.vehicleeditfeature_set.all():
+                if feature.add:
+                    vehicle.features.add(feature.feature)
+                else:
+                    vehicle.features.remove(feature.feature)
+            if ok:
+                self.approved = True
+                self.save(update_fields=['approved'])
+
     def get_absolute_url(self):
         return self.vehicle.get_absolute_url()
 

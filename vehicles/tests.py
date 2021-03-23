@@ -205,7 +205,7 @@ class VehiclesTests(TestCase):
 
         self.client.force_login(self.user)
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.get(url)
         self.assertNotContains(response, 'already')
         self.assertContains(response, '<option value="Holt" selected>Holt</option>')
@@ -223,14 +223,14 @@ class VehiclesTests(TestCase):
         }
 
         # edit nothing
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(16):
             response = self.client.post(url, initial)
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
 
         # edit fleet number
         initial['fleet_number'] = '2'
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
         self.assertContains(response, 'I’ll update those details')
@@ -246,7 +246,7 @@ class VehiclesTests(TestCase):
         initial['colours'] = self.vehicle_2.livery_id
         initial['name'] = 'Colin'
         initial['url'] = 'http://localhost'
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(16):
             response = self.client.post(url, initial)
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'That URL does')
@@ -257,7 +257,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<td class="field-vehicle_type">Optare Tempo</td>')
 
         # should not create an edit
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(16):
             initial['colours'] = '#FFFF00'
             response = self.client.post(url, initial)
         self.assertTrue(response.context['form'].has_changed())
@@ -298,7 +298,7 @@ class VehiclesTests(TestCase):
             'depot': 'Long Sutton'
         }
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
         self.assertFalse(response.context['form'].has_changed())
@@ -312,7 +312,7 @@ class VehiclesTests(TestCase):
         initial['depot'] = ''
         initial['name'] = 'Luther Blisset'
         initial['branding'] = 'Coastliner'
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             # initial['operator'] = self.bova.id
             initial['reg'] = ''
             response = self.client.post(url, initial)
@@ -339,7 +339,7 @@ class VehiclesTests(TestCase):
         # self.assertContains(response, 'LYNX')
         # self.assertContains(response, 'BOVA')
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.get(url)
         self.assertContains(response, 'already')
 
@@ -348,7 +348,7 @@ class VehiclesTests(TestCase):
 
         url = self.vehicle_1.get_absolute_url() + '/edit'
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             self.client.post(url, {
                 'fleet_number': '',
                 'reg': '',

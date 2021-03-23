@@ -216,76 +216,6 @@ notes.admin_order_field = 'notes'
 changes.admin_order_field = 'changes'
 
 
-def apply_edits(queryset):
-    for edit in queryset.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features'):
-        ok = True
-        vehicle = edit.vehicle
-        update_fields = []
-        if edit.withdrawn is not None:
-            vehicle.withdrawn = edit.withdrawn
-            update_fields.append('withdrawn')
-        if edit.fleet_number:
-            if edit.fleet_number.startswith('-'):
-                if edit.fleet_number == f'-{vehicle.fleet_code or vehicle.fleet_number}':
-                    vehicle.fleet_code = ''
-                    vehicle.fleet_number = None
-            else:
-                vehicle.fleet_code = edit.fleet_number
-                if edit.fleet_number.isdigit():
-                    vehicle.fleet_number = edit.fleet_number
-                else:
-                    vehicle.fleet_number = None
-            update_fields.append('fleet_code')
-            update_fields.append('fleet_number')
-        if edit.changes:
-            if vehicle.data:
-                vehicle.data = {
-                    **vehicle.data, **edit.changes
-                }
-                for field in edit.changes:
-                    if not edit.changes[field]:
-                        del vehicle.data[field]
-            else:
-                vehicle.data = edit.changes
-            update_fields.append('data')
-        for field in ('branding', 'name', 'notes', 'reg'):
-            new_value = getattr(edit, field)
-            if new_value:
-                if new_value.startswith('-'):
-                    if new_value == f'-{getattr(vehicle, field)}':
-                        setattr(vehicle, field, '')
-                    else:
-                        continue
-                else:
-                    setattr(vehicle, field, new_value)
-                update_fields.append(field)
-        if edit.vehicle_type:
-            try:
-                vehicle.vehicle_type = VehicleType.objects.get(name__iexact=edit.vehicle_type)
-                update_fields.append('vehicle_type')
-            except VehicleType.DoesNotExist:
-                ok = False
-        if edit.livery_id:
-            vehicle.livery_id = edit.livery_id
-            vehicle.colours = ''
-            update_fields.append('livery')
-            update_fields.append('colours')
-        elif edit.colours and edit.colours != 'Other':
-            vehicle.livery = None
-            vehicle.colours = edit.colours
-            update_fields.append('livery')
-            update_fields.append('colours')
-        vehicle.save(update_fields=update_fields)
-        for feature in edit.vehicleeditfeature_set.all():
-            if feature.add:
-                vehicle.features.add(feature.feature)
-            else:
-                vehicle.features.remove(feature.feature)
-        if ok:
-            edit.approved = True
-            edit.save(update_fields=['approved'])
-
-
 class OperatorFilter(admin.SimpleListFilter):
     title = 'operator'
     parameter_name = 'operator'
@@ -403,7 +333,8 @@ class VehicleEditAdmin(admin.ModelAdmin):
         return queryset
 
     def apply_edits(self, request, queryset):
-        apply_edits(queryset)
+        for edit in queryset.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features'):
+            edit.apply()
         self.message_user(request, 'Applied edits.')
 
     def approve(self, request, queryset):

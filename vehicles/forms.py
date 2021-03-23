@@ -120,7 +120,7 @@ class EditVehicleForm(EditVehiclesForm):
     def __init__(self, *args, user, vehicle=None, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
-        if vehicle.fleet_code in vehicle.code or vehicle.fleet_number and str(vehicle.fleet_number) in vehicle.code:
+        if vehicle.fleet_code and vehicle.fleet_code in vehicle.code or str(vehicle.fleet_number) in vehicle.code:
             self.fields['fleet_number'].disabled = True
         elif vehicle.fleet_code and vehicle.latest_journey and vehicle.latest_journey.data:
             try:
