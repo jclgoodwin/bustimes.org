@@ -34,10 +34,10 @@ def get_routes(routes, when):
         return list(routes_by_service_code.values())
 
     if len(sources) == 1:
-        prefixes = set(route.code.split('/')[0] for route in routes if '.zip/' in route.code)
+        prefixes = set(route.code.split('.zip')[0] for route in routes if '.zip' in route.code)
         # use latest passenger zipfile filename
         if len(prefixes) > 1:
-            latest_prefix = max(prefixes)
+            latest_prefix = f'{max(prefixes)}.zip'
             routes = [route for route in routes if route.code.startswith(latest_prefix)]
         else:
             override_routes = [route for route in routes if route.start_date == route.end_date == when]
