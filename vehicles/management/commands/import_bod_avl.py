@@ -337,13 +337,13 @@ class Command(ImportLiveVehiclesCommand):
                     journey = journeys.filter(datetime=origin_aimed_departure_time).first()
             elif journey_code:
                 if '_' in journey_code:
-                    if journey_code == latest_journey.code:
+                    if route_name == latest_journey.route_name and journey_code == latest_journey.code:
                         journey = latest_journey
                     else:
                         journey = journeys.filter(route_name=route_name, code=journey_code).first()
                 else:
                     datetime = self.get_datetime(item)
-                    if journey_code == latest_journey.code:
+                    if route_name == latest_journey.route_name and journey_code == latest_journey.code:
                         if datetime - latest_journey.datetime < TWELVE_HOURS:
                             journey = latest_journey
                     else:
