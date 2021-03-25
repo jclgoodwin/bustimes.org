@@ -509,6 +509,7 @@ BOD_OPERATORS = [
     ('LAWS', 'EM',  {}, False),
     ('BMCS', 'SE',  {}, False),
 
+    ('CPLT', 'EA', {}, False),
     ('OBUS', 'EA', {
         'OURH': 'OURH',
         'OBUS': 'OBUS',
@@ -573,4 +574,5 @@ TICKETER_OPERATORS = [
     ('WM', ['LMST'], 'LMS Travel'),
     ('SE', ['ENSB'], 'Ensignbus'),
     ('EA', ['AMBS'], 'Ambassador Travel'),
+    ('EA', ['WHIP'], 'Go-Whippet'),
 ]
