@@ -282,6 +282,19 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(149, service.stopusage_set.order_by().distinct('stop_id').count())
 
+    @time_machine.travel('2021-03-25')
+    def test_delaine_101(self):
+        """Test timetable with some batshit year 2099 dates"""
+        self.handle_files('EA.zip', ['lincs_DELA_101_13101_.xml'])
+
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data['timetable']
+
+        self.assertEqual(20, len(timetable.date_options))
+        self.assertEqual(14, CalendarDate.objects.filter(operation=True, special=True).count())
+        self.assertEqual(2, CalendarDate.objects.filter(operation=True, special=False).count())
+
     @time_machine.travel('2017-08-29')
     def test_timetable_abbreviations_notes(self):
         """Test a timetable with a note which should determine the bounds of an abbreviation"""

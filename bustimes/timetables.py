@@ -170,18 +170,7 @@ class Timetable:
         end_date = date + datetime.timedelta(days=21)
         end_dates = [route.end_date for route in self.routes]
         if end_dates and all(end_dates):
-            max_end_date = max(end_dates)
-            end_date = min(end_date, max_end_date)  # 21 days in the future, or the end date, whichever is sooner
-        else:
-            max_end_date = None
-
-        if start_dates:
-            max_start_date = max(start_dates)
-            week = datetime.timedelta(days=7)
-            if max_start_date - end_date > week:
-                end_date = max_start_date + week
-                if max_end_date:
-                    end_date = min(max_end_date, end_date)
+            end_date = min(end_date, max(end_dates))  # 21 days in the future, or the end date, whichever is sooner
 
         if self.date and self.date < date:
             yield self.date

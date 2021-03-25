@@ -195,10 +195,13 @@ class DataSource(models.Model):
         return self.name.split('_')[0]
 
     def get_nice_url(self):
+        # BODS
         if self.url.startswith('https://data.bus-data.dft.gov.uk'):
             return self.url.replace('download/', '')
+        # Passenger
         if 'open-data' in self.url or 'data.discover' in self.url:
             return self.url
+        # Stagecoach
         if 'stagecoach' in self.url:
             return 'https://www.stagecoachbus.com/open-data'
         if self.settings and 'url' in self.settings:

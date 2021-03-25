@@ -345,10 +345,14 @@ class Command(BaseCommand):
             CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
                          operation=False) for date_range in operating_profile.nonoperation_days
         ]
-        calendar_dates += [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
-                         special=True, operation=True) for date_range in operating_profile.operation_days
-        ]
+        for date_range in operating_profile.operation_days:
+
+            calendar_date = CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                                         special=True, operation=True)
+            if date_range.end - date_range.start > datetime.timedelta(days=5):
+                print(date_range)
+                calendar_date.special = False
+            calendar_dates.append(calendar_date)
 
         dates = []
         for holiday in operating_profile.operation_bank_holidays:
