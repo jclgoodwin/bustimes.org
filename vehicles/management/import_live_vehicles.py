@@ -174,10 +174,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
             return
         journey.vehicle = vehicle
 
-        if latest and latest_journey.source_id != self.source.id and self.source.name != 'Bus Open Data':
-            if ((datetime or now) - latest_datetime).total_seconds() < 300:  # less than 5 minutes old
-                if latest_journey.service_id or not journey.service_id:
-                    return  # defer to other source
+        if latest and latest_journey.source_id != self.source.id:
+            if self.source.name not in ('Bus Open Data', 'Stagecoach'):
+                if ((datetime or now) - latest_datetime).total_seconds() < 300:  # less than 5 minutes old
+                    if latest_journey.service_id or not journey.service_id:
+                        return  # defer to other source
 
         if not latest and now and datetime:
             if (now - datetime).total_seconds() > 900:
