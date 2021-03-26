@@ -410,7 +410,7 @@ def edit_vehicle(request, vehicle_id):
     if not vehicle.editable():
         raise Http404
 
-    for edit in request.user.vehicleedit_set.filter(approved=None):
+    for edit in request.user.vehicleedit_set.filter(vehicle=vehicle, approved=None):
         edit.vehicle = vehicle
         edit.apply(save=False)
 
