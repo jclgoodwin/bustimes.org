@@ -136,7 +136,7 @@
                 return;
             }
         }
-        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
+        var params = '?ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
         lastStopsReq = reqwest('/stops.json' + params, function(data) {
             if (data && data.features) {
                 stopsHighWater = bounds;
@@ -168,7 +168,7 @@
         if (loadVehiclesTimeout) {
             clearTimeout(loadVehiclesTimeout);
         }
-        var params = '?ymax=' + bounds.getNorth() + '&xmax=' + bounds.getEast() + '&ymin=' + bounds.getSouth() + '&xmin=' + bounds.getWest();
+        var params = '?ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
         lastVehiclesReq = reqwest(
             '/vehicles.json' + params,
             function(data) {
@@ -271,10 +271,14 @@
         }
     }
 
+    function round(number) {
+        return Math.round(number * 1000) / 1000;
+    }
+
     // update window location hash
     function updateLocation() {
         var latLng = map.getCenter(),
-            string = map.getZoom() + '/' + Math.round(latLng.lat * 1000) / 1000 + '/' + Math.round(latLng.lng * 1000) / 1000;
+            string = map.getZoom() + '/' + round(latLng.lat) + '/' + round(latLng.lng);
 
         if (history.replaceState) {
             try {
