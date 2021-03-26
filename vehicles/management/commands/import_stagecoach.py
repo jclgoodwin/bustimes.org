@@ -115,8 +115,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if vehicle_code in self.vehicles_cache:
             vehicle = self.vehicles_cache[vehicle_code]
-            if vehicle.latest_journey and vehicle.latest_journey.source_id != self.source.id:
-                return None, None
         else:
             operator_id = self.operator_ids.get(item['oc'], item['oc'])
             if operator_id in self.operators:
