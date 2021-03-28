@@ -92,11 +92,11 @@ def stop_times_json(request, atco_code):
     times = []
     if 'when' in request.GET:
         try:
-            when = parse_datetime(request.GET['when'])
+            when = parse_datetime(request.GET['when']).astimezone()
         except ValueError:
             return HttpResponseBadRequest("'when' isn't in the right format")
     else:
-        when = timezone.now()
+        when = timezone.localtime()
     services = stop.service_set.filter(current=True).defer('geometry', 'search_vector')
 
     try:
