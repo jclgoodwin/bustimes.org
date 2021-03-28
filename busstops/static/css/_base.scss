@@ -1300,6 +1300,10 @@ tfoot a {
         display: inline;
     }
 
+    p:first-child {
+        margin-top: .5em;
+    }
+
     p:last-child {
         margin-bottom: 0;
     }

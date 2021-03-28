@@ -70,26 +70,26 @@ class Command(ImportLiveVehiclesCommand):
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)
 
-        if fleet_number.isdigit():
-            vehicle, created = vehicles.get_or_create(
-                defaults,
-                fleet_number=fleet_number,
-            )
-        else:
-            vehicle, created = vehicles.get_or_create(
-                defaults,
-                code=code,
-            )
+        vehicle = None
+        created = False
 
-        if 'fleet_code' in defaults:  # McGill
-            if vehicle.code != code:
-                vehicle.code = code
-                vehicle.fleet_code = defaults['fleet_code']
-                vehicle.save(update_fields=['code', 'fleet_code'])
+        if 'reg' in defaults:
+            vehicle = vehicles.filter(reg=defaults['reg']).first()
 
-        elif vehicle.code.isdigit() and not code.isdigit():
+        if not vehicle and fleet_number.isdigit():
+            vehicle = vehicles.filter(fleet_number=fleet_number).first()
+
+        if not vehicle:
+            vehicle, created = vehicles.get_or_create(defaults, code=code)
+
+        if vehicle.code != code:
             vehicle.code = code
-            vehicle.save(update_fields=['code'])
+            if 'fleet_code' in defaults:
+                vehicle.fleet_code = defaults['fleet_code']
+            elif 'fleet_number' in defaults:
+                vehicle.fleet_number = defaults['fleet_number']
+                vehicle.fleet_code = vehicle.fleet_number
+            vehicle.save(update_fields=['code', 'fleet_code', 'fleet_number'])
 
         return vehicle, created
 
