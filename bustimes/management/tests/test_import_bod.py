@@ -91,21 +91,24 @@ class ImportBusOpenDataTest(TestCase):
             <td>09:33</td>
         </tr>""")
 
+        expected_json = {
+            'times': [
+                {
+                    'service': {'line_name': '54', 'operators': [{'id': 'LYNX', 'name': 'Lynx', 'parent': ''}]},
+                    'trip_id': trip.id,
+                    'destination': {
+                        'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'
+                    },
+                    'aimed_arrival_time': None, 'aimed_departure_time': '2020-05-01T09:15:00+01:00'
+                }
+            ]
+        }
+
         response = self.client.get('/stops/2900W0321/times.json')
-        self.assertEqual(
-            response.json(), {
-                'times': [
-                    {
-                        'service': {'line_name': '54', 'operators': [{'id': 'LYNX', 'name': 'Lynx', 'parent': ''}]},
-                        'trip_id': trip.id,
-                        'destination': {
-                            'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'
-                        },
-                        'aimed_arrival_time': None, 'aimed_departure_time': '2020-05-01T09:15:00+01:00'
-                    }
-                ]
-            }
-        )
+        self.assertEqual(response.json(), expected_json)
+
+        response = self.client.get('/stops/2900W0321/times.json?when=2020-05-01T09:15:00%2b01:00')
+        self.assertEqual(response.json(), expected_json)
 
         response = self.client.get('/stops/2900W0321/times.json?limit=10')
         self.assertEqual(1, len(response.json()['times']))

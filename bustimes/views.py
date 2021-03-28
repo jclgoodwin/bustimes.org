@@ -1,7 +1,7 @@
 import os
 import zipfile
 import requests
-from datetime import timedelta
+from datetime import timedelta, datetime
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.db.models import Prefetch, F, Exists, OuterRef, DurationField, ExpressionWrapper
@@ -90,11 +90,14 @@ def route_xml(request, source, code=''):
 def stop_times_json(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code=atco_code)
     times = []
+
+    current_timezone = timezone.get_current_timezone()
+
     if 'when' in request.GET:
         try:
-            when = parse_datetime(request.GET['when']).astimezone()
+            when = parse_datetime(request.GET['when']).astimezone(current_timezone)
         except ValueError:
-            return HttpResponseBadRequest("'when' isn't in the right format")
+            return HttpResponseBadRequest(f"'{request.GET['when']}' isn't in the right format")
     else:
         when = timezone.localtime()
     services = stop.service_set.filter(current=True).defer('geometry', 'search_vector')
