@@ -263,7 +263,10 @@ def vehicles_json(request):
             locations.append(item)
             if 'service_id' in item and item['service_id']:
                 service_ids.add(item['service_id'])
-            vehicle = vehicles[int(vehicle_ids[i])]
+            try:
+                vehicle = vehicles[int(vehicle_ids[i])]
+            except KeyError:
+                continue
             item['vehicle'] = vehicle.get_json(item['heading'])
 
     services = Service.objects.only('line_name', 'line_brand', 'slug').in_bulk(service_ids)
