@@ -105,7 +105,7 @@ class VehicleAdmin(admin.ModelAdmin):
 
     def merge(self, request, queryset):
         first = None
-        for vehicle in queryset:
+        for vehicle in queryset.order_by('id'):
             if not first:
                 first = vehicle
             else:
@@ -116,9 +116,12 @@ class VehicleAdmin(admin.ModelAdmin):
                 vehicle.latest_journey = None
                 vehicle.save(update_fields=['latest_location', 'latest_journey'])
                 first.save(update_fields=['latest_location', 'latest_journey'])
-                vehicle.delete()
                 first.code = vehicle.code
-                first.save(update_fields=['code'])
+                first.fleet_code = vehicle.fleet_code
+                first.fleet_number = vehicle.fleet_number
+                first.reg = vehicle.reg
+                vehicle.delete()
+                first.save(update_fields=['code', 'fleet_code', 'fleet_number', 'reg'])
 
     def last_seen(self, obj):
         if obj.latest_journey:

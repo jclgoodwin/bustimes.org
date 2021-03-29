@@ -7,6 +7,12 @@ def get_vehicle_edit(vehicle, fields, now, request):
     if request.user.is_authenticated:
         edit.user = request.user
 
+    if 'fleet_number' in fields:
+        if fields['fleet_number']:
+            edit.fleet_number = fields['fleet_number']
+        else:
+            edit.fleet_number = f'-{vehicle.fleet_code or vehicle.fleet_number}'
+
     for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes'):
         if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
             if fields[field]:
