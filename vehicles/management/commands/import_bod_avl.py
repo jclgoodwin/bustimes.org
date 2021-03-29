@@ -25,7 +25,7 @@ class Command(ImportLiveVehiclesCommand):
         'ANE': ['ARDU', 'ANUM', 'ANEA'],  # Arriva North East
         'ANW': ['ANWE', 'AMSY', 'ACYM'],  # Arriva North West
         'ATS': ['ARBB', 'ASES', 'GLAR'],  # Arriva the Shires
-        'AMD': ['AMID', 'AMNO', 'AFCL'],  # Arriva Midlands
+        'AMD': ['AMID', 'AMNO', 'AFCL', 'ADER'],  # Arriva Midlands
         'CBBH': ['CBBH', 'CBNL'],  # Centrebus
         'UNO': ['UNOE', 'UNIB'],  # Uno/Universitybus
         'UNIB': ['UNOE', 'UNIB'],
