@@ -36,6 +36,12 @@ class CalendarDateInline(admin.TabularInline):
     model = CalendarDate
 
 
+class CalendarDateAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'start_date', 'end_date']
+    list_filter = ['start_date', 'end_date']
+    raw_id_fields = ['calendar']
+
+
 class CalendarAdmin(admin.ModelAdmin):
     list_display = ['id', '__str__', 'summary']
     inlines = [CalendarDateInline]
@@ -72,5 +78,6 @@ class GarageAdmin(admin.ModelAdmin):
 admin.site.register(Route, RouteAdmin)
 admin.site.register(Trip, TripAdmin)
 admin.site.register(Calendar, CalendarAdmin)
+admin.site.register(CalendarDate, CalendarDateAdmin)
 admin.site.register(Note, NoteAdmin)
 admin.site.register(Garage, GarageAdmin)

@@ -65,6 +65,8 @@ class VehicleAdmin(admin.ModelAdmin):
                     'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
     list_filter = (
         'withdrawn',
+        'features',
+        'vehicle_type',
         ('source', admin.RelatedOnlyFieldListFilter),
         ('operator', admin.RelatedOnlyFieldListFilter),
     )
