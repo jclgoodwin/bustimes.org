@@ -23,8 +23,8 @@ session = requests.Session()
 
 def clean_up(operators, sources, incomplete=False):
     routes = Route.objects.filter(service__operator__in=operators).exclude(source__in=sources)
-    if incomplete:
-        routes = routes.exclude(source__url__contains='.tnds.')
+    if incomplete:  # leave other sources alone
+        routes = routes.filter(source__url__contains='bus-data.dft.gov.uk')
     routes.delete()
     Service.objects.filter(operator__in=operators, current=True, route=None).update(current=False)
     Calendar.objects.filter(trip=None).delete()
