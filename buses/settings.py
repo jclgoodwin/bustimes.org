@@ -515,6 +515,8 @@ BOD_OPERATORS = [
         'OBUS': 'OBUS',
     }, False),
 
+    ('SNDR', 'EA', {}, True),
+
     ('MDCL', 'EM', {}, False),
 
     ('RDRT', 'SE', {
