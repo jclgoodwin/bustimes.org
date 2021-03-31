@@ -29,11 +29,11 @@
         if (document.body.style.paddingTop) {
             container.style.top = document.body.style.paddingTop;
         }
-        document.body.style.overflow = 'hidden';
 
         setLocationHash('#map');
 
         if (map) {
+            document.body.style.overflow = 'hidden';
             map.invalidateSize();
         } else {
             loadjs([window.LEAFLET_CSS_URL, window.MAPS_JS_URL, window.LEAFLET_JS_URL], setUpMap);
@@ -66,6 +66,8 @@
         if (map) {
             return;
         }
+
+        document.body.style.overflow = 'hidden';
 
         map = L.map(container);
 
