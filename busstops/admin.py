@@ -231,7 +231,7 @@ class PlaceAdmin(admin.ModelAdmin):
 @admin.register(DataSource)
 class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
-    list_display = ('name', 'url', 'datetime', 'settings', 'operators', 'routes', 'services')
+    list_display = ('name', 'url', 'datetime', 'settings', 'operators', 'routes', 'services', 'journeys')
     list_editable = ['datetime']
     actions = ['delete_routes', 'remove_datetimes']
     show_full_result_count = False
@@ -252,13 +252,21 @@ class DataSourceAdmin(admin.ModelAdmin):
     def routes(obj):
         url = reverse('admin:bustimes_route_changelist')
         routes = obj.route_set.count()
-        return mark_safe(f'<a href="{url}?source={obj.id}">{routes}</a>')
+        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{routes}</a>')
 
     @staticmethod
     def services(obj):
-        url = reverse('admin:busstops_service_changelist')
-        services = obj.service_set.count()
-        return mark_safe(f'<a href="{url}?source={obj.id}">{services}</a>')
+        if obj.operators:
+            url = reverse('admin:busstops_service_changelist')
+            services = obj.service_set.count()
+            return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{services}</a>')
+
+    @staticmethod
+    def journeys(obj):
+        if not obj.operators:
+            url = reverse('admin:vehicles_vehiclejourney_changelist')
+            services = obj.vehiclejourney_set.filter(latest_vehicle__isnull=False).count()
+            return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{services}</a>')
 
     def delete_routes(self, request, queryset):
         result = Route.objects.filter(source__in=queryset).delete()
