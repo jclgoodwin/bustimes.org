@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q, Exists, OuterRef
 from busstops.models import Operator, Service
-from .models import VehicleType, VehicleFeature, Livery, Vehicle
+from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
 from .fields import RegField
 
 
@@ -46,12 +46,18 @@ class EditVehiclesForm(forms.Form):
         if self.cleaned_data['other_colour']:
             if self.cleaned_data.get('colours') != 'Other':
                 return
+
+            try:
+                get_text_colour(self.cleaned_data['other_colour'])
+            except ValueError as e:
+                raise ValidationError(str(e))
+
         return self.cleaned_data['other_colour']
 
     def has_really_changed(self):
         if not self.has_changed():
             return False
-        if all(key == 'url' for key in self.changed_data):
+        if all(key == 'url' or key == 'other_colour' for key in self.changed_data):
             return False
         return True
 
@@ -112,8 +118,8 @@ class EditVehicleForm(EditVehiclesForm):
     notes = forms.CharField(  # help_text="""Please <strong>don’t</strong>
                               # add information about depots, previous operators, etc""",
                             required=False, max_length=255)
-    url = forms.URLField(label='URL', help_text="Optional link to a public (not Facebook) web page or photo "
-                         "showing repaint", required=False, max_length=255)
+    url = forms.URLField(label='URL', help_text="Optional link to a public web page (not a private Facebook group)"
+                         " or picture showing repaint", required=False, max_length=255)
     field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
 

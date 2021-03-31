@@ -343,6 +343,33 @@ class VehiclesTests(TestCase):
             response = self.client.get(url)
         self.assertContains(response, 'already')
 
+    def test_vehicle_edit_colour(self):
+        self.client.force_login(self.user)
+        url = self.vehicle_2.get_absolute_url() + '/edit'
+
+        initial = {
+            'fleet_number': '50',
+            'reg': 'UWW2X',
+            'vehicle_type': self.vehicle_2.vehicle_type_id,
+            'operator': self.lynx.id,
+            'colours': self.vehicle_2.livery_id,
+            'other_colour': '',
+            'notes': '',
+            'depot': 'Long Sutton'
+        }
+
+        with self.assertNumQueries(15):
+            response = self.client.post(url, initial)
+            self.assertContains(response, 'You haven&#x27;t changed anything')
+
+        initial['colours'] = 'Other'
+        initial['other_colour'] = 'Bath is my favourite spa town, and so is Harrogate'
+        with self.assertNumQueries(15):
+            response = self.client.post(url, initial)
+            self.assertEqual(response.context['form'].errors, {'other_colour': [
+                'An HTML5 simple color must be a Unicode string exactly seven characters long.'
+            ]})
+
     def test_remove_fleet_number(self):
         self.client.force_login(self.user)
 
@@ -382,21 +409,22 @@ class VehiclesTests(TestCase):
     def test_vehicles_edit(self):
         self.client.force_login(self.user)
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(8):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
+        self.assertFalse(VehicleRevision.objects.all())
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,
-                'notes': 'foo'
+                'vehicle_type': self.vehicle_2.vehicle_type_id
             })
         self.assertContains(response, 'I’ll update those details (1 vehicle) shortly')
         edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.vehicle_type, '')
-        # self.assertEqual(edit.notes, 'foo')
+        self.assertEqual(edit.vehicle_type, 'Optare Spectra')
+        self.assertEqual(edit.notes, '')
 
         self.assertContains(response, 'FD54\xa0JYA')
 
