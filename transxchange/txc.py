@@ -111,8 +111,7 @@ class JourneyPattern:
         self.direction = element.findtext('Direction')
         if self.direction and self.direction != 'inbound' and self.direction != 'outbound':
             # clockwise/anticlockwise? Not supported, not sure if that's a problem
-            print(self.direction)
-            self.direction == self.direction.lower()
+            self.direction = self.direction.lower()
 
         self.operating_profile = element.find('OperatingProfile')
         if self.operating_profile is not None:
