@@ -168,15 +168,18 @@ class Command(ImportLiveVehiclesCommand):
                     condition |= Q(fleet_code=code)
         vehicles = vehicles.filter(condition)
 
-        # VehicleUniqueId
-        try:
-            fleet_number = item['Extensions']['VehicleJourney']['VehicleUniqueId']
-            if len(fleet_number) < len(vehicle_ref):
-                defaults['fleet_code'] = fleet_number
-            if fleet_number.isdigit():
-                defaults['fleet_number'] = fleet_number
-        except KeyError:
-            pass
+        if operator_ref == 'MSOT':
+            defaults['fleet_code'] = vehicle_ref
+        else:
+            # VehicleUniqueId
+            try:
+                fleet_number = item['Extensions']['VehicleJourney']['VehicleUniqueId']
+                if len(fleet_number) < len(vehicle_ref):
+                    defaults['fleet_code'] = fleet_number
+                if fleet_number.isdigit():
+                    defaults['fleet_number'] = fleet_number
+            except KeyError:
+                pass
 
         try:
             vehicle, created = vehicles.get_or_create(defaults)
