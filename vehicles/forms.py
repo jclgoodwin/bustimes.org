@@ -147,3 +147,5 @@ class EditVehicleForm(EditVehiclesForm):
             if vehicle.operator:
                 condition |= Q(pk=vehicle.operator_id)
             self.fields['operator'].queryset = operators.filter(condition)
+        else:
+            del self.fields['operator']

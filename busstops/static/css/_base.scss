@@ -259,18 +259,6 @@ header {
     }
 }
 
-@media (min-width: 22em) {
-    .site-name {
-        background: url('/static/svg/bus.svg') no-repeat;
-        background-position: right .666em center;
-        padding-right: 3.208em;
-    }
-
-    .ferry {
-        background-image: url('/static/svg/boat.svg');
-    }
-}
-
 h1,
 h2 {
     line-height: 1.2em;
