@@ -1,4 +1,5 @@
 import requests
+from datetime import timedelta
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q, Exists, OuterRef
@@ -23,7 +24,6 @@ def get_livery_choices(operator):
 
 
 class EditVehiclesForm(forms.Form):
-    operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False)
@@ -88,29 +88,13 @@ class EditVehiclesForm(forms.Form):
         else:
             del self.fields['depot']
 
-        operators = None
-        if vehicle and (not operator or operator.parent):
-            operators = Operator.objects
-            if user.trusted and operator:
-                # any sibling operator
-                operators = operators.filter(parent=operator.parent)
-                condition = Exists(Service.objects.filter(current=True, operator=OuterRef('pk')).only('id'))
-                condition |= Exists(Vehicle.objects.filter(operator=OuterRef('pk')).only('id'))
-            else:
-                # only operators whose services the vehicle has operated
-                condition = Exists(vehicle.vehiclejourney_set.filter(service__operator=OuterRef('pk')))
-            if operator:
-                condition |= Q(pk=operator.pk)
-            self.fields['operator'].queryset = operators.filter(condition)
-        else:
-            del self.fields['operator']
-
 
 class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle
     """
     fleet_number = forms.CharField(required=False, max_length=14)
     reg = RegField(label='Number plate', required=False, max_length=10)
+    operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
     name = forms.CharField(label='Name', help_text="Not your name", required=False, max_length=255)
     previous_reg = RegField(required=False, max_length=14)
@@ -123,7 +107,7 @@ class EditVehicleForm(EditVehiclesForm):
     field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'depot', 'notes']
 
-    def __init__(self, *args, user, vehicle=None, **kwargs):
+    def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
         if vehicle.fleet_code and vehicle.fleet_code in vehicle.code or str(vehicle.fleet_number) in vehicle.code:
@@ -143,3 +127,23 @@ class EditVehicleForm(EditVehiclesForm):
                 del self.fields['notes']
             if not vehicle.branding:
                 del self.fields['branding']
+
+        if not vehicle.operator or vehicle.operator.parent:
+            operators = Operator.objects
+            if user.trusted and vehicle.operator:
+                # any sibling operator
+                operators = operators.filter(parent=vehicle.operator.parent)
+                condition = Exists(Service.objects.filter(current=True, operator=OuterRef('pk')).only('id'))
+                condition |= Exists(Vehicle.objects.filter(operator=OuterRef('pk')).only('id'))
+            elif vehicle.latest_journey:
+                # only operators whose services the vehicle has operated
+                condition = Exists(
+                    vehicle.vehiclejourney_set.filter(service__operator=OuterRef('pk')),
+                    datetime__gte=vehicle.latest_journey.datetime - timedelta(days=1)
+                )
+            else:
+                del self.fields['operator']
+                return
+            if vehicle.operator:
+                condition |= Q(pk=vehicle.operator_id)
+            self.fields['operator'].queryset = operators.filter(condition)

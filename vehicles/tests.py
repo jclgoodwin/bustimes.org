@@ -291,14 +291,13 @@ class VehiclesTests(TestCase):
             'fleet_number': '50',
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
-            'operator': self.lynx.id,
             'colours': self.vehicle_2.livery_id,
             'other_colour': '#ffffff',
             'notes': '',
             'depot': 'Long Sutton'
         }
 
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
         self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
         self.assertFalse(response.context['form'].has_changed())
@@ -312,34 +311,21 @@ class VehiclesTests(TestCase):
         initial['depot'] = ''
         initial['name'] = 'Luther Blisset'
         initial['branding'] = 'Coastliner'
-        with self.assertNumQueries(14):
-            # initial['operator'] = self.bova.id
+        with self.assertNumQueries(13):
             initial['reg'] = ''
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
 
-        # check vehicle operator has been changed
-        # self.assertContains(response, '/operators/bova-and-over')
-        # self.assertContains(response, 'Changed operator from Lynx to Bova and Over')
         self.assertContains(response, 'Changed depot from Long Sutton')
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
         response = self.client.get('/vehicles/history')
-        # self.assertContains(response, 'operator')
-        # self.assertContains(response, 'LYNX')
-        # self.assertContains(response, 'BOVA')
-
-        # revision = response.context['revisions'][0]
-        # self.assertEqual(revision.from_operator, self.lynx)
-        # self.assertEqual(revision.to_operator, self.bova)
-        # self.assertEqual(str(revision), 'operator: Lynx → Bova and Over, depot: Long Sutton → ')
+        self.assertContains(response, 'Luther Blisset')
 
         response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
-        # self.assertContains(response, 'operator')
-        # self.assertContains(response, 'LYNX')
-        # self.assertContains(response, 'BOVA')
+        self.assertContains(response, 'Luther Blisset')
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             response = self.client.get(url)
         self.assertContains(response, 'already')
 
@@ -351,20 +337,19 @@ class VehiclesTests(TestCase):
             'fleet_number': '50',
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
-            'operator': self.lynx.id,
             'colours': self.vehicle_2.livery_id,
             'other_colour': '',
             'notes': '',
             'depot': 'Long Sutton'
         }
 
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
             self.assertContains(response, 'You haven&#x27;t changed anything')
 
         initial['colours'] = 'Other'
         initial['other_colour'] = 'Bath is my favourite spa town, and so is Harrogate'
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
             self.assertEqual(response.context['form'].errors, {'other_colour': [
                 'An HTML5 simple color must be a Unicode string exactly seven characters long.'
