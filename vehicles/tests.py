@@ -453,7 +453,7 @@ class VehiclesTests(TestCase):
             self.client.get('/map')
 
     def test_vehicles(self):
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             self.client.get('/vehicles')
 
     def test_journey_debug(self):

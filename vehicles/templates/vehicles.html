@@ -20,57 +20,20 @@
 
 <h2>Operators</h2>
 
+<h3>Recently added</h3>
+
+<ul class="long">
+    {% for operator in new_operators %}
+        <li><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></li>
+    {% endfor %}
+</ul>
+
+<h3>All</h3>
+
 <ul class="long">
     {% for operator in operators %}
         <li><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></li>
     {% endfor %}
 </ul>
-
-<!-- <table>
-    <thead>
-        <tr>
-            <th scope="col">Operator</th>
-            <th scope="col">Number of vehicles</th>
-        </tr>
-    </thead>
-    <tbody>
-</table>
-
-<h2>Liveries</h2>
-
-<table>
-    <thead>
-        <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Livery</th>
-            <th scope="col">Number of vehicles</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for livery in liveries %}
-            <tr>
-                <td><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></td>
-            </tr>
-            <tr>
-                
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<h2>Vehicle types</h2>
-
-<table>
-    <thead>
-        <tr>
-            <th scope="col">Type</th>
-            <th scope="col">Coach?</th>
-            <th scope="col">Decker?</th>
-            <th scope="col">Number of vehicles</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table> -->
 
 {% endblock %}

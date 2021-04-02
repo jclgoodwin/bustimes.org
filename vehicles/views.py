@@ -3,7 +3,7 @@ import json
 import xml.etree.cElementTree as ET
 import datetime
 from haversine import haversine
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Min
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -37,8 +37,14 @@ class Vehicles():
 
 
 def vehicles(request):
+    operators = Operator.objects.filter(
+        Exists(Vehicle.objects.filter(operator=OuterRef('pk'), withdrawn=False))
+    )
     return render(request, 'vehicles.html', {
-        'operators': Operator.objects.filter(vehicle__withdrawn=False).distinct()
+        'new_operators': operators.annotate(
+            min=Min('vehicle__id'),
+        ).order_by('-min')[:36],
+        'operators': operators
     })
 
 
