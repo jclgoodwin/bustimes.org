@@ -33,11 +33,14 @@ class ImportFromCSVCommand(BaseCommand):
     def process_rows(rows):
         return rows
 
+    def handle_rows(self, rows):
+        for row in self.process_rows(rows):
+            self.handle_row(row)
+
     def handle(self, *args, **options):
         """
         Runs when the command is executed
         """
         with open(self.input, encoding=self.encoding) as input:
             rows = csv.DictReader(input)
-            for row in self.process_rows(rows):
-                self.handle_row(row)
+            self.handle_rows(rows)
