@@ -462,17 +462,8 @@ class OperatingProfile:
 
         # Bank Holidays
 
-        bank_holidays_operation_element = element.find('BankHolidayOperation/DaysOfOperation')
-        bank_holidays_nonoperation_element = element.find('BankHolidayOperation/DaysOfNonOperation')
-        if bank_holidays_operation_element is not None:
-            self.operation_bank_holidays = [e.tag for e in bank_holidays_operation_element]
-        else:
-            self.operation_bank_holidays = []
-
-        if bank_holidays_nonoperation_element is not None:
-            self.nonoperation_bank_holidays = [e.tag for e in bank_holidays_nonoperation_element]
-        else:
-            self.nonoperation_bank_holidays = []
+        self.operation_bank_holidays = element.find('BankHolidayOperation/DaysOfOperation')
+        self.nonoperation_bank_holidays = element.find('BankHolidayOperation/DaysOfNonOperation')
 
 
 class DateRange:

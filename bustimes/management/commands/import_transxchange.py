@@ -171,6 +171,17 @@ def get_open_data_operators():
     return set(open_data_operators), set(incomplete_operators)
 
 
+def get_calendar_date(date, operation, summary):
+    return CalendarDate(
+        start_date=date,
+        end_date=date,
+        dates=DateRange(date, date, '[]'),
+        special=operation,
+        operation=operation,
+        summary=summary
+    )
+
+
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
@@ -340,55 +351,46 @@ class Command(BaseCommand):
         for service in Service.objects.filter(id__in=self.service_ids):
             service.update_geometry()
 
+    def do_bank_holidays(self, holidays, operating_period, operation, calendar_dates):
+        if not holidays:
+            return
+        dates = []  # (to avoid creating duplicates)
+        for element in holidays:
+            holiday = element.tag
+            if holiday == 'OtherPublicHoliday':
+                date = element.findtext('Date')
+                if date not in dates:
+                    dates.append(date)
+                    calendar_dates.append(
+                        get_calendar_date(date, operation, element.findtext('Description'))
+                    )
+            elif holiday in BANK_HOLIDAYS:
+                for date in BANK_HOLIDAYS[holiday]:
+                    if date not in dates and operating_period.contains(date):
+                        dates.append(date)
+                        calendar_dates.append(
+                            get_calendar_date(date, operation, holiday)
+                        )
+            else:
+                self.undefined_holidays.add(holiday)
+
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
             CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
                          operation=False) for date_range in operating_profile.nonoperation_days
         ]
         for date_range in operating_profile.operation_days:
-
             calendar_date = CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
                                          special=True, operation=True)
             if date_range.end - date_range.start > datetime.timedelta(days=5):
+                # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation
+                # (school term dates etc)
                 print(date_range)
                 calendar_date.special = False
             calendar_dates.append(calendar_date)
 
-        dates = []
-        for holiday in operating_profile.operation_bank_holidays:
-            if holiday in BANK_HOLIDAYS:
-                for date in BANK_HOLIDAYS[holiday]:
-                    if operating_period.contains(date):
-                        if date not in dates:
-                            dates.append(date)
-                            calendar_dates.append(
-                                CalendarDate(
-                                    start_date=date, end_date=date,
-                                    dates=DateRange(date, date, '[]'),
-                                    special=True, operation=True,
-                                    summary=holiday
-                                )
-                            )
-            else:
-                self.undefined_holidays.add(holiday)
-
-        dates = []
-        for holiday in operating_profile.nonoperation_bank_holidays:
-            if holiday in BANK_HOLIDAYS:
-                for date in BANK_HOLIDAYS[holiday]:
-                    if operating_period.contains(date):
-                        if date not in dates:
-                            dates.append(date)
-                            calendar_dates.append(
-                                CalendarDate(
-                                    start_date=date, end_date=date,
-                                    dates=DateRange(date, date, '[]'),
-                                    operation=False,
-                                    summary=holiday
-                                )
-                            )
-            else:
-                self.undefined_holidays.add(holiday)
+        self.do_bank_holidays(operating_profile.operation_bank_holidays, operating_period, True, calendar_dates)
+        self.do_bank_holidays(operating_profile.nonoperation_bank_holidays, operating_period, False, calendar_dates)
 
         sodt = operating_profile.serviced_organisation_day_type
         summary = []
