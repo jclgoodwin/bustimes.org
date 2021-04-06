@@ -29,6 +29,7 @@ else:
 
 INSTALLED_APPS = [
     'accounts',
+    'busstops',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.sitemaps',
-    'busstops',
     'bustimes',
     'disruptions',
     'fares',
