@@ -189,6 +189,7 @@ def status(request):
 
     return render(request, 'status.html', {
         'bod_avl_status': cache.get('bod_avl_status', []),
+        'tfn_disruption_heartbeat': cache.get('Heartbeat:TransportAPI'),
         'tnds': tnds
     })
 

@@ -79,7 +79,7 @@ class ImportNPTGTest(TestCase):
             active=False
         )
 
-        # localtiies with no active stop points should return a 404
+        # localities with no active stop points should return a 404
         self.assertEqual(404, self.client.get(self.cambridge.get_absolute_url()).status_code)
         self.assertEqual(404, self.client.get(self.addenbrookes.get_absolute_url()).status_code)
         self.assertEqual(404, self.client.get(stop.get_absolute_url()).status_code)

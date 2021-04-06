@@ -276,7 +276,9 @@ class Command(BaseCommand):
             if operator:
                 return operator
 
-        self.missing_operators.append(ET.tostring(operator_element, encoding="unicode"))
+        missing_operator = ET.tostring(operator_element, encoding="unicode")
+        if missing_operator not in self.missing_operators:
+            self.missing_operators.append(missing_operator)
 
     def get_operators(self, transxchange, service):
         operators = transxchange.operators
