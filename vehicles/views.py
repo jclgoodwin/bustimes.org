@@ -25,7 +25,7 @@ from .utils import get_vehicle_edit, do_revision, do_revisions
 from .tasks import handle_siri_vm, handle_siri_sx
 
 
-class Vehicles():
+class Vehicles:
     def __init__(self, operator):
         self.operator = operator
 

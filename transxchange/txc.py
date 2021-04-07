@@ -137,15 +137,13 @@ class JourneyPatternSection:
 
 
 class JourneyPatternStopUsage:
-    sequencenumber = None
-
     """Either a 'From' or 'To' element in TransXChange."""
     def __init__(self, element, stops):
         self.activity = element.findtext('Activity')
 
-        sequencenumber = element.get('SequenceNumber')
-        if sequencenumber is not None:
-            self.sequencenumber = int(sequencenumber)
+        self.sequencenumber = element.get('SequenceNumber')
+        if self.sequencenumber is not None:
+            self.sequencenumber = int(self.sequencenumber)
 
         self.stop = stops.get(element.find('StopPointRef').text)
         if self.stop is None:
@@ -216,12 +214,6 @@ class VehicleType:
 
 class VehicleJourney:
     """A scheduled journey that happens at most once per day"""
-    operating_profile = None
-    journey_pattern = None
-    journey_ref = None
-    block = None
-    garage_ref = None
-
     def __str__(self):
         return str(self.departure_time)
 
@@ -239,15 +231,17 @@ class VehicleJourney:
 
         journeypatternref_element = element.find('JourneyPatternRef')
         if journeypatternref_element is not None:
+            self.journey_ref = None
             self.journey_pattern = services[self.service_ref].journey_patterns.get(journeypatternref_element.text)
         else:
             # Journey has no direct reference to a JourneyPattern.
             # Instead, it has a reference to another journey...
             self.journey_ref = element.find('VehicleJourneyRef').text
+            self.journey_pattern = None
 
-        operatingprofile_element = element.find('OperatingProfile')
-        if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
+        self.operating_profile = element.find('OperatingProfile')
+        if self.operating_profile is not None:
+            self.operating_profile = OperatingProfile(self.operating_profile, serviced_organisations)
 
         hours, minutes, seconds = element.find('DepartureTime').text.split(':')
         self.departure_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
