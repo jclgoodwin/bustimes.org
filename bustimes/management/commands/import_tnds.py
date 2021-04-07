@@ -34,15 +34,18 @@ class Command(BaseCommand):
             s3_key = f'TNDS/{versioned_name}'
             existing = self.get_existing_file(s3_key)
 
-            if not existing or existing['Size'] != int(details['size']):
-                path = os.path.join(settings.TNDS_DIR, name)
+            if existing and existing['Size'] == int(details['size']):
+                continue
 
-                if not os.path.exists(path) or os.path.getsize(path) != int(details['size']):
-                    with open(path, 'wb') as open_file:
-                        self.ftp.retrbinary(f"RETR {name}", open_file.write)
-                self.client.upload_file(path, 'bustimes-data', s3_key)
+            path = os.path.join(settings.TNDS_DIR, name)
+            if os.path.exists(path) and os.path.getsize(path) == int(details['size']):
+                continue
 
-                self.changed_files.append(path)
+            with open(path, 'wb') as open_file:
+                self.ftp.retrbinary(f"RETR {name}", open_file.write)
+            self.client.upload_file(path, 'bustimes-data', s3_key)
+
+            self.changed_files.append(path)
 
     def handle(self, username, password, *args, **options):
         self.client = boto3.client('s3', endpoint_url='https://ams3.digitaloceanspaces.com')
