@@ -41,8 +41,7 @@ def get_vehicle_edit(vehicle, fields, now, request):
 
     if fields.get('colours'):
         if fields['colours'].isdigit():
-            assert type(fields['colours']) is int
-            edit.livery_id = fields['colours']
+            edit.livery_id = int(fields['colours'])
             if edit.livery_id != vehicle.livery_id:
                 changed = True
         elif fields['colours']:
