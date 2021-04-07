@@ -74,7 +74,10 @@ class OperatorTests(TestCase):
         response = self.client.get('/admin/busstops/operator/?q=sanders')
         self.assertEqual(0, response.context_data['cl'].result_count)
 
-        response = self.client.get('/admin/busstops/operator/autocomplete/?q=ainsley')
+        response = self.client.get(
+            '/admin/autocomplete/?term=ainsley&app_label=busstops&model_name=operator_payment_methods'
+            '&field_name=operator'
+        )
         self.assertEqual(response.json(), {"results": [], "pagination": {"more": False}})
 
 
@@ -156,7 +159,9 @@ class ServiceTests(TestCase):
         response = self.client.get('/admin/busstops/service/?q=21')
         self.assertEqual(1, response.context_data['cl'].result_count)
 
-        response = self.client.get('/admin/busstops/service/autocomplete/?term=21')
+        response = self.client.get(
+            '/admin/autocomplete/?term=21&app_label=busstops&model_name=servicecode&field_name=service'
+        )
         self.assertEqual({'results': [], 'pagination': {'more': False}}, response.json())
 
 

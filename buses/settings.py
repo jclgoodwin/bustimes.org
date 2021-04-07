@@ -100,6 +100,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
 if os.environ.get('READ_ONLY_DB_HOST'):
     REPLICA_DATABASES = []
     for i, host in enumerate(os.environ['READ_ONLY_DB_HOST'].split()):
