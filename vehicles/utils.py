@@ -4,6 +4,8 @@ from .models import Vehicle, VehicleEdit, VehicleRevision, VehicleType, Livery
 def get_vehicle_edit(vehicle, fields, now, request):
     edit = VehicleEdit(vehicle=vehicle, datetime=now)
 
+    changed = False
+
     if request.user.is_authenticated:
         edit.user = request.user
 
@@ -12,6 +14,7 @@ def get_vehicle_edit(vehicle, fields, now, request):
             edit.fleet_number = fields['fleet_number']
         else:
             edit.fleet_number = f'-{vehicle.fleet_code or vehicle.fleet_number}'
+        changed = True
 
     for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes'):
         if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
@@ -19,27 +22,39 @@ def get_vehicle_edit(vehicle, fields, now, request):
                 setattr(edit, field, fields[field])
             else:
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
+            changed = True
 
     if 'withdrawn' in fields:
         edit.withdrawn = fields['withdrawn']
+        changed = True
 
     changes = {}
     if 'previous_reg' in fields:
         changes['Previous reg'] = fields['previous_reg']
     if changes:
         edit.changes = changes
+        changed = True
 
     edit.url = fields.get('url', '')
+    if edit.url:
+        changed = True
 
     if fields.get('colours'):
         if fields['colours'].isdigit():
+            assert type(fields['colours']) is int
             edit.livery_id = fields['colours']
+            if edit.livery_id != vehicle.livery_id:
+                changed = True
         elif fields['colours']:
             edit.colours = fields['colours']
+            if edit.colours != vehicle.colours:
+                changed = True
     if fields.get('other_colour'):
         edit.colours = fields['other_colour']
+        changed = True
 
-    return edit
+    if changed:
+        return edit
 
 
 def do_revisions(vehicle_ids, data, user):
