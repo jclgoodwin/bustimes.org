@@ -144,12 +144,12 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle, False
 
     def get_journey(self, item, vehicle):
-        if item['ao']:  # aimed origin departure time
+        if item['ao']:  # aimedOriginStopDepartureTime
             departure_time = parse_timestamp(item['ao'])
-            code = item.get('td', '')  # trip id
         else:
             departure_time = None
-            code = ''
+
+        code = item.get('td', '')  # trip id
 
         latest_journey = vehicle.latest_journey
 
@@ -161,14 +161,20 @@ class Command(ImportLiveVehiclesCommand):
                     return vehicle.vehiclejourney_set.get(datetime=departure_time)
                 except VehicleJourney.DoesNotExist:
                     pass
+        elif item['eo']:  # expectedOriginStopDepartureTime
+            departure_time = parse_timestamp(item['eo'])
 
-        journey = VehicleJourney(datetime=departure_time, data=item)
+        journey = VehicleJourney(
+            datetime=departure_time,
+            data=item,
+            destination=item.get('dd', ''),  # destinationDisplay
+            route_name=item.get('sn', '')  # serviceNumber
+        )
 
         if code:
             journey.code = code
-            journey.destination = item.get('dd', '')
-
-        journey.route_name = item.get('sn', '')
+        elif not journey.departure_time and journey.route_name == latest_journey.route_name:
+            journey = latest_journey
 
         if not journey.service_id and journey.route_name:
             service = journey.route_name
