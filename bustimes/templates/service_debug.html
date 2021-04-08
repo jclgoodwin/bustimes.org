@@ -65,7 +65,7 @@
     <tbody>
 {% for trip in route.trip_set.all %}
 <tr style="vertical-align:top">
-    <td>{{ trip.sequence }}</td>
+    <td>{% if trip.sequence %}{{ trip.sequence }}{% endif %}</td>
     <td>{{ trip.block }}</td>
     <td>{{ trip.ticket_machine_code }}</td>
     <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
@@ -73,14 +73,14 @@
     <td>{{ trip.end_time }}</td>
     {% if trip.rowspan %}
     <td rowspan="{{ trip.rowspan }}">{{ trip.calendar.start_date }}–<br>{{ trip.calendar.end_date }}</td>
-    <td rowspan="{{ trip.rowspan }}">{{ trip.calendar }}</td>
+    <td rowspan="{{ trip.rowspan }}"><a href="{% url 'admin:bustimes_calendar_change' trip.calendar.id %}">{{ trip.calendar }}</a></td>
     <td rowspan="{{ trip.rowspan }}">
         {% for calendar_date in trip.calendar.calendardate_set.all %}
-            {{ calendar_date }}<br>
+            <a href="{% url 'admin:bustimes_calendardate_change' calendar_date.id %}">{{ calendar_date }}</a><br>
         {% endfor %}
     </td>
     {% endif %}
-    <td>{{ trip.garage }}</td>
+    <td>{% if trip.garage %}{{ trip.garage }}{% endif %}</td>
 </tr>
 {% endfor %}
 </tbody>
