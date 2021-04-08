@@ -1,5 +1,4 @@
 import requests
-from datetime import timedelta
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Count, Q, Exists, OuterRef
@@ -138,8 +137,10 @@ class EditVehicleForm(EditVehiclesForm):
             elif vehicle.latest_journey:
                 # only operators whose services the vehicle has operated
                 condition = Exists(
-                    vehicle.vehiclejourney_set.filter(service__operator=OuterRef('pk')),
-                    datetime__gte=vehicle.latest_journey.datetime - timedelta(days=1)
+                    Service.objects.filter(
+                        operator=OuterRef('pk'),
+                        id=vehicle.latest_journey.service_id
+                    )
                 )
             else:
                 del self.fields['operator']
