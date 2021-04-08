@@ -52,8 +52,7 @@ def get_vehicle_edit(vehicle, fields, now, request):
         edit.colours = fields['other_colour']
         changed = True
 
-    if changed:
-        return edit
+    return edit, changed
 
 
 def do_revisions(vehicle_ids, data, user):

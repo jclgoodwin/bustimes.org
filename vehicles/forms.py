@@ -18,14 +18,14 @@ def get_livery_choices(operator):
             choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
     if choices:
-        choices = [('', 'None/mostly white')] + choices + [('Other', 'Other')]
+        choices.append(('Other', 'Other'))
     return choices
 
 
 class EditVehiclesForm(forms.Form):
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
-    other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False)
+    other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False, initial='#ffffff')
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.ChoiceField(required=False)
@@ -45,7 +45,6 @@ class EditVehiclesForm(forms.Form):
         if self.cleaned_data['other_colour']:
             if self.cleaned_data.get('colours') != 'Other':
                 return
-
             try:
                 get_text_colour(self.cleaned_data['other_colour'])
             except ValueError as e:
@@ -68,6 +67,10 @@ class EditVehiclesForm(forms.Form):
 
         if operator:
             colours = get_livery_choices(operator)
+            if vehicle:
+                colours = [('', 'None/mostly white')] + colours
+            else:
+                colours = [('', 'No change')] + colours
 
             if user.trusted:
                 depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
@@ -98,9 +101,7 @@ class EditVehicleForm(EditVehiclesForm):
     name = forms.CharField(label='Name', help_text="Not your name", required=False, max_length=255)
     previous_reg = RegField(required=False, max_length=14)
     depot = forms.ChoiceField(required=False)
-    notes = forms.CharField(  # help_text="""Please <strong>don’t</strong>
-                              # add information about depots, previous operators, etc""",
-                            required=False, max_length=255)
+    notes = forms.CharField(required=False, max_length=255)
     url = forms.URLField(label='URL', help_text="Optional link to a public web page (not a private Facebook group)"
                          " or picture showing repaint", required=False, max_length=255)
     field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',

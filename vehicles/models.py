@@ -200,7 +200,7 @@ class Vehicle(models.Model):
         fleet_code = self.fleet_code or self.fleet_number
         if len(self.reg) > 3:
             reg = self.get_reg()
-            if fleet_code:
+            if fleet_code and fleet_code not in reg:
                 return '{} - {}'.format(fleet_code, reg)
             return reg
         if fleet_code:

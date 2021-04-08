@@ -105,15 +105,16 @@ def operator_vehicles(request, slug=None, parent=None):
         breadcrumb.append(Vehicles(operator))
         initial = {
             'operator': operator,
-            'other_colour': '#ffffff',
         }
         if request.method == 'POST':
             form = EditVehiclesForm(request.POST, initial=initial, operator=operator, user=request.user)
+            vehicle_ids = request.POST.getlist('vehicle')
+            if not vehicle_ids:
+                form.add_error(None, 'Select some vehicles to change')
             if not form.has_really_changed():
                 form.add_error(None, 'You haven\'t changed anything')
             elif form.is_valid():
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
-                vehicle_ids = request.POST.getlist('vehicle')
                 now = timezone.now()
 
                 revisions, changed_fields = do_revisions(vehicle_ids, data, request.user)
@@ -129,7 +130,7 @@ def operator_vehicles(request, slug=None, parent=None):
                     # - slightly important that it occurs before any change of operator
                     ticked_vehicles = [v for v in vehicles if str(v.id) in vehicle_ids]
                     edits = [get_vehicle_edit(vehicle, data, now, request) for vehicle in ticked_vehicles]
-                    edits = VehicleEdit.objects.bulk_create(edit for edit in edits if edit)
+                    edits = VehicleEdit.objects.bulk_create(edit for edit, changed in edits if changed)
                     submitted = len(edits)
                     if 'features' in data:
                         for edit in edits:
@@ -431,7 +432,6 @@ def edit_vehicle(request, vehicle_id):
         'vehicle_type': vehicle.vehicle_type,
         'features': vehicle.features.all(),
         'colours': str(vehicle.livery_id or vehicle.colours),
-        'other_colour': '#ffffff',
         'branding': vehicle.branding,
         'name': vehicle.name,
         'previous_reg': vehicle.data and vehicle.data.get('Previous reg') or None,
@@ -460,8 +460,10 @@ def edit_vehicle(request, vehicle_id):
             form = None
 
             if data:
-                edit = get_vehicle_edit(vehicle, data, now, request)
-                edit.save()
+                edit, changed = get_vehicle_edit(vehicle, data, now, request)
+                if changed:
+                    edit.save()
+                    submitted = True
                 if 'features' in data:
                     for feature in vehicle.features.all():
                         if feature not in data['features']:
@@ -470,9 +472,11 @@ def edit_vehicle(request, vehicle_id):
                                 feature=feature,
                                 add=False
                             )
+                    if not changed:  # .save() was not called before
+                        edit.save()
+                        submitted = True
                     for feature in data['features']:
                         edit.features.add(feature)
-                submitted = True
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
 
