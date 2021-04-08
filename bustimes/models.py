@@ -125,7 +125,7 @@ class Calendar(models.Model):
     sun = models.BooleanField()
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    dates = DateRangeField(null=True)
+    dates = DateRangeField(null=True, blank=True)
     summary = models.CharField(max_length=255, blank=True)
 
     contains = Route.contains
@@ -186,7 +186,7 @@ class CalendarDate(models.Model):
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     start_date = models.DateField(db_index=True)
     end_date = models.DateField(null=True, blank=True, db_index=True)
-    dates = DateRangeField(null=True)
+    dates = DateRangeField(null=True, blank=True)
     operation = models.BooleanField(db_index=True)
     special = models.BooleanField(default=False, db_index=True)
     summary = models.CharField(max_length=255, blank=True)

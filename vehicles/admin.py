@@ -413,7 +413,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     list_filter = (
         ServiceIsNullFilter,
         TripIsNullFilter,
-        ('source', admin.RelatedOnlyFieldListFilter),
+        'source',
         'vehicle__operator',
     )
     show_full_result_count = False
