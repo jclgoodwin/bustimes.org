@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db.models import Exists, OuterRef
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
+from django.urls import reverse
 from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime, Garage
 
 
@@ -48,11 +49,9 @@ class CalendarAdmin(admin.ModelAdmin):
     readonly_fields = ['routes']
 
     def routes(self, obj):
-        return mark_safe('<br>'.join(
-            f'<a href="{route.get_absolute_url()}">{route}</a>' for route in Route.objects.filter(
-                Exists(Trip.objects.filter(calendar=obj, route=OuterRef('pk')))
-            )
-        ))
+        routes = Route.objects.filter(Exists(Trip.objects.filter(calendar=obj, route=OuterRef('pk'))))
+        routes = ((reverse("admin:bustimes_route_change", args=(route.id,)), route) for route in routes)
+        return mark_safe('<br>'.join(f'<a href="{url}">{route}</a>' for url, route in routes))
 
 
 class NoteAdmin(admin.ModelAdmin):

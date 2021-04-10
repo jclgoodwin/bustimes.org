@@ -76,7 +76,7 @@
     <td rowspan="{{ trip.rowspan }}"><a href="{% url 'admin:bustimes_calendar_change' trip.calendar.id %}">{{ trip.calendar }}</a></td>
     <td rowspan="{{ trip.rowspan }}">
         {% for calendar_date in trip.calendar.calendardate_set.all %}
-            <a href="{% url 'admin:bustimes_calendardate_change' calendar_date.id %}">{{ calendar_date }}</a><br>
+            <a href="{% url 'admin:bustimes_calendardate_change' calendar_date.id %}">{{ calendar_date }}</a>
         {% endfor %}
     </td>
     {% endif %}
