@@ -29,28 +29,16 @@ class Command(ImportLiveVehiclesCommand):
         }
 
         if len(vehicle_code) > 5 and vehicle_code[:5].isdigit():
-            vehicle_code = vehicle_code[:5]
-            defaults['fleet_number'] = vehicle_code
-            try:
-                vehicle = self.vehicles.get(operator__parent__in=['Rotala', 'First'], code=vehicle_code)
-                if vehicle.operator_id == 'DIAM':
-                    return None, None
-                return vehicle, False
-            except Vehicle.MultipleObjectsReturned:
-                try:
-                    vehicle = self.vehicles.get(operator__in=['FSMR', 'DIAM'], code=vehicle_code)
-                except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
-                    return None, None
-            except Vehicle.DoesNotExist:
-                pass
+            # First or Diamond Bus - defer to BODS
+            return None, None
 
         elif vehicle_code.startswith('BUS_'):
-            line_names = Service.objects.filter(current=True, operator='SLBS').values_list('line_name', flat=True)
-            for line_name in line_names:
-                if vehicle_code.endswith(line_name) and not vehicle_code.endswith('_' + line_name):
-                    vehicle_code = vehicle_code[:-len(line_name)]
-                    defaults['fleet_number'] = vehicle_code.split('_')[-1]
-                    return self.vehicles.get_or_create(defaults, operator_id='SLBS', code=vehicle_code)
+            # Select Bus Services - defer to BODS
+            return None, None
+
+        elif vehicle_code[-3:] == 'X12':
+            # Midland Classic - defer to BODS
+            return None, None
 
         if item.vehicle.HasField('trip'):
             try:
@@ -70,10 +58,6 @@ class Command(ImportLiveVehiclesCommand):
             except Service.DoesNotExist as e:
                 print(e, item.vehicle.trip.route_id, vehicle_code)
                 pass
-
-        elif vehicle_code[-3:] == 'X12':
-            vehicle_code = vehicle_code[:-3]
-            return self.vehicles.get_or_create(defaults, operator_id='MDCL', code=vehicle_code)
 
         reg = vehicle_code.replace('_', '')
 
