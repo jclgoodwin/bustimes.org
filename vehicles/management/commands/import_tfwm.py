@@ -74,6 +74,9 @@ class Command(ImportLiveVehiclesCommand):
             return self.vehicles.filter(code=vehicle_code).first(), False
 
     def get_journey(self, item, vehicle):
+        if vehicle.latest_journey and vehicle.latest_journey.source_id != self.source.id:
+            return
+
         journey = VehicleJourney()
 
         if item.vehicle.HasField('trip'):
