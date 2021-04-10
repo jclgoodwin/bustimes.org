@@ -256,9 +256,9 @@ class ChangeFilter(admin.SimpleListFilter):
             ('name', 'name'),
             ('notes', 'notes'),
             ('withdrawn', 'withdrawn'),
-            ('USB charging', 'USB charging'),
+            ('USB power', 'USB power'),
             ('open top', 'open top'),
-            ('bike storage', 'bike storage'),
+            ('bike rack', 'bike rack'),
             ('changes__Depot', 'depot'),
             ('changes__Previous reg', 'previous reg'),
         )
@@ -268,7 +268,7 @@ class ChangeFilter(admin.SimpleListFilter):
         if value:
             if value == 'colours':
                 return queryset.filter(~Q(colours='') | Q(livery__isnull=False))
-            if value in {'USB charging', 'open top', 'bike storage'}:
+            if value in {'USB power', 'open top', 'bike rack'}:
                 return queryset.filter(vehicleeditfeature__feature__name=value)
             if value.startswith('changes__'):
                 return queryset.filter(**{f'{value}__isnull': False})
@@ -320,7 +320,6 @@ class VehicleEditAdmin(admin.ModelAdmin):
     list_filter = [
         'approved',
         UrlFilter,
-        'withdrawn',
         'vehicle__withdrawn',
         ChangeFilter,
         OperatorFilter,
