@@ -716,7 +716,7 @@ class VehicleLocation(models.Model):
                 'line_name': journey.route_name
             }
 
-        if self.occupancy_thresholds and self.seated_occupancy is not None:
+        if self.occupancy_thresholds and self.seated_occupancy is not None and self.seated_capacity is not None:
             green, amber = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
             if self.seated_occupancy < green:
                 occupancy = '🟢'
