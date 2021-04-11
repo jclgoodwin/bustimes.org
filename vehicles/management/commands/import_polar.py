@@ -35,6 +35,9 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         code = item['properties']['vehicle']
 
+        if code == 'Holt_Depot':
+            return None, None
+
         operator = self.get_operator(item)
         if not operator:
             return None, None
