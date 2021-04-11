@@ -67,10 +67,6 @@ class EditVehiclesForm(forms.Form):
 
         if operator:
             colours = get_livery_choices(operator)
-            if vehicle:
-                colours = [('', 'None/mostly white')] + colours
-            else:
-                colours = [('', 'No change')] + colours
 
             if user.trusted:
                 depots = operator.vehicle_set.distinct('data__Depot').values_list('data__Depot', flat=True)
@@ -80,6 +76,10 @@ class EditVehiclesForm(forms.Form):
                 depots = [(vehicle.data['Depot'], vehicle.data['Depot'])]
 
         if colours:
+            if vehicle:
+                colours = [('', 'None/mostly white')] + colours
+            else:
+                colours = [('', 'No change')] + colours
             self.fields['colours'].choices = colours
         else:
             del self.fields['colours']
