@@ -404,8 +404,6 @@ BOD_OPERATORS = [
         'CRDR': 'CRDR'
     }, False),
     ('RLNE', 'SE', {}, True),
-    ('GOGO', 'NW', {}, False),
-    ('BRYL', 'EM', {}, False),
     ('LODG', 'SE', {}, False),
     ('BDRB', 'EA', {}, False),
     ('SIMO', 'EA', {}, False),
@@ -519,7 +517,6 @@ BOD_OPERATORS = [
 
     ('SNDR', 'EA', {}, True),
 
-    ('MDCL', 'EM', {}, False),
 
     ('RDRT', 'SE', {
         'RR': 'RDRT',
@@ -579,4 +576,8 @@ TICKETER_OPERATORS = [
     ('SE', ['ENSB'], 'Ensignbus'),
     ('EA', ['AMBS'], 'Ambassador Travel'),
     ('EA', ['WHIP'], 'Go-Whippet'),
+    ('NW', ['GOGO'], 'Go Goodwins'),
+    ('EM', ['Brylaine', 'BRYL'], 'Brylaine'),
+    ('EM', ['Midland_Classic', 'MDCL'], 'Midland Classic'),
+
 ]
