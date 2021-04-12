@@ -18,9 +18,14 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_vehicle(self, item):
         code = item['vehicleRef']
+        defaults = {
+            'fleet_code': code
+        }
+        if code.isdigit():
+            defaults['fleet_number'] = code
 
         try:
-            return self.vehicles.get_or_create(code=code, operator_id='NWPT')
+            return self.vehicles.get_or_create(defaults, code=code, operator_id='NWPT')
         except self.vehicles.model.MultipleObjectsReturned:
             return self.vehicles.filter(code=code, operator='NWPT').first(), False
 
@@ -36,25 +41,28 @@ class Command(ImportLiveVehiclesCommand):
             print(e)
 
     def get_journey(self, item, vehicle):
-        code = item.get('tripId', '')
         datetime = parse_datetime(item['scheduledTripStartTime'])
 
         latest_journey = vehicle.latest_journey
         if latest_journey and latest_journey.datetime == datetime:
-            journey = latest_journey
+            return latest_journey
         else:
             try:
-                journey = VehicleJourney.objects.select_related('service').get(vehicle=vehicle, datetime=datetime)
+                return vehicle.vehiclejourney_set.get(datetime=datetime)
             except VehicleJourney.DoesNotExist:
                 journey = VehicleJourney(datetime=datetime, data=item)
 
-        journey.code = code
         journey.route_name = item['routeName']
 
         if not journey.service_id:
             journey.service = self.get_service(item)
 
         journey.destination = item.get('destination', '')
+
+        journey.code = f'{datetime.hour:02}{datetime.minute:02}'
+        journey.trip = journey.get_trip()
+        if journey.trip and journey.trip.destination and journey.trip.destination.locality:
+            journey.destination = str(journey.trip.destination.locality)
 
         return journey
 
