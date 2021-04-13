@@ -844,21 +844,27 @@ body {
     }
 }
 
-.leaflet-popup-content a {
-    display: block;
-    font-size: 1em;
-    overflow: hidden;
-
-    span {
-        display: block;
+.leaflet-popup-content {
+    img {
+        vertical-align: middle;
     }
 
-    small {
-        color: $text-color;
+    a {
         display: block;
-        float: left;
-        font-size: .75em;
-        margin-right: .5em;
+        font-size: 1em;
+        overflow: hidden;
+
+        span {
+            display: block;
+        }
+
+        small {
+            color: $text-color;
+            display: block;
+            float: left;
+            font-size: .75em;
+            margin-right: .5em;
+        }
     }
 }
 

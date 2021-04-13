@@ -716,18 +716,10 @@ class VehicleLocation(models.Model):
                 'line_name': journey.route_name
             }
 
-        if self.occupancy_thresholds and self.seated_occupancy is not None and self.seated_capacity is not None:
-            green, amber = [int(threshold) for threshold in self.occupancy_thresholds.split(',')]
-            if self.seated_occupancy < green:
-                occupancy = '🟢'
-            elif self.seated_occupancy < amber:
-                occupancy = '🟠'
-            else:
-                occupancy = '🔴'
-            occupancy = f'{occupancy}{self.seated_capacity - self.seated_occupancy} seats free'
-            if self.wheelchair_capacity:
-                if self.wheelchair_occupancy < self.wheelchair_capacity:
-                    occupancy = f'{occupancy}<br>🦽space free'
-            json['occupancy'] = occupancy
+        if self.seated_occupancy is not None and self.seated_capacity is not None:
+            json['seats'] = f'{self.seated_capacity - self.seated_occupancy} free'
+        if self.wheelchair_occupancy is not None and self.wheelchair_capacity is not None:
+            if self.wheelchair_occupancy < self.wheelchair_capacity:
+                json['wheelchair'] = 'free'
 
         return json

@@ -88,9 +88,11 @@
         if (item.vehicle.features) {
             content += item.vehicle.features + '<br>';
         }
-
-        if (item.occupancy) {
-            content += item.occupancy + '<br>';
+        if (item.seats) {
+            content += '<img src="/static/svg/seat.svg" width="14" height="14" alt="seats"> ' + item.seats + '<br>';
+        }
+        if (item.wheelchair) {
+            content += '<img src="/static/svg/wheelchair.svg" width="14" height="14" alt="wheelchair space"> ' + item.wheelchair + '<br>';
         }
 
         if (ago >= 1800) {

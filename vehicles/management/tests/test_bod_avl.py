@@ -321,5 +321,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "datetime": "2021-03-05T14:26:43Z",
             "destination": "",
             "service": {"line_name": "42"},
-            "occupancy": "🟢27 seats free<br>🦽space free"
+            "seats": "27 free",
+            "wheelchair": "free",
         }])
