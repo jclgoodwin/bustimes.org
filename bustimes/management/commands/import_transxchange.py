@@ -160,8 +160,8 @@ def get_open_data_operators():
         open_data_operators += operators.values()
     for _, _, _, operators in settings.STAGECOACH_OPERATORS:
         open_data_operators += operators
-    for _, operators, _ in settings.TICKETER_OPERATORS:
-        open_data_operators += operators
+    for setting in settings.TICKETER_OPERATORS:
+        open_data_operators += setting[1]
 
     if 'SCLI' in open_data_operators:  # stagecoach lincs – cos a bloke complained about missing school services
         open_data_operators.remove('SCLI')

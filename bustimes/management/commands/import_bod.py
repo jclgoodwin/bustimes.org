@@ -174,7 +174,8 @@ def bus_open_data(api_key, operator):
         'api_key': api_key,
         'status': ['published', 'expiring'],
     }
-    for _, operators, _ in settings.TICKETER_OPERATORS:
+    for setting in settings.TICKETER_OPERATORS:
+        operators = setting[1]
         params['noc'] = operators[0] if operators[0].isupper() else operators[1]
         response = session.get(url, params=params)
         json = response.json()
@@ -202,7 +203,13 @@ def update_ticketer_source_settings_url(dataset, operator):
 def ticketer(operator=None):
     command = get_command()
 
-    for region_id, operators, name in settings.TICKETER_OPERATORS:
+    for setting in settings.TICKETER_OPERATORS:
+        if len(setting) == 3:
+            region_id, operators, name = setting
+        else:
+            region_id, operators = setting
+            name = operators[0].replace('_', ' ')
+
         noc = operators[0]
 
         if operator and operator != noc:

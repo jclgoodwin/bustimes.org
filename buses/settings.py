@@ -239,14 +239,14 @@ AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')
 AKISMET_SITE_URL = 'https://bustimes.org'
 
 IE_COLLECTIONS = (
-    'goahead', 'luasbus', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
+    'goahead', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
     'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',
     'mkilbride', 'expressbus', 'edmoore', 'collins', 'luas', 'sro',
     'dublincoach', 'burkes', 'mhealy', 'kearns', 'josfoley', 'buggy',
     'jjkavanagh', 'citydirect', 'aircoach', 'matthews', 'wexfordbus',
     'dualway', 'tralee', 'sbloom', 'mcginley', 'swordsexpress', 'suirway',
     'sdoherty', 'pjmartley', 'mortons', 'mgray', 'mcgrath', 'mangan',
-    'lallycoach', 'halpenny', 'eurobus', 'donnellys', 'cmadigan', 'bkavanagh',
+    'lallycoach', 'halpenny', 'donnellys', 'cmadigan', 'bkavanagh',
     'ptkkenneally', 'farragher', 'fedateoranta', 'ashbourneconnect'
 )
 PASSENGER_OPERATORS = [
@@ -336,9 +336,6 @@ PASSENGER_OPERATORS = [
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
-    ('Sanders Coaches', 'https://data.discoverpassenger.com/operator/sanderscoaches', 'EA', {
-        'SA': 'SNDR',
-    }),
 ]
 FIRST_OPERATORS = [
 ]
@@ -383,13 +380,7 @@ BOD_OPERATORS = [
     ('KBUS', 'EM', {
         'KN': 'KBUS',
     }, False),
-    ('GPLM', 'SE', {
-        'OP': 'GPLM',
-        'GP': 'GPLM'
-    }, False),
-    ('WHIP', 'EA', {
-        'OP': 'WHIP'
-    }, False),
+
     ('CSVC', 'EA', {
         'CS': 'CSVC'
     }, False),
@@ -403,16 +394,11 @@ BOD_OPERATORS = [
         'DAGC': 'DAGC',
         'CRDR': 'CRDR'
     }, False),
-    ('RLNE', 'SE', {}, True),
+
     ('LODG', 'SE', {}, False),
-    ('BDRB', 'EA', {}, False),
-    ('SIMO', 'EA', {}, False),
-    ('SULV', 'SE', {
-        'SN': 'SULV'
-    }, False),
+
     ('FRDS', 'SE', {}, False),
     ('BEES', 'EA', {}, False),
-    ('COTY', 'NE', {}, False),
 
     ('AVMT', 'SW', {}, False),
     ('BZCO', 'SW', {}, False),
@@ -467,25 +453,19 @@ BOD_OPERATORS = [
     ('LIHO', 'SW', {}, False),
     ('DPCR', 'SW', {}, False),
 
-    ('KJTR', 'Y', {}, False),
-    ('JOHS', 'WM', {}, False),
     # ('NATX', 'GB', {}, False),
     ('KETR', 'SE', {}, False),
-    ('WNCT', 'EA', {}, False),
     # ('HACO', 'EA', {}, False),
     # ('PCCO', 'EM', {}, False),
     ('HCCL', 'NE', {
         'HCC': 'WGHC'
     }, False),
 
-    ('WBSV', 'SE', {}, False),
     ('SPSV', 'SE', {}, False),
     ('GOCH', 'SE', {
         'GO': 'GOCH'
     }, False),
 
-    ('HATT', 'NW', {}, False),
-    ('REDE', 'SE', {}, False),
     ('LAKC', 'WM', {}, False),
 
     ('CBBH', 'EM', {
@@ -495,16 +475,13 @@ BOD_OPERATORS = [
     }, False),
     # ('BULL', 'NW', {}, False),
     ('SELT', 'NW', {}, False),
-    ('HCTY', 'Y',  {}, False),
     ('ROSS', 'Y',  {}, False),
 
-    ('RBTS', 'EM',  {}, False),
     ('GRYC', 'EM',  {}, False),
 
     # ('A2BR', 'EA',  {}, False),
     # ('A2BV', 'NE',  {}, False),
 
-    ('CLNB', 'SE',  {}, False),
     ('STNE', 'NE',  {}, False),
     ('LAWS', 'EM',  {}, False),
     ('BMCS', 'SE',  {}, False),
@@ -515,8 +492,7 @@ BOD_OPERATORS = [
         'OBUS': 'OBUS',
     }, False),
 
-    ('SNDR', 'EA', {}, True),
-
+    ('SNDR', 'EA', {}, False),
 
     ('RDRT', 'SE', {
         'RR': 'RDRT',
@@ -576,8 +552,22 @@ TICKETER_OPERATORS = [
     ('SE', ['ENSB'], 'Ensignbus'),
     ('EA', ['AMBS'], 'Ambassador Travel'),
     ('EA', ['WHIP'], 'Go-Whippet'),
+    ('EA', ['WNCT'], 'West Norfolk Community Transport'),
     ('NW', ['GOGO'], 'Go Goodwins'),
-    ('EM', ['Brylaine', 'BRYL'], 'Brylaine'),
-    ('EM', ['Midland_Classic', 'MDCL'], 'Midland Classic'),
-
+    ('EM', ['Brylaine', 'BRYL']),
+    ('EM', ['Midland_Classic', 'MDCL']),
+    ('EM', ['RBTS'], 'Roberts Travel'),
+    ('SE', ['Redline_Buses_Ltd', 'RLNE']),
+    ('NW', ['HATT'], 'Hattons'),
+    ('SE', ['Sullivan_Buses', 'SULV']),
+    ('EA', ['BDRB'], 'BorderBus'),
+    ('EA', ['Simonds', 'SIMO']),
+    ('NE', ['Coatham_Coaches', 'COTY']),
+    ('WM', ['Johnsons', 'JOHS']),
+    ('Y',  ['HCTY'], 'Connexions Buses'),
+    ('Y',  ['KJTR'], 'York Pullman'),
+    ('SE', ['WBSV'], 'White Bus'),
+    ('SE', ['REDE'], 'Red Eagle'),
+    ('SE', ['GPLM'], 'Grant Palmer'),
+    ('SE', ['CLNB'], 'Carlone Buses'),
 ]
