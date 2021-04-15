@@ -7,4 +7,29 @@
             top: 0;
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('tr input.action-select');
+            if (!checkboxes.length) {
+                return
+            }
+            let lastChecked;
+            document.getElementById('result_list').addEventListener('click', function(event) {
+                if (event.target.className === 'action-select') {
+                    if (lastChecked && event.shiftKey) {
+                        let from = event.target.parentNode.parentNode.rowIndex - 1,
+                            to = lastChecked.parentNode.parentNode.rowIndex - 1,
+                            min = Math.min(from, to),
+                            max = Math.max(from, to);
+                        for (let i = min + 1; i < max; i += 1) {
+                            let checkbox = checkboxes[i];
+                            checkbox.checked = lastChecked.checked;
+                            checkbox.parentNode.parentNode.className = checkbox.checked ? 'selected' : '';
+                        }
+                    }
+                    lastChecked = event.target;
+                }
+            });
+        });
+    </script>
 {% endblock %}
