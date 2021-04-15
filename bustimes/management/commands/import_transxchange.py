@@ -483,8 +483,15 @@ class Command(BaseCommand):
                 calendar.sun = True
 
         calendar.save()
+
+        weird = False
         for date in calendar_dates:
             date.calendar = calendar
+            if date.end_date < date.start_date:
+                weird = True
+                print(date)
+        if weird:
+            calendar_dates = [date for date in calendar_dates if date.end_date >= date.start_date]
         CalendarDate.objects.bulk_create(calendar_dates)
 
         self.calendar_cache[calendar_hash] = calendar
