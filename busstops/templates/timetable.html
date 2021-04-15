@@ -113,9 +113,10 @@
         <p>Times marked <strong>s</strong> – “sets down only” – the {{ object.mode }} will only stop to drop passengers off</p>
     {% endif %}
 
-    {% for credit in timetable.credits %}
-        {% ifchanged credit %}{{ credit }}{% endifchanged %}
-    {% endfor %}
+    {% for credit in timetable.credits %}{% if forloop.first %}
+        <p class="credit">Timetable data from {% else %}, {% endif %}{{ credit }}{% if forloop.last %}{% if 'bus-data.dft.gov.uk' in credit %}.
+        We’re not endorsed by, affiliated with or supported by them, and they don’t warrant the accuracy or quality of the information.{% endif %}
+    </p>{% endif %}{% endfor %}
 
 {% else %}
     {% include 'route.html' %}

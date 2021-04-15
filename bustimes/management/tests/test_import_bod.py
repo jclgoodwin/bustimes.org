@@ -75,9 +75,9 @@ class ImportBusOpenDataTest(TestCase):
 
         self.assertContains(
             response,
-            '<p class="credit">Timetable data from '
+            'Timetable data from '
             '<a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/Bus Open Data Service</a>, '
-            '1 April 2020</p>'
+            '1 April 2020.'
         )
 
         trip = route.trip_set.first()

@@ -258,8 +258,8 @@ class DataSource(models.Model):
                 text = escape(text)
             if date:
                 date = date.strftime('%-d %B %Y')
-                text = f'{text}, {date}'
-            return mark_safe(f'<p class="credit">Timetable data from {text}</p>')
+                text = mark_safe(f'{text}, {date}')
+            return text
 
         return ''
 

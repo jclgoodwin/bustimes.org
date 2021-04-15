@@ -189,7 +189,7 @@ class Timetable:
                         return True
 
     def credits(self):
-        return [route.source.credit(route) for route in self.current_routes]
+        return set(route.source.credit(route) for route in self.current_routes)
 
 
 class Repetition:
