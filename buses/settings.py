@@ -390,15 +390,9 @@ BOD_OPERATORS = [
     }, False),
     ('HNTS', 'EM', {}, False),
     # ('SLBS', 'WM', {}, True),
-    ('DAGC', 'NW', {
-        'DAGC': 'DAGC',
-        'CRDR': 'CRDR'
-    }, False),
 
     ('LODG', 'SE', {}, False),
-
     ('FRDS', 'SE', {}, False),
-    ('BEES', 'EA', {}, False),
 
     ('AVMT', 'SW', {}, False),
     ('BZCO', 'SW', {}, False),
@@ -474,8 +468,8 @@ BOD_OPERATORS = [
         'CBL': 'CBNL',
     }, False),
     # ('BULL', 'NW', {}, False),
-    ('SELT', 'NW', {}, False),
-    ('ROSS', 'Y',  {}, False),
+    ('SELT', 'NW', {}, False),  # Selwyns Ticketer
+    ('ROSS', 'Y',  {}, False),  # Ross Travel Ticketer
 
     ('GRYC', 'EM',  {}, False),
 
@@ -570,4 +564,6 @@ TICKETER_OPERATORS = [
     ('SE', ['REDE'], 'Red Eagle'),
     ('SE', ['GPLM'], 'Grant Palmer'),
     ('SE', ['CLNB'], 'Carlone Buses'),
+    ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
+    ('EA', ['Beestons_(Hadleigh)_Ltd', 'BEES']),
 ]
