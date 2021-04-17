@@ -503,7 +503,7 @@ STAGECOACH_OPERATORS = [
     ('SE', 'scso', 'Stagecoach South',         ['SCPY', 'SCHM', 'SCHW', 'SCCO', 'SMSO']),
     ('SE', 'scek', 'Stagecoach South East',    ['SCEK', 'SCEB', 'SCHT']),
     ('Y',  'syrk', 'Stagecoach Yorkshire',     ['SYRK', 'YSYC', 'CLTL']),
-    ('NW', 'sccu', 'Stagecoach Cumbria',       ['SCMB', 'SCCU']),
+    ('NW', 'sccu', 'Stagecoach Cumbria',       ['SCMB', 'SCCU', 'SCNW']),
     ('NW', 'scmn', 'Stagecoach Manchester',    ['SCMN', 'SWIG']),
     ('NW', 'scmy', 'Stagecoach Merseyside',    ['SCMY']),
     ('SW', 'sdvn', 'Stagecoach South West',    ['SDVN', 'SDVN']),
