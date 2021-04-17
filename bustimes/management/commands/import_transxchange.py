@@ -63,10 +63,18 @@ BANK_HOLIDAYS = {
     # 'NewYearsEve':      [datetime.date(2020, 12, 31)],
     # 'NewYearsDay':      [datetime.date(2021, 1, 1)],
     # 'Jan2ndScotland':   [datetime.date(2021, 1, 2)],
-    'GoodFriday':       [datetime.date(2021, 4, 2)],
-    'EasterMonday':     [datetime.date(2021, 4, 5)],
+    # 'GoodFriday':       [datetime.date(2021, 4, 2)],
+    # 'EasterMonday':     [datetime.date(2021, 4, 5)],
     'MayDay':           [datetime.date(2021, 5, 3)],
     'SpringBank':       [datetime.date(2021, 5, 31)],
+    'AugustBankHolidayScotland': [datetime.date(2021, 8, 2)],
+    'LateSummerBankHolidayNotScotland': [datetime.date(2021, 8, 30)],
+    # 'ChristmasEve':        [datetime.date(2021, 12, 24)],
+    # 'ChristmasDay':        [datetime.date(2021, 12, 25)],
+    # 'BoxingDay':           [datetime.date(2021, 12, 26)],
+    # 'ChristmasDayHoliday': [datetime.date(2021, 12, 27)],
+    # 'BoxingDayHoliday':    [datetime.date(2021, 12, 28)],
+
 }
 
 # BANK_HOLIDAYS['EarlyRunOffDays'] = BANK_HOLIDAYS['ChristmasEve'] + BANK_HOLIDAYS['NewYearsEve']
@@ -75,8 +83,8 @@ BANK_HOLIDAYS = {
 # BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 BANK_HOLIDAYS['EarlyRunOffDays'] = []
 BANK_HOLIDAYS['Christmas'] = []
-BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['GoodFriday'] + BANK_HOLIDAYS['EasterMonday'] + \
-                                              BANK_HOLIDAYS['MayDay'] + BANK_HOLIDAYS['SpringBank']
+BANK_HOLIDAYS['HolidayMondays'] = BANK_HOLIDAYS['MayDay'] + BANK_HOLIDAYS['SpringBank']
+BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['HolidayMondays']
 BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 
 BODS_SERVICE_CODE_REGEX = re.compile(r'^P[BCDFGHKM]\d+:\d+.*.$')
