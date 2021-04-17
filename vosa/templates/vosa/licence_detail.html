@@ -19,8 +19,12 @@
             </tr>
         {% endif %}
         <tr>
+            <th>Licence type</th>
+            <td>{{ object.description }}</td>
+        </tr>
+        <tr>
             <th>Traffic area</th>
-            <td>{{ object.traffic_area }}</td>
+            <td>{{ object.get_traffic_area_display }}</td>
         </tr>
         <tr>
             <th>Discs</th>
@@ -29,6 +33,18 @@
         <tr>
             <th>Authorised discs</th>
             <td>{{ object.authorised_discs }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>{{ object.address }}</td>
+        </tr>
+        <tr>
+            <th>Granted date</th>
+            <td>{{ object.granted_date }}</td>
+        </tr>
+        <tr>
+            <th>Expiry date</th>
+            <td>{{ object.expiry_date }}</td>
         </tr>
     </tbody>
 </table>

@@ -4,16 +4,35 @@ from django.urls import reverse
 from busstops.models import Service
 
 
+class TrafficArea(models.TextChoices):
+    WEST = 'H', 'West of England'
+    WM = 'D', 'West Midlands'
+    WALES = 'G', 'Wales'
+    SE = 'K', 'London and the South East of England'
+    SCOTLAND = 'M', 'Scotland'
+    NW = 'C', 'North West of England'
+    NE = 'B', 'North East of England'
+    EAST = 'F', 'East of England'
+
+
+class Description(models.TextChoices):
+    RESTRICTED = 'Restricted'
+    STANDARD_INTERNATIONAL = 'Standard International'
+    STANDARD_NATIONAL = 'Standard National'
+
+
 class Licence(models.Model):
     name = models.CharField(max_length=48)
-    trading_name = models.CharField(max_length=48)
-    traffic_area = models.CharField(max_length=1)
+    trading_name = models.CharField(max_length=255, blank=True)
+    traffic_area = models.CharField(max_length=1, choices=TrafficArea.choices)
     licence_number = models.CharField(max_length=20, unique=True)
     discs = models.PositiveSmallIntegerField()
     authorised_discs = models.PositiveSmallIntegerField()
-    description = models.CharField(max_length=255)
-    granted_date = models.DateField(null=True)
+    description = models.CharField(max_length=22, choices=Description.choices)
+    granted_date = models.DateField(null=True, blank=True)
+    expiry_date = models.DateField(null=True, blank=True)
     address = models.TextField()
+    licence_status = models.CharField(max_length=255)
 
     def get_operator(self):
         operators = self.operator_set.filter(Exists(Service.objects.filter(operator=OuterRef('pk'), current=True)))
@@ -36,7 +55,6 @@ class Registration(models.Model):
     subsidies_description = models.CharField(max_length=255)
     subsidies_details = models.CharField(max_length=255)
     service_type_description = models.CharField(max_length=255, blank=True)
-    licence_status = models.CharField(max_length=255)
     registration_status = models.CharField(max_length=255, db_index=True)
     traffic_area_office_covered_by_area = models.CharField(max_length=100)
 
@@ -53,11 +71,9 @@ class Registration(models.Model):
 class Variation(models.Model):
     registration = models.ForeignKey(Registration, models.CASCADE)
     variation_number = models.PositiveSmallIntegerField()
-    granted_date = models.DateField()
-    expiry_date = models.DateField()
-    effective_date = models.DateField(null=True)
-    date_received = models.DateField(null=True)
-    end_date = models.DateField(null=True)
+    effective_date = models.DateField(null=True, blank=True)
+    date_received = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
     service_type_other_details = models.TextField()
     registration_status = models.CharField(max_length=255)
     publication_text = models.TextField()
