@@ -20,63 +20,79 @@ def download_if_modified(path):
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **kwargs):
-        regions = "FBCMKGDH"
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument('regions', nargs='?', type=str, default="FBCMKGDH")
+
+    def handle(self, regions, **kwargs):
         for region in regions:
-            modified, last_modified = download_if_modified(f"Bus_RegisteredOnly_{region}.csv")
+            # modified, last_modified = download_if_modified(f"Bus_RegisteredOnly_{region}.csv")
             self.handle_registered(region)
             # print(modified, last_modified)
-            modified, last_modified = download_if_modified(f"Bus_Variation_{region}.csv")
+            # modified, last_modified = download_if_modified(f"Bus_Variation_{region}.csv")
             # print(modified, last_modified)
             # self.handle_variations(region)
 
     def handle_registered(self, region):
         path = os.path.join(settings.DATA_DIR, f"Bus_RegisteredOnly_{region}.csv")
 
-        licences = Licence.objects.filter(traffic_area=region)
-        licences = licences.in_bulk(field_name="licence_number")
-        licences_to_update = []
-        licences_to_create = []
+        lics = Licence.objects.filter(traffic_area=region)
+        lics = lics.in_bulk(field_name="licence_number")
+        lics_to_update = []
+        lics_to_create = []
 
-        registrations = Registration.objects.filter(registration_number__startswith=f"P{region}")
-        registrations = registrations.in_bulk(field_name="registration_number")
-        to_update = []
-        to_create = []
+        regs = Registration.objects.filter(registration_number__startswith=f"P{region}")
+        regs = regs.in_bulk(field_name="registration_number")
+        regs_to_update = []
+        regs_to_create = []
         with open(path) as open_file:
-            previous_line = None
+            # previous_line = None
             cardinals = set()
             for line in csv.DictReader(open_file):
                 reg_no = line["Reg_No"]
-                assert reg_no.startswith(f"P{region}")
-                if previous_line and previous_line["Reg_No"] == reg_no:
-                    for key in line:
-                        if line[key] != previous_line[key]:
-                            cardinals.add(key)
-                previous_line = line
+                lic_no = line["Lic_No"]
 
-                if reg_no in registrations:
-                    registration = registrations[reg_no]
-                    if registration not in to_update:
-                        to_update.append(registration)
+                assert lic_no.startswith(f"P{region}")
+                assert reg_no.startswith(lic_no)
+
+                # if previous_line and previous_line["Reg_No"] == reg_no:
+                #     for key in line:
+                #         prev = previous_line[key]
+                #         value = line[key]
+                #         if prev != value:
+                #             if key == 'trading_name':
+                #                 print(reg_no, prev, value)
+                #             cardinals.add(key)
+
+                if lic_no in lics:
+                    licence = lics[lic_no]
+                    if licence.id and licence not in lics_to_update:
+                        licence.trading_name = ''
+                        lics_to_update.append(licence)
+                else:
+                    licence = Licence(licence_number=lic_no)
+                    lics_to_create.append(licence)
+                    lics[lic_no] = licence
+
+                if reg_no in regs:
+                    registration = regs[reg_no]
+                    if registration.id and registration not in regs_to_update:
+                        regs_to_update.append(registration)
                 else:
                     registration = Registration(
                         registration_number=reg_no,
                     )
-                    to_create.append(registration)
-                    registrations[reg_no] = registration
-
-                lic_no = line["Lic_No"]
-                if lic_no in licences:
-                    licence = licences[lic_no]
-                    if licence not in licences_to_update:
-                        licences_to_update.append(licence)
-                else:
-                    licence = Licence(licence_number=lic_no)
-                    licences_to_create.append(licence)
-                    licences[lic_no] = licence
+                    regs_to_create.append(registration)
+                    regs[reg_no] = registration
 
                 licence.name = line['Op_Name']
-                licence.trading_name = line['trading_name']
+
+                if line['trading_name'] not in licence.trading_name:
+                    if licence.trading_name:
+                        licence.trading_name = f"{licence.trading_name}\n{line['trading_name']}"
+                    else:
+                        licence.trading_name = line['trading_name']
+
                 licence.address = line['Address']
                 licence.traffic_area = line['Current Traffic Area']
                 licence.discs = line['Discs in Possession'] or 0
@@ -96,25 +112,28 @@ class Command(BaseCommand):
                 registration.service_type_description = line['Service_Type_Description']
                 registration.registration_status = line['Registration Status']
 
-        print(len(licences_to_create))
-        print(len(licences_to_update))
-        Licence.objects.bulk_create(licences_to_create)
+                # previous_line = line
+
+        print(cardinals)
+        print(len(lics_to_create))
+        print(len(lics_to_update))
         Licence.objects.bulk_update(
-            licences_to_update,
+            lics_to_update,
             ["name", "trading_name", "traffic_area", "licence_number", "discs", "authorised_discs", "description",
              "granted_date", "expiry_date", "address"]
         )
+        Licence.objects.bulk_create(lics_to_create)
 
-        for registration in to_create:
+        for registration in regs_to_create:
             registration.licence = registration.licence
 
-        Registration.objects.bulk_create(to_create)
         Registration.objects.bulk_update(
-            to_update,
+            regs_to_update,
             ["start_point", "finish_point", "via",
              "subsidies_description", "subsidies_details", "traffic_area_office_covered_by_area",
              "service_number", "service_type_description", "registration_status"]
         )
+        Registration.objects.bulk_create(regs_to_create)
 
     # def handle_variations(region):
     #     path = os.path.join(settings.DATA_DIR, f"Bus_Variation_{region}.csv")

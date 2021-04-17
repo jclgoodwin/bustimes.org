@@ -22,7 +22,7 @@ class Description(models.TextChoices):
 
 
 class Licence(models.Model):
-    name = models.CharField(max_length=48)
+    name = models.CharField(max_length=255)
     trading_name = models.CharField(max_length=255, blank=True)
     traffic_area = models.CharField(max_length=1, choices=TrafficArea.choices)
     licence_number = models.CharField(max_length=20, unique=True)
