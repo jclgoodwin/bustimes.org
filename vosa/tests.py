@@ -1,11 +1,9 @@
 import os
 import mock
-# from vcr import use_cassette
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-# from busstops.models import Region, Operator, Service
+from busstops.models import Region, Operator
 from .models import Licence
-# from .management.commands import import_variations
 
 
 class VosaTest(TestCase):
@@ -19,7 +17,12 @@ class VosaTest(TestCase):
         licence = Licence.objects.get(licence_number='PF0000705')
         self.assertEqual(licence.trading_name, "R O SIMONDS\nSimonds Coach& Travel\nSimonds Countrylink")
 
+        Region.objects.create(id='SW', name='South West')
+        operator = Operator.objects.create(region_id='SW', id='AINS', name="Ainsley's Chariots")
+        operator.licences.add(licence)
+
         response = self.client.get('/licences/PF0000705')
+        self.assertContains(response, "Ainsley's Chariots")
         self.assertContains(response, "<th>Trading name</th>")
 
         # licence
