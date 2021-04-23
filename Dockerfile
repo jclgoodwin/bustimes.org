@@ -10,6 +10,9 @@ RUN pipenv sync --dev
 
 COPY . /app/
 
+ENV STATICFILES_DIR=/staticfiles/
+RUN pipenv run ./manage.py collectstatic
+
 ENV PGHOST=host.docker.internal
 ENV PGUSER=josh
 ENV DEBUG=1
