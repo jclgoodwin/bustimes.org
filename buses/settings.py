@@ -566,4 +566,5 @@ TICKETER_OPERATORS = [
     ('SE', ['CLNB'], 'Carlone Buses'),
     ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
     ('EA', ['Beestons_(Hadleigh)_Ltd', 'BEES']),
+    ('Y',  ['Shoreline_Suncruisers', 'SSSN']),
 ]
