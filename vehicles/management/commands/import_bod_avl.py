@@ -287,6 +287,13 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
         try:
+            # in case there was MultipleObjectsReturned caused by a bogus ServiceCode
+            # e.g. both Somerset 21 and 21A have 21A ServiceCode
+            return services.get(line_name__iexact=line_ref)
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+            pass
+
+        try:
             when = self.get_datetime(item)
             when = when.strftime('%a').lower()
             trips = Trip.objects.filter(**{f'calendar__{when}': True}, route__service=OuterRef("pk"))
