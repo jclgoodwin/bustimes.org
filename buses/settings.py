@@ -375,11 +375,9 @@ BOD_OPERATORS = [
         'UN': 'UNOE',
     }, False),
     ('TBTN', 'EM', {
-        '574T': 'TBTN',
+        'BRTB': 'TBTN',
     }, False),
-    ('KBUS', 'EM', {
-        'KN': 'KBUS',
-    }, False),
+    ('KBUS', 'EM', {}, False),
 
     ('CSVC', 'EA', {
         'CS': 'CSVC'
@@ -567,4 +565,11 @@ TICKETER_OPERATORS = [
     ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
     ('EA', ['Beestons_(Hadleigh)_Ltd', 'BEES']),
     ('Y',  ['Shoreline_Suncruisers', 'SSSN']),
+    ('WM', ['Travel_Express', 'TEXP']),
+    ('WM', ['Banga_Buses', 'BANG']),
+    ('EM', ['DELA'], 'Delaine Buses'),
+    ('SE', ['RCHC'], 'Richmonds Coaches'),
+    ('SE', ['RRTR'], 'Red Rose Travel'),
+    ('NW', ['Finches', 'FCHS']),
+    ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
 ]
