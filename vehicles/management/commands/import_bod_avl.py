@@ -261,9 +261,10 @@ class Command(ImportLiveVehiclesCommand):
                     pass
 
         if destination_ref:
+            stops = StopPoint.objects.filter(service=OuterRef("pk"), atco_code__startswith=destination_ref[:3])
+            services = services.filter(Exists(stops))
             try:
-                stops = StopPoint.objects.filter(service=OuterRef("pk"), atco_code__startswith=destination_ref[:3])
-                return services.get(Exists(stops))
+                return services.get()
             except Service.DoesNotExist:
                 cache.set(cache_key, False, 3600)
                 return
@@ -280,8 +281,8 @@ class Command(ImportLiveVehiclesCommand):
                     pass
 
         else:
+            latlong = self.create_vehicle_location(item).latlong
             try:
-                latlong = self.create_vehicle_location(item).latlong
                 return services.get(geometry__bboverlaps=latlong)
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                 pass
