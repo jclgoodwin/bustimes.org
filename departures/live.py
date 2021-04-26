@@ -15,7 +15,7 @@ from django.db.models.functions import Concat
 from django.utils import timezone
 from busstops.models import Service, ServiceCode, SIRISource
 from bustimes.models import get_calendars, get_routes, Route, StopTime
-from vehicles.tasks import create_service_code, create_journey_code, log_vehicle_journey
+from vehicles.tasks import log_vehicle_journey
 
 
 logger = logging.getLogger(__name__)
@@ -612,44 +612,20 @@ def get_departures(stop, services):
             if live_rows:
                 blend(departures, live_rows)
 
-                if source:
+                if source and source.name in {'Aberdeen', 'SPT'}:
                     # Record some information about the vehicle and journey,
                     # for enthusiasts,
                     # because the source doesn't support vehicle locations
-                    if source.name in {'Aberdeen', 'Dundee', 'SPT'}:
-                        for row in departures:
-                            if 'data' in row and 'VehicleRef' in row['data']:
-                                log_vehicle_journey.delay(
-                                    row['service'].pk if type(row['service']) is Service else None,
-                                    row['data'],
-                                    str(row['origin_departure_time']) if 'origin_departure_time' in row else None,
-                                    str(row['destination']),
-                                    source.name,
-                                    source.url
-                                )
-
-                    # Create a "service code",
-                    # because the source supports vehicle locations.
-                    # For Norfolk, the code was useful for deciphering out what route a vehicle is on.
-                    # For other sources, it just denotes that some live tracking is available.
-                    if 'icarus' in source.url or 'sslink' in source.url:
-                        line_refs = set()
-                        for row in departures:
-                            if type(row['service']) is Service and 'data' in row and 'LineRef' in row['data']:
-                                line_ref = row['data']['LineRef']
-                                create_service_code.delay(line_ref, row['service'].pk, f'{source.name} SIRI')
-                                line_refs.add(line_ref)
-
-                    # Create a "journey code", which can be used to work out the destination of a vehicle.
-                    if 'SIRIHandler' in source.url:
-                        for row in departures:
-                            if type(row['service']) is Service:
-                                if 'data' in row and 'FramedVehicleJourneyRef' in row['data']:
-                                    if 'DatedVehicleJourneyRef' in row['data']['FramedVehicleJourneyRef']:
-                                        create_journey_code.delay(
-                                            str(row['destination']), service.pk,
-                                            row['data']['FramedVehicleJourneyRef']['DatedVehicleJourneyRef'], source.id
-                                        )
+                    for row in departures:
+                        if 'data' in row and 'VehicleRef' in row['data']:
+                            log_vehicle_journey.delay(
+                                row['service'].pk if type(row['service']) is Service else None,
+                                row['data'],
+                                str(row['origin_departure_time']) if 'origin_departure_time' in row else None,
+                                str(row['destination']),
+                                source.name,
+                                source.url
+                            )
 
     max_age = 60
 

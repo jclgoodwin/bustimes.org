@@ -6,10 +6,10 @@ from celery import shared_task
 from django.db.models import Q
 from django.db.utils import OperationalError
 from django.core.cache import cache
-from busstops.models import DataSource, ServiceCode, Operator
+from busstops.models import DataSource, Operator
 from disruptions.management.commands.import_siri_sx import handle_item as siri_sx
 from .management.commands import import_bod_avl
-from .models import JourneyCode, Vehicle, VehicleJourney
+from .models import Vehicle, VehicleJourney
 
 
 @shared_task
@@ -75,18 +75,6 @@ def handle_siri_sx(request_body):
         source.settings['subscription_ref'] = subscription_ref
         source.save(update_fields=['settings'])
         source.situation_set.filter(current=True).exclude(id__in=situation_ids).update(current=False)
-
-
-@shared_task
-def create_service_code(line_ref, service_id, scheme):
-    ServiceCode.objects.update_or_create({'code': line_ref}, service_id=service_id, scheme=scheme)
-
-
-@shared_task
-def create_journey_code(destination, service_id, journey_ref, source_id):
-    JourneyCode.objects.update_or_create({
-        'destination': destination
-    }, service_id=service_id, code=journey_ref, siri_source_id=source_id)
 
 
 @shared_task

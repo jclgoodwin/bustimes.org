@@ -21,7 +21,6 @@ class SiriVMImportTest(TestCase):
             name='Essex SIRI', datetime='2018-08-06T22:41:15+01:00',
             url='http://essex.jmwrti.co.uk:8080/RTI-SIRI-Server/SIRIHandler')
         OperatorCode.objects.create(operator=cls.operator, source=cls.command.source, code='FE')
-        # JourneyCode.objects.create(service=cls.service, code='14', destination='Hundred Acre Wood')
 
     @use_cassette(os.path.join(DIR, 'vcr', 'import_sirivm.yaml'), decode_compressed_response=True)
     def test_handle(self):
