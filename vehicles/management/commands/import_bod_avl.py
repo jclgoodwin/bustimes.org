@@ -269,16 +269,20 @@ class Command(ImportLiveVehiclesCommand):
                 cache.set(cache_key, False, 3600)
                 return
             except Service.MultipleObjectsReturned:
-                trips = Trip.objects.filter(route__service=OuterRef("pk"), destination=destination_ref)
+                condition = Exists(StopPoint.objects.filter(
+                    service=OuterRef("pk"), atco_code=destination_ref
+                ))
                 origin_ref = monitored_vehicle_journey.get("OriginRef")
                 if origin_ref:
-                    trips = trips.filter(
-                        Exists(StopTime.objects.filter(trip=OuterRef("pk"), stop=origin_ref))
-                    )
+                    condition &= Exists(StopPoint.objects.filter(
+                        service=OuterRef("pk"), atoco_code=origin_ref
+                    ))
                 try:
-                    return services.get(Exists(trips))
-                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                    return services.get(condition)
+                except Service.DoesNotExist:
                     pass
+                except Service.MultipleObjectsReturned:
+                    services = services.filter(condition)
 
         else:
             latlong = self.create_vehicle_location(item).latlong
