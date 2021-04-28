@@ -732,8 +732,6 @@ class Command(BaseCommand):
                     existing = Service.objects.filter(operator__parent='Go South Coast')
                 elif self.source.name.startswith('Stagecoach'):
                     existing = Service.objects.filter(Q(source=self.source) | Q(operator__in=operators))
-                    if description:
-                        existing = existing.filter(description=description)
                 else:
                     existing = Service.objects.filter(operator__in=operators)
 
