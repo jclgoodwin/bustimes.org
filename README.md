@@ -36,9 +36,11 @@ There are also some JavaScript dependencies:
 
 ### Static data (stops, timetables, etc)
 
-[`import.sh`](data/import.sh) will download data from various [sources](https://bustimes.org.uk/data) and run the necessary Django [management commands](busstops/management/commands) to import it.
+	cd data
+	pipenv run ./import.sh
+
+will download some data from various [sources](https://bustimes.org.uk/data) and run the necessary Django [management commands](busstops/management/commands) to import it.
 When run repeatedly, it will only download and import the stuff that's changed.
-It expects to be run from the [`data`](data) directory.
 It needs a username and password for the Traveline National Dataset step.
 
 ### Live data

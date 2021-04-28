@@ -88,9 +88,9 @@ DATABASES = {
         }
     }
 }
-if TEST:
-    TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
-    NUM_SLOW_TESTS = 20
+# if TEST:
+#     TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
+#     NUM_SLOW_TESTS = 20
 
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/vehicles'
