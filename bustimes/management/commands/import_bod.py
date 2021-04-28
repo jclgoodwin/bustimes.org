@@ -264,7 +264,7 @@ def stagecoach(operator=None):
         if operator and operator != noc:  # something like 'sswl'
             continue
 
-        filename = f'stagecoach-{noc}-route-schedule-data-transxchange.zip'
+        filename = f'stagecoach-{noc}-route-schedule-data-transxchange_2_4.zip'
         url = f'https://opendata.stagecoachbus.com/{filename}'
         path = os.path.join(settings.DATA_DIR, filename)
 
