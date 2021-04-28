@@ -265,6 +265,8 @@ def stagecoach(operator=None):
             continue
 
         filename = f'stagecoach-{noc}-route-schedule-data-transxchange_2_4.zip'
+        if noc in ('sdvn', 'scox', 'scgl', 'sccm', 'scnh'):
+            filename = filename.replace('_2_4', '')
         url = f'https://opendata.stagecoachbus.com/{filename}'
         path = os.path.join(settings.DATA_DIR, filename)
 
