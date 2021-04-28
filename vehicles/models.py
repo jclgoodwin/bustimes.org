@@ -8,6 +8,7 @@ from django.contrib.gis.db import models
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.db.models.functions import TruncDate
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, DataSource, SIRISource
@@ -601,9 +602,9 @@ class VehicleJourney(models.Model):
 
     class Meta:
         ordering = ('id',)
-        index_together = (
-            ('service', 'datetime'),
-        )
+        indexes = [
+            models.Index('service', TruncDate('datetime').asc(), name='service_datetime_date')
+        ]
         unique_together = (
             ('vehicle', 'datetime'),
         )
