@@ -223,7 +223,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             try:
                 journey.save()
             except IntegrityError:
-                journey = vehicle.vehiclejourney_set.using('default').get(datetime=journey.datetime)
+                journey = vehicle.vehiclejourney_set.defer('data').using('default').get(datetime=journey.datetime)
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
