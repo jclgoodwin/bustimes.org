@@ -347,13 +347,13 @@ class Command(BaseCommand):
                             except (AttributeError, DataError) as error:
                                 logger.error(error, exc_info=True)
 
-        self.update_geometries()
-
-        self.source.save(update_fields=['datetime'])
-
         if not filenames:
             self.mark_old_services_as_not_current()
             self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
+
+        self.update_geometries()
+
+        self.source.save(update_fields=['datetime'])
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
 
