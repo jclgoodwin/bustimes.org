@@ -704,9 +704,11 @@ class Command(BaseCommand):
 
             if unique_service_code:
                 # first try getting by BODS profile compliant service code
+                condition = Q(service_code=unique_service_code)
+                if description and self.source.name.startswith('Stagecoach'):
+                    condition |= Q(description=description)
                 existing = Service.objects.filter(
-                    service_code=unique_service_code,
-                    line_name__iexact=line.line_name
+                    condition, line_name__iexact=line.line_name
                 ).order_by('-current', 'id').first()
 
             if not existing and operators and line.line_name:
