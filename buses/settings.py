@@ -573,4 +573,6 @@ TICKETER_OPERATORS = [
     ('SE', ['RRTR'], 'Red Rose Travel'),
     ('NW', ['Finches', 'FCHS']),
     ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
+    ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
+    ('SW', ['NCTP'], 'HCT Group'),
 ]
