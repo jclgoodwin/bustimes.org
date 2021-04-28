@@ -484,6 +484,7 @@ BOD_OPERATORS = [
         'OBUS': 'OBUS',
     }, False),
 
+    ('PLNG', 'EA', {}, False),
     ('SNDR', 'EA', {}, False),
     ('BEVC', 'NW', {}, False),
 
