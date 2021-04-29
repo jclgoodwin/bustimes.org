@@ -619,6 +619,7 @@ class Command(BaseCommand):
     def get_description(self, txc_service):
         description = txc_service.description
         if description and ('timetable' in description.lower() or 'Database Refresh' in description
+                            or self.source.name.startswith('Stagecoach')
                             or self.source.name.startswith('Coach Services')):
             description = None
         if not description:
