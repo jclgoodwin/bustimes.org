@@ -22,7 +22,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
-from vehicles.models import Vehicle
+from vehicles.models import Vehicle, VehicleLocation
 from .utils import format_gbp, get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
                      Service, Place, ServiceColour, DataSource)
@@ -557,7 +557,7 @@ class OperatorDetailView(DetailView):
             context['colours'] = get_colours(context['services'])
 
         if context['vehicles']:
-            context['map'] = self.object.vehicle_set.filter(latest_location__isnull=False).exists()
+            context['map'] = VehicleLocation.objects.filter(journey__vehicle__operator=self.object).exists()
 
         return context
 

@@ -135,6 +135,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with self.assertNumQueries(2):
             bod_avl(items)
 
+        self.assertEqual(3, VehicleLocation.objects.all().count())
+
         location = VehicleLocation.objects.all()[1]
         self.assertEqual(location.journey.route_name, '843X')
         self.assertEqual(location.journey.destination, 'Soho Road')
