@@ -26,6 +26,7 @@ class MegabusTest(TestCase):
             }
         }
         self.command.handle_item(item)
+        self.command.save()
         vehicle = Vehicle.objects.get()
         self.assertEqual('54123', str(vehicle))
         self.assertEqual('28 Mar 2021 01:17:03', str(vehicle.latest_location))

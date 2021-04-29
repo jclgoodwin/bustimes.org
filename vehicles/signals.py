@@ -5,8 +5,9 @@ from .models import Vehicle, Livery
 
 
 @receiver(post_save, sender=Vehicle)
-def vehicle_varnish_ban(sender, instance, **kwargs):
-    varnish_ban(f'/vehicles/{instance.id}')
+def vehicle_varnish_ban(sender, instance, created, **kwargs):
+    if not created:
+        varnish_ban(f'/vehicles/{instance.id}')
 
 
 @receiver(post_save, sender=Livery)

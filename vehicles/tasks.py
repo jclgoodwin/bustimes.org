@@ -135,7 +135,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
     else:
         vehicles = operator.vehicle_set
 
-    vehicles = vehicles.select_related('latest_location', 'latest_journey')
+    vehicles = vehicles.select_related('latest_journey')
 
     if vehicle.isdigit():
         defaults['fleet_number'] = vehicle
@@ -152,10 +152,6 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
     time = parse_datetime(time)
 
     if vehicle.latest_journey and vehicle.latest_journey.datetime == time:
-        return
-
-    if vehicle.latest_location and (time - vehicle.latest_location.datetime).total_seconds() < 7200:
-        # vehicle tracked less than 2 hours ago
         return
 
     destination = destination or ''

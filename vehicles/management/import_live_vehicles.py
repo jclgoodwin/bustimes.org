@@ -97,6 +97,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         self.session = requests.Session()
         self.redis = redis.from_url(settings.REDIS_URL)
         self.to_save = []
+        self.vehicles_to_update = []
 
     @staticmethod
     def get_datetime(self):
@@ -241,23 +242,24 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if vehicle.latest_journey_id != journey.id:
             vehicle.latest_journey = journey
-            update_fields = ['latest_journey']
 
             if vehicle.latest_location_id != location.id:
                 vehicle.latest_location = location
-                update_fields.append('latest_location')
 
             if vehicle.withdrawn:
                 vehicle.withdrawn = False
-                update_fields.append('withdrawn')
 
-            vehicle.save(update_fields=update_fields)
+            self.vehicles_to_update.append(vehicle)
 
         self.to_save.append((location, vehicle))
 
     def save(self):
         if not self.to_save:
             return
+
+        if self.vehicles_to_update:
+            Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'latest_location', 'withdrawn'])
+            self.vehicles_to_update = []
 
         pipeline = self.redis.pipeline(transaction=False)
 
@@ -278,13 +280,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
         for location, vehicle in self.to_save:
             pipeline.rpush(*location.get_appendage())
 
+        self.to_save = []
+
         with beeline.tracer(name="pipeline"):
             try:
                 pipeline.execute()
             except redis.exceptions.ConnectionError:
                 pass
-
-        self.to_save = []
 
     def do_source(self):
         if self.url:
