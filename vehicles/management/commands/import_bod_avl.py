@@ -275,7 +275,7 @@ class Command(ImportLiveVehiclesCommand):
                 origin_ref = monitored_vehicle_journey.get("OriginRef")
                 if origin_ref:
                     condition &= Exists(StopPoint.objects.filter(
-                        service=OuterRef("pk"), atoco_code=origin_ref
+                        service=OuterRef("pk"), atco_code=origin_ref
                     ))
                 try:
                     return services.get(condition)
