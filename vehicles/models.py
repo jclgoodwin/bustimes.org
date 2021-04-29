@@ -191,6 +191,8 @@ class Vehicle(models.Model):
             reg = re.match(r"^[A-Z]\w_?\d\d?[ _-]?[A-Z]{3}$", self.code)
             if reg:
                 self.reg = self.code.replace(' ', '').replace('_', '').replace('-', '')
+        elif update_fields is None or 'reg' in update_fields:
+            self.reg = self.reg.upper().replace(' ', '')
 
         super().save(*args, update_fields=update_fields, **kwargs)
 
