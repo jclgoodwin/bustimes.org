@@ -226,12 +226,6 @@ def ticketer(operator=None):
             print(url, last_modified)
 
             command.operators = {code: code for code in operators}
-            if noc == 'ACYM':
-                command.operators['ANW'] = noc
-            elif noc == 'AMID':
-                command.operators['AMD'] = noc
-            elif noc == 'AMTM':
-                command.operators['ASC'] = noc
 
             command.region_id = region_id
             command.service_ids = set()
