@@ -40,6 +40,12 @@ h1 {
     margin-top: 0;
 }
 
+
+.table-wrapper,
+.timetable-wrapper {
+    overflow: visible;
+}
+
 .timetable {
     thead td,
     td,
