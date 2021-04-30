@@ -9,6 +9,7 @@ source =
     bustimes
     departures
     disruptions
+    fares
     transxchange
     vehicles
     vosa
