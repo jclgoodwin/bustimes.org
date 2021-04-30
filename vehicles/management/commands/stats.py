@@ -26,7 +26,7 @@ class Command(BaseCommand):
         except (FileNotFoundError, json.decoder.JSONDecodeError):
             history = []
 
-        history.append(stats)
+        history = history[-3000:] + [stats]
 
         with open('stats.json', 'w') as open_file:
             json.dump(history, open_file, cls=DjangoJSONEncoder)
