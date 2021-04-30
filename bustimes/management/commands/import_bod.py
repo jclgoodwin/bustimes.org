@@ -265,12 +265,12 @@ def stagecoach(operator=None):
             continue
 
         filename = f'stagecoach-{noc}-route-schedule-data-transxchange_2_4.zip'
-        if noc in ('sdvn', 'scox', 'scgl', 'sccm', 'scnh'):
+        if noc in ('sdvn', 'scox', 'scgl', 'sccm', 'scnh', 'scmy'):
             filename = filename.replace('_2_4', '')
         url = f'https://opendata.stagecoachbus.com/{filename}'
         path = os.path.join(settings.DATA_DIR, filename)
 
-        command.source, created = DataSource.objects.get_or_create({'name': name}, url=url)
+        command.source, created = DataSource.objects.get_or_create({'url': url}, name=name)
 
         modified, last_modified = download_if_changed(path, url)
 
