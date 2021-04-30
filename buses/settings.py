@@ -575,5 +575,5 @@ TICKETER_OPERATORS = [
     ('NW', ['Finches', 'FCHS']),
     ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
     ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
-    ('SW', ['NCTP'], 'HCT Group'),
+    ('SW', ['NTCP', 'NCTP'], 'HCT Group'),
 ]
