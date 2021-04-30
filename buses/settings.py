@@ -12,7 +12,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
 
 TEST = 'test' in sys.argv or 'pytest' in sys.argv[0]
-DEBUG = bool(os.environ.get('DEBUG', False)) or TEST
+DEBUG = bool(os.environ.get('DEBUG', False))
 
 SERVER_EMAIL = 'contact@bustimes.org'
 DEFAULT_FROM_EMAIL = 'bustimes.org <contact@bustimes.org>'
@@ -148,17 +148,20 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-            ]
+            ],
+            'loaders': [('django.template.loaders.cached.Loader', [
+                'template_minifier.template.loaders.app_directories.Loader'
+            ])]
         }
     }
 ]
 if DEBUG:
     TEMPLATES[0]['OPTIONS']['loaders'] = ['django.template.loaders.app_directories.Loader']
-else:
+elif TEST:
     TEMPLATES[0]['OPTIONS']['loaders'] = [('django.template.loaders.cached.Loader', [
-        # 'django.template.loaders.app_directories.Loader'
-        'template_minifier.template.loaders.app_directories.Loader'
+        'django.template.loaders.app_directories.Loader'
     ])]
+
 
 CACHES = {}
 if TEST:
