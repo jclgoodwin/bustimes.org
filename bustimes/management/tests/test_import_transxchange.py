@@ -77,6 +77,7 @@ class ImportTransXChangeTest(TestCase):
             path = os.path.join(FIXTURES_DIR, filename)
             with open(path, 'r') as open_file:
                 command.handle_file(open_file, filename)
+        command.finish_services()
 
     @classmethod
     def write_files_to_zipfile_and_import(cls, zipfile_name, filenames):
@@ -642,7 +643,6 @@ class ImportTransXChangeTest(TestCase):
         self.handle_files('S.zip', ['SVRABBN017.xml'])
 
         service = Service.objects.get(service_code='ABBN017')
-        service.update_geometry()
 
         self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
         self.assertTrue(service.show_timetable)

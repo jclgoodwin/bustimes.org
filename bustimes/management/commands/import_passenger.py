@@ -193,7 +193,7 @@ class Command(BaseCommand):
             print('  old services:', old_services.update(current=False))
 
             if new_versions:
-                command.update_geometries()
+                command.finish_services()
 
                 for version in versions:
                     if 'gtfs' in version:

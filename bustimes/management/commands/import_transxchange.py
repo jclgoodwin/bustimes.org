@@ -202,7 +202,6 @@ class Command(BaseCommand):
         self.undefined_holidays = set()
         self.missing_operators = []
         self.notes = {}
-        self.corrections = {}
         self.garages = {}
 
     def handle(self, *args, **options):
@@ -331,9 +330,6 @@ class Command(BaseCommand):
 
         self.source.datetime = datetime.datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
-        with open(os.path.join(settings.DATA_DIR, 'services.yaml')) as open_file:
-            self.corrections = yaml.load(open_file, Loader=yaml.FullLoader)
-
         with zipfile.ZipFile(archive_name) as archive:
 
             self.set_service_descriptions(archive)
@@ -351,14 +347,35 @@ class Command(BaseCommand):
             self.mark_old_services_as_not_current()
             self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
 
-        self.update_geometries()
+        self.finish_services()
 
         self.source.save(update_fields=['datetime'])
 
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
 
-    def update_geometries(self):
+    def finish_services(self):
+        """update/create StopUsages, search_vector and geometry fields"""
+
         for service in Service.objects.filter(id__in=self.service_ids):
+            service.stops.clear()
+
+            outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
+
+            stop_usages = [
+                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='outbound', order=i)
+                for i, stop_time in enumerate(outbound)
+            ] + [
+                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='inbound', order=i)
+                for i, stop_time in enumerate(inbound)
+            ]
+            StopUsage.objects.bulk_create(stop_usages)
+
+            # using StopUsages
+            service.update_search_vector()
+
+            # using routes
             service.update_geometry()
 
     def do_bank_holidays(self, holidays, operating_period, operation, calendar_dates):
@@ -912,34 +929,6 @@ class Command(BaseCommand):
                 route.trip_set.all().delete()
 
             self.handle_journeys(route, stops, journeys, txc_service, line.id)
-
-            # TODO: move everything below this point, cos it's wasteful if a service is split across multiple files
-
-            service.stops.clear()
-            outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
-
-            stop_usages = [
-                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='outbound', order=i)
-                for i, stop_time in enumerate(outbound)
-            ] + [
-                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='inbound', order=i)
-                for i, stop_time in enumerate(inbound)
-            ]
-            StopUsage.objects.bulk_create(stop_usages)
-
-            service_code = service.service_code
-            if service_code in self.corrections:
-                corrections = {}
-                for field in self.corrections[service_code]:
-                    if field == 'operator':
-                        service.operator.set(self.corrections[service_code][field])
-                    else:
-                        corrections[field] = self.corrections[service_code][field]
-                Service.objects.filter(service_code=service_code).update(**corrections)
-
-            service.update_search_vector()
 
         if len(linked_services) > 1:
             for i, from_service in enumerate(linked_services):

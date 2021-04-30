@@ -160,8 +160,8 @@ def bus_open_data(api_key, operator):
                 print('  ', operator_ids)
                 print('  ', [o for o in operator_ids if o not in operators])
 
-                command.update_geometries()
                 command.mark_old_services_as_not_current()
+                command.finish_services()
 
         # delete routes from any sources that have been made inactive
         if Service.objects.filter(source__in=sources, operator__in=operators, current=True).exists():
@@ -237,8 +237,8 @@ def ticketer(operator=None):
 
             handle_file(command, filename)
 
-            command.update_geometries()
             command.mark_old_services_as_not_current()
+            command.finish_services()
 
             clean_up(operators, [command.source])
 
@@ -285,8 +285,8 @@ def stagecoach(operator=None):
 
             handle_file(command, filename)
 
-            command.update_geometries()
             command.mark_old_services_as_not_current()
+            command.finish_services()
 
             clean_up(command.operators.values(), [command.source])
 

@@ -897,7 +897,11 @@ class Service(models.Model):
             if len(points) > 1:
                 linestrings.append(LineString(points))
         if linestrings:
-            self.geometry = MultiLineString(*linestrings)
+            geometry = MultiLineString(*linestrings).simplify()
+            if type(geometry) is LineString:
+                self.geometry = MultiLineString([geometry])
+            else:
+                self.geometry = geometry
             self.save(update_fields=['geometry'])
 
 
