@@ -225,10 +225,12 @@ def vehicles_json(request):
 
     vehicles = Vehicle.objects.select_related('vehicle_type').annotate(
         feature_names=StringAgg('features__name', ', ')
-    )
+    ).defer('data')
 
     if 'service__isnull' in request.GET:
-        vehicles = vehicles.filter(latest_journey__service__isnull=BooleanField().to_python(request.GET['service__isnull']))
+        vehicles = vehicles.filter(
+            latest_journey__service__isnull=BooleanField().to_python(request.GET['service__isnull'])
+        )
 
     if bounds is not None:
         # ids of vehicles within box

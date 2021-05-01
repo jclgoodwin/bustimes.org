@@ -9,7 +9,10 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 class Command(ImportLiveVehiclesCommand):
     url = 'http://tfe-opendata.com/api/v1/vehicle_locations'
     source_name = 'TfE'
-    services = Service.objects.filter(operator__in=('LOTH', 'EDTR', 'ECBU', 'NELB'), current=True)
+    services = Service.objects.filter(
+        operator__in=('LOTH', 'EDTR', 'ECBU', 'NELB'),
+        current=True
+    ).defer('geometry', 'search_vector')
 
     @staticmethod
     def get_datetime(item):
@@ -51,8 +54,7 @@ class Command(ImportLiveVehiclesCommand):
                         vehicle.operator = operator
                         vehicle.save()
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                if item['service_name'] not in {'ET1', 'MA1', '3BBT', 'C134'}:
-                    print(e, item['service_name'])
+                print(e, item['service_name'])
 
         return journey
 

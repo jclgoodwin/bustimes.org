@@ -9,7 +9,7 @@ from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.db.models import Q, Exists, OuterRef
 from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
-from bustimes.models import Trip, StopTime
+from bustimes.models import Trip
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -39,6 +39,7 @@ class Command(ImportLiveVehiclesCommand):
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
     identifiers = {}
+    services = Service.objects.using(settings.READ_DATABASE).filter(current=True).defer('geometry', 'search_vector')
 
     @staticmethod
     def get_datetime(item):
@@ -226,7 +227,7 @@ class Command(ImportLiveVehiclesCommand):
             if ticket_machine_service_code.lower() != line_ref.lower():
                 line_name_query |= self.get_line_name_query(ticket_machine_service_code)
 
-        services = Service.objects.using(settings.READ_DATABASE).filter(line_name_query, current=True)
+        services = self.services.filter(line_name_query).defer('geometry')
 
         if type(operator) is Operator and operator.parent and destination_ref:
             condition = Q(parent=operator.parent)
@@ -339,7 +340,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey = None
 
-        journeys = vehicle.vehiclejourney_set
+        journeys = vehicle.vehiclejourney_set.defer('data')
 
         datetime = None
 
