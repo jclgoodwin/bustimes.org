@@ -117,16 +117,16 @@
         var xScale = d3.scaleTime().domain([
             datetimes.reduce((a, b) => Math.min(a, b)),
             datetimes.reduce((a, b) => Math.max(a, b)),
-        ]).range([0, 700]);
+        ]).range([0, 780]);
 
         var totals = data.map(item => Object.values(item.sources).reduce((a, b) => a + b));
         var maxTotal = totals.reduce((a, b) => Math.max(a, b));
-        var servicesScale = d3.scaleLinear().domain([0, maxTotal]).range([650, 0]);
+        var servicesScale = d3.scaleLinear().domain([0, maxTotal]).range([780, 0]);
 
         var xAxis = d3.axisBottom(xScale);
         var yAxis = d3.axisLeft(servicesScale);
 
-        timetables.append("g").attr("transform", "translate(50, 650)").call(xAxis);
+        timetables.append("g").attr("transform", "translate(50, 780)").call(xAxis);
 
         timetables.append("g").attr("transform", "translate(50, 0)").call(yAxis);
 

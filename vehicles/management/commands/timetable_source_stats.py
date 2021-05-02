@@ -12,15 +12,21 @@ class Command(BaseCommand):
 
         sources = DataSource.objects.annotate(
             count=Count('route__service', filter=Q(route__service__current=True), distinct=True),
-        ).filter(count__gt=0)
+        ).filter(count__gt=0).order_by('name')
 
         stats = {
             "datetime": now,
-            "sources": {
-                source.name: source.count
-                for source in sources
-            }
+            "sources": {}
         }
+        for source in sources:
+            if '_' in source.name:
+                name = source.name.split('_')[0]
+                if name in stats['sources']:
+                    stats['sources'][name] += source.count
+                else:
+                    stats['sources'][name] = source.count
+            else:
+                stats['sources'][source.name] = source.count
 
         filename = "timetable-source-stats.json"
 
