@@ -146,22 +146,25 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         latest = None
         latest_datetime = None
-        if vehicle.latest_location_id:
-            latest = self.redis.get(f'vehicle{vehicle.id}')
-            if latest:
-                latest = json.loads(latest)
-                latest_datetime = parse_datetime(latest['datetime'])
-                latest_latlong = Point(*latest['coordinates'])
 
-                if datetime:
-                    if latest_datetime >= datetime:
-                        # timestamp hasn't changed/is older
-                        return
-                else:
-                    location = self.create_vehicle_location(item)
-                    if location.latlong.equals_exact(latest_latlong, 0.001):
-                        # position haven't changed
-                        return
+        latest = self.redis.get(f'vehicle{vehicle.id}')
+        if latest:
+            latest = json.loads(latest)
+            latest_datetime = parse_datetime(latest['datetime'])
+            latest_latlong = Point(*latest['coordinates'])
+
+            if datetime:
+                if latest_datetime >= datetime:
+                    # timestamp isn't newer
+                    return
+            else:
+                location = self.create_vehicle_location(item)
+                if location.latlong.equals_exact(latest_latlong, 0.001):
+                    # position hasn't changed
+                    return
+        elif now and datetime and (now - datetime).total_seconds() > 600:
+            # more than 10 minutes old
+            return
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
