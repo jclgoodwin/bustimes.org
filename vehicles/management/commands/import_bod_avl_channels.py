@@ -55,7 +55,4 @@ class Command(ImportLiveVehiclesCommand):
 
         cache.set('bod_avl_identifiers', self.identifiers)  # backup
 
-        if count < 1000:  # suspiciously few items, try again sooner
-            return 14
-
         return 32
