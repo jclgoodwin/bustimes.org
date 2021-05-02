@@ -332,7 +332,7 @@ class Command(ImportLiveVehiclesCommand):
             elif not journey_ref or '_' in journey_ref:
                 journey_ref = journey_code  # what we will use for finding matching trip
 
-        route_name = monitored_vehicle_journey.get('PublishedLineName') or monitored_vehicle_journey.get('LineRef')
+        route_name = monitored_vehicle_journey.get('PublishedLineName') or monitored_vehicle_journey.get('LineRef', '')
 
         origin_aimed_departure_time = monitored_vehicle_journey.get('OriginAimedDepartureTime')
         if origin_aimed_departure_time:
@@ -371,7 +371,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if not journey:
             journey = VehicleJourney(
-                route_name=route_name or '',
+                route_name=route_name,
                 vehicle=vehicle,
                 source=self.source,
                 data=item,
