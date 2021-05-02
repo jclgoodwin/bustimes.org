@@ -19,14 +19,16 @@ class Command(BaseCommand):
             "sources": {}
         }
         for source in sources:
-            if '_' in source.name:
+            name = source.name
+            if '_' in name:
                 name = source.name.split('_')[0]
-                if name in stats['sources']:
-                    stats['sources'][name] += source.count
-                else:
-                    stats['sources'][name] = source.count
+            elif name.startswith('Stagecoach'):
+                name = 'Stagecoach'
+
+            if name in stats['sources']:
+                stats['sources'][name] += source.count
             else:
-                stats['sources'][source.name] = source.count
+                stats['sources'][name] = source.count
 
         filename = "timetable-source-stats.json"
 
