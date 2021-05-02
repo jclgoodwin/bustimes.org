@@ -54,16 +54,22 @@
         edits.append("g").attr("transform", "translate(50, 10)").call(editsAxis);
 
         var line = d3.line().x(item => xScale(item.datetime)).y(item => editsScale(item.pending_vehicle_edits));
-        edits.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line);
+        edits.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').attr("stroke-width", 2).datum(data).attr('d', line)
+        .append("title").text(d => {
+            return d.key;
+        });
 
         line = d3.line().x(item => xScale(item.datetime)).y(item => journeysScale(item.vehicle_journeys));
-        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line).attr("title", "tracked journeys");
+        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', 'red').attr("stroke-width", 2).datum(data).attr('d', line)
+        .append("title").text("journeys");
 
         line = d3.line().x(item => xScale(item.datetime)).y(item => journeysScale(item.service_vehicle_journeys));
-        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line).attr("title", "journeys matched to services");
+        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', 'blue').attr("stroke-width", 2).datum(data).attr('d', line)
+        .append("title").text("journeys matched to services");
 
         line = d3.line().x(item => xScale(item.datetime)).y(item => journeysScale(item.trip_vehicle_journeys));
-        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', '#000').datum(data).attr('d', line).attr("title", "journeys matched to timetable journeys");
+        journeys.append('path').attr('transform', 'translate(50, 10)').attr('fill', 'none').attr('stroke', 'green').attr("stroke-width", 2).datum(data).attr('d', line)
+        .append("title").text("journeys matched to timetables");
 
     });
 </script>
@@ -171,8 +177,10 @@
         .attr("d", area)
         .style("fill", d => {
             return accent(d.key);
+        })
+        .append("title").text(d => {
+            return d.key;
         });
-
 
     });
 </script>
