@@ -22,6 +22,9 @@ class Command(ImportLiveVehiclesCommand):
         # encourage items to be grouped by operator
         items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])
 
+        if not self.identifiers:  # restore backup
+            self.identifiers = cache.get('bod_avl_identifiers', {})
+
         identifiers = {}
         i = 0
         to_send = []
@@ -50,7 +53,9 @@ class Command(ImportLiveVehiclesCommand):
         bod_status = bod_status[-10:]
         cache.set('bod_avl_status', bod_status)
 
-        if count < 1000:  # suspiciously few items, try again sooner
-            return 15
+        cache.set('bod_avl_identifiers', self.identifiers)  # backup
 
-        return 30
+        if count < 1000:  # suspiciously few items, try again sooner
+            return 14
+
+        return 32
