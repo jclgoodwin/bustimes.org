@@ -265,6 +265,8 @@ def stagecoach(operator=None):
         path = os.path.join(settings.DATA_DIR, filename)
 
         command.source, created = DataSource.objects.get_or_create({'url': url}, name=name)
+        if not created:
+            command.source.url = url
 
         modified, last_modified = download_if_changed(path, url)
 
@@ -291,7 +293,7 @@ def stagecoach(operator=None):
             clean_up(command.operators.values(), [command.source])
 
             command.source.datetime = last_modified
-            command.source.save(update_fields=['datetime'])
+            command.source.save(update_fields=['datetime', 'url'])
 
             print('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
             operators = get_operator_ids(command.source)
