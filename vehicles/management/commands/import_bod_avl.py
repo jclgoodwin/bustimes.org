@@ -256,7 +256,7 @@ class Command(ImportLiveVehiclesCommand):
                 try:
                     return services.get()
                 except Service.DoesNotExist:
-                    cache.set(cache_key, None, 3600)  # cache 'service not found' for an hour
+                    cache.set(cache_key, False, 3600)  # cache 'service not found' for an hour
                     return
                 except Service.MultipleObjectsReturned:
                     pass

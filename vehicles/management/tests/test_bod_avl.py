@@ -1,6 +1,7 @@
 import os
 import redis
 import time_machine
+from django.core.cache import cache
 from mock import patch
 from vcr import use_cassette
 from django.conf import settings
@@ -166,6 +167,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         response = self.client.get('/operators/hams/map')
         self.assertContains(response, 'EXTENT = [0.285348,51.2135,0.285348,51.2135];OPERATOR_ID="HAMS";')
+
+        self.assertIs(cache.get('WHIP:U:0500CCITY544'), False)
+        self.assertIsNone(cache.get('WHIP:U:0500CCITY5'))
 
     def test_handle_item(self):
         command = import_bod_avl.Command()
