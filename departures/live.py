@@ -1,5 +1,4 @@
 """Various ways of getting live departures from some web service"""
-import re
 import ciso8601
 import datetime
 import requests
@@ -19,9 +18,7 @@ from vehicles.tasks import log_vehicle_journey
 
 
 logger = logging.getLogger(__name__)
-DESTINATION_REGEX = re.compile(r'.+\((.+)\)')
 LOCAL_TIMEZONE = pytz.timezone('Europe/London')
-SESSION = requests.Session()
 
 
 class Departures:
@@ -79,7 +76,7 @@ class Departures:
         }
 
     def get_response(self):
-        return SESSION.get(self.get_request_url(), **self.get_request_kwargs())
+        return requests.get(self.get_request_url(), **self.get_request_kwargs())
 
     def get_service(self, line_name):
         """Given a line name string, returns the Service matching a line name
@@ -240,7 +237,7 @@ class AcisHorizonDepartures(Departures):
                 </s:Body>
             </s:Envelope>
         """.format(self.stop.pk)
-        return SESSION.post(self.request_url, headers=self.headers, data=data, timeout=2)
+        return requests.post(self.request_url, headers=self.headers, data=data, timeout=2)
 
     def departures_from_response(self, res):
         items = ET.fromstring(res.text)
@@ -421,7 +418,7 @@ class SiriSmDepartures(Departures):
             </Siri>
         """.format(timestamp, username, timestamp, self.stop.atco_code)
         headers = {'Content-Type': 'application/xml'}
-        return SESSION.post(self.source.url, data=request_xml, headers=headers, timeout=5)
+        return requests.post(self.source.url, data=request_xml, headers=headers, timeout=5)
 
 
 class StagecoachDepartures(Departures):
@@ -446,8 +443,8 @@ class StagecoachDepartures(Departures):
                 }
             }
         }
-        return SESSION.post('https://api.stagecoachbus.com/adc/stop-monitor',
-                            headers=headers, json=json, timeout=2)
+        return requests.post('https://api.stagecoachbus.com/adc/stop-monitor',
+                             headers=headers, json=json, timeout=2)
 
     def departures_from_response(self, response):
         stop_monitors = response.json()['stopMonitors']
