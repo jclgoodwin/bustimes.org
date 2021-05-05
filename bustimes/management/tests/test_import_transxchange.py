@@ -536,21 +536,12 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(service.slug, 'abao421')
 
-        # after operating period
+        # after operating period - shouldn't create routes or trips
         with patch('os.path.getmtime', return_value=1645544079):
             with patch('builtins.print') as mocked_print:
                 self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
-        self.assertFalse(service.current)
-        self.assertEqual(service.slug, 'abao421')
-        mocked_print.assert_called_with("SVRABAO421.xml", date(2021, 8, 19))
-
-        # back within operating period - should update slug
-        with patch('os.path.getmtime', return_value=1582385679):
-            with patch('builtins.print') as mocked_print:
-                self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
-        service = Service.objects.get()
-        self.assertTrue(service.current)
+        self.assertEqual(0, service.route_set.count())
         self.assertEqual(service.slug, '421-inverurie-alford')
 
         mocked_print.assert_called_with("""<Operator id="BLB">

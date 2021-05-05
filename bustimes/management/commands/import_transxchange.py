@@ -681,12 +681,8 @@ class Command(BaseCommand):
                 return services.filter(operator__parent='Stagecoach').exists()
 
     def handle_service(self, filename, transxchange, txc_service, today, stops):
-        if txc_service.operating_period.end:
-            if txc_service.operating_period.end < today:
-                print(filename, txc_service.operating_period.end)
-                return
-            elif txc_service.operating_period.end < txc_service.operating_period.start:
-                return
+        if txc_service.operating_period.end and txc_service.operating_period.end < txc_service.operating_period.start:
+            return
 
         operators = self.get_operators(transxchange, txc_service)
 
@@ -847,6 +843,9 @@ class Command(BaseCommand):
                         service.operator.set(operators)
             self.service_ids.add(service.id)
             linked_services.append(service.id)
+
+            if txc_service.operating_period.end and txc_service.operating_period.end < today:
+                continue
 
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
