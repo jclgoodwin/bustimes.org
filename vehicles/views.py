@@ -50,10 +50,12 @@ def vehicles(request):
 
 
 def map(request):
-    return render(request, 'map.html')
+    return render(request, 'map.html', {
+        'liveries_css_version': cache.get('liveries_css_version', 0)
+    })
 
 
-def liveries_css(request):
+def liveries_css(request, version=None):
     styles = []
     liveries = Livery.objects.all()
     for livery in liveries:
@@ -188,6 +190,7 @@ def operator_vehicles(request, slug=None, parent=None):
         'revisions': revisions,
         'revision': revisions and revision,
         'form': form,
+        'liveries_css_version': cache.get('liveries_css_version', 0)
     }
 
     if not parent and not form:
@@ -211,7 +214,8 @@ def operator_map(request, slug):
         'operator': operator,
         'breadcrumb': [operator.region, operator],
         'operator_id': operator.id,
-        'extent': extent
+        'extent': extent,
+        'liveries_css_version': cache.get('liveries_css_version', 0)
     })
 
 

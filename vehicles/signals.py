@@ -1,5 +1,7 @@
+from datetime import datetime
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.core.cache import cache
 from buses.utils import varnish_ban
 from .models import Vehicle, Livery
 
@@ -12,4 +14,4 @@ def vehicle_varnish_ban(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Livery)
 def liveries_varnish_ban(sender, instance, **kwargs):
-    varnish_ban('/liveries.css')
+    cache.set('liveries_css_version', datetime.utcnow().timestamp())

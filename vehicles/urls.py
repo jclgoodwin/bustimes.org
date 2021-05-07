@@ -17,7 +17,7 @@ urlpatterns = [
     path('vehicles/<int:vehicle_id>/history', views.vehicle_history),
     path('journeys/<int:pk>/debug', views.journey_debug),
     path('journeys/<int:pk>.json', views.journey_json),
-    path('liveries.css', views.liveries_css),
+    path('liveries.<int:version>.css', views.liveries_css),
     path('siri', views.siri),
     path('map', views.map),
 ]

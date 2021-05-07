@@ -599,6 +599,8 @@ class ServiceDetailView(DetailView):
         if context['related']:
             context['colours'] = get_colours(context['related'])
 
+        # timetable
+
         if self.object.show_timetable and not self.object.timetable_wrong:
             date = self.request.GET.get('date')
             if date:
@@ -622,6 +624,8 @@ class ServiceDetailView(DetailView):
 
         else:
             date = None
+
+        # disruptions
 
         consequences = Consequence.objects.filter(services=self.object)
         context['situations'] = Situation.objects.filter(
@@ -671,6 +675,8 @@ class ServiceDetailView(DetailView):
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):
             context['breadcrumb'] = [self.object.region]
+
+        context['liveries_css_version'] = cache.get('liveries_css_version', 0)
 
         context['links'] = []
 

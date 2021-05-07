@@ -191,6 +191,12 @@ class VehiclesTests(TestCase):
         self.assertEqual(livery.left_css, 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
         self.assertEqual(livery.right_css, 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
 
+        response = self.client.get('/liveries.44.css')
+        self.assertContains(
+            response,
+            "{background:linear-gradient(to right,#FF0000 50%,#0000FF 50%);color:#fff}.livery-"
+        )
+
     def test_vehicle_edit_1(self):
         url = self.vehicle_1.get_absolute_url() + '/edit'
 

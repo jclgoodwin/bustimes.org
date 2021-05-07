@@ -38,7 +38,7 @@
         } else {
             loadjs([window.LEAFLET_CSS_URL, window.MAPS_JS_URL, window.LEAFLET_JS_URL], setUpMap);
             if (window.SERVICE_TRACKING) {
-                loadjs('/liveries.css');
+                loadjs(window.LIVERIES_CSS_URL);
             }
         }
     }
