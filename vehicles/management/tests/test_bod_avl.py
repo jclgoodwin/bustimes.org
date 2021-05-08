@@ -330,3 +330,42 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "seats": "27 free",
             "wheelchair": "free",
         }])
+
+    @time_machine.travel('2021-05-08T13:00+00:00')
+    def test_invalid_location(self):
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        item = {
+            "RecordedAtTime": "2021-05-08T12:54:36+00:00",
+            "ItemIdentifier": "db82c74d-e2ac-48f4-8963-4cea2d706b6d",
+            "ValidUntilTime": "2021-05-08T12:59:47.376621",
+            "MonitoredVehicleJourney": {
+                "LineRef": "8",
+                "DirectionRef": "OUTBOUND",
+                "PublishedLineName": "8",
+                "OperatorRef": "SCHI",
+                "OriginRef": "670030036",
+                "OriginName": "Stratton Road",
+                "DestinationRef": "670030036",
+                "DestinationName": "Stratton Road",
+                "OriginAimedDepartureTime": "2021-05-08T12:30:00+00:00",
+                "VehicleLocation": {
+                    "Longitude": "149.2244263",
+                    "Latitude": "87.8245926"
+                },
+                "Bearing": "0.0",
+                "VehicleJourneyRef": "2029",
+                "VehicleRef": "SCHI-21210"
+            },
+            "Extensions": {
+                "VehicleJourney": {
+                    "DriverRef": "135531"
+                }
+            }
+        }
+        command.handle_item(item)
+        command.save()
+
+        journey = VehicleJourney.objects.get()
+        self.assertEqual(item, journey.data)
