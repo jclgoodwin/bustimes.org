@@ -25,7 +25,7 @@
 {% endblock %}
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
-    <script>try{if(localStorage.hideAds){document.body.className+=' hide-ads'}}catch{}</script>
+    <script>try{if(localStorage.hideAds){document.body.className+=' hide-ads'}}catch(e){}</script>
     <a href="#content" class="skip">Skip to main content</a>
 {% block header %}
 <header>

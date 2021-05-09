@@ -34,7 +34,9 @@
             if (localStorage.hideStops) {
                 showStops = false;
             }
-        } catch {}
+        } catch (e) {
+            // ok
+        }
     }
 
     stopsGroup.on('add', function() {
@@ -46,13 +48,17 @@
         showStops = true;
         try {
             localStorage.removeItem('hideStops');
-        } catch {}
+        } catch (e) {
+            // ok
+        }
     }).on('remove', function() {
         if (showStops) {  // box was unchecked (not just a zoom out)
             showStops = false;
             try {
                 localStorage.setItem('hideStops', '1');
-            } catch {}
+            } catch (e) {
+                // ok
+            }
         }
     });
 
@@ -288,13 +294,15 @@
         if (history.replaceState) {
             try {
                 history.replaceState(null, null, '#' + string);
-            } catch {
+            } catch (e) {
                 // probably SecurityError (document is not fully active)
             }
         }
         try {
             localStorage.setItem('vehicleMap', string);
-        } catch {}
+        } catch (e) {
+            // ok
+        }
     }
 
     var first = true;
@@ -328,7 +336,9 @@
             if (localStorage.vehicleMap) {
                 parts = localStorage.vehicleMap.split('/');
             }
-        } catch {}
+        } catch (e) {
+            // ok
+        }
     }
     if (parts) {
         if (parts.length === 1) {
@@ -340,7 +350,7 @@
             } else {
                 map.setView([parts[0], parts[1]], 14);
             }
-        } catch {
+        } catch (e) {
             // oh well
         }
     }
