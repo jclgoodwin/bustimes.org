@@ -29,8 +29,12 @@
 
     if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
         var clickedStopMarker = '/stops/' + document.referrer.split('/stops/')[1];
-    } else if (localStorage && localStorage.hideStops) {
-        showStops = false;
+    } else {
+        try {
+            if (localStorage.hideStops) {
+                showStops = false;
+            }
+        } catch {}
     }
 
     stopsGroup.on('add', function() {
@@ -40,15 +44,15 @@
             loadStops();
         }
         showStops = true;
-        if (localStorage) {
+        try {
             localStorage.removeItem('hideStops');
-        }
+        } catch {}
     }).on('remove', function() {
         if (showStops) {  // box was unchecked (not just a zoom out)
             showStops = false;
-            if (localStorage) {
+            try {
                 localStorage.setItem('hideStops', '1');
-            }
+            } catch {}
         }
     });
 
@@ -284,17 +288,13 @@
         if (history.replaceState) {
             try {
                 history.replaceState(null, null, '#' + string);
-            } catch (error) {
+            } catch {
                 // probably SecurityError (document is not fully active)
             }
         }
-        if (window.localStorage) {
-            try {
-                localStorage.setItem('vehicleMap', string);
-            } catch (error) {
-                // never mind
-            }
-        }
+        try {
+            localStorage.setItem('vehicleMap', string);
+        } catch {}
     }
 
     var first = true;
@@ -323,8 +323,12 @@
     var parts;
     if (location.hash) {
         parts = location.hash.substring(1).split('/');
-    } else if (localStorage && localStorage.vehicleMap) {
-        parts = localStorage.vehicleMap.split('/');
+    } else {
+        try {
+            if (localStorage.vehicleMap) {
+                parts = localStorage.vehicleMap.split('/');
+            }
+        } catch {}
     }
     if (parts) {
         if (parts.length === 1) {
@@ -336,7 +340,7 @@
             } else {
                 map.setView([parts[0], parts[1]], 14);
             }
-        } catch (error) {
+        } catch {
             // oh well
         }
     }

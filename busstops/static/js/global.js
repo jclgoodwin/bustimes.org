@@ -11,7 +11,7 @@ try {
                         });
                     }
                 );
-            } catch (error) {
+            } catch {
                 // ok
             }
         });
