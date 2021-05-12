@@ -89,244 +89,246 @@ def do_stops(archive):
     return StopPoint.objects.in_bulk(stops), stops_not_created
 
 
-def handle_zipfile(path, collection, url, last_modified):
-    source = DataSource.objects.update_or_create(
-        {
-            'url': url,
-            'datetime': last_modified
-        }, name=f'{collection} GTFS'
-    )[0]
-
-    shapes = {}
-    service_shapes = {}
-    operators = {}
-    routes = {}
-    services = set()
-    headsigns = {}
-
-    with zipfile.ZipFile(path) as archive:
-
-        for line in read_file(archive, 'shapes.txt'):
-            shape_id = line['shape_id']
-            if shape_id not in shapes:
-                shapes[shape_id] = []
-            shapes[shape_id].append(Point(float(line['shape_pt_lon']), float(line['shape_pt_lat'])))
-
-        for line in read_file(archive, 'agency.txt'):
-            operator, created = Operator.objects.get_or_create({
-                'name': line['agency_name'],
-                'region_id': 'LE'
-            }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
-            if not created and operator.name != line['agency_name']:
-                print(operator, line)
-            operators[line['agency_id']] = operator
-
-        for line in read_file(archive, 'routes.txt'):
-            defaults = {
-                'line_name': line['route_short_name'],
-                'description': line['route_long_name'],
-                'date': time.strftime('%Y-%m-%d'),
-                'mode': MODES.get(int(line['route_type']), ''),
-                'current': True,
-                'show_timetable': True,
-                'source': source,
-                'service_code': ''
-            }
-            service, created = Service.objects.filter(
-                source=source,
-                route__code=line['route_id']
-            ).update_or_create(defaults)
-
-            try:
-                operator = operators[line['agency_id']]
-                if service in services:
-                    service.operator.add(operator)
-                else:
-                    service.operator.set([operator])
-            except KeyError:
-                pass
-            services.add(service)
-
-            route, created = Route.objects.update_or_create(
-                {
-                    'line_name': line['route_short_name'],
-                    'description': line['route_long_name'],
-                    'service': service,
-                },
-                source=source,
-                code=line['route_id'],
-            )
-            if not created:
-                route.trip_set.all().delete()
-            routes[line['route_id']] = route
-
-        stops, stops_not_created = do_stops(archive)
-
-        calendars = {}
-        for line in read_file(archive, 'calendar.txt'):
-            calendar = Calendar(
-                mon='1' == line['monday'],
-                tue='1' == line['tuesday'],
-                wed='1' == line['wednesday'],
-                thu='1' == line['thursday'],
-                fri='1' == line['friday'],
-                sat='1' == line['saturday'],
-                sun='1' == line['sunday'],
-                start_date=parse_date(line['start_date']),
-                end_date=parse_date(line['end_date']),
-            )
-            calendar.save()
-            calendars[line['service_id']] = calendar
-
-        for line in read_file(archive, 'calendar_dates.txt'):
-            CalendarDate.objects.create(
-                calendar=calendars[line['service_id']],
-                start_date=parse_date(line['date']),
-                end_date=parse_date(line['date']),
-                operation=line['exception_type'] == '1'
-            )
-
-        trips = {}
-        for line in read_file(archive, 'trips.txt'):
-            route = routes[line['route_id']]
-            trips[line['trip_id']] = Trip(
-                route=route,
-                calendar=calendars[line['service_id']],
-                inbound=line['direction_id'] == '1'
-            )
-            if route.service_id not in service_shapes:
-                service_shapes[route.service_id] = set()
-            service_shapes[route.service_id].add(line['shape_id'])
-            if line['trip_headsign']:
-                if line['route_id'] not in headsigns:
-                    headsigns[line['route_id']] = {
-                        '0': set(),
-                        '1': set(),
-                    }
-                headsigns[line['route_id']][line['direction_id']].add(line['trip_headsign'])
-        for route_id in headsigns:
-            route = routes[route_id]
-            if not route.service.description:
-                origins = headsigns[route_id]['1']
-                destinations = headsigns[route_id]['0']
-                origin = None
-                destination = None
-                if len(origins) <= 1 and len(destinations) <= 1:
-                    if len(origins) == 1:
-                        origin = list(origins)[0]
-                    if len(destinations) == 1:
-                        destination = list(destinations)[0]
-
-                    if origin and ' - ' in origin:
-                        route.service.inbound_description = origin
-                        route.service.description = origin
-                    if destination and ' - ' in destination:
-                        route.service.outbound_description = destination
-                        route.service.description = destination
-
-                    if origin and destination and ' - ' not in origin:
-                        route.service.description = route.service.outbound_description = f'{origin} - {destination}'
-                        route.service.inbound_description = f'{destination} - {origin}'
-
-                    route.service.save(update_fields=['description', 'inbound_description', 'outbound_description'])
-
-        stop_times = []
-        trip_id = None
-        trip = None
-        stop_time = None
-        for line in read_file(archive, 'stop_times.txt'):
-            if trip_id != line['trip_id']:
-                # previous trip
-                if trip:
-                    if not stop_time.arrival:
-                        stop_time.arrival = stop_time.departure
-                        stop_time.departure = None
-                    trip.start = stop_times[0].departure
-                    trip.end = stop_times[-1].arrival
-                    trip.save()
-                    for stop_time in stop_times:
-                        stop_time.trip = trip
-                    StopTime.objects.bulk_create(stop_times)
-                    stop_times = []
-                trip = Trip()
-            trip_id = line['trip_id']
-            trip = trips[trip_id]
-            stop = stops.get(line['stop_id'])
-            arrival_time = line['arrival_time']
-            departure_time = line['departure_time']
-            if arrival_time == departure_time:
-                arrival_time = None
-            stop_time = StopTime(
-                stop=stop,
-                arrival=arrival_time,
-                departure=departure_time,
-                sequence=line['stop_sequence'],
-            )
-            if stop:
-                trip.destination = stop
-            elif line['stop_id'] in stops_not_created:
-                stop_time.stop_code = stops_not_created[line['stop_id']]
-            else:
-                stop_time.stop_code = line['stop_id']
-                print(line)
-            stop_times.append(stop_time)
-
-    # last trip
-    if not stop_time.arrival:
-        stop_time.arrival = stop_time.departure
-        stop_time.departure = None
-    trip.start = stop_times[0].departure
-    trip.end = stop_times[-1].arrival
-    trip.save()
-    for stop_time in stop_times:
-        stop_time.trip = trip
-    StopTime.objects.bulk_create(stop_times)
-
-    for service in services:
-        if service.id in service_shapes:
-            linestrings = [LineString(*shapes[shape]) for shape in service_shapes[service.id] if shape in shapes]
-            service.geometry = MultiLineString(*linestrings)
-            service.save(update_fields=['geometry'])
-
-        groupings = get_stop_usages(Trip.objects.filter(route__service=service))
-
-        service.stops.clear()
-        stop_usages = [
-            StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                      direction='outbound', order=i)
-            for i, stop_time in enumerate(groupings[0])
-        ] + [
-            StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                      direction='inbound', order=i)
-            for i, stop_time in enumerate(groupings[1])
-        ]
-        StopUsage.objects.bulk_create(stop_usages)
-
-        service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
-            Count('adminarea__stoppoint__service')
-        ).order_by('-adminarea__stoppoint__service__count').first()
-        if service.region:
-            service.save(update_fields=['region'])
-        service.update_search_vector()
-
-    for operator in operators.values():
-        operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
-            Count('adminarea__stoppoint__service__operator')
-        ).order_by('-adminarea__stoppoint__service__operator__count').first()
-        if operator.region_id:
-            operator.save(update_fields=['region'])
-
-    print(source.service_set.filter(current=True).exclude(route__in=routes.values()).update(current=False))
-    print(source.service_set.filter(current=True).exclude(route__trip__isnull=False).update(current=False))
-    print(source.route_set.exclude(id__in=(route.id for route in routes.values())).delete())
-    StopPoint.objects.filter(active=False, service__current=True).update(active=True)
-    StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
-
-
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--force', action='store_true', help="Import data even if the GTFS feeds haven't changed")
         parser.add_argument('collections', nargs='*', type=str)
+
+    def handle_operator(self, line):
+        operator, created = Operator.objects.get_or_create({
+            'name': line['agency_name'],
+            'region_id': 'LE'
+        }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
+        if not created and operator.name != line['agency_name']:
+            print(operator, line)
+
+    def handle_zipfile(self, path, collection, url, last_modified):
+        source = DataSource.objects.update_or_create(
+            {
+                'url': url,
+                'datetime': last_modified
+            }, name=f'{collection} GTFS'
+        )[0]
+
+        shapes = {}
+        service_shapes = {}
+        operators = {}
+        routes = {}
+        services = set()
+        headsigns = {}
+
+        with zipfile.ZipFile(path) as archive:
+
+            for line in read_file(archive, 'shapes.txt'):
+                shape_id = line['shape_id']
+                if shape_id not in shapes:
+                    shapes[shape_id] = []
+                shapes[shape_id].append(Point(float(line['shape_pt_lon']), float(line['shape_pt_lat'])))
+
+            for line in read_file(archive, 'agency.txt'):
+                operator = self.handle_operator(line)
+                operators[line['agency_id']] = operator
+
+            for line in read_file(archive, 'routes.txt'):
+                defaults = {
+                    'line_name': line['route_short_name'],
+                    'description': line['route_long_name'],
+                    'date': time.strftime('%Y-%m-%d'),
+                    'mode': MODES.get(int(line['route_type']), ''),
+                    'current': True,
+                    'show_timetable': True,
+                    'source': source,
+                    'service_code': ''
+                }
+                service, created = Service.objects.filter(
+                    source=source,
+                    route__code=line['route_id']
+                ).update_or_create(defaults)
+
+                try:
+                    operator = operators[line['agency_id']]
+                    if service in services:
+                        service.operator.add(operator)
+                    else:
+                        service.operator.set([operator])
+                except KeyError:
+                    pass
+                services.add(service)
+
+                route, created = Route.objects.update_or_create(
+                    {
+                        'line_name': line['route_short_name'],
+                        'description': line['route_long_name'],
+                        'service': service,
+                    },
+                    source=source,
+                    code=line['route_id'],
+                )
+                if not created:
+                    route.trip_set.all().delete()
+                routes[line['route_id']] = route
+
+            stops, stops_not_created = do_stops(archive)
+
+            calendars = {}
+            for line in read_file(archive, 'calendar.txt'):
+                calendar = Calendar(
+                    mon='1' == line['monday'],
+                    tue='1' == line['tuesday'],
+                    wed='1' == line['wednesday'],
+                    thu='1' == line['thursday'],
+                    fri='1' == line['friday'],
+                    sat='1' == line['saturday'],
+                    sun='1' == line['sunday'],
+                    start_date=parse_date(line['start_date']),
+                    end_date=parse_date(line['end_date']),
+                )
+                calendar.save()
+                calendars[line['service_id']] = calendar
+
+            for line in read_file(archive, 'calendar_dates.txt'):
+                CalendarDate.objects.create(
+                    calendar=calendars[line['service_id']],
+                    start_date=parse_date(line['date']),
+                    end_date=parse_date(line['date']),
+                    operation=line['exception_type'] == '1'
+                )
+
+            trips = {}
+            for line in read_file(archive, 'trips.txt'):
+                route = routes[line['route_id']]
+                trips[line['trip_id']] = Trip(
+                    route=route,
+                    calendar=calendars[line['service_id']],
+                    inbound=line['direction_id'] == '1'
+                )
+                if route.service_id not in service_shapes:
+                    service_shapes[route.service_id] = set()
+                service_shapes[route.service_id].add(line['shape_id'])
+                if line['trip_headsign']:
+                    if line['route_id'] not in headsigns:
+                        headsigns[line['route_id']] = {
+                            '0': set(),
+                            '1': set(),
+                        }
+                    headsigns[line['route_id']][line['direction_id']].add(line['trip_headsign'])
+            for route_id in headsigns:
+                route = routes[route_id]
+                if not route.service.description:
+                    origins = headsigns[route_id]['1']
+                    destinations = headsigns[route_id]['0']
+                    origin = None
+                    destination = None
+                    if len(origins) <= 1 and len(destinations) <= 1:
+                        if len(origins) == 1:
+                            origin = list(origins)[0]
+                        if len(destinations) == 1:
+                            destination = list(destinations)[0]
+
+                        if origin and ' - ' in origin:
+                            route.service.inbound_description = origin
+                            route.service.description = origin
+                        if destination and ' - ' in destination:
+                            route.service.outbound_description = destination
+                            route.service.description = destination
+
+                        if origin and destination and ' - ' not in origin:
+                            route.service.description = route.service.outbound_description = f'{origin} - {destination}'
+                            route.service.inbound_description = f'{destination} - {origin}'
+
+                        route.service.save(update_fields=['description', 'inbound_description', 'outbound_description'])
+
+            stop_times = []
+            trip_id = None
+            trip = None
+            stop_time = None
+            for line in read_file(archive, 'stop_times.txt'):
+                if trip_id != line['trip_id']:
+                    # previous trip
+                    if trip:
+                        if not stop_time.arrival:
+                            stop_time.arrival = stop_time.departure
+                            stop_time.departure = None
+                        trip.start = stop_times[0].departure
+                        trip.end = stop_times[-1].arrival
+                        trip.save()
+                        for stop_time in stop_times:
+                            stop_time.trip = trip
+                        StopTime.objects.bulk_create(stop_times)
+                        stop_times = []
+                    trip = Trip()
+                trip_id = line['trip_id']
+                trip = trips[trip_id]
+                stop = stops.get(line['stop_id'])
+                arrival_time = line['arrival_time']
+                departure_time = line['departure_time']
+                if arrival_time == departure_time:
+                    arrival_time = None
+                stop_time = StopTime(
+                    stop=stop,
+                    arrival=arrival_time,
+                    departure=departure_time,
+                    sequence=line['stop_sequence'],
+                )
+                if stop:
+                    trip.destination = stop
+                elif line['stop_id'] in stops_not_created:
+                    stop_time.stop_code = stops_not_created[line['stop_id']]
+                else:
+                    stop_time.stop_code = line['stop_id']
+                    print(line)
+                stop_times.append(stop_time)
+
+        # last trip
+        if not stop_time.arrival:
+            stop_time.arrival = stop_time.departure
+            stop_time.departure = None
+        trip.start = stop_times[0].departure
+        trip.end = stop_times[-1].arrival
+        trip.save()
+        for stop_time in stop_times:
+            stop_time.trip = trip
+        StopTime.objects.bulk_create(stop_times)
+
+        for service in services:
+            if service.id in service_shapes:
+                linestrings = [LineString(*shapes[shape]) for shape in service_shapes[service.id] if shape in shapes]
+                service.geometry = MultiLineString(*linestrings)
+                service.save(update_fields=['geometry'])
+
+            groupings = get_stop_usages(Trip.objects.filter(route__service=service))
+
+            service.stops.clear()
+            stop_usages = [
+                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='outbound', order=i)
+                for i, stop_time in enumerate(groupings[0])
+            ] + [
+                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                          direction='inbound', order=i)
+                for i, stop_time in enumerate(groupings[1])
+            ]
+            StopUsage.objects.bulk_create(stop_usages)
+
+            service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
+                Count('adminarea__stoppoint__service')
+            ).order_by('-adminarea__stoppoint__service__count').first()
+            if service.region:
+                service.save(update_fields=['region'])
+            service.update_search_vector()
+
+        for operator in operators.values():
+            operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
+                Count('adminarea__stoppoint__service__operator')
+            ).order_by('-adminarea__stoppoint__service__operator__count').first()
+            if operator.region_id:
+                operator.save(update_fields=['region'])
+
+        print(source.service_set.filter(current=True).exclude(route__in=routes.values()).update(current=False))
+        print(source.service_set.filter(current=True).exclude(route__trip__isnull=False).update(current=False))
+        print(source.route_set.exclude(id__in=(route.id for route in routes.values())).delete())
+        StopPoint.objects.filter(active=False, service__current=True).update(active=True)
+        StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
     def handle(self, *args, **options):
         for collection in options['collections'] or settings.IE_COLLECTIONS:
@@ -335,4 +337,4 @@ class Command(BaseCommand):
             modifed, last_modified = download_if_changed(path, url)
             if modifed or options['force']:
                 print(collection, last_modified)
-                handle_zipfile(path, collection, url, last_modified)
+                self.handle_zipfile(path, collection, url, last_modified)

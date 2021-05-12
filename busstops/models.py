@@ -225,6 +225,8 @@ class DataSource(models.Model):
         elif url:
             text = self.get_nice_name()
             date = self.datetime
+            if self.name == 'flixbus GTFS':
+                text = 'FlixBus'
         elif 'transportforireland' in self.url:
             url = 'https://www.transportforireland.ie/transitData/PT_Data.html'
             text = 'Transport for Ireland'
