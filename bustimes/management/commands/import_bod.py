@@ -169,36 +169,6 @@ def bus_open_data(api_key, operator):
 
     command.debrief()
 
-    url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
-    params = {
-        'api_key': api_key,
-        'status': ['published', 'expiring'],
-    }
-    for setting in settings.TICKETER_OPERATORS:
-        operators = setting[1]
-        params['noc'] = operators[0] if operators[0].isupper() else operators[1]
-        response = session.get(url, params=params)
-        json = response.json()
-        if len(json['results']) == 1:
-            update_ticketer_source_settings_url(json['results'][0], operators[0])
-
-
-def update_ticketer_source_settings_url(dataset, operator):
-    try:
-        source = DataSource.objects.get(url__contains=operator)
-    except DataSource.DoesNotExist:
-        return
-    dataset_url = dataset['url'].replace('download/', '')
-    if source.settings:
-        if 'url' in source.settings and source.settings['url'] == dataset_url:
-            return
-        print(source, source.settings)
-        source.settings['url'] = dataset_url
-    else:
-        source.settings = {'url': dataset_url}
-    print(source, source.settings)
-    source.save(update_fields=['settings'])
-
 
 def ticketer(operator=None):
     command = get_command()
