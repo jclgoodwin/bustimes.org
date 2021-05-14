@@ -101,6 +101,7 @@ class Command(BaseCommand):
         }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
         if not created and operator.name != line['agency_name']:
             print(operator, line)
+        return operator
 
     def handle_zipfile(self, path, collection, url, last_modified):
         source = DataSource.objects.update_or_create(
