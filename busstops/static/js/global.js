@@ -22,7 +22,7 @@ try {
 
 (function () {
     var ads = document.getElementsByClassName('adsbygoogle');
-    if (!ads.length) {
+    if (!ads.length || !document.referrer) {
         return;
     }
 
