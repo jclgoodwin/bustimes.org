@@ -297,25 +297,25 @@ class VehicleJourney:
             if deadrun and self.start_deadrun == timinglink.id:
                 deadrun = False  # end of dead run
 
-            if journey_timinglink and journey_timinglink.from_wait_time is not None:
-                wait_time = journey_timinglink.from_wait_time
-            else:
-                wait_time = stopusage.wait_time or wait_time
+            if not deadrun:
+                if journey_timinglink and journey_timinglink.from_wait_time is not None:
+                    wait_time = journey_timinglink.from_wait_time
+                elif stopusage.wait_time is not None:
+                    wait_time = stopusage.wait_time
 
-            if wait_time:
-                next_time = time + wait_time
-                if not deadrun:
+                if wait_time:
+                    next_time = time + wait_time
                     yield Cell(stopusage, time, next_time)
-                time = next_time
-            elif not deadrun:
-                yield Cell(stopusage, time, time)
+                    time = next_time
+                else:
+                    yield Cell(stopusage, time, time)
 
-            if journey_timinglink and journey_timinglink.run_time is not None:
-                run_time = journey_timinglink.run_time
-            else:
-                run_time = timinglink.runtime
-            if run_time:
-                time += run_time
+                if journey_timinglink and journey_timinglink.run_time is not None:
+                    run_time = journey_timinglink.run_time
+                else:
+                    run_time = timinglink.runtime
+                if run_time:
+                    time += run_time
 
             if deadrun_next:
                 deadrun = True
@@ -325,10 +325,11 @@ class VehicleJourney:
 
             stopusage = timinglink.destination
 
-            if journey_timinglink and journey_timinglink.to_wait_time is not None:
-                wait_time = journey_timinglink.to_wait_time
-            else:
-                wait_time = stopusage.wait_time
+            if not deadrun:
+                if journey_timinglink and journey_timinglink.to_wait_time is not None:
+                    wait_time = journey_timinglink.to_wait_time
+                else:
+                    wait_time = stopusage.wait_time
 
         if not deadrun:
             yield Cell(timinglink.destination, time, time)

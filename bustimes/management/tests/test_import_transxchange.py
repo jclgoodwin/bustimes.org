@@ -561,6 +561,21 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(1, Trip.objects.filter(route__service=services[1]).count())
         self.assertEqual(2, Trip.objects.filter(route__service=services[2]).count())
 
+    def test_start_dead_run(self):
+        """Turns out WaitTimes and RunTimes should be ignored during a StartDeadRun"""
+
+        call_command('import_transxchange', os.path.join(FIXTURES_DIR, 'Centrebus_Belgrave_Birstall_20210308_2.xml'))
+
+        self.assertEqual(str(Trip.objects.get(ticket_machine_code='1935')), '19:35')
+
+        trips = Trip.objects.filter(ticket_machine_code='2045')
+        self.assertEqual(str(trips[0]), '20:45')
+        self.assertEqual(str(trips[1]), '20:45')
+
+        trips = Trip.objects.filter(ticket_machine_code='2145')
+        self.assertEqual(str(trips[0]), '21:45')
+        self.assertEqual(str(trips[1]), '21:45')
+
     def test_service_error(self):
         """A file with some wrong references should be handled gracefully"""
         with self.assertLogs(level='ERROR'):

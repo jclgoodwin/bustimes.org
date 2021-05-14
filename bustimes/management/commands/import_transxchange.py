@@ -8,7 +8,6 @@ import logging
 import os
 import re
 import csv
-import yaml
 import zipfile
 import xml.etree.cElementTree as ET
 import datetime
@@ -238,10 +237,13 @@ class Command(BaseCommand):
             name=self.region_id
         )
 
-        if self.region_id == 'NCSD':
-            self.region_id = 'GB'
-        elif self.region_id == 'IOM':
-            self.region_id = 'IM'
+        if len(self.region_id) > 2:
+            if self.region_id == 'NCSD':
+                self.region_id = 'GB'
+            elif self.region_id == 'IOM':
+                self.region_id = 'IM'
+            else:
+                self.region_id = None
 
     def get_operator(self, operator_element):
         """
@@ -330,18 +332,22 @@ class Command(BaseCommand):
 
         self.source.datetime = datetime.datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
-        with zipfile.ZipFile(archive_name) as archive:
+        try:
+            with zipfile.ZipFile(archive_name) as archive:
 
-            self.set_service_descriptions(archive)
+                self.set_service_descriptions(archive)
 
-            for filename in filenames or archive.namelist():
-                if filename.endswith('.xml'):
-                    with archive.open(filename) as open_file:
-                        with transaction.atomic():
-                            try:
-                                self.handle_file(open_file, filename)
-                            except (AttributeError, DataError) as error:
-                                logger.error(error, exc_info=True)
+                for filename in filenames or archive.namelist():
+                    if filename.endswith('.xml'):
+                        with archive.open(filename) as open_file:
+                            with transaction.atomic():
+                                try:
+                                    self.handle_file(open_file, filename)
+                                except (AttributeError, DataError) as error:
+                                    logger.error(error, exc_info=True)
+        except zipfile.BadZipfile:
+            with open(archive_name) as open_file:
+                self.handle_file(open_file, archive_name)
 
         if not filenames:
             self.mark_old_services_as_not_current()
