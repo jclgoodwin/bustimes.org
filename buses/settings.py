@@ -513,6 +513,7 @@ BOD_OPERATORS = [
     ('SNDR', 'EA', {}, False),
     ('BEVC', 'NW', {}, False),
     ('CARL', 'SE', {}, False),
+    ('IRVD', 'NW', {}, False),
 
     ('RDRT', 'SE', {
         'RR': 'RDRT',
