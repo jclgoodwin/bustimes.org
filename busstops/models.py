@@ -634,6 +634,8 @@ class Service(models.Model):
     payment_methods = models.ManyToManyField('PaymentMethod', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
+    public_use = models.BooleanField(null=True)
+
     colour = models.ForeignKey(ServiceColour, models.SET_NULL, null=True, blank=True)
 
     objects = ServiceManager()

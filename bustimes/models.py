@@ -1,6 +1,5 @@
 from django.db.models import Q, Exists, OuterRef
 from django.contrib.gis.db import models
-from django.contrib.postgres.fields import DateRangeField
 from django.urls import reverse
 from .fields import SecondsField
 from .utils import format_timedelta
@@ -83,7 +82,6 @@ class Route(models.Model):
     via = models.CharField(max_length=255, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    dates = DateRangeField(null=True, blank=True)
     service = models.ForeignKey('busstops.Service', models.CASCADE)
     geometry = models.MultiLineStringField(null=True, blank=True, editable=False)
 
@@ -115,6 +113,15 @@ class BankHolidayDate(models.Model):
     scotland = models.BooleanField(null=True)
 
 
+class CalendarBankHoliday(models.Model):
+    operation = models.BooleanField()
+    bank_holiday = models.ForeignKey(BankHoliday, models.CASCADE)
+    calendar = models.ForeignKey('bustimes.Calendar', models.CASCADE)
+
+    class Meta:
+        unique_together = ('bank_holiday', 'calendar')
+
+
 class Calendar(models.Model):
     mon = models.BooleanField()
     tue = models.BooleanField()
@@ -125,8 +132,8 @@ class Calendar(models.Model):
     sun = models.BooleanField()
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
-    dates = DateRangeField(null=True, blank=True)
     summary = models.CharField(max_length=255, blank=True)
+    bank_holidays = models.ManyToManyField(BankHoliday, through=CalendarBankHoliday)
 
     contains = Route.contains
 
@@ -186,7 +193,6 @@ class CalendarDate(models.Model):
     calendar = models.ForeignKey(Calendar, models.CASCADE)
     start_date = models.DateField(db_index=True)
     end_date = models.DateField(null=True, blank=True, db_index=True)
-    dates = DateRangeField(null=True, blank=True)
     operation = models.BooleanField(db_index=True)
     special = models.BooleanField(default=False, db_index=True)
     summary = models.CharField(max_length=255, blank=True)
@@ -227,6 +233,7 @@ class Trip(models.Model):
     start = SecondsField()
     end = SecondsField()
     garage = models.ForeignKey('Garage', models.SET_NULL, null=True, blank=True)
+    vehicle_type = models.ForeignKey('VehicleType', models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return format_timedelta(self.start)

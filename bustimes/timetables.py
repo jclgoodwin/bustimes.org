@@ -83,10 +83,6 @@ def get_stop_usages(trips):
 
 
 class Timetable:
-    calendars = ()
-    calendar = None
-    start_date = None
-
     def __init__(self, routes, date):
         self.today = localdate()
 
@@ -98,7 +94,10 @@ class Timetable:
 
         self.groupings = [Grouping(), Grouping(True)]
 
+        self.calendar = None
+        self.start_date = None
         if not routes:
+            self.calendars = ()
             return
 
         self.calendars = Calendar.objects.filter(
@@ -455,9 +454,8 @@ class Row:
 
 
 class Stop:
-    timing_status = None
-
     def __init__(self, atco_code):
+        self.timing_status = None
         self.atco_code = atco_code
 
     def __str__(self):
@@ -465,10 +463,9 @@ class Stop:
 
 
 class Cell:
-    first = False
-    last = False
-
     def __init__(self, stoptime, arrival, departure):
+        self.first = False
+        self.last = False
         self.stoptime = stoptime
         self.arrival = arrival
         self.departure = departure

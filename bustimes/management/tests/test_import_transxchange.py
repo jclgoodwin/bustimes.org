@@ -308,6 +308,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.service_code, 'PF0007024:15:28')
         self.assertEqual(5, CalendarDate.objects.filter(summary='Christmas week').count())
         self.assertEqual(1, CalendarDate.objects.filter(summary='Christmas Week').count())
+        self.assertTrue(service.public_use)
 
     @time_machine.travel('2017-08-29')
     def test_timetable_abbreviations_notes(self):

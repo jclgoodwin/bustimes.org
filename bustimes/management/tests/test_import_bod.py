@@ -58,6 +58,8 @@ class ImportBusOpenDataTest(TestCase):
         route = Route.objects.get()
         self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
 
+        self.assertFalse(route.service.public_use)
+
         # a TicketMachineServiceCode should have been created
         service_code = ServiceCode.objects.get()
         self.assertEqual(service_code.code, '1')
@@ -174,7 +176,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
 
-                    with self.assertNumQueries(62):
+                    with self.assertNumQueries(63):
                         with patch('builtins.print') as mocked_print:
                             call_command('import_bod', 'stagecoach', 'sccm')
                     mocked_print.assert_called_with(undefined_holidays)

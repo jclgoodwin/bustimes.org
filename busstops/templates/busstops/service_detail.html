@@ -29,6 +29,10 @@
     {% endif %}
 </p>
 
+{% if object.public_use is False %}
+    <p>🚫 Not available for public use</p>
+{% endif %}
+
 {% include 'situations.html' %}
 
 {% if object.geometry %}

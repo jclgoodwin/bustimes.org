@@ -11,7 +11,6 @@ import csv
 import zipfile
 import xml.etree.cElementTree as ET
 import datetime
-from psycopg2.extras import DateRange
 from titlecase import titlecase
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
@@ -170,9 +169,6 @@ def get_open_data_operators():
     for setting in settings.TICKETER_OPERATORS:
         open_data_operators += setting[1]
 
-    if 'SCLI' in open_data_operators:  # stagecoach lincs – cos a bloke complained about missing school services
-        open_data_operators.remove('SCLI')
-        incomplete_operators.append('SCLI')
     incomplete_operators.append('SEMM')  # h semmence & co
 
     return set(open_data_operators), set(incomplete_operators)
@@ -182,7 +178,6 @@ def get_calendar_date(date, operation, summary):
     return CalendarDate(
         start_date=date,
         end_date=date,
-        dates=DateRange(date, date, '[]'),
         special=operation,
         operation=operation,
         summary=summary
@@ -409,11 +404,11 @@ class Command(BaseCommand):
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
-            CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+            CalendarDate(start_date=date_range.start, end_date=date_range.end,
                          operation=False) for date_range in operating_profile.nonoperation_days
         ]
         for date_range in operating_profile.operation_days:
-            calendar_date = CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+            calendar_date = CalendarDate(start_date=date_range.start, end_date=date_range.end,
                                          special=True, operation=True)
             if date_range.end - date_range.start > datetime.timedelta(days=5):
                 # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation
@@ -442,7 +437,7 @@ class Command(BaseCommand):
                 non_operation_days += sodt.non_operation_holidays.holidays
 
             calendar_dates += [
-                CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                CalendarDate(start_date=date_range.start, end_date=date_range.end,
                              operation=False)
                 for date_range in non_operation_days
             ]
@@ -459,7 +454,7 @@ class Command(BaseCommand):
                 operation_days += sodt.operation_holidays.holidays
 
             calendar_dates += [
-                CalendarDate(start_date=date_range.start, end_date=date_range.end, dates=date_range.dates(),
+                CalendarDate(start_date=date_range.start, end_date=date_range.end,
                              operation=True)
                 for date_range in operation_days
             ]
@@ -474,8 +469,9 @@ class Command(BaseCommand):
         if not calendar_dates and not operating_profile.regular_days and not summary:
             return
 
-        calendar_hash = f'{operating_profile.regular_days}{operating_period.dates()}{summary}'
-        calendar_hash += ''.join(f'{date.dates}{date.operation}{date.special}' for date in calendar_dates)
+        calendar_hash = f'{operating_profile.regular_days}{operating_period.start}{operating_period.end}{summary}'
+        calendar_hash += ''.join(f'{date.start_date}{date.end_date}{date.operation}{date.special}'
+                                 for date in calendar_dates)
 
         if calendar_hash in self.calendar_cache:
             return self.calendar_cache[calendar_hash]
@@ -493,7 +489,6 @@ class Command(BaseCommand):
             sun=False,
             start_date=operating_period.start,
             end_date=operating_period.end,
-            dates=operating_period.dates(),
             summary=summary
         )
 
@@ -798,6 +793,14 @@ class Command(BaseCommand):
             service.source = self.source
             service.show_timetable = True
 
+            if txc_service.public_use:
+                if txc_service.public_use in ('0', 'false'):
+                    service.public_use = False
+                elif txc_service.public_use in ('1', 'true'):
+                    service.public_use = True
+                else:
+                    print(txc_service.public_use)
+
             if service_code:
                 service.service_code = service_code
 
@@ -880,7 +883,6 @@ class Command(BaseCommand):
                 'line_brand': line_brand,
                 'start_date': txc_service.operating_period.start,
                 'end_date': txc_service.operating_period.end,
-                'dates': txc_service.operating_period.dates(),
                 'service': service,
                 'revision_number': transxchange.attributes['RevisionNumber'],
                 'service_code': txc_service.service_code

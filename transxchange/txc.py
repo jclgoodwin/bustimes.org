@@ -3,7 +3,6 @@ import xml.etree.cElementTree as ET
 import calendar
 import datetime
 import logging
-from psycopg2.extras import DateRange as PDateRange
 from django.contrib.gis.geos import Point, LineString
 from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
@@ -484,9 +483,6 @@ class DateRange:
 
     def contains(self, date):
         return self.start <= date and (not self.end or self.end >= date)
-
-    def dates(self):
-        return PDateRange(self.start, self.end, '[]')
 
 
 class OperatingPeriod(DateRange):
