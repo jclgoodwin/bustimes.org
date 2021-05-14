@@ -2,6 +2,7 @@
   "devDependencies": {
     "autoprefixer": "^10.2.5",
     "eslint": "^7.18.0",
+    "postcss": "^8.2.15",
     "postcss-cli": "^8.3.1",
     "sass": "^1.32.5",
     "sass-lint": "^1.13.1"
