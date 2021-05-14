@@ -564,7 +564,7 @@ class ImportTransXChangeTest(TestCase):
     def test_start_dead_run(self):
         """Turns out WaitTimes and RunTimes should be ignored during a StartDeadRun"""
 
-        call_command('import_transxchange', os.path.join(FIXTURES_DIR, 'Centrebus_Belgrave_Birstall_20210308_2.xml'))
+        call_command('import_transxchange', os.path.join(FIXTURES_DIR, '22A 22B 22C 08032021.xml'))
 
         self.assertEqual(str(Trip.objects.get(ticket_machine_code='1935')), '19:35')
 
