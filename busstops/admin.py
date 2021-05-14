@@ -4,11 +4,12 @@ from django.contrib.gis.db.models import PointField
 from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Count, Q, F, Exists, OuterRef, CharField
+from django.db.models import Count, Q, F, Exists, OuterRef, CharField, Subquery
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from bustimes.models import Route
+from vehicles.models import Vehicle, VehicleJourney
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
     ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
@@ -74,8 +75,8 @@ class OperatorAdminForm(forms.ModelForm):
 @admin.register(Operator)
 class OperatorAdmin(admin.ModelAdmin):
     form = OperatorAdminForm
-    list_display = ['name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region',
-                    'service_count', 'vehicle_count', 'twitter']
+    list_display = ['name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region_id',
+                    'services', 'vehicles', 'twitter']
     list_filter = ('region', 'vehicle_mode', 'payment_methods', 'parent')
     search_fields = ('id', 'name')
     raw_id_fields = ('region', 'regions', 'siblings', 'colour')
@@ -86,18 +87,28 @@ class OperatorAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            service_count = Count('service', filter=Q(service__current=True))
             return queryset.annotate(
-                service_count=service_count
+                services=Subquery(
+                    Service.objects.filter(
+                        current=True,
+                        operator=OuterRef('id')
+                    ).values('operator').annotate(count=Count('pk')).values('count')
+                ),
+                vehicles=Subquery(
+                    Vehicle.objects.filter(
+                        operator=OuterRef('id')
+                    ).values('operator').annotate(count=Count('pk')).values('count')
+                ),
             ).prefetch_related('operatorcode_set')
         return queryset
 
-    def service_count(self, obj):
-        return obj.service_count
-    service_count.admin_order_field = 'service_count'
+    @admin.display(ordering='services')
+    def services(self, obj):
+        return obj.services
 
-    def vehicle_count(self, obj):
-        return obj.vehicle_set.count()
+    @admin.display(ordering='vehicles')
+    def vehicles(self, obj):
+        return obj.vehicles
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -240,40 +251,51 @@ class DataSourceAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
             return queryset.annotate(
-                operators=StringAgg('route__service__operator', ', ', distinct=True)
+                operators=StringAgg('route__service__operator', ', ', distinct=True),
+                # more complicated than Count('service') but faster (subquery vs join):
+                services=Subquery(
+                    Service.objects.filter(
+                        source=OuterRef('id')
+                    ).values('source').annotate(count=Count('pk')).values('count')
+                ),
+                routes=Subquery(
+                    Route.objects.filter(
+                        source=OuterRef('id')
+                    ).values('source').annotate(count=Count('pk')).values('count')
+                ),
+                journeys=Subquery(
+                    VehicleJourney.objects.filter(
+                        latest_vehicle__isnull=False, source=OuterRef('id')
+                    ).values('source').annotate(count=Count('pk')).values('count')
+                )
             )
         return queryset
 
-    @staticmethod
-    def operators(obj):
+    @admin.display(ordering='operators')
+    def operators(self, obj):
         return obj.operators
 
-    @staticmethod
-    def routes(obj):
+    @admin.display(ordering='routes')
+    def routes(self, obj):
         url = reverse('admin:bustimes_route_changelist')
-        routes = obj.route_set.count()
-        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{routes}</a>')
+        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{obj.routes or 0}</a>')
 
-    @staticmethod
-    def services(obj):
-        if obj.operators:
-            url = reverse('admin:busstops_service_changelist')
-            services = obj.service_set.count()
-            return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{services}</a>')
+    @admin.display(ordering='services')
+    def services(self, obj):
+        url = reverse('admin:busstops_service_changelist')
+        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{obj.services or 0}</a>')
 
-    @staticmethod
-    def journeys(obj):
-        if not obj.operators:
-            url = reverse('admin:vehicles_vehiclejourney_changelist')
-            services = obj.vehiclejourney_set.filter(latest_vehicle__isnull=False).count()
-            return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{services}</a>')
+    @admin.display(ordering='journeys')
+    def journeys(self, obj):
+        url = reverse('admin:vehicles_vehiclejourney_changelist')
+        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{obj.journeys or 0}</a>')
 
     def delete_routes(self, request, queryset):
         result = Route.objects.filter(source__in=queryset).delete()
         self.message_user(request, result)
 
     def remove_datetimes(self, request, queryset):
-        result = queryset.update(datetime=None)
+        result = queryset.order_by().update(datetime=None)
         self.message_user(request, result)
 
 
