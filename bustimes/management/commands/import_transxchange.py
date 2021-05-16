@@ -816,8 +816,7 @@ class Command(BaseCommand):
                         line_brand_parts.remove(line.line_name)
                         line_brand = ' '.join(line_brand_parts)
                 print(line_brand)
-            if line_brand:
-                service.line_brand = line_brand
+            service.line_brand = line_brand or ''
 
             if txc_service.mode:
                 service.mode = txc_service.mode
