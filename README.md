@@ -13,24 +13,50 @@ app      | concern
 buses    | contains the site settings.py
 busstops | bus stops - but also operating companies, places, and routes 🤯 and all the site CSS and JavaScript
 bustimes | getting timetable data out of various formats (GTFS, TransXChange, ATCO-CIF) and into a database and doing stuff therewith 
-vehicles | tracking buses' locations and showing them on a map, and pointless details about vehicles' colours and features
 departures | listing the "next departures" at a bus stop – from a timetable and/or predicted by an API
 disruptions | information about like roadworks, diversions and stuff
+fares    | fares
+vehicles | tracking buses' locations and showing them on a map, and pointless details about vehicles' colours and features
 vosa     | the Great Britain Traffic Commissioners' bus service registration data. VOSA is the name of a defunct UK government agency. 
 
 This documentation is incomplete and out of date. And that's OK (?) because I don't expect anyone to need to follow it. I will try to document some things for my own reference.
 
 ## Installing
 
-Python 3.9 is required.
-Use [Pipenv](https://docs.pipenv.org/en/latest/) to install the Python dependencies (Django, etc):
+These definitely need to be available:
 
-    pipenv --python 3.9
-    pipenv install --dev
+- Python 3.9
+- [Pipenv](https://docs.pipenv.org/en/latest/) to install necessary Python packages (Django, etc)
+- PostgreSQL with PostGIS
+    - On my Macintosh computer I use [Postgres.app](https://postgresapp.com/)
+- `npm` to install some front end JavaScript things
 
-There are also some JavaScript dependencies:
+And for certain features to work properly, these too:
 
-    npm install
+- Redis 6.2
+- Memcached 
+
+Then some environment variables need to be set.
+Many of them control settings in [buses/settings.py](buses/settings.py).
+I have a file named `.env` in this here directory,
+[which Pipenv automatically loads when I use Pipenv to run things](https://pipenv.pypa.io/en/latest/advanced/#automatic-loading-of-env), and to give you an idea its contents look something like this:
+
+```
+DEBUG=1
+SECRET_KEY=f
+ALLOWED_HOSTS=localhost macbook-pro-16.local
+#PYTHONWARNINGS=all
+PGHOST=localhost
+PGUSER=postgres
+PGPASSWORD=password
+#PGPORT=
+#DB_NAME=
+CELERY_BROKER_URL=redis://localhost:6379
+#AWS_ACCESS_KEY_ID=
+#AWS_SECRET_ACCESS_KEY=
+```
+
+[.github/workflows/pythonapp.yml](.github/workflows/pythonapp.yml) sort of documents the process of installing dependencies and running tests.
 
 ## Importing data
 
@@ -39,9 +65,11 @@ There are also some JavaScript dependencies:
 	cd data
 	pipenv run ./import.sh
 
-will download some data from various [sources](https://bustimes.org.uk/data) and run the necessary Django [management commands](busstops/management/commands) to import it.
+will download *some* data from various [sources](https://bustimes.org/data) and run the necessary Django [management commands](busstops/management/commands) to import it, in a sensible order (place names, then stops, then timetables).
 When run repeatedly, it will only download and import the stuff that's changed.
 It needs a username and password for the Traveline National Dataset step.
+
+But then there are further management commands for getting further data from further places like the Bus Open Data Service.
 
 ### Live data
 
