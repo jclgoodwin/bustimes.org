@@ -35,6 +35,7 @@
         if (map) {
             document.body.style.overflow = 'hidden';
             map.invalidateSize();
+            loadVehicles();
         } else {
             loadjs([window.LEAFLET_CSS_URL, window.MAPS_JS_URL, window.LEAFLET_JS_URL], setUpMap);
             if (window.SERVICE_TRACKING) {
@@ -206,7 +207,7 @@
     if (window.location.hash === '#map') {
         openMap();
     } else {
-        loadVehicles();
+        loadVehicles();  // just populate '_ vehicles online'
     }
 
 })();
