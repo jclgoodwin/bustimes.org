@@ -592,7 +592,7 @@ class ServiceColour(models.Model):
 
     def preview(self, name=False):
         return format_html('<div style="background:{};color:{}">{}</div>',
-                           self.background, self.foreground, self.name or self.operator_id or '\u00A0')
+                           self.background, self.foreground, self.name or '-')
 
 
 class ServiceManager(models.Manager):

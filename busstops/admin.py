@@ -9,7 +9,8 @@ from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from bustimes.models import Route
-from vehicles.models import Vehicle  # , VehicleJourney
+from vehicles.models import Vehicle
+from vehicles.admin import ServiceIsNullFilter
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
     ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
@@ -231,8 +232,17 @@ class ServiceCodeAdmin(admin.ModelAdmin):
 
 @admin.register(ServiceColour)
 class ServiceColourAdmin(admin.ModelAdmin):
-    list_display = ('preview', 'foreground', 'background')
+    list_display = ('preview', 'foreground', 'background', 'services')
     search_fields = ['name']
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            queryset = queryset.annotate(services=Count('service', filter=Q(service__current=True)))
+        return queryset
+
+    def services(self, obj):
+        return obj.services
 
 
 @admin.register(Place)
@@ -241,54 +251,33 @@ class PlaceAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class RouteIsNullFilter(ServiceIsNullFilter):
+    title = 'route is null'
+    parameter_name = 'route__isnull'
+
+
+class VehicleJourneyIsNullFilter(ServiceIsNullFilter):
+    title = 'vehicle journey is null'
+    parameter_name = 'vehiclejourney__isnull'
+
+
 @admin.register(DataSource)
 class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
-    list_display = ('name', 'url', 'datetime', 'settings', 'operators', 'routes', 'services', 'journeys')
+    list_display = ('name', 'url', 'datetime', 'settings', 'routes', 'services', 'journeys')
     list_editable = ['datetime']
+    list_filter = [RouteIsNullFilter, ServiceIsNullFilter, VehicleJourneyIsNullFilter]
     actions = ['delete_routes', 'remove_datetimes']
     show_full_result_count = False
 
-    def get_queryset(self, request):
-        queryset = super().get_queryset(request)
-        if 'changelist' in request.resolver_match.view_name:
-            return queryset.annotate(
-                operators=StringAgg('route__service__operator', ', ', distinct=True),
-                # more complicated than Count('service') but faster (subquery vs join):
-                # services=Subquery(
-                #     Service.objects.filter(
-                #         source=OuterRef('id')
-                #     ).values('source').annotate(count=Count('pk')).values('count')
-                # ),
-                routes=Count('route')
-                # routes=Subquery(
-                #     Route.objects.filter(
-                #         source=OuterRef('id')
-                #     ).values('source').annotate(count=Count('pk')).values('count')
-                # ),
-                # journeys=Subquery(
-                #     VehicleJourney.objects.filter(
-                #         latest_vehicle__isnull=False, source=OuterRef('id')
-                #     ).values('source').annotate(count=Count('pk')).values('count')
-                # )
-            )
-        return queryset
-
-    @admin.display(ordering='operators')
-    def operators(self, obj):
-        return obj.operators
-
-    @admin.display(ordering='routes')
     def routes(self, obj):
         url = reverse('admin:bustimes_route_changelist')
-        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{obj.routes or 0}</a>')
+        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">routes</a>')
 
-    # @admin.display(ordering='services')
     def services(self, obj):
         url = reverse('admin:busstops_service_changelist')
         return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">services</a>')
 
-    # @admin.display(ordering='journeys')
     def journeys(self, obj):
         url = reverse('admin:vehicles_vehiclejourney_changelist')
         return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">journeys</a>')
