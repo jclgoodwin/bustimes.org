@@ -2,8 +2,6 @@
 
 {% block title %}Site status – bustimes.org{% endblock %}
 
-{% block bodyclass %}narrow{% endblock %}
-
 {% block content %}
 
 <h1>Site status</h1>
@@ -117,7 +115,7 @@
         var xScale = d3.scaleTime().domain([
             datetimes.reduce((a, b) => Math.min(a, b)),
             datetimes.reduce((a, b) => Math.max(a, b)),
-        ]).range([0, 780]);
+        ]).range([0, 700]);
 
         var totals = data.map(item => Object.values(item.sources).reduce((a, b) => a + b));
         var maxTotal = totals.reduce((a, b) => Math.max(a, b));
