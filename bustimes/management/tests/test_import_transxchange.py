@@ -363,6 +363,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(len(timetable.groupings[1].rows), 29)
 
         self.assertEqual(str(timetable.groupings[0].rows[0].times), "[19:12, '', '']")
+        self.assertEqual(str(timetable.groupings[0].rows[21].times), "[19:29, '', '']")
+        self.assertEqual(str(timetable.groupings[0].rows[22].times), "[19:30, 21:00, 22:30]")
         self.assertEqual(str(timetable.groupings[0].rows[-25].times), '[19:32, 21:02, 22:32]')
         self.assertEqual(str(timetable.groupings[0].rows[-24].times), '[19:33, 21:03, 22:33]')
         self.assertEqual(str(timetable.groupings[0].rows[-12].times), '[19:42, 21:12, 22:42]')
