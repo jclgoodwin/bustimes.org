@@ -9,7 +9,7 @@ from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from bustimes.models import Route
-from vehicles.models import Vehicle, VehicleJourney
+from vehicles.models import Vehicle  # , VehicleJourney
 from .models import (
     Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
     ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
@@ -104,11 +104,13 @@ class OperatorAdmin(admin.ModelAdmin):
 
     @admin.display(ordering='services')
     def services(self, obj):
-        return obj.services
+        url = reverse('admin:busstops_service_changelist')
+        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.services or 0}</a>')
 
     @admin.display(ordering='vehicles')
     def vehicles(self, obj):
-        return obj.vehicles
+        url = reverse('admin:vehicles_vehicle_changelist')
+        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.vehicles or 0}</a>')
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -253,21 +255,22 @@ class DataSourceAdmin(admin.ModelAdmin):
             return queryset.annotate(
                 operators=StringAgg('route__service__operator', ', ', distinct=True),
                 # more complicated than Count('service') but faster (subquery vs join):
-                services=Subquery(
-                    Service.objects.filter(
-                        source=OuterRef('id')
-                    ).values('source').annotate(count=Count('pk')).values('count')
-                ),
-                routes=Subquery(
-                    Route.objects.filter(
-                        source=OuterRef('id')
-                    ).values('source').annotate(count=Count('pk')).values('count')
-                ),
-                journeys=Subquery(
-                    VehicleJourney.objects.filter(
-                        latest_vehicle__isnull=False, source=OuterRef('id')
-                    ).values('source').annotate(count=Count('pk')).values('count')
-                )
+                # services=Subquery(
+                #     Service.objects.filter(
+                #         source=OuterRef('id')
+                #     ).values('source').annotate(count=Count('pk')).values('count')
+                # ),
+                routes=Count('route')
+                # routes=Subquery(
+                #     Route.objects.filter(
+                #         source=OuterRef('id')
+                #     ).values('source').annotate(count=Count('pk')).values('count')
+                # ),
+                # journeys=Subquery(
+                #     VehicleJourney.objects.filter(
+                #         latest_vehicle__isnull=False, source=OuterRef('id')
+                #     ).values('source').annotate(count=Count('pk')).values('count')
+                # )
             )
         return queryset
 
@@ -280,15 +283,15 @@ class DataSourceAdmin(admin.ModelAdmin):
         url = reverse('admin:bustimes_route_changelist')
         return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{obj.routes or 0}</a>')
 
-    @admin.display(ordering='services')
+    # @admin.display(ordering='services')
     def services(self, obj):
         url = reverse('admin:busstops_service_changelist')
-        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{obj.services or 0}</a>')
+        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">services</a>')
 
-    @admin.display(ordering='journeys')
+    # @admin.display(ordering='journeys')
     def journeys(self, obj):
         url = reverse('admin:vehicles_vehiclejourney_changelist')
-        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">{obj.journeys or 0}</a>')
+        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">journeys</a>')
 
     def delete_routes(self, request, queryset):
         result = Route.objects.filter(source__in=queryset).delete()
