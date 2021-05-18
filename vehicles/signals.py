@@ -14,4 +14,4 @@ def vehicle_varnish_ban(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Livery)
 def liveries_varnish_ban(sender, instance, **kwargs):
-    cache.set('liveries_css_version', datetime.utcnow().timestamp())
+    cache.set('liveries_css_version', int(datetime.utcnow().timestamp()))
