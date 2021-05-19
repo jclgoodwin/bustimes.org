@@ -98,11 +98,12 @@ class Tariff(models.Model):
     source = models.ForeignKey(DataSet, models.CASCADE)
     filename = models.CharField(max_length=255)
     user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
-    trip_type = models.CharField(max_length=255)
+    trip_type = models.CharField(max_length=255, blank=True)
     valid_between = DateTimeRangeField(null=True, blank=True)
     type_of_tariff = models.CharField(
         max_length=19,
         choices=TypeOfTariff.choices,
+        blank=True
     )
 
     def __str__(self):
@@ -150,6 +151,16 @@ class DistanceMatrixElement(models.Model):
     start_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='starting')
     end_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='ending')
     tariff = models.ForeignKey(Tariff, models.CASCADE)
+
+    def html(self):
+        if self.tariff.user_profile:
+            tariff = self.tariff.user_profile
+            if self.tariff.trip_type:
+                tariff = f'{tariff} {self.tariff.trip_type}'
+        else:
+            tariff = self.tariff
+
+        return f'{tariff}: £{self.price.amount}'
 
     def __str__(self):
         return self.code

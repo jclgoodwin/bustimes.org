@@ -18,11 +18,11 @@
 
     {% for result in results %}
         {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
-        <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price_group.amount }}</p>
+        <p>{{ result.html }}</p>
     {% endfor %}
 
     {% for tariff in object.tariff_set.all %}
-        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }} ({{ tariff.user_profile }} {{ tariff.trip_type }})</a></p>
+        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
     {% endfor %}
 
 {% endblock %}

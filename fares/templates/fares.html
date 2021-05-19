@@ -9,7 +9,7 @@
 {% if form.is_valid %}
     {% for result in form.get_results %}
         {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
-        <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price_group.amount }}</p>
+        <p>{{ result.html }}</p>
     {% endfor %}
 {% endif %}
 

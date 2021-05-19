@@ -63,7 +63,7 @@ td:hover {
 
     {% for result in results %}
         {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
-        <p>{{ result.tariff.user_profile }} {{ result.tariff.trip_type }}: £{{ result.price.amount }}</p>
+        <p>{{ result.html }}</p>
     {% endfor %}
 
     {% for price in object.price_set.all %}

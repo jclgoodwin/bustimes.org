@@ -22,6 +22,7 @@ class TariffAdmin(admin.ModelAdmin):
     list_filter = [
        ('source__operators', admin.RelatedOnlyFieldListFilter)
     ]
+    raw_id_fields = ["source", "user_profile"]
 
 
 class FareZoneAdmin(admin.ModelAdmin):
