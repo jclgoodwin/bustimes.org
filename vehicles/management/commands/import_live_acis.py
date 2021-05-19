@@ -14,6 +14,12 @@ NS = {
     's': 'http://www.w3.org/2003/05/soap-envelope'
 }
 
+OPERATORS = {
+    'Ulsterbus': 'ULB',
+    'Translink Metro': 'MET',
+    'Translink Glider': 'GDR'
+}
+
 
 def items_from_response(response):
     try:
@@ -52,7 +58,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_points(self):
         points = []
         now = self.source.datetime
-        services = Service.objects.filter(current=True, operator__in=['MET', 'GDR'])
+        services = Service.objects.filter(current=True, operator__in=['MET', 'GDR', 'ULB', 'GLE'])
         extent = services.aggregate(Extent('geometry'))['geometry__extent']
         if extent:
             longitude = extent[0]
@@ -84,8 +90,8 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         operator = item.find('a:VehicleOperatorName', NS).text
 
-        if operator == 'Translink Glider':
-            operator = 'GDR'
+        if operator in OPERATORS:
+            operator = OPERATORS[operator]
         else:
             operator = 'MET'
 
@@ -96,7 +102,9 @@ class Command(ImportLiveVehiclesCommand):
         if notes is not None:
             defaults['notes'] = notes.text
 
-        vehicle, created = self.vehicles.get_or_create(defaults, operator_id=operator, code=vehicle, source=self.source)
+        defaults['operator_id'] = operator
+
+        vehicle, created = self.vehicles.get_or_create(defaults, code=vehicle, source=self.source)
 
         return vehicle, created
 
@@ -115,16 +123,16 @@ class Command(ImportLiveVehiclesCommand):
 
         operator = item.find('a:VehicleOperatorName', NS).text
 
-        if operator == 'Translink Glider':
-            operator = 'GDR'
+        if operator in OPERATORS:
+            operator = OPERATORS[operator]
         else:
             operator = 'MET'
-
+        print(operator, journey.route_name)
         try:
             try:
                 journey.service = Service.objects.get(line_name__iexact=journey.route_name, operator=operator)
             except Service.DoesNotExist:
-                operator = 'ULB'
+                operator = 'GLE'
                 journey.service = Service.objects.get(line_name__iexact=journey.route_name, operator=operator)
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, journey.route_name)
