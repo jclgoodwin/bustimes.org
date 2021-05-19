@@ -65,7 +65,11 @@ class OperatorTests(TestCase):
 
         response = self.client.get('/admin/busstops/operator/')
         self.assertContains(response, '<td class="field-operator_codes"></td>')
-        self.assertContains(response, '<td class="field-services">-</td><td class="field-vehicles">-</td>')
+        self.assertContains(
+            response,
+            '<td class="field-services"><a href="/admin/busstops/service/?operator__id__exact=CHAR">0</a></td>'
+            '<td class="field-vehicles"><a href="/admin/vehicles/vehicle/?operator__id__exact=CHAR">0</a></td>'
+        )
         self.assertEqual(1, response.context_data['cl'].result_count)
 
         response = self.client.get('/admin/busstops/operator/?q=ainsley')
