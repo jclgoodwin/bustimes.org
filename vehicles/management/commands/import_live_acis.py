@@ -127,7 +127,8 @@ class Command(ImportLiveVehiclesCommand):
             operator = OPERATORS[operator]
         else:
             operator = 'MET'
-        print(operator, journey.route_name)
+            print(operator, journey.route_name)
+
         try:
             try:
                 journey.service = Service.objects.get(line_name__iexact=journey.route_name, operator=operator)
