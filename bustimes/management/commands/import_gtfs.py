@@ -298,7 +298,7 @@ class Command(BaseCommand):
             stop_time.trip = trip
         StopTime.objects.bulk_create(stop_times)
 
-        for service in self.services:
+        for service in self.services.values():
             if service.id in self.service_shapes:
                 linestrings = [LineString(*self.shapes[shape])
                                for shape in self.service_shapes[service.id]
