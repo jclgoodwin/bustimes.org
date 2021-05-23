@@ -118,7 +118,7 @@ class Command(BaseCommand):
         service.current = True
         service.show_timetable = True
         service.service_code = line['route_id']
-        service.source = self.source
+        service.save()
 
         try:
             operator = self.operators[line['agency_id']]
