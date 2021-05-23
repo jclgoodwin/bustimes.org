@@ -94,12 +94,12 @@ class EditVehiclesForm(forms.Form):
 class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle
     """
-    fleet_number = forms.CharField(required=False, max_length=14)
-    reg = RegField(label='Number plate', required=False, max_length=10)
+    fleet_number = forms.CharField(required=False, max_length=24)
+    reg = RegField(label='Number plate', required=False, max_length=24)
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
     name = forms.CharField(label='Name', help_text="Not your name", required=False, max_length=255)
-    previous_reg = RegField(required=False, max_length=14)
+    previous_reg = RegField(required=False, max_length=24)
     depot = forms.ChoiceField(required=False)
     notes = forms.CharField(required=False, max_length=255)
     url = forms.URLField(label='URL', help_text="Optional link to a public web page (not a private Facebook group)"
