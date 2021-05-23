@@ -258,8 +258,7 @@ PASSENGER_OPERATORS = [
         'NCT': 'NCTR'
     }),
     ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S', {
-        'BB': 'BORD',
-        'PERY': 'PERY'
+        'PERY': 'BORD',
     }),
     ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
         'SQ': 'WDBC',

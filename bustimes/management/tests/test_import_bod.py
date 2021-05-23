@@ -176,7 +176,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
 
-                    with self.assertNumQueries(63):
+                    with self.assertNumQueries(61):
                         with patch('builtins.print') as mocked_print:
                             call_command('import_bod', 'stagecoach', 'sccm')
                     mocked_print.assert_called_with(undefined_holidays)

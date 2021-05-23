@@ -1,6 +1,7 @@
 import io
 import zipfile
 import xmltodict
+import functools
 from django.core.cache import cache
 from django.conf import settings
 from datetime import timedelta
@@ -34,7 +35,6 @@ class Command(ImportLiveVehiclesCommand):
         'MTRL': ['MPTR'],  # MP Travel using M Travel code (no relation!)
         'HUNT': ['HNTC'],  # Hunts using Hunters code
     }
-    operator_cache = {}
     vehicle_id_cache = {}
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
@@ -55,6 +55,7 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                 pass
 
+    @functools.cache
     def get_operator(self, operator_ref):
         if operator_ref == "SCEM":
             operator_ref = "SCGH"
@@ -63,9 +64,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref in self.operators:
             return self.operators[operator_ref]
-
-        if operator_ref in self.operator_cache:
-            return self.operator_cache[operator_ref]
 
         operators = Operator.objects.using(settings.READ_DATABASE)
 
@@ -82,7 +80,6 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 return
 
-        self.operator_cache[operator_ref] = operator
         return operator
 
     @staticmethod

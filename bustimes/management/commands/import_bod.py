@@ -200,8 +200,6 @@ def ticketer(operator=None):
         if modified or operator == noc:
             print(url, last_modified)
 
-            command.operators = {code: code for code in operators}
-
             command.region_id = region_id
             command.service_ids = set()
             command.route_ids = set()
@@ -251,7 +249,6 @@ def stagecoach(operator=None):
         if modified or operator:
             print(url, last_modified)
 
-            command.operators = {o: o for o in nocs}
             command.region_id = region_id
             command.service_ids = set()
             command.route_ids = set()
@@ -265,7 +262,7 @@ def stagecoach(operator=None):
             command.mark_old_services_as_not_current()
             command.finish_services()
 
-            clean_up(command.operators.values(), [command.source])
+            clean_up(nocs, [command.source])
 
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime', 'url'])

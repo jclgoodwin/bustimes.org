@@ -11,6 +11,7 @@ import csv
 import zipfile
 import xml.etree.cElementTree as ET
 import datetime
+from functools import cache
 from titlecase import titlecase
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
@@ -140,6 +141,7 @@ def get_operator_name(operator_element):
             return name.replace('&amp;', '&')
 
 
+@cache
 def get_operator_by(scheme, code):
     if code:
         try:
@@ -193,6 +195,7 @@ class Command(BaseCommand):
     def set_up(self):
         self.service_descriptions = {}
         self.calendar_cache = {}
+        self.operators = {}
         self.undefined_holidays = set()
         self.missing_operators = []
         self.notes = {}
@@ -287,7 +290,10 @@ class Command(BaseCommand):
     def get_operators(self, transxchange, service):
         operators = transxchange.operators
         if len(operators) > 1:
-            journey_operators = {journey.operator for journey in transxchange.journeys}
+            journey_operators = {
+                journey.operator for journey in transxchange.journeys
+                if journey.operator and journey.service_ref == service.service_code
+            }
             journey_operators.add(service.operator)
             operators = [operator for operator in operators if operator.get('id') in journey_operators]
         operators = (self.get_operator(operator) for operator in operators)
