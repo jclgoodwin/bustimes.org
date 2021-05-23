@@ -26,15 +26,10 @@ interactions:
       - Sat, 04 Jul 2020 14:06:20 GMT
       Expires:
       - Mon, 06 Jul 2020 14:06:20 GMT
-      Server:
-      - Apache
-      Set-Cookie:
-      - AWSALB=n8NJMzsabKa21Pu+aM22wGS+GvV21e1KxhyUCZuYCKIh1YbzVgSVv6KgCrzt17gIGX57zdakWjhRzGkjuXjLLZkHcp7P7sG35SvKBU6rem27dfJOzQypGwtmQncp;
-        Expires=Sat, 11 Jul 2020 14:06:20 GMT; Path=/
-      - AWSALBCORS=n8NJMzsabKa21Pu+aM22wGS+GvV21e1KxhyUCZuYCKIh1YbzVgSVv6KgCrzt17gIGX57zdakWjhRzGkjuXjLLZkHcp7P7sG35SvKBU6rem27dfJOzQypGwtmQncp;
-        Expires=Sat, 11 Jul 2020 14:06:20 GMT; Path=/; SameSite=None; Secure
       Vary:
       - X-Forwarded-Proto
+      Last-Modified:
+      - Sat, 04 Jul 2020 13:41:09 GMT
     status:
       code: 304
       message: Not Modified
@@ -69,19 +64,8 @@ interactions:
       - Sat, 04 Jul 2020 14:06:20 GMT
       Expires:
       - Wed, 11 Jan 1984 05:00:00 GMT
-      Link:
-      - <https://www.transportforireland.ie/wp-json/>; rel="https://api.w.org/"
-      Server:
-      - Apache
-      Set-Cookie:
-      - AWSALB=HukRDrWOVtLvz/XIdxnr/IJEIGAP9/kgq7fl8/i1tpyIcGrh2OpIaC/7oE2nHUEJRPAVpK2Mz0iro7GXpcVOgtPCB7p0NXGYqaP4KAvjdkCcLt2386vqq5KZYoXr;
-        Expires=Sat, 11 Jul 2020 14:06:20 GMT; Path=/
-      - AWSALBCORS=HukRDrWOVtLvz/XIdxnr/IJEIGAP9/kgq7fl8/i1tpyIcGrh2OpIaC/7oE2nHUEJRPAVpK2Mz0iro7GXpcVOgtPCB7p0NXGYqaP4KAvjdkCcLt2386vqq5KZYoXr;
-        Expires=Sat, 11 Jul 2020 14:06:20 GMT; Path=/; SameSite=None; Secure
-      - cookielawinfo-checkbox-necessary=yes; expires=Sat, 04-Jul-2020 15:06:20 GMT;
-        Max-Age=3600; path=/
-      - cookielawinfo-checkbox-non-necessary=yes; expires=Sat, 04-Jul-2020 15:06:20
-        GMT; Max-Age=3600; path=/
+      Last-Modified:
+      - Sat, 04 Jul 2020 13:41:09 GMT
       Vary:
       - X-Forwarded-Proto,Accept-Encoding
     status:
@@ -118,19 +102,8 @@ interactions:
       - Sat, 04 Jul 2020 14:06:21 GMT
       Expires:
       - Wed, 11 Jan 1984 05:00:00 GMT
-      Link:
-      - <https://www.transportforireland.ie/wp-json/>; rel="https://api.w.org/"
-      Server:
-      - Apache
-      Set-Cookie:
-      - AWSALB=igitoaU9TMaNCruP+6R04jXv2PqWZUw/WB3CNf8jPedNyP7KXkudmasj03o5Af1/DLL5bDxSdYmk0DGSD+cYiS7X5G1cNQw71RKv3JeHNE1l8XCw+KfIVh0hSrQX;
-        Expires=Sat, 11 Jul 2020 14:06:20 GMT; Path=/
-      - AWSALBCORS=igitoaU9TMaNCruP+6R04jXv2PqWZUw/WB3CNf8jPedNyP7KXkudmasj03o5Af1/DLL5bDxSdYmk0DGSD+cYiS7X5G1cNQw71RKv3JeHNE1l8XCw+KfIVh0hSrQX;
-        Expires=Sat, 11 Jul 2020 14:06:20 GMT; Path=/; SameSite=None; Secure
-      - cookielawinfo-checkbox-necessary=yes; expires=Sat, 04-Jul-2020 15:06:21 GMT;
-        Max-Age=3600; path=/
-      - cookielawinfo-checkbox-non-necessary=yes; expires=Sat, 04-Jul-2020 15:06:21
-        GMT; Max-Age=3600; path=/
+      Last-Modified:
+      - Sat, 04 Jul 2020 13:41:09 GMT
       Transfer-Encoding:
       - chunked
       Vary:

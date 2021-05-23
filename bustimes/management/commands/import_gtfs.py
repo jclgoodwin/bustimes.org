@@ -1,5 +1,4 @@
 import os
-import time
 import io
 import csv
 import logging
@@ -9,9 +8,8 @@ from datetime import datetime
 from chardet.universaldetector import UniversalDetector
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db.models import Count
-from django.contrib.gis.geos import Point
-from django.contrib.gis.geos import LineString, MultiLineString
+from django.db.models import Count, Q
+from django.contrib.gis.geos import Point, LineString, MultiLineString
 from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
 from ...timetables import get_stop_usages
@@ -74,7 +72,7 @@ def do_stops(archive):
                 active=True
             )
         else:
-            stops_not_created[stop_id] = line['stop_name'][:48]
+            stops_not_created[stop_id] = line
     existing_stops = StopPoint.objects.in_bulk(stops)
     stops_to_create = [stop for stop in stops.values() if stop.atco_code not in existing_stops]
 
@@ -99,75 +97,83 @@ class Command(BaseCommand):
             'name': line['agency_name'],
             'region_id': 'LE'
         }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
-        if not created and operator.name != line['agency_name']:
+        if operator.name != line['agency_name']:
             print(operator, line)
-        return operator
+        self.operators[line['agency_id']] = operator
+
+    def handle_route(self, line):
+        try:
+            service = Service.objects.filter(
+                Q(route__code=line['route_id']) | Q(service_code=line['route_id']),
+                source=self.source
+            ).get()
+        except Service.DoesNotExist:
+            service = Service(source=self.source)
+
+        service.service_code = line['route_id']
+        service.line_name = line['route_short_name']
+        service.description = line['route_long_name']
+        service.date = self.source.datetime.strftime('%Y-%m-%d')
+        service.mode = MODES.get(int(line['route_type']), '')
+        service.current = True
+        service.show_timetable = True
+        service.service_code = line['route_id']
+        service.source = self.source
+
+        try:
+            operator = self.operators[line['agency_id']]
+            if service.id in self.services:
+                service.operator.add(operator)
+            else:
+                service.operator.set([operator])
+        except KeyError:
+            pass
+        self.services[service.id] = service
+
+        route, created = Route.objects.update_or_create(
+            {
+                'line_name': line['route_short_name'],
+                'description': line['route_long_name'],
+                'service': service,
+            },
+            source=self.source,
+            code=line['route_id'],
+        )
+        if not created:
+            route.trip_set.all().delete()
+        self.routes[line['route_id']] = route
 
     def handle_zipfile(self, path, collection, url, last_modified):
-        source = DataSource.objects.update_or_create(
+        source = DataSource.objects.get_or_create(
             {
                 'url': url,
-                'datetime': last_modified
             }, name=f'{collection} GTFS'
         )[0]
+        source.datetime = last_modified  # we will save this later, when the import has been successful
+        self.source = source
 
-        shapes = {}
-        service_shapes = {}
-        operators = {}
-        routes = {}
-        services = set()
+        self.shapes = {}
+        self.service_shapes = {}
+        self.operators = {}
+        self.routes = {}
+        self.services = {}
         headsigns = {}
 
         with zipfile.ZipFile(path) as archive:
 
             for line in read_file(archive, 'shapes.txt'):
                 shape_id = line['shape_id']
-                if shape_id not in shapes:
-                    shapes[shape_id] = []
-                shapes[shape_id].append(Point(float(line['shape_pt_lon']), float(line['shape_pt_lat'])))
+                if shape_id not in self.shapes:
+                    self.shapes[shape_id] = []
+                self.shapes[shape_id].append(
+                    Point(float(line['shape_pt_lon']), float(line['shape_pt_lat']))
+                )
 
             for line in read_file(archive, 'agency.txt'):
-                operator = self.handle_operator(line)
-                operators[line['agency_id']] = operator
+                self.handle_operator(line)
 
             for line in read_file(archive, 'routes.txt'):
-                defaults = {
-                    'line_name': line['route_short_name'],
-                    'description': line['route_long_name'],
-                    'date': time.strftime('%Y-%m-%d'),
-                    'mode': MODES.get(int(line['route_type']), ''),
-                    'current': True,
-                    'show_timetable': True,
-                    'source': source,
-                    'service_code': ''
-                }
-                service, created = Service.objects.filter(
-                    source=source,
-                    route__code=line['route_id']
-                ).update_or_create(defaults)
-
-                try:
-                    operator = operators[line['agency_id']]
-                    if service in services:
-                        service.operator.add(operator)
-                    else:
-                        service.operator.set([operator])
-                except KeyError:
-                    pass
-                services.add(service)
-
-                route, created = Route.objects.update_or_create(
-                    {
-                        'line_name': line['route_short_name'],
-                        'description': line['route_long_name'],
-                        'service': service,
-                    },
-                    source=source,
-                    code=line['route_id'],
-                )
-                if not created:
-                    route.trip_set.all().delete()
-                routes[line['route_id']] = route
+                self.handle_route(line)
 
             stops, stops_not_created = do_stops(archive)
 
@@ -197,15 +203,16 @@ class Command(BaseCommand):
 
             trips = {}
             for line in read_file(archive, 'trips.txt'):
-                route = routes[line['route_id']]
+                route = self.routes[line['route_id']]
                 trips[line['trip_id']] = Trip(
                     route=route,
                     calendar=calendars[line['service_id']],
                     inbound=line['direction_id'] == '1'
                 )
-                if route.service_id not in service_shapes:
-                    service_shapes[route.service_id] = set()
-                service_shapes[route.service_id].add(line['shape_id'])
+                if line['shape_id']:
+                    if route.service_id not in self.service_shapes:
+                        self.service_shapes[route.service_id] = set()
+                    self.service_shapes[route.service_id].add(line['shape_id'])
                 if line['trip_headsign']:
                     if line['route_id'] not in headsigns:
                         headsigns[line['route_id']] = {
@@ -214,7 +221,7 @@ class Command(BaseCommand):
                         }
                     headsigns[line['route_id']][line['direction_id']].add(line['trip_headsign'])
             for route_id in headsigns:
-                route = routes[route_id]
+                route = self.routes[route_id]
                 if not route.service.description:
                     origins = headsigns[route_id]['1']
                     destinations = headsigns[route_id]['0']
@@ -274,7 +281,7 @@ class Command(BaseCommand):
                 if stop:
                     trip.destination = stop
                 elif line['stop_id'] in stops_not_created:
-                    stop_time.stop_code = stops_not_created[line['stop_id']]
+                    stop_time.stop_code = stops_not_created[line['stop_id']]['stop_name']
                 else:
                     stop_time.stop_code = line['stop_id']
                     print(line)
@@ -291,11 +298,15 @@ class Command(BaseCommand):
             stop_time.trip = trip
         StopTime.objects.bulk_create(stop_times)
 
-        for service in services:
-            if service.id in service_shapes:
-                linestrings = [LineString(*shapes[shape]) for shape in service_shapes[service.id] if shape in shapes]
+        for service in self.services:
+            if service.id in self.service_shapes:
+                linestrings = [LineString(*self.shapes[shape])
+                               for shape in self.service_shapes[service.id]
+                               if shape in self.shapes]
                 service.geometry = MultiLineString(*linestrings)
                 service.save(update_fields=['geometry'])
+            else:
+                pass
 
             groupings = get_stop_usages(Trip.objects.filter(route__service=service))
 
@@ -318,16 +329,18 @@ class Command(BaseCommand):
                 service.save(update_fields=['region'])
             service.update_search_vector()
 
-        for operator in operators.values():
+        source.save(update_fields=['datetime'])
+
+        for operator in self.operators.values():
             operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
                 Count('adminarea__stoppoint__service__operator')
             ).order_by('-adminarea__stoppoint__service__operator__count').first()
             if operator.region_id:
                 operator.save(update_fields=['region'])
 
-        print(source.service_set.filter(current=True).exclude(route__in=routes.values()).update(current=False))
+        print(source.service_set.filter(current=True).exclude(route__in=self.routes.values()).update(current=False))
         print(source.service_set.filter(current=True).exclude(route__trip__isnull=False).update(current=False))
-        print(source.route_set.exclude(id__in=(route.id for route in routes.values())).delete())
+        print(source.route_set.exclude(id__in=(route.id for route in self.routes.values())).delete())
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
