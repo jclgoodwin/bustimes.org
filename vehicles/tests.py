@@ -295,8 +295,12 @@ class VehiclesTests(TestCase):
         del initial['features']
         with self.assertNumQueries(14):
             response = self.client.post(url, initial)
+
         vef = VehicleEditFeature.objects.get()
         self.assertEqual(str(vef), '<del>Wi-Fi</del>')
+
+        edit = vef.edit
+        self.assertEqual(edit.get_changes(), {'features': [vef]})
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.user)
@@ -334,6 +338,9 @@ class VehiclesTests(TestCase):
 
         self.assertContains(response, 'Changed depot from Long Sutton')
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
+
+        edit = VehicleEdit.objects.get()
+        self.assertEqual(edit.get_changes(), {'reg': ''})
 
         response = self.client.get('/vehicles/history')
         self.assertContains(response, 'Luther Blisset')
