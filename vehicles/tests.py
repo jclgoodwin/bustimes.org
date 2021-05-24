@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from accounts.models import User
 from busstops.models import DataSource, Region, Operator, Service
 from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
-                     VehicleJourney, VehicleLocation, VehicleEdit, VehicleRevision)
+                     VehicleJourney, VehicleLocation, VehicleEdit, VehicleRevision, VehicleEditFeature)
 
 
 class VehiclesTests(TestCase):
@@ -248,12 +248,14 @@ class VehiclesTests(TestCase):
         })
 
         # edit type, livery and name with bad URL
-        initial['vehicle_type'] = self.vehicle_2.vehicle_type_id
         initial['colours'] = self.vehicle_2.livery_id
-        initial['name'] = 'Colin'
-        initial['url'] = 'http://localhost'
         with self.assertNumQueries(16):
-            response = self.client.post(url, initial)
+            response = self.client.post(url, {
+                **initial,
+                'url': 'http://localhost',
+                'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'name': 'Colin'
+            })
         self.assertTrue(response.context['form'].has_changed())
         self.assertContains(response, 'That URL does')
         self.assertContains(response, '/edit-vehicle.')
@@ -287,6 +289,14 @@ class VehiclesTests(TestCase):
             response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, '<del>1</del><br><ins>2</ins>')
         self.assertEqual(1, response.context_data['cl'].result_count)
+
+        # remove a feature
+        del initial['colours']
+        del initial['features']
+        with self.assertNumQueries(14):
+            response = self.client.post(url, initial)
+        vef = VehicleEditFeature.objects.get()
+        self.assertEqual(str(vef), '<del>Wi-Fi</del>')
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.user)

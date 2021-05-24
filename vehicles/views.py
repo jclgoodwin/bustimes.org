@@ -475,18 +475,14 @@ def edit_vehicle(request, vehicle_id):
                     edit.save()
                     submitted = True
                 if 'features' in data:
-                    for feature in vehicle.features.all():
-                        if feature not in data['features']:
-                            VehicleEditFeature.objects.create(
-                                edit=edit,
-                                feature=feature,
-                                add=False
-                            )
                     if not changed:  # .save() was not called before
                         edit.save()
                         submitted = True
+                    for feature in vehicle.features.all():
+                        if feature not in data['features']:
+                            VehicleEditFeature.objects.create(edit=edit, feature=feature, add=False)
                     for feature in data['features']:
-                        edit.features.add(feature)
+                        VehicleEditFeature.objects.create(edit=edit, feature=feature, add=True)
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
 
