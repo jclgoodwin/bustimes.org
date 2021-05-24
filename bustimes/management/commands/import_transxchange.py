@@ -799,8 +799,10 @@ class Command(BaseCommand):
             service.source = self.source
             service.show_timetable = True
 
+            journeys = transxchange.get_journeys(txc_service.service_code, line.id)
+
             if txc_service.public_use:
-                if txc_service.public_use in ('0', 'false'):
+                if txc_service.public_use in ('0', 'false') and len(journeys) < 5:
                     service.public_use = False
                 elif txc_service.public_use in ('1', 'true'):
                     service.public_use = True
@@ -860,8 +862,6 @@ class Command(BaseCommand):
 
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
                 continue
-
-            journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
             if journeys:
                 journey = journeys[0]
