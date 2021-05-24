@@ -77,7 +77,7 @@ class EditVehiclesForm(forms.Form):
 
         if colours:
             if vehicle:
-                colours = [('', 'None/mostly white')] + colours
+                colours = [('', 'None/mostly white/other')] + colours
             else:
                 colours = [('', 'No change')] + colours
             self.fields['colours'].choices = colours

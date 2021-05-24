@@ -120,7 +120,8 @@ def do_revisions(vehicle_ids, data, user):
                     revision.from_livery = revision.vehicle.livery
                     revision.to_livery = livery
                     revision.vehicle.livery = livery
-            changed_fields.append('livery')
+                    revision.vehicle.colours = ''
+            changed_fields += ['livery', 'colours']
             del data['colours']
 
     if 'operator' in data:
@@ -184,8 +185,6 @@ def do_revision(vehicle, data, user):
         vehicle=vehicle,
         user=user
     )
-    if changes:
-        revision.changes = changes
 
     if 'operator' in data:
         revision.from_operator = vehicle.operator
@@ -203,13 +202,30 @@ def do_revision(vehicle, data, user):
             changed_fields.append('vehicle_type')
             del data['vehicle_type']
 
-        if 'colours' in data and data['colours'].isdigit():
-            livery = Livery.objects.get(id=data['colours'])
-            revision.from_livery = vehicle.livery
-            revision.to_livery = livery
-            vehicle.livery = livery
-            changed_fields.append('livery')
-            del data['colours']
+        if 'colours' in data:
+            if data['colours'].isdigit():
+                livery = Livery.objects.get(id=data['colours'])
+                revision.from_livery = vehicle.livery
+                revision.to_livery = livery
+                vehicle.livery = livery
+                changed_fields.append('livery')
+                if vehicle.colours:
+                    changes['colours'] = f"-{vehicle.colours}\n+{data['colours']}"
+                    vehicle.colours = ''
+                    changed_fields.append('colours')
+                del data['colours']
+            else:
+                changes['colours'] = f"-{vehicle.colours}\n+{data['colours']}"
+                vehicle.colours = data['colours']
+                changed_fields.append('colours')
+                if vehicle.livery:
+                    changed_fields.append('livery')
+                    revision.from_livery = vehicle.livery
+                    vehicle.livery = None
+                del data['colours']
+
+    if changes:
+        revision.changes = changes
 
     if changed_fields:
         vehicle.save(update_fields=changed_fields)
