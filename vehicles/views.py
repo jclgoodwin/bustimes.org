@@ -342,7 +342,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
             date = context['dates'][-1]
         context['date'] = date
 
-        journeys = journeys.defer('data').filter(datetime__date=date).select_related('trip').order_by('datetime')
+        journeys = journeys.filter(datetime__date=date).select_related('trip').order_by('datetime')
 
         try:
             r = redis.from_url(settings.REDIS_URL)
