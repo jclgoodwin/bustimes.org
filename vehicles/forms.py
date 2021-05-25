@@ -1,6 +1,8 @@
 import requests
+from datetime import timedelta
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.db.models import Count, Q, Exists, OuterRef
 from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
@@ -118,6 +120,10 @@ class EditVehicleForm(EditVehiclesForm):
                     self.fields['fleet_number'].disabled = True
             except KeyError:
                 pass
+
+        if not vehicle.withdrawn and vehicle.latest_journey:
+            if timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3):
+                del self.fields['withdrawn']
 
         if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
             self.fields['reg'].disabled = True
