@@ -196,7 +196,7 @@ def tfl_vehicle(request, reg):
     for item in data:
         item['expectedArrival'] = parse_datetime(item['expectedArrival'])
         if item['platformName'] == 'null':
-            item['platformName'] = None 
+            item['platformName'] = None
     return render(request, 'tfl_vehicle.html', {
         'data': data
     })

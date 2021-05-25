@@ -4,8 +4,9 @@ import csv
 import logging
 import zipfile
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from chardet.universaldetector import UniversalDetector
+from django.utils.dateparse import parse_duration
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Q
@@ -57,36 +58,6 @@ def get_stop_id(stop_id):
     return stop_id
 
 
-def do_stops(archive):
-    stops = {}
-    admin_areas = {}
-    stops_not_created = {}
-    for line in read_file(archive, 'stops.txt'):
-        stop_id = get_stop_id(line['stop_id'])
-        if stop_id[0] in '78' and len(stop_id) <= 16:
-            stops[stop_id] = StopPoint(
-                atco_code=stop_id,
-                latlong=Point(float(line['stop_lon']), float(line['stop_lat'])),
-                common_name=line['stop_name'][:48],
-                locality_centre=False,
-                active=True
-            )
-        else:
-            stops_not_created[stop_id] = line
-    existing_stops = StopPoint.objects.in_bulk(stops)
-    stops_to_create = [stop for stop in stops.values() if stop.atco_code not in existing_stops]
-
-    for stop in stops_to_create:
-        admin_area_id = stop.atco_code[:3]
-        if admin_area_id not in admin_areas:
-            admin_areas[admin_area_id] = AdminArea.objects.filter(id=admin_area_id).exists()
-        if admin_areas[admin_area_id]:
-            stop.admin_area_id = admin_area_id
-
-    StopPoint.objects.bulk_create(stops_to_create)
-    return StopPoint.objects.in_bulk(stops), stops_not_created
-
-
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--force', action='store_true', help="Import data even if the GTFS feeds haven't changed")
@@ -99,7 +70,37 @@ class Command(BaseCommand):
         }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
         if operator.name != line['agency_name']:
             print(operator, line)
-        self.operators[line['agency_id']] = operator
+
+    def do_stops(self, archive):
+        stops = {}
+        admin_areas = {}
+        stops_not_created = {}
+        self.stop_timezones = {}
+        for line in read_file(archive, 'stops.txt'):
+            stop_id = get_stop_id(line['stop_id'])
+            if stop_id[0] in '78' and len(stop_id) <= 16:
+                stops[stop_id] = StopPoint(
+                    atco_code=stop_id,
+                    latlong=Point(float(line['stop_lon']), float(line['stop_lat'])),
+                    common_name=line['stop_name'][:48],
+                    locality_centre=False,
+                    active=True
+                )
+            else:
+                stops_not_created[stop_id] = line
+            self.stop_timezones[stop_id] = line['stop_timezone']
+        existing_stops = StopPoint.objects.in_bulk(stops)
+        stops_to_create = [stop for stop in stops.values() if stop.atco_code not in existing_stops]
+
+        for stop in stops_to_create:
+            admin_area_id = stop.atco_code[:3]
+            if admin_area_id not in admin_areas:
+                admin_areas[admin_area_id] = AdminArea.objects.filter(id=admin_area_id).exists()
+            if admin_areas[admin_area_id]:
+                stop.admin_area_id = admin_area_id
+
+        StopPoint.objects.bulk_create(stops_to_create)
+        return StopPoint.objects.in_bulk(stops), stops_not_created
 
     def handle_route(self, line):
         try:
@@ -157,6 +158,7 @@ class Command(BaseCommand):
         self.operators = {}
         self.routes = {}
         self.services = {}
+        self.agency_timezones = {}
         headsigns = {}
 
         with zipfile.ZipFile(path) as archive:
@@ -171,11 +173,12 @@ class Command(BaseCommand):
 
             for line in read_file(archive, 'agency.txt'):
                 self.handle_operator(line)
+                self.agency_timezones['agency_id'] = line['agency_timezone']
 
             for line in read_file(archive, 'routes.txt'):
                 self.handle_route(line)
 
-            stops, stops_not_created = do_stops(archive)
+            stops, stops_not_created = self.do_stops(archive)
 
             calendars = {}
             for line in read_file(archive, 'calendar.txt'):
@@ -203,7 +206,9 @@ class Command(BaseCommand):
 
             trips = {}
             for line in read_file(archive, 'trips.txt'):
-                route = self.routes[line['route_id']]
+                route = self.routes.get(line['route_id'])
+                if not route:
+                    continue
                 trips[line['trip_id']] = Trip(
                     route=route,
                     calendar=calendars[line['service_id']],
@@ -246,11 +251,15 @@ class Command(BaseCommand):
 
                         route.service.save(update_fields=['description', 'inbound_description', 'outbound_description'])
 
+            utc = all(timezone == 'UTC' for timezone in self.agency_timezones.values())
+
             stop_times = []
             trip_id = None
             trip = None
             stop_time = None
             for line in read_file(archive, 'stop_times.txt'):
+                if line['trip_id'] not in trips:
+                    continue
                 if trip_id != line['trip_id']:
                     # previous trip
                     if trip:
@@ -268,8 +277,13 @@ class Command(BaseCommand):
                 trip_id = line['trip_id']
                 trip = trips[trip_id]
                 stop = stops.get(line['stop_id'])
-                arrival_time = line['arrival_time']
-                departure_time = line['departure_time']
+                arrival_time = parse_duration(line['arrival_time'])
+                departure_time = parse_duration(line['departure_time'])
+                if utc and self.stop_timezones[line['stop_id']] == 'Europe/London':
+                    # TODO: fix assumption of British Summer Time
+                    arrival_time += timedelta(hours=1)
+                    departure_time += timedelta(hours=1)
+
                 if arrival_time == departure_time:
                     arrival_time = None
                 stop_time = StopTime(

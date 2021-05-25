@@ -11,7 +11,7 @@ class Command(BaseCommand):
             id='flixbus-eu',
             name='FlixBus'
         )
-        return operator
+        self.operators[line['agency_id']] = operator
 
     def handle(self, *args, **options):
         path = os.path.join(settings.DATA_DIR, 'flixbus.zip')
@@ -19,4 +19,9 @@ class Command(BaseCommand):
         modifed, last_modified = download_if_changed(path, url)
         if modifed or options['force']:
             print('flixbus', last_modified)
+            self.agency_timezones = {}
             self.handle_zipfile(path, 'flixbus', url, last_modified)
+
+    def handle_route(self, line):
+        if line['route_short_name'].startswith('UK'):
+            super().handle_route(line)
