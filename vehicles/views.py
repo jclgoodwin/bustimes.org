@@ -361,6 +361,13 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         except redis.exceptions.ConnectionError:
             pass
 
+        context['block_column'] = any(
+            journey.data
+            and 'MonitoredVehicleJourney' in journey.data
+            and 'BlockRef' in journey.data['MonitoredVehicleJourney']
+            for journey in journeys
+        )
+
         context['journeys'] = journeys
 
     return context
