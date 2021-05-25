@@ -15,7 +15,7 @@ interactions:
   response:
     body:
       string: '[{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"1566189989","operationType":1,"vehicleId":"LTZ1243","naptanId":"490004215M","stationName":"Bow
-        Church","lineId":"8","lineName":"8","platformName":"M","direction":"outbound","bearing":"61","destinationNaptanId":"","destinationName":"Tottenham
+        Church","lineId":"8","lineName":"8","platformName":"null","direction":"outbound","bearing":"61","destinationNaptanId":"","destinationName":"Tottenham
         Court Road","timestamp":"2021-03-17T18:39:58.54552Z","timeToStation":582,"currentLocation":"","towards":"Stratford
         or Bromley-By-Bow Station.","expectedArrival":"2021-03-17T18:49:40Z","timeToLive":"2021-03-17T18:50:10Z","modeName":"bus","timing":{"$type":"Tfl.Api.Presentation.Entities.PredictionTiming,
         Tfl.Api.Presentation.Entities","countdownServerAdjustment":"00:00:04.1541400","source":"2021-03-17T18:06:15.231Z","insert":"2021-03-17T18:40:01.46Z","read":"2021-03-17T18:40:05.617Z","sent":"2021-03-17T18:39:58Z","received":"0001-01-01T00:00:00Z"}},{"$type":"Tfl.Api.Presentation.Entities.Prediction,

@@ -19,6 +19,7 @@ class BusTimesTest(TestCase):
             self.assertContains(response, '<p>LTZ1243</p>')
             self.assertContains(response, '<td><a href="/stops/490010552N">Old Ford Road (OB)</a></td>')
             self.assertContains(response, '<td>18:55</td>')
+            self.assertContains(response, '<td><a href="/stops/490004215M">Bow Church</a></td>')
 
             response = self.client.get('/vehicles/tfl/LJ53NHP')
             self.assertEqual(response.status_code, 404)
