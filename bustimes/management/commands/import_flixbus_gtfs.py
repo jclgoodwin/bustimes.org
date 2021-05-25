@@ -7,11 +7,10 @@ from .import_gtfs import Command as BaseCommand
 
 class Command(BaseCommand):
     def handle_operator(self, line):
-        operator, created = Operator.objects.get_or_create(
+        return Operator.objects.get_or_create(
             id='flixbus-eu',
             name='FlixBus'
-        )
-        self.operators[line['agency_id']] = operator
+        )[0]
 
     def handle(self, *args, **options):
         path = os.path.join(settings.DATA_DIR, 'flixbus.zip')

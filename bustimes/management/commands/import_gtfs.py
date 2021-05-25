@@ -70,6 +70,7 @@ class Command(BaseCommand):
         }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
         if operator.name != line['agency_name']:
             print(operator, line)
+        return operator
 
     def do_stops(self, archive):
         stops = {}
@@ -88,7 +89,8 @@ class Command(BaseCommand):
                 )
             else:
                 stops_not_created[stop_id] = line
-            self.stop_timezones[stop_id] = line['stop_timezone']
+            if 'stop_timezone' in line:
+                self.stop_timezones[stop_id] = line['stop_timezone']
         existing_stops = StopPoint.objects.in_bulk(stops)
         stops_to_create = [stop for stop in stops.values() if stop.atco_code not in existing_stops]
 
@@ -172,7 +174,7 @@ class Command(BaseCommand):
                 )
 
             for line in read_file(archive, 'agency.txt'):
-                self.handle_operator(line)
+                self.operators[line['agency_id']] = self.handle_operator(line)
                 self.agency_timezones['agency_id'] = line['agency_timezone']
 
             for line in read_file(archive, 'routes.txt'):
@@ -279,7 +281,7 @@ class Command(BaseCommand):
                 stop = stops.get(line['stop_id'])
                 arrival_time = parse_duration(line['arrival_time'])
                 departure_time = parse_duration(line['departure_time'])
-                if utc and self.stop_timezones[line['stop_id']] == 'Europe/London':
+                if utc and self.stop_timezones and self.stop_timezones[line['stop_id']] == 'Europe/London':
                     # TODO: fix assumption of British Summer Time
                     arrival_time += timedelta(hours=1)
                     departure_time += timedelta(hours=1)
