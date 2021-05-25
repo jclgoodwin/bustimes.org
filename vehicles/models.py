@@ -17,12 +17,13 @@ import json
 
 
 def format_reg(reg):
-    if reg[-3:].isalpha():
-        return reg[:-3] + '\u00A0' + reg[-3:]
-    if reg[:3].isalpha():
-        return reg[:3] + '\u00A0' + reg[3:]
-    if reg[-2:].isalpha():
-        return reg[:-2] + '\u00A0' + reg[-2:]
+    if '-' not in reg:
+        if reg[-3:].isalpha():
+            return reg[:-3] + '\u00A0' + reg[-3:]
+        if reg[:3].isalpha():
+            return reg[:3] + '\u00A0' + reg[3:]
+        if reg[-2:].isalpha():
+            return reg[:-2] + '\u00A0' + reg[-2:]
     return reg
 
 
