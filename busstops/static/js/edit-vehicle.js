@@ -25,8 +25,10 @@
             toggleOtherColour();
         }
     }
-    withdrawnElement.addEventListener('change', handleWithdrawn);
-    handleWithdrawn();
+    if (withdrawnElement) {
+        withdrawnElement.addEventListener('change', handleWithdrawn);
+        handleWithdrawn();
+    }
 
     // other colour
     function toggleOtherColour() {
