@@ -98,7 +98,7 @@
                                 {{ journey.route_name }}
                             {% endif %}
                         </td>
-                        {% if block_column %}<td>{{ journey.block }}</td>{% endif %}
+                        {% if block_column %}<td>{% if journey.block %}{{ journey.block }}{% endif %}</td>{% endif %}
                         {% if journey.code and journey.code|length < 40 and '_' not in journey.code %}
                             <td>{{ journey.datetime|time }}</td>
                             <td>{{ journey.code }}</td>
