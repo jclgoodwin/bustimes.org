@@ -366,7 +366,7 @@ BOD_OPERATORS = [
         # 'FBRI': 'FBRI',
         # 'ABUS': 'ABUS',
         # 'FWYO': 'FWYO',
-    }, False),
+    }, True),
     ('AKSS', None, {
         'ACYM': 'ACYM',
         'ADER': 'ADER',
