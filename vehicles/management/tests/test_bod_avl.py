@@ -331,6 +331,19 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "wheelchair": "free",
         }])
 
+        #  BlockRef
+        self.assertEqual(location.journey.block, '52')
+
+        # BlockRef same as DriverRef - block is None
+        location.journey.data['MonitoredVehicleJourney']['BlockRef'] = '98119'
+        del location.journey.block
+        self.assertIsNone(location.journey.block)
+
+        # BlockRef same as route name - block is None
+        location.journey.data['MonitoredVehicleJourney']['BlockRef'] = '42'
+        del location.journey.block
+        self.assertIsNone(location.journey.block)
+
     @time_machine.travel('2021-05-08T13:00+00:00')
     def test_invalid_location(self):
         command = import_bod_avl.Command()

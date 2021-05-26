@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.db.models.functions import TruncDate
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from busstops.models import Operator, Service, DataSource, SIRISource
 from bustimes.models import get_calendars, Trip
@@ -611,6 +612,24 @@ class VehicleJourney(models.Model):
         unique_together = (
             ('vehicle', 'datetime'),
         )
+
+    @cached_property
+    def block(self):
+        if not self.data:
+            return
+        try:
+            block_ref = self.data['MonitoredVehicleJourney']['BlockRef']
+        except KeyError:
+            return
+        try:
+            driver_ref = self.data['Extensions']['VehicleJourney']['DriverRef']
+            if block_ref == driver_ref:
+                return
+        except KeyError:
+            pass
+        if block_ref == self.route_name:
+            return
+        return block_ref
 
     def get_trip(self, datetime=None, destination_ref=None):
         if not datetime:
