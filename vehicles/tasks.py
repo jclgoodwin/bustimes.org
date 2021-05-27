@@ -78,7 +78,7 @@ def handle_siri_sx(request_body):
 
 
 @shared_task
-def log_vehicle_journey(service, data, time, destination, source_name, url):
+def log_vehicle_journey(service, data, time, destination, source_name, url, link):
     operator_ref = data.get('OperatorRef')
     if operator_ref and operator_ref == 'McG':
         return
@@ -124,6 +124,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     data_source, _ = DataSource.objects.get_or_create({'url': url}, name=source_name)
 
+    # get or create vehicle
     defaults = {
         'source': data_source,
         'operator': operator,
@@ -154,6 +155,11 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
     if vehicle.latest_journey and vehicle.latest_journey.datetime == time:
         return
 
+    if link and '/trips/' in link:
+        trip_id = int(link.removeprefix('/trips/'))
+    else:
+        trip_id = None
+
     destination = destination or ''
     route_name = data.get('LineName') or data.get('LineRef')
 
@@ -165,7 +171,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url):
 
     journey = VehicleJourney.objects.create(
         vehicle=vehicle, service_id=service, route_name=route_name, data=data, code=journey_ref,
-        datetime=time, source=data_source, destination=destination
+        datetime=time, source=data_source, destination=destination, trip_id=trip_id
     )
 
     if not vehicle.latest_journey or vehicle.latest_journey.datetime < journey.datetime:

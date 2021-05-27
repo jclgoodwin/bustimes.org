@@ -317,7 +317,7 @@ class LiveDeparturesTest(TestCase):
                     'DepartureStatus': 'onTime',
                 },
             },
-            None, 'EVESHAM Bus Station', 'SPT', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080'
+            None, 'EVESHAM Bus Station', 'SPT', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080', None
         )
         self.assertEqual(0, VehicleJourney.objects.count())
 

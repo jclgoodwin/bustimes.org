@@ -621,7 +621,8 @@ def get_departures(stop, services):
                                 str(row['origin_departure_time']) if 'origin_departure_time' in row else None,
                                 str(row['destination']),
                                 source.name,
-                                source.url
+                                source.url,
+                                row.get('link')
                             )
 
     max_age = 60
