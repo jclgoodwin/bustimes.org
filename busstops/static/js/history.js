@@ -10,15 +10,19 @@
 
     var map;
 
-    function arrowMarker(latLng, direction) {
-        direction = (direction || 0) - 135;
-        return L.marker(latLng, {
+    function arrowMarker(location) {
+        var direction = (location.direction || 0) - 135;
+        var tooltip = location.datetime.toTimeString().slice(0, 8);
+        tooltip += getTooltip(location.delta);
+
+        return L.marker(location.coordinates, {
             icon: L.divIcon({
                 iconSize: [16, 16],
                 html: '<div class="arrow" style="-webkit-transform: rotate(' + direction + 'deg);transform: rotate(' + direction + 'deg)"></div>',
                 className: 'just-arrow',
             })
-        });
+        }).bindTooltip(tooltip);
+
     }
 
     var circleMarkerOptions = {
@@ -72,7 +76,7 @@
         }
     }
 
-    var stops, locations, arrowMarkers;
+    var stops, locations, rovingTooltipMarker;
 
     function showStopOnMap() {
         var stop = stops[this.rowIndex - 1];
@@ -85,19 +89,27 @@
             return;
         }
 
-        var min = 1000, minIndex, location, distance;
+        var min = 1000, nearest, location, distance;
 
         for (var i = 0; i < locations.length; i++) {
             location = locations[i];
             distance = stop.coordinates.distanceTo(location.coordinates);
             if (distance < min) {
                 min = distance;
-                minIndex = i;
+                nearest = location;
             }
         }
 
-        if (minIndex != null) {
-            arrowMarkers[minIndex].openTooltip();
+        if (nearest) {
+            var popup = nearest.datetime.toTimeString().slice(0, 8);
+            popup += getTooltip(nearest.delta);
+
+            if (!rovingTooltipMarker) {
+                rovingTooltipMarker = L.circleMarker(nearest.coordinates, circleMarkerOptions).addTo(map);
+            } else {
+                rovingTooltipMarker.setLatLng(nearest.coordinates);
+            }
+            rovingTooltipMarker.bindTooltip(popup).openTooltip();
         }
     }
 
@@ -127,6 +139,7 @@
             for (i = 0; i < response.locations.length; i++) {
                 var location = response.locations[i];
                 location.coordinates = L.latLng(location.coordinates[1], location.coordinates[0]);
+                location.datetime = new Date(location.datetime);
             }
 
             if (response.stops) {
@@ -175,49 +188,60 @@
 
             var line = [],
                 previousCoordinates,
-                previousTimestamp;
-
-            arrowMarkers = [];
+                previousTimestamp,
+                previousMarkerCoordinates,
+                previousDroppedLocation;
 
             response.locations.forEach(function(location) {
-                var dateTime = new Date(location.datetime);
-                var popup = dateTime.toTimeString().slice(0, 8);
-                var timestamp = dateTime.getTime();
-                popup += getTooltip(location.delta);
+                var timestamp = location.datetime.getTime();
 
                 var coordinates = location.coordinates;
-
-                var marker = arrowMarker(coordinates, location.direction);
-
-                marker.bindTooltip(popup).addTo(map);
-                arrowMarkers.push(marker);
 
                 line.push(coordinates);
 
                 if (previousCoordinates) {
                     var time = timestamp - previousTimestamp;
 
+                    if (time) {
+                        if (previousMarkerCoordinates.distanceTo(location.coordinates) > 100) {
+                            if (previousDroppedLocation) {
+                                arrowMarker(previousDroppedLocation).addTo(map);
+                            }
+                            previousDroppedLocation = null;
+                            arrowMarker(location).addTo(map);
+                            previousMarkerCoordinates = location.coordinates;
+                        } else {
+                            // not moved far from the last marker
+                            previousDroppedLocation = location;
+                        }
 
-                    if (time && time < 6000000) {
-                        var latDistance = coordinates.lat - previousCoordinates.lat;
-                        var lngDistance = coordinates.lng - previousCoordinates.lng;
-                        var latSpeed = latDistance / time;
-                        var lngSpeed = lngDistance / time;
+                        // add a marker every minute
+                        if (time < 6000000) {  // less than 10 minutes
+                            var latDistance = coordinates.lat - previousCoordinates.lat;
+                            var lngDistance = coordinates.lng - previousCoordinates.lng;
+                            var latSpeed = latDistance / time;  // really velocity
+                            var lngSpeed = lngDistance / time;
 
-
-                        var minute = Math.ceil(previousTimestamp / 60000) * 60000 - previousTimestamp;
-                        for (; minute <= time; minute += 60000) {
-                            L.circleMarker(L.latLng(
-                                previousCoordinates.lat + latSpeed * minute,
-                                previousCoordinates.lng + lngSpeed * minute
-                            ), circleMarkerOptions).addTo(map);
+                            var minute = Math.ceil(previousTimestamp / 60000) * 60000 - previousTimestamp;
+                            for (; minute <= time; minute += 60000) {
+                                L.circleMarker(L.latLng(
+                                    previousCoordinates.lat + latSpeed * minute,
+                                    previousCoordinates.lng + lngSpeed * minute
+                                ), circleMarkerOptions).addTo(map);
+                            }
                         }
                     }
+                } else {
+                    arrowMarker(location).addTo(map);
+                    previousMarkerCoordinates = location.coordinates;
                 }
 
                 previousCoordinates = coordinates;
                 previousTimestamp = timestamp;
             });
+            if (previousDroppedLocation) { 
+                arrowMarker(previousDroppedLocation).addTo(map);
+            }
 
             if (response.stops) {
                 stops = response.stops;
