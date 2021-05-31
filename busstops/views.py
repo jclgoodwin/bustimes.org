@@ -23,7 +23,7 @@ from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
 from vehicles.models import Vehicle, VehicleLocation
-from .utils import format_gbp, get_bounding_box
+from .utils import get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
                      Service, Place, ServiceColour, DataSource)
 from .forms import ContactForm, SearchForm
@@ -109,10 +109,6 @@ def offline(request):
     return render(request, 'offline.html')
 
 
-def settings(request):
-    return render(request, 'settings.html')
-
-
 def change_password(request):
     return redirect('/accounts/password_reset/')
 
@@ -144,21 +140,6 @@ def contact(request):
         'form': form,
         'submitted': submitted
     })
-
-
-def awin_transaction(request):
-    json_string = request.POST.get('AwinTransactionPush') or request.body
-    if not json_string:
-        return HttpResponseBadRequest()
-    data = json.loads(json_string)
-    message = '\n'.join('%s: %s' % pair for pair in data.items())
-    EmailMessage(
-        '💷 {} on a {} transaction'.format(format_gbp(data['commission']), format_gbp(data['transactionAmount'])),
-        message,
-        '%s <%s>' % ('🚌⏰🤖', 'robot@bustimes.org'),
-        ('contact@bustimes.org',)
-    ).send()
-    return HttpResponse()
 
 
 def cookies(request):

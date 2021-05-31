@@ -18,13 +18,13 @@
     </thead>
     <tbody>
         <tr>
-            <td>personalise_ads</td><td>Remember whether you’ve opted to see personalised ads</td>
-        </tr>
-        <tr>
             <td>vehicleMap</td><td>Remember the last viewed location on the map</td>
         </tr>
         <tr>
             <td>hideStops</td><td>Remember whether to show bus stops on the map</td>
+        </tr>
+        <tr>
+            <td>sessionid</td><td>Remember who is logged in</td>
         </tr>
     </tbody>
 </table>
@@ -33,7 +33,6 @@
 
 <p>I display adverts, using Google AdSense, to fund the cost of operating this website.
 Google and its partners use cookies ‘for frequency capping, aggregated ad reporting, and to combat fraud and abuse.’</p>
-
 
 <table>
     <thead>
@@ -47,31 +46,6 @@ Google and its partners use cookies ‘for frequency capping, aggregated ad repo
         </tr>
     </tbody>
 </table>
-
-<p>
-    <label><input type="checkbox" id="personalise-adverts"> Show personalised adverts</label>
-</p>
-
-<script>
-(function () {
-    var personaliseAds = document.getElementById('personalise-adverts');
-    if (document.cookie.indexOf('personalise_ads=yes') !== -1) {
-        personaliseAds.checked = true;
-    } else {
-        personaliseAds.checked = false;
-    }
-
-    function handlePersonaliseAds(event) {
-        if (event.target.checked) {
-            document.cookie = 'personalise_ads=yes; max-age=31536000; path=/';
-        } else {
-            document.cookie = 'personalise_ads=no; max-age=31536000; path=/';
-        }
-    }
-
-    personaliseAds.addEventListener('click', handlePersonaliseAds);
-})();
-</script>
 
 <o><a href="https://www.google.com/settings/ads">Google Ads Settings</a></o>
 

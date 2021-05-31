@@ -1,6 +1,5 @@
 # coding=utf-8
 import os
-import json
 import vcr
 from django.test import TestCase
 from unittest import skip
@@ -36,36 +35,6 @@ class ContactTests(TestCase):
         self.assertEqual('Dear John,', mail.outbox[0].subject)
         self.assertEqual('"Rufus "Red" Herring" <contactform@bustimes.org>', mail.outbox[0].from_email)
         self.assertEqual(['contact@bustimes.org'], mail.outbox[0].to)
-
-    def test_awin_post(self):
-        self.assertEqual(400, self.client.get('/awin-transaction').status_code)
-        self.client.post('/awin-transaction', {
-            'AwinTransactionPush': json.dumps({
-                'transactionId': '244231459',
-                'transactionDate': '2016-12-06 18:35:28',
-                'transactionAmount': '33.7',
-                'commission': '0.67',
-                'affiliateId': '242611',
-                'merchantId': '2678',
-                'groupId': '0',
-                'bannerId': '0',
-                'clickRef': '',
-                'clickThroughTime': '2016-12-06 07:15:24',
-                'clickTime': '2016-12-06 07:15:24',
-                'url': 'https://bustimes.org.uk/services/swe_33-FLC-_-y10',
-                'transactionCurrency': 'GBP',
-                'commissionGroups': [
-                    {
-                        'id': '15250',
-                        'name': 'Default Commission',
-                        'code': 'DEFAULT',
-                        'description': ' You will receive 2% commission '
-                    }
-                ]
-            })
-        })
-        self.assertEqual('💷 67p on a £33.70 transaction', mail.outbox[0].subject)
-        self.assertEqual('🚌⏰🤖 <robot@bustimes.org>', mail.outbox[0].from_email)
 
 
 class ViewsTests(TestCase):
@@ -158,7 +127,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_static(self):
-        for route in ('/cookies', '/data', '/settings'):
+        for route in ('/cookies', '/data'):
             response = self.client.get(route)
             self.assertEqual(response.status_code, 200)
 

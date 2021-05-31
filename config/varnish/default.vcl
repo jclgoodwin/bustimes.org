@@ -27,7 +27,7 @@ sub vcl_recv {
         return (synth(200, "Ban added"));
     }
 
-    if (req.url ~ "^/(admin/|accounts/|siri|contact|awin-transaction)" || req.url ~ "/edit") {
+    if (req.url ~ "^/(admin/|accounts/|siri|contact)" || req.url ~ "/edit") {
         return (pass);
     }
 
