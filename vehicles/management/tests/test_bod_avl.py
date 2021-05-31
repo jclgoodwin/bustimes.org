@@ -157,7 +157,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "coordinates": [0.285348, 51.2135],
             "vehicle": {
                 "url": f"/vehicles/{location.vehicle.id}",
-                "name": "DW18\u00a0HAM"
+                "name": "DW18 HAM"
             },
             "heading": 92.0,
             "datetime": "2020-10-15T07:46:08Z",
@@ -251,7 +251,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get('/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
-             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': '104 - BB62\xa0BUS'},
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': '104 - BB62 BUS'},
              'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
              'service': {'line_name': '146'}}
         ])
@@ -260,7 +260,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get('/vehicles.json')
         self.assertEqual(response.json(), [
             {'id': location.id, 'coordinates': [1.675893, 52.328398],
-             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': '104 - BB62\xa0BUS'},
+             'vehicle': {'url': f'/vehicles/{vehicle.id}', 'name': '104 - BB62 BUS'},
              'heading': 142, 'datetime': '2020-11-28T15:07:06Z', 'destination': 'Southwold',
              'service': {'line_name': '146'}}
         ])

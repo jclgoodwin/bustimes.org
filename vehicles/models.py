@@ -20,11 +20,11 @@ import json
 def format_reg(reg):
     if '-' not in reg:
         if reg[-3:].isalpha():
-            return reg[:-3] + '\u00A0' + reg[-3:]
+            return reg[:-3] + ' ' + reg[-3:]
         if reg[:3].isalpha():
-            return reg[:3] + '\u00A0' + reg[3:]
+            return reg[:3] + ' ' + reg[3:]
         if reg[-2:].isalpha():
-            return reg[:-2] + '\u00A0' + reg[-2:]
+            return reg[:-2] + ' ' + reg[-2:]
     return reg
 
 
@@ -272,7 +272,7 @@ class Vehicle(models.Model):
 
     def get_flickr_url(self):
         if self.reg:
-            reg = self.get_reg().replace('\xa0', ' ')
+            reg = self.get_reg()
             search = f'{self.reg} or "{reg}"'
             if self.fleet_number and self.operator and self.operator.parent:
                 number = str(self.fleet_number)

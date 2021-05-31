@@ -74,7 +74,7 @@ class VehiclesTests(TestCase):
 
     def test_vehicle(self):
         vehicle = Vehicle(reg='3990ME')
-        self.assertEqual(str(vehicle), '3990\xa0ME')
+        self.assertEqual(str(vehicle), '3990 ME')
         self.assertIn('search/?text=3990ME%20or%20%223990%20ME%22&sort', vehicle.get_flickr_url())
 
         vehicle.reg = 'J122018'
@@ -434,7 +434,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(edit.vehicle_type, 'Optare Spectra')
         self.assertEqual(edit.notes, '')
 
-        self.assertContains(response, 'FD54\xa0JYA')
+        self.assertContains(response, 'FD54 JYA')
 
         # # just updating operator should not create a VehicleEdit, but update the vehicle immediately
         # with self.assertNumQueries(15):
@@ -442,7 +442,7 @@ class VehiclesTests(TestCase):
         #         'vehicle': self.vehicle_1.id,
         #         'operator': self.bova.id,
         #     })
-        # self.assertNotContains(response, 'FD54\xa0JYA')
+        # self.assertNotContains(response, 'FD54 JYA')
         # self.vehicle_1.refresh_from_db()
         # self.assertEqual(self.bova, self.vehicle_1.operator)
         # self.assertContains(response, '1 vehicle updated')
@@ -475,11 +475,11 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Vehicles')
         self.assertContains(response, '/vehicles/')
         self.assertContains(response, '<option selected value="2020-10-20">Tuesday 20 October 2020</option>')
-        self.assertContains(response, '1 - FD54\xa0JYA')
+        self.assertContains(response, '1 - FD54 JYA')
 
         with self.assertNumQueries(5):
             response = self.client.get('/services/spixworth-hunworth-happisburgh/vehicles?date=2004-04-04')
-        self.assertNotContains(response, '1 - FD54\xa0JYA')
+        self.assertNotContains(response, '1 - FD54 JYA')
 
     def test_api(self):
         with self.assertNumQueries(2):
