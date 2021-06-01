@@ -190,7 +190,7 @@
                 previousCoordinates,
                 previousTimestamp,
                 previousMarkerCoordinates,
-                previousDroppedLocation;
+                previousSkippedLocation;
 
             response.locations.forEach(function(location) {
                 var timestamp = location.datetime.getTime();
@@ -204,15 +204,17 @@
 
                     if (time) {
                         if (previousMarkerCoordinates.distanceTo(location.coordinates) > 100) {
-                            if (previousDroppedLocation) {
-                                arrowMarker(previousDroppedLocation).addTo(map);
+                            // vehicle has moved far enough
+                            if (previousSkippedLocation) {
+                                // mark the end of the stationary period
+                                arrowMarker(previousSkippedLocation).addTo(map);
+                                previousSkippedLocation = null;
                             }
-                            previousDroppedLocation = null;
                             arrowMarker(location).addTo(map);
                             previousMarkerCoordinates = location.coordinates;
                         } else {
-                            // not moved far from the last marker
-                            previousDroppedLocation = location;
+                            // vehicle has barely moved
+                            previousSkippedLocation = location;
                         }
 
                         // add a marker every minute
@@ -239,8 +241,8 @@
                 previousCoordinates = coordinates;
                 previousTimestamp = timestamp;
             });
-            if (previousDroppedLocation) { 
-                arrowMarker(previousDroppedLocation).addTo(map);
+            if (previousSkippedLocation) { 
+                arrowMarker(previousSkippedLocation).addTo(map);
             }
 
             if (response.stops) {
