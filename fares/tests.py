@@ -18,6 +18,7 @@ class FaresTest(TestCase):
 
         tariff = Tariff.objects.get(name="A C Williams WM06 - single fares")
 
+        # tariff detail view
         response = self.client.get(tariff.get_absolute_url())
 
         self.assertContains(response, "A C Williams WM06 - single fares")
@@ -34,4 +35,13 @@ class FaresTest(TestCase):
         self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
+        # dataset detail view
+        response = self.client.get(f'{tariff.source.get_absolute_url()}?origin={origin}&destination={destination}')
+        self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")
+        self.assertContains(response, "<p>adult single: £1.50</p>")
+
         self.assertEqual(TimeInterval.objects.count(), 8)
+
+        # fares index
+        response = self.client.get('/fares/')
+        self.assertContains(response, '£3.30–£7.00')
