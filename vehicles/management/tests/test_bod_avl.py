@@ -244,6 +244,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         location = VehicleLocation.objects.get()
 
         with self.assertNumQueries(0):
+            response = self.client.get('/vehicles.json?xmax=984.375&xmin=694.688&ymax=87.043&ymin=-89.261')
+            self.assertEqual(response.status_code, 400)
+
+        with self.assertNumQueries(0):
             response = self.client.get('/vehicles.json?ymax=52.3&xmax=1.7&ymin=52.3&xmin=1.6')
         self.assertEqual(response.json(), [])
 

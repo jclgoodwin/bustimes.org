@@ -8,13 +8,14 @@ from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.conf import settings
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
-from django.http import HttpResponse, JsonResponse, Http404, HttpResponseNotAllowed
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseNotAllowed, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
+from django.views.decorators.http import require_GET, require_POST
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from busstops.utils import get_bounding_box
@@ -37,6 +38,7 @@ class Vehicles:
         return reverse('operator_vehicles', args=(self.operator.slug,))
 
 
+@require_GET
 def vehicles(request):
     operators = Operator.objects.filter(
         Exists(Vehicle.objects.filter(operator=OuterRef('pk'), withdrawn=False))
@@ -49,12 +51,14 @@ def vehicles(request):
     })
 
 
+@require_GET
 def map(request):
     return render(request, 'map.html', {
         'liveries_css_version': cache.get('liveries_css_version', 0)
     })
 
 
+@require_GET
 def liveries_css(request, version=None):
     styles = []
     liveries = Livery.objects.all()
@@ -199,6 +203,7 @@ def operator_vehicles(request, slug=None, parent=None):
     return render(request, 'operator_vehicles.html', context)
 
 
+@require_GET
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related('region'), slug=slug)
 
@@ -219,6 +224,7 @@ def operator_map(request, slug):
     })
 
 
+@require_GET
 def vehicles_json(request):
     r = redis.from_url(settings.REDIS_URL)
 
@@ -244,12 +250,15 @@ def vehicles_json(request):
         width = haversine((ymin, xmax), (ymin, xmin))
         height = haversine((ymin, xmax), (ymax, xmax))
 
-        vehicle_ids = r.execute_command(
-            'GEOSEARCH',
-            'vehicle_location_locations',
-            'FROMLONLAT', (xmax + xmin) / 2, (ymax + ymin) / 2,
-            'BYBOX', width, height, 'km'
-        )
+        try:
+            vehicle_ids = r.execute_command(
+                'GEOSEARCH',
+                'vehicle_location_locations',
+                'FROMLONLAT', (xmax + xmin) / 2, (ymax + ymin) / 2,
+                'BYBOX', width, height, 'km'
+            )
+        except redis.exceptions.ResponseError:
+            return HttpResponseBadRequest()
         vehicles = vehicles.in_bulk(vehicle_ids)
     else:
         if 'service' in request.GET:
@@ -323,6 +332,7 @@ def get_dates(journeys, vehicle=None, service=None):
     return dates
 
 
+@require_GET
 def journeys_list(request, journeys, service=None, vehicle=None):
     dates = get_dates(journeys, service=service, vehicle=vehicle)
     if service and not dates:
@@ -368,6 +378,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
     return context
 
 
+@require_GET
 def service_vehicles_history(request, slug):
     service = get_object_or_404(Service, slug=slug)
 
@@ -508,6 +519,7 @@ def edit_vehicle(request, vehicle_id):
     return response
 
 
+@require_GET
 def vehicle_history(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
     revisions = vehicle.vehiclerevision_set.select_related(
@@ -520,6 +532,7 @@ def vehicle_history(request, vehicle_id):
     })
 
 
+@require_GET
 def vehicles_history(request):
     revisions = VehicleRevision.objects.all().select_related(
         'vehicle', 'from_livery', 'to_livery', 'from_type', 'to_type', 'user'
@@ -532,6 +545,7 @@ def vehicles_history(request):
     })
 
 
+@require_GET
 def journey_json(request, pk):
     data = {}
 
@@ -573,14 +587,14 @@ def journey_json(request, pk):
     return JsonResponse(data)
 
 
+@require_GET
 def journey_debug(request, pk):
     journey = get_object_or_404(VehicleJourney, id=pk)
     return JsonResponse(journey.data or {})
 
 
+@require_POST
 def siri(request):
-    if request.method != 'POST':
-        return HttpResponseNotAllowed(['POST'])
     body = request.body.decode()
     if not body:
         return HttpResponse()
