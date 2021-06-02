@@ -332,7 +332,6 @@ def get_dates(journeys, vehicle=None, service=None):
     return dates
 
 
-@require_GET
 def journeys_list(request, journeys, service=None, vehicle=None):
     dates = get_dates(journeys, service=service, vehicle=vehicle)
     if service and not dates:
