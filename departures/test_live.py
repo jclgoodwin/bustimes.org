@@ -10,6 +10,7 @@ from django.shortcuts import render
 from busstops.models import StopPoint, Service, Region, Operator, StopUsage, AdminArea, DataSource, SIRISource
 from bustimes.models import Route, Trip, Calendar, StopTime
 from vehicles.models import VehicleJourney
+from vehicles.tasks import log_vehicle_journey
 from . import live
 
 
@@ -273,7 +274,7 @@ class LiveDeparturesTest(TestCase):
         """, html=True)
 
     @patch('vehicles.tasks.log_vehicle_journey.delay')
-    def test_worcestershire(self, log_vehicle_journey):
+    def test_worcestershire(self, mocked_log_vehicle_journey):
         with time_machine.travel('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
                 with self.assertNumQueries(10):
@@ -281,44 +282,58 @@ class LiveDeparturesTest(TestCase):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
                 with self.assertNumQueries(3):
                     xml_response = self.client.get(self.worcester_stop.get_absolute_url() + '.xml')
+
+        trip_url = self.trip.get_absolute_url()
+
         self.assertContains(response, f"""
             <tr>
                 <td>
                     <a href="/services/44">44</a>
                 </td>
                 <td>Crowngate Bus Station</td>
-                <td><a href="/trips/{self.trip.id}">10:54</a></td>
+                <td><a href="{trip_url}">10:54</a></td>
             </tr>
         """, html=True)
         self.assertContains(response, 'EVESHAM Bus Station')
         self.assertNotContains(response, 'WORCESTER')
 
-        log_vehicle_journey.assert_called_with(
-            None,
-            {
-                'LineRef': 'X50',
-                'DirectionRef': 'O',
-                'FramedVehicleJourneyRef': {
-                    'DataFrameRef': '2019_02_09_311_4560_220',
-                    'DatedVehicleJourneyRef': '311_4560_220',
-                },
-                'OperatorRef': 'FMR',
-                'OriginRef': '2000G000106',
-                'OriginName': 'Crowngate Bus Station',
-                'DestinationRef': '2000G000400',
-                'DestinationName': 'EVESHAM Bus Station',
-                'OriginAimedDepartureTime': '2019-02-09T12:10:00Z',
-                'Monitored': 'true',
-                'Delay': 'PT0M0S',
-                'VehicleRef': 'FMR-66692',
-                'MonitoredCall': {
-                    'AimedDepartureTime': '2019-02-09T12:10:00Z',
-                    'ExpectedDepartureTime': '2019-02-09T12:10:00Z',
-                    'DepartureStatus': 'onTime',
-                },
+        args = (None, {
+            'LineRef': 'X50',
+            'DirectionRef': 'O',
+            'FramedVehicleJourneyRef': {
+                'DataFrameRef': '2019_02_09_311_4560_220',
+                'DatedVehicleJourneyRef': '311_4560_220',
             },
-            None, 'EVESHAM Bus Station', 'SPT', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080', None
-        )
+            'OperatorRef': 'FMR',
+            'OriginRef': '2000G000106',
+            'OriginName': 'Crowngate Bus Station',
+            'DestinationRef': '2000G000400',
+            'DestinationName': 'EVESHAM Bus Station',
+            'OriginAimedDepartureTime': '2019-02-09T12:10:00Z',
+            'Monitored': 'true',
+            'Delay': 'PT0M0S',
+            'VehicleRef': 'FMR-66692',
+            'MonitoredCall': {
+                'AimedDepartureTime': '2019-02-09T12:10:00Z',
+                'ExpectedDepartureTime': '2019-02-09T12:10:00Z',
+                'DepartureStatus': 'onTime',
+            },
+        }, None, 'EVESHAM Bus Station', 'SPT', 'http://worcestershire-rt-http.trapezenovus.co.uk:8080', None)
+
+        # test that the task is called
+        mocked_log_vehicle_journey.assert_called_with(*args)
         self.assertEqual(0, VehicleJourney.objects.count())
 
         self.assertEqual(xml_response['Content-Type'], 'text/xml')
+
+        # test the actual task
+        with self.assertNumQueries(13):
+            log_vehicle_journey(*args[:-1], trip_url)
+
+        with self.assertNumQueries(3):
+            log_vehicle_journey(*args[:-1], trip_url)
+
+        journey = VehicleJourney.objects.get()
+        self.assertEqual(journey.data, args[1])
+        self.assertEqual(journey.trip, self.trip)
+        self.assertEqual(str(journey.datetime), '2019-02-09 12:10:00+00:00')
