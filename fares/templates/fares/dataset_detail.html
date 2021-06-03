@@ -10,16 +10,18 @@
 
     {{ object.description|linebreaks }}
 
-    <form>
-        {{ form.as_p }}
+    {% if form.fields.origin.choices %}
+        <form>
+            {{ form.as_p }}
 
-        <input type="submit" value="Find fare">
-    </form>
+            <input type="submit" value="Find fare">
+        </form>
 
-    {% for result in results %}
-        {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
-        <p>{{ result.html }}</p>
-    {% endfor %}
+        {% for result in results %}
+            {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
+            <p>{{ result.html }}</p>
+        {% endfor %}
+    {% endif %}
 
     {% for tariff in object.tariff_set.all %}
         <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>

@@ -40,7 +40,9 @@ class TariffDetailView(DetailView):
         'faretable_set__row_set__cell_set__price',
         'faretable_set__column_set',
         'faretable_set__user_profile',
-        'faretable_set__sales_offer_package'
+        'faretable_set__sales_offer_package',
+        'price_set__time_interval',
+        'price_set__sales_offer_package',
     )
 
     def get_context_data(self, *args, **kwargs):
@@ -55,4 +57,5 @@ class TariffDetailView(DetailView):
             form = FaresForm([self.object])
 
         context_data['form'] = form
+
         return context_data

@@ -20,9 +20,10 @@ from django.utils.safestring import mark_safe
 class DataSet(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(blank=True)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
     operators = models.ManyToManyField('busstops.Operator', blank=True)
     datetime = models.DateTimeField(null=True, blank=True)
+    published = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -105,6 +106,7 @@ class Tariff(models.Model):
         choices=TypeOfTariff.choices,
         blank=True
     )
+    access_zones = models.ManyToManyField('FareZone')
 
     def __str__(self):
         return self.name
@@ -119,6 +121,9 @@ class Price(models.Model):
     user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
     sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE, null=True, blank=True)
     tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.amount)
 
 
 class FareTable(models.Model):

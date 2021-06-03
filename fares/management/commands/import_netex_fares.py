@@ -7,6 +7,7 @@ import zipfile
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
+from busstops.models import StopPoint
 # from bustimes.utils import write_file
 from ... import models
 
@@ -77,27 +78,36 @@ class Command(BaseCommand):
         fare_zones = {}
         fare_zones_element = element.find("dataObjects/CompositeFrame/frames/FareFrame/fareZones")
         if fare_zones_element:
-            for fare_zone in fare_zones_element:
+            for fare_zone_element in fare_zones_element:
                 fare_zone, created = models.FareZone.objects.get_or_create(
-                    code=fare_zone.attrib['id'],
-                    name=fare_zone.findtext("Name")
+                    code=fare_zone_element.attrib['id'],
+                    name=fare_zone_element.findtext("Name")
                 )
                 fare_zones[fare_zone.code] = fare_zone
+                stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
+                if stop_refs:
+                    stops = StopPoint.objects.none()
+                    for stop_ref in stop_refs:
+                        if stop_ref.startswith('atco:'):
+                            stops |= StopPoint.objects.filter(atco_code=stop_ref.removeprefix('atco:'))
+                        elif stop_ref.startswith('naptStop:'):
+                            stops |= StopPoint.objects.filter(naptan_code__iexact=stop_ref.removeprefix('naptStop:'))
+                    fare_zone.stops.set(stops)
 
         tariffs = {}
         distance_matrix_elements = {}
         time_intervals = {}
         for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
-            fare_structre_elements = tariff_element.find("fareStructureElements")
+            fare_structure_elements = tariff_element.find("fareStructureElements")
 
-            user_profile = fare_structre_elements.find(
+            user_profile = fare_structure_elements.find(
                 "FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
             )
             if user_profile is not None:
                 user_profile, created = get_user_profile(user_profile)
                 user_profiles[user_profile.code] = user_profile
 
-            round_trip = fare_structre_elements.find(
+            round_trip = fare_structure_elements.find(
                 "FareStructureElement/GenericParameterAssignment/limitations/RoundTrip"
             )
             if round_trip:
@@ -112,7 +122,7 @@ class Command(BaseCommand):
             )
             tariffs[tariff.code] = tariff
 
-            distance_matrix_element_elements = fare_structre_elements.find(
+            distance_matrix_element_elements = fare_structure_elements.find(
                 "FareStructureElement/distanceMatrixElements"
             )
             if distance_matrix_element_elements:
@@ -133,6 +143,12 @@ class Command(BaseCommand):
                         tariff=tariff,
                     )
                     distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
+
+            access_zones = fare_structure_elements.find(
+                "FareStructureElement/GenericParameterAssignment/validityParameters/FareZoneRef"
+            )
+            if access_zones is not None:
+                tariff.access_zones.add(fare_zones[access_zones.attrib["ref"]])
 
             time_intervals_element = tariff_element.find("timeIntervals")
             if time_intervals_element:

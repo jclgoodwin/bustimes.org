@@ -55,21 +55,28 @@ td:hover {
         <p><a href="{{ service.get_absolute_url }}">{{ service }}</a></p>
     {% endfor %}
 
-    <form>
-        {{ form.as_p }}
+    {% if form.fields.origin.choices %}
+        <form>
+            {{ form.as_p }}
 
-        <input type="submit" value="Find fare">
-    </form>
+            <input type="submit" value="Find fare">
+        </form>
 
-    {% for result in results %}
-        {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
-        <p>{{ result.html }}</p>
-    {% endfor %}
+        {% for result in results %}
+            {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
+            <p>{{ result.html }}</p>
+        {% endfor %}
+    {% endif %}
 
     {% for price in object.price_set.all %}
 
-        <p>{{ price.time_interval.name }} ({{ price.time_interval }}): {{ price.amount }}</p>
+        <p>{{ price.sales_offer_package }}:<br>{{ price.time_interval.name }} ({{ price.time_interval }}):<br>£{{ price.amount }}</p>
 
+    {% endfor %}
+
+    {% for zone in object.access_zones.all %}
+        <p>{{ zone }}</p>
+        <p>{{ zone.stops.all }}</p>
     {% endfor %}
 
     {% for table in object.faretable_set.all %}

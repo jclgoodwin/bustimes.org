@@ -1,21 +1,11 @@
-import os
 from django.test import TestCase
-from .management.commands import import_netex_fares
-from .models import Tariff, DataSet, TimeInterval
+from django.core.management import call_command
+from .models import Tariff, TimeInterval
 
 
 class FaresTest(TestCase):
     def test_netex(self):
-        command = import_netex_fares.Command()
-
-        base_dir = os.path.dirname(os.path.abspath(__file__))
-        path = os.path.join(base_dir, 'data')
-
-        for filename in os.listdir(path):
-            source = DataSet.objects.create(name=filename, datetime='2017-01-01T00:00:00Z')
-            with open(os.path.join(path, filename), "rb") as open_file:
-                command.handle_file(source, open_file)
-
+        call_command('import_netex_fares', 'test')
         tariff = Tariff.objects.get(name="A C Williams WM06 - single fares")
 
         # tariff detail view
@@ -28,8 +18,8 @@ class FaresTest(TestCase):
         origins = list(response.context_data['form'].fields['origin'].choices)
         destinations = list(response.context_data['form'].fields['destination'].choices)
 
-        origin = origins[2][0].value
-        destination = destinations[3][0].value
+        origin = origins[2][0]
+        destination = destinations[3][0]
         response = self.client.get(f'{tariff.get_absolute_url()}?origin={origin}&destination={destination}')
 
         self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")

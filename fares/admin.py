@@ -22,11 +22,12 @@ class TariffAdmin(admin.ModelAdmin):
     list_filter = [
        ('source__operators', admin.RelatedOnlyFieldListFilter)
     ]
-    raw_id_fields = ["source", "user_profile"]
+    raw_id_fields = ["source", "user_profile", "access_zones"]
 
 
-class FareZoneAdmin(admin.ModelAdmin):
-    autocomplete_fields = ["stops"]
+class PriceAdmin(admin.ModelAdmin):
+    raw_id_fields = ["time_interval", "user_profile", "sales_offer_package", "tariff"]
+    list_display = ["amount"]
 
 
 class FareTableAdmin(admin.ModelAdmin):
@@ -35,10 +36,18 @@ class FareTableAdmin(admin.ModelAdmin):
     raw_id_fields = ["user_profile", "sales_offer_package", "tariff"]
 
 
+class DistanceMatrixElementAdmin(admin.ModelAdmin):
+    raw_id_fields = ["price", "start_zone", "end_zone", "tariff"]
+
+
+class FareZoneAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["stops"]
+
+
 admin.site.register(DataSet, DataSetAdmin)
 admin.site.register(Tariff, TariffAdmin)
-admin.site.register(Price)
+admin.site.register(Price, PriceAdmin)
 admin.site.register(UserProfile)
 admin.site.register(FareTable, FareTableAdmin)
-admin.site.register(DistanceMatrixElement)
+admin.site.register(DistanceMatrixElement, DistanceMatrixElementAdmin)
 admin.site.register(FareZone, FareZoneAdmin)

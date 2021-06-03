@@ -4,8 +4,8 @@ from django import forms
 
 
 class FaresForm(forms.Form):
-    origin = forms.ModelChoiceField(FareZone.objects, label="From")
-    destination = forms.ModelChoiceField(FareZone.objects, label="To")
+    origin = forms.ChoiceField(label="From")
+    destination = forms.ChoiceField(label="To")
 
     def __init__(self, tariffs, *args, **kwargs):
         self.tariffs = tariffs
@@ -21,12 +21,17 @@ class FaresForm(forms.Form):
 
         super().__init__(*args, **kwargs)
 
-        self.fields['origin'].queryset = zones
-        self.fields['destination'].queryset = zones
+        if zones:
+            zones = [('', '')] + [
+                (zone.id, str(zone)) for zone in zones
+            ]
+
+        self.fields['origin'].choices = zones
+        self.fields['destination'].choices = zones
 
     def get_results(self):
         return DistanceMatrixElement.objects.filter(
             Q(start_zone=self.cleaned_data['origin'], end_zone=self.cleaned_data['destination']) |
             Q(start_zone=self.cleaned_data['destination'], end_zone=self.cleaned_data['origin']),
             tariff__in=self.tariffs
-        ).select_related('price')
+        ).select_related('price', 'tariff')

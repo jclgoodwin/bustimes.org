@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
-from django.http import HttpResponse, JsonResponse, Http404, HttpResponseNotAllowed, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
 from django.views.generic.detail import DetailView
 from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import render, get_object_or_404, redirect
