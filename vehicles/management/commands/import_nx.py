@@ -40,7 +40,7 @@ class Command(ImportLiveVehiclesCommand):
                                     end__gte=time_since_midnight - timedelta(minutes=30))
         services = Service.objects.filter(operator__in=self.operators, route__trip__in=trips).distinct()
         for service in services.values('line_name'):
-            line_name = service['line_name'].replace('-x', 'X')
+            line_name = service['line_name'].replace('-x', 'X')  # Aircoach
             for direction in 'OI':
                 try:
                     res = self.session.get(self.url.format(line_name, direction), timeout=5)
@@ -63,13 +63,18 @@ class Command(ImportLiveVehiclesCommand):
                                            code=item['live']['vehicle'])
 
     def get_journey(self, item, vehicle):
-        print(item)
-        journey = VehicleJourney()
-
-        journey.datetime = parse_datetime(item['startTime']['dateTime'])
+        journey = VehicleJourney(
+            datetime=parse_datetime(item['startTime']['dateTime']),
+            route_name=item['route']
+        )
+        
+        if journey.route_name.endswith('X'):  # Aircoach
+            journey.route_name = f'{journey.route_name[:-1]}-x'
 
         latest_journey = vehicle.latest_journey
         if latest_journey and journey.datetime == latest_journey.datetime:
+            if journey.route_name == latest_journey.route_name and latest_journey.service_id:
+                return latest_journey
             journey = latest_journey
         else:
             try:
@@ -77,23 +82,26 @@ class Command(ImportLiveVehiclesCommand):
             except VehicleJourney.DoesNotExist:
                 pass
 
-        journey.route_name = item['route']
-        if journey.route_name.endswith('X'):
-            journey.route_name = f'{journey.route_name[:-1]}-x'
-
         journey.destination = item['arrival']
         journey.code = item['journeyId']
-
-        if latest_journey and journey.route_name == latest_journey.route_name:
-            if latest_journey.service_id:
-                journey.service_id = latest_journey.service_id
-                return journey
+        journey.data = item
 
         try:
             journey.service = Service.objects.get(operator__in=self.operators, line_name=journey.route_name,
                                                   current=True)
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             print(journey.route_name, e)
+
+        if journey.service:
+            try:
+                departure_time = timezone.localtime(journey.datetime)
+                journey.trip = Trip.objects.filter(
+                    route__service=journey.service,
+                    calendar__in=get_calendars(departure_time),
+                    start=timedelta(hours=departure_time.hour, minutes=departure_time.minute)
+                ).get()
+            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
+                pass
 
         return journey
 
