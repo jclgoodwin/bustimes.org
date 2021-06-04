@@ -6,7 +6,8 @@
     */
 
     var map = L.map('hugemap', {
-            worldCopyJump: true
+            worldCopyJump: true,
+            tap: false
         }),
         stopsGroup = L.layerGroup(),
         vehiclesGroup = L.layerGroup();

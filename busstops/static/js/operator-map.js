@@ -8,8 +8,9 @@
         L, reqwest, bustimes
     */
 
-    var container = document.getElementById('map'),
-        map = L.map(container);
+    var map = L.map('map', {
+        tap: false
+    });
 
     bustimes.map = map;
 
@@ -52,4 +53,3 @@
 
     loadVehicles();
 })();
- 

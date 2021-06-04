@@ -10,7 +10,7 @@
   "dependencies": {
     "accessible-autocomplete": "^2.0.3",
     "html5shiv": "^3.7.3",
-    "leaflet": "1.6.*",
+    "leaflet": "^1.7.1",
     "leaflet.locatecontrol": "^0.73.0",
     "loadjs": "^4.2.0",
     "reqwest": "^2.0.5"

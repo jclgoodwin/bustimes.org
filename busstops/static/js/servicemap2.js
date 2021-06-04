@@ -70,7 +70,9 @@
 
         document.body.style.overflow = 'hidden';
 
-        map = L.map(container);
+        map = L.map(container, {
+            tap: false
+        });
 
         bustimes.map = map;
 
