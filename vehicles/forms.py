@@ -126,8 +126,8 @@ class EditVehicleForm(EditVehiclesForm):
         if not vehicle.withdrawn and vehicle.latest_journey:
             if timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3):
                 self.fields['withdrawn'].disabled = True
-                self.fields['withdrawn'].help_text = "Can't be withdrawn yet, as this vehicle (or ticket machine) has "
-                "tracked in the last 3 days"
+                self.fields['withdrawn'].help_text = """Can't be withdrawn yet, as this vehicle (or ticket machine) has 
+tracked in the last 3 days"""
 
         if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
             self.fields['reg'].disabled = True
