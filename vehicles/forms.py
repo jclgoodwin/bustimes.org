@@ -31,7 +31,8 @@ class EditVehiclesForm(forms.Form):
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     depot = forms.ChoiceField(required=False)
-    withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
+    withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False, help_text="Will be automatically "
+                                   "unticked the next time this vehicle (or a ticket machine purportedly in it) tracks")
 
     def clean_url(self):
         if self.cleaned_data['url']:
@@ -117,13 +118,16 @@ class EditVehicleForm(EditVehiclesForm):
         elif vehicle.fleet_code and vehicle.latest_journey and vehicle.latest_journey.data:
             try:
                 if vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId'] == vehicle.fleet_code:
-                    self.fields['fleet_number'].disabled = True
+                    if not vehicle.code.isdigit() or vehicle.code == vehicle.fleet_code:
+                        self.fields['fleet_number'].disabled = True
             except KeyError:
                 pass
 
         if not vehicle.withdrawn and vehicle.latest_journey:
             if timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3):
-                del self.fields['withdrawn']
+                self.fields['withdrawn'].disabled = True
+                self.fields['withdrawn'].help_text = "Can't be withdrawn yet, as this vehicle (or ticket machine) has "
+                "tracked in the last 3 days"
 
         if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
             self.fields['reg'].disabled = True

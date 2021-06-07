@@ -67,7 +67,7 @@ class Command(ImportLiveVehiclesCommand):
             datetime=parse_datetime(item['startTime']['dateTime']),
             route_name=item['route']
         )
-        
+
         if journey.route_name.endswith('X'):  # Aircoach
             journey.route_name = f'{journey.route_name[:-1]}-x'
 
