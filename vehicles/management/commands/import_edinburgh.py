@@ -24,7 +24,9 @@ class Command(ImportLiveVehiclesCommand):
             return (item for item in items['vehicles'] if item['service_name'])
 
     def get_vehicle(self, item):
-        vehicle_defaults = {}
+        vehicle_defaults = {
+            'operator_id': 'LOTH'
+        }
         vehicle_code = item['vehicle_id']
         if vehicle_code.isdigit():
             vehicle_defaults['fleet_number'] = vehicle_code
@@ -52,7 +54,7 @@ class Command(ImportLiveVehiclesCommand):
                     operator = journey.service.operator.first()
                     if not vehicle.operator_id or vehicle.operator_id != operator.id:
                         vehicle.operator = operator
-                        vehicle.save()
+                        vehicle.save(update_fields=['operator'])
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item['service_name'])
 

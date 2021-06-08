@@ -8,9 +8,10 @@ class EdinburghImportTest(TestCase):
     def setUpTestData(cls):
         source = DataSource.objects.create(name='TfE', url='', datetime='1066-01-01 12:18Z')
         Region.objects.create(name='Scotland', id='S')
-        cls.operator = Operator.objects.create(name='Lothian Buses', id='LOTH', region_id='S')
+        cls.operator_1 = Operator.objects.create(name='Lothian Buses', id='LOTH', region_id='S')
+        cls.operator_2 = Operator.objects.create(name='Edinburgh Trams', id='EDTR', region_id='S')
         cls.service = Service.objects.create(line_name='11', date='1904-05-05', current=True)
-        cls.service.operator.add(cls.operator)
+        cls.service.operator.add(cls.operator_2)
         cls.command = Command()
         cls.command.source = source
 
@@ -40,7 +41,7 @@ class EdinburghImportTest(TestCase):
 
         with self.assertNumQueries(1):
             vehicle, created = self.command.get_vehicle(item)
-        self.assertEqual(self.operator, vehicle.operator)
+        self.assertEqual(self.operator_2, vehicle.operator)
         self.assertEqual(3032, vehicle.fleet_number)
         self.assertFalse(created)
 
