@@ -6,7 +6,6 @@ import pytz
 import logging
 import xmltodict
 import xml.etree.cElementTree as ET
-from pytz.exceptions import AmbiguousTimeError
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q, Exists, OuterRef, Value
@@ -259,43 +258,6 @@ class AcisHorizonDepartures(Departures):
             else:
                 row['time'] = time
             return row
-
-
-class NorfolkDepartures(Departures):
-    request_url = 'https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable'
-
-    def get_request_params(self):
-        return {
-            'stopId': 'NaPTAN_' + self.stop.atco_code,
-            'stopIdType': 'native'
-        }
-
-    def departures_from_response(self, res):
-        departures = []
-        res = res.json()['r']
-        for i in range(0, int(len(res[1]) / 11)):
-            item = (res[1][i * 11: (i + 1) * 11])
-            time = datetime.datetime.fromtimestamp(int(item[3]))
-            try:
-                time = timezone.make_aware(time)
-            except AmbiguousTimeError:
-                time = timezone.make_aware(time, is_dst=True)
-            live = item[4]
-            if live:
-                live = datetime.datetime.fromtimestamp(int(live))
-                try:
-                    live = timezone.make_aware(live)
-                except AmbiguousTimeError:
-                    live = timezone.make_aware(live, is_dst=True)
-            if not live or time < self.now and live < self.now:
-                continue
-            departures.append({
-                'time': time,
-                'live': live,
-                'service': self.get_service(item[2]),
-                'destination': item[6],
-            })
-        return departures
 
 
 class TimetableDepartures(Departures):
@@ -573,9 +535,9 @@ def get_departures(stop, services):
                 or 'Edinburgh Trams' in operators
             ):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
-            if live_rows:
-                blend(departures, live_rows)
-                live_rows = None
+                if live_rows:
+                    departures = live_rows
+                    live_rows = None
 
             source = None
 
@@ -593,8 +555,6 @@ def get_departures(stop, services):
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
-            elif stop.atco_code[:3] == '290':
-                live_rows = NorfolkDepartures(stop, services, now).get_departures()
 
             if any(operator[:11] == 'Stagecoach ' for operator in operators):
                 if not (live_rows and any(
