@@ -174,9 +174,7 @@
                 item: item
             });
             marker.addTo(window.bustimes.map)
-                .bindPopup('', {
-                    autoPan: false
-                })
+                .bindPopup('', window.bustimes.popupOptions)
                 .on('popupopen', handlePopupOpen)
                 .on('popupclose', handlePopupClose);
         }
@@ -217,5 +215,7 @@
         handleVehicles: handleVehicles,
 
         vehicleMarkers: {},
+
+        popupOptions: {},
     };
 })();

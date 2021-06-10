@@ -732,6 +732,8 @@ class VehicleLocation(models.Model):
             'destination': journey.destination,
         }
 
+        if journey.trip_id:
+            json['trip_id'] = journey.trip_id
         if journey.service_id:
             json['service_id'] = journey.service_id
         elif journey.route_name:

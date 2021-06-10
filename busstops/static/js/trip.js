@@ -30,8 +30,18 @@
             function(data) {
                 if (data) {
                     window.bustimes.handleVehicles(data);
+
+                    if (!window.bustimes.clickedMarker &&  window.TRIP_ID) {
+                        for (var id in window.bustimes.vehicleMarkers) {
+                            if (window.bustimes.vehicleMarkers[id].options.item.trip_id === window.TRIP_ID) {
+                                window.bustimes.vehicleMarkers[id].openPopup();
+                                break;
+                            }
+                        }
+                    }
                 }
-                if (map && data.length) {
+
+                if (data.length) {
                     loadVehiclesTimeout = setTimeout(loadVehicles, 10000);
                 }
             }

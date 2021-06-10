@@ -13,6 +13,9 @@
         vehiclesGroup = L.layerGroup();
 
     bustimes.doTileLayer(map);
+    bustimes.popupOptions = {
+        autoPan: false
+    };
 
     L.control.locate().addTo(map);
 
