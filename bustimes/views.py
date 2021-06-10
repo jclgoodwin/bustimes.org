@@ -184,6 +184,14 @@ class TripDetailView(DetailView):
 
         context['stops'] = self.object.stoptime_set.select_related('stop__locality')
 
+        stops_json = json.dumps([{
+            'latlong': stop_time.stop.latlong.coords,
+            'bearing': stop_time.stop.get_heading(),
+            'time': stop_time.departure_time() or stop_time.arrival_time()
+        } for stop_time in context['stops'] if stop_time.stop and stop_time.stop.latlong])
+
+        context['stops_json'] = mark_safe(stops_json)
+
         context['breadcrumb'] = [self.object.route.service]
 
         return context
