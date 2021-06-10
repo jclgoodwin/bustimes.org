@@ -59,7 +59,9 @@
     }
 
     if (window.STOPS) {
-        var map = L.map('map');
+        var map = L.map('map', {
+            tap: false
+        });
 
         window.bustimes.doTileLayer(map);
 
