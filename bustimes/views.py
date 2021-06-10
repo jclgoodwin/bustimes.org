@@ -5,6 +5,7 @@ import json
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.conf import settings
+from django.core.cache import cache
 from django.db.models import Prefetch, F, Exists, OuterRef, DurationField, ExpressionWrapper
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -191,6 +192,8 @@ class TripDetailView(DetailView):
         } for stop_time in context['stops'] if stop_time.stop and stop_time.stop.latlong])
 
         context['stops_json'] = mark_safe(stops_json)
+
+        context['liveries_css_version'] = cache.get('liveries_css_version', 0)
 
         context['breadcrumb'] = [self.object.route.service]
 

@@ -5,7 +5,7 @@
         browser: true
     */
     /*global
-        L
+        L, reqwest
     */
 
     if (document.referrer.indexOf('/stops/') > -1) {
@@ -18,10 +18,42 @@
         });
     }
 
+    var loadVehiclesTimeout;
+
+    function loadVehicles() {
+        if (!window.SERVICE) {
+            return;
+        }
+        var params = '?service=' + window.SERVICE;
+        reqwest(
+            '/vehicles.json' + params,
+            function(data) {
+                if (data) {
+                    window.bustimes.handleVehicles(data);
+                }
+                if (map && data.length) {
+                    loadVehiclesTimeout = setTimeout(loadVehicles, 10000);
+                }
+            }
+        );
+    }
+
+    function handleVisibilityChange(event) {
+        if (event.target.hidden) {
+            if (loadVehiclesTimeout) {
+                clearTimeout(loadVehiclesTimeout);
+            }
+        } else {
+            loadVehicles();
+        }
+    }
+
     if (window.STOPS) {
-        var map = L.map('trip-map');
+        var map = L.map('map');
 
         window.bustimes.doTileLayer(map);
+
+        window.bustimes.map = map;
 
         var bounds = L.latLngBounds();
 
@@ -45,9 +77,14 @@
             bounds.extend(location);
         });
 
+
         map.fitBounds(bounds);
 
-        map.setMaxBounds(bounds);
+        loadVehicles();
+
+        if (document.addEventListener) {
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
 
         L.control.locate().addTo(map);
     }
