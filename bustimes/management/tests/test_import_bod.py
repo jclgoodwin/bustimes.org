@@ -112,6 +112,9 @@ class ImportBusOpenDataTest(TestCase):
         response = self.client.get('/stops/2900W0321/times.json?when=2020-05-01T09:15:00%2b01:00')
         self.assertEqual(response.json(), expected_json)
 
+        response = self.client.get('/stops/2900W0321/times.json?when=2020-05-01T09:15:00')
+        self.assertEqual(response.json(), expected_json)
+
         response = self.client.get('/stops/2900W0321/times.json?limit=10')
         self.assertEqual(1, len(response.json()['times']))
 
