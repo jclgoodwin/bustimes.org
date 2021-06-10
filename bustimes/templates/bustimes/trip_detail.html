@@ -40,20 +40,12 @@
     <p>Depot: {{ trip.garage }}</p>
 {% endif %}
 
-<script>
-    (function() {
-        if (document.referrer.indexOf('/stops/') > -1) {
-            var links = document.querySelectorAll('.trip-timetable a');
-            links.forEach(function(link) {
-                if (link.href === document.referrer) {
-                    link.parentNode.parentNode.classList.add('referrer');
-                }
-            });
-        }
-    })();
-
-</script>
-
 {% endblock %}
 
 {% block ad %}{% endblock %}
+
+{% load static %}
+
+{% block foot %}
+    <script src="{% static 'js/trip.js' %}">
+{% endblock %}

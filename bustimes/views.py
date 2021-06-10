@@ -1,11 +1,13 @@
 import os
 import zipfile
 import requests
+import json
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.db.models import Prefetch, F, Exists, OuterRef, DurationField, ExpressionWrapper
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
@@ -91,11 +93,9 @@ def stop_times_json(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code=atco_code)
     times = []
 
-    current_timezone = timezone.get_current_timezone()
-
     if 'when' in request.GET:
         try:
-            when = parse_datetime(request.GET['when']).astimezone(current_timezone)
+            when = timezone.localtime(parse_datetime(request.GET['when']))
         except ValueError:
             return HttpResponseBadRequest(f"'{request.GET['when']}' isn't in the right format")
     else:
@@ -193,10 +193,22 @@ def tfl_vehicle(request, reg):
     data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals', params=settings.TFL).json()
     if not data:
         raise Http404
+
+    stops = StopPoint.objects.in_bulk(item['naptanId'] for item in data)
+
     for item in data:
         item['expectedArrival'] = parse_datetime(item['expectedArrival'])
         if item['platformName'] == 'null':
             item['platformName'] = None
+        item['stop'] = stops.get(item['naptanId'])
+
+    stops_json = json.dumps([{
+        'latlong': item['stop'].latlong.coords,
+        'bearing': item['stop'].get_heading(),
+        'time': str(timezone.localtime(item['expectedArrival']).time())
+    } for item in data if item['stop'] and item['stop'].latlong])
+
     return render(request, 'tfl_vehicle.html', {
-        'data': data
+        'data': data,
+        'stops_json': mark_safe(stops_json)
     })

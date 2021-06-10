@@ -12,6 +12,10 @@
 
 <p>{{ data.0.vehicleId }}</p>
 
+{% if stops_json %}
+    <div id="trip-map"></div>
+{% endif %}
+
 <table class="trip-timetable">
     <th></th><th>Expected</th>
     <tbody>
@@ -24,20 +28,21 @@
 </tbody>
 </table>
 
-<script>
-    (function() {
-        if (document.referrer.indexOf('/stops/') > -1) {
-            var links = document.querySelectorAll('.trip-timetable a');
-            links.forEach(function(link) {
-                if (link.href === document.referrer) {
-                    link.parentNode.parentNode.classList.add('referrer');
-                }
-            });
-        }
-    })();
-
-</script>
-
 {% endblock %}
 
 {% block ad %}{% endblock %}
+
+{% load static %}
+
+{% block foot %}
+    {% if stops_json %}
+        <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
+        <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
+        <script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
+        <script src="{% static 'js/maps.js' %}"></script>
+        <script>
+            window.STOPS = {{ stops_json }};
+        </script>
+    {% endif %}
+    <script src="{% static 'js/trip.js' %}">
+{% endblock %}
