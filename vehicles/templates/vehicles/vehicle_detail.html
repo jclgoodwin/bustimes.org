@@ -99,7 +99,9 @@
                             {% endif %}
                         </td>
                         {% if block_column %}<td>{% if journey.block %}{{ journey.block }}{% endif %}</td>{% endif %}
-                        {% if journey.code and journey.code|length < 40 and '_' not in journey.code %}
+                        {% if journey.trip %}
+                            <td colspan="2"><a href="{{ journey.trip.get_absolute_url }}">{{ journey.trip.start_time }}</a></td>
+                        {% elif journey.code and journey.code|length < 40 and '_' not in journey.code %}
                             <td>{{ journey.datetime|time }}</td>
                             <td>{{ journey.code }}</td>
                         {% else %}
@@ -107,11 +109,8 @@
                         {% endif %}
                         <td>{% firstof journey.destination journey.direction %}</td>
                         {% if journey.locations %}
-                            <td><a href="#journeys/{{ journey.id }}">{% if journey.trip %}Times{% else %}Map{% endif %}</a></td>
-                        {% elif journey.trip %}
-                            <td><a href="{{ journey.trip.get_absolute_url }}">Times</a></td>
+                            <td><a href="#journeys/{{ journey.id }}">Map</a></td>
                         {% endif %}
-                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

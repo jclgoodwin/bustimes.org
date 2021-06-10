@@ -76,7 +76,9 @@
             if (item.destination) {
                 content += ' to ' + item.destination;
             }
-            if (item.service.url) {
+            if (item.trip_id) {
+                content = '<a href="/trips/' + item.trip_id + '">' + content + '</a>';
+            } else if (item.service.url) {
                 content = '<a href="' + item.service.url + '">' + content + '</a>';
             }
         } else {
