@@ -3,6 +3,7 @@ import json
 import xml.etree.cElementTree as ET
 import datetime
 from haversine import haversine
+from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Min
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
@@ -477,27 +478,34 @@ def edit_vehicle(request, vehicle_id):
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             now = timezone.now()
-            revision = do_revision(vehicle, data, request.user)
-            if revision:
-                revision.datetime = now
-                revision.save()
+            try:
+                revision = do_revision(vehicle, data, request.user)
+            except IntegrityError as e:
+                if 'operator' in data:
+                    form.add_error('operator', f"{data['operator']} already has a vehicle with the code {vehicle.code}")
+                else:
+                    raise e
+            else:
+                if revision:
+                    revision.datetime = now
+                    revision.save()
 
-            form = None
+                form = None
 
-            if data:
-                edit, changed = get_vehicle_edit(vehicle, data, now, request)
-                if changed:
-                    edit.save()
-                    submitted = True
-                if 'features' in data:
-                    if not changed:  # .save() was not called before
+                if data:
+                    edit, changed = get_vehicle_edit(vehicle, data, now, request)
+                    if changed:
                         edit.save()
                         submitted = True
-                    for feature in vehicle.features.all():
-                        if feature not in data['features']:
-                            VehicleEditFeature.objects.create(edit=edit, feature=feature, add=False)
-                    for feature in data['features']:
-                        VehicleEditFeature.objects.create(edit=edit, feature=feature, add=True)
+                    if 'features' in data:
+                        if not changed:  # .save() was not called before
+                            edit.save()
+                            submitted = True
+                        for feature in vehicle.features.all():
+                            if feature not in data['features']:
+                                VehicleEditFeature.objects.create(edit=edit, feature=feature, add=False)
+                        for feature in data['features']:
+                            VehicleEditFeature.objects.create(edit=edit, feature=feature, add=True)
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
 
