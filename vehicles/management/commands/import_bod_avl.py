@@ -4,6 +4,7 @@ import xmltodict
 import functools
 from django.core.cache import cache
 from django.conf import settings
+from django.db import IntegrityError
 from datetime import timedelta
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
@@ -407,7 +408,10 @@ class Command(ImportLiveVehiclesCommand):
 
             if not operator and journey.service and journey.service.operator.all():
                 operator = journey.service.operator.all()[0]
-                OperatorCode.objects.create(source=self.source, operator=operator, code=operator_ref)
+                try:
+                    OperatorCode.objects.create(source=self.source, operator=operator, code=operator_ref)
+                except IntegrityError:
+                    pass
                 vehicle.operator = operator
                 vehicle.save(update_fields=['operator'])
 
