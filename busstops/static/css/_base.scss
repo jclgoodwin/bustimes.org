@@ -649,9 +649,11 @@ table {
 }
 
 .trip-map {
-    display: block;
     height: 300px;
-    margin: 16px 0;
+}
+
+.trip-map-wrapper {
+    margin: 1em 0;
 }
 
 .livery {

@@ -72,3 +72,15 @@ h1 {
         width: 24.25em;
     }
 }
+
+.trip-map {
+    height: 400px;
+}
+
+.trip-map-wrapper {
+    float: right;
+    position: sticky;
+    top: 1em;
+    margin: 0;
+    width: 50%;
+}

@@ -13,7 +13,9 @@
 <p>{{ data.0.vehicleId }}</p>
 
 {% if stops_json %}
-    <div id="map" class="trip-map"></div>
+    <div class="trip-map-wrapper">
+        <div id="map" class="trip-map"></div>
+    </div>
 {% endif %}
 
 <table class="trip-timetable">
