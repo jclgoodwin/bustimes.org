@@ -70,16 +70,6 @@ class LiveDeparturesTest(TestCase):
         worcester_44.operator.add(Operator.objects.create(id='FMR', name='First Midland Red', region_id='W'))
         StopUsage.objects.create(stop=cls.worcester_stop, service=worcester_44, order=0)
 
-        cls.stagecoach_stop = StopPoint.objects.create(atco_code='64801092', active=True,
-                                                       locality_centre=False)
-        stagecoach_operator = Operator.objects.create(id='SCOX',
-                                                      name='Stagecoach Oxenholme',
-                                                      region_id='W')
-        cls.stagecoach_service = Service.objects.create(service_code='15', line_name='15',
-                                                        region_id='W', date='2017-01-01')
-        cls.stagecoach_service.operator.add(stagecoach_operator)
-        StopUsage.objects.create(stop=cls.stagecoach_stop, service=cls.stagecoach_service, order=1)
-
         translink_metro_operator = Operator.objects.create(id='MET', name='Translink Metro', region_id='W')
         cls.translink_metro_stop = StopPoint.objects.create(atco_code='700000001415', active=True,
                                                             locality_centre=False)
@@ -87,24 +77,6 @@ class LiveDeparturesTest(TestCase):
                                                          date='2017-01-01')
         translink_metro_service.operator.add(translink_metro_operator)
         StopUsage.objects.create(stop=cls.translink_metro_stop, service=translink_metro_service, order=0)
-
-        calendar_1 = Calendar.objects.create(mon=False, tue=True, wed=False, thu=False, fri=False, sat=False, sun=False,
-                                             start_date='2017-03-14', end_date='2017-03-14')
-        calendar_2 = Calendar.objects.create(mon=False, tue=True, wed=False, thu=False, fri=False, sat=False, sun=False,
-                                             start_date='2017-03-28', end_date='2017-03-28')
-        route = Route.objects.create(service=cls.stagecoach_service, start_date='2017-03-04', source=source)
-        trip_1 = Trip.objects.create(calendar=calendar_1, route=route, destination=cls.cardiff_stop,
-                                     start='0', end='21:23:00')
-        trip_2 = Trip.objects.create(calendar=calendar_2, route=route, destination=cls.cardiff_stop,
-                                     start='0', end='20:00:00')
-        StopTime.objects.bulk_create(
-            StopTime(trip=trip, sequence=0, arrival=when, departure=when, stop_id='64801092')
-            for trip, when in (
-                (trip_1, '20:23:00'),
-                (trip_1, '21:23:00'),
-                (trip_2, '18:53:00')
-            )
-        )
 
         calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
                                            start_date='2019-02-09', end_date='2019-02-09')
@@ -180,42 +152,6 @@ class LiveDeparturesTest(TestCase):
         with vcr.use_cassette('data/vcr/translink_metro.yaml', match_on=['body']):
             departures = live.AcisHorizonDepartures(StopPoint(pk='700000000748'), ())
             self.assertEqual([], departures.get_departures())
-
-    @time_machine.travel(datetime.datetime(2017, 3, 14, 20))
-    def test_stagecoach(self):
-        with vcr.use_cassette('data/vcr/stagecoach.yaml'):
-            with self.assertNumQueries(9):
-                res = self.client.get('/stops/64801092')
-        self.assertContains(res, '<td><a href="/services/15">15</a></td>', html=True)
-        self.assertContains(res, '<td>Hillend</td>')
-        departures = res.context_data['departures']
-        self.assertEqual(3, len(departures))
-        self.assertEqual(departures[0]['service'], self.stagecoach_service)
-        self.assertEqual(departures[0]['live'].time(), datetime.time(20, 37, 51))
-
-        self.assertEqual(departures[1]['service'], '7')
-        self.assertEqual(departures[1]['live'].time(), datetime.time(21, 17, 28))
-
-        self.assertEqual(departures[2]['service'], self.stagecoach_service)
-        self.assertEqual(departures[2]['live'].time(), datetime.time(21, 38, 21))
-
-    @time_machine.travel(datetime.datetime(2017, 3, 28, 17))
-    def test_stagecoach_timezone(self):
-        with vcr.use_cassette('data/vcr/stagecoach_timezone.yaml'):
-            with self.assertNumQueries(9):
-                res = self.client.get('/stops/64801092')
-        departures = res.context_data['departures']
-        self.assertEqual(6, len(departures))
-        self.assertEqual(departures[0]['destination'], 'Wood Street')
-        self.assertEqual(departures[1]['destination'], 'Hillend')
-        self.assertEqual(departures[2]['destination'], 'Hillend')
-
-        self.assertEqual(departures[1]['service'], '7')
-        self.assertEqual(departures[0]['service'].line_name, '15')
-        self.assertEqual(departures[0]['service'].line_name, '15')
-        self.assertEqual(str(departures[0]['time']), '2017-03-28 18:53:00+01:00')
-        self.assertEqual(str(departures[2]['time']), '2017-03-28 19:08:00+01:00')
-        self.assertEqual(str(departures[2]['live']), '2017-03-28 19:08:25+01:00')
 
     def test_blend(self):
         service = Service(line_name='X98')

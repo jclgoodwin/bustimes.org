@@ -8,10 +8,9 @@ import xmltodict
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q, Exists, OuterRef, Value
-from django.db.models.functions import Concat
+from django.db.models import Q
 from django.utils import timezone
-from busstops.models import Service, ServiceCode, SIRISource
+from busstops.models import Service, SIRISource
 from bustimes.models import get_calendars, get_routes, Route, StopTime
 from vehicles.tasks import log_vehicle_journey
 
@@ -383,51 +382,6 @@ class SiriSmDepartures(Departures):
         return requests.post(self.source.url, data=request_xml, headers=headers, timeout=5)
 
 
-class StagecoachDepartures(Departures):
-    def get_response(self):
-        headers = {
-            'Origin': 'https://www.stagecoachbus.com',
-            'Referer': 'https://www.stagecoachbus.com',
-            'X-SC-apiKey': 'ukbusprodapi_9T61Jo3vsbql#!',
-            'X-SC-securityMethod': 'API'
-        }
-        json = {
-            'StopMonitorRequest': {
-                'header': {
-                    'retailOperation': '',
-                    'channel': '',
-                },
-                'stopMonitorQueries': {
-                    'stopMonitorQuery': [{
-                        'stopPointLabel': self.stop.atco_code,
-                        'servicesFilters': {}
-                    }]
-                }
-            }
-        }
-        return requests.post('https://api.stagecoachbus.com/adc/stop-monitor',
-                             headers=headers, json=json, timeout=2)
-
-    def departures_from_response(self, response):
-        stop_monitors = response.json()['stopMonitors']
-        departures = []
-
-        if 'stopMonitor' in stop_monitors:
-            for monitor in stop_monitors['stopMonitor'][0]['monitoredCalls']['monitoredCall']:
-
-                if 'expectedDepartureTime' not in monitor:
-                    continue
-
-                departures.append({
-                    'time': parse_datetime(monitor['aimedDepartureTime']),
-                    'live': parse_datetime(monitor['expectedDepartureTime']),
-                    'service': self.get_service(monitor['lineRef']),
-                    'destination': monitor['destinationDisplay'],
-                })
-
-        return departures
-
-
 def services_match(a, b):
     if type(a) is Service:
         a = a.line_name
@@ -542,11 +496,7 @@ def get_departures(stop, services):
             source = None
 
             if stop.admin_area_id:
-                service_code_exists = Exists(
-                    ServiceCode.objects.filter(service__in=services, scheme=Concat(OuterRef('name'), Value(' SIRI')))
-                )
-                possible_sources = SIRISource.objects.filter(service_code_exists | Q(admin_areas=stop.admin_area_id))
-                for possible_source in possible_sources:
+                for possible_source in SIRISource.objects.filter(admin_areas=stop.admin_area_id):
                     if not possible_source.get_poorly():
                         source = possible_source
                         break
@@ -555,16 +505,6 @@ def get_departures(stop, services):
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
             elif stop.atco_code[:3] == '430':
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
-
-            if any(operator[:11] == 'Stagecoach ' for operator in operators):
-                if not (live_rows and any(
-                    row.get('live') and type(row['service']) is Service and any(
-                        operator.name[:11] == 'Stagecoach ' for operator in row['service'].operator.all()
-                    ) for row in live_rows
-                )):
-                    stagecoach_rows = StagecoachDepartures(stop, services).get_departures()
-                    if stagecoach_rows:
-                        blend(departures, stagecoach_rows)
 
             if live_rows:
                 blend(departures, live_rows)
