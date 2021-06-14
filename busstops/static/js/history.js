@@ -180,8 +180,9 @@
                 element.appendChild(mapContainer);
             }
 
-            map = L.map(mapContainer);
-
+            map = L.map(mapContainer, {
+                tap: false
+            });
             window.bustimes.doTileLayer(map);
 
             L.control.locate().addTo(map);
