@@ -1,9 +1,16 @@
 import os
 from vcr import use_cassette
 from django.test import TestCase
+from busstops.models import DataSource
+from vehicles.models import Livery
 
 
 class BusTimesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        DataSource.objects.create(id=7, name='London')
+        Livery.objects.create(id=262, name='London', colours='#dc241f')
+
     def test_tfl_vehicle_view(self):
         with use_cassette(
             os.path.join(

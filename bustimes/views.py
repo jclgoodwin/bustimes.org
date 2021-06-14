@@ -14,6 +14,7 @@ from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
 from busstops.models import Service, DataSource, StopPoint
 from departures.live import TimetableDepartures
+from vehicles.models import Vehicle
 from .models import Route, Trip, CalendarDate
 
 
@@ -203,9 +204,16 @@ class TripDetailView(DetailView):
 
 
 def tfl_vehicle(request, reg):
+    reg = reg.upper()
+
     data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals', params=settings.TFL).json()
     if not data:
         raise Http404
+
+    try:
+        Vehicle.objects.get(reg=reg)
+    except Vehicle.DoesNotExist:
+        Vehicle.objects.create(source_id=7, code=reg, reg=reg, livery_id=262)
 
     stops = StopPoint.objects.in_bulk(item['naptanId'] for item in data)
 

@@ -213,7 +213,6 @@ def do_revision(vehicle, data, user):
                     changes['colours'] = f"-{vehicle.colours}\n+"
                     vehicle.colours = ''
                     changed_fields.append('colours')
-                del data['colours']
             else:
                 changes['colours'] = f"-{vehicle.colours}\n+{data['colours']}"
                 vehicle.colours = data['colours']
@@ -222,7 +221,7 @@ def do_revision(vehicle, data, user):
                     changed_fields.append('livery')
                     revision.from_livery = vehicle.livery
                     vehicle.livery = None
-                del data['colours']
+            del data['colours']
 
     if changes:
         revision.changes = changes
