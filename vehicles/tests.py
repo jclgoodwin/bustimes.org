@@ -51,7 +51,7 @@ class VehiclesTests(TestCase):
 
         cls.vehicle_1.features.set([cls.wifi])
 
-        cls.user = User.objects.create(username='josh', is_staff=True, is_superuser=True, email='j@example.com')
+        cls.staff_user = User.objects.create(username='josh', is_staff=True, is_superuser=True, email='j@example.com')
         cls.trusted_user = User.objects.create(username='norma', trusted=True, email='n@example.com')
         cls.untrusted_user = User.objects.create(username='clem', trusted=False, email='c@example.com')
 
@@ -59,7 +59,7 @@ class VehiclesTests(TestCase):
         self.client.force_login(self.untrusted_user)
 
         with self.assertNumQueries(2):
-            response = self.client.get(self.vehicle_1.get_absolute_url() + '/edit')
+            response = self.client.get(self.vehicle_1.get_edit_url())
         self.assertEqual(response.status_code, 403)
 
         with self.assertNumQueries(3):
@@ -198,7 +198,7 @@ class VehiclesTests(TestCase):
         )
 
     def test_vehicle_edit_1(self):
-        url = self.vehicle_1.get_absolute_url() + '/edit'
+        url = self.vehicle_1.get_edit_url()
 
         with self.assertNumQueries(0):
             response = self.client.get(url)
@@ -209,7 +209,7 @@ class VehiclesTests(TestCase):
             response = self.client.get(response.url)
         self.assertContains(response, '<p>To edit vehicle details, please log in.</p>')
 
-        self.client.force_login(self.user)
+        self.client.force_login(self.staff_user)
 
         with self.assertNumQueries(13):
             response = self.client.get(url)
@@ -278,11 +278,11 @@ class VehiclesTests(TestCase):
         self.assertContains(
             response,
             '<td class="field-approved">'
-            f'<a href="/admin/vehicles/vehicleedit/?user={self.user.id}&approved__exact=1">0</a></td>'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=1">0</a></td>'
             '<td class="field-disapproved">'
-            f'<a href="/admin/vehicles/vehicleedit/?user={self.user.id}&approved__exact=0">0</a></td>'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=0">0</a></td>'
             '<td class="field-pending">'
-            f'<a href="/admin/vehicles/vehicleedit/?user={self.user.id}&approved__isnull=True">1</a></td>'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">1</a></td>'
         )
 
         with self.assertNumQueries(9):
@@ -290,8 +290,17 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<del>1</del><br><ins>2</ins>')
         self.assertEqual(1, response.context_data['cl'].result_count)
 
-        # remove a feature
         del initial['colours']
+
+        # staff user can fully edit branding and notes
+        initial['branding'] = 'Crag Hopper'
+        initial['notes'] = 'West Coast Motors'
+        with self.assertNumQueries(14):
+            response = self.client.post(url, initial)
+        self.assertContains(response, 'Changed notes from Trent Barton to West Coast Motors')
+        self.assertContains(response, 'Changed branding to Crag Hopper')
+
+        # remove a feature
         del initial['features']
         with self.assertNumQueries(14):
             response = self.client.post(url, initial)
@@ -303,9 +312,9 @@ class VehiclesTests(TestCase):
         self.assertEqual(edit.get_changes(), {'features': [vef]})
 
     def test_vehicle_edit_2(self):
-        self.client.force_login(self.user)
+        self.client.force_login(self.staff_user)
 
-        url = self.vehicle_2.get_absolute_url() + '/edit'
+        url = self.vehicle_2.get_edit_url()
 
         initial = {
             'fleet_number': '50',
@@ -353,8 +362,8 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'already')
 
     def test_vehicle_edit_colour(self):
-        self.client.force_login(self.user)
-        url = self.vehicle_2.get_absolute_url() + '/edit'
+        self.client.force_login(self.staff_user)
+        url = self.vehicle_2.get_edit_url()
 
         initial = {
             'fleet_number': '50',
@@ -379,9 +388,9 @@ class VehiclesTests(TestCase):
             ]})
 
     def test_remove_fleet_number(self):
-        self.client.force_login(self.user)
+        self.client.force_login(self.staff_user)
 
-        url = self.vehicle_1.get_absolute_url() + '/edit'
+        url = self.vehicle_1.get_edit_url()
 
         with self.assertNumQueries(15):
             self.client.post(url, {
@@ -410,43 +419,41 @@ class VehiclesTests(TestCase):
         self.assertEqual('', vehicle.reg)
 
         # test user view
-        response = self.client.get(self.user.get_absolute_url())
+        response = self.client.get(self.staff_user.get_absolute_url())
         self.assertContains(response, '1 other edit,')
         self.assertContains(response, 'Trent Barton')
 
     def test_vehicles_edit(self):
-        self.client.force_login(self.user)
+        self.client.force_login(self.trusted_user)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
         self.assertFalse(VehicleRevision.objects.all())
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(18):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,
-                'vehicle_type': self.vehicle_2.vehicle_type_id
+                'vehicle_type': self.vehicle_2.vehicle_type_id,
             })
-        self.assertContains(response, 'I’ll update those details (1 vehicle) shortly')
-        edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.vehicle_type, 'Optare Spectra')
-        self.assertEqual(edit.notes, '')
-
+        self.assertContains(response, '1 vehicle updated')
+        revision = VehicleRevision.objects.get()
+        self.assertEqual(revision.changes, {})
         self.assertContains(response, 'FD54 JYA')
 
-        # # just updating operator should not create a VehicleEdit, but update the vehicle immediately
-        # with self.assertNumQueries(15):
-        #     response = self.client.post('/operators/lynx/vehicles/edit', {
-        #         'vehicle': self.vehicle_1.id,
-        #         'operator': self.bova.id,
-        #     })
-        # self.assertNotContains(response, 'FD54 JYA')
-        # self.vehicle_1.refresh_from_db()
-        # self.assertEqual(self.bova, self.vehicle_1.operator)
-        # self.assertContains(response, '1 vehicle updated')
-        # self.assertEqual(1, VehicleEdit.objects.count())
+        # trusted user can withdraw
+
+        with self.assertNumQueries(15):
+            response = self.client.post('/operators/lynx/vehicles/edit', {
+                'vehicle': self.vehicle_1.id,
+                'withdrawn': 'on'
+            })
+        revision = VehicleRevision.objects.last()
+        self.assertEqual(revision.changes, {'withdrawn': '-No\n+Yes'})
+        self.assertContains(response, '1 vehicle updated')
+        self.assertNotContains(response, 'FD54 JYA')
 
     def test_validation(self):
         vehicle = Vehicle(colours='ploop')
