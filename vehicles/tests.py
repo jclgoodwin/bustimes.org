@@ -432,23 +432,25 @@ class VehiclesTests(TestCase):
         self.assertFalse(VehicleEdit.objects.all())
         self.assertFalse(VehicleRevision.objects.all())
 
+        # change vehicle type and depot:
         with self.assertNumQueries(18):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'depot': 'Long Sutton',
             })
         self.assertContains(response, '1 vehicle updated')
         revision = VehicleRevision.objects.get()
-        self.assertEqual(revision.changes, {})
+        self.assertEqual(revision.changes, {'depot': '-Holt\n+Long Sutton'})
         self.assertContains(response, 'FD54 JYA')
 
-        # trusted user can withdraw
-
+        # withdraw:
         with self.assertNumQueries(15):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
-                'withdrawn': 'on'
+                'withdrawn': 'on',
+                'depot': 'Long Sutton',  # (no change)
             })
         revision = VehicleRevision.objects.last()
         self.assertEqual(revision.changes, {'withdrawn': '-No\n+Yes'})
