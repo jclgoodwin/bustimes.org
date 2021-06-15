@@ -20,10 +20,12 @@ class BusTimesTest(TestCase):
             ),
             decode_compressed_response=True
         ):
-            response = self.client.get('/vehicles/tfl/LTZ1243')
+            with self.assertNumQueries(3):
+                response = self.client.get('/vehicles/tfl/LTZ1243')
+            vehicle = response.context["object"]
 
             self.assertContains(response, '<h2>8 to Tottenham Court Road</h2>')
-            self.assertContains(response, '<p>LTZ1243</p>')
+            self.assertContains(response, f'<p><a href="/vehicles/{vehicle.id}">LTZ 1243</a></p>')
             self.assertContains(response, '<td><a href="/stops/490010552N">Old Ford Road (OB)</a></td>')
             self.assertContains(response, '<td>18:55</td>')
             self.assertContains(response, '<td><a href="/stops/490004215M">Bow Church</a></td>')
