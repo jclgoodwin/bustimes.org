@@ -648,12 +648,14 @@ table {
     }
 }
 
-.trip-map {
-    height: 300px;
+.trip-map-wrapper {
+    margin: 1em -1em;
+    position: sticky;
+    top: 0;
 }
 
-.trip-map-wrapper {
-    margin: 1em 0;
+.trip-map {
+    height: 50vh;
 }
 
 .livery {
@@ -762,7 +764,8 @@ table .livery {
     }
 }
 
-.service-map {
+.service-map,
+.trip-map {
     .stop-arrow {
         background: #fff;
         border: 2px solid #87f;

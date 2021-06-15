@@ -211,9 +211,9 @@ def tfl_vehicle(request, reg):
         raise Http404
 
     try:
-        Vehicle.objects.get(reg=reg)
+        vehicle = Vehicle.objects.get(reg=reg)
     except Vehicle.DoesNotExist:
-        Vehicle.objects.create(source_id=7, code=reg, reg=reg, livery_id=262)
+        vehicle = Vehicle.objects.create(source_id=7, code=reg, reg=reg, livery_id=262)
 
     stops = StopPoint.objects.in_bulk(item['naptanId'] for item in data)
 
@@ -231,5 +231,6 @@ def tfl_vehicle(request, reg):
 
     return render(request, 'tfl_vehicle.html', {
         'data': data,
+        'object': vehicle,
         'stops_json': mark_safe(stops_json)
     })

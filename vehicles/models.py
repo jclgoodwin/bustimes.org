@@ -259,6 +259,12 @@ class Vehicle(models.Model):
     def get_absolute_url(self):
         return reverse('vehicle_detail', args=(self.id,))
 
+    def get_edit_url(self):
+        return reverse('vehicle_edit', args=(self.id,))
+
+    def get_history_url(self):
+        return reverse('vehicle_history', args=(self.id,))
+
     def fleet_number_mismatch(self):
         if self.code.isdigit():
             if self.fleet_number and self.fleet_number != int(self.code):

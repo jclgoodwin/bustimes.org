@@ -10,7 +10,7 @@
 
 <h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
 
-<p>{{ data.0.vehicleId }}</p>
+<p><a href="{{ object.get_absolute_url }}">{{ object }}</a></p>
 
 {% if stops_json %}
     <div class="trip-map-wrapper">
