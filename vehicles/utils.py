@@ -149,6 +149,12 @@ def do_revision(vehicle, data, user):
             changed_fields.append('reg')
             del data['reg']
 
+        if 'branding' in data and data['branding'] == '':
+            changes['branding'] = f"-{vehicle.branding}\n+"
+            vehicle.branding = ''
+            changed_fields.append('branding')
+            del data['branding']
+
         if 'withdrawn' in data:
             from_value = 'Yes' if vehicle.withdrawn else 'No'
             to_value = 'Yes' if data['withdrawn'] else 'No'
@@ -185,6 +191,8 @@ def do_revision(vehicle, data, user):
         vehicle=vehicle,
         user=user
     )
+
+    # operator, vehicle_type and livery have their own ForeignKey fields:
 
     if 'operator' in data:
         revision.from_operator = vehicle.operator
