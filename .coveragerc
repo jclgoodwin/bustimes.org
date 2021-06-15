@@ -15,6 +15,7 @@ source =
     vosa
 omit =
     */migrations/*
+    */fixtures/*
     busstops/static/*
     buses/asgi.py
     buses/wsgi.py

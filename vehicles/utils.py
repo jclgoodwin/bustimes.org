@@ -66,15 +66,13 @@ def do_revisions(vehicle_ids, data, user):
 
     if 'depot' in data:
         to_depot = data['depot']
+        assert to_depot
         for revision in revisions:
             if revision.vehicle.data:
                 from_depot = revision.vehicle.data.get('Depot') or ''
                 if from_depot == to_depot:
                     continue
-                if to_depot:
-                    revision.vehicle.data['Depot'] = to_depot
-                elif from_depot:
-                    del revision.vehicle.data['Depot']
+                revision.vehicle.data['Depot'] = to_depot
             else:
                 from_depot = ''
                 revision.vehicle.data = {'Depot': to_depot}

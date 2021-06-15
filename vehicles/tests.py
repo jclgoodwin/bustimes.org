@@ -36,8 +36,8 @@ class VehiclesTests(TestCase):
         cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
                                                colours='#FF0000', notes='Trent Barton', operator=cls.lynx,
                                                data={'Depot': 'Holt'})
-        livery = Livery.objects.create(colours='#FF0000 #0000FF')
-        cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=livery,
+        cls.livery = Livery.objects.create(colours='#FF0000 #0000FF')
+        cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=cls.livery,
                                                vehicle_type=spectra, operator=cls.lynx, data={'Depot': 'Long Sutton'})
 
         cls.journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
@@ -248,7 +248,7 @@ class VehiclesTests(TestCase):
         })
 
         # edit type, livery and name with bad URL
-        initial['colours'] = self.vehicle_2.livery_id
+        initial['colours'] = self.livery.id
         with self.assertNumQueries(16):
             response = self.client.post(url, {
                 **initial,
@@ -320,7 +320,7 @@ class VehiclesTests(TestCase):
             'fleet_number': '50',
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
-            'colours': self.vehicle_2.livery_id,
+            'colours': self.livery.id,
             'other_colour': '#ffffff',
             'notes': '',
             'depot': 'Long Sutton'
@@ -369,7 +369,7 @@ class VehiclesTests(TestCase):
             'fleet_number': '50',
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
-            'colours': self.vehicle_2.livery_id,
+            'colours': self.livery.id,
             'other_colour': '',
             'notes': '',
             'depot': 'Long Sutton'
@@ -432,20 +432,38 @@ class VehiclesTests(TestCase):
         self.assertFalse(VehicleEdit.objects.all())
         self.assertFalse(VehicleRevision.objects.all())
 
-        # change vehicle type and depot:
-        with self.assertNumQueries(18):
+        # change vehicle type, depot and colours:
+        with self.assertNumQueries(19):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
-                'operator': self.lynx.id,
+                'operator': self.lynx.id,  # (no change)
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'depot': 'Long Sutton',
+                'colours': self.livery.id
             })
         self.assertContains(response, '1 vehicle updated')
         revision = VehicleRevision.objects.get()
         self.assertEqual(revision.changes, {'depot': '-Holt\n+Long Sutton'})
+        self.assertIsNone(revision.from_livery)
+        self.assertTrue(revision.to_livery)
+        self.assertEqual('Optare Tempo', revision.from_type.name)
+        self.assertEqual('Optare Spectra', revision.to_type.name)
         self.assertContains(response, 'FD54 JYA')
 
-        # withdraw:
+        # reset depot, change colours
+        Vehicle.objects.filter(id=self.vehicle_1.id).update(data=None)
+        with self.assertNumQueries(16):
+            response = self.client.post('/operators/lynx/vehicles/edit', {
+                'vehicle': self.vehicle_1.id,
+                'depot': 'Long Sutton',
+                'colours': self.livery.id  # (no change)
+            })
+        revision = VehicleRevision.objects.last()
+        self.assertEqual(revision.changes, {'depot': '-\n+Long Sutton'})
+        self.assertEqual(str(revision), 'depot:  → Long Sutton')
+        self.assertContains(response, '1 vehicle updated')
+
+        # withdraw
         with self.assertNumQueries(15):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
@@ -507,7 +525,7 @@ class VehiclesTests(TestCase):
                     'garage': None},
                 {'id': self.vehicle_2.id,
                     'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
-                    'livery': {'id': self.vehicle_2.livery_id, 'name': '',
+                    'livery': {'id': self.livery.id, 'name': '',
                                'left': 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)',
                                'right': 'linear-gradient(to left,#FF0000 50%,#0000FF 50%)'},
                     'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': '', 'branding': '', 'notes': '',
