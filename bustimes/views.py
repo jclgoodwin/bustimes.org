@@ -6,7 +6,7 @@ from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Prefetch, F, Exists, OuterRef, DurationField, ExpressionWrapper
+from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404, render
@@ -15,7 +15,7 @@ from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpR
 from busstops.models import Service, DataSource, StopPoint
 from departures.live import TimetableDepartures
 from vehicles.models import Vehicle
-from .models import Route, Trip, CalendarDate
+from .models import Route, Trip
 
 
 class ServiceDebugView(DetailView):
@@ -42,19 +42,6 @@ class ServiceDebugView(DetailView):
         context['breadcrumb'] = [self.object]
 
         return context
-
-
-def services_debug(request):
-    dates = CalendarDate.objects.filter(special=True, operation=True, end_date__gt=F('start_date'))
-    dates = dates.annotate(duration=ExpressionWrapper(F('end_date') - F('start_date'), output_field=DurationField()))
-    dates = dates.filter(duration__gt=timedelta(days=5))
-    routes = Route.objects.filter(
-        Exists(Trip.objects.filter(route=OuterRef('id'), calendar__calendardate__in=dates))
-    ).order_by('source', 'code').select_related('service', 'source')
-
-    return render(request, 'services_debug.html', {
-        'routes': routes
-    })
 
 
 def route_xml(request, source, code=''):

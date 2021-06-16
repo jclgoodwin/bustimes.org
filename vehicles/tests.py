@@ -450,7 +450,7 @@ class VehiclesTests(TestCase):
         self.assertEqual('Optare Spectra', revision.to_type.name)
         self.assertContains(response, 'FD54 JYA')
 
-        # reset depot, change colours
+        # reset depot
         Vehicle.objects.filter(id=self.vehicle_1.id).update(data=None)
         with self.assertNumQueries(16):
             response = self.client.post('/operators/lynx/vehicles/edit', {
