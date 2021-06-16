@@ -135,7 +135,8 @@ class Command(ImportLiveVehiclesCommand):
                     # Connexions Buses 64
                     if operator.id == "FWYO":
                         condition |= Q(operator="HCTY")
-
+                elif operator.id == 'FBRI' and len(vehicle_ref) == 4:
+                    condition |= Q(operator="HCTP")
                 vehicles = self.vehicles.filter(condition)
             else:
                 vehicles = self.vehicles.filter(operator=operator)
