@@ -2,14 +2,14 @@ import os
 import redis
 import time_machine
 from django.core.cache import cache
-from mock import patch
+# from mock import patch
 from vcr import use_cassette
 from django.conf import settings
 from django.test import TestCase, override_settings
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney
-from ...tasks import bod_avl
-from ..commands import import_bod_avl, import_bod_avl_celery, import_bod_avl_channels
+from ...workers import SiriConsumer
+from ..commands import import_bod_avl, import_bod_avl_channels
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -61,20 +61,15 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 <td>0</td>
             </tr>""")
 
-    def test_celery_update(self):
-        command = import_bod_avl_celery.Command()
-        with patch('vehicles.management.commands.import_bod_avl.Command.get_items', return_value=[]):
-            self.assertEqual(300, command.update())
-
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_task(self):
         r = redis.from_url(settings.REDIS_URL)
         r.flushall()
 
         items = [{
-            'RecordedAtTime': '2020-06-17T08:34:00+00:00',
+            'RecordedAtTime': '2020-10-17T08:34:00+00:00',
             'ItemIdentifier': '13505681-c482-451d-a089-ee805e196e7e',
-            'ValidUntilTime': '2020-07-24T14:19:46.982911',
+            'ValidUntilTime': '2020-10-24T14:19:46.982911',
             'MonitoredVehicleJourney': {
                 'LineRef': 'U',
                 'DirectionRef': 'INBOUND',
@@ -131,10 +126,17 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }]
 
+        consumer = SiriConsumer()
         with self.assertNumQueries(29):
-            bod_avl(items)
-        with self.assertNumQueries(2):
-            bod_avl(items)
+            consumer.sirivm({
+                "when": "2020-10-15T07:46:08+00:00",
+                "items": items
+            })
+        with self.assertNumQueries(1):
+            consumer.sirivm({
+                "when": "2020-10-15T07:46:08+00:00",
+                "items": items
+            })
 
         self.assertEqual(3, VehicleLocation.objects.all().count())
 
