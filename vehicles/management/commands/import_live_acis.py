@@ -1,5 +1,7 @@
 import xml.etree.cElementTree as ET
 from time import sleep
+from django.utils import timezone
+
 from datetime import timedelta
 from random import shuffle
 from django.contrib.gis.geos import Point, Polygon
@@ -82,6 +84,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         for latitute, longitude in self.get_points():
+            self.source.datetime = timezone.now()
             for item in items_from_response(self.get_response(latitute, longitude)):
                 yield item
             self.save()

@@ -317,7 +317,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 i = 0
                 for item in items:
                     try:
-                        self.handle_item(item, now)
+                        # use `self.source.datetime` instead of `now`,
+                        # so `get_items` can increment the time
+                        # if it involves multiple spread out requests
+                        self.handle_item(item, self.source.datetime)
                     except IntegrityError as e:
                         logger.error(e, exc_info=True)
                     i += 1

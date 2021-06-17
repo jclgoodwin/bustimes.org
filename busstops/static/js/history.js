@@ -150,7 +150,7 @@
                 var table = document.createElement('table');
                 table.className = 'trip-timetable';
                 var thead = document.createElement('thead');
-                thead.innerHTML = '<tr><th>Stop</th><th>Timetable</th></tr>';
+                thead.innerHTML = '<tr><th scope="col">Stop</th><th scope="col">Timetable</th></tr>';
                 table.appendChild(thead);
 
                 var tbody = document.createElement('tbody');
@@ -203,35 +203,33 @@
                 if (previousCoordinates) {
                     var time = timestamp - previousTimestamp;
 
-                    if (time) {
-                        if (previousMarkerCoordinates.distanceTo(location.coordinates) > 100) {
-                            // vehicle has moved far enough
-                            if (previousSkippedLocation) {
-                                // mark the end of the stationary period
-                                arrowMarker(previousSkippedLocation).addTo(map);
-                                previousSkippedLocation = null;
-                            }
-                            arrowMarker(location).addTo(map);
-                            previousMarkerCoordinates = location.coordinates;
-                        } else {
-                            // vehicle has barely moved
-                            previousSkippedLocation = location;
+                    if (previousMarkerCoordinates.distanceTo(location.coordinates) > 100) {
+                        // vehicle has moved far enough
+                        if (previousSkippedLocation) {
+                            // mark the end of the stationary period
+                            arrowMarker(previousSkippedLocation).addTo(map);
+                            previousSkippedLocation = null;
                         }
+                        arrowMarker(location).addTo(map);
+                        previousMarkerCoordinates = location.coordinates;
+                    } else {
+                        // vehicle has barely moved
+                        previousSkippedLocation = location;
+                    }
 
-                        // add a marker every minute
-                        if (time < 6000000) {  // less than 10 minutes
-                            var latDistance = coordinates.lat - previousCoordinates.lat;
-                            var lngDistance = coordinates.lng - previousCoordinates.lng;
-                            var latSpeed = latDistance / time;  // really velocity
-                            var lngSpeed = lngDistance / time;
+                    // add a marker every minute
+                    if (time && time < 6000000) {  // less than 10 minutes
+                        var latDistance = coordinates.lat - previousCoordinates.lat;
+                        var lngDistance = coordinates.lng - previousCoordinates.lng;
+                        var latSpeed = latDistance / time;  // really velocity
+                        var lngSpeed = lngDistance / time;
 
-                            var minute = Math.ceil(previousTimestamp / 60000) * 60000 - previousTimestamp;
-                            for (; minute <= time; minute += 60000) {
-                                L.circleMarker(L.latLng(
-                                    previousCoordinates.lat + latSpeed * minute,
-                                    previousCoordinates.lng + lngSpeed * minute
-                                ), circleMarkerOptions).addTo(map);
-                            }
+                        var minute = Math.ceil(previousTimestamp / 60000) * 60000 - previousTimestamp;
+                        for (; minute <= time; minute += 60000) {
+                            L.circleMarker(L.latLng(
+                                previousCoordinates.lat + latSpeed * minute,
+                                previousCoordinates.lng + lngSpeed * minute
+                            ), circleMarkerOptions).addTo(map);
                         }
                     }
                 } else {
