@@ -456,18 +456,19 @@ table {
 .breadcrumb {
     border-bottom: 1px solid $brand-color-darker;
     margin: 0 -1em;
-    overflow: hidden;
+    overflow: auto;
     padding: .5em 0 0 1em;
+    white-space: nowrap;
 
     li {
-        float: left;
+        display: inline-block;
         margin: 0;
         margin-top: -.5em;
 
         &:after {
             color: $border-color-darker;
             content: '\203A';
-            float: left;
+            vertical-align: middle;
             padding: .75em .5em;
         }
 
@@ -478,8 +479,9 @@ table {
     }
 
     a {
-        float: left;
+        display: inline-block;
         padding: .75em 0;
+        vertical-align: middle;
     }
 
 }
