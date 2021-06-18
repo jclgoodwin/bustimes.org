@@ -173,7 +173,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if code:
             journey.code = code
-        elif not journey.departure_time and journey.route_name == latest_journey.route_name:
+        elif not departure_time and journey.route_name == latest_journey.route_name:
             journey = latest_journey
 
         if not journey.service_id and journey.route_name:
