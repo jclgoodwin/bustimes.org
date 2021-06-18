@@ -398,14 +398,19 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         when = None
         date = self.request.GET.get('date')
-        time = self.request.GET.get('time')
-        if date and time:
+        time_string = self.request.GET.get('time')
+        if date:
             try:
                 date = datetime.date.fromisoformat(date)
-                time = datetime.time.fromisoformat(time)
             except ValueError:
                 pass
             else:
+                time = datetime.time()
+                if time_string:
+                    try:
+                        time = datetime.time.fromisoformat(time_string)
+                    except ValueError:
+                        pass
                 when = datetime.datetime.combine(date, time)
 
         departures, _ = live.get_departures(self.object, context['services'], when)
