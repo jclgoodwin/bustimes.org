@@ -2,6 +2,5 @@ reqwest.min.js
 sorttable.js
 accessible-autocomplete
 loadjs
-leaflet
-leaflet.locatecontrol
+leaflet*
 html5shiv

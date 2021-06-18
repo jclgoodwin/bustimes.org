@@ -274,6 +274,11 @@
     function handleClick(event) {
         window.history.replaceState(null, null, '?date=' + date + event.target.hash);
         maybeOpenMap();
+
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical) {
+            canonical.remove();
+        }
     }
 
     var links = document.querySelectorAll('a[href^="#journeys/"]');
