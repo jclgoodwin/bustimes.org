@@ -396,14 +396,19 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if not (self.object.active or context['services']):
             raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
 
-        departures = cache.get(self.object.atco_code)
-        if not departures:
-            departures, max_age = live.get_departures(self.object, context['services'])
-            if hasattr(departures['departures'], 'get_departures'):
-                departures['departures'] = departures['departures'].get_departures()
-            if max_age:
-                cache.set(self.object.atco_code, departures, max_age)
+        when = None
+        date = self.request.GET.get('date')
+        time = self.request.GET.get('time')
+        if date and time:
+            try:
+                date = datetime.date.fromisoformat(date)
+                time = datetime.time.fromisoformat(time)
+            except ValueError:
+                pass
+            else:
+                when = datetime.datetime.combine(date, time)
 
+        departures, _ = live.get_departures(self.object, context['services'], when)
         context.update(departures)
         if context['departures']:
             context['live'] = any(item.get('live') for item in context['departures'])
@@ -414,7 +419,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
             'near ' + self.object.landmark if self.object.landmark else None,
         ) if part is not None)
         if text:
-            context['text'] = text[0].upper() + text[1:]
+            context['text'] = f'{text[0].upper()}{text[1:]}'
 
         context['modes'] = {service.mode for service in context['services'] if service.mode}
         context['colours'] = get_colours(context['services'])

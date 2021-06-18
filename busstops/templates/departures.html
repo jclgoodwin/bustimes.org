@@ -1,6 +1,10 @@
-{% if departures %}
+{% if when or departures %}
 <div class="aside">
-    <h2>Next departures</h2>
+    {% if when %}
+    <form>
+        <input type="date" name="date" value="{{ today.isoformat }}" /><input type="time" name="time" value="{{ when.time }}" /><input type="submit" value="Go" />
+    </form>
+    {% else %}<h2>Next departures</h2>{% endif %}
     {% for item in departures %}
         {% ifchanged item.time.date %}
             {% if forloop.first or item.time.date and item.time.date != today %}
