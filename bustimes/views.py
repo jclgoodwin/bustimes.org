@@ -78,6 +78,34 @@ def route_xml(request, source, code=''):
     return FileResponse(open(path, 'rb'), content_type='text/xml')
 
 
+def stop_time_json(stop_time, midnight):
+    service = {
+        "line_name": stop_time.trip.route.service.line_name,
+        "operators": [{
+            "id": operator.id,
+            "name": operator.name,
+            "parent": operator.parent,
+        } for operator in stop_time.trip.route.service.operator.all()]
+    }
+    destination = {
+        "atco_code": stop_time.trip.destination_id,
+        "name": stop_time.trip.destination.get_qualified_name()
+    }
+    arrival = stop_time.arrival
+    departure = stop_time.departure
+    if arrival:
+        arrival = midnight + stop_time.arrival
+    if departure:
+        departure = midnight + stop_time.departure
+    return {
+        "service": service,
+        "trip_id":  stop_time.trip_id,
+        "destination": destination,
+        "aimed_arrival_time": arrival,
+        "aimed_departure_time": departure
+    }
+
+
 def stop_times_json(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code=atco_code)
     times = []
@@ -112,32 +140,11 @@ def stop_times_json(request, atco_code):
                                     microseconds=when.microsecond)
     midnight = when - time_since_midnight
 
-    for stop_time in departures.get_times(when).prefetch_related("trip__route__service__operator")[:limit]:
-        service = {
-            "line_name": stop_time.trip.route.service.line_name,
-            "operators": [{
-                "id": operator.id,
-                "name": operator.name,
-                "parent": operator.parent,
-            } for operator in stop_time.trip.route.service.operator.all()]
-        }
-        destination = {
-            "atco_code": stop_time.trip.destination_id,
-            "name": stop_time.trip.destination.get_qualified_name()
-        }
-        arrival = stop_time.arrival
-        departure = stop_time.departure
-        if arrival:
-            arrival = midnight + stop_time.arrival
-        if departure:
-            departure = midnight + stop_time.departure
-        times.append({
-            "service": service,
-            "trip_id":  stop_time.trip_id,
-            "destination": destination,
-            "aimed_arrival_time": arrival,
-            "aimed_departure_time": departure
-        })
+    stop_times = departures.get_times(when.date(), time_since_midnight)
+    stop_times = stop_times.prefetch_related("trip__route__service__operator")[:limit]
+
+    for stop_time in stop_times:
+        times.append(stop_time_json(stop_time, midnight))
 
     return JsonResponse({
         "times": times

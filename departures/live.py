@@ -275,8 +275,8 @@ class TimetableDepartures(Departures):
             'link': trip.get_absolute_url()
         }
 
-    def get_times(self, when):
-        times = get_stop_times(when, self.stop.atco_code, self.services, self.routes)
+    def get_times(self, date, time=None):
+        times = get_stop_times(date, time, self.stop.atco_code, self.services, self.routes)
         times = times.select_related('trip__route__service', 'trip__destination__locality')
         times = times.defer('trip__route__service__geometry', 'trip__route__service__search_vector',
                             'trip__destination__locality__latlong', 'trip__destination__locality__search_vector')
@@ -287,15 +287,20 @@ class TimetableDepartures(Departures):
         times = cache.get(key)
         if times is not None:
             return times
-        time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute, seconds=self.now.second,
-                                                 microseconds=self.now.microsecond)
+        time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute)
         midnight = self.now - time_since_midnight
-        times = [self.get_row(stop_time, midnight) for stop_time in self.get_times(self.now)[:10]]
+        times = [
+            self.get_row(stop_time, midnight) for stop_time in
+            self.get_times(self.now.date(), time_since_midnight)[:10]
+        ]
         i = 0
         while len(times) < 10 and i < 3:
             i += 1
             midnight += datetime.timedelta(1)
-            times += [self.get_row(stop_time, midnight) for stop_time in self.get_times(midnight)[:10-len(times)]]
+            times += [
+                self.get_row(stop_time, midnight) for stop_time in
+                self.get_times(midnight.date())[:10-len(times)]
+            ]
         if times:
             max_age = (times[0]['time'] - self.now).seconds + 60
             cache.set(key, times, max_age)
@@ -424,17 +429,16 @@ def blend(departures, live_rows, stop=None):
         departures.sort(key=get_departure_order)
 
 
-def get_stop_times(when, stop, services, services_routes):
-    time_since_midnight = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
+def get_stop_times(date, time, stop, services, services_routes):
     times = StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop)
-    if time_since_midnight:
-        times = times.filter(departure__gte=time_since_midnight)
+    if time:
+        times = times.filter(departure__gte=time)
     services = [service for service in services if not service.timetable_wrong]
     services = {}
     routes = []
     for service_routes in services_routes.values():
-        routes += get_routes(service_routes, when.date())
-    return times.filter(trip__route__in=routes, trip__calendar__in=get_calendars(when))
+        routes += get_routes(service_routes, date)
+    return times.filter(trip__route__in=routes, trip__calendar__in=get_calendars(date))
 
 
 def get_departures(stop, services):
@@ -463,9 +467,14 @@ def get_departures(stop, services):
     departures = departures.get_departures()
 
     one_hour = datetime.timedelta(hours=1)
+    one_hour_ago = now - one_hour
 
-    if not departures or (departures[0]['time'] - now) < one_hour or (
-        get_stop_times(now - one_hour, stop.atco_code, services, routes)
+    if not departures or (departures[0]['time'] - now) < one_hour or get_stop_times(
+        one_hour_ago.date(),
+        datetime.timedelta(hours=one_hour_ago.hour, minutes=one_hour_ago.minute),
+        stop.atco_code,
+        services,
+        routes
     ).exists():
 
         operators = set()
