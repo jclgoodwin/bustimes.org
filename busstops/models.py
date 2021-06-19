@@ -864,7 +864,7 @@ class Service(models.Model):
         if timetable.date:
             previous_route = None
             for route in timetable.routes:
-                if previous_route and route.source_id == previous_route.source_id:
+                if previous_route and route.source_id == previous_route.source_id and '_FG_' not in route.code:
                     if '/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0]:
                         if route.start_date > timetable.date:
                             timetable_change = route.start_date
