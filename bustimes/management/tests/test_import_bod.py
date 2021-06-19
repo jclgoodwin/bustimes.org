@@ -106,19 +106,19 @@ class ImportBusOpenDataTest(TestCase):
             ]
         }
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get('/stops/2900W0321/times.json')
         self.assertEqual(response.json(), expected_json)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get('/stops/2900W0321/times.json?when=2020-05-01T09:15:00%2b01:00')
         self.assertEqual(response.json(), expected_json)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get('/stops/2900W0321/times.json?when=2020-05-01T09:15:00')
         self.assertEqual(response.json(), expected_json)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get('/stops/2900W0321/times.json?limit=10')
         self.assertEqual(1, len(response.json()['times']))
 

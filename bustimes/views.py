@@ -94,9 +94,9 @@ def stop_time_json(stop_time, midnight):
     arrival = stop_time.arrival
     departure = stop_time.departure
     if arrival:
-        arrival = midnight + stop_time.arrival
+        arrival += midnight
     if departure:
-        departure = midnight + stop_time.departure
+        departure += midnight
     return {
         "service": service,
         "trip_id":  stop_time.trip_id,
@@ -135,15 +135,22 @@ def stop_times_json(request, atco_code):
         else:
             routes[route.service_id] = [route]
 
-    departures = TimetableDepartures(stop, services, when, routes)
+    departures = TimetableDepartures(stop, services, None, routes)
     time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                     microseconds=when.microsecond)
     midnight = when - time_since_midnight
 
-    stop_times = departures.get_times(when.date(), time_since_midnight)
-    stop_times = stop_times.prefetch_related("trip__route__service__operator")[:limit]
+    # any journeys that started yesterday
+    yesterday_date = (when - timedelta(1)).date()
+    yesterday_time = time_since_midnight + timedelta(1)
+    stop_times = departures.get_times(yesterday_date, yesterday_time)
 
-    for stop_time in stop_times:
+    for stop_time in stop_times.prefetch_related("trip__route__service__operator")[:limit]:
+        times.append(stop_time_json(stop_time, midnight - timedelta(1)))
+
+    # journeys that started today
+    stop_times = departures.get_times(when.date(), time_since_midnight)
+    for stop_time in stop_times.prefetch_related("trip__route__service__operator")[:limit]:
         times.append(stop_time_json(stop_time, midnight))
 
     return JsonResponse({
