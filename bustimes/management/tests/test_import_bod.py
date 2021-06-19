@@ -156,7 +156,7 @@ class ImportBusOpenDataTest(TestCase):
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=directory):
-                archive_name = 'stagecoach-sccm-route-schedule-data-transxchange.zip'
+                archive_name = 'stagecoach-sccm-route-schedule-data-transxchange_2_4.zip'
                 path = os.path.join(directory, archive_name)
 
                 with zipfile.ZipFile(path, 'a') as open_zipfile:
