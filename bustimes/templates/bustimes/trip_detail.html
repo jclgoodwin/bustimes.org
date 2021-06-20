@@ -8,6 +8,12 @@
 
 {% block content %}
 
+{% if stops_json %}
+    <div class="trip-map-wrapper">
+        <div id="map" class="trip-map"></div>
+    </div>
+{% endif %}
+
 <h2>{% for stop in stops %}{% if forloop.first or forloop.last %}{{ stop.stop.locality }}{% if forloop.first %} to {% endif %}{% endif %}{% endfor %}</h2>
 
 <p>{{ trip.calendar }}</p>
@@ -15,12 +21,6 @@
 {% for note in trip.notes_set.all %}
     <p>{{ note }}</p>
 {% endfor %}
-
-{% if stops_json %}
-    <div class="trip-map-wrapper">
-        <div id="map" class="trip-map"></div>
-    </div>
-{% endif %}
 
 <table class="trip-timetable">
     <th></th><th>Timetable</th>

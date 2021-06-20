@@ -8,15 +8,15 @@
 
 {% block content %}
 
-<h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
-
-<p><a href="{{ object.get_absolute_url }}">{{ object }}</a></p>
-
 {% if stops_json %}
     <div class="trip-map-wrapper">
         <div id="map" class="trip-map"></div>
     </div>
 {% endif %}
+
+<h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
+
+<p><a href="{{ object.get_absolute_url }}">{{ object }}</a></p>
 
 <table class="trip-timetable">
     <th></th><th>Expected</th>
