@@ -1,3 +1,4 @@
+import datetime
 from django.db.models import Q, Exists, OuterRef
 from django.contrib.gis.db import models
 from django.urls import reverse
@@ -220,6 +221,17 @@ class Note(models.Model):
         return self.trip_set.first().route.service.get_absolute_url()
 
 
+def time_datetime(time, date):
+    seconds = time.total_seconds()
+    while seconds >= 86400:
+        date += datetime.timedelta(1)
+        seconds -= 86400
+    return datetime.datetime.combine(
+        date,
+        datetime.time(int(seconds / 3600), int(seconds % 3600 / 60), int(seconds % 60))
+    )
+
+
 class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE)
     inbound = models.BooleanField(default=False)
@@ -244,6 +256,12 @@ class Trip(models.Model):
     def end_time(self):
         return format_timedelta(self.end)
 
+    def start_datetime(self, date):
+        return time_datetime(self.start, date)
+
+    def end_datetime(self, date):
+        return time_datetime(self.start, date)
+
     class Meta:
         index_together = (
             ('route', 'start', 'end'),
@@ -264,12 +282,12 @@ class Trip(models.Model):
                     a_time = a.end
                     b_time = b.end
                 else:
-                    times = {time.get_key(): time.arrival_or_departure() for time in a_times}
-                    for time in b_times:
-                        key = time.get_key()
+                    times = {stop_time.get_key(): stop_time.arrival_or_departure() for stop_time in a_times}
+                    for stop_time in b_times:
+                        key = stop_time.get_key()
                         if key in times:
                             a_time = times[key]
-                            b_time = time.arrival_or_departure()
+                            b_time = stop_time.arrival_or_departure()
                             break
         if a_time > b_time:
             return 1
@@ -285,12 +303,12 @@ class Trip(models.Model):
         new_trip.start += difference
         new_trip.end += difference
         new_trip.save()
-        for time in times:
-            time.id = None
-            time.arrival += difference
-            time.departure += difference
-            time.trip = new_trip
-            time.save()
+        for stop_time in times:
+            stop_time.id = None
+            stop_time.arrival += difference
+            stop_time.departure += difference
+            stop_time.trip = new_trip
+            stop_time.save()
 
     def __repr__(self):
         return str(self.start)
@@ -334,8 +352,14 @@ class StopTime(models.Model):
     def arrival_time(self):
         return format_timedelta(self.arrival)
 
+    def arrival_datetime(self, date):
+        return time_datetime(self.arrival, date)
+
     def departure_time(self):
         return format_timedelta(self.departure)
+
+    def departure_datetime(self, date):
+        return time_datetime(self.departure, date)
 
     def is_minor(self):
         return self.timing_status == 'OTH'

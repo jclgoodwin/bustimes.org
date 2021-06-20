@@ -78,7 +78,7 @@ def route_xml(request, source, code=''):
     return FileResponse(open(path, 'rb'), content_type='text/xml')
 
 
-def stop_time_json(stop_time, midnight):
+def stop_time_json(stop_time, date):
     service = {
         "line_name": stop_time.trip.route.service.line_name,
         "operators": [{
@@ -93,10 +93,10 @@ def stop_time_json(stop_time, midnight):
     }
     arrival = stop_time.arrival
     departure = stop_time.departure
-    if arrival:
-        arrival += midnight
-    if departure:
-        departure += midnight
+    if arrival is not None:
+        arrival = timezone.make_aware(stop_time.arrival_datetime(date))
+    if departure is not None:
+        departure = timezone.make_aware(stop_time.departure_datetime(date))
     return {
         "service": service,
         "trip_id":  stop_time.trip_id,
@@ -138,7 +138,6 @@ def stop_times_json(request, atco_code):
     departures = TimetableDepartures(stop, services, None, routes)
     time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                     microseconds=when.microsecond)
-    midnight = when - time_since_midnight
 
     # any journeys that started yesterday
     yesterday_date = (when - timedelta(1)).date()
@@ -146,12 +145,12 @@ def stop_times_json(request, atco_code):
     stop_times = departures.get_times(yesterday_date, yesterday_time)
 
     for stop_time in stop_times.prefetch_related("trip__route__service__operator")[:limit]:
-        times.append(stop_time_json(stop_time, midnight - timedelta(1)))
+        times.append(stop_time_json(stop_time, yesterday_date))
 
     # journeys that started today
     stop_times = departures.get_times(when.date(), time_since_midnight)
     for stop_time in stop_times.prefetch_related("trip__route__service__operator")[:limit]:
-        times.append(stop_time_json(stop_time, midnight))
+        times.append(stop_time_json(stop_time, when.date()))
 
     return JsonResponse({
         "times": times

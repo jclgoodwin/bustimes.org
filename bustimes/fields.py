@@ -25,12 +25,10 @@ class SecondsField(DurationField):
             return value
         if isinstance(value, str):
             value = parse_duration(value)
-        return int(round(value.total_seconds()))
+        return int(value.total_seconds())
 
     @staticmethod
     def convert(value, _expression, _connection, _context=None):
         if value is None:
             return value
-        # if type(value) is timedelta:
-        #     return value
         return timedelta(seconds=value)
