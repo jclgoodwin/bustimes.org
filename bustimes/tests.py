@@ -1,5 +1,5 @@
 import os
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, timezone
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import DataSource
@@ -42,23 +42,23 @@ class BusTimesTest(TestCase):
         trip.end = timedelta(hours=11, minutes=00, seconds=00)
         self.assertEqual(
             trip.start_datetime(date(2021, 6, 20)),
-            datetime(2021, 6, 20, 10, 47, 30)
+            datetime(2021, 6, 20, 10, 47, 30, tzinfo=timezone(timedelta(hours=1)))
         )
         self.assertEqual(
             trip.end_datetime(date(2021, 6, 20)),
-            datetime(2021, 6, 20, 11, 00, 00)
+            datetime(2021, 6, 20, 11, tzinfo=timezone(timedelta(hours=1)))
         )
         self.assertEqual(
             trip.start_datetime(date(2021, 11, 1)),
-            datetime(2021, 11, 1, 10, 47, 30)
+            datetime(2021, 11, 1, 10, 47, 30, tzinfo=timezone(timedelta()))
         )
 
         trip.start = timedelta(hours=25, minutes=47, seconds=30)
         self.assertEqual(
             trip.start_datetime(date(2021, 6, 20)),
-            datetime(2021, 6, 21, 1, 47, 30)
+            datetime(2021, 6, 21, 1, 47, 30, tzinfo=timezone(timedelta(hours=1)))
         )
         self.assertEqual(
             trip.start_datetime(date(2021, 10, 31)),
-            datetime(2021, 11, 1, 1, 47, 30)
+            datetime(2021, 11, 1, 1, 47, 30, tzinfo=timezone(timedelta()))
         )

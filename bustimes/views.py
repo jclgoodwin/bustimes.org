@@ -94,9 +94,9 @@ def stop_time_json(stop_time, date):
     arrival = stop_time.arrival
     departure = stop_time.departure
     if arrival is not None:
-        arrival = timezone.make_aware(stop_time.arrival_datetime(date))
+        arrival = stop_time.arrival_datetime(date)
     if departure is not None:
-        departure = timezone.make_aware(stop_time.departure_datetime(date))
+        departure = stop_time.departure_datetime(date)
     return {
         "service": service,
         "trip_id":  stop_time.trip_id,

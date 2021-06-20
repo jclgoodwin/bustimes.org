@@ -260,15 +260,15 @@ class AcisHorizonDepartures(Departures):
 
 
 class TimetableDepartures(Departures):
-    def get_row(self, stop_time, midnight):
+    def get_row(self, stop_time, date):
         trip = stop_time.trip
         destination = trip.destination
         if stop_time.departure is not None:
-            time = midnight + stop_time.departure
+            time = stop_time.departure_datetime(date)
         else:
-            time = midnight + stop_time.arrival
+            time = stop_time.arrival_datetime(date)
         return {
-            'origin_departure_time': midnight + trip.start,
+            'origin_departure_time': trip.start_datetime(date),
             'time': time,
             'destination': destination.locality or destination.town or destination.common_name,
             'service': trip.route.service,
@@ -283,27 +283,20 @@ class TimetableDepartures(Departures):
         return times.order_by('departure')
 
     def get_departures(self):
-        key = f'TimetableDepartures:{self.stop.atco_code}'
-        times = cache.get(key)
-        if times is not None:
-            return times
         time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute)
-        midnight = self.now - time_since_midnight
+        date = self.now.date()
         times = [
-            self.get_row(stop_time, midnight) for stop_time in
-            self.get_times(self.now.date(), time_since_midnight)[:10]
+            self.get_row(stop_time, date) for stop_time in
+            self.get_times(date, time_since_midnight)[:10]
         ]
         i = 0
         while len(times) < 10 and i < 3:
             i += 1
-            midnight += datetime.timedelta(1)
+            date += datetime.timedelta(1)
             times += [
-                self.get_row(stop_time, midnight) for stop_time in
-                self.get_times(midnight.date())[:10-len(times)]
+                self.get_row(stop_time, date) for stop_time in
+                self.get_times(date)[:10-len(times)]
             ]
-        if times:
-            max_age = (times[0]['time'] - self.now).seconds + 60
-            cache.set(key, times, max_age)
         return times
 
     def __init__(self, stop, services, now, routes):
@@ -441,16 +434,16 @@ def get_stop_times(date, time, stop, services, services_routes):
     return times.filter(trip__route__in=routes, trip__calendar__in=get_calendars(date))
 
 
-def get_departures(stop, services):
+def get_departures(stop, services, when):
     """Given a StopPoint object and an iterable of Service objects,
     returns a tuple containing a context dictionary and a max_age integer
     """
 
     # Transport for London
-    if any(service.service_code[:4] == 'tfl_' for service in services):
+    if not when and any(service.service_code[:4] == 'tfl_' for service in services):
         departures = TflDepartures(stop, services)
         return ({
-            'departures': departures,
+            'departures': departures.get_departures(),
             'today': timezone.localdate(),
         }, 60)
 
@@ -463,19 +456,20 @@ def get_departures(stop, services):
         else:
             routes[route.service_id] = [route]
 
-    departures = TimetableDepartures(stop, services, now, routes)
-    departures = departures.get_departures()
+    departures = TimetableDepartures(stop, services, when or now, routes).get_departures()
 
     one_hour = datetime.timedelta(hours=1)
     one_hour_ago = now - one_hour
 
-    if not departures or (departures[0]['time'] - now) < one_hour or get_stop_times(
+    if when:
+        pass
+    elif not departures or ((departures[0]['time'] - now) < one_hour or get_stop_times(
         one_hour_ago.date(),
         datetime.timedelta(hours=one_hour_ago.hour, minutes=one_hour_ago.minute),
         stop.atco_code,
         services,
         routes
-    ).exists():
+    ).exists()):
 
         operators = set()
         for service in services:

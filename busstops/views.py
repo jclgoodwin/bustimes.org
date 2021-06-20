@@ -412,6 +412,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
                     except ValueError:
                         pass
                 when = datetime.datetime.combine(date, time)
+                context['when'] = when
 
         departures, _ = live.get_departures(self.object, context['services'], when)
         context.update(departures)

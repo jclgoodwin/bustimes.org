@@ -1,7 +1,7 @@
 import os
 import requests
-from datetime import datetime
-from django.utils.timezone import utc
+import datetime
+from django.utils.timezone import utc, make_aware
 from django.utils.http import http_date, parse_http_date
 
 
@@ -44,7 +44,7 @@ def download_if_changed(path, url, params=None):
     elif 'last-modified' in response.headers:
         last_modified = response.headers['last-modified']
     if last_modified:
-        last_modified = datetime.fromtimestamp(parse_http_date(last_modified), utc)
+        last_modified = datetime.datetime.fromtimestamp(parse_http_date(last_modified), utc)
 
     return modified, last_modified
 
@@ -56,3 +56,16 @@ def format_timedelta(timedelta):
         if len(timedelta) == 4:
             return '0' + timedelta
         return timedelta
+
+
+def time_datetime(time, date):
+    seconds = time.total_seconds()
+    while seconds >= 86400:
+        date += datetime.timedelta(1)
+        seconds -= 86400
+    return make_aware(
+        datetime.datetime.combine(
+            date,
+            datetime.time(int(seconds / 3600), int(seconds % 3600 / 60), int(seconds % 60))
+        )
+    )

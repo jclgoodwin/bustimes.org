@@ -1,9 +1,8 @@
-import datetime
 from django.db.models import Q, Exists, OuterRef
 from django.contrib.gis.db import models
 from django.urls import reverse
 from .fields import SecondsField
-from .utils import format_timedelta
+from .utils import format_timedelta, time_datetime
 
 
 def get_routes(routes, when):
@@ -221,17 +220,6 @@ class Note(models.Model):
         return self.trip_set.first().route.service.get_absolute_url()
 
 
-def time_datetime(time, date):
-    seconds = time.total_seconds()
-    while seconds >= 86400:
-        date += datetime.timedelta(1)
-        seconds -= 86400
-    return datetime.datetime.combine(
-        date,
-        datetime.time(int(seconds / 3600), int(seconds % 3600 / 60), int(seconds % 60))
-    )
-
-
 class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE)
     inbound = models.BooleanField(default=False)
@@ -260,7 +248,7 @@ class Trip(models.Model):
         return time_datetime(self.start, date)
 
     def end_datetime(self, date):
-        return time_datetime(self.start, date)
+        return time_datetime(self.end, date)
 
     class Meta:
         index_together = (
