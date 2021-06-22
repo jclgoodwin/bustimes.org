@@ -326,7 +326,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_service_map_data(self):
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.get(f'/services/{self.service.id}.json')
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertEqual(response.status_code, 200)

@@ -14,7 +14,7 @@ from django.utils import timezone
 from busstops.models import DataSource, Operator, Service
 from .import_transxchange import Command as TransXChangeCommand
 from ...utils import download, download_if_changed
-from ...models import Route, Calendar
+from ...models import Route
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,6 @@ def clean_up(operators, sources, incomplete=False):
         routes = routes.filter(source__url__contains='bus-data.dft.gov.uk')
     routes.delete()
     Service.objects.filter(operator__in=operators, current=True, route=None).update(current=False)
-    Calendar.objects.filter(trip=None).delete()
 
 
 def get_operator_ids(source):
@@ -166,6 +165,7 @@ def bus_open_data(api_key, operator):
                 print('  ', [o for o in operator_ids if o not in operators])
 
                 command.mark_old_services_as_not_current()
+
                 command.finish_services()
 
         # delete routes from any sources that have been made inactive
@@ -211,9 +211,10 @@ def ticketer(operator=None):
             handle_file(command, filename)
 
             command.mark_old_services_as_not_current()
-            command.finish_services()
 
             clean_up(operators, [command.source])
+
+            command.finish_services()
 
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
@@ -260,9 +261,10 @@ def stagecoach(operator=None):
             handle_file(command, filename)
 
             command.mark_old_services_as_not_current()
-            command.finish_services()
 
             clean_up(nocs, [command.source])
+
+            command.finish_services()
 
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime', 'url'])
