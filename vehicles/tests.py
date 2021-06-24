@@ -155,6 +155,25 @@ class VehiclesTests(TestCase):
         self.location.refresh_from_db()
         self.assertEqual(str(self.location), '19 Oct 2020 23:47:00')
 
+    def test_livery_admin(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get('/admin/vehicles/livery/')
+        self.assertContains(response, '<td class="field-name"></td>')
+        self.assertContains(response, '<td class="field-vehicles">1</td>')
+        self.assertContains(response, '<td class="field-left">\
+<div style="height:1.5em;width:2.25em;background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">\
+</div></td>')
+        self.assertContains(response, '<td class="field-right">\
+<div style="height:1.5em;width:2.25em;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">\
+</div></td>')
+
+    def test_journey_admin(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get('/admin/vehicles/vehiclejourney/?trip__isnull=1')
+        self.assertContains(response, '0 of 1 selected')
+
     def test_search(self):
         response = self.client.get('/search?q=fd54jya')
         self.assertContains(response, '1 vehicle')
@@ -474,6 +493,21 @@ class VehiclesTests(TestCase):
         self.assertEqual(revision.changes, {'withdrawn': '-No\n+Yes'})
         self.assertContains(response, '1 vehicle updated')
         self.assertNotContains(response, 'FD54 JYA')
+
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get('/admin/vehicles/vehiclerevision/?change=changes__depot')
+        self.assertContains(response, "2 vehicle revisions")
+
+        self.assertEqual(VehicleRevision.objects.count(), 3)
+
+        # revert
+        self.client.post('/admin/vehicles/vehiclerevision/', {
+            'action': 'revert',
+            '_selected_action': revision.id
+        })
+        response = self.client.get('/admin/vehicles/vehiclerevision/')
+        self.assertContains(response, "reverted [&#x27;withdrawn&#x27;]")
 
     def test_validation(self):
         vehicle = Vehicle(colours='ploop')
