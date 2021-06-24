@@ -255,35 +255,6 @@ class Trip(models.Model):
             ('route', 'start', 'end'),
         )
 
-    def __cmp__(a, b):
-        """Compare two journeys"""
-        if a.sequence is not None and b.sequence is not None:
-            a_time = a.sequence
-            b_time = b.sequence
-            # (in practice, the journey sequence number is not always reliable)
-        else:
-            a_time = a.start
-            b_time = b.start
-        a_times = a.stoptime_set.all()
-        b_times = b.stoptime_set.all()
-        if a_times and b_times and a_times[0].get_key() != b_times[0].get_key():
-            if a.destination_id == b.destination_id:
-                a_time = a.end
-                b_time = b.end
-            else:
-                times = {stop_time.get_key(): stop_time.arrival_or_departure() for stop_time in a_times}
-                for stop_time in b_times:
-                    key = stop_time.get_key()
-                    if key in times:
-                        a_time = times[key]
-                        b_time = stop_time.arrival_or_departure()
-                        break
-        if a_time > b_time:
-            return 1
-        if a_time < b_time:
-            return -1
-        return 0
-
     def copy(self, start):
         difference = start - self.start
         new_trip = Trip.objects.get(id=self.id)

@@ -1,7 +1,7 @@
 import datetime
 from django.utils.timezone import localdate
 from difflib import Differ
-from functools import cmp_to_key
+from functools import cmp_to_key, partial
 from django.db.models import Prefetch
 from .utils import format_timedelta
 from .models import get_calendars, get_routes, Calendar, Trip, StopTime
@@ -82,6 +82,51 @@ def get_stop_usages(trips):
     return groupings
 
 
+def compare_trips(rows, trip_ids, a, b):
+    a_top = None
+    a_bottom = None
+    b_top = None
+    b_bottom = None
+    a_index = trip_ids.index(a.id)
+    b_index = trip_ids.index(b.id)
+
+    for i, row in enumerate(rows):
+        if row.times[a_index]:
+            if a_top is None:
+                a_top = i
+            a_bottom = i
+        if row.times[b_index]:
+            if b_top is None:
+                b_top = i
+            b_bottom = i
+
+    if a_top == b_top:
+        a_time = a.start
+        b_time = b.start
+    elif a_bottom == b_bottom:
+        a_time = a.end
+        b_time = b.end
+    elif a_top >= b_bottom:  # b is above a
+        a_time = a.start
+        b_time = b.end
+    elif b_top >= a_bottom:  # a is above a
+        a_time = a.end
+        b_time = b.start
+    else:
+        a_time = a.start
+        b_time = b.start
+
+    if a_time > b_time:
+        return 1  # a is later
+    elif a_time < b_time:
+        return -1  # b is later
+    elif a_top >= b_bottom:  # b is above a
+        return 1
+    elif b_top >= a_bottom:  # a is above a
+        return -1
+    return 0
+
+
 class Timetable:
     def __init__(self, routes, date):
         self.today = localdate()
@@ -129,30 +174,50 @@ class Timetable:
         if not self.calendar:
             calendar_ids = [calendar.id for calendar in self.calendars]
             trips = trips.filter(calendar__in=get_calendars(self.date, calendar_ids))
-        trips = trips.order_by('start').defer('route__service__geometry').select_related('route__service')
-        trips = trips.prefetch_related('notes', 'stoptime_set')
+        trips = trips.defer(
+            'route__service__geometry'
+        ).select_related(
+            'route__service'
+        ).prefetch_related(
+            'notes',
+            'stoptime_set'
+        )
 
         for trip in trips:
             if trip.inbound:
-                grouping = self.groupings[1]
+                self.groupings[1].trips.append(trip)
             else:
-                grouping = self.groupings[0]
-            grouping.trips.append(trip)
+                self.groupings[0].trips.append(trip)
 
         del trips
 
         for grouping in self.groupings:
-            grouping.trips.sort(key=cmp_to_key(Trip.__cmp__))
+
+            # longest trips first, to minimise duplicate rows
+            grouping.trips.sort(key=lambda t: -len(t.stoptime_set.all()))
+
+            # build the table
             for trip in grouping.trips:
                 grouping.handle_trip(trip)
 
-        if all(g.trips for g in self.groupings):
-            self.groupings.sort(key=Grouping.get_order)
+            trip_ids = [trip.id for trip in grouping.trips]
 
-        for grouping in self.groupings:
+            # sort columns properly, now we have the rows
+            grouping.trips.sort(key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids)))
+
+            new_trip_ids = [trip.id for trip in grouping.trips]
+            indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
+
             for row in grouping.rows:
+                # reassemble in order
+                row.times = [row.times[i] for i in indices]
+
                 row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
+
             grouping.do_heads_and_feet()
+
+        if all(grouping.trips for grouping in self.groupings):
+            self.groupings.sort(key=Grouping.get_order)
 
     def get_date_options(self):
         date = self.today
