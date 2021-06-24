@@ -3,6 +3,7 @@ from django.db.models import Exists, OuterRef
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
 from django.urls import reverse
+from vehicles.admin import TripIsNullFilter
 from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime, Garage
 
 
@@ -46,6 +47,7 @@ class CalendarDateAdmin(admin.ModelAdmin):
 class CalendarAdmin(admin.ModelAdmin):
     list_display = ['id', '__str__', 'summary']
     inlines = [CalendarDateInline]
+    list_filter = [TripIsNullFilter]
     readonly_fields = ['routes']
 
     def routes(self, obj):

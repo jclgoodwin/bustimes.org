@@ -77,7 +77,7 @@ class VehicleAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator', 'source')
     search_fields = ('code', 'fleet_code', 'reg')
     ordering = ('-id',)
-    actions = ('copy_livery', 'copy_type', 'make_livery', 'merge')
+    actions = ('copy_livery', 'copy_type', 'make_livery', 'merge', 'spare_ticket_machine')
     inlines = [VehicleEditInline]
     readonly_fields = ['latest_journey_data']
 
@@ -124,6 +124,12 @@ class VehicleAdmin(admin.ModelAdmin):
                 first.reg = vehicle.reg
                 vehicle.delete()
                 first.save(update_fields=['code', 'fleet_code', 'fleet_number', 'reg'])
+
+    def spare_ticket_machine(self, request, queryset):
+        queryset.update(
+            reg='', fleet_code='', fleet_number=None, name='', colours='',
+            livery=None, branding='', vehicle_type=None, notes='Spare ticket machine',
+        )
 
     def last_seen(self, obj):
         if obj.latest_journey:
