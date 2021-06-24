@@ -222,6 +222,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if location.heading is None:
                     location.heading = latest['heading']
         else:
+            existing_id = journey.id
             journey.source = self.source
             if not journey.datetime:
                 journey.datetime = location.datetime
@@ -229,6 +230,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 journey.save()
             except IntegrityError:
                 journey = vehicle.vehiclejourney_set.defer('data').using('default').get(datetime=journey.datetime)
+            else:
+                if existing_id:
+                    # just in case the id has been reused
+                    # (after a database backup restore)
+                    self.redis.delete(f'journey{self.journey_id}')
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
