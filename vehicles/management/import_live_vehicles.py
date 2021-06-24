@@ -231,10 +231,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except IntegrityError:
                 journey = vehicle.vehiclejourney_set.defer('data').using('default').get(datetime=journey.datetime)
             else:
-                if existing_id:
+                if not existing_id:
                     # just in case the id has been reused
                     # (after a database backup restore)
-                    self.redis.delete(f'journey{self.journey_id}')
+                    self.redis.delete(f'journey{journey.id}')
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
