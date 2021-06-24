@@ -58,6 +58,10 @@ class ImportBusOpenDataTest(TestCase):
         route = Route.objects.get()
         self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
 
+        with self.assertNumQueries(3):
+            response = self.client.get(f'/services/{route.service_id}.json')
+        self.assertTrue(response.json()['geometry'])
+
         self.assertFalse(route.service.public_use)
 
         # a TicketMachineServiceCode should have been created
@@ -198,6 +202,10 @@ class ImportBusOpenDataTest(TestCase):
                 response = self.client.get(route.get_absolute_url())
                 self.assertEqual(200, response.status_code)
                 self.assertEqual('', response.filename)
+
+        with self.assertNumQueries(3):
+            response = self.client.get(f'/services/{route.service_id}.json')
+        self.assertTrue(response.json()['geometry'])
 
         self.assertEqual(1, Service.objects.count())
         self.assertEqual(2, Route.objects.count())

@@ -790,7 +790,7 @@ def service_map_data(request, service_id):
             } for stop in stops]
         }
     }
-    route = service.route_set.filter(geometry__isnull=False).only('geometry')
+    route = service.route_set.filter(geometry__isnull=False).only('geometry', 'service').first()
     if route:
         data['geometry'] = json.loads(route.geometry.simplify().json)
     elif service.geometry:
