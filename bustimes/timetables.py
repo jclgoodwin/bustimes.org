@@ -403,7 +403,7 @@ class Grouping:
             return
 
         previous_trip = None
-        previous_note_ids = None
+        previous_note_ids = ()
         in_a_row = 0
         prev_difference = None
 
