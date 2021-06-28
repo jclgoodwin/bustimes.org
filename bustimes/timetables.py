@@ -403,7 +403,6 @@ class Grouping:
             return
 
         previous_trip = None
-        previous_notes = None
         previous_note_ids = None
         in_a_row = 0
         prev_difference = None
@@ -414,12 +413,18 @@ class Grouping:
             difference = None
             notes = trip.notes.all()
             note_ids = {note.id for note in notes}
+
+            # add notes
             for note in notes:
                 if note.id in self.column_feet:
-                    if note in previous_notes:
+                    if note.id in previous_note_ids:
                         self.column_feet[note.id][-1].span += 1
                     else:
                         self.column_feet[note.id].append(ColumnFoot(note))
+                elif note.id in previous_note_ids:
+                    assert max_notes == 1
+                    for note_id in self.column_feet:
+                        self.column_feet[note_id][-1].span += 1
                 elif i:  # not the first trip
                     if max_notes == 1 and self.column_feet:
                         # assert len(self.column_feet) == 1
@@ -429,14 +434,17 @@ class Grouping:
                         self.column_feet[note.id] = [ColumnFoot(None, i), ColumnFoot(note)]
                 else:
                     self.column_feet[note.id] = [ColumnFoot(note)]
-            for key in self.column_feet:
-                if not any(key == note.id for note in notes):
-                    if not self.column_feet[key][-1].notes:
-                        # expand existing empty cell
-                        self.column_feet[key][-1].span += 1
-                    else:
-                        # new empty cell
-                        self.column_feet[key].append(ColumnFoot(None, 1))
+
+            # add or expand empty cells
+            if max_notes > 1 or not notes:
+                for key in self.column_feet:
+                    if key not in note_ids:
+                        if not self.column_feet[key][-1].notes:
+                            # expand existing empty cell
+                            self.column_feet[key][-1].span += 1
+                        else:
+                            # new empty cell
+                            self.column_feet[key].append(ColumnFoot(None, 1))
 
             if previous_trip:
                 if previous_trip.route.service_id != trip.route.service_id:
@@ -462,7 +470,6 @@ class Grouping:
 
             prev_difference = difference
             previous_trip = trip
-            previous_notes = notes
             previous_note_ids = note_ids
 
         if previous_trip:

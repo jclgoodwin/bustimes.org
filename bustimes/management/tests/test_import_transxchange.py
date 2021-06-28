@@ -616,12 +616,10 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(3, feet[0].span)
         self.assertEqual(1, feet[1].span)
-        self.assertEqual(1, feet[2].span)
-        self.assertEqual(1, feet[3].span)
+        self.assertEqual(3, feet[2].span)
+        self.assertEqual(22, feet[3].span)
         self.assertEqual(1, feet[4].span)
-        self.assertEqual(22, feet[5].span)
-        self.assertEqual(1, feet[6].span)
-        self.assertEqual(6, feet[7].span)
+        self.assertEqual(6, feet[5].span)
 
     def test_service_error(self):
         """A file with some wrong references should be handled gracefully"""
