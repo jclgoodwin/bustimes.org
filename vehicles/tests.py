@@ -499,8 +499,6 @@ class VehiclesTests(TestCase):
         response = self.client.get('/admin/vehicles/vehiclerevision/?change=changes__depot')
         self.assertContains(response, "2 vehicle revisions")
 
-        self.assertEqual(VehicleRevision.objects.count(), 3)
-
         # revert
         self.client.post('/admin/vehicles/vehiclerevision/', {
             'action': 'revert',

@@ -171,8 +171,6 @@ def get_open_data_operators():
     for setting in settings.TICKETER_OPERATORS:
         open_data_operators += setting[1]
 
-    incomplete_operators.append('SEMM')  # h semmence & co
-
     return set(open_data_operators), set(incomplete_operators)
 
 

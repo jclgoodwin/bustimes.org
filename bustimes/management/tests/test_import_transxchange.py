@@ -2,6 +2,8 @@ import os
 import zipfile
 import xml.etree.cElementTree as ET
 import time_machine
+from functools import partial
+from pathlib import Path
 from mock import patch
 from unittest import skip
 from tempfile import TemporaryDirectory
@@ -15,7 +17,7 @@ from ...models import Route, Trip, Calendar, CalendarDate
 from ..commands import import_transxchange
 
 
-FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
+FIXTURES_DIR = Path(os.path.dirname(os.path.abspath(__file__))) / 'fixtures'
 
 
 @override_settings(
@@ -74,7 +76,7 @@ class ImportTransXChangeTest(TestCase):
         command.set_region(archive_name)
         command.source.datetime = timezone.now()
         for filename in filenames:
-            path = os.path.join(FIXTURES_DIR, filename)
+            path = FIXTURES_DIR / filename
             with open(path, 'r') as open_file:
                 command.handle_file(open_file, filename)
         command.finish_services()
@@ -82,7 +84,7 @@ class ImportTransXChangeTest(TestCase):
     @classmethod
     def write_files_to_zipfile_and_import(cls, zipfile_name, filenames):
         with TemporaryDirectory() as directory:
-            zipfile_path = os.path.join(directory, zipfile_name)
+            zipfile_path = Path(directory) / zipfile_name
             with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
                 for filename in filenames:
                     cls.write_file_to_zipfile(open_zipfile, filename)
@@ -90,7 +92,7 @@ class ImportTransXChangeTest(TestCase):
 
     @staticmethod
     def write_file_to_zipfile(open_zipfile, filename):
-        open_zipfile.write(os.path.join(FIXTURES_DIR, filename), filename)
+        open_zipfile.write(FIXTURES_DIR / filename, filename)
 
     @time_machine.travel('3 October 2016')
     def test_east_anglia(self):
@@ -579,6 +581,48 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(trips[0]), '21:45')
         self.assertEqual(str(trips[1]), '21:45')
 
+    @time_machine.travel('2021-06-28')
+    def test_difficult_layout(self):
+        call_command('import_transxchange', FIXTURES_DIR / 'square_COMT_100_06100B.xml')
+
+        response = self.client.get(Service.objects.get().get_absolute_url())
+        timetable = response.context_data['timetable']
+
+        self.assertEqual(179, len(timetable.groupings[0].rows))
+        self.assertEqual(179, len(timetable.groupings[1].rows))
+
+        self.assertEqual(
+            str(timetable.groupings[0].rows[0].times), 
+            "['', '', 07:16, '', 08:20, '', 09:38, '', 10:38, '', 11:38, '', 12:38, '', 13:38, '', '', 14:38, '',"
+            " 15:38, '', '', '', 16:45, '', 17:45, '']"
+        )
+
+        self.assertEqual(
+            str(timetable.groupings[1].rows[0].times),
+            "['', '', 06:41, '', '', 07:41, '', '', 09:11, '', 10:11, '', 11:11, '', 12:11, '', 13:11, '', 14:26, '',"
+            " 15:26, '', 16:26, 17:26, 18:06]"
+        )
+
+    @time_machine.travel('2021-06-28')
+    def test_different_notes_in_same_row(self):
+        call_command('import_transxchange', FIXTURES_DIR / 'twm_3-74-_-y11-1.xml')
+
+        response = self.client.get(Service.objects.get().get_absolute_url())
+        timetable = response.context_data['timetable']
+
+        self.assertEqual(26, len(timetable.groupings[0].rows))
+
+        feet = list(timetable.groupings[0].column_feet.values())[0]
+
+        self.assertEqual(3, feet[0].span)
+        self.assertEqual(1, feet[1].span)
+        self.assertEqual(1, feet[2].span)
+        self.assertEqual(1, feet[3].span)
+        self.assertEqual(1, feet[4].span)
+        self.assertEqual(22, feet[5].span)
+        self.assertEqual(1, feet[6].span)
+        self.assertEqual(6, feet[7].span)
+
     def test_service_error(self):
         """A file with some wrong references should be handled gracefully"""
         with self.assertLogs(level='ERROR'):
@@ -699,13 +743,13 @@ class ImportTransXChangeTest(TestCase):
     def test_megabus(self):
         # simulate a National Coach Service Database zip file
         with TemporaryDirectory() as directory:
-            zipfile_path = os.path.join(directory, 'NCSD.zip')
+            zipfile_path = Path(directory) / 'NCSD.zip'
             with zipfile.ZipFile(zipfile_path, 'a') as open_zipfile:
-                self.write_file_to_zipfile(open_zipfile, os.path.join('NCSD_TXC',
-                                           'Megabus_Megabus14032016 163144_MEGA_M11A.xml'))
-                self.write_file_to_zipfile(open_zipfile, os.path.join('NCSD_TXC',
-                                           'Megabus_Megabus14032016 163144_MEGA_M12.xml'))
-                self.write_file_to_zipfile(open_zipfile, 'IncludedServices.csv')
+                write_to_zipfile = partial(self.write_file_to_zipfile, open_zipfile)
+                path = Path('NCSD_TXC')
+                write_to_zipfile(path / 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
+                write_to_zipfile(path / 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
+                write_to_zipfile('IncludedServices.csv')
             call_command('import_transxchange', zipfile_path)
             # test re-importing a previously imported service again
             call_command('import_transxchange', zipfile_path)
