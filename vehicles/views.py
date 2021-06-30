@@ -2,6 +2,7 @@ import redis
 import json
 import xml.etree.cElementTree as ET
 import datetime
+from ciso8601 import parse_datetime
 from haversine import haversine
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Min
@@ -588,7 +589,7 @@ def journey_json(request, pk):
                 'coordinates': location[1],
                 'delta': location[3],
                 'direction': location[2],
-                'datetime': location[0]
+                'datetime': parse_datetime(location[0])
             } for location in locations if location[1][0] and location[1][1]]
             data['locations'].sort(key=lambda location: location['datetime'])
     except redis.exceptions.ConnectionError:
