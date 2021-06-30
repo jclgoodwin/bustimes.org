@@ -2,8 +2,6 @@
 
 {% block title %}{{ data.0.lineName }} to {{ data.0.destinationName }} – bustimes.org{% endblock %}
 
-{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
-
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
@@ -16,8 +14,6 @@
 
 <h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
 
-<p><a href="{{ object.get_absolute_url }}">{{ object }}</a></p>
-
 <table class="trip-timetable">
     <th></th><th>Expected</th>
     <tbody>
@@ -29,6 +25,10 @@
 {% endfor %}
 </tbody>
 </table>
+
+<h2 id="vehicle">{{ object }}</h2>
+
+{% include 'vehicle_info.html' with vehicle=object %}
 
 {% endblock %}
 

@@ -281,7 +281,9 @@ class Command(BaseCommand):
             if operator:
                 return operator
 
-        missing_operator = ET.tostring(operator_element, encoding="unicode")
+        missing_operator = {
+            element.tag: element.text for element in operator_element
+        }
         if missing_operator not in self.missing_operators:
             self.missing_operators.append(missing_operator)
 

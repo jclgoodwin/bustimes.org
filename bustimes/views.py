@@ -10,6 +10,7 @@ from django.db.models import Prefetch
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404, render
+from django.views.decorators.http import require_GET
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
 from busstops.models import Service, DataSource, StopPoint
@@ -44,6 +45,7 @@ class ServiceDebugView(DetailView):
         return context
 
 
+@require_GET
 def route_xml(request, source, code=''):
     source = get_object_or_404(DataSource, id=source)
 
@@ -106,6 +108,7 @@ def stop_time_json(stop_time, date):
     }
 
 
+@require_GET
 def stop_times_json(request, atco_code):
     stop = get_object_or_404(StopPoint, atco_code=atco_code)
     times = []
@@ -157,6 +160,7 @@ def stop_times_json(request, atco_code):
     })
 
 
+@require_GET
 def trip_json(request, id):
     trip = get_object_or_404(Trip, id=id)
     times = []
@@ -203,17 +207,25 @@ class TripDetailView(DetailView):
         return context
 
 
+@require_GET
 def tfl_vehicle(request, reg):
     reg = reg.upper()
 
     data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals', params=settings.TFL).json()
+
+    vehicles = Vehicle.objects.select_related('livery', 'operator', 'vehicle_type')
+
     if not data:
-        raise Http404
+        vehicle = get_object_or_404(vehicles, code=reg)
+        return render(request, 'vehicles/vehicle_detail.html', {
+            'vehicle': vehicle,
+            'object': vehicle
+        })
 
     try:
-        vehicle = Vehicle.objects.get(reg=reg)
+        vehicle = vehicles.get(reg=reg)
     except Vehicle.DoesNotExist:
-        vehicle = Vehicle.objects.create(source_id=7, code=reg, reg=reg, livery_id=262)
+        vehicle = vehicles.create(source_id=7, code=reg, reg=reg, livery_id=262)
 
     stops = StopPoint.objects.in_bulk(item['naptanId'] for item in data)
 

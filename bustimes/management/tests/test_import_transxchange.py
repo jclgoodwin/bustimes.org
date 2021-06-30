@@ -529,12 +529,11 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
         self.assertTrue(service.current)
 
-        mocked_print.assert_called_with("""<Operator id="BLB">
-      <NationalOperatorCode>SBLB</NationalOperatorCode>
-      <OperatorCode>BLB</OperatorCode>
-      <OperatorShortName>Stagecoach North Scotlan</OperatorShortName>
-    </Operator>
-    """)
+        mocked_print.assert_called_with({
+            'NationalOperatorCode': 'SBLB',
+            'OperatorCode': 'BLB',
+            'OperatorShortName': 'Stagecoach North Scotlan'
+        })
 
         service.slug = 'abao421'
         service.save(update_fields=['slug'])
@@ -549,12 +548,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(0, service.route_set.count())
         self.assertEqual(service.slug, '421-inverurie-alford')
 
-        mocked_print.assert_called_with("""<Operator id="BLB">
-      <NationalOperatorCode>SBLB</NationalOperatorCode>
-      <OperatorCode>BLB</OperatorCode>
-      <OperatorShortName>Stagecoach North Scotlan</OperatorShortName>
-    </Operator>
-    """)
+        mocked_print.assert_called_with({
+            'NationalOperatorCode': 'SBLB',
+            'OperatorCode': 'BLB',
+            'OperatorShortName': 'Stagecoach North Scotlan'
+        })
 
     def test_multiple_services(self):
         with patch('os.path.getmtime', return_value=1582385679):

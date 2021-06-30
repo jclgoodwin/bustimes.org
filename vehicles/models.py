@@ -257,6 +257,8 @@ class Vehicle(models.Model):
             return get_css(colours, direction, self.livery and self.livery.horizontal)
 
     def get_absolute_url(self):
+        if self.source_id == 7:  # London
+            return reverse('tfl_vehicle', args=(self.reg,))
         return reverse('vehicle_detail', args=(self.id,))
 
     def get_edit_url(self):

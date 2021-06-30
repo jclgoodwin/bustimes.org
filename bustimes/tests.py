@@ -22,7 +22,7 @@ class BusTimesTest(TestCase):
             ),
             decode_compressed_response=True
         ):
-            with self.assertNumQueries(3):
+            with self.assertNumQueries(6):
                 response = self.client.get('/vehicles/tfl/LTZ1243')
             vehicle = response.context["object"]
 

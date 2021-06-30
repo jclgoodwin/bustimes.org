@@ -1,0 +1,44 @@
+{% if vehicle.vehicle_type %}
+    <p>{{ vehicle.vehicle_type }}</p>
+{% endif %}
+
+{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %}
+    <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
+    {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
+{% endif %}
+
+{% if vehicle.branding and vehicle.branding != 'None' %}
+    <p>Branding: {{ vehicle.branding }}</p>
+{% endif %}
+
+{% if vehicle.name %}
+    <p>Name: {{ vehicle.name }}</p>
+{% endif %}
+
+{% if vehicle.notes %}
+    <p>{{ vehicle.notes }}</p>
+{% endif %}
+
+{% for key, value in vehicle.data_get %}
+    {% if value %}
+        <p>{{ key }}: {{ value }}</p>
+    {% endif %}
+{% endfor %}
+
+{% if vehicle.features.all %}
+    <p>Features: {{ vehicle.features.all|join:", " }}</p>
+{% endif %}
+
+{% if garage %}
+    <p>{{ garage }}</p>
+{% endif %}
+
+{% if vehicle.editable %}
+    <ul class="horizontal">
+        <li><a href="{{ vehicle.get_edit_url }}">Edit{% if pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></li>
+        {% if vehicle.vehiclerevision_set.exists %}
+            <li><a href="{{ vehicle.get_history_url }}">History</a></li>
+        {% endif %}
+        <li>{{ vehicle.get_flickr_link }}</li>
+    </ul>
+{% endif %}
