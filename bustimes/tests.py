@@ -3,7 +3,7 @@ from datetime import date, timedelta, datetime, timezone
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import DataSource
-from vehicles.models import Livery
+from vehicles.models import Livery, Vehicle
 from .models import Trip
 
 
@@ -21,19 +21,24 @@ class BusTimesTest(TestCase):
                 'tfl_vehicle.yaml'
             ),
             decode_compressed_response=True
-        ):
+        ) as cassette:
             with self.assertNumQueries(6):
                 response = self.client.get('/vehicles/tfl/LTZ1243')
-            vehicle = response.context["object"]
+            # vehicle = response.context["object"]
 
             self.assertContains(response, '<h2>8 to Tottenham Court Road</h2>')
-            self.assertContains(response, f'<p><a href="/vehicles/{vehicle.id}">LTZ 1243</a></p>')
+            self.assertContains(response, '<h2>LTZ 1243</h2>')
             self.assertContains(response, '<td><a href="/stops/490010552N">Old Ford Road (OB)</a></td>')
             self.assertContains(response, '<td>18:55</td>')
             self.assertContains(response, '<td><a href="/stops/490004215M">Bow Church</a></td>')
 
             response = self.client.get('/vehicles/tfl/LJ53NHP')
             self.assertEqual(response.status_code, 404)
+
+            Vehicle.objects.create(code='LJ53NHP', reg='LJ53NHP')
+            cassette.rewind()
+            response = self.client.get('/vehicles/tfl/LJ53NHP')
+            self.assertContains(response, 'LJ53 NHP')
 
     def test_trip(self):
         trip = Trip()
