@@ -18,6 +18,7 @@ class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('id', 'name', 'vehicles', 'double_decker', 'coach')
     list_editable = ('name', 'double_decker', 'coach')
+    actions = ['merge']
 
     def vehicles(self, obj):
         return obj.vehicles
@@ -28,6 +29,12 @@ class VehicleTypeAdmin(admin.ModelAdmin):
         if 'changelist' in request.resolver_match.view_name:
             return queryset.annotate(vehicles=Count('vehicle'))
         return queryset
+
+    def merge(self, request, queryset):
+        first = queryset[0]
+        Vehicle.objects.filter(vehicle_type__in=queryset).update(vehicle_type=first)
+        VehicleRevision.objects.filter(from_type__in=queryset).update(from_type=first)
+        VehicleRevision.objects.filter(to_type__in=queryset).update(to_type=first)
 
 
 class VehicleAdminForm(forms.ModelForm):
@@ -464,6 +471,7 @@ class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
     list_display = ['id', 'name', 'vehicles', 'left', 'right', 'white_text']
+    actions = ['duplicate']
 
     def right(self, obj):
         if obj.right_css:
@@ -482,6 +490,11 @@ class LiveryAdmin(admin.ModelAdmin):
         if 'changelist' in request.resolver_match.view_name:
             return queryset.annotate(vehicles=Count('vehicle'))
         return queryset
+
+    def duplicate(self, request, queryset):
+        for livery in queryset:
+            livery.pk = None
+            livery.save()
 
 
 class RevisionChangeFilter(admin.SimpleListFilter):

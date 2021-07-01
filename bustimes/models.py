@@ -227,7 +227,7 @@ class Trip(models.Model):
     ticket_machine_code = models.CharField(max_length=255, blank=True, db_index=True)
     block = models.CharField(max_length=255, blank=True, db_index=True)
     destination = models.ForeignKey('busstops.StopPoint', models.SET_NULL, null=True, blank=True)
-    calendar = models.ForeignKey(Calendar, models.CASCADE)
+    calendar = models.ForeignKey(Calendar, models.DO_NOTHING)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.ManyToManyField(Note, blank=True)
     start = SecondsField()
