@@ -322,9 +322,11 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
         try:
-            journey_code = item['Extensions']['VehicleJourney']['Operational']['TicketMachine']['JourneyCode']
+            ticket_machine = item['Extensions']['VehicleJourney']['Operational']['TicketMachine']
+            journey_code = ticket_machine['JourneyCode']
         except KeyError:
             journey_code = journey_ref
+            ticket_machine = None
         else:
             if journey_code == '0000':
                 journey_code = journey_ref
@@ -332,6 +334,8 @@ class Command(ImportLiveVehiclesCommand):
                 journey_ref = journey_code  # what we will use for finding matching trip
 
         route_name = monitored_vehicle_journey.get('PublishedLineName') or monitored_vehicle_journey.get('LineRef', '')
+        if not route_name and ticket_machine:
+            route_name = ticket_machine.get('TicketMachineServiceCode', '')
 
         origin_aimed_departure_time = monitored_vehicle_journey.get('OriginAimedDepartureTime')
         if origin_aimed_departure_time:
