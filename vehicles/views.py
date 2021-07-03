@@ -244,6 +244,8 @@ def vehicles_json(request):
             latest_journey__service__isnull=BooleanField().to_python(request.GET['service__isnull'])
         )
 
+    vehicle_ids = None
+
     if bounds is not None:
         # ids of vehicles within box
         xmin, ymin, xmax, ymax = bounds.extent
@@ -261,27 +263,32 @@ def vehicles_json(request):
             )
         except redis.exceptions.ResponseError:
             return HttpResponseBadRequest()
-        vehicles = vehicles.in_bulk(vehicle_ids)
     else:
         if 'service' in request.GET:
             vehicles = vehicles.filter(
                 latest_journey__service__in=request.GET['service'].split(',')
             ).in_bulk()
-            vehicle_ids = list(vehicles.keys())
         elif 'operator' in request.GET:
             vehicles = vehicles.filter(
                 operator__in=request.GET['operator'].split(',')
             ).in_bulk()
-            vehicle_ids = list(vehicles.keys())
         else:
             # ids of all vehicles
             vehicle_ids = r.zrange('vehicle_location_locations', 0, -1)
-            vehicles = vehicles.in_bulk(vehicle_ids)
 
-    pipeline = r.pipeline(transaction=False)
-    for vehicle_id in vehicle_ids:
-        pipeline.get(f'vehicle{int(vehicle_id)}')
-    vehicle_locations = pipeline.execute()
+    if vehicle_ids is None:
+        vehicle_ids = list(vehicles.keys())
+
+    vehicle_locations = r.mget([f'vehicle{int(vehicle_id)}' for vehicle_id in vehicle_ids])
+
+    if type(vehicles) is not dict:
+        # remove expired items from 'vehicle_location_locations'
+        to_remove = [vehicle_ids[i] for i, item in enumerate(vehicle_locations) if not item]
+        if to_remove:
+            r.zrem('vehicle_location_locations', *to_remove)
+
+        # only get vehicles with unexpired locations
+        vehicles = vehicles.in_bulk([vehicle_ids[i] for i, item in enumerate(vehicle_locations) if item])
 
     locations = []
     service_ids = set()
@@ -357,7 +364,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
 
         try:
             r = redis.from_url(settings.REDIS_URL)
-            pipe = r.pipeline()
+            pipe = r.pipeline(transaction=False)
             for journey in journeys:
                 pipe.exists(f'journey{journey.id}')
             locations = pipe.execute()
