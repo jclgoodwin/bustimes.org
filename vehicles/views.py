@@ -294,11 +294,11 @@ def vehicles_json(request):
     service_ids = set()
     for i, item in enumerate(vehicle_locations):
         if item:
-            item = json.loads(item)
             try:
                 vehicle = vehicles[int(vehicle_ids[i])]
             except KeyError:
                 continue
+            item = json.loads(item)
             item['vehicle'] = vehicle.get_json(item['heading'])
             locations.append(item)
             if 'service_id' in item and item['service_id']:
