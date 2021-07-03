@@ -23,7 +23,7 @@ gtfs-realtime-bindings = "*"
 # django-multidb-router = "*"
 celery = {extras = ["redis"],version = "*"}
 pyyaml = "*"
-asgiref = "*"
+asgiref = "<3.4.0"
 xmltodict = "*"
 channels = "*"
 channels-redis = "*"
