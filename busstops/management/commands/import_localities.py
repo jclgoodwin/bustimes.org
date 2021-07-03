@@ -39,5 +39,9 @@ class Command(ImportFromCSVCommand):
                 locality.id = locality_code
                 to_create.append(locality)
 
-        Locality.objects.bulk_update(to_update, fields=['name', 'qualifier_name', 'admin_area', 'latlong', 'district'])
+        Locality.objects.bulk_update(
+            to_update,
+            fields=['name', 'qualifier_name', 'admin_area', 'latlong', 'district'],
+            batch_size=100
+        )
         Locality.objects.bulk_create(to_create)

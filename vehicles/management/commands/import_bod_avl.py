@@ -56,6 +56,19 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                 pass
 
+    @staticmethod
+    def get_destination_name(destination_ref):
+        destination_ref = destination_ref.removeprefix('NT')
+        cache_key = f'stop{destination_ref}locality'
+        destination = cache.get(cache_key)
+        if destination is None:
+            try:
+                destination = Locality.objects.get(stoppoint=destination_ref).name
+            except Locality.DoesNotExist:
+                destination = ''
+            cache.set(cache_key, destination)
+        return destination
+
     @functools.cache
     def get_operator(self, operator_ref):
         if operator_ref == "SCEM":
@@ -387,24 +400,21 @@ class Command(ImportLiveVehiclesCommand):
         destination_ref = monitored_vehicle_journey.get('DestinationRef')
 
         if not journey.destination:
-            destination = monitored_vehicle_journey.get('DestinationName')
-            if destination:
-                if route_name:
-                    destination = destination.removeprefix(f'{route_name} ')  # TGTC
-                journey.destination = destination
-            else:
-                if destination_ref:
-                    destination_ref = destination_ref.removeprefix('NT')
-                    cache_key = f'stop{destination_ref}locality'
-                    journey.destination = cache.get(cache_key)
-                    if journey.destination is None:
-                        try:
-                            journey.destination = Locality.objects.get(stoppoint=destination_ref).name
-                        except Locality.DoesNotExist:
-                            journey.destination = ''
-                        cache.set(cache_key, journey.destination)
-                if not journey.destination:
-                    journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
+            # use stop locality
+            if destination_ref:
+                journey.destination = self.get_destination_name(destination_ref)
+
+            # use destination name string (often not very descriptive)
+            if not journey.destination:
+                destination = monitored_vehicle_journey.get('DestinationName')
+                if destination:
+                    if route_name:
+                        destination = destination.removeprefix(f'{route_name} ')  # TGTC
+                    journey.destination = destination
+
+            # fall back to direction
+            if not journey.destination:
+                journey.direction = monitored_vehicle_journey.get('DirectionRef', '')[:8]
 
         if not journey.service_id and route_name:
             operator_ref = monitored_vehicle_journey["OperatorRef"]
@@ -424,6 +434,9 @@ class Command(ImportLiveVehiclesCommand):
                 if not datetime:
                     datetime = self.get_datetime(item)
                 journey.trip = journey.get_trip(datetime, destination_ref)
+
+                if journey.trip and not journey.destination and journey.trip.destination_id:
+                    journey.destination = self.get_destination_name(journey.trip.destination_id)
 
         return journey
 
