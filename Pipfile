@@ -41,6 +41,7 @@ honeycomb-beeline = "*"
 haversine = "*"
 boto3 = "*"
 regex = "*"
+django-redis = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"
