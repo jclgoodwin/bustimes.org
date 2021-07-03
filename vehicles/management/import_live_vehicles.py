@@ -191,7 +191,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not location:
             location = self.create_vehicle_location(item)
 
-        if not location.latlong or not (location.latlong.x or location.latlong.y):  # (0, 0) - null island
+        if (
+            not location.latlong
+            or not (location.latlong.x or location.latlong.y)  # (0, 0) - null island
+            or location.latlong.x == 1 and location.latlong.y == 1
+        ):
             return
 
         if location.heading == -1:
