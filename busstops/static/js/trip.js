@@ -18,7 +18,8 @@
         });
     }
 
-    var loadVehiclesTimeout;
+    var loadVehiclesTimeout,
+        poppedUp = false;
 
     function loadVehicles() {
         if (!window.SERVICE) {
@@ -31,10 +32,11 @@
                 if (data) {
                     window.bustimes.handleVehicles(data);
 
-                    if (!window.bustimes.clickedMarker &&  window.TRIP_ID) {
+                    if (!window.bustimes.clickedMarker && window.TRIP_ID && !poppedUp) {
                         for (var id in window.bustimes.vehicleMarkers) {
                             if (window.bustimes.vehicleMarkers[id].options.item.trip_id === window.TRIP_ID) {
                                 window.bustimes.vehicleMarkers[id].openPopup();
+                                poppedUp = true;  // don't auto-open the popup again
                                 break;
                             }
                         }
