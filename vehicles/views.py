@@ -2,6 +2,7 @@ import redis
 import json
 import xml.etree.cElementTree as ET
 import datetime
+import xmltodict
 from ciso8601 import parse_datetime
 from haversine import haversine
 from django.db import IntegrityError
@@ -23,10 +24,11 @@ from django.utils import timezone
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from bustimes.models import Garage, Trip
+from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import get_vehicle_edit, do_revision, do_revisions
-from .tasks import handle_siri_vm, handle_siri_sx
+from .management.commands import import_bod_avl
 
 
 class Vehicles:
@@ -616,16 +618,33 @@ def siri(request):
     body = request.body.decode()
     if not body:
         return HttpResponse()
-    if 'HeartbeatNotification' in body:
+
+    if 'HeartbeatNotification' in body:  # subscription heartbeat
         for _, element in ET.iterparse(request):
             if element.tag == '{http://www.siri.org.uk/siri}ProducerRef':
                 cache.set(f'Heartbeat:{element.text}', True, 300)  # 5 minutes
                 break
-    elif 'VehicleLocation' in body:
-        handle_siri_vm.delay(body)
-    else:
+
+    elif 'VehicleLocation' in body:  # SIRI-VM
+        command = import_bod_avl.Command()
+        command.source_name = 'TransMach'
+        command.do_source()
+
+        data = xmltodict.parse(
+            body,
+            dict_constructor=dict,
+            force_list=['VehicleActivity']
+        )
+        for item in data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']:
+            command.handle_item(item)
+
+        command.save()
+
+    else:  # SIRI-SX
         assert 'SituationElement' in body
-        handle_siri_sx.delay(body)
+        siri_sx(request)
+
+    # ack
     return HttpResponse(f"""<?xml version="1.0" ?>
 <Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
   <DataReceivedAcknowledgement>

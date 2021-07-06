@@ -6,7 +6,6 @@ from django.core.cache import cache
 from django.conf import settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, Service, DataSource, StopPoint, StopUsage
-from vehicles.tasks import handle_siri_sx
 from .models import Situation
 
 
@@ -739,15 +738,12 @@ Services will observe all bus stops on the diverted route. </Details>
     </SituationExchangeDelivery>
   </ServiceDelivery>
 </Siri>"""
-        with patch('vehicles.tasks.handle_siri_sx.delay') as siri_sx:
-            with self.assertNumQueries(0):
-                self.client.post('/siri', xml, content_type='text/xml')
-            siri_sx.assert_called_with(xml)
 
         with self.assertNumQueries(16):
-            handle_siri_sx(xml)
+            self.client.post('/siri', xml, content_type='text/xml')
+
         with self.assertNumQueries(2):
-            handle_siri_sx(xml)
+            self.client.post('/siri', xml, content_type='text/xml')
 
     def test_siri_sx_request(self):
         with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):

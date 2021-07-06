@@ -1,52 +1,8 @@
-import xml.etree.cElementTree as ET
-import xmltodict
-from io import StringIO
 from ciso8601 import parse_datetime
 from celery import shared_task
 from django.db.models import Q
 from busstops.models import DataSource, Operator
-from disruptions.management.commands.import_siri_sx import handle_item as siri_sx
-from .management.commands import import_bod_avl
 from .models import Vehicle, VehicleJourney
-
-
-@shared_task
-def handle_siri_vm(request_body):
-    command = import_bod_avl.Command()
-    command.source_name = 'TransMach'
-    command.do_source()
-
-    data = xmltodict.parse(
-        request_body,
-        dict_constructor=dict,
-        force_list=['VehicleActivity']
-    )
-    response_timestamp = parse_datetime(data['Siri']['ServiceDelivery']['ResponseTimestamp'])
-
-    for item in data['Siri']['ServiceDelivery']['VehicleMonitoringDelivery']['VehicleActivity']:
-        command.handle_item(item, response_timestamp)
-
-    command.save()
-
-
-@shared_task
-def handle_siri_sx(request_body):
-    source = DataSource.objects.get(name='Transport for the North')
-    iterator = ET.iterparse(StringIO(request_body))
-    situation_ids = []
-    for _, element in iterator:
-        if element.tag[:29] == '{http://www.siri.org.uk/siri}':
-            element.tag = element.tag[29:]
-            if element.tag == 'SubscriptionRef':
-                subscription_ref = element.text
-            if element.tag == 'PtSituationElement':
-                situation_ids.append(siri_sx(element, source))
-                element.clear()
-
-    if subscription_ref != source.settings.get('subscription_ref'):
-        source.settings['subscription_ref'] = subscription_ref
-        source.save(update_fields=['settings'])
-        source.situation_set.filter(current=True).exclude(id__in=situation_ids).update(current=False)
 
 
 @shared_task
