@@ -94,10 +94,6 @@ def compare_trips(rows, trip_ids, a, b):
 
     for i, row in enumerate(rows):
         if row.times[a_index]:
-            if row.times[b_index]:
-                a_time = row.times[a_index].arrival
-                b_time = row.times[b_index].arrival
-                break
             if a_top is None:
                 a_top = i
             a_bottom = i
@@ -105,6 +101,10 @@ def compare_trips(rows, trip_ids, a, b):
             if b_top is None:
                 b_top = i
             b_bottom = i
+            if row.times[a_index]:
+                a_time = row.times[a_index].arrival
+                b_time = row.times[b_index].arrival
+                break
 
     if a_time is None:
         if a_top == b_top:
