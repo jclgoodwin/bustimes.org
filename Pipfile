@@ -20,7 +20,6 @@ django-autoslug = "*"
 webcolors = "*"
 sentry-sdk = "*"
 gtfs-realtime-bindings = "*"
-# django-multidb-router = "*"
 celery = {extras = ["redis"],version = "*"}
 pyyaml = "*"
 asgiref = "<3.4.0"

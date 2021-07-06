@@ -234,6 +234,7 @@ class ServiceCodeAdmin(admin.ModelAdmin):
 class ServiceColourAdmin(admin.ModelAdmin):
     list_display = ('preview', 'foreground', 'background', 'services')
     search_fields = ['name']
+    list_filter = ('service__operator', ServiceIsNullFilter)
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

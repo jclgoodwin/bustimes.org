@@ -53,7 +53,7 @@ def route_xml(request, source, code=''):
         path = os.path.join(settings.TNDS_DIR, f'{source}.zip')
         with zipfile.ZipFile(path) as archive:
             if code:
-                return FileResponse(archive.open(code), content_type='text/xml')
+                return FileResponse(archive.open(code), content_type='text/plain')
             return HttpResponse('\n'.join(archive.namelist()), content_type='text/plain')
 
     route = Route.objects.filter(source=source, code__startswith=code).first()

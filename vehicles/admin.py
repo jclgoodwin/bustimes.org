@@ -50,12 +50,11 @@ class VehicleAdminForm(forms.ModelForm):
 
 
 def user(obj):
-    if obj.user_id:
-        return format_html(
-            '<a href="{}">{}</a>',
-            reverse('admin:accounts_user_change', args=(obj.user_id,)),
-            obj.user_id
-        )
+    return format_html(
+        '<a href="{}">{}</a>',
+        reverse('admin:accounts_user_change', args=(obj.user_id,)),
+        obj.user
+    )
 
 
 class VehicleEditInline(admin.TabularInline):
@@ -226,13 +225,14 @@ def url(obj):
 
 
 vehicle.admin_order_field = 'vehicle'
-reg.admin_order_field = 'reg'
+reg.admin_order_field = 'vehicle__reg'
 vehicle_type.admin_order_field = 'vehicle_type'
 branding.admin_order_field = 'branding'
 name.admin_order_field = 'name'
 notes.admin_order_field = 'notes'
 changes.admin_order_field = 'changes'
-
+user.admin_order_field = 'user'
+url.admin_order_field = 'url'
 
 class OperatorFilter(admin.SimpleListFilter):
     title = 'operator'
@@ -329,7 +329,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
                     'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', user, url]
     list_select_related = ['vehicle__vehicle_type', 'vehicle__livery', 'vehicle__operator', 'vehicle__latest_journey',
-                           'livery']
+                           'livery', 'user']
     list_filter = [
         'approved',
         UrlFilter,
