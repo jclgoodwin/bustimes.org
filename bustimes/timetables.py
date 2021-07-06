@@ -83,6 +83,8 @@ def get_stop_usages(trips):
 
 
 def compare_trips(rows, trip_ids, a, b):
+    a_time = None
+    b_time = None
     a_top = None
     a_bottom = None
     b_top = None
@@ -92,6 +94,10 @@ def compare_trips(rows, trip_ids, a, b):
 
     for i, row in enumerate(rows):
         if row.times[a_index]:
+            if row.times[b_index]:
+                a_time = row.times[a_index].arrival
+                b_time = row.times[b_index].arrival
+                break
             if a_top is None:
                 a_top = i
             a_bottom = i
@@ -100,21 +106,22 @@ def compare_trips(rows, trip_ids, a, b):
                 b_top = i
             b_bottom = i
 
-    if a_top == b_top:
-        a_time = a.start
-        b_time = b.start
-    elif a_bottom == b_bottom:
-        a_time = a.end
-        b_time = b.end
-    elif a_top >= b_bottom:  # b is above a
-        a_time = a.start
-        b_time = b.end
-    elif b_top >= a_bottom:  # a is above a
-        a_time = a.end
-        b_time = b.start
-    else:
-        a_time = a.start
-        b_time = b.start
+    if a_time is None:
+        if a_top == b_top:
+            a_time = a.start
+            b_time = b.start
+        elif a_bottom == b_bottom:
+            a_time = a.end
+            b_time = b.end
+        elif a_top >= b_bottom:  # b is above a
+            a_time = a.start
+            b_time = b.end
+        elif b_top >= a_bottom:  # a is above a
+            a_time = a.end
+            b_time = b.start
+        else:
+            a_time = a.start
+            b_time = b.start
 
     if a_time > b_time:
         return 1  # a is later
