@@ -150,6 +150,7 @@ class Command(BaseCommand):
                 command.region_id = region_id
                 command.service_ids = set()
                 command.route_ids = set()
+                command.garages = {}
 
                 for version in versions:  # newest first
                     if version['modified']:
