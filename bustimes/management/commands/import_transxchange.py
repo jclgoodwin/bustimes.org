@@ -9,7 +9,6 @@ import os
 import re
 import csv
 import zipfile
-import xml.etree.cElementTree as ET
 import datetime
 from functools import cache
 from titlecase import titlecase
@@ -684,8 +683,6 @@ class Command(BaseCommand):
             services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
             if services.filter(operator__in=operators).exists():
                 return True
-            if any(operator.id == 'SCLI' for operator in operators):
-                return services.filter(operator__parent='Stagecoach').exists()
 
     def handle_service(self, filename, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end and txc_service.operating_period.end < txc_service.operating_period.start:
