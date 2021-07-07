@@ -619,6 +619,30 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(1, feet[4].span)
         self.assertEqual(6, feet[5].span)
 
+    @time_machine.travel('2021-07-07')
+    def test_multiple_lines(self):
+        call_command('import_transxchange', FIXTURES_DIR / '904_SCD_PH_903_20210530.xml')
+
+        self.assertEqual(ServiceLink.objects.count(), 1)
+
+        route_1, route_2 = Route.objects.filter(code__contains='904_SCD_PH_903_20210530')
+
+        trip = route_1.trip_set.first()
+        response = self.client.get(trip.get_absolute_url())
+        self.assertContains(response, "Depot: Barnstaple Depot")
+
+        service = route_1.service
+        response = self.client.get(f'{service.get_absolute_url()}?detailed')
+        self.assertContains(response, '<td>9032</td>')  # block number
+
+    @time_machine.travel('2021-07-07')
+    def test_confusing_start_date(self):
+        call_command('import_transxchange', FIXTURES_DIR / 'notts_KRWL_DS_180DS_.xml')
+
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(response, "Tuesdays from Tuesday 17 August 2021")
+
     def test_service_error(self):
         """A file with some wrong references should be handled gracefully"""
         with self.assertLogs(level='ERROR'):

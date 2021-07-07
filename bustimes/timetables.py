@@ -135,7 +135,7 @@ def compare_trips(rows, trip_ids, a, b):
 
 
 class Timetable:
-    def __init__(self, routes, date):
+    def __init__(self, routes, date, detailed=False):
         self.today = localdate()
 
         routes = list(routes.select_related('source'))
@@ -143,6 +143,7 @@ class Timetable:
         self.current_routes = routes
 
         self.date = date
+        self.detailed = detailed
 
         self.groupings = [Grouping(), Grouping(True)]
 
@@ -225,7 +226,7 @@ class Timetable:
 
                 row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
 
-            grouping.do_heads_and_feet()
+            grouping.do_heads_and_feet(detailed)
 
         if all(grouping.trips for grouping in self.groupings):
             self.groupings.sort(key=Grouping.get_order)
@@ -409,7 +410,7 @@ class Grouping:
                 if len(row.times) == x:
                     row.times.append('')
 
-    def do_heads_and_feet(self):
+    def do_heads_and_feet(self, detailed=False):
         if not self.trips:
             return
 
@@ -462,7 +463,9 @@ class Grouping:
                     self.heads.append(
                         ColumnHead(previous_trip.route.service, i - sum(head.span for head in self.heads)))
 
-                if previous_note_ids != note_ids:
+                if detailed:
+                    pass
+                elif previous_note_ids != note_ids:
                     if in_a_row > 1:
                         abbreviate(self, i, in_a_row - 1, prev_difference)
                     in_a_row = 0

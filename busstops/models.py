@@ -846,7 +846,7 @@ class Service(models.Model):
             cache.set(key, services, 86400)
         return services
 
-    def get_timetable(self, day=None, related=()):
+    def get_timetable(self, day=None, related=(), detailed=False):
         """Given a Service, return a Timetable"""
 
         if self.region_id == 'NI' or self.source and self.source.name.endswith(' GTFS'):
@@ -857,7 +857,7 @@ class Service(models.Model):
         else:
             routes = self.route_set.order_by('start_date')
         try:
-            timetable = Timetable(routes, day)
+            timetable = Timetable(routes, day, detailed)
         except (IndexError, UnboundLocalError) as e:
             logger.error(e, exc_info=True)
             return

@@ -607,7 +607,8 @@ class ServiceDetailView(DetailView):
                 context['linked_services'] = parallel
             else:
                 parallel = []
-            timetable = self.object.get_timetable(date, parallel)
+            detailed = 'detailed' in self.request.GET
+            timetable = self.object.get_timetable(date, parallel, detailed)
             if timetable and timetable.routes and (timetable.date or timetable.calendar):
                 if not parallel:
                     for grouping in timetable.groupings:

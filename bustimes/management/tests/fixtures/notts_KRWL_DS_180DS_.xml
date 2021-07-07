@@ -1,0 +1,4968 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TransXChange xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.transxchange.org.uk/ http://www.transxchange.org.uk/schema/2.5/TransXChange_general.xsd" CreationDateTime="2021-07-05T12:01:57" ModificationDateTime="2021-07-05T12:01:57" Modification="new" RevisionNumber="0" FileName="notts_KRWL_DS_180DS_.xml" SchemaVersion="2.5" RegistrationDocument="true" xmlns="http://www.transxchange.org.uk/">
+  <StopPoints>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0911</StopPointRef>
+      <CommonName>Gilbert Avenue</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0505</StopPointRef>
+      <CommonName>Faraday Avenue</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0701</StopPointRef>
+      <CommonName>Library</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0493</StopPointRef>
+      <CommonName>Orchard Crescent</CommonName>
+      <Indicator>SE-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0502</StopPointRef>
+      <CommonName>The Beeches</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0597</StopPointRef>
+      <CommonName>Sun Inn</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0555</StopPointRef>
+      <CommonName>Eldon Street</CommonName>
+      <Indicator>N-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0554</StopPointRef>
+      <CommonName>Tuxford Road</CommonName>
+      <Indicator>N-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0534</StopPointRef>
+      <CommonName>The Hall Close</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0510</StopPointRef>
+      <CommonName>High Street</CommonName>
+      <Indicator>NW-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0507</StopPointRef>
+      <CommonName>Police House</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0249</StopPointRef>
+      <CommonName>High Street</CommonName>
+      <Indicator>NW-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0246</StopPointRef>
+      <CommonName>Holly Bush Close</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0244</StopPointRef>
+      <CommonName>Blacksmith Cottages</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0758</StopPointRef>
+      <CommonName>Coalpit Lane</CommonName>
+      <Indicator>W-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0769</StopPointRef>
+      <CommonName>Jockey Lane</CommonName>
+      <Indicator>NE-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1025</StopPointRef>
+      <CommonName>Glen Eagles Way</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0111</StopPointRef>
+      <CommonName>Brecks Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0112</StopPointRef>
+      <CommonName>Welbeck Road</CommonName>
+      <Indicator>E-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0792</StopPointRef>
+      <CommonName>Farm View</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0795</StopPointRef>
+      <CommonName>Church Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0088</StopPointRef>
+      <CommonName>Whitehouses Road</CommonName>
+      <Indicator>E-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0042</StopPointRef>
+      <CommonName>Mount Vernon Park</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0100</StopPointRef>
+      <CommonName>Whinney Moor Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1009</StopPointRef>
+      <CommonName>The Elms Hotel</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0086</StopPointRef>
+      <CommonName>Avenue Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0934</StopPointRef>
+      <CommonName>South Street</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0994</StopPointRef>
+      <CommonName>Bus Station</CommonName>
+      <Indicator>Bay A</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0164</StopPointRef>
+      <CommonName>The Square</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1144</StopPointRef>
+      <CommonName>Bridgegate</CommonName>
+      <Indicator>NW-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0930</StopPointRef>
+      <CommonName>Hallcroft Avenue</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1116</StopPointRef>
+      <CommonName>Sandringham Road</CommonName>
+      <Indicator>S-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0411</StopPointRef>
+      <CommonName>Denman Close</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0603</StopPointRef>
+      <CommonName>Trinity Road</CommonName>
+      <Indicator>NE-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0158</StopPointRef>
+      <CommonName>Cemetery</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0157</StopPointRef>
+      <CommonName>Silverdale Close</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0932</StopPointRef>
+      <CommonName>North Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0367</StopPointRef>
+      <CommonName>Cooks Cottages</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0791</StopPointRef>
+      <CommonName>Sandiforths</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0365</StopPointRef>
+      <CommonName>Station Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0763</StopPointRef>
+      <CommonName>Great North Road</CommonName>
+      <Indicator>W-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0877</StopPointRef>
+      <CommonName>Little Grange Farm</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1033</StopPointRef>
+      <CommonName>Trinity College Farm</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0762</StopPointRef>
+      <CommonName>Old School House</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1043</StopPointRef>
+      <CommonName>Blacksmith Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0490</StopPointRef>
+      <CommonName>Holds Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0488</StopPointRef>
+      <CommonName>St Barnabas Church</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0482</StopPointRef>
+      <CommonName>Blue Bell Court</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0683</StopPointRef>
+      <CommonName>Arundel Drive</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0922</StopPointRef>
+      <CommonName>Lodge Court</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0479</StopPointRef>
+      <CommonName>Pilgrims Oak</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0485</StopPointRef>
+      <CommonName>Pilgrim Fathers</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1002</StopPointRef>
+      <CommonName>Mill Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045320</StopPointRef>
+      <CommonName>High Street/Tickhill Road</CommonName>
+      <Indicator>at</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040278</StopPointRef>
+      <CommonName>Doncaster Road/Martin Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045322</StopPointRef>
+      <CommonName>Doncaster Road/Ingham Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040285</StopPointRef>
+      <CommonName>Great North Road/Bawtry Forest</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370041022</StopPointRef>
+      <CommonName>Great North Road/Highfield Lane</CommonName>
+      <Indicator>nr</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370041027</StopPointRef>
+      <CommonName>Great North Road/RSPCA Access Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045307</StopPointRef>
+      <CommonName>Great North Road/Rossington Hall School</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040303</StopPointRef>
+      <CommonName>Great North Road/High Common Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045563</StopPointRef>
+      <CommonName>Great North Road/High Common Lane</CommonName>
+      <Indicator>at</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370046331</StopPointRef>
+      <CommonName>Great North Road/Hurst Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040308</StopPointRef>
+      <CommonName>Great North Road/Littleworth Lane</CommonName>
+      <Indicator>at</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045327</StopPointRef>
+      <CommonName>Bawtry Road/Plantation Avenue</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045181</StopPointRef>
+      <CommonName>Bawtry Road/Warren Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045180</StopPointRef>
+      <CommonName>Bawtry Road/Grange Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045458</StopPointRef>
+      <CommonName>Bawtry Road/Stoops Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045452</StopPointRef>
+      <CommonName>Bawtry Road/Alston Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045451</StopPointRef>
+      <CommonName>Bawtry Road/Boswell Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040445</StopPointRef>
+      <CommonName>Bawtry Road/Ellers Road</CommonName>
+      <Indicator>nr</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040436</StopPointRef>
+      <CommonName>Bawtry Road/Saxton Avenue</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040434</StopPointRef>
+      <CommonName>Bawtry Road/St Augustines Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040658</StopPointRef>
+      <CommonName>Bennetthorpe/Sandbeck Road</CommonName>
+      <Indicator>at</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045446</StopPointRef>
+      <CommonName>Bennetthorpe/Danum Road</CommonName>
+      <Indicator>at</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045443</StopPointRef>
+      <CommonName>Bennetthorpe/Roman Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370041216</StopPointRef>
+      <CommonName>South Parade/Thorne Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040950</StopPointRef>
+      <CommonName>Waterdale/College Road</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370070018</StopPointRef>
+      <CommonName>Doncaster Interchange</CommonName>
+      <Indicator>at</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370041001</StopPointRef>
+      <CommonName>Waterdale/Wood Street</CommonName>
+      <Indicator>at</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045028</StopPointRef>
+      <CommonName>South Parade/Regent Square</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045442</StopPointRef>
+      <CommonName>Bennetthorpe/Roman Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040721</StopPointRef>
+      <CommonName>Bennetthorpe/Alderson Drive</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045445</StopPointRef>
+      <CommonName>Bennetthorpe/Manor Drive</CommonName>
+      <Indicator>nr</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370041000</StopPointRef>
+      <CommonName>Bennetthorpe/Leger Way</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045449</StopPointRef>
+      <CommonName>Bawtry Road/Leger Way</CommonName>
+      <Indicator>nr</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040433</StopPointRef>
+      <CommonName>Bawtry Road/The Avenue</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040444</StopPointRef>
+      <CommonName>Bawtry Road/St Erics Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040446</StopPointRef>
+      <CommonName>Bawtry Road/Boswell Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040410</StopPointRef>
+      <CommonName>Bawtry Road/Alston Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040416</StopPointRef>
+      <CommonName>Bawtry Road/Church Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040415</StopPointRef>
+      <CommonName>Bawtry Road/Grange Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040389</StopPointRef>
+      <CommonName>Bawtry Road/Plumpton Park Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040390</StopPointRef>
+      <CommonName>Bawtry Road/Warnington Drive</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040319</StopPointRef>
+      <CommonName>Bawtry Road/Plantation Avenue</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045486</StopPointRef>
+      <CommonName>Great North Road/Warning Tongue Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040307</StopPointRef>
+      <CommonName>Great North Road/Littleworth Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040306</StopPointRef>
+      <CommonName>Great North Road/Hurst Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045663</StopPointRef>
+      <CommonName>Great North Road/High Common Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040302</StopPointRef>
+      <CommonName>Great North Road/High Common Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040283</StopPointRef>
+      <CommonName>Great North Road/High Common Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040282</StopPointRef>
+      <CommonName>Great North Road/RSPCA Access Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040286</StopPointRef>
+      <CommonName>Great North Road/Yorkshire Caravans</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040284</StopPointRef>
+      <CommonName>Great North Road/Bawtry Forest</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040280</StopPointRef>
+      <CommonName>Great North Road/Kings Wood</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370045526</StopPointRef>
+      <CommonName>Doncaster Road/North Avenue</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370040277</StopPointRef>
+      <CommonName>Doncaster Road/Martin Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>370041013</StopPointRef>
+      <CommonName>High Street/Wharfe Street</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0196</StopPointRef>
+      <CommonName>Hawks Nest</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1003</StopPointRef>
+      <CommonName>Mill Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0459</StopPointRef>
+      <CommonName>Pilgrim Fathers</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0825</StopPointRef>
+      <CommonName>Pilgrims Oak</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0480</StopPointRef>
+      <CommonName>Lodge Court</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0786</StopPointRef>
+      <CommonName>Arundel Drive</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0481</StopPointRef>
+      <CommonName>Blue Bell Court</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0684</StopPointRef>
+      <CommonName>St Barnabas Church</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0489</StopPointRef>
+      <CommonName>Holds Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1042</StopPointRef>
+      <CommonName>Blacksmith Lane</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0761</StopPointRef>
+      <CommonName>Old School House</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1034</StopPointRef>
+      <CommonName>Trinity College Farm</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0491</StopPointRef>
+      <CommonName>Little Grange Farm</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0469</StopPointRef>
+      <CommonName>Great North Road</CommonName>
+      <Indicator>E-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0467</StopPointRef>
+      <CommonName>Station Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0343</StopPointRef>
+      <CommonName>Sandiforths</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0790</StopPointRef>
+      <CommonName>Cooks Cottages</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0390</StopPointRef>
+      <CommonName>North Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0156</StopPointRef>
+      <CommonName>Silverdale Close</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0933</StopPointRef>
+      <CommonName>Cemetery</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0602</StopPointRef>
+      <CommonName>Trinity Road</CommonName>
+      <Indicator>SW-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0150</StopPointRef>
+      <CommonName>Denman Close</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1115</StopPointRef>
+      <CommonName>Sandringham Road</CommonName>
+      <Indicator>N-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0151</StopPointRef>
+      <CommonName>Hallcroft Avenue</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0179</StopPointRef>
+      <CommonName>Bridgegate</CommonName>
+      <Indicator>SE-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0171</StopPointRef>
+      <CommonName>The Square</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0093</StopPointRef>
+      <CommonName>South Street</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0095</StopPointRef>
+      <CommonName>Avenue Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0728</StopPointRef>
+      <CommonName>The Elms Hotel</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0099</StopPointRef>
+      <CommonName>Whinney Moor Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0097</StopPointRef>
+      <CommonName>Mount Vernon Park</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0089</StopPointRef>
+      <CommonName>Whitehouses Road</CommonName>
+      <Indicator>W-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0087</StopPointRef>
+      <CommonName>Church Lane</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0109</StopPointRef>
+      <CommonName>Farm View</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0102</StopPointRef>
+      <CommonName>Welbeck Road</CommonName>
+      <Indicator>W-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0094</StopPointRef>
+      <CommonName>Brecks Road</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA1024</StopPointRef>
+      <CommonName>Glen Eagles Way</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0830</StopPointRef>
+      <CommonName>Jockey Lane</CommonName>
+      <Indicator>SW-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0245</StopPointRef>
+      <CommonName>Blacksmith Cottages</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0247</StopPointRef>
+      <CommonName>Holly Bush Close</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0508</StopPointRef>
+      <CommonName>Police House</CommonName>
+      <Indicator>o/s</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0509</StopPointRef>
+      <CommonName>High Street</CommonName>
+      <Indicator>SE-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0523</StopPointRef>
+      <CommonName>Tuxford Road</CommonName>
+      <Indicator>adj</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0494</StopPointRef>
+      <CommonName>The Hall Close</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0913</StopPointRef>
+      <CommonName>Eldon Street</CommonName>
+      <Indicator>S-bound</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0912</StopPointRef>
+      <CommonName>Faraday Avenue</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+    <AnnotatedStopPointRef>
+      <StopPointRef>3300BA0506</StopPointRef>
+      <CommonName>Gilbert Avenue</CommonName>
+      <Indicator>opp</Indicator>
+    </AnnotatedStopPointRef>
+  </StopPoints>
+  <RouteSections>
+    <RouteSection id="RS1">
+      <RouteLink id="RS1_RL1">
+        <From>
+          <StopPointRef>3300BA0911</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0505</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS1_RL2">
+        <From>
+          <StopPointRef>3300BA0505</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0701</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS1_RL3">
+        <From>
+          <StopPointRef>3300BA0701</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0493</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS1_RL4">
+        <From>
+          <StopPointRef>3300BA0493</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0502</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS1_RL5">
+        <From>
+          <StopPointRef>3300BA0502</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0597</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS2">
+      <RouteLink id="RS2_RL6">
+        <From>
+          <StopPointRef>3300BA0597</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0555</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS2_RL7">
+        <From>
+          <StopPointRef>3300BA0555</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0554</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS2_RL8">
+        <From>
+          <StopPointRef>3300BA0554</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0534</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS2_RL9">
+        <From>
+          <StopPointRef>3300BA0534</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0510</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS3">
+      <RouteLink id="RS3_RL10">
+        <From>
+          <StopPointRef>3300BA0510</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0507</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS3_RL11">
+        <From>
+          <StopPointRef>3300BA0507</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0249</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS4">
+      <RouteLink id="RS4_RL12">
+        <From>
+          <StopPointRef>3300BA0249</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0246</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS4_RL13">
+        <From>
+          <StopPointRef>3300BA0246</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0244</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS4_RL14">
+        <From>
+          <StopPointRef>3300BA0244</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0758</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS4_RL15">
+        <From>
+          <StopPointRef>3300BA0758</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0769</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS4_RL16">
+        <From>
+          <StopPointRef>3300BA0769</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1025</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS4_RL17">
+        <From>
+          <StopPointRef>3300BA1025</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0111</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS4_RL18">
+        <From>
+          <StopPointRef>3300BA0111</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0112</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS5">
+      <RouteLink id="RS5_RL19">
+        <From>
+          <StopPointRef>3300BA0112</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0792</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS6">
+      <RouteLink id="RS6_RL20">
+        <From>
+          <StopPointRef>3300BA0792</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0795</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS6_RL21">
+        <From>
+          <StopPointRef>3300BA0795</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0088</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS6_RL22">
+        <From>
+          <StopPointRef>3300BA0088</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0042</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS6_RL23">
+        <From>
+          <StopPointRef>3300BA0042</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0100</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS6_RL24">
+        <From>
+          <StopPointRef>3300BA0100</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1009</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS6_RL25">
+        <From>
+          <StopPointRef>3300BA1009</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0086</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS7">
+      <RouteLink id="RS7_RL26">
+        <From>
+          <StopPointRef>3300BA0086</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0934</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS7_RL27">
+        <From>
+          <StopPointRef>3300BA0934</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0994</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS8">
+      <RouteLink id="RS8_RL28">
+        <From>
+          <StopPointRef>3300BA0994</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0164</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS8_RL29">
+        <From>
+          <StopPointRef>3300BA0164</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1144</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS8_RL30">
+        <From>
+          <StopPointRef>3300BA1144</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0930</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS9">
+      <RouteLink id="RS9_RL31">
+        <From>
+          <StopPointRef>3300BA0930</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1116</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS10">
+      <RouteLink id="RS10_RL32">
+        <From>
+          <StopPointRef>3300BA1116</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0411</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS11">
+      <RouteLink id="RS11_RL33">
+        <From>
+          <StopPointRef>3300BA0411</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0603</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS11_RL34">
+        <From>
+          <StopPointRef>3300BA0603</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0158</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS11_RL35">
+        <From>
+          <StopPointRef>3300BA0158</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0157</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS12">
+      <RouteLink id="RS12_RL36">
+        <From>
+          <StopPointRef>3300BA0157</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0932</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS12_RL37">
+        <From>
+          <StopPointRef>3300BA0932</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0367</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS12_RL38">
+        <From>
+          <StopPointRef>3300BA0367</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0791</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS12_RL39">
+        <From>
+          <StopPointRef>3300BA0791</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0365</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS12_RL40">
+        <From>
+          <StopPointRef>3300BA0365</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0763</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS13">
+      <RouteLink id="RS13_RL41">
+        <From>
+          <StopPointRef>3300BA0763</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0877</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS13_RL42">
+        <From>
+          <StopPointRef>3300BA0877</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1033</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS13_RL43">
+        <From>
+          <StopPointRef>3300BA1033</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0762</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS13_RL44">
+        <From>
+          <StopPointRef>3300BA0762</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1043</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS13_RL45">
+        <From>
+          <StopPointRef>3300BA1043</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0490</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS14">
+      <RouteLink id="RS14_RL46">
+        <From>
+          <StopPointRef>3300BA0490</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0488</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS14_RL47">
+        <From>
+          <StopPointRef>3300BA0488</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0482</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS15">
+      <RouteLink id="RS15_RL48">
+        <From>
+          <StopPointRef>3300BA0482</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0683</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS15_RL49">
+        <From>
+          <StopPointRef>3300BA0683</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0922</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS15_RL50">
+        <From>
+          <StopPointRef>3300BA0922</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0479</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS15_RL51">
+        <From>
+          <StopPointRef>3300BA0479</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0485</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS16">
+      <RouteLink id="RS16_RL52">
+        <From>
+          <StopPointRef>3300BA0485</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1002</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS16_RL53">
+        <From>
+          <StopPointRef>3300BA1002</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045320</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS17">
+      <RouteLink id="RS17_RL54">
+        <From>
+          <StopPointRef>370045320</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040278</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL55">
+        <From>
+          <StopPointRef>370040278</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045322</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL56">
+        <From>
+          <StopPointRef>370045322</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040285</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL57">
+        <From>
+          <StopPointRef>370040285</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370041022</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL58">
+        <From>
+          <StopPointRef>370041022</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370041027</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL59">
+        <From>
+          <StopPointRef>370041027</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045307</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL60">
+        <From>
+          <StopPointRef>370045307</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040303</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL61">
+        <From>
+          <StopPointRef>370040303</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045563</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL62">
+        <From>
+          <StopPointRef>370045563</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370046331</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL63">
+        <From>
+          <StopPointRef>370046331</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040308</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL64">
+        <From>
+          <StopPointRef>370040308</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045327</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL65">
+        <From>
+          <StopPointRef>370045327</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045181</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL66">
+        <From>
+          <StopPointRef>370045181</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045180</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL67">
+        <From>
+          <StopPointRef>370045180</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045458</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL68">
+        <From>
+          <StopPointRef>370045458</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045452</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL69">
+        <From>
+          <StopPointRef>370045452</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045451</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL70">
+        <From>
+          <StopPointRef>370045451</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040445</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL71">
+        <From>
+          <StopPointRef>370040445</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040436</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL72">
+        <From>
+          <StopPointRef>370040436</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040434</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL73">
+        <From>
+          <StopPointRef>370040434</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040658</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL74">
+        <From>
+          <StopPointRef>370040658</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045446</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL75">
+        <From>
+          <StopPointRef>370045446</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045443</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL76">
+        <From>
+          <StopPointRef>370045443</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370041216</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL77">
+        <From>
+          <StopPointRef>370041216</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040950</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS17_RL78">
+        <From>
+          <StopPointRef>370040950</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370070018</StopPointRef>
+        </To>
+        <Direction>outbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS18">
+      <RouteLink id="RS18_RL79">
+        <From>
+          <StopPointRef>370070018</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370041001</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL80">
+        <From>
+          <StopPointRef>370041001</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045028</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL81">
+        <From>
+          <StopPointRef>370045028</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045442</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL82">
+        <From>
+          <StopPointRef>370045442</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040721</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL83">
+        <From>
+          <StopPointRef>370040721</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045445</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL84">
+        <From>
+          <StopPointRef>370045445</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370041000</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL85">
+        <From>
+          <StopPointRef>370041000</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045449</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL86">
+        <From>
+          <StopPointRef>370045449</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040433</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL87">
+        <From>
+          <StopPointRef>370040433</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040444</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL88">
+        <From>
+          <StopPointRef>370040444</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040446</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL89">
+        <From>
+          <StopPointRef>370040446</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040410</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL90">
+        <From>
+          <StopPointRef>370040410</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040416</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL91">
+        <From>
+          <StopPointRef>370040416</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040415</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL92">
+        <From>
+          <StopPointRef>370040415</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040389</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL93">
+        <From>
+          <StopPointRef>370040389</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040390</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL94">
+        <From>
+          <StopPointRef>370040390</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040319</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL95">
+        <From>
+          <StopPointRef>370040319</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045486</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL96">
+        <From>
+          <StopPointRef>370045486</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040307</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL97">
+        <From>
+          <StopPointRef>370040307</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040306</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL98">
+        <From>
+          <StopPointRef>370040306</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045663</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL99">
+        <From>
+          <StopPointRef>370045663</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040302</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL100">
+        <From>
+          <StopPointRef>370040302</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040283</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL101">
+        <From>
+          <StopPointRef>370040283</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040282</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL102">
+        <From>
+          <StopPointRef>370040282</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040286</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL103">
+        <From>
+          <StopPointRef>370040286</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040284</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL104">
+        <From>
+          <StopPointRef>370040284</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040280</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL105">
+        <From>
+          <StopPointRef>370040280</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370045526</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL106">
+        <From>
+          <StopPointRef>370045526</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370040277</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS18_RL107">
+        <From>
+          <StopPointRef>370040277</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>370041013</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS19">
+      <RouteLink id="RS19_RL108">
+        <From>
+          <StopPointRef>370041013</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0196</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS19_RL109">
+        <From>
+          <StopPointRef>3300BA0196</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1003</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS19_RL110">
+        <From>
+          <StopPointRef>3300BA1003</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0459</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS20">
+      <RouteLink id="RS20_RL111">
+        <From>
+          <StopPointRef>3300BA0459</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0825</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS20_RL112">
+        <From>
+          <StopPointRef>3300BA0825</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0480</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS20_RL113">
+        <From>
+          <StopPointRef>3300BA0480</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0786</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS20_RL114">
+        <From>
+          <StopPointRef>3300BA0786</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0481</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS21">
+      <RouteLink id="RS21_RL115">
+        <From>
+          <StopPointRef>3300BA0481</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0684</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS21_RL116">
+        <From>
+          <StopPointRef>3300BA0684</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0489</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS22">
+      <RouteLink id="RS22_RL117">
+        <From>
+          <StopPointRef>3300BA0489</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1042</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS22_RL118">
+        <From>
+          <StopPointRef>3300BA1042</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0761</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS22_RL119">
+        <From>
+          <StopPointRef>3300BA0761</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1034</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS22_RL120">
+        <From>
+          <StopPointRef>3300BA1034</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0491</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS22_RL121">
+        <From>
+          <StopPointRef>3300BA0491</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0469</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS23">
+      <RouteLink id="RS23_RL122">
+        <From>
+          <StopPointRef>3300BA0469</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0467</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS23_RL123">
+        <From>
+          <StopPointRef>3300BA0467</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0343</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS23_RL124">
+        <From>
+          <StopPointRef>3300BA0343</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0790</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS23_RL125">
+        <From>
+          <StopPointRef>3300BA0790</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0390</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS23_RL126">
+        <From>
+          <StopPointRef>3300BA0390</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0156</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS24">
+      <RouteLink id="RS24_RL127">
+        <From>
+          <StopPointRef>3300BA0156</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0933</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS24_RL128">
+        <From>
+          <StopPointRef>3300BA0933</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0602</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS24_RL129">
+        <From>
+          <StopPointRef>3300BA0602</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0150</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS25">
+      <RouteLink id="RS25_RL130">
+        <From>
+          <StopPointRef>3300BA0150</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1115</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS26">
+      <RouteLink id="RS26_RL131">
+        <From>
+          <StopPointRef>3300BA1115</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0151</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS27">
+      <RouteLink id="RS27_RL132">
+        <From>
+          <StopPointRef>3300BA0151</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0179</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS27_RL133">
+        <From>
+          <StopPointRef>3300BA0179</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0171</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS27_RL134">
+        <From>
+          <StopPointRef>3300BA0171</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0994</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS28">
+      <RouteLink id="RS28_RL135">
+        <From>
+          <StopPointRef>3300BA0994</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0093</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS28_RL136">
+        <From>
+          <StopPointRef>3300BA0093</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0095</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS29">
+      <RouteLink id="RS29_RL137">
+        <From>
+          <StopPointRef>3300BA0095</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0728</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS29_RL138">
+        <From>
+          <StopPointRef>3300BA0728</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0099</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS29_RL139">
+        <From>
+          <StopPointRef>3300BA0099</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0097</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS29_RL140">
+        <From>
+          <StopPointRef>3300BA0097</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0089</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS29_RL141">
+        <From>
+          <StopPointRef>3300BA0089</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0087</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS29_RL142">
+        <From>
+          <StopPointRef>3300BA0087</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0109</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS30">
+      <RouteLink id="RS30_RL143">
+        <From>
+          <StopPointRef>3300BA0109</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0102</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS31">
+      <RouteLink id="RS31_RL144">
+        <From>
+          <StopPointRef>3300BA0102</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0094</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS31_RL145">
+        <From>
+          <StopPointRef>3300BA0094</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA1024</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS31_RL146">
+        <From>
+          <StopPointRef>3300BA1024</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0830</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS31_RL147">
+        <From>
+          <StopPointRef>3300BA0830</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0245</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS31_RL148">
+        <From>
+          <StopPointRef>3300BA0245</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0247</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS31_RL149">
+        <From>
+          <StopPointRef>3300BA0247</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0249</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS32">
+      <RouteLink id="RS32_RL150">
+        <From>
+          <StopPointRef>3300BA0249</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0246</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS32_RL151">
+        <From>
+          <StopPointRef>3300BA0246</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0244</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS32_RL152">
+        <From>
+          <StopPointRef>3300BA0244</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0758</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS32_RL153">
+        <From>
+          <StopPointRef>3300BA0758</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0508</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS32_RL154">
+        <From>
+          <StopPointRef>3300BA0508</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0509</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS33">
+      <RouteLink id="RS33_RL155">
+        <From>
+          <StopPointRef>3300BA0509</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0523</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS33_RL156">
+        <From>
+          <StopPointRef>3300BA0523</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0494</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS33_RL157">
+        <From>
+          <StopPointRef>3300BA0494</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0913</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS33_RL158">
+        <From>
+          <StopPointRef>3300BA0913</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0493</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS33_RL159">
+        <From>
+          <StopPointRef>3300BA0493</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0502</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS33_RL160">
+        <From>
+          <StopPointRef>3300BA0502</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0597</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+    <RouteSection id="RS34">
+      <RouteLink id="RS34_RL161">
+        <From>
+          <StopPointRef>3300BA0597</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0912</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+      <RouteLink id="RS34_RL162">
+        <From>
+          <StopPointRef>3300BA0912</StopPointRef>
+        </From>
+        <To>
+          <StopPointRef>3300BA0506</StopPointRef>
+        </To>
+        <Direction>inbound</Direction>
+      </RouteLink>
+    </RouteSection>
+  </RouteSections>
+  <Routes>
+    <Route id="R1">
+      <Description>Tuxford - East Markham - Elkesley - Ordsall - White Houses - Retford - Hallcroft - Retford - Barnby Moor - Torworth - Ranskill - Scrooby - Gibbet Hill - Bawtry - Mount Pleasant - Bessacarr - Cantley - Belle Vue - Bennetthorpe - Doncaster Town Centre</Description>
+      <RouteSectionRef>RS1</RouteSectionRef>
+      <RouteSectionRef>RS2</RouteSectionRef>
+      <RouteSectionRef>RS3</RouteSectionRef>
+      <RouteSectionRef>RS4</RouteSectionRef>
+      <RouteSectionRef>RS5</RouteSectionRef>
+      <RouteSectionRef>RS6</RouteSectionRef>
+      <RouteSectionRef>RS7</RouteSectionRef>
+      <RouteSectionRef>RS8</RouteSectionRef>
+      <RouteSectionRef>RS9</RouteSectionRef>
+      <RouteSectionRef>RS10</RouteSectionRef>
+      <RouteSectionRef>RS11</RouteSectionRef>
+      <RouteSectionRef>RS12</RouteSectionRef>
+      <RouteSectionRef>RS13</RouteSectionRef>
+      <RouteSectionRef>RS14</RouteSectionRef>
+      <RouteSectionRef>RS15</RouteSectionRef>
+      <RouteSectionRef>RS16</RouteSectionRef>
+      <RouteSectionRef>RS17</RouteSectionRef>
+    </Route>
+    <Route id="R2">
+      <Description>Doncaster Town Centre - Bennetthorpe - Belle Vue - Cantley - Bessacarr - Parrots Corner - Mount Pleasant - Bawtry - Gibbet Hill - Scrooby - Ranskill - Torworth - Barnby Moor - Retford - Hallcroft - Retford - White Houses - Ordsall - Elkesley - East Markham - Tuxford</Description>
+      <RouteSectionRef>RS18</RouteSectionRef>
+      <RouteSectionRef>RS19</RouteSectionRef>
+      <RouteSectionRef>RS20</RouteSectionRef>
+      <RouteSectionRef>RS21</RouteSectionRef>
+      <RouteSectionRef>RS22</RouteSectionRef>
+      <RouteSectionRef>RS23</RouteSectionRef>
+      <RouteSectionRef>RS24</RouteSectionRef>
+      <RouteSectionRef>RS25</RouteSectionRef>
+      <RouteSectionRef>RS26</RouteSectionRef>
+      <RouteSectionRef>RS27</RouteSectionRef>
+      <RouteSectionRef>RS28</RouteSectionRef>
+      <RouteSectionRef>RS29</RouteSectionRef>
+      <RouteSectionRef>RS30</RouteSectionRef>
+      <RouteSectionRef>RS31</RouteSectionRef>
+      <RouteSectionRef>RS32</RouteSectionRef>
+      <RouteSectionRef>RS33</RouteSectionRef>
+      <RouteSectionRef>RS34</RouteSectionRef>
+    </Route>
+  </Routes>
+  <JourneyPatternSections>
+    <JourneyPatternSection id="JS1">
+      <JourneyPatternTimingLink id="JS1_TL1">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>3300BA0911</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0505</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS1_RL1</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS1_TL2">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0505</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0701</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS1_RL2</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS1_TL3">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0701</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0493</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS1_RL3</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS1_TL4">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0493</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0502</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS1_RL4</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS1_TL5">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0502</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0597</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS1_RL5</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS2">
+      <JourneyPatternTimingLink id="JS2_TL6">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0597</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0555</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS2_RL6</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS2_TL7">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0555</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0554</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS2_RL7</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT3M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS2_TL8">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0554</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0534</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS2_RL8</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS2_TL9">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0534</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0510</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS2_RL9</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS3">
+      <JourneyPatternTimingLink id="JS3_TL10">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0510</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0507</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS3_RL10</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS3_TL11">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0507</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0249</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS3_RL11</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT10M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS4">
+      <JourneyPatternTimingLink id="JS4_TL12">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0249</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0246</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS4_RL12</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS4_TL13">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0246</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0244</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS4_RL13</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS4_TL14">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0244</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0758</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS4_RL14</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS4_TL15">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0758</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0769</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS4_RL15</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS4_TL16">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0769</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1025</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS4_RL16</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT5M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS4_TL17">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1025</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0111</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS4_RL17</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS4_TL18">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0111</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0112</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS4_RL18</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS5">
+      <JourneyPatternTimingLink id="JS5_TL19">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0112</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0792</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS5_RL19</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS6">
+      <JourneyPatternTimingLink id="JS6_TL20">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0792</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0795</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS6_RL20</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS6_TL21">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0795</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0088</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS6_RL21</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS6_TL22">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0088</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0042</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS6_RL22</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS6_TL23">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0042</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0100</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS6_RL23</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS6_TL24">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0100</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS6_RL24</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS6_TL25">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1009</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0086</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS6_RL25</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS7">
+      <JourneyPatternTimingLink id="JS7_TL26">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0086</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0934</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS7_RL26</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS7_TL27">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0934</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0994</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS7_RL27</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT4M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS8">
+      <JourneyPatternTimingLink id="JS8_TL28">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0994</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0164</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS8_RL28</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS8_TL29">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0164</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1144</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS8_RL29</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS8_TL30">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1144</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0930</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS8_RL30</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT3M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS9">
+      <JourneyPatternTimingLink id="JS9_TL31">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0930</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1116</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS9_RL31</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT3M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS10">
+      <JourneyPatternTimingLink id="JS10_TL32">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1116</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0411</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS10_RL32</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS11">
+      <JourneyPatternTimingLink id="JS11_TL33">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0411</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0603</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS11_RL33</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS11_TL34">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0603</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0158</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS11_RL34</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS11_TL35">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0158</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0157</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS11_RL35</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS12">
+      <JourneyPatternTimingLink id="JS12_TL36">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0157</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS12_RL36</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS12_TL37">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0932</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0367</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS12_RL37</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS12_TL38">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0367</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0791</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS12_RL38</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS12_TL39">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0791</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0365</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS12_RL39</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS12_TL40">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0365</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0763</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS12_RL40</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS13">
+      <JourneyPatternTimingLink id="JS13_TL41">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0763</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0877</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS13_RL41</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS13_TL42">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0877</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1033</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS13_RL42</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS13_TL43">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1033</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0762</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS13_RL43</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS13_TL44">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0762</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1043</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS13_RL44</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS13_TL45">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1043</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0490</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS13_RL45</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS14">
+      <JourneyPatternTimingLink id="JS14_TL46">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0490</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0488</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS14_RL46</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS14_TL47">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0488</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0482</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS14_RL47</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS15">
+      <JourneyPatternTimingLink id="JS15_TL48">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0482</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0683</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS15_RL48</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS15_TL49">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0683</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0922</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS15_RL49</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS15_TL50">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0922</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0479</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS15_RL50</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS15_TL51">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0479</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0485</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS15_RL51</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS16">
+      <JourneyPatternTimingLink id="JS16_TL52">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0485</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS16_RL52</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS16_TL53">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1002</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045320</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS16_RL53</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT3M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS17">
+      <JourneyPatternTimingLink id="JS17_TL54">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045320</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040278</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL54</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL55">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040278</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL55</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL56">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045322</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040285</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL56</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL57">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040285</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041022</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL57</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL58">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041022</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041027</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL58</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL59">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041027</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045307</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL59</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL60">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045307</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040303</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL60</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL61">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040303</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045563</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL61</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL62">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045563</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370046331</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL62</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL63">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370046331</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040308</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL63</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL64">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040308</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045327</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL64</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL65">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045327</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL65</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL66">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045181</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045180</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL66</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL67">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045180</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045458</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL67</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL68">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045458</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045452</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL68</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL69">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045452</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045451</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL69</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL70">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045451</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040445</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL70</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL71">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040445</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040436</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL71</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL72">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040436</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040434</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL72</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL73">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040434</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040658</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL73</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL74">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040658</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045446</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL74</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL75">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045446</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045443</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL75</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL76">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045443</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041216</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL76</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL77">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041216</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040950</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL77</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS17_TL78">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040950</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>370070018</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS17_RL78</RouteLinkRef>
+        <Direction>outbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS18">
+      <JourneyPatternTimingLink id="JS18_TL79">
+        <From>
+          <Activity>pickUp</Activity>
+          <StopPointRef>370070018</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL79</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL80">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041001</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045028</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL80</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL81">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045028</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045442</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL81</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL82">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045442</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040721</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL82</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL83">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040721</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045445</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL83</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL84">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045445</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041000</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL84</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL85">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041000</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045449</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL85</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL86">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045449</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040433</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL86</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL87">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040433</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040444</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL87</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL88">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040444</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040446</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL88</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL89">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040446</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040410</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL89</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL90">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040410</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040416</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL90</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL91">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040416</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040415</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL91</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL92">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040415</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040389</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL92</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL93">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040389</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL93</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL94">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040319</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL94</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL95">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040319</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045486</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL95</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL96">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045486</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040307</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL96</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL97">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040307</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040306</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL97</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL98">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040306</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045663</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL98</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL99">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045663</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040302</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL99</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL100">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040302</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040283</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL100</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL101">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040283</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040282</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL101</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL102">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040282</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040286</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL102</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL103">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040286</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040284</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL103</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL104">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040284</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040280</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL104</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL105">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040280</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045526</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL105</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL106">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370045526</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040277</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL106</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS18_TL107">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370040277</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041013</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS18_RL107</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS19">
+      <JourneyPatternTimingLink id="JS19_TL108">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>370041013</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0196</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS19_RL108</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS19_TL109">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0196</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS19_RL109</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS19_TL110">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1003</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0459</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS19_RL110</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS20">
+      <JourneyPatternTimingLink id="JS20_TL111">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0459</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0825</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS20_RL111</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS20_TL112">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0825</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0480</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS20_RL112</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS20_TL113">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0480</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0786</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS20_RL113</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS20_TL114">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0786</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS20_RL114</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS21">
+      <JourneyPatternTimingLink id="JS21_TL115">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0481</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0684</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS21_RL115</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS21_TL116">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0684</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0489</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS21_RL116</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS22">
+      <JourneyPatternTimingLink id="JS22_TL117">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0489</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1042</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS22_RL117</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS22_TL118">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1042</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0761</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS22_RL118</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS22_TL119">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0761</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1034</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS22_RL119</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS22_TL120">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1034</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0491</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS22_RL120</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS22_TL121">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0491</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0469</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS22_RL121</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS23">
+      <JourneyPatternTimingLink id="JS23_TL122">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0469</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0467</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS23_RL122</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS23_TL123">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0467</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0343</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS23_RL123</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS23_TL124">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0343</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0790</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS23_RL124</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS23_TL125">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0790</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS23_RL125</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS23_TL126">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0390</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0156</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS23_RL126</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS24">
+      <JourneyPatternTimingLink id="JS24_TL127">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0156</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0933</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS24_RL127</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS24_TL128">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0933</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0602</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS24_RL128</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS24_TL129">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0602</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0150</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS24_RL129</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS25">
+      <JourneyPatternTimingLink id="JS25_TL130">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0150</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1115</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS25_RL130</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS26">
+      <JourneyPatternTimingLink id="JS26_TL131">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1115</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0151</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS26_RL131</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT3M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS27">
+      <JourneyPatternTimingLink id="JS27_TL132">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0151</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0179</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS27_RL132</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS27_TL133">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0179</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0171</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS27_RL133</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS27_TL134">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0171</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0994</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS27_RL134</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS28">
+      <JourneyPatternTimingLink id="JS28_TL135">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0994</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0093</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS28_RL135</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS28_TL136">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0093</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0095</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS28_RL136</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS29">
+      <JourneyPatternTimingLink id="JS29_TL137">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0095</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0728</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS29_RL137</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS29_TL138">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0728</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0099</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS29_RL138</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS29_TL139">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0099</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0097</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS29_RL139</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS29_TL140">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0097</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0089</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS29_RL140</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS29_TL141">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0089</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0087</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS29_RL141</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS29_TL142">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0087</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0109</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS29_RL142</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS30">
+      <JourneyPatternTimingLink id="JS30_TL143">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0109</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0102</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS30_RL143</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS31">
+      <JourneyPatternTimingLink id="JS31_TL144">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0102</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0094</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS31_RL144</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS31_TL145">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0094</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1024</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS31_RL145</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS31_TL146">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA1024</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0830</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS31_RL146</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT6M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS31_TL147">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0830</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0245</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS31_RL147</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS31_TL148">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0245</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0247</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS31_RL148</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS31_TL149">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0247</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0249</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS31_RL149</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS32">
+      <JourneyPatternTimingLink id="JS32_TL150">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0249</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0246</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS32_RL150</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS32_TL151">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0246</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0244</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS32_RL151</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS32_TL152">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0244</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0758</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS32_RL152</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS32_TL153">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0758</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0508</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS32_RL153</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT9M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS32_TL154">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0508</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0509</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS32_RL154</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS33">
+      <JourneyPatternTimingLink id="JS33_TL155">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0509</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0523</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS33_RL155</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS33_TL156">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0523</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0494</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS33_RL156</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS33_TL157">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0494</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0913</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS33_RL157</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS33_TL158">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0913</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0493</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS33_RL158</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS33_TL159">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0493</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0502</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS33_RL159</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT0M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS33_TL160">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0502</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0597</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS33_RL160</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT1M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+    <JourneyPatternSection id="JS34">
+      <JourneyPatternTimingLink id="JS34_TL161">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0597</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </From>
+        <To>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0912</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </To>
+        <RouteLinkRef>RS34_RL161</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT3M0S</RunTime>
+      </JourneyPatternTimingLink>
+      <JourneyPatternTimingLink id="JS34_TL162">
+        <From>
+          <Activity>pickUpAndSetDown</Activity>
+          <StopPointRef>3300BA0912</StopPointRef>
+          <TimingStatus>OTH</TimingStatus>
+        </From>
+        <To>
+          <Activity>setDown</Activity>
+          <StopPointRef>3300BA0506</StopPointRef>
+          <TimingStatus>PTP</TimingStatus>
+        </To>
+        <RouteLinkRef>RS34_RL162</RouteLinkRef>
+        <Direction>inbound</Direction>
+        <RunTime>PT2M0S</RunTime>
+      </JourneyPatternTimingLink>
+    </JourneyPatternSection>
+  </JourneyPatternSections>
+  <Operators>
+    <Operator id="KRWL">
+      <NationalOperatorCode>KRWL</NationalOperatorCode>
+      <OperatorCode>KRWL</OperatorCode>
+      <OperatorShortName>Kettlewells</OperatorShortName>
+    </Operator>
+  </Operators>
+  <Services>
+    <Service>
+      <ServiceCode>notts_KRWL_DS_180DS_</ServiceCode>
+      <Lines>
+        <Line id="DS">
+          <LineName>Doncaster Shopper</LineName>
+        </Line>
+      </Lines>
+      <OperatingPeriod>
+        <StartDate>2021-08-02</StartDate>
+      </OperatingPeriod>
+      <RegisteredOperatorRef>KRWL</RegisteredOperatorRef>
+      <StopRequirements>
+        <NoNewStopsRequired />
+      </StopRequirements>
+      <Mode>bus</Mode>
+      <Description>Tuxford - Retford - Doncaster</Description>
+      <StandardService>
+        <Origin>Tuxford</Origin>
+        <Destination>Doncaster Town Centre</Destination>
+        <JourneyPattern id="JP1">
+          <Direction>outbound</Direction>
+          <RouteRef>R1</RouteRef>
+          <JourneyPatternSectionRefs>JS1</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS2</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS3</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS4</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS5</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS6</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS7</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS8</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS9</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS10</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS11</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS12</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS13</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS14</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS15</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS16</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS17</JourneyPatternSectionRefs>
+        </JourneyPattern>
+        <JourneyPattern id="JP2">
+          <Direction>inbound</Direction>
+          <RouteRef>R2</RouteRef>
+          <JourneyPatternSectionRefs>JS18</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS19</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS20</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS21</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS22</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS23</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS24</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS25</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS26</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS27</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS28</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS29</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS30</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS31</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS32</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS33</JourneyPatternSectionRefs>
+          <JourneyPatternSectionRefs>JS34</JourneyPatternSectionRefs>
+        </JourneyPattern>
+      </StandardService>
+    </Service>
+  </Services>
+  <VehicleJourneys>
+    <VehicleJourney>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Tuesday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2021-12-28</StartDate>
+              <EndDate>2021-12-28</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ1_092000</VehicleJourneyCode>
+      <ServiceRef>notts_KRWL_DS_180DS_</ServiceRef>
+      <LineRef>DS</LineRef>
+      <JourneyPatternRef>JP1</JourneyPatternRef>
+      <DepartureTime>09:20:00</DepartureTime>
+    </VehicleJourney>
+    <VehicleJourney>
+      <OperatingProfile>
+        <RegularDayType>
+          <DaysOfWeek>
+            <Tuesday />
+          </DaysOfWeek>
+        </RegularDayType>
+        <SpecialDaysOperation>
+          <DaysOfNonOperation>
+            <DateRange>
+              <StartDate>2021-12-28</StartDate>
+              <EndDate>2021-12-28</EndDate>
+            </DateRange>
+          </DaysOfNonOperation>
+        </SpecialDaysOperation>
+      </OperatingProfile>
+      <VehicleJourneyCode>VJ2_140000</VehicleJourneyCode>
+      <ServiceRef>notts_KRWL_DS_180DS_</ServiceRef>
+      <LineRef>DS</LineRef>
+      <JourneyPatternRef>JP2</JourneyPatternRef>
+      <DepartureTime>14:00:00</DepartureTime>
+    </VehicleJourney>
+  </VehicleJourneys>
+</TransXChange>

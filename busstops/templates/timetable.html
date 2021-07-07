@@ -31,9 +31,9 @@
             {% endif %}
             <div class="timetable-wrapper{% if grouping.width > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
-                    {% if grouping.heads %}
+                    {% if grouping.heads or timetable.detailed %}
                         <thead>
-                            <tr>
+                            {% if grouping.heads %}<tr>
                                 <th></th>
                                 {% for head in grouping.heads %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
@@ -45,6 +45,15 @@
                                     </td>
                                 {% endfor %}
                             </tr>
+                            {% endif %}
+                            {% if timetable.detailed %}
+                                <tr>
+                                    <th>Block</th>
+                                    {% for trip in grouping.trips %}
+                                        <td>{{ trip.block }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
                         </thead>
                     {% endif %}
                     <tbody>
