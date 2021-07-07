@@ -16,7 +16,7 @@
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script>
-    fetch("/stats.json").then(response => response.json()).then(data => {
+    fetch("https://bustimes.org/stats.json").then(response => response.json()).then(data => {
         var journeys = d3.select("#journeys");
         var edits = d3.select("#edits");
 
@@ -102,7 +102,7 @@
 <svg id="timetables" width="792" height="800"></svg>
 
 <script>
-    fetch("/timetable-source-stats.json").then(response => response.json()).then(data => {
+    fetch("https://bustimes.org/timetable-source-stats.json").then(response => response.json()).then(data => {
         var timetables = d3.select("#timetables");
 
         data = data.map(item => {
@@ -176,9 +176,17 @@
         .style("fill", d => {
             return accent(d.key);
         })
+        .on("mousemove", handleMouseMove)
         .append("title").text(d => {
             return d.key;
         });
+
+        var mouser = timetables.append('text');
+
+        function handleMouseMove(event, data) {
+            var pointer = d3.pointer(event, this);
+            mouser.text(data.key).attr('x', pointer[0]).attr('y', pointer[1]);
+        }
 
     });
 </script>
