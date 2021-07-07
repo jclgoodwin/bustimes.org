@@ -156,19 +156,20 @@ class Timetable:
             trip__route__in=self.routes
         ).distinct().prefetch_related('calendardate_set')
 
-        self.date_options = list(self.get_date_options())
-
         if not date and len(self.calendars) == 1 and len(routes) == 1:
             calendar = self.calendars[0]
             # calendar has a summary like 'school days only', or no exceptions within 21 days
             if calendar.is_sufficiently_simple(self.today + datetime.timedelta(days=21)):
                 self.calendar = calendar
                 if calendar.start_date > self.today:  # starts in the future
-                    self.start_date = self.date_options[0]
-                    # we don't use calendar.start_date
-                    # in case a Friday only service 'starts' on a Sunday, for example
+                    self.start_date = calendar.start_date
+
+                    # in case a Friday only service has a start_date that's a Sunday, for example:
+                    for date in self.get_date_options():
+                        self.start_date = date
 
         if not self.calendar:
+            self.date_options = list(self.get_date_options())
             if not self.date:
                 if self.date_options:
                     self.date = self.date_options[0]
