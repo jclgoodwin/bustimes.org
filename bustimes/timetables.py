@@ -107,13 +107,7 @@ def compare_trips(rows, trip_ids, a, b):
                 break
 
     if a_time is None:
-        if a_top == b_top:
-            a_time = a.start
-            b_time = b.start
-        elif a_bottom == b_bottom:
-            a_time = a.end
-            b_time = b.end
-        elif a_top >= b_bottom:  # b is above a
+        if a_top >= b_bottom:  # b is above a
             a_time = a.start
             b_time = b.end
         elif b_top >= a_bottom:  # a is above b
