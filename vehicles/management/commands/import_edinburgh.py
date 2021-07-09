@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.utils.timezone import make_aware
+from django.utils import timezone
 from django.contrib.gis.geos import Point
 from busstops.models import Service
 from ...models import VehicleLocation, VehicleJourney
@@ -16,12 +16,11 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return make_aware(datetime.utcfromtimestamp(item['last_gps_fix']))
+        return datetime.fromtimestamp(item['last_gps_fix'], timezone.utc)
 
     def get_items(self):
         items = super().get_items()
-        if items:
-            return (item for item in items['vehicles'] if item['service_name'])
+        return items['vehicles']
 
     def get_vehicle(self, item):
         vehicle_defaults = {
@@ -43,13 +42,15 @@ class Command(ImportLiveVehiclesCommand):
             destination=item['destination'] or ''
         )
 
-        journey.route_name = item['service_name']
+        journey.route_name = item['service_name'] or ''
 
-        if vehicle.latest_journey and vehicle.latest_journey.route_name == journey.route_name:
+        if not journey.route_name:
+            pass
+        elif vehicle.latest_journey and vehicle.latest_journey.route_name == journey.route_name:
             journey.service_id = vehicle.latest_journey.service_id
         else:
             try:
-                journey.service = self.services.get(line_name=item['service_name'])
+                journey.service = self.services.get(line_name=journey.route_name)
                 if journey.service:
                     operator = journey.service.operator.first()
                     if not vehicle.operator_id or vehicle.operator_id != operator.id:

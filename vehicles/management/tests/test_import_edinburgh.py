@@ -61,4 +61,4 @@ class EdinburghImportTest(TestCase):
         self.assertEqual(76, location.heading)
         self.assertTrue(location.latlong)
 
-        self.assertEqual('2019-03-31 13:17:22+01:00', str(self.command.get_datetime(item)))
+        self.assertEqual('2019-03-31 13:17:22+00:00', str(self.command.get_datetime(item)))
