@@ -23,6 +23,9 @@ class Command(ImportLiveVehiclesCommand):
         return items['vehicles']
 
     def get_vehicle(self, item):
+        if item['longitude'] == -7.557172 and item['latitude'] == 49.7668:
+            return None, None
+
         vehicle_defaults = {
             'operator_id': 'LOTH'
         }
