@@ -964,7 +964,6 @@ thead {
     th {
         padding-top: 0;
         vertical-align: bottom;
-        text-align: right;
     }
 }
 
@@ -1058,20 +1057,19 @@ input:not(:checked) + label {
     }
 
     thead {
-        th {
+        th { // 'Block'
             border-top: 0;
+            border-bottom: 1px solid $border-color;
+            text-align: right;
+            padding-right: .5em;
         }
 
-        td {
+        td {  // block number / line name
             border: 1px solid $border-color;
             border-width: 0 1px 1px 0;
             text-align: center;
 
-            &:first-child {
-                border-bottom: 0;
-            }
-
-            &:last-child {
+            &:last-child { // last cell
                 border-right: 0;
             }
         }
@@ -1096,6 +1094,10 @@ input:not(:checked) + label {
         td {
             border-top: 0;
         }
+
+        td:first-child {
+            padding-left: .5em;
+        }
     }
 
     .minor {
@@ -1111,27 +1113,17 @@ input:not(:checked) + label {
         border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
         font-weight: normal;
-        padding-right: 0;
         white-space: nowrap;
-
-        a {
-            margin-right: 0;
-        }
     }
 }
 
 .timetable-wrapper--wide {
+    .stop-name,
     th {
         left: 0;
         overflow: hidden;
         position: sticky;
-        max-width: calc(100vw - 12em);
-    }
-
-    td:first-child {
-        background: #fff;
-        left: 0;
-        position: sticky;
+        max-width: calc(100vw - 14em);
     }
 }
 

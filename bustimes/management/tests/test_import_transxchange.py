@@ -163,7 +163,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
         self.assertContains(res, """
             <tr class="minor">
-                <th><a href="/stops/2900N12345">Norwich Brunswick Road</a></th><td>19:48</td><td>22:56</td>
+                <th class="stop-name"><a href="/stops/2900N12345">Norwich Brunswick Road</a></th><td>19:48</td><td>22:56</td>
             </tr>
         """, html=True)
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
@@ -172,7 +172,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
         self.assertContains(res, """
             <tr class="minor">
-                <th><a href="/stops/2900N12348">Norwich Eagle Walk</a></th>
+                <th class="stop-name"><a href="/stops/2900N12348">Norwich Eagle Walk</a></th>
                 <td>19:47</td>
                 <td>22:55</td>
             </tr>
@@ -829,14 +829,13 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(len(groupings[1].rows), 15)
         self.assertContains(res, """
             <tr>
-                <th><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
+                <th class="stop-name" rowspan="2"><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
                 <td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td>
                 <td></td><td></td><td rowspan="2"></td>
             </tr>
         """, html=True)
         self.assertContains(res, """
             <tr class="dep">
-                <th><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
                 <td>02:45</td><td>06:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td>
             </tr>
         """, html=True)
