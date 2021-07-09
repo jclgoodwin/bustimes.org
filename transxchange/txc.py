@@ -590,6 +590,9 @@ class Line:
             self.line_brand = ''
         self.line_name = line_name.strip()
 
+        if element.findtext('LineColour') or element.findtext('LineFontColour') or element.findtext('LineImage'):
+            print(ET.tostring(element).decode())
+
         self.outbound_description = element.findtext('OutboundDescription/Description')
         self.inbound_description = element.findtext('InboundDescription/Description')
 
