@@ -64,22 +64,6 @@ def do_revisions(vehicle_ids, data, user):
     # create a VehicleRevision record,
     # and remove fields from the 'data' dict so they're not part of any VehicleEdits created in the next step
 
-    if 'depot' in data:
-        to_depot = data['depot']
-        assert to_depot
-        for revision in revisions:
-            if revision.vehicle.data:
-                from_depot = revision.vehicle.data.get('Depot') or ''
-                if from_depot == to_depot:
-                    continue
-                revision.vehicle.data['Depot'] = to_depot
-            else:
-                from_depot = ''
-                revision.vehicle.data = {'Depot': to_depot}
-            revision.changes['depot'] = f"-{from_depot}\n+{to_depot}"
-        changed_fields.append('data')
-        del data['depot']
-
     if user.trusted:
 
         if data.get('withdrawn'):
@@ -150,20 +134,6 @@ def do_revision(vehicle, data, user):
                 setattr(vehicle, field, to_value)
                 changed_fields.append(field)
                 del data[field]
-
-    if 'depot' in data:
-        if vehicle.data:
-            from_depot = vehicle.data.get('Depot') or ''
-            if data['depot']:
-                vehicle.data['Depot'] = data['depot']
-            elif from_depot:
-                del vehicle.data['Depot']
-        else:
-            from_depot = ''
-            vehicle.data = {'Depot': data['depot']}
-        changes['depot'] = f"-{from_depot}\n+{data['depot']}"
-        changed_fields.append('data')
-        del data['depot']
 
     revision = VehicleRevision(
         vehicle=vehicle,

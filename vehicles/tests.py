@@ -34,11 +34,10 @@ class VehiclesTests(TestCase):
         service.operator.add(cls.bova)
 
         cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
-                                               colours='#FF0000', notes='Trent Barton', operator=cls.lynx,
-                                               data={'Depot': 'Holt'})
+                                               colours='#FF0000', notes='Trent Barton', operator=cls.lynx)
         cls.livery = Livery.objects.create(colours='#FF0000 #0000FF')
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=cls.livery,
-                                               vehicle_type=spectra, operator=cls.lynx, data={'Depot': 'Long Sutton'})
+                                               vehicle_type=spectra, operator=cls.lynx)
 
         cls.journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
                                                     service=service, route_name='2')
@@ -233,7 +232,6 @@ class VehiclesTests(TestCase):
         with self.assertNumQueries(13):
             response = self.client.get(url)
         self.assertNotContains(response, 'already')
-        self.assertContains(response, '<option value="Holt" selected>Holt</option>')
 
         initial = {
             'fleet_number': '1',
@@ -244,7 +242,6 @@ class VehiclesTests(TestCase):
             'colours': '#FF0000',
             'other_colour': '#ffffff',
             'notes': 'Trent Barton',
-            'depot': 'Holt'
         }
 
         # edit nothing
@@ -342,7 +339,6 @@ class VehiclesTests(TestCase):
             'colours': self.livery.id,
             'other_colour': '#ffffff',
             'notes': '',
-            'depot': 'Long Sutton'
         }
 
         with self.assertNumQueries(13):
@@ -356,7 +352,6 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, '/operators/bova-and-over')
 
         initial['notes'] = 'Ex Ipswich Buses'
-        initial['depot'] = ''
         initial['name'] = 'Luther Blisset'
         initial['branding'] = 'Coastliner'
         with self.assertNumQueries(13):
@@ -364,7 +359,6 @@ class VehiclesTests(TestCase):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
 
-        self.assertContains(response, 'Changed depot from Long Sutton')
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
         edit = VehicleEdit.objects.get()
@@ -391,7 +385,6 @@ class VehiclesTests(TestCase):
             'colours': self.livery.id,
             'other_colour': '',
             'notes': '',
-            'depot': 'Long Sutton'
         }
 
         with self.assertNumQueries(13):
@@ -419,7 +412,7 @@ class VehiclesTests(TestCase):
             })
 
         revision = VehicleRevision.objects.get()
-        self.assertEqual(str(revision), 'depot: Holt → , notes: Trent Barton → ')
+        self.assertEqual(str(revision), 'notes: Trent Barton → ')
 
         edit = VehicleEdit.objects.get()
 
@@ -445,49 +438,33 @@ class VehiclesTests(TestCase):
     def test_vehicles_edit(self):
         self.client.force_login(self.trusted_user)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             response = self.client.post('/operators/lynx/vehicles/edit')
         self.assertContains(response, 'Select vehicles to update')
         self.assertFalse(VehicleEdit.objects.all())
         self.assertFalse(VehicleRevision.objects.all())
 
-        # change vehicle type, depot and colours:
-        with self.assertNumQueries(19):
+        # change vehicle type and colours:
+        with self.assertNumQueries(17):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'operator': self.lynx.id,  # (no change)
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
-                'depot': 'Long Sutton',
                 'colours': self.livery.id
             })
         self.assertContains(response, '1 vehicle updated')
         revision = VehicleRevision.objects.get()
-        self.assertEqual(revision.changes, {'depot': '-Holt\n+Long Sutton'})
         self.assertIsNone(revision.from_livery)
         self.assertTrue(revision.to_livery)
         self.assertEqual('Optare Tempo', revision.from_type.name)
         self.assertEqual('Optare Spectra', revision.to_type.name)
         self.assertContains(response, 'FD54 JYA')
 
-        # reset depot
-        Vehicle.objects.filter(id=self.vehicle_1.id).update(data=None)
-        with self.assertNumQueries(16):
-            response = self.client.post('/operators/lynx/vehicles/edit', {
-                'vehicle': self.vehicle_1.id,
-                'depot': 'Long Sutton',
-                'colours': self.livery.id  # (no change)
-            })
-        revision = VehicleRevision.objects.last()
-        self.assertEqual(revision.changes, {'depot': '-\n+Long Sutton'})
-        self.assertEqual(str(revision), 'depot:  → Long Sutton')
-        self.assertContains(response, '1 vehicle updated')
-
         # withdraw
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(13):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'withdrawn': 'on',
-                'depot': 'Long Sutton',  # (no change)
             })
         revision = VehicleRevision.objects.last()
         self.assertEqual(revision.changes, {'withdrawn': '-No\n+Yes'})
@@ -495,9 +472,6 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, 'FD54 JYA')
 
         self.client.force_login(self.staff_user)
-
-        response = self.client.get('/admin/vehicles/vehiclerevision/?change=changes__depot')
-        self.assertContains(response, "2 vehicle revisions")
 
         # revert
         self.client.post('/admin/vehicles/vehiclerevision/', {
@@ -550,7 +524,7 @@ class VehiclesTests(TestCase):
                     'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
                     'livery': {'id': None, 'name': None, 'left': '#FF0000', 'right': '#FF0000'},
                     'fleet_number': 1, 'fleet_code': '1', 'reg': 'FD54JYA', 'name': '',
-                    'branding': '', 'notes': 'Trent Barton', 'withdrawn': False, 'data': {'Depot': 'Holt'},
+                    'branding': '', 'notes': 'Trent Barton', 'withdrawn': False, 'data': None,
                     'vehicle_type': {
                         'id': self.vehicle_1.vehicle_type_id,
                         'name': 'Optare Tempo', 'double_decker': False, 'coach': False, 'electric': None},
@@ -561,7 +535,7 @@ class VehiclesTests(TestCase):
                                'left': 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)',
                                'right': 'linear-gradient(to left,#FF0000 50%,#0000FF 50%)'},
                     'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': '', 'branding': '', 'notes': '',
-                    'withdrawn': False, 'data': {'Depot': 'Long Sutton'},
+                    'withdrawn': False, 'data': None,
                     'vehicle_type': {
                         'id': self.vehicle_2.vehicle_type_id,
                         'name': 'Optare Spectra', 'double_decker': True, 'coach': False, 'electric': None},

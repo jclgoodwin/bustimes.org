@@ -471,7 +471,6 @@ def edit_vehicle(request, vehicle_id):
         'branding': vehicle.branding,
         'name': vehicle.name,
         'previous_reg': vehicle.data and vehicle.data.get('Previous reg') or None,
-        'depot': vehicle.data and vehicle.data.get('Depot') or None,
         'notes': vehicle.notes,
         'withdrawn': vehicle.withdrawn
     }
