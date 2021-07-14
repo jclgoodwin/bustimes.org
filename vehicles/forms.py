@@ -57,8 +57,10 @@ class EditVehiclesForm(forms.Form):
     def has_really_changed(self):
         if not self.has_changed():
             return False
-        if all(key == 'url' or key == 'other_colour' for key in self.changed_data):
-            return False
+        for key in self.changed_data:
+            if all(key == 'url' or key == 'other_colour' for key in self.changed_data):
+                if not self.data.get('other_colour'):
+                    return False
         return True
 
     def __init__(self, *args, operator=None, user, vehicle=None, **kwargs):
@@ -87,11 +89,11 @@ class EditVehicleForm(EditVehiclesForm):
     reg = RegField(label='Number plate', required=False, max_length=24)
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
-    name = forms.CharField(label='Name', help_text="Not your name", required=False, max_length=255)
+    name = forms.CharField(label='Vehicle name', required=False, max_length=70)
     previous_reg = RegField(required=False, max_length=24)
     notes = forms.CharField(required=False, max_length=255)
     url = forms.URLField(label='URL', help_text="Optional link to a public web page (not a private Facebook group)"
-                         " or picture showing repaint", required=False, max_length=255)
+                         " or picture confirming changes", required=False, max_length=255)
     field_order = ['fleet_number', 'reg', 'operator', 'vehicle_type', 'colours', 'other_colour', 'branding', 'name',
                    'previous_reg', 'features', 'notes']
 

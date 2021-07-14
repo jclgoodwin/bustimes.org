@@ -1,4 +1,4 @@
-from .models import Vehicle, VehicleEdit, VehicleRevision, VehicleType, Livery
+from .models import VehicleEdit, VehicleRevision, VehicleType, Livery
 
 
 def get_vehicle_edit(vehicle, fields, now, request):
@@ -55,8 +55,7 @@ def get_vehicle_edit(vehicle, fields, now, request):
     return edit, changed
 
 
-def do_revisions(vehicle_ids, data, user):
-    vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
+def do_revisions(vehicles, data, user):
     revisions = [VehicleRevision(vehicle=vehicle, user=user, changes={}) for vehicle in vehicles]
     changed_fields = []
 
@@ -66,11 +65,12 @@ def do_revisions(vehicle_ids, data, user):
 
     if user.trusted:
 
-        if data.get('withdrawn'):
-            # assume vehicles can't be un-withdrawn in bulk
+        if 'withdrawn' in data:
+            to_value = 'Yes' if data['withdrawn'] else 'No'
             for revision in revisions:
+                from_value = 'Yes' if revision.vehicle.withdrawn else 'No'
+                revision.changes['withdrawn'] = f"-{from_value}\n+{to_value}"
                 revision.vehicle.withdrawn = data['withdrawn']
-                revision.changes['withdrawn'] = "-No\n+Yes"
             changed_fields.append('withdrawn')
             del data['withdrawn']
 
@@ -84,63 +84,59 @@ def do_revisions(vehicle_ids, data, user):
             changed_fields.append('vehicle_type')
             del data['vehicle_type']
 
-        if 'colours' in data and data['colours'].isdigit():
-            livery = Livery.objects.get(id=data['colours'])
-            for revision in revisions:
-                if revision.vehicle.livery_id != livery.id:
+        if 'colours' in data:
+            if data['colours'].isdigit():
+                livery = Livery.objects.get(id=data['colours'])
+                for revision in revisions:
+                    if revision.vehicle.livery_id != livery.id:
+                        revision.from_livery = revision.vehicle.livery
+                        revision.to_livery = livery
+                        revision.vehicle.livery = livery
+                        revision.changes['colours'] = f"-{revision.vehicle.colours}\n+"
+                        revision.vehicle.colours = ''
+            else:
+                to_colour = data.get('other_colour') or data['colours']
+                for revision in revisions:
                     revision.from_livery = revision.vehicle.livery
-                    revision.to_livery = livery
-                    revision.vehicle.livery = livery
-                    revision.vehicle.colours = ''
+                    revision.vehicle.livery = None
+                    if revision.vehicle.colours != to_colour:
+                        revision.changes['colours'] = f"-{revision.vehicle.colours}\n+{to_colour}"
+                        revision.vehicle.colours = to_colour
             changed_fields += ['livery', 'colours']
             del data['colours']
-
-    revisions = [revision for revision in revisions if str(revision)]
+            if 'other_colour' in data:
+                del data['other_colour']
 
     return revisions, changed_fields
 
 
 def do_revision(vehicle, data, user):
-    changes = {}
-    changed_fields = []
+    (revision,), changed_fields = do_revisions((vehicle,), data, user)
 
     if user.trusted:
         if 'reg' in data:
-            changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
+            revision.changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
             vehicle.reg = data['reg']
             changed_fields.append('reg')
             del data['reg']
 
         if 'branding' in data and data['branding'] == '':
-            changes['branding'] = f"-{vehicle.branding}\n+"
+            revision.changes['branding'] = f"-{vehicle.branding}\n+"
             vehicle.branding = ''
             changed_fields.append('branding')
             del data['branding']
-
-        if 'withdrawn' in data:
-            from_value = 'Yes' if vehicle.withdrawn else 'No'
-            to_value = 'Yes' if data['withdrawn'] else 'No'
-            changes['withdrawn'] = f"-{from_value}\n+{to_value}"
-            vehicle.withdrawn = data['withdrawn']
-            changed_fields.append('withdrawn')
-            del data['withdrawn']
 
     if user.is_staff:
         for field in ('notes', 'branding', 'name'):
             if field in data:
                 from_value = getattr(vehicle, field)
                 to_value = data[field]
-                changes[field] = f"-{from_value}\n+{to_value}"
+                revision.changes[field] = f"-{from_value}\n+{to_value}"
                 setattr(vehicle, field, to_value)
                 changed_fields.append(field)
                 del data[field]
 
-    revision = VehicleRevision(
-        vehicle=vehicle,
-        user=user
-    )
-
-    # operator, vehicle_type and livery have their own ForeignKey fields:
+    # operator has its own ForeignKey fields:
 
     if 'operator' in data:
         revision.from_operator = vehicle.operator
@@ -148,39 +144,6 @@ def do_revision(vehicle, data, user):
         vehicle.operator = data['operator']
         changed_fields.append('operator')
         del data['operator']
-
-    if user.trusted:
-        if 'vehicle_type' in data:
-            vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
-            revision.from_type = vehicle.vehicle_type
-            revision.to_type = vehicle_type
-            vehicle.vehicle_type = vehicle_type
-            changed_fields.append('vehicle_type')
-            del data['vehicle_type']
-
-        if 'colours' in data:
-            if data['colours'].isdigit():
-                livery = Livery.objects.get(id=data['colours'])
-                revision.from_livery = vehicle.livery
-                revision.to_livery = livery
-                vehicle.livery = livery
-                changed_fields.append('livery')
-                if vehicle.colours:
-                    changes['colours'] = f"-{vehicle.colours}\n+"
-                    vehicle.colours = ''
-                    changed_fields.append('colours')
-            else:
-                changes['colours'] = f"-{vehicle.colours}\n+{data['colours']}"
-                vehicle.colours = data['colours']
-                changed_fields.append('colours')
-                if vehicle.livery:
-                    changed_fields.append('livery')
-                    revision.from_livery = vehicle.livery
-                    vehicle.livery = None
-            del data['colours']
-
-    if changes:
-        revision.changes = changes
 
     if changed_fields:
         vehicle.save(update_fields=changed_fields)
