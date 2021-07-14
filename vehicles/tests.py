@@ -24,6 +24,7 @@ class VehiclesTests(TestCase):
                                            parent='Madrigal Electromotive')
         cls.lynx = Operator.objects.create(region=ea, name='Lynx', id='LYNX', slug='lynx',
                                            parent='Madrigal Electromotive')
+        cls.chicken = Operator.objects.create(region=ea, name='Chicken Bus', id='CLUCK', slug='chicken')
 
         tempo = VehicleType.objects.create(name='Optare Tempo', coach=False, double_decker=False)
         spectra = VehicleType.objects.create(name='Optare Spectra', coach=False, double_decker=True)
@@ -39,6 +40,8 @@ class VehiclesTests(TestCase):
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=cls.livery,
                                                vehicle_type=spectra, operator=cls.lynx)
 
+        cls.vehicle_3 = Vehicle.objects.create(code='10', branding='Coastliner')
+
         cls.journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
                                                     service=service, route_name='2')
 
@@ -52,6 +55,7 @@ class VehiclesTests(TestCase):
 
         cls.staff_user = User.objects.create(username='josh', is_staff=True, is_superuser=True, email='j@example.com')
         cls.trusted_user = User.objects.create(username='norma', trusted=True, email='n@example.com')
+        cls.user = User.objects.create(username='ken', trusted=None, email='ken@example.com')
         cls.untrusted_user = User.objects.create(username='clem', trusted=False, email='c@example.com')
 
     def test_untrusted_user(self):
@@ -435,6 +439,53 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '1 other edit,')
         self.assertContains(response, 'Trent Barton')
 
+    def test_vehicle_edit_3(self):
+        self.client.force_login(self.user)
+
+        with self.assertNumQueries(8):
+            response = self.client.get(self.vehicle_3.get_edit_url())
+        self.assertNotContains(response, 'livery')
+        self.assertNotContains(response, 'notes')
+
+        with self.assertNumQueries(6):
+            # new user - can create a VehicleEdit
+            response = self.client.post(self.vehicle_3.get_edit_url(), {
+                'reg': 'D19 FOX',
+                'previous_reg': 'QC FBPE',
+                'withdrawn': True
+            })
+        self.assertContains(response, "I’ll update those details shortly")
+
+        with self.assertNumQueries(11):
+            response = self.client.post(self.vehicle_2.get_edit_url(), {
+                'reg': self.vehicle_2.reg,
+                'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'colours': 'Other',
+            })
+            self.assertContains(response, "I’ll update those details shortly")
+
+        self.client.force_login(self.trusted_user)
+
+        with self.assertNumQueries(7):
+            # trusted user - can edit reg and remove branding
+            response = self.client.post(self.vehicle_3.get_edit_url(), {
+                'reg': 'DA04 DDA',
+                'branding': ''
+            })
+        self.assertContains(response, 'Changed reg to DA04DDA')
+        self.assertContains(response, 'Changed branding from Coastliner to')
+
+        with self.assertNumQueries(13):
+            # trusted user - can edit colour
+            response = self.client.post(self.vehicle_2.get_edit_url(), {
+                'reg': self.vehicle_2.reg,
+                'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'operator': self.vehicle_2.operator_id,
+                'colours': 'Other',
+            })
+        self.assertContains(response, 'Changed livery from  to None')
+        self.assertContains(response, 'Changed colours to Other')
+
     def test_vehicles_edit(self):
         self.client.force_login(self.trusted_user)
 
@@ -516,10 +567,10 @@ class VehiclesTests(TestCase):
 
     def test_api(self):
         with self.assertNumQueries(2):
-            response = self.client.get('/api/vehicles/')
+            response = self.client.get('/api/vehicles/?limit=2')
         self.assertEqual(
             response.json(),
-            {'count': 2, 'next': None, 'previous': None, 'results': [
+            {'count': 3, 'next': 'http://testserver/api/vehicles/?limit=2&offset=2', 'previous': None, 'results': [
                 {'id': self.vehicle_1.id,
                     'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
                     'livery': {'id': None, 'name': None, 'left': '#FF0000', 'right': '#FF0000'},
