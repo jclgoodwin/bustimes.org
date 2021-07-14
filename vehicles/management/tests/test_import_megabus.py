@@ -1,5 +1,6 @@
 from django.test import TestCase
 from busstops.models import DataSource, Region, Operator
+from ...utils import flush_redis
 from ...models import Vehicle
 from ..commands.import_megabus import Command
 
@@ -15,6 +16,8 @@ class MegabusTest(TestCase):
         Operator.objects.create(id="MEGA", name="Megabus", region=gb)
 
     def test_handle_item(self):
+        flush_redis()
+
         item = {
             'reference': '210310CL774304', 'id': '210310CL774304',
             'depart': 'Glasgow', 'arrival': 'Aberdeen', 'route': 'M9', 'date': '2021-03-10', 'linkDate': '2021-03-10',

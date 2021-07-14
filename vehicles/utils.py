@@ -1,4 +1,12 @@
+import redis
+from django.conf import settings
 from .models import VehicleEdit, VehicleRevision, VehicleType, Livery
+
+
+def flush_redis():
+    """For use in tests"""
+    r = redis.from_url(settings.REDIS_URL)
+    r.flushall()
 
 
 def get_vehicle_edit(vehicle, fields, now, request):

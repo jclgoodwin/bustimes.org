@@ -2,13 +2,13 @@ import os
 import redis
 import time_machine
 from django.core.cache import cache
-# from mock import patch
 from vcr import use_cassette
 from django.conf import settings
 from django.test import TestCase, override_settings
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney
 from ...workers import SiriConsumer
+from ...utils import flush_redis
 from ..commands import import_bod_avl, import_bod_avl_channels
 
 DIR = os.path.dirname(os.path.abspath(__file__))
@@ -63,8 +63,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_task(self):
-        r = redis.from_url(settings.REDIS_URL)
-        r.flushall()
+        flush_redis()
 
         items = [{
             'RecordedAtTime': '2020-10-17T08:34:00+00:00',
@@ -177,8 +176,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl.Command()
         command.source = self.source
 
-        r = redis.from_url(settings.REDIS_URL)
-        r.flushall()
+        flush_redis()
 
         command.handle_item({
             "Extensions": {
@@ -276,8 +274,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl.Command()
         command.source = self.source
 
-        r = redis.from_url(settings.REDIS_URL)
-        r.flushall()
+        flush_redis()
 
         command.handle_item({
             "Extensions": {
