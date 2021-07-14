@@ -334,6 +334,7 @@ PASSENGER_OPERATORS = [
         'KDT': 'KDTR',
         'HDT': 'HRGT',
         'YCD': 'YCST',
+        'TPEN': 'TPEN',
     }),
     ('Go North East', 'https://www.gonortheast.co.uk/open-data', 'NE', {
         'GNE': 'GNEL',

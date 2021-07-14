@@ -32,7 +32,7 @@ class Command(ImportLiveVehiclesCommand):
         'UNO': ['UNOE', 'UNIB'],  # Uno/Universitybus
         'UNIB': ['UNOE', 'UNIB'],
         'TBTN': ['TBTN', 'BRTB', 'KBUS'],  # trentbarton/Kinchbus
-        'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT'],  # Transdev Blazefield
+        'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT', 'TPEN'],  # Transdev Blazefield
         'MTRL': ['MPTR'],  # MP Travel using M Travel code (no relation!)
         'HUNT': ['HNTC'],  # Hunts using Hunters code
     }
