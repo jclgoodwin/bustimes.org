@@ -227,6 +227,9 @@ class Command(BaseCommand):
                         columnn_ref = cell_element.find('ColumnRef').attrib['ref']
                         row_ref = cell_element.find('RowRef').attrib['ref']
                         distance_matrix_element_price = cell_element.find("DistanceMatrixElementPrice")
+                        if distance_matrix_element_price is None:
+                            print(ET.tostring(cell_element).decode())
+                            continue
                         price_ref = distance_matrix_element_price.find("GeographicalIntervalPriceRef")
                         if price_ref is None:
                             continue
