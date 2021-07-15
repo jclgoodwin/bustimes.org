@@ -671,8 +671,8 @@ class VehicleJourney(models.Model):
                     pass
             try:
                 return trips.get(start, calendar__in=get_calendars(datetime))
-            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
-                pass
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                return
 
         try:
             return trips.get(ticket_machine_code=self.code)
