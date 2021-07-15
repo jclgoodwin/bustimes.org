@@ -649,18 +649,30 @@ class VehicleJourney(models.Model):
         ).distinct('start', 'end')
 
         if destination_ref and ' ' not in destination_ref and destination_ref[:3].isdigit():
-            trips = trips.filter(destination=destination_ref)
+            destination = Q(destination=destination_ref)
         else:
-            trips = trips.distinct('destination')
+            destination = None
 
         if len(self.code) == 4 and self.code.isdigit() and int(self.code) < 2400:
             hours = int(self.code[:-2])
             minutes = int(self.code[-2:])
             start = timedelta(hours=hours, minutes=minutes)
+            start = Q(start=start)
+
+            if destination:
+                try:
+                    return trips.get(start, destination)
+                except Trip.MultipleObjectsReturned:
+                    try:
+                        return trips.get(start, destination, calendar__in=get_calendars(datetime))
+                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                        return
+                except Trip.DoesNotExist:
+                    pass
             try:
-                return trips.get(start=start)
-            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                return
+                return trips.get(start, calendar__in=get_calendars(datetime))
+            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
+                pass
 
         try:
             return trips.get(ticket_machine_code=self.code)
