@@ -5,7 +5,7 @@ import logging
 import requests
 import zipfile
 import xml.etree.cElementTree as ET
-from django.db.models import Q
+from django.db.models import Q, OuterRef, Exists
 from io import StringIO
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
@@ -26,7 +26,7 @@ def clean_up(operators, sources, incomplete=False):
     service_operators = Service.operator.through.objects.filter(service=OuterRef('service'))
     routes = Route.objects.filter(
         Exists(service_operators.filter(operator__in=operators)),
-        ~Exists(service_operators.filter(~Q(operator__in=operators))  # exclude joint services
+        ~Exists(service_operators.filter(~Q(operator__in=operators)))  # exclude joint services
     ).exclude(source__in=sources)
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains='bus-data.dft.gov.uk')

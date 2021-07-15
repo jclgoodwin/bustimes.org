@@ -1,5 +1,4 @@
 import os
-from mock import patch
 from vcr import use_cassette
 from django.test import TestCase, override_settings
 from django.core.cache import cache

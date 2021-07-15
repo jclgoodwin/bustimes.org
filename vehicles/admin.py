@@ -234,6 +234,7 @@ changes.admin_order_field = 'changes'
 user.admin_order_field = 'user'
 url.admin_order_field = 'url'
 
+
 class OperatorFilter(admin.SimpleListFilter):
     title = 'operator'
     parameter_name = 'operator'

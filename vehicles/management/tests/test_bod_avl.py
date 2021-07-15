@@ -1,9 +1,7 @@
 import os
-import redis
 import time_machine
 from django.core.cache import cache
 from vcr import use_cassette
-from django.conf import settings
 from django.test import TestCase, override_settings
 from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
 from ...models import VehicleLocation, VehicleJourney
