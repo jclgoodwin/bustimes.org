@@ -262,6 +262,8 @@ PASSENGER_OPERATORS = [
     }),
     ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S', {
         'PERY': 'BORD',
+        'BB': 'BORD',
+        '': 'PERY',
     }),
     ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
         'SQ': 'WDBC',
