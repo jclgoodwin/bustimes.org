@@ -4,21 +4,16 @@ import logging
 import xml.etree.cElementTree as ET
 import requests
 import zipfile
+from datetime import datetime, timezone
 from ciso8601 import parse_datetime
+from django.utils.http import parse_http_date
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from busstops.models import StopPoint
-# from bustimes.utils import write_file
 from ... import models
 
 
 logger = logging.getLogger(__name__)
-
-
-def get_atco_code(stop):
-    ref = stop["@ref"]
-    assert ref.startswith("atco:")
-    return ref[5:]
 
 
 def get_user_profile(element):
@@ -127,14 +122,12 @@ class Command(BaseCommand):
             )
             if distance_matrix_element_elements:
                 for distance_matrix_element in distance_matrix_element_elements:
-                    start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
-                    end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
                     price_group_ref = distance_matrix_element.find("priceGroups/PriceGroupRef")
                     if price_group_ref is None:
-                        print(ET.tostring(distance_matrix_element).decode())
                         continue
-                    else:
-                        price_group_ref = price_group_ref.attrib['ref']
+                    price_group_ref = price_group_ref.attrib['ref']
+                    start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
+                    end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
                     distance_matrix_element, created = models.DistanceMatrixElement.objects.get_or_create(
                         code=distance_matrix_element.attrib["id"],
                         start_zone=fare_zones[start_zone],
@@ -289,7 +282,7 @@ class Command(BaseCommand):
         try:
             dataset = models.DataSet.objects.get(url=dataset_url)
             if dataset.datetime == modified:
-                return
+                return dataset
             # has changed
             dataset.tariff_set.all().delete()
         except models.DataSet.DoesNotExist:
@@ -301,6 +294,9 @@ class Command(BaseCommand):
             dataset.operators.set(item["noc"])
         except IntegrityError:
             print(item["noc"])
+
+        if 'BRTB' in item["noc"] or "RBUS" in item["noc"]:
+            return
 
         download_url = f"{dataset_url}download/"
         response = self.session.get(download_url, stream=True)
@@ -328,6 +324,37 @@ class Command(BaseCommand):
         dataset.datetime = modified
         dataset.save(update_fields=["datetime"])
 
+        return dataset
+
+    def ticketer(self, noc):
+        download_url = f"https://opendata.ticketer.com/uk/{noc}/fares/current.zip"
+        print(download_url)
+        try:
+            source = models.DataSet.objects.get(url=download_url)
+        except models.DataSet.DoesNotExist:
+            source = models.DataSet.objects.create(name=f"{noc} Ticketer fares", url=download_url)
+        response = self.session.get(download_url, stream=True)
+        assert response.ok
+
+        last_modified = response.headers['last-modified']
+        last_modified = parse_http_date(last_modified)
+        last_modified = datetime.fromtimestamp(last_modified, timezone.utc)
+
+        if source.datetime == last_modified:
+            return source
+
+        with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+            for filename in archive.namelist():
+                print(' ', filename)
+                try:
+                    self.handle_file(source, archive.open(filename), filename)
+                except AttributeError as e:
+                    logger.error(e, exc_info=True)
+
+        source.datetime = last_modified
+        source.save(update_fields=['datetime'])
+        return source
+
     def handle(self, api_key=None, **kwargs):
 
         if api_key == 'test':
@@ -345,23 +372,16 @@ class Command(BaseCommand):
 
         self.session = requests.Session()
 
-        for noc in ('FECS', 'LYNX'):
-            print(noc)
-            download_url = f"https://opendata.ticketer.com/uk/{noc}/fares/current.zip"
-            try:
-                source = models.DataSet.objects.get(url=download_url)
-            except models.DataSet.DoesNotExist:
-                source = models.DataSet(name=f"{noc} Ticketer fares", url=download_url)
-                source.save()
-            response = self.session.get(download_url, stream=True)
-            assert response.headers['Content-Type'] == 'application/zip'
-            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                for filename in archive.namelist():
-                    print(' ', filename)
-                    try:
-                        self.handle_file(source, archive.open(filename), filename)
-                    except AttributeError as e:
-                        logger.error(e, exc_info=True)
+        datasets = []
+
+        # Ticketer:
+
+        for noc in ('LYNX', 'FESX'):
+            dataset = self.ticketer(noc)
+            if dataset:
+                datasets.append(dataset.id)
+
+        # Bus Open Data Service:
 
         url = f"{self.base_url}/api/v1/fares/dataset/"
         params = {
@@ -375,7 +395,14 @@ class Command(BaseCommand):
             data = response.json()
 
             for item in data['results']:
-                self.handle_dataset(item)
+                dataset = self.handle_dataset(item)
+                if dataset:
+                    datasets.append(dataset.id)
 
             url = data['next']
             params = None
+
+        # remove removed datasets
+        old = models.DataSet.objects.exclude(id__in=datasets)
+        print(old)
+        print(old.delete())

@@ -22,12 +22,12 @@ class FaresTest(TestCase):
         destination = destinations[3][0]
         response = self.client.get(f'{tariff.get_absolute_url()}?origin={origin}&destination={destination}')
 
-        self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")
+        self.assertContains(response, "<h3>RAF Cranwell to Cranwell</h3>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
         # dataset detail view
         response = self.client.get(f'{tariff.source.get_absolute_url()}?origin={origin}&destination={destination}')
-        self.assertContains(response, "<p>RAF Cranwell to Cranwell:</p>")
+        self.assertContains(response, "<h3>RAF Cranwell to Cranwell</h3>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
         self.assertEqual(TimeInterval.objects.count(), 8)

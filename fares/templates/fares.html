@@ -8,7 +8,7 @@
 
 {% if form.is_valid %}
     {% for result in form.get_results %}
-        {% if forloop.first %}<p>{{ result.start_zone }} to {{ result.end_zone }}:</p>{% endif %}
+        {% ifchanged result.start_zone %}<h3>{{ result.start_zone }} to {{ result.end_zone }}</h3>{% endifchanged %}
         <p>{{ result.html }}</p>
     {% endfor %}
 {% endif %}
