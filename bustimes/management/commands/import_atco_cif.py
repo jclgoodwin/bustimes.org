@@ -30,18 +30,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for archive_name in options['filenames']:
+            
+            if 'ulb' in archive_name.lower() or 'ulsterbus' in archive_name.lower():
+                source_name = 'ULB'
+            else:
+                source_name = 'MET'
+            self.source, _ = DataSource.objects.get_or_create(name=source_name)
+
+            self.source.datetime = datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
+
             self.handle_archive(archive_name)
 
     def handle_archive(self, archive_name):
         self.routes = {}
         self.calendars = {}
-        if 'ulb' in archive_name.lower():
-            source_name = 'ULB'
-        else:
-            source_name = 'MET'
-        self.source, source_created = DataSource.objects.get_or_create(name=source_name)
-
-        self.source.datetime = datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
         with zipfile.ZipFile(archive_name) as archive:
             for filename in archive.namelist():

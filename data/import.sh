@@ -67,22 +67,6 @@ fi
 
 cd ..
 
-# Translink Metro
-metro_old=$(shasum metro--glider-opendata.zip)
-wget -qN https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/153a47c3-59b1-404f-8ec6-e5230cc4377d/download/metro--glider-opendata.zip
-metro_new=$(shasum metro--glider-opendata.zip)
-if [[ "$metro_old" != "$metro_new" ]]; then
-    ../manage.py import_atco_cif metro--glider-opendata.zip
-fi
-
-# Ulsterbus
-ulb_old=$(shasum ulb--goldline-opendata.zip)
-wget -qN https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/6c040b78-9fbe-439f-b359-38fb21c882ca/download/ulb--goldline-opendata.zip
-ulb_new=$(shasum ulb--goldline-opendata.zip)
-if [[ "$ulb_old" != "$ulb_new" ]]; then
-    ../manage.py import_atco_cif ulb--goldline-opendata.zip
-fi
-
 
 
 ie_nptg_old=$(shasum NPTG_final.xml)
@@ -133,7 +117,7 @@ fi
 cd ..
 
 noc_old=$(ls -l NOC_DB.csv)
-wget -qN http://mytraveline.info/NOC/NOC_DB.csv
+wget -qN https://mytraveline.info/NOC/NOC_DB.csv
 noc_new=$(ls -l NOC_DB.csv)
 if [[ $noc_old != $noc_new ]]; then
     wget -qN www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml

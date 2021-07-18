@@ -1,0 +1,232 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+    method: GET
+    uri: https://www.opendatani.gov.uk/api/3/action/package_show?id=ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016
+  response:
+    body:
+      string: '{"help": "https://www.opendatani.gov.uk/api/3/action/help_show?name=package_show",
+        "success": true, "result": {"license_title": "UK Open Government Licence",
+        "maintainer": null, "relationships_as_object": [], "private": false, "maintainer_email":
+        null, "num_tags": 5, "frequency": "irregular", "contact_name": "Open Data
+        Translink", "additional_info": "Additional information to the data files has
+        been supplied in a separate document entitled __''Additional Information''__.
+        This mainly refers to exceptions - e.g. validity dates for journeys highlighted
+        as public holidays or school holidays and information about through services
+        and guaranteed connections. ", "metadata_created": "2016-06-28T07:49:51.516946",
+        "metadata_modified": "2021-07-01T09:11:19.793130", "author": null, "author_email":
+        null, "id": "c1acee5b-a400-46bd-a795-9bf7637ff879", "state": "active", "version":
+        null, "license_id": "uk-ogl", "type": "dataset", "resources": [{"mimetype":
+        null, "cache_url": null, "hash": "", "description": "This is a common interface
+        file of Ulsterbus and Goldline Timetable information - ATCO.cif. The ATCO
+        specification is a standard used widely within the Public Transport Industry.",
+        "name": "Ulsterbus Timetables", "format": "ATCO.CIF", "url": "https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/291cbb54-7bb3-4df7-8599-0c8f49a20be6/download/ulb--goldline-opendata.zip",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "c1acee5b-a400-46bd-a795-9bf7637ff879",
+        "created": "2016-09-26T08:42:41.817605", "state": "active", "mimetype_inner":
+        null, "last_modified": "2020-12-10T16:12:51.334368", "position": 0, "revision_id":
+        "cc66900c-6df3-4678-8be0-bfaf3b72383e", "url_type": "upload", "id": "291cbb54-7bb3-4df7-8599-0c8f49a20be6",
+        "resource_type": null, "size": null}, {"mimetype": null, "cache_url": null,
+        "hash": "", "description": "Ulsterbus Timetable valid from 01 July 2021",
+        "name": "Ulsterbus Timetables valid from 01 July 2021", "format": "ATCO.CIF",
+        "url": "https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/6c040b78-9fbe-439f-b359-38fb21c882ca/download/ulsterbus--goldline.zip",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "c1acee5b-a400-46bd-a795-9bf7637ff879",
+        "created": "2016-06-28T07:54:38.791446", "state": "active", "mimetype_inner":
+        null, "last_modified": "2021-07-01T09:11:19.766692", "position": 1, "revision_id":
+        "afdecae0-95c3-4e22-9c5d-6d369acf64fc", "url_type": "upload", "id": "6c040b78-9fbe-439f-b359-38fb21c882ca",
+        "resource_type": null, "size": null}, {"mimetype": null, "cache_url": null,
+        "hash": "", "description": "supplementary information for bus cif data", "name":
+        "bus cif supplementary information", "format": "DOCX", "url": "https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/7b195748-c3f9-4970-b0fb-90a194f7e3b3/download/bus-cif-file-supplementary-notes.docx",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "c1acee5b-a400-46bd-a795-9bf7637ff879",
+        "created": "2016-06-28T12:32:09.227980", "state": "active", "mimetype_inner":
+        null, "last_modified": null, "position": 2, "revision_id": "22363948-941d-4c27-b8fa-36ed9dbc1aca",
+        "url_type": "upload", "id": "7b195748-c3f9-4970-b0fb-90a194f7e3b3", "resource_type":
+        null, "size": null}, {"mimetype": null, "cache_url": null, "hash": "", "description":
+        "bus ATCO-cif specification", "name": "bus ATCO-cif specification", "format":
+        "PDF", "url": "https://www.opendatani.gov.uk/dataset/c1acee5b-a400-46bd-a795-9bf7637ff879/resource/6fba35d3-b59c-4eaa-925f-e3dbaa1ea168/download/atco-cif-spec1.pdf",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "c1acee5b-a400-46bd-a795-9bf7637ff879",
+        "created": "2016-06-28T12:37:47.278222", "state": "active", "mimetype_inner":
+        null, "last_modified": null, "position": 3, "revision_id": "22363948-941d-4c27-b8fa-36ed9dbc1aca",
+        "url_type": "upload", "id": "6fba35d3-b59c-4eaa-925f-e3dbaa1ea168", "resource_type":
+        null, "size": null}], "num_resources": 4, "topic_category": ["transportation"],
+        "tags": [{"vocabulary_id": null, "state": "active", "display_name": "Bus services",
+        "id": "55c62d84-a1b7-4444-9083-e14e3bbacc07", "name": "Bus services"}, {"vocabulary_id":
+        null, "state": "active", "display_name": "Public Transport", "id": "6a4f65fb-fe0c-4243-a023-6b46348507ca",
+        "name": "Public Transport"}, {"vocabulary_id": null, "state": "active", "display_name":
+        "Road transport", "id": "3e83817c-1e02-4b6a-8c5f-98eb63132abe", "name": "Road
+        transport"}, {"vocabulary_id": null, "state": "active", "display_name": "bus",
+        "id": "455b0f1d-735e-43e7-98ca-39ef450657ca", "name": "bus"}, {"vocabulary_id":
+        null, "state": "active", "display_name": "timetables", "id": "c3778938-e9cd-4b7f-810d-e331c8840ad7",
+        "name": "timetables"}], "contact_email": "opendata@translink.co.uk", "groups":
+        [{"display_name": "Transport", "description": "", "image_display_url": "https://www.opendatani.gov.uk/uploads/group/2015-11-20-162726.184495transport.png",
+        "title": "Transport", "id": "3efef411-492a-4ccc-830d-f7ab351698e5", "name":
+        "transport"}], "creator_user_id": "27e5fa8d-f0b5-4226-ba7d-0113aabb6b15",
+        "relationships_as_subject": [], "lineage": "The Ulsterbus timetables are an
+        output from Omnibus bus scheduling software. This is a common interface file
+        ATCO.cif. The ATCO specification is a standard used widely within the Public
+        Transport Industry.", "organization": {"description": "Translink is the brand
+        name of the integrated public transport operation of Metro, NI Railways, and
+        Ulsterbus.", "created": "2015-09-08T14:30:45.115999", "title": "Translink",
+        "name": "translink", "is_organization": true, "state": "active", "image_url":
+        "2015-11-23-154108.586905logo-translink.jpg", "revision_id": "5846fe19-18ac-4ccc-bced-351c5cd6c8b1",
+        "type": "organization", "id": "50fbb69c-9a43-4d69-ae26-0e7421ddc9c1", "approval_status":
+        "approved"}, "name": "ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016",
+        "isopen": true, "url": null, "notes": "Ulsterbus and Goldline timetable data.
+        This is a common interface file ATCO.cif. \r\n\r\nThe ATCO specification is
+        a standard used widely within the Public Transport Industry. This file can
+        be opened as a text file.", "owner_org": "50fbb69c-9a43-4d69-ae26-0e7421ddc9c1",
+        "license_url": "http://reference.data.gov.uk/id/open-government-licence",
+        "title": "Ulsterbus and Goldline Timetable Data", "revision_id": "3ea613c9-eb16-4716-829a-3b5661412817"}}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 18 Jul 2021 00:05:26 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - nginx/1.19.2
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      content-length:
+      - '6497'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.25.1
+    method: GET
+    uri: https://www.opendatani.gov.uk/api/3/action/package_show?id=metro-timetable-data-valid-from-18-june-until-31-august-2016
+  response:
+    body:
+      string: '{"help": "https://www.opendatani.gov.uk/api/3/action/help_show?name=package_show",
+        "success": true, "result": {"license_title": "UK Open Government Licence",
+        "maintainer": null, "relationships_as_object": [], "private": false, "maintainer_email":
+        null, "num_tags": 5, "frequency": "irregular", "contact_name": "Open Data
+        Translink", "additional_info": "Additional information to the dta files has
+        been supplied in a separate document entitled __''bus-cif-file-supplementary-notes''__.
+        This mainly refers to exceptions to validity dates for journeys highlighted
+        as public holidays, or school terms/school holidays and information about
+        through services and guaranteed connections", "metadata_created": "2016-06-28T11:01:19.978289",
+        "metadata_modified": "2021-07-01T09:09:40.734456", "author": null, "author_email":
+        null, "id": "6d9677cf-8d03-4851-985c-16f73f7dd5fb", "state": "active", "version":
+        null, "license_id": "uk-ogl", "type": "dataset", "resources": [{"mimetype":
+        null, "cache_url": null, "hash": "", "description": "Metro and Glider ATCO.cif
+        data from 1 Sepember 2019", "name": "Metro & Glider timetables pre-covid",
+        "format": "ATCO.CIF", "url": "https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/f2c58049-7ca9-4576-b3bd-1b3d8a8674e0/download/metro-glider.zip",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "6d9677cf-8d03-4851-985c-16f73f7dd5fb",
+        "created": "2016-09-26T08:17:37.875512", "state": "active", "mimetype_inner":
+        null, "last_modified": "2019-12-05T16:25:33.909257", "position": 0, "revision_id":
+        "0f6c0147-00e3-429e-a53b-7393acca5e73", "url_type": "upload", "id": "f2c58049-7ca9-4576-b3bd-1b3d8a8674e0",
+        "resource_type": null, "size": null}, {"mimetype": null, "cache_url": null,
+        "hash": "", "description": "Metro ATCO.cif data", "name": "Metro timetables
+        28 June to 31 August 2016", "format": "ATCO.CIF", "url": "https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/4a65175b-4d61-4d1f-b770-026ea9c237b9/download/metro20160628.zip",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "6d9677cf-8d03-4851-985c-16f73f7dd5fb",
+        "created": "2016-06-28T11:03:08.900983", "state": "active", "mimetype_inner":
+        null, "last_modified": null, "position": 1, "revision_id": "3b8bb238-eab2-4745-b92a-8f85f917ca3c",
+        "url_type": "upload", "id": "4a65175b-4d61-4d1f-b770-026ea9c237b9", "resource_type":
+        null, "size": null}, {"mimetype": null, "cache_url": null, "hash": "", "description":
+        "bus cif supplementary information", "name": "bus cif supplementary information",
+        "format": "DOCX", "url": "https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/1a72b4c1-48a4-4dd9-a1ee-2de4bba281bc/download/bus-cif-file-supplementary-notes.docx",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "6d9677cf-8d03-4851-985c-16f73f7dd5fb",
+        "created": "2016-06-28T12:39:05.157369", "state": "active", "mimetype_inner":
+        null, "last_modified": null, "position": 2, "revision_id": "3b8bb238-eab2-4745-b92a-8f85f917ca3c",
+        "url_type": "upload", "id": "1a72b4c1-48a4-4dd9-a1ee-2de4bba281bc", "resource_type":
+        null, "size": null}, {"mimetype": null, "cache_url": null, "hash": "", "description":
+        "bus ATCO-cif specification", "name": "bus ATCO-cif specification", "format":
+        "PDF", "url": "https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/6c9a6067-55e5-48c7-bcdd-164d50f2ce30/download/atco-cif-spec1.pdf",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "6d9677cf-8d03-4851-985c-16f73f7dd5fb",
+        "created": "2016-06-28T12:39:37.746882", "state": "active", "mimetype_inner":
+        null, "last_modified": null, "position": 3, "revision_id": "3b8bb238-eab2-4745-b92a-8f85f917ca3c",
+        "url_type": "upload", "id": "6c9a6067-55e5-48c7-bcdd-164d50f2ce30", "resource_type":
+        null, "size": null}, {"mimetype": null, "cache_url": null, "hash": "", "description":
+        "Metro and Glider Timetables from 01 July 2021", "name": "Metro and Glider
+        Timetables from 01 July 2021", "format": "atco.cif", "url": "https://www.opendatani.gov.uk/dataset/6d9677cf-8d03-4851-985c-16f73f7dd5fb/resource/153a47c3-59b1-404f-8ec6-e5230cc4377d/download/metro--glider.zip",
+        "datastore_active": false, "cache_last_updated": null, "package_id": "6d9677cf-8d03-4851-985c-16f73f7dd5fb",
+        "created": "2020-07-01T10:35:39.433122", "state": "active", "mimetype_inner":
+        null, "last_modified": "2021-07-01T09:09:40.707985", "position": 4, "revision_id":
+        "207058a7-d509-4016-bd6c-40ad836f8991", "url_type": "upload", "id": "153a47c3-59b1-404f-8ec6-e5230cc4377d",
+        "resource_type": null, "size": null}], "num_resources": 5, "topic_category":
+        ["boundaries", "transportation"], "tags": [{"vocabulary_id": null, "state":
+        "active", "display_name": "Metro", "id": "81ffdc49-1a37-4e16-888e-5a4c454814f3",
+        "name": "Metro"}, {"vocabulary_id": null, "state": "active", "display_name":
+        "Translink", "id": "8468ca0b-91bc-4af5-9217-ebbefffe97ca", "name": "Translink"},
+        {"vocabulary_id": null, "state": "active", "display_name": "bus", "id": "455b0f1d-735e-43e7-98ca-39ef450657ca",
+        "name": "bus"}, {"vocabulary_id": null, "state": "active", "display_name":
+        "public transport", "id": "74f9fd2e-d9a5-4df4-a0c5-e070d3ea88b2", "name":
+        "public transport"}, {"vocabulary_id": null, "state": "active", "display_name":
+        "road transport", "id": "fb42bcd5-4136-4f1d-90cd-33c3b17b2363", "name": "road
+        transport"}], "contact_email": "opendata@translink.co.uk", "groups": [{"display_name":
+        "Transport", "description": "", "image_display_url": "https://www.opendatani.gov.uk/uploads/group/2015-11-20-162726.184495transport.png",
+        "title": "Transport", "id": "3efef411-492a-4ccc-830d-f7ab351698e5", "name":
+        "transport"}], "creator_user_id": "27e5fa8d-f0b5-4226-ba7d-0113aabb6b15",
+        "relationships_as_subject": [], "lineage": "The Metro timetables are an ouput
+        from bus scheduling software. This is a common interface file ATCO.cif. The
+        ATCO.cif specification is a standard used widely within Public Transport industry.",
+        "organization": {"description": "Translink is the brand name of the integrated
+        public transport operation of Metro, NI Railways, and Ulsterbus.", "created":
+        "2015-09-08T14:30:45.115999", "title": "Translink", "name": "translink", "is_organization":
+        true, "state": "active", "image_url": "2015-11-23-154108.586905logo-translink.jpg",
+        "revision_id": "5846fe19-18ac-4ccc-bced-351c5cd6c8b1", "type": "organization",
+        "id": "50fbb69c-9a43-4d69-ae26-0e7421ddc9c1", "approval_status": "approved"},
+        "name": "metro-timetable-data-valid-from-18-june-until-31-august-2016", "isopen":
+        true, "url": null, "notes": "Translink Metro and Glider timetable data.\r\n\r\nThis
+        is a common interface file ATCO.cif. \r\n\r\nThe __ATCO.cif__ specification
+        is a standard used widely within the Public Transport industry.  This file
+        can be opened as a text file.", "owner_org": "50fbb69c-9a43-4d69-ae26-0e7421ddc9c1",
+        "license_url": "http://reference.data.gov.uk/id/open-government-licence",
+        "title": "Translink Metro & Glider Timetable Data", "revision_id": "abad64ff-bce6-4dc2-b1be-3f2dcd6fd6a3"}}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Cache-Control:
+      - no-cache
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Sun, 18 Jul 2021 00:05:26 GMT
+      Pragma:
+      - no-cache
+      Server:
+      - nginx/1.19.2
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      content-length:
+      - '7096'
+    status:
+      code: 200
+      message: OK
+version: 1
