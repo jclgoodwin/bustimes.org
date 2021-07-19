@@ -5,6 +5,7 @@ from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 from requests import RequestException
 from django.contrib.gis.geos import Point
 from django.utils import timezone
+from django.db.models import Exists, OuterRef
 from busstops.models import Service
 from bustimes.models import get_calendars, Trip
 from ...models import VehicleLocation, VehicleJourney
@@ -38,7 +39,8 @@ class Command(ImportLiveVehiclesCommand):
         trips = Trip.objects.filter(calendar__in=get_calendars(now),
                                     start__lte=time_since_midnight + timedelta(minutes=5),
                                     end__gte=time_since_midnight - timedelta(minutes=30))
-        services = Service.objects.filter(operator__in=self.operators, route__trip__in=trips).distinct()
+        has_trips = Exists(trips.filter(route__service=OuterRef('id')))
+        services = Service.objects.filter(has_trips, operator__in=self.operators)
         for service in services.values('line_name'):
             line_name = service['line_name'].replace('-x', 'X')  # Aircoach
             for direction in 'OI':
