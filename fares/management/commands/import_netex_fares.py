@@ -48,6 +48,20 @@ class Command(BaseCommand):
             if element.tag[:31] == '{http://www.netex.org.uk/netex}':
                 element.tag = element.tag[31:]
 
+        operators = element.find("dataObjects/CompositeFrame/frames/ResourceFrame/organisations")
+        operators = {
+            operator.attrib["id"]: operator for operator in operators
+        }
+
+        lines = element.find("dataObjects/CompositeFrame/frames/ServiceFrame/lines")
+        if lines is None:
+            lines = {}
+        else:
+            lines = {
+                line.attrib["id"]: line for line in lines
+            }
+        # print(operators, lines)
+
         user_profiles = {}
         for usage_parameter in element.find("dataObjects/CompositeFrame/frames/FareFrame/usageParameters"):
             user_profile, created = get_user_profile(usage_parameter)

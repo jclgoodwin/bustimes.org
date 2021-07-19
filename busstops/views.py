@@ -689,7 +689,8 @@ class ServiceDetailView(DetailView):
                 else:
                     context['payment_methods'].append(method)
 
-        tariffs = self.object.tariff_set.all()
+        tariffs = self.object.tariff_set
+        tariffs = tariffs.filter(source__published=True)
         if tariffs.exists():
             if self.request.GET:
                 context['fares'] = FaresForm(tariffs, self.request.GET)
