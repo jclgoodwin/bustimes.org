@@ -22,10 +22,12 @@ class ImportOperatorContactTest(TestCase):
 
         source = DataSource.objects.create(name='National Operator Codes', datetime='2017-01-01 00:00+00:00')
 
-        OperatorCode.objects.create(operator=cls.sanders, code='SNDR', source=source)
-        OperatorCode.objects.create(operator=cls.first, code='FECS', source=source)
-        OperatorCode.objects.create(operator=cls.loaches, code='LCHS', source=source)
-        OperatorCode.objects.create(operator=cls.polruan, code='CSTL', source=source)
+        OperatorCode.objects.bulk_create([
+            OperatorCode(source=source, code='SNDR', operator=cls.sanders),
+            OperatorCode(source=source, code='FECS', operator=cls.first),
+            OperatorCode(source=source, code='LCHS', operator=cls.loaches),
+            OperatorCode(source=source, code='CSTL', operator=cls.polruan),
+        ])
 
         cls.command.handle()
 
