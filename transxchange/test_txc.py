@@ -5,12 +5,6 @@ from django.test import TestCase
 from . import txc
 
 
-class DescriptionTest(TestCase):
-    def test_correct_description(self):
-        self.assertEqual(txc.correct_description('Penryn College - Stitians'), 'Penryn College - Stithians')
-        self.assertEqual(txc.correct_description('Sutton Benger- Swindon'), 'Sutton Benger - Swindon')
-
-
 class DateRangeTest(TestCase):
     """Tests for DateRanges"""
 

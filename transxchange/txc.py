@@ -4,7 +4,6 @@ import calendar
 import datetime
 import logging
 from django.contrib.gis.geos import Point, LineString
-from django.utils.text import slugify
 from django.utils.dateparse import parse_duration
 from chardet.universaldetector import UniversalDetector
 from titlecase import titlecase
@@ -24,33 +23,10 @@ def sanitize_description_part(part):
     return a shorter, more normal version like 'Blyth'.
     """
     sanitized_part = DESCRIPTION_REGEX.match(part.strip())
-    return sanitized_part.group(1) if sanitized_part is not None else part
-
-
-def correct_description(description):
-    """Given an description, return a version with any typos pedantically corrected."""
-    for old, new in (
-            ('Stitians', 'Stithians'),
-            ('Kings Lynn', "King's Lynn"),
-            ('Wells - Next - The - Sea', 'Wells-next-the-Sea'),
-            ('Wells next the Sea', 'Wells-next-the-Sea'),
-            ('Baasingstoke', 'Basingstoke'),
-            ('Liskerard', 'Liskeard'),
-            ('Tauton', 'Taunton'),
-            ('City Centre,st Stephens Street', 'Norwich'),
-            ('Charlton Horethore', 'Charlton Horethorne'),
-            ('Camleford', 'Camelford'),
-            ('Greenstead Green', 'Greensted Green'),
-            ('Tinagel', 'Tintagel'),
-            ('Plymouh City Cerntre', 'Plymouth City Centre'),
-            ('Winterbourn ', 'Winterbourne'),
-            ('Exetedr', 'Exeter'),
-            ('- ', ' - '),
-            (' -', ' - '),
-            ('  ', ' '),
-    ):
-        description = description.replace(old, new)
-    return description
+    if sanitized_part is not None:
+        print(part)
+        return sanitized_part.group(1)
+    return part
 
 
 class Stop:
@@ -490,7 +466,7 @@ class Service:
         elif ' via ' in description and description[:description.find(' via ')].isupper():
             parts = description.split(' via ')
             description = ' via '.join(titlecase(part) for part in parts)
-        self.description = correct_description(description)
+        self.description = description
 
         self.via = None
         if ' - ' in self.description:
@@ -640,8 +616,6 @@ class TransXChange:
                 for route_element in element:
                     route = Route(route_element)
                     self.routes[route.id] = route
-                element.clear()
-            elif tag == 'RouteSections':
                 element.clear()
             elif tag == 'Operators':
                 self.operators = element
