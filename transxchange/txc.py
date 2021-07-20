@@ -464,49 +464,18 @@ class DateRange:
     def __init__(self, element):
         self.start = element.findtext("StartDate")
         self.end = element.findtext("EndDate")
-        try:
-            self.start = datetime.date.fromisoformat(self.start)
-        except ValueError:  # Sanders Coaches. There's no way this is valid
-            self.start = datetime.datetime.strptime(self.start, '%m/%d/%Y').date()
-            if self.end:
-                self.end = datetime.datetime.strptime(self.end, '%m/%d/%Y').date()
-        else:
-            if self.end:
-                self.end = datetime.date.fromisoformat(self.end)
+        self.start = datetime.date.fromisoformat(self.start)
+        if self.end:
+            self.end = datetime.date.fromisoformat(self.end)
         self.note = element.findtext("Note", "")
 
     def __str__(self):
         if self.start == self.end:
-            return self.start.strftime('%-d %B %Y')
-        else:
-            return '%s to %s' % (self.start, self.end)
+            return str(self.start)
+        return f'{self.start} to {self.end}'
 
     def contains(self, date):
         return self.start <= date and (not self.end or self.end >= date)
-
-
-class OperatingPeriod(DateRange):
-    def __str__(self):
-        if self.start == self.end:
-            return self.start.strftime('on %-d %B %Y')
-        today = datetime.date.today()
-        if self.start > today:
-            if self.end and (self.end - self.start).days < 14:
-                start_format = '%-d'
-                if self.start.month != self.end.month:
-                    start_format += ' %B'
-                if self.start.year != self.end.year:
-                    start_format += ' %Y'
-                return 'from {} to {}'.format(
-                    self.start.strftime(start_format),
-                    self.end.strftime('%-d %B %Y')
-                )
-            return self.start.strftime('from %-d %B %Y')
-        # The end date is often bogus,
-        # but show it if the period seems short enough to be relevant
-        if self.end and (self.end - self.start).days < 7:
-            return self.end.strftime('until %-d %B %Y')
-        return ''
 
 
 class Service:
@@ -543,7 +512,7 @@ class Service:
         if operatingprofile_element is not None:
             self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
 
-        self.operating_period = OperatingPeriod(element.find('OperatingPeriod'))
+        self.operating_period = DateRange(element.find('OperatingPeriod'))
 
         self.public_use = element.findtext('PublicUse')
 
@@ -716,22 +685,3 @@ class Cell:
             self.wait_time = True
         else:
             self.wait_time = None
-
-
-def stop_is_at(stop, text):
-    """Whether a given slugified string, roughly matches either
-    this stop's locality's name, or this stop's name
-    (e.g. 'kings-lynn' matches 'kings-lynn-bus-station' and vice versa).
-    """
-    if stop.locality:
-        name = slugify(stop.locality)
-        if name in text or text in name:
-            if name == text:
-                return 2
-            return 1
-    name = slugify(stop.common_name)
-    if text in name or name in text:
-        if name == text:
-            return 2
-        return 1
-    return False
