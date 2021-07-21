@@ -1,12 +1,8 @@
 import yaml
-import os
 from django.db.models import Count, OuterRef, Exists
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from ...models import Operator, Region, Service
-
-
-DIR = os.path.dirname(__file__)
 
 
 def maybe_move_operator(operator, regions):
@@ -39,7 +35,7 @@ class Command(BaseCommand):
             if regions:
                 maybe_move_operator(operator, regions)
 
-        with open(os.path.join(settings.DATA_DIR, 'operators.yaml')) as open_file:
+        with open(settings.DATA_DIR / 'operators.yaml') as open_file:
             records = yaml.load(open_file, Loader=yaml.FullLoader)
             for code in records:
                 Operator.objects.filter(id=code).update(**records[code])

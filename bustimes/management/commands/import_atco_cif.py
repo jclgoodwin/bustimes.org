@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for archive_name in options['filenames']:
-            
+
             if 'ulb' in archive_name.lower() or 'ulsterbus' in archive_name.lower():
                 source_name = 'ULB'
             else:

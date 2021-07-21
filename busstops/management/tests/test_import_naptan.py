@@ -1,7 +1,7 @@
 """Tests for importing NaPTAN data
 """
-import os
 import vcr
+from pathlib import Path
 from mock import patch
 from warnings import catch_warnings
 from django.core.management import call_command
@@ -10,8 +10,7 @@ from ...models import Region, AdminArea, StopPoint, Locality, Service, StopUsage
 from ..commands import import_stop_areas, import_stops, import_stops_in_area, import_stop_area_hierarchy
 
 
-DIR = os.path.dirname(os.path.abspath(__file__))
-FIXTURES_DIR = os.path.join(DIR, 'fixtures')
+FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 
 
 @override_settings(DATA_DIR=FIXTURES_DIR)
@@ -19,28 +18,30 @@ class UpdateNaptanTest(TestCase):
     """Test the update_naptan command
     """
     def test_handle(self):
-        naptan_dir = os.path.join(FIXTURES_DIR, 'NaPTAN')
-        if not os.path.exists(naptan_dir):
-            os.mkdir(naptan_dir)
-        zipfile_path = os.path.join(naptan_dir, 'naptan.zip')
+        naptan_dir = FIXTURES_DIR / 'NaPTAN'
+        if not naptan_dir.exists():
+            naptan_dir.mkdir()
+        zipfile_path = naptan_dir / 'naptan.zip'
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
+        with vcr.use_cassette(str(FIXTURES_DIR / 'naptan.yml')) as cassette:
             call_command('update_naptan')
 
-        source = DataSource.objects.get(name='NaPTAN')
-        self.assertEqual(source.settings[0]['LastUpload'], '03/09/2020')
+            source = DataSource.objects.get(name='NaPTAN')
+            self.assertEqual(source.settings[0]['LastUpload'], '03/09/2020')
 
-        with open(zipfile_path) as open_file:
-            self.assertEqual(open_file.read(), 'this is all the data')
+            with open(zipfile_path) as open_file:
+                self.assertEqual(open_file.read(), 'this is all the data')
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
+            cassette.rewind()
+
             with patch('busstops.management.commands.update_naptan.Command.get_data') as get_data:
                 call_command('update_naptan')
                 get_data.assert_not_called()
 
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan.yml')):
             source.settings[0]['LastUpload'] = '01/09/2020'
             source.save(update_fields=['settings'])
+
+            cassette.rewind()
 
             call_command('update_naptan')
 
@@ -51,7 +52,7 @@ class UpdateNaptanTest(TestCase):
             self.assertEqual(open_file.read(), 'this is the shetland data')
 
         # simulate a problem with the region-specific NaPTAN download, so all regions are downloaded
-        with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'naptan-error.yml')):
+        with vcr.use_cassette(str(FIXTURES_DIR / 'naptan-error.yml')):
             with override_settings(DATA_DIR=FIXTURES_DIR):
                 with patch('builtins.print') as mocked_print:
                     call_command('update_naptan')
@@ -60,8 +61,8 @@ class UpdateNaptanTest(TestCase):
             self.assertEqual(open_file.read(), 'these pretzels are making me thirsty again')
 
         # clean up afterwards
-        os.remove(zipfile_path)
-        os.rmdir(naptan_dir)
+        zipfile_path.unlink()
+        naptan_dir.rmdir()
 
 
 class ImportStopsTest(TestCase):
@@ -95,7 +96,7 @@ class ImportNaptanTest(TestCase):
 
         command = import_stops.Command()
         for filename in ('Stops.csv', 'StopPoints.csv'):
-            command.input = os.path.join(FIXTURES_DIR, filename)
+            command.input = FIXTURES_DIR / filename
             command.handle()
 
         cls.stop_area = import_stop_areas.Command().handle_row({

@@ -1,4 +1,3 @@
-import os
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -38,7 +37,7 @@ class Command(BaseCommand):
         else:  # get all data
             response = self.get_data()
 
-        with open(os.path.join(settings.DATA_DIR, 'NaPTAN', 'naptan.zip'), 'wb') as zip_file:
+        with open(settings.DATA_DIR / 'NaPTAN' / 'naptan.zip', 'wb') as zip_file:
             for chunk in response.iter_content(chunk_size=102400):
                 zip_file.write(chunk)
 

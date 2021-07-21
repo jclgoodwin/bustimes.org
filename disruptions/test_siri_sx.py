@@ -747,7 +747,7 @@ Services will observe all bus stops on the diverted route. </Details>
             self.client.post('/siri', xml, content_type='text/xml')
 
     def test_siri_sx_request(self):
-        cassette = str(VCR_DIR/ 'siri_sx.yaml')
+        cassette = str(VCR_DIR / 'siri_sx.yaml')
 
         with use_cassette(cassette, match_on=['body']):
             with self.assertNumQueries(110):

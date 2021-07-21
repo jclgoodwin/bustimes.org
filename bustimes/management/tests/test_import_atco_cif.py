@@ -90,10 +90,10 @@ class ImportAtcoCifTest(TestCase):
                 response = self.client.get('/services/219-belfast-europa-buscentre-ballymena-buscentre')
                 self.assertEqual('2019-07-27', str(response.context_data['timetable'].date))
                 self.assertEqual(1, len(response.context_data['timetable'].groupings))
-        self.assertContains(response, 'sets down only')
+        self.assertContains(response, 'set down only')
 
         service = Service.objects.get(service_code='218_GLE')
         with time_machine.travel('2019-10-01'):
             with self.assertNumQueries(14):
                 response = self.client.get(service.get_absolute_url() + '?date=2019-10-01')
-        self.assertContains(response, 'sets down only')
+        self.assertContains(response, 'set down only')
