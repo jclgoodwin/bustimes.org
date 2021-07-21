@@ -253,7 +253,7 @@ class Timetable:
         for grouping in self.groupings:
             for row in grouping.rows:
                 for cell in row.times:
-                    if type(cell) is Cell and not cell.last and cell.stoptime.activity == 'setDown':
+                    if type(cell) is Cell and cell.stoptime.pick_up is False and not cell.last:
                         return True
 
     def credits(self):
@@ -564,3 +564,8 @@ class Cell:
 
     def departure_time(self):
         return format_timedelta(self.departure)
+
+    def set_down_only(self):
+        if not self.last:
+            if not self.stoptime.pick_up:
+                return True

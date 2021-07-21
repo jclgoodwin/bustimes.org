@@ -8,7 +8,6 @@ import xmltodict
 import xml.etree.cElementTree as ET
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q
 from django.utils import timezone
 from busstops.models import Service, SIRISource
 from bustimes.models import get_calendars, get_routes, Route, StopTime
@@ -423,7 +422,7 @@ def blend(departures, live_rows, stop=None):
 
 
 def get_stop_times(date, time, stop, services, services_routes):
-    times = StopTime.objects.filter(~Q(activity='setDown'), stop_id=stop)
+    times = StopTime.objects.filter(pick_up=True, stop_id=stop)
     if time:
         times = times.filter(departure__gte=time)
     services = [service for service in services if not service.timetable_wrong]

@@ -74,14 +74,14 @@
                                 {% if cell.colspan %}
                                     <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>
                                 {% else %}
-                                    <td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if not cell.last and cell.stoptime.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
+                                    <td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% endif %}{% endif %}</td>
                                 {% endif %}
                             {% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
-                                <tr class="{% if row.is_minor %}minor {% endif %} dep">
+                                <tr class="{% if row.is_minor %}minor {% endif %}dep">
                                     {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}
-                                        <td>{% if cell.wait_time or not cell.last %}{{ cell.departure_time }}{% if not cell.last and cell.stoptime.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
+                                        <td>{% if cell.wait_time or not cell.last %}{{ cell.departure_time }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% endif %}{% endif %}</td>
                                     {% endif %}{% endfor %}
                                 </tr>
                             {% endif %}
@@ -112,7 +112,7 @@
     {% endfor %}
 
     {% if timetable.has_set_down_only %}
-        <p>Times marked <strong>s</strong> – “sets down only” – the {{ object.mode }} will only stop to drop passengers off</p>
+        <p>Times marked <strong>s</strong> – “set down only” – the {{ object.mode }} will only stop to drop passengers off</p>
     {% endif %}
 
     {% for credit in timetable.credits %}{% if forloop.first %}
