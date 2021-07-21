@@ -3,7 +3,7 @@ import io
 import csv
 import logging
 import zipfile
-import requests
+from requests_html import HTMLSession
 from datetime import datetime, timedelta
 from chardet.universaldetector import UniversalDetector
 from django.utils.dateparse import parse_duration
@@ -26,7 +26,6 @@ MODES = {
     4: 'ferry',
     200: 'coach',
 }
-SESSION = requests.Session()
 
 
 def parse_date(string):
@@ -34,6 +33,7 @@ def parse_date(string):
 
 
 def read_file(archive, name):
+    print(archive)
     try:
         with archive.open(name) as open_file:
             detector = UniversalDetector()
@@ -45,7 +45,7 @@ def read_file(archive, name):
             open_file.seek(0)
             with io.TextIOWrapper(open_file, encoding=detector.result['encoding']) as wrapped_file:
                 for line in csv.DictReader(wrapped_file):
-                    yield(line)
+                    yield line
     except KeyError:
         # file doesn't exist
         return
@@ -294,6 +294,9 @@ class Command(BaseCommand):
                     departure=departure_time,
                     sequence=line['stop_sequence'],
                 )
+                if line.get('pickup_type') == '1':  # "No pickup available"
+                    stop_time.pick_up = False
+
                 if stop:
                     trip.destination = stop
                 elif line['stop_id'] in stops_not_created:
@@ -361,9 +364,19 @@ class Command(BaseCommand):
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
     def handle(self, *args, **options):
-        for collection in options['collections'] or settings.IE_COLLECTIONS:
-            path = os.path.join(settings.DATA_DIR, f'google_transit_{collection}.zip')
-            url = f'https://www.transportforireland.ie/transitData/google_transit_{collection}.zip'
+        if options['collections']:
+            collections = [f'google_transit_{collection}.zip' for collection in options['collections']]
+        else:
+            session = HTMLSession()
+
+            response = session.get('https://www.transportforireland.ie/transitData/PT_Data.html')
+            collections = response.html.find('a[href^="google_transit_"]')
+
+            collections = options['collections'] or set(element.attrs['href'] for element in collections)
+
+        for collection in collections:
+            path = os.path.join(settings.DATA_DIR, collection)
+            url = f'https://www.transportforireland.ie/transitData/{collection}'
             modifed, last_modified = download_if_changed(path, url)
             if modifed or options['force']:
                 print(collection, last_modified)

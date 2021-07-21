@@ -17,7 +17,7 @@ from ...models import Route, Trip, Calendar, CalendarDate
 from ..commands import import_transxchange
 
 
-FIXTURES_DIR = Path(os.path.dirname(os.path.abspath(__file__))) / 'fixtures'
+FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 
 
 @override_settings(

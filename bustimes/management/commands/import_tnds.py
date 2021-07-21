@@ -37,7 +37,7 @@ class Command(BaseCommand):
             if existing and existing['Size'] == int(details['size']):
                 continue
 
-            path = os.path.join(settings.TNDS_DIR, name)
+            path = settings.TNDS_DIR / name
             if os.path.exists(path) and os.path.getsize(path) == int(details['size']):
                 continue
 

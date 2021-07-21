@@ -1,22 +1,21 @@
-import os
 import zipfile
 import vcr
 import time_machine
 import datetime
+from pathlib import Path
 from mock import patch
 from tempfile import TemporaryDirectory
 from django.test import TestCase, override_settings
-from django.conf import settings
 from django.core.management import call_command
 from busstops.models import Region, AdminArea, StopPoint, Service, Operator
 from ...models import Route
 from ..commands import import_gtfs
 
 
-FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
+FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 
 
-@override_settings(DATA_DIR=FIXTURES_DIR, IE_COLLECTIONS=['mortons', 'seamusdoherty'])
+@override_settings(DATA_DIR=FIXTURES_DIR)
 @time_machine.travel(datetime.datetime(2019, 8, 30))
 class GTFSTest(TestCase):
     @classmethod
@@ -52,24 +51,25 @@ class GTFSTest(TestCase):
         Operator.objects.create(id=132, name='Seumas Doherty', region=cls.leinster)
 
         with TemporaryDirectory() as directory:
-            for collection in settings.IE_COLLECTIONS:
-                dir_path = os.path.join(FIXTURES_DIR, f'google_transit_{collection}')
-                feed_path = os.path.join(directory, f'google_transit_{collection}.zip')
+            for collection in ('mortons', 'seamusdoherty'):
+                dir_path = FIXTURES_DIR / f'google_transit_{collection}'
+                feed_path = Path(directory) / f'google_transit_{collection}.zip'
                 with zipfile.ZipFile(feed_path, 'a') as open_zipfile:
-                    for item in os.listdir(dir_path):
-                        open_zipfile.write(os.path.join(dir_path, item), item)
+                    for item in dir_path.iterdir():
+                        open_zipfile.write(item, item.name)
 
             with override_settings(DATA_DIR=directory):
-                with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
+                with vcr.use_cassette(str(FIXTURES_DIR / 'google_transit_ie.yaml')) as cassette:
                     with patch('builtins.print') as mocked_print:
                         call_command('import_gtfs', '--force', '-v2')
-                mocked_print.assert_called_with((0, {}))
+                    mocked_print.assert_called_with((0, {}))
 
-                # import a second time - test that it's OK if stuff already exists
-                with vcr.use_cassette(os.path.join(FIXTURES_DIR, 'google_transit_ie') + '.yaml'):
+                    cassette.rewind()
+
+                    # import a second time - test that it's OK if stuff already exists
                     with patch('builtins.print') as mocked_print:
                         call_command('import_gtfs', '--force')
-                mocked_print.assert_called_with((0, {}))
+                    mocked_print.assert_called_with((0, {}))
 
     def test_stops(self):
         stops = StopPoint.objects.all()
@@ -132,13 +132,13 @@ class GTFSTest(TestCase):
         self.assertContains(res, '/services/165')
 
     def test_download_if_modified(self):
-        path = 'poop.txt'
+        path = Path('poop.txt')
         url = 'https://bustimes.org/static/js/global.js'
 
-        if os.path.exists(path):
-            os.remove(path)
+        if path.exists():
+            path.unlink()
 
-        cassette = os.path.join(FIXTURES_DIR, 'download_if_modified.yaml')
+        cassette = str(FIXTURES_DIR / 'download_if_modified.yaml')
 
         with vcr.use_cassette(cassette, match_on=['uri', 'headers']):
             self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
@@ -147,22 +147,21 @@ class GTFSTest(TestCase):
             with patch('os.path.getmtime', return_value=1593870909.0) as getmtime:
                 self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
                                  '(True, datetime.datetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
-                getmtime.assert_called_with('poop.txt')
+                getmtime.assert_called_with(path)
 
-        self.assertTrue(os.path.exists(path))
-
-        os.remove(path)
+        self.assertTrue(path.exists())
+        path.unlink()
 
     def test_handle(self):
         Route.objects.all().delete()
 
         with patch('bustimes.management.commands.import_gtfs.download_if_changed', return_value=(False, None)):
-            call_command('import_gtfs')
+            call_command('import_gtfs', 'mortons')
         self.assertFalse(Route.objects.all())
 
         with patch('bustimes.management.commands.import_gtfs.download_if_changed', return_value=(True, None)):
             with patch('builtins.print') as mocked_print:
                 with self.assertRaises(FileNotFoundError):
-                    call_command('import_gtfs')
-        mocked_print.assert_called_with('mortons', None)
+                    call_command('import_gtfs', 'mortons')
+        mocked_print.assert_called_with('google_transit_mortons.zip', None)
         self.assertFalse(Route.objects.all())

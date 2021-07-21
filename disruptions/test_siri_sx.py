@@ -1,11 +1,13 @@
-import os
 from vcr import use_cassette
+from pathlib import Path
 from django.test import TestCase, override_settings
 from django.core.cache import cache
-from django.conf import settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, Service, DataSource, StopPoint, StopUsage
 from .models import Situation
+
+
+VCR_DIR = Path(__file__).resolve().parent.parent / 'data' / 'vcr'
 
 
 class SiriSXTest(TestCase):
@@ -89,7 +91,7 @@ class SiriSXTest(TestCase):
         self.assertIsNone(cache.get('Heartbeat:HAConTest'))
         self.assertIsNone(cache.get('Heartbeat:TransportAPI'))
 
-        cassette = os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml')
+        cassette = str(VCR_DIR / 'siri_sx.yaml')
 
         with use_cassette(cassette, match_on=['body']):
             with self.assertRaises(ValueError):
@@ -745,10 +747,12 @@ Services will observe all bus stops on the diverted route. </Details>
             self.client.post('/siri', xml, content_type='text/xml')
 
     def test_siri_sx_request(self):
-        with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
+        cassette = str(VCR_DIR/ 'siri_sx.yaml')
+
+        with use_cassette(cassette, match_on=['body']):
             with self.assertNumQueries(110):
                 call_command('import_siri_sx')
-        with use_cassette(os.path.join(settings.DATA_DIR, 'vcr', 'siri_sx.yaml'), match_on=['body']):
+        with use_cassette(cassette, match_on=['body']):
             with self.assertNumQueries(11):
                 call_command('import_siri_sx')
 

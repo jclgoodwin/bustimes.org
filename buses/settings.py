@@ -3,11 +3,12 @@
 
 import os
 import sys
+from pathlib import Path
 from aioredis import ReplyError
 from autobahn.exception import Disconnected
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
 
@@ -135,7 +136,7 @@ CHANNEL_LAYERS = {
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.environ.get('STATIC_ROOT', os.path.join(BASE_DIR, '..', 'bustimes-static'))
+STATIC_ROOT = os.environ.get('STATIC_ROOT', BASE_DIR.parent / 'bustimes-static')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 TEMPLATE_MINIFER_STRIP_FUNCTION = 'buses.utils.minify'
@@ -239,23 +240,12 @@ TFWM = {
     'app_key': os.environ.get('TFWM_APP_KEY')
 }
 
-DATA_DIR = os.path.join(BASE_DIR, 'data')
-TNDS_DIR = os.path.join(DATA_DIR, 'TNDS')
+DATA_DIR = BASE_DIR / 'data'
+TNDS_DIR = DATA_DIR / 'TNDS'
 
 AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')
 AKISMET_SITE_URL = 'https://bustimes.org'
 
-IE_COLLECTIONS = (
-    'goahead', 'dublinbus', 'kenneallys', 'locallink', 'irishrail', 'ferries',
-    'manda', 'finnegans', 'citylink', 'nitelink', 'buseireann', 'mcgeehan',
-    'mkilbride', 'expressbus', 'edmoore', 'collins', 'luas', 'sro',
-    'dublincoach', 'burkes', 'mhealy', 'kearns', 'josfoley', 'buggy',
-    'jjkavanagh', 'citydirect', 'aircoach', 'matthews', 'wexfordbus',
-    'dualway', 'tralee', 'sbloom', 'mcginley', 'swordsexpress', 'suirway',
-    'sdoherty', 'pjmartley', 'mortons', 'mgray', 'mcgrath', 'mangan',
-    'lallycoach', 'halpenny', 'donnellys', 'cmadigan', 'bkavanagh',
-    'ptkkenneally', 'farragher', 'fedateoranta', 'ashbourneconnect'
-)
 PASSENGER_OPERATORS = [
     ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
         'NCT': 'NCTR'

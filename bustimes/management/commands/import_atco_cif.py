@@ -300,9 +300,11 @@ class Command(BaseCommand):
                 if note == 'pick up only' or note == 'pick up  only':
                     if previous_identity != b'QT':
                         self.stop_times[-1].activity = 'pickUp'
+                        self.stop_times[-1].set_down = False
                 elif note == 'set down only' or note == '.set down only':
                     if previous_identity != b'QT':
                         self.stop_times[-1].activity = 'setDown'
+                        self.stop_times[-1].pick_up = False
                 else:
                     print(note)
             elif previous_identity == b'QS' or previous_identity == b'QE' or previous_identity == b'QN':

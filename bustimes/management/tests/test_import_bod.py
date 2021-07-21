@@ -1,8 +1,8 @@
-import os
 import zipfile
 import datetime
 from ciso8601 import parse_datetime
 from tempfile import TemporaryDirectory
+from pathlib import Path
 from vcr import use_cassette
 from mock import patch
 import time_machine
@@ -13,7 +13,7 @@ from vehicles.models import VehicleJourney
 from ...models import Route
 
 
-FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures')
+FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 
 
 class MockZipFile:
@@ -35,7 +35,7 @@ class ImportBusOpenDataTest(TestCase):
             OperatorCode(operator=schu, source=source, code='SCHU')
         ])
 
-    @use_cassette(os.path.join(FIXTURES_DIR, 'bod_lynx.yaml'))
+    @use_cassette(str(FIXTURES_DIR / 'bod_lynx.yaml'))
     @time_machine.travel(datetime.datetime(2020, 5, 1))
     @override_settings(BOD_OPERATORS=[
         ('LYNX', 'EA', {
@@ -45,7 +45,7 @@ class ImportBusOpenDataTest(TestCase):
     @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {})
     def test_import_bod(self):
         with TemporaryDirectory() as directory:
-            with override_settings(DATA_DIR=directory):
+            with override_settings(DATA_DIR=Path(directory)):
                 with patch('builtins.print') as mocked_print:
                     call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
                 mocked_print.assert_called_with({'GoodFriday', 'NewYearsDay', 'EasterMonday', 'BoxingDay', 'MayDay',
@@ -165,16 +165,16 @@ class ImportBusOpenDataTest(TestCase):
         }
 
         with TemporaryDirectory() as directory:
-            with override_settings(DATA_DIR=directory):
+            with override_settings(DATA_DIR=Path(directory)):
                 archive_name = 'stagecoach-sccm-route-schedule-data-transxchange_2_4.zip'
-                path = os.path.join(directory, archive_name)
+                path = Path(directory) / archive_name
 
                 with zipfile.ZipFile(path, 'a') as open_zipfile:
                     for filename in (
                         '904_FE_PF_904_20210102.xml',
                         '904_VI_PF_904_20200830.xml',
                     ):
-                        open_zipfile.write(os.path.join(FIXTURES_DIR, filename), filename)
+                        open_zipfile.write(FIXTURES_DIR / filename, filename)
 
                 with patch(
                     'bustimes.management.commands.import_bod.download_if_changed',
@@ -183,7 +183,9 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(63):
                         with patch('builtins.print') as mocked_print:
                             call_command('import_bod', 'stagecoach')
-                    download_if_changed.assert_called_with(path, 'https://opendata.stagecoachbus.com/' + archive_name)
+                    download_if_changed.assert_called_with(
+                        str(path), 'https://opendata.stagecoachbus.com/' + archive_name
+                    )
                     mocked_print.assert_called_with(undefined_holidays)
 
                     with self.assertNumQueries(1):

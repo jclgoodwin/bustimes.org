@@ -1,4 +1,3 @@
-import os
 import zipfile
 import requests
 import json
@@ -50,7 +49,7 @@ def route_xml(request, source, code=''):
     source = get_object_or_404(DataSource, id=source)
 
     if 'tnds' in source.url:
-        path = os.path.join(settings.TNDS_DIR, f'{source}.zip')
+        path = settings.TNDS_DIR / f'{source}.zip'
         with zipfile.ZipFile(path) as archive:
             if code:
                 return FileResponse(archive.open(code), content_type='text/plain')
@@ -63,12 +62,12 @@ def route_xml(request, source, code=''):
     if '/' in code:
         path = code.split('/')[0]
         code = code[len(path) + 1:]
-        path = os.path.join(settings.DATA_DIR, path)
+        path = settings.DATA_DIR / path
         if code:
             with zipfile.ZipFile(path) as archive:
                 return FileResponse(archive.open(code), content_type='text/xml')
     else:
-        path = os.path.join(settings.DATA_DIR, code)
+        path = settings.DATA_DIR / code
 
     try:
         with zipfile.ZipFile(path) as archive:

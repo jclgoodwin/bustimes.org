@@ -1,6 +1,6 @@
 # coding=utf-8
-import os
 import vcr
+from pathlib import Path
 from django.test import TestCase
 from unittest import skip
 from django.core import mail
@@ -9,7 +9,7 @@ from django.shortcuts import render
 from .models import Region, AdminArea, District, Locality, StopPoint, StopUsage, Operator, Service
 
 
-DIR = os.path.dirname(os.path.abspath(__file__))
+VCR_DIR = Path(__file__).resolve().parent.parent / 'data' / 'vcr'
 
 
 class ContactTests(TestCase):
@@ -24,7 +24,7 @@ class ContactTests(TestCase):
         self.assertFalse(response.context['form'].is_valid())
 
     def test_contact_post(self):
-        with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', 'akismet.yaml')):
+        with vcr.use_cassette(str(VCR_DIR / 'akismet.yaml')):
             response = self.client.post('/contact', {
                 'name': 'Rufus "Red" Herring',
                 'email': 'rufus@example.com',
@@ -168,7 +168,7 @@ class ViewsTests(TestCase):
         self.assertNotContains(response, 'found for')
 
     def test_postcode(self):
-        with vcr.use_cassette(os.path.join(DIR, '..', 'data', 'vcr', 'postcode.yaml')):
+        with vcr.use_cassette(str(VCR_DIR / 'postcode.yaml')):
             # postcode sufficiently near to fake locality
             with self.assertNumQueries(2):
                 response = self.client.get('/search?q=w1a 1aa')
