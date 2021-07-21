@@ -2,7 +2,7 @@ import datetime
 from django.utils.timezone import localdate
 from difflib import Differ
 from functools import cmp_to_key, partial, cached_property
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 from .utils import format_timedelta
 from .models import get_calendars, get_routes, Calendar, Trip, StopTime
 
@@ -185,8 +185,8 @@ class Timetable:
         ).select_related(
             'route__service'
         ).prefetch_related(
-            'notes',
-            'stoptime_set'
+            Prefetch('stoptime_set', queryset=StopTime.objects.filter(Q(pick_up=True) | Q(set_down=True))),
+            'notes'
         )
 
         for trip in trips:
