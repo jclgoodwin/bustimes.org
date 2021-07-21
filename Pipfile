@@ -41,6 +41,7 @@ haversine = "*"
 boto3 = "*"
 regex = "*"
 django-redis = "*"
+chardet = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

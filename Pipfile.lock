@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "85978066b0f0da083e62a7ecac37272723fa0e2eff4dceaaf2a0836016e63497"
+            "sha256": "d4e3ae0548b9c548e1da724558f3a1ec26aff0d26b7b52270e974097ce566cc0"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -196,6 +196,14 @@
             ],
             "index": "pypi",
             "version": "==3.3.0"
+        },
+        "chardet": {
+            "hashes": [
+                "sha256:0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa",
+                "sha256:f864054d66fd9118f2e67044ac8981a54775ec5b67aed0441892edb553d21da5"
+            ],
+            "index": "pypi",
+            "version": "==4.0.0"
         },
         "charset-normalizer": {
             "hashes": [
@@ -864,7 +872,7 @@
                 "sha256:c2974be1afa13b17f7ecd120d265d8b8cd324d536a231c3953ca872b68aba4af",
                 "sha256:d4cb4a5ef94b00c1073aed888b39646ce26cff3339cff7a3f1f1cc307bf50408"
             ],
-            "markers": "python_full_version >= '3.6.1' and python_full_version < '4.0.0'",
+            "markers": "python_version < '4' and python_full_version >= '3.6.1'",
             "version": "==0.2.5"
         },
         "pyquery": {
@@ -1152,7 +1160,7 @@
                 "sha256:39fb8672126159acb139a7718dd10806104dec1e2f0f6c88aab05d17df10c8d4",
                 "sha256:f57b4c16c62fa2760b7e3d97c35b255512fb6b59a259730f36ba32ce9f8e342f"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_full_version < '4.0.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4' and python_version < '4'",
             "version": "==1.26.6"
         },
         "vcrpy": {
