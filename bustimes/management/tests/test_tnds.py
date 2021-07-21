@@ -1,7 +1,9 @@
 import mock
 import time_machine
 from datetime import timedelta
-from django.test import TestCase
+from tempfile import TemporaryDirectory
+from pathlib import Path
+from django.test import TestCase, override_settings
 from django.core.management import call_command
 
 
@@ -19,7 +21,9 @@ class TNDSTest(TestCase):
 
         with time_machine.travel('2021-01-01', tick=False):
             with mock.patch('builtins.print') as mocked_print:
-                call_command('import_tnds', 'u', 'p')
+                with TemporaryDirectory() as directory:
+                    with override_settings(TNDS_DIR=Path(directory)):
+                        call_command('import_tnds', 'u', 'p')
 
         boto3.assert_called_with('s3', endpoint_url='https://ams3.digitaloceanspaces.com')
 
