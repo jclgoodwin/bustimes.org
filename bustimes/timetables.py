@@ -1,7 +1,7 @@
 import datetime
 from django.utils.timezone import localdate
 from difflib import Differ
-from functools import cmp_to_key, partial
+from functools import cmp_to_key, partial, cached_property
 from django.db.models import Prefetch
 from .utils import format_timedelta
 from .models import get_calendars, get_routes, Calendar, Trip, StopTime
@@ -217,8 +217,6 @@ class Timetable:
             for row in grouping.rows:
                 # reassemble in order
                 row.times = [row.times[i] for i in indices]
-
-                row.has_waittimes = any(type(cell) is Cell and cell.wait_time for cell in row.times)
 
             grouping.do_heads_and_feet(detailed)
 
@@ -525,6 +523,12 @@ class Row:
     def __init__(self, stop, times=[]):
         self.stop = stop
         self.times = times
+
+    @cached_property
+    def has_waittimes(self):
+        for cell in self.times:
+            if type(cell) is Cell and cell.wait_time:
+                return True
 
     def is_minor(self):
         return self.timing_status == 'OTH'

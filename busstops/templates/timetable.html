@@ -79,7 +79,7 @@
                             {% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
-                                <tr class="dep">
+                                <tr class="{% if row.is_minor %}minor {% endif %} dep">
                                     {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}
                                         <td>{% if cell.wait_time or not cell.last %}{{ cell.departure_time }}{% if not cell.last and cell.stoptime.activity == 'setDown' %}<abbr title="sets down only">s</abbr>{% endif %}{% endif %}</td>
                                     {% endif %}{% endfor %}
