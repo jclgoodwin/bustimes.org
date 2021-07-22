@@ -19,7 +19,7 @@ from django.db import transaction, DataError, IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
-from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note, Garage
+from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note, Garage, VehicleType, Block
 from ...timetables import get_stop_usages
 from transxchange.txc import TransXChange, sanitize_description_part
 
@@ -537,6 +537,9 @@ class Command(BaseCommand):
         trips = []
         notes_by_trip = []
 
+        blocks = []
+        vehicle_types = []
+
         for journey in journeys:
             calendar = None
             if journey.operating_profile:
@@ -557,9 +560,30 @@ class Command(BaseCommand):
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
                 ticket_machine_code=journey.ticket_machine_journey_code or '',
-                block=journey.block or '',
                 sequence=journey.sequencenumber
             )
+
+            if journey.block:
+                if journey.block.code not in self.blocks:
+                    trip.block = Block(
+                        code=journey.block.code,
+                        description=journey.block.description
+                    )
+                    blocks.append(trip.block)
+                    self.blocks[journey.block.code] = trip.block
+                else:
+                    trip.block = self.blocks[journey.block.code]
+
+            if journey.vehicle_type:
+                if journey.vehicle_type.code not in self.vehicle_types:
+                    trip.vehicle_type = VehicleType(
+                        code=journey.vehicle_type.code,
+                        description=journey.vehicle_type.description
+                    )
+                    vehicle_types.append(trip.vehicle_type)
+                    self.vehicle_types[journey.vehicle_type.code] = trip.vehicle_type
+                else:
+                    trip.vehicle_type = self.vehicle_types[journey.vehicle_type.code]
 
             if journey.garage_ref:
                 trip.garage = self.garages.get(journey.garage_ref)
@@ -581,13 +605,15 @@ class Command(BaseCommand):
                 stop_time = StopTime(
                     trip=trip,
                     sequence=cell.stopusage.sequencenumber or i,
-                    timing_status=timing_status,
-                    activity=cell.stopusage.activity or ''
+                    timing_status=timing_status
                 )
-                if stop_time.activity == 'pickUp' or stop_time.activity == 'pass':
+                if cell.stopusage.activity == 'pickUp':
                     stop_time.set_down = False
-                if stop_time.activity == 'setDown' or stop_time.activity == 'pass':
+                elif cell.stopusage.activity == 'setDown':
                     stop_time.pick_up = False
+                elif cell.stopusage.activity == 'pass':
+                    stop_time.pick_up = False
+                    stop_time.set_down = False
 
                 stop_time.departure = cell.departure_time
                 if cell.arrival_time != cell.departure_time:
@@ -628,6 +654,12 @@ class Command(BaseCommand):
                     self.notes[note_cache_key] = note
                 notes.append(note)
             notes_by_trip.append(notes)
+
+        VehicleType.objects.bulk_create(vehicle_types)
+        Block.objects.bulk_create(blocks)
+        for trip in trips:
+            trip.vehicle_type = trip.vehicle_type
+            trip.block = trip.block
 
         Trip.objects.bulk_create(trips)
 
@@ -970,6 +1002,9 @@ class Command(BaseCommand):
 
     def handle_file(self, open_file, filename):
         transxchange = TransXChange(open_file)
+
+        self.blocks = {}
+        self.vehicle_types = {}
 
         today = self.source.datetime.date()
 

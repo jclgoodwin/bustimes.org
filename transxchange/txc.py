@@ -187,6 +187,12 @@ class VehicleType:
         self.description = element.findtext('Description')
 
 
+class Block:
+    def __init__(self, element):
+        self.code = element.findtext('BlockNumber')
+        self.description = element.findtext('Description')
+
+
 class VehicleJourney:
     """A scheduled journey that happens at most once per day"""
     def __str__(self):
@@ -198,7 +204,14 @@ class VehicleJourney:
 
         self.ticket_machine_journey_code = element.findtext('Operational/TicketMachine/JourneyCode')
         self.ticket_machine_service_code = element.findtext('Operational/TicketMachine/TicketMachineServiceCode')
-        self.block = element.findtext('Operational/Block/BlockNumber')
+
+        self.block = element.find('Operational/Block')
+        if self.block is not None:
+            self.block = Block(self.block)
+        self.vehicle_type = element.find('VehicleType')
+        if self.vehicle_type is not None:
+            self.vehicle_type = VehicleType(self.vehicle_type)
+
         self.garage_ref = element.findtext('GarageRef')
 
         self.service_ref = element.find('ServiceRef').text

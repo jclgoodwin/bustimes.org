@@ -225,7 +225,7 @@ class Trip(models.Model):
     inbound = models.BooleanField(default=False)
     journey_pattern = models.CharField(max_length=255, blank=True)
     ticket_machine_code = models.CharField(max_length=255, blank=True, db_index=True)
-    block = models.CharField(max_length=255, blank=True, db_index=True)
+    block = models.ForeignKey('Block', models.SET_NULL, null=True, blank=True)
     destination = models.ForeignKey('busstops.StopPoint', models.SET_NULL, null=True, blank=True)
     calendar = models.ForeignKey(Calendar, models.DO_NOTHING)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -234,6 +234,7 @@ class Trip(models.Model):
     end = SecondsField()
     garage = models.ForeignKey('Garage', models.SET_NULL, null=True, blank=True)
     vehicle_type = models.ForeignKey('VehicleType', models.SET_NULL, null=True, blank=True)
+    operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return format_timedelta(self.start)
@@ -286,7 +287,6 @@ class StopTime(models.Model):
     departure = SecondsField(null=True, blank=True)
     sequence = models.PositiveSmallIntegerField()
     timing_status = models.CharField(max_length=3, blank=True)
-    activity = models.CharField(max_length=16, blank=True)
     pick_up = models.BooleanField(default=True)
     set_down = models.BooleanField(default=True)
 
@@ -325,6 +325,14 @@ class StopTime(models.Model):
         return self.timing_status == 'OTH'
 
 
+class Block(models.Model):
+    code = models.CharField(max_length=50, db_index=True)
+    description = models.CharField(max_length=50, blank=True)
+
+    def __str__(self):
+        return self.code
+
+
 class Garage(models.Model):
     operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
     code = models.CharField(max_length=50, blank=True)
@@ -343,3 +351,6 @@ class Garage(models.Model):
 class VehicleType(models.Model):
     code = models.CharField(max_length=50, blank=True)
     description = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return self.code
