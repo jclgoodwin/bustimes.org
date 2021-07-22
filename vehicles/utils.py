@@ -100,8 +100,9 @@ def do_revisions(vehicles, data, user):
                         revision.from_livery = revision.vehicle.livery
                         revision.to_livery = livery
                         revision.vehicle.livery = livery
-                        revision.changes['colours'] = f"-{revision.vehicle.colours}\n+"
-                        revision.vehicle.colours = ''
+                        if revision.vehicle.colours:
+                            revision.changes['colours'] = f"-{revision.vehicle.colours}\n+"
+                            revision.vehicle.colours = ''
             else:
                 to_colour = data.get('other_colour') or data['colours']
                 for revision in revisions:
