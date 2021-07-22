@@ -393,7 +393,7 @@ class Command(BaseCommand):
 
         # Ticketer:
 
-        for noc in ('LYNX', 'FESX'):
+        for noc in ('LYNX', 'FESX', 'FECS', 'FCWL', 'FGLA', 'FSYO', 'FWYO', 'FYOR'):
             dataset = self.ticketer(noc)
             if dataset:
                 datasets.append(dataset.id)
