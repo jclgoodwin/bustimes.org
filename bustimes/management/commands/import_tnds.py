@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
             with open(path, 'wb') as open_file:
                 self.ftp.retrbinary(f"RETR {name}", open_file.write)
-            self.client.upload_file(path, 'bustimes-data', s3_key)
+            self.client.upload_file(str(path), 'bustimes-data', s3_key)
 
             self.changed_files.append(path)
 
