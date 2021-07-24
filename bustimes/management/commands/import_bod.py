@@ -249,7 +249,7 @@ def stagecoach(operator=None):
 
         modified, last_modified = download_if_changed(path, url)
 
-        if modified and command.source.datetime and command.source.datetime >= last_modified:
+        if modified and not command.source.older_than(last_modified):
             modified = False
 
         if modified or operator:

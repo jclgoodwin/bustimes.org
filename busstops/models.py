@@ -265,6 +265,11 @@ class DataSource(models.Model):
 
         return ''
 
+    def older_than(self, when):
+        if not self.datetime or not when or self.datetime < when:
+            return True
+        return False
+
 
 class Place(models.Model):
     source = models.ForeignKey(DataSource, models.CASCADE)

@@ -1,6 +1,6 @@
 import os
 from django.conf import settings
-from busstops.models import Operator
+from busstops.models import Operator, DataSource
 from ...utils import download_if_changed
 from .import_gtfs import Command as BaseCommand
 
@@ -17,9 +17,15 @@ class Command(BaseCommand):
         url = 'http://gtfs.gis.flix.tech/gtfs_generic_eu.zip'
         modifed, last_modified = download_if_changed(path, url)
         if modifed or options['force']:
-            print('flixbus', last_modified)
-            self.agency_timezones = {}
-            self.handle_zipfile(path, 'flixbus', url, last_modified)
+            self.source, _ = DataSource.objects.get_or_create(
+                {'name': 'flixbus GTFS'},
+                url=url
+            )
+            if options['force'] or self.source.older_than(last_modified):
+                print('flixbus', last_modified)
+                self.agency_timezones = {}
+                self.source.datetime = last_modified
+                self.handle_zipfile(path)
 
     def handle_route(self, line):
         if line['route_short_name'].startswith('UK'):

@@ -145,15 +145,7 @@ class Command(BaseCommand):
             route.trip_set.all().delete()
         self.routes[line['route_id']] = route
 
-    def handle_zipfile(self, path, collection, url, last_modified):
-        source = DataSource.objects.get_or_create(
-            {
-                'url': url,
-            }, name=f'{collection} GTFS'
-        )[0]
-        source.datetime = last_modified  # we will save this later, when the import has been successful
-        self.source = source
-
+    def handle_zipfile(self, path):
         self.shapes = {}
         self.service_shapes = {}
         self.operators = {}
@@ -347,7 +339,7 @@ class Command(BaseCommand):
                 service.save(update_fields=['region'])
             service.update_search_vector()
 
-        source.save(update_fields=['datetime'])
+        self.source.save(update_fields=['datetime'])
 
         for operator in self.operators.values():
             operator.region = Region.objects.filter(adminarea__stoppoint__service__operator=operator).annotate(
@@ -356,9 +348,10 @@ class Command(BaseCommand):
             if operator.region_id:
                 operator.save(update_fields=['region'])
 
-        print(source.service_set.filter(current=True).exclude(route__in=self.routes.values()).update(current=False))
-        print(source.service_set.filter(current=True).exclude(route__trip__isnull=False).update(current=False))
-        print(source.route_set.exclude(id__in=(route.id for route in self.routes.values())).delete())
+        current_services = self.source.service_set.filter(current=True)
+        print(current_services.exclude(route__in=self.routes.values()).update(current=False))
+        print(current_services.exclude(route__trip__isnull=False).update(current=False))
+        print(self.source.route_set.exclude(id__in=(route.id for route in self.routes.values())).delete())
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
@@ -378,6 +371,14 @@ class Command(BaseCommand):
             url = f'https://www.transportforireland.ie/transitData/{collection}'
             modifed, last_modified = download_if_changed(path, url)
             if modifed or options['force']:
+
                 collection = collection.removeprefix('google_transit_').removesuffix('.zip')
-                print(collection, last_modified)
-                self.handle_zipfile(path, collection, url, last_modified)
+
+                self.source, _ = DataSource.objects.get_or_create(
+                    {'url': url},
+                    name=f'{collection} GTFS'
+                )
+                if options['force'] or self.source.older_than(last_modified):
+                    print(collection, last_modified)
+                    self.source.datetime = last_modified
+                    self.handle_zipfile(path)
