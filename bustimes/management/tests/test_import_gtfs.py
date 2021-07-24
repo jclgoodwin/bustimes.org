@@ -126,6 +126,8 @@ class GTFSTest(TestCase):
 
         self.assertTrue(service.geometry)
 
+        self.assertEqual(str(service.source), 'seamusdoherty GTFS')
+
     def test_admin_area(self):
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)
@@ -163,5 +165,5 @@ class GTFSTest(TestCase):
             with patch('builtins.print') as mocked_print:
                 with self.assertRaises(FileNotFoundError):
                     call_command('import_gtfs', 'mortons')
-        mocked_print.assert_called_with('google_transit_mortons.zip', None)
+        mocked_print.assert_called_with('mortons', None)
         self.assertFalse(Route.objects.all())

@@ -378,5 +378,6 @@ class Command(BaseCommand):
             url = f'https://www.transportforireland.ie/transitData/{collection}'
             modifed, last_modified = download_if_changed(path, url)
             if modifed or options['force']:
+                collection = collection.removeprefix('google_transit_').removesuffix('.zip')
                 print(collection, last_modified)
                 self.handle_zipfile(path, collection, url, last_modified)
