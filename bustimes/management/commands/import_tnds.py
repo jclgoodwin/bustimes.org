@@ -1,4 +1,3 @@
-import os
 import boto3
 from ftplib import FTP
 from django.core.management.base import BaseCommand
@@ -38,7 +37,7 @@ class Command(BaseCommand):
                 continue
 
             path = settings.TNDS_DIR / name
-            if os.path.exists(path) and os.path.getsize(path) == int(details['size']):
+            if path.exists() and path.stat().st_size == int(details['size']):
                 continue
 
             with open(path, 'wb') as open_file:

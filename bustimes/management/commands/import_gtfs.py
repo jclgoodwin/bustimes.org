@@ -33,7 +33,6 @@ def parse_date(string):
 
 
 def read_file(archive, name):
-    print(archive)
     try:
         with archive.open(name) as open_file:
             detector = UniversalDetector()
