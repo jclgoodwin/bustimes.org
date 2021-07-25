@@ -198,7 +198,12 @@ class Command(ImportLiveVehiclesCommand):
             vehicle, created = vehicles.get_or_create(defaults)
             if operator_ref in self.reg_operators and vehicle.code != vehicle_ref:
                 vehicle.code = vehicle_ref
-                vehicle.save(update_fields=['code'])
+                if fleet_number != vehicle.fleet_code:
+                    vehicle.fleet_code = fleet_number
+                    vehicle.fleet_number = fleet_number
+                    vehicle.save(update_fields=['code', 'fleet_code', 'fleet_number'])
+                else:
+                    vehicle.save(update_fields=['code'])
             elif 'fleet_code' in defaults and not vehicle.fleet_code:
                 vehicle.fleet_code = defaults['fleet_code']
                 if 'fleet_number' in defaults:

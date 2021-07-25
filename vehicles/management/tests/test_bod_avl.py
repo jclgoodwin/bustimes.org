@@ -1,5 +1,5 @@
-import os
 import time_machine
+from pathlib import Path
 from django.core.cache import cache
 from vcr import use_cassette
 from django.test import TestCase, override_settings
@@ -8,8 +8,6 @@ from ...models import VehicleLocation, VehicleJourney
 from ...workers import SiriConsumer
 from ...utils import flush_redis
 from ..commands import import_bod_avl, import_bod_avl_channels
-
-DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class BusOpenDataVehicleLocationsTest(TestCase):
@@ -37,10 +35,11 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl_channels.Command()
         command.source = self.source
 
-        with use_cassette(os.path.join(DIR, 'vcr', 'bod_avl.yaml')):
+        with use_cassette(str(Path(__file__).resolve().parent / 'vcr' / 'bod_avl.yaml')) as cassette:
             command.update()
 
-        with use_cassette(os.path.join(DIR, 'vcr', 'bod_avl.yaml')):
+            cassette.rewind()
+
             command.update()
 
         self.assertEqual(841, len(command.identifiers))
