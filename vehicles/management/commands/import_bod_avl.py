@@ -35,6 +35,7 @@ class Command(ImportLiveVehiclesCommand):
         'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT', 'TPEN'],  # Transdev Blazefield
         'MTRL': ['MPTR'],  # MP Travel using M Travel code (no relation!)
         'HUNT': ['HNTC'],  # Hunts using Hunters code
+        'LVTR': ['LVTR', 'YEOC'],
     }
     vehicle_id_cache = {}
     vehicle_cache = {}
