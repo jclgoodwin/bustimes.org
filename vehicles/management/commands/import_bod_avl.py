@@ -444,6 +444,10 @@ class Command(ImportLiveVehiclesCommand):
                 if journey.trip and not journey.destination and journey.trip.destination_id:
                     journey.destination = self.get_destination_name(journey.trip.destination_id)
 
+                if journey.trip and journey.trip.garage_id != vehicle.garage_id:
+                    vehicle.garage_id = journey.trip.garage_id
+                    vehicle.save(update_fields=['garage'])
+
         return journey
 
     @staticmethod
