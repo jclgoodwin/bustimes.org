@@ -630,7 +630,7 @@ class ImportTransXChangeTest(TestCase):
 
         trip = route_1.trip_set.first()
         response = self.client.get(trip.get_absolute_url())
-        self.assertContains(response, "Barnstaple Depot")
+        self.assertContains(response, "Barnstaple")
 
         service = route_1.service
         response = self.client.get(f'{service.get_absolute_url()}?detailed')
