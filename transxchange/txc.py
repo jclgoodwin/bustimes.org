@@ -15,20 +15,6 @@ logger = logging.getLogger(__name__)
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
 
 
-DESCRIPTION_REGEX = re.compile(r'.+,([^ ].+)$')
-
-
-def sanitize_description_part(part):
-    """Given an oddly formatted part like 'Bus Station bay 5,Blyth',
-    return a shorter, more normal version like 'Blyth'.
-    """
-    sanitized_part = DESCRIPTION_REGEX.match(part.strip())
-    if sanitized_part is not None:
-        print(part)
-        return sanitized_part.group(1)
-    return part
-
-
 class Stop:
     """A TransXChange StopPoint."""
     def __init__(self, element):
@@ -488,7 +474,7 @@ class Service:
             parts = self.description.split(' to ')
         else:
             parts = [self.description]
-        self.description_parts = [sanitize_description_part(part) for part in parts]
+        self.description_parts = parts
         if ' via ' in self.description_parts[-1]:
             self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
 

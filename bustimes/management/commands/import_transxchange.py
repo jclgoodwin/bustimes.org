@@ -21,7 +21,7 @@ from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note, Garage, VehicleType, Block
 from ...timetables import get_stop_usages
-from transxchange.txc import TransXChange, sanitize_description_part
+from transxchange.txc import TransXChange
 
 
 logger = logging.getLogger(__name__)
@@ -105,18 +105,6 @@ def get_summary(summary):
     summary = re.sub(r'(?i)(school(day)?s)', 'school', summary)
 
     return summary
-
-
-def sanitize_description(name):
-    """
-    Given an oddly formatted description from the North East,
-    like 'Bus Station bay 5,Blyth - Grange Road turning circle,Widdrington Station',
-    returns a shorter, more normal version like
-    'Blyth - Widdrington Station'
-    """
-
-    parts = [sanitize_description_part(part) for part in name.split(' - ')]
-    return ' - '.join(parts)
 
 
 def get_service_code(filename):
@@ -701,8 +689,6 @@ class Command(BaseCommand):
                                 return f"{description} via {vias[0]}"
                         else:
                             description = ' - '.join([origin] + vias + [destination])
-        if description and self.source.name == 'NE':
-            description = sanitize_description(description)
         return description
 
     def is_tnds(self):
