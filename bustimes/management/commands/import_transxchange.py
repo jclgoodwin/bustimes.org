@@ -1000,8 +1000,8 @@ class Command(BaseCommand):
             if garage_code not in self.garages:
                 garage = transxchange.garages[garage_code]
                 name = garage.findtext('GarageName', '')
-                name = name.removesuffix(' depot').removesuffix(' Depot')
-                name = name.removesuffix(' DEPOT').removesuffix(' Garage')
+                name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
+                name = name.removesuffix(' garage').removesuffix(' Garage')
                 try:
                     garage = Garage.objects.get(code=garage_code, name=name)
                 except Garage.DoesNotExist:
