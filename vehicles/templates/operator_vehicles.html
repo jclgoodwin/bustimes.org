@@ -78,6 +78,7 @@
             {% if branding_column %}<th scope="col">Branding</th>{% endif %}
             {% if name_column %}<th scope="col" class="trivia">Name</th>{% endif %}
             {% if notes_column %}<th scope="col" class="trivia">Notes</th>{% endif %}
+            {% if garage_column %}<th scope="col" class="trivia">Garage</th>{% endif %}
             {% for col in columns %}<th scope="col" class="trivia">{{ col }}</th>{% endfor %}
             {% if features_column %}<th scope="col" class="trivia">Special features</th>{% endif %}
             {% if parent %}<th>Operator</th>{% endif %}
@@ -114,7 +115,7 @@
                         {{ vehicle.last_seen.when }}
                     {% endif %}
                 </td>{% endif %}
-                <td>{% if vehicle.notes == 'Spare ticket machine' %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type|default:"" }}{% endif %}</td>
+                <td>{% if vehicle.notes == 'Spare ticket machine' %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
                 <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}{% if branding_column %}{% if not vehicle.branding or vehicle.branding == 'None' %} colspan="2"{% endif %}{% endif %}>
                     {% if vehicle.colours == 'Other' %}
                         {{ vehicle.colours }}
@@ -126,6 +127,7 @@
                 {% if vehicle.branding and vehicle.branding != 'None' %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td class="trivia">{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
+                {% if garage_column %}<td class="trivia">{% firstof vehicle.garage_name  '' %}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}

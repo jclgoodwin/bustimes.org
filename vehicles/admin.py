@@ -271,9 +271,9 @@ class ChangeFilter(admin.SimpleListFilter):
             ('notes', 'notes'),
             ('withdrawn', 'withdrawn'),
             ('USB power', 'USB power'),
+            ('power sockets', 'power sockets'),
             ('open top', 'open top'),
             ('bike rack', 'bike rack'),
-            ('changes__Depot', 'depot'),
             ('changes__Previous reg', 'previous reg'),
         )
 
@@ -507,7 +507,6 @@ class RevisionChangeFilter(admin.SimpleListFilter):
             ('changes__reg', 'reg'),
             ('changes__name', 'name'),
             ('changes__branding', 'branding'),
-            ('changes__depot', 'depot'),
         )
 
     def queryset(self, request, queryset):
