@@ -278,9 +278,12 @@ def vehicles_json(request):
             return HttpResponseBadRequest()
     else:
         if 'service' in request.GET:
-            vehicles = vehicles.filter(
-                latest_journey__service__in=request.GET['service'].split(',')
-            ).in_bulk()
+            try:
+                vehicles = vehicles.filter(
+                    latest_journey__service__in=request.GET['service'].split(',')
+                ).in_bulk()
+            except ValueError:
+                return HttpResponseBadRequest()
         elif 'operator' in request.GET:
             vehicles = vehicles.filter(
                 operator__in=request.GET['operator'].split(',')
