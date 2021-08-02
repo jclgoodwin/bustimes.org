@@ -247,6 +247,25 @@ AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')
 AKISMET_SITE_URL = 'https://bustimes.org'
 
 PASSENGER_OPERATORS = [
+    ('Go Cornwall Bus', 'https://www.gocornwallbus.co.uk/open-data', 'SW', {
+        'TFCN': 'TFCN'
+    }),
+    ('Plymouth Citybus', 'https://www.plymouthbus.co.uk/open-data', 'SW', {
+        'TFCN': 'PLYC'
+    }),
+    ('Go North West', 'https://www.gonorthwest.co.uk/open-data', 'NW', {
+        'GNEL': 'GNEL'
+    }),
+    ('Oxford Bus', 'https://data.discoverpassenger.com/operator/oxfordbus', 'SE', {
+        'OXBC': 'OXBC',
+        'THTR': 'THTR'
+    }),
+    ('Carousel', 'https://data.discoverpassenger.com/operator/carouselbuses', 'SE', {
+        'CSLB': 'CSLB'
+    }),
+    ('Metrobus', 'https://www.metrobus.co.uk/open-data', 'SE', {
+        'METR': 'METR'
+    }),
     ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
         'NCT': 'NCTR'
     }),
@@ -545,9 +564,9 @@ TICKETER_OPERATORS = [
     ('Y', ['RELD'], 'Reliance Motor Services'),
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     # ('SW', ['PLYC', 'TFCN'], 'Go South West'),
-    ('SE', ['METR'], 'Metrobus'),
-    ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
-    ('NW', ['GONW'], 'Go North West'),
+    # ('SE', ['METR'], 'Metrobus'),
+    # ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
+    # ('NW', ['GONW'], 'Go North West'),
 
     ('EM', ['NOCT'], 'CT4N'),
     ('WM', ['DIAM'], 'Diamond Bus'),
