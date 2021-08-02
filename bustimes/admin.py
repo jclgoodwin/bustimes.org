@@ -10,7 +10,7 @@ from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime, Garage
 class TripInline(admin.TabularInline):
     model = Trip
     show_change_link = True
-    raw_id_fields = ['destination', 'calendar', 'notes']
+    raw_id_fields = ['destination', 'calendar', 'notes', 'block', 'vehicle_type', 'calendar', 'operator']
     fields = ['start', 'end', 'destination', 'inbound', 'calendar']
 
 
