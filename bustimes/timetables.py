@@ -2,7 +2,7 @@ import datetime
 from django.utils.timezone import localdate
 from difflib import Differ
 from functools import cmp_to_key, partial, cached_property
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch, Q, OuterRef, Exists
 from .utils import format_timedelta
 from .models import get_calendars, get_routes, Calendar, Trip, StopTime
 
@@ -179,7 +179,7 @@ class Timetable:
         trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:
             calendar_ids = [calendar.id for calendar in self.calendars]
-            trips = trips.filter(calendar__in=get_calendars(self.date, calendar_ids))
+            trips = trips.filter(Exists(get_calendars(self.date, calendar_ids).filter(trip=OuterRef('id'))))
         trips = trips.defer(
             'route__service__geometry'
         ).select_related(

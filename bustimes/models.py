@@ -49,8 +49,11 @@ def get_routes(routes, when):
 def get_calendars(when, calendar_ids=None):
     calendars = Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
                                         start_date__lte=when)
-    calendar_dates = CalendarDate.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
-                                                 start_date__lte=when)
+    calendar_calendar_dates = CalendarDate.objects.filter(calendar=OuterRef('id'))
+    calendar_dates = calendar_calendar_dates.filter(
+        Q(end_date__gte=when) | Q(end_date=None),
+        start_date__lte=when
+    )
     if calendar_ids is not None:
         # cunningly make the query faster
         calendars = calendars.filter(id__in=calendar_ids)
@@ -58,13 +61,11 @@ def get_calendars(when, calendar_ids=None):
     exclusions = calendar_dates.filter(operation=False)
     inclusions = calendar_dates.filter(operation=True)
     special_inclusions = inclusions.filter(special=True)
-    only_certain_dates = Exists(CalendarDate.objects.filter(calendar=OuterRef('id'), special=False, operation=True))
+    only_certain_dates = Exists(calendar_calendar_dates.filter(special=False, operation=True))
     return calendars.filter(
-        ~Q(calendardate__in=exclusions)
-    ).filter(
-        Q(~only_certain_dates) | Q(calendardate__in=inclusions)
-    ).filter(
-        Q(**{when.strftime('%a').lower(): True}) | Q(calendardate__in=special_inclusions)
+        ~Exists(exclusions),
+        ~only_certain_dates | Exists(inclusions),
+        Q(**{when.strftime('%a').lower(): True}) | Exists(special_inclusions)
     )
 
 
