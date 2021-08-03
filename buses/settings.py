@@ -248,13 +248,14 @@ AKISMET_SITE_URL = 'https://bustimes.org'
 
 PASSENGER_OPERATORS = [
     ('Go Cornwall Bus', 'https://www.gocornwallbus.co.uk/open-data', 'SW', {
-        'TFCN': 'TFCN'
+        'TFCN': 'TFCN',
+        'TfCN': 'TFCN'
     }),
     ('Plymouth Citybus', 'https://www.plymouthbus.co.uk/open-data', 'SW', {
-        'TFCN': 'PLYC'
+        'PLYC': 'PLYC'
     }),
     ('Go North West', 'https://www.gonorthwest.co.uk/open-data', 'NW', {
-        'GNEL': 'GNEL'
+        'GONW': 'GONW'
     }),
     ('Oxford Bus', 'https://data.discoverpassenger.com/operator/oxfordbus', 'SE', {
         'OXBC': 'OXBC',
