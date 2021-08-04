@@ -32,6 +32,9 @@ from .utils import get_vehicle_edit, do_revision, do_revisions
 from .management.commands import import_bod_avl
 
 
+r = redis.from_url(settings.REDIS_URL)
+
+
 class Vehicles:
     def __init__(self, operator):
         self.operator = operator
@@ -241,7 +244,6 @@ def operator_map(request, slug):
 
 @require_GET
 def vehicles_json(request):
-    r = redis.from_url(settings.REDIS_URL)
 
     try:
         bounds = get_bounding_box(request)
@@ -379,7 +381,6 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         journeys = journeys.filter(datetime__date=date).select_related('trip').order_by('datetime')
 
         try:
-            r = redis.from_url(settings.REDIS_URL)
             pipe = r.pipeline(transaction=False)
             for journey in journeys:
                 pipe.exists(f'journey{journey.id}')
@@ -603,7 +604,6 @@ def journey_json(request, pk):
         } for stop_time in trip.stoptime_set.select_related('stop__locality')]
 
     try:
-        r = redis.from_url(settings.REDIS_URL)
         locations = r.lrange(f'journey{pk}', 0, -1)
         if locations:
             locations = (json.loads(location) for location in locations)
