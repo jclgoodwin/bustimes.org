@@ -157,9 +157,6 @@ class Command(BaseCommand):
                         print(version)
                         handle_file(command, version['filename'])
 
-                    if version['dates'][0] <= str(command.source.datetime.date()):
-                        break
-
                 routes = Route.objects.filter(service__source=command.source)
                 print('  duplicate routes:', routes.exclude(source=command.source).delete())
 
@@ -175,12 +172,10 @@ class Command(BaseCommand):
                 print('  ', [o for o in operator_ids if o not in operators])
 
             # even if there are no new versions, delete old routes from expired versions
-            routes = command.source.route_set
+            old_routes = command.source.route_set
             for version in versions:
-                routes = routes.filter(~Q(code__startswith=version['filename']))
-                if version['dates'][0] <= str(command.source.datetime.date()):
-                    break
-            old_routes = routes.delete()
+                old_routes = old_routes.filter(~Q(code__startswith=version['filename']))
+            old_routes = old_routes.delete()
             if not new_versions:
                 if old_routes[0]:
                     print(name)
