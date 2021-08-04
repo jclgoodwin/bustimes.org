@@ -1,4 +1,3 @@
-import re
 import xml.etree.cElementTree as ET
 import calendar
 import datetime

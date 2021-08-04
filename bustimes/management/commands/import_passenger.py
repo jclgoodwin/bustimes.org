@@ -10,7 +10,7 @@ from requests_html import HTMLSession
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, OuterRef, Exists
 from busstops.models import DataSource, Service, ServiceColour
 from .import_bod import handle_file, get_operator_ids
 from .import_transxchange import Command as TransXChangeCommand
@@ -169,7 +169,18 @@ class Command(BaseCommand):
 
                 operator_ids = get_operator_ids(command.source)
                 print('  ', operator_ids)
-                print('  ', [o for o in operator_ids if o not in operators])
+
+                foreign_operators = [o for o in operator_ids if o not in operators]
+                print('  ', foreign_operators)
+
+                if foreign_operators:
+                    print(command.source.service_set.filter(
+                        ~Exists(
+                            Service.operator.through.objects.filter(
+                                service=OuterRef('service')
+                            ).filter(operator__in=operators)
+                        ),
+                    ).delete())
 
             # even if there are no new versions, delete old routes from expired versions
             old_routes = command.source.route_set
