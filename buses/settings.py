@@ -395,7 +395,7 @@ BOD_OPERATORS = [
         'AMTM': 'AMTM',
         'ANEA': 'ANEA',
         'ANUM': 'ANUM',
-        # 'ANWE': 'ANWE',
+        'ANWE': 'ANWE',
         'ARBB': 'ARBB',
         'ARDU': 'ARDU',
         'ARHE': 'ARHE',
