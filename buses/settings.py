@@ -257,7 +257,7 @@ PASSENGER_OPERATORS = [
     ('Go North West', 'https://www.gonorthwest.co.uk/open-data', 'NW', {
         'GONW': 'GONW'
     }),
-    ('Oxford Bus', 'https://data.discoverpassenger.com/operator/oxfordbus', 'SE', {
+    ('Oxford Bus Company', 'https://data.discoverpassenger.com/operator/oxfordbus', 'SE', {
         'OXBC': 'OXBC',
         'THTR': 'THTR'
     }),

@@ -718,8 +718,17 @@ class Command(BaseCommand):
                     except Operator.DoesNotExist:
                         pass
 
-        if self.is_tnds() and self.source.name != 'L':
-            if operators and all(operator.id in self.open_data_operators for operator in operators):
+        if self.is_tnds():
+            if self.source.name != 'L':
+                if operators and all(operator.id in self.open_data_operators for operator in operators):
+                    return
+        elif self.source.name == 'Oxford Bus Company':
+            if operators and operators[0].id not in self.operators.values():
+                print(operators)
+                return
+        elif self.source.name.startswith('Stagecoach'):
+            if operators and operators[0].parent != 'Stagecoach':
+                print(operators)
                 return
 
         linked_services = []

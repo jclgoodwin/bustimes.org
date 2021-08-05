@@ -278,8 +278,6 @@ def stagecoach(operator=None):
             operators = get_operator_ids(command.source)
             print('  ', operators)
             print('  ', [o for o in operators if o not in nocs])
-            if 'ANEA' in operators or 'OXBC' in operators:
-                print(command.source.service_set.filter(operator__in=['ANEA', 'OXBC']).delete())
 
     command.debrief()
 
