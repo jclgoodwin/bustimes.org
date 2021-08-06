@@ -269,7 +269,7 @@ class Command(BaseCommand):
                 return operator
 
         missing_operator = {
-            element.tag: element.text.strip() for element in operator_element
+            element.tag: element.text.strip() for element in operator_element if element.text
         }
         if missing_operator not in self.missing_operators:
             self.missing_operators.append(missing_operator)
