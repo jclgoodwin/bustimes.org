@@ -157,9 +157,6 @@ class Command(BaseCommand):
                         print(version)
                         handle_file(command, version['filename'])
 
-                routes = Route.objects.filter(service__source=command.source)
-                print('  duplicate routes:', routes.exclude(source=command.source).delete())
-
                 # delete route data from TNDS
                 routes = Route.objects.filter(service__operator__in=operators)
                 print('  other source routes:', routes.exclude(source__in=sources).delete())
