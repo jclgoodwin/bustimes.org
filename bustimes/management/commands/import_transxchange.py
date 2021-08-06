@@ -15,7 +15,7 @@ from titlecase import titlecase
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
-from django.db import transaction, DataError, IntegrityError
+from django.db import DataError, IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
@@ -269,7 +269,7 @@ class Command(BaseCommand):
                 return operator
 
         missing_operator = {
-            element.tag: element.text for element in operator_element
+            element.tag: element.text.strip() for element in operator_element
         }
         if missing_operator not in self.missing_operators:
             self.missing_operators.append(missing_operator)
@@ -328,11 +328,10 @@ class Command(BaseCommand):
                 for filename in filenames or archive.namelist():
                     if filename.endswith('.xml'):
                         with archive.open(filename) as open_file:
-                            with transaction.atomic():
-                                try:
-                                    self.handle_file(open_file, filename)
-                                except (AttributeError, DataError) as error:
-                                    logger.error(error, exc_info=True)
+                            try:
+                                self.handle_file(open_file, filename)
+                            except (AttributeError, DataError) as error:
+                                logger.error(error, exc_info=True)
         except zipfile.BadZipfile:
             with open(archive_name) as open_file:
                 self.handle_file(open_file, archive_name)
@@ -757,22 +756,7 @@ class Command(BaseCommand):
                 ).order_by('-current', 'id').first()
 
             if not existing and operators and line.line_name:
-                if self.source.name in {'Go South West', 'Oxford Bus Company'}:
-                    assert operators[0].parent
-                    existing = Service.objects.filter(operator__parent=operators[0].parent)
-
-                    if self.source.name == 'Oxford Bus Company':
-                        if txc_service.service_code.startswith('T'):
-                            operators = Operator.objects.filter(id='THTR')
-                        elif txc_service.service_code.startswith('C'):
-                            operators = Operator.objects.filter(id='CSLB')
-                    elif self.source.name == 'Go South West':
-                        if txc_service.service_code.startswith('GC'):
-                            operators = Operator.objects.filter(id='TFCN')
-
-                elif all(operator.parent == 'Go South Coast' for operator in operators):
-                    existing = Service.objects.filter(operator__parent='Go South Coast')
-                elif self.source.name.startswith('Stagecoach'):
+                if self.source.name.startswith('Stagecoach'):
                     existing = Service.objects.filter(Q(source=self.source) | Q(operator__in=operators))
                 else:
                     existing = Service.objects.filter(operator__in=operators)
@@ -877,9 +861,7 @@ class Command(BaseCommand):
                 if service_created:
                     service.operator.set(operators)
                 else:
-                    if self.source.name in {'Oxford Bus Company', 'Go South West'}:
-                        pass
-                    elif service.id in self.service_ids or all(o.parent == 'Go South Coast' for o in operators):
+                    if service.id in self.service_ids:
                         service.operator.add(*operators)
                     else:
                         service.operator.set(operators)
