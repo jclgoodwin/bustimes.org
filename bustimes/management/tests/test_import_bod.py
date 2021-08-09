@@ -46,12 +46,7 @@ class ImportBusOpenDataTest(TestCase):
     def test_import_bod(self):
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                with patch('builtins.print') as mocked_print:
-                    call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
-                mocked_print.assert_called_with({'GoodFriday', 'NewYearsDay', 'EasterMonday', 'BoxingDay', 'MayDay',
-                                                 'BoxingDayHoliday', 'ChristmasDay', 'ChristmasDayHoliday',
-                                                 'NewYearsDayHoliday', 'LateSummerBankHolidayNotScotland',
-                                                 'SpringBank'})
+                call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
 
                 call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
 
@@ -158,12 +153,6 @@ class ImportBusOpenDataTest(TestCase):
     })
     def test_import_stagecoach(self):
 
-        undefined_holidays = {
-            'ChristmasDay', 'NewYearsDay', 'MayDay', 'BoxingDay', 'ChristmasDayHoliday', 'GoodFriday',
-            'NewYearsEve', 'EasterMonday', 'SpringBank', 'NewYearsDayHoliday', 'BoxingDayHoliday',
-            'LateSummerBankHolidayNotScotland', 'ChristmasEve'
-        }
-
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
                 archive_name = 'stagecoach-sccm-route-schedule-data-transxchange_2_4.zip'
@@ -180,21 +169,17 @@ class ImportBusOpenDataTest(TestCase):
                     'bustimes.management.commands.import_bod.download_if_changed',
                     return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
                 ) as download_if_changed:
-                    with self.assertNumQueries(65):
-                        with patch('builtins.print') as mocked_print:
-                            call_command('import_bod', 'stagecoach')
+                    with self.assertNumQueries(66):
+                        call_command('import_bod', 'stagecoach')
                     download_if_changed.assert_called_with(
                         str(path), 'https://opendata.stagecoachbus.com/' + archive_name
                     )
-                    mocked_print.assert_called_with(undefined_holidays)
 
                     with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
 
-                    with self.assertNumQueries(58):
-                        with patch('builtins.print') as mocked_print:
-                            call_command('import_bod', 'stagecoach', 'sccm')
-                    mocked_print.assert_called_with(undefined_holidays)
+                    with self.assertNumQueries(59):
+                        call_command('import_bod', 'stagecoach', 'sccm')
 
                 source = DataSource.objects.get(name='Stagecoach East')
                 response = self.client.get(f'/sources/{source.id}/routes/{archive_name}')

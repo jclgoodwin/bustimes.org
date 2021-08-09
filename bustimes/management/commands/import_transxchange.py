@@ -19,7 +19,8 @@ from django.db import DataError, IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
-from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note, Garage, VehicleType, Block
+from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block,
+                       Calendar, CalendarDate, CalendarBankHoliday, BankHoliday)
 from ...timetables import get_stop_usages
 from transxchange.txc import TransXChange
 
@@ -135,6 +136,11 @@ def get_operator_by(scheme, code):
             return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).distinct().get()
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             pass
+
+
+@cache
+def get_bank_holiday(bank_holiday_name):
+    return BankHoliday.objects.get_or_create(name=bank_holiday_name)[0]
 
 
 def get_open_data_operators():
@@ -371,28 +377,28 @@ class Command(BaseCommand):
             # using routes
             service.update_geometry()
 
-    def do_bank_holidays(self, holidays, operating_period, operation, calendar_dates):
-        if not holidays:
+    def do_bank_holidays(self, holiday_elements, operating_period, operation, calendar_dates):
+        if not holiday_elements:
             return
         dates = []  # (to avoid creating duplicates)
-        for element in holidays:
-            holiday = element.tag
-            if holiday == 'OtherPublicHoliday':
+        for element in holiday_elements:
+            bank_holiday_name = element.tag
+            if bank_holiday_name == 'OtherPublicHoliday':
                 date = element.findtext('Date')
                 if date not in dates:
                     dates.append(date)
                     calendar_dates.append(
                         get_calendar_date(date, operation, element.findtext('Description'))
                     )
-            elif holiday in BANK_HOLIDAYS:
-                for date in BANK_HOLIDAYS[holiday]:
-                    if date not in dates and operating_period.contains(date):
-                        dates.append(date)
-                        calendar_dates.append(
-                            get_calendar_date(date, operation, holiday)
-                        )
             else:
-                self.undefined_holidays.add(holiday)
+                if bank_holiday_name in BANK_HOLIDAYS:
+                    for date in BANK_HOLIDAYS[bank_holiday_name]:
+                        if date not in dates and operating_period.contains(date):
+                            dates.append(date)
+                            calendar_dates.append(
+                                get_calendar_date(date, operation, bank_holiday_name)
+                            )
+                    yield get_bank_holiday(bank_holiday_name)
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [
@@ -409,8 +415,29 @@ class Command(BaseCommand):
                 calendar_date.special = False
             calendar_dates.append(calendar_date)
 
-        self.do_bank_holidays(operating_profile.operation_bank_holidays, operating_period, True, calendar_dates)
-        self.do_bank_holidays(operating_profile.nonoperation_bank_holidays, operating_period, False, calendar_dates)
+        bank_holidays = []
+
+        for bank_holiday in self.do_bank_holidays(
+            holiday_elements=operating_profile.operation_bank_holidays,
+            operating_period=operating_period,
+            operation=True,
+            calendar_dates=calendar_dates
+        ):
+            bank_holidays.append(CalendarBankHoliday(
+                operation=False,
+                bank_holiday=bank_holiday
+            ))
+
+        for bank_holiday in self.do_bank_holidays(
+            holiday_elements=operating_profile.nonoperation_bank_holidays,
+            operating_period=operating_period,
+            operation=False,
+            calendar_dates=calendar_dates
+        ):
+            bank_holidays.append(CalendarBankHoliday(
+                operation=True,
+                bank_holiday=bank_holiday
+            ))
 
         sodt = operating_profile.serviced_organisation_day_type
         summary = []
@@ -511,6 +538,10 @@ class Command(BaseCommand):
         if weird:
             calendar_dates = [date for date in calendar_dates if date.end_date >= date.start_date]
         CalendarDate.objects.bulk_create(calendar_dates)
+
+        for bank_holiday in bank_holidays:
+            bank_holiday.calendar = calendar
+        CalendarBankHoliday.objects.bulk_create(bank_holidays)
 
         self.calendar_cache[calendar_hash] = calendar
 
