@@ -1,9 +1,9 @@
 import io
-import os
 import logging
 import xml.etree.cElementTree as ET
 import requests
 import zipfile
+from pathlib import Path
 from datetime import datetime, timezone
 from ciso8601 import parse_datetime
 from django.utils.http import parse_http_date
@@ -51,7 +51,7 @@ class Command(BaseCommand):
         operators = element.find("dataObjects/CompositeFrame/frames/ResourceFrame/organisations")
         operators = {
             operator.attrib["id"]: operator for operator in operators
-        }
+        } if operators else {}
 
         lines = element.find("dataObjects/CompositeFrame/frames/ServiceFrame/lines")
         if lines is None:
@@ -95,13 +95,17 @@ class Command(BaseCommand):
                 fare_zones[fare_zone.code] = fare_zone
                 stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
                 if stop_refs:
-                    stops = StopPoint.objects.none()
-                    for stop_ref in stop_refs:
-                        if stop_ref.startswith('atco:'):
-                            stops |= StopPoint.objects.filter(atco_code=stop_ref.removeprefix('atco:'))
-                        elif stop_ref.startswith('naptStop:'):
-                            stops |= StopPoint.objects.filter(naptan_code__iexact=stop_ref.removeprefix('naptStop:'))
-                    fare_zone.stops.set(stops)
+                    try:
+                        if stop_refs[0].startswith('atco'):
+                            fare_zone.stops.set([stop_ref.removeprefix('atco:') for stop_ref in stop_refs])
+                        elif stop_refs[0].startswith('naptStop'):
+                            fare_zone.stops.set(StopPoint.objects.filter(
+                                naptan_code__in=[stop_ref.removeprefix('naptStop:') for stop_ref in stop_refs]
+                            ))
+                        else:
+                            print(stop_refs[0])
+                    except IntegrityError as e:
+                        print(e)
 
         tariffs = {}
         distance_matrix_elements = {}
@@ -372,19 +376,26 @@ class Command(BaseCommand):
         source.save(update_fields=['datetime'])
         return source
 
+    def handle_dir(self, path):
+        for sub_path in path.iterdir():
+            if sub_path.is_dir():
+                self.handle_dir(sub_path)
+            elif sub_path.name.endswith('.xml'):
+                source = models.DataSet.objects.create(name=sub_path.name, datetime='2017-01-01T00:00:00Z')
+                with sub_path.open("rb") as open_file:
+                    print(sub_path)
+                    self.handle_file(source, open_file, sub_path.name)
+
     def handle(self, api_key=None, **kwargs):
 
         if api_key == 'test':
             models.DataSet.objects.all().delete()
 
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            path = os.path.join(base_dir, '..', '..', 'data')
+            base_dir = Path(__file__).resolve().parent.parent
+            path = base_dir.parent / 'data'
+            # path = base_dir.parent.parent / 'NeTEx samples'
+            self.handle_dir(path)
 
-            for filename in os.listdir(path):
-                print(filename)
-                source = models.DataSet.objects.create(name=filename, datetime='2017-01-01T00:00:00Z')
-                with open(os.path.join(path, filename), "rb") as open_file:
-                    self.handle_file(source, open_file)
             return
 
         self.session = requests.Session()

@@ -1,9 +1,9 @@
-from django.test import TestCase
+from django.test import TransactionTestCase
 from django.core.management import call_command
 from .models import Tariff, TimeInterval
 
 
-class FaresTest(TestCase):
+class FaresTest(TransactionTestCase):
     def test_netex(self):
         call_command('import_netex_fares', 'test')
         tariff = Tariff.objects.get(name="A C Williams WM06 - single fares")
