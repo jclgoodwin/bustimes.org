@@ -138,11 +138,6 @@ def get_operator_by(scheme, code):
             pass
 
 
-@cache
-def get_bank_holiday(bank_holiday_name):
-    return BankHoliday.objects.get_or_create(name=bank_holiday_name)[0]
-
-
 def get_open_data_operators():
     open_data_operators = []
     incomplete_operators = []
@@ -377,6 +372,10 @@ class Command(BaseCommand):
             # using routes
             service.update_geometry()
 
+    @cache
+    def get_bank_holiday(self, bank_holiday_name):
+        return BankHoliday.objects.get_or_create(name=bank_holiday_name)[0]
+
     def do_bank_holidays(self, holiday_elements, operating_period, operation, calendar_dates):
         if not holiday_elements:
             return
@@ -398,7 +397,7 @@ class Command(BaseCommand):
                             calendar_dates.append(
                                 get_calendar_date(date, operation, bank_holiday_name)
                             )
-                    yield get_bank_holiday(bank_holiday_name)
+                yield self.get_bank_holiday(bank_holiday_name)
 
     def get_calendar(self, operating_profile, operating_period):
         calendar_dates = [

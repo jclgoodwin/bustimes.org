@@ -4,7 +4,7 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from vehicles.admin import TripIsNullFilter
-from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime, Garage
+from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime, Garage, BankHoliday
 
 
 class TripInline(admin.TabularInline):
@@ -76,9 +76,14 @@ class GarageAdmin(admin.ModelAdmin):
         return queryset
 
 
+class BankHolidayAdmin(admin.ModelAdmin):
+    pass
+
+
 admin.site.register(Route, RouteAdmin)
 admin.site.register(Trip, TripAdmin)
 admin.site.register(Calendar, CalendarAdmin)
 admin.site.register(CalendarDate, CalendarDateAdmin)
 admin.site.register(Note, NoteAdmin)
 admin.site.register(Garage, GarageAdmin)
+admin.site.register(BankHoliday, BankHolidayAdmin)
