@@ -688,6 +688,13 @@ class ServiceDetailView(DetailView):
                     context['app'] = method
                 else:
                     context['payment_methods'].append(method)
+            for operator in operators:
+                if operator.name == 'National Express':
+                    context["links"].append({
+                        "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
+                        "text": "Buy tickets at nationalexpress.com"
+                    })
+                    break
 
         tariffs = self.object.tariff_set
         tariffs = tariffs.filter(source__published=True)

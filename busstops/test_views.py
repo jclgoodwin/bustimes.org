@@ -2,7 +2,6 @@
 import vcr
 from pathlib import Path
 from django.test import TestCase
-from unittest import skip
 from django.core import mail
 from django.contrib.gis.geos import Point
 from django.shortcuts import render
@@ -276,28 +275,21 @@ class ViewsTests(TestCase):
         self.assertContains(response, '@dril on Twitter')
         self.assertContains(response, 'twitter.com/dril"')
 
-    @skip
     def test_national_express_service(self):
-        self.chariots.name = 'Hotel Hoppa'
+        self.chariots.name = 'National Express'
         self.chariots.url = 'http://nationalexpress.com'
         self.chariots.save()
 
         response = self.client.get(self.service.get_absolute_url())
         self.assertEqual(response.context_data['links'][0], {
             'text': 'Buy tickets at nationalexpress.com',
-            'url': 'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g=24233768'
+            'url': 'https://nationalexpress.prf.hn/click/camref:1011ljPYw'
         })
-
-        self.chariots.name = 'National Express Airport'
-        self.assertEqual(self.chariots.get_national_express_url()[-10:], 'g=24233764')
-
-        self.chariots.name = 'National Express Shuttle'
-        self.assertEqual(self.chariots.get_national_express_url()[-10:], 'g=21039402')
 
         response = self.client.get(self.chariots.get_absolute_url())
         self.assertContains(
             response,
-            'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&amp;a=3022528&amp;g=21039402'
+            'https://nationalexpress.prf.hn/click/camref:1011ljPYw'
         )
 
     def test_service_redirect(self):

@@ -506,26 +506,6 @@ class Operator(SearchMixin, models.Model):
     def __str__(self):
         return str(self.name or self.id)
 
-    national_expresses = {
-        'Hotel Hoppa': '24233768',
-        'National Express Airport': '24233764',
-        'National Express': '21039402',
-    }
-    national_expresses['National Express Shuttle'] = national_expresses['National Express']
-    national_expresses['Woking RailAir'] = national_expresses['National Express Airport']
-
-    def is_national_express(self):
-        return self.name in self.national_expresses
-
-    def get_national_express_url(self):
-        return (
-            'https://clkuk.pvnsolutions.com/brand/contactsnetwork/click?p=230590&a=3022528&g='
-            + {
-                **self.national_expresses,
-                'Xplore Dundee': self.national_expresses['National Express Airport']
-            }[self.name]
-        )
-
     def get_absolute_url(self):
         return reverse('operator_detail', args=(self.slug or self.id,))
 
