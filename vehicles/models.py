@@ -233,6 +233,8 @@ class Vehicle(models.Model):
             value = self.data.get(key)
             if value:
                 if key == 'Previous reg':
+                    if type(value) is list:
+                        return ', '.join(format_reg(reg) for reg in value)
                     return format_reg(value)
                 return value
         return ''
