@@ -132,8 +132,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     def handle_item(self, item, now=None):
         datetime = self.get_datetime(item)
-        if now and datetime and datetime - now > twelve_hours:
-            datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
+        if now and datetime and now < datetime:
+            difference = datetime - now
+            if difference > twelve_hours:
+                datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
+            if 3000 < difference.total_seconds() <= 3600:
+                datetime -= timedelta(hours=1)  # Watersons timezone
 
         location = None
         try:
