@@ -467,6 +467,7 @@ class StopPoint(models.Model):
 class OperatorManager(models.Manager):
     def with_documents(self):
         vector = SearchVector('name', weight='A', config='english')
+        vector += SearchVector('id', weight='A', config='english')
         vector += SearchVector('aka', weight='B', config='english')
         return self.get_queryset().annotate(document=vector)
 
