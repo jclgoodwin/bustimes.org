@@ -321,15 +321,12 @@ class Command(BaseCommand):
 
         self.source.datetime = datetime.datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
-        logger.debug(self.source.datetime)
-
         try:
             with zipfile.ZipFile(archive_name) as archive:
 
                 self.set_service_descriptions(archive)
 
                 for filename in filenames or archive.namelist():
-                    logger.debug(filename)
                     if filename.endswith('.xml'):
                         with archive.open(filename) as open_file:
                             try:
@@ -838,7 +835,7 @@ class Command(BaseCommand):
                 elif txc_service.public_use in ('1', 'true'):
                     service.public_use = True
                 else:
-                    print(txc_service.public_use)
+                    print(description, txc_service.public_use)
 
             if service_code:
                 service.service_code = service_code
@@ -847,14 +844,18 @@ class Command(BaseCommand):
                 service.description = description
 
             line_brand = line.line_brand
-            if txc_service.marketing_name and txc_service.marketing_name != 'CornwallbyKernow':
-                line_brand = txc_service.marketing_name
-                if line.line_name in line_brand:
-                    line_brand_parts = line_brand.split()
-                    if line.line_name in line_brand_parts:
-                        line_brand_parts.remove(line.line_name)
-                        line_brand = ' '.join(line_brand_parts)
-                print(line_brand)
+            if txc_service.marketing_name:
+                if txc_service.marketing_name == 'CornwallbyKernow':
+                    pass
+                elif 'tudents only' in txc_service.marketing_name or 'pupils only' in txc_service.marketing_name:
+                    service.public_use = False
+                else:
+                    line_brand = txc_service.marketing_name
+                    if line.line_name in line_brand:
+                        line_brand_parts = line_brand.split()
+                        if line.line_name in line_brand_parts:
+                            line_brand_parts.remove(line.line_name)
+                            line_brand = ' '.join(line_brand_parts)
             if not line_brand and service.colour and service.colour.name:
                 line_brand = service.colour.name
             service.line_brand = line_brand or ''

@@ -360,7 +360,7 @@ FIRST_OPERATORS = [
 ]
 BOD_OPERATORS = [
     ('FBOS', None, {
-        # 'FYOR': 'FYOR',
+        'FYOR': 'FYOR',
         # 'FPOT': 'FPOT',
         # 'FSYO': 'FSYO',
         # 'FMAN': 'FMAN',
