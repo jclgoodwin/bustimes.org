@@ -1006,7 +1006,7 @@ thead {
 input:not(:checked) + label {
     + .timetable-wrapper,
     + .route {
-        .minor:not(:first-child):not(:last-child):not(.referrer) {
+        .minor {
             display: none;
         }
     }
@@ -1040,7 +1040,15 @@ input:not(:checked) + label {
         }
     }
 
-    .referrer {
+    .referrer,
+    .referrer + .dep,
+    .minor:first-child,
+    .minor:first-child + .dep {
+        display: table-row !important;
+    }
+
+    .referrer,
+    .referrer + .dep {
         td,
         th {
             background: $brand-color;

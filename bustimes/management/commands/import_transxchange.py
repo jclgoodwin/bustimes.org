@@ -321,12 +321,15 @@ class Command(BaseCommand):
 
         self.source.datetime = datetime.datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
 
+        logger.debug(self.source.datetime)
+
         try:
             with zipfile.ZipFile(archive_name) as archive:
 
                 self.set_service_descriptions(archive)
 
                 for filename in filenames or archive.namelist():
+                    logger.debug(filename)
                     if filename.endswith('.xml'):
                         with archive.open(filename) as open_file:
                             try:
