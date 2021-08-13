@@ -417,7 +417,7 @@ class Command(BaseCommand):
                 calendar_date.special = False
             calendar_dates.append(calendar_date)
 
-        bank_holidays = []
+        bank_holidays = {}  # a dictionary to remove duplicates! (non-operation overrides operation)
 
         for bank_holiday in self.do_bank_holidays(
             holiday_elements=operating_profile.operation_bank_holidays,
@@ -425,10 +425,10 @@ class Command(BaseCommand):
             operation=True,
             calendar_dates=calendar_dates
         ):
-            bank_holidays.append(CalendarBankHoliday(
+            bank_holidays[bank_holiday] = CalendarBankHoliday(
                 operation=False,
                 bank_holiday=bank_holiday
-            ))
+            )
 
         for bank_holiday in self.do_bank_holidays(
             holiday_elements=operating_profile.nonoperation_bank_holidays,
@@ -436,10 +436,10 @@ class Command(BaseCommand):
             operation=False,
             calendar_dates=calendar_dates
         ):
-            bank_holidays.append(CalendarBankHoliday(
+            bank_holidays[bank_holiday] = CalendarBankHoliday(
                 operation=True,
                 bank_holiday=bank_holiday
-            ))
+            )
 
         sodt = operating_profile.serviced_organisation_day_type
         summary = []
@@ -541,9 +541,9 @@ class Command(BaseCommand):
             calendar_dates = [date for date in calendar_dates if date.end_date >= date.start_date]
         CalendarDate.objects.bulk_create(calendar_dates)
 
-        for bank_holiday in bank_holidays:
+        for bank_holiday in bank_holidays.values():
             bank_holiday.calendar = calendar
-        CalendarBankHoliday.objects.bulk_create(bank_holidays)
+        CalendarBankHoliday.objects.bulk_create(bank_holidays.values())
 
         self.calendar_cache[calendar_hash] = calendar
 

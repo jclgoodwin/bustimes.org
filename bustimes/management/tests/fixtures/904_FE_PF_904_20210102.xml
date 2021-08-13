@@ -23190,6 +23190,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -23486,6 +23489,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -23782,6 +23788,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -24078,6 +24087,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -24374,6 +24386,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -24670,6 +24685,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -24966,6 +24984,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -25269,6 +25290,9 @@
 </ServicedOrganisationDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -25389,6 +25413,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -25685,6 +25712,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -25981,6 +26011,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -26277,6 +26310,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -26573,6 +26609,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -26869,6 +26908,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -27165,6 +27207,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -27461,6 +27506,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -27757,6 +27805,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -28053,6 +28104,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -28349,6 +28403,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -28645,6 +28702,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -28941,6 +29001,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -29237,6 +29300,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -29507,6 +29573,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -29784,6 +29853,9 @@
 </ServicedOrganisationDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -29899,6 +29971,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -30169,6 +30244,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -30439,6 +30517,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -30709,6 +30790,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -30979,6 +31063,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -31249,6 +31336,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -31519,6 +31609,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -31789,6 +31882,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -32059,6 +32155,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -32329,6 +32428,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -32599,6 +32701,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -32869,6 +32974,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -33139,6 +33247,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -33409,6 +33520,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -33679,6 +33793,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -33949,6 +34066,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -34219,6 +34339,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
@@ -34489,6 +34612,9 @@
 </RegularDayType>
 <SpecialDaysOperation />
 <BankHolidayOperation>
+<DaysOfOperation>
+<MayDay />
+</DaysOfOperation>
 <DaysOfNonOperation>
 <ChristmasDay />
 <BoxingDay />
