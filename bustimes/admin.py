@@ -4,7 +4,12 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 from vehicles.admin import TripIsNullFilter
-from .models import Route, Trip, Calendar, CalendarDate, Note, StopTime, Garage, BankHoliday
+from .models import (
+    Route, Trip,
+    Calendar, CalendarDate,
+    BankHoliday, BankHolidayDate,
+    Note, StopTime, Garage
+)
 
 
 class TripInline(admin.TabularInline):
@@ -19,6 +24,7 @@ class StopTimeInline(admin.TabularInline):
     autocomplete_fields = ['stop']
 
 
+@admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'code', 'start_date', 'end_date']
     list_filter = [
@@ -29,6 +35,7 @@ class RouteAdmin(admin.ModelAdmin):
     inlines = [TripInline]
 
 
+@admin.register(Trip)
 class TripAdmin(admin.ModelAdmin):
     raw_id_fields = ['route', 'destination', 'calendar', 'notes']
     inlines = [StopTimeInline]
@@ -38,12 +45,14 @@ class CalendarDateInline(admin.TabularInline):
     model = CalendarDate
 
 
+@admin.register(CalendarDate)
 class CalendarDateAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'start_date', 'end_date']
     list_filter = ['start_date', 'end_date']
     raw_id_fields = ['calendar']
 
 
+@admin.register(Calendar)
 class CalendarAdmin(admin.ModelAdmin):
     list_display = ['id', '__str__', 'summary']
     inlines = [CalendarDateInline]
@@ -56,11 +65,13 @@ class CalendarAdmin(admin.ModelAdmin):
         return mark_safe('<br>'.join(f'<a href="{url}">{route}</a>' for url, route in routes))
 
 
+@admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
     list_display = ['code', 'text']
     search_fields = ['code', 'text']
 
 
+@admin.register(Garage)
 class GarageAdmin(admin.ModelAdmin):
     list_display = ['code', 'name', 'operators']
 
@@ -76,14 +87,10 @@ class GarageAdmin(admin.ModelAdmin):
         return queryset
 
 
+class BankHolidayDateInline(admin.TabularInline):
+    model = BankHolidayDate
+
+
+@admin.register(BankHoliday)
 class BankHolidayAdmin(admin.ModelAdmin):
-    pass
-
-
-admin.site.register(Route, RouteAdmin)
-admin.site.register(Trip, TripAdmin)
-admin.site.register(Calendar, CalendarAdmin)
-admin.site.register(CalendarDate, CalendarDateAdmin)
-admin.site.register(Note, NoteAdmin)
-admin.site.register(Garage, GarageAdmin)
-admin.site.register(BankHoliday, BankHolidayAdmin)
+    inlines = [BankHolidayDateInline]

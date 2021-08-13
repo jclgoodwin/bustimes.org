@@ -105,7 +105,11 @@ class Route(models.Model):
 
 
 class BankHoliday(models.Model):
+    id = models.SmallAutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class BankHolidayDate(models.Model):
