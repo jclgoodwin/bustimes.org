@@ -328,6 +328,7 @@ PASSENGER_OPERATORS = [
         'TT': 'TDTR',
         'SBCR': 'TDTR',  # rural
         'SR': 'TDTR',  # rural
+        'SWIN': 'TDTR',
         'NATI': 'TDTR',  # Nationwide Building Society
     }),
     ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
