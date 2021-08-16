@@ -21,7 +21,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
     if operator_ref:
         vehicle = vehicle.removeprefix(f'{operator_ref}-')
         if operator_ref == 'FAB':  # Aberdeen
-            vehicle = vehicle.removeprefix('111-').removeprefix('1')
+            vehicle = vehicle.removeprefix('111-').removeprefix('S-')
         elif operator_ref == 'GCB':
             vehicle = vehicle.removeprefix('WCM-')
 
