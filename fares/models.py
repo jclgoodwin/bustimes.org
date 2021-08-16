@@ -106,7 +106,7 @@ class Tariff(models.Model):
         choices=TypeOfTariff.choices,
         blank=True
     )
-    access_zones = models.ManyToManyField('FareZone')
+    access_zones = models.ManyToManyField('FareZone', blank=True)
 
     def __str__(self):
         return self.name
