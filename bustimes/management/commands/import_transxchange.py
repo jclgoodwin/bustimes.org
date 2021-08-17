@@ -606,7 +606,7 @@ class Command(BaseCommand):
                 trip.garage = self.garages.get(journey.garage_ref)
 
             blank = False
-            for i, cell in enumerate(journey.get_times()):
+            for cell in journey.get_times():
                 timing_status = cell.stopusage.timingstatus
                 if timing_status is None:
                     timing_status = ''
@@ -640,8 +640,10 @@ class Command(BaseCommand):
                 stop_time.departure = cell.departure_time
                 if cell.arrival_time != cell.departure_time:
                     stop_time.arrival = cell.arrival_time
-                if i == 0:
+
+                if trip.start is None:
                     trip.start = stop_time.arrival_or_departure()
+
                 atco_code = cell.stopusage.stop.atco_code
                 if atco_code in stops:
                     if type(stops[atco_code]) is str:
@@ -653,10 +655,15 @@ class Command(BaseCommand):
                     stop_time.stop_code = atco_code
                 stop_times.append(stop_time)
 
+            if any(stop_time.sequence is None or stop_time.sequence > 32767 for stop_time in stop_times):
+                for i, stop_time in enumerate(stop_times):
+                    stop_time.sequence = i
+
             # last stop
             if not stop_time.arrival:
                 stop_time.arrival = stop_time.departure
                 stop_time.departure = None
+
             trip.end = stop_time.departure_or_arrival()
             trips.append(trip)
 
