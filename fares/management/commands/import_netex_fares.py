@@ -316,9 +316,6 @@ class Command(BaseCommand):
         except IntegrityError:
             print(item["noc"])
 
-        if 'BRTB' in item["noc"] or "RBUS" in item["noc"]:
-            return
-
         download_url = f"{dataset_url}download/"
         response = self.session.get(download_url, stream=True)
 
