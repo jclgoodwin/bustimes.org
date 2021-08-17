@@ -621,9 +621,14 @@ class Command(BaseCommand):
 
                 stop_time = StopTime(
                     trip=trip,
-                    sequence=cell.stopusage.sequencenumber or i,
+                    sequence=cell.stopusage.sequencenumber,
                     timing_status=timing_status
                 )
+                if stop_time.sequencenumber is None:
+                    stop_times.sequencenumber = i
+                elif stop_time.sequencenumber > 32767:
+                    stop_times.sequencenumber = None
+
                 if cell.stopusage.activity == 'pickUp':
                     stop_time.set_down = False
                 elif cell.stopusage.activity == 'setDown':
