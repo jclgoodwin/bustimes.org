@@ -1,4 +1,5 @@
 from django.db.models import Q, Exists, OuterRef
+from django.db.utils import OperationalError
 from .models import FareZone, DistanceMatrixElement
 from django import forms
 
@@ -21,13 +22,16 @@ class FaresForm(forms.Form):
 
         super().__init__(*args, **kwargs)
 
-        if zones:
-            zones = [('', '')] + [
-                (zone.id, str(zone)) for zone in zones
-            ]
+        try:
+            if zones:
+                zones = [('', '')] + [
+                    (zone.id, str(zone)) for zone in zones
+                ]
 
-        self.fields['origin'].choices = zones
-        self.fields['destination'].choices = zones
+            self.fields['origin'].choices = zones
+            self.fields['destination'].choices = zones
+        except OperationalError:
+            return
 
     def get_results(self):
         return DistanceMatrixElement.objects.filter(

@@ -432,7 +432,7 @@ class VehicleDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         if self.object.withdrawn and not self.object.latest_journey_id:
-            raise Http404
+            raise Http404('Someone marked this vehicle as withdrawn. It will be unwithdrawn if it tracks again')
 
         context = {
             **context,
