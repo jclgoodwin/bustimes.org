@@ -299,7 +299,7 @@ class StopTime(models.Model):
         return self.stop_id or self.stop_code
 
     class Meta:
-        ordering = ('sequence',)
+        ordering = ('id',)
         index_together = (
             ('stop', 'departure'),
         )
