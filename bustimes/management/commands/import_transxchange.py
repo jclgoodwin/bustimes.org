@@ -848,12 +848,11 @@ class Command(BaseCommand):
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
             if txc_service.public_use:
-                if txc_service.public_use in ('0', 'false') and len(journeys) < 5:
-                    service.public_use = False
+                if txc_service.public_use in ('0', 'false'):
+                    if len(journeys) < 5:
+                        service.public_use = False
                 elif txc_service.public_use in ('1', 'true'):
                     service.public_use = True
-                else:
-                    print(description, txc_service.public_use)
 
             if service_code:
                 service.service_code = service_code

@@ -300,19 +300,17 @@ PASSENGER_OPERATORS = [
         'SQ': 'SVCT',
         'DAM': 'DAMY',
     }),
+
     ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
-        'RB': 'RBUS',
-        'GLRB': 'GLRB',  # Green Line
+        'RBUS': 'RBUS',
     }),
     ('Thames Valley Buses', 'https://www.thamesvalleybuses.com/open-data', 'SE', {
-        'CTNY': 'CTNY',
-        'RB': 'RBUS',
         'THVB': 'THVB'
     }),
     ('Newbury & District', 'https://data.discoverpassenger.com/operator/kennections', 'SE', {
-        'ND': 'NADS',
-        'KC': 'NADS',
+        'NADS': 'NADS',
     }),
+
     ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
         'WCM': 'WCMO',
         'GCB': 'GCTB',  # Glasgow Citybus
