@@ -304,7 +304,7 @@ PASSENGER_OPERATORS = [
         'RB': 'RBUS',
         'GLRB': 'GLRB',  # Green Line
     }),
-    ('Courtney Buses', 'https://www.courtneybuses.com/open-data', 'SE', {
+    ('Thames Valley Buses', 'https://www.thamesvalleybuses.com/open-data', 'SE', {
         'CTNY': 'CTNY',
         'RB': 'RBUS',
         'THVB': 'THVB'
@@ -536,6 +536,8 @@ BOD_OPERATORS = [
     ('ACME', 'SE', {}, False),
     ('ALSC', 'NW', {}, False),
     ('LCAC', 'NW', {}, False),
+
+    ('RBUS', 'SE', {}, True),
 
     ('RDRT', 'SE', {
         'RR': 'RDRT',

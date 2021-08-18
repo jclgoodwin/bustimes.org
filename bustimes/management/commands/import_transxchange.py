@@ -771,6 +771,19 @@ class Command(BaseCommand):
             unique_service_code = None
 
         for line in txc_service.lines:
+            # defer to a Bus Open Data type source
+            if self.is_tnds() and self.should_defer_to_other_source(operators, line.line_name):
+                continue
+
+            # defer to the better Reading Buses source,
+            # unless this service is only present in this worse source
+            # (probably a football services)
+            if self.source.name.startswith('Reading Buses_') and Service.objects.filter(
+                line_name__iexact=line.line_name, current=True,
+                source__name__in=('Reading Buses', 'Newbury & District')
+            ).exists():
+                continue
+
             existing = None
             service_code = None
 
@@ -811,9 +824,6 @@ class Command(BaseCommand):
                         existing = None
 
             if self.is_tnds():
-                if self.should_defer_to_other_source(operators, line.line_name):
-                    continue
-
                 service_code = get_service_code(filename)
                 if service_code is None:
                     service_code = txc_service.service_code
