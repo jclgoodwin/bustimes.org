@@ -563,13 +563,12 @@ class Command(BaseCommand):
                 calendar = self.get_calendar(journey.operating_profile, txc_service.operating_period)
             elif journey.journey_pattern.operating_profile:
                 calendar = self.get_calendar(journey.journey_pattern.operating_profile, txc_service.operating_period)
-            else:
+            elif txc_service.operating_profile:
                 if not default_calendar:
                     default_calendar = self.get_calendar(txc_service.operating_profile, txc_service.operating_period)
                 calendar = default_calendar
-
-            if calendar is None:
-                continue
+            else:
+                calendar = None
 
             trip = Trip(
                 inbound=journey.journey_pattern.is_inbound(),

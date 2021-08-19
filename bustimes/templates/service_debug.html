@@ -71,7 +71,7 @@
     <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
     <td><a href="{{ trip.get_absolute_url }}">{{ trip.start_time }}</a></td>
     <td>{{ trip.end_time }}</td>
-    {% if trip.rowspan %}
+    {% if trip.rowspan and trip.calendar %}
     <td rowspan="{{ trip.rowspan }}">{{ trip.calendar.start_date }}–<br>{{ trip.calendar.end_date }}</td>
     <td rowspan="{{ trip.rowspan }}"><a href="{% url 'admin:bustimes_calendar_change' trip.calendar.id %}">{{ trip.calendar }}</a></td>
     <td rowspan="{{ trip.rowspan }}">
