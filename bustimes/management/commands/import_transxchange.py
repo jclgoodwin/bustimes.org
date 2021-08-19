@@ -1038,9 +1038,8 @@ class Command(BaseCommand):
                 name = garage.findtext('GarageName', '')
                 name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
                 name = name.removesuffix(' garage').removesuffix(' Garage')
-                try:
-                    garage = Garage.objects.get(code=garage_code, name=name)
-                except Garage.DoesNotExist:
+                garage = Garage.objects.filter(code=garage_code, name=name).first()
+                if garage is None:
                     garage = Garage.objects.create(code=garage_code, name=name)
                 self.garages[garage_code] = garage
 
