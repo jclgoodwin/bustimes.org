@@ -780,7 +780,7 @@ class Command(BaseCommand):
             # (probably a football services)
             if self.source.name.startswith('Reading Buses_') and Service.objects.filter(
                 line_name__iexact=line.line_name, current=True,
-                source__name__in=('Reading Buses', 'Newbury & District')
+                route__source__name__in=('Reading Buses', 'Newbury & District')
             ).exists():
                 continue
 
@@ -882,6 +882,11 @@ class Command(BaseCommand):
 
             if self.region_id:
                 service.region_id = self.region_id
+
+            if line.outbound_description:
+                service.outbound_description = line.outbound_description
+            if line.inbound_description:
+                service.inbound_description = line.inbound_description
 
             if self.service_descriptions:  # NCSD
                 service.outbound_description, service.inbound_description = self.get_service_descriptions(filename)
