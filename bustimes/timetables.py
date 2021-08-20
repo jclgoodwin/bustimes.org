@@ -106,6 +106,9 @@ def compare_trips(rows, trip_ids, a, b):
                 b_time = row.times[b_index].arrival
                 break
 
+    if a_top is None and b_top is None:
+        return 0
+
     if a_time is None:
         if a_top >= b_bottom:  # b is above a
             a_time = a.start
