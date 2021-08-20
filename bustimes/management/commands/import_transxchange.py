@@ -15,7 +15,7 @@ from titlecase import titlecase
 from django.conf import settings
 from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
-from django.db import DataError, IntegrityError
+from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
@@ -329,10 +329,7 @@ class Command(BaseCommand):
                 for filename in filenames or archive.namelist():
                     if filename.endswith('.xml'):
                         with archive.open(filename) as open_file:
-                            try:
-                                self.handle_file(open_file, filename)
-                            except (AttributeError, DataError) as error:
-                                logger.error(error, exc_info=True)
+                            self.handle_file(open_file, filename)
         except zipfile.BadZipfile:
             with open(archive_name) as open_file:
                 self.handle_file(open_file, archive_name)
@@ -623,6 +620,8 @@ class Command(BaseCommand):
                     sequence=cell.stopusage.sequencenumber,
                     timing_status=timing_status
                 )
+                if stop_time.sequence is not None and stop_time.sequence > 32767:  # too big for smallint
+                    stop_time.sequence = None
 
                 if cell.stopusage.activity == 'pickUp':
                     stop_time.set_down = False
@@ -649,10 +648,6 @@ class Command(BaseCommand):
                 else:
                     stop_time.stop_code = atco_code
                 stop_times.append(stop_time)
-
-            if any(stop_time.sequence is None or stop_time.sequence > 32767 for stop_time in stop_times):
-                for i, stop_time in enumerate(stop_times):
-                    stop_time.sequence = i
 
             # last stop
             if not stop_time.arrival:
