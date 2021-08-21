@@ -47,14 +47,14 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         response = self.client.get('/status')
         self.assertContains(response, """
             <tr>
-                <td>00:00:00:0000</td>
+                <td>00:00:00.000000</td>
                 <td>15:14:46.261274</td>
                 <td>841</td>
                 <td>841</td>
             </tr>""")
         self.assertContains(response, """
             <tr>
-                <td>00:00:00:0000</td>
+                <td>00:00:00.000000</td>
                 <td>15:14:46.261274</td>
                 <td>841</td>
                 <td>0</td>
