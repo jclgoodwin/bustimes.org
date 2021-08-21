@@ -29,7 +29,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
         StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
 
-    @time_machine.travel('2020-05-01')
+    @time_machine.travel('2020-05-01', tick=False)
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
     def test_channels_update(self):
         command = import_bod_avl_channels.Command()
@@ -47,13 +47,15 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         response = self.client.get('/status')
         self.assertContains(response, """
             <tr>
-                <td>24 Jul 15:14:46</td>
+                <td>00:00:00:0000</td>
+                <td>15:14:46.261274</td>
                 <td>841</td>
                 <td>841</td>
             </tr>""")
         self.assertContains(response, """
             <tr>
-                <td>24 Jul 15:14:46</td>
+                <td>00:00:00:0000</td>
+                <td>15:14:46.261274</td>
                 <td>841</td>
                 <td>0</td>
             </tr>""")

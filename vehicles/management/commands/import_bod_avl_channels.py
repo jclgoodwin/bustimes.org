@@ -1,7 +1,7 @@
 from asgiref.sync import async_to_sync
 from django.core.cache import cache
+from django.utils import timezone
 from channels.layers import get_channel_layer
-# from channels.exceptions import ChannelFull
 from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
@@ -49,7 +49,7 @@ class Command(ImportLiveVehiclesCommand):
 
         # stats for last 10 updates
         bod_status = cache.get('bod_avl_status', [])
-        bod_status.append((self.source.datetime, count, i))
+        bod_status.append((timezone.now(), self.source.datetime, count, i))
         bod_status = bod_status[-10:]
         cache.set('bod_avl_status', bod_status)
 
