@@ -42,14 +42,19 @@
 
 {% include 'services.html' with services=services %}
 
-{% if operator.licences.all %}
-    <p>PSV operator licence: {% for licence in operator.licences.all %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+
+{% if operator.licences.all or object.address or object.url or object.email or object.phone %}
+    <h2>{{ object }}</h2>
 {% endif %}
 
+{% if operator.licences.all %}
+    <p>PSV operator licence:
+        {% for licence in operator.licences.all %}<a href="{{ licence.get_absolute_url }}">{{ licence }}</a>{% if not forloop.last %},
+        {% endif %}{% endfor %}
+    </p>
+{% endif %}
 
 {% if object.address or object.url or object.email or object.phone %}
-    <h2>Contact {{ object }}</h2>
-
     <div class="contact-details">
         {% if object.url %}
             <p itemprop="url">{{ object.url|urlise }}</p>
