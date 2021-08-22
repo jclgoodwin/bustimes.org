@@ -1028,14 +1028,14 @@ class Command(BaseCommand):
         stops = self.do_stops(transxchange.stops)
 
         for garage_code in transxchange.garages:
-            if garage_code not in self.garages:
-                garage = transxchange.garages[garage_code]
-                name = garage.findtext('GarageName', '')
-                name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
-                name = name.removesuffix(' garage').removesuffix(' Garage')
+            garage = transxchange.garages[garage_code]
+            name = garage.findtext('GarageName', '')
+            name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
+            name = name.removesuffix(' garage').removesuffix(' Garage')
+            if garage_code not in self.garages or self.garages[garage_code].name != name:
                 garage = Garage.objects.filter(code=garage_code, name=name).first()
                 if garage is None:
-                    garage = Garage.objects.create(code=garage_code, name=name)
+                    garage = Garage.objects.create(code=garage_code, name=name or garage_code)
                 self.garages[garage_code] = garage
 
         for txc_service in transxchange.services.values():

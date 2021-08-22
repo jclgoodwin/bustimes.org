@@ -105,7 +105,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     vehicles = vehicles.annotate(
         vehicle_type_name=F('vehicle_type__name'),
-        garage_name=Coalesce('garage__name', 'garage__code', 'latest_journey__trip__garage__name')
+        garage_name=Coalesce('garage__name', 'latest_journey__trip__garage__name')
     ).select_related('livery')
 
     submitted = False
