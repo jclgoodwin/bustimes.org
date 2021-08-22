@@ -259,9 +259,14 @@ class OperatorFilter(admin.SimpleListFilter):
 class ChangeFilter(admin.SimpleListFilter):
     title = 'changed field'
     parameter_name = 'change'
+    vehicle_features = None
 
     def lookups(self, request, model_admin):
-        return (
+        if self.vehicle_features is None:
+            self.vehicle_features = [
+                feature.name for feature in VehicleFeature.objects.all()
+            ]
+        return [
             ('fleet_number', 'fleet number'),
             ('reg', 'reg'),
             ('vehicle_type', 'type'),
@@ -270,19 +275,17 @@ class ChangeFilter(admin.SimpleListFilter):
             ('name', 'name'),
             ('notes', 'notes'),
             ('withdrawn', 'withdrawn'),
-            ('USB power', 'USB power'),
-            ('power sockets', 'power sockets'),
-            ('open top', 'open top'),
-            ('bike rack', 'bike rack'),
             ('changes__Previous reg', 'previous reg'),
-        )
+        ] + [
+            (feature, feature) for feature in self.vehicle_features
+        ]
 
     def queryset(self, request, queryset):
         value = self.value()
         if value:
             if value == 'colours':
                 return queryset.filter(~Q(colours='') | Q(livery__isnull=False))
-            if value in {'USB power', 'open top', 'bike rack'}:
+            if value in self.vehicle_features:
                 return queryset.filter(vehicleeditfeature__feature__name=value)
             if value.startswith('changes__'):
                 return queryset.filter(**{f'{value}__isnull': False})

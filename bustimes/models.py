@@ -346,7 +346,7 @@ class Garage(models.Model):
     address = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        if self.name:
+        if self.name != self.code:
             if self.name.isupper():
                 return self.name.title()
             return self.name

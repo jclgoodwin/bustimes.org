@@ -73,7 +73,11 @@ class NoteAdmin(admin.ModelAdmin):
 
 @admin.register(Garage)
 class GarageAdmin(admin.ModelAdmin):
+    search_fields = ['code', 'name']
     list_display = ['code', 'name', 'operators']
+    list_filter = [
+        ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
+    ]
 
     def operators(self, obj):
         return obj.operators
@@ -82,7 +86,7 @@ class GarageAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
             return queryset.annotate(
-                operators=StringAgg('trip__route__service__operator', ', ', distinct=True)
+                operators=StringAgg('vehicle__operator', ', ', distinct=True)
             )
         return queryset
 
