@@ -262,10 +262,9 @@ class ChangeFilter(admin.SimpleListFilter):
     vehicle_features = None
 
     def lookups(self, request, model_admin):
-        if self.vehicle_features is None:
-            self.vehicle_features = [
-                feature.name for feature in VehicleFeature.objects.all()
-            ]
+        self.vehicle_features = [
+            feature.name for feature in VehicleFeature.objects.all()
+        ]
         return [
             ('fleet_number', 'fleet number'),
             ('reg', 'reg'),
