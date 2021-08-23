@@ -332,7 +332,6 @@ class Command(BaseCommand):
                     filenames = [filename for filename in namelist if filename.startswith('NCSD_TXC_2_4/')]
 
                 for filename in filenames or namelist:
-                    print(filename)
                     if filename.endswith('.xml'):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)
