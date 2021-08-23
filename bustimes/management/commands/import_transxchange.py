@@ -326,7 +326,13 @@ class Command(BaseCommand):
 
                 self.set_service_descriptions(archive)
 
-                for filename in filenames or archive.namelist():
+                namelist = archive.namelist()
+
+                if 'NCSD_TXC_2_4/' in namelist:
+                    filenames = [filename for filename in namelist if filename.startswith('NCSD_TXC_2_4/')]
+
+                for filename in filenames or namelist:
+                    print(filename)
                     if filename.endswith('.xml'):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)
@@ -883,8 +889,11 @@ class Command(BaseCommand):
                 service.inbound_description = line.inbound_description
 
             if self.service_descriptions:  # NCSD
-                service.outbound_description, service.inbound_description = self.get_service_descriptions(filename)
-                service.description = service.outbound_description or service.inbound_description
+                outbound_description, inbound_description = self.get_service_descriptions(filename)
+                if inbound_description:
+                    service.description = service.inbound_description = inbound_description
+                if outbound_description:
+                    service.description = service.outbound_description = outbound_description
 
             if service.id:
                 service_created = False
