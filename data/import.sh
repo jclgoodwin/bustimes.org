@@ -135,18 +135,6 @@ fi
 
 ./manage.py import_tnds "$USERNAME" "$PASSWORD"
 
-cd data/variations
-
-for region in F B C M K G D H; do
-    old=$(shasum "Bus_Variation_$region.csv")
-    wget -qN "https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/Bus_Variation_$region.csv"
-    new=$(shasum "Bus_Variation_$region.csv")
-    if [[ $old != $new ]]; then
-        echo $region
-        ../../manage.py import_variations < "Bus_Variation_$region.csv"
-    fi
-done
-
-../../manage.py import_gtfs
+./manage.py import_gtfs
 
 finish

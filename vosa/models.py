@@ -1,7 +1,6 @@
 from django.db import models
-from django.db.models import Exists, OuterRef
+from django.db.models import Count
 from django.urls import reverse
-from busstops.models import Service
 
 
 class TrafficArea(models.TextChoices):
@@ -35,7 +34,9 @@ class Licence(models.Model):
     licence_status = models.CharField(max_length=255)
 
     def get_operator(self):
-        operators = self.operator_set.filter(Exists(Service.objects.filter(operator=OuterRef('pk'), current=True)))
+        operators = self.operator_set.annotate(
+            services=Count('service', current=True)
+        ).order_by('-services')
         return operators.select_related('region').first()
 
     def __str__(self):
@@ -48,15 +49,18 @@ class Licence(models.Model):
 class Registration(models.Model):
     licence = models.ForeignKey(Licence, models.CASCADE)
     registration_number = models.CharField(max_length=20, unique=True)
-    service_number = models.CharField(max_length=100)
-    start_point = models.CharField(max_length=255)
-    finish_point = models.CharField(max_length=255)
+    service_number = models.CharField(max_length=100, blank=True)
+    start_point = models.CharField(max_length=255, blank=True)
+    finish_point = models.CharField(max_length=255, blank=True)
     via = models.CharField(blank=True, max_length=255)
     subsidies_description = models.CharField(max_length=255)
-    subsidies_details = models.CharField(max_length=255)
+    subsidies_details = models.CharField(max_length=255, blank=True)
     service_type_description = models.CharField(max_length=255, blank=True)
     registration_status = models.CharField(max_length=255, db_index=True)
     traffic_area_office_covered_by_area = models.CharField(max_length=100)
+    authority_description = models.CharField(max_length=255, blank=True)
+    registered = models.BooleanField()
+    latest_variation = models.ForeignKey('Variation', models.SET_NULL, null=True, blank=True, related_name='latest')
 
     def __str__(self):
         string = '{} - {} to {}'.format(self.service_number, self.start_point, self.finish_point)
@@ -78,7 +82,6 @@ class Variation(models.Model):
     registration_status = models.CharField(max_length=255)
     publication_text = models.TextField()
     short_notice = models.CharField(max_length=255)
-    authority_description = models.CharField(max_length=255)
 
     class Meta():
         ordering = ('-variation_number',)

@@ -10,7 +10,7 @@ class VosaTest(TestCase):
     @override_settings(DATA_DIR=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures'))
     def test(self):
         with mock.patch('vosa.management.commands.import_vosa.download_if_changed', return_value=(True, None)):
-            with self.assertNumQueries(4):
+            with self.assertNumQueries(6):
                 call_command('import_vosa', 'F')
 
         # multiple trading names
@@ -22,15 +22,15 @@ class VosaTest(TestCase):
         operator.licences.add(licence)
 
         response = self.client.get('/licences/PF0000705')
-        self.assertContains(response, "Ainsley's Chariots")
+        self.assertContains(response, "Ainsley&#x27;s Chariots")
         self.assertContains(response, "<th>Trading name</th>")
 
         # licence
         response = self.client.get('/licences/PF1018256')
-        self.assertEqual(54, len(response.context_data['registrations']))
-        self.assertEqual(0, len(response.context_data['cancelled']))
+        self.assertEqual(1, len(response.context_data['registrations']))
+        self.assertEqual(2, len(response.context_data['cancelled']))
         self.assertContains(response, 'SANDERS COACHES LIMITED')
-        self.assertContains(response, 'Thorpe Market &amp; Roughton')
+        self.assertContains(response, 'LETHERINGSETT, GLANDFORD, WIVETON, CLEY, BLAKENEY')
 
         # rss feed
         with self.assertNumQueries(2):

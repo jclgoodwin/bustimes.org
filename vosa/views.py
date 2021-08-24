@@ -17,9 +17,8 @@ class LicenceView(DetailView):
             received_date=Max('variation__date_received')
         ).order_by('-effective_date', '-received_date')
 
-        cancelled_statuses = ('Admin Cancelled', 'Cancellation', 'Cancelled', 'Refused', 'Withdrawn')
-        context['cancelled'] = registrations.filter(registration_status__in=cancelled_statuses)
-        context['registrations'] = registrations.exclude(pk__in=context['cancelled'])
+        context['registrations'] = registrations.filter(registered=True)
+        context['cancelled'] = registrations.filter(registered=False)
 
         context['operator'] = self.object.get_operator()
         if context['operator']:

@@ -10,7 +10,7 @@
     <tbody>
         <tr>
             <th scope="row"></th>
-            <td>{{ object.service_number }}</td>
+            <td>{{ object.service_number|linebreaksbr }}</td>
         </tr>
         <tr>
             <th scope="row">From</th>
@@ -26,11 +26,16 @@
         </tr>
         <tr>
             <th scope="row">Type</th>
-            <td>{{ object.service_type_description }} </td>
+            <td>{{ object.service_type_description|linebreaksbr }} </td>
         </tr>
         <tr>
             <th scope="row">Supported by subsidy?</th>
-            <td>{{ object.subsidies_description }}<br>{{ object.subsidies_details }} </td>
+            <td>{{ object.subsidies_description }}
+                {% if object.subsidies_details %}<br>{{ object.subsidies_details }}{% endif %}</td>
+        </tr>
+        <tr>
+            <th scope="row">Authorities</th>
+            <td>{{ object.authority_description|linebreaksbr }}</td>
         </tr>
         <tr>
             <th scope="row">Status</th>
