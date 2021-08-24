@@ -15,7 +15,8 @@ class RegistrationAdmin(admin.ModelAdmin):
 
 
 class VariationAdmin(admin.ModelAdmin):
-    list_display = ['variation_number', 'service_type_other_details', 'registration_status']
+    list_display = ['variation_number', 'service_type_other_details',
+                   'registration_status', 'effective_date', 'date_received']
     list_filter = ['registration_status']
     raw_id_fields = ['registration']
 

@@ -241,7 +241,8 @@ class Command(BaseCommand):
              "traffic_area_office_covered_by_area",
              "service_number", "service_type_description",
              "registration_status", "authority_description",
-             "registered"]
+             "registered"],
+             batch_size=1000
         )
         Registration.objects.bulk_create(regs_to_create)
 
