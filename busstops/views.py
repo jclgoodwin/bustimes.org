@@ -616,7 +616,7 @@ class ServiceDetailView(DetailView):
                 context['timetable'] = timetable
 
             if timetable and timetable.routes:
-                context['registrations'] = {route.registration for route in timetable.routes}
+                context['registrations'] = {route.registration for route in timetable.routes if route.registration}
 
         else:
             date = None
