@@ -615,8 +615,14 @@ class ServiceDetailView(DetailView):
                         del grouping.heads
                 context['timetable'] = timetable
 
+            if timetable and timetable.routes:
+                context['registrations'] = {route.registration for route in timetable.routes}
+
         else:
             date = None
+
+        if self.object.tracking and self.object.vehiclejourney_set.exists():
+            context['vehicles'] = True
 
         # disruptions
 

@@ -41,7 +41,7 @@
 {% endif %}
 
 <div id="timetable">
-{% include 'timetable.html' %}
+    {% include 'timetable.html' %}
 </div>
 
 {% if fares %}
@@ -59,6 +59,17 @@
 
 {% if app %}
     <p>Mobile tickets and live bus tracking available on <a href="{{ app.url }}">the {{ app }}</a></p>
+{% endif %}
+
+{% if registrations or vehicles %}
+    <ul class="horizontal">
+        {% for registration in registrations %}
+            <li><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a>
+        {% endfor %}
+        {% if vehicles %}
+            <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a>
+        {% endif %}
+    </ul>
 {% endif %}
 
 {% if related %}

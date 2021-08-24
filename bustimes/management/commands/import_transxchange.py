@@ -23,6 +23,7 @@ from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block,
                        Calendar, CalendarDate, CalendarBankHoliday, BankHoliday)
 from ...timetables import get_stop_usages
 from transxchange.txc import TransXChange
+from vosa.models import Registration
 
 
 logger = logging.getLogger(__name__)
@@ -950,6 +951,16 @@ class Command(BaseCommand):
             }
             if description:
                 route_defaults['description'] = description
+
+            if unique_service_code:
+                parts = unique_service_code.split('_')[0].split(':')
+                if parts[1]:
+                    try:
+                        route_defaults['registration'] = Registration.objects.get(
+                            registration_number=f'{parts[0]}/{parts[1]}'
+                        )
+                    except Registration.DoesNotExist:
+                        pass
 
             geometry = []
             if transxchange.route_sections:
