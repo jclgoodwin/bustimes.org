@@ -155,7 +155,7 @@ class ImportBusOpenDataTest(TestCase):
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                archive_name = 'stagecoach-sccm-route-schedule-data-transxchange_2_4.zip'
+                archive_name = 'stagecoach-sccm-route-schedule-data-transxchange.zip'
                 path = Path(directory) / archive_name
 
                 with zipfile.ZipFile(path, 'a') as open_zipfile:
