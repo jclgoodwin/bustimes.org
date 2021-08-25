@@ -544,7 +544,9 @@ BOD_OPERATORS = [
     ('KENS', 'Y', {}, True),
     ('AWAN', 'SE', {}, True),
     ('LUCK', 'SW', {}, True),
-
+    
+    ('GVTR', 'NE', {}, True),
+    
     ('RDRT', 'SE', {
         'RR': 'RDRT',
         'RR1': 'RDRT'
@@ -562,7 +564,7 @@ STAGECOACH_OPERATORS = [
     ('Y',  'syrk', 'Stagecoach Yorkshire',     ['SYRK', 'YSYC', 'CLTL']),
     ('NW', 'sccu', 'Stagecoach Cumbria',       ['SCMB', 'SCCU', 'SCNW']),
     ('NW', 'scmn', 'Stagecoach Manchester',    ['SCMN', 'SWIG']),
-    ('NW', 'scmy', 'Stagecoach Merseyside',    ['SCMY']),
+    ('NW', 'scmy', 'Stagecoach Merseyside',    ['SCMY', 'STCR']),
     ('SW', 'sdvn', 'Stagecoach South West',    ['SDVN', 'SDVN']),
     ('SE', 'sccm', 'Stagecoach East',          ['SCBD', 'SCCM', 'SCPB', 'SCHU']),
     ('EM', 'scnh', 'Stagecoach Midlands',      ['SCNH', 'SCWW']),
