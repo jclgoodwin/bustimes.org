@@ -44,7 +44,7 @@ class VosaTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
         # registration
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             response = self.client.get('/registrations/PF1018256/2')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'WIVETON, CLEY, BLAKENEY, MORSTON, FIELD DALLING, HINDRINGHAM AND THURSFORD')

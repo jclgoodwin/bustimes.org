@@ -1,7 +1,9 @@
 from datetime import datetime
 from django.views.generic.detail import DetailView
 from django.contrib.syndication.views import Feed
-from django.db.models import Max
+from django.db.models import Max, Exists, OuterRef
+from busstops.models import Service
+from bustimes.models import Route
 from .models import Licence, Registration, Variation
 
 
@@ -40,6 +42,11 @@ class RegistrationView(DetailView):
         context['breadcrumb'] = [self.object.licence]
 
         context['operator'] = self.object.licence.get_operator()
+
+        context['services'] = Service.objects.filter(
+            Exists(Route.objects.filter(service=OuterRef('id'), registration=self.object)),
+            current=True
+        )
 
         if context['operator']:
             context['breadcrumb'] = [
