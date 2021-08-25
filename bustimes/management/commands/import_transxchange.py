@@ -749,7 +749,7 @@ class Command(BaseCommand):
             if self.source.name != 'L':
                 if operators and all(operator.id in self.open_data_operators for operator in operators):
                     return
-        elif self.source.name == 'Oxford Bus Company':
+        elif self.source.name in ('Oxford Bus Company', 'Carousel'):
             if operators and operators[0].id not in self.operators.values():
                 print(operators)
                 return

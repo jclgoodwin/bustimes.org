@@ -305,7 +305,8 @@ PASSENGER_OPERATORS = [
         'RBUS': 'RBUS',
     }),
     ('Thames Valley Buses', 'https://www.thamesvalleybuses.com/open-data', 'SE', {
-        'THVB': 'THVB'
+        'THVB': 'THVB',
+        'CTNY': 'CTNY',
     }),
     ('Newbury & District', 'https://data.discoverpassenger.com/operator/kennections', 'SE', {
         'NADS': 'NADS',
