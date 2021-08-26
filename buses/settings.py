@@ -525,7 +525,7 @@ BOD_OPERATORS = [
     }, False),
 
     ('PLNG', 'EA', {}, False),
-    ('SNDR', 'EA', {}, True),
+    ('SNDR', 'EA', {}, True),  # incomplete
     ('STOT', 'NW', {}, False),
     ('BEVC', 'NW', {}, False),
     ('CARL', 'SE', {}, False),
@@ -536,16 +536,16 @@ BOD_OPERATORS = [
     ('ALSC', 'NW', {}, False),
     ('LCAC', 'NW', {}, False),
 
-    ('RBUS', 'SE', {}, True),
+    ('RBUS', 'SE', {}, True),  # incomplete
 
-    ('ROOS', 'SW', {}, True),
-    ('SEWR', 'SW', {}, True),
-    ('HRBT', 'SE', {}, True),
-    ('KENS', 'Y', {}, True),
-    ('AWAN', 'SE', {}, True),
-    ('LUCK', 'SW', {}, True),
+    ('ROOS', 'SW', {}, False),
+    ('SEWR', 'SW', {}, False),
+    ('HRBT', 'SE', {}, False),
+    ('KENS', 'Y', {}, False),
+    ('AWAN', 'SE', {}, False),
+    ('LUCK', 'SW', {}, False),
     
-    ('GVTR', 'NE', {}, True),
+    ('GVTR', 'NE', {}, False),
     
     ('RDRT', 'SE', {
         'RR': 'RDRT',
