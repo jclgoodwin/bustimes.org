@@ -610,9 +610,6 @@ class ServiceDetailView(DetailView):
             detailed = 'detailed' in self.request.GET
             timetable = self.object.get_timetable(date, parallel, detailed)
             if timetable and timetable.routes and (timetable.date or timetable.calendar):
-                if not parallel:
-                    for grouping in timetable.groupings:
-                        del grouping.heads
                 context['timetable'] = timetable
 
             if timetable and timetable.routes:
@@ -658,7 +655,6 @@ class ServiceDetailView(DetailView):
 
         else:
             stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
-            context['timetable'].groupings = [grouping for grouping in context['timetable'].groupings if grouping.rows]
             stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
             stops = stops.in_bulk(stop_codes)
             for atco_code in stops:
@@ -762,11 +758,7 @@ def service_timetable(request, service_id):
         date = datetime.date.fromisoformat(date)
     parallel = service.get_linked_services()
     timetable = service.get_timetable(date, parallel)
-    if not parallel:
-        for grouping in timetable.groupings:
-            del grouping.heads
     stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
-    timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
     stop_codes = (row.stop.atco_code for grouping in timetable.groupings for row in grouping.rows)
     stops = stops.in_bulk(stop_codes)
     for grouping in timetable.groupings:

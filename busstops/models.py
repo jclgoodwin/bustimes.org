@@ -864,6 +864,12 @@ class Service(models.Model):
                             break
                 previous_route = route
 
+        timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
+
+        if not related:
+            for grouping in timetable.groupings:
+                del grouping.heads
+
         return timetable
 
     def varnish_ban(self):
