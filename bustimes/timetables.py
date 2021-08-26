@@ -144,10 +144,11 @@ class Timetable:
 
         self.groupings = [Grouping(), Grouping(True)]
 
+        # self.date_options = ()
         self.calendar = None
         self.start_date = None
         if not routes:
-            self.calendars = ()
+            # self.calendars = ()
             return
 
         self.calendars = Calendar.objects.filter(
@@ -166,7 +167,7 @@ class Timetable:
                     for date in self.get_date_options():
                         self.start_date = date
 
-        if not self.calendar:
+        if self.calendars and not self.calendar:
             self.date_options = list(self.get_date_options())
             if not self.date:
                 if self.date_options:
@@ -181,8 +182,12 @@ class Timetable:
 
         trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:
-            calendar_ids = [calendar.id for calendar in self.calendars]
-            trips = trips.filter(Exists(get_calendars(self.date, calendar_ids).filter(trip=OuterRef('id'))))
+            if self.calendars:
+                calendar_ids = [calendar.id for calendar in self.calendars]
+                trips = trips.filter(Exists(get_calendars(self.date, calendar_ids).filter(trip=OuterRef('id'))))
+            else:
+                trips = trips.filter(calendar=None)
+
         trips = trips.defer(
             'route__service__geometry'
         ).select_related(

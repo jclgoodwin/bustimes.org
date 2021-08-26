@@ -609,10 +609,11 @@ class ServiceDetailView(DetailView):
                 parallel = []
             detailed = 'detailed' in self.request.GET
             timetable = self.object.get_timetable(date, parallel, detailed)
-            if timetable and timetable.routes and (timetable.date or timetable.calendar):
-                context['timetable'] = timetable
-
             if timetable and timetable.routes:
+
+                if timetable.date or timetable.groupings:
+                    context['timetable'] = timetable
+
                 context['registrations'] = {route.registration for route in timetable.routes if route.registration}
 
         else:

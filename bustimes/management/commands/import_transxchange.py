@@ -487,9 +487,6 @@ class Command(BaseCommand):
                 summary = f"{summary}, "
             summary = f"{summary}{operating_period.start.strftime('%A %-d %B %Y')} only"
 
-        if not calendar_dates and not operating_profile.regular_days and not summary:
-            return
-
         calendar_hash = f'{operating_profile.regular_days}{operating_period.start}{operating_period.end}{summary}'
         calendar_hash += ''.join(f'{date.start_date}{date.end_date}{date.operation}{date.special}'
                                  for date in calendar_dates)

@@ -7,7 +7,7 @@
 {% if timetable %}
     {% if timetable.calendar %}
         <p>{{ timetable.calendar }}{% if timetable.start_date %} from {{ timetable.start_date }}{% endif %}</p>
-    {% else %}
+    {% elif timetable.date_options %}
         <form class="timetable-date">
             <select onchange="this.form.submit()" name="date" aria-label="Date">
                 {% for option in timetable.date_options %}

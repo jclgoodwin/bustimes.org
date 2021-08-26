@@ -133,7 +133,7 @@ class ImportTransXChangeTest(TestCase):
         route = Route.objects.get(line_name='13B', line_brand='Turquoise Line')
 
         self.assertEqual(75, Trip.objects.count())
-        self.assertEqual(6, Calendar.objects.count())
+        self.assertEqual(7, Calendar.objects.count())
         self.assertEqual(8, CalendarDate.objects.count())
 
         self.assertEqual(str(route), '13B – Turquoise Line – Norwich - Wymondham - Attleborough')
