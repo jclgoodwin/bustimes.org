@@ -12,11 +12,12 @@ class RegistrationAdmin(admin.ModelAdmin):
     search_fields = ['registration_number']
     list_display = ['registration_number']
     list_filter = ['registration_status']
+    raw_id_fields = ['licence', 'latest_variation']
 
 
 class VariationAdmin(admin.ModelAdmin):
     list_display = ['variation_number', 'service_type_other_details',
-                   'registration_status', 'effective_date', 'date_received']
+                    'registration_status', 'effective_date', 'date_received']
     list_filter = ['registration_status']
     raw_id_fields = ['registration']
 

@@ -304,6 +304,9 @@ class StopTime(models.Model):
             ('stop', 'departure'),
         )
 
+    def __str__(self):
+        return format_timedelta(self.arrival_or_departure())
+
     def arrival_or_departure(self):
         if self.arrival is not None:
             return self.arrival

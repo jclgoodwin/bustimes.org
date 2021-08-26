@@ -26,16 +26,17 @@ class AdminAreaAdmin(admin.ModelAdmin):
 
 class StopCodeInline(admin.TabularInline):
     model = StopCode
+    raw_id_fields = ['source']
 
 
 @admin.register(StopPoint)
 class StopPointAdmin(admin.ModelAdmin):
-    list_display = ('atco_code', 'naptan_code', 'locality', 'admin_area', '__str__')
-    list_select_related = ('locality', 'admin_area')
-    list_filter = ('stop_type', 'service__region', 'admin_area')
-    raw_id_fields = ('places',)
-    search_fields = ('atco_code',)
-    ordering = ('atco_code',)
+    list_display = ['atco_code', 'naptan_code', 'locality', 'admin_area', '__str__']
+    list_select_related = ['locality', 'admin_area']
+    list_filter = ['stop_type', 'service__region', 'admin_area']
+    raw_id_fields = ['places', 'admin_area']
+    search_fields = ['atco_code']
+    ordering = ['atco_code']
     formfield_overrides = {
         PointField: {'widget': OSMWidget}
     }
@@ -58,7 +59,7 @@ class StopPointAdmin(admin.ModelAdmin):
 @admin.register(StopCode)
 class StopCodeAdmin(admin.ModelAdmin):
     list_display = ['stop', 'code', 'source']
-    raw_id_fields = ['stop']
+    raw_id_fields = ['stop', 'source']
 
 
 class OperatorCodeInline(admin.TabularInline):
@@ -82,6 +83,7 @@ class OperatorAdmin(admin.ModelAdmin):
     search_fields = ('id', 'name')
     raw_id_fields = ('region', 'regions', 'siblings', 'colour')
     inlines = [OperatorCodeInline]
+    readonly_fields = ['search_vector']
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ('licences',)
 

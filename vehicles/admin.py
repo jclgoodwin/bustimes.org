@@ -454,7 +454,7 @@ class JourneyCodeAdmin(admin.ModelAdmin):
         ('data_source', admin.RelatedOnlyFieldListFilter),
         ('siri_source', admin.RelatedOnlyFieldListFilter),
     ]
-    raw_id_fields = ['service']
+    raw_id_fields = ['service', 'data_source']
 
 
 class LiveryAdminForm(forms.ModelForm):

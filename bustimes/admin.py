@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.db.models import Exists, OuterRef
+from django.contrib.gis.db.models import PointField
+from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
 from django.urls import reverse
@@ -15,7 +17,7 @@ from .models import (
 class TripInline(admin.TabularInline):
     model = Trip
     show_change_link = True
-    raw_id_fields = ['destination', 'calendar', 'notes', 'block', 'vehicle_type', 'calendar', 'operator']
+    raw_id_fields = ['block', 'destination', 'notes', 'calendar', 'garage', 'vehicle_type', 'operator']
     fields = ['start', 'end', 'destination', 'inbound', 'calendar']
 
 
@@ -30,14 +32,14 @@ class RouteAdmin(admin.ModelAdmin):
     list_filter = [
         ('source', admin.RelatedOnlyFieldListFilter)
     ]
-    raw_id_fields = ['service', 'registration']
+    raw_id_fields = ['source', 'service', 'registration']
     search_fields = ['line_name', 'line_brand', 'description']
     inlines = [TripInline]
 
 
 @admin.register(Trip)
 class TripAdmin(admin.ModelAdmin):
-    raw_id_fields = ['route', 'destination', 'calendar', 'notes']
+    raw_id_fields = ['route'] + TripInline.raw_id_fields
     inlines = [StopTimeInline]
 
 
@@ -78,6 +80,10 @@ class GarageAdmin(admin.ModelAdmin):
     list_filter = [
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
     ]
+    raw_id_fields = ['operator']
+    formfield_overrides = {
+        PointField: {'widget': OSMWidget}
+    }
 
     def operators(self, obj):
         return obj.operators
