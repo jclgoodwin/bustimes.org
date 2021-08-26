@@ -836,18 +836,20 @@ class Service(models.Model):
         """Given a Service, return a Timetable"""
 
         if self.region_id == 'NI' or self.source and self.source.name.endswith(' GTFS'):
-            return Timetable(self.route_set.all(), day)
-
-        if related:
-            routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
+            timetable = Timetable(self.route_set.all(), day)
         else:
-            routes = self.route_set.order_by('start_date')
-        try:
-            timetable = Timetable(routes, day, detailed)
-        except (IndexError, UnboundLocalError) as e:
-            logger.error(e, exc_info=True)
-            return
+            if related:
+                routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
+            else:
+                routes = self.route_set.order_by('start_date')
+            try:
+                timetable = Timetable(routes, day, detailed)
+            except (IndexError, UnboundLocalError) as e:
+                logger.error(e, exc_info=True)
+                return
+
         if timetable.date:
+            # set 'timetable changes from _' if there's a route with a future start date
             previous_route = None
             for route in timetable.routes:
                 if previous_route and route.source_id == previous_route.source_id and '_FG_' not in route.code:
