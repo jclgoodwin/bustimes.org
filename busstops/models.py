@@ -848,22 +848,26 @@ class Service(models.Model):
                 logger.error(e, exc_info=True)
                 return
 
-        if timetable.date:
+        if timetable.date and len(timetable.routes) > 1:
             # set 'timetable changes from _' if there's a route with a future start date
-            previous_route = None
-            for route in timetable.routes:
-                if previous_route and route.source_id == previous_route.source_id and '_FG_' not in route.code:
-                    if '/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0]:
-                        if route.start_date > timetable.date:
-                            timetable_change = route.start_date
-                            if timetable_change not in timetable.date_options:
-                                # change 'from Sunday' to 'from Monday' if no Sunday service
-                                for date in timetable.date_options:
-                                    if timetable_change < date:
-                                        timetable_change = date
-                                        break
-                            self.timetable_change = timetable_change
-                            break
+            previous_route = timetable.routes[0]
+            for route in timetable.routes[1:]:
+                if (
+                    route.source_id == previous_route.source_id
+                    and '_FG_' not in route.code
+                    and ('/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0])
+                    and route.start_date
+                    and route.start_date and route.start_date > timetable.date
+                ):
+                    timetable_change = route.start_date
+                    if timetable_change not in timetable.date_options:
+                        # change 'from Sunday' to 'from Monday' if no Sunday service
+                        for date in timetable.date_options:
+                            if timetable_change < date:
+                                timetable_change = date
+                                break
+                    self.timetable_change = timetable_change
+                    break
                 previous_route = route
 
         timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
