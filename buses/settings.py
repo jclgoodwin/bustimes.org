@@ -379,7 +379,7 @@ BOD_OPERATORS = [
         'FBOS': 'FBOS',
         # 'FLEI': 'FLEI',
         'RRAR': 'RRAR',
-        # 'FBRI': 'FBRI',
+        'FBRI': 'FBRI',
         # 'ABUS': 'ABUS',
         # 'FWYO': 'FWYO',
     }, True),
