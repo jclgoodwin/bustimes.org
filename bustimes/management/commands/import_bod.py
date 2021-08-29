@@ -25,9 +25,11 @@ session = requests.Session()
 def clean_up(operators, sources, incomplete=False):
     service_operators = Service.operator.through.objects.filter(service=OuterRef('service'))
     routes = Route.objects.filter(
+        ~Q(source__in=sources),
+        ~Q(source__name__in=('L', 'bustimes.org')),
         Exists(service_operators.filter(operator__in=operators)),
         ~Exists(service_operators.filter(~Q(operator__in=operators)))  # exclude joint services
-    ).exclude(source__in=sources)
+    )
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains='bus-data.dft.gov.uk')
     routes.delete()
