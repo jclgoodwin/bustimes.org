@@ -892,8 +892,12 @@ class Command(BaseCommand):
 
             if line.outbound_description:
                 service.outbound_description = line.outbound_description
+                if not service.description:
+                    service.description = line.outbound_description
             if line.inbound_description:
                 service.inbound_description = line.inbound_description
+                if not service.description:
+                    service.description = line.inbound_description
 
             if self.service_descriptions:  # NCSD
                 outbound_description, inbound_description = self.get_service_descriptions(filename)
