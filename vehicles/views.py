@@ -22,6 +22,7 @@ from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
+from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from bustimes.models import Garage, Trip
@@ -148,6 +149,7 @@ def operator_vehicles(request, slug=None, parent=None):
                         revision.datetime = now
                     VehicleRevision.objects.bulk_create(revisions)
                     revisions = len(revisions)
+                    varnish_ban('/vehicles/history')
 
                 if data:
                     # this will fetch the vehicles list
@@ -513,6 +515,7 @@ def edit_vehicle(request, vehicle_id):
                 if revision:
                     revision.datetime = now
                     revision.save()
+                    varnish_ban('/vehicles/history')
 
                 form = None
 
