@@ -199,7 +199,7 @@ class VehicleJourney:
 
         self.garage_ref = element.findtext('GarageRef')
 
-        self.service_ref = element.find('ServiceRef').text
+        self.service_ref = element.find('ServiceRef').text.strip()
         self.line_ref = element.find('LineRef').text
 
         journeypatternref_element = element.find('JourneyPatternRef')
@@ -490,7 +490,7 @@ class Service:
 
         self.public_use = element.findtext('PublicUse')
 
-        self.service_code = element.find('ServiceCode').text
+        self.service_code = element.find('ServiceCode').text.strip()
 
         self.marketing_name = element.findtext('MarketingName')
 
