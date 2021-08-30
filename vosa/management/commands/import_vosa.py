@@ -91,9 +91,9 @@ class Command(BaseCommand):
                 else:
                     licence.trading_name = line['trading_name']
 
-            if licence.address:
-                assert licence.address == line['Address']
-            else:
+            if licence.address != line['Address']:
+                if licence.address:
+                    print(licence.address, line['Address'])
                 licence.address = line['Address']
 
             if licence.traffic_area:
