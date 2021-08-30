@@ -179,7 +179,7 @@ class Command(BaseCommand):
             variation = Variation(registration=registration, variation_number=var_no)
             if reg_no in variations_dict:
                 if var_no in variations_dict[reg_no]:
-                    continue  # ? 
+                    continue  # ?
                 else:
                     variations_dict[reg_no][var_no] = variation
             else:
@@ -242,7 +242,7 @@ class Command(BaseCommand):
              "service_number", "service_type_description",
              "registration_status", "authority_description",
              "registered"],
-             batch_size=1000
+            batch_size=1000
         )
         Registration.objects.bulk_create(regs_to_create)
 

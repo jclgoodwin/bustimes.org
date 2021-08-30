@@ -553,9 +553,9 @@ BOD_OPERATORS = [
     ('KENS', 'Y', {}, False),
     ('AWAN', 'SE', {}, False),
     ('LUCK', 'SW', {}, False),
-    
+
     ('GVTR', 'NE', {}, False),
-    
+
     ('RDRT', 'SE', {
         'RR': 'RDRT',
         'RR1': 'RDRT'
