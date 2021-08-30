@@ -355,6 +355,12 @@ PASSENGER_OPERATORS = [
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
+    ('Warringtons Own Buses', 'https://www.warringtonsownbuses.co.uk/open-data', 'NW', {
+        'WOB': 'WBTR',
+    }),
+    ('Newport Bus', 'https://www.newportbus.co.uk/open-data', 'W', {
+        'NWPT': 'NWPT',
+    }),
 ]
 FIRST_OPERATORS = [
 ]
@@ -583,7 +589,7 @@ STAGECOACH_OPERATORS = [
     ('Y',  'tram', 'Stagecoach Supertram',     ['SCST']),
 ]
 TICKETER_OPERATORS = [
-    ('NW', ['WBTR'], 'Warrington’s Own Buses'),
+    # ('NW', ['WBTR'], 'Warrington’s Own Buses'),
     ('EA', ['LYNX'], 'Lynx'),
     ('EA', ['Ipswich_Buses', 'IPSW'], 'Ipswich Buses'),
     ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
