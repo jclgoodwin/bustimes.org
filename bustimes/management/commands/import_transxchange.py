@@ -83,7 +83,7 @@ BANK_HOLIDAYS = {
 # BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 BANK_HOLIDAYS['EarlyRunOffDays'] = []
 BANK_HOLIDAYS['Christmas'] = []
-BANK_HOLIDAYS['HolidayMondays'] = BANK_HOLIDAYS['MayDay'] + BANK_HOLIDAYS['SpringBank']
+BANK_HOLIDAYS['HolidayMondays'] = BANK_HOLIDAYS['LateSummerBankHolidayNotScotland']
 BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['HolidayMondays']
 BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
 
@@ -393,6 +393,8 @@ class Command(BaseCommand):
                         get_calendar_date(date, operation, element.findtext('Description'))
                     )
             else:
+                if bank_holiday_name == 'HolidaysOnly':
+                    bank_holiday_name = 'AllBankHolidays'
                 if bank_holiday_name in BANK_HOLIDAYS:
                     for date in BANK_HOLIDAYS[bank_holiday_name]:
                         if date not in dates and operating_period.contains(date):

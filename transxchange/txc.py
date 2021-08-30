@@ -433,6 +433,11 @@ class OperatingProfile:
         self.operation_bank_holidays = element.find('BankHolidayOperation/DaysOfOperation')
         self.nonoperation_bank_holidays = element.find('BankHolidayOperation/DaysOfNonOperation')
 
+        if not self.operation_bank_holidays:
+            holidays_only = element.find('RegularDayType/HolidaysOnly')
+            if holidays_only is not None:
+                self.operation_bank_holidays = element.find('RegularDayType')
+
 
 class DateRange:
     def __init__(self, element):
