@@ -788,11 +788,6 @@ class Command(BaseCommand):
 
                 existing = existing.filter(line_name__iexact=line.line_name).order_by('-current', 'id').first()
 
-                if existing and existing.service_code and unique_service_code:
-                    if re.match(BODS_SERVICE_CODE_REGEX, existing.service_code):
-                        # matched service has a different BODS profile compliant service code - oh no
-                        existing = None
-
             if self.is_tnds():
                 service_code = get_service_code(filename)
                 if service_code is None:
