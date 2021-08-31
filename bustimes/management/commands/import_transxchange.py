@@ -55,38 +55,6 @@ ________________________________________________________________________________
 |_________________|______________|
 """
 
-BANK_HOLIDAYS = {
-    # 'ChristmasEve':     [datetime.date(2020, 12, 24)],
-    # 'ChristmasDay':     [datetime.date(2020, 12, 25)],
-    # 'BoxingDay':        [datetime.date(2020, 12, 26)],
-    # 'BoxingDayHoliday': [datetime.date(2020, 12, 28)],
-    # 'NewYearsEve':      [datetime.date(2020, 12, 31)],
-    # 'NewYearsDay':      [datetime.date(2021, 1, 1)],
-    # 'Jan2ndScotland':   [datetime.date(2021, 1, 2)],
-    # 'GoodFriday':       [datetime.date(2021, 4, 2)],
-    # 'EasterMonday':     [datetime.date(2021, 4, 5)],
-    'MayDay':           [datetime.date(2021, 5, 3)],
-    'SpringBank':       [datetime.date(2021, 5, 31)],
-    'AugustBankHolidayScotland': [datetime.date(2021, 8, 2)],
-    'LateSummerBankHolidayNotScotland': [datetime.date(2021, 8, 30)],
-    # 'ChristmasEve':        [datetime.date(2021, 12, 24)],
-    # 'ChristmasDay':        [datetime.date(2021, 12, 25)],
-    # 'BoxingDay':           [datetime.date(2021, 12, 26)],
-    # 'ChristmasDayHoliday': [datetime.date(2021, 12, 27)],
-    # 'BoxingDayHoliday':    [datetime.date(2021, 12, 28)],
-
-}
-
-# BANK_HOLIDAYS['EarlyRunOffDays'] = BANK_HOLIDAYS['ChristmasEve'] + BANK_HOLIDAYS['NewYearsEve']
-# BANK_HOLIDAYS['Christmas'] = BANK_HOLIDAYS['ChristmasDay'] + BANK_HOLIDAYS['BoxingDay']
-# BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['NewYearsDay'] + BANK_HOLIDAYS[]
-# BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
-BANK_HOLIDAYS['EarlyRunOffDays'] = []
-BANK_HOLIDAYS['Christmas'] = []
-BANK_HOLIDAYS['HolidayMondays'] = BANK_HOLIDAYS['LateSummerBankHolidayNotScotland']
-BANK_HOLIDAYS['AllHolidaysExceptChristmas'] = BANK_HOLIDAYS['HolidayMondays']
-BANK_HOLIDAYS['AllBankHolidays'] = BANK_HOLIDAYS['Christmas'] + BANK_HOLIDAYS['AllHolidaysExceptChristmas']
-
 BODS_SERVICE_CODE_REGEX = re.compile(r'^P[BCDFGHKM]\d+:\d+.*.$')
 
 
@@ -395,13 +363,6 @@ class Command(BaseCommand):
             else:
                 if bank_holiday_name == 'HolidaysOnly':
                     bank_holiday_name = 'AllBankHolidays'
-                if bank_holiday_name in BANK_HOLIDAYS:
-                    for date in BANK_HOLIDAYS[bank_holiday_name]:
-                        if date not in dates and operating_period.contains(date):
-                            dates.append(date)
-                            calendar_dates.append(
-                                get_calendar_date(date, operation, bank_holiday_name)
-                            )
                 yield self.get_bank_holiday(bank_holiday_name)
 
     def get_calendar(self, operating_profile, operating_period):
@@ -428,7 +389,7 @@ class Command(BaseCommand):
             calendar_dates=calendar_dates
         ):
             bank_holidays[bank_holiday] = CalendarBankHoliday(
-                operation=False,
+                operation=True,
                 bank_holiday=bank_holiday
             )
 
@@ -439,7 +400,7 @@ class Command(BaseCommand):
             calendar_dates=calendar_dates
         ):
             bank_holidays[bank_holiday] = CalendarBankHoliday(
-                operation=True,
+                operation=False,
                 bank_holiday=bank_holiday
             )
 

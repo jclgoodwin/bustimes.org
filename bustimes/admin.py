@@ -8,7 +8,7 @@ from django.urls import reverse
 from vehicles.admin import TripIsNullFilter
 from .models import (
     Route, Trip,
-    Calendar, CalendarDate,
+    Calendar, CalendarDate, CalendarBankHoliday,
     BankHoliday, BankHolidayDate,
     Note, StopTime, Garage
 )
@@ -47,6 +47,11 @@ class CalendarDateInline(admin.TabularInline):
     model = CalendarDate
 
 
+class CalendarBankHolidayInline(admin.TabularInline):
+    model = CalendarBankHoliday
+    select_related = ['bank_holiday']
+
+
 @admin.register(CalendarDate)
 class CalendarDateAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'start_date', 'end_date']
@@ -57,7 +62,7 @@ class CalendarDateAdmin(admin.ModelAdmin):
 @admin.register(Calendar)
 class CalendarAdmin(admin.ModelAdmin):
     list_display = ['id', '__str__', 'summary']
-    inlines = [CalendarDateInline]
+    inlines = [CalendarDateInline, CalendarBankHolidayInline]
     list_filter = [TripIsNullFilter]
     readonly_fields = ['routes']
 

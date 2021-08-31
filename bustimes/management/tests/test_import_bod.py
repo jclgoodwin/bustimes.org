@@ -42,7 +42,6 @@ class ImportBusOpenDataTest(TestCase):
             'CO': 'LYNX',
         }, False),
     ], TICKETER_OPERATORS=[])
-    @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {})
     def test_import_bod(self):
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
@@ -148,9 +147,6 @@ class ImportBusOpenDataTest(TestCase):
 
     @override_settings(STAGECOACH_OPERATORS=[('EA', 'sccm', 'Stagecoach East', ['SCHU', 'SCPB'])])
     @time_machine.travel(datetime.datetime(2020, 6, 10))
-    @patch('bustimes.management.commands.import_transxchange.BANK_HOLIDAYS', {
-        'AllBankHolidays': [datetime.date(2020, 8, 31)],
-    })
     def test_import_stagecoach(self):
 
         with TemporaryDirectory() as directory:
