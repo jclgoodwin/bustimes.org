@@ -120,6 +120,7 @@ class Command(BaseCommand):
             else:
                 registration = Registration(
                     registration_number=reg_no,
+                    registered=False
                 )
                 regs_to_create.append(registration)
                 regs[reg_no] = registration
@@ -129,8 +130,10 @@ class Command(BaseCommand):
 
             if var_no == 0 and registration.registration_status == 'New':
                 registration.registered = True
-            else:
-                registration.registered = False  # will change to True later if it appears in the RegisteredOnly list
+            elif registration.registration_status == 'Registered':
+                registration.registered = True
+            elif registration.registration_status == 'Cancelled':
+                registration.registered = False
 
             registration.start_point = line['start_point']
             registration.finish_point = line['finish_point']
