@@ -125,7 +125,13 @@ class Command(BaseCommand):
                 regs[reg_no] = registration
             registration.licence = licence
 
-            registration.registered = False
+            registration.registration_status = line['Registration Status']  # remove?
+
+            if var_no == 0 and registration.registration_status == 'New':
+                registration.registered = True
+            else:
+                registration.registered = False  # will change to True later if it appears in the RegisteredOnly list
+
             registration.start_point = line['start_point']
             registration.finish_point = line['finish_point']
             registration.via = line['via']
@@ -146,8 +152,6 @@ class Command(BaseCommand):
                     registration.service_type_description += f"\n{line['Service_Type_Description']}"
             else:
                 registration.service_type_description = line['Service_Type_Description']
-
-            registration.registration_status = line['Registration Status']  # remove?
 
             if registration.authority_description:
                 if line['Auth_Description'] not in registration.authority_description:
