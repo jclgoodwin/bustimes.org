@@ -498,7 +498,7 @@ BOD_OPERATORS = [
         'GO': 'GOCH'
     }, False),
 
-    ('LAKC', 'WM', {}, False),
+    ('LAKC', 'WM', {}, True),  # incomplete
 
     ('CBBH', 'EM', {
         'CBBH': 'CBBH',
@@ -555,6 +555,8 @@ BOD_OPERATORS = [
     ('LUCK', 'SW', {}, False),
 
     ('GVTR', 'NE', {}, False),
+
+    ('LNNE', 'NW', {}, False),
 
     ('RDRT', 'SE', {
         'RR': 'RDRT',
