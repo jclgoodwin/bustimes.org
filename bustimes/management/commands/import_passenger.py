@@ -12,11 +12,10 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db.models import Q
 from busstops.models import DataSource, Service, ServiceColour
-from .import_bod import handle_file, get_operator_ids
+from .import_bod import handle_file, get_operator_ids, clean_up
 from .import_transxchange import Command as TransXChangeCommand
 from .import_gtfs import read_file
 from ...utils import write_file
-from ...models import Route
 
 
 def handle_gtfs(operators, url):
@@ -157,12 +156,7 @@ class Command(BaseCommand):
                         print(version)
                         handle_file(command, version['filename'])
 
-                # delete route data from TNDS
-                routes = Route.objects.filter(service__operator__in=operators)
-                print('  other source routes:', routes.exclude(source__in=sources).delete())
-
-                services = Service.objects.filter(operator__in=operators, current=True, route=None)
-                print('  other source services:', services.update(current=False))
+                clean_up(operators, sources)
 
                 operator_ids = get_operator_ids(command.source)
                 print('  ', operator_ids)

@@ -693,6 +693,8 @@ class Command(BaseCommand):
 
     def should_defer_to_other_source(self, operators, line_name):
         if self.source.name == 'L':
+            if operators and operators[0].id == 'NXHH':
+                return True
             return False
         if operators and all(operator.id in self.incomplete_operators for operator in operators):
             services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
@@ -723,6 +725,9 @@ class Command(BaseCommand):
             if operators and operators[0].id not in self.operators.values():
                 print(operators)
                 return
+        elif self.source.name.startswith('Arriva') and 'tfl_' in filename:
+            print(filename)
+            return
         elif self.source.name.startswith('Stagecoach'):
             if operators and operators[0].parent != 'Stagecoach':
                 print(operators)
