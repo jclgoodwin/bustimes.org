@@ -379,7 +379,7 @@ BOD_OPERATORS = [
         'FBOS': 'FBOS',
         # 'FLEI': 'FLEI',
         'RRAR': 'RRAR',
-        # 'FBRI': 'FBRI',
+        'FBRI': 'FBRI',
         # 'ABUS': 'ABUS',
         # 'FWYO': 'FWYO',
     }, True),
@@ -498,7 +498,7 @@ BOD_OPERATORS = [
         'GO': 'GOCH'
     }, False),
 
-    # ('LAKC', 'WM', {}, False),
+    ('LAKC', 'WM', {}, True),  # incomplete
 
     ('CBBH', 'EM', {
         'CBBH': 'CBBH',
@@ -524,6 +524,15 @@ BOD_OPERATORS = [
         'OBUS': 'OBUS',
     }, False),
 
+    ('WNGS', None, {  # Rotala Grouo of Companies
+        'WINGS': 'WNGS',
+        'TGM': 'WNGS',  # Diamond SE
+        'NXHH': 'NXHH',  # Hotel Hoppa
+        'DIAM': 'DIAM',  # Diamond WM
+        'GTRI': 'GTRI',  # Diamond NW
+        'PBLT': 'PBLT',  # Preston
+    }, False),
+
     ('PLNG', 'EA', {}, False),
     ('SNDR', 'EA', {}, True),  # incomplete
     ('STOT', 'NW', {}, False),
@@ -544,11 +553,11 @@ BOD_OPERATORS = [
     ('KENS', 'Y', {}, False),
     ('AWAN', 'SE', {}, False),
     ('LUCK', 'SW', {}, False),
-    
+
     ('GVTR', 'NE', {}, False),
+
     ('LNNE', 'NW', {}, False),
 
-    
     ('RDRT', 'SE', {
         'RR': 'RDRT',
         'RR1': 'RDRT'
@@ -588,10 +597,6 @@ TICKETER_OPERATORS = [
     # ('NW', ['GONW'], 'Go North West'),
 
     ('EM', ['NOCT'], 'CT4N'),
-    ('WM', ['DIAM'], 'Diamond Bus'),
-    ('NW', ['GTRI'], 'Diamond Bus North West'),
-    ('NW', ['PBLT'], 'Preston Bus'),
-    # ('SE', ['WNGS', 'NXHH'], 'Hallmark Connections'),
     ('WM', ['LMST'], 'LMS Travel'),
     ('SE', ['ENSB'], 'Ensignbus'),
     ('EA', ['AMBS'], 'Ambassador Travel'),

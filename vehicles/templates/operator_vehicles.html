@@ -148,8 +148,9 @@
 {% include 'pagination.html' with page=vehicles %}
 
 {% if form %}
-
-    {{ form.as_p }}
+    <div class="edit-vehicles">
+        {{ form.as_p }}
+    </div>
 
     {% if user.is_authenticated %}
         <p>You’re logged in as <strong>user {{ user.id }}</strong>. <a href="{% url 'logout' %}">Log out</a></p>
@@ -169,6 +170,7 @@
     {% if form %}
         {% load static %}
         <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
+        <script async src="{% static 'js/edit-vehicle.js' %}"></script>
         <script async src="{% static 'js/edit-vehicles.js' %}"></script>
     {% endif %}
 {% endblock %}

@@ -58,6 +58,7 @@
             <th scope="col">End</th>
             <th scope="col">Dates</th>
             <th scope="col">Days</th>
+            <th scope="col">Bank Holidays</th>
             <th scope="col">Dates</th>
             <th scope="col">Garage</th>
         </tr>
@@ -72,13 +73,18 @@
     <td><a href="{{ trip.get_absolute_url }}">{{ trip.start_time }}</a></td>
     <td>{{ trip.end_time }}</td>
     {% if trip.rowspan and trip.calendar %}
-    <td rowspan="{{ trip.rowspan }}">{{ trip.calendar.start_date }}–<br>{{ trip.calendar.end_date }}</td>
-    <td rowspan="{{ trip.rowspan }}"><a href="{% url 'admin:bustimes_calendar_change' trip.calendar.id %}">{{ trip.calendar }}</a></td>
-    <td rowspan="{{ trip.rowspan }}">
-        {% for calendar_date in trip.calendar.calendardate_set.all %}
-            <a href="{% url 'admin:bustimes_calendardate_change' calendar_date.id %}">{{ calendar_date }}</a>
-        {% endfor %}
-    </td>
+        <td rowspan="{{ trip.rowspan }}">{{ trip.calendar.start_date }}–<br>{{ trip.calendar.end_date }}</td>
+        <td rowspan="{{ trip.rowspan }}"><a href="{% url 'admin:bustimes_calendar_change' trip.calendar.id %}">{{ trip.calendar }}</a></td>
+        <td rowspan="{{ trip.rowspan }}">
+            {% for bank_holiday in trip.calendar.calendarbankholiday_set.all %}
+                {{ bank_holiday }}<br>
+            {% endfor %}
+        </td>
+        <td rowspan="{{ trip.rowspan }}">
+            {% for calendar_date in trip.calendar.calendardate_set.all %}
+                <a href="{% url 'admin:bustimes_calendardate_change' calendar_date.id %}">{{ calendar_date }}</a>
+            {% endfor %}
+        </td>
     {% endif %}
     <td>{% if trip.garage %}{{ trip.garage }}{% endif %}</td>
 </tr>

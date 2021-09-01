@@ -126,6 +126,11 @@ class CalendarBankHoliday(models.Model):
     class Meta:
         unique_together = ('bank_holiday', 'calendar')
 
+    def __str__(self):
+        if self.operation:
+            return str(self.bank_holiday)
+        return f'not {self.bank_holiday}'
+
 
 class Calendar(models.Model):
     mon = models.BooleanField()

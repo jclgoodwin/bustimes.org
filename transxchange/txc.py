@@ -199,7 +199,7 @@ class VehicleJourney:
 
         self.garage_ref = element.findtext('GarageRef')
 
-        self.service_ref = element.find('ServiceRef').text
+        self.service_ref = element.find('ServiceRef').text.strip()
         self.line_ref = element.find('LineRef').text
 
         journeypatternref_element = element.find('JourneyPatternRef')
@@ -433,6 +433,11 @@ class OperatingProfile:
         self.operation_bank_holidays = element.find('BankHolidayOperation/DaysOfOperation')
         self.nonoperation_bank_holidays = element.find('BankHolidayOperation/DaysOfNonOperation')
 
+        if not self.operation_bank_holidays:
+            holidays_only = element.find('RegularDayType/HolidaysOnly')
+            if holidays_only is not None:
+                self.operation_bank_holidays = element.find('RegularDayType')
+
 
 class DateRange:
     def __init__(self, element):
@@ -490,7 +495,7 @@ class Service:
 
         self.public_use = element.findtext('PublicUse')
 
-        self.service_code = element.find('ServiceCode').text
+        self.service_code = element.find('ServiceCode').text.strip()
 
         self.marketing_name = element.findtext('MarketingName')
 

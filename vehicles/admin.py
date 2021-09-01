@@ -342,7 +342,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         UserFilter,
     ]
     raw_id_fields = ['vehicle', 'livery', 'user']
-    actions = ['apply_edits', 'approve', 'disapprove', 'delete_vehicles']
+    actions = ['apply_edits', 'approve', 'disapprove', 'delete_vehicles', 'spare_ticket_machine']
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -367,6 +367,10 @@ class VehicleEditAdmin(admin.ModelAdmin):
 
     def delete_vehicles(self, request, queryset):
         Vehicle.objects.filter(vehicleedit__in=queryset).delete()
+
+    def spare_ticket_machine(self, request, queryset):
+        queryset = Vehicle.objects.filter(vehicleedit__in=queryset)
+        VehicleAdmin.spare_ticket_machine(self, request, queryset)
 
     def current(self, obj):
         if obj.vehicle.livery:

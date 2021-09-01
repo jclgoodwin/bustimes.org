@@ -13,7 +13,7 @@
     var withdrawnElement = document.getElementById('id_withdrawn');
     function handleWithdrawn() {
         var display = withdrawnElement.checked ? 'none' : '';
-        var elements = document.querySelectorAll('.edit-vehicle > *');
+        var elements = document.querySelectorAll('.edit-vehicle > *, .edit-vehicles > *');
 
         for (var i = elements.length - 1; i >= 0; i -= 1) {
             var element = elements[i];

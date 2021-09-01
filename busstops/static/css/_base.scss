@@ -119,7 +119,7 @@ summary {
     color: $text-color;
 }
 
-form ul {
+form p + ul {  // multiple choice list
     margin-top: -1em;
 }
 

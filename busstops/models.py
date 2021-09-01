@@ -568,7 +568,7 @@ class StopUsage(models.Model):
 
 
 class ServiceColour(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64, blank=True)
     foreground = models.CharField(max_length=20, blank=True)
     background = models.CharField(max_length=20, blank=True)
     border = models.CharField(max_length=20, blank=True)

@@ -20,8 +20,9 @@ from .models import Route, Trip
 
 class ServiceDebugView(DetailView):
     model = Service
-    trips = Trip.objects.select_related('garage')
-    trips = trips.prefetch_related('calendar__calendardate_set').order_by('calendar', 'inbound', 'start')
+    trips = Trip.objects.select_related('garage').prefetch_related(
+        'calendar__calendardate_set', 'calendar__calendarbankholiday_set__bank_holiday'
+    ).order_by('calendar', 'inbound', 'start')
     prefetch = Prefetch('route_set__trip_set', queryset=trips)
     queryset = model.objects.prefetch_related(prefetch)
     template_name = 'service_debug.html'
