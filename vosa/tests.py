@@ -27,8 +27,8 @@ class VosaTest(TestCase):
 
         # licence
         response = self.client.get('/licences/PF1018256')
-        self.assertEqual(1, len(response.context_data['registrations']))
-        self.assertEqual(2, len(response.context_data['cancelled']))
+        self.assertEqual(2, len(response.context_data['registrations']))
+        self.assertEqual(1, len(response.context_data['cancelled']))
         self.assertContains(response, 'SANDERS COACHES LIMITED')
         self.assertContains(response, 'LETHERINGSETT, GLANDFORD, WIVETON, CLEY, BLAKENEY')
 

@@ -126,13 +126,14 @@ class Command(BaseCommand):
                 regs[reg_no] = registration
             registration.licence = licence
 
-            registration.registration_status = line['Registration Status']  # remove?
+            status = line['Registration Status']
+            registration.registration_status = status
 
-            if var_no == 0 and registration.registration_status == 'New':
+            if var_no == 0 and status == 'New':
                 registration.registered = True
-            elif registration.registration_status == 'Registered':
+            elif status == 'Registered':
                 registration.registered = True
-            elif registration.registration_status == 'Cancelled':
+            elif status == 'Cancelled' or status == 'Admin Cancelled' or status == 'Cancellation':
                 registration.registered = False
 
             registration.start_point = line['start_point']
