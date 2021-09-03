@@ -1,5 +1,5 @@
-import os
 import mock
+from pathlib import Path
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator
@@ -7,7 +7,7 @@ from .models import Licence
 
 
 class VosaTest(TestCase):
-    @override_settings(DATA_DIR=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fixtures'))
+    @override_settings(DATA_DIR=Path(__file__).resolve().parent / 'fixtures')
     def test(self):
         with mock.patch('vosa.management.commands.import_vosa.download_if_changed', return_value=(True, None)):
             with self.assertNumQueries(6):

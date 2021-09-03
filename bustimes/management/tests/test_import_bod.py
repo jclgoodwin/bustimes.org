@@ -26,7 +26,7 @@ class ImportBusOpenDataTest(TestCase):
     def setUpTestData(cls):
         ea = Region.objects.create(pk='EA', name='East Anglia')
         lynx = Operator.objects.create(id='LYNX', region=ea, name='Lynx')
-        scpb = Operator.objects.create(id='SCPB', region=ea, name='Peterborough', parent='Stagecoach')
+        scpb = Operator.objects.create(id='SCCM', region=ea, name='Stagecoach East', parent='Stagecoach')
         schu = Operator.objects.create(id='SCHU', region=ea, name='Huntingdon', parent='Stagecoach')
         source = DataSource.objects.create(name='National Operator Codes')
         OperatorCode.objects.bulk_create([
@@ -165,7 +165,7 @@ class ImportBusOpenDataTest(TestCase):
                     'bustimes.management.commands.import_bod.download_if_changed',
                     return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
                 ) as download_if_changed:
-                    with self.assertNumQueries(126):
+                    with self.assertNumQueries(125):
                         call_command('import_bod', 'stagecoach')
                     download_if_changed.assert_called_with(
                         str(path), 'https://opendata.stagecoachbus.com/' + archive_name
@@ -174,7 +174,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
 
-                    with self.assertNumQueries(80):
+                    with self.assertNumQueries(79):
                         call_command('import_bod', 'stagecoach', 'sccm')
 
                 source = DataSource.objects.get(name='Stagecoach East')
@@ -199,4 +199,3 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get('/services/904-huntingdon-peterborough')
         self.assertContains(response, '<option selected value="2020-08-31">Monday 31 August 2020</option>')
         self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
-        self.assertContains(response, '<a href="/operators/peterborough">Peterborough</a>')
