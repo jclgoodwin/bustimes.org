@@ -1,4 +1,3 @@
-import os
 import csv
 from datetime import datetime
 from django.conf import settings
@@ -14,8 +13,7 @@ def parse_date(date_string):
 
 def download_if_modified(path):
     url = f"https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/{path}"
-    path = os.path.join(settings.DATA_DIR, path)
-    return download_if_changed(path, url)
+    return download_if_changed(settings.DATA_DIR / path, url)
 
 
 class Command(BaseCommand):
@@ -24,8 +22,7 @@ class Command(BaseCommand):
         parser.add_argument('regions', nargs='?', type=str, default="FBCMKGDH")
 
     def get_rows(self, path):
-        path = os.path.join(settings.DATA_DIR, path)
-        with open(path) as open_file:
+        with open(settings.DATA_DIR / path) as open_file:
             for line in csv.DictReader(open_file):
                 yield line
 

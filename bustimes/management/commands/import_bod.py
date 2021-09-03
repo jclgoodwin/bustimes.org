@@ -261,6 +261,9 @@ def stagecoach(operator=None):
             command.service_ids = set()
             command.route_ids = set()
             command.garages = {}
+            command.operators = {  # sort of ~homogenise~ all the different OperatorCodes in the data
+                o: nocs[0] for o in nocs
+            }
 
             # avoid importing old data
             command.source.datetime = timezone.now()
