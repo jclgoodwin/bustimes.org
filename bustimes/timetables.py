@@ -71,7 +71,6 @@ def get_stop_usages(trips):
                 else:
                     grouping = grouping[:y] + [stop_time] + grouping[y:]
                     old_rows = old_rows[:y] + [stop_time.stop_id] + old_rows[y:]
-                # existing_row = stop_time.stop_id
             else:
                 assert instruction[2:] == existing_row
 
@@ -389,7 +388,6 @@ class Grouping:
                     rows.append(row)
                 else:
                     rows = self.rows = rows[:y] + [row] + rows[y:]
-                existing_row = row
             else:
                 row = existing_row
                 assert instruction[2:] == existing_row.stop.atco_code

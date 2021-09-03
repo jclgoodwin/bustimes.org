@@ -323,11 +323,25 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context_data['timetable']
         self.assertEqual('2017-08-29', str(timetable.date))
 
+        self.assertEqual(
+            str(timetable.groupings[0].rows[0].times[:16]),
+            "[05:06, '', 05:33, '', '', 06:08, 06:29, 06:46, 06:58, 07:21, 07:35, 07:44, 07:59, 08:14, 08:49, 09:07]"
+        )
         self.assertEqual(str(timetable.groupings[0].rows[0].times[17]), 'then every 20 minutes until')
-        # self.assertEqual(timetable.groupings[0].rows[11].times[15], time(9, 8))
-        # self.assertEqual(timetable.groupings[0].rows[11].times[16], time(9, 34))
-        # self.assertEqual(timetable.groupings[0].rows[11].times[17], time(15, 34))
-        # self.assertEqual(timetable.groupings[0].rows[11].times[18], time(15, 54))
+        self.assertEqual(timetable.groupings[0].rows[0].times[17].colspan, 17)
+        self.assertEqual(timetable.groupings[0].rows[0].times[17].rowspan, 60)
+        self.assertEqual(
+            str(timetable.groupings[0].rows[0].times[18:22]),
+            "[15:33, 15:53, 15:58, 16:13]"
+        )
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[22]), 'then every 20 minutes until')
+        self.assertEqual(timetable.groupings[0].rows[0].times[22].colspan, 2)
+        self.assertEqual(timetable.groupings[0].rows[0].times[22].rowspan, 60)
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[23:]), '[17:13, 17:29, 17:59, 18:07, 18:44, 19:54]')
+
+        self.assertEqual(str(timetable.groupings[0].rows[1].times[15:20]), '[09:08, 09:34, 15:34, 15:54, 15:59]')
+        self.assertEqual(str(timetable.groupings[0].rows[11].times[15:20]), '[09:24, 09:47, 15:47, 16:07, 16:12]')
+
         feet = list(timetable.groupings[0].column_feet.values())[0]
         self.assertEqual(feet[0].span, 9)
         self.assertEqual(feet[1].span, 2)
@@ -335,10 +349,10 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(feet[3].span, 1)
         self.assertEqual(feet[4].span, 10)
 
-        # self.assertEqual(service.outbound_description, 'Basildon - South Benfleet - Southend On Sea via Hadleigh')
-        # self.assertEqual(service.inbound_description, 'Southend On Sea - South Benfleet - Basildon via Hadleigh')
+        self.assertEqual(service.outbound_description, '')
+        self.assertEqual(service.inbound_description, '')
 
-        self.assertEqual(138, service.stopusage_set.count())
+        self.assertEqual(131, service.stopusage_set.count())
 
     @time_machine.travel('2017-12-10')
     def test_timetable_derby_alvaston_circular(self):

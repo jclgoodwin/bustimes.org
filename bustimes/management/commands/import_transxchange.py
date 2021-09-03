@@ -646,7 +646,7 @@ class Command(BaseCommand):
             trip.vehicle_type = trip.vehicle_type
             trip.block = trip.block
 
-        Trip.objects.bulk_create(trips)
+        Trip.objects.bulk_create(trips, batch_size=1000)
 
         for i, trip in enumerate(trips):
             if notes_by_trip[i]:
@@ -654,7 +654,7 @@ class Command(BaseCommand):
 
         for stop_time in stop_times:
             stop_time.trip = stop_time.trip  # set trip_id
-        StopTime.objects.bulk_create(stop_times)
+        StopTime.objects.bulk_create(stop_times, batch_size=1000)
 
     def get_description(self, txc_service):
         description = txc_service.description
