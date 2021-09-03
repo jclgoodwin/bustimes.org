@@ -547,8 +547,10 @@ BOD_OPERATORS = [
     ('FALC', 'SE', {}, False),
     ('VECT', 'SE', {}, False),
     ('ACME', 'SE', {}, False),
+
     ('ALSC', 'NW', {}, False),
     ('LCAC', 'NW', {}, False),
+    ('LNNE', 'NW', {}, False),
 
     ('RBUS', 'SE', {}, True),  # incomplete
 
@@ -560,8 +562,26 @@ BOD_OPERATORS = [
     ('LUCK', 'SW', {}, False),
 
     ('GVTR', 'NE', {}, False),
+    ('COTY', 'NE', {}, False),
 
-    ('LNNE', 'NW', {}, False),
+    ('LMST', 'WM', {}, False),
+    ('ENSB', 'SE', {}, False),
+
+    ('BRYL', 'EM', {}, False),
+    ('MDCL', 'EM', {}, False),
+    ('NDTR', 'EM', {}, False),
+    ('NOCT', 'EM', {}, False),
+
+    ('RELD', 'Y', {}, False),
+
+    ('LYNX', 'EA', {}, False),
+    ('IPSW', 'EA', {}, False),
+    ('WNCT', 'EA', {}, False),
+    ('BDRB', 'EA', {}, False),
+    ('WHIP', 'EA', {}, False),
+    ('SIMO', 'EA', {}, False),
+    ('AMBS', 'EA', {}, False),
+
 
     ('RDRT', 'SE', {
         'RR': 'RDRT',
@@ -594,33 +614,14 @@ STAGECOACH_OPERATORS = [
 # https://opendata.ticketer.com/uk/LYNX/routes_and_timetables/current.zip
 # rather than via the Bus Open Data site
 TICKETER_OPERATORS = [
-    # ('NW', ['WBTR'], 'Warrington’s Own Buses'),
-    ('EA', ['LYNX'], 'Lynx'),
-    ('EA', ['Ipswich_Buses', 'IPSW'], 'Ipswich Buses'),
-    ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
-    ('Y', ['RELD'], 'Reliance Motor Services'),
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
-    # ('SW', ['PLYC', 'TFCN'], 'Go South West'),
-    # ('SE', ['METR'], 'Metrobus'),
-    # ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
-    # ('NW', ['GONW'], 'Go North West'),
 
-    ('EM', ['NOCT'], 'CT4N'),
-    ('WM', ['LMST'], 'LMS Travel'),
-    ('SE', ['ENSB'], 'Ensignbus'),
-    ('EA', ['AMBS'], 'Ambassador Travel'),
-    ('EA', ['WHIP'], 'Go-Whippet'),
-    ('EA', ['WNCT'], 'West Norfolk Community Transport'),
     ('NW', ['GOGO'], 'Go Goodwins'),
-    ('EM', ['Brylaine', 'BRYL']),
-    ('EM', ['Midland_Classic', 'MDCL']),
     ('EM', ['RBTS'], 'Roberts Travel'),
     ('SE', ['Redline_Buses_Ltd', 'RLNE']),
     ('NW', ['HATT'], 'Hattons'),
     ('SE', ['Sullivan_Buses', 'SULV']),
-    ('EA', ['BDRB'], 'BorderBus'),
-    ('EA', ['Simonds', 'SIMO']),
-    ('NE', ['Coatham_Coaches', 'COTY']),
+
     ('WM', ['Johnsons', 'JOHS']),
     ('Y',  ['HCTY'], 'Connexions Buses'),
     ('Y',  ['KJTR'], 'York Pullman'),
