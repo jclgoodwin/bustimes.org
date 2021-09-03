@@ -565,6 +565,11 @@ BOD_OPERATORS = [
     ('COTY', 'NE', {}, False),
 
     ('LMST', 'WM', {}, False),
+    ('TEXP', 'WM', {}, False),
+    ('BANG', 'WM', {}, False),
+    ('SLVL', 'WM', {}, False),
+    ('JOHS', 'WM', {}, False),
+
     ('ENSB', 'SE', {}, False),
 
     ('BRYL', 'EM', {}, False),
@@ -573,6 +578,18 @@ BOD_OPERATORS = [
     ('NOCT', 'EM', {}, False),
 
     ('RELD', 'Y', {}, False),
+    ('SSSN', 'Y', {}, False),
+    ('KJTR', 'Y', {}, False),
+    ('HCTY', 'Y', {
+        'HCTY': 'HCTY',  # Connexions
+        'YRRB': 'YRRB',  # 'Road Runner'
+    }, False),
+
+    ('NCTP', None, {
+        'NCTP': 'NCTP',  # CT Plus Bristol (/London)
+        'POWB': 'POWB',  # Powells
+        'CTPL': 'CTPL',  # CT Plus Yorkshire
+    }, False),
 
     ('LYNX', 'EA', {}, False),
     ('IPSW', 'EA', {}, False),
@@ -580,8 +597,11 @@ BOD_OPERATORS = [
     ('BDRB', 'EA', {}, False),
     ('WHIP', 'EA', {}, False),
     ('SIMO', 'EA', {}, False),
-    ('AMBS', 'EA', {}, False),
-
+    ('BEES', 'EA', {}, False),
+    ('AMBS', 'EA', {
+        'AMBS': 'AMBS',
+        'SEMM': 'SEMM',
+    }, True),
 
     ('RDRT', 'SE', {
         'RR': 'RDRT',
@@ -615,30 +635,18 @@ STAGECOACH_OPERATORS = [
 # rather than via the Bus Open Data site
 TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
-
     ('NW', ['GOGO'], 'Go Goodwins'),
     ('EM', ['RBTS'], 'Roberts Travel'),
     ('SE', ['Redline_Buses_Ltd', 'RLNE']),
     ('NW', ['HATT'], 'Hattons'),
     ('SE', ['Sullivan_Buses', 'SULV']),
-
-    ('WM', ['Johnsons', 'JOHS']),
-    ('Y',  ['HCTY'], 'Connexions Buses'),
-    ('Y',  ['KJTR'], 'York Pullman'),
     ('SE', ['WBSV'], 'White Bus'),
     ('SE', ['REDE'], 'Red Eagle'),
     ('SE', ['GPLM'], 'Grant Palmer'),
     ('SE', ['CLNB'], 'Carlone Buses'),
     ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
-    ('EA', ['Beestons_(Hadleigh)_Ltd', 'BEES']),
-    ('Y',  ['Shoreline_Suncruisers', 'SSSN']),
-    ('WM', ['Travel_Express', 'TEXP']),
-    ('WM', ['Banga_Buses', 'BANG']),
     ('EM', ['DELA'], 'Delaine Buses'),
     ('SE', ['RCHC'], 'Richmonds Coaches'),
     ('SE', ['RRTR'], 'Red Rose Travel'),
     ('NW', ['Finches', 'FCHS']),
-    ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
-    ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
-    ('SW', ['NTCP', 'NCTP'], 'HCT Group'),
 ]
