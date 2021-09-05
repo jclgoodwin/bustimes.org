@@ -55,7 +55,7 @@ ________________________________________________________________________________
 |_________________|______________|
 """
 
-BODS_SERVICE_CODE_REGEX = re.compile(r'^P[BCDFGHKM]\d+:\d+.*.$')
+BODS_SERVICE_CODE_REGEX = re.compile(r'^P[BCDFGHKM]\d+:\d+.*$')
 
 
 def initialisms(word, **kwargs):
@@ -928,6 +928,10 @@ class Command(BaseCommand):
 
             if unique_service_code:
                 parts = unique_service_code.split('_')[0].split(':')
+                if len(parts[0]) > 9:
+                    print(parts)
+                elif len(parts[0]) < 9:
+                    parts[0] = parts[0][:2] + parts[0][2:].zfill(7)
                 if parts[1]:
                     try:
                         route_defaults['registration'] = Registration.objects.get(
