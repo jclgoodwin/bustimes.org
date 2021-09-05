@@ -11,7 +11,6 @@ from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.db.models import Extent
 from django.contrib.postgres.aggregates import StringAgg
@@ -29,11 +28,8 @@ from bustimes.models import Garage, Trip
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
 from .forms import EditVehiclesForm, EditVehicleForm
-from .utils import get_vehicle_edit, do_revision, do_revisions
+from .utils import redis_client, get_vehicle_edit, do_revision, do_revisions
 from .management.commands import import_bod_avl
-
-
-r = redis.from_url(settings.REDIS_URL)
 
 
 class Vehicles:
@@ -272,7 +268,7 @@ def vehicles_json(request):
         height = haversine((ymin, xmax), (ymax, xmax))
 
         try:
-            vehicle_ids = r.execute_command(
+            vehicle_ids = redis_client.execute_command(
                 'GEOSEARCH',
                 'vehicle_location_locations',
                 'FROMLONLAT', (xmax + xmin) / 2, (ymax + ymin) / 2,
@@ -294,18 +290,18 @@ def vehicles_json(request):
             ).in_bulk()
         else:
             # ids of all vehicles
-            vehicle_ids = r.zrange('vehicle_location_locations', 0, -1)
+            vehicle_ids = redis_client.zrange('vehicle_location_locations', 0, -1)
 
     if vehicle_ids is None:
         vehicle_ids = list(vehicles.keys())
 
-    vehicle_locations = r.mget([f'vehicle{int(vehicle_id)}' for vehicle_id in vehicle_ids])
+    vehicle_locations = redis_client.mget([f'vehicle{int(vehicle_id)}' for vehicle_id in vehicle_ids])
 
     if type(vehicles) is not dict:
         # remove expired items from 'vehicle_location_locations'
         to_remove = [vehicle_ids[i] for i, item in enumerate(vehicle_locations) if not item]
         if to_remove:
-            r.zrem('vehicle_location_locations', *to_remove)
+            redis_client.zrem('vehicle_location_locations', *to_remove)
 
         # only get vehicles with unexpired locations
         vehicles = vehicles.in_bulk([vehicle_ids[i] for i, item in enumerate(vehicle_locations) if item])
@@ -383,7 +379,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         journeys = journeys.filter(datetime__date=date).select_related('trip').order_by('datetime')
 
         try:
-            pipe = r.pipeline(transaction=False)
+            pipe = redis_client.pipeline(transaction=False)
             for journey in journeys:
                 pipe.exists(f'journey{journey.id}')
             locations = pipe.execute()
@@ -607,7 +603,7 @@ def journey_json(request, pk):
         } for stop_time in trip.stoptime_set.select_related('stop__locality')]
 
     try:
-        locations = r.lrange(f'journey{pk}', 0, -1)
+        locations = redis_client.lrange(f'journey{pk}', 0, -1)
         if locations:
             locations = (json.loads(location) for location in locations)
             data['locations'] = [{

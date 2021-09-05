@@ -9,7 +9,6 @@ from datetime import timedelta
 from time import sleep
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
-from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
@@ -17,6 +16,7 @@ from django.db.models.functions import Now
 from django.utils import timezone
 from bustimes.models import Route
 from busstops.models import DataSource
+from ..utils import redis_client
 from ..models import Vehicle, VehicleJourney
 
 
@@ -95,7 +95,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.session = requests.Session()
-        self.redis = redis.from_url(settings.REDIS_URL)
         self.to_save = []
         self.vehicles_to_update = []
 
@@ -151,7 +150,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         latest = None
         latest_datetime = None
 
-        latest = self.redis.get(f'vehicle{vehicle.id}')
+        latest = redis_client.get(f'vehicle{vehicle.id}')
         if latest:
             latest = json.loads(latest)
             latest_datetime = parse_datetime(latest['datetime'])
@@ -242,7 +241,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if not existing_id:
                     # just in case the id has been reused
                     # (after a database backup restore)
-                    self.redis.delete(f'journey{journey.id}')
+                    redis_client.delete(f'journey{journey.id}')
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
@@ -280,7 +279,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'latest_location', 'withdrawn'])
             self.vehicles_to_update = []
 
-        pipeline = self.redis.pipeline(transaction=False)
+        pipeline = redis_client.pipeline(transaction=False)
 
         for location, vehicle in self.to_save:
             lon = location.latlong.x
@@ -297,7 +296,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except redis.exceptions.ConnectionError:
                 pass
 
-        pipeline = self.redis.pipeline(transaction=False)
+        pipeline = redis_client.pipeline(transaction=False)
 
         for location, vehicle in self.to_save:
             pipeline.rpush(*location.get_appendage())
