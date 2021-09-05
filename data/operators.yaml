@@ -355,17 +355,12 @@ ENSB:
     name: Ensignbus
 NOTB:
     twitter: NottsCC
-EYMS:
-    name: East Yorkshire
-    url: https://www.eastyorkshirebuses.co.uk/
 FSCE:
     url: https://www.firstgroup.com/south-east-and-central-scotland
 MCGL:
     name: McGill’s
 BHBC:
     name: Brighton & Hove
-CT4N:
-    name: CT4N
 EDWC:
     address: |
         Edwards Busnes Parc
@@ -380,6 +375,10 @@ WNCT:
         King’s Lynn
         PE30 4JX
     email: enquiries@wnct.co.uk
+TFCN:
+    name: Go Cornwall Bus
+    twitter: GoCornwallBuses
+    url: https://www.gocornwallbus.co.uk/
 HAIN:
     name: Phil Haines Coaches
 TLCT:
