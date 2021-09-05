@@ -33,7 +33,7 @@ class Licence(models.Model):
     address = models.TextField()
     licence_status = models.CharField(max_length=255)
 
-    def get_operator(self):
+    def get_operators(self):
         return self. operator_set.annotate(
             services=Count('service', current=True)
         ).filter(services__gt=0).order_by('-services')
