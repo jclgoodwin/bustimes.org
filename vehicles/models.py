@@ -380,7 +380,7 @@ class VehicleEdit(models.Model):
 
     def get_changes(self):
         changes = {}
-        for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes', 'colours', 'livery'):
+        for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes', 'colours', 'livery_id'):
             edit = str(getattr(self, field) or '')
             if edit:
                 if field == 'reg':
@@ -404,8 +404,8 @@ class VehicleEdit(models.Model):
                     features.append(feature)
             if features:
                 changes['features'] = features
-        if self.withdrawn and not self.vehicle.withdrawn:
-            changes['withdrawn'] = True
+        if self.withdrawn is not None and self.withdrawn != self.vehicle.withdrawn:
+            changes['withdrawn'] = self.withdrawn
         if self.changes:
             for key in self.changes:
                 if not self.vehicle.data or self.changes[key] != self.vehicle.data.get(key):
