@@ -1,10 +1,14 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ object }} – {{ operator }} – bustimes.org{% endblock %}
+{% block title %}{{ object }} – {{ object.name }} – bustimes.org{% endblock %}
 
 {% block content %}
 
 <h1>{{ object }}</h1>
+
+{% if operators %}
+    <p>({% for operator in operators %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% if not forloop.last %}, {% endif %}{% endfor %})</p>
+{% endif %}
 
 <table>
     <tbody>

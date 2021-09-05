@@ -630,7 +630,8 @@ STAGECOACH_OPERATORS = [
     ('Y',  'tram', 'Stagecoach Supertram',     ['SCST']),
 ]
 
-# Some operators' timetables are fetched directly from e.g.
+# For historical reasons,
+# some operators' timetables are fetched directly from e.g.
 # https://opendata.ticketer.com/uk/LYNX/routes_and_timetables/current.zip
 # rather than via the Bus Open Data site
 TICKETER_OPERATORS = [

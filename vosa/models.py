@@ -34,10 +34,9 @@ class Licence(models.Model):
     licence_status = models.CharField(max_length=255)
 
     def get_operator(self):
-        operators = self.operator_set.annotate(
+        return self. operator_set.annotate(
             services=Count('service', current=True)
-        ).order_by('-services')
-        return operators.select_related('region').first()
+        ).filter(services__gt=0).order_by('-services')
 
     def __str__(self):
         return self.licence_number

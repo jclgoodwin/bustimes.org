@@ -22,9 +22,10 @@ class LicenceView(DetailView):
         context['registrations'] = registrations.filter(registered=True)
         context['cancelled'] = registrations.filter(registered=False)
 
-        context['operator'] = self.object.get_operator()
-        if context['operator']:
-            context['breadcrumb'] = [context['operator'].region, context['operator']]
+        operators = self.object.get_operators()
+        if operators:
+            context['operators'] = operators
+            context['breadcrumb'] = [operators[0].region, operators[0]]
 
         return context
 
@@ -41,18 +42,14 @@ class RegistrationView(DetailView):
 
         context['breadcrumb'] = [self.object.licence]
 
-        context['operator'] = self.object.licence.get_operator()
+        operators = self.object.licence.get_operators()
+        if operators:
+            context['breadcrumb'] = context['breadcrumb'] = [operators[0].region, operators[0]] + context['breadcrumb']
 
         context['services'] = Service.objects.filter(
             Exists(Route.objects.filter(service=OuterRef('id'), registration=self.object)),
             current=True
         )
-
-        if context['operator']:
-            context['breadcrumb'] = [
-                context['operator'].region,
-                context['operator'],
-            ] + context['breadcrumb']
 
         return context
 

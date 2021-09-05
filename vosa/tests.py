@@ -2,7 +2,7 @@ import mock
 from pathlib import Path
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator
+from busstops.models import Region, Operator, Service
 from .models import Licence
 
 
@@ -19,6 +19,8 @@ class VosaTest(TestCase):
 
         Region.objects.create(id='SW', name='South West')
         operator = Operator.objects.create(region_id='SW', id='AINS', name="Ainsley's Chariots")
+        service = Service.objects.create(current=True, line_name='33B')
+        service.operator.add(operator)
         operator.licences.add(licence)
 
         response = self.client.get('/licences/PF0000705')
