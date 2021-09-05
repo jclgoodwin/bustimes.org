@@ -137,8 +137,6 @@ MULB:
     url: http://www.mullanyscoaches.com
 TAFV:
     url: http://tafvalleycoaches.co.uk
-ALSC:
-    url: ""
 HOGG:
     url: http://roadhoggs.net/timetables.html
 JTMT:
@@ -196,22 +194,26 @@ CBNL:
     name: Centrebus (North)
 ASES:
     name: Arriva the Shires
+    url: https://www.arrivabus.co.uk
 AMTM:
     name: Arriva Kent Thameside
+    url: https://www.arrivabus.co.uk
 GPWS:
     name: Whites Coaches (Shetland)
 AMNO:
     name: Arriva Midlands North
-    url: https://www.arrivabus.co.uk/midlands/
+    url: https://www.arrivabus.co.uk
 AFCL:
     name: Arriva Derby
-    url: https://www.arrivabus.co.uk/midlands/
+    url: https://www.arrivabus.co.uk
 AMSY:
-    url: https://www.arrivabus.co.uk/north-west/
+    url: https://www.arrivabus.co.uk
 ANEA:
     name: Arriva North East
+    url: https://www.arrivabus.co.uk
 ANUM:
     name: Arriva Northumbria
+    url: https://www.arrivabus.co.uk
 A1CS:
     name: A1 Coaches (Fife)
 AOLC:
@@ -393,3 +395,73 @@ ULCO:
     address: ""
     email: ""
     url: ""
+    
+    
+CAEL:
+    name: Caelloi
+    url: https://www.caelloi.co.uk/
+ALPI:
+    url: https://www.alpine-travel.co.uk/
+CLTR:
+    url: https://www.clynnogandtrefor.com/
+AINT:
+    url: http://www.aintreecoachline.com/
+    email: info@aintreecoachline.com
+    twitter: ""
+ALSC:
+    url: https://www.alscoaches.com/
+BLPH:
+    url: https://www.blackburnprivatehire.co.uk/
+NUTT:
+    url: https://www.coastlinerbuses.co.uk/
+    email: coastlinerbuses@gmail.com
+    phone: 01253 761739
+    address: |
+        COASTLINER BUSES LTD
+        Brinwell Road Bus Garage
+        Mereside
+        Blackpool 
+        FY4 4QU
+LNNE:
+    URL: ""
+MPTR:
+    Twitter: _mptravel
+STCR:
+    name: Stagecoach Merseyside and South Lancashire (SCMY)
+STEW:
+    Twitter: stewartscoaches
+DDIS:
+    URL: https://procterscoaches.com/dales-district-timetable/
+TANV:
+    email: ""
+    url: https://tanat.co.uk/
+    twitter: ""
+LNGS: 
+    url: http://www.lylescoaches.co.uk/home
+POWB: 
+    twitter: powellsbus
+CTPL:
+    twitter: CTPlusYorkshire
+YSTN:
+    url: https://www.stationcoaches.co.uk/
+SPMW:
+    url: https://www.stringerscoaches.co.uk/
+WNGS: 
+    name: Diamond Bus South East
+    url: https://www.diamondbuses.com/south-east
+    twitter: DiamondBusSE
+    email: Comments-DiamondSE@rotala.co.uk
+    phone: 01784 425 621
+CTNY:
+    name: Thames Valley Buses
+    url: https://www.thamesvalleybuses.com/
+    twitter: ThamesValleyBus
+    email: customerservices@thamesvalleybuses.com
+    address: |
+        Customer Services
+        Thames Valley Buses
+        Unit 3 The Maple Centre
+        Downmill Road
+        Bracknell
+        Berkshire
+        RG12 1QS
