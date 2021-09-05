@@ -451,10 +451,8 @@ class Command(BaseCommand):
             summary = f"{summary}{operating_period.start.strftime('%A %-d %B %Y')} only"
 
         calendar_hash = f'{operating_profile.regular_days}{operating_period.start}{operating_period.end}{summary}'
-        calendar_hash += ''.join(f'{date.start_date}{date.end_date}{date.operation}{date.special}'
-                                 for date in calendar_dates)
-        calendar_hash += ''.join(f'{bank_holiday.name}{bank_holiday.operation}'
-                                 for bank_holiday in bank_holidays.values())
+        calendar_hash += ' '.join(str(date) for date in calendar_dates)
+        calendar_hash += ' '.join(str(bank_holiday) for bank_holiday in bank_holidays.values())
 
         if calendar_hash in self.calendar_cache:
             return self.calendar_cache[calendar_hash]
