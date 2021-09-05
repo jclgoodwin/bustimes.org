@@ -418,13 +418,13 @@ NUTT:
         Blackpool 
         FY4 4QU
 LNNE:
-    URL: ""
+    url: ""
 MPTR:
     Twitter: _mptravel
 STEW:
     Twitter: stewartscoaches
 DDIS:
-    URL: https://procterscoaches.com/dales-district-timetable/
+    url: https://procterscoaches.com/dales-district-timetable/
 TANV:
     email: ""
     url: https://tanat.co.uk/
