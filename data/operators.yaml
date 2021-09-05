@@ -192,25 +192,24 @@ CBBH:
     name: Centrebus (South)
 CBNL:
     name: Centrebus (North)
-ASES:
-    name: Arriva the Shires
-    url: https://www.arrivabus.co.uk
+ARBB:
+    url: https://www.arrivabus.co.uk/beds-and-bucks
 AMTM:
     name: Arriva Kent Thameside
-    url: https://www.arrivabus.co.uk
+    url: https://www.arrivabus.co.uk/kent-and-surrey
 GPWS:
     name: Whites Coaches (Shetland)
 AMNO:
     name: Arriva Midlands North
-    url: https://www.arrivabus.co.uk
+    url: https://www.arrivabus.co.uk/midlands
 AFCL:
     name: Arriva Derby
-    url: https://www.arrivabus.co.uk
+    url: https://www.arrivabus.co.uk/derby
 AMSY:
-    url: https://www.arrivabus.co.uk
+    url: https://www.arrivabus.co.uk/north-west
 ANEA:
     name: Arriva North East
-    url: https://www.arrivabus.co.uk
+    url: https://www.arrivabus.co.uk/north-east
 ANUM:
     name: Arriva Northumbria
     url: https://www.arrivabus.co.uk
@@ -394,8 +393,6 @@ ULCO:
     address: ""
     email: ""
     url: ""
-    
-    
 CAEL:
     name: Caelloi
     url: https://www.caelloi.co.uk/
@@ -416,7 +413,6 @@ NUTT:
     email: coastlinerbuses@gmail.com
     phone: 01253 761739
     address: |
-        COASTLINER BUSES LTD
         Brinwell Road Bus Garage
         Mereside
         Blackpool 
@@ -425,8 +421,6 @@ LNNE:
     URL: ""
 MPTR:
     Twitter: _mptravel
-STCR:
-    name: Stagecoach Merseyside and South Lancashire (SCMY)
 STEW:
     Twitter: stewartscoaches
 DDIS:
@@ -457,8 +451,6 @@ CTNY:
     twitter: ThamesValleyBus
     email: customerservices@thamesvalleybuses.com
     address: |
-        Customer Services
-        Thames Valley Buses
         Unit 3 The Maple Centre
         Downmill Road
         Bracknell

@@ -145,7 +145,7 @@ def bus_open_data(api_key, operator):
             url = dataset['url']
             path = os.path.join(settings.DATA_DIR, filename)
 
-            if 'FBOS' in operator_codes_dict:
+            if noc == 'FBOS':
                 # only certain First operators
                 if not any(code in dataset['description'] for code in operator_codes_dict):
                     continue
