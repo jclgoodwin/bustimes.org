@@ -420,9 +420,9 @@ NUTT:
 LNNE:
     url: ""
 MPTR:
-    Twitter: _mptravel
+    twitter: _mptravel
 STEW:
-    Twitter: stewartscoaches
+    twitter: stewartscoaches
 DDIS:
     url: https://procterscoaches.com/dales-district-timetable/
 TANV:
