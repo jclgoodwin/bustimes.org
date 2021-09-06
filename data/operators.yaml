@@ -243,8 +243,6 @@ FECS:
         7b Castle Meadow
         Norwich
         NR1 3DE
-FHUD:
-    name: First Huddersfield
 TRST:
     name: TrustyBus
 GECL:
@@ -335,7 +333,7 @@ KCTB:
         Norwich
         NR1 3NX
 HEDO:
-    url: https://www.hedingham.co.uk/
+    url: https://www.hedinghamandchambers.co.uk/
     phone: 03301 020801
     address: |
         Unit 6-7 Stephenson Road
@@ -343,7 +341,7 @@ HEDO:
         Essex
         CO15 4XA
 CHAM:
-    url: https://www.chambersbus.co.uk/
+    url: https://www.hedinghamandchambers.co.uk/
     phone: 03301 020801
     address: |
         Unit 6-7 Stephenson Road
