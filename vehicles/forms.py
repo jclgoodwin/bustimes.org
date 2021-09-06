@@ -27,6 +27,7 @@ def get_livery_choices(operator):
 class EditVehiclesForm(forms.Form):
     withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False, help_text="Will be automatically "
                                    "unticked the next time this vehicle (or a ticket machine purportedly in it) tracks")
+    spare_ticket_machine = forms.BooleanField(required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False, initial='#ffffff')
@@ -94,7 +95,7 @@ class EditVehicleForm(EditVehiclesForm):
     notes = forms.CharField(required=False, max_length=255)
     url = forms.URLField(label='URL', help_text="Optional link to a public web page (not a private Facebook group)"
                          " or picture confirming changes", required=False, max_length=255)
-    field_order = ['withdrawn',
+    field_order = ['withdrawn', 'spare_ticket_machine',
                    'fleet_number', 'reg',
                    'operator', 'vehicle_type',
                    'colours', 'other_colour', 'branding', 'name',

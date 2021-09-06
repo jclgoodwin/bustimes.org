@@ -485,7 +485,8 @@ def edit_vehicle(request, vehicle_id):
         'name': vehicle.name,
         'previous_reg': vehicle.data and vehicle.data.get('Previous reg') or None,
         'notes': vehicle.notes,
-        'withdrawn': vehicle.withdrawn
+        'withdrawn': vehicle.withdrawn,
+        'spare_ticket_machine': vehicle.notes == 'Spare ticket machine'
     }
     if vehicle.fleet_code:
         initial['fleet_number'] = vehicle.fleet_code
