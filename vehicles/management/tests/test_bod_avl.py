@@ -373,11 +373,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "VehicleJourneyRef": "2029",
                 "VehicleRef": "SCHI-21210"
             },
-            "Extensions": {
-                "VehicleJourney": {
-                    "DriverRef": "135531"
-                }
-            }
+            "Extensions": None
         }
         command.handle_item(item)
         command.save()

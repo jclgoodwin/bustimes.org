@@ -192,7 +192,7 @@ class Command(ImportLiveVehiclesCommand):
                     defaults['fleet_code'] = fleet_number
                 if fleet_number.isdigit():
                     defaults['fleet_number'] = fleet_number
-            except KeyError:
+            except (KeyError, TypeError):
                 pass
 
         try:
@@ -239,7 +239,7 @@ class Command(ImportLiveVehiclesCommand):
             ticket_machine_service_code = (
                 item['Extensions']['VehicleJourney']['Operational']['TicketMachine']['TicketMachineServiceCode']
             )
-        except KeyError:
+        except (KeyError, TypeError):
             pass
         else:
             if ticket_machine_service_code.lower() != line_ref.lower():
@@ -343,7 +343,7 @@ class Command(ImportLiveVehiclesCommand):
         try:
             ticket_machine = item['Extensions']['VehicleJourney']['Operational']['TicketMachine']
             journey_code = ticket_machine['JourneyCode']
-        except KeyError:
+        except (KeyError, TypeError):
             journey_code = journey_ref
             ticket_machine = None
         else:
@@ -471,7 +471,7 @@ class Command(ImportLiveVehiclesCommand):
             location.seated_capacity = int(extensions['SeatedCapacity'])
             location.wheelchair_occupancy = int(extensions['WheelchairOccupancy'])
             location.wheelchair_capacity = int(extensions['WheelchairCapacity'])
-        except KeyError:
+        except (KeyError, TypeError):
             pass
         return location
 
