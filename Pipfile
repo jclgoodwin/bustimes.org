@@ -42,6 +42,7 @@ boto3 = "*"
 regex = "*"
 django-redis = "*"
 chardet = "*"
+django-sql-utils = "*"
 
 [dev-packages]
 django-debug-toolbar = "*"

@@ -1,20 +1,20 @@
 from django.contrib import admin
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.utils.html import format_html
 from django.urls import reverse
+
+from sql_util.utils import SubqueryCount
+
 from .models import User
 
 
 def get_count(obj, attribute, approved):
-    count = getattr(obj, attribute, None)
-    if count is None:
-        count = getattr(obj, f'{attribute}_count')()
     return format_html(
         '<a href="{}?user={}&approved__{}">{}</a>',
         reverse('admin:vehicles_vehicleedit_changelist'),
         obj.id,
         approved,
-        count
+        getattr(obj, attribute, None)
     )
 
 
@@ -31,8 +31,9 @@ class UserAdmin(admin.ModelAdmin):
             '<a href="{}?user={}">{}</a>',
             reverse('admin:vehicles_vehiclerevision_changelist'),
             obj.id,
-            obj.revisions_count()
+            obj.revisions,
         )
+    revisions.admin_order_field = 'revisions'
 
     def approved(self, obj):
         return get_count(obj, 'approved', 'exact=1')
@@ -48,11 +49,12 @@ class UserAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        if request.resolver_match.view_name == 'admin:accounts_user_changelist':
+        if request.resolver_match.view_name in ('admin:accounts_user_changelist', 'admin:accounts_user_change'):
             return queryset.annotate(
-                approved=Count('vehicleedit', filter=Q(vehicleedit__approved=True)),
-                disapproved=Count('vehicleedit', filter=Q(vehicleedit__approved=False)),
-                pending=Count('vehicleedit', filter=Q(vehicleedit__approved=None)),
+                approved=SubqueryCount('vehicleedit', filter=Q(approved=True)),
+                disapproved=SubqueryCount('vehicleedit', filter=Q(approved=False)),
+                pending=SubqueryCount('vehicleedit', filter=Q(approved=None)),
+                revisions=SubqueryCount('vehiclerevision')
             )
         return queryset
 

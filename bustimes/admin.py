@@ -5,7 +5,6 @@ from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from vehicles.admin import TripIsNullFilter
 from .models import (
     Route, Trip,
     Calendar, CalendarDate, CalendarBankHoliday,
@@ -63,7 +62,9 @@ class CalendarDateAdmin(admin.ModelAdmin):
 class CalendarAdmin(admin.ModelAdmin):
     list_display = ['id', '__str__', 'summary']
     inlines = [CalendarDateInline, CalendarBankHolidayInline]
-    list_filter = [TripIsNullFilter]
+    list_filter = [
+        ('trip', admin.EmptyFieldListFilter)
+    ]
     readonly_fields = ['routes']
 
     def routes(self, obj):

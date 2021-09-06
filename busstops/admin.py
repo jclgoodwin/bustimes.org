@@ -4,20 +4,18 @@ from django.contrib.gis.db.models import PointField
 from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Count, Q, F, Exists, OuterRef, CharField, Subquery
+from django.db.models import Count, Q, F, Exists, OuterRef, CharField
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+
+from sql_util.utils import SubqueryCount
+
 from bustimes.models import Route
-from vehicles.models import Vehicle
-from vehicles.admin import ServiceIsNullFilter
-from .models import (
-    Region, AdminArea, District, Locality, StopArea, StopPoint, StopCode, Operator, Service, ServiceLink,
-    ServiceCode, OperatorCode, DataSource, Place, SIRISource, PaymentMethod, ServiceColour
-)
+from . import models
 
 
-@admin.register(AdminArea)
+@admin.register(models.AdminArea)
 class AdminAreaAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'atco_code', 'region_id')
     list_filter = ('region_id',)
@@ -25,11 +23,11 @@ class AdminAreaAdmin(admin.ModelAdmin):
 
 
 class StopCodeInline(admin.TabularInline):
-    model = StopCode
+    model = models.StopCode
     raw_id_fields = ['source']
 
 
-@admin.register(StopPoint)
+@admin.register(models.StopPoint)
 class StopPointAdmin(admin.ModelAdmin):
     list_display = ['atco_code', 'naptan_code', 'locality', 'admin_area', '__str__']
     list_select_related = ['locality', 'admin_area']
@@ -56,14 +54,14 @@ class StopPointAdmin(admin.ModelAdmin):
         return queryset, False
 
 
-@admin.register(StopCode)
+@admin.register(models.StopCode)
 class StopCodeAdmin(admin.ModelAdmin):
     list_display = ['stop', 'code', 'source']
     raw_id_fields = ['stop', 'source']
 
 
 class OperatorCodeInline(admin.TabularInline):
-    model = OperatorCode
+    model = models.OperatorCode
 
 
 class OperatorAdminForm(forms.ModelForm):
@@ -74,7 +72,7 @@ class OperatorAdminForm(forms.ModelForm):
         }
 
 
-@admin.register(Operator)
+@admin.register(models.Operator)
 class OperatorAdmin(admin.ModelAdmin):
     form = OperatorAdminForm
     list_display = ['name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region_id',
@@ -91,35 +89,26 @@ class OperatorAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
             return queryset.annotate(
-                services=Subquery(
-                    Service.objects.filter(
-                        current=True,
-                        operator=OuterRef('id')
-                    ).values('operator').annotate(count=Count('pk')).values('count')
-                ),
-                vehicles=Subquery(
-                    Vehicle.objects.filter(
-                        operator=OuterRef('id')
-                    ).values('operator').annotate(count=Count('pk')).values('count')
-                ),
+                services=SubqueryCount('service', filter=Q(service__current=True)),
+                vehicles=SubqueryCount('vehicle')
             ).prefetch_related('operatorcode_set')
         return queryset
 
     @admin.display(ordering='services')
     def services(self, obj):
         url = reverse('admin:busstops_service_changelist')
-        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.services or 0}</a>')
+        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.services}</a>')
 
     @admin.display(ordering='vehicles')
     def vehicles(self, obj):
         url = reverse('admin:vehicles_vehicle_changelist')
-        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.vehicles or 0}</a>')
+        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.vehicles}</a>')
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
         if request.path.endswith('/autocomplete/'):
-            queryset = queryset.filter(Exists(Service.objects.filter(operator=OuterRef('pk'), current=True)))
+            queryset = queryset.filter(Exists(models.Service.objects.filter(operator=OuterRef('pk'), current=True)))
 
         return queryset, use_distinct
 
@@ -133,7 +122,7 @@ class OperatorAdmin(admin.ModelAdmin):
 
 
 class ServiceCodeInline(admin.TabularInline):
-    model = ServiceCode
+    model = models.ServiceCode
 
 
 class RouteInline(admin.TabularInline):
@@ -144,7 +133,7 @@ class RouteInline(admin.TabularInline):
 
 
 class FromServiceLinkInline(admin.TabularInline):
-    model = ServiceLink
+    model = models.ServiceLink
     fk_name = 'from_service'
     autocomplete_fields = ['to_service']
 
@@ -154,7 +143,7 @@ class ToServiceLinkInline(FromServiceLinkInline):
     autocomplete_fields = ['from_service']
 
 
-@admin.register(Service)
+@admin.register(models.Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'service_code', 'mode', 'region_id',
                     'current', 'show_timetable', 'timetable_wrong', 'colour', 'line_brand')
@@ -184,7 +173,7 @@ class ServiceAdmin(admin.ModelAdmin):
         return super().get_search_results(request, queryset, search_term)
 
 
-@admin.register(ServiceLink)
+@admin.register(models.ServiceLink)
 class ServiceLinkAdmin(admin.ModelAdmin):
     save_as = True
     list_display = ('from_service', 'from_service__current', 'to_service', 'to_service__current', 'how')
@@ -200,7 +189,7 @@ class ServiceLinkAdmin(admin.ModelAdmin):
         return obj.to_service.current
 
 
-@admin.register(Locality)
+@admin.register(models.Locality)
 class LocalityAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
     search_fields = ('id', 'name')
@@ -208,7 +197,7 @@ class LocalityAdmin(admin.ModelAdmin):
     list_filter = ('admin_area', 'admin_area__region')
 
 
-@admin.register(OperatorCode)
+@admin.register(models.OperatorCode)
 class OperatorCodeAdmin(admin.ModelAdmin):
     save_as = True
     list_display = ('id', 'operator', 'source', 'code')
@@ -219,24 +208,26 @@ class OperatorCodeAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator',)
 
 
-@admin.register(ServiceCode)
+@admin.register(models.ServiceCode)
 class ServiceCodeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'service', 'scheme', 'code')
-    list_filter = (
+    list_display = ['id', 'service', 'scheme', 'code']
+    list_filter = [
         'scheme',
         'service__current',
         ('service__operator', admin.RelatedOnlyFieldListFilter),
         'service__stops__admin_area'
-    )
-    search_fields = ('code', 'service__line_name', 'service__description')
+    ]
+    search_fields = ['code', 'service__line_name', 'service__description']
     autocomplete_fields = ['service']
 
 
-@admin.register(ServiceColour)
+@admin.register(models.ServiceColour)
 class ServiceColourAdmin(admin.ModelAdmin):
-    list_display = ('preview', 'foreground', 'background', 'services')
+    list_display = ['preview', 'foreground', 'background', 'services']
     search_fields = ['name']
-    list_filter = ('service__operator', ServiceIsNullFilter)
+    list_filter = [
+        ('service__operator', admin.EmptyFieldListFilter)
+    ]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -248,28 +239,22 @@ class ServiceColourAdmin(admin.ModelAdmin):
         return obj.services
 
 
-@admin.register(Place)
+@admin.register(models.Place)
 class PlaceAdmin(admin.ModelAdmin):
     list_filter = ('source',)
     search_fields = ('name',)
 
 
-class RouteIsNullFilter(ServiceIsNullFilter):
-    title = 'route is null'
-    parameter_name = 'route__isnull'
-
-
-class VehicleJourneyIsNullFilter(ServiceIsNullFilter):
-    title = 'vehicle journey is null'
-    parameter_name = 'vehiclejourney__isnull'
-
-
-@admin.register(DataSource)
+@admin.register(models.DataSource)
 class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
     list_display = ('name', 'url', 'datetime', 'settings', 'routes', 'services', 'journeys')
     list_editable = ['datetime']
-    list_filter = [RouteIsNullFilter, ServiceIsNullFilter, VehicleJourneyIsNullFilter]
+    list_filter = (
+        ('route', admin.EmptyFieldListFilter),
+        ('service', admin.EmptyFieldListFilter),
+        ('vehiclejourney', admin.EmptyFieldListFilter)
+    )
     actions = ['delete_routes', 'remove_datetimes']
     show_full_result_count = False
 
@@ -294,7 +279,7 @@ class DataSourceAdmin(admin.ModelAdmin):
         self.message_user(request, result)
 
 
-@admin.register(SIRISource)
+@admin.register(models.SIRISource)
 class SIRISourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'requestor_ref', 'areas', 'get_poorly')
 
@@ -312,11 +297,11 @@ class SIRISourceAdmin(admin.ModelAdmin):
 
 
 class PaymentMethodOperatorInline(admin.TabularInline):
-    model = PaymentMethod.operator_set.through
+    model = models.PaymentMethod.operator_set.through
     autocomplete_fields = ['operator']
 
 
-@admin.register(PaymentMethod)
+@admin.register(models.PaymentMethod)
 class PaymentMethodAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'operators')
     inlines = [PaymentMethodOperatorInline]
@@ -332,6 +317,6 @@ class PaymentMethodAdmin(admin.ModelAdmin):
         return obj.operators
 
 
-admin.site.register(Region)
-admin.site.register(District)
-admin.site.register(StopArea)
+admin.site.register(models.Region)
+admin.site.register(models.District)
+admin.site.register(models.StopArea)

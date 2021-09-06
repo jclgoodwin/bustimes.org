@@ -1,9 +1,12 @@
 import requests
+
 from datetime import timedelta
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Count, Q, Exists, OuterRef
+
 from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
 from .fields import RegField

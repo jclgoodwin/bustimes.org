@@ -3,17 +3,19 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.db.utils import ConnectionDoesNotExist
 from django.contrib.auth import get_user_model
+
+from sql_util.utils import SubqueryCount
+
 from busstops.models import Operator
-from .models import (VehicleType, VehicleFeature, Vehicle, VehicleEdit, VehicleLocation,
-                     VehicleJourney, Livery, JourneyCode, VehicleRevision)
+from . import models
 
 UserModel = get_user_model()
 
 
-@admin.register(VehicleType)
+@admin.register(models.VehicleType)
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('id', 'name', 'vehicles', 'double_decker', 'coach')
@@ -27,14 +29,14 @@ class VehicleTypeAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            return queryset.annotate(vehicles=Count('vehicle'))
+            return queryset.annotate(vehicles=SubqueryCount('vehicle'))
         return queryset
 
     def merge(self, request, queryset):
         first = queryset[0]
-        Vehicle.objects.filter(vehicle_type__in=queryset).update(vehicle_type=first)
-        VehicleRevision.objects.filter(from_type__in=queryset).update(from_type=first)
-        VehicleRevision.objects.filter(to_type__in=queryset).update(to_type=first)
+        models.Vehicle.objects.filter(vehicle_type__in=queryset).update(vehicle_type=first)
+        models.VehicleRevision.objects.filter(from_type__in=queryset).update(from_type=first)
+        models.VehicleRevision.objects.filter(to_type__in=queryset).update(to_type=first)
 
 
 class VehicleAdminForm(forms.ModelForm):
@@ -58,14 +60,14 @@ def user(obj):
 
 
 class VehicleEditInline(admin.TabularInline):
-    model = VehicleEdit
+    model = models.VehicleEdit
     fields = ['approved', 'datetime', 'fleet_number', 'reg', 'vehicle_type', 'livery_id', 'colours', 'branding',
               'notes', 'changes', user]
     readonly_fields = fields[1:]
     show_change_link = True
 
 
-@admin.register(Vehicle)
+@admin.register(models.Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
                     'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
@@ -92,20 +94,20 @@ class VehicleAdmin(admin.ModelAdmin):
             return obj.latest_journey.data
 
     def copy_livery(self, request, queryset):
-        livery = Livery.objects.filter(vehicle__in=queryset).first()
+        livery = models.Livery.objects.filter(vehicle__in=queryset).first()
         count = queryset.update(livery=livery)
         self.message_user(request, f'Copied {livery} to {count} vehicles.')
 
     def copy_type(self, request, queryset):
-        vehicle_type = VehicleType.objects.filter(vehicle__in=queryset).first()
+        vehicle_type = models.VehicleType.objects.filter(vehicle__in=queryset).first()
         count = queryset.update(vehicle_type=vehicle_type)
         self.message_user(request, f'Copied {vehicle_type} to {count} vehicles.')
 
     def make_livery(self, request, queryset):
         vehicle = queryset.first()
         if vehicle.colours and vehicle.branding:
-            livery = Livery.objects.create(name=vehicle.branding, colours=vehicle.colours)
-            vehicles = Vehicle.objects.filter(colours=vehicle.colours, branding=vehicle.branding)
+            livery = models.Livery.objects.create(name=vehicle.branding, colours=vehicle.colours)
+            vehicles = models.Vehicle.objects.filter(colours=vehicle.colours, branding=vehicle.branding)
             count = vehicles.update(colours='', branding='', livery=livery)
             self.message_user(request, f'Updated {count} vehicles.')
         else:
@@ -240,9 +242,9 @@ class OperatorFilter(admin.SimpleListFilter):
     parameter_name = 'operator'
 
     def lookups(self, request, model_admin):
-        operators = Operator.objects.filter(vehicle__vehicleedit__isnull=False,
-                                            vehicle__vehicleedit__approved=None)
-        operators = operators.annotate(count=Count('vehicle__vehicleedit')).order_by('-count')
+        operators = Operator.objects.annotate(
+            count=SubqueryCount('vehicle__vehicleedit', filter=Q(approved=None))
+        ).filter(count__gt=0).order_by('-count')
         try:
             operators = list(operators.using('read-only-0'))
         except ConnectionDoesNotExist:
@@ -263,7 +265,7 @@ class ChangeFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         self.vehicle_features = [
-            feature.name for feature in VehicleFeature.objects.all()
+            feature.name for feature in models.VehicleFeature.objects.all()
         ]
         return [
             ('fleet_number', 'fleet number'),
@@ -312,22 +314,22 @@ class UserFilter(admin.SimpleListFilter):
     parameter_name = 'user'
 
     def lookups(self, request, model_admin):
-        users = UserModel.objects
-        model = model_admin.model.__name__.lower()
-        count = Count(model)
-        if model == 'vehicleedit':
-            count.filter = Q(**{f'{model}__approved': None})
-        users = users.annotate(count=count).filter(count__gt=0).order_by('-count')
-        for user in users:
-            yield (user.id, f"{user} ({user.count})")
+        lookups = [
+            ('Trusted', 'Trusted')
+        ]
+        if self.value() and self.value() != 'Trusted':
+            lookups.append((self.value(), self.value()))
+        return lookups
 
     def queryset(self, request, queryset):
         if self.value():
+            if self.value() == 'Trusted':
+                return queryset.filter(user__trusted=True)
             return queryset.filter(user=self.value())
         return queryset
 
 
-@admin.register(VehicleEdit)
+@admin.register(models.VehicleEdit)
 class VehicleEditAdmin(admin.ModelAdmin):
     list_display = ['datetime', vehicle, 'edit_count', 'last_seen', fleet_number, reg, vehicle_type, branding, name,
                     'current', 'suggested', notes, 'withdrawn', features, changes, 'flickr', user, url]
@@ -347,7 +349,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            edit_count = Count('vehicle__vehicleedit', filter=Q(vehicle__vehicleedit__approved=None))
+            edit_count = SubqueryCount('vehicle__vehicleedit', filter=Q(vehicle__vehicleedit__approved=None))
             queryset = queryset.annotate(edit_count=edit_count)
             return queryset.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features')
         return queryset
@@ -366,17 +368,17 @@ class VehicleEditAdmin(admin.ModelAdmin):
         self.message_user(request, f'Disapproved {count} edits.')
 
     def delete_vehicles(self, request, queryset):
-        Vehicle.objects.filter(vehicleedit__in=queryset).delete()
+        models.Vehicle.objects.filter(vehicleedit__in=queryset).delete()
 
     def spare_ticket_machine(self, request, queryset):
-        queryset = Vehicle.objects.filter(vehicleedit__in=queryset)
+        queryset = models.Vehicle.objects.filter(vehicleedit__in=queryset)
         VehicleAdmin.spare_ticket_machine(self, request, queryset)
 
     def current(self, obj):
         if obj.vehicle.livery:
             return obj.vehicle.livery.preview()
         if obj.vehicle.colours:
-            return Livery(colours=obj.vehicle.colours).preview()
+            return models.Livery(colours=obj.vehicle.colours).preview()
     current.admin_order_field = 'vehicle__livery'
 
     def suggested(self, obj):
@@ -385,7 +387,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         if obj.colours:
             if obj.colours == 'Other':
                 return obj.colours
-            return Livery(colours=obj.colours).preview()
+            return models.Livery(colours=obj.colours).preview()
     suggested.admin_order_field = 'livery'
 
     def flickr(self, obj):
@@ -403,35 +405,14 @@ class VehicleEditAdmin(admin.ModelAdmin):
     last_seen.short_description = 'seen'
 
 
-class ServiceIsNullFilter(admin.SimpleListFilter):
-    title = 'service is null'
-    parameter_name = 'service__isnull'
-
-    def lookups(self, request, model_admin):
-        return (
-            ('1', 'Yes'),
-            ('0', 'No'),
-        )
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(**{self.parameter_name: self.value() == '1'})
-        return queryset
-
-
-class TripIsNullFilter(ServiceIsNullFilter):
-    title = 'trip is null'
-    parameter_name = 'trip__isnull'
-
-
-@admin.register(VehicleJourney)
+@admin.register(models.VehicleJourney)
 class VehicleJourneyAdmin(admin.ModelAdmin):
     list_display = ('datetime', 'code', 'vehicle', 'route_name', 'service', 'destination')
     list_select_related = ('vehicle', 'service')
     raw_id_fields = ('vehicle', 'service', 'source', 'trip')
     list_filter = (
-        ServiceIsNullFilter,
-        TripIsNullFilter,
+        ('service', admin.EmptyFieldListFilter),
+        ('trip', admin.EmptyFieldListFilter),
         'source',
         'vehicle__operator',
     )
@@ -439,7 +420,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
-@admin.register(VehicleLocation)
+@admin.register(models.VehicleLocation)
 class VehicleLocationAdmin(admin.ModelAdmin):
     raw_id_fields = ['journey']
     list_display = ['datetime', '__str__']
@@ -450,7 +431,7 @@ class VehicleLocationAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(JourneyCode)
+@admin.register(models.JourneyCode)
 class JourneyCodeAdmin(admin.ModelAdmin):
     list_display = ['code', 'service', 'destination']
     list_select_related = ['service']
@@ -473,7 +454,7 @@ class LiveryAdminForm(forms.ModelForm):
         }
 
 
-@admin.register(Livery)
+@admin.register(models.Livery)
 class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
@@ -495,7 +476,7 @@ class LiveryAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            return queryset.annotate(vehicles=Count('vehicle'))
+            return queryset.annotate(vehicles=SubqueryCount('vehicle'))
         return queryset
 
     def duplicate(self, request, queryset):
@@ -522,7 +503,7 @@ class RevisionChangeFilter(admin.SimpleListFilter):
         return queryset
 
 
-@admin.register(VehicleRevision)
+@admin.register(models.VehicleRevision)
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = ['from_operator', 'to_operator', 'from_livery', 'to_livery', 'vehicle', 'user']
     list_display = ['datetime', 'vehicle', '__str__', user]
@@ -532,11 +513,11 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         UserFilter,
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter),
     ]
-    list_select_related = ['from_operator', 'to_operator', 'vehicle']
+    list_select_related = ['from_operator', 'to_operator', 'vehicle', 'user']
 
     def revert(self, request, queryset):
         for revision in queryset.prefetch_related('vehicle'):
             revision.revert(self.message_user, request)
 
 
-admin.site.register(VehicleFeature)
+admin.site.register(models.VehicleFeature)

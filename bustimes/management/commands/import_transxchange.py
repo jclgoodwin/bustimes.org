@@ -1028,7 +1028,7 @@ class Command(BaseCommand):
             garage = transxchange.garages[garage_code]
             name = garage.findtext('GarageName', '')
             name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
-            name = name.removesuffix(' garage').removesuffix(' Garage')
+            name = name.removesuffix(' garage').removesuffix(' Garage').strip()
             if garage_code not in self.garages or self.garages[garage_code].name != name:
                 garage = Garage.objects.filter(code=garage_code, name=name).first()
                 if garage is None:
