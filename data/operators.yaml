@@ -194,6 +194,8 @@ CBNL:
     name: Centrebus (North)
 ARBB:
     url: https://www.arrivabus.co.uk/beds-and-bucks
+WRAY:
+    url: https://www.arrivabus.co.uk/yorkshire
 AMTM:
     name: Arriva Kent Thameside
     url: https://www.arrivabus.co.uk/kent-and-surrey

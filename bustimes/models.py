@@ -13,7 +13,7 @@ def get_routes(routes, when):
 
     # use maximum revision number for each service_code
     revision_numbers = set(route.revision_number for route in routes)
-    if len(revision_numbers) > 1:
+    if len(revision_numbers) > 1 and not any(route.end_date for route in routes):
         revision_numbers = {}
         for route in routes:
             if (
