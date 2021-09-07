@@ -305,7 +305,7 @@ class VehiclesTests(TestCase):
             f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">1</a></td>'
         )
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(9):
             response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, '<del>1</del><br><ins>2</ins>')
         self.assertEqual(1, response.context_data['cl'].result_count)
@@ -420,7 +420,7 @@ class VehiclesTests(TestCase):
 
         edit = VehicleEdit.objects.get()
 
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(15):
             self.client.post('/admin/vehicles/vehicleedit/', {
                 'action': 'apply_edits',
                 '_selected_action': edit.id
