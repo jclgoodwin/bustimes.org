@@ -310,11 +310,6 @@ class Vehicle(models.Model):
 
     clean = Livery.clean  # validate colours field
 
-    def editable(self):
-        if self.notes == 'Spare ticket machine':
-            return False
-        return True
-
     def get_json(self, heading):
         json = {
             'url': self.get_absolute_url(),

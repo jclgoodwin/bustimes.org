@@ -82,11 +82,9 @@ class VehiclesTests(TestCase):
 
         vehicle.reg = 'J122018'
         self.assertEqual(str(vehicle), 'J122018')
-        self.assertTrue(vehicle.editable())
 
         vehicle.notes = 'Spare ticket machine'
         self.assertEqual('', vehicle.get_flickr_link())
-        self.assertFalse(vehicle.editable())
 
         vehicle = Vehicle(code='RML2604')
         self.assertIn('search/?text=RML2604&sort', vehicle.get_flickr_url())

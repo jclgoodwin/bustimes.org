@@ -466,7 +466,7 @@ def edit_vehicle(request, vehicle_id):
         Vehicle.objects.select_related('vehicle_type', 'livery', 'operator', 'latest_journey'),
         id=vehicle_id
     )
-    if not vehicle.editable() or vehicle.withdrawn and not vehicle.latest_journey_id:
+    if vehicle.withdrawn and not vehicle.latest_journey_id:
         raise Http404
 
     for edit in request.user.vehicleedit_set.filter(vehicle=vehicle, approved=None):
