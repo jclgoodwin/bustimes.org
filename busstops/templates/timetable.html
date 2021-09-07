@@ -9,7 +9,7 @@
         <p>{{ timetable.calendar }}{% if timetable.start_date %} from {{ timetable.start_date }}{% endif %}</p>
     {% elif timetable.date_options %}
         <form class="timetable-date">
-            <select onchange="this.form.submit()" name="date" aria-label="Date">
+            <select onchange="this.form.submit()" name="date" id="id_date" aria-label="Date">
                 {% for option in timetable.date_options %}
                     <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
                 {% endfor %}

@@ -42,6 +42,8 @@
                 loadjs(window.LIVERIES_CSS_URL);
             }
         }
+
+        return false;
     }
 
     button.onclick = openMap;

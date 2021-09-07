@@ -182,8 +182,13 @@
         if (loadVehiclesTimeout) {
             clearTimeout(loadVehiclesTimeout);
         }
-        var params = window.location.search || '?';
-        params += '&ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
+        var params = window.location.search;
+        if (params) {
+            params += '&';
+        } else {
+            params = '?';
+        }
+        params += 'ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
         lastVehiclesReq = reqwest(
             '/vehicles.json' + params,
             function(data) {

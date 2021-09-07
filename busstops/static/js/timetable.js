@@ -26,16 +26,17 @@
             }
         }
 
-        var selects = timetableWrapper.getElementsByTagName('select');
-        if (selects.length) {
-            selects[0].onchange = function(event) {
+        var select = document.getElementById('id_date');
+        if (select) {
+            select.onchange = function(event) {
                 timetableWrapper.className = 'loading';
-                var search = '?date=' + event.target.value;
-                reqwest('/services/' + SERVICE_ID + '/timetable' + search, function(response) {
+                var newSearch = '?date=' + event.target.value;
+                reqwest('/services/' + SERVICE_ID + '/timetable' + newSearch, function(response) {
                     timetableWrapper.className = '';
                     timetableWrapper.innerHTML = response;
                     doStuff();
-                    history.pushState(null, null, search);
+                    search = newSearch;
+                    history.pushState(null, null, newSearch);
                 });
             };
         }
@@ -43,16 +44,21 @@
 
     doStuff();
 
+    var search  = window.location.search;
+
     window.addEventListener('popstate', function() {
-        var url = '/services/' + SERVICE_ID + '/timetable';
-        if (window.location.search) {
-            url += window.location.search;
+        if (search !== window.location.search) {
+            search = window.location.search;
+            var url = '/services/' + SERVICE_ID + '/timetable';
+            if (search) {
+                url += search;
+            }
+            timetableWrapper.className = 'loading';
+            reqwest(url, function(response) {
+                timetableWrapper.className = '';
+                timetableWrapper.innerHTML = response;
+                doStuff();
+            });
         }
-        timetableWrapper.className = 'loading';
-        reqwest(url, function(response) {
-            timetableWrapper.className = '';
-            timetableWrapper.innerHTML = response;
-            doStuff();
-        });
     });
 }());
