@@ -283,7 +283,7 @@ def vehicles_json(request):
                 service_ids = [int(service_id) for service_id in request.GET['service'].split(',')]
             except ValueError:
                 return HttpResponseBadRequest()
-            vehicle_ids = list(redis_client.sinter(
+            vehicle_ids = list(redis_client.sunion(
                 [f'service{service_id}vehicles' for service_id in service_ids]
             ))
         elif 'operator' in request.GET:
@@ -324,7 +324,7 @@ def vehicles_json(request):
         if service_ids and (not item or item.get('service_id') not in service_ids):
             for service_id in service_ids:
                 redis_client.srem(f'service{service_id}vehicles', vehicle_id)
-        else:
+        elif item:
             locations.append(item)
 
     service_ids = [item['service_id'] for item in locations if item.get('service_id')]
