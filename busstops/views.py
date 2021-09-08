@@ -541,7 +541,9 @@ class OperatorDetailView(DetailView):
         context['services'] = sorted(services, key=Service.get_order)
         context['today'] = timezone.localdate()
 
-        context['vehicles'] = self.object.vehicle_set.filter(withdrawn=False).exists()
+        vehicles = self.object.vehicle_set.filter(withdrawn=False)
+
+        context['vehicles'] = vehicles.exists()
 
         if context['services']:
             context['breadcrumb'] = [self.object.region]
@@ -549,7 +551,7 @@ class OperatorDetailView(DetailView):
             context['colours'] = get_colours(context['services'])
 
         if context['vehicles']:
-            context['map'] = VehicleLocation.objects.filter(journey__vehicle__operator=self.object).exists()
+            context['map'] = vehicles.filter(latest_location__isnull=False).exists()
 
         return context
 
