@@ -258,6 +258,7 @@ def vehicles_json(request):
         )
 
     vehicle_ids = None
+    service_ids = None
 
     if bounds is not None:
         # ids of vehicles within box
@@ -279,11 +280,12 @@ def vehicles_json(request):
     else:
         if 'service' in request.GET:
             try:
-                vehicles = vehicles.filter(
-                    latest_journey__service__in=request.GET['service'].split(',')
-                ).in_bulk()
+                service_ids = [int(service_id) for service_id in request.GET['service'].split(',')]
             except ValueError:
                 return HttpResponseBadRequest()
+            vehicle_ids = list(redis_client.sinter(
+                [f'service{service_id}vehicles' for service_id in service_ids]
+            ))
         elif 'operator' in request.GET:
             vehicles = vehicles.filter(
                 operator__in=request.GET['operator'].split(',')
@@ -300,6 +302,7 @@ def vehicles_json(request):
     if type(vehicles) is not dict:
         # remove expired items from 'vehicle_location_locations'
         to_remove = [vehicle_ids[i] for i, item in enumerate(vehicle_locations) if not item]
+
         if to_remove:
             redis_client.zrem('vehicle_location_locations', *to_remove)
 
@@ -307,18 +310,24 @@ def vehicles_json(request):
         vehicles = vehicles.in_bulk([vehicle_ids[i] for i, item in enumerate(vehicle_locations) if item])
 
     locations = []
-    service_ids = set()
+
     for i, item in enumerate(vehicle_locations):
+        vehicle_id = int(vehicle_ids[i])
         if item:
             try:
-                vehicle = vehicles[int(vehicle_ids[i])]
+                vehicle = vehicles[vehicle_id]
             except KeyError:
-                continue
+                continue  # vehicle was deleted?
             item = json.loads(item)
             item['vehicle'] = vehicle.get_json(item['heading'])
+
+        if service_ids and (not item or item.get('service_id') not in service_ids):
+            for service_id in service_ids:
+                redis_client.srem(f'service{service_id}vehicles', vehicle_id)
+        else:
             locations.append(item)
-            if 'service_id' in item and item['service_id']:
-                service_ids.add(item['service_id'])
+
+    service_ids = [item['service_id'] for item in locations if item.get('service_id')]
 
     services = Service.objects.only('line_name', 'line_brand', 'slug').in_bulk(service_ids)
     for item in locations:
