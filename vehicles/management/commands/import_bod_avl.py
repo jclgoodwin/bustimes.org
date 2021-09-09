@@ -201,7 +201,8 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.code = vehicle_ref
                 if fleet_number != vehicle.fleet_code:
                     vehicle.fleet_code = fleet_number
-                    vehicle.fleet_number = fleet_number
+                    if fleet_number.isdigit():
+                        vehicle.fleet_number = fleet_number
                     vehicle.save(update_fields=['code', 'fleet_code', 'fleet_number'])
                 else:
                     vehicle.save(update_fields=['code'])
