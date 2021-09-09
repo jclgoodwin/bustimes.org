@@ -6,8 +6,7 @@ import xmltodict
 from ciso8601 import parse_datetime
 from haversine import haversine
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Min, F
-from django.db.models.functions import Coalesce
+from django.db.models import Exists, OuterRef, Min, F, Case, When
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -102,7 +101,10 @@ def operator_vehicles(request, slug=None, parent=None):
 
     vehicles = vehicles.annotate(
         vehicle_type_name=F('vehicle_type__name'),
-        garage_name=Coalesce('garage__name', 'latest_journey__trip__garage__name')
+        garage_name=Case(
+            When(garage__name='', then='garage__code'),
+            default='garage__name',
+        )
     ).select_related('livery')
 
     submitted = False

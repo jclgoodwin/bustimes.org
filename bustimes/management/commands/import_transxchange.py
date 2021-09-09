@@ -1032,7 +1032,7 @@ class Command(BaseCommand):
             if garage_code not in self.garages or self.garages[garage_code].name != name:
                 garage = Garage.objects.filter(code=garage_code, name=name).first()
                 if garage is None:
-                    garage = Garage.objects.create(code=garage_code, name=name or garage_code)
+                    garage = Garage.objects.create(code=garage_code, name=name)
                 self.garages[garage_code] = garage
 
         for txc_service in transxchange.services.values():
