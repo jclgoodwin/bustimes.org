@@ -179,16 +179,9 @@ class Command(BaseCommand):
         """
         Set region_id and source based on the name of the TNDS archive, creating a DataSource if necessary
         """
-        archive_name = os.path.basename(archive_name)
-        region_id, _ = os.path.splitext(archive_name)
-        self.region_id = region_id.upper()
-
-        self.source, created = DataSource.objects.get_or_create(
-            {
-                'url': 'ftp://ftp.tnds.basemap.co.uk/' + archive_name
-            },
-            name=self.region_id
-        )
+        archive_name = os.path.basename(archive_name)  # ea.zip
+        region_id, _ = os.path.splitext(archive_name)  # ea
+        self.region_id = region_id.upper()  # EA
 
         if len(self.region_id) > 2:
             if self.region_id == 'NCSD':
@@ -197,6 +190,16 @@ class Command(BaseCommand):
                 self.region_id = 'IM'
             else:
                 self.region_id = None
+
+        if self.region_id:
+            self.source, _ = DataSource.objects.get_or_create(
+                {
+                    'url': 'ftp://ftp.tnds.basemap.co.uk/' + archive_name
+                },
+                name=self.region_id
+            )
+        else:
+            self.source, _ = DataSource.objects.get_or_create(name=archive_name)
 
     def get_operator(self, operator_element):
         """
@@ -774,6 +777,8 @@ class Command(BaseCommand):
             if not existing and operators and line.line_name:
                 if self.source.name.startswith('Stagecoach'):
                     existing = Service.objects.filter(Q(source=self.source) | Q(operator__in=operators))
+                elif self.source.name.startswith('Leic_2109_MF_SCH_From'):
+                    existing = Service.objects.filter(operator__in=['CBBH', 'CBNL'])
                 else:
                     existing = Service.objects.filter(operator__in=operators)
 
