@@ -23,12 +23,6 @@ class Command(ImportLiveVehiclesCommand):
     source_name = 'Bus Open Data'
     wait = 20
     operators = {
-        'ASC': ['AKSS', 'ARHE', 'AMTM', 'GLAR'],  # Arriva Southern Counties
-        'ANE': ['ARDU', 'ANUM', 'ANEA'],  # Arriva North East
-        'ANW': ['ANWE', 'AMSY', 'ACYM'],  # Arriva North West
-        'ATS': ['ARBB', 'ASES', 'GLAR'],  # Arriva the Shires
-        'AMD': ['AMID', 'AMNO', 'AFCL', 'ADER'],  # Arriva Midlands
-        'CBBH': ['CBBH', 'CBNL'],  # Centrebus
         'UNO': ['UNOE', 'UNIB'],  # Uno/Universitybus
         'UNIB': ['UNOE', 'UNIB'],
         'TBTN': ['TBTN', 'BRTB', 'KBUS'],  # trentbarton/Kinchbus
@@ -127,11 +121,10 @@ class Command(ImportLiveVehiclesCommand):
 
         operator = self.get_operator(operator_ref)
 
+        vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
+
         if operator:
             vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
-
-            if operator_ref == 'AKE':
-                vehicle_ref = vehicle_ref.removeprefix('ASC-')
 
         assert vehicle_ref
 
