@@ -81,7 +81,7 @@ class Command(ImportLiveVehiclesCommand):
         try:
             return operators.get()
         except Operator.MultipleObjectsReturned:
-            return [operators.id for operator in operators]
+            return [operator.id for operator in operators]
         except Operator.DoesNotExist:
             if len(operator_ref) == 4:
                 try:
