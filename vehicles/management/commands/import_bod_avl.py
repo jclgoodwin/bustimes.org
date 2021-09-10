@@ -74,22 +74,20 @@ class Command(ImportLiveVehiclesCommand):
         if operator_ref in self.operators:
             return self.operators[operator_ref]
 
-        operators = Operator.objects.using(settings.READ_DATABASE)
+        operators = Operator.objects.filter(
+            Exists(self.source.operatorcode_set.filter(operator=OuterRef('id'), code=operator_ref))
+        )
 
         try:
-            operator = operators.get(
-                Exists(self.source.operatorcode_set.filter(operator=OuterRef('id'), code=operator_ref))
-            )
+            return operators.get()
+        except Operator.MultipleObjectsReturned:
+            return [operators.id for operator in operators]
         except Operator.DoesNotExist:
             if len(operator_ref) == 4:
                 try:
-                    operator = operators.get(id=operator_ref)
+                    return Operator.objects.get(id=operator_ref)
                 except Operator.DoesNotExist:
                     return
-            else:
-                return
-
-        return operator
 
     @staticmethod
     def get_vehicle_cache_key(item):
