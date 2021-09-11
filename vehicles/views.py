@@ -405,8 +405,6 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         except redis.exceptions.ConnectionError:
             pass
 
-        # context['block_column'] = any(journey.block for journey in journeys)
-
         context['journeys'] = journeys
 
     return context

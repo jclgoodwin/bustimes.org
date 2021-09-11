@@ -56,7 +56,6 @@
                                 {{ journey.route_name }}
                             {% endif %}
                         </td>
-                        {% if block_column %}<td>{% if journey.block %}{{ journey.block }}{% endif %}</td>{% endif %}
                         {% if journey.trip %}
                             <td colspan="2"><a href="{{ journey.trip.get_absolute_url }}">{{ journey.trip.start_time }}</a></td>
                         {% elif journey.code and journey.code|length < 40 and '_' not in journey.code %}

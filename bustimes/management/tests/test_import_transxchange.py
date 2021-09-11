@@ -2,17 +2,21 @@ import os
 import zipfile
 import xml.etree.cElementTree as ET
 import time_machine
+
 from functools import partial
 from pathlib import Path
 from mock import patch
 from unittest import skip
 from tempfile import TemporaryDirectory
 from datetime import date
+
 from django.test import TestCase, override_settings
 from django.utils import timezone
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
+
 from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource, ServiceLink
+from vosa.models import Licence, Registration
 from ...models import Route, Trip, Calendar, CalendarDate
 from ..commands import import_transxchange
 
@@ -22,7 +26,6 @@ FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 
 @override_settings(
     TNDS_DIR=FIXTURES_DIR,
-    FIRST_OPERATORS=()
 )
 class ImportTransXChangeTest(TestCase):
     @classmethod
@@ -903,6 +906,17 @@ class ImportTransXChangeTest(TestCase):
             </Operator>
         """)))
         self.assertEqual(2, len(command.missing_operators))
+
+    def test_get_registration(self):
+        lic = Licence.objects.create(licence_number='PH0000153', discs=0, authorised_discs=0)
+        reg = Registration.objects.create(
+            licence=lic, registration_number='PH0000153/159', registered=True,
+            service_number='69', start_point='Ham', finish_point='Sandwich'
+        )
+        self.assertEqual(reg, import_transxchange.get_registration('PH0000153:159'))
+        self.assertEqual(reg, import_transxchange.get_registration('PH000000153:0159'))
+        self.assertEqual(reg, import_transxchange.get_registration('PH0153:159'))
+        self.assertIsNone(import_transxchange.get_registration('P000153:159'))
 
     def test_summary(self):
         self.assertEqual(

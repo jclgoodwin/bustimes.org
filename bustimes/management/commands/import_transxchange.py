@@ -121,8 +121,6 @@ def get_open_data_operators():
             open_data_operators += operators
     for _, _, _, operators in settings.PASSENGER_OPERATORS:
         open_data_operators += operators.values()
-    for _, _, operators in settings.FIRST_OPERATORS:
-        open_data_operators += operators.values()
     for _, _, _, operators in settings.STAGECOACH_OPERATORS:
         open_data_operators += operators
     for setting in settings.TICKETER_OPERATORS:
@@ -139,6 +137,21 @@ def get_calendar_date(date, operation, summary):
         operation=operation,
         summary=summary
     )
+
+
+def get_registration(service_code):
+    parts = service_code.split('_')[0].split(':')
+    if len(parts[0]) != 9:
+        prefix = parts[0][:2]
+        suffix = str(int(parts[0][2:]))
+        parts[0] = f'{prefix}{suffix.zfill(7)}'
+    if parts[1] and parts[1].isdigit():
+        try:
+            return Registration.objects.get(
+                registration_number=f'{parts[0]}/{int(parts[1])}'
+            )
+        except Registration.DoesNotExist:
+            pass
 
 
 class Command(BaseCommand):
@@ -932,18 +945,9 @@ class Command(BaseCommand):
                 route_defaults['description'] = description
 
             if unique_service_code:
-                parts = unique_service_code.split('_')[0].split(':')
-                if len(parts[0]) > 9:
-                    print(parts)
-                elif len(parts[0]) < 9:
-                    parts[0] = parts[0][:2] + parts[0][2:].zfill(7)
-                if parts[1]:
-                    try:
-                        route_defaults['registration'] = Registration.objects.get(
-                            registration_number=f'{parts[0]}/{parts[1]}'
-                        )
-                    except Registration.DoesNotExist:
-                        pass
+                registration = get_registration(unique_service_code)
+                if registration:
+                    route_defaults['registration'] = registration
 
             geometry = []
             if transxchange.route_sections:

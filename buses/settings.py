@@ -361,8 +361,6 @@ PASSENGER_OPERATORS = [
         'NWPT': 'NWPT',
     }),
 ]
-FIRST_OPERATORS = [
-]
 BOD_OPERATORS = [
     ('FBOS', None, {
         'FYOR': 'FYOR',

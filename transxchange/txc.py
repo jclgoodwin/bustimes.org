@@ -193,7 +193,7 @@ class VehicleJourney:
         self.block = element.find('Operational/Block')
         if self.block is not None:
             self.block = Block(self.block)
-        self.vehicle_type = element.find('VehicleType')
+        self.vehicle_type = element.find('Operational/VehicleType')
         if self.vehicle_type is not None:
             self.vehicle_type = VehicleType(self.vehicle_type)
 
