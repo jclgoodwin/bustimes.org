@@ -164,7 +164,6 @@ class Command(BaseCommand):
         self.service_descriptions = {}
         self.calendar_cache = {}
         self.operators = {}
-        self.undefined_holidays = set()
         self.missing_operators = []
         self.notes = {}
         self.garages = {}
@@ -183,10 +182,8 @@ class Command(BaseCommand):
         """
         Log the names of any undefined public holiday names, and operators that couldn't be found
         """
-        if self.undefined_holidays:
-            print(self.undefined_holidays)
         for operator in self.missing_operators:
-            print(operator)
+            logger.warning(operator)
 
     def set_region(self, archive_name):
         """
@@ -534,7 +531,6 @@ class Command(BaseCommand):
         notes_by_trip = []
 
         blocks = []
-        vehicle_types = []
 
         for journey in journeys:
             calendar = None
@@ -571,12 +567,10 @@ class Command(BaseCommand):
 
             if journey.vehicle_type:
                 if journey.vehicle_type.code not in self.vehicle_types:
-                    trip.vehicle_type = VehicleType(
+                    trip.vehicle_type, _ = VehicleType.objects.get_or_create(
                         code=journey.vehicle_type.code,
                         description=journey.vehicle_type.description
                     )
-                    vehicle_types.append(trip.vehicle_type)
-                    self.vehicle_types[journey.vehicle_type.code] = trip.vehicle_type
                 else:
                     trip.vehicle_type = self.vehicle_types[journey.vehicle_type.code]
 
@@ -656,10 +650,8 @@ class Command(BaseCommand):
                 notes.append(note)
             notes_by_trip.append(notes)
 
-        VehicleType.objects.bulk_create(vehicle_types)
         Block.objects.bulk_create(blocks)
         for trip in trips:
-            trip.vehicle_type = trip.vehicle_type
             trip.block = trip.block
 
         Trip.objects.bulk_create(trips, batch_size=1000)
@@ -790,8 +782,6 @@ class Command(BaseCommand):
             if not existing and operators and line.line_name:
                 if self.source.name.startswith('Stagecoach'):
                     existing = Service.objects.filter(Q(source=self.source) | Q(operator__in=operators))
-                elif self.source.name.startswith('Leic_2109_MF_SCH_From'):
-                    existing = Service.objects.filter(operator__in=['CBBH', 'CBNL'])
                 else:
                     existing = Service.objects.filter(operator__in=operators)
 

@@ -10,7 +10,7 @@ from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode
 from vehicles.models import VehicleJourney
-from ...models import Route, BankHoliday
+from ...models import Route, BankHoliday, CalendarBankHoliday, VehicleType, Block, Garage
 
 
 FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
@@ -165,7 +165,7 @@ class ImportBusOpenDataTest(TestCase):
                     'bustimes.management.commands.import_bod.download_if_changed',
                     return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
                 ) as download_if_changed:
-                    with self.assertNumQueries(125):
+                    with self.assertNumQueries(127):
                         call_command('import_bod', 'stagecoach')
                     download_if_changed.assert_called_with(
                         str(path), 'https://opendata.stagecoachbus.com/' + archive_name
@@ -174,7 +174,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
 
-                    with self.assertNumQueries(79):
+                    with self.assertNumQueries(81):
                         call_command('import_bod', 'stagecoach', 'sccm')
 
                 source = DataSource.objects.get(name='Stagecoach East')
@@ -186,7 +186,11 @@ class ImportBusOpenDataTest(TestCase):
                 self.assertEqual(200, response.status_code)
                 self.assertEqual('', response.filename)
 
-        self.assertEqual(BankHoliday.objects.all().count(), 13)
+        self.assertEqual(BankHoliday.objects.count(), 13)
+        self.assertEqual(CalendarBankHoliday.objects.count(), 130)
+        self.assertEqual(VehicleType.objects.count(), 6)
+        self.assertEqual(Garage.objects.count(), 4)
+        self.assertEqual(Block.objects.count(), 12)
 
         with self.assertNumQueries(3):
             response = self.client.get(f'/services/{route.service_id}.json')

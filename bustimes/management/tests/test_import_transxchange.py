@@ -49,9 +49,6 @@ class ImportTransXChangeTest(TestCase):
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
 
-        source = DataSource.objects.create(name='EA', url='ftp://ftp.tnds.basemap.co.uk/open-data')
-        OperatorCode.objects.create(operator=cls.fecs, source=source, code='FECS')
-
         StopPoint.objects.bulk_create(
             StopPoint(
                 atco_code=atco_code, locality_centre=False, active=True, common_name=common_name,
@@ -541,17 +538,21 @@ class ImportTransXChangeTest(TestCase):
             self.client.get(route.get_absolute_url())
 
     def test_multiple_operators(self):
-        with patch('os.path.getmtime', return_value=1582385679):
-            with patch('builtins.print') as mocked_print:
+        """
+        file has two Operators (SBLB and and BAIN) but only one operates any journeys
+        """
+
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            with patch('os.path.getmtime', return_value=1582385679):
                 self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertTrue(service.current)
 
-        mocked_print.assert_called_with({
-            'NationalOperatorCode': 'SBLB',
-            'OperatorCode': 'BLB',
-            'OperatorShortName': 'Stagecoach North Scotlan'
-        })
+        self.assertEqual([
+            "WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'SBLB', "
+            "'OperatorCode': 'BLB', 'OperatorShortName': 'Stagecoach North Scotlan'}"],
+            cm.output
+        )
 
         service.slug = 'abao421'
         service.save(update_fields=['slug'])
@@ -559,18 +560,18 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.slug, 'abao421')
 
         # after operating period - shouldn't create routes or trips
-        with patch('os.path.getmtime', return_value=1645544079):
-            with patch('builtins.print') as mocked_print:
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            with patch('os.path.getmtime', return_value=1645544079):
                 self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
         self.assertEqual(0, service.route_set.count())
         self.assertEqual(service.slug, '421-inverurie-alford')
 
-        mocked_print.assert_called_with({
-            'NationalOperatorCode': 'SBLB',
-            'OperatorCode': 'BLB',
-            'OperatorShortName': 'Stagecoach North Scotlan'
-        })
+        self.assertEqual([
+            "WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'SBLB', "
+            "'OperatorCode': 'BLB', 'OperatorShortName': 'Stagecoach North Scotlan'}"],
+            cm.output
+        )
 
     def test_multiple_services(self):
         with patch('os.path.getmtime', return_value=1582385679):
@@ -647,11 +648,13 @@ class ImportTransXChangeTest(TestCase):
 
         trip = route_1.trip_set.first()
         response = self.client.get(trip.get_absolute_url())
-        self.assertContains(response, "Barnstaple")
+        self.assertContains(response, "Barnstaple")  # garage
 
-        service = route_1.service
+        service = route_2.service
         response = self.client.get(f'{service.get_absolute_url()}?detailed')
         self.assertContains(response, '<td>9032</td>')  # block number
+        self.assertContains(response, '<td>1554</td>')  # block number
+        self.assertContains(response, '<td>SWBA</td>')  # garafe
 
     @time_machine.travel('2021-07-07')
     def test_confusing_start_date(self):
