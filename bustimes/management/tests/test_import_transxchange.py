@@ -496,17 +496,6 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(37, service.stopusage_set.count())
 
-    @skip
-    @time_machine.travel('2017-01-01')
-    def test_cardiff_airport(self):
-        """Should be able to distinguish between Cardiff and Cardiff Airport as start and end of a route"""
-        self.handle_files('W.zip', ['TCAT009.xml'])
-        service = Service.objects.get()
-        self.assertEqual(service.inbound_description, 'Cardiff - Cardiff Airport')
-        self.assertEqual(service.outbound_description, 'Cardiff Airport - Cardiff')
-
-        self.assertEqual(17, service.stopusage_set.count())
-
     @time_machine.travel('2018-09-24')
     def test_timetable_plymouth(self):
         self.handle_files('EA.zip', ['20-plymouth-city-centre-plympton.xml'])
@@ -658,11 +647,14 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel('2021-07-07')
     def test_confusing_start_date(self):
-        call_command('import_transxchange', FIXTURES_DIR / 'notts_KRWL_DS_180DS_.xml')
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            call_command('import_transxchange', FIXTURES_DIR / 'notts_KRWL_DS_180DS_.xml')
 
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, "Tuesdays from Tuesday 17 August 2021")
+
+        self.assertEqual(1, len(cm.output))
 
     def test_service_error(self):
         """A file with some wrong references should be handled gracefully"""
@@ -805,10 +797,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.megabus)
         self.assertEqual(list(service.get_traveline_links()), [])
-        #     [('http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST'
-        #      '?line=11M11&sup=A&net=nrc&project=y08&command=direct&outputFormat=0',
-        #         'Timetable on the Traveline South West website')]
-        # )
 
         self.assertEqual(res.context_data['breadcrumb'], [self.gb, self.megabus])
         self.assertTemplateUsed(res, 'busstops/service_detail.html')

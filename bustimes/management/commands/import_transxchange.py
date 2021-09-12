@@ -567,12 +567,11 @@ class Command(BaseCommand):
 
             if journey.vehicle_type:
                 if journey.vehicle_type.code not in self.vehicle_types:
-                    trip.vehicle_type, _ = VehicleType.objects.get_or_create(
+                    self.vehicle_types[journey.vehicle_type.code], _ = VehicleType.objects.get_or_create(
                         code=journey.vehicle_type.code,
                         description=journey.vehicle_type.description
                     )
-                else:
-                    trip.vehicle_type = self.vehicle_types[journey.vehicle_type.code]
+                trip.vehicle_type = self.vehicle_types[journey.vehicle_type.code]
 
             if journey.garage_ref:
                 trip.garage = self.garages.get(journey.garage_ref)
