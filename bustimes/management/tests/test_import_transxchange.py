@@ -363,6 +363,8 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context_data['timetable']
         self.assertEqual('2017-12-10', str(timetable.date))
 
+        self.assertEqual('109000009399', timetable.groupings[0].rows[49].stop.atco_code)
+        self.assertEqual('109000009399', timetable.groupings[0].rows[50].stop.atco_code)
         self.assertEqual(60, len(timetable.groupings[0].rows))
 
     @time_machine.travel('2017-04-13')
