@@ -9,9 +9,8 @@ class VehicleFilter(FilterSet):
     search = CharFilter(method='search_filter', label='Search')
 
     def search_filter(self, queryset, name, value):
-        value = value.upper()
         return queryset.filter(
-            Q(reg=value) | Q(fleet_code=value)
+            Q(reg=value.upper()) | Q(fleet_code__iexact=value)
         )
 
     class Meta:
