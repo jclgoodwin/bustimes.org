@@ -470,17 +470,12 @@ BOD_OPERATORS = [
     ('SWAN', 'SW', {}, False),
     ('CTCO', 'SW', {}, False),
     ('EBLY', 'SW', {}, False),
-    ('SGLC', 'SW', {}, False),
     ('BYCO', 'SW', {}, False),
     ('NEJH', 'SW', {}, False),
     ('BNNT', 'SW', {}, False),
     ('XLBL', 'SW', {}, False),
     ('NCSL', 'SW', {}, False),
     ('AMKC', 'SW', {}, False),
-    ('WTSW', 'SW', {
-        'WSTW': 'WSTW',
-        'NWDL': 'NWDL'
-    }, False),
     ('EUTX', 'SW', {}, False),
     ('CHCB', 'SW', {}, False),
     ('DJWA', 'SW', {}, False),
@@ -542,7 +537,6 @@ BOD_OPERATORS = [
     ('PLNG', 'EA', {}, False),
     ('SNDR', 'EA', {}, True),  # incomplete
     ('STOT', 'NW', {}, False),
-    ('BEVC', 'NW', {}, False),
     ('CARL', 'SE', {}, False),
     ('IRVD', 'NW', {}, False),
     ('FALC', 'SE', {}, False),
