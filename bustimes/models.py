@@ -29,11 +29,11 @@ def get_routes(routes, when):
 
     # remove duplicates
     if len(sources) > 1:
-        sources_by_hash = {route.source.hash: route.source_id for route in routes if route.source.hash}
-        # if multiple sources have the same hash, we're only interested in one
+        sources_by_sha1 = {route.source.sha1: route.source_id for route in routes if route.source.sha1}
+        # if multiple sources have the same sha1 hash, we're only interested in one
         routes = [
             route for route in routes
-            if not route.source.hash or route.source_id == sources_by_hash[route.source.hash]
+            if not route.source.sha1 or route.source_id == sources_by_sha1[route.source.sha1]
         ]
     elif len(sources) == 1:
         prefixes = set(route.code.split('.zip')[0] for route in routes if '.zip' in route.code)
