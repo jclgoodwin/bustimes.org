@@ -606,6 +606,13 @@ BOD_OPERATORS = [
     ('RRTR', 'SE', {}, False),
     ('RCHC', 'SE', {}, False),
     ('FCHS', 'NW', {}, False),
+    ('DAGC', None, {}, False),
+    ('Go East Anglia', 'EA', {
+        'KCTB': 'KCTB',
+        'HEOD': 'HEOD',
+        'CHAM': 'CHAM',
+    }, False),
+
     ('AMBS', 'EA', {
         'AMBS': 'AMBS',
         'SEMM': 'SEMM',
@@ -638,13 +645,4 @@ STAGECOACH_OPERATORS = [
     ('SW', 'scgl', 'Stagecoach West',          ['SCGL', 'SSWN', 'STWD']),
     ('W',  'sswl', 'Stagecoach South Wales',   ['SSWL']),
     ('Y',  'tram', 'Stagecoach Supertram',     ['SCST']),
-]
-
-# For historical reasons,
-# some operators' timetables are fetched directly from e.g.
-# https://opendata.ticketer.com/uk/LYNX/routes_and_timetables/current.zip
-# rather than via the Bus Open Data site
-TICKETER_OPERATORS = [
-    ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
-    ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
 ]

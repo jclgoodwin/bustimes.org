@@ -186,6 +186,7 @@ class DataSource(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(blank=True)
     datetime = models.DateTimeField(null=True, blank=True)
+    sha1 = models.CharField(max_length=40, null=True, blank=True)
     settings = models.JSONField(null=True, blank=True)
 
     def __str__(self):
@@ -204,8 +205,6 @@ class DataSource(models.Model):
         # Stagecoach
         if 'stagecoach' in self.url:
             return 'https://www.stagecoachbus.com/open-data'
-        if self.settings and 'url' in self.settings:
-            return self.settings['url']
 
     def get_nice_link(self):
         name = self.get_nice_name()

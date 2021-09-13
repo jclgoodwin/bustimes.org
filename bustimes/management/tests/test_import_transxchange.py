@@ -6,7 +6,6 @@ import time_machine
 from functools import partial
 from pathlib import Path
 from mock import patch
-from unittest import skip
 from tempfile import TemporaryDirectory
 from datetime import date
 
