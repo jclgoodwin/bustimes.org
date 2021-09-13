@@ -6,6 +6,8 @@ from .utils import format_timedelta, time_datetime
 
 
 def get_routes(routes, when):
+    end_dates = any(route.end_date for route in routes)
+
     routes = [route for route in routes if route.contains(when)]
 
     if len(routes) == 1:
@@ -13,7 +15,7 @@ def get_routes(routes, when):
 
     # use maximum revision number for each service_code
     revision_numbers = set(route.revision_number for route in routes)
-    if len(revision_numbers) > 1 and not any(route.end_date for route in routes):
+    if len(revision_numbers) > 1 and not end_dates:
         revision_numbers = {}
         for route in routes:
             if (

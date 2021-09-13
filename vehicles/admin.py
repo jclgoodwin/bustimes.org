@@ -349,7 +349,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            edit_count = SubqueryCount('vehicle__vehicleedit', filter=Q(vehicle__vehicleedit__approved=None))
+            edit_count = SubqueryCount('vehicle__vehicleedit', filter=Q(approved=None))
             queryset = queryset.annotate(edit_count=edit_count)
             return queryset.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features')
         return queryset
