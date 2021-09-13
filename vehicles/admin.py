@@ -151,7 +151,7 @@ class VehicleAdmin(admin.ModelAdmin):
 
 def vehicle(obj):
     url = reverse('admin:vehicles_vehicle_change', args=(obj.vehicle_id,))
-    return mark_safe(f'<a href="{url}">{obj.vehicle}</a>')
+    return format_html('<a href="{}">{}</a>', url, obj.vehicle)
 
 
 def fleet_number(obj):
@@ -223,7 +223,7 @@ def changes(obj):
 
 def url(obj):
     if obj.url:
-        return mark_safe(f'<a href="{obj.url}" target="_blank" rel="noopener">{obj.url}</a>')
+        return format_html('<a href="{}" target="_blank" rel="noopener">{}</a>', obj.url, obj.url)
 
 
 vehicle.admin_order_field = 'vehicle'

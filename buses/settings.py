@@ -215,7 +215,7 @@ elif not DEBUG and 'collectstatic' not in sys.argv and 'SENTRY_DSN' in os.enviro
         ignore_errors=[KeyboardInterrupt],
         before_send=before_send
     )
-else:
+if not TEST:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,

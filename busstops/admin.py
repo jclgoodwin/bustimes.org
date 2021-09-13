@@ -7,7 +7,7 @@ from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Count, Q, F, Exists, OuterRef, CharField
 from django.db.models.functions import Cast
 from django.urls import reverse
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 
 from sql_util.utils import SubqueryCount
 
@@ -97,12 +97,12 @@ class OperatorAdmin(admin.ModelAdmin):
     @admin.display(ordering='services')
     def services(self, obj):
         url = reverse('admin:busstops_service_changelist')
-        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.services}</a>')
+        return format_html('<a href="{}?operator__id__exact={}">{}</a>', url, obj.id, obj.services)
 
     @admin.display(ordering='vehicles')
     def vehicles(self, obj):
         url = reverse('admin:vehicles_vehicle_changelist')
-        return mark_safe(f'<a href="{url}?operator__id__exact={obj.id}">{obj.vehicles}</a>')
+        return format_html('<a href="{}?operator__id__exact={}">{}</a>', url, obj.id, obj.vehicles)
 
     def get_search_results(self, request, queryset, search_term):
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
@@ -248,8 +248,7 @@ class PlaceAdmin(admin.ModelAdmin):
 @admin.register(models.DataSource)
 class DataSourceAdmin(admin.ModelAdmin):
     search_fields = ('name', 'url')
-    list_display = ('name', 'url', 'datetime', 'settings', 'routes', 'services', 'journeys')
-    list_editable = ['datetime']
+    list_display = ('name', 'url', 'sha1', 'datetime', 'settings', 'routes', 'services', 'journeys')
     list_filter = (
         ('route', admin.EmptyFieldListFilter),
         ('service', admin.EmptyFieldListFilter),
@@ -258,17 +257,30 @@ class DataSourceAdmin(admin.ModelAdmin):
     actions = ['delete_routes', 'remove_datetimes']
     show_full_result_count = False
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.annotate(
+                routes=SubqueryCount('route'),
+                services=SubqueryCount('service', filter=Q(current=True)),
+                journeys=SubqueryCount('vehiclejourney'),
+            ).prefetch_related('operatorcode_set')
+        return queryset
+
     def routes(self, obj):
         url = reverse('admin:bustimes_route_changelist')
-        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">routes</a>')
+        return format_html('<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.routes)
+    routes.admin_order_field = 'routes'
 
     def services(self, obj):
         url = reverse('admin:busstops_service_changelist')
-        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">services</a>')
+        return format_html('<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.services)
+    services.admin_order_field = 'services'
 
     def journeys(self, obj):
         url = reverse('admin:vehicles_vehiclejourney_changelist')
-        return mark_safe(f'<a href="{url}?source__id__exact={obj.id}">journeys</a>')
+        return format_html('<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.journeys)
+    journeys.admin_order_field = 'journeys'
 
     def delete_routes(self, request, queryset):
         result = Route.objects.filter(source__in=queryset).delete()
