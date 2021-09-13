@@ -188,6 +188,6 @@ class Command(BaseCommand):
                     if 'gtfs' in version:
                         handle_gtfs(list(operators), version['gtfs'])
 
-                command.source.save(update_fields=['datetime'])
+                command.source.save()
 
         command.debrief()

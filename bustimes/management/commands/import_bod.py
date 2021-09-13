@@ -1,10 +1,11 @@
 """Import timetable data "fresh from the cow"
 """
-import os
 import logging
 import requests
+import hashlib
 import zipfile
 import xml.etree.cElementTree as ET
+from pathlib import Path
 from django.db.models import Q, OuterRef, Exists
 from io import StringIO
 from ciso8601 import parse_datetime
@@ -49,13 +50,15 @@ def get_command():
 
 def handle_file(command, path):
     # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
+    full_path = settings.DATA_DIR / path
+
     try:
-        with zipfile.ZipFile(os.path.join(settings.DATA_DIR, path)) as archive:
+        with zipfile.ZipFile(full_path) as archive:
             for filename in archive.namelist():
                 if filename.endswith('.csv'):
                     continue
                 with archive.open(filename) as open_file:
-                    qualified_filename = os.path.join(path, filename)
+                    qualified_filename = Path(path) / filename
                     try:
                         try:
                             command.handle_file(open_file, qualified_filename)
@@ -69,11 +72,21 @@ def handle_file(command, path):
                             logger.info(filename)
                             logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
-        with open(os.path.join(settings.DATA_DIR, path)) as open_file:
+        with full_path.open() as open_file:
             try:
                 command.handle_file(open_file, path)
             except (AttributeError, DataError) as e:
                 logger.error(e, exc_info=True)
+
+    sha1 = hashlib.sha1()
+    with full_path.open('rb') as open_file:
+        while True:
+            data = open_file.read(65536)
+            if data:
+                sha1.update(open_file.read())
+            else:
+                break
+    command.source.sha1 = sha1.hexdigest()
 
 
 def get_bus_open_data_paramses(api_key, operator):
@@ -143,7 +156,7 @@ def bus_open_data(api_key, operator):
         for dataset in operator_datasets:
             filename = dataset['name']
             url = dataset['url']
-            path = os.path.join(settings.DATA_DIR, filename)
+            path = settings.DATA_DIR / filename
 
             if noc == 'FBOS':
                 # only certain First operators
@@ -169,7 +182,7 @@ def bus_open_data(api_key, operator):
                 download(path, url)
                 handle_file(command, filename)
 
-                command.source.save(update_fields=['name', 'datetime'])
+                command.source.save()
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info('  ', operator_ids)
@@ -199,7 +212,7 @@ def stagecoach(operator=None):
         # if noc not in ('scek', 'sccm'):  # , 'sblb', 'sccu', 'scfi', 'schi', 'scem', 'sswl'):
         filename = filename.replace('_2_4', '')
         url = f'https://opendata.stagecoachbus.com/{filename}'
-        path = os.path.join(settings.DATA_DIR, filename)
+        path = settings.DATA_DIR / filename
 
         command.source, created = DataSource.objects.get_or_create({'url': url}, name=name)
         if not created:
@@ -233,7 +246,7 @@ def stagecoach(operator=None):
             command.finish_services()
 
             command.source.datetime = last_modified
-            command.source.save(update_fields=['datetime', 'url'])
+            command.source.save()
 
             logger.info('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
             operators = get_operator_ids(command.source)
