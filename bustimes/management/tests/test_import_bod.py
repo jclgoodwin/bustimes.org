@@ -191,7 +191,6 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(VehicleType.objects.count(), 3)
         self.assertEqual(Garage.objects.count(), 4)
         self.assertEqual(Block.objects.count(), 12)
-        self.assertEqual(route.source.sha1, 'fa010b5ee280146476e0a817200c286a22e944e4')
 
         with self.assertNumQueries(3):
             response = self.client.get(f'/services/{route.service_id}.json')

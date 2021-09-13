@@ -28,13 +28,14 @@ def get_routes(routes, when):
     sources = set(route.source_id for route in routes)
 
     # remove duplicates
-    if len(sources) > 1 and all(route.source.name.startswith('First Bus') for route in routes):
-        routes_by_service_code = {}
-        for route in routes:
-            routes_by_service_code[route.service_code] = route
-        return list(routes_by_service_code.values())
-
-    if len(sources) == 1:
+    if len(sources) > 1:
+        sources_by_hash = {route.source.hash: route.source_id for route in routes if route.source.hash}
+        # if multiple sources have the same hash, we're only interested in one
+        routes = [
+            route for route in routes
+            if not route.source.hash or route.source_id == sources_by_hash[route.source.hash]
+        ]
+    elif len(sources) == 1:
         prefixes = set(route.code.split('.zip')[0] for route in routes if '.zip' in route.code)
         # use latest passenger zipfile filename
         if len(prefixes) > 1:
