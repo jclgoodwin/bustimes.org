@@ -12,6 +12,7 @@ from django.utils.html import format_html
 from sql_util.utils import SubqueryCount
 
 from bustimes.models import Route
+from vehicles.models import VehicleJourney
 from . import models
 
 
@@ -263,7 +264,7 @@ class DataSourceAdmin(admin.ModelAdmin):
             return queryset.annotate(
                 routes=SubqueryCount('route'),
                 services=SubqueryCount('service', filter=Q(current=True)),
-                journeys=SubqueryCount('vehiclejourney'),
+                journeys=Exists(VehicleJourney.objects.filter(source=OuterRef('id'))),
             ).prefetch_related('operatorcode_set')
         return queryset
 
