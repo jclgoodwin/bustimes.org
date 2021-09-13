@@ -245,6 +245,7 @@ TNDS_DIR = DATA_DIR / 'TNDS'
 AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')
 AKISMET_SITE_URL = 'https://bustimes.org'
 
+# see bustimes.management.commands.import_passenger
 PASSENGER_OPERATORS = [
     ('Go Cornwall Bus', 'https://www.gocornwallbus.co.uk/open-data', 'SW', {
         'TFCN': 'TFCN',
@@ -361,6 +362,8 @@ PASSENGER_OPERATORS = [
         'NWPT': 'NWPT',
     }),
 ]
+
+# see bustimes.management.commands.import_bod
 BOD_OPERATORS = [
     ('FBOS', None, {
         'FYOR': 'FYOR',
@@ -596,6 +599,19 @@ BOD_OPERATORS = [
     ('WHIP', 'EA', {}, False),
     ('SIMO', 'EA', {}, False),
     ('BEES', 'EA', {}, False),
+    ('GOGO', 'NW', {}, False),
+    ('RBTS', 'EM', {}, False),
+    ('DELA', 'EM', {}, False),
+    ('RLNE', 'SE', {}, False),
+    ('HATT', 'NW', {}, False),
+    ('SULV', 'SE', {}, False),
+    ('WBSV', 'SE', {}, False),
+    ('REDE', 'SE', {}, False),
+    ('GPLM', 'SE', {}, False),
+    ('CLNB', 'SE', {}, False),
+    ('RRTR', 'SE', {}, False),
+    ('RCHC', 'SE', {}, False),
+    ('FCHS', 'NW', {}, False),
     ('AMBS', 'EA', {
         'AMBS': 'AMBS',
         'SEMM': 'SEMM',
@@ -606,6 +622,8 @@ BOD_OPERATORS = [
         'RR1': 'RDRT'
     }, False),
 ]
+
+# see bustimes.management.commands.import_bod
 STAGECOACH_OPERATORS = [
     ('S',  'sblb', 'Stagecoach Bluebird',      ['SBLB']),
     ('S',  'scfi', 'Stagecoach East Scotland', ['SCFI', 'SCPE', 'SSPH', 'STSY', 'SSTY']),
@@ -634,18 +652,5 @@ STAGECOACH_OPERATORS = [
 # rather than via the Bus Open Data site
 TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
-    ('NW', ['GOGO'], 'Go Goodwins'),
-    ('EM', ['RBTS'], 'Roberts Travel'),
-    ('SE', ['Redline_Buses_Ltd', 'RLNE']),
-    ('NW', ['HATT'], 'Hattons'),
-    ('SE', ['Sullivan_Buses', 'SULV']),
-    ('SE', ['WBSV'], 'White Bus'),
-    ('SE', ['REDE'], 'Red Eagle'),
-    ('SE', ['GPLM'], 'Grant Palmer'),
-    ('SE', ['CLNB'], 'Carlone Buses'),
     ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
-    ('EM', ['DELA'], 'Delaine Buses'),
-    ('SE', ['RCHC'], 'Richmonds Coaches'),
-    ('SE', ['RRTR'], 'Red Rose Travel'),
-    ('NW', ['Finches', 'FCHS']),
 ]

@@ -66,7 +66,7 @@ def handle_file(command, path):
                             command.handle_file(fake_file, qualified_filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         if filename.endswith('.xml'):
-                            print(filename)
+                            logger.info(filename)
                             logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
         with open(os.path.join(settings.DATA_DIR, path)) as open_file:
@@ -158,7 +158,7 @@ def bus_open_data(api_key, operator):
             sources.append(command.source)
 
             if operator or dataset['source'].datetime != dataset['modified']:
-                print(filename)
+                logger.info(filename)
                 command.service_ids = set()
                 command.route_ids = set()
                 command.garages = {}
@@ -172,8 +172,8 @@ def bus_open_data(api_key, operator):
                 command.source.save(update_fields=['name', 'datetime'])
 
                 operator_ids = get_operator_ids(command.source)
-                print('  ', operator_ids)
-                print('  ', [o for o in operator_ids if o not in operators])
+                logger.info('  ', operator_ids)
+                logger.info('  ', [o for o in operator_ids if o not in operators])
 
                 command.mark_old_services_as_not_current()
 
@@ -182,6 +182,8 @@ def bus_open_data(api_key, operator):
         # delete routes from any sources that have been made inactive
         if Service.objects.filter(source__in=sources, operator__in=operators, current=True).exists():
             clean_up(operators, sources, incomplete)
+        else:
+            logger.warning(f'{operators} has no current data')
 
     command.debrief()
 
@@ -209,7 +211,7 @@ def ticketer(operator=None):
         modified, last_modified = download_if_changed(path, url)
 
         if modified or operator == noc:
-            print(url, last_modified)
+            logger.info(url, last_modified)
 
             command.region_id = region_id
             command.service_ids = set()
@@ -230,8 +232,8 @@ def ticketer(operator=None):
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
 
-            print('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
-            print('  ', get_operator_ids(command.source))
+            logger.info('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            logger.info('  ', get_operator_ids(command.source))
 
     command.debrief()
 
@@ -259,7 +261,7 @@ def stagecoach(operator=None):
             modified = False
 
         if modified or operator:
-            print(url, last_modified)
+            logger.info(url, last_modified)
 
             command.region_id = region_id
             command.service_ids = set()
@@ -283,10 +285,10 @@ def stagecoach(operator=None):
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime', 'url'])
 
-            print('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            logger.info('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
             operators = get_operator_ids(command.source)
-            print('  ', operators)
-            print('  ', [o for o in operators if o not in nocs])
+            logger.info('  ', operators)
+            logger.info('  ', [o for o in operators if o not in nocs])
 
     command.debrief()
 
