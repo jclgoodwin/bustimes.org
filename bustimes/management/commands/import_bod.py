@@ -251,7 +251,7 @@ def stagecoach(operator=None):
 
             logger.info("  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}")
             operators = get_operator_ids(command.source)
-            logger.info('  {operators}')
+            logger.info(f'  {operators}')
             logger.info(f'  {[o for o in operators if o not in nocs]}')
 
     command.debrief()
