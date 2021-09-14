@@ -7,9 +7,10 @@ import datetime
 from unittest.mock import patch
 from django.test import TestCase
 from django.shortcuts import render
+
 from busstops.models import StopPoint, Service, Region, Operator, StopUsage, AdminArea, DataSource, SIRISource
 from bustimes.models import Route, Trip, Calendar, StopTime
-from vehicles.models import VehicleJourney
+from vehicles.models import Vehicle, VehicleJourney
 from vehicles.tasks import log_vehicle_journey
 from . import live
 
@@ -267,6 +268,11 @@ class LiveDeparturesTest(TestCase):
             log_vehicle_journey(*args[:-1], trip_url)
 
         with self.assertNumQueries(3):
+            log_vehicle_journey(*args[:-1], trip_url)
+
+        Vehicle.objects.update(latest_journey=None)
+
+        with self.assertNumQueries(4):
             log_vehicle_journey(*args[:-1], trip_url)
 
         journey = VehicleJourney.objects.get()

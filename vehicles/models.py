@@ -8,7 +8,7 @@ from django.contrib.gis.db import models
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.db.models.functions import TruncDate
+from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
@@ -163,8 +163,8 @@ class VehicleFeature(models.Model):
 class Vehicle(models.Model):
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
-    fleet_code = models.CharField(max_length=24, blank=True, db_index=True)
-    reg = models.CharField(max_length=24, blank=True, db_index=True)
+    fleet_code = models.CharField(max_length=24, blank=True)
+    reg = models.CharField(max_length=24, blank=True)
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
@@ -200,6 +200,10 @@ class Vehicle(models.Model):
 
     class Meta:
         unique_together = ('code', 'operator')
+        indexes = [
+            models.Index(Upper('fleet_code'), name='fleet_code'),
+            models.Index(Upper('reg'), name='reg'),
+        ]
 
     def __str__(self):
         fleet_code = self.fleet_code or self.fleet_number

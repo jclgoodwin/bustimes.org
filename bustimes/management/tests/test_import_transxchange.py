@@ -148,7 +148,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(service), '13B - Turquoise Line - Norwich - Wymondham - Attleborough')
         self.assertEqual(service.line_name, '13B')
         self.assertEqual(service.line_brand, 'Turquoise Line')
-        self.assertTrue(service.show_timetable)
         self.assertTrue(service.current)
         # self.assertEqual(service.outbound_description, 'Norwich - Wymondham - Attleborough')
         # self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
@@ -756,7 +755,6 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get(service_code='ABBN017')
 
         self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
-        self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(
             list(service.get_traveline_links()),
@@ -785,8 +783,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, 'Sorry, no journeys found for Saturday 18 April 2026')
 
         # Test the fallback version without a timetable (just a list of stops)
-        service.show_timetable = False
-        service.save()
+        service.timetable_wrong = True
+        service.save(update_fields=['timetable_wrong'])
         res = self.client.get(service.get_absolute_url())
         self.assertContains(res, 'Outbound')
         self.assertContains(res, """
@@ -819,7 +817,6 @@ class ImportTransXChangeTest(TestCase):
         service = res.context_data['object']
 
         self.assertEqual(str(service), 'M11A - Belgravia - Liverpool')
-        self.assertTrue(service.show_timetable)
         self.assertEqual(service.operator.first(), self.megabus)
         self.assertEqual(list(service.get_traveline_links()), [])
 

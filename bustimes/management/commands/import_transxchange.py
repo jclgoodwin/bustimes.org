@@ -818,7 +818,6 @@ class Command(BaseCommand):
             service.date = today
             service.current = True
             service.source = self.source
-            service.show_timetable = True
 
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 

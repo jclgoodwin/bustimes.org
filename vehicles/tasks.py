@@ -1,6 +1,9 @@
 from ciso8601 import parse_datetime
 from celery import shared_task
+
 from django.db.models import Q
+from django.db import IntegrityError
+
 from busstops.models import DataSource, Operator
 from .models import Vehicle, VehicleJourney
 
@@ -97,10 +100,13 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
     if journey_ref and journeys.filter(route_name=route_name, code=journey_ref, datetime__date=time.date()).exists():
         return
 
-    journey = VehicleJourney.objects.create(
-        vehicle=vehicle, service_id=service, route_name=route_name, data=data, code=journey_ref,
-        datetime=time, source=data_source, destination=destination, trip_id=trip_id
-    )
+    try:
+        journey = VehicleJourney.objects.create(
+            vehicle=vehicle, service_id=service, route_name=route_name, data=data, code=journey_ref,
+            datetime=time, source=data_source, destination=destination, trip_id=trip_id
+        )
+    except IntegrityError:
+        return
 
     if not vehicle.latest_journey or vehicle.latest_journey.datetime < journey.datetime:
         vehicle.latest_journey = journey

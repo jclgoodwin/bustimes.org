@@ -7,15 +7,17 @@ from .serializers import VehicleSerializer, LiverySerializer, VehicleTypeSeriali
 
 class VehicleFilter(FilterSet):
     search = CharFilter(method='search_filter', label='Search')
+    fleet_code = CharFilter(lookup_expr='iexact')
+    reg = CharFilter(lookup_expr='iexact')
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(
-            Q(reg=value.upper()) | Q(fleet_code__iexact=value)
+            Q(reg__iexact=value) | Q(fleet_code__iexact=value)
         )
 
     class Meta:
         model = Vehicle
-        fields = ['id', 'operator', 'vehicle_type', 'livery', 'withdrawn', 'reg', 'fleet_code']
+        fields = ['id', 'operator', 'vehicle_type', 'livery', 'withdrawn']
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):

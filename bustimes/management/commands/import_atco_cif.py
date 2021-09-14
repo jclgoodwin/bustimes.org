@@ -191,7 +191,6 @@ class Command(BaseCommand):
                     'description': description,
                     'date': self.source.datetime.date(),
                     'current': True,
-                    'show_timetable': True,
                     'source': self.source,
                     'region_id': 'NI'
                 }

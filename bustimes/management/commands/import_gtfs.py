@@ -118,7 +118,6 @@ class Command(BaseCommand):
         service.date = self.source.datetime.strftime('%Y-%m-%d')
         service.mode = MODES.get(int(line['route_type']), '')
         service.current = True
-        service.show_timetable = True
         service.service_code = line['route_id']
         service.save()
 

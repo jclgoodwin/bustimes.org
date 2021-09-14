@@ -15,7 +15,7 @@ class SiriSXTest(TestCase):
     def setUpTestData(cls):
         region = Region.objects.create(id='NW', name='North West')
         operator = Operator.objects.create(region=region, id='HATT', name='Hattons of Huyton')
-        service = Service.objects.create(line_name='156', service_code='156', date='2020-01-01', current=True)
+        service = Service.objects.create(line_name='156', service_code='156', date='2020-01-01', current=True, timetable_wrong=True)
         service.operator.add(operator)
         StopPoint.objects.bulk_create([
             StopPoint(atco_code='1800EB00151', active=True),

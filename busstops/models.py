@@ -14,6 +14,7 @@ from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db.models import Q, OuterRef, Exists
+from django.db.models.functions import Upper
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.html import format_html, escape
@@ -293,7 +294,7 @@ class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
     atco_code = models.CharField(max_length=16, primary_key=True)
-    naptan_code = models.CharField(max_length=16, db_index=True, blank=True)
+    naptan_code = models.CharField(max_length=16, blank=True)
 
     common_name = models.CharField(max_length=48)
     landmark = models.CharField(max_length=48, blank=True)
@@ -363,6 +364,9 @@ class StopPoint(models.Model):
 
     class Meta:
         ordering = ('common_name', 'atco_code')
+        indexes = [
+            models.Index(Upper('naptan_code'), name='naptan_code'),
+        ]
 
     def __str__(self):
         name = self.get_unqualified_name()
@@ -610,7 +614,6 @@ class Service(models.Model):
                                    through=StopUsage)
     date = models.DateField(null=True, blank=True)
     current = models.BooleanField(default=True, db_index=True)
-    show_timetable = models.BooleanField(default=False)
     timetable_wrong = models.BooleanField(default=False)
     geometry = models.MultiLineStringField(null=True, editable=False)
 
@@ -629,7 +632,8 @@ class Service(models.Model):
     class Meta:
         ordering = ['id']
         indexes = [
-            GinIndex(fields=['search_vector'])
+            models.Index(Upper('line_name'), name='line_name'),
+            GinIndex(fields=['search_vector']),
         ]
 
     def __str__(self):
@@ -657,7 +661,6 @@ class Service(models.Model):
                 'outbound_description': self.outbound_description,
                 'inbound_description': self.inbound_description,
                 'current': self.current,
-                'show_timetable': self.show_timetable,
             }
         })
 

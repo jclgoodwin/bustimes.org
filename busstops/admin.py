@@ -147,8 +147,8 @@ class ToServiceLinkInline(FromServiceLinkInline):
 @admin.register(models.Service)
 class ServiceAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'service_code', 'mode', 'region_id',
-                    'current', 'show_timetable', 'timetable_wrong', 'colour', 'line_brand')
-    list_filter = ('current', 'show_timetable', 'timetable_wrong', 'mode', 'region',
+                    'current', 'timetable_wrong', 'colour', 'line_brand')
+    list_filter = ('current', 'timetable_wrong', 'mode', 'region',
                    ('source', admin.RelatedOnlyFieldListFilter),
                    ('operator', admin.RelatedOnlyFieldListFilter))
     search_fields = ('service_code', 'line_name', 'line_brand', 'description')

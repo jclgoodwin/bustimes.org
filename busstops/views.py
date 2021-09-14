@@ -595,7 +595,7 @@ class ServiceDetailView(DetailView):
 
         # timetable
 
-        if self.object.show_timetable and not self.object.timetable_wrong:
+        if not self.object.timetable_wrong:
             date = self.request.GET.get('date')
             if date:
                 try:

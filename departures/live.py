@@ -275,7 +275,7 @@ class TimetableDepartures(Departures):
         }
 
     def get_times(self, date, time=None):
-        times = get_stop_times(date, time, self.stop.atco_code, self.services, self.routes)
+        times = get_stop_times(date, time, self.stop.atco_code, self.routes)
         times = times.select_related('trip__route__service', 'trip__destination__locality')
         times = times.defer('trip__route__service__geometry', 'trip__route__service__search_vector',
                             'trip__destination__locality__latlong', 'trip__destination__locality__search_vector')
@@ -421,12 +421,10 @@ def blend(departures, live_rows, stop=None):
         departures.sort(key=get_departure_order)
 
 
-def get_stop_times(date, time, stop, services, services_routes):
+def get_stop_times(date: datetime.datetime, time: datetime.timedelta, stop, services_routes: dict):
     times = StopTime.objects.filter(pick_up=True, stop_id=stop)
     if time:
         times = times.filter(departure__gte=time)
-    services = [service for service in services if not service.timetable_wrong]
-    services = {}
     routes = []
     for service_routes in services_routes.values():
         routes += get_routes(service_routes, date)
@@ -439,7 +437,7 @@ def get_departures(stop, services, when):
     """
 
     # Transport for London
-    if not when and any(service.service_code[:4] == 'tfl_' for service in services):
+    if not when and any(s.service_code[:4] == 'tfl_' for s in services):
         departures = TflDepartures(stop, services)
         return ({
             'departures': departures.get_departures(),
@@ -449,7 +447,9 @@ def get_departures(stop, services, when):
     now = timezone.localtime()
 
     routes = {}
-    for route in Route.objects.filter(service__in=services).select_related('source'):
+    for route in Route.objects.filter(
+        service__in=[s for s in services if not s.timetable_wrong]
+    ).select_related('source'):
         if route.service_id in routes:
             routes[route.service_id].append(route)
         else:
@@ -466,7 +466,6 @@ def get_departures(stop, services, when):
         one_hour_ago.date(),
         datetime.timedelta(hours=one_hour_ago.hour, minutes=one_hour_ago.minute),
         stop.atco_code,
-        services,
         routes
     ).exists()):
 
