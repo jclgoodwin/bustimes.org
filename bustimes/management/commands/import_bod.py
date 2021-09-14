@@ -185,8 +185,8 @@ def bus_open_data(api_key, operator):
                 command.source.save()
 
                 operator_ids = get_operator_ids(command.source)
-                logger.info('  ', operator_ids)
-                logger.info('  ', [o for o in operator_ids if o not in operators])
+                logger.info(f'  {operator_ids}')
+                logger.info(f'  {[o for o in operator_ids if o not in operators]}')
 
                 command.mark_old_services_as_not_current()
 
@@ -224,7 +224,7 @@ def stagecoach(operator=None):
             modified = False
 
         if modified or operator:
-            logger.info(url, last_modified)
+            logger.info(f'{url} {last_modified}')
 
             command.region_id = region_id
             command.service_ids = set()
