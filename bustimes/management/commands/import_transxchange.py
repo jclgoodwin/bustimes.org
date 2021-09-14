@@ -181,7 +181,7 @@ class Command(BaseCommand):
         Log the names of any undefined public holiday names, and operators that couldn't be found
         """
         for operator in self.missing_operators:
-            logger.warning(operator)
+            logger.warning(str(operator))
 
     def set_region(self, archive_name):
         """
