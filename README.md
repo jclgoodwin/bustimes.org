@@ -34,7 +34,6 @@ These definitely need to be available:
 And for certain features to work properly, these too:
 
 - Redis 6.2
-- Memcached 
 
 Then some environment variables need to be set.
 Many of them control settings in [buses/settings.py](buses/settings.py).

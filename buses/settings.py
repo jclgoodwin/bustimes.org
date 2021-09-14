@@ -613,6 +613,8 @@ BOD_OPERATORS = [
         'CHAM': 'CHAM',
     }, False),
 
+    ('DRMC', 'WM', {}, True),
+
     ('AMBS', 'EA', {
         'AMBS': 'AMBS',
         'SEMM': 'SEMM',
