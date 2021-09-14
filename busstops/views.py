@@ -872,9 +872,9 @@ def search(request):
             query_text = query_text.replace(' ', '')
             if len(query_text) >= 5:
                 if query_text.isdigit():
-                    context['vehicles'] = vehicles.filter(fleet_code=query_text)
+                    context['vehicles'] = vehicles.filter(fleet_code__iexact=query_text)
                 elif not query_text.isalpha():
-                    context['vehicles'] = vehicles.filter(reg=query_text.upper())
+                    context['vehicles'] = vehicles.filter(reg__iexact=query_text)
 
     return render(request, 'search.html', context)
 
