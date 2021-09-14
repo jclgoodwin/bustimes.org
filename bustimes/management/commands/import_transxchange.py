@@ -696,7 +696,7 @@ class Command(BaseCommand):
     def is_tnds(self):
         return self.source.url.startswith('ftp://ftp.tnds.basemap.co.uk/')
 
-    def should_defer_to_other_source(self, operators, line_name):
+    def should_defer_to_other_source(self, operators: list, line_name: str):
         if self.source.name == 'L':
             if operators and operators[0].id == 'NXHH':
                 return True
@@ -706,7 +706,7 @@ class Command(BaseCommand):
             if services.filter(operator__in=operators).exists():
                 return True
 
-    def handle_service(self, filename, transxchange, txc_service, today, stops):
+    def handle_service(self, filename: str, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end and txc_service.operating_period.end < txc_service.operating_period.start:
             return
 
@@ -994,7 +994,7 @@ class Command(BaseCommand):
                         ServiceLink.objects.create(**kwargs, how='also')
 
     @staticmethod
-    def do_stops(transxchange_stops):
+    def do_stops(transxchange_stops: dict) -> dict:
         stops = StopPoint.objects.in_bulk(transxchange_stops.keys())
         stops_to_create = {}
         for atco_code, stop in transxchange_stops.items():
@@ -1010,7 +1010,7 @@ class Command(BaseCommand):
 
         return stops
 
-    def handle_file(self, open_file, filename):
+    def handle_file(self, open_file, filename: str):
         transxchange = TransXChange(open_file)
 
         self.blocks = {}

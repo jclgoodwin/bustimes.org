@@ -61,12 +61,12 @@ def handle_file(command, path):
                     qualified_filename = Path(path) / filename
                     try:
                         try:
-                            command.handle_file(open_file, qualified_filename)
+                            command.handle_file(open_file, str(qualified_filename))
                         except ET.ParseError:
                             open_file.seek(0)
                             content = open_file.read().decode('utf-16')
                             fake_file = StringIO(content)
-                            command.handle_file(fake_file, qualified_filename)
+                            command.handle_file(fake_file, str(qualified_filename))
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         if filename.endswith('.xml'):
                             logger.info(filename)
@@ -74,7 +74,7 @@ def handle_file(command, path):
     except zipfile.BadZipFile:
         with full_path.open() as open_file:
             try:
-                command.handle_file(open_file, path)
+                command.handle_file(open_file, str(path))
             except (AttributeError, DataError) as e:
                 logger.error(e, exc_info=True)
 
