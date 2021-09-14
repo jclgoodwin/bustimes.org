@@ -387,7 +387,7 @@ class Command(BaseCommand):
             if date_range.end - date_range.start > datetime.timedelta(days=5):
                 # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation
                 # (school term dates etc)
-                print(date_range)
+                logger.warning(date_range)
                 calendar_date.special = False
             calendar_dates.append(calendar_date)
 
@@ -507,7 +507,7 @@ class Command(BaseCommand):
             date.calendar = calendar
             if date.end_date < date.start_date:
                 weird = True
-                print(date)
+                logger.warning(date)
         if weird:
             calendar_dates = [date for date in calendar_dates if date.end_date >= date.start_date]
         CalendarDate.objects.bulk_create(calendar_dates)
@@ -586,7 +586,7 @@ class Command(BaseCommand):
                     elif timing_status == 'principleTimingPoint' or timing_status == 'principalTimingPoint':
                         timing_status = 'PTP'
                     else:
-                        print(timing_status)
+                        logger.warning(timing_status)
 
                 stop_time = StopTime(
                     trip=trip,
@@ -728,14 +728,14 @@ class Command(BaseCommand):
                     return
         elif self.source.name in ('Oxford Bus Company', 'Carousel'):
             if operators and operators[0].id not in self.operators.values():
-                print(operators)
+                logger.info(f'skipping {txc_service.service_code} ({operators})')
                 return
         elif self.source.name.startswith('Arriva') and 'tfl_' in filename:
-            print(filename)
+            logger.info(f'skipping {filename} {txc_service.service_code} (Arriva London)')
             return
         elif self.source.name.startswith('Stagecoach'):
             if operators and operators[0].parent != 'Stagecoach':
-                print(operators)
+                logger.info(f'skipping {txc_service.service_code} ({operators})')
                 return
 
         linked_services = []

@@ -47,6 +47,8 @@ class ImportTransXChangeTest(TestCase):
         nocs = DataSource.objects.create(name='National Operator Codes')
         OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
         OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
+        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='SDVN')
+        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='CBNL')
 
         StopPoint.objects.bulk_create(
             StopPoint(
@@ -290,15 +292,22 @@ class ImportTransXChangeTest(TestCase):
     def test_delaine_101(self):
         """Test timetable with some batshit year 2099 dates"""
 
-        self.handle_files('EA.zip', ['lincs_DELA_101_13101_.xml'])
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            self.handle_files('EA.zip', ['lincs_DELA_101_13101_.xml'])
+        self.assertEqual(
+            cm.output,
+            ['WARNING:bustimes.management.commands.import_transxchange:2021-04-19 to 2021-05-28',
+             'WARNING:bustimes.management.commands.import_transxchange:2021-06-07 to 2021-07-21']
+        )
 
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
 
-        self.assertEqual(20, len(timetable.date_options))
-        self.assertEqual(14, CalendarDate.objects.filter(operation=True, special=True).count())
+        self.assertEqual(14, len(timetable.date_options))
+        self.assertEqual(2, CalendarDate.objects.filter(operation=True, special=True).count())
         self.assertEqual(2, CalendarDate.objects.filter(operation=True, special=False).count())
+        self.assertEqual(19, CalendarDate.objects.filter(operation=False).count())
 
     @time_machine.travel('2021-04-03')
     def test_other_public_holiday(self):
@@ -590,7 +599,14 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel('2021-06-28')
     def test_difficult_layout(self):
-        call_command('import_transxchange', FIXTURES_DIR / 'square_COMT_100_06100B.xml')
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            call_command('import_transxchange', FIXTURES_DIR / 'square_COMT_100_06100B.xml')
+
+        self.assertEqual(
+            cm.output,
+            ["WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'COMT', "
+             "'OperatorCode': 'COMT', 'OperatorShortName': 'Compass Travel'}"]
+        )
 
         response = self.client.get(Service.objects.get().get_absolute_url())
         timetable = response.context_data['timetable']
@@ -612,7 +628,15 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel('2021-06-28')
     def test_different_notes_in_same_row(self):
-        call_command('import_transxchange', FIXTURES_DIR / 'twm_3-74-_-y11-1.xml')
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            call_command('import_transxchange', FIXTURES_DIR / 'twm_3-74-_-y11-1.xml')
+
+        self.assertEqual(
+            cm.output,
+            ["WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'YEOC', "
+             "'OperatorCode': 'YEC', 'OperatorShortName': 'Yeomans Travel', 'OperatorNameOnLicence': 'Yeomans Travel', "
+             "'TradingName': 'Yeomans Travel'}"]
+        )
 
         response = self.client.get(Service.objects.get().get_absolute_url())
         timetable = response.context_data['timetable']

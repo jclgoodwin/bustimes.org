@@ -83,10 +83,11 @@ def handle_file(command, path):
         while True:
             data = open_file.read(65536)
             if data:
-                sha1.update(open_file.read())
+                sha1.update(data)
             else:
                 break
     command.source.sha1 = sha1.hexdigest()
+    print(command.source.sha1)
 
 
 def get_bus_open_data_paramses(api_key, operator):
