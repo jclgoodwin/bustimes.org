@@ -552,7 +552,7 @@ class Command(BaseCommand):
                 sequence=journey.sequencenumber
             )
 
-            if journey.block:
+            if journey.block and journey.block.code:
                 if journey.block.code not in self.blocks:
                     trip.block = Block(
                         code=journey.block.code,
@@ -563,7 +563,7 @@ class Command(BaseCommand):
                 else:
                     trip.block = self.blocks[journey.block.code]
 
-            if journey.vehicle_type:
+            if journey.vehicle_type and journey.vehicle_type.code:
                 if journey.vehicle_type.code not in self.vehicle_types:
                     self.vehicle_types[journey.vehicle_type.code], _ = VehicleType.objects.get_or_create(
                         code=journey.vehicle_type.code,
