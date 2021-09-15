@@ -218,22 +218,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, 'Norfolk')
         self.assertContains(response, 'Melton Constable, opposite Bus Shelter')
 
-    def test_stop_json(self):
-        response = self.client.get('/stops/2900M114.json')
-        data = response.json()
-        self.assertTrue(data['active'])
-        self.assertEqual(data['admin_area'], 91)
-        self.assertEqual(data['atco_code'], '2900M114')
-        self.assertEqual(data['latlong'], [52.8566019427, 1.0331935468])
-        self.assertIsNone(data['heading'])
-        self.assertIsNone(data['stop_area'])
-
-    def test_stop_gtfs(self):
-        response = self.client.get('/stops/2900M114.txt')
-        self.assertEqual("""stop_id,stop_name,stop_lat,stop_lon
-2900M114,Melton Constable, opp Bus Shelter,1.0331935468,52.8566019427
-""", response.content.decode())
-
     def test_inactive_stop(self):
         response = self.client.get('/stops/2900M115')
         self.assertContains(response, 'Sorry, it looks like no services currently stop at', status_code=404)

@@ -216,9 +216,6 @@ class LiveDeparturesTest(TestCase):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
                 with self.assertNumQueries(10):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
-            with vcr.use_cassette('data/vcr/worcester.yaml'):
-                with self.assertNumQueries(3):
-                    xml_response = self.client.get(self.worcester_stop.get_absolute_url() + '.xml')
 
         trip_url = self.trip.get_absolute_url()
 
@@ -260,8 +257,6 @@ class LiveDeparturesTest(TestCase):
         # test that the task is called
         mocked_log_vehicle_journey.assert_called_with(*args)
         self.assertEqual(0, VehicleJourney.objects.count())
-
-        self.assertEqual(xml_response['Content-Type'], 'text/xml')
 
         # test the actual task
         with self.assertNumQueries(13):

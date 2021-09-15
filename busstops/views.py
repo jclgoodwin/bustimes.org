@@ -473,48 +473,6 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         return context
 
 
-def stop_gtfs(_, pk):
-    stop = get_object_or_404(StopPoint, atco_code=pk)
-    content = 'stop_id,stop_name,stop_lat,stop_lon\n{},{},{},{}\n'.format(
-        stop.atco_code, stop.get_qualified_name(), stop.latlong.y, stop.latlong.x)
-    return HttpResponse(content, content_type='text/plain')
-
-
-def stop_xml(_, pk):
-    stop = get_object_or_404(StopPoint, atco_code=pk)
-    source = stop.admin_area.sirisource_set.first()
-    if source:
-        departures = live.SiriSmDepartures(source, stop, ())
-        return HttpResponse(departures.get_response().text, content_type='text/xml')
-    raise Http404()
-
-
-def stop_json(_, pk):
-    stop = get_object_or_404(StopPoint, atco_code=pk)
-    return JsonResponse({
-        'atco_code': stop.atco_code,
-        'naptan_code': stop.naptan_code,
-        'common_name': stop.common_name,
-        'landmark': stop.landmark,
-        'street': stop.street,
-        'crossing': stop.crossing,
-        'indicator': stop.indicator,
-        'latlong': stop.latlong.coords,
-        'stop_area': stop.stop_area_id,
-        'locality': stop.locality_id,
-        'suburb': stop.suburb,
-        'town': stop.town,
-        'locality_centre': stop.locality_centre,
-        'heading': stop.heading,
-        'bearing': stop.bearing,
-        'stop_type': stop.stop_type,
-        'bus_stop_type': stop.bus_stop_type,
-        'timing_status': stop.timing_status,
-        'admin_area': stop.admin_area_id,
-        'active': stop.active,
-    }, safe=False)
-
-
 class OperatorDetailView(DetailView):
     "An operator and the services it operates"
 
