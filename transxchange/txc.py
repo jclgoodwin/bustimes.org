@@ -51,7 +51,7 @@ class RouteLink:
         if not locations:
             locations = element.findall('Track/Mapping/Location')
         locations = (
-            GEOSGeometry(f"POINT({location.findtext('Longitude')} {location.findtext('Latitude')}")
+            GEOSGeometry(f"POINT({location.findtext('Longitude')} {location.findtext('Latitude')})")
             for location in locations
         )
         self.track = LineString(*locations)
