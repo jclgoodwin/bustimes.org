@@ -10,7 +10,7 @@ from django.utils.dateparse import parse_duration
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Q
-from django.contrib.gis.geos import Point, LineString, MultiLineString
+from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
 from ...timetables import get_stop_usages
@@ -81,7 +81,7 @@ class Command(BaseCommand):
             if stop_id[0] in '78' and len(stop_id) <= 16:
                 stops[stop_id] = StopPoint(
                     atco_code=stop_id,
-                    latlong=Point(float(line['stop_lon']), float(line['stop_lat'])),
+                    latlong=GEOSGeometry(f"POINT({line['stop_lon']} {line['stop_lat']})"),
                     common_name=line['stop_name'][:48],
                     locality_centre=False,
                     active=True
@@ -160,7 +160,7 @@ class Command(BaseCommand):
                 if shape_id not in self.shapes:
                     self.shapes[shape_id] = []
                 self.shapes[shape_id].append(
-                    Point(float(line['shape_pt_lon']), float(line['shape_pt_lat']))
+                    GEOSGeometry(f"POINT({line['shape_pt_lon']} {line['shape_pt_lat']})")
                 )
 
             for line in read_file(archive, 'agency.txt'):

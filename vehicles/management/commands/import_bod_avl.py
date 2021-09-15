@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from datetime import timedelta
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q, Exists, OuterRef
 from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
 from bustimes.models import Trip
@@ -446,7 +446,7 @@ class Command(ImportLiveVehiclesCommand):
     def create_vehicle_location(item):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
         location = monitored_vehicle_journey['VehicleLocation']
-        latlong = Point(float(location['Longitude']), float(location['Latitude']))
+        latlong = GEOSGeometry(f"POINT({location['Longitude']} {location['Latitude']})")
         bearing = monitored_vehicle_journey.get('Bearing')
         if bearing:
             # Assume '0' means None. There's only a 1/360 chance the bus is actually facing exactly north

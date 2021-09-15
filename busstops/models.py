@@ -360,8 +360,6 @@ class StopPoint(models.Model):
     admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(db_index=True)
 
-    osm = models.JSONField(null=True, blank=True)
-
     class Meta:
         ordering = ('common_name', 'atco_code')
         indexes = [

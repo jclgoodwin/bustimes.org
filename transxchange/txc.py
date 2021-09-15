@@ -2,7 +2,7 @@ import xml.etree.cElementTree as ET
 import calendar
 import datetime
 import logging
-from django.contrib.gis.geos import Point, LineString
+from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.utils.dateparse import parse_duration
 from chardet.universaldetector import UniversalDetector
 from titlecase import titlecase
@@ -50,10 +50,10 @@ class RouteLink:
         locations = element.findall('Track/Mapping/Location/Translation')
         if not locations:
             locations = element.findall('Track/Mapping/Location')
-        locations = (Point(
-            float(location.find('Longitude').text),
-            float(location.find('Latitude').text)
-        ) for location in locations)
+        locations = (
+            GEOSGeometry(f"POINT({location.findtext('Longitude')} {location.findtext('Latitude')}")
+            for location in locations
+        )
         self.track = LineString(*locations)
 
 

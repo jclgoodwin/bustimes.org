@@ -50,6 +50,11 @@ class ImportBusOpenDataTest(TestCase):
                 call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
 
         route = Route.objects.get()
+
+        self.assertEqual(route.source.name, 'Lynx_Clenchwarton_54_20200330')
+        self.assertEqual(route.source.url, 'https://data.bus-data.dft.gov.uk/category/dataset/35/download/')
+        self.assertEqual(route.source.sha1, 'b76edbf7a39b8adae10b984af05aff4d4326bae4')
+
         self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
 
         with self.assertNumQueries(3):

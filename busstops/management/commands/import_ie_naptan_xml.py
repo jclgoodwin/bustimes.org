@@ -5,7 +5,7 @@ https://www.transportforireland.ie/transitData/PT_Data.html
 import warnings
 import zipfile
 import xml.etree.cElementTree as ET
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from ...models import Locality, AdminArea, StopPoint
 
@@ -64,10 +64,10 @@ class Command(BaseCommand):
 
         location_element = place_element.find('naptan:Location/naptan:Translation', self.ns)
         if location_element is not None:
-            longitude_element = location_element.find('naptan:Longitude', self.ns)
-            latitude_element = location_element.find('naptan:Latitude', self.ns)
-            if longitude_element is not None:
-                stop.latlong = Point(float(longitude_element.text), float(latitude_element.text))
+            lon = location_element.find('naptan:Longitude', self.ns)
+            lat = location_element.find('naptan:Latitude', self.ns)
+            if lon is not None:
+                stop.latlong = GEOSGeometry(f"POINT({lon.text} {lat.text})")
         else:
             warnings.warn('Stop {} has no location'.format(stop.atco_code))
 

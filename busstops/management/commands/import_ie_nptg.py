@@ -3,7 +3,7 @@ https://www.transportforireland.ie/transitData/PT_Data.html
 """
 
 import xml.etree.cElementTree as ET
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from ...models import Region, AdminArea, Locality
 
@@ -30,13 +30,13 @@ class Command(BaseCommand):
 
     def handle_locality(self, element):
         location_element = element.find('nptg:Location/nptg:Translation', self.ns)
-        latlong = Point(float(location_element.find('nptg:Longitude', self.ns).text),
-                        float(location_element.find('nptg:Latitude', self.ns).text))
+        lon = location_element.find('nptg:Longitude', self.ns).text
+        lat = location_element.find('nptg:Latitude', self.ns).text
         Locality(
             id=element.find('nptg:NptgLocalityCode', self.ns).text,
             admin_area_id=element.find('nptg:AdministrativeAreaRef', self.ns).text,
             name=element.find('nptg:Descriptor/nptg:LocalityName', self.ns).text,
-            latlong=latlong
+            latlong=GEOSGeometry(f"POINT({lon} {lat})")
         ).save()
 
     def handle(self, *args, **options):

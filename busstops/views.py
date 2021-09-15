@@ -11,7 +11,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, Prefetch, F, Exists, OuterRef, Count, Min
 from django.db.models.functions import Now
-from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
+from django.http import JsonResponse, Http404, HttpResponseBadRequest
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
@@ -189,7 +189,7 @@ def stops(request):
         latlong__bboverlaps=bounding_box, active=True
     ).annotate(
         line_names=ArrayAgg('service__line_name', filter=Q(service__current=True), distinct=True)
-    ).filter(line_names__isnull=False).select_related('locality').defer('osm', 'locality__latlong')
+    ).filter(line_names__isnull=False).select_related('locality').defer('locality__latlong')
 
     return JsonResponse({
         'type': 'FeatureCollection',
@@ -355,7 +355,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         stops = self.object.stoppoint_set
         context['stops'] = stops.annotate(
             line_names=ArrayAgg('service__line_name', filter=Q(service__current=True), distinct=True)
-        ).filter(line_names__isnull=False).defer('osm', 'latlong')
+        ).filter(line_names__isnull=False).defer('latlong')
 
         if not (context['localities'] or context['stops']):
             raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
@@ -383,7 +383,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     queryset = model.objects.select_related('admin_area', 'admin_area__region',
                                             'locality', 'locality__parent',
                                             'locality__district')
-    queryset = queryset.defer('osm', 'locality__latlong', 'locality__parent__latlong')
+    queryset = queryset.defer('locality__latlong', 'locality__parent__latlong')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -450,7 +450,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
         if nearby is not None:
             context['nearby'] = nearby.exclude(pk=self.object.pk).annotate(
                 line_names=ArrayAgg('service__line_name', filter=Q(service__current=True), distinct=True)
-            ).filter(line_names__isnull=False).defer('osm')
+            ).filter(line_names__isnull=False).defer('latlong')
 
         consequences = Consequence.objects.filter(stops=self.object)
         context['situations'] = Situation.objects.filter(
@@ -604,7 +604,7 @@ class ServiceDetailView(DetailView):
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer(
-                'stop__osm', 'stop__locality__latlong'
+                'stop__latlong', 'stop__locality__latlong'
             )
             context['has_minor_stops'] = any(stop_usage.is_minor() for stop_usage in context['stopusages'])
             for stop_usage in context['stopusages']:
@@ -615,7 +615,7 @@ class ServiceDetailView(DetailView):
                         stop_usage.situation = True
 
         else:
-            stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
+            stops = StopPoint.objects.select_related('locality').defer('latlong', 'locality__latlong')
             stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
             stops = stops.in_bulk(stop_codes)
             for atco_code in stops:
@@ -719,7 +719,7 @@ def service_timetable(request, service_id):
         date = datetime.date.fromisoformat(date)
     parallel = service.get_linked_services()
     timetable = service.get_timetable(date, parallel)
-    stops = StopPoint.objects.select_related('locality').defer('osm', 'latlong', 'locality__latlong')
+    stops = StopPoint.objects.select_related('locality').defer('latlong', 'locality__latlong')
     stop_codes = (row.stop.atco_code for grouping in timetable.groupings for row in grouping.rows)
     stops = stops.in_bulk(stop_codes)
     for grouping in timetable.groupings:
