@@ -1,5 +1,5 @@
 import os
-from mock import patch
+from unittest.mock import patch
 from vcr import use_cassette
 import time_machine
 from django.test import TestCase, override_settings

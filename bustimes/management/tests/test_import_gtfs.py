@@ -3,7 +3,7 @@ import vcr
 import time_machine
 import datetime
 from pathlib import Path
-from mock import patch
+from unittest.mock import patch
 from tempfile import TemporaryDirectory
 from django.test import TestCase, override_settings
 from django.core.management import call_command

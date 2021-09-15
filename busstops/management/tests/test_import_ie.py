@@ -3,7 +3,7 @@
 import os
 import warnings
 import zipfile
-from mock import patch, call
+from unittest.mock import patch, call
 from tempfile import TemporaryDirectory
 from django.test import TransactionTestCase
 from django.core.management import call_command

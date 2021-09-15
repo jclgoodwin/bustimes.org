@@ -1,5 +1,5 @@
-import mock
 import time_machine
+from unittest import mock
 from datetime import timedelta
 from tempfile import TemporaryDirectory
 from pathlib import Path

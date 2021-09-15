@@ -1,7 +1,7 @@
 import os
 import time_machine
 from vcr import use_cassette
-from mock import patch
+from unittest.mock import patch
 from django.test import TestCase, override_settings
 from ...models import Vehicle
 from ..commands import import_tfwm

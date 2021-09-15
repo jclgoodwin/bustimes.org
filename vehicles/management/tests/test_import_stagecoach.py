@@ -1,7 +1,7 @@
 import vcr
 import os
 import time_machine
-from mock import patch
+from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
 from busstops.models import DataSource, Region, Operator, Service

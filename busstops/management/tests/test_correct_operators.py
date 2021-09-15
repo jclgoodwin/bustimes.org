@@ -1,5 +1,5 @@
 from django.test import TestCase
-from mock import patch
+from unittest.mock import patch
 from ...models import Region, Operator, Service
 from ..commands import correct_operators
 

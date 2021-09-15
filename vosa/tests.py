@@ -1,4 +1,4 @@
-import mock
+from unittest import mock
 from pathlib import Path
 from django.test import TestCase, override_settings
 from django.core.management import call_command

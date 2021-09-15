@@ -1,5 +1,5 @@
 import os
-from mock import patch
+from unittest.mock import patch
 from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import Region, Operator, DataSource

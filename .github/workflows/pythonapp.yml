@@ -43,15 +43,14 @@ jobs:
         path: |
           ~/.cache/pip
           ~/.local/share/pyppeteer
-        key: ${{ runner.os }}-${{ hashFiles('Pipfile.lock') }}
+        key: ${{ runner.os }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
           ${{ runner.os }}-
 
-    - name: Install Pipenv
-      # and then install dependencies from Pipfile.lock
+    - name: Install Python dependencies
       run: |
-        python -m pip install --upgrade pipenv
-        pipenv sync
+        python -m pip install poetry
+        poetry install --no-root
 
     - name: Install Geospatial libraries
       # required by GeoDjango
@@ -63,9 +62,9 @@ jobs:
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        pipenv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        poetry run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        pipenv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
     - name: JavaScript
       # install dependencies from package(-lock).json,
@@ -85,9 +84,9 @@ jobs:
         PGPASSWORD: postgres
         DB_NAME: postgres
       run: |
-       pipenv run coverage run ./manage.py collectstatic --noinput
-       pipenv run coverage run --append ./manage.py test
-       pipenv run coverage html
+       poetry run coverage run ./manage.py collectstatic --noinput
+       poetry run coverage run --append ./manage.py test
+       poetry run coverage html
 
     - name: Upload coverage
       # upload the Python coverage.py report to https://bustimes-coverage.ams3.digitaloceanspaces.com/index.html
@@ -96,4 +95,4 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
       run: |
-        pipenv run aws s3 sync htmlcov s3://bustimes-coverage --delete --endpoint-url=https://ams3.digitaloceanspaces.com --acl=public-read
+        poetry run aws s3 sync htmlcov s3://bustimes-coverage --delete --endpoint-url=https://ams3.digitaloceanspaces.com --acl=public-read

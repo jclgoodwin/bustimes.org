@@ -2,7 +2,7 @@
 """
 import vcr
 from pathlib import Path
-from mock import patch
+from unittest.mock import patch
 from warnings import catch_warnings
 from django.core.management import call_command
 from django.test import TestCase, override_settings

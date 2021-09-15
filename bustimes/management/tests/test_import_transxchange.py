@@ -5,7 +5,7 @@ import time_machine
 
 from functools import partial
 from pathlib import Path
-from mock import patch
+from unittest.mock import patch
 from tempfile import TemporaryDirectory
 from datetime import date
 

@@ -4,7 +4,7 @@ from ciso8601 import parse_datetime
 from tempfile import TemporaryDirectory
 from pathlib import Path
 from vcr import use_cassette
-from mock import patch
+from unittest.mock import patch
 import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command

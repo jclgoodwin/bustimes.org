@@ -1,6 +1,6 @@
 from ciso8601 import parse_datetime
 from django.test import TestCase
-from mock import patch
+from unittest.mock import patch
 from busstops.models import Region, Operator, DataSource
 from ...models import Vehicle
 from ..commands.import_polar import Command

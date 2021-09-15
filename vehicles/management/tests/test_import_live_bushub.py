@@ -1,4 +1,4 @@
-from mock import patch
+from unittest.mock import patch
 from django.test import TestCase
 from busstops.models import Region, Operator, Service, DataSource
 from ...models import VehicleLocation, Vehicle
