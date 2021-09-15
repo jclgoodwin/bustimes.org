@@ -42,6 +42,7 @@ jobs:
       with:
         path: |
           ~/.cache/pip
+          ~/.cache/pypoetry
           ~/.local/share/pyppeteer
         key: ${{ runner.os }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
