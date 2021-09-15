@@ -377,6 +377,11 @@ class Command(BaseCommand):
                 yield self.get_bank_holiday(bank_holiday_name)
 
     def get_calendar(self, operating_profile, operating_period):
+        calendar_hash = f'{operating_profile.hash}{operating_period}'
+
+        if calendar_hash in self.calendar_cache:
+            return self.calendar_cache[calendar_hash]
+
         calendar_dates = [
             CalendarDate(start_date=date_range.start, end_date=date_range.end,
                          operation=False) for date_range in operating_profile.nonoperation_days
@@ -460,13 +465,6 @@ class Command(BaseCommand):
             if summary:
                 summary = f"{summary}, "
             summary = f"{summary}{operating_period.start.strftime('%A %-d %B %Y')} only"
-
-        calendar_hash = f'{operating_profile.regular_days}{operating_period.start}{operating_period.end}{summary}'
-        calendar_hash += ' '.join(str(date) for date in calendar_dates)
-        calendar_hash += ' '.join(str(bank_holiday) for bank_holiday in bank_holidays.values())
-
-        if calendar_hash in self.calendar_cache:
-            return self.calendar_cache[calendar_hash]
 
         if summary:
             summary = get_summary(summary)

@@ -438,6 +438,8 @@ class OperatingProfile:
             if holidays_only is not None:
                 self.operation_bank_holidays = element.find('RegularDayType')
 
+        self.hash = ET.tostring(element)
+
 
 class DateRange:
     def __init__(self, element):
