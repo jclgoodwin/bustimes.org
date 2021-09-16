@@ -606,10 +606,13 @@ BOD_OPERATORS = [
     ('RRTR', 'SE', {}, False),
     ('RCHC', 'SE', {}, False),
     ('FCHS', 'NW', {}, False),
-    ('DAGC', None, {}, False),
+    ('DAGC', None, {
+        'DAGC': 'DAGC',
+        'CRDR': 'CRDR'
+    }, False),
     ('Go East Anglia', 'EA', {
         'KCTB': 'KCTB',
-        'HEOD': 'HEOD',
+        'HEDO': 'HEDO',
         'CHAM': 'CHAM',
     }, False),
 

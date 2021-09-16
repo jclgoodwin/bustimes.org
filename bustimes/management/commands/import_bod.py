@@ -141,7 +141,10 @@ def bus_open_data(api_key, operator):
             params = None
 
     for noc, region_id, operator_codes_dict, incomplete in settings.BOD_OPERATORS:
-        operator_datasets = [item for item in datasets if noc in item['noc']]
+        if ' ' in noc:
+            operator_datasets = [item for item in datasets if noc in item['description']]
+        else:
+            operator_datasets = [item for item in datasets if noc in item['noc']]
 
         command.operators = operator_codes_dict
         command.region_id = region_id
@@ -248,7 +251,7 @@ def stagecoach(operator=None):
             command.source.datetime = last_modified
             command.source.save()
 
-            logger.info("  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}")
+            logger.info(f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}")
             operators = get_operator_ids(command.source)
             logger.info(f'  {operators}')
             logger.info(f'  {[o for o in operators if o not in nocs]}')
