@@ -361,16 +361,13 @@ class Command(BaseCommand):
     def do_bank_holidays(self, holiday_elements, operating_period, operation, calendar_dates):
         if not holiday_elements:
             return
-        dates = []  # (to avoid creating duplicates)
+
         for element in holiday_elements:
             bank_holiday_name = element.tag
             if bank_holiday_name == 'OtherPublicHoliday':
-                date = element.findtext('Date')
-                if date not in dates:
-                    dates.append(date)
-                    calendar_dates.append(
-                        get_calendar_date(date, operation, element.findtext('Description'))
-                    )
+                calendar_dates.append(
+                    get_calendar_date(element.findtext('Date'), operation, element.findtext('Description'))
+                )
             else:
                 if bank_holiday_name == 'HolidaysOnly':
                     bank_holiday_name = 'AllBankHolidays'

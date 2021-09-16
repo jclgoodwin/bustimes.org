@@ -48,7 +48,7 @@ def get_command():
     return command
 
 
-def handle_file(command, path):
+def handle_file(command, path, qualify_filename=False):
     # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
     full_path = settings.DATA_DIR / path
 
@@ -58,15 +58,17 @@ def handle_file(command, path):
                 if filename.endswith('.csv'):
                     continue
                 with archive.open(filename) as open_file:
-                    qualified_filename = Path(path) / filename
+                    if qualify_filename: 
+                        # source has multiple versions (Passsenger) so add a prefix like 'gonortheast_123.zip/'
+                        filename = str(Path(path) / filename)
                     try:
                         try:
-                            command.handle_file(open_file, str(qualified_filename))
+                            command.handle_file(open_file, filename)
                         except ET.ParseError:
                             open_file.seek(0)
                             content = open_file.read().decode('utf-16')
                             fake_file = StringIO(content)
-                            command.handle_file(fake_file, str(qualified_filename))
+                            command.handle_file(fake_file, filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         if filename.endswith('.xml'):
                             logger.info(filename)
@@ -78,15 +80,16 @@ def handle_file(command, path):
             except (AttributeError, DataError) as e:
                 logger.error(e, exc_info=True)
 
-    sha1 = hashlib.sha1()
-    with full_path.open('rb') as open_file:
-        while True:
-            data = open_file.read(65536)
-            if data:
-                sha1.update(data)
-            else:
-                break
-    command.source.sha1 = sha1.hexdigest()
+    if not qualify_filename:
+        sha1 = hashlib.sha1()
+        with full_path.open('rb') as open_file:
+            while True:
+                data = open_file.read(65536)
+                if data:
+                    sha1.update(data)
+                else:
+                    break
+        command.source.sha1 = sha1.hexdigest()
 
 
 def get_bus_open_data_paramses(api_key, operator):

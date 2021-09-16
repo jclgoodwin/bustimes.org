@@ -1,6 +1,7 @@
 import zipfile
 import requests
 import json
+from pathlib import Path
 from datetime import timedelta
 from ciso8601 import parse_datetime
 from django.conf import settings
@@ -56,12 +57,18 @@ def route_xml(request, source, code=''):
                 return FileResponse(archive.open(code), content_type='text/plain')
             return HttpResponse('\n'.join(archive.namelist()), content_type='text/plain')
 
-    route = Route.objects.filter(source=source, code__startswith=code).first()
-    if not route:
-        raise Http404
+    if '.zip' not in code:
+        if 'stagecoach' in source.url:
+            code = str(Path(source.url.split('/')[-1]) / code)
+        elif not code.startswith(source.name):
+            code = str(Path(source.name) / code)
+
+    # route = Route.objects.filter(source=source, code__startswith=code).first()
+    # if not route:
+    #     raise Http404
 
     if '/' in code:
-        path = code.split('/')[0]
+        path = code.split('/')[0]  # archive name
         code = code[len(path) + 1:]
         path = settings.DATA_DIR / path
         if code:

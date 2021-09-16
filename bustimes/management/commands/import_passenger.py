@@ -154,7 +154,7 @@ class Command(BaseCommand):
                 for version in versions:  # newest first
                     if version['modified']:
                         print(version)
-                        handle_file(command, version['filename'])
+                        handle_file(command, version['filename'], qualify_filename=True)
 
                 clean_up(operators, sources)
 
