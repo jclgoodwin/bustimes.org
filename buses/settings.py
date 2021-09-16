@@ -644,7 +644,7 @@ STAGECOACH_OPERATORS = [
     ('SE', 'sccm', 'Stagecoach East',          ['SCCM', 'SCBD', 'SCPB', 'SCHU']),
     ('EM', 'scnh', 'Stagecoach Midlands',      ['SCNH', 'SCWW']),
     ('SE', 'scox', 'Stagecoach Oxfordshire',   ['SCOX']),
-    ('SW', 'scgl', 'Stagecoach West',          ['SCGL', 'SSWN', 'STWD']),
+    ('SW', 'scgl', 'Stagecoach West',          ['SCGL', 'SSWN', 'STWD', 'SCCH']),
     ('W',  'sswl', 'Stagecoach South Wales',   ['SSWL']),
     ('Y',  'tram', 'Stagecoach Supertram',     ['SCST']),
 ]
