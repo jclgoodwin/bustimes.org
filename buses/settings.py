@@ -606,6 +606,7 @@ BOD_OPERATORS = [
     ('RRTR', 'SE', {}, False),
     ('RCHC', 'SE', {}, False),
     ('FCHS', 'NW', {}, False),
+    ('CRSS', 'WM', {}, True),  # NN Cresswell
     ('DAGC', None, {
         'DAGC': 'DAGC',
         'CRDR': 'CRDR'
