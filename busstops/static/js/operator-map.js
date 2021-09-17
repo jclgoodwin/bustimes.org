@@ -18,7 +18,7 @@
 
     L.control.locate().addTo(map);
 
-    map.fitBounds([[window.EXTENT[1], window.EXTENT[0]], [window.EXTENT[3], window.EXTENT[2]]]);
+    var bounds, sorry;
 
     var loadVehiclesTimeout;
 
@@ -27,11 +27,24 @@
         reqwest(
             '/vehicles.json' + params,
             function(data) {
-                if (data) {
-                    bustimes.handleVehicles(data);
+                if (!data) {
+                    return;
                 }
-                if (map && data.length) {
+                bustimes.handleVehicles(data);
+                if (data.length) {
+                    if (!bounds) {
+                        bounds = new L.LatLngBounds();
+                        for (var i = data.length - 1; i >= 0; i--) {
+                            bounds.extend([data[i].coordinates[1], data[i].coordinates[0]]);
+                        }
+                        map.fitBounds(bounds);
+                    }
                     loadVehiclesTimeout = setTimeout(loadVehicles, 10000);
+                } else if (!bounds && !sorry) {
+                    sorry = document.createElement('div');
+                    sorry.className = 'sorry';
+                    sorry.innerHTML = 'Sorry, no buses are tracking at the moment';
+                    document.getElementById('map').appendChild(sorry);
                 }
             }
         );

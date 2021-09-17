@@ -2,6 +2,10 @@
 
 {% block title %}Map – {{ object }} – bustimes.org{% endblock %}
 
+{% block canonical %}
+    <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/map">
+{% endblock %}
+
 {% block head %}
     <style>
     #map {
@@ -9,6 +13,13 @@
         position: absolute;
         top: 7.5em;
         width: 100%;
+    }
+
+    .sorry {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        justify-content: center;
     }
 
     footer {
@@ -38,7 +49,7 @@
 
 {% block foot %}
     {% load static %}
-    <script>EXTENT = [{{ extent|join:"," }}];OPERATOR_ID="{{ operator_id }}";</script>
+    <script>OPERATOR_ID="{{ operator.id }}";</script>
     <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
     <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
         <script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>

@@ -183,7 +183,8 @@ class ImportBusOpenDataTest(TestCase):
                         call_command('import_bod', 'stagecoach', 'sccm')
 
                 source = DataSource.objects.get(name='Stagecoach East')
-                response = self.client.get(f'/sources/{source.id}/routes/{archive_name}')
+                response = self.client.get(f'/sources/{source.id}/routes/')
+
                 self.assertEqual(response.content.decode(), '904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml')
 
                 route = Route.objects.first()

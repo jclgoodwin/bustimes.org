@@ -11,7 +11,6 @@ from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.contrib.gis.db.models import Extent
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -198,7 +197,6 @@ def operator_vehicles(request, slug=None, parent=None):
         'parent': parent,
         'operators': parent and operators,
         'object': operator,
-        'map': any(vehicle.latest_location_id for vehicle in vehicles),
         'vehicles': vehicles,
         'paginator': paginator,
         'code_column': any(vehicle.fleet_number_mismatch() for vehicle in vehicles),
@@ -225,19 +223,10 @@ def operator_vehicles(request, slug=None, parent=None):
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related('region'), slug=slug)
 
-    services = operator.service_set.filter(current=True)
-    extent = services.aggregate(Extent('geometry'))['geometry__extent']
-    if not extent:
-        extent = operator.vehicle_set.aggregate(Extent('latest_location__latlong'))['latest_location__latlong__extent']
-    if not extent:
-        raise Http404
-
     return render(request, 'operator_map.html', {
         'object': operator,
         'operator': operator,
         'breadcrumb': [operator.region, operator],
-        'operator_id': operator.id,
-        'extent': extent,
         'liveries_css_version': cache.get('liveries_css_version', 0)
     })
 

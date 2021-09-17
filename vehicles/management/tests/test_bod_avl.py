@@ -166,7 +166,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }])
 
         response = self.client.get('/operators/hams/map')
-        self.assertContains(response, 'EXTENT = [0.285348,51.2135,0.285348,51.2135];OPERATOR_ID="HAMS";')
+        self.assertContains(response, 'OPERATOR_ID="HAMS";')
+        self.assertContains(response, '/operators/hams/map')
 
         self.assertIs(cache.get('WHIP:U:0500CCITY544'), False)
         self.assertIsNone(cache.get('WHIP:U:0500CCITY5'))
