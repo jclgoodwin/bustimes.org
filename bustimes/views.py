@@ -57,15 +57,15 @@ def route_xml(request, source, code=''):
                 return FileResponse(archive.open(code), content_type='text/plain')
             return HttpResponse('\n'.join(archive.namelist()), content_type='text/plain')
 
-    if '.zip' not in code:
-        if 'stagecoach' in source.url:
-            code = str(Path(source.url.split('/')[-1]) / code)
-        elif not code.startswith(source.name):
-            code = str(Path(source.name) / code)
+    if code:
+        route = Route.objects.filter(source=source, code__startswith=code).first()
+        if not route:
+            raise Http404
 
-    # route = Route.objects.filter(source=source, code__startswith=code).first()
-    # if not route:
-    #     raise Http404
+    if 'stagecoach' in source.url:
+        code = str(Path(source.url.split('/')[-1]) / code)
+    elif not code.startswith(source.name):
+        code = str(Path(source.name) / code)
 
     if '/' in code:
         path = code.split('/')[0]  # archive name
