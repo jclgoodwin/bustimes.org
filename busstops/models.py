@@ -7,7 +7,9 @@ import yaml
 from datetime import datetime
 from urllib.parse import urlencode
 from autoslug import AutoSlugField
+
 from django.contrib.gis.db import models
+from django.contrib.gis.db.models import Collect
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
@@ -19,6 +21,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.html import format_html, escape
 from django.utils.safestring import mark_safe
+
 from bustimes.models import Route, Trip
 from bustimes.timetables import Timetable
 from buses.utils import varnish_ban
@@ -884,11 +887,12 @@ class Service(models.Model):
         varnish_ban(self.get_absolute_url())
 
     def update_geometry(self):
-        for route in self.route_set.all():
-            if route.geometry:
-                self.geometry = route.geometry
-                self.save(update_fields=['geometry'])
-                return
+        routes_geometry = self.route_set.aggregate(Collect('geometry'))['geometry__collect']
+        if routes_geometry:
+            self.geometry = routes_geometry.simplify()
+            self.save(update_fields=['geometry'])
+            return
+
         patterns = []
         linestrings = []
         for trip in Trip.objects.filter(route__service=self).prefetch_related('stoptime_set__stop'):
