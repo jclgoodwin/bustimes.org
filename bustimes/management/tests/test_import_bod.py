@@ -41,7 +41,7 @@ class ImportBusOpenDataTest(TestCase):
         ('LYNX', 'EA', {
             'CO': 'LYNX',
         }, False),
-    ], TICKETER_OPERATORS=[])
+    ])
     def test_import_bod(self):
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):

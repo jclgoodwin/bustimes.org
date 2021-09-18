@@ -224,8 +224,9 @@ def ticketer(operator=None):
 
         url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
         filename = f'{noc}.zip'
-        path = os.path.join(settings.DATA_DIR, filename)
+        path = settings.DATA_DIR / filename
         command.source, created = DataSource.objects.get_or_create({'name': name}, url=url)
+        command.garages = {}
 
         modified, last_modified = download_if_changed(path, url)
 
@@ -235,7 +236,6 @@ def ticketer(operator=None):
             command.region_id = region_id
             command.service_ids = set()
             command.route_ids = set()
-            command.garages = {}
 
             # avoid importing old data
             command.source.datetime = timezone.now()
