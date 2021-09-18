@@ -114,7 +114,7 @@ class EditVehicleForm(EditVehiclesForm):
                 if vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId'] == vehicle.fleet_code:
                     if not vehicle.code.isdigit() or vehicle.code == vehicle.fleet_code:
                         self.fields['fleet_number'].disabled = True
-            except (KeyError, ValueError):
+            except (KeyError, TypeError):
                 pass
 
         if not vehicle.withdrawn and vehicle.latest_journey:
