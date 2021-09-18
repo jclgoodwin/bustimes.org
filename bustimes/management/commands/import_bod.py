@@ -207,6 +207,56 @@ def bus_open_data(api_key, operator):
     command.debrief()
 
 
+def ticketer(operator=None):
+    command = get_command()
+
+    for setting in settings.TICKETER_OPERATORS:
+        if len(setting) == 3:
+            region_id, operators, name = setting
+        else:
+            region_id, operators = setting
+            name = operators[0].replace('_', ' ')
+
+        noc = operators[0]
+
+        if operator and operator != noc:
+            continue
+
+        url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
+        filename = f'{noc}.zip'
+        path = os.path.join(settings.DATA_DIR, filename)
+        command.source, created = DataSource.objects.get_or_create({'name': name}, url=url)
+
+        modified, last_modified = download_if_changed(path, url)
+
+        if modified or operator == noc:
+            logger.info(url, last_modified)
+
+            command.region_id = region_id
+            command.service_ids = set()
+            command.route_ids = set()
+            command.garages = {}
+
+            # avoid importing old data
+            command.source.datetime = timezone.now()
+
+            handle_file(command, filename)
+
+            command.mark_old_services_as_not_current()
+
+            clean_up(operators, [command.source])
+
+            command.finish_services()
+
+            command.source.datetime = last_modified
+            command.source.save(update_fields=['datetime'])
+
+            logger.info('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
+            logger.info('  ', get_operator_ids(command.source))
+
+    command.debrief()
+
+
 def stagecoach(operator=None):
     command = get_command()
 
@@ -271,5 +321,7 @@ class Command(BaseCommand):
     def handle(self, api_key, operator, **options):
         if api_key == 'stagecoach':
             stagecoach(operator)
+        elif api_key == 'ticketer':
+            ticketer(operator)
         else:
             bus_open_data(api_key, operator)

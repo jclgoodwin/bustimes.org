@@ -206,6 +206,8 @@ class DataSource(models.Model):
         # Stagecoach
         if 'stagecoach' in self.url:
             return 'https://www.stagecoachbus.com/open-data'
+        if self.settings and 'url' in self.settings:
+            return self.settings['url']
 
     def get_nice_link(self):
         name = self.get_nice_name()

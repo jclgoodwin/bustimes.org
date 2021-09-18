@@ -123,6 +123,8 @@ def get_open_data_operators():
         open_data_operators += operators.values()
     for _, _, _, operators in settings.STAGECOACH_OPERATORS:
         open_data_operators += operators
+    for setting in settings.TICKETER_OPERATORS:
+        open_data_operators += setting[1]
 
     return set(open_data_operators), set(incomplete_operators)
 
