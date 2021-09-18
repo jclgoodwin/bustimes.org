@@ -7,7 +7,7 @@ from ukpostcodeutils import validation
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.gis.geos import Point, Polygon
-from django.contrib.gis.db.models import Collect
+from django.contrib.gis.db.models import Union
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -760,7 +760,7 @@ def service_map_data(request, service_id):
             } for stop in stops]
         }
     }
-    routes_geometry = service.route_set.aggregate(Collect('geometry'))['geometry__collect']
+    routes_geometry = service.route_set.aggregate(Union('geometry'))['geometry__union']
     if routes_geometry:
         data['geometry'] = json.loads(routes_geometry.simplify().json)
     elif service.geometry:

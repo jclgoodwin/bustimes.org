@@ -9,7 +9,7 @@ from urllib.parse import urlencode
 from autoslug import AutoSlugField
 
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models import Collect
+from django.contrib.gis.db.models import Union
 from django.contrib.gis.geos import LineString, MultiLineString
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
@@ -887,7 +887,7 @@ class Service(models.Model):
         varnish_ban(self.get_absolute_url())
 
     def update_geometry(self):
-        routes_geometry = self.route_set.aggregate(Collect('geometry'))['geometry__collect']
+        routes_geometry = self.route_set.aggregate(Union('geometry'))['geometry__union']
         if routes_geometry:
             self.geometry = routes_geometry.simplify()
             self.save(update_fields=['geometry'])
