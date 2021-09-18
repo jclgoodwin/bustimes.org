@@ -231,7 +231,7 @@ def ticketer(operator=None):
         modified, last_modified = download_if_changed(path, url)
 
         if modified or operator == noc:
-            logger.info(url, last_modified)
+            logger.info(f"{url} {last_modified}")
 
             command.region_id = region_id
             command.service_ids = set()
@@ -251,8 +251,8 @@ def ticketer(operator=None):
             command.source.datetime = last_modified
             command.source.save(update_fields=['datetime'])
 
-            logger.info('  ', command.source.route_set.order_by('end_date').distinct('end_date').values('end_date'))
-            logger.info('  ', get_operator_ids(command.source))
+            logger.info(f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}")
+            logger.info(f"  {get_operator_ids(command.source)}")
 
     command.debrief()
 
