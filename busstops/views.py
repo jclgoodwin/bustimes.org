@@ -767,7 +767,8 @@ def service_map_data(request, service_id):
     if len(routes) == 1:
         geometry = routes[0].geometry
     elif any(route.geometry for route in routes):
-        geometry = service.route_set.filter(id__in=routes).aggregate(Union('geometry'))['geometry__union']
+        route_ids = [route.id for route in routes]
+        geometry = service.route_set.filter(id__in=route_ids).aggregate(Union('geometry'))['geometry__union']
 
     if not geometry:
         geometry = service.geometry
