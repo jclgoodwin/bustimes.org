@@ -25,6 +25,7 @@ from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
 from vehicles.models import Vehicle, VehicleLocation
+from bustimes.models import get_routes
 from .utils import get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
                      Service, Place, ServiceColour, DataSource)
@@ -760,11 +761,20 @@ def service_map_data(request, service_id):
             } for stop in stops]
         }
     }
-    routes_geometry = service.route_set.aggregate(Union('geometry'))['geometry__union']
-    if routes_geometry:
-        data['geometry'] = json.loads(routes_geometry.simplify().json)
-    elif service.geometry:
-        data['geometry'] = json.loads(service.geometry.simplify().json)
+
+    routes = get_routes(service.route_set.select_related('source'))
+    geometry = None
+    if len(routes) == 1:
+        geometry = routes[0].geometry
+    elif any(route.geometry for route in routes):
+        geometry = service.route_set.filter(id__in=routes).aggregate(Union('geometry'))['geometry__union']
+
+    if not geometry:
+        geometry = service.geometry
+
+    if geometry:
+        data['geometry'] = json.loads(geometry.simplify().json)
+
     return JsonResponse(data)
 
 

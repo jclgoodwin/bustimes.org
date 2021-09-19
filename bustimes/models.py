@@ -5,10 +5,11 @@ from .fields import SecondsField
 from .utils import format_timedelta, time_datetime
 
 
-def get_routes(routes, when):
+def get_routes(routes, when=None):
     end_dates = any(route.end_date for route in routes)
 
-    routes = [route for route in routes if route.contains(when)]
+    if when:
+        routes = [route for route in routes if route.contains(when)]
 
     if len(routes) == 1:
         return routes
@@ -41,7 +42,7 @@ def get_routes(routes, when):
         if len(prefixes) > 1:
             latest_prefix = f'{max(prefixes)}.zip'
             routes = [route for route in routes if route.code.startswith(latest_prefix)]
-        else:
+        elif when:
             override_routes = [route for route in routes if route.start_date == route.end_date == when]
             if override_routes:  # e.g. Lynx BoxingDayHoliday
                 routes = override_routes

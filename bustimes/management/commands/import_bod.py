@@ -144,6 +144,14 @@ def bus_open_data(api_key, operator):
             params = None
 
     for noc, region_id, operator_codes_dict, incomplete in settings.BOD_OPERATORS:
+        if operator_codes_dict:
+            operators = operator_codes_dict.values()
+        else:
+            operators = [noc]
+
+        if operator and operator not in operators:
+            continue
+
         if ' ' in noc:
             operator_datasets = [item for item in datasets if noc in item['description']]
         else:
@@ -151,11 +159,6 @@ def bus_open_data(api_key, operator):
 
         command.operators = operator_codes_dict
         command.region_id = region_id
-
-        if operator_codes_dict:
-            operators = operator_codes_dict.values()
-        else:
-            operators = [noc]
 
         sources = []
 
