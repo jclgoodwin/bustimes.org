@@ -725,14 +725,14 @@ class Command(BaseCommand):
                     return
         elif self.source.name in ('Oxford Bus Company', 'Carousel'):
             if operators and operators[0].id not in self.operators.values():
-                logger.info(f'skipping {txc_service.service_code} ({operators})')
+                logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
                 return
         elif self.source.name.startswith('Arriva') and 'tfl_' in filename:
             logger.info(f'skipping {filename} {txc_service.service_code} (Arriva London)')
             return
         elif self.source.name.startswith('Stagecoach'):
             if operators and operators[0].parent != 'Stagecoach':
-                logger.info(f'skipping {txc_service.service_code} ({operators})')
+                logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
                 return
 
         linked_services = []
