@@ -34,7 +34,6 @@ class Command(ImportLiveVehiclesCommand):
     vehicle_id_cache = {}
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
-    identifiers = {}
     services = Service.objects.using(settings.READ_DATABASE).filter(current=True).defer('geometry', 'search_vector')
 
     @staticmethod

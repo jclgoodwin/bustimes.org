@@ -6,6 +6,8 @@ from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
+    identifiers = None
+
     @async_to_sync
     async def send_items(self, items):
         await get_channel_layer().send('sirivm', {
@@ -25,25 +27,21 @@ class Command(ImportLiveVehiclesCommand):
         if not self.identifiers:  # restore backup
             self.identifiers = cache.get('bod_avl_identifiers', {})
 
-        identifiers = {}
         i = 0
         to_send = []
 
         for item in items:
             monitored_vehicle_journey = item['MonitoredVehicleJourney']
             key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
-            if self.identifiers.get(key) != item['RecordedAtTime']:
-                identifiers[key] = item['RecordedAtTime']
+            if key not in self.identifiers or self.identifiers[key] < item['RecordedAtTime']:
+                self.identifiers[key] = item['RecordedAtTime']
                 to_send.append(item)
                 i += 1
                 if i % 1000 == 0:
                     self.send_items(to_send)
-                    self.identifiers.update(identifiers)
-                    identifiers = {}
                     to_send = []
         if to_send:
             self.send_items(to_send)
-            self.identifiers.update(identifiers)
 
         count = len(items)
 
