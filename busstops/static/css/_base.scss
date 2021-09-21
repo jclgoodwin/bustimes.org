@@ -324,6 +324,7 @@ input[type='date'],
 input[type='time'],
 textarea {
     appearance: none;
+    background: #fff;
     border: 1px solid $border-color;
     border-radius: 0;
     box-sizing: border-box;
@@ -347,6 +348,7 @@ select {
     background-position: right;
     border: 1px solid $border-color;
     border-radius: 0;
+    color: inherit;
     font: inherit;
     padding: .25em 1.5em .25em .25em;
 
