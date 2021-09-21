@@ -11,7 +11,7 @@ from titlecase import titlecase
 logger = logging.getLogger(__name__)
 
 
-WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}
+WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}  # {'Monday:' 0,
 
 
 class Stop:
@@ -390,10 +390,11 @@ class OperatingProfile:
     def __init__(self, element, serviced_organisations):
         element = element
 
-        week_days_element = element.find('RegularDayType/DaysOfWeek')
+        week_days = element.find('RegularDayType/DaysOfWeek')
         self.regular_days = []
-        if week_days_element is not None:
-            for day in [e.tag for e in week_days_element]:
+        if week_days is not None:
+            week_days = [e.tag for e in week_days]
+            for day in week_days:
                 if 'To' in day:
                     day_range_bounds = [WEEKDAYS[i] for i in day.split('To')]
                     day_range = range(day_range_bounds[0], day_range_bounds[1] + 1)
@@ -401,7 +402,7 @@ class OperatingProfile:
                 elif day == 'Weekend':
                     self.regular_days += [DayOfWeek(5), DayOfWeek(6)]
                 elif day[:3] == 'Not':
-                    print(day)
+                    self.regular_days += [DayOfWeek(WEEKDAYS[key]) for key in WEEKDAYS if key != day[3:]]
                 else:
                     self.regular_days.append(DayOfWeek(day))
 

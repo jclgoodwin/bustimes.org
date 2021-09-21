@@ -31,3 +31,30 @@ class DateRangeTest(TestCase):
         """)
         date_range = txc.DateRange(element)
         self.assertEqual(str(date_range), '2001-05-01 to 2002-05-01')
+
+    def test_operating_profile(self):
+        element = ET.fromstring("""
+            <OperatingProfile>
+                <RegularDayType>
+                    <DaysOfWeek>
+                        <NotWednesday />
+                    </DaysOfWeek>
+                </RegularDayType>
+            </OperatingProfile>
+        """)
+        operating_profile = txc.OperatingProfile(element, None)
+        self.assertEqual(
+            str(operating_profile.regular_days), '[Monday, Tuesday, Thursday, Friday, Saturday, Sunday]'
+        )
+
+        element = ET.fromstring("""
+          <OperatingProfile>
+            <RegularDayType>
+              <DaysOfWeek>
+                <Weekend />
+              </DaysOfWeek>
+            </RegularDayType>
+          </OperatingProfile>
+        """)
+        operating_profile = txc.OperatingProfile(element, None)
+        self.assertEqual(str(operating_profile.regular_days), '[Saturday, Sunday]')
