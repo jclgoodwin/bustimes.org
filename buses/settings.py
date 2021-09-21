@@ -589,7 +589,6 @@ BOD_OPERATORS = [
     ('LYNX', 'EA', {}, False),
     ('IPSW', 'EA', {}, False),
     ('WNCT', 'EA', {}, False),
-    ('BDRB', 'EA', {}, False),
     ('WHIP', 'EA', {}, False),
     ('SIMO', 'EA', {}, False),
     ('BEES', 'EA', {}, False),
@@ -653,10 +652,11 @@ STAGECOACH_OPERATORS = [
     ('Y',  'tram', 'Stagecoach Supertram',     ['SCST']),
 ]
 
-# For historical reasons,
-# some operators' timetables are fetched directly from e.g.
+# Some operators' timetables are fetched directly from e.g.
 # https://opendata.ticketer.com/uk/LYNX/routes_and_timetables/current.zip
-# rather than via the Bus Open Data site
+# rather than via the Bus Open Data site,
+# because sometimes BODS doesn't detect updates
 TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
+    ('EA', ['BDRB'], 'BorderBus'),
 ]
