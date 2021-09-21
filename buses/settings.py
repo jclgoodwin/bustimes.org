@@ -525,7 +525,7 @@ BOD_OPERATORS = [
         'OBUS': 'OBUS',
     }, False),
 
-    ('WNGS', None, {  # Rotala Grouo of Companies
+    ('WNGS', None, {  # Rotala Group of Companies
         'WINGS': 'WNGS',
         'TGM': 'WNGS',  # Diamond SE
         'NXHH': 'NXHH',  # Hotel Hoppa
@@ -535,7 +535,7 @@ BOD_OPERATORS = [
     }, False),
 
     ('PLNG', 'EA', {}, False),
-    ('SNDR', 'EA', {}, True),  # incomplete
+    ('SNDR', 'EA', {}, False),
     ('STOT', 'NW', {}, False),
     ('CARL', 'SE', {}, False),
     ('IRVD', 'NW', {}, False),
@@ -617,6 +617,7 @@ BOD_OPERATORS = [
     # }, False),
 
     ('DRMC', 'WM', {}, True),
+    ('SARG', 'WM', {}, False),
 
     ('AMBS', 'EA', {
         'AMBS': 'AMBS',
