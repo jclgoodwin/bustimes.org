@@ -262,7 +262,7 @@ class Vehicle(models.Model):
             return get_css(colours, direction, self.livery and self.livery.horizontal)
 
     def get_absolute_url(self):
-        if self.source_id == 7:  # London
+        if self.source_id == 7 and not self.latest_journey_id:  # London
             return reverse('tfl_vehicle', args=(self.reg,))
         return reverse('vehicle_detail', args=(self.id,))
 
