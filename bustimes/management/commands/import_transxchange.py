@@ -922,7 +922,9 @@ class Command(BaseCommand):
                 'end_date': txc_service.operating_period.end,
                 'service': service,
                 'revision_number': transxchange.attributes['RevisionNumber'],
-                'service_code': txc_service.service_code
+                'service_code': txc_service.service_code,
+                'origin': txc_service.origin or '',
+                'destination': txc_service.destination or '',
             }
             if description:
                 route_defaults['description'] = description

@@ -461,38 +461,14 @@ class DateRange:
 
 
 class Service:
-    description = None
-    description_parts = None
-    via = None
-    operating_profile = None
-
-    def set_description(self, description):
-        if description.isupper():
-            description = titlecase(description)
-        elif ' via ' in description and description[:description.find(' via ')].isupper():
-            parts = description.split(' via ')
-            description = ' via '.join(titlecase(part) for part in parts)
-        self.description = description
-
-        self.via = None
-        if ' - ' in self.description:
-            parts = self.description.split(' - ')
-        elif ' to ' in self.description:
-            parts = self.description.split(' to ')
-        else:
-            parts = [self.description]
-        self.description_parts = parts
-        if ' via ' in self.description_parts[-1]:
-            self.description_parts[-1], self.via = self.description_parts[-1].split(' via ', 1)
-
     def __init__(self, element, serviced_organisations, journey_pattern_sections):
         self.mode = element.findtext('Mode', '')
 
         self.operator = element.findtext('RegisteredOperatorRef')
 
-        operatingprofile_element = element.find('OperatingProfile')
-        if operatingprofile_element is not None:
-            self.operating_profile = OperatingProfile(operatingprofile_element, serviced_organisations)
+        self.operating_profile = element.find('OperatingProfile')
+        if self.operating_profile is not None:
+            self.operating_profile = OperatingProfile(self.operating_profile, serviced_organisations)
 
         self.operating_period = DateRange(element.find('OperatingPeriod'))
 
@@ -502,9 +478,9 @@ class Service:
 
         self.marketing_name = element.findtext('MarketingName')
 
-        description = element.findtext('Description')
-        if description:
-            self.set_description(description.strip())
+        self.description = element.findtext('Description')
+        if self.description:
+            self.description = self.description.strip()
 
         self.origin = element.findtext('StandardService/Origin')
         if self.origin:
