@@ -245,6 +245,7 @@
         return marker;
     }
 
+    // like handleVehicle in 'maps.js' but with support for varying marker size based on zoom level
     function processVehicle(item) {
         var isClickedMarker = item.id === bustimes.clickedMarker;
         var latLng = L.latLng(item.coordinates[1], item.coordinates[0]);

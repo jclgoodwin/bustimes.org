@@ -164,12 +164,13 @@
         if (item.id in window.bustimes.vehicleMarkers) {
             // update existing
             var marker = window.bustimes.vehicleMarkers[item.id];
-            marker.setLatLng(latLng);
-            marker.setIcon(icon);
-            marker.options.item = item;
-            if (isClickedMarker) {
-                window.bustimes.vehicleMarkers[item.id] = marker;  // make updatePopupContent work
-                updatePopupContent();
+            if (marker.options.item.datetime != item.datetime) {
+                marker.setLatLng(latLng);
+                marker.setIcon(icon);
+                marker.options.item = item;
+                if (isClickedMarker) {
+                    updatePopupContent();
+                }
             }
         } else {
             marker = L.marker(latLng, {
