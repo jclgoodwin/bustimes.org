@@ -854,14 +854,17 @@ class Command(BaseCommand):
             if self.region_id:
                 service.region_id = self.region_id
 
-            if line.outbound_description:
-                service.outbound_description = line.outbound_description
-                if not service.description:
-                    service.description = line.outbound_description
-            if line.inbound_description:
-                service.inbound_description = line.inbound_description
-                if not service.description:
-                    service.description = line.inbound_description
+            service.outbound_description = ''
+            service.inbound_description = ''
+            if line.outbound_description != line.inbound_description:
+                if line.outbound_description:
+                    service.outbound_description = line.outbound_description
+                    if not service.description:
+                        service.description = line.outbound_description
+                if line.inbound_description:
+                    service.inbound_description = line.inbound_description
+                    if not service.description:
+                        service.description = line.inbound_description
 
             if self.service_descriptions:  # NCSD
                 outbound_description, inbound_description = self.get_service_descriptions(filename)

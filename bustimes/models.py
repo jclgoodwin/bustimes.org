@@ -83,7 +83,7 @@ class Route(models.Model):
     revision_number = models.PositiveSmallIntegerField(null=True, blank=True)
     description = models.CharField(max_length=255, blank=True)
     origin = models.CharField(max_length=255, blank=True)
-    destinaton = models.CharField(max_length=255, blank=True)
+    destination = models.CharField(max_length=255, blank=True)
     via = models.CharField(max_length=255, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)

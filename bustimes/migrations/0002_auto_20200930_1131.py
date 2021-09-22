@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='route',
-            name='destinaton',
+            name='destination',
             field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AddField(
