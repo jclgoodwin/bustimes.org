@@ -230,6 +230,10 @@ class Timetable:
         if all(grouping.trips for grouping in self.groupings):
             self.groupings.sort(key=Grouping.get_order)
 
+        self.origins_and_destinations = {
+            (route.origin, route.destination) for route in self.current_routes
+        }
+
     def get_date_options(self):
         date = self.today
 
