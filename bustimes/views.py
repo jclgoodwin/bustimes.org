@@ -218,7 +218,11 @@ class TripDetailView(DetailView):
 def tfl_vehicle(request, reg):
     reg = reg.upper()
 
-    data = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals', params=settings.TFL).json()
+    response = requests.get(f'https://api.tfl.gov.uk/vehicle/{reg}/arrivals', params=settings.TFL)
+    if response.ok:
+        data = response.json()
+    else:
+        data = None
 
     vehicles = Vehicle.objects.select_related('livery', 'operator', 'vehicle_type')
 
