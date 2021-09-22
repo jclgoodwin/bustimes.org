@@ -165,6 +165,7 @@ class Timetable:
                     # in case a Friday only service has a start_date that's a Sunday, for example:
                     for date in self.get_date_options():
                         self.start_date = date
+                        break
 
         if self.calendars and not self.calendar:
             self.date_options = list(self.get_date_options())

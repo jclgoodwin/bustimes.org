@@ -676,7 +676,7 @@ class ImportTransXChangeTest(TestCase):
 
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
-        self.assertContains(response, "Tuesdays from Tuesday 17 August 2021")
+        self.assertContains(response, "Tuesdays from Tuesday 3 August 2021")
 
         self.assertEqual(1, len(cm.output))
 
