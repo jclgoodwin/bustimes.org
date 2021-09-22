@@ -40,6 +40,8 @@ flake8 = "^3.9.2"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"
+django-debug-toolbar-force = "^0.1.8"
+gunicorn = "^20.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
