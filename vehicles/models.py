@@ -183,8 +183,8 @@ class Vehicle(models.Model):
     garage = models.ForeignKey('bustimes.Garage', models.SET_NULL, null=True, blank=True)
 
     def save(self, *args, update_fields=None, **kwargs):
-        if update_fields is None or 'fleet_number' in update_fields:
-            if self.fleet_number and (not self.fleet_code or self.fleet_code.isdigit()):
+        if (update_fields is None or 'fleet_number' in update_fields) and self.fleet_number:
+            if not self.fleet_code or (self.fleet_code.isdigit() and self.fleet_number != int(self.fleet_code)):
                 self.fleet_code = str(self.fleet_number)
                 if update_fields and 'fleet_code' not in update_fields:
                     update_fields.append('fleet_code')
