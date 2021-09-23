@@ -64,7 +64,7 @@ def route_xml(request, source, code=''):
 
     if 'stagecoach' in source.url:
         code = str(Path(source.url.split('/')[-1]) / code)
-    elif not code.startswith(source.name):
+    elif '.zip' not in code:
         code = str(Path(source.name) / code)
 
     if '/' in code:

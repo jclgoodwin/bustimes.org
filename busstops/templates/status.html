@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h1>Site status</h1>
+<h1>Site stat(u)s</h1>
 
 <h2>Vehicle journeys</h2>
 
@@ -178,12 +178,9 @@
         .style("fill", d => {
             return accent(d.key);
         })
-        .on("mousemove", handleMouseMove)
-        .append("title").text(d => {
-            return d.key;
-        });
+        .on("mousemove", handleMouseMove);
 
-        var mouser = timetables.append('text');
+        var mouser = timetables.append('text').style('stroke', 'white').style('paint-order', 'stroke').style('stroke-width', '5px');
 
         function handleMouseMove(event, data) {
             var pointer = d3.pointer(event, this);
