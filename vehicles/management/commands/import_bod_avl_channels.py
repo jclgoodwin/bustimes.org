@@ -1,3 +1,4 @@
+from ciso8601 import parse_datetime
 from asgiref.sync import async_to_sync
 from django.core.cache import cache
 from django.utils import timezone
@@ -34,6 +35,8 @@ class Command(ImportLiveVehiclesCommand):
             monitored_vehicle_journey = item['MonitoredVehicleJourney']
             key = f"{monitored_vehicle_journey['OperatorRef']}-{monitored_vehicle_journey['VehicleRef']}"
             if key not in self.identifiers or self.identifiers[key] < item['RecordedAtTime']:
+                if key in self.identifiers:
+                    assert parse_datetime(self.identifiers[key]) < parse_datetime(item['RecordedAtTime'])
                 self.identifiers[key] = item['RecordedAtTime']
                 to_send.append(item)
                 i += 1
