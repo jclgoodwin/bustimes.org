@@ -295,8 +295,8 @@ class ImportTransXChangeTest(TestCase):
             self.handle_files('EA.zip', ['lincs_DELA_101_13101_.xml'])
         self.assertEqual(
             cm.output,
-            ['WARNING:bustimes.management.commands.import_transxchange:2021-04-19 to 2021-05-28',
-             'WARNING:bustimes.management.commands.import_transxchange:2021-06-07 to 2021-07-21']
+            ['WARNING:bustimes.management.commands.import_transxchange:2021-04-19 to 2021-05-28 is 39 days long',
+             'WARNING:bustimes.management.commands.import_transxchange:2021-06-07 to 2021-07-21 is 44 days long']
         )
 
         service = Service.objects.get()

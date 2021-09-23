@@ -88,8 +88,7 @@ class GTFSTest(TestCase):
         timetable = response.context_data['timetable']
         self.assertEqual(str(timetable.groupings[0]), 'Outbound')
         self.assertEqual(str(timetable.groupings[1]), 'Inbound')
-        # self.assertEqual(str(timetable.groupings[0]), 'Merrion - Citywest')
-        # self.assertEqual(str(timetable.groupings[1]), 'Citywest - Ballsbridge')
+        self.assertFalse(timetable.origins_and_destinations)
         self.assertEqual(str(timetable.groupings[0].rows[0].times), '[07:45]')
         self.assertEqual(str(timetable.groupings[0].rows[4].times), '[07:52]')
         self.assertEqual(str(timetable.groupings[0].rows[6].times), '[08:01]')

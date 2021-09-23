@@ -388,11 +388,12 @@ class Command(BaseCommand):
         for date_range in operating_profile.operation_days:
             calendar_date = CalendarDate(start_date=date_range.start, end_date=date_range.end,
                                          special=True, operation=True)
-            if date_range.end - date_range.start > datetime.timedelta(days=5):
+            difference = date_range.end - date_range.start
+            if difference > datetime.timedelta(days=5):
                 # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation
                 # (school term dates etc)
-                logger.warning(date_range)
                 calendar_date.special = False
+                logger.warning(f'{date_range} is {difference.days} days long')
             calendar_dates.append(calendar_date)
 
         bank_holidays = {}  # a dictionary to remove duplicates! (non-operation overrides operation)
@@ -925,10 +926,19 @@ class Command(BaseCommand):
                 'end_date': txc_service.operating_period.end,
                 'service': service,
                 'revision_number': transxchange.attributes['RevisionNumber'],
-                'service_code': txc_service.service_code,
-                'origin': txc_service.origin or '',
-                'destination': txc_service.destination or '',
+                'service_code': txc_service.service_code
             }
+
+            if txc_service.origin and txc_service.origin != 'Origin':
+                route_defaults['origin'] = txc_service.origin
+            else:
+                route_defaults['origin'] = ''
+
+            if txc_service.destination and txc_service.destination != 'Destination':
+                route_defaults['destination'] = txc_service.destination
+            else:
+                route_defaults['destination'] = ''
+
             if description:
                 route_defaults['description'] = description
 

@@ -232,7 +232,7 @@ class Timetable:
             self.groupings.sort(key=Grouping.get_order)
 
         self.origins_and_destinations = {
-            (route.origin, route.destination) for route in self.current_routes
+            (route.origin, route.destination) for route in self.current_routes if route.origin
         }
 
     def get_date_options(self):
