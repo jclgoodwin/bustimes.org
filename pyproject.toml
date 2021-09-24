@@ -5,7 +5,7 @@ description = ""
 authors = ["Josh Goodwin <j@joshuagoodw.in>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.11"
 ciso8601 = "^2.2.0"
 django-sql-utils = "^0.6.1"
 Django = "^3.2.7"
@@ -37,6 +37,7 @@ titlecase = "^2.3"
 PyYAML = "^5.4.1"
 django-coverage-plugin = "^2.0.0"
 flake8 = "^3.9.2"
+numpy = "^1.21.2"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"

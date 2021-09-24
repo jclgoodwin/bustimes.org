@@ -4,7 +4,7 @@ import xml.etree.cElementTree as ET
 import datetime
 import xmltodict
 from ciso8601 import parse_datetime
-from haversine import haversine
+from haversine import haversine, haversine_vector, Unit
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Min, F, Case, When
 from django.core.cache import cache
@@ -614,6 +614,18 @@ def journey_json(request, pk):
             data['locations'].sort(key=lambda location: location['datetime'])
     except redis.exceptions.ConnectionError:
         pass
+
+    if trip and locations:
+        haversine_vector_results = haversine_vector(
+            [stop['coordinates'] for stop in data['stops'] if stop['coordinates']],  # !
+            [location['coordinates'] for location in data['locations']],
+            Unit.METERS,
+            comb=True
+        )
+        for i, distances in enumerate(haversine_vector_results):
+            minimum, index_of_minimum = min(((value, index) for index, value in enumerate(distances)))
+            if minimum < 100:
+                data['stops'][index_of_minimum]['actual_departure_time'] = data['locations'][i]['datetime']
 
     return JsonResponse(data)
 

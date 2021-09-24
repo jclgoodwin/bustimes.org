@@ -134,7 +134,7 @@
         }
 
         reqwest('/' + journey + '.json', function(response) {
-            var i;
+            var i, actual;
 
             for (i = 0; i < response.locations.length; i++) {
                 var location = response.locations[i];
@@ -150,7 +150,7 @@
                 var table = document.createElement('table');
                 table.className = 'trip-timetable';
                 var thead = document.createElement('thead');
-                thead.innerHTML = '<tr><th scope="col">Stop</th><th scope="col">Timetable</th></tr>';
+                thead.innerHTML = '<tr><th scope="col">Stop</th><th scope="col">Timetable</th><th>Actual</th></tr>';
                 table.appendChild(thead);
 
                 var tbody = document.createElement('tbody');
@@ -162,6 +162,10 @@
                         tr.className = 'minor';
                     }
                     time = stop.aimed_departure_time || stop.aimed_arrival_time || '';
+                    if (stop.actual_departure_time) {
+                        actual = new Date(stop.actual_departure_time);
+                        time += '</td><td>' + actual.toTimeString().slice(0, 5);
+                    }
                     tr.innerHTML = '<td>' + stop.name + '</th><td>' + time + '</td>';
                     tbody.appendChild(tr);
 
