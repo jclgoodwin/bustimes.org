@@ -543,9 +543,10 @@ BOD_OPERATORS = [
     ('VECT', 'SE', {}, False),
     ('ACME', 'SE', {}, False),
 
-    ('ALSC', 'NW', {}, False),
-    ('LCAC', 'NW', {}, False),
-    ('LNNE', 'NW', {}, False),
+    ('VIKG', 'NW', {}, False),  # Viking
+    ('ALSC', 'NW', {}, False),  # Happy Al's
+    ('LCAC', 'NW', {}, False), 
+    ('LNNE', 'NW', {}, False), 
 
     ('RBUS', 'SE', {}, True),  # incomplete
 
