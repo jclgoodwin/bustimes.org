@@ -197,6 +197,9 @@ class Timetable:
             'notes'
         )
 
+        if detailed:
+            trips = trips.select_related('block', 'garage')
+
         for trip in trips:
             if trip.inbound:
                 self.groupings[1].trips.append(trip)
@@ -234,6 +237,29 @@ class Timetable:
         self.origins_and_destinations = {
             (route.origin, route.destination) for route in self.current_routes if route.origin
         }
+
+    def any_trip_has(self, attr: str) -> bool:
+        for grouping in self.groupings:
+            for trip in grouping.trips:
+                if getattr(trip, attr):
+                    return True
+        return False
+
+    @cached_property
+    def has_blocks(self) -> bool:
+        return self.any_trip_has('block_id')
+
+    @cached_property
+    def has_garages(self) -> bool:
+        return self.any_trip_has('garage_id')
+
+    @cached_property
+    def has_vehicle_types(self) -> bool:
+        return self.any_trip_has('vehicle_type_id')
+
+    @cached_property
+    def has_ticket_machine_codes(self) -> bool:
+        return self.any_trip_has('ticket_machine_code')
 
     def get_date_options(self):
         date = self.today
