@@ -567,7 +567,7 @@ class StopUsage(models.Model):
                                      choices=TIMING_STATUS_CHOICES)
 
     class Meta:
-        ordering = ('direction', 'order')
+        ordering = ('-direction', 'order')  # outbound then inbound
 
     def is_minor(self):
         return self.timing_status == 'OTH'

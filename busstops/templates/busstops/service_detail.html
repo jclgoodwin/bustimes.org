@@ -48,7 +48,7 @@
     {% include 'fares.html' with form=fares %}
 {% endif %}
 
-{% if payment_methods %}
+{% {% if object.public_use is not False and payment_methods %}
     <p>
         {% for method in payment_methods %}
             {% if not forloop.first %}{% if forloop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}
