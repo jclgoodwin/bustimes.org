@@ -155,13 +155,15 @@ class Command(BaseCommand):
             else:
                 tariff.operators.add(operator)
 
-                line_ref = tariff_element.find("LineRef").attrib["ref"]
-                try:
-                    service = Service.objects.get(operator=operator, line_name=line_ref, current=True)
-                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                    pass
-                else:
-                    tariff.services.add(service)
+                line_ref = tariff_element.find("LineRef")
+                if line_ref is not None:
+                    line = lines[line_ref.attrib["ref"]]
+                    try:
+                        service = Service.objects.get(operator=operator, line_name=line.findtext("PublicCode"), current=True)
+                    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                        print(operator, line)
+                    else:
+                        tariff.services.add(service)
 
             distance_matrix_element_elements = fare_structure_elements.find(
                 "FareStructureElement/distanceMatrixElements"
