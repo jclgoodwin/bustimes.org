@@ -9,7 +9,7 @@ from ciso8601 import parse_datetime
 from django.utils.http import parse_http_date
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from busstops.models import StopPoint
+from busstops.models import StopPoint, Operator, Service
 from ... import models
 
 
@@ -78,11 +78,12 @@ class Command(BaseCommand):
         if price_groups_element:
             for price_group_element in price_groups_element:
                 price_element = price_group_element.find("members/GeographicalIntervalPrice")  # assume only 1 ~
-                price = models.Price.objects.create(
+                price = models.Price(
                     amount=price_element.findtext("Amount")
                 )
                 price_groups[price_group_element.attrib["id"]] = price
                 price_group_prices[price_element.attrib["id"]] = price
+        models.Price.objects.bulk_create(price_groups.values())
 
         fare_zones = {}
         fare_zones_element = element.find("dataObjects/CompositeFrame/frames/FareFrame/fareZones")
@@ -94,14 +95,17 @@ class Command(BaseCommand):
                 )
                 fare_zones[fare_zone.code] = fare_zone
                 stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
-                if stop_refs:
+                # if stop_refs:
+                if False:
                     try:
                         if stop_refs[0].startswith('atco'):
-                            fare_zone.stops.set([stop_ref.removeprefix('atco:') for stop_ref in stop_refs])
-                        elif stop_refs[0].startswith('naptStop'):
                             fare_zone.stops.set(StopPoint.objects.filter(
-                                naptan_code__in=[stop_ref.removeprefix('naptStop:') for stop_ref in stop_refs]
+                                atco_code__in=[stop_ref.removeprefix('atco:') for stop_ref in stop_refs]
                             ))
+                        # elif stop_refs[0].startswith('naptStop'):
+                        #     fare_zone.stops.set(StopPoint.objects.filter(
+                        #         naptan_code__iexact__in=[stop_ref.removeprefix('naptStop:') for stop_ref in stop_refs]
+                        #     ))
                         else:
                             print(stop_refs[0])
                     except IntegrityError as e:
@@ -128,12 +132,36 @@ class Command(BaseCommand):
             else:
                 trip_type = ''
 
+            type_of_tariff = tariff_element.find("TypeOfTariffRef")
+            if type_of_tariff is not None:
+                type_of_tariff = type_of_tariff.attrib["ref"].removeprefix('fxc:')
+
             tariff = models.Tariff.objects.create(
-                code=tariff_element.attrib['id'], name=tariff_element.findtext("Name"),
-                source=source, filename=filename,
-                trip_type=trip_type, user_profile=user_profile
+                code=tariff_element.attrib['id'],
+                name=tariff_element.findtext("Name"),
+                source=source,
+                filename=filename,
+                trip_type=trip_type,
+                user_profile=user_profile,
+                type_of_tariff=type_of_tariff or ''
             )
             tariffs[tariff.code] = tariff
+
+            operator_ref = tariff_element.find("OperatorRef").attrib["ref"]
+            try:
+                operator = Operator.objects.get(id=operator_ref.removeprefix("noc:"))
+            except Operator.DoesNotExist:
+                pass
+            else:
+                tariff.operators.add(operator)
+
+                line_ref = tariff_element.find("LineRef").attrib["ref"]
+                try:
+                    service = Service.objects.get(operator=operator, line_name=line_ref, current=True)
+                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                    pass
+                else:
+                    tariff.services.add(service)
 
             distance_matrix_element_elements = fare_structure_elements.find(
                 "FareStructureElement/distanceMatrixElements"
@@ -217,26 +245,31 @@ class Command(BaseCommand):
                 columns = {}
                 if columns_element:
                     for column in columns_element:
-                        column = models.Column.objects.create(
+                        column = models.Column(
                             table=table,
                             code=column.attrib['id'],
                             name=column.findtext('Name'),
                             order=column.attrib.get('order')
                         )
                         columns[column.code] = column
+                models.Column.objects.bulk_create(columns.values())
 
                 rows = {}
                 if rows_element:
                     for row in rows_element:
-                        row = models.Row.objects.create(
+                        row = models.Row(
                             table=table,
                             code=row.attrib['id'],
                             name=row.findtext('Name'),
                             order=row.attrib.get('order')
                         )
                         rows[row.code] = row
+                models.Row.objects.bulk_create(rows.values())
+
             else:
                 table = None
+
+            cells = []
 
             for sub_fare_table_element in fare_table_element.find('includes'):  # fare tables within fare tables
                 cells_element = sub_fare_table_element.find('cells')
@@ -262,12 +295,12 @@ class Command(BaseCommand):
                             row_refs = [row_ref for row_ref in rows if row_ref.endswith(row_ref_suffix)]
                             assert len(row_refs) == 1
                             row = rows[row_refs[0]]
-                        models.Cell.objects.create(
+                        cells.append(models.Cell(
                             column=columns[columnn_ref],
                             row=row,
                             price=price_group_prices[price_ref.attrib["ref"]],
                             distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
-                        )
+                        ))
 
                 sales_offer_package_ref = sub_fare_table_element.find("pricesFor/SalesOfferPackageRef")
                 if sales_offer_package_ref is not None:
@@ -292,6 +325,8 @@ class Command(BaseCommand):
                                         sales_offer_package=sales_offer_package,
                                         user_profile=user_profile
                                     )
+
+            models.Cell.objects.bulk_create(cells)
 
     @staticmethod
     def add_arguments(parser):
