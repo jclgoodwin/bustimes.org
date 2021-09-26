@@ -1010,7 +1010,7 @@ class Command(BaseCommand):
         stops_to_create = {}
         for atco_code, stop in transxchange_stops.items():
             if atco_code not in stops:
-                if atco_code.startswith('000'):
+                if atco_code.startswith('000') or atco_code.startswith('999'):
                     stops[atco_code] = str(stop)[:255]
                 else:
                     stops_to_create[atco_code] = StopPoint(atco_code=atco_code, common_name=str(stop)[:48], active=True)
