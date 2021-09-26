@@ -12,6 +12,7 @@ from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
+from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, SIRISource
 from bustimes.models import get_calendars, Trip
 import json
@@ -635,7 +636,7 @@ class VehicleJourney(models.Model):
             return
         return block_ref
 
-    def get_trip(self, datetime=None, destination_ref=None):
+    def get_trip(self, datetime=None, destination_ref=None, origin_aimed_departure_time=None):
         if not datetime:
             datetime = self.datetime
         trips = Trip.objects.filter(
@@ -649,12 +650,18 @@ class VehicleJourney(models.Model):
         else:
             destination = None
 
-        if len(self.code) == 4 and self.code.isdigit() and int(self.code) < 2400:
+        if origin_aimed_departure_time:
+            start = timezone.localtime(origin_aimed_departure_time)
+            start = timedelta(hours=start.hour, minutes=start.minute)
+        elif len(self.code) == 4 and self.code.isdigit() and int(self.code) < 2400:
             hours = int(self.code[:-2])
             minutes = int(self.code[-2:])
             start = timedelta(hours=hours, minutes=minutes)
-            start = Q(start=start)
+        else:
+            start = None
 
+        if start is not None:
+            start = Q(start=start)
             if destination:
                 try:
                     return trips.get(start, destination)

@@ -24,7 +24,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
-from vehicles.models import Vehicle, VehicleLocation
+from vehicles.models import Vehicle
 from bustimes.models import get_routes
 from .utils import get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,

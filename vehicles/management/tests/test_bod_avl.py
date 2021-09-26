@@ -3,7 +3,8 @@ from pathlib import Path
 from django.core.cache import cache
 from vcr import use_cassette
 from django.test import TestCase, override_settings
-from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea
+from busstops.models import Region, DataSource, Operator, OperatorCode, StopPoint, Locality, AdminArea, Service
+from bustimes.models import Route, Trip
 from ...models import VehicleLocation, VehicleJourney
 from ...workers import SiriConsumer
 from ...utils import flush_redis
@@ -28,6 +29,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         suffolk = AdminArea.objects.create(region=region, id=1, atco_code=390, name='Suffolk')
         southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
         StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
+
+        service_u = Service.objects.create(
+            line_name='U'
+        )
+        service_u.operator.add('WHIP')
+        route_u = Route.objects.create(service=service_u, source=cls.source)
+        Trip.objects.create(route=route_u, start='09:23', end='10:50')
 
     @time_machine.travel('2020-05-01', tick=False)
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
@@ -125,7 +133,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }]
 
         consumer = SiriConsumer()
-        with self.assertNumQueries(31):
+        with self.assertNumQueries(34):
             consumer.sirivm({
                 "when": "2020-10-15T07:46:08+00:00",
                 "items": items
@@ -169,7 +177,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertContains(response, 'OPERATOR_ID="HAMS";')
         self.assertContains(response, '/operators/hams/map')
 
-        self.assertIs(cache.get('WHIP:U:0500CCITY544'), False)
+        self.assertIs(False, cache.get('TGTC:843X:43000280301'))
+        self.assertIs(False, cache.get('HAMS:C:2400103099'))
+        self.assertIsNone(cache.get('WHIP:U:0500CCITY544'))
         self.assertIsNone(cache.get('WHIP:U:0500CCITY5'))
 
     def test_handle_item(self):
