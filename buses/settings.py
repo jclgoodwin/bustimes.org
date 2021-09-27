@@ -543,10 +543,13 @@ BOD_OPERATORS = [
     ('VECT', 'SE', {}, False),
     ('ACME', 'SE', {}, False),
 
-    ('VIKG', 'NW', {}, False),  # Viking
+    ('Viking Coaches', 'NW', {
+        'VIKG': 'VIKG'
+    }, False),  # Viking (BODS API thinks their operator code is WVIK, but that's a different Viking)
+
     ('ALSC', 'NW', {}, False),  # Happy Al's
-    ('LCAC', 'NW', {}, False), 
-    ('LNNE', 'NW', {}, False), 
+    ('LCAC', 'NW', {}, False),
+    ('LNNE', 'NW', {}, False),
 
     ('RBUS', 'SE', {}, True),  # incomplete
 

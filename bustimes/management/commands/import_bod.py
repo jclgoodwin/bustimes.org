@@ -133,7 +133,10 @@ def bus_open_data(api_key, operator):
         while url:
             response = session.get(url, params=params)
             json = response.json()
-            for dataset in json['results']:
+            results = json['results']
+            if not results:
+                logger.warning(f'no results: {response.url}')
+            for dataset in results:
                 dataset['source'], created = DataSource.objects.get_or_create(
                     {'name': dataset['name']},
                     url=dataset['url']
@@ -153,7 +156,7 @@ def bus_open_data(api_key, operator):
             continue
 
         if ' ' in noc:
-            operator_datasets = [item for item in datasets if noc in item['description']]
+            operator_datasets = [item for item in datasets if noc in item['name'] or noc in item['description']]
         else:
             operator_datasets = [item for item in datasets if noc in item['noc']]
 
