@@ -43,6 +43,8 @@ numpy = "^1.21.2"
 django-debug-toolbar = "^3.2.2"
 django-debug-toolbar-force = "^0.1.8"
 gunicorn = "^20.1.0"
+setproctitle = "^1.2.2"
+ipython = "^7.28.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
