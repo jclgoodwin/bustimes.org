@@ -4,7 +4,7 @@ from django.contrib.gis.db.models import PointField
 from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Count, Q, F, Exists, OuterRef, CharField
+from django.db.models import Q, F, Exists, OuterRef, CharField
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.html import format_html
@@ -146,7 +146,7 @@ class ToServiceLinkInline(FromServiceLinkInline):
 
 @admin.register(models.Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'service_code', 'mode', 'region_id',
+    list_display = ('__str__', 'service_code', 'mode', 'region_id', 'routes',
                     'current', 'timetable_wrong', 'colour', 'line_brand')
     list_filter = ('current', 'timetable_wrong', 'mode', 'region',
                    ('source', admin.RelatedOnlyFieldListFilter),
@@ -157,6 +157,16 @@ class ServiceAdmin(admin.ModelAdmin):
     readonly_fields = ['search_vector']
     list_editable = ['colour', 'line_brand']
     list_select_related = ['colour']
+
+    def routes(self, obj):
+        return obj.routes
+    routes.admin_order_field = 'routes'
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            queryset = queryset.annotate(routes=SubqueryCount('route'))
+        return queryset
 
     def get_search_results(self, request, queryset, search_term):
         if search_term and request.path.endswith('/autocomplete/'):
@@ -233,11 +243,12 @@ class ServiceColourAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if 'changelist' in request.resolver_match.view_name:
-            queryset = queryset.annotate(services=Count('service', filter=Q(service__current=True)))
+            queryset = queryset.annotate(services=SubqueryCount('service', filter=Q(current=True)))
         return queryset
 
     def services(self, obj):
         return obj.services
+    services.admin_order_field = 'services'
 
 
 @admin.register(models.Place)
