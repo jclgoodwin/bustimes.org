@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import camel_case_to_spaces
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
 from busstops.templatetags.date_range import date_range
@@ -18,6 +19,9 @@ class Situation(models.Model):
 
     def __str__(self):
         return self.summary or self.text
+
+    def nice_reason(self):
+        return camel_case_to_spaces(self.reason)
 
     def get_absolute_url(self):
         return reverse('situation', args=(self.id,))

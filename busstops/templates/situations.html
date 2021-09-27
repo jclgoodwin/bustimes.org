@@ -7,7 +7,7 @@
             <div class="summary">
                 {% if situation.reason %}
                     <div class="reason">
-                        {% if situation.reason == 'roadClosed' %}Road closed{% elif situation.reason == 'routeDiversion' %}Diversion{% else %}{{ situation.reason|title }}{% endif %}
+                        {{ situation.nice_reason|capfirst }}
                     </div>
                 {% endif %}
                 <h2>{{ situation.summary }}</h2>
