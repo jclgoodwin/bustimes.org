@@ -1,18 +1,6 @@
 [run]
 plugins =
     django_coverage_plugin
-source =
-    accounts
-    api
-    buses
-    busstops
-    bustimes
-    departures
-    disruptions
-    fares
-    transxchange
-    vehicles
-    vosa
 omit =
     */migrations/*
     */fixtures/*
