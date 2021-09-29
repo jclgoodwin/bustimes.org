@@ -335,8 +335,6 @@ class Command(BaseCommand):
         """update/create StopUsages, search_vector and geometry fields"""
 
         for service in Service.objects.filter(id__in=self.service_ids):
-            service.stops.clear()
-
             outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
 
             stop_usages = [
@@ -348,13 +346,17 @@ class Command(BaseCommand):
                           direction='inbound', order=i)
                 for i, stop_time in enumerate(inbound)
             ]
-            StopUsage.objects.bulk_create(stop_usages)
 
-            # using StopUsages
-            service.update_search_vector()
+            if stop_usages:
+                service.stops.clear()
 
-            # using routes
-            service.update_geometry()
+                StopUsage.objects.bulk_create(stop_usages)
+
+                # using StopUsages
+                service.update_search_vector()
+
+                # using routes
+                service.update_geometry()
 
     @cache
     def get_bank_holiday(self, bank_holiday_name):
@@ -581,6 +583,8 @@ class Command(BaseCommand):
                 elif len(timing_status) > 3:
                     if timing_status == 'otherPoint':
                         timing_status = 'OTH'
+                    if timing_status == 'timeInfoPoint':
+                        timing_status = 'TIP'
                     elif timing_status == 'principleTimingPoint' or timing_status == 'principalTimingPoint':
                         timing_status = 'PTP'
                     else:
