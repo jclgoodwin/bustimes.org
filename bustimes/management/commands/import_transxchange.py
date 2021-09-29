@@ -583,7 +583,7 @@ class Command(BaseCommand):
                 elif len(timing_status) > 3:
                     if timing_status == 'otherPoint':
                         timing_status = 'OTH'
-                    if timing_status == 'timeInfoPoint':
+                    elif timing_status == 'timeInfoPoint':
                         timing_status = 'TIP'
                     elif timing_status == 'principleTimingPoint' or timing_status == 'principalTimingPoint':
                         timing_status = 'PTP'
