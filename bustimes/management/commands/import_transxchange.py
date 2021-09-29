@@ -706,7 +706,10 @@ class Command(BaseCommand):
 
     def handle_service(self, filename: str, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end and txc_service.operating_period.end < txc_service.operating_period.start:
-            return
+            logger.warning(
+                f"skipping {filename}: "
+                f"end {txc_service.operating_period.end} " " is before start {txc_service.operating_period.start}"
+            )
 
         operators = self.get_operators(transxchange, txc_service)
 
@@ -897,7 +900,9 @@ class Command(BaseCommand):
             linked_services.append(service.id)
 
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
-                continue
+                logger.warning(
+                    f"{filename}: end {txc_service.operating_period.end} is in the past"
+                )
 
             if journeys:
                 journey = journeys[0]
