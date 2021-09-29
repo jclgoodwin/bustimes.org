@@ -665,10 +665,15 @@ class Command(BaseCommand):
 
     def get_description(self, txc_service):
         description = txc_service.description
-        if description and ('timetable' in description.lower() or 'Database Refresh' in description
-                            or self.source.name.startswith('Stagecoach')
-                            or self.source.name.startswith('Coach Services')):
-            description = None
+        if description:
+            if ('timetable' in description.lower() or 'Database Refresh' in description):
+                logger.warning(f"ignoring description {description}")
+                description = None
+            elif self.source.name.startswith('Stagecoach'):
+                description = None
+            elif description.isupper():
+                description = titlecase(description, callback=initialisms)
+
         if not description:
             origin = txc_service.origin
             destination = txc_service.destination
@@ -677,11 +682,9 @@ class Command(BaseCommand):
                     origin = titlecase(origin, callback=initialisms)
                     destination = titlecase(destination, callback=initialisms)
 
-                # for the outbound and inbound descriptions
-                txc_service.description_parts = [origin, destination]
-
-                if description and (description.startswith('via ') or description.startswith('then ')):
-                    description = f'{origin} - {destination} {description}'
+                if description:
+                    if description.startswith('via ') or description.startswith('then '):
+                        description = f'{origin} - {destination} {description}'
                 else:
                     description = f'{origin} - {destination}'
                     vias = txc_service.vias
@@ -862,17 +865,26 @@ class Command(BaseCommand):
             if self.region_id:
                 service.region_id = self.region_id
 
+            # inbound and outbound descriptions
+
             service.outbound_description = ''
             service.inbound_description = ''
             if line.outbound_description != line.inbound_description or txc_service.origin == 'Origin':
-                if line.outbound_description:
-                    service.outbound_description = line.outbound_description
+                out_desc = line.outbound_description
+                in_desc = line.inbound_description
+
+                if out_desc and in_desc and out_desc.isupper() and in_desc.isupper():
+                    out_desc = titlecase(out_desc, callback=initialisms)
+                    in_desc = titlecase(in_desc, callback=initialisms)
+
+                if out_desc:
+                    service.outbound_description = out_desc
                     if not service.description:
-                        service.description = line.outbound_description
-                if line.inbound_description:
-                    service.inbound_description = line.inbound_description
+                        service.description = out_desc
+                if in_desc:
+                    service.inbound_description = in_desc
                     if not service.description:
-                        service.description = line.inbound_description
+                        service.description = in_desc
 
             if self.service_descriptions:  # NCSD
                 outbound_description, inbound_description = self.get_service_descriptions(filename)
@@ -880,6 +892,8 @@ class Command(BaseCommand):
                     service.description = service.inbound_description = inbound_description
                 if outbound_description:
                     service.description = service.outbound_description = outbound_description
+
+            # does is the service already exist in the database?
 
             if service.id:
                 service_created = False
