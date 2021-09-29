@@ -864,7 +864,7 @@ class Command(BaseCommand):
 
             service.outbound_description = ''
             service.inbound_description = ''
-            if line.outbound_description != line.inbound_description:
+            if line.outbound_description != line.inbound_description or txc_service.origin == 'Origin':
                 if line.outbound_description:
                     service.outbound_description = line.outbound_description
                     if not service.description:
