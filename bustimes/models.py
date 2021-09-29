@@ -82,6 +82,17 @@ class CalendarBankHoliday(models.Model):
         return f'not {self.bank_holiday}'
 
 
+day_keys = (
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+)
+
+
 class Calendar(models.Model):
     mon = models.BooleanField()
     tue = models.BooleanField()
@@ -126,20 +137,15 @@ class Calendar(models.Model):
         if date in self.bank_holiday_dates:
             return True
 
-    def __str__(self):
-        if self.summary and self.start_date == self.end_date:
-            return self.summary
-        day_keys = (
-            'Monday',
-            'Tuesday',
-            'Wednesday',
-            'Thursday',
-            'Friday',
-            'Saturday',
-            'Sunday',
-        )
+    def get_days(self):
         day_values = (self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun)
-        days = [day_keys[i] for i, value in enumerate(day_values) if value]
+        return [day_keys[i] for i, value in enumerate(day_values) if value]
+
+    def get_order(self):
+        return [day_keys.index(day) for day in self.get_days()]
+
+    def __str__(self):
+        days = self.get_days()
         if not days:
             return self.summary
         if len(days) == 1:

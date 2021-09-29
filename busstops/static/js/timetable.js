@@ -31,7 +31,7 @@
         if (select) {
             select.onchange = function(event) {
                 timetableWrapper.className = 'loading';
-                var newSearch = '?date=' + event.target.value;
+                var newSearch = '?' + event.target.name + '=' + event.target.value;
                 reqwest('/services/' + SERVICE_ID + '/timetable' + newSearch, function(response) {
                     timetableWrapper.className = '';
                     timetableWrapper.innerHTML = response;

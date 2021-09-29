@@ -893,18 +893,18 @@ class Service(models.Model):
                 return timetable_change
             previous_route = route
 
-    def get_timetable(self, day=None, related=(), detailed=False):
+    def get_timetable(self, day=None, calendar_id=None, related=(), detailed=False):
         """Given a Service, return a Timetable"""
 
         if self.region_id == 'NI' or self.source and self.source.name.endswith(' GTFS'):
-            timetable = Timetable(self.route_set.all(), day)
+            timetable = Timetable(self.route_set.all(), day, calendar_id=calendar_id)
         else:
             if related:
                 routes = Route.objects.filter(service__in=[self] + related)
             else:
                 routes = self.route_set
             try:
-                timetable = Timetable(routes.order_by('start_date'), day, detailed)
+                timetable = Timetable(routes.order_by('start_date'), day, calendar_id=calendar_id, detailed=detailed)
             except (IndexError, UnboundLocalError) as e:
                 logger.error(e, exc_info=True)
                 return

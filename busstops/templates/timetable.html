@@ -1,7 +1,16 @@
 {% load urlise %}
 
 {% if timetable %}
-    {% if timetable.calendar %}
+    {% if timetable.calendar_options %}
+        <form class="timetable-date">
+            <select onchange="this.form.submit()" name="calendar" id="id_date" aria-label="Date">
+                {% for option in timetable.calendar_options %}
+                    <option{% if option == timetable.calendar %} selected{% endif %} value="{{ option.id }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <noscript><input type="submit"></noscript>
+        </form>
+    {% elif timetable.calendar %}
         <p>
             {{ timetable.calendar }}
             {% if timetable.start_date %}
