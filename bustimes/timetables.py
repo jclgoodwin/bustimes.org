@@ -173,12 +173,13 @@ class Timetable:
                 if self.date_options:
                     self.date = self.date_options[0]
                 else:
-                    return
+                    self.date = self.today
 
             if len(routes) > 1:
                 # consider revision numbers:
                 routes = get_routes(routes, self.date)
-                self.current_routes = routes
+                if routes:
+                    self.current_routes = routes
 
         trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:

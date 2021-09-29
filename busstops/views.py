@@ -561,8 +561,6 @@ class ServiceDetailView(DetailView):
             if date:
                 try:
                     date = datetime.date.fromisoformat(date)
-                    if date < timezone.localdate():
-                        date = None
                 except ValueError:
                     date = None
             if context['related']:
@@ -603,7 +601,7 @@ class ServiceDetailView(DetailView):
                 for stop in consequence.stops.all():
                     stop_situations[stop.atco_code] = situation
 
-        if not context.get('timetable'):
+        if 'timetable' not in context or not timetable.groupings:
             context['stopusages'] = self.object.stopusage_set.all().select_related(
                 'stop__locality'
             ).defer(

@@ -7,13 +7,18 @@
 {% if timetable %}
     {% if timetable.calendar %}
         <p>{{ timetable.calendar }}{% if timetable.start_date %} from {{ timetable.start_date }}{% endif %}</p>
-    {% elif timetable.date_options %}
+    {% elif timetable.date_options|length > 1 %}
         <form class="timetable-date">
             <select onchange="this.form.submit()" name="date" id="id_date" aria-label="Date">
                 {% for option in timetable.date_options %}
                     <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
                 {% endfor %}
             </select>
+            <noscript><input type="submit"></noscript>
+        </form>
+    {% else %}
+        <form class="timetable-date">
+            <input type="date" onchange="this.form.submit()" name="date" id="id_date" aria-label="Date" value="{{ timetable.date.isoformat }}">
             <noscript><input type="submit"></noscript>
         </form>
     {% endif %}
@@ -125,6 +130,10 @@
 
     {% empty %}
         <p>Sorry, no journeys found for {{ timetable.date }}</p>
+
+        {% if not date_options %}
+            <p>Try selecting a date in the past – the “old” timetable might still be valid</p>
+        {% endif %}
 
         {% include 'route.html' %}
     {% endfor %}
