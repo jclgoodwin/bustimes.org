@@ -239,6 +239,14 @@ class Command(ImportLiveVehiclesCommand):
         services = self.services.filter(line_name_query).defer('geometry')
 
         if type(operator) is Operator and operator.parent and destination_ref:
+
+            # first try taking OperatorRef at face value
+            # (temporary while some services may have no StopUsages)
+            try:
+                return services.filter(operator=operator).get()
+            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+                pass
+
             condition = Q(parent=operator.parent)
 
             # in case the vehicle operator has a different parent (e.g. HCTY)
