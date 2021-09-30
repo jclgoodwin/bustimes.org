@@ -14,9 +14,14 @@ def get_routes(routes, when=None):
     if len(routes) == 1:
         return routes
 
-    # use maximum revision number for each service_code
+    sources = set(route.source_id for route in routes)
     revision_numbers = set(route.revision_number for route in routes)
-    if len(revision_numbers) > 1 and not end_dates:
+
+    # use maximum revision number for each service_code
+    # (but if there's only one source, ignore the revision numbers,
+    #  e.g. to avoid missing half the Konectbus 5B timetable)
+
+    if len(sources) > 1 and len(revision_numbers) > 1 and not end_dates:
         revision_numbers = {}
         for route in routes:
             if (
