@@ -597,7 +597,7 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
     data = models.JSONField(null=True, blank=True)
-    trip = models.ForeignKey('bustimes.Trip', models.DO_NOTHING, db_constraint=False, null=True, blank=True)
+    trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, db_constraint=False, null=True, blank=True)
 
     def get_absolute_url(self):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
@@ -701,12 +701,6 @@ class JourneyCode(models.Model):
             ('code', 'service', 'siri_source'),
             ('code', 'service', 'data_source'),
         )
-
-
-class Channel(models.Model):
-    name = models.CharField(max_length=100, unique=True)
-    bounds = models.PolygonField()
-    datetime = models.DateTimeField(null=True, blank=True)
 
 
 class Occupancy(models.TextChoices):

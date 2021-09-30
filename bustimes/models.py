@@ -113,6 +113,15 @@ class Route(models.Model):
         return reverse('route_xml', args=(self.source_id, self.code.split('#')[0]))
 
 
+class RouteLink(models.Model):
+    service = models.ForeignKey('busstops.Service', models.CASCADE)
+    from_stop = models.ForeignKey('busstops.StopPoint', models.CASCADE, related_name='link_from')
+    to_stop = models.ForeignKey('busstops.StopPoint', models.CASCADE, related_name='link_to')
+    distance_metres = models.PositiveSmallIntegerField(null=True, blank=True)
+    geometry = models.LineStringField()
+    override = models.BooleanField(default=False)
+
+
 class BankHoliday(models.Model):
     id = models.SmallAutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=255)
