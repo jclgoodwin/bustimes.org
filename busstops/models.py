@@ -859,8 +859,8 @@ class Service(models.Model):
             # there are two identical (but differently dated) versions of a timetable
             if (
                 route.source_id == previous_route.source_id
-                and '_FG_' not in route.code
-                and ('/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0])
+                and '_FG_' not in route.code  # not First Group
+                and '.zip/' not in route.code  # not Passenger
                 and route.start_date
                 and route.start_date >= earliest_start
             ):
