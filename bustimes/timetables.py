@@ -236,7 +236,7 @@ class Timetable:
             self.groupings.sort(key=Grouping.get_order)
 
         self.origins_and_destinations = {
-            (route.origin, route.destination) for route in self.current_routes if route.origin
+            (route.origin, route.destination, route.via) for route in self.current_routes if route.origin
         }
 
     def any_trip_has(self, attr: str) -> bool:

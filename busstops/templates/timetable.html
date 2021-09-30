@@ -31,16 +31,16 @@
                     {% if object.inbound_description and timetable.origins_and_destinations|length <= 1 %}
                         {{ object.inbound_description }}
                     {% else %}
-                        {% for origin, destination in timetable.origins_and_destinations %} 
-                            {{ destination }} - {{ origin }}{% if not forloop.last %}<br>{% endif %}
+                        {% for origin, destination, via in timetable.origins_and_destinations %} 
+                            {{ destination }} - {{ origin }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
                         {% empty %}Inbound{% endfor %}
                     {% endif %}
                 {% else %}
                     {% if object.outbound_description and timetable.origins_and_destinations|length <= 1 %}
                         {{ object.outbound_description }}
                     {% else %}
-                        {% for origin, destination in timetable.origins_and_destinations %} 
-                            {{ origin }} - {{ destination }}{% if not forloop.last %}<br>{% endif %}
+                        {% for origin, destination, via in timetable.origins_and_destinations %} 
+                            {{ origin }} - {{ destination }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
                         {% empty %}Outbound{% endfor %}
                     {% endif %}
                 {% endif %}
