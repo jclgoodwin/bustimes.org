@@ -1,4 +1,5 @@
 import boto3
+import logging
 from ftplib import FTP
 from django.core.management.base import BaseCommand
 from django.core.management import call_command
@@ -47,6 +48,8 @@ class Command(BaseCommand):
             self.changed_files.append(path)
 
     def handle(self, username, password, *args, **options):
+        logger = logging.getLogger(__name__)
+
         self.client = boto3.client('s3', endpoint_url='https://ams3.digitaloceanspaces.com')
 
         self.existing_files = self.client.list_objects_v2(Bucket='bustimes-data')
@@ -71,7 +74,7 @@ class Command(BaseCommand):
         self.ftp.quit()
 
         for file in self.changed_files:
-            print(file)
+            logger.info(file.name)
             before = timezone.now()
             call_command('import_transxchange', file)
-            print(timezone.now() - before)
+            logger.info(timezone.now() - before)

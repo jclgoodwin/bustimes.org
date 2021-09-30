@@ -30,12 +30,14 @@ class ImportPassengerTest(TestCase):
 
         with patch('bustimes.management.commands.import_passenger.write_file'):
             with self.assertRaises(FileNotFoundError):
-                with patch('builtins.print') as mocked_print:
+                with self.assertLogs('bustimes.management.commands.import_bod') as cm:
                     call_command('import_passenger')
 
-        mocked_print.assert_called_with(
-            {'filename': 'unilink_1586941265.zip', 'modified': True, 'dates': ['2020-05-10', '2020-06-01'],
-             'gtfs': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/gtfs/unilink_1586941265.zip'}
-        )
+        self.assertEqual(cm.output, [
+            'INFO:bustimes.management.commands.import_bod:Unilink',
+            "INFO:bustimes.management.commands.import_bod:{'filename': 'unilink_1586941265.zip', 'modified': True, "
+            "'dates': ['2020-05-10', '2020-06-01'], 'gtfs': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/u"
+            "nilink/gtfs/unilink_1586941265.zip'}"
+        ])
 
         self.assertFalse(Route.objects.all())

@@ -58,7 +58,7 @@ def handle_file(command, path, qualify_filename=False):
                 if filename.endswith('.csv'):
                     continue
                 with archive.open(filename) as open_file:
-                    if qualify_filename: 
+                    if qualify_filename:
                         # source has multiple versions (Passsenger) so add a prefix like 'gonortheast_123.zip/'
                         filename = str(Path(path) / filename)
                     try:

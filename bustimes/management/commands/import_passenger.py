@@ -12,7 +12,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db.models import Q
 from busstops.models import DataSource, Service, ServiceColour
-from .import_bod import handle_file, get_operator_ids, clean_up
+from .import_bod import handle_file, get_operator_ids, clean_up, logger
 from .import_transxchange import Command as TransXChangeCommand
 from .import_gtfs import read_file
 from ...utils import write_file
@@ -83,11 +83,11 @@ def get_versions(session, url):
     try:
         response = session.get(url, timeout=5)
     except requests.RequestException as e:
-        print(url, e)
+        logger.warning(f"{url} {e}")
         sleep(5)
         return
     if not response.ok:
-        print(url, response)
+        logger.warning(f"{url} {response}")
         sleep(5)
         return
     for element in response.html.find():
@@ -142,7 +142,7 @@ class Command(BaseCommand):
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
 
             if new_versions:
-                print(name)
+                logger.info(name)
 
                 command.source.datetime = timezone.now()
                 command.operators = operators_dict
@@ -153,16 +153,16 @@ class Command(BaseCommand):
 
                 for version in versions:  # newest first
                     if version['modified']:
-                        print(version)
+                        logger.info(version)
                         handle_file(command, version['filename'], qualify_filename=True)
 
                 clean_up(operators, sources)
 
                 operator_ids = get_operator_ids(command.source)
-                print('  ', operator_ids)
+                logger.info(f"  {operator_ids}")
 
                 foreign_operators = [o for o in operator_ids if o not in operators]
-                print('  ', foreign_operators)
+                logger.info(f"  {foreign_operators}")
 
             # even if there are no new versions, delete old routes from expired versions
             old_routes = command.source.route_set
@@ -171,22 +171,25 @@ class Command(BaseCommand):
             old_routes = old_routes.delete()
             if not new_versions:
                 if old_routes[0]:
-                    print(name)
+                    logger.info(name)
                 else:
                     sleep(2)
                     continue
-            print('  old routes:', old_routes)
+            logger.info(f"  old routes: {old_routes}")
 
             # mark old services as not current
             old_services = command.source.service_set.filter(current=True, route=None)
-            print('  old services:', old_services.update(current=False))
+            logger.info(f"  old services: {old_services.update(current=False)}")
 
             if new_versions:
                 command.finish_services()
 
-                for version in versions:
-                    if 'gtfs' in version:
-                        handle_gtfs(list(operators), version['gtfs'])
+                if name in ('Nottingham City Transport', 'Reading Buses', 'Transdev Blazefield', 'Cardiff Bus'):
+                    # get colours from the GTFS data
+                    for version in versions:
+                        if 'gtfs' in version:
+                            handle_gtfs(list(operators), version['gtfs'])
+                            break
 
                 command.source.save()
 
