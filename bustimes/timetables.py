@@ -134,12 +134,11 @@ class Timetable:
         self.detailed = detailed
 
         self.groupings = [Grouping(), Grouping(True)]
+        self.calendar_options = None
 
-        # self.date_options = ()
         self.calendar = None
         self.start_date = None
         if not routes:
-            # self.calendars = ()
             return
 
         if not date and len(routes) > 1:
