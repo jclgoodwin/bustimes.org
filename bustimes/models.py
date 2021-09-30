@@ -85,7 +85,7 @@ class Route(models.Model):
     registration = models.ForeignKey('vosa.Registration', models.SET_NULL, null=True, blank=True)
     line_brand = models.CharField(max_length=255, blank=True)
     line_name = models.CharField(max_length=255, blank=True)
-    revision_number = models.PositiveSmallIntegerField(null=True, blank=True)
+    revision_number = models.PositiveIntegerField(null=True, blank=True)
     description = models.CharField(max_length=255, blank=True)
     origin = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
