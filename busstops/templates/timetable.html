@@ -131,7 +131,7 @@
     {% empty %}
         <p>Sorry, no journeys found for {{ timetable.date }}</p>
 
-        {% if not date_options %}
+        {% if not timetable.date_options %}
             <p>Try selecting a date in the past – the “old” timetable might still be valid</p>
         {% endif %}
 

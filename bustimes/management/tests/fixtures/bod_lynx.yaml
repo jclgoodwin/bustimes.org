@@ -3956,7 +3956,7 @@ interactions:
         \            </ServiceClassification>\n            <RegisteredOperatorRef>13847</RegisteredOperatorRef>\n\
         \            <StopRequirements>\n                <NoNewStopsRequired/>\n \
         \           </StopRequirements>\n            <PublicUse>false</PublicUse>\n\
-        \            <Express>false</Express>\n            <Description>COVID-19 timetable</Description>\n\
+        \            <Express>false</Express>\n            \n\
         \            <StandardService>\n                <Origin>King's Lynn</Origin>\n\
         \                <Destination>The Walpoles via Clenchwarton</Destination>\n\
         \                <UseAllStopPoints>true</UseAllStopPoints>\n             \

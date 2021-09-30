@@ -218,8 +218,9 @@ class ImportTransXChangeTest(TestCase):
 
         res = self.client.get(route.service.get_absolute_url() + '?date=2016-12-28')
         timetable = res.context_data['timetable']
-        self.assertEqual(75, len(timetable.groupings[0].rows))
-        self.assertEqual(82, len(timetable.groupings[1].rows))
+        self.assertEqual(timetable.date, date(2016, 12, 28))
+
+        self.assertEqual([], timetable.groupings)
 
         self.assertEqual(157, route.service.stopusage_set.count())
 
@@ -466,7 +467,7 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.get()
 
         response = self.client.get(service.get_absolute_url())
-        self.assertNotIn('timetable', response.context_data)
+        self.assertEqual([], response.context_data['timetable'].groupings)
 
         # Has some journeys that operate on 1 May 2017
         with time_machine.travel(date(2017, 4, 28)):
@@ -486,7 +487,12 @@ class ImportTransXChangeTest(TestCase):
         # try date outside of operating period
         response = self.client.get(service.get_absolute_url() + '?date=2007-06-27')
         timetable = response.context_data['timetable']
+        self.assertEqual([], timetable.groupings)
+        self.assertEqual('2007-06-27', str(timetable.date))
+
         # next day of operation
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data['timetable']
         self.assertEqual('2012-06-30', str(timetable.date))
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(str(timetable.groupings[0].rows[0].times),
@@ -562,12 +568,15 @@ class ImportTransXChangeTest(TestCase):
             with patch('os.path.getmtime', return_value=1645544079):
                 self.write_files_to_zipfile_and_import('EA.zip', ['SVRABAO421.xml'])
         service = Service.objects.get()
-        self.assertEqual(0, service.route_set.count())
+        self.assertEqual(1, service.route_set.count())
         self.assertEqual(service.slug, '421-inverurie-alford')
 
         self.assertEqual([
-            "WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'SBLB', "
-            "'OperatorCode': 'BLB', 'OperatorShortName': 'Stagecoach North Scotlan'}"],
+            "WARNING:bustimes.management.commands.import_transxchange:"
+            "SVRABAO421.xml: end 2021-08-19 is in the past",
+            "WARNING:bustimes.management.commands.import_transxchange:"
+            "{'NationalOperatorCode': 'SBLB', 'OperatorCode': 'BLB', 'OperatorShortName': 'Stagecoach North Scotlan'}"
+            ],
             cm.output
         )
 
@@ -653,7 +662,14 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel('2021-07-07')
     def test_multiple_lines(self):
-        call_command('import_transxchange', FIXTURES_DIR / '904_SCD_PH_903_20210530.xml')
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            call_command('import_transxchange', FIXTURES_DIR / '904_SCD_PH_903_20210530.xml')
+
+        self.assertEqual(
+            cm.output,
+            ["WARNING:bustimes.management.commands.import_transxchange:"
+             "ignoring description Register timetable as permanent post covid lockdown"]
+        )
 
         self.assertEqual(ServiceLink.objects.count(), 1)
 
@@ -705,7 +721,7 @@ class ImportTransXChangeTest(TestCase):
         service.save(update_fields=['geometry'])
 
         with time_machine.travel('1 September 2017'):
-            with self.assertNumQueries(11):
+            with self.assertNumQueries(12):
                 res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
         self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
         self.assertContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')

@@ -837,6 +837,42 @@ class Service(models.Model):
             cache.set(key, services, 86400)
         return services
 
+    def get_next_timetable_change(self, timetable):
+        """Returns a 'timetable changes from _' if there's a route with a future start date
+        """
+        if not timetable.date:
+            return
+
+        start_dates = set(
+            route.start_date for route in timetable.routes
+            if route.start_date and route.start_date > timetable.date
+        )
+
+        if not start_dates:
+            return
+
+        previous_route = timetable.routes[0]
+        earliest_start = min(start_dates)
+
+        for route in timetable.routes[1:]:
+            # various heuristics to avoid returning a date when
+            # there are two identical (but differently dated) versions of a timetable
+            if (
+                route.source_id == previous_route.source_id
+                and '_FG_' not in route.code
+                and ('/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0])
+                and route.start_date
+                and route.start_date >= earliest_start
+            ):
+                timetable_change = route.start_date
+                if timetable_change not in timetable.date_options:
+                    # change 'from Sunday' to 'from Monday' if no Sunday service
+                    for date in timetable.date_options:
+                        if timetable_change < date:
+                            return date
+                return timetable_change
+            previous_route = route
+
     def get_timetable(self, day=None, related=(), detailed=False):
         """Given a Service, return a Timetable"""
 
@@ -853,27 +889,7 @@ class Service(models.Model):
                 logger.error(e, exc_info=True)
                 return
 
-        if timetable.date and len(timetable.routes) > 1:
-            # set 'timetable changes from _' if there's a route with a future start date
-            previous_route = timetable.routes[0]
-            for route in timetable.routes[1:]:
-                if (
-                    route.source_id == previous_route.source_id
-                    and '_FG_' not in route.code
-                    and ('/' not in route.code or route.code.split('/', 1)[0] == previous_route.code.split('/', 1)[0])
-                    and route.start_date
-                    and route.start_date and route.start_date > timetable.date
-                ):
-                    timetable_change = route.start_date
-                    if timetable_change not in timetable.date_options:
-                        # change 'from Sunday' to 'from Monday' if no Sunday service
-                        for date in timetable.date_options:
-                            if timetable_change < date:
-                                timetable_change = date
-                                break
-                    self.timetable_change = timetable_change
-                    break
-                previous_route = route
+        self.timetable_change = self.get_next_timetable_change(timetable)
 
         timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
 

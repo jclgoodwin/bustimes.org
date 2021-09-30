@@ -666,10 +666,10 @@ class Command(BaseCommand):
     def get_description(self, txc_service):
         description = txc_service.description
         if description:
-            if ('timetable' in description.lower() or 'Database Refresh' in description):
-                logger.warning(f"ignoring description {description}")
+            if self.source.name.startswith('Stagecoach'):
                 description = None
-            elif self.source.name.startswith('Stagecoach'):
+            elif ('timetable' in description.lower() or 'Database Refresh' in description):
+                logger.warning(f"ignoring description {description}")
                 description = None
             elif description.isupper():
                 description = titlecase(description, callback=initialisms)
