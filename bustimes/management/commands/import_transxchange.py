@@ -958,7 +958,10 @@ class Command(BaseCommand):
                 route_defaults['origin'] = ''
 
             if txc_service.destination and txc_service.destination != 'Destination':
-                route_defaults['destination'] = txc_service.destination
+                if ' via ' in txc_service.destination:
+                    route_defaults['destination'], route_defaults['via'] = txc_service.destination.split(' via ', 1)
+                else:
+                    route_defaults['destination'] = txc_service.destination
             else:
                 route_defaults['destination'] = ''
 
