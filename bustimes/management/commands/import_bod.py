@@ -206,9 +206,9 @@ def bus_open_data(api_key, operator):
 
         # delete routes from any sources that have been made inactive
         for o in operators:
-            if Service.objects.filter(source__in=sources, operator=o, current=True).exists():
+            if Service.objects.filter(source__in=sources, current=True, operator=o).exists():
                 clean_up([o], sources, incomplete)
-            else:
+            elif len(operators) == 1 or Service.objects.filter(current=True, operator=o).exists():
                 logger.warning(f'{o} has no current data')
 
     command.debrief()

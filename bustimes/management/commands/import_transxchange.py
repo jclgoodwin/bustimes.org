@@ -668,9 +668,6 @@ class Command(BaseCommand):
         if description:
             if self.source.name.startswith('Stagecoach'):
                 description = None
-            elif ('timetable' in description.lower() or 'Database Refresh' in description):
-                logger.warning(f"ignoring description {description}")
-                description = None
             elif description.isupper():
                 description = titlecase(description, callback=initialisms)
 
@@ -680,7 +677,9 @@ class Command(BaseCommand):
             if origin and destination and (origin != 'Origin' and destination != 'Destination' or txc_service.vias):
                 if origin.isupper() and destination.isupper():
                     origin = titlecase(origin, callback=initialisms)
+                    txc_service.origin = origin
                     destination = titlecase(destination, callback=initialisms)
+                    txc_service.destination = destination
 
                 if description:
                     if description.startswith('via ') or description.startswith('then '):
