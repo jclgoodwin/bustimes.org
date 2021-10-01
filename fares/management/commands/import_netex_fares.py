@@ -112,7 +112,6 @@ class Command(BaseCommand):
                         print(e)
 
         tariffs = {}
-        distance_matrix_elements = {}
         time_intervals = {}
         for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
             fare_structure_elements = tariff_element.find("fareStructureElements")
@@ -158,13 +157,16 @@ class Command(BaseCommand):
                 line_ref = tariff_element.find("LineRef")
                 if line_ref is not None:
                     line = lines[line_ref.attrib["ref"]]
+                    line_name = line.findtext("PublicCode")
                     try:
-                        service = Service.objects.get(operator=operator, line_name=line.findtext("PublicCode"), current=True)
-                    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                        print(operator, line)
+
+                        service = Service.objects.get(operator=operator, line_name=line_name, current=True)
+                    except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+                        logger.warning(f"{e} {operator} {line_name}")
                     else:
                         tariff.services.add(service)
 
+            distance_matrix_elements = {}
             distance_matrix_element_elements = fare_structure_elements.find(
                 "FareStructureElement/distanceMatrixElements"
             )
@@ -176,7 +178,7 @@ class Command(BaseCommand):
                     price_group_ref = price_group_ref.attrib['ref']
                     start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
                     end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
-                    distance_matrix_element, created = models.DistanceMatrixElement.objects.get_or_create(
+                    distance_matrix_element = models.DistanceMatrixElement(
                         code=distance_matrix_element.attrib["id"],
                         start_zone=fare_zones[start_zone],
                         end_zone=fare_zones[end_zone],
@@ -184,6 +186,7 @@ class Command(BaseCommand):
                         tariff=tariff,
                     )
                     distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
+            models.DistanceMatrixElement.objects.bulk_create(distance_matrix_elements.values())
 
             access_zones = fare_structure_elements.find(
                 "FareStructureElement/GenericParameterAssignment/validityParameters/FareZoneRef"
@@ -335,7 +338,8 @@ class Command(BaseCommand):
         parser.add_argument('api_key', type=str)
 
     def handle_dataset(self, item):
-        dataset_url = f"{self.base_url}/fares/dataset/{item['id']}/"
+        download_url = item["url"]
+        dataset_url = download_url.removesuffix("download/")
         modified = parse_datetime(item["modified"])
         try:
             dataset = models.DataSet.objects.get(url=dataset_url)
@@ -346,20 +350,20 @@ class Command(BaseCommand):
         except models.DataSet.DoesNotExist:
             dataset = models.DataSet(name=item["name"], description=item["description"], url=dataset_url)
             dataset.save()
-        print(dataset_url)
+
+        logger.info(dataset)
 
         try:
             dataset.operators.set(item["noc"])
         except IntegrityError:
-            print(item["noc"])
+            logger.warning(item["noc"])
 
-        download_url = f"{dataset_url}download/"
         response = self.session.get(download_url, stream=True)
 
         if response.headers['Content-Type'] == 'text/xml':
             # maybe not fully RFC 6266 compliant
             filename = response.headers['Content-Disposition'].split('filename', 1)[1][2:-1]
-            print(filename)
+            logger.info(filename)
             try:
                 self.handle_file(dataset, response.raw, filename)
             except AttributeError as e:
@@ -383,7 +387,6 @@ class Command(BaseCommand):
 
     def ticketer(self, noc):
         download_url = f"https://opendata.ticketer.com/uk/{noc}/fares/current.zip"
-        print(download_url)
         try:
             source = models.DataSet.objects.get(url=download_url)
         except models.DataSet.DoesNotExist:
@@ -398,9 +401,11 @@ class Command(BaseCommand):
         if source.datetime == last_modified:
             return source
 
+        logger.info(download_url)
+
         with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
             for filename in archive.namelist():
-                print(' ', filename)
+                logger.info(f"  {filename}")
                 try:
                     self.handle_file(source, archive.open(filename), filename)
                 except AttributeError as e:
