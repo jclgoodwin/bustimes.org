@@ -146,7 +146,7 @@ class ToServiceLinkInline(FromServiceLinkInline):
 
 @admin.register(models.Service)
 class ServiceAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'service_code', 'mode', 'region_id', 'routes',
+    list_display = ('id', '__str__', 'service_code', 'mode', 'region_id', 'routes',
                     'current', 'timetable_wrong', 'colour', 'line_brand')
     list_filter = ('current', 'timetable_wrong', 'mode', 'region',
                    ('source', admin.RelatedOnlyFieldListFilter),
