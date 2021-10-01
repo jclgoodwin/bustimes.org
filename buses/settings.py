@@ -515,7 +515,11 @@ BOD_OPERATORS = [
     # ('A2BR', 'EA',  {}, False),
     # ('A2BV', 'NE',  {}, False),
 
-    ('STNE', 'NE',  {}, False),
+    # ('STNE', 'NE',  {
+    #     'STNE': 'STNE',
+    #     'STNT': 'STNT',
+    # }, False),
+
     ('LAWS', 'EM',  {}, False),
     ('BMCS', 'SE',  {}, False),
 
