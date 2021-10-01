@@ -72,7 +72,7 @@ class ImportBusOpenDataTest(TestCase):
 
         self.assertContains(response, """
             <tr>
-                <th class="stop-name">
+                <th class="stop-name" scope="row">
                     <a href="/stops/2900W0321">Walpole St Peter Lion Store</a>
                 </th>
                 <td>12:19</td>

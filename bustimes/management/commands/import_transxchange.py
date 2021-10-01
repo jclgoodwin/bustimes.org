@@ -671,30 +671,26 @@ class Command(BaseCommand):
             elif description.isupper():
                 description = titlecase(description, callback=initialisms)
 
-        if not description:
-            origin = txc_service.origin
-            destination = txc_service.destination
-            if origin and destination and (origin != 'Origin' and destination != 'Destination' or txc_service.vias):
-                if origin.isupper() and destination.isupper():
-                    origin = titlecase(origin, callback=initialisms)
-                    txc_service.origin = origin
-                    destination = titlecase(destination, callback=initialisms)
-                    txc_service.destination = destination
+        origin = txc_service.origin
+        destination = txc_service.destination
 
-                if description:
-                    if description.startswith('via ') or description.startswith('then '):
-                        description = f'{origin} - {destination} {description}'
-                else:
-                    description = f'{origin} - {destination}'
-                    vias = txc_service.vias
-                    if vias:
-                        if len(vias) == 1:
-                            if 'via ' in vias[0]:
-                                return f"{description} {vias[0]}"
-                            elif (',' in vias[0] or ' and ' in vias[0] or '&' in vias[0]):
-                                return f"{description} via {vias[0]}"
-                        else:
-                            description = ' - '.join([origin] + vias + [destination])
+        if origin and destination:
+            if origin.isupper() and destination.isupper():
+                txc_service.origin = origin = titlecase(origin, callback=initialisms)
+                txc_service.destination = destination = titlecase(destination, callback=initialisms)
+
+            if not description:
+                description = f'{origin} - {destination}'
+                vias = txc_service.vias
+                if vias:
+                    if len(vias) == 1:
+                        via = vias[0]
+                        if 'via ' in via:
+                            return f"{description} {via}"
+                        elif (',' in via or ' and ' in via or '&' in via):
+                            return f"{description} via {via}"
+                    else:
+                        description = ' - '.join([origin] + vias + [destination])
         return description
 
     def is_tnds(self):

@@ -149,8 +149,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.line_name, '13B')
         self.assertEqual(service.line_brand, 'Turquoise Line')
         self.assertTrue(service.current)
-        # self.assertEqual(service.outbound_description, 'Norwich - Wymondham - Attleborough')
-        # self.assertEqual(service.inbound_description, 'Attleborough - Wymondham - Norwich')
         self.assertEqual(service.operator.first(), self.fecs)
         self.assertEqual(
             list(service.get_traveline_links()),
@@ -161,9 +159,11 @@ class ImportTransXChangeTest(TestCase):
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.ea, self.fecs])
+        self.assertContains(res, "Ivy Road - Queens Square")
+        self.assertContains(res, "Queens Square - Ivy Road")
         self.assertContains(res, """
             <tr class="minor">
-                <th class="stop-name"><a href="/stops/2900N12345">Norwich Brunswick
+                <th class="stop-name" scope="row"><a href="/stops/2900N12345">Norwich Brunswick
                 Road</a></th><td>19:48</td><td>22:56</td>
             </tr>
         """, html=True)
@@ -173,7 +173,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, '<option selected value="2016-10-03">Monday 3 October 2016</option>')
         self.assertContains(res, """
             <tr class="minor">
-                <th class="stop-name"><a href="/stops/2900N12348">Norwich Eagle Walk</a></th>
+                <th class="stop-name" scope="row"><a href="/stops/2900N12348">Norwich Eagle Walk</a></th>
                 <td>19:47</td>
                 <td>22:55</td>
             </tr>
@@ -662,14 +662,7 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel('2021-07-07')
     def test_multiple_lines(self):
-        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
-            call_command('import_transxchange', FIXTURES_DIR / '904_SCD_PH_903_20210530.xml')
-
-        self.assertEqual(
-            cm.output,
-            ["WARNING:bustimes.management.commands.import_transxchange:"
-             "ignoring description Register timetable as permanent post covid lockdown"]
-        )
+        call_command('import_transxchange', FIXTURES_DIR / '904_SCD_PH_903_20210530.xml')
 
         self.assertEqual(ServiceLink.objects.count(), 1)
 
@@ -881,7 +874,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(len(groupings[1].rows), 15)
         self.assertContains(res, """
             <tr>
-                <th class="stop-name" rowspan="2"><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
+                <th class="stop-name" rowspan="2" scope="row"><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
                 <td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td>
                 <td></td><td></td><td rowspan="2"></td>
             </tr>

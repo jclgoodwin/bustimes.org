@@ -71,13 +71,13 @@
                             {% endif %}
                             {% if timetable.detailed %}
                                 <tr>
-                                    <th>Block</th>
+                                    <th scope="col">Block</th>
                                     {% for trip in grouping.trips %}
                                         <td>{{ trip.block }}</td>
                                     {% endfor %}
                                 </tr>
                                 <tr>
-                                    <th>Garage</th>
+                                    <th scope="col">Garage</th>
                                     {% for trip in grouping.trips %}
                                         <td>{{ trip.garage.code }}</td>
                                     {% endfor %}
@@ -88,7 +88,7 @@
                     <tbody>
                         {% for row in grouping.rows %}
                             <tr{% if row.is_minor %} class="minor"{% endif %}>
-                                <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name">
+                                <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
                                     {% if row.stop.pk %}
                                         <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.suspended %}🚧 {% elif row.stop.situation %}⚠️ {% endif %}{{ row.stop.get_qualified_name }}</a>
                                     {% else %}{{ row.stop }}{% endif %}
