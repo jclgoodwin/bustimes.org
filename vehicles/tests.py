@@ -454,6 +454,11 @@ class VehiclesTests(TestCase):
             })
         self.assertContains(response, "I’ll update those details shortly")
 
+        edit = VehicleEdit.objects.get()
+        self.assertFalse(edit.vehicle.withdrawn)
+        edit.apply(save=False)
+        self.assertTrue(edit.vehicle.withdrawn)
+
         with self.assertNumQueries(11):
             response = self.client.post(self.vehicle_2.get_edit_url(), {
                 'reg': self.vehicle_2.reg,
@@ -483,6 +488,12 @@ class VehiclesTests(TestCase):
             })
         self.assertContains(response, 'Changed livery from  to None')
         self.assertContains(response, 'Changed colours to Other')
+
+        revision = VehicleRevision.objects.last()
+        self.assertEqual(list(revision.revert()), [
+            f'vehicle {revision.vehicle_id} colours not reverted',
+            f"vehicle {revision.vehicle_id} reverted ['livery']"
+        ])
 
     def test_vehicles_edit(self):
         self.client.force_login(self.trusted_user)

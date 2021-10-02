@@ -103,6 +103,7 @@ class Livery(models.Model):
     text_colour = models.CharField(max_length=7, blank=True)
     horizontal = models.BooleanField(default=False)
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
+    operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -375,6 +376,7 @@ class VehicleEdit(models.Model):
     changes = models.JSONField(null=True, blank=True)
     url = models.URLField(blank=True, max_length=255)
     approved = models.BooleanField(null=True, db_index=True)
+    score = models.SmallIntegerField(default=0)
     datetime = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
 
@@ -507,6 +509,15 @@ class VehicleEdit(models.Model):
         return str(self.id)
 
 
+class VehicleEditVote(models.Model):
+    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
+    for_edit = models.ForeignKey(VehicleEdit, models.CASCADE)
+    positive = models.BooleanField()
+
+    class Meta:
+        unique_together = ('by_user', 'for_edit')
+
+
 class VehicleRevision(models.Model):
     datetime = models.DateTimeField()
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
@@ -538,7 +549,7 @@ class VehicleRevision(models.Model):
                 before = before[1:]
                 yield (key, before, after)
 
-    def revert(self, message_user=None, request=None):
+    def revert(self):
         vehicle = self.vehicle
         fields = []
 
@@ -574,17 +585,11 @@ class VehicleRevision(models.Model):
                         vehicle.withdrawn = False
                         fields.append('withdrawn')
                 else:
-                    if message_user and request:
-                        message_user(request, f'vehicle {vehicle.id} {key} not reverted')
-                    else:
-                        print(f'vehicle {vehicle.id} {key} not reverted')
+                    yield f'vehicle {vehicle.id} {key} not reverted'
 
         if fields:
             self.vehicle.save(update_fields=fields)
-            if message_user and request:
-                message_user(request, f'vehicle {vehicle.id} reverted {fields}')
-            else:
-                print(f'vehicle {vehicle.id} reverted {fields}')
+            yield f'vehicle {vehicle.id} reverted {fields}'
 
 
 class VehicleJourney(models.Model):
@@ -617,24 +622,6 @@ class VehicleJourney(models.Model):
         unique_together = (
             ('vehicle', 'datetime'),
         )
-
-    @cached_property
-    def block(self):
-        if not self.data:
-            return
-        try:
-            block_ref = self.data['MonitoredVehicleJourney']['BlockRef']
-        except KeyError:
-            return
-        try:
-            driver_ref = self.data['Extensions']['VehicleJourney']['DriverRef']
-            if block_ref == driver_ref:
-                return
-        except KeyError:
-            pass
-        if block_ref == self.route_name:
-            return
-        return block_ref
 
     def get_trip(self, datetime=None, destination_ref=None, origin_aimed_departure_time=None):
         if not datetime:
