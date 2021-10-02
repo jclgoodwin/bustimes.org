@@ -619,6 +619,8 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(Service.objects.get().get_absolute_url())
         timetable = response.context_data['timetable']
 
+        self.assertEqual(27, len(timetable.groupings[0].trips))
+        self.assertEqual(25, len(timetable.groupings[1].trips))
         self.assertEqual(179, len(timetable.groupings[0].rows))
         self.assertEqual(179, len(timetable.groupings[1].rows))
 
@@ -694,6 +696,7 @@ class ImportTransXChangeTest(TestCase):
         with self.assertLogs(level='ERROR'):
             self.handle_files('NW.zip', ['NW_05_PBT_6_1.xml'])
 
+    @time_machine.travel('1 September 2017')
     def test_services_nw(self):
         self.handle_files('NW.zip', ['NW_04_GMN_2_1.xml', 'NW_04_GMS_237_1.xml', 'NW_04_GMS_237_2.xml'])
 
@@ -713,9 +716,8 @@ class ImportTransXChangeTest(TestCase):
         service.geometry = 'SRID=4326;MULTILINESTRING((1.31326925542 51.1278853356,1.08276947772 51.2766792559))'
         service.save(update_fields=['geometry'])
 
-        with time_machine.travel('1 September 2017'):
-            with self.assertNumQueries(12):
-                res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
+        with self.assertNumQueries(12):
+            res = self.client.get(service.get_absolute_url() + '?date=2017-09-01')
         self.assertEqual(str(res.context_data['timetable'].date), '2017-09-01')
         self.assertContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         self.assertContains(res, f'data-service="{service.id},{duplicate.id}"></div')

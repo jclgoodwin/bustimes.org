@@ -329,28 +329,37 @@ class Command(BaseCommand):
 
         self.source.save(update_fields=['datetime'])
 
-        StopPoint.objects.filter(active=False, service__current=True).update(active=True)
+        StopPoint.objects.filter(
+            ~Exists(StopUsage.objects.filter(stop=OuterRef('pk'), service__current=True)), active=False
+        ).update(active=True)
 
     def finish_services(self):
         """update/create StopUsages, search_vector and geometry fields"""
 
-        for service in Service.objects.filter(id__in=self.service_ids):
+        services = Service.objects.filter(id__in=self.service_ids)
+
+        for service in services:
             outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
 
-            stop_usages = [
-                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='outbound', order=i)
-                for i, stop_time in enumerate(outbound)
-            ] + [
-                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='inbound', order=i)
-                for i, stop_time in enumerate(inbound)
-            ]
+            if outbound or inbound:
+                stop_usages = [
+                    StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                              direction='outbound', order=i)
+                    for i, stop_time in enumerate(outbound)
+                ] + [
+                    StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                              direction='inbound', order=i)
+                    for i, stop_time in enumerate(inbound)
+                ]
 
-            if stop_usages:
-                service.stops.clear()
+                existing = service.stopusage_set.all()
+                existing_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in existing]
+                proposed_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in stop_usages]
 
-                StopUsage.objects.bulk_create(stop_usages)
+                if existing_hash != proposed_hash:
+                    if existing:
+                        existing.delete()
+                    StopUsage.objects.bulk_create(stop_usages)
 
                 # using StopUsages
                 service.update_search_vector()

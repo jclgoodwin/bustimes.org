@@ -179,7 +179,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
 
-                    with self.assertNumQueries(84):
+                    with self.assertNumQueries(83):
                         call_command('import_bod', 'stagecoach', 'sccm')
 
                 source = DataSource.objects.get(name='Stagecoach East')
