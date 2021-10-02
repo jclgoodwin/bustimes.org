@@ -28,12 +28,12 @@ class Command(ImportLiveVehiclesCommand):
         if self.source.settings and 'OperatorRef' in self.source.settings:
             item['OperatorRef'] = self.source.settings['OperatorRef']
 
-        defaults = {'fleet_number': fleet_number, 'source': self.source, 'operator_id': item['OperatorRef']}
+        defaults = {'fleet_number': fleet_number, 'source': self.source}
 
         operator = item['OperatorRef']
 
         try:
-            return self.vehicles.get_or_create(defaults, code=code, operator=operator)
+            return self.vehicles.get_or_create(defaults, code=code, operator_id=operator)
         except self.vehicles.model.MultipleObjectsReturned:
             return self.vehicles.filter(code=code, operator=operator).first(), False
 
