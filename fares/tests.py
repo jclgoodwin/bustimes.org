@@ -1,11 +1,17 @@
+from pathlib import Path
+from vcr import use_cassette
 from django.test import TransactionTestCase
 from django.core.management import call_command
 from .models import Tariff, TimeInterval
 
 
 class FaresTest(TransactionTestCase):
-    def test_netex(self):
-        call_command('import_netex_fares', 'test')
+    def test_bod_netex(self):
+        path = Path(__file__).resolve() / 'data'
+
+        with use_cassette(str(path / 'bod_fares.yaml')):
+            call_command('import_netex_fares', 'XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8')
+
         tariff = Tariff.objects.get(name="A C Williams WM06 - single fares")
 
         # tariff detail view
@@ -18,8 +24,8 @@ class FaresTest(TransactionTestCase):
         origins = list(response.context_data['form'].fields['origin'].choices)
         destinations = list(response.context_data['form'].fields['destination'].choices)
 
-        origin = origins[2][0]
-        destination = destinations[3][0]
+        origin = origins[6][0]
+        destination = destinations[5][0]
         response = self.client.get(f'{tariff.get_absolute_url()}?origin={origin}&destination={destination}')
 
         self.assertContains(response, "<h3>RAF Cranwell to Cranwell</h3>")
@@ -30,8 +36,8 @@ class FaresTest(TransactionTestCase):
         self.assertContains(response, "<h3>RAF Cranwell to Cranwell</h3>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
-        self.assertEqual(TimeInterval.objects.count(), 8)
-
         # fares index
         response = self.client.get('/fares/')
-        self.assertContains(response, '£3.30–£7.00')
+        self.assertContains(response, '£1.40–£1.70')
+
+        self.assertEqual(TimeInterval.objects.count(), 0)

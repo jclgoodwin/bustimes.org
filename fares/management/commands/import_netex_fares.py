@@ -3,7 +3,6 @@ import logging
 import xml.etree.cElementTree as ET
 import requests
 import zipfile
-from pathlib import Path
 from datetime import datetime, timezone
 from ciso8601 import parse_datetime
 from django.utils.http import parse_http_date
@@ -159,7 +158,6 @@ class Command(BaseCommand):
                     line = lines[line_ref.attrib["ref"]]
                     line_name = line.findtext("PublicCode")
                     try:
-
                         service = Service.objects.get(operator=operator, line_name=line_name, current=True)
                     except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                         logger.warning(f"{e} {operator} {line_name}")
@@ -337,7 +335,18 @@ class Command(BaseCommand):
     def add_arguments(parser):
         parser.add_argument('api_key', type=str)
 
-    def handle_dataset(self, item):
+    def handle_archive(self, dataset, response):
+        assert response.headers['Content-Type'] == 'application/zip'
+        with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+            for filename in archive.namelist():
+                logger.info(f"  {filename}")
+                try:
+                    self.handle_file(dataset, archive.open(filename), filename)
+                except AttributeError as e:
+                    logger.error(e, exc_info=True)
+                    return
+
+    def handle_bods_dataset(self, item):
         download_url = item["url"]
         dataset_url = download_url.removesuffix("download/")
         modified = parse_datetime(item["modified"])
@@ -370,27 +379,19 @@ class Command(BaseCommand):
                 logger.error(e, exc_info=True)
                 return
         else:
-            assert response.headers['Content-Type'] == 'application/zip'
-            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                for filename in archive.namelist():
-                    print(' ', filename)
-                    try:
-                        self.handle_file(dataset, archive.open(filename), filename)
-                    except AttributeError as e:
-                        logger.error(e, exc_info=True)
-                        return
+            self.handle_archive(dataset, response)
 
         dataset.datetime = modified
         dataset.save(update_fields=["datetime"])
-
         return dataset
 
     def ticketer(self, noc):
         download_url = f"https://opendata.ticketer.com/uk/{noc}/fares/current.zip"
-        try:
-            source = models.DataSet.objects.get(url=download_url)
-        except models.DataSet.DoesNotExist:
-            source = models.DataSet.objects.create(name=f"{noc} Ticketer fares", url=download_url)
+
+        dataset, = models.DataSet.objects.get_or_create({
+            'name': f"{noc} Ticketer fares"
+        }, url=download_url)
+
         response = self.session.get(download_url, stream=True)
         assert response.ok
 
@@ -398,71 +399,32 @@ class Command(BaseCommand):
         last_modified = parse_http_date(last_modified)
         last_modified = datetime.fromtimestamp(last_modified, timezone.utc)
 
-        if source.datetime == last_modified:
-            return source
+        if dataset.datetime == last_modified:
+            return dataset
 
         logger.info(download_url)
 
-        with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-            for filename in archive.namelist():
-                logger.info(f"  {filename}")
-                try:
-                    self.handle_file(source, archive.open(filename), filename)
-                except AttributeError as e:
-                    logger.error(e, exc_info=True)
+        self.handle_archive(dataset, response)
 
-        source.datetime = last_modified
-        source.save(update_fields=['datetime'])
-        return source
+        dataset.datetime = last_modified
+        dataset.save(update_fields=['datetime'])
+        return dataset
 
-    def handle_dir(self, path):
-        for sub_path in path.iterdir():
-            if sub_path.is_dir():
-                self.handle_dir(sub_path)
-            elif sub_path.name.endswith('.xml'):
-                source = models.DataSet.objects.create(name=sub_path.name, datetime='2017-01-01T00:00:00Z')
-                with sub_path.open("rb") as open_file:
-                    print(sub_path)
-                    self.handle_file(source, open_file, sub_path.name)
-
-    def handle(self, api_key=None, **kwargs):
-
-        if api_key == 'test':
-            models.DataSet.objects.all().delete()
-
-            base_dir = Path(__file__).resolve().parent.parent
-            path = base_dir.parent / 'data'
-            # path = base_dir.parent.parent / 'NeTEx samples'
-            self.handle_dir(path)
-
-            return
-
-        self.session = requests.Session()
-
+    def bod(self, api_key):
         datasets = []
-
-        # Ticketer:
-
-        for noc in ('LYNX', 'FESX', 'FECS', 'FCWL', 'FGLA', 'FSYO', 'FWYO', 'FYOR'):
-            dataset = self.ticketer(noc)
-            if dataset:
-                datasets.append(dataset.id)
-
-        # Bus Open Data Service:
-
         url = f"{self.base_url}/api/v1/fares/dataset/"
         params = {
             'api_key': api_key,
             'status': 'published'
         }
         while url:
-            print(url)
+            logger.info(url)
             response = self.session.get(url, params=params)
 
             data = response.json()
 
             for item in data['results']:
-                dataset = self.handle_dataset(item)
+                dataset = self.handle_bods_dataset(item)
                 if dataset:
                     datasets.append(dataset.id)
 
@@ -470,6 +432,18 @@ class Command(BaseCommand):
             params = None
 
         # remove removed datasets
-        old = models.DataSet.objects.exclude(id__in=datasets)
-        print(old)
-        print(old.delete())
+        old = models.DataSet.objects.filter(url__startswith=self.base_url).exclude(id__in=datasets)
+        if old:
+            logger.info(f"deleting {old}")
+            logger.info(f"deleted {old.delete()}")
+
+    def handle(self, api_key, **options):
+        self.session = requests.Session()
+
+        if api_key == 'ticketer':
+            for noc in ('LYNX', 'FESX', 'FECS', 'FCWL', 'FGLA', 'FSYO', 'FWYO', 'FYOR'):
+                self.ticketer(noc)
+
+        else:
+            assert len(api_key) == 40
+            self.bod(api_key)
