@@ -365,6 +365,8 @@ PASSENGER_OPERATORS = [
 
 # see bustimes.management.commands.import_bod
 BOD_OPERATORS = [
+    ('WMSA', 'EM', {}, False),
+
     ('FBOS', None, {
         'FYOR': 'FYOR',
         # 'FPOT': 'FPOT',
