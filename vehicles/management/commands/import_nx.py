@@ -89,7 +89,7 @@ class Command(ImportLiveVehiclesCommand):
         journey.data = item
 
         try:
-            journey.service = Service.objects.get(operator__in=self.operators, line_name=journey.route_name,
+            journey.service = Service.objects.get(operator__in=self.operators, line_name__iexact=journey.route_name,
                                                   current=True)
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             print(journey.route_name, e)

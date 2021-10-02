@@ -52,7 +52,7 @@ class Command(ImportLiveVehiclesCommand):
         line_name = item['PublishedLineName']
         if not line_name:
             return
-        services = Service.objects.filter(current=True, line_name=line_name)
+        services = Service.objects.filter(current=True, line_name__iexact=line_name)
         if item['OperatorRef'] == 'SESX':
             services = services.filter(operator__in=['SESX', 'GECL'])
         else:

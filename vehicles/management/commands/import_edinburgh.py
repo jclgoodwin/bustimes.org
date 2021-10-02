@@ -53,7 +53,7 @@ class Command(ImportLiveVehiclesCommand):
             journey.service_id = vehicle.latest_journey.service_id
         else:
             try:
-                journey.service = self.services.get(line_name=journey.route_name)
+                journey.service = self.services.get(line_name__iexact=journey.route_name)
                 if journey.service:
                     operator = journey.service.operator.first()
                     if not vehicle.operator_id or vehicle.operator_id != operator.id:

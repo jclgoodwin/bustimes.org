@@ -45,6 +45,7 @@ class Command(BaseCommand):
 
         try:
             for _, element in iterator:
+                # remove NeTEx namespace for simplicity's sake:
                 if element.tag[:31] == '{http://www.netex.org.uk/netex}':
                     element.tag = element.tag[31:]
         except ET.ParseError:
@@ -161,7 +162,7 @@ class Command(BaseCommand):
                     line = lines[line_ref.attrib["ref"]]
                     line_name = line.findtext("PublicCode")
                     try:
-                        service = Service.objects.get(operator=operator, line_name=line_name, current=True)
+                        service = Service.objects.get(operator=operator, line_name__iexact=line_name, current=True)
                     except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                         logger.warning(f"{e} {operator} {line_name}")
                     else:

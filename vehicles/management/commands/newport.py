@@ -34,7 +34,7 @@ class Command(ImportLiveVehiclesCommand):
         line_name = item['routeName']
         if not line_name:
             return
-        services = Service.objects.filter(current=True, line_name=line_name, operator='NWPT')
+        services = Service.objects.filter(current=True, line_name__iexact=line_name, operator='NWPT')
         try:
             return services.get()
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
