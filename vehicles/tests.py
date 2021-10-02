@@ -36,7 +36,7 @@ class VehiclesTests(TestCase):
 
         cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
                                                colours='#FF0000', notes='Trent Barton', operator=cls.lynx)
-        cls.livery = Livery.objects.create(colours='#FF0000 #0000FF')
+        cls.livery = Livery.objects.create(name='black with lemon piping', colours='#FF0000 #0000FF')
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=cls.livery,
                                                vehicle_type=spectra, operator=cls.lynx)
 
@@ -160,7 +160,7 @@ class VehiclesTests(TestCase):
         self.client.force_login(self.staff_user)
 
         response = self.client.get('/admin/vehicles/livery/')
-        self.assertContains(response, '<td class="field-name"></td>')
+        self.assertContains(response, '<td class="field-name">black with lemon piping</td>')
         self.assertContains(response, '<td class="field-vehicles">1</td>')
         self.assertContains(response, '<td class="field-left">\
 <div style="height:1.5em;width:2.25em;background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">\
@@ -486,7 +486,7 @@ class VehiclesTests(TestCase):
                 'operator': self.vehicle_2.operator_id,
                 'colours': 'Other',
             })
-        self.assertContains(response, 'Changed livery from  to None')
+        self.assertContains(response, 'Changed livery from black with lemon piping to None')
         self.assertContains(response, 'Changed colours to Other')
 
         revision = VehicleRevision.objects.last()
@@ -494,6 +494,12 @@ class VehiclesTests(TestCase):
             f'vehicle {revision.vehicle_id} colours not reverted',
             f"vehicle {revision.vehicle_id} reverted ['livery']"
         ])
+        revision = VehicleRevision.objects.first()
+        self.assertEqual(list(revision.revert()), [
+            f'vehicle {revision.vehicle_id} branding not reverted',
+            f"vehicle {revision.vehicle_id} reverted ['reg']"
+        ])
+        self.assertEqual(revision.vehicle.reg, '')
 
     def test_vehicles_edit(self):
         self.client.force_login(self.trusted_user)
@@ -591,7 +597,7 @@ class VehiclesTests(TestCase):
                     'garage': None},
                 {'id': self.vehicle_2.id,
                     'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
-                    'livery': {'id': self.livery.id, 'name': '',
+                    'livery': {'id': self.livery.id, 'name': 'black with lemon piping',
                                'left': 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)',
                                'right': 'linear-gradient(to left,#FF0000 50%,#0000FF 50%)'},
                     'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': '', 'branding': '', 'notes': '',

@@ -550,36 +550,31 @@ class VehicleRevision(models.Model):
                 yield (key, before, after)
 
     def revert(self):
+        """Revert various values to how they were before the revision
+        """
         vehicle = self.vehicle
         fields = []
 
-        if self.from_operator_id or self.to_operator_id:
-            if vehicle.operator_id == self.to_operator_id:
-                vehicle.operator_id = self.from_operator_id
-                fields.append('operator')
-
-        if self.from_type_id or self.to_type_id:
-            if vehicle.vehicle_type_id == self.to_type_id:
-                vehicle.vehicle_type_id = self.from_type_id
-                fields.append('vehicle_type')
-
-        if self.from_livery_id or self.to_livery_id:
-            if vehicle.livery_id == self.to_livery_id:
-                vehicle.livery_id = self.from_livery_id
-                fields.append('livery')
+        for key, vehicle_key in (
+            ('operator', 'operator'),
+            ('type',     'vehicle_type'),
+            ('livery',   'livery')
+        ):
+            before = getattr(self, f'from_{key}_id')
+            after = getattr(self, f'to_{key}_id')
+            if before or after:
+                if getattr(vehicle, f'{vehicle_key}_id') == after:
+                    setattr(vehicle, f'{vehicle_key}_id', before)
+                    fields.append(vehicle_key)
 
         if self.changes:
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
                 before = before[1:]
-                if key == 'reg':
-                    if vehicle.reg == after:
-                        vehicle.reg = before
+                if key == 'reg' or key == 'name':
+                    if getattr(vehicle, key) == after:
+                        setattr(vehicle, key, before)
                         fields.append('reg')
-                elif key == 'name':
-                    if vehicle.name == after:
-                        vehicle.name = before
-                        fields.append('name')
                 elif key == 'withdrawn':
                     if vehicle.withdrawn and after == 'Yes':
                         vehicle.withdrawn = False
