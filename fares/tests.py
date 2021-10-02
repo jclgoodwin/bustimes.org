@@ -7,7 +7,7 @@ from .models import Tariff, TimeInterval
 
 class FaresTest(TransactionTestCase):
     def test_bod_netex(self):
-        path = Path(__file__).resolve() / 'data'
+        path = Path(__file__).resolve().parent / 'data'
 
         with use_cassette(str(path / 'bod_fares.yaml')):
             call_command('import_netex_fares', 'XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8')

@@ -43,9 +43,12 @@ class Command(BaseCommand):
         if not filename:
             filename = open_file.name
 
-        for _, element in iterator:
-            if element.tag[:31] == '{http://www.netex.org.uk/netex}':
-                element.tag = element.tag[31:]
+        try:
+            for _, element in iterator:
+                if element.tag[:31] == '{http://www.netex.org.uk/netex}':
+                    element.tag = element.tag[31:]
+        except ET.ParseError:
+            return
 
         operators = element.find("dataObjects/CompositeFrame/frames/ResourceFrame/organisations")
         operators = {
@@ -320,10 +323,12 @@ class Command(BaseCommand):
 
                                 time_interval_price = cell_element.find("TimeIntervalPrice")
                                 if time_interval_price:
-                                    time_interval_ref = time_interval_price.find("TimeIntervalRef").attrib['ref']
+                                    time_interval = time_interval_price.find("TimeIntervalRef")
+                                    if time_interval is not None:
+                                        time_interval = time_intervals[time_interval.attrib['ref']]
                                     price, created = models.Price.objects.get_or_create(
                                         amount=time_interval_price.findtext("Amount"),
-                                        time_interval=time_intervals[time_interval_ref],
+                                        time_interval=time_interval,
                                         tariff=tariff,
                                         sales_offer_package=sales_offer_package,
                                         user_profile=user_profile
@@ -340,11 +345,7 @@ class Command(BaseCommand):
         with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
             for filename in archive.namelist():
                 logger.info(f"  {filename}")
-                try:
-                    self.handle_file(dataset, archive.open(filename), filename)
-                except AttributeError as e:
-                    logger.error(e, exc_info=True)
-                    return
+                self.handle_file(dataset, archive.open(filename), filename)
 
     def handle_bods_dataset(self, item):
         download_url = item["url"]
@@ -373,11 +374,7 @@ class Command(BaseCommand):
             # maybe not fully RFC 6266 compliant
             filename = response.headers['Content-Disposition'].split('filename', 1)[1][2:-1]
             logger.info(filename)
-            try:
-                self.handle_file(dataset, response.raw, filename)
-            except AttributeError as e:
-                logger.error(e, exc_info=True)
-                return
+            self.handle_file(dataset, response.raw, filename)
         else:
             self.handle_archive(dataset, response)
 
@@ -418,8 +415,8 @@ class Command(BaseCommand):
             'status': 'published'
         }
         while url:
-            logger.info(url)
             response = self.session.get(url, params=params)
+            logger.info(response.url)
 
             data = response.json()
 

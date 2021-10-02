@@ -83,7 +83,11 @@ td:hover {
 
         {% ifchanged table.name %}<h2>{{ table }}</h2>{% endifchanged %}
 
-        <p>{{ table.user_profile }} {{ table.sales_offer_package }}</p>
+        <p>{% if table.user_profile %}
+            {{ table.user_profile|capfirst }} {{ table.sales_offer_package|lower }}
+        {% elif table.sales_offer_package %}
+            {{ table.sales_offer_package }}
+        {% endif %}</p>
 
         <table>
             <tbody>
@@ -93,14 +97,14 @@ td:hover {
                         <th scope="col">{{ column }}</th>
                     {% endfor %}
                 </tr>
-                {% for row in table.row_set.all %}
+                {% for row in table.row_set.all %}{% if row.cell_set.all %}
                     <tr>
                         <th>{{ row.name }}</th>
                         {% for cell in row.cell_set.all %}
                             <td>£{{ cell.price.amount }}</td>
                         {% endfor %}
                     </tr>
-                {% endfor %}
+                {% endif %}{% endfor %}
         </table>
 
     {% endfor %}

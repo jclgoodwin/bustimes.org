@@ -3,6 +3,7 @@ from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
+from django.utils.text import camel_case_to_spaces
 
 
 # class Currency(models.TextChoices):
@@ -78,7 +79,7 @@ class UserProfile(models.Model):
     max_age = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return camel_case_to_spaces(self.name)
 
 
 class TypeOfTariff(models.TextChoices):
