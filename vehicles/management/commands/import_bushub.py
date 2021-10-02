@@ -1,5 +1,5 @@
 from django.contrib.gis.geos import Point
-from busstops.models import Service, DataSource
+from busstops.models import Service
 from ...models import VehicleLocation, VehicleJourney
 from .import_nx import parse_datetime
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -13,13 +13,6 @@ class Command(ImportLiveVehiclesCommand):
     def handle(self, source_name, **options):
         self.source_name = source_name
         super().handle(**options)
-
-    def do_source(self):
-        try:
-            super().do_source()
-        except DataSource.MultipleObjectsReturned:
-            self.source = DataSource.objects.get(name=self.source_name, url__contains='/nearby?')
-            self.url = self.source.url
 
     @staticmethod
     def get_datetime(item):
@@ -37,15 +30,12 @@ class Command(ImportLiveVehiclesCommand):
 
         defaults = {'fleet_number': fleet_number, 'source': self.source, 'operator_id': item['OperatorRef']}
 
-        if item['OperatorRef'] == 'SESX':
-            operators = ['SESX', 'NIBS', 'GECL']
-        else:
-            operators = [item['OperatorRef']]
+        operator = item['OperatorRef']
 
         try:
-            return self.vehicles.get_or_create(defaults, code=code, operator__in=operators)
+            return self.vehicles.get_or_create(defaults, code=code, operator=operator)
         except self.vehicles.model.MultipleObjectsReturned:
-            return self.vehicles.filter(code=code, operator__in=operators).first(), False
+            return self.vehicles.filter(code=code, operator=operator).first(), False
 
     @classmethod
     def get_service(cls, item):
@@ -53,10 +43,7 @@ class Command(ImportLiveVehiclesCommand):
         if not line_name:
             return
         services = Service.objects.filter(current=True, line_name__iexact=line_name)
-        if item['OperatorRef'] == 'SESX':
-            services = services.filter(operator__in=['SESX', 'GECL'])
-        else:
-            services = services.filter(operator=item['OperatorRef'])
+        services = services.filter(operator=item['OperatorRef'])
         try:
             return services.get()
         except Service.DoesNotExist as e:

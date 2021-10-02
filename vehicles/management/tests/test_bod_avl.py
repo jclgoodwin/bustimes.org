@@ -29,13 +29,18 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         suffolk = AdminArea.objects.create(region=region, id=1, atco_code=390, name='Suffolk')
         southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
         StopPoint.objects.create(atco_code='390071066', locality=southwold, active=True, common_name='Kings Head')
+        StopPoint.objects.create(atco_code='0500CCITY544', active=False)
 
-        service_u = Service.objects.create(
-            line_name='U'
-        )
+        service_u = Service.objects.create(line_name='U')
         service_u.operator.add('WHIP')
-        route_u = Route.objects.create(service=service_u, source=cls.source)
-        Trip.objects.create(route=route_u, start='09:23', end='10:50')
+        service_c = Service.objects.create(line_name='c')
+        service_c.operator.add('HAMS')
+        route_u = Route.objects.create(service=service_u, source=cls.source, code='u')
+        # route_c = Route.objects.create(service=service_c, source=cls.source, code='c')
+        Trip.objects.create(route=route_u, start='09:23:00', end='10:50:00', destination_id='0500CCITY544')
+        # calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True,
+        #                                    fri=True, sat=True, sun=True, start_date='2020-10-20')
+        # Trip.objects.create(route=route_c, start='15:32:00', end='23:00:00', calendar=calendar)
 
     @time_machine.travel('2020-05-01', tick=False)
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
@@ -129,11 +134,23 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "Bearing": "92.0",
                 "PublishedLineName": "C",
                 "VehicleJourneyRef": "C_20201015_05_53"
+            },
+            "Extensions": {
+                "VehicleJourney": {
+                    "DriverRef": "1038",
+                    "Operational": {
+                        "TicketMachine": {
+                            "JourneyCode": "1532",
+                            "TicketMachineServiceCode": "258"
+                        }
+                    },
+                    "VehicleUniqueId": "T2-1"
+                }
             }
         }]
 
         consumer = SiriConsumer()
-        with self.assertNumQueries(34):
+        with self.assertNumQueries(36):
             consumer.sirivm({
                 "when": "2020-10-15T07:46:08+00:00",
                 "items": items
@@ -158,19 +175,19 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(location.journey.vehicle.reg, 'DW18HAM')
 
         # test operator map
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.get('/vehicles.json?operator=HAMS')
         self.assertEqual(response.json(), [{
             "id": location.id,
             "coordinates": [0.285348, 51.2135],
             "vehicle": {
                 "url": f"/vehicles/{location.vehicle.id}",
-                "name": "DW18 HAM"
+                "name": "T2-1 - DW18 HAM"
             },
             "heading": 92.0,
             "datetime": "2020-10-15T07:46:08Z",
             "destination": "",
-            "service": {"line_name": "C"}
+            "service": {"line_name": "c", "url": "/services/c"}
         }])
 
         response = self.client.get('/operators/hams/map')
@@ -178,9 +195,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertContains(response, '/operators/hams/map')
 
         self.assertIs(False, cache.get('TGTC:843X:43000280301'))
-        self.assertIs(False, cache.get('HAMS:C:2400103099'))
+        self.assertIsNone(cache.get('HAMS:C:2400103099'))
         self.assertIsNone(cache.get('WHIP:U:0500CCITY544'))
-        self.assertIsNone(cache.get('WHIP:U:0500CCITY5'))
+
+        whippet_journey = VehicleJourney.objects.get(vehicle__operator='WHIP')
+        response = self.client.get(whippet_journey.get_absolute_url())
+        self.assertContains(response, '<a href="/services/u/vehicles?date=2020-06-17">U</a>')
+        self.assertContains(response, f'<td colspan="2"><a href="/trips/{whippet_journey.trip_id}">09:23</a></td>')
 
     def test_handle_item(self):
         command = import_bod_avl.Command()
@@ -253,9 +274,15 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         vehicle = journey.vehicle
         location = VehicleLocation.objects.get()
 
+        with self.assertNumQueries(6):
+            response = self.client.get(journey.get_absolute_url())
+        self.assertContains(response, '146')
+        self.assertContains(response, 'to Southwold')
+        self.assertContains(response, f'<td><a href="#journeys/{journey.id}">Map</a></td>')
+
         with self.assertNumQueries(0):
             response = self.client.get('/vehicles.json?xmax=984.375&xmin=694.688&ymax=87.043&ymin=-89.261')
-            self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 400)
 
         with self.assertNumQueries(0):
             response = self.client.get('/vehicles.json?ymax=52.3&xmax=1.7&ymin=52.3&xmin=1.6')
