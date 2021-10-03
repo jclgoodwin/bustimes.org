@@ -23,9 +23,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
 
     if operator_ref:
         vehicle = vehicle.removeprefix(f'{operator_ref}-')
-        if operator_ref == 'FAB':  # Aberdeen
-            vehicle = vehicle.removeprefix('111-').removeprefix('S-')
-        elif operator_ref == 'GCB':
+        if operator_ref == 'GCB':
             vehicle = vehicle.removeprefix('WCM-')
 
     if not vehicle or vehicle == '-':
@@ -41,16 +39,11 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
         try:
             operator = Operator.objects.get(id=operator_ref)
         except Operator.DoesNotExist:
-            if not service:
-                return
-
-    if not operator:
-        try:
-            operator = Operator.objects.get(service=service)
-        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
-    if operator.parent == 'Stagecoach' or operator.id in {'EYMS', 'MCGL'}:
+    if operator.id == 'FABD':  # Aberdeen
+        vehicle = vehicle.removeprefix('111-').removeprefix('S-')
+    elif operator.parent == 'Stagecoach' or operator.id == 'MCGL':
         return
 
     data_source, _ = DataSource.objects.get_or_create({'url': url}, name=source_name)
