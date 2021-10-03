@@ -26,6 +26,7 @@
             }
         }
 
+        // load timetable for a particular date without loading the rest of the page
         var select = document.getElementById('id_date');
         if (select) {
             select.onchange = function(event) {
@@ -47,6 +48,7 @@
     var search  = window.location.search;
 
     window.addEventListener('popstate', function() {
+        // handle back/forward navigation
         if (search !== window.location.search) {
             search = window.location.search;
             var url = '/services/' + SERVICE_ID + '/timetable';
