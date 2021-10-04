@@ -65,7 +65,7 @@ class TripSerializer(serializers.ModelSerializer):
                     "atco_code": stop_time.stop_id,
                     "name": stop_time.stop.get_name_for_timetable() if stop_time.stop else stop_time.stop_code,
                     "location": stop_time.stop and stop_time.stop.latlong and stop_time.stop.latlong.coords,
-                    "bearing": stop_time.stop and stop_time.stop.bearing,
+                    "bearing": stop_time.stop and stop_time.stop.get_heading(),
                 },
                 "aimed_arrival_time": stop_time.arrival_time(),
                 "aimed_departure_time": stop_time.departure_time(),
