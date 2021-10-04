@@ -43,6 +43,8 @@ class ServiceDebugView(DetailView):
                 else:
                     previous_trip.rowspan += 1
 
+        context['stopusages'] = self.object.stopusage_set.select_related('stop__locality')
+
         context['breadcrumb'] = [self.object]
 
         return context

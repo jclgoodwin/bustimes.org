@@ -67,7 +67,7 @@
 {% for trip in route.trip_set.all %}
 <tr style="vertical-align:top">
     <td>{% if trip.sequence %}{{ trip.sequence }}{% endif %}</td>
-    <td>{{ trip.block }}</td>
+    <td>{% if trip.block %}{{ trip.block }}{% endif %}</td>
     <td>{{ trip.ticket_machine_code }}</td>
     <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
     <td><a href="{{ trip.get_absolute_url }}">{{ trip.start_time }}</a></td>
@@ -93,6 +93,8 @@
 </table>
 </details>
 {% endfor %}
+
+{% include 'route.html' %}
 
 {% endblock %}
 
