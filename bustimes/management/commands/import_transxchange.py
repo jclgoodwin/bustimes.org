@@ -530,13 +530,19 @@ class Command(BaseCommand):
 
         return calendar
 
-    def handle_journeys(self, route, stops, journeys, txc_service, line_id):
+    def handle_journeys(self, route_code, route_defaults, stops, journeys, txc_service, line_id):
         default_calendar = None
+
+        route, route_created = Route.objects.update_or_create(
+            route_defaults, source=self.source, code=route_code
+        )
+
+        self.route_ids.add(route.id)
 
         stop_times = []
 
         trips = []
-        notes_by_trip = []
+        trip_notes = []
 
         blocks = []
 
@@ -648,7 +654,6 @@ class Command(BaseCommand):
                     if not stop_time.timing_status:
                         stop_time.timing_status = 'OTH'
 
-            notes = []
             for note in journey.notes:
                 note_cache_key = f'{note}:{journey.notes[note]}'
                 if note_cache_key in self.notes:
@@ -656,18 +661,49 @@ class Command(BaseCommand):
                 else:
                     note, _ = Note.objects.get_or_create(code=note or '', text=journey.notes[note])
                     self.notes[note_cache_key] = note
-                notes.append(note)
-            notes_by_trip.append(notes)
+                trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
         Block.objects.bulk_create(blocks)
         for trip in trips:
             trip.block = trip.block
 
-        Trip.objects.bulk_create(trips, batch_size=1000)
+        if not route_created:
+            # reuse trip ids if the number and start times haven't changed
+            existing_trips = route.trip_set.order_by('id')
+            if len(existing_trips) == len(trips):
+                for i, old_trip in enumerate(existing_trips):
+                    if old_trip.start == trips[i].start:
+                        trips[i].id = old_trip.id
+                    else:
+                        print(old_trip.start, trips[i].start)
+                        existing_trips.delete()
+                        existing_trips = None
+                        break
+            else:
+                existing_trips.delete()
+                existing_trips = None
+        else:
+            existing_trips = None
 
-        for i, trip in enumerate(trips):
-            if notes_by_trip[i]:
-                trip.notes.set(notes_by_trip[i])
+        if existing_trips:
+            Trip.objects.bulk_update(trips, fields=[
+                'inbound',
+                'journey_pattern',
+                'ticket_machine_code',
+                'block',
+                'destination',
+                'calendar',
+                'sequence',
+                'end',
+                'garage',
+                'vehicle_type',
+            ])
+            Trip.notes.through.objects.filter(trip__route=route).delete()
+            StopTime.objects.filter(trip__route=route).delete()
+        else:
+            Trip.objects.bulk_create(trips)
+
+        Trip.notes.through.objects.bulk_create(trip_notes)
 
         for stop_time in stop_times:
             stop_time.trip = stop_time.trip  # set trip_id
@@ -1041,14 +1077,7 @@ class Command(BaseCommand):
             if len(txc_service.lines) > 1:
                 route_code += f'#{line.id}'
 
-            route, route_created = Route.objects.update_or_create(route_defaults,
-                                                                  source=self.source, code=route_code)
-            self.route_ids.add(route.id)
-            # TODO: reuse route ids
-            if not route_created:
-                route.trip_set.all().delete()
-
-            self.handle_journeys(route, stops, journeys, txc_service, line.id)
+            self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service, line.id)
 
         if len(linked_services) > 1:
             for i, from_service in enumerate(linked_services):
