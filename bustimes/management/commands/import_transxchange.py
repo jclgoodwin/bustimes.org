@@ -342,6 +342,8 @@ class Command(BaseCommand):
             outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
 
             if outbound or inbound:
+                existing = service.stopusage_set.all()
+
                 stop_usages = [
                     StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
                               direction='outbound', order=i)
@@ -352,7 +354,6 @@ class Command(BaseCommand):
                     for i, stop_time in enumerate(inbound)
                 ]
 
-                existing = service.stopusage_set.all()
                 existing_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in existing]
                 proposed_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in stop_usages]
 
@@ -805,20 +806,13 @@ class Command(BaseCommand):
             existing = None
             service_code = None
 
-            if unique_service_code:
-                # first try getting by BODS profile compliant service code
-                condition = Q(service_code=unique_service_code)
-                if description and self.source.name.startswith('Stagecoach'):
-                    condition |= Q(description=description)
-                existing = Service.objects.filter(
-                    condition, line_name__iexact=line.line_name
-                ).order_by('-current', 'id').first()
+            services = Service.objects.filter(line_name__iexact=line.line_name).order_by('-current', 'id')
 
-            if not existing and operators and line.line_name:
+            if operators and line.line_name:
                 if self.source.name.startswith('Stagecoach'):
-                    existing = Service.objects.filter(Q(source=self.source) | Q(operator__in=operators))
+                    existing = services.filter(Q(source=self.source) | Q(operator__in=operators))
                 else:
-                    existing = Service.objects.filter(operator__in=operators)
+                    existing = services.filter(operator__in=operators)
 
                 if len(transxchange.services) == 1:
                     has_stop_time = Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
@@ -834,7 +828,7 @@ class Command(BaseCommand):
                 elif description:
                     existing = existing.filter(description=description)
 
-                existing = existing.filter(line_name__iexact=line.line_name).order_by('-current', 'id').first()
+                existing = existing.first()
 
             if self.is_tnds():
                 service_code = get_service_code(filename)
@@ -846,6 +840,10 @@ class Command(BaseCommand):
                     existing = self.source.service_set.filter(service_code=service_code).first()
             elif unique_service_code:
                 service_code = unique_service_code
+
+                if not existing:
+                    # try getting by BODS profile compliant service code
+                    existing = services.filter(service_code=service_code).first()
 
             if existing:
                 service = existing
