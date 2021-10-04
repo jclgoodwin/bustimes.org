@@ -19,7 +19,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
-from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block,
+from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block, RouteLink,
                        Calendar, CalendarDate, CalendarBankHoliday, BankHoliday)
 from ...timetables import get_stop_usages
 from transxchange.txc import TransXChange
@@ -715,6 +715,32 @@ class Command(BaseCommand):
             if services.filter(operator__in=operators).exists():
                 return True
 
+    def get_route_links(self, journeys, transxchange):
+        patterns = {
+            journey.journey_pattern.id: journey.journey_pattern for journey in journeys
+        }
+        route_refs = [pattern.route_ref for pattern in patterns.values() if pattern.route_ref]
+        if route_refs:
+            routes = [transxchange.routes[route_id] for route_id in transxchange.routes if route_id in route_refs]
+            for route in routes:
+                for section_ref in route.route_section_refs:
+                    route_section = transxchange.route_sections[section_ref]
+                    for route_link in route_section.links:
+                        if route_link.track:
+                            yield route_link
+        else:
+            route_links = {}
+            for route_section in transxchange.route_sections.values():
+                for route_section_link in route_section.links:
+                    route_links[route_section_link.id] = route_section_link
+            for journey in journeys:
+                if journey.journey_pattern:
+                    for section in journey.journey_pattern.sections:
+                        for timing_link in section.timinglinks:
+                            route_link = route_links[timing_link.route_link_ref]
+                            if route_link.track:
+                                yield route_link
+
     def handle_service(self, filename: str, transxchange, txc_service, today, stops):
         if txc_service.operating_period.end and txc_service.operating_period.end < txc_service.operating_period.start:
             logger.warning(
@@ -977,32 +1003,34 @@ class Command(BaseCommand):
                 if registration:
                     route_defaults['registration'] = registration
 
-            geometry = []
             if transxchange.route_sections:
-                patterns = {
-                    journey.journey_pattern.id: journey.journey_pattern for journey in journeys
-                }
-                routes = [pattern.route_ref for pattern in patterns.values() if pattern.route_ref]
-                if routes:
-                    routes = [transxchange.routes[route_id] for route_id in transxchange.routes if route_id in routes]
-                    for route in routes:
-                        for section_ref in route.route_section_refs:
-                            section = transxchange.route_sections[section_ref]
-                            for link in section.links:
-                                if link.track:
-                                    geometry.append(link.track)
+                geometry = []
+                if service_created:
+                    existing_route_links = {}
                 else:
-                    route_links = {}
-                    for section in transxchange.route_sections.values():
-                        for link in section.links:
-                            route_links[link.id] = link
-                    for journey in journeys:
-                        if journey.journey_pattern:
-                            for section in journey.journey_pattern.sections:
-                                for link in section.timinglinks:
-                                    link = route_links[link.route_link_ref]
-                                    if link.track:
-                                        geometry.append(link.track)
+                    existing_route_links = {
+                        (link.from_stop_id, link.to_stop_id): link for link in service.routelink_set.all()
+                    }
+                route_links_to_update = {}
+                route_links_to_create = {}
+                for route_link in self.get_route_links(journeys, transxchange):
+                    geometry.append(route_link.track)
+                    if route_link.from_stop in stops and route_link.to_stop in stops:
+                        key = (route_link.from_stop, route_link.to_stop)
+                        if key in existing_route_links:
+                            if key not in existing_route_links:
+                                route_links_to_update[key].geometry = route_link.track
+                        else:
+                            route_links_to_create[key] = RouteLink(
+                                from_stop_id=route_link.from_stop,
+                                to_stop_id=route_link.to_stop,
+                                geometry=route_link.track,
+                                service=service
+                            )
+
+                RouteLink.objects.bulk_update(route_links_to_update.values(), ['geometry'])
+                RouteLink.objects.bulk_create(route_links_to_create.values())
+
                 if geometry:
                     geometry = MultiLineString(geometry).simplify()
                     if not isinstance(geometry, MultiLineString):

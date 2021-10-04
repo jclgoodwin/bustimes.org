@@ -71,8 +71,16 @@
 
         var bounds = L.latLngBounds();
 
-        window.STOPS.forEach(function(stop) {
-            var location = L.GeoJSON.coordsToLatLng(stop.latlong);
+        window.STOPS.times.forEach(function(time) {
+            var stop = time.stop;
+            var location = L.GeoJSON.coordsToLatLng(stop.location);
+
+            if (time.track) {
+                L.geoJSON({
+                    'type': 'LineString',
+                    'coordinates': time.track
+                }).addTo(map);
+            }
 
             if (stop.bearing !== null) {
                 var html = '<div class="stop-arrow" style="' + window.bustimes.getTransform(stop.bearing + 45) + '"></div>';
@@ -86,11 +94,10 @@
                     html: html,
                     className: 'stop'
                 })
-            }).bindTooltip(stop.time).addTo(map);
+            }).bindTooltip(time.aimed_arrival_time || time.aimed_departure_time).addTo(map);
 
             bounds.extend(location);
         });
-
 
         map.fitBounds(bounds);
 

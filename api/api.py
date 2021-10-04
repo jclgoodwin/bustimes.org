@@ -1,8 +1,10 @@
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter
 from rest_framework import routers, viewsets
+from rest_framework.exceptions import NotFound
+from bustimes.models import Trip
 from vehicles.models import Vehicle, Livery, VehicleType
-from .serializers import VehicleSerializer, LiverySerializer, VehicleTypeSerializer
+from .serializers import VehicleSerializer, LiverySerializer, VehicleTypeSerializer, TripSerializer
 
 
 class VehicleFilter(FilterSet):
@@ -37,7 +39,16 @@ class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = VehicleTypeSerializer
 
 
+class TripViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Trip.objects.select_related('route').prefetch_related('stoptime_set__stop__locality')
+    serializer_class = TripSerializer
+
+    def list(self, request):
+        raise NotFound
+
+
 router = routers.DefaultRouter()
 router.register('vehicles', VehicleViewSet)
 router.register('liveries', LiveryViewSet)
 router.register('vehicletypes', VehicleTypeViewSet)
+router.register('trips', TripViewSet)

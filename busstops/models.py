@@ -903,27 +903,29 @@ class Service(models.Model):
         varnish_ban(self.get_absolute_url())
 
     def update_geometry(self):
-        routes_geometry = self.route_set.aggregate(Union('geometry'))['geometry__union']
-        if routes_geometry:
-            self.geometry = routes_geometry.simplify()
-            self.save(update_fields=['geometry'])
-            return
+        geometry = self.route_set.aggregate(Union('geometry'))['geometry__union']
+        if geometry:
+            geometry = geometry.simplify()
+        else:
+            patterns = []
+            linestrings = []
+            for trip in Trip.objects.filter(route__service=self).prefetch_related('stoptime_set__stop'):
+                stops = [
+                    stoptime.stop for stoptime in trip.stoptime_set.all() if stoptime.stop and stoptime.stop.latlong
+                ]
+                pattern = [stop.pk for stop in stops]
+                if pattern in patterns:
+                    continue
+                patterns.append(pattern)
+                points = [stop.latlong for stop in stops]
+                if len(points) > 1:
+                    linestrings.append(LineString(points))
+            if linestrings:
+                geometry = MultiLineString(*linestrings).simplify()
 
-        patterns = []
-        linestrings = []
-        for trip in Trip.objects.filter(route__service=self).prefetch_related('stoptime_set__stop'):
-            stops = [stoptime.stop for stoptime in trip.stoptime_set.all() if stoptime.stop and stoptime.stop.latlong]
-            pattern = [stop.pk for stop in stops]
-            if pattern in patterns:
-                continue
-            patterns.append(pattern)
-            points = [stop.latlong for stop in stops]
-            if len(points) > 1:
-                linestrings.append(LineString(points))
-        if linestrings:
-            geometry = MultiLineString(*linestrings).simplify()
+        if geometry:
             if type(geometry) is LineString:
-                self.geometry = MultiLineString([geometry])
+                self.geometry = MultiLineString(geometry)
             else:
                 self.geometry = geometry
             self.save(update_fields=['geometry'])

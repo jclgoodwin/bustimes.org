@@ -46,6 +46,8 @@ class RouteSection:
 class RouteLink:
     def __init__(self, element):
         self.id = element.get('id')
+        self.from_stop = element.findtext('From/StopPointRef')
+        self.to_stop = element.findtext('To/StopPointRef')
         locations = element.findall('Track/Mapping/Location/Translation')
         if not locations:
             locations = element.findall('Track/Mapping/Location')

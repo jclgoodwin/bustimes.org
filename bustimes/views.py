@@ -13,6 +13,8 @@ from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_GET
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
+from rest_framework.renderers import JSONRenderer
+from api.serializers import TripSerializer
 from busstops.models import Service, DataSource, StopPoint
 from departures.live import TimetableDepartures
 from vehicles.models import Vehicle
@@ -192,20 +194,17 @@ def trip_json(request, id):
 
 class TripDetailView(DetailView):
     model = Trip
-    queryset = model.objects.select_related('route__service')
+    queryset = model.objects.select_related('route__service').prefetch_related('stoptime_set__stop__locality')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['stops'] = self.object.stoptime_set.select_related('stop__locality')
+        context['stops'] = self.object.stoptime_set.all()
 
-        stops_json = json.dumps([{
-            'latlong': stop_time.stop.latlong.coords,
-            'bearing': stop_time.stop.get_heading(),
-            'time': stop_time.departure_time() or stop_time.arrival_time()
-        } for stop_time in context['stops'] if stop_time.stop and stop_time.stop.latlong])
+        trip_serializer = TripSerializer(self.object)
+        stops_json = JSONRenderer().render(trip_serializer.data)
 
-        context['stops_json'] = mark_safe(stops_json)
+        context['stops_json'] = mark_safe(stops_json.decode())
 
         context['liveries_css_version'] = cache.get('liveries_css_version', 0)
 
@@ -246,11 +245,14 @@ def tfl_vehicle(request, reg):
             item['platformName'] = None
         item['stop'] = stops.get(item['naptanId'])
 
-    stops_json = json.dumps([{
-        'latlong': item['stop'].latlong.coords,
-        'bearing': item['stop'].get_heading(),
-        'time': str(timezone.localtime(item['expectedArrival']).time())
-    } for item in data if item['stop'] and item['stop'].latlong])
+    stops_json = json.dumps({
+        "times": [{
+            "stop": {
+                "location": item['stop'].latlong.coords,
+                'bearing': item['stop'].get_heading(),
+            },
+            'aimed_arrival_time': str(timezone.localtime(item['expectedArrival']).time())
+        } for item in data if item['stop'] and item['stop'].latlong]})
 
     return render(request, 'tfl_vehicle.html', {
         'data': data,

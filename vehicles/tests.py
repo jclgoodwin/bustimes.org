@@ -590,22 +590,20 @@ class VehiclesTests(TestCase):
                     'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
                     'livery': {'id': None, 'name': None, 'left': '#FF0000', 'right': '#FF0000'},
                     'fleet_number': 1, 'fleet_code': '1', 'reg': 'FD54JYA', 'name': '',
-                    'branding': '', 'notes': 'Trent Barton', 'withdrawn': False, 'data': None,
+                    'branding': '', 'notes': 'Trent Barton', 'withdrawn': False,
                     'vehicle_type': {
                         'id': self.vehicle_1.vehicle_type_id,
-                        'name': 'Optare Tempo', 'double_decker': False, 'coach': False, 'electric': None},
-                    'garage': None},
+                        'name': 'Optare Tempo', 'double_decker': False, 'coach': False, 'electric': None}},
                 {'id': self.vehicle_2.id,
                     'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
                     'livery': {'id': self.livery.id, 'name': 'black with lemon piping',
                                'left': 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)',
                                'right': 'linear-gradient(to left,#FF0000 50%,#0000FF 50%)'},
                     'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': '', 'branding': '', 'notes': '',
-                    'withdrawn': False, 'data': None,
+                    'withdrawn': False,
                     'vehicle_type': {
                         'id': self.vehicle_2.vehicle_type_id,
-                        'name': 'Optare Spectra', 'double_decker': True, 'coach': False, 'electric': None},
-                    'garage': None}
+                        'name': 'Optare Spectra', 'double_decker': True, 'coach': False, 'electric': None}}
             ]}
         )
 
