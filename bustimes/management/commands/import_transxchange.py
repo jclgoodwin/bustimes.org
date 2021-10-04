@@ -839,7 +839,6 @@ class Command(BaseCommand):
             ).exists():
                 continue
 
-            existing = None
             service_code = None
 
             services = Service.objects.filter(line_name__iexact=line.line_name).order_by('-current', 'id')
@@ -849,22 +848,22 @@ class Command(BaseCommand):
                     existing = services.filter(Q(source=self.source) | Q(operator__in=operators))
                 else:
                     existing = services.filter(operator__in=operators)
+            else:
+                existing = services
 
-                if len(transxchange.services) == 1:
-                    has_stop_time = Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
-                    has_stop_usage = Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
-                    has_no_route = ~Exists(Route.objects.filter(service=OuterRef('id')))
-                    existing = existing.filter(has_stop_time | (has_stop_usage & has_no_route))
-                elif len(txc_service.lines) == 1:
-                    existing = existing.filter(
-                        Exists(
-                            Route.objects.filter(service_code=txc_service.service_code, service=OuterRef('id'))
-                        )
-                    )
-                elif description:
-                    existing = existing.filter(description=description)
+            if len(transxchange.services) == 1:
+                has_stop_time = Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
+                has_stop_usage = Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
+                has_no_route = ~Exists(Route.objects.filter(service=OuterRef('id')))
+                condition = has_stop_time | (has_stop_usage & has_no_route)
+            else:
+                condition = Exists(
+                    Route.objects.filter(service_code=txc_service.service_code, service=OuterRef('id'))
+                )
+                if description:
+                    condition |= existing.filter(description=description)
 
-                existing = existing.first()
+            existing = existing.filter(condition).first()
 
             if self.is_tnds():
                 service_code = get_service_code(filename)
