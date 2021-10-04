@@ -164,6 +164,7 @@ def bus_open_data(api_key, operator):
         command.region_id = region_id
 
         sources = []
+        service_ids = set()
 
         for dataset in operator_datasets:
             filename = dataset['name']
@@ -202,7 +203,7 @@ def bus_open_data(api_key, operator):
 
                 command.mark_old_services_as_not_current()
 
-                command.finish_services()
+                service_ids |= command.service_ids
 
         # delete routes from any sources that have been made inactive
         for o in operators:
@@ -212,6 +213,9 @@ def bus_open_data(api_key, operator):
                 clean_up([o], sources, incomplete)
             elif len(operators) == 1 or Service.objects.filter(current=True, operator=o).exists():
                 logger.warning(f'{o} has no current data')
+
+        command.service_ids = service_ids
+        command.finish_services()
 
     command.debrief()
 
