@@ -16,8 +16,8 @@
             </select>
             <noscript><input type="submit"></noscript>
         </form>
-    {% else %}
-        <form class="timetable-date">
+    {% elif timetable.date %}
+        <form class="timetable-date" autocomplete="off">
             <input type="date" onchange="this.form.submit()" name="date" id="id_date" aria-label="Date" value="{{ timetable.date.isoformat }}">
             <noscript><input type="submit"></noscript>
         </form>
