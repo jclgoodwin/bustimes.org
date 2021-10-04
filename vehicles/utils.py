@@ -80,9 +80,9 @@ def do_revisions(vehicles, data, user):
     # create a VehicleRevision record,
     # and remove fields from the 'data' dict so they're not part of any VehicleEdits created in the next step
 
-    if user.trusted:
-
-        if 'withdrawn' in data:
+    if 'withdrawn' in data:
+        # any user can can unwithdraw
+        if data['withdrawn'] is False or user.trusted:
             to_value = 'Yes' if data['withdrawn'] else 'No'
             for revision in revisions:
                 from_value = 'Yes' if revision.vehicle.withdrawn else 'No'
@@ -91,6 +91,7 @@ def do_revisions(vehicles, data, user):
             changed_fields.append('withdrawn')
             del data['withdrawn']
 
+    if user.trusted:
         if 'vehicle_type' in data:
             vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
             for revision in revisions:
