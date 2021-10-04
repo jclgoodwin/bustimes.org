@@ -19,19 +19,23 @@
     <p>What would you like to contact me about?</p>
 
     <details>
-        <summary>Lost property</summary>
+        <summary>Lost property 👜 🧸</summary>
 
-        <p>I don’t operate any bus services – just this independent, unofficial website – so I can’t help you find items you’ve left on a bus. Sorry.</p>
+        <p>Please don’t.
+        bustimes.org is just an independent website and I don’t operate any buses,
+        so I can’t help you find items you’ve left on a bus. Sorry.</p>
 
-        <p>You can find links to most bus operating companies’ websites, and contact details, elsewhere on this website.</p>
+        <p>You can find links to most bus companies’ websites elsewhere on this website.</p>
     </details>
 
     <details>
         <summary>Enquiry or complaint about a bus service</summary>
 
-        <p>I don’t operate any bus services – just this independent, unofficial website. Sorry.</p>
+        <p>Please don’t.
+        bustimes.org is just an independent website and I don’t operate any buses,
+        so I usually can’t answer these sorts of emails. Sorry.</p>
 
-        <p>You can find links to most bus operating companies’ websites, and contact details, elsewhere on this website.</p>
+        <p>You can find links to most bus companies’ websites elsewhere on this website.</p>
     </details>
 
     <details{% if form.is_bound or form.initial.message %} open{% endif %}>
@@ -39,8 +43,7 @@
 
         {% load email_obfuscator %}
 
-        <p>To contact me about this website,
-        you can email {{ 'contact@bustimes.org'|obfuscate_mailto }},
+        <p>You can email {{ 'contact@bustimes.org'|obfuscate_mailto }},
         tweet <a href="https://twitter.com/bustimes_org">@bustimes_org</a>, or use the form below.</p>
 
         <p>Due to the the linear nature of time, I may be slow to reply, if I reply at all, but do I read every email.</p>
