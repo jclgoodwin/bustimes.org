@@ -627,7 +627,7 @@ class VehicleJourney(models.Model):
             Q(route__start_date__lte=datetime) | Q(route__start_date=None),
             Q(route__end_date__gte=datetime) | Q(route__end_date=None),
             route__service=self.service_id
-        ).distinct('start', 'end')
+        )
 
         if destination_ref and ' ' not in destination_ref and destination_ref[:3].isdigit():
             destination = Q(destination=destination_ref)
