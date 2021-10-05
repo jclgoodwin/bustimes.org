@@ -861,7 +861,7 @@ class Command(BaseCommand):
                     Route.objects.filter(service_code=txc_service.service_code, service=OuterRef('id'))
                 )
                 if description:
-                    condition |= existing.filter(description=description)
+                    condition |= Q(description=description)
 
             existing = existing.filter(condition).first()
 
