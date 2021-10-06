@@ -10,11 +10,10 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
-from django.utils.functional import cached_property
 from django.utils.html import escape, format_html
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, SIRISource
-from bustimes.models import get_calendars, Trip
+from bustimes.models import get_calendars, get_routes, Trip
 import json
 
 
@@ -621,13 +620,16 @@ class VehicleJourney(models.Model):
         )
 
     def get_trip(self, datetime=None, destination_ref=None, origin_aimed_departure_time=None):
+        if not self.service:
+            return
+
         if not datetime:
             datetime = self.datetime
-        trips = Trip.objects.filter(
-            Q(route__start_date__lte=datetime) | Q(route__start_date=None),
-            Q(route__end_date__gte=datetime) | Q(route__end_date=None),
-            route__service=self.service_id
-        )
+
+        routes = get_routes(self.service.route_set.select_related('source'))
+        if not routes:
+            return
+        trips = Trip.objects.filter(route__in=routes)
 
         if destination_ref and ' ' not in destination_ref and destination_ref[:3].isdigit():
             destination = Q(destination=destination_ref)

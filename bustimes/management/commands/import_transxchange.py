@@ -843,7 +843,7 @@ class Command(BaseCommand):
 
             services = Service.objects.filter(line_name__iexact=line.line_name).order_by('-current', 'id')
 
-            if operators and line.line_name:
+            if operators:
                 if self.source.name.startswith('Stagecoach'):
                     existing = services.filter(Q(source=self.source) | Q(operator__in=operators))
                 else:
