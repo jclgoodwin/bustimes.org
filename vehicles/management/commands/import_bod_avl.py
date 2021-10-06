@@ -135,12 +135,8 @@ class Command(ImportLiveVehiclesCommand):
             if operator.parent:
                 condition = Q(operator__parent=operator.parent)
 
-                if not vehicle_ref.isdigit() and vehicle_ref.isupper():
-                    # Connexions Buses 64
-                    if operator.id == "FWYO":
-                        condition |= Q(operator="HCTY")
-                elif operator.id == 'FBRI' and len(vehicle_ref) == 4:
-                    condition |= Q(operator="HCTP")
+                if operator.id == 'FBRI' and len(vehicle_ref) == 4:
+                    condition |= Q(operator="NCTP")
                 vehicles = self.vehicles.filter(condition)
             else:
                 vehicles = self.vehicles.filter(operator=operator)

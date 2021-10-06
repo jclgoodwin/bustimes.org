@@ -587,8 +587,6 @@ def journey_json(request, pk):
             trip = journey.trip
         except ObjectDoesNotExist:
             pass
-    if not trip and journey.service_id and journey.code and '_' not in journey.code:
-        trip = journey.get_trip()
 
     if trip:
         data['stops'] = [{
