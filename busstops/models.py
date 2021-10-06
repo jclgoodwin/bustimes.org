@@ -829,6 +829,9 @@ class Service(models.Model):
         if services is None:
             q = Exists(ServiceLink.objects.filter(
                 Q(from_service=self, to_service=OuterRef('pk')) | Q(from_service=OuterRef('pk'), to_service=self),
+            )) | Exists(Route.objects.filter(
+                registration__in=self.route_set.values('registration'),
+                service=OuterRef('id')
             ))
             if self.description and self.line_name:
                 q |= Q(description=self.description)

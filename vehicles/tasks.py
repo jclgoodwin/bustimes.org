@@ -36,9 +36,12 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
 
     operator = None
     if operator_ref:
+        operator = Operator.objects.filter(id=operator_ref).first()
+
+    if not operator:
         try:
-            operator = Operator.objects.get(id=operator_ref)
-        except Operator.DoesNotExist:
+            operator = Operator.objects.get(service=service)
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
     if operator.id == 'FABD':  # Aberdeen
