@@ -115,6 +115,10 @@ class Command(BaseCommand):
         service.service_code = line['route_id']
         service.line_name = line['route_short_name']
         service.description = line['route_long_name']
+        if not service.line_name and ' ' not in service.description:
+            service.line_name = service.description
+        if service.line_name.endswith('x'):  # Aircoach
+            service.line_name = service.line_name.replace('-', '').upper()
         service.date = self.source.datetime.strftime('%Y-%m-%d')
         service.mode = MODES.get(int(line['route_type']), '')
         service.current = True
@@ -133,8 +137,8 @@ class Command(BaseCommand):
 
         route, created = Route.objects.update_or_create(
             {
-                'line_name': line['route_short_name'],
-                'description': line['route_long_name'],
+                'line_name': service.line_name,
+                'description': service.description,
                 'service': service,
             },
             source=self.source,

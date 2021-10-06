@@ -42,7 +42,7 @@ class Command(ImportLiveVehiclesCommand):
         has_trips = Exists(trips.filter(route__service=OuterRef('id')))
         services = Service.objects.filter(has_trips, operator__in=self.operators)
         for service in services.values('line_name'):
-            line_name = service['line_name'].replace('-x', 'X')  # Aircoach
+            line_name = service['line_name']
             for direction in 'OI':
                 try:
                     res = self.session.get(self.url.format(line_name, direction), timeout=5)
@@ -69,9 +69,6 @@ class Command(ImportLiveVehiclesCommand):
             datetime=parse_datetime(item['startTime']['dateTime']),
             route_name=item['route']
         )
-
-        if journey.route_name.endswith('X'):  # Aircoach
-            journey.route_name = f'{journey.route_name[:-1]}-x'
 
         latest_journey = vehicle.latest_journey
         if latest_journey and journey.datetime == latest_journey.datetime:
