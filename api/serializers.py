@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from bustimes.models import Trip, RouteLink
-from vehicles.models import Vehicle, VehicleType, Livery
+from vehicles.models import Vehicle, VehicleType, Livery, VehicleJourney
 
 
 class VehicleSerializer(serializers.ModelSerializer):
@@ -49,6 +49,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     def get_service(self, obj):
         return {
+            "id": obj.route.service_id,
             "line_name": obj.route.service.line_name,
         }
 
@@ -76,3 +77,18 @@ class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = ['id', 'service', 'times']
+
+
+class VehicleJourneySerializer(serializers.ModelSerializer):
+    vehicle = serializers.SerializerMethodField()
+
+    def get_vehicle(self, obj):
+        return {
+            "id": obj.vehicle_id,
+            "fleet_code": obj.vehicle.fleet_code,
+            "reg": obj.vehicle.reg
+        }
+
+    class Meta:
+        model = VehicleJourney
+        fields = ['id', 'datetime', 'vehicle', 'trip_id', 'route_name', 'destination']
