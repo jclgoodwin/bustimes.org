@@ -404,7 +404,8 @@ class Command(ImportLiveVehiclesCommand):
             # use stop locality
             if destination_ref:
                 journey.destination = self.get_destination_name(destination_ref)
-
+                if not journey.destination:
+                    destination_ref = None
             # use destination name string (often not very descriptive)
             if not journey.destination:
                 destination = monitored_vehicle_journey.get('DestinationName')
