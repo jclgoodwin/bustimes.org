@@ -735,8 +735,7 @@ class Command(BaseCommand):
                             return f"{description} {via}"
                         elif (',' in via or ' and ' in via or '&' in via):
                             return f"{description} via {via}"
-                    else:
-                        description = ' - '.join([origin] + vias + [destination])
+                    description = ' - '.join([origin] + vias + [destination])
         return description
 
     def is_tnds(self):
