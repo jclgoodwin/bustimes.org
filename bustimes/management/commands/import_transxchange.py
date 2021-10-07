@@ -830,6 +830,8 @@ class Command(BaseCommand):
         else:
             unique_service_code = None
 
+        joined_line_names = '/'.join(line.line_name for line in txc_service.lines)
+
         for line in txc_service.lines:
             # defer to a Bus Open Data type source
             if self.is_tnds() and self.should_defer_to_other_source(operators, line.line_name):
@@ -846,7 +848,11 @@ class Command(BaseCommand):
 
             service_code = None
 
-            services = Service.objects.filter(line_name__iexact=line.line_name).order_by('-current', 'id')
+            services = Service.objects.order_by('-current', 'id')
+            if len(txc_service.lines) == 1:
+                services = services.filter(line_name__iexact=line.line_name)
+            else:
+                services = services.filter(line_name__in=[line.line_name, joined_line_names])
 
             if operators:
                 if self.source.name.startswith('Stagecoach'):
@@ -890,7 +896,7 @@ class Command(BaseCommand):
             else:
                 service = Service()
 
-            service.line_name = line.line_name
+            service.line_name = joined_line_names
             service.date = today
             service.current = True
             service.source = self.source
