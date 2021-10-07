@@ -254,15 +254,17 @@ class VehiclesTests(TestCase):
 
         # edit fleet number
         initial['fleet_number'] = '2'
-        with self.assertNumQueries(13):
+        initial['previous_reg'] = 'cock'
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
-        self.assertContains(response, 'I’ll update those details')
+        self.assertContains(response, 'Changed fleet number from 1 to 2')
+        self.assertContains(response, 'I’ll update the other details')
 
         edit = VehicleEdit.objects.filter(approved=None).get()
         self.assertEqual(edit.colours, '')
         self.assertEqual(edit.get_changes(), {
-            'fleet_number': '2'
+            'Previous reg': 'COCK'
         })
 
         # edit type, livery and name with bad URL
@@ -305,7 +307,7 @@ class VehiclesTests(TestCase):
 
         with self.assertNumQueries(9):
             response = self.client.get('/admin/vehicles/vehicleedit/')
-        self.assertContains(response, '<del>1</del><br><ins>2</ins>')
+        self.assertContains(response, '<ins>COCK</ins>')
         self.assertEqual(1, response.context_data['cl'].result_count)
 
         del initial['colours']
@@ -345,7 +347,7 @@ class VehiclesTests(TestCase):
 
         with self.assertNumQueries(13):
             response = self.client.post(url, initial)
-        self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
+        # self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
 

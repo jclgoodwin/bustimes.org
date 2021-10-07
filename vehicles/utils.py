@@ -1,3 +1,4 @@
+import re
 from redis import from_url
 from django.conf import settings
 from .models import VehicleEdit, VehicleRevision, VehicleType, Livery
@@ -9,6 +10,12 @@ redis_client = from_url(settings.REDIS_URL)
 def flush_redis():
     """For use in tests"""
     redis_client.flushall()
+
+
+def match_reg(string):
+    return re.match("(^[A-Z]{2}[0-9]{2} ?[A-Z]{3}$)|(^[A-Z][0-9]{1,3}[A-Z]{3}$)"
+                    "|(^[A-Z]{3}[0-9]{1,3}[A-Z]$)|(^[0-9]{1,4}[A-Z]{1,2}$)|(^[0-9]{1,3}[A-Z]{1,3}$)"
+                    "|(^[A-Z]{1,2}[0-9]{1,4}$)|(^[A-Z]{1,3}[0-9]{1,3}$)|(^[A-Z]{1,3}[0-9]{1,4}$)", string)
 
 
 def get_vehicle_edit(vehicle, fields, now, request):
@@ -132,12 +139,29 @@ def do_revisions(vehicles, data, user):
 def do_revision(vehicle, data, user):
     (revision,), changed_fields = do_revisions((vehicle,), data, user)
 
-    if user.trusted:
-        if 'reg' in data:
+    if 'fleet_number' in data:
+        if user.trusted or data['fleet_number'] and data['fleet_number'] in re.split('_- ', vehicle.code):
+            revision.changes['fleet number'] = f"-{vehicle.fleet_code}\n+{data['fleet_number']}"
+            vehicle.fleet_code = data['fleet_number']
+            vehicle.fleet_number = re.sub(r'[^\d]', '', vehicle.fleet_code)
+            changed_fields.append('fleet_code')
+            del data['fleet_number']
+
+    if 'reg' in data:
+        if user.trusted or data['reg'] and data['reg'] in re.sub('_- ', '', vehicle.code):
             revision.changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
             vehicle.reg = data['reg']
             changed_fields.append('reg')
             del data['reg']
+
+    if user.trusted:
+        if 'previous_reg' in data and not vehicle.data and match_reg(data['previous_reg']):
+            revision.changes['previous reg'] = f"-\n+{data['previous_reg']}"
+            vehicle.data = {
+                'Previous reg': data['previous_reg']
+            }
+            changed_fields.append('data')
+            del data['previous_reg']
 
         if 'branding' in data and data['branding'] == '':
             revision.changes['branding'] = f"-{vehicle.branding}\n+"

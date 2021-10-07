@@ -193,7 +193,7 @@ class Vehicle(models.Model):
         if update_fields is None and not self.reg:
             reg = re.match(r"^[A-Z]\w_?\d\d?[ _-]?[A-Z]{3}$", self.code)
             if reg:
-                self.reg = self.code.replace(' ', '').replace('_', '').replace('-', '')
+                self.reg = re.sub("[-_ ]", "", self.code)
         elif update_fields is None or 'reg' in update_fields:
             self.reg = self.reg.upper().replace(' ', '')
 

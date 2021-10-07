@@ -107,30 +107,32 @@ class EditVehicleForm(EditVehiclesForm):
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
-        if vehicle.fleet_code and vehicle.fleet_code in vehicle.code or str(vehicle.fleet_number) in vehicle.code:
-            self.fields['fleet_number'].disabled = True
-        elif vehicle.fleet_code and vehicle.latest_journey and vehicle.latest_journey.data:
-            try:
-                if vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId'] == vehicle.fleet_code:
-                    if not vehicle.code.isdigit() or vehicle.code == vehicle.fleet_code:
-                        self.fields['fleet_number'].disabled = True
-            except (KeyError, TypeError):
-                pass
+        if not user.is_staff:
+            if vehicle.fleet_code and vehicle.fleet_code in vehicle.code.replace('_', ' ').split():
+                self.fields['fleet_number'].disabled = True
+            elif vehicle.fleet_code and vehicle.latest_journey and vehicle.latest_journey.data:
+                try:
+                    vehicle_unique_id = vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId']
+                except (KeyError, TypeError):
+                    pass
+                else:
+                    if vehicle_unique_id == vehicle.fleet_code:
+                        if not vehicle.code.isdigit() or vehicle.code == vehicle.fleet_code:
+                            self.fields['fleet_number'].disabled = True
+
+            if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
+                self.fields['reg'].disabled = True
+
+            if not vehicle.notes:
+                del self.fields['notes']
+            if not vehicle.branding:
+                del self.fields['branding']
 
         if not vehicle.withdrawn and vehicle.latest_journey:
             if timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3):
                 self.fields['withdrawn'].disabled = True
                 self.fields['withdrawn'].help_text = """Can't be ticked yet,
  as this vehicle (or ticket machine) has tracked in the last 3 days"""
-
-        if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
-            self.fields['reg'].disabled = True
-
-        if not user.is_staff:
-            if not vehicle.notes:
-                del self.fields['notes']
-            if not vehicle.branding:
-                del self.fields['branding']
 
         if not vehicle.operator or vehicle.operator.parent:
             operators = Operator.objects
