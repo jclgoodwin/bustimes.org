@@ -262,6 +262,8 @@ class TimetableDepartures(Departures):
     def get_row(self, stop_time, date):
         trip = stop_time.trip
         destination = trip.destination
+        if destination:
+            destination = destination.locality or destination.town or destination.common_name
         if stop_time.departure is not None:
             time = stop_time.departure_datetime(date)
         else:
@@ -269,7 +271,7 @@ class TimetableDepartures(Departures):
         return {
             'origin_departure_time': trip.start_datetime(date),
             'time': time,
-            'destination': destination.locality or destination.town or destination.common_name,
+            'destination': destination or '',
             'service': trip.route.service,
             'link': trip.get_absolute_url()
         }

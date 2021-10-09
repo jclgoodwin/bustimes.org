@@ -6,8 +6,6 @@ from .utils import format_timedelta, time_datetime
 
 
 def get_routes(routes, when=None):
-    end_dates = any(route.end_date for route in routes)
-
     if when:
         routes = [route for route in routes if route.contains(when)]
 
@@ -17,11 +15,9 @@ def get_routes(routes, when=None):
     sources = set(route.source_id for route in routes)
     revision_numbers = set(route.revision_number for route in routes)
 
-    # use maximum revision number for each service_code
-    # (but if there's only one source, ignore the revision numbers,
-    #  e.g. to avoid missing half the Konectbus 5B timetable)
+    # use maximum revision number for each service_code (except for Ticketer data):
 
-    if len(sources) > 1 and len(revision_numbers) > 1 and not end_dates:
+    if len(revision_numbers) > 1 and not all(route.code[:4].isupper() and route.code[4] == '_' for route in routes):
         revision_numbers = {}
         for route in routes:
             if (

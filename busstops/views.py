@@ -5,7 +5,7 @@ import requests
 import datetime
 from ukpostcodeutils import validation
 
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.contrib.gis.geos import Point, Polygon
 from django.contrib.gis.db.models import Union
 from django.contrib.gis.db.models.functions import Distance
@@ -538,7 +538,7 @@ class ServiceDetailView(DetailView):
         try:
             return super().get_object(**kwargs)
         except Http404:
-            return get_object_or_404(self.model, service_code=self.kwargs['slug'])
+            return get_list_or_404(self.model, service_code=self.kwargs['slug'])[0]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

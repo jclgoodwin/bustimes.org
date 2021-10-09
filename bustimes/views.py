@@ -228,7 +228,10 @@ def tfl_vehicle(request, reg):
     vehicles = Vehicle.objects.select_related('livery', 'operator', 'vehicle_type')
 
     if not data:
-        vehicle = get_object_or_404(vehicles, code=reg)
+        try:
+            vehicle = get_object_or_404(vehicles, code=reg)
+        except Vehicle.MultipleObjectsReturned:
+            vehicle = get_object_or_404(vehicles, source=7, code=reg)
         return render(request, 'vehicles/vehicle_detail.html', {
             'vehicle': vehicle,
             'object': vehicle
