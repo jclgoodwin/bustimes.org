@@ -150,7 +150,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }]
 
         consumer = SiriConsumer()
-        with self.assertNumQueries(36):
+        with self.assertNumQueries(38):
             consumer.sirivm({
                 "when": "2020-10-15T07:46:08+00:00",
                 "items": items
