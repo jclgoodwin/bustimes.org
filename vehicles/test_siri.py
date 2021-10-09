@@ -90,7 +90,7 @@ class SiriSubscriptionReceiveTest(TestCase):
         </Siri>
         """
 
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(17):
             self.client.post('/siri', xml, content_type='text/xml')
 
         location = VehicleLocation.objects.first()

@@ -19,12 +19,20 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             Operator(id='WHIP', region=region),
             Operator(id='TGTC', region=region),
             Operator(id='HAMS', region=region),
+            Operator(id='UNOE', region=region),
+            Operator(id='UNIB', region=region),
         ])
         cls.source = DataSource.objects.create(
             name='Bus Open Data',
             url='https://data.bus-data.dft.gov.uk/api/v1/datafeed/'
         )
-        OperatorCode.objects.create(operator_id='HAMS', source=cls.source, code='HAMSTRA')
+        OperatorCode.objects.bulk_create([
+            OperatorCode(operator_id='HAMS', source=cls.source, code='HAMSTRA'),
+            OperatorCode(operator_id='TGTC', source=cls.source, code='FOO'),
+            OperatorCode(operator_id='WHIP', source=cls.source, code='FOO'),
+            OperatorCode(operator_id='UNOE', source=cls.source, code='UNOE'),
+            OperatorCode(operator_id='UNOE', source=cls.source, code='UNIB'),
+        ])
 
         suffolk = AdminArea.objects.create(region=region, id=1, atco_code=390, name='Suffolk')
         southwold = Locality.objects.create(admin_area=suffolk, name='Southwold')
@@ -41,6 +49,20 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         # calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True,
         #                                    fri=True, sat=True, sun=True, start_date='2020-10-20')
         # Trip.objects.create(route=route_c, start='15:32:00', end='23:00:00', calendar=calendar)
+
+    def test_get_operator(self):
+        command = import_bod_avl_channels.Command()
+        command.source = self.source
+
+        self.assertEqual(command.get_operator('HAMS').get().id, 'HAMS')
+        self.assertEqual(command.get_operator('HAMSTRA').get().id, 'HAMS')
+        self.assertEqual(command.get_operator('UNOE').get().id, 'UNOE')
+
+        # should ignore operator with id 'UNIB' in favour of one with OperatorCode:
+        self.assertEqual(command.get_operator('UNIB').get().id, 'UNOE') 
+
+        self.assertEqual(list(command.get_operator('FOO').values('id')),
+                         [{'id': 'WHIP'}, {'id': 'TGTC'}]) 
 
     @time_machine.travel('2020-05-01', tick=False)
     @override_settings(CACHES={'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}})
@@ -150,7 +172,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }]
 
         consumer = SiriConsumer()
-        with self.assertNumQueries(38):
+        with self.assertNumQueries(36):
             consumer.sirivm({
                 "when": "2020-10-15T07:46:08+00:00",
                 "items": items

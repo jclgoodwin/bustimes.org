@@ -22,15 +22,6 @@ TWELVE_HOURS = timedelta(hours=12)
 class Command(ImportLiveVehiclesCommand):
     source_name = 'Bus Open Data'
     wait = 20
-    operators = {
-        'UNO': ['UNOE', 'UNIB'],  # Uno/Universitybus
-        'UNIB': ['UNOE', 'UNIB'],
-        'TBTN': ['TBTN', 'BRTB', 'KBUS'],  # trentbarton/Kinchbus
-        'TDY': ['YCST', 'LNUD', 'ROST', 'BPTR', 'KDTR', 'HRGT', 'TPEN'],  # Transdev Blazefield
-        'MTRL': ['MPTR'],  # MP Travel using M Travel code (no relation!)
-        'HUNT': ['HNTC'],  # Hunts using Hunters code
-        'LVTR': ['LVTR', 'YEOC'],
-    }
     vehicle_id_cache = {}
     vehicle_cache = {}
     reg_operators = {'BDRB', 'COMT', 'TDY', 'ROST', 'CT4N', 'TBTN', 'OTSS'}
@@ -67,28 +58,13 @@ class Command(ImportLiveVehiclesCommand):
 
     @functools.cache
     def get_operator(self, operator_ref):
-        if operator_ref == "SCEM":
-            operator_ref = "SCGH"
-        elif operator_ref == "SCSO":
-            operator_ref = "SCCO"
-
-        if operator_ref in self.operators:
-            return self.operators[operator_ref]
-
-        operators = Operator.objects.filter(
-            Exists(self.source.operatorcode_set.filter(operator=OuterRef('id'), code=operator_ref))
+        # all operators with a matching OperatorCode,
+        # or (if no such OperatorCode) the one with a matching id
+        operator_codes = self.source.operatorcode_set.filter(code=operator_ref)
+        return Operator.objects.filter(
+            Exists(operator_codes.filter(operator=OuterRef('id'))) |
+            Q(id=operator_ref) & ~Exists(operator_codes)
         )
-
-        try:
-            return operators.get()
-        except Operator.MultipleObjectsReturned:
-            return [operator.id for operator in operators]
-        except Operator.DoesNotExist:
-            if len(operator_ref) == 4:
-                try:
-                    return Operator.objects.get(id=operator_ref)
-                except Operator.DoesNotExist:
-                    return
 
     @staticmethod
     def get_vehicle_cache_key(item):
@@ -118,12 +94,11 @@ class Command(ImportLiveVehiclesCommand):
         except (KeyError, Vehicle.DoesNotExist):
             pass
 
-        operator = self.get_operator(operator_ref)
+        operators = self.get_operator(operator_ref)
 
-        vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
-
-        if operator:
+        if operators:
             vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
+            vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
 
         assert vehicle_ref
 
@@ -132,7 +107,11 @@ class Command(ImportLiveVehiclesCommand):
             'source': self.source
         }
 
-        if type(operator) is Operator:
+        if not operators:
+            vehicles = self.vehicles.filter(operator=None)
+        elif len(operators) == 1:
+            operator = operators[0]
+
             defaults['operator'] = operator
             if operator.parent:
                 condition = Q(operator__parent=operator.parent)
@@ -142,14 +121,12 @@ class Command(ImportLiveVehiclesCommand):
                 vehicles = self.vehicles.filter(condition)
             else:
                 vehicles = self.vehicles.filter(operator=operator)
-        elif type(operator) is list:
-            defaults['operator_id'] = operator[0]
-            vehicles = self.vehicles.filter(operator__in=operator)
         else:
-            vehicles = self.vehicles.filter(operator=None)
+            defaults['operator'] = operator[0]
+            vehicles = self.vehicles.filter(operator__in=operators)
 
         condition = Q(code=vehicle_ref)
-        if operator:
+        if operators:
             if vehicle_ref.isdigit():
                 defaults['fleet_number'] = vehicle_ref
                 condition |= Q(code__endswith=f'-{vehicle_ref}') | Q(code__startswith=f'{vehicle_ref}_')
@@ -207,7 +184,7 @@ class Command(ImportLiveVehiclesCommand):
         self.vehicle_id_cache[cache_key] = vehicle.id
         return vehicle, created
 
-    def get_service(self, operator, item, line_ref, vehicle_operator_id):
+    def get_service(self, operators, item, line_ref, vehicle_operator_id):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         destination_ref = monitored_vehicle_journey.get("DestinationRef")
@@ -236,7 +213,10 @@ class Command(ImportLiveVehiclesCommand):
 
         services = self.services.filter(line_name_query).defer('geometry')
 
-        if type(operator) is Operator and operator.parent and destination_ref:
+        if not operators:
+            pass
+        elif len(operators) == 1 and operators[0].parent and destination_ref:
+            operator = operators[0]
 
             # first try taking OperatorRef at face value
             # (temporary while some services may have no StopUsages)
@@ -258,16 +238,17 @@ class Command(ImportLiveVehiclesCommand):
             # because the OperatorRef field is unreliable,
             # e.g. sometimes has the wrong up First Yorkshire operator code
 
-        elif operator:
-            if type(operator) is Operator:
+        elif operators:
+            if len(operators) == 1:
+                operator = operators[0]
                 condition = Q(operator=operator)
                 if vehicle_operator_id != operator.id:
                     condition |= Q(operator=vehicle_operator_id)
                 services = services.filter(condition)
             else:
-                services = services.filter(operator__in=operator)
+                services = services.filter(operator__in=operators)
 
-            if type(operator) is Operator or not destination_ref:
+            if len(operators) == 1 or not destination_ref:
                 try:
                     return services.get()
                 except Service.DoesNotExist:
@@ -425,10 +406,10 @@ class Command(ImportLiveVehiclesCommand):
 
         if not journey.service_id and route_name:
             operator_ref = monitored_vehicle_journey["OperatorRef"]
-            operator = self.get_operator(operator_ref)
-            journey.service = self.get_service(operator, item, route_name, vehicle.operator_id)
+            operators = self.get_operator(operator_ref)
+            journey.service = self.get_service(operators, item, route_name, vehicle.operator_id)
 
-            if not operator and journey.service and journey.service.operator.all():
+            if not operators and journey.service and journey.service.operator.all():
                 operator = journey.service.operator.all()[0]
                 try:
                     OperatorCode.objects.create(source=self.source, operator=operator, code=operator_ref)
