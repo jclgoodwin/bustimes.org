@@ -24,8 +24,9 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
-from vehicles.models import Vehicle
 from bustimes.models import get_routes
+from vehicles.models import Vehicle
+from vosa.models import Registration
 from .utils import get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
                      Service, Place, ServiceColour, DataSource)
@@ -575,7 +576,8 @@ class ServiceDetailView(DetailView):
                 if timetable.date or timetable.groupings:
                     context['timetable'] = timetable
 
-                context['registrations'] = {route.registration for route in timetable.routes if route.registration}
+                registrations = {route.registration_id for route in timetable.routes if route.registration_id} 
+                context['registrations'] = Registration.objects.filter(id__in=registrations)
 
         else:
             date = None

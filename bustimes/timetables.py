@@ -489,9 +489,9 @@ class Grouping:
                             self.column_feet[key].append(ColumnFoot(None, 1))
 
             if previous_trip:
-                if previous_trip.route.service_id != trip.route.service_id:
+                if previous_trip.route.line_name != trip.route.line_name:
                     self.heads.append(
-                        ColumnHead(previous_trip.route.service, i - sum(head.span for head in self.heads)))
+                        ColumnHead(previous_trip.route, i - sum(head.span for head in self.heads)))
 
                 if detailed:
                     pass
@@ -517,7 +517,7 @@ class Grouping:
             previous_note_ids = note_ids
 
         if previous_trip:
-            self.heads.append(ColumnHead(previous_trip.route.service,
+            self.heads.append(ColumnHead(previous_trip.route,
                                          len(self.trips) - sum(head.span for head in self.heads)))
 
         if in_a_row > 1:
@@ -546,8 +546,8 @@ class Grouping:
 
 
 class ColumnHead:
-    def __init__(self, service, span):
-        self.service = service
+    def __init__(self, route, span):
+        self.route = route
         self.span = span
 
 

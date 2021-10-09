@@ -18,7 +18,7 @@ from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
-from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
+from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode
 from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block, RouteLink,
                        Calendar, CalendarDate, CalendarBankHoliday, BankHoliday)
 from ...timetables import get_stop_usages
@@ -818,8 +818,6 @@ class Command(BaseCommand):
                 logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
                 return
 
-        linked_services = []
-
         description = self.get_description(txc_service)
 
         if description == 'Origin - Destination':
@@ -830,7 +828,9 @@ class Command(BaseCommand):
         else:
             unique_service_code = None
 
-        joined_line_names = '/'.join(line.line_name for line in txc_service.lines)
+        line_names = [line.line_name for line in txc_service.lines]
+        line_names.sort()
+        joined_line_names = '/'.join(line_names)
 
         for line in txc_service.lines:
             # defer to a Bus Open Data type source
@@ -849,10 +849,10 @@ class Command(BaseCommand):
             service_code = None
 
             services = Service.objects.order_by('-current', 'id')
-            if len(txc_service.lines) == 1:
-                services = services.filter(line_name__iexact=line.line_name)
-            else:
-                services = services.filter(line_name__in=[line.line_name, joined_line_names])
+            q = Q(line_name__iexact=line.line_name)
+            if len(line_names) > 1:
+                q |= Q(route__line_name__in=line_names) | Q(line_name__iexact=joined_line_names)
+            services = services.filter(q)
 
             if operators:
                 if self.source.name.startswith('Stagecoach'):
@@ -989,7 +989,6 @@ class Command(BaseCommand):
                     else:
                         service.operator.set(operators)
             self.service_ids.add(service.id)
-            linked_services.append(service.id)
 
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
                 logger.warning(
@@ -1088,16 +1087,6 @@ class Command(BaseCommand):
                 route_code += f'#{line.id}'
 
             self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service, line.id)
-
-        if len(linked_services) > 1:
-            for i, from_service in enumerate(linked_services):
-                for i, to_service in enumerate(linked_services[i+1:]):
-                    kwargs = {
-                        'from_service_id': from_service,
-                        'to_service_id': to_service,
-                    }
-                    if not ServiceLink.objects.filter(**kwargs).exists():
-                        ServiceLink.objects.create(**kwargs, how='also')
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:

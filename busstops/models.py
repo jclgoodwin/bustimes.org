@@ -883,11 +883,11 @@ class Service(models.Model):
             timetable = Timetable(self.route_set.all(), day)
         else:
             if related:
-                routes = Route.objects.filter(service__in=[self] + related).order_by('start_date')
+                routes = Route.objects.filter(service__in=[self] + related)
             else:
-                routes = self.route_set.order_by('start_date')
+                routes = self.route_set
             try:
-                timetable = Timetable(routes, day, detailed)
+                timetable = Timetable(routes.order_by('start_date'), day, detailed)
             except (IndexError, UnboundLocalError) as e:
                 logger.error(e, exc_info=True)
                 return
@@ -896,7 +896,7 @@ class Service(models.Model):
 
         timetable.groupings = [grouping for grouping in timetable.groupings if grouping.rows]
 
-        if not related:
+        if all(route.line_name == self.line_name for route in timetable.routes):
             for grouping in timetable.groupings:
                 del grouping.heads
 

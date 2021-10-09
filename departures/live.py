@@ -292,6 +292,7 @@ class TimetableDepartures(Departures):
             'arrival': arrival,
             'departure': departure,
             'destination': destination or '',
+            'route': trip.route,
             'service': trip.route.service,
             'link': trip.get_absolute_url()
         }
