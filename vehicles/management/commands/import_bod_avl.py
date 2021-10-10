@@ -96,9 +96,8 @@ class Command(ImportLiveVehiclesCommand):
 
         operators = self.get_operator(operator_ref)
 
-        if operators:
-            vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
-            vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
+        vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
+        vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
 
         assert vehicle_ref
 
@@ -122,7 +121,7 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 vehicles = self.vehicles.filter(operator=operator)
         else:
-            defaults['operator'] = operator[0]
+            defaults['operator'] = operators[0]
             vehicles = self.vehicles.filter(operator__in=operators)
 
         condition = Q(code=vehicle_ref)
