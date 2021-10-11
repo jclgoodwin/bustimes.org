@@ -146,6 +146,8 @@ def bus_open_data(api_key, operator):
             url = json['next']
             params = None
 
+    all_source_ids = []
+
     for noc, region_id, operator_codes_dict, incomplete in settings.BOD_OPERATORS:
         if operator_codes_dict:
             operators = operator_codes_dict.values()
@@ -216,6 +218,14 @@ def bus_open_data(api_key, operator):
 
         command.service_ids = service_ids
         command.finish_services()
+        all_source_ids += [source.id for source in sources]
+
+    if not operator:
+        logger.info(DataSource.objects.filter(
+            ~Q(id__in=all_source_ids),
+            ~Exists(Route.objects.filter(source=OuterRef('id'))),
+            url__contains="https://data.bus-data.dft.gov.uk/timetable/dataset/"
+        ).delete())
 
     command.debrief()
 
