@@ -268,6 +268,7 @@ class DataSourceAdmin(admin.ModelAdmin):
     )
     actions = ['delete_routes', 'remove_datetimes']
     show_full_result_count = False
+    ordering = ('name',)
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

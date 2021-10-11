@@ -4,8 +4,7 @@
 import os
 import sys
 from pathlib import Path
-from aioredis import ReplyError
-from autobahn.exception import Disconnected
+from django.db.utils import OperationalError
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -196,7 +195,7 @@ USE_I18N = False
 def before_send(event, hint):
     if 'exc_info' in hint:
         exc_type, exc_value, traceback = hint['exc_info']
-        if isinstance(exc_value, ReplyError) or isinstance(exc_value, Disconnected):
+        if isinstance(exc_value, OperationalError):
             return
     return event
 
@@ -366,6 +365,8 @@ PASSENGER_OPERATORS = [
 # see bustimes.management.commands.import_bod
 BOD_OPERATORS = [
     ('WMSA', 'EM', {}, False),
+    ('LANT', 'EM', {}, False),
+    ('NWBT', 'NW', {}, False),
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
@@ -388,7 +389,7 @@ BOD_OPERATORS = [
         # 'FLEI': 'FLEI',
         'RRAR': 'RRAR',
         'FBRI': 'FBRI',
-        # 'ABUS': 'ABUS',
+        'ABUS': 'ABUS',
         # 'FWYO': 'FWYO',
     }, True),
     ('AKSS', None, {
@@ -425,7 +426,9 @@ BOD_OPERATORS = [
     ('TBTN', 'EM', {
         'BRTB': 'TBTN',
     }, False),
-    ('KBUS', 'EM', {}, False),
+    ('KBUS', 'SE', {}, False),
+    ('NIBS', 'SE', {}, False),
+    #('SESX', 'EA', {}, False),
 
     ('CSVC', 'EA', {
         'CS': 'CSVC'
@@ -676,4 +679,8 @@ STAGECOACH_OPERATORS = [
 TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     ('EA', ['BDRB'], 'BorderBus'),
+    ('WM', ['DIAM'], 'Diamond Bus'),
+    ('EA', ['WHIP'], 'Whippet'),
+    ('WM', ['Johnsons', 'JOHS'], 'Johnsons'),
+    ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC'], 'A-Line Coaches')
 ]

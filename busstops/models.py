@@ -240,7 +240,7 @@ class DataSource(models.Model):
             text = self.name
             date = self.datetime
         elif self.url.startswith('https://opendata.ticketer.com/uk/'):
-            text = self.name
+            text = self.url
             date = self.datetime
         elif self.name == 'MET' or self.name == 'ULB':
             url = self.url

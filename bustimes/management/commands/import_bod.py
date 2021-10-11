@@ -137,10 +137,6 @@ def bus_open_data(api_key, operator):
             if not results:
                 logger.warning(f'no results: {response.url}')
             for dataset in results:
-                dataset['source'], created = DataSource.objects.get_or_create(
-                    {'name': dataset['name']},
-                    url=dataset['url']
-                )
                 dataset['modified'] = parse_datetime(dataset['modified'])
                 datasets.append(dataset)
             url = json['next']
@@ -169,10 +165,6 @@ def bus_open_data(api_key, operator):
         service_ids = set()
 
         for dataset in operator_datasets:
-            filename = dataset['name']
-            url = dataset['url']
-            path = settings.DATA_DIR / filename
-
             if noc == 'FBOS':
                 # only certain First operators
                 if not any(code in dataset['description'] for code in operator_codes_dict):
@@ -181,6 +173,15 @@ def bus_open_data(api_key, operator):
                     # ignore FECS datasets older than 1 sep 2021
                     if dataset['modified'] < parse_datetime('2021-09-01T00:00:00+00:00'):
                         continue
+
+            filename = dataset['name']
+            url = dataset['url']
+            path = settings.DATA_DIR / filename
+
+            dataset['source'], created = DataSource.objects.get_or_create(
+                {'name': dataset['name']},
+                url=dataset['url']
+            )
 
             command.source = dataset['source']
             sources.append(command.source)
@@ -221,11 +222,14 @@ def bus_open_data(api_key, operator):
         all_source_ids += [source.id for source in sources]
 
     if not operator:
-        logger.info(DataSource.objects.filter(
+        to_delete = DataSource.objects.filter(
             ~Q(id__in=all_source_ids),
             ~Exists(Route.objects.filter(source=OuterRef('id'))),
             url__contains="https://data.bus-data.dft.gov.uk/timetable/dataset/"
-        ).delete())
+        )
+        if to_delete:
+            logger.info(to_delete)
+            logger.info(to_delete.delete())
 
     command.debrief()
 
@@ -272,7 +276,7 @@ def ticketer(operator=None):
             command.finish_services()
 
             command.source.datetime = last_modified
-            command.source.save(update_fields=['datetime'])
+            command.source.save()
 
             logger.info(f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}")
             logger.info(f"  {get_operator_ids(command.source)}")
