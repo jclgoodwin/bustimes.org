@@ -426,7 +426,7 @@ def get_departure_order(departure):
 def rows_match(a, b):
     if services_match(a['service'], b['service']):
         if a['time'] and b['time']:
-            if 'arrival' in a and 'arrival' in b:
+            if a.get('arrival') and b.get('arrival'):
                 key = 'arrival'
             else:
                 key = 'time'
