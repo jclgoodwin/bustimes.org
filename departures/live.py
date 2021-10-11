@@ -174,7 +174,7 @@ class WestMidlandsDepartures(Departures):
     def get_row(self, item):
         scheduled = ciso8601.parse_datetime(item['ScheduledArrival'])
         expected = ciso8601.parse_datetime(item['ExpectedArrival'])
-        {
+        return {
             'time': scheduled,
             'arrival': scheduled,
             'live': expected,
