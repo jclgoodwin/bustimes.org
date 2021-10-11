@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 from busstops.models import DataSource, Region, Operator
 from ...models import Vehicle
+from ..commands.import_nx import parse_datetime
 from ..commands.import_aircoach import Command as AircoachCommand, NatExpCommand
 from ..commands.import_kings_ferry import Command as KingsFerryCommand
 
@@ -24,6 +25,15 @@ class NatExpTest(TestCase):
 
         gb = Region.objects.create(id="GB")
         Operator.objects.create(id="NATX", name="Nathaniel Express", region=gb)
+
+    def test_parse_datetime(self):
+        self.assertEqual(str(parse_datetime("2021-10-31 00:00:00")), "2021-10-31 00:00:00+01:00")
+        self.assertEqual(str(parse_datetime("2021-10-31 01:05:00")), "2021-10-31 01:05:00+01:00")  # ambiguous time
+        self.assertEqual(str(parse_datetime("2021-10-31 02:05:00")), "2021-10-31 02:05:00+00:00")
+
+        self.assertEqual(str(parse_datetime("2021-03-28 00:00:00")), "2021-03-28 00:00:00+00:00")
+        self.assertEqual(str(parse_datetime("2021-03-28 01:05:00")), "2021-03-28 02:05:00+01:00")  # non existent time
+        self.assertEqual(str(parse_datetime("2021-03-28 02:05:00")), "2021-03-28 02:05:00+01:00")
 
     @patch("vehicles.management.commands.import_nx.sleep")
     def test_get_items(self, sleep):

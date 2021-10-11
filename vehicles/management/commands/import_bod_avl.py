@@ -148,7 +148,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref == 'MSOT':
             defaults['fleet_code'] = vehicle_ref
-        else:
+        elif 'fleet_number' not in defaults:
             # VehicleUniqueId
             try:
                 fleet_number = item['Extensions']['VehicleJourney']['VehicleUniqueId']
