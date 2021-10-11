@@ -427,9 +427,10 @@ def rows_match(a, b):
     if services_match(a['service'], b['service']):
         if a['time'] and b['time']:
             if 'arrival' in a and 'arrival' in b:
-                return a['arrival'] == b['arrival']
+                key = 'arrival'
             else:
-                return abs(a['time'] - b['time']) <= datetime.timedelta(minutes=2)
+                key = 'time'
+            return abs(a[key] - b[key]) <= datetime.timedelta(minutes=2)
 
 
 def blend(departures, live_rows, stop=None):
