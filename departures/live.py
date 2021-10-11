@@ -171,13 +171,22 @@ class WestMidlandsDepartures(Departures):
     def get_request_url(self):
         return f'http://api.tfwm.org.uk/stoppoint/{self.stop.pk}/arrivals'
 
-    def departures_from_response(self, res):
-        return sorted([{
-            'time': ciso8601.parse_datetime(item['ScheduledArrival']),
-            'live': ciso8601.parse_datetime(item['ExpectedArrival']),
+    def get_row(self, item):
+        scheduled = ciso8601.parse_datetime(item['ScheduledArrival'])
+        expected = ciso8601.parse_datetime(item['ExpectedArrival'])
+        {
+            'time': scheduled,
+            'arrival': scheduled,
+            'live': expected,
             'service': self.get_service(item['LineName']),
             'destination': item['DestinationName'],
-        } for item in res.json()['Predictions']['Prediction'] if item['ExpectedArrival']], key=lambda d: d['live'])
+        }
+
+    def departures_from_response(self, res):
+        return sorted([
+            self.get_row(item)
+            for item in res.json()['Predictions']['Prediction'] if item['ExpectedArrival']
+        ], key=lambda d: d['live'])
 
 
 class EdinburghDepartures(Departures):
@@ -264,13 +273,24 @@ class TimetableDepartures(Departures):
         destination = trip.destination
         if destination:
             destination = destination.locality or destination.town or destination.common_name
-        if stop_time.departure is not None:
-            time = stop_time.departure_datetime(date)
+
+        if stop_time.arrival is not None:
+            arrival = stop_time.arrival_datetime(date)
         else:
-            time = stop_time.arrival_datetime(date)
+            arrival = None
+        time = arrival
+
+        if stop_time.departure is not None:
+            departure = stop_time.departure_datetime(date)
+            time = departure
+        else:
+            departure = None
+
         return {
             'origin_departure_time': trip.start_datetime(date),
             'time': time,
+            'arrival': arrival,
+            'departure': departure,
             'destination': destination or '',
             'service': trip.route.service,
             'link': trip.get_absolute_url()
@@ -403,19 +423,27 @@ def get_departure_order(departure):
     return timezone.make_naive(time, LOCAL_TIMEZONE)
 
 
+def rows_match(a, b):
+    if services_match(a['service'], b['service']):
+        if a['time'] and b['time']:
+            if 'arrival' in a and 'arrival' in b:
+                return a['arrival'] == b['arrival']
+            else:
+                return abs(a['time'] - b['time']) <= datetime.timedelta(minutes=2)
+
+
 def blend(departures, live_rows, stop=None):
     added = False
     for live_row in live_rows:
         replaced = False
         for row in departures:
-            if services_match(row['service'], live_row['service']) and row['time'] and live_row['time']:
-                if abs(row['time'] - live_row['time']) <= datetime.timedelta(minutes=2):
-                    if live_row.get('live'):
-                        row['live'] = live_row['live']
-                    if 'data' in live_row:
-                        row['data'] = live_row['data']
-                    replaced = True
-                    break
+            if rows_match(row, live_row):
+                if live_row.get('live'):
+                    row['live'] = live_row['live']
+                if 'data' in live_row:
+                    row['data'] = live_row['data']
+                replaced = True
+                break
         if not replaced and (live_row.get('live') or live_row['time']):
             departures.append(live_row)
             added = True
