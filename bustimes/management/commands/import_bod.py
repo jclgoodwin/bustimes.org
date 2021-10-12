@@ -236,8 +236,13 @@ def bus_open_data(api_key, operator):
     command.debrief()
 
 
-def ticketer(operator=None):
+def ticketer(specific_operator=None):
     command = get_command()
+
+    base_dir = settings.DATA_DIR / 'ticketer'
+
+    if not base_dir.exists():
+        base_dir.mkdir()
 
     for setting in settings.TICKETER_OPERATORS:
         if len(setting) == 3:
@@ -248,18 +253,18 @@ def ticketer(operator=None):
 
         noc = operators[0]
 
-        if operator and operator != noc:
+        if specific_operator and specific_operator != noc:
             continue
 
         url = f'https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip'
         filename = f'{noc}.zip'
-        path = settings.DATA_DIR / filename
+        path = base_dir / filename
         command.source, created = DataSource.objects.get_or_create({'name': name}, url=url)
         command.garages = {}
 
         modified, last_modified = download_if_changed(path, url)
 
-        if modified or operator == noc:
+        if noc == specific_operator or not command.source.datetime or last_modified > command.source.datetime:
             logger.info(f"{url} {last_modified}")
 
             command.region_id = region_id
@@ -269,7 +274,7 @@ def ticketer(operator=None):
             # avoid importing old data
             command.source.datetime = timezone.now()
 
-            handle_file(command, filename)
+            handle_file(command, path)
 
             command.mark_old_services_as_not_current()
 

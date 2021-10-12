@@ -67,13 +67,20 @@ def route_xml(request, source, code=''):
             raise Http404
 
     if 'stagecoach' in source.url:
-        code = str(Path(source.url.split('/')[-1]) / code)
+        path = str(Path(source.url.split('/')[-1]))
     elif '.zip' not in code and code != source.name:
-        code = str(Path(source.name) / code)
-
-    if '/' in code:
+        if source.url.startswith('https://opendata.ticketer.com/uk/'):
+            path = source.url.split('/')[4]
+            path = Path('ticketer') / f'{path}.zip'
+        else:
+            path = Path(source.name)
+    elif '/' in code:
         path = code.split('/')[0]  # archive name
         code = code[len(path) + 1:]
+    else:
+        path = None
+
+    if path:
         path = settings.DATA_DIR / path
         if code:
             with zipfile.ZipFile(path) as archive:
