@@ -173,6 +173,8 @@ def bus_open_data(api_key, operator):
                     # ignore FECS datasets older than 1 sep 2021
                     if dataset['modified'] < parse_datetime('2021-09-01T00:00:00+00:00'):
                         continue
+            if noc == 'EYMS' and not any(area["atco_code"] == "229" for area in dataset["adminAreas"]):
+                continue
 
             filename = dataset['name']
             url = dataset['url']

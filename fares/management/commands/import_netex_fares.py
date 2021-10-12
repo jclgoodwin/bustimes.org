@@ -386,7 +386,7 @@ class Command(BaseCommand):
     def ticketer(self, noc):
         download_url = f"https://opendata.ticketer.com/uk/{noc}/fares/current.zip"
 
-        dataset, = models.DataSet.objects.get_or_create({
+        dataset, created = models.DataSet.objects.get_or_create({
             'name': f"{noc} Ticketer fares"
         }, url=download_url)
 

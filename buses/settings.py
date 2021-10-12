@@ -332,9 +332,6 @@ PASSENGER_OPERATORS = [
     ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
         'BH': 'BHBC',
     }),
-    ('East Yorkshire', 'https://www.eastyorkshirebuses.co.uk/open-data', 'Y', {
-        'EY': 'EYMS',
-    }),
     ('Blackpool Transport', 'https://www.blackpooltransport.com/open-data', 'NW', {
         'RR': 'BLAC',
     }),
@@ -367,6 +364,8 @@ BOD_OPERATORS = [
     ('WMSA', 'EM', {}, False),
     ('LANT', 'EM', {}, False),
     ('NWBT', 'NW', {}, False),
+    ('MARS', 'SE', {}, False),
+    ('EYMS', 'Y',  {}, False),
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
