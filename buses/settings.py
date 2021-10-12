@@ -523,8 +523,9 @@ BOD_OPERATORS = [
 
     ('GRYC', 'EM',  {}, False),
 
+    ('CKMR', 'SE',  {}, False),
     # ('A2BR', 'EA',  {}, False),
-    # ('A2BV', 'NE',  {}, False),
+    ('A2BV', 'NW',  {}, False),
 
     # ('STNE', 'NE',  {
     #     'STNE': 'STNE',
