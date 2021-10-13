@@ -24,8 +24,11 @@ def get_routes(routes, when=None):
                 route.service_code not in revision_numbers
                 or route.revision_number > revision_numbers[route.service_code]
             ):
-                revision_numbers[route.service_code] = route.revision_number
-        routes = [route for route in routes if route.revision_number == revision_numbers[route.service_code]]
+                revision_numbers[f'{route.service_code}:{route.service_id}'] = route.revision_number
+        routes = [
+            route for route in routes if route.revision_number ==
+            revision_numbers[f'{route.service_code}:{route.service_id}']
+        ]
 
     sources = set(route.source_id for route in routes)
 
