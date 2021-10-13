@@ -40,7 +40,7 @@ class VehiclesTests(TestCase):
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=cls.livery,
                                                vehicle_type=spectra, operator=cls.lynx)
 
-        cls.vehicle_3 = Vehicle.objects.create(code='10', branding='Coastliner')
+        cls.vehicle_3 = Vehicle.objects.create(code='10', branding='Coastliner', colours='#c0c0c0')
 
         cls.journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
                                                     service=service, route_name='2')
@@ -156,6 +156,49 @@ class VehiclesTests(TestCase):
         self.location.refresh_from_db()
         self.assertEqual(str(self.location), '19 Oct 2020 23:47:00')
 
+    def test_vehicle_admin(self):
+        self.client.force_login(self.staff_user)
+
+        # test copy type, livery actions
+        self.client.post('/admin/vehicles/vehicle/', {
+            'action': 'copy_type',
+            '_selected_action': [self.vehicle_1.id, self.vehicle_2.id]
+        })
+        self.client.post('/admin/vehicles/vehicle/', {
+            'action': 'copy_livery',
+            '_selected_action': [self.vehicle_1.id, self.vehicle_2.id]
+        })
+        self.client.post('/admin/vehicles/vehicle/', {
+            'action': 'spare_ticket_machine',
+            '_selected_action': [self.vehicle_1.id, self.vehicle_2.id]
+        })
+        response = self.client.get('/admin/vehicles/vehicle/')
+        self.assertContains(response, "Copied Optare Spectra to 2 vehicles.")
+        self.assertContains(response, "Copied black with lemon piping to 2 vehicles.")
+
+        # test make livery
+        self.client.post('/admin/vehicles/vehicle/', {
+            'action': 'make_livery',
+            '_selected_action': [self.vehicle_1.id]
+        })
+        response = self.client.get('/admin/vehicles/vehicle/')
+        self.assertContains(response, "Select a vehicle with colours and branding.")
+        self.client.post('/admin/vehicles/vehicle/', {
+            'action': 'make_livery',
+            '_selected_action': [self.vehicle_3.id]
+        })
+        response = self.client.get('/admin/vehicles/vehicle/')
+        self.assertContains(response, "Updated 1 vehicles.")
+
+        self.assertEqual(Vehicle.objects.all().count(), 3)
+
+        # test merge 2 vehicles
+        self.client.post('/admin/vehicles/vehicle/', {
+            'action': 'merge',
+            '_selected_action': [self.vehicle_1.id, self.vehicle_2.id]
+        })
+        self.assertEqual(Vehicle.objects.all().count(), 2)
+
     def test_livery_admin(self):
         self.client.force_login(self.staff_user)
 
@@ -168,6 +211,21 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<td class="field-right">\
 <div style="height:1.5em;width:2.25em;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">\
 </div></td>')
+
+    def test_vehicle_type_admin(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get('/admin/vehicles/vehicletype/')
+        self.assertContains(response, "Optare Spectra")
+        self.assertContains(response, '<td class="field-vehicles">1</td>', 2)
+
+        self.client.post('/admin/vehicles/vehicletype/', {
+            'action': 'merge',
+            '_selected_action': [self.vehicle_1.vehicle_type_id, self.vehicle_2.vehicle_type_id]
+        })
+        response = self.client.get('/admin/vehicles/vehicletype/')
+        self.assertContains(response, '<td class="field-vehicles">2</td>', 1)
+        self.assertContains(response, '<td class="field-vehicles">0</td>', 1)
 
     def test_journey_admin(self):
         self.client.force_login(self.staff_user)
