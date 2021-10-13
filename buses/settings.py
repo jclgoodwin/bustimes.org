@@ -681,6 +681,6 @@ TICKETER_OPERATORS = [
     ('EA', ['BDRB'], 'BorderBus'),
     ('WM', ['DIAM'], 'Diamond Bus'),
     ('EA', ['WHIP'], 'Whippet'),
-    ('WM', ['Johnsons', 'JOHS'], 'Johnsons'),
-    ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC'], 'A-Line Coaches')
+    ('WM', ['Johnsons', 'JOHS']),
+    ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC'])
 ]

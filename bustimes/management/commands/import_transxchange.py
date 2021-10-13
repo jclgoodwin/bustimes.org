@@ -627,7 +627,7 @@ class Command(BaseCommand):
                     stop_time.arrival = cell.arrival_time
 
                 if trip.start is None:
-                    trip.start = stop_time.arrival_or_departure()
+                    trip.start = stop_time.departure_or_arrival()
 
                 atco_code = cell.stopusage.stop.atco_code
                 if atco_code in stops:
@@ -645,7 +645,7 @@ class Command(BaseCommand):
                 stop_time.arrival = stop_time.departure
                 stop_time.departure = None
 
-            trip.end = stop_time.departure_or_arrival()
+            trip.end = stop_time.arrival_or_departure(()
             trips.append(trip)
 
             if blank and any(stop_time.timing_status for stop_time in stop_times):

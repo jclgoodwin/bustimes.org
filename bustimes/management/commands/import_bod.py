@@ -227,7 +227,7 @@ def bus_open_data(api_key, operator):
         to_delete = DataSource.objects.filter(
             ~Q(id__in=all_source_ids),
             ~Exists(Route.objects.filter(source=OuterRef('id'))),
-            url__contains="https://data.bus-data.dft.gov.uk/timetable/dataset/"
+            url__startswith="https://data.bus-data.dft.gov.uk/timetable/dataset/"
         )
         if to_delete:
             logger.info(to_delete)

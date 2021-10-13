@@ -47,7 +47,8 @@ class ImportBusOpenDataTest(TestCase):
             with override_settings(DATA_DIR=Path(directory)):
                 call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
 
-                call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
+                with self.assertNumQueries(5):
+                    call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
 
                 route = Route.objects.get()
 
@@ -153,17 +154,24 @@ class ImportBusOpenDataTest(TestCase):
         trip = journey.get_trip()
         self.assertIsNone(trip)
 
-    @override_settings(TICKETER_OPERATORS=[('EA', ['Completely_Coach_Travel', 'CPLT'], 'Completely Coach Travel')])
     def test_ticketer(self):
-
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
                 with use_cassette(str(FIXTURES_DIR / 'bod_ticketer.yaml')):
-                    with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
-                        call_command('import_bod', 'ticketer')
+                    with override_settings(
+                        TICKETER_OPERATORS=[('EA', ['Completely_Coach_Travel', 'CPLT'], 'Completely Coach Travel')]
+                    ):
+                        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+                            call_command('import_bod', 'ticketer')
 
-                    with self.assertNumQueries(1):
-                        call_command('import_bod', 'ticketer')
+                    with override_settings(
+                        TICKETER_OPERATORS=[('EA', ['Completely_Coach_Travel', 'CPLT'])]
+                    ):
+                        with self.assertNumQueries(1):
+                            call_command('import_bod', 'ticketer')  # not modified
+
+                        with self.assertNumQueries(0):
+                            call_command('import_bod', 'ticketer', 'POOP')  # no matching setting
 
                 source = DataSource.objects.get(name='Completely Coach Travel')
                 service = source.service_set.first()
@@ -214,6 +222,9 @@ class ImportBusOpenDataTest(TestCase):
 
                     with self.assertNumQueries(1):
                         call_command('import_bod', 'stagecoach')
+
+                    with self.assertNumQueries(0):
+                        call_command('import_bod', 'stagecoach', 'scox')
 
                     with self.assertNumQueries(81):
                         call_command('import_bod', 'stagecoach', 'sccm')
