@@ -666,7 +666,7 @@ class ImportTransXChangeTest(TestCase):
     def test_multiple_lines(self):
         call_command('import_transxchange', FIXTURES_DIR / '904_SCD_PH_903_20210530.xml')
 
-        self.assertEqual(ServiceLink.objects.count(), 1)
+        link = ServiceLink.objects.get()
 
         route_1, route_2 = Route.objects.filter(code__contains='904_SCD_PH_903_20210530')
 
@@ -678,7 +678,26 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(f'{service.get_absolute_url()}?detailed')
         self.assertContains(response, '<td>9032</td>')  # block number
         self.assertContains(response, '<td>1554</td>')  # block number
-        self.assertContains(response, '<td>SWBA</td>')  # garafe
+        self.assertContains(response, '<td>SWBA</td>')  # garage
+
+        # test combined timetable
+        link.how = 'parallel'
+        link.save()
+
+        response = self.client.get(route_1.service.get_absolute_url())
+        self.assertContains(response, """
+            <thead>
+                <tr>
+                    <th></th>
+                    <td>
+                        904
+                    </td>
+                    <td>
+                        <a href="/services/903-register-timetable-as-permanent-post-covid-loc">903</a>
+                    </td>
+                </tr>
+            </thead>
+        """, html=True)
 
     @time_machine.travel('2021-07-07')
     def test_confusing_start_date(self):

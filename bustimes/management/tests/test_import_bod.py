@@ -49,7 +49,10 @@ class ImportBusOpenDataTest(TestCase):
 
                 call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
 
-        route = Route.objects.get()
+                route = Route.objects.get()
+
+                response = self.client.get(route.get_absolute_url())
+                self.assertEqual(200, response.status_code)
 
         self.assertEqual(route.source.name, 'Lynx_Clenchwarton_54_20200330')
         self.assertEqual(route.source.url, 'https://data.bus-data.dft.gov.uk/category/dataset/35/download/')
@@ -149,6 +152,39 @@ class ImportBusOpenDataTest(TestCase):
         journey.code = '0916'
         trip = journey.get_trip()
         self.assertIsNone(trip)
+
+    @override_settings(TICKETER_OPERATORS=[('EA', ['Completely_Coach_Travel', 'CPLT'], 'Completely Coach Travel')])
+    def test_ticketer(self):
+
+        with TemporaryDirectory() as directory:
+            with override_settings(DATA_DIR=Path(directory)):
+                with use_cassette(str(FIXTURES_DIR / 'bod_ticketer.yaml')):
+                    with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+                        call_command('import_bod', 'ticketer')
+
+                    with self.assertNumQueries(1):
+                        call_command('import_bod', 'ticketer')
+
+                source = DataSource.objects.get(name='Completely Coach Travel')
+                service = source.service_set.first()
+                route = service.route_set.first()
+
+                response = self.client.get(route.get_absolute_url())
+                self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(
+            response,
+            "Timetable data from "
+            "https://opendata.ticketer.com/uk/Completely_Coach_Travel/routes_and_timetables/current.zip, "
+            "24 September 2021"
+        )
+
+        self.assertEqual(
+            cm.output,
+            ["WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'CPLT', "
+             "'OperatorShortName': 'Completely Coach Travel', 'LicenceNumber': 'PF2024545'}"]
+        )
 
     @override_settings(STAGECOACH_OPERATORS=[('EA', 'sccm', 'Stagecoach East', ['SCHU', 'SCPB'])])
     @time_machine.travel(datetime.datetime(2020, 6, 10))
