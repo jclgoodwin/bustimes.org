@@ -645,7 +645,7 @@ class Command(BaseCommand):
                 stop_time.arrival = stop_time.departure
                 stop_time.departure = None
 
-            trip.end = stop_time.arrival_or_departure(()
+            trip.end = stop_time.arrival_or_departure()
             trips.append(trip)
 
             if blank and any(stop_time.timing_status for stop_time in stop_times):
