@@ -744,9 +744,16 @@ class VehicleLocation(models.Model):
             }
 
         if self.seated_occupancy is not None and self.seated_capacity is not None:
-            json['seats'] = f'{self.seated_capacity - self.seated_occupancy} free'
+            if self.occupancy == 'full':
+                json['seats'] = self.occupancy
+            else:
+                json['seats'] = f'{self.seated_capacity - self.seated_occupancy} free'
+        elif self.occupancy:
+            json['seats'] = self.get_occupancy_display()
         if self.wheelchair_occupancy is not None and self.wheelchair_capacity is not None:
             if self.wheelchair_occupancy < self.wheelchair_capacity:
                 json['wheelchair'] = 'free'
+            else:
+                json['wheelchair'] = 'occupied'
 
         return json
