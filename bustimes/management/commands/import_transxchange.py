@@ -675,7 +675,7 @@ class Command(BaseCommand):
                     if old_trip.start == trips[i].start:
                         trips[i].id = old_trip.id
                     else:
-                        print(old_trip.start, trips[i].start)
+                        logger.info(f"{route_code} {old_trip.start} {trips[i].start}")
                         existing_trips.delete()
                         existing_trips = None
                         break

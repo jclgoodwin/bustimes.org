@@ -117,7 +117,7 @@ class JourneyPatternStopUsage:
             self.wait_time = parse_duration(self.wait_time.text)
             if self.wait_time.total_seconds() > 10000:
                 # bad data detected
-                print(self.wait_time)
+                logger.warning(f"long wait time {self.wait_time} at stop {self.stop}")
                 self.wait_time = None
 
         self.row = None
@@ -519,7 +519,7 @@ class Line:
         self.line_name = line_name.strip()
 
         if element.findtext('LineColour') or element.findtext('LineFontColour') or element.findtext('LineImage'):
-            print(ET.tostring(element).decode())
+            logger.info(ET.tostring(element).decode())
 
         self.outbound_description = element.findtext('OutboundDescription/Description')
         self.inbound_description = element.findtext('InboundDescription/Description')
