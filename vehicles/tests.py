@@ -156,6 +156,31 @@ class VehiclesTests(TestCase):
         self.location.refresh_from_db()
         self.assertEqual(str(self.location), '19 Oct 2020 23:47:00')
 
+    def test_location_json(self):
+        location = VehicleLocation.objects.get()
+        self.assertEqual(location.get_redis_json()['coordinates'], (0.0, 51.0))
+
+        location.occupancy = 'seatsAvailable'
+        self.assertEqual(location.get_redis_json()['seats'], 'Seats available')
+
+        location.wheelchair_occupancy = 0
+        location.wheelchair_capacity = 0
+        self.assertNotIn('wheelchair', location.get_redis_json())
+
+        location.wheelchair_capacity = 1
+        self.assertEqual(location.get_redis_json()['wheelchair'], 'free')
+
+    def test_vehicle_json(self):
+        vehicle = Vehicle.objects.get(id=self.vehicle_2.id)
+        vehicle.feature_names = "foo, bar"
+
+        self.assertEqual(vehicle.get_json(2)["features"], "Double decker<br>foo, bar")
+
+        vehicle = Vehicle.objects.get(id=self.vehicle_1.id)
+        vehicle.feature_names = ""
+
+        self.assertEqual(vehicle.get_json(2)["css"], "#FF0000")
+
     def test_vehicle_admin(self):
         self.client.force_login(self.staff_user)
 

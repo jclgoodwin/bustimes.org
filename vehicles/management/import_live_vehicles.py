@@ -288,7 +288,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 pipeline.geoadd('vehicle_location_locations', lon, lat, vehicle.id)
                 if location.journey.service_id:
                     pipeline.sadd(f'service{location.journey.service_id}vehicles', vehicle.id)
-                redis_json = location.get_redis_json(vehicle)
+                redis_json = location.get_redis_json()
                 redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
                 pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
 

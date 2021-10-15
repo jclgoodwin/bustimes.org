@@ -723,7 +723,7 @@ class VehicleLocation(models.Model):
         appendage = [self.datetime, self.latlong.coords, self.heading, self.early]
         return (f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
 
-    def get_redis_json(self, vehicle):
+    def get_redis_json(self):
         journey = self.journey
 
         json = {
@@ -750,7 +750,7 @@ class VehicleLocation(models.Model):
                 json['seats'] = f'{self.seated_capacity - self.seated_occupancy} free'
         elif self.occupancy:
             json['seats'] = self.get_occupancy_display()
-        if self.wheelchair_occupancy is not None and self.wheelchair_capacity is not None:
+        if self.wheelchair_occupancy is not None and self.wheelchair_capacity:
             if self.wheelchair_occupancy < self.wheelchair_capacity:
                 json['wheelchair'] = 'free'
             else:
