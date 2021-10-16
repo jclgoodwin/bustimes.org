@@ -293,8 +293,10 @@ class Trip(models.Model):
         new_trip.save()
         for stop_time in times:
             stop_time.id = None
-            stop_time.arrival += difference
-            stop_time.departure += difference
+            if stop_time.arrival is not None:
+                stop_time.arrival += difference
+            if stop_time.departure is not None:
+                stop_time.departure += difference
             stop_time.trip = new_trip
             stop_time.save()
 

@@ -90,6 +90,9 @@ class ImportBusOpenDataTest(TestCase):
         )
 
         trip = route.trip_set.first()
+
+        trip.copy(datetime.timedelta(hours=1))
+
         response = self.client.get(f'/trips/{trip.id}.json')
         self.assertEqual(27, len(response.json()['times']))
 
