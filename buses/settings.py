@@ -373,11 +373,11 @@ BOD_OPERATORS = [
         # 'FSYO': 'FSYO',
         # 'FMAN': 'FMAN',
         # 'FLDS': 'FLDS',
-        # 'FHUD': 'FHUD',
         # 'FSMR': 'FSMR',
-        # 'FHAL': 'FHAL',
-        # 'FBRA': 'FBRA',
-        # 'FESX': 'FESX',
+        'FHUD': 'FHUD',
+        'FHAL': 'FHUD',
+        'FBRA': 'FBRA',
+        'FESX': 'FESX',
         'FECS': 'FECS',
         # 'FCWL': 'FCWL',
         # 'FHDO': 'FHDO',
@@ -388,9 +388,14 @@ BOD_OPERATORS = [
         # 'FLEI': 'FLEI',
         'RRAR': 'RRAR',
         'FBRI': 'FBRI',
-        'ABUS': 'ABUS',
         # 'FWYO': 'FWYO',
     }, True),
+
+    # these no longer operate services - this is just to prevent their TNDS data being used:
+    ('PTSG', None, {
+        'ABUS': 'ABUS',
+        'PTSG': 'PTSG',
+    }, False),
     ('AKSS', None, {
         'ACYM': 'ACYM',
         'ADER': 'ADER',

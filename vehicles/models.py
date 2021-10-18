@@ -130,8 +130,9 @@ class Livery(models.Model):
             background = escape(self.left_css)
         elif self.colours:
             background = get_css(self.colours.split())
-        else:
-            return
+        elif name:
+            background = ''
+
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
         if name:
             return format_html(div + '></div> {}', self.name)

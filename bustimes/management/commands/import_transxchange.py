@@ -729,6 +729,8 @@ class Command(BaseCommand):
                 description = f'{origin} - {destination}'
                 vias = txc_service.vias
                 if vias:
+                    if all(via.isupper() for via in vias):
+                        vias = [titlecase(via, callback=initialisms) for via in vias]
                     if len(vias) == 1:
                         via = vias[0]
                         if 'via ' in via:
@@ -748,7 +750,11 @@ class Command(BaseCommand):
             return False
         if operators and all(operator.id in self.incomplete_operators for operator in operators):
             services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
-            if services.filter(operator__in=operators).exists():
+            if operators[0].parent:
+                services = services.filter(operator__parent=operators[0].parent)
+            else:
+                services = services.filter(operator__in=operators)
+            if services.exists():
                 return True
 
     def get_route_links(self, journeys, transxchange):
