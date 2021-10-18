@@ -89,9 +89,9 @@ class ImportBusOpenDataTest(TestCase):
             '1 April 2020.'
         )
 
-        trip = route.trip_set.first()
+        # test views:
 
-        trip.copy(datetime.timedelta(hours=1))
+        trip = route.trip_set.first()
 
         response = self.client.get(f'/trips/{trip.id}.json')
         self.assertEqual(27, len(response.json()['times']))
@@ -156,6 +156,11 @@ class ImportBusOpenDataTest(TestCase):
         journey.code = '0916'
         trip = journey.get_trip()
         self.assertIsNone(trip)
+
+        # test trip copy:
+
+        trip = route.trip_set.first()
+        trip.copy(datetime.timedelta(hours=1))
 
     def test_ticketer(self):
         with TemporaryDirectory() as directory:
