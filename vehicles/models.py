@@ -132,6 +132,8 @@ class Livery(models.Model):
             background = get_css(self.colours.split())
         elif name:
             background = ''
+        else:
+            return
 
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
         if name:
