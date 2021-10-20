@@ -41,7 +41,10 @@ def get_vehicle_edit(vehicle, fields, now, request):
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
             changed = True
 
-    if 'spare_ticket_machine' in fields:
+    if fields.get('duplicate'):
+        edit.notes = 'Duplicate'
+        changed = True
+    elif 'spare_ticket_machine' in fields:
         if fields['spare_ticket_machine']:
             edit.notes = 'Spare ticket machine'
         elif edit.notes:
