@@ -1,0 +1,82 @@
+{% extends 'page.html' %}
+
+{% block title %}Vehicle edits – bustimes.org{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="/liveries.0.css">
+{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+
+<style>
+    button {
+        /*background: none;*/
+        border: 0;
+        padding: 0;
+    }
+</style>
+
+<div class="table-wrapper">
+    <table class="fleet">
+        <thead>
+            <tr>
+                <th scope="col">date</th>
+                <th scope="col">user</th>
+                <th scope="col">vehicle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for edit in edits %}
+                <tr>
+                    <td>{{ edit.datetime }}</td>
+                    <td>{{ edit.user }}</td>
+                    <td><a href="{{ edit.vehicle.get_absolute_url }}">{{ edit.vehicle }}</a></td>
+                    <td><div class="livery{% if edit.vehicle.livery_id %} livery-{{ edit.vehicle.livery_id }}{% else %}" style="background:{{ edit.vehicle.get_livery }}{% endif %}"></div></td>
+                    <td>{% for key, value in edit.get_changes.items %}
+                        {% if key == 'features' %}
+                            {% for feature in value %}{{ feature|safe }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% elif key == 'livery_id' %}
+                            livery: <div class="livery livery-{{ value }}"></div>
+                        {% else %}{{ key }}: {{ value }}{% endif %}
+                        <br>{% endfor %}</td>
+                    <td><button data-action="apply" data-edit-id="{{ edit.id }}">apply</button></td>
+                    <td><button data-action="approve" data-edit-id="{{ edit.id }}">(mark as approved)</button></td>
+                    <td><button data-action="disapprove" data-edit-id="{{ edit.id }}" style="color:#fff;background:#f00">disapprove</button></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'pagination.html' with page=edits %}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
+
+{% block foot %}
+
+<script>
+
+(function () {
+    'use strict';
+
+    for (const button of document.getElementsByTagName('button')) {
+        let row = button.parentElement.parentElement;
+        button.onclick = function(event) {
+            let url = '/vehicles/edits/' + this.dataset.editId + '/' + this.dataset.action;
+            fetch(url, {
+                method: 'POST'
+            }).then(function(response) {
+                if (response.ok) {
+                    row.style.opacity = '.5';
+                }
+            });
+        }
+    }
+})();
+</script>
+
+{% endblock %}

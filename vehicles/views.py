@@ -10,7 +10,7 @@ from django.db.models import Exists, OuterRef, Min, F, Case, When
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
@@ -534,7 +534,7 @@ def edit_vehicle(request, vehicle_id):
     else:
         breadcrumb = [vehicle]
 
-    response = render(request, 'edit_vehicle.html', {
+    return render(request, 'edit_vehicle.html', {
         'breadcrumb': breadcrumb,
         'form': form,
         'object': vehicle,
@@ -546,7 +546,39 @@ def edit_vehicle(request, vehicle_id):
         'pending_edits': form and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
 
-    return response
+
+def is_staff(user):
+    return user.is_staff
+
+
+@require_GET
+@user_passes_test(is_staff)
+def vehicle_edits(request):
+    edits = VehicleEdit.objects.filter(approved=None).select_related('vehicle__livery', 'user').order_by('-id').prefetch_related('vehicleeditfeature_set')
+
+    paginator = Paginator(edits, 100)
+
+    return render(request, 'vehicle_edits.html', {
+        'edits': paginator.get_page(request.GET.get('page'))
+    })
+
+
+@require_POST
+@user_passes_test(is_staff)
+def vehicle_edit_action(request, edit_id, action):
+    edit = get_object_or_404(VehicleEdit, id=edit_id)
+
+    if action == 'apply':
+        edit.apply()
+    else:
+        if action == 'disapprove':
+            edit.approved = False
+        elif action == 'approve':
+            edit.approved = True
+
+        edit.save(update_fields=['approved'])
+
+    return HttpResponse()
 
 
 @require_GET
