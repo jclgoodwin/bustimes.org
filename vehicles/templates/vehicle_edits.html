@@ -59,7 +59,7 @@
                         <br>{% endfor %}
                     </td>
                     <td class="score">{{ edit.score }}</td>
-                    {% if user.is_saff %}
+                    {% if user.is_staff %}
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/apply" style="background:#0f0">👍 apply</a></td>
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/approve">(mark as approved)</a></td>
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</a></td>
