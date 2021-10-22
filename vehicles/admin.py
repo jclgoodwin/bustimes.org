@@ -72,14 +72,18 @@ class DuplicateVehicleFilter(admin.SimpleListFilter):
     parameter_name = 'duplicate'
 
     def lookups(self, request, model_admin):
-        return (('Yes', 'Yes'),)
+        return (
+            ('reg', 'same reg'),
+            ('operator', 'same reg and operator'),
+        )
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.filter(
-                ~Q(reg=''),
-                Exists(models.Vehicle.objects.filter(~Q(id=OuterRef('id')), reg=OuterRef('reg')))
-            )
+            vehicles = models.Vehicle.objects.filter(~Q(id=OuterRef('id')), reg=OuterRef('reg'))
+            if self.value() == 'operator':
+                vehicles = vehicles.filter(operator=OuterRef('operator'))
+            queryset = queryset.filter(~Q(reg=''), Exists(vehicles))
+
         return queryset
 
 

@@ -556,7 +556,8 @@ def is_staff(user):
 def vehicle_edits(request):
     edits = VehicleEdit.objects.filter(approved=None).order_by('-id')
 
-    edits = edits.select_related('vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey').prefetch_related('vehicleeditfeature_set')
+    edits = edits.select_related('livery', 'vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey')
+    edits = edits.prefetch_related('vehicleeditfeature_set')
 
     paginator = Paginator(edits, 100)
 
