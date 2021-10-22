@@ -18,9 +18,14 @@
     }
 </style>
 
-<h1>pending vehicle edits</h1>
+<ul class="tabs">
+    <li><a href="/vehicles/history">Recent changes</a></li>
+    <li>Pending vehicle edits</li>
+</ul>
 
-<p>filters: <a href="?">clear</a> &bull;  <a href="?livery=600">new stagecoach livery</a> &bull; <a href="?change=vehicle_type">vehicle type change</a></p>
+<h1>Pending vehicle edits</h1>
+
+<p>Filters: <a href="?">clear</a> &bull;  <a href="?livery=600">new stagecoach livery</a> &bull; <a href="?change=vehicle_type">vehicle type change</a></p>
 
 {% include 'pagination.html' with page=edits %}
 
