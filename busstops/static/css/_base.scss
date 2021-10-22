@@ -537,6 +537,10 @@ table {
         border-left: 0;
         margin-left: -1em;
     }
+
+    + .name.is-short {
+        margin-left: -.5em;
+    }
 }
 
 .has-smalls .name {

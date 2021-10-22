@@ -830,7 +830,6 @@ class Command(BaseCommand):
 
         line_names = [line.line_name for line in txc_service.lines]
         line_names.sort()
-        joined_line_names = '/'.join(line_names)
 
         for line in txc_service.lines:
             # defer to a Bus Open Data type source
@@ -851,7 +850,8 @@ class Command(BaseCommand):
             services = Service.objects.order_by('-current', 'id')
             q = Q(line_name__iexact=line.line_name)
             if len(line_names) > 1:
-                q |= Q(route__line_name__in=line_names) | Q(line_name__iexact=joined_line_names)
+                for line_name in line_names:
+                    q |= Q(route__line_name__iexact=line_name)
             services = services.filter(q)
 
             if operators:
@@ -896,7 +896,7 @@ class Command(BaseCommand):
             else:
                 service = Service()
 
-            service.line_name = joined_line_names
+            service.line_name = line.line_name
             service.date = today
             service.current = True
             service.source = self.source

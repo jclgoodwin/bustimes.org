@@ -392,7 +392,7 @@ class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        services = self.object.service_set.filter(current=True).defer('geometry')
+        services = self.object.service_set.with_line_names().filter(current=True).defer('geometry')
         # services = services.annotate(direction=F('stopusage__direction'))
         services = services.annotate(operators=ArrayAgg('operator__name', distinct=True))
         context['services'] = sorted(services, key=Service.get_order)
@@ -498,7 +498,7 @@ class OperatorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        services = self.object.service_set.filter(current=True).defer('geometry', 'search_vector')
+        services = self.object.service_set.with_line_names().filter(current=True).defer('geometry', 'search_vector')
         services = services.annotate(start_date=Min('route__start_date'))
         context['services'] = sorted(services, key=Service.get_order)
         context['today'] = timezone.localdate()
@@ -533,7 +533,7 @@ class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
     model = Service
-    queryset = model.objects.select_related('region', 'source').prefetch_related('operator')
+    queryset = model.objects.with_line_names().select_related('region', 'source').prefetch_related('operator')
 
     def get_object(self, **kwargs):
         try:
@@ -827,13 +827,13 @@ def search(request):
 
             localities = Locality.objects.filter()
             operators = Operator.objects.filter(operator_has_current_services_or_vehicles)
-            services = Service.objects.filter(current=True)
+            services = Service.objects.with_line_names().filter(current=True)
 
             localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
             operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
             services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
 
-            services = services.annotate(operators=ArrayAgg('operator__name'))
+            services = services.annotate(operators=ArrayAgg('operator__name', distinct=True))
 
             context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
             context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))

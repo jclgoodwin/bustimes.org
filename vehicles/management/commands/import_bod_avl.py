@@ -11,7 +11,7 @@ from ciso8601 import parse_datetime
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q, Exists, OuterRef
 from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
-from bustimes.models import Trip
+from bustimes.models import Trip, Route
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
@@ -78,6 +78,7 @@ class Command(ImportLiveVehiclesCommand):
         return (
             Exists(ServiceCode.objects.filter(service=OuterRef('id'), scheme__endswith='SIRI', code=line_ref))
             | Q(line_name__iexact=line_ref)
+            | Exists(Route.objects.filter(service=OuterRef('id'), line_name__iexact=line_ref))
         )
 
     def get_vehicle(self, item):

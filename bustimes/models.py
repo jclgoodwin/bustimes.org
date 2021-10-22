@@ -1,5 +1,6 @@
 from django.db.models import Q, Exists, OuterRef
 from django.contrib.gis.db import models
+from django.db.models.functions import Upper
 from django.urls import reverse
 from .fields import SecondsField
 from .utils import format_timedelta, time_datetime
@@ -104,6 +105,9 @@ class Route(models.Model):
         index_together = (
             ('start_date', 'end_date'),
         )
+        indexes = [
+            models.Index(Upper('line_name'), name='route_line_name'),
+        ]
 
     def __str__(self):
         return ' – '.join(part for part in (self.line_name, self.line_brand, self.description) if part)

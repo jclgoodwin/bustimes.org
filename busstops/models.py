@@ -16,7 +16,7 @@ from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db.models import Q, OuterRef, Exists
-from django.db.models.functions import Upper
+from django.db.models.functions import Upper, Coalesce
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.html import format_html, escape
@@ -597,6 +597,11 @@ class ServiceManager(models.Manager):
         vector += SearchVector(StringAgg('stops__common_name', delimiter=' '), weight='D', config='english')
         return self.get_queryset().annotate(document=vector)
 
+    def with_line_names(self):
+        return self.get_queryset().annotate(
+            line_names=ArrayAgg(Coalesce('route__line_name', 'line_name'), distinct=True)
+        )
+
     def with_operators(self):
         return self.get_queryset().annotate(operators=ArrayAgg('operator_name'))
 
@@ -640,7 +645,7 @@ class Service(models.Model):
         ]
 
     def __str__(self):
-        line_name = self.line_name
+        line_name = ', '.join(self.get_line_names())
         description = None
         if hasattr(self, 'direction') and hasattr(self, f'{self.direction}_description'):
             description = getattr(self, f'{self.direction}_description')
@@ -667,14 +672,15 @@ class Service(models.Model):
             }
         })
 
+    def get_line_names(self):
+        if hasattr(self, 'line_names') and self.line_names:
+            return self.line_names
+        return [self.line_name]
+
     def get_line_name_and_brand(self):
         if self.line_brand:
             return f'{self.line_name} - {self.line_brand}'
         return self.line_name
-
-    def has_long_line_name(self):
-        "Is this service's line_name more than 4 characters long?"
-        return len(self.line_name) > 4
 
     def get_a_mode(self):
         if self.mode and self.mode[0].lower() in 'aeiou':

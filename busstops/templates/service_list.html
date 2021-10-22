@@ -10,13 +10,13 @@
 <ul class="{{ class }}">
 {% for service in services %}
     <li><a href="{{ service.get_absolute_url }}">
-        {% if service.line_name %}
-            {% if ' ' not in service.line_name or service.line_name not in service.description %}
+        {% for line_name in service.get_line_names %}
+            {% if ' ' not in line_name or line_name not in service.description %}
                 <span class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">
-                    {{ service.line_name }}
+                    {{ line_name }}
                 </span>
             {% endif %}
-        {% endif %}
+        {% endfor %}
         {% if service.line_brand %}
             <span class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">{{ service.line_brand }}</span>
         {% endif %}

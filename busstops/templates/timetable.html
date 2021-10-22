@@ -60,7 +60,7 @@
                                 <th></th>
                                 {% for head in grouping.heads %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
-                                        {% if object != head.route.service_id %}
+                                        {% if object.id != head.route.service_id %}
                                             <a href="{{ head.route.service.get_absolute_url }}">{{ head.route.line_name }}</a>
                                         {% else %}
                                             {{ head.route.line_name }}
