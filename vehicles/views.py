@@ -7,6 +7,7 @@ from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Min, F, Case, When, Q
+from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -401,7 +402,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
 
 @require_GET
 def service_vehicles_history(request, slug):
-    service = get_object_or_404(Service, slug=slug)
+    service = get_object_or_404(Service.objects.with_line_names(), slug=slug)
 
     context = journeys_list(
         request,
@@ -430,11 +431,14 @@ class VehicleDetailView(DetailView):
         if self.object.withdrawn and not self.object.latest_journey_id:
             raise Http404('Someone marked this vehicle as withdrawn. It will be unwithdrawn if it tracks again')
 
+        journeys = self.object.vehiclejourney_set.select_related('service')
+        journeys = journeys.annotate(line_name=Coalesce('trip__route__line_name', 'service__line_name', 'route_name'))
+
         context = {
             **context,
             **journeys_list(
                 self.request,
-                self.object.vehiclejourney_set.select_related('service'),
+                journeys,
                 vehicle=self.object
             )
         }

@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ object.route.service }} – bustimes.org{% endblock %}
+{% block title %}{{ object.route.line_name }} – bustimes.org{% endblock %}
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
@@ -14,7 +14,7 @@
     </div>
 {% endif %}
 
-<h2>{% for stop in stops %}{% if forloop.first or forloop.last %}{{ stop.stop.locality }}{% if forloop.first %} to {% endif %}{% endif %}{% endfor %}</h2>
+<h2>{{ object.route.line_name }} - {% for stop in stops %}{% if forloop.first or forloop.last %}{{ stop.stop.locality }}{% if forloop.first %} to {% endif %}{% endif %}{% endfor %}</h2>
 
 <p>{{ trip.calendar }}</p>
 
