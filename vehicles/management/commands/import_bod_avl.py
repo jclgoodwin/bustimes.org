@@ -10,6 +10,7 @@ from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q, Exists, OuterRef
+from django.utils.timezone import localtime
 from busstops.models import Operator, OperatorCode, Service, Locality, StopPoint, ServiceCode
 from bustimes.models import Trip, Route
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -425,6 +426,15 @@ class Command(ImportLiveVehiclesCommand):
 
                 if journey.trip and not journey.destination and journey.trip.destination_id:
                     journey.destination = self.get_destination_name(journey.trip.destination_id)
+
+                elif not journey.trip and latest_journey and latest_journey.trip:
+                    # if driver change caused bogus journey code change (Ticketer), continue previous journey
+                    if latest_journey.route_name == journey.route_name:
+                        if latest_journey.destination == journey.destination:
+                            start = localtime(datetime)
+                            start = timedelta(hours=start.hour, minutes=start.minute)
+                            if latest_journey.trip.start < start < latest_journey.trip.end:
+                                journey.trip = latest_journey.trip
 
                 if journey.trip and journey.trip.garage_id != vehicle.garage_id:
                     vehicle.garage_id = journey.trip.garage_id
