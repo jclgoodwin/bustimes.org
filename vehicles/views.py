@@ -241,7 +241,9 @@ def vehicles_json(request):
         bounds = None
 
     vehicles = Vehicle.objects.select_related('vehicle_type').annotate(
-        feature_names=StringAgg('features__name', ', ')
+        feature_names=StringAgg('features__name', ', '),
+        service_line_name=Coalesce('latest_journey__trip__route__line_name', 'latest_journey__service__line_name'),
+        service_slug=F('latest_journey__service__slug')
     ).defer('data')
 
     if 'service__isnull' in request.GET:
@@ -312,25 +314,17 @@ def vehicles_json(request):
                 continue  # vehicle was deleted?
             item = json.loads(item)
             item['vehicle'] = vehicle.get_json(item['heading'])
+            if vehicle.service_line_name:
+                item["service"] = {
+                    "line_name": vehicle.service_line_name,
+                    "url": f"/services/{vehicle.service_slug}"
+                }
 
         if service_ids and (not item or item.get('service_id') not in service_ids):
             for service_id in service_ids:
                 redis_client.srem(f'service{service_id}vehicles', vehicle_id)
         elif item:
             locations.append(item)
-
-    service_ids = [item['service_id'] for item in locations if item.get('service_id')]
-
-    services = Service.objects.only('line_name', 'line_brand', 'slug').in_bulk(service_ids)
-    for item in locations:
-        if 'service_id' in item:
-            if item['service_id']:
-                service = services[item['service_id']]
-                item['service'] = {
-                    'line_name': service.line_name,
-                    'url': service.get_absolute_url()
-                }
-            del item['service_id']
 
     return JsonResponse(locations, safe=False)
 

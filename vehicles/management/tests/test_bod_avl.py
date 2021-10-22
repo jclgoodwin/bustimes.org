@@ -240,7 +240,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(location.journey.vehicle.reg, "DW18HAM")
 
         # test operator map
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             response = self.client.get("/vehicles.json?operator=HAMS")
         self.assertEqual(
             response.json(),
