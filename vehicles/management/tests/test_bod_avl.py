@@ -72,7 +72,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         service_u.operator.add("WHIP")
         service_c = Service.objects.create(line_name="c")
         service_c.operator.add("HAMS")
-        route_u = Route.objects.create(service=service_u, source=cls.source, code="u")
+        route_u = Route.objects.create(service=service_u, source=cls.source, code="u", line_name="UU")
         # route_c = Route.objects.create(service=service_c, source=cls.source, code='c')
         Trip.objects.create(
             route=route_u,
@@ -271,7 +271,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
         response = self.client.get(whippet_journey.get_absolute_url())
         self.assertContains(
-            response, '<a href="/services/u/vehicles?date=2020-06-17">U</a>'
+            response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
         )
         self.assertContains(
             response,
