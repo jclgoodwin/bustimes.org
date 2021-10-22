@@ -554,7 +554,9 @@ def is_staff(user):
 @require_GET
 @user_passes_test(is_staff)
 def vehicle_edits(request):
-    edits = VehicleEdit.objects.filter(approved=None).select_related('vehicle__livery', 'user').order_by('-id').prefetch_related('vehicleeditfeature_set')
+    edits = VehicleEdit.objects.filter(approved=None).order_by('-id')
+
+    edits = edits.select_related('vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey').prefetch_related('vehicleeditfeature_set')
 
     paginator = Paginator(edits, 100)
 

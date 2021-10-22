@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.db.utils import ConnectionDoesNotExist
 from django.contrib.auth import get_user_model
 
@@ -67,11 +67,28 @@ class VehicleEditInline(admin.TabularInline):
     show_change_link = True
 
 
+class DuplicateVehicleFilter(admin.SimpleListFilter):
+    title = 'duplicate'
+    parameter_name = 'duplicate'
+
+    def lookups(self, request, model_admin):
+        return (('Yes', 'Yes'),)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(
+                ~Q(reg=''),
+                Exists(models.Vehicle.objects.filter(~Q(id=OuterRef('id')), reg=OuterRef('reg')))
+            )
+        return queryset
+
+
 @admin.register(models.Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
     list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
-                    'get_flickr_link', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
+                    'get_flickr_link', 'withdrawn', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
     list_filter = (
+        DuplicateVehicleFilter,
         'withdrawn',
         'features',
         'vehicle_type',
@@ -385,9 +402,7 @@ class VehicleEditAdmin(admin.ModelAdmin):
         if obj.livery:
             return obj.livery.preview()
         if obj.colours:
-            if obj.colours == 'Other':
-                return obj.colours
-            return models.Livery(colours=obj.colours).preview()
+            return obj.get_css()
     suggested.admin_order_field = 'livery'
 
     def flickr(self, obj):

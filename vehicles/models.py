@@ -382,6 +382,10 @@ class VehicleEdit(models.Model):
     datetime = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
 
+    def get_css(self):
+        if self.colours and self.colours != 'Other':
+            return get_css(self.colours.split())
+
     def get_changes(self):
         changes = {}
         for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes', 'colours', 'livery_id'):

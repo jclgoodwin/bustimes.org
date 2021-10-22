@@ -33,10 +33,13 @@
                     <td>{{ edit.datetime }}</td>
                     <td>{{ edit.user }}</td>
                     <td><a href="{{ edit.vehicle.get_absolute_url }}">{{ edit.vehicle }}</a></td>
+                    <td>{{ edit.vehicle.get_flickr_link }}</td>
                     <td><div class="livery{% if edit.vehicle.livery_id %} livery-{{ edit.vehicle.livery_id }}{% else %}" style="background:{{ edit.vehicle.get_livery }}{% endif %}"></div></td>
                     <td>{% for key, value in edit.get_changes.items %}
                         {% if key == 'features' %}
                             {% for feature in value %}{{ feature|safe }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                        {% elif key == 'colours' %}
+                            colours: <div class="livery" style="background:{{ edit.get_css }}"></div>
                         {% elif key == 'livery_id' %}
                             livery: <div class="livery livery-{{ value }}"></div>
                         {% else %}{{ key }}: {{ value }}{% endif %}
