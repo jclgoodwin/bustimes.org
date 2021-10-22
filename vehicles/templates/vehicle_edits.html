@@ -18,6 +18,12 @@
     }
 </style>
 
+<h1>pending vehicle edits</h1>
+
+<p>filters: <a href="?">clear</a> &bull;  <a href="?livery=600">new stagecoach livery</a> &bull; <a href="?change=vehicle_type">vehicle type change</a></p>
+
+{% include 'pagination.html' with page=edits %}
+
 <div class="table-wrapper">
     <table class="fleet">
         <thead>
@@ -26,6 +32,7 @@
                 <th scope="col">user</th>
                 <th scope="col" colspan="3">vehicle</th>
                 <th scope="col">proposed changes</th>
+                <th scope="col">score</th>
             </tr>
         </thead>
         <tbody>
@@ -49,10 +56,17 @@
                             <a href="/admin/vehicles/vehicle/?q={{ edit.vehicle.reg }}">Duplicate</a>
                         {% else %}{{ key }}: {{ value }}
                         {% endif %}
-                        <br>{% endfor %}</td>
-                    <td><button data-action="apply" data-edit-id="{{ edit.id }}">apply</button></td>
-                    <td><button data-action="approve" data-edit-id="{{ edit.id }}">(mark as approved)</button></td>
-                    <td><button data-action="disapprove" data-edit-id="{{ edit.id }}" style="color:#fff;background:#f00">disapprove</button></td>
+                        <br>{% endfor %}
+                    </td>
+                    <td class="score">{{ edit.score }}</td>
+                    {% if user.is_saff %}
+                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/apply" style="background:#0f0">👍 apply</a></td>
+                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/approve">(mark as approved)</a></td>
+                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</a></td>
+                    {% else %}
+                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/vote/up">👍</a></td>
+                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/vote/down">👎</a></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
@@ -72,18 +86,31 @@
 (function () {
     'use strict';
 
-    for (const button of document.getElementsByTagName('button')) {
+    for (const button of document.querySelectorAll('a.action')) {
         let row = button.parentElement.parentElement;
         button.onclick = function(event) {
-            let url = '/vehicles/edits/' + this.dataset.editId + '/' + this.dataset.action;
-            fetch(url, {
+            let url = this.href;
+            fetch(this.href, {
                 method: 'POST'
             }).then(function(response) {
                 if (response.ok) {
-                    row.style.opacity = '.5';
+                    button.style.opacity = '.5';
+                    response.text().then(text => {
+                        if (text) {
+                            row.querySelector('.score').innerText = text;
+                        }
+                    });
+                    if (url.endsWith('/up')) {
+                        button.style.transition = 'transform .5s';
+                        button.style.transform = 'translateY(-2em)';
+                    } else if (url.endsWith('/down')) {
+                        button.style.transition = 'transform .5s';
+                        button.style.transform = 'translateY(2em)';
+                    }
                 }
             });
-        }
+            return false;
+        };
     }
 })();
 </script>

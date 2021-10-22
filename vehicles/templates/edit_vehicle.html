@@ -34,7 +34,7 @@
     {% endif %}
 
     {% if pending_edits %}
-        <p class="message">❗ There’s already a pending edit for this vehicle</p>
+        <p class="message">❗ There’s already <a href="/vehicles/edits?vehicle={{ vehicle.id }}">a pending edit for this vehicle</a></p>
     {% endif %}
 
     <form action="{{ vehicle.get_edit_url }}" method="POST">

@@ -6,7 +6,7 @@ import xmltodict
 from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Min, F, Case, When
+from django.db.models import Exists, OuterRef, Min, F, Case, When, Q
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.core.paginator import Paginator
@@ -24,7 +24,7 @@ from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from bustimes.models import Garage, Trip
 from disruptions.views import siri_sx
-from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery
+from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import redis_client, get_vehicle_edit, do_revision, do_revisions
 from .management.commands import import_bod_avl
@@ -552,18 +552,48 @@ def is_staff(user):
 
 
 @require_GET
-@user_passes_test(is_staff)
+@login_required
 def vehicle_edits(request):
     edits = VehicleEdit.objects.filter(approved=None).order_by('-id')
 
     edits = edits.select_related('livery', 'vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey')
     edits = edits.prefetch_related('vehicleeditfeature_set')
 
+    if request.GET.get('vehicle'):
+        edits = edits.filter(vehicle=request.GET['vehicle'])
+
+    if request.GET.get('livery'):
+        edits = edits.filter(livery=request.GET['livery'])
+
+    if request.GET.get('change'):
+        if request.GET['change'] == 'vehicle_type':
+            edits = edits.filter(~Q(vehicle_type=''))
+
     paginator = Paginator(edits, 100)
 
     return render(request, 'vehicle_edits.html', {
         'edits': paginator.get_page(request.GET.get('page'))
     })
+
+
+@login_required
+def vehicle_edit_vote(request, edit_id, direction):
+    edit = get_object_or_404(VehicleEdit, id=edit_id)
+
+    votes = edit.vehicleeditvote_set
+    positive = direction == 'up'
+
+    VehicleEditVote.objects.update_or_create(
+        {"positive": positive},
+        for_edit=edit,
+        by_user=request.user
+    )
+
+    # a bit dodgy - a vote could change direction between the two count queries!
+    edit.score = votes.filter(positive=True).count() - votes.filter(positive=False).count()
+    edit.save(update_fields=['score'])
+
+    return HttpResponse(edit.score)
 
 
 @require_POST
