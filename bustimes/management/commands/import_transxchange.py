@@ -18,7 +18,7 @@ from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
-from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode
+from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block, RouteLink,
                        Calendar, CalendarDate, CalendarBankHoliday, BankHoliday)
 from ...timetables import get_stop_usages
