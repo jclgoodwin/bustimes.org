@@ -829,7 +829,6 @@ class Command(BaseCommand):
             unique_service_code = None
 
         line_names = [line.line_name for line in txc_service.lines]
-        line_names.sort()
 
         for line in txc_service.lines:
             # defer to a Bus Open Data type source
@@ -896,7 +895,7 @@ class Command(BaseCommand):
             else:
                 service = Service()
 
-            service.line_name = line.line_name
+            service.line_name = line_names[0]
             service.date = today
             service.current = True
             service.source = self.source
