@@ -818,6 +818,8 @@ class Command(BaseCommand):
                 logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
                 return
 
+        linked_services = set()
+
         description = self.get_description(txc_service)
 
         if description == 'Origin - Destination':
@@ -852,7 +854,7 @@ class Command(BaseCommand):
 
             existing = None
 
-            if len(line_names) > 1:
+            if self.source.name.startswith('Sanders') and len(line_names) > 1:
                 if i > 0:
                     existing = service
                 else:
@@ -906,7 +908,7 @@ class Command(BaseCommand):
             else:
                 service = Service()
 
-            service.line_name = line_names[0]
+            service.line_name = line.line_name
             service.date = today
             service.current = True
             service.source = self.source
@@ -999,6 +1001,7 @@ class Command(BaseCommand):
                     else:
                         service.operator.set(operators)
             self.service_ids.add(service.id)
+            linked_services.add(service.id)
 
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
                 logger.warning(
@@ -1097,6 +1100,16 @@ class Command(BaseCommand):
                 route_code += f'#{line.id}'
 
             self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service, line.id)
+
+        if len(linked_services) > 1:
+            for i, from_service in enumerate(linked_services):
+                for i, to_service in enumerate(linked_services[i+1:]):
+                    kwargs = {
+                        'from_service_id': from_service,
+                        'to_service_id': to_service,
+                    }
+                    if not ServiceLink.objects.filter(**kwargs).exists():
+                        ServiceLink.objects.create(**kwargs, how='also')
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:
