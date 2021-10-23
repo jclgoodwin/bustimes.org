@@ -377,7 +377,7 @@ BOD_OPERATORS = [
         'FHUD': 'FHUD',
         'FHAL': 'FHUD',
         'FBRA': 'FBRA',
-        'FESX': 'FESX',
+        # 'FESX': 'FESX',
         'FECS': 'FECS',
         # 'FCWL': 'FCWL',
         # 'FHDO': 'FHDO',
