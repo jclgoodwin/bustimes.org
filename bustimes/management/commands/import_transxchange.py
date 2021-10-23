@@ -830,7 +830,9 @@ class Command(BaseCommand):
 
         line_names = [line.line_name for line in txc_service.lines]
 
-        for line in txc_service.lines:
+        service = None
+
+        for i, line in enumerate(txc_service.lines):
             # defer to a Bus Open Data type source
             if self.is_tnds() and self.should_defer_to_other_source(operators, line.line_name):
                 continue
@@ -846,34 +848,43 @@ class Command(BaseCommand):
 
             service_code = None
 
-            services = Service.objects.order_by('-current', 'id')
             q = Q(line_name__iexact=line.line_name)
+
+            existing = None
+
             if len(line_names) > 1:
-                for line_name in line_names:
-                    q |= Q(route__line_name__iexact=line_name)
-            services = services.filter(q)
-
-            if operators:
-                if self.source.name.startswith('Stagecoach'):
-                    existing = services.filter(Q(source=self.source) | Q(operator__in=operators))
+                if i > 0:
+                    existing = service
                 else:
-                    existing = services.filter(operator__in=operators)
-            else:
-                existing = services
+                    other_q = Q()
+                    for line_name in line_names:
+                        other_q &= Q(route__line_name__iexact=line_name)
+                    q |= other_q
 
-            if len(transxchange.services) == 1:
-                has_stop_time = Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
-                has_stop_usage = Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
-                has_no_route = ~Exists(Route.objects.filter(service=OuterRef('id')))
-                condition = has_stop_time | (has_stop_usage & has_no_route)
-            else:
-                condition = Exists(
-                    Route.objects.filter(service_code=txc_service.service_code, service=OuterRef('id'))
-                )
-                if description:
-                    condition |= Q(description=description)
+            if not existing:
+                services = Service.objects.order_by('-current', 'id').filter(q)
 
-            existing = existing.filter(condition).first()
+                if operators:
+                    if self.source.name.startswith('Stagecoach'):
+                        existing = services.filter(Q(source=self.source) | Q(operator__in=operators))
+                    else:
+                        existing = services.filter(operator__in=operators)
+                else:
+                    existing = services
+
+                if len(transxchange.services) == 1:
+                    has_stop_time = Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
+                    has_stop_usage = Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
+                    has_no_route = ~Exists(Route.objects.filter(service=OuterRef('id')))
+                    condition = has_stop_time | (has_stop_usage & has_no_route)
+                else:
+                    condition = Exists(
+                        Route.objects.filter(service_code=txc_service.service_code, service=OuterRef('id'))
+                    )
+                    if description:
+                        condition |= Q(description=description)
+
+                existing = existing.filter(condition).first()
 
             if self.is_tnds():
                 service_code = get_service_code(filename)
