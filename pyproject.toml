@@ -38,6 +38,7 @@ PyYAML = "^5.4.1"
 django-coverage-plugin = "^2.0.0"
 flake8 = "^3.9.2"
 numpy = "^1.21.2"
+requests-toolbelt = "^0.9.1"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"
