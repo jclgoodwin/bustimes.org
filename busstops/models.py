@@ -589,7 +589,7 @@ class ServiceColour(models.Model):
 
 class ServiceManager(models.Manager):
     def with_documents(self):
-        vector = SearchVector('line_name', weight='A', config='english')
+        vector = SearchVector(StringAgg('route__line_name', delimiter=' ', distinct=True), weight='A', config='english')
         vector += SearchVector('line_brand', weight='A', config='english')
         vector += SearchVector('description', weight='B', config='english')
         vector += SearchVector(StringAgg('operator__name', delimiter=' '), weight='B', config='english')
