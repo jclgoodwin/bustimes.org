@@ -625,9 +625,12 @@ class VehicleJourney(models.Model):
             ('vehicle', 'datetime'),
         )
 
-    def get_trip(self, datetime=None, destination_ref=None, origin_aimed_departure_time=None):
+    def get_trip(self, datetime=None, destination_ref=None, origin_aimed_departure_time=None, journey_ref=None):
         if not self.service:
             return
+
+        if journey_ref == self.code:
+            journey_ref = None
 
         if not datetime:
             datetime = self.datetime
@@ -661,20 +664,25 @@ class VehicleJourney(models.Model):
                     try:
                         return trips.get(start, destination, calendar__in=get_calendars(datetime))
                     except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                        return
+                        if not journey_ref:
+                            return
                 except Trip.DoesNotExist:
                     pass
             try:
                 return trips.get(start, calendar__in=get_calendars(datetime))
             except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                return
+                if not journey_ref:
+                    return
+
+        if not journey_ref:
+            journey_ref = self.code
 
         try:
-            return trips.get(ticket_machine_code=self.code)
+            return trips.get(ticket_machine_code=journey_ref)
         except Trip.MultipleObjectsReturned:
             trips = trips.filter(calendar__in=get_calendars(datetime))
             try:
-                return trips.get(ticket_machine_code=self.code)
+                return trips.get(ticket_machine_code=journey_ref)
             except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                 pass
         except Trip.DoesNotExist:

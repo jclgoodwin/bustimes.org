@@ -422,7 +422,7 @@ class Command(ImportLiveVehiclesCommand):
             if journey.service and (origin_aimed_departure_time or journey_ref and '_' not in journey_ref):
                 if not datetime:
                     datetime = self.get_datetime(item)
-                journey.trip = journey.get_trip(datetime, destination_ref, origin_aimed_departure_time)
+                journey.trip = journey.get_trip(datetime, destination_ref, origin_aimed_departure_time, journey_ref)
 
                 if journey.trip and not journey.destination and journey.trip.destination_id:
                     journey.destination = self.get_destination_name(journey.trip.destination_id)

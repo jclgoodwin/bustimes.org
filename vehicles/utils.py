@@ -44,8 +44,8 @@ def get_vehicle_edit(vehicle, fields, now, request):
     if 'spare_ticket_machine' in fields:
         if fields['spare_ticket_machine']:
             edit.notes = 'Spare ticket machine'
-        elif edit.notes:
-            edit.notes = f'-{edit.notes}'
+        elif vehicle.notes:
+            edit.notes = f'-{vehicle.notes}'
         changed = True
 
     if 'withdrawn' in fields:
