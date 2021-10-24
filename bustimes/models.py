@@ -18,7 +18,7 @@ def get_routes(routes, when=None):
 
     # use maximum revision number for each service_code (except for Ticketer data):
 
-    if len(revision_numbers) > 1 and not all(route.code[:4].isupper() and route.code[4] == '_' for route in routes):
+    if len(revision_numbers) > 1 and not any(route.code[:4].isupper() and route.code[4] == '_' for route in routes):
         revision_numbers = {}
         for route in routes:
             if (
