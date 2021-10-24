@@ -818,7 +818,7 @@ class Command(BaseCommand):
                 logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
                 return
 
-        linked_services = set()
+        linked_services = []
 
         description = self.get_description(txc_service)
 
@@ -1001,7 +1001,7 @@ class Command(BaseCommand):
                     else:
                         service.operator.set(operators)
             self.service_ids.add(service.id)
-            linked_services.add(service.id)
+            linked_services.append(service.id)
 
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
                 logger.warning(
