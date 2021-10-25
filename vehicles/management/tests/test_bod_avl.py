@@ -70,8 +70,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         service_u = Service.objects.create(line_name="U")
         service_u.operator.add("WHIP")
-        service_c = Service.objects.create(line_name="c")
-        service_c.operator.add("HAMS")
+        cls.service_c = Service.objects.create(line_name="c")
+        cls.service_c.operator.add("HAMS")
         route_u = Route.objects.create(service=service_u, source=cls.source, code="u", line_name="UU")
         # route_c = Route.objects.create(service=service_c, source=cls.source, code='c')
         Trip.objects.create(
@@ -242,8 +242,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         # test operator map
         with self.assertNumQueries(1):
             response = self.client.get("/vehicles.json?operator=HAMS")
+        json = response.json()
         self.assertEqual(
-            response.json(),
+            json,
             [
                 {
                     "id": location.id,
@@ -255,6 +256,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "heading": 92.0,
                     "datetime": "2020-10-15T07:46:08Z",
                     "destination": "",
+                    "service_id": self.service_c.id,
                     "service": {"line_name": "c", "url": "/services/c"},
                 }
             ],
@@ -264,10 +266,29 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertContains(response, 'OPERATOR_ID="HAMS";')
         self.assertContains(response, "/operators/hams/map")
 
+        # test other maps
+        with self.assertNumQueries(1):
+            response = self.client.get(f"/vehicles.json?service={self.service_c.id},-2")
+        self.assertEqual(response.json(), json)
+
+        with self.assertNumQueries(1):
+            response = self.client.get("/vehicles.json")
+        self.assertEqual(len(response.json()), 3)
+
+        with self.assertNumQueries(1):
+            response = self.client.get("/vehicles.json?service__isnull=True")
+        self.assertEqual(len(response.json()), 1)
+
+        with self.assertNumQueries(0):
+            response = self.client.get("/vehicles.json?service=ff")
+        self.assertEqual(response.status_code, 400)
+
+        # test cache 
         self.assertIs(False, cache.get("TGTC:843X:43000280301"))
         self.assertIsNone(cache.get("HAMS:C:2400103099"))
         self.assertIsNone(cache.get("WHIP:U:0500CCITY544"))
 
+        # test history view
         whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
         response = self.client.get(whippet_journey.get_absolute_url())
         self.assertContains(
