@@ -781,12 +781,10 @@ class Service(models.Model):
             try:
                 for i, route in enumerate(self.route_set.order_by('start_date')):
 
-                    code = route.code
-                    if '/' in code:
-                        code = code.split('/')[-1]
-
-                    parts = code.split('-')
+                    parts = route.code.split('-')
                     net, line = parts[0].split('_')
+                    if not net.isalpha() or not net.islower():
+                        break
                     line_ver = parts[4][:-4]
                     line = line.zfill(2) + parts[1].zfill(3)
 
@@ -798,7 +796,7 @@ class Service(models.Model):
                         query.append(('sup', parts[2]))
 
                     text = 'Timetable'
-                    if i:
+                    if i:  # probably a future-dated version
                         date = route.start_date.strftime('%-d %B')
                         text = f'{text} from {date}'
                     text = f'{text} on the Traveline South West website'
