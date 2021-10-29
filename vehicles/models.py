@@ -620,7 +620,7 @@ class VehicleJourney(models.Model):
         ordering = ('id',)
         indexes = [
             models.Index('service', TruncDate('datetime').asc(), name='service_datetime_date'),
-            models.Index('vehicle', TruncDate('datetime').asc(), name='service_datetime_date')
+            models.Index('vehicle', TruncDate('datetime').asc(), name='vehicle_datetime_date')
         ]
         unique_together = (
             ('vehicle', 'datetime'),
