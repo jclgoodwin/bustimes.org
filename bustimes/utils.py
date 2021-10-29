@@ -69,4 +69,4 @@ def time_datetime(time, date):
     try:
         return make_aware(combined)
     except AmbiguousTimeError:
-        return make_aware(is_dst=True)
+        return make_aware(combined, is_dst=True)
