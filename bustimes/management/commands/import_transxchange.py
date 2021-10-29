@@ -648,6 +648,9 @@ class Command(BaseCommand):
             trip.end = stop_time.arrival_or_departure()
             trips.append(trip)
 
+            if trip.start == trip.end:
+                logger.warning(f"{route_code} trip {trip} takes no time")
+
             if blank and any(stop_time.timing_status for stop_time in stop_times):
                 # not all timing statuses are blank - mark any blank ones as minor
                 for stop_time in stop_times:

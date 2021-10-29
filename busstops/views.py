@@ -576,7 +576,7 @@ class ServiceDetailView(DetailView):
                 if timetable.date or timetable.groupings:
                     context['timetable'] = timetable
 
-                registrations = {route.registration_id for route in timetable.routes if route.registration_id} 
+                registrations = {route.registration_id for route in timetable.routes if route.registration_id}
                 context['registrations'] = Registration.objects.filter(id__in=registrations)
 
         else:

@@ -604,7 +604,7 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
     data = models.JSONField(null=True, blank=True)
-    trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, db_constraint=False, null=True, blank=True)
+    trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
@@ -619,7 +619,8 @@ class VehicleJourney(models.Model):
     class Meta:
         ordering = ('id',)
         indexes = [
-            models.Index('service', TruncDate('datetime').asc(), name='service_datetime_date')
+            models.Index('service', TruncDate('datetime').asc(), name='service_datetime_date'),
+            models.Index('vehicle', TruncDate('datetime').asc(), name='service_datetime_date')
         ]
         unique_together = (
             ('vehicle', 'datetime'),

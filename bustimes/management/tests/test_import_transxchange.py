@@ -14,7 +14,7 @@ from django.utils import timezone
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
 
-from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource, ServiceLink
+from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource
 from vosa.models import Licence, Registration
 from ...models import Route, Trip, Calendar, CalendarDate
 from ..commands import import_transxchange
