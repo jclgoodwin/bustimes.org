@@ -432,7 +432,8 @@ BOD_OPERATORS = [
     }, False),
     ('KBUS', 'SE', {}, False),
     ('NIBS', 'SE', {}, False),
-    #('SESX', 'EA', {}, False),
+    # ('SESX', 'EA', {}, False),
+    ('STCB', 'EA', {}, False),
 
     ('CSVC', 'EA', {
         'CS': 'CSVC'
