@@ -329,39 +329,41 @@ class ServicedOrganisation:
 
 
 class ServicedOrganisationDayType:
-    non_operation_holidays = None
-    non_operation_working_days = None
     operation_holidays = None
     operation_working_days = None
+    non_operation_holidays = None
+    non_operation_working_days = None
 
     def __init__(self, element, serviced_organisations):
         if not serviced_organisations:
             return
 
-        organisation_ref = element.findtext('DaysOfOperation/Holidays/ServicedOrganisationRef')
-        if organisation_ref:
-            self.operation_holidays = serviced_organisations[organisation_ref]
-            if not self.operation_holidays.holidays and self.operation_holidays.working_days:
-                self.non_operation_working_days = self.operation_holidays
-                self.operation_holidays = None
+        operation_holidays = element.findtext('DaysOfOperation/Holidays/ServicedOrganisationRef')
+        operation_working_days = element.findtext('DaysOfOperation/WorkingDays/ServicedOrganisationRef')
+        non_operation_holidays = element.findtext('DaysOfNonOperation/Holidays/ServicedOrganisationRef')
+        non_operation_working_days = element.findtext('DaysOfNonOperation/WorkingDays/ServicedOrganisationRef')
 
-        organisation_ref = element.findtext('DaysOfNonOperation/Holidays/ServicedOrganisationRef')
-        if organisation_ref:
-            self.non_operation_holidays = serviced_organisations[organisation_ref]
+        if operation_holidays != operation_working_days:
+            if operation_holidays:
+                self.operation_holidays = serviced_organisations[operation_holidays]
+                if not self.operation_holidays.holidays and self.operation_holidays.working_days:
+                    self.non_operation_working_days = self.operation_holidays
+                    self.operation_holidays = None
+
+            if operation_working_days:
+                self.operation_working_days = serviced_organisations[operation_working_days]
+                if not self.operation_working_days.working_days and self.operation_working_days.holidays:
+                    self.non_operation_holidays = self.operation_working_days
+                    self.operation_working_days = None
+
+        if non_operation_holidays:
+            self.non_operation_holidays = serviced_organisations[non_operation_holidays]
             if not self.non_operation_holidays.holidays and self.non_operation_holidays.working_days:
                 self.operation_working_days = self.non_operation_holidays
                 self.non_operation_holidays = None
 
-        organisation_ref = element.findtext('DaysOfOperation/WorkingDays/ServicedOrganisationRef')
-        if organisation_ref:
-            self.operation_working_days = serviced_organisations[organisation_ref]
-            if not self.operation_working_days.working_days and self.operation_working_days.holidays:
-                self.non_operation_holidays = self.operation_working_days
-                self.operation_working_days = None
-
-        organisation_ref = element.findtext('DaysOfNonOperation/WorkingDays/ServicedOrganisationRef')
-        if organisation_ref:
-            self.non_operation_working_days = serviced_organisations[organisation_ref]
+        if non_operation_working_days:
+            self.non_operation_working_days = serviced_organisations[non_operation_working_days]
             if not self.non_operation_working_days.working_days and self.non_operation_working_days.holidays:
                 self.operation_holidays = self.non_operation_working_days
                 self.non_operation_working_days = None
