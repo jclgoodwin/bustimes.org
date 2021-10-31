@@ -510,6 +510,8 @@ BOD_OPERATORS = [
     }, False),
 
     ('SPSV', 'SE', {}, False),
+    ('NVTR', 'SE', {}, False),
+    ('LEMN', 'SE', {}, False),
     ('GOCH', 'SE', {
         'GO': 'GOCH'
     }, False),
@@ -685,6 +687,8 @@ TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     ('EA', ['BDRB'], 'BorderBus'),
     ('WM', ['DIAM'], 'Diamond Bus'),
+    ('NW', ['GTRI'], 'Diamond Bus North West'),
+    ('NW', ['PBLT'], 'Preston Bus'),
     ('EA', ['WHIP'], 'Whippet'),
     ('WM', ['Johnsons', 'JOHS']),
     ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC'])
