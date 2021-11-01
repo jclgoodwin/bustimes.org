@@ -149,12 +149,13 @@ class Command(BaseCommand):
             )
             tariffs[tariff.code] = tariff
 
-            operator_ref = tariff_element.find("OperatorRef").attrib["ref"]
-            try:
-                operator = Operator.objects.get(id=operator_ref.removeprefix("noc:"))
-            except Operator.DoesNotExist:
-                pass
-            else:
+            operator = tariff_element.find("OperatorRef")
+            if operator is not None:
+                try:
+                    operator = Operator.objects.get(id=operator.attrib["ref"].removeprefix("noc:"))
+                except Operator.DoesNotExist:
+                    pass
+            if operator:
                 tariff.operators.add(operator)
 
                 line_ref = tariff_element.find("LineRef")
