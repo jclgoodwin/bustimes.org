@@ -692,7 +692,7 @@ TICKETER_OPERATORS = [
     ('NW', ['PBLT'], 'Preston Bus'),
     ('EA', ['WHIP'], 'Whippet'),
     ('WM', ['Johnsons', 'JOHS']),
-    ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC'])
+    ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC']),
 
     ('EA', ['Ipswich_Buses', 'IPSW'], 'Ipswich Buses'),
     ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
