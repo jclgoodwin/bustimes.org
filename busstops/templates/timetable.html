@@ -131,8 +131,8 @@
     {% empty %}
         <p>Sorry, no journeys found for {{ timetable.date }}</p>
 
-        {% if not timetable.date_options %}
-            <p>Try selecting a date in the past – the “old” timetable might still be valid</p>
+        {% if timetable.expired %}
+            <p>The timetable data for this service was valid until {{ timetable.expired }}. But it might still be valid – try selecting an earlier date</p>
         {% endif %}
 
         {% include 'route.html' %}

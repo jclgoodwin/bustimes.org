@@ -279,13 +279,19 @@ class Timetable:
         if end_dates and all(end_dates):
             end_date = min(end_date, max(end_dates))  # 21 days in the future, or the end date, whichever is sooner
 
+            if end_date < date:  # allow users to select past dates
+                self.expired = end_date
+                if not self.date:
+                    self.date = date
+                date = end_date - datetime.timedelta(days=7)
+
         if self.date and self.date < date:
             yield self.date
         while date <= end_date:
             if any(calendar.allows(date) for calendar in self.calendars) or date == self.date:
                 yield date
             date += datetime.timedelta(days=1)
-        if self.date and self.date > end_date:
+        if self.date and self.date >= date:
             yield self.date
 
     def has_set_down_only(self):
