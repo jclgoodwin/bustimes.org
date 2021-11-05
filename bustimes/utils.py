@@ -1,7 +1,7 @@
 import os
 import requests
 import datetime
-from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
+from pytz.exceptions import AmbiguousTimeError
 from django.utils.timezone import utc, make_aware
 from django.utils.http import http_date, parse_http_date
 

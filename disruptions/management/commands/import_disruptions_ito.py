@@ -4,6 +4,7 @@ from datetime import datetime
 from requests_toolbelt.adapters.source import SourceAddressAdapter
 from django.core.management.base import BaseCommand
 from busstops.models import DataSource
+from .import_siri_sx import handle_item
 
 
 class Command(BaseCommand):
@@ -49,7 +50,7 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
                 situations.append(handle_item(element, source))
                 element.clear()
 
-        Situation.objects.filter(source=source, current=True).exclude(id__in=situations).update(current=False)
+        source.situation_set.filter(current=True).exclude(id__in=situations).update(current=False)
 
     def handle(self, *args, **options):
         self.fetch()
