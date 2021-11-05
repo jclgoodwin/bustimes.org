@@ -87,7 +87,7 @@
     <tbody>
         {% for vehicle in vehicles %}
             <tr>
-                {% if form %}
+                {% if form and vehicle.notes != 'Spare ticket machine' %}
                     <td><input type="checkbox" name="vehicle" value="{{ vehicle.id }}"></td>
                 {% endif %}
                 {% if code_column %}

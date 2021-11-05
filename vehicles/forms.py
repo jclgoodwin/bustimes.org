@@ -122,10 +122,18 @@ class EditVehicleForm(EditVehiclesForm):
             if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
                 self.fields['reg'].disabled = True
 
-            if not vehicle.notes:
+            if not vehicle.notes and vehicle.operator_id != 'NATX':
                 del self.fields['notes']
             if not vehicle.branding:
                 del self.fields['branding']
+
+        if vehicle.notes == 'Spare ticket machine':
+            del self.fields['vehicle_type']
+            del self.fields['name']
+            del self.fields['reg']
+            if 'colours' in self.fields:
+                del self.fields['colours']
+                del self.fields['other_colour']
 
         if not vehicle.withdrawn and vehicle.latest_journey:
             if timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3):
