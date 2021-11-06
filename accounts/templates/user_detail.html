@@ -18,7 +18,7 @@
     <p>As well as the activity listed below, they have done {{ edits }} other edit{{ edits|pluralize }},
     of which {{ approved }} ha{{ approved|pluralize:"s,ve" }} been approved,
     {{ disapproved }} ha{{ disapproved|pluralize:"s,ve" }} been disapproved,
-    and {{ pending }} {{ pending|pluralize:"is,are" }} pending.</p>
+    and <a href="/vehicles/edits?user={{ object.id }}">{{ pending }} {{ pending|pluralize:"is,are" }} pending</a>.</p>
 
     <table>
         <thead>

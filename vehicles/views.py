@@ -560,6 +560,12 @@ def vehicle_edits(request):
     if request.GET.get('vehicle'):
         edits = edits.filter(vehicle=request.GET['vehicle'])
 
+    if request.GET.get('operator'):
+        edits = edits.filter(vehicle__operator=request.GET['operator'])
+
+    if request.GET.get('user'):
+        edits = edits.filter(user=request.GET['user'])
+
     if request.GET.get('livery'):
         edits = edits.filter(livery=request.GET['livery'])
 
