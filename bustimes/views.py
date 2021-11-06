@@ -4,9 +4,10 @@ import json
 from pathlib import Path
 from datetime import timedelta
 from ciso8601 import parse_datetime
+
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Exists, OuterRef
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.shortcuts import get_object_or_404, render
@@ -14,8 +15,9 @@ from django.views.decorators.http import require_GET
 from django.views.generic.detail import DetailView
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
 from rest_framework.renderers import JSONRenderer
+
 from api.serializers import TripSerializer
-from busstops.models import Service, DataSource, StopPoint
+from busstops.models import Service, DataSource, StopPoint, StopUsage
 from departures.live import TimetableDepartures
 from vehicles.models import Vehicle
 from .models import Route, Trip
@@ -244,12 +246,28 @@ def tfl_vehicle(request, reg):
             'object': vehicle
         })
 
+    atco_codes = [item['naptanId'] for item in data]
+    try:
+        service = Service.objects.get(
+            Exists(StopUsage.objects.filter(stop_id__in=atco_codes, service=OuterRef('id'))),
+            line_name__iexact=data[0]['lineName'],
+            current=True
+        )
+        operator = service.operator.first()
+    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+        service = None
+        operator = None
+
     try:
         vehicle = vehicles.get(reg=reg)
     except Vehicle.DoesNotExist:
-        vehicle = vehicles.create(source_id=7, code=reg, reg=reg, livery_id=262)
+        vehicle = vehicles.create(source_id=7, code=reg, reg=reg, livery_id=262, operator=operator)
 
-    stops = StopPoint.objects.in_bulk(item['naptanId'] for item in data)
+    if operator and not vehicle.operator:
+        vehicle.operator = operator
+        vehicle.save(update_fields=['operator'])
+
+    stops = StopPoint.objects.in_bulk(atco_codes)
 
     for item in data:
         item['expectedArrival'] = parse_datetime(item['expectedArrival'])
@@ -267,6 +285,7 @@ def tfl_vehicle(request, reg):
         } for item in data if item['stop'] and item['stop'].latlong]})
 
     return render(request, 'tfl_vehicle.html', {
+        'breadcrumb': [service],
         'data': data,
         'object': vehicle,
         'stops_json': mark_safe(stops_json)
