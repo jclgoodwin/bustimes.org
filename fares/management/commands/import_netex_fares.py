@@ -51,55 +51,48 @@ class Command(BaseCommand):
         except ET.ParseError:
             return
 
-        operators = element.find("dataObjects/CompositeFrame/frames/ResourceFrame/organisations")
+        operators = element.findall("dataObjects/CompositeFrame/frames/ResourceFrame/organisations/Operator")
         operators = {
             operator.attrib["id"]: operator for operator in operators
-        } if operators else {}
+        }
 
-        lines = element.find("dataObjects/CompositeFrame/frames/ServiceFrame/lines")
-        if lines is None:
-            lines = {}
-        else:
-            lines = {
-                line.attrib["id"]: line for line in lines
-            }
+        lines = element.findall("dataObjects/CompositeFrame/frames/ServiceFrame/lines/Line")
+        lines = {
+            line.attrib["id"]: line for line in lines
+        }
         # print(operators, lines)
 
         user_profiles = {}
-        for usage_parameter in element.find("dataObjects/CompositeFrame/frames/FareFrame/usageParameters"):
+        for usage_parameter in element.findall("dataObjects/CompositeFrame/frames/FareFrame/usageParameters/UserProfile"):
             user_profile, created = get_user_profile(usage_parameter)
             user_profiles[user_profile.code] = user_profile
 
         sales_offer_packages = {}
-        for sales_offer_package in element.find("dataObjects/CompositeFrame/frames/FareFrame/salesOfferPackages"):
+        for sales_offer_package in element.findall("dataObjects/CompositeFrame/frames/FareFrame/salesOfferPackages/SalesOfferPackage"):
             sales_offer_package, created = get_sales_offer_package(sales_offer_package)
             sales_offer_packages[sales_offer_package.code] = sales_offer_package
 
         price_groups = {}
         price_group_prices = {}
-        price_groups_element = element.find("dataObjects/CompositeFrame/frames/FareFrame/priceGroups")
-        if price_groups_element:
-            for price_group_element in price_groups_element:
-                price_element = price_group_element.find("members/GeographicalIntervalPrice")  # assume only 1 ~
-                price = models.Price(
-                    amount=price_element.findtext("Amount")
-                )
-                price_groups[price_group_element.attrib["id"]] = price
-                price_group_prices[price_element.attrib["id"]] = price
+        for price_group_element in element.findall("dataObjects/CompositeFrame/frames/FareFrame/priceGroups/PriceGroup"):
+            price_element = price_group_element.find("members/GeographicalIntervalPrice")  # assume only 1 ~
+            price = models.Price(
+                amount=price_element.findtext("Amount")
+            )
+            price_groups[price_group_element.attrib["id"]] = price
+            price_group_prices[price_element.attrib["id"]] = price
         models.Price.objects.bulk_create(price_groups.values())
 
         fare_zones = {}
-        fare_zones_element = element.find("dataObjects/CompositeFrame/frames/FareFrame/fareZones")
-        if fare_zones_element:
-            for fare_zone_element in fare_zones_element:
-                fare_zone, created = models.FareZone.objects.get_or_create(
-                    code=fare_zone_element.attrib['id'],
-                    name=fare_zone_element.findtext("Name")
-                )
-                fare_zones[fare_zone.code] = fare_zone
-                stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
-                # if stop_refs:
-                if False:
+        for fare_zone_element in element.findall("dataObjects/CompositeFrame/frames/FareFrame/fareZones/FareZone"):
+            fare_zone, created = models.FareZone.objects.get_or_create(
+                code=fare_zone_element.attrib['id'],
+                name=fare_zone_element.findtext("Name")
+            )
+            fare_zones[fare_zone.code] = fare_zone
+            stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
+            # if stop_refs:
+            if False:
                     try:
                         if stop_refs[0].startswith('atco'):
                             fare_zone.stops.set(StopPoint.objects.filter(
@@ -116,7 +109,7 @@ class Command(BaseCommand):
 
         tariffs = {}
         time_intervals = {}
-        for tariff_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/tariffs"):
+        for tariff_element in element.findall("dataObjects/CompositeFrame/frames/FareFrame/tariffs/Tariff"):
             fare_structure_elements = tariff_element.find("fareStructureElements")
 
             user_profile = fare_structure_elements.find(
@@ -207,7 +200,7 @@ class Command(BaseCommand):
                     )
                     time_intervals[time_interval.code] = time_interval
 
-        for fare_table_element in element.find("dataObjects/CompositeFrame/frames/FareFrame/fareTables"):
+        for fare_table_element in element.findall("dataObjects/CompositeFrame/frames/FareFrame/fareTables/FareTable"):
             tariff_ref = fare_table_element.find("usedIn/TariffRef")
             if tariff_ref is None:
                 pass
@@ -423,9 +416,12 @@ class Command(BaseCommand):
             data = response.json()
 
             for item in data['results']:
-                dataset = self.handle_bods_dataset(item)
-                if dataset:
-                    datasets.append(dataset.id)
+                try:
+                    dataset = self.handle_bods_dataset(item)
+                    if dataset:
+                        datasets.append(dataset.id)
+                except (TypeError, IntegrityError) as e:
+                    print(e)
 
             url = data['next']
             params = None
