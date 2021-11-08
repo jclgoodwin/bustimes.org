@@ -563,4 +563,5 @@ def get_departures(stop, services, when):
     return ({
         'departures': departures,
         'today': now.date(),
+        'when': when or now
     },  max_age)

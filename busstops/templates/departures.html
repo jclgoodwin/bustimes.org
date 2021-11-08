@@ -35,8 +35,11 @@
             </td>
         </tr>
         {% if forloop.last %}
-        </tbody>
-        </table>
+            </tbody>
+            </table>
+            {% if when %}
+                <p><a href="?date={{ item.time.date.isoformat }}&amp;time={{ item.time.time }}">Later</a></p>
+            {% endif %}
         {% endif %}
     {% endfor %}
     {% if live %}

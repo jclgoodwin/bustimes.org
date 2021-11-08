@@ -342,6 +342,14 @@ textarea {
     }
 }
 
+input[type='date'] {
+    width: 10em;
+}
+
+input[type='time'] {
+    width: 5em;
+}
+
 select {
     appearance: none;
     background: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 4,8 8,0'/%3E%3C/svg%3E") no-repeat;
@@ -1252,7 +1260,8 @@ tfoot a {
         margin: .25em 0 .5em;
     }
 
-    h3 {
+    h3,
+    p {
         margin: .5em 0;
     }
 
@@ -1264,6 +1273,10 @@ tfoot a {
         font-size: .75em;
         margin: .3em 0 0;
         text-align: right;
+    }
+
+    input {
+        margin: 0 .5em .5em;
     }
 }
 
