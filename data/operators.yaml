@@ -229,6 +229,16 @@ JKHY:
     name: Hodgsons Buses (North Yorkshire)
 YCST:
     name: Transdev York
+TPEN:
+    url: https://www.transdevbus.co.uk/teampennine/
+HRGT:
+    url: https://www.transdevbus.co.uk/harrogate/
+KDTR:
+    url: https://www.transdevbus.co.uk/keighley/
+LNUD:
+    url: https://www.transdevbus.co.uk/blackburn/
+BPTR:
+    url: https://www.transdevbus.co.uk/burnley/
 ROSM:
     url: ""
 SFGC:
