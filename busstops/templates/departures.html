@@ -2,7 +2,7 @@
 <div class="aside">
     {% if when %}
     <form>
-        <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" /><input type="time" name="time" value="{{ when.time }}" /><input type="submit" value="Go" />
+        <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required /><input type="time" name="time" value="{{ when.time }}" required /><input type="submit" value="Go" />
     </form>
     {% else %}<h2>Next departures</h2>{% endif %}
     {% for item in departures %}
@@ -38,7 +38,7 @@
             </tbody>
             </table>
             {% if when %}
-                <p><a href="?date={{ item.time.date.isoformat }}&amp;time={{ item.time.time }}">Later</a></p>
+                <p class="next"><a href="?date={{ item.time.date.isoformat }}&amp;time={{ item.time.time }}">Later &darr;</a></p>
             {% endif %}
         {% endif %}
     {% endfor %}
