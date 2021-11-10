@@ -154,17 +154,20 @@ class VehicleJourneyTimingLink:
     def __init__(self, element):
         self.id = element.attrib.get('id')
         self.journeypatterntiminglinkref = element.find('JourneyPatternTimingLinkRef').text
-        self.run_time = element.find('RunTime')
+        self.run_time = element.findtext('RunTime')
         if self.run_time is not None:
-            self.run_time = parse_duration(self.run_time.text)
+            self.run_time = parse_duration(self.run_time)
 
-        self.from_wait_time = element.find('From/WaitTime')
+        self.from_wait_time = element.findtext('From/WaitTime')
         if self.from_wait_time is not None:
-            self.from_wait_time = parse_duration(self.from_wait_time.text)
+            self.from_wait_time = parse_duration(self.from_wait_time)
 
-        self.to_wait_time = element.find('To/WaitTime')
+        self.to_wait_time = element.findtext('To/WaitTime')
         if self.to_wait_time is not None:
-            self.to_wait_time = parse_duration(self.to_wait_time.text)
+            self.to_wait_time = parse_duration(self.to_wait_time)
+
+        self.from_activity = element.findtext('From/Activity')
+        self.to_activity = element.findtext('To/Activity')
 
 
 class VehicleType:
@@ -242,21 +245,12 @@ class VehicleJourney:
 
     def get_timinglinks(self):
         pattern_links = self.journey_pattern.get_timinglinks()
-        if self.timing_links:
-            timing_links = iter(self.timing_links)
-            journey_link = next(timing_links)
-            for link in pattern_links:
-                if link.id == journey_link.journeypatterntiminglinkref:
-                    yield link, journey_link
-                    try:
-                        journey_link = next(timing_links)
-                    except StopIteration:
-                        pass
-                else:
-                    yield link, None
-        else:
-            for link in pattern_links:
-                yield link, None
+        journey_links = {
+            link.journeypatterntiminglinkref: link
+            for link in self.timing_links
+        }
+        for link in pattern_links:
+            yield link, journey_links.get(link.id)
 
     def get_times(self):
         stopusage = None
