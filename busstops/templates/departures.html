@@ -1,7 +1,7 @@
 {% if when or departures %}
 <div class="aside">
     {% if when %}
-    <form>
+    <form autocomplete="off">
         <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required /><input type="time" name="time" value="{{ when.time }}" required /><input type="submit" value="Go" />
     </form>
     {% else %}<h2>Next departures</h2>{% endif %}
@@ -38,7 +38,12 @@
             </tbody>
             </table>
             {% if when %}
-                <p class="next"><a href="?date={{ item.time.date.isoformat }}&amp;time={{ item.time.time }}">Later &darr;</a></p>
+                {% if departures|length == 10 %}
+                    <p class="next"><a href="?date={{ item.time.date.isoformat }}&amp;time={{ item.time.time }}">Later &darr;</a></p>
+                {% endif %}
+                {% if when != now %}
+                    <p><a href="{{ object.get_absolute_url }}">&uarr; Now</a></p>
+                {% endif %}
             {% endif %}
         {% endif %}
     {% endfor %}

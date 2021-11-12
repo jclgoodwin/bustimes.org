@@ -142,7 +142,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'OPTIONS': {
-            'debug': DEBUG or TEST,  # required by django_coverage_plugin
+            'debug': True,
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
