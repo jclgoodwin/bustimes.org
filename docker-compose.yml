@@ -1,0 +1,16 @@
+services:
+  web:
+    build: .
+    command: poetry run ./manage.py runserver 0.0.0.0:8000
+    container_name: django_web
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=d
+      # I have Postgres and Redis running on the host machine outside of Docker
+      - PGHOST=host.docker.internal
+      - PGUSER=josh
+      - REDIS_URL=redis://host.docker.internal:6379
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"

@@ -23,22 +23,17 @@ This documentation is incomplete and out of date. And that's OK (?) because I do
 
 ## Installing
 
-These definitely need to be available:
+These need to be available:
 
 - Python 3.9
-- [Pipenv](https://docs.pipenv.org/en/latest/) to install necessary Python packages (Django, etc)
+- [Poetry](https://python-poetry.org/) to install necessary Python packages (Django, etc)
 - PostgreSQL with PostGIS
     - On my Macintosh computer I use [Postgres.app](https://postgresapp.com/)
 - `npm` to install some front end JavaScript things
-
-And for certain features to work properly, these too:
-
 - Redis 6.2
 
-Then some environment variables need to be set.
+Some environment variables need to be set.
 Many of them control settings in [buses/settings.py](buses/settings.py).
-I have a file named `.env` in this here directory,
-[which Pipenv automatically loads when I use Pipenv to run things](https://pipenv.pypa.io/en/latest/advanced/#automatic-loading-of-env), and to give you an idea its contents look something like this:
 
 ```
 DEBUG=1
