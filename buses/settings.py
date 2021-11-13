@@ -63,12 +63,16 @@ MIDDLEWARE = [
 SECURE_REFERRER_POLICY = None
 
 if DEBUG and 'runserver' in sys.argv:
-    INTERNAL_IPS = ['127.0.0.1']
     INSTALLED_APPS.append('debug_toolbar')
     MIDDLEWARE += [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
         'debug_toolbar_force.middleware.ForceDebugToolbarMiddleware',
     ]
+
+    # Docker
+    import socket
+    _, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1', '10.0.2.2']
 
 ROOT_URLCONF = 'buses.urls'
 
@@ -142,7 +146,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'OPTIONS': {
-            'debug': True,
+            'debug': DEBUG or TEST,
             'context_processors': [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
