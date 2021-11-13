@@ -896,6 +896,9 @@ class Command(BaseCommand):
 
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
+            if not journeys:
+                continue
+
             if txc_service.public_use:
                 if txc_service.public_use in ('0', 'false'):
                     if len(journeys) < 5:
@@ -989,23 +992,22 @@ class Command(BaseCommand):
                     f"{filename}: end {txc_service.operating_period.end} is in the past"
                 )
 
-            if journeys:
-                journey = journeys[0]
+            journey = journeys[0]
 
-                ticket_machine_service_code = journey.ticket_machine_service_code
-                if ticket_machine_service_code and ticket_machine_service_code != line.line_name:
-                    try:
-                        ServiceCode.objects.create(scheme='SIRI', code=ticket_machine_service_code, service=service)
-                    except IntegrityError:
-                        pass
+            ticket_machine_service_code = journey.ticket_machine_service_code
+            if ticket_machine_service_code and ticket_machine_service_code != line.line_name:
+                try:
+                    ServiceCode.objects.create(scheme='SIRI', code=ticket_machine_service_code, service=service)
+                except IntegrityError:
+                    pass
 
-                # a code used in Traveline Cymru URLs:
-                if self.source.name == 'W':
-                    private_code = journey.private_code
-                    if private_code and ':' in private_code:
-                        ServiceCode.objects.update_or_create({
-                            'code': private_code.split(':', 1)[0]
-                        }, service=service, scheme='Traveline Cymru')
+            # a code used in Traveline Cymru URLs:
+            if self.source.name == 'W':
+                private_code = journey.private_code
+                if private_code and ':' in private_code:
+                    ServiceCode.objects.update_or_create({
+                        'code': private_code.split(':', 1)[0]
+                    }, service=service, scheme='Traveline Cymru')
 
             # timetable data:
 
@@ -1111,6 +1113,9 @@ class Command(BaseCommand):
 
     def handle_file(self, open_file, filename: str):
         transxchange = TransXChange(open_file)
+
+        if not transxchange.journeys:
+            return
 
         self.blocks = {}
         self.vehicle_types = {}
