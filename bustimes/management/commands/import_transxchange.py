@@ -21,7 +21,6 @@ from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block, RouteLink,
                        Calendar, CalendarDate, CalendarBankHoliday, BankHoliday)
-from ...timetables import get_stop_usages
 from transxchange.txc import TransXChange
 from vosa.models import Registration
 
@@ -339,34 +338,13 @@ class Command(BaseCommand):
         services = Service.objects.filter(id__in=self.service_ids)
 
         for service in services:
-            outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=service))
+            service.do_stop_usages()
 
-            if outbound or inbound:
-                existing = service.stopusage_set.all()
+            # using StopUsages
+            service.update_search_vector()
 
-                stop_usages = [
-                    StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                              direction='outbound', order=i)
-                    for i, stop_time in enumerate(outbound)
-                ] + [
-                    StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                              direction='inbound', order=i)
-                    for i, stop_time in enumerate(inbound)
-                ]
-
-                existing_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in existing]
-                proposed_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in stop_usages]
-
-                if existing_hash != proposed_hash:
-                    if existing:
-                        existing.delete()
-                    StopUsage.objects.bulk_create(stop_usages)
-
-                # using StopUsages
-                service.update_search_vector()
-
-                # using routes
-                service.update_geometry()
+            # using routes
+            service.update_geometry()
 
     @cache
     def get_bank_holiday(self, bank_holiday_name):

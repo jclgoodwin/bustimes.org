@@ -23,7 +23,7 @@ from django.utils.html import format_html, escape
 from django.utils.safestring import mark_safe
 
 from bustimes.models import Route, Trip
-from bustimes.timetables import Timetable
+from bustimes.timetables import Timetable, get_stop_usages
 from buses.utils import varnish_ban
 
 
@@ -908,6 +908,31 @@ class Service(models.Model):
 
     def varnish_ban(self):
         varnish_ban(self.get_absolute_url())
+
+    def do_stop_usages(self):
+        outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=self))
+
+        existing = self.stopusage_set.all()
+
+        stop_usages = [
+            StopUsage(service=self, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                      direction='outbound', order=i)
+            for i, stop_time in enumerate(outbound)
+        ] + [
+            StopUsage(service=self, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
+                      direction='inbound', order=i)
+            for i, stop_time in enumerate(inbound)
+        ]
+
+        existing_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in existing]
+        proposed_hash = [(su.stop_id, su.timing_status, su.direction, su.order) for su in stop_usages]
+
+        if existing_hash != proposed_hash:
+            if existing:
+                existing.delete()
+            StopUsage.objects.bulk_create(stop_usages)
+
+        return stop_usages
 
     def update_geometry(self):
         geometry = self.route_set.aggregate(Union('geometry'))['geometry__union']

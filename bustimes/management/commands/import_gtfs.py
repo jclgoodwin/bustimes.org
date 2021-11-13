@@ -321,19 +321,7 @@ class Command(BaseCommand):
             else:
                 pass
 
-            groupings = get_stop_usages(Trip.objects.filter(route__service=service))
-
-            service.stops.clear()
-            stop_usages = [
-                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='outbound', order=i)
-                for i, stop_time in enumerate(groupings[0])
-            ] + [
-                StopUsage(service=service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='inbound', order=i)
-                for i, stop_time in enumerate(groupings[1])
-            ]
-            StopUsage.objects.bulk_create(stop_usages)
+            service.do_stop_usages()
 
             service.region = Region.objects.filter(adminarea__stoppoint__service=service).annotate(
                 Count('adminarea__stoppoint__service')

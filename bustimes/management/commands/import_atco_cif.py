@@ -5,9 +5,9 @@ from datetime import date, timedelta, datetime
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.utils import timezone
-from busstops.models import Service, DataSource, StopPoint, StopUsage
+from busstops.models import Service, DataSource, StopPoint
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
-from ...timetables import get_journey_patterns, get_stop_usages
+from ...timetables import get_journey_patterns
 
 
 def parse_date(string):
@@ -53,19 +53,7 @@ class Command(BaseCommand):
         assert self.stop_times == []
 
         for route in self.routes.values():
-            groupings = get_stop_usages(route.trip_set.all())
-
-            route.service.stops.clear()
-            stop_usages = [
-                StopUsage(service=route.service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='outbound', order=i)
-                for i, stop_time in enumerate(groupings[0])
-            ] + [
-                StopUsage(service=route.service, stop_id=stop_time.stop_id, timing_status=stop_time.timing_status,
-                          direction='inbound', order=i)
-                for i, stop_time in enumerate(groupings[1])
-            ]
-            StopUsage.objects.bulk_create(stop_usages)
+            stop_usages = route.service.do_stop_usages()
 
             # self.stops doesn't contain all stops, and has latlongs in the Irish Grid projection
             stops = StopPoint.objects.in_bulk(stop_usage.stop_id for stop_usage in stop_usages)
