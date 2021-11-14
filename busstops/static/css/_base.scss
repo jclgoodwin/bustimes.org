@@ -328,6 +328,7 @@ textarea {
     border: 1px solid $border-color;
     border-radius: 0;
     box-sizing: border-box;
+    color: inherit;
     font: inherit;
     outline: 0;
     padding: .25em;
@@ -343,11 +344,11 @@ textarea {
 }
 
 input[type='date'] {
-    width: 10em;
+    max-width: 10em;
 }
 
 input[type='time'] {
-    width: 5em;
+    max-width: 5em;
 }
 
 select {
