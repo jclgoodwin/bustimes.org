@@ -42,8 +42,10 @@
 </tbody>
 </table>
 
+{% load urlise %}
+
 {% for note in trip.notes.all %}
-    <p>{{ note.text }}</p>
+    <p>{{ note.text|urlise }}</p>
 {% endfor %}
 
 {% if trip.garage %}
