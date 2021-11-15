@@ -65,7 +65,7 @@ def get_version(url):
 
         if not os.path.exists(path):
             write_file(path, response)
-            modified = True
+    modified = True
 
     return {
         'url': url,
@@ -89,8 +89,9 @@ def get_versions(session, url):
     for element in response.html.find():
         if element.tag == 'a':
             url = urljoin(element.base_url, element.attrs['href'])
-            if url.endswith('/current'):
-                current = session.head(url).headers['location']
+            if '/current' in url:
+                if 'gtfs' not in url:
+                    current = session.head(url).headers['location']
             elif '/txc' in url:
                 versions.append(get_version(url))
             elif '/gtfs' in url:
