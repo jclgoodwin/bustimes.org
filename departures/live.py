@@ -307,14 +307,21 @@ class TimetableDepartures(Departures):
     def get_departures(self):
         time_since_midnight = datetime.timedelta(hours=self.now.hour, minutes=self.now.minute)
         date = self.now.date()
+        one_day = datetime.timedelta(1)
+        yesterday_date = (self.now - one_day).date()
+        yesterday_time = time_since_midnight + one_day
+
         times = [
+            self.get_row(stop_time, yesterday_date) for stop_time in
+            self.get_times(yesterday_date, yesterday_time)[:10]
+        ] + [
             self.get_row(stop_time, date) for stop_time in
             self.get_times(date, time_since_midnight)[:10]
         ]
         i = 0
         while len(times) < 10 and i < 3:
             i += 1
-            date += datetime.timedelta(1)
+            date += one_day
             times += [
                 self.get_row(stop_time, date) for stop_time in
                 self.get_times(date)[:10-len(times)]
