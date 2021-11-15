@@ -214,7 +214,7 @@ class LiveDeparturesTest(TestCase):
     def test_worcestershire(self, mocked_log_vehicle_journey):
         with time_machine.travel('Sat Feb 09 10:45:45 GMT 2019'):
             with vcr.use_cassette('data/vcr/worcester.yaml'):
-                with self.assertNumQueries(10):
+                with self.assertNumQueries(11):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
 
         trip_url = self.trip.get_absolute_url()
