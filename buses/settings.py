@@ -525,6 +525,8 @@ BOD_OPERATORS = [
     ('LAWS', 'EM',  {}, False),
     ('BMCS', 'SE',  {}, False),
 
+    ('AJCO', 'EA', {}, False),
+    ('LTEA', 'EA', {}, False),
     ('CPLT', 'EA', {}, False),
     ('OBUS', 'EA', {
         'OURH': 'OURH',
