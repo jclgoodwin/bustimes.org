@@ -33,11 +33,13 @@ class ImportPassengerTest(TestCase):
                 with self.assertLogs('bustimes.management.commands.import_bod') as cm:
                     call_command('import_passenger')
 
+
         self.assertEqual(cm.output, [
             'INFO:bustimes.management.commands.import_bod:Unilink',
-            "INFO:bustimes.management.commands.import_bod:{'filename': 'unilink_1586941265.zip', 'modified': True, "
-            "'dates': ['2020-05-10', '2020-06-01'], 'gtfs': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/u"
-            "nilink/gtfs/unilink_1586941265.zip'}"
+            "INFO:bustimes.management.commands.import_bod:"
+            "{'url': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941265.zip', "
+            "'filename': 'unilink_1586941265.zip', 'modified': True, "
+            "'gtfs': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/gtfs/unilink_1586941265.zip'}"
         ])
 
         self.assertFalse(Route.objects.all())

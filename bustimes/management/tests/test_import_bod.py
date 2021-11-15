@@ -99,9 +99,13 @@ class ImportBusOpenDataTest(TestCase):
         response = self.client.get(trip.get_absolute_url())
 
         self.assertContains(response, """<tr class="minor">
-            <td><a href="/stops/2900C1814">Clenchwarton Post Box</a></td>
-            <td>09:33</td>
-        </tr>""")
+                <td class="stop-name">
+                        <a href="/stops/2900C1814">Clenchwarton Post Box</a>
+                </td>
+            <td>
+                09:33
+            </td>
+        </tr>""", html=True)
 
         expected_json = {
             'times': [

@@ -340,21 +340,60 @@ interactions:
       message: OK
 - request:
     body: null
-    headers: {}
-    method: GET
-    uri: https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941265.zip
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Cookie:
+      - lb_session_coookie=node-242694852|YZJ4S|YZJ4S; passenger-favourites-0=%7B%22device%22%3A%22737e24db9d61f2ea2073cb6044a85d45%22%2C%22user%22%3Anull%2C%22lastSync%22%3Anull%2C%22favourites%22%3A%5B%5D%7D
+      User-Agent:
+      - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/603.3.8 (KHTML,
+        like Gecko) Version/10.1.2 Safari/603.3.8
+    method: HEAD
+    uri: https://www.unilinkbus.co.uk/open-data/network/current
   response:
     body:
       string: ''
-    headers: {}
+    headers:
+      cache-control:
+      - max-age=0, must-revalidate, private
+      content-type:
+      - text/html; charset=UTF-8
+      date:
+      - Mon, 15 Nov 2021 15:10:00 GMT
+      expires:
+      - Mon, 15 Nov 2021 15:10:00 GMT
+      location:
+      - https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941265.zip
+      server:
+      - nginx/1.18.0 (Ubuntu)
+      set-cookie:
+      - passenger-favourites-0=%7B%22device%22%3A%22737e24db9d61f2ea2073cb6044a85d45%22%2C%22user%22%3Anull%2C%22lastSync%22%3Anull%2C%22favourites%22%3A%5B%5D%7D;
+        expires=Tue, 15-Nov-2022 15:10:00 GMT; Max-Age=31536000; path=/; secure; httponly;
+        samesite=strict
+      - passenger-favourites-1=deleted; expires=Sun, 15-Nov-2020 15:09:59 GMT; Max-Age=0;
+        path=/; secure; httponly; samesite=strict
+      x-served-by:
+      - www01.unilinkbus.co.uk
     status:
-      code: 200
-      message: OK
+      code: 302
+      message: Found
 - request:
     body: null
-    headers: {}
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.26.0
     method: GET
-    uri: https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941252.zip
+    uri: https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1586941265.zip
   response:
     body:
       string: ''
