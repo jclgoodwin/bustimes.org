@@ -51,7 +51,7 @@ def handle_gtfs(operators, url):
             service.save(update_fields=['colour'])
 
 
-def get_version(url, element, heading):
+def get_version(url):
     modified = False
 
     filename = os.path.basename(urlparse(url).path)
@@ -67,14 +67,10 @@ def get_version(url, element, heading):
             write_file(path, response)
             modified = True
 
-    if '(' in heading:
-        heading = heading.split('(')[-1][:-1]
-    dates = heading.split(' to ')
-
     return {
+        'url': url,
         'filename': filename,
         'modified': modified,
-        'dates': dates
     }
 
 
@@ -91,16 +87,17 @@ def get_versions(session, url):
         sleep(5)
         return
     for element in response.html.find():
-        if element.tag == 'h3':
-            heading = element.text
-        elif element.tag == 'a':
+        if element.tag == 'a':
             url = urljoin(element.base_url, element.attrs['href'])
-            if '/txc' in url:
-                versions.append(get_version(url, element, heading))
+            if url.endswith('/current'):
+                current = session.head(url).headers['location']
+            elif '/txc' in url:
+                versions.append(get_version(url))
             elif '/gtfs' in url:
                 versions[-1]['gtfs'] = url
 
-    versions.sort(key=lambda v: (v['dates'][0], v['filename']), reverse=True)
+                if versions[-1]['url'] == current:  # stop - not interested in older data
+                    break
 
     return versions
 
