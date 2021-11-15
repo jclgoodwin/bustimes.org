@@ -829,15 +829,15 @@ def search(request):
             operators = Operator.objects.filter(operator_has_current_services_or_vehicles)
             services = Service.objects.with_line_names().filter(current=True)
 
-            localities = localities.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-            operators = operators.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-            services = services.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
-
             services = services.annotate(operators=ArrayAgg('operator__name', distinct=True))
 
-            context['localities'] = Paginator(localities, 20).get_page(request.GET.get('page'))
-            context['operators'] = Paginator(operators, 20).get_page(request.GET.get('page'))
-            context['services'] = Paginator(services, 20).get_page(request.GET.get('page'))
+            for key, queryset in (
+                ('localities', localities),
+                ('operators', operators),
+                ('services', services),
+            ):
+                queryset = queryset.filter(search_vector=query).annotate(rank=rank).order_by('-rank')
+                context[key] = Paginator(queryset, 20).get_page(request.GET.get('page'))
 
             vehicles = Vehicle.objects.select_related('operator')
             query_text = query_text.replace(' ', '')
