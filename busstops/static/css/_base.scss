@@ -332,7 +332,6 @@ textarea {
     font: inherit;
     outline: 0;
     padding: .25em;
-    padding-right: 0;
 
     &:focus {
         border-color: $border-color-darker;
@@ -349,6 +348,10 @@ input[type='date'] {
 
 input[type='time'] {
     max-width: 5em;
+}
+
+::-webkit-calendar-picker-indicator {
+    padding-left: 0;
 }
 
 select {
@@ -631,9 +634,16 @@ table {
         overflow-y: auto;
         position: absolute;
         padding: 1em;
+        padding-top: 0;
 
         table {
             table-layout: fixed;
+        }
+
+        thead {
+            background: #fff;
+            position: sticky;
+            top: 0;
         }
 
         th,
@@ -783,6 +793,7 @@ table .livery {
 }
 
 .service-map,
+.journey,
 .trip-map {
     .stop-arrow {
         background: #fff;

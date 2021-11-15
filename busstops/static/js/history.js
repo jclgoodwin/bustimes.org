@@ -76,43 +76,6 @@
         }
     }
 
-    var stops, locations, rovingTooltipMarker;
-
-    function showStopOnMap() {
-        var stop = stops[this.rowIndex - 1];
-
-        map.eachLayer(function(layer) {
-            if (layer.options.pane === 'tooltipPane') layer.removeFrom(map);
-        });
-
-        if (!stop.coordinates) {
-            return;
-        }
-
-        var min = 1000, nearest, location, distance;
-
-        for (var i = 0; i < locations.length; i++) {
-            location = locations[i];
-            distance = stop.coordinates.distanceTo(location.coordinates);
-            if (distance < min) {
-                min = distance;
-                nearest = location;
-            }
-        }
-
-        if (nearest) {
-            var popup = nearest.datetime.toTimeString().slice(0, 8);
-            popup += getTooltip(nearest.delta);
-
-            if (!rovingTooltipMarker) {
-                rovingTooltipMarker = L.circleMarker(nearest.coordinates, circleMarkerOptions).addTo(map);
-            } else {
-                rovingTooltipMarker.setLatLng(nearest.coordinates);
-            }
-            rovingTooltipMarker.bindTooltip(popup).openTooltip();
-        }
-    }
-
     function maybeOpenMap() {
         var journey = window.location.hash.slice(1);
 
@@ -162,16 +125,18 @@
                         tr.className = 'minor';
                     }
                     time = stop.aimed_departure_time || stop.aimed_arrival_time || '';
+                    time += '</td><td>';
                     if (stop.actual_departure_time) {
                         actual = new Date(stop.actual_departure_time);
-                        time += '</td><td>' + actual.toTimeString().slice(0, 5);
+                        time += actual.toTimeString().slice(0, 5);
                     }
                     tr.innerHTML = '<td>' + stop.name + '</th><td>' + time + '</td>';
                     tbody.appendChild(tr);
 
                     if (stop.coordinates) {
-                        stop.coordinates = L.latLng(stop.coordinates[1], stop.coordinates[0]);
+                        stop.coordinates = L.GeoJSON.coordsToLatLng(stop.coordinates);
                     }
+                    stop.tr = tr;
                 }
                 table.appendChild(tbody);
                 tripElement.appendChild(table);
@@ -190,6 +155,38 @@
             window.bustimes.doTileLayer(map);
 
             L.control.locate().addTo(map);
+
+            if (response.stops) {
+                var html = '<div class="stop-arrow no-direction"></div>';
+                var openTooltip;
+                response.stops.forEach(function(stop) {
+                    if (stop.coordinates) {
+                        var marker = L.marker(stop.coordinates, {
+                            icon: L.divIcon({
+                                iconSize: [9, 9],
+                                html: html,
+                                className: 'stop'
+                            })
+                        }).bindTooltip(stop.name);
+
+                        marker.addTo(map);
+
+                        var showStop = function() {
+                            if (openTooltip) {
+                                openTooltip.closeTooltip();
+                            }
+                            openTooltip = marker.openTooltip();
+                        };
+
+                        stop.tr.addEventListener('mouseover', showStop, {
+                            passive: true
+                        });
+                        stop.tr.addEventListener('touchstart', showStop, {
+                            passive: true
+                        });
+                    }
+                });
+            }
 
             var line = [],
                 previousCoordinates,
@@ -246,16 +243,6 @@
             });
             if (previousSkippedLocation) { 
                 arrowMarker(previousSkippedLocation).addTo(map);
-            }
-
-            if (response.stops) {
-                stops = response.stops;
-                locations = response.locations;
-                for (i = 0; i < tbody.children.length; i++) {
-                    tr = tbody.children[i];
-                    tr.addEventListener('mouseover', showStopOnMap);
-                    tr.addEventListener('touchstart', showStopOnMap);
-                }
             }
 
             line = L.polyline(line, {
