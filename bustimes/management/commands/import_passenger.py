@@ -65,7 +65,7 @@ def get_version(url):
 
         if not os.path.exists(path):
             write_file(path, response)
-    modified = True
+            modified = True
 
     return {
         'url': url,
