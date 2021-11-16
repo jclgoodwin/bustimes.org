@@ -1,20 +1,23 @@
 import re
+import json
+
 from math import ceil
 from urllib.parse import quote
 from datetime import timedelta
 from webcolors import html5_parse_simple_color
+
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Q, F
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, SIRISource
-from bustimes.models import get_calendars, get_routes, Trip
-import json
+from bustimes.models import get_calendars, get_routes, Trip, RouteLink
 
 
 def format_reg(reg):
@@ -688,6 +691,23 @@ class VehicleJourney(models.Model):
                 pass
         except Trip.DoesNotExist:
             pass
+
+    def get_progress(self, location):
+        point = Point(location["coordinates"][0], location["coordinates"][1], srid=4326)
+
+        trip = self.trip_id
+
+        return RouteLink.objects.filter(
+            geometry__bboverlaps=point.buffer(0.001),
+            service=self.service_id,
+            from_stop__stoptime__trip=trip,
+            to_stop__stoptime__trip=trip,
+            to_stop__stoptime__id__gt=F('from_stop__stoptime__id')
+        ).annotate(
+            distance=models.functions.Distance('geometry', point),
+            from_stoptime=F('from_stop__stoptime'),
+            to_stoptime=F('to_stop__stoptime')
+        ).order_by('distance').first()
 
 
 class JourneyCode(models.Model):

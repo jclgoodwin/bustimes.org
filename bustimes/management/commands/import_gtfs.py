@@ -11,9 +11,8 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Q
 from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
-from busstops.models import Region, DataSource, StopPoint, Service, StopUsage, Operator, AdminArea
+from busstops.models import Region, DataSource, StopPoint, Service, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
-from ...timetables import get_stop_usages
 from ...utils import download_if_changed
 
 

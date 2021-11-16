@@ -467,7 +467,8 @@ class StopPoint(models.Model):
         return reverse('stoppoint_detail', args=(self.atco_code,))
 
     def get_line_names(self):
-        return sorted(self.line_names, key=Service.get_line_name_order)
+        if self.line_names:
+            return sorted(self.line_names, key=Service.get_line_name_order)
 
 
 class OperatorManager(models.Manager):

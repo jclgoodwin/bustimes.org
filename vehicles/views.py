@@ -23,7 +23,7 @@ from django.utils import timezone
 from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
-from bustimes.models import Garage, Trip
+from bustimes.models import Garage, Trip, StopTime
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from .forms import EditVehiclesForm, EditVehicleForm
@@ -305,6 +305,10 @@ def vehicles_json(request):
 
     locations = []
 
+    trip = request.GET.get('trip')
+    if trip:
+        trip = int(trip)
+
     for i, item in enumerate(vehicle_locations):
         vehicle_id = int(vehicle_ids[i])
         if item:
@@ -319,6 +323,30 @@ def vehicles_json(request):
                     "line_name": vehicle.service_line_name,
                     "url": f"/services/{vehicle.service_slug}"
                 }
+
+            if trip and 'trip_id' in item and item['trip_id'] == trip:
+                vj = VehicleJourney(service_id=item['service_id'], trip_id=trip)
+                progress = vj.get_progress(item)
+                if progress:
+                    item['progress'] = {
+                        'prev_stop': progress.from_stop_id,
+                        'next_stop': progress.to_stop_id,
+                    }
+                    prev_stop, next_stop = StopTime.objects.filter(trip=trip, id__gte=progress.from_stoptime)[:2]
+                    when = parse_datetime(item['datetime'])
+                    when = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
+
+                    prev_time = prev_stop.departure_or_arrival()
+                    next_time = next_stop.arrival_or_departure()
+                    if prev_time <= when <= next_time:
+                        delay = 0
+                    elif prev_time < when:
+                        delay = (when - next_time).total_seconds()  # late
+                    else:
+                        delay = (when - prev_time).total_seconds()  # early
+                    item['delay'] = delay
+                    item['progress']['prev_time'] = prev_time
+                    item['progress']['next_time'] = next_time
 
         if service_ids and (not item or item.get('service_id') not in service_ids):
             for service_id in service_ids:

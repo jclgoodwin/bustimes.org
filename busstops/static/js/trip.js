@@ -25,7 +25,7 @@
         if (!window.SERVICE) {
             return;
         }
-        var params = '?service=' + window.SERVICE;
+        var params = '?service=' + window.SERVICE + '&trip=' +  window.TRIP_ID;
         reqwest(
             '/vehicles.json' + params,
             function(data) {

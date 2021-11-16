@@ -33,7 +33,6 @@ class ImportPassengerTest(TestCase):
                 with self.assertLogs('bustimes.management.commands.import_bod') as cm:
                     call_command('import_passenger')
 
-
         self.assertEqual(cm.output, [
             'INFO:bustimes.management.commands.import_bod:Unilink',
             "INFO:bustimes.management.commands.import_bod:"

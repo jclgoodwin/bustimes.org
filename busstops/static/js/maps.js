@@ -41,12 +41,14 @@
             }
         }
         var style = getTransform(heading, active);
-        if (item.vehicle.livery) {
-            className += ' livery-' + item.vehicle.livery;
-        } else if (item.vehicle.css) {
-            style += 'background:' + item.vehicle.css;
-            if (item.vehicle.text_colour) {
-                className += ' white-text';
+        if (item.vehicle) {
+            if (item.vehicle.livery) {
+                className += ' livery-' + item.vehicle.livery;
+            } else if (item.vehicle.css) {
+                style += 'background:' + item.vehicle.css;
+                if (item.vehicle.text_colour) {
+                    className += ' white-text';
+                }
             }
         }
         var html = '<div class="' + className + '" style="' + style + '">';
@@ -65,6 +67,14 @@
     }
 
     var agoTimeout;
+
+    function getTimeDelta(seconds) {
+        var minutes = Math.round(seconds / 60);
+        if (minutes === 1) {
+            return '1 minute';
+        }
+        return minutes + ' minutes';
+    }
 
     function getPopupContent(item) {
         var now = new Date();
@@ -99,17 +109,30 @@
             content += '<img src="/static/svg/wheelchair.svg" width="14" height="14" alt="wheelchair space"> ' + item.wheelchair + '<br>';
         }
 
+        if (typeof item.delay !== 'undefined') {
+            var delay = item.delay;
+            if (-60 < delay && delay < 60) {
+                delay = 'On time';
+            } else {
+                if (delay < 0) {
+                    delay *= -1;
+                }
+                delay = getTimeDelta(delay);
+                if (item.delay < 0) {
+                    delay += ' early';
+                } else {
+                    delay += ' late';
+                }
+            }
+            content += delay + '<br>';
+        }
+
         if (ago >= 1800) {
             content += 'Updated at ' + then.toTimeString().slice(0, 8);
         } else {
             content += '<time datetime="' + item.datetime + '" title="' + then.toTimeString().slice(0, 8) + '">';
             if (ago >= 59) {
-                var minutes = Math.round(ago / 60);
-                if (minutes === 1) {
-                    content += '1 minute';
-                } else {
-                    content += minutes + ' minutes';
-                }
+                content += getTimeDelta(ago);
                 agoTimeout = setTimeout(updatePopupContent, (61 - ago % 60) * 1000);
             } else {
                 if (ago === 1) {
