@@ -897,7 +897,7 @@ class Command(BaseCommand):
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
             if not journeys:
-                continue
+                logger.warning(f'{txc_service.service_code} has no journeys')
 
             if txc_service.public_use:
                 if txc_service.public_use in ('0', 'false'):
@@ -989,25 +989,26 @@ class Command(BaseCommand):
 
             if txc_service.operating_period.end and txc_service.operating_period.end < today:
                 logger.warning(
-                    f"{filename}: end {txc_service.operating_period.end} is in the past"
+                    f"{filename}: {txc_service.service_code} end {txc_service.operating_period.end} is in the past"
                 )
 
-            journey = journeys[0]
+            if journeys:
+                journey = journeys[0]
 
-            ticket_machine_service_code = journey.ticket_machine_service_code
-            if ticket_machine_service_code and ticket_machine_service_code != line.line_name:
-                try:
-                    ServiceCode.objects.create(scheme='SIRI', code=ticket_machine_service_code, service=service)
-                except IntegrityError:
-                    pass
+                ticket_machine_service_code = journey.ticket_machine_service_code
+                if ticket_machine_service_code and ticket_machine_service_code != line.line_name:
+                    try:
+                        ServiceCode.objects.create(scheme='SIRI', code=ticket_machine_service_code, service=service)
+                    except IntegrityError:
+                        pass
 
-            # a code used in Traveline Cymru URLs:
-            if self.source.name == 'W':
-                private_code = journey.private_code
-                if private_code and ':' in private_code:
-                    ServiceCode.objects.update_or_create({
-                        'code': private_code.split(':', 1)[0]
-                    }, service=service, scheme='Traveline Cymru')
+                # a code used in Traveline Cymru URLs:
+                if self.source.name == 'W':
+                    private_code = journey.private_code
+                    if private_code and ':' in private_code:
+                        ServiceCode.objects.update_or_create({
+                            'code': private_code.split(':', 1)[0]
+                        }, service=service, scheme='Traveline Cymru')
 
             # timetable data:
 
@@ -1082,7 +1083,8 @@ class Command(BaseCommand):
             if len(txc_service.lines) > 1:
                 route_code += f'#{line.id}'
 
-            self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service, line.id)
+            if journeys:
+                self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service, line.id)
 
         if len(linked_services) > 1:
             for i, from_service in enumerate(linked_services):
@@ -1115,7 +1117,7 @@ class Command(BaseCommand):
         transxchange = TransXChange(open_file)
 
         if not transxchange.journeys:
-            return
+            logger.warning(f'{filename} has no journeys')
 
         self.blocks = {}
         self.vehicle_types = {}
