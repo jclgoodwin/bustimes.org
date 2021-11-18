@@ -649,6 +649,13 @@ class VehicleJourney(models.Model):
         else:
             destination = None
 
+        if self.direction == 'outbound':
+            direction = Q(inbound=False)
+        elif self.direction == 'inbound':
+            direction = Q(inbound=True)
+        else:
+            direction = None
+
         if origin_aimed_departure_time:
             start = timezone.localtime(origin_aimed_departure_time)
             start = timedelta(hours=start.hour, minutes=start.minute)
@@ -661,6 +668,8 @@ class VehicleJourney(models.Model):
 
         if start is not None and destination is not None:
             start = Q(start=start)
+            if direction:
+                destination |= direction
             try:
                 return trips.get(start, destination)
             except Trip.MultipleObjectsReturned:
