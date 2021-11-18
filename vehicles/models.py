@@ -659,24 +659,18 @@ class VehicleJourney(models.Model):
         else:
             start = None
 
-        if start is not None:
+        if start is not None and destination is not None:
             start = Q(start=start)
-            if destination:
-                try:
-                    return trips.get(start, destination)
-                except Trip.MultipleObjectsReturned:
-                    try:
-                        return trips.get(start, destination, calendar__in=get_calendars(datetime))
-                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                        if not journey_ref:
-                            return
-                except Trip.DoesNotExist:
-                    pass
             try:
-                return trips.get(start, calendar__in=get_calendars(datetime))
-            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                if not journey_ref:
-                    return
+                return trips.get(start, destination)
+            except Trip.MultipleObjectsReturned:
+                try:
+                    return trips.get(start, destination, calendar__in=get_calendars(datetime))
+                except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                    if not journey_ref:
+                        return
+            except Trip.DoesNotExist:
+                pass
 
         if not journey_ref:
             journey_ref = self.code
