@@ -573,7 +573,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual([
             "WARNING:bustimes.management.commands.import_transxchange:"
-            "SVRABAO421.xml: end 2021-08-19 is in the past",
+            "SVRABAO421.xml: ABAO421 end 2021-08-19 is in the past",
             "WARNING:bustimes.management.commands.import_transxchange:"
             "{'NationalOperatorCode': 'SBLB', 'OperatorCode': 'BLB', 'OperatorShortName': 'Stagecoach North Scotlan'}"
             ],
