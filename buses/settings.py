@@ -351,6 +351,9 @@ PASSENGER_OPERATORS = [
     ('Go North East', 'https://www.gonortheast.co.uk/open-data', 'NE', {
         'GNE': 'GNEL',
     }),
+    ('East Yorkshire', 'https://www.eastyorkshirebuses.co.uk/open-data', 'Y', {
+        'EYMS': 'EYMS',
+    }),
     ('McGill’s', 'https://data.discoverpassenger.com/operator/mcgills', 'S', {
         'MCG': 'MCGL',
         'McG': 'MCGL',
@@ -369,7 +372,6 @@ BOD_OPERATORS = [
     ('LANT', 'EM', {}, False),
     ('NWBT', 'NW', {}, False),
     ('MARS', 'SE', {}, False),
-    ('EYMS', 'Y',  {}, False),
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
@@ -387,7 +389,7 @@ BOD_OPERATORS = [
         'FTVA': 'FTVA',
         # 'FHAM': 'FHAM',
         # 'FDOR': 'FDOR',
-        'FBOS': 'FBOS',
+        # 'FBOS': 'FBOS',
         'FCWL': 'FCWL',
         'FBRI': 'FBRI',
         # 'FLEI': 'FLEI',
@@ -688,9 +690,9 @@ TICKETER_OPERATORS = [
     # ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     # ('NW', ['GONW'], 'Go North West'),
 
-    ('W', ['ACYM'], 'Arriva Cymru'),
-    ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
-    ('NW', ['AMSY'], 'Arriva Merseyside'),
+    # ('W', ['ACYM'], 'Arriva Cymru'),
+    # ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
+    # ('NW', ['AMSY'], 'Arriva Merseyside'),
     ('NE', ['ARDU', 'ANEA'], 'Arriva Durham'),
     ('NE', ['ANUM'], 'Arriva Northumbria'),
     ('Y', ['WRAY', 'YTIG'], 'Arriva Yorkshire'),

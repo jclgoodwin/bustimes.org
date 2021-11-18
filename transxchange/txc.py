@@ -547,23 +547,7 @@ class TransXChange:
         return [journey for journey in journeys.values() if journey.journey_pattern]
 
     def __init__(self, open_file):
-        try:
-            detector = UniversalDetector()
-
-            for line in open_file:
-                detector.feed(line)
-                if detector.done:
-                    break
-            detector.close()
-            encoding = detector.result['encoding']
-            if encoding == 'UTF-8-SIG':
-                encoding = 'utf-8'
-            parser = ET.XMLParser(encoding=encoding)
-        except TypeError:
-            parser = None
-
-        open_file.seek(0)
-        iterator = ET.iterparse(open_file, parser=parser)
+        iterator = ET.iterparse(open_file)
 
         self.services = {}
         self.stops = {}
