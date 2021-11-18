@@ -73,6 +73,10 @@
 
         window.STOPS.times.forEach(function(time) {
             var stop = time.stop;
+            if (!stop.location) {
+                return;
+            }
+
             var location = L.GeoJSON.coordsToLatLng(stop.location);
 
             if (time.track) {
