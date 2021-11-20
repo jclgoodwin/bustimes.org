@@ -252,6 +252,8 @@ def ticketer(specific_operator=None):
             name = operators[0].replace('_', ' ')
 
         noc = operators[0]
+        if noc == 'AMTM':  # AMTM data is only in the AKSS dataset...
+            operators = operators[1:]
 
         if specific_operator and specific_operator != noc:
             continue

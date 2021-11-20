@@ -700,7 +700,9 @@ TICKETER_OPERATORS = [
     ('EM', ['AMID', 'AFCL', 'ADER'], 'Arriva Midlands'),
     ('SE', ['ARBB', 'ASES', 'GLAR'], 'Arriva Beds & Bucks'),
     ('SE', ['AMTM', 'ARHE'], 'Arriva Kent Thameside'),
-    ('SE', ['AKSS'], 'Arriva Kent & Surrey'),
+    ('SE', ['AKSS', 'AMTM'], 'Arriva Kent & Surrey'),
+
+    ('SE', ['Vectare', 'VECT']),
 
     ('EM', ['NOCT'], 'CT4N'),
     ('WM', ['LMST'], 'LMS Travel'),
