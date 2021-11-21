@@ -810,10 +810,9 @@ def search(request):
             if res.ok:
                 result = res.json()['result']
                 point = Point(result['longitude'], result['latitude'], srid=4326)
-                bbox = Polygon.from_bbox((point.x - .05, point.y - .05, point.x + .05, point.y + .05))
 
                 context['postcode'] = Locality.objects.filter(
-                    latlong__bboverlaps=bbox
+                    latlong__bboverlaps=point.buffer(0.05)
                 ).filter(
                     Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)
                 ).distinct().annotate(
