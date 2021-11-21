@@ -314,7 +314,7 @@ class VehiclesTests(TestCase):
 
         self.client.force_login(self.staff_user)
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             response = self.client.get(url)
         self.assertNotContains(response, 'already')
 
@@ -330,7 +330,7 @@ class VehiclesTests(TestCase):
         }
 
         # edit nothing
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
@@ -338,7 +338,7 @@ class VehiclesTests(TestCase):
         # edit fleet number
         initial['fleet_number'] = '2'
         initial['previous_reg'] = 'cock'
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
         self.assertContains(response, 'Changed fleet number from 1 to 2')
@@ -352,7 +352,7 @@ class VehiclesTests(TestCase):
 
         # edit type, livery and name with bad URL
         initial['colours'] = self.livery.id
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(15):
             response = self.client.post(url, {
                 **initial,
                 'url': 'http://localhost',
@@ -368,7 +368,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<td class="field-vehicle_type">Optare Tempo</td>')
 
         # should not create an edit
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(15):
             initial['colours'] = '#FFFF00'
             response = self.client.post(url, initial)
         self.assertTrue(response.context['form'].has_changed())
@@ -403,9 +403,11 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Changed notes from Trent Barton to West Coast Motors')
         self.assertContains(response, 'Changed branding to Crag Hopper')
 
+        del initial['previous_reg']
+
         # remove a feature
         del initial['features']
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
 
         vef = VehicleEditFeature.objects.get()
@@ -428,7 +430,7 @@ class VehiclesTests(TestCase):
             'notes': '',
         }
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
         # self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
         self.assertFalse(response.context['form'].has_changed())
@@ -441,7 +443,7 @@ class VehiclesTests(TestCase):
         initial['notes'] = 'Ex Ipswich Buses'
         initial['name'] = 'Luther Blisset'
         initial['branding'] = 'Coastliner'
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             initial['reg'] = ''
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
@@ -457,7 +459,7 @@ class VehiclesTests(TestCase):
         response = self.client.get(f'{self.vehicle_2.get_absolute_url()}/history')
         self.assertContains(response, 'Luther Blisset')
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(11):
             response = self.client.get(url)
         self.assertContains(response, 'already')
 
@@ -474,13 +476,13 @@ class VehiclesTests(TestCase):
             'notes': '',
         }
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
             self.assertContains(response, 'You haven&#x27;t changed anything')
 
         initial['colours'] = 'Other'
         initial['other_colour'] = 'Bath is my favourite spa town, and so is Harrogate'
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
             self.assertEqual(response.context['form'].errors, {'other_colour': [
                 'An HTML5 simple color must be a Unicode string exactly seven characters long.'
@@ -491,7 +493,7 @@ class VehiclesTests(TestCase):
 
         url = self.vehicle_1.get_edit_url()
 
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(14):
             self.client.post(url, {
                 'fleet_number': '',
                 'reg': '',
@@ -525,12 +527,12 @@ class VehiclesTests(TestCase):
     def test_vehicle_edit_3(self):
         self.client.force_login(self.user)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_3.get_edit_url())
         self.assertNotContains(response, 'livery')
         self.assertNotContains(response, 'notes')
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             # new user - can create a VehicleEdit
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'D19 FOX',
@@ -544,7 +546,7 @@ class VehiclesTests(TestCase):
         edit.apply(save=False)
         self.assertTrue(edit.vehicle.withdrawn)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             response = self.client.post(self.vehicle_2.get_edit_url(), {
                 'reg': self.vehicle_2.reg,
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
@@ -554,7 +556,7 @@ class VehiclesTests(TestCase):
 
         self.client.force_login(self.trusted_user)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             # trusted user - can edit reg and remove branding
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'DA04 DDA',
@@ -563,7 +565,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Changed reg to DA04DDA')
         self.assertContains(response, 'Changed branding from Coastliner to')
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(12):
             # trusted user - can edit colour
             response = self.client.post(self.vehicle_2.get_edit_url(), {
                 'reg': self.vehicle_2.reg,

@@ -491,10 +491,6 @@ def edit_vehicle(request, vehicle_id):
         id=vehicle_id
     )
 
-    for edit in request.user.vehicleedit_set.filter(vehicle=vehicle, approved=None):
-        edit.vehicle = vehicle
-        edit.apply(save=False)
-
     submitted = False
     revision = None
     initial = {
