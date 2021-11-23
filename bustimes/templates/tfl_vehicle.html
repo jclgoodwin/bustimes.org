@@ -19,7 +19,7 @@
     <tbody>
 {% for item in data %}
     <tr>
-        <td><a href="/stops/{{ item.naptanId }}">{{ item.stationName }}{% if item.platformName %} ({{ item.platformName }}){% endif %}</a></td>
+        <td class="stop-name"><a href="/stops/{{ item.naptanId }}">{{ item.stationName }}{% if item.platformName %} ({{ item.platformName }}){% endif %}</a></td>
         <td>{{ item.expectedArrival|time }}</td>
     </tr>
 {% endfor %}
