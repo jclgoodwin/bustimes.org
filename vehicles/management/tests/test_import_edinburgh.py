@@ -25,6 +25,7 @@ class EdinburghImportTest(TestCase):
             'latitude': 55.95376,
             'longitude': -3.18718,
             'last_gps_fix': 1554038242,
+            'ineo_gps_fix': 1554038242,
         }
         with self.assertNumQueries(11):
             self.command.handle_item(item)
@@ -55,7 +56,8 @@ class EdinburghImportTest(TestCase):
             'heading': 76,
             'latitude': 55.95376,
             'longitude': -3.18718,
-            'last_gps_fix': 1554038242,
+            'last_gps_fix': 1554034642,
+            'ineo_gps_fix': 1554038242,
         }
         location = self.command.create_vehicle_location(item)
         self.assertEqual(76, location.heading)

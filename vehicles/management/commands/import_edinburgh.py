@@ -16,6 +16,8 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
+        if item['ineo_gps_fix'] - item['last_gps_fix'] == 3600:
+            return datetime.fromtimestamp(item['ineo_gps_fix'], timezone.utc)
         return datetime.fromtimestamp(item['last_gps_fix'], timezone.utc)
 
     def get_items(self):
