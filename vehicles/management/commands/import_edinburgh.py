@@ -1,7 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+
 from django.utils import timezone
 from django.contrib.gis.geos import Point
+from django.db.models import Exists, OuterRef
+
 from busstops.models import Service
+from bustimes.models import Trip, StopTime, get_calendars
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
@@ -63,6 +67,28 @@ class Command(ImportLiveVehiclesCommand):
                         vehicle.save(update_fields=['operator'])
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item['service_name'])
+
+        if vehicle.latest_journey and vehicle.latest_journey.code == journey.code:
+            pass
+        elif item['next_stop_id'] and journey.service_id:
+            now = self.get_datetime(item)
+            now = timezone.localtime(now)
+            calendars = get_calendars(now)
+            now = timedelta(hours=now.hour, minutes=now.minute)
+            trips = Trip.objects.filter(
+                Exists(
+                    StopTime.objects.filter(
+                        trip=OuterRef('id'),
+                        stop__naptan_code__iexact=item['next_stop_id'],
+                        departure__lt=now + timedelta(minutes=5),
+                        departure__gt=now - timedelta(minutes=10)
+                    )
+                ), calendar__in=calendars, route__service=journey.service_id
+            )
+            try:
+                journey.trip = trips.get()
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                pass
 
         return journey
 
