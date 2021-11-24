@@ -142,12 +142,14 @@ class GTFSTest(TestCase):
         cassette = str(FIXTURES_DIR / 'download_if_modified.yaml')
 
         with vcr.use_cassette(cassette, match_on=['uri', 'headers']):
-            self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
-                             '(True, datetime.datetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
+            changed, when = import_gtfs.download_if_changed(path, url)
+            self.assertTrue(changed)
+            self.assertEqual(str(when), '2020-06-02 07:35:34+00:00')
 
             with patch('os.path.getmtime', return_value=1593870909.0) as getmtime:
-                self.assertEqual(str(import_gtfs.download_if_changed(path, url)),
-                                 '(True, datetime.datetime(2020, 6, 2, 7, 35, 34, tzinfo=<UTC>))')
+                changed, when = import_gtfs.download_if_changed(path, url)
+                self.assertTrue(changed)
+                self.assertEqual(str(when), '2020-06-02 07:35:34+00:00')
                 getmtime.assert_called_with(path)
 
         self.assertTrue(path.exists())
