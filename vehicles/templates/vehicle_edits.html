@@ -44,7 +44,7 @@
             {% for edit in edits %}
                 <tr>
                     <td>{{ edit.datetime }}</td>
-                    <td><a href="{{ edit.user.get_absolute_url }}">{{ edit.user }}</a></td>
+                    <td><a href="?user={{ edit.user_id }}">{{ edit.user }}</a></td>
                     <td><a href="{{ edit.vehicle.get_absolute_url }}">{{ edit.vehicle }}</a></td>
                     <td>{{ edit.vehicle.get_flickr_link }}</td>
                     <td><div class="livery{% if edit.vehicle.livery_id %} livery-{{ edit.vehicle.livery_id }}{% else %}" style="background:{{ edit.vehicle.get_livery }}{% endif %}"></div></td>

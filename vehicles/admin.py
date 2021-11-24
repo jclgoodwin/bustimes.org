@@ -396,17 +396,14 @@ class VehicleEditAdmin(admin.ModelAdmin):
         VehicleAdmin.spare_ticket_machine(self, request, queryset)
 
     def current(self, obj):
-        if obj.vehicle.livery:
-            return obj.vehicle.livery.preview()
-        if obj.vehicle.colours:
-            return models.Livery(colours=obj.vehicle.colours).preview()
+        return self.suggested(obj.vehicle)
     current.admin_order_field = 'vehicle__livery'
 
     def suggested(self, obj):
         if obj.livery:
             return obj.livery.preview()
         if obj.colours:
-            return obj.get_css()
+            return models.Livery(colours=obj.colours).preview()
     suggested.admin_order_field = 'livery'
 
     def flickr(self, obj):
