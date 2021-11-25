@@ -281,16 +281,20 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         pipeline = redis_client.pipeline(transaction=False)
 
+        geoadd_values = []
+
         for location, vehicle in self.to_save:
             lon = location.latlong.x
             lat = location.latlong.y
             if -180 <= lon <= 180 and -85.05112878 <= lat <= 85.05112878:
-                pipeline.geoadd('vehicle_location_locations', lon, lat, vehicle.id)
+                geoadd_values += [lon, lat, vehicle.id]
                 if location.journey.service_id:
                     pipeline.sadd(f'service{location.journey.service_id}vehicles', vehicle.id)
                 redis_json = location.get_redis_json()
                 redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
                 pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
+
+        pipeline.geoadd('vehicle_location_locations', geoadd_values)
 
         with beeline.tracer(name="pipeline"):
             try:

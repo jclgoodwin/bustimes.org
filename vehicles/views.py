@@ -263,11 +263,13 @@ def vehicles_json(request):
         height = haversine((ymin, xmax), (ymax, xmax))
 
         try:
-            vehicle_ids = redis_client.execute_command(
-                'GEOSEARCH',
+            vehicle_ids = redis_client.geosearch(
                 'vehicle_location_locations',
-                'FROMLONLAT', (xmax + xmin) / 2, (ymax + ymin) / 2,
-                'BYBOX', width, height, 'km'
+                longitude=(xmax + xmin) / 2,
+                latitude=(ymax + ymin) / 2,
+                width=width,
+                height=height,
+                unit='km'
             )
         except redis.exceptions.ResponseError:
             return HttpResponseBadRequest()
