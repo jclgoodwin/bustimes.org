@@ -151,8 +151,10 @@ class VehicleAdmin(admin.ModelAdmin):
                 first.fleet_code = vehicle.fleet_code
                 first.fleet_number = vehicle.fleet_number
                 first.reg = vehicle.reg
+                if first.withdrawn and not vehicle.withdrawn:
+                    first.withdrawn = False
                 vehicle.delete()
-                first.save(update_fields=['code', 'fleet_code', 'fleet_number', 'reg'])
+                first.save(update_fields=['code', 'fleet_code', 'fleet_number', 'reg', 'withdrawn'])
 
     def spare_ticket_machine(self, request, queryset):
         queryset.update(

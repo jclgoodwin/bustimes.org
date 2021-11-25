@@ -550,7 +550,7 @@ BOD_OPERATORS = [
     ('CARL', 'SE', {}, False),
     ('IRVD', 'NW', {}, False),
     ('FALC', 'SE', {}, False),
-    ('VECT', 'SE', {}, False),
+    ('VECT', 'SE', {}, True),
     ('ACME', 'SE', {}, False),
 
     ('Viking Coaches', 'NW', {

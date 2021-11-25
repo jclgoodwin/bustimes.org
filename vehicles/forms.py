@@ -16,7 +16,7 @@ from .fields import RegField
 def get_livery_choices(operator):
     choices = {}
     vehicles = operator.vehicle_set.filter(withdrawn=False)
-    liveries = Livery.objects.filter(vehicle__in=vehicles).annotate(popularity=Count('vehicle'))
+    liveries = Livery.objects.filter(Q(vehicle__in=vehicles) | Q(operator=operator)).annotate(popularity=Count('vehicle'))
     for livery in liveries.order_by('-popularity').distinct():
         choices[livery.id] = livery
     for vehicle in vehicles.distinct('colours'):
