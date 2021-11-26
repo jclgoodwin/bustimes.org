@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.http import Http404
 from django.utils import timezone
 from django.db.models import Count, Q, Exists, OuterRef
 
@@ -105,6 +106,16 @@ class EditVehicleForm(EditVehiclesForm):
 
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
+
+        if vehicle.latest_journey and vehicle.latest_journey.data and not vehicle.reg:
+            try:
+                if vehicle.latest_journey.data['MonitoredVehicleJourney']['OperatorRef'] == 'TFLO':
+                    raise Http404("""
+                        Please don’t try to identify this vehicle.
+                        It might turn out to be a waste of time.
+                    """)
+            except (KeyError, TypeError):
+                pass
 
         if not user.is_staff:
             if vehicle.fleet_code and vehicle.fleet_code in vehicle.code.replace('_', ' ').split():
