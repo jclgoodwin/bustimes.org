@@ -59,8 +59,7 @@ class Command(ImportLiveVehiclesCommand):
 
         journey.destination = item.get('destination', '')
 
-        journey.code = f'{datetime.hour:02}{datetime.minute:02}'
-        journey.trip = journey.get_trip()
+        journey.trip = journey.get_trip(origin_aimed_departure_time=datetime)
         if journey.trip and journey.trip.destination and journey.trip.destination.locality:
             journey.destination = str(journey.trip.destination.locality)
 

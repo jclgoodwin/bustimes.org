@@ -666,22 +666,27 @@ class VehicleJourney(models.Model):
         else:
             start = None
 
-        if start is not None and destination is not None:
+        if start is not None:
             start = Q(start=start)
-            if direction:
-                destination |= direction
+            trips_at_start = trips.filter(start)
+
+            if destination:
+                if direction:
+                    destination |= direction
+                trips_at_start = trips.filter(destination)
+
             try:
-                return trips.get(start, destination)
+                return trips_at_start.get()
             except Trip.MultipleObjectsReturned:
                 try:
-                    return trips.get(start, destination, calendar__in=get_calendars(datetime))
+                    return trips_at_start.get(calendar__in=get_calendars(datetime))
                 except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                     if not journey_ref:
                         return
             except Trip.DoesNotExist:
-                if origin_aimed_departure_time:
+                if destination and origin_aimed_departure_time:
                     try:
-                        return trips.get(start, calendar__in=get_calendars(datetime))
+                        return trips.filter(start, calendar__in=get_calendars(datetime))
                     except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                         pass
 
