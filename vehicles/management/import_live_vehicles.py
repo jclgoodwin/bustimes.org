@@ -276,7 +276,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             return
 
         if self.vehicles_to_update:
-            Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'latest_location', 'withdrawn'])
+            try:
+                Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'latest_location', 'withdrawn'])
+            except IntegrityError:
+                self.vehicle_cache = {}  # for import_bod_avl
             self.vehicles_to_update = []
 
         pipeline = redis_client.pipeline(transaction=False)
