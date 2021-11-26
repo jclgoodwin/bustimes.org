@@ -679,7 +679,11 @@ class VehicleJourney(models.Model):
                     if not journey_ref:
                         return
             except Trip.DoesNotExist:
-                pass
+                if origin_aimed_departure_time:
+                    try:
+                        return trips.get(start, calendar__in=get_calendars(datetime))
+                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                        pass
 
         if not journey_ref:
             journey_ref = self.code
