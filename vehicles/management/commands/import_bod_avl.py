@@ -183,7 +183,7 @@ class Command(ImportLiveVehiclesCommand):
                     vehicle.fleet_number = defaults['fleet_number']
                 vehicle.save(update_fields=['fleet_code', 'fleet_number'])
         except Vehicle.MultipleObjectsReturned as e:
-            print(e, operator, vehicle_ref)
+            print(e, operator_ref, vehicle_ref)
             vehicle = vehicles.first()
             created = False
 
@@ -430,17 +430,20 @@ class Command(ImportLiveVehiclesCommand):
             if journey.service and (origin_aimed_departure_time or journey_ref and '_' not in journey_ref):
                 journey.trip = journey.get_trip(datetime, destination_ref, origin_aimed_departure_time, journey_ref)
 
-                if journey.trip and not journey.destination and journey.trip.destination_id:
-                    journey.destination = self.get_destination_name(journey.trip.destination_id)
+                try:
+                    if journey.trip and not journey.destination and journey.trip.destination_id:
+                        journey.destination = self.get_destination_name(journey.trip.destination_id)
 
-                elif not journey.trip and latest_journey and latest_journey.trip:
-                    # if driver change caused bogus journey code change (Ticketer), continue previous journey
-                    if latest_journey.route_name == journey.route_name:
-                        if latest_journey.destination == journey.destination:
-                            start = localtime(datetime)
-                            start = timedelta(hours=start.hour, minutes=start.minute)
-                            if latest_journey.trip.start < start < latest_journey.trip.end:
-                                journey.trip = latest_journey.trip
+                    elif not journey.trip and latest_journey and latest_journey.trip:
+                        # if driver change caused bogus journey code change (Ticketer), continue previous journey
+                        if latest_journey.route_name == journey.route_name:
+                            if latest_journey.destination == journey.destination:
+                                 start = localtime(datetime)
+                                 start = timedelta(hours=start.hour, minutes=start.minute)
+                                 if latest_journey.trip.start < start < latest_journey.trip.end:
+                                     journey.trip = latest_journey.trip
+                except Trip.DoesNotExist:
+                    pass
 
                 if journey.trip and journey.trip.garage_id != vehicle.garage_id:
                     vehicle.garage_id = journey.trip.garage_id

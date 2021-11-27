@@ -71,7 +71,7 @@ class Command(ImportLiveVehiclesCommand):
         vehicle = None
         created = False
 
-        if 'reg' in defaults:
+        if 'reg' in defaults and operator != 'MCGL':
             vehicle = vehicles.filter(reg=defaults['reg']).first()
 
         if not vehicle and fleet_number.isdigit():

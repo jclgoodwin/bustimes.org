@@ -686,7 +686,7 @@ class VehicleJourney(models.Model):
             except Trip.DoesNotExist:
                 if destination and origin_aimed_departure_time:
                     try:
-                        return trips.filter(start, calendar__in=get_calendars(datetime))
+                        return trips.get(start, calendar__in=get_calendars(datetime))
                     except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                         pass
 

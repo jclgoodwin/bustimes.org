@@ -278,7 +278,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if self.vehicles_to_update:
             try:
                 Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'latest_location', 'withdrawn'])
-            except IntegrityError:
+            except IntegrityError as e:
+                print(e)
                 self.vehicle_cache = {}  # for import_bod_avl
             self.vehicles_to_update = []
 

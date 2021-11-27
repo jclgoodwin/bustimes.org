@@ -51,7 +51,7 @@ class Command(ImportLiveVehiclesCommand):
         # stats for last 10 updates
         bod_status = cache.get('bod_avl_status', [])
         bod_status.append((timezone.now(), self.source.datetime, count, i))
-        bod_status = bod_status[-10:]
+        bod_status = bod_status[-50:]
         cache.set('bod_avl_status', bod_status)
 
         cache.set('bod_avl_identifiers', self.identifiers)  # backup
