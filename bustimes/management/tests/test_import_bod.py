@@ -155,6 +155,9 @@ class ImportBusOpenDataTest(TestCase):
 
         journey.code = '0915'
         trip = journey.get_trip()
+        self.assertEqual(trip.ticket_machine_code, '1')
+
+        trip = journey.get_trip(destination_ref='2900K132')
         self.assertIsNone(trip)
 
         trip = journey.get_trip(destination_ref='2900K132')
@@ -165,7 +168,6 @@ class ImportBusOpenDataTest(TestCase):
         self.assertIsNone(trip)
 
         # test trip copy:
-
         trip = route.trip_set.first()
         trip.copy(datetime.timedelta(hours=1))
 

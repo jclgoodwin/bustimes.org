@@ -259,20 +259,20 @@ def vehicles_json(request):
         xmin, ymin, xmax, ymax = bounds.extent
 
         # convert to kilometres (only for redis to convert back to degrees)
-        width = haversine((ymin, xmax), (ymin, xmin))
-        height = haversine((ymin, xmax), (ymax, xmax))
+        width = haversine((ymin, xmax), (ymin, xmin)) or 1
+        height = haversine((ymin, xmax), (ymax, xmax)) or 1
 
         try:
             vehicle_ids = redis_client.geosearch(
                 'vehicle_location_locations',
                 longitude=(xmax + xmin) / 2,
                 latitude=(ymax + ymin) / 2,
+                unit='km',
                 width=width,
-                height=height,
-                unit='km'
+                height=height
             )
-        except redis.exceptions.ResponseError:
-            return HttpResponseBadRequest()
+        except redis.exceptions.ResponseError as e:
+            return HttpResponseBadRequest(e)
     else:
         if 'service' in request.GET:
             try:
