@@ -2,7 +2,9 @@
 <div class="aside">
     {% if when %}
     <form autocomplete="off">
-        <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required /><input type="time" name="time" value="{{ when.time }}" required /><input type="submit" value="Go" />
+        <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required
+        /><input type="time" name="time" value="{{ when.time }}" required
+        /><input type="submit" value="Go" />
     </form>
     {% else %}<h2>Next departures</h2>{% endif %}
     {% for item in departures %}
@@ -12,8 +14,8 @@
                     </tbody>
                     </table>
                 {% endif %}
-                {% if item.time.date and item.time.date != today %}
-                    <h3>{{ item.time|date:"l" }}</h3>
+                {% if item.time.date and item.time.date != when.date %}
+                    <h3>{{ item.time|date:"l j F" }}</h3>
                 {% endif %}
                 <table>
                 <tbody>
