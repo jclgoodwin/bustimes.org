@@ -673,7 +673,7 @@ class VehicleJourney(models.Model):
             if destination:
                 if direction:
                     destination |= direction
-                trips_at_start = trips.filter(destination)
+                trips_at_start = trips_at_start.filter(destination)
 
             try:
                 return trips_at_start.get()
