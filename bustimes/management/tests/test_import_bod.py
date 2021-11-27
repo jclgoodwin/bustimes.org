@@ -157,7 +157,7 @@ class ImportBusOpenDataTest(TestCase):
         trip = journey.get_trip()
         self.assertEqual(trip.ticket_machine_code, '1')
 
-        trip = journey.get_trip(destination_ref='2900K132')
+        trip = journey.get_trip(destination_ref='290J34')
         self.assertIsNone(trip)
 
         trip = journey.get_trip(destination_ref='2900K132')
