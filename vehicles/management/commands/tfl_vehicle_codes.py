@@ -1,0 +1,48 @@
+import json
+import requests
+from django.core.management.base import BaseCommand
+from ...models import Vehicle, VehicleCode
+
+
+def get_tfl_vehicle(reg):
+    try:
+        return Vehicle.objects.get(code=reg)
+    except Vehicle.DoesNotExist:
+        try:
+            return Vehicle.objects.get(reg=reg)
+        except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned) as e:
+            print(reg, e)
+    except Vehicle.MultipleObjectsReturned as e:
+        print(reg, e)
+
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+
+        url = "http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?ReturnList=VehicleID,RegistrationNumber"
+
+        scheme = "TFLO"
+
+        existing_codes = VehicleCode.objects.filter(scheme=scheme).select_related('vehicle')
+        existing_codes = {code.code: code.vehicle for code in existing_codes}
+
+        response = requests.get(url)
+
+        for line in response.text.split()[1:]:
+            line = json.loads(line)
+            _, vehicle_id, reg = line
+            if reg.isdigit():
+                continue
+            vehicle_id = str(vehicle_id)
+            if vehicle_id not in existing_codes:
+                vehicle = get_tfl_vehicle(reg)
+                if not vehicle:
+                    continue
+                code = VehicleCode.objects.create(code=vehicle_id, scheme=scheme, vehicle=vehicle)
+                try:
+                    anonymous_vehicle = Vehicle.objects.get(code=vehicle_id, operator=None)
+                except Vehicle.DoesNotExist:
+                    pass
+                else:
+                    print(anonymous_vehicle.delete())
+                existing_codes[vehicle_id] = code

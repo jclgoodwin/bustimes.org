@@ -353,6 +353,15 @@ class Vehicle(models.Model):
         return json
 
 
+class VehicleCode(models.Model):
+    code = models.CharField(max_length=24)
+    scheme = models.CharField(max_length=24)
+    vehicle = models.ForeignKey(Vehicle, models.CASCADE)
+
+    class Meta:
+        index_together = ('code', 'scheme')
+
+
 class VehicleEditFeature(models.Model):
     feature = models.ForeignKey(VehicleFeature, models.CASCADE)
     edit = models.ForeignKey('VehicleEdit', models.CASCADE)

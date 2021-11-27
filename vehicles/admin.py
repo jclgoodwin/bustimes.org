@@ -539,4 +539,10 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
                 self.message_user(request, message)
 
 
+@admin.register(models.VehicleCode)
+class VehicleCodeAdmin(admin.ModelAdmin):
+    raw_id_fields = ['vehicle']
+    list_display = ['code', 'vehicle']
+
+
 admin.site.register(models.VehicleFeature)

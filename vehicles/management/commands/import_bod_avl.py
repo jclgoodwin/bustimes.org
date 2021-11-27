@@ -106,6 +106,12 @@ class Command(ImportLiveVehiclesCommand):
 
         assert vehicle_ref
 
+        if operator_ref == 'TFLO':
+            try:
+                return self.vehicles.get(vehiclecode__scheme=operator_ref, vehiclecode__code=vehicle_ref), False
+            except Vehicle.DoesNotExist:
+                pass
+
         defaults = {
             'code': vehicle_ref,
             'source': self.source
@@ -427,23 +433,25 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.operator = operator
                 vehicle.save(update_fields=['operator'])
 
+            # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref and '_' not in journey_ref):
                 journey.trip = journey.get_trip(datetime, destination_ref, origin_aimed_departure_time, journey_ref)
 
-                try:
-                    if journey.trip and not journey.destination and journey.trip.destination_id:
-                        journey.destination = self.get_destination_name(journey.trip.destination_id)
-
-                    elif not journey.trip and latest_journey and latest_journey.trip:
+                if not journey.trip:
+                    try:
                         # if driver change caused bogus journey code change (Ticketer), continue previous journey
-                        if latest_journey.route_name == journey.route_name:
+                        if latest_journey and latest_journey.trip and latest_journey.route_name == journey.route_name:
                             if latest_journey.destination == journey.destination:
-                                 start = localtime(datetime)
-                                 start = timedelta(hours=start.hour, minutes=start.minute)
-                                 if latest_journey.trip.start < start < latest_journey.trip.end:
-                                     journey.trip = latest_journey.trip
-                except Trip.DoesNotExist:
-                    pass
+                                start = localtime(datetime)
+                                start = timedelta(hours=start.hour, minutes=start.minute)
+                                if latest_journey.trip.start < start < latest_journey.trip.end:
+                                    journey.trip = latest_journey.trip
+                    except Trip.DoesNotExist:
+                        pass
+
+                elif journey.trip.destination_id:
+                    if not journey.destination or destination_ref != journey.trip.destination_id:
+                        journey.destination = self.get_destination_name(journey.trip.destination_id)
 
                 if journey.trip and journey.trip.garage_id != vehicle.garage_id:
                     vehicle.garage_id = journey.trip.garage_id
