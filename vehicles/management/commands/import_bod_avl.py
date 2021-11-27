@@ -111,7 +111,6 @@ class Command(ImportLiveVehiclesCommand):
             'source': self.source
         }
 
-
         if not operators:
             vehicles = self.vehicles.filter(operator=None)
             if operator_ref == 'TFLO':
@@ -354,7 +353,10 @@ class Command(ImportLiveVehiclesCommand):
 
         journeys = vehicle.vehiclejourney_set.defer('data')
 
-        datetime = None
+        datetime = self.get_datetime(item)
+
+        if origin_aimed_departure_time and origin_aimed_departure_time - datetime > timedelta(hours=20):
+            origin_aimed_departure_time -= timedelta(hours=24)
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
@@ -426,8 +428,6 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.save(update_fields=['operator'])
 
             if journey.service and (origin_aimed_departure_time or journey_ref and '_' not in journey_ref):
-                if not datetime:
-                    datetime = self.get_datetime(item)
                 journey.trip = journey.get_trip(datetime, destination_ref, origin_aimed_departure_time, journey_ref)
 
                 if journey.trip and not journey.destination and journey.trip.destination_id:
