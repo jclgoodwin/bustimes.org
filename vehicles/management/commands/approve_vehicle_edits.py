@@ -6,6 +6,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         for ve in VehicleEdit.objects.filter(approved=None):
             if not ve.get_changes():
-                print(ve)
                 ve.approved = True
                 ve.save(update_fields=['approved'])
+                revision = ve.make_revision()
+                if revision:
+                    revision.save()

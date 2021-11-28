@@ -598,6 +598,8 @@ def vehicle_edits(request):
     if request.GET.get('change'):
         if request.GET['change'] == 'vehicle_type':
             edits = edits.filter(~Q(vehicle_type=''))
+        elif request.GET['change'] == 'reg':
+            edits = edits.filter(~Q(reg=''))
 
     paginator = Paginator(edits, 100)
 

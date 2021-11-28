@@ -453,6 +453,8 @@ class VehicleEdit(models.Model):
     def apply(self, save=True):
         ok = True
         vehicle = self.vehicle
+        if save:
+            revision = self.make_revision()
         update_fields = []
         if self.withdrawn is not None:
             vehicle.withdrawn = self.withdrawn
@@ -510,6 +512,8 @@ class VehicleEdit(models.Model):
             update_fields.append('colours')
         if save:
             vehicle.save(update_fields=update_fields)
+            if revision:
+                revision.save()
             for feature in self.vehicleeditfeature_set.all():
                 if feature.add:
                     vehicle.features.add(feature.feature)
@@ -518,6 +522,23 @@ class VehicleEdit(models.Model):
             if ok:
                 self.approved = True
                 self.save(update_fields=['approved'])
+
+    def make_revision(self):
+        revision = VehicleRevision(user_id=self.user_id, vehicle_id=self.vehicle_id, datetime=self.datetime)
+        revision.to_livery_id = self.livery_id
+        # revision.to_type_id = self.vehicle_type_id
+        revision.changes = {}
+        for field in ('reg', 'name', 'branding'):
+            to_value = getattr(self, field)
+            if to_value:
+                from_value = getattr(self.vehicle, field)
+                if to_value == f"-{from_value}":
+                    to_value = ''
+                elif from_value == to_value:
+                    from_value = ''
+                revision.changes[field] = f"-{from_value}\n+{to_value}"
+        if revision.to_livery_id or revision.to_type_id or revision.changes:
+            return revision
 
     def get_absolute_url(self):
         return self.vehicle.get_absolute_url()
