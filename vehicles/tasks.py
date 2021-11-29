@@ -23,8 +23,8 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
 
     if operator_ref:
         vehicle = vehicle.removeprefix(f'{operator_ref}-')
-        if operator_ref == 'GCB':
-            vehicle = vehicle.removeprefix('WCM-')
+
+    vehicle = vehicle.removeprefix('WCM-')
 
     if not vehicle or vehicle == '-':
         return
