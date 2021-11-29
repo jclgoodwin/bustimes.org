@@ -163,10 +163,9 @@ def operator_vehicles(request, slug=None, parent=None):
         else:
             form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
 
+    vehicles = sorted(vehicles, key=lambda v: Service.get_line_name_order(v.fleet_code))
     if operator.name == 'National Express':
         vehicles = sorted(vehicles, key=lambda v: v.notes)
-    else:
-        vehicles = sorted(vehicles, key=lambda v: Service.get_line_name_order(v.fleet_code))
 
     if not vehicles:
         raise Http404
