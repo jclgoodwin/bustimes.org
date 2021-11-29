@@ -579,7 +579,7 @@ BOD_OPERATORS = [
     ('SLVL', 'WM', {}, False),
     ('JOHS', 'WM', {}, False),
 
-    ('ENSB', 'SE', {}, False),
+    ('ENSB', 'SE', {}, True),
 
     ('BRYL', 'EM', {}, False),
     ('MDCL', 'EM', {}, False),

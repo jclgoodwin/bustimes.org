@@ -116,8 +116,7 @@ def get_open_data_operators():
             operators = [operator_code]
         if incomplete:
             incomplete_operators += operators
-        else:
-            open_data_operators += operators
+        open_data_operators += operators
     for _, _, _, operators in settings.PASSENGER_OPERATORS:
         open_data_operators += operators.values()
     for _, _, _, operators in settings.STAGECOACH_OPERATORS:
@@ -125,7 +124,10 @@ def get_open_data_operators():
     for setting in settings.TICKETER_OPERATORS:
         open_data_operators += setting[1]
 
-    return set(open_data_operators), set(incomplete_operators)
+    open_data_operators = set(open_data_operators)
+    incomplete_operators = set(incomplete_operators)
+    open_data_operators -= incomplete_operators
+    return open_data_operators, incomplete_operators
 
 
 def get_calendar_date(date, operation, summary):
@@ -731,7 +733,7 @@ class Command(BaseCommand):
             return False
         if operators and all(operator.id in self.incomplete_operators for operator in operators):
             services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
-            if operators[0].parent:
+            if operators[0].parent and operators[0].id not in ('FBRI', 'FECS'):
                 services = services.filter(operator__parent=operators[0].parent)
             else:
                 services = services.filter(operator__in=operators)
