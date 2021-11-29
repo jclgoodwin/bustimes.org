@@ -283,7 +283,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get("/vehicles.json?service=ff")
         self.assertEqual(response.status_code, 400)
 
-        # test cache 
+        # test cache
         self.assertIs(False, cache.get("TGTC:843X:43000280301"))
         self.assertIsNone(cache.get("HAMS:C:2400103099"))
         self.assertIsNone(cache.get("WHIP:U:0500CCITY544"))

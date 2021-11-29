@@ -44,13 +44,6 @@ class Command(ImportLiveVehiclesCommand):
             print(code)
             return None, None
 
-        fleet_number = code
-
-        if '_-_' in code:
-            parts = code.split('_-_')
-            if parts[0].isdigit():
-                fleet_number = parts[0]
-
         defaults = {
             'source': self.source,
             'operator_id': operator,
@@ -62,7 +55,6 @@ class Command(ImportLiveVehiclesCommand):
                 defaults['reg'] = item['properties']['meta']['number_plate']
 
         if len(code) > 4 and code[0].isalpha() and code[1] == '_':  # McGill
-            fleet_number = code[2:]
             defaults['fleet_code'] = code.replace('_', ' ')
 
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
@@ -73,9 +65,6 @@ class Command(ImportLiveVehiclesCommand):
 
         if 'reg' in defaults and operator != 'MCGL':
             vehicle = vehicles.filter(reg=defaults['reg']).first()
-
-        if not vehicle and fleet_number.isdigit():
-            vehicle = vehicles.filter(fleet_number=fleet_number).first()
 
         if not vehicle:
             vehicle, created = vehicles.get_or_create(defaults, code=code)

@@ -598,15 +598,18 @@ def vehicle_edits(request):
         edits = edits.filter(livery=request.GET['livery'])
 
     if request.GET.get('change'):
-        if request.GET['change'] == 'vehicle_type':
-            edits = edits.filter(~Q(vehicle_type=''))
-        elif request.GET['change'] == 'reg':
-            edits = edits.filter(~Q(reg=''))
+        if request.GET['change'] in ('vehicle_type', 'reg', 'notes', 'branding', 'name'):
+            edits = edits.filter(~Q(**{request.GET['change']: ''}))
+
+    if request.GET.get('order'):
+        if request.GET['order'] in ('score', '-score'):
+            edits = edits.order_by(request.GET['order'])
 
     paginator = Paginator(edits, 100)
 
     return render(request, 'vehicle_edits.html', {
-        'edits': paginator.get_page(request.GET.get('page'))
+        'edits': paginator.get_page(request.GET.get('page')),
+        'liveries_css_version': cache.get('liveries_css_version', 0),
     })
 
 

@@ -4,7 +4,6 @@ import datetime
 import logging
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.utils.dateparse import parse_duration
-from chardet.universaldetector import UniversalDetector
 
 
 logger = logging.getLogger(__name__)

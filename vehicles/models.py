@@ -528,7 +528,7 @@ class VehicleEdit(models.Model):
         revision.to_livery_id = self.livery_id
         # revision.to_type_id = self.vehicle_type_id
         revision.changes = {}
-        for field in ('reg', 'name', 'branding'):
+        for field in ('reg', 'name', 'branding', 'notes'):
             to_value = getattr(self, field)
             if to_value:
                 from_value = getattr(self.vehicle, field)

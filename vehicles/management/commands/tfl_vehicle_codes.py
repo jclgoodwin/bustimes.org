@@ -39,10 +39,5 @@ class Command(BaseCommand):
                 if not vehicle:
                     continue
                 code = VehicleCode.objects.create(code=vehicle_id, scheme=scheme, vehicle=vehicle)
-                try:
-                    anonymous_vehicle = Vehicle.objects.get(code=vehicle_id, operator=None)
-                except Vehicle.DoesNotExist:
-                    pass
-                else:
-                    print(anonymous_vehicle.delete())
                 existing_codes[vehicle_id] = code
+                Vehicle.objects.filter(code=vehicle_id, operator=None).delete()
