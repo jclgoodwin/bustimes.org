@@ -10,7 +10,10 @@ def get_tfl_vehicle(reg):
     except Vehicle.DoesNotExist:
         try:
             return Vehicle.objects.get(reg=reg)
-        except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned) as e:
+        except Vehicle.DoesNotExist as e:
+            print(reg, e)  # new vehicle
+            return Vehicle.objects.create(code=reg, reg=reg, livery_id=262)
+        except Vehicle.MultipleObjectsReturned as e:
             print(reg, e)
     except Vehicle.MultipleObjectsReturned as e:
         print(reg, e)
@@ -31,7 +34,7 @@ class Command(BaseCommand):
         for line in response.text.split()[1:]:
             line = json.loads(line)
             _, vehicle_id, reg = line
-            if reg.isdigit():
+            if reg.isdigit():  # tram?
                 continue
             vehicle_id = str(vehicle_id)
             if vehicle_id not in existing_codes:

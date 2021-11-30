@@ -14,7 +14,7 @@ interactions:
     uri: http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?ReturnList=VehicleID,RegistrationNumber
   response:
     body:
-      string: "[4,\"1.0\",1638042438789]\r\n[1,10617,\"LK17CZP\"]\r\n[1,19424,\"LK67EOM\"]\r\n[1,9554,\"LTZ1454\"]\r\n[1,7642,\"BV10WVK\"]\r\n[1,7790,\"BV10WWO\"]"
+      string: "[4,\"1.0\",1638042438789]\r\n[1,10617,\"LK17CZP\"]\r\n[1,21084,\"2563\"]\r\n[1,19424,\"LK67EOM\"]\r\n[1,9554,\"LTZ1454\"]\r\n[1,7642,\"BV10WVK\"]\r\n[1,7790,\"BV10WWO\"]"
     headers:
       Access-Control-Allow-Origin:
       - '*'
