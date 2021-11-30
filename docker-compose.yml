@@ -4,7 +4,7 @@ services:
     command: sh -c "make watch & poetry run ./manage.py migrate && poetry run ./manage.py runserver 0.0.0.0:8000"
     container_name: django_web
     environment:
-      - DEBUG=${SECRET_KEY-1}
+      - DEBUG=${DEBUG-1}
       - SECRET_KEY=${SECRET_KEY-d}
       - PGHOST=${PGHOST-postgres}
       - PGUSER=${PGUSER-postgres}
