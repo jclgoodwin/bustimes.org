@@ -30,15 +30,13 @@
     <thead>
         <th scope="col">Publisher</th>
         <th scope="col">Modified</th>
-        <th scope="col">Amounts</th>
         <th scope="col">Description</th>
     </thead>
     <tbody>
         {% for dataset in datasets %}
             <tr>
                 <td style="white-space:nowrap"><a href="{{ dataset.get_absolute_url }}">{{ dataset.nice_name }}</a></td>
-                <td style="white-space:nowrap">{{ dataset.datetime }}</td>
-                <td style="white-space:nowrap">{% if dataset.min_amount is not None %}£{{ dataset.min_amount }}–£{{ dataset.max_amount }}{% endif %}</td>
+                <td style="white-space:nowrap">{{ dataset.datetime|date:"j M Y" }}</td>
                 <td>{{ dataset.description|linebreaksbr }}</td>
             </tr>
         {% endfor %}
