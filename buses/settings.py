@@ -260,13 +260,6 @@ PASSENGER_OPERATORS = [
     ('Go North West', 'https://www.gonorthwest.co.uk/open-data', 'NW', {
         'GONW': 'GONW'
     }),
-    ('Oxford Bus Company', 'https://data.discoverpassenger.com/operator/oxfordbus', 'SE', {
-        'OXBC': 'OXBC',
-        'THTR': 'THTR'
-    }),
-    ('Carousel', 'https://data.discoverpassenger.com/operator/carouselbuses', 'SE', {
-        'CSLB': 'CSLB'
-    }),
     ('Metrobus', 'https://www.metrobus.co.uk/open-data', 'SE', {
         'METR': 'METR'
     }),
@@ -687,7 +680,7 @@ TICKETER_OPERATORS = [
 
     # ('SW', ['PLYC', 'TFCN'], 'Go South West'),
     # ('SE', ['METR'], 'Metrobus'),
-    # ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
+    ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     # ('NW', ['GONW'], 'Go North West'),
 
     # ('W', ['ACYM'], 'Arriva Cymru'),
