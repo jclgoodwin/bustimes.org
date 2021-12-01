@@ -23,14 +23,25 @@ This documentation is incomplete and out of date. And that's OK (?) because I do
 
 ## Installing
 
+### Using Docker
+
+You need Docker installed with docker-compose 1.27.0+. Then you can start the whole environment:
+
+```
+docker-compose up
+```
+
+### Using local install
+
 These need to be available:
 
-- Python 3.9
+- Python 3.9+
 - [Poetry](https://python-poetry.org/) to install necessary Python packages (Django, etc)
 - PostgreSQL with PostGIS
     - On my Macintosh computer I use [Postgres.app](https://postgresapp.com/)
 - `npm` to install some front end JavaScript things
-- Redis 6.2
+- Redis 6.2+
+- [GDAL](https://gdal.org/)
 
 Some environment variables need to be set.
 Many of them control settings in [buses/settings.py](buses/settings.py).
@@ -48,6 +59,16 @@ PGPASSWORD=password
 CELERY_BROKER_URL=redis://localhost:6379
 #AWS_ACCESS_KEY_ID=
 #AWS_SECRET_ACCESS_KEY=
+```
+
+Then run, preferably in a virtual environment, those commands:
+
+```
+npm install
+make build-static
+poetry install
+poetry run ./manage.py migrate
+poetry run ./manage.py runserver 0.0.0.0:8000 
 ```
 
 [.github/workflows/pythonapp.yml](.github/workflows/pythonapp.yml) sort of documents the process of installing dependencies and running tests.

@@ -1,16 +1,43 @@
 services:
   web:
     build: .
-    command: poetry run ./manage.py runserver 0.0.0.0:8000
+    command: sh -c "make watch & poetry run ./manage.py migrate && poetry run ./manage.py runserver 0.0.0.0:8000"
     container_name: django_web
     environment:
-      - DEBUG=1
-      - SECRET_KEY=d
-      # I have Postgres and Redis running on the host machine outside of Docker
-      - PGHOST=host.docker.internal
-      - PGUSER=josh
-      - REDIS_URL=redis://host.docker.internal:6379
+      - DEBUG=${DEBUG-1}
+      - SECRET_KEY=${SECRET_KEY-d}
+      - PGHOST=${PGHOST-postgres}
+      - PGUSER=${PGUSER-postgres}
+      - PGPASSWORD=${PGPASSWORD-postgres}
+      - DB_NAME=${DB_NAME-postgres}
+      - REDIS_URL=${REDIS_URL-redis://redis:6379}
     volumes:
       - .:/app
+      - node_modules:/app/node_modules
     ports:
       - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+  postgres:
+    image: postgis/postgis
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      interval: 3s
+      test: pg_isready -U $$POSTGRES_USER
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      interval: 3s
+      test: redis-cli ping
+volumes:
+  node_modules:

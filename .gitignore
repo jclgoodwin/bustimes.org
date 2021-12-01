@@ -17,3 +17,4 @@ busstops/static/css/*.css.map
 .env
 .coverage
 slim-bustimes.sql
+.idea
