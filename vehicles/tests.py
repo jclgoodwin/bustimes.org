@@ -505,7 +505,7 @@ class VehiclesTests(TestCase):
 
         edit = VehicleEdit.objects.get()
 
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             self.client.post('/admin/vehicles/vehicleedit/', {
                 'action': 'apply_edits',
                 '_selected_action': edit.id

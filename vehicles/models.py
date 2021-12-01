@@ -526,12 +526,21 @@ class VehicleEdit(models.Model):
     def make_revision(self):
         revision = VehicleRevision(user_id=self.user_id, vehicle_id=self.vehicle_id, datetime=self.datetime)
         revision.to_livery_id = self.livery_id
-        # revision.to_type_id = self.vehicle_type_id
+        if self.vehicle_type:
+            try:
+                self.to_type = VehicleType.objects.get(name=self.vehicle_type)
+            except VehicleType.DoesNotExist:
+                pass
+            else:
+                if self.to_type.id != self.vehicle.vehicle_type_id:
+                    self.from_type_id = self.vehicle.vehicle_type_id
         revision.changes = {}
-        for field in ('reg', 'name', 'branding', 'notes'):
+        for field in ('reg', 'name', 'branding', 'notes', 'fleet_number'):
             to_value = getattr(self, field)
             if to_value:
                 from_value = getattr(self.vehicle, field)
+                if field == 'fleet_number':
+                    from_value = self.vehicle.fleet_code
                 if to_value == f"-{from_value}":
                     to_value = ''
                 elif from_value == to_value:
