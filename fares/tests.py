@@ -59,7 +59,7 @@ class FaresTest(TestCase):
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
         # fares index
-        response = self.client.get('/fares/')
-        self.assertContains(response, '£1.40–£1.70')
+        # response = self.client.get('/fares/')
+        # self.assertContains(response, '£1.40–£1.70')
 
         self.assertEqual(TimeInterval.objects.count(), 0)
