@@ -526,6 +526,11 @@ class VehiclesTests(TestCase):
             'reg': '-FD54JYA\n+',
             'fleet number': '-1\n+'
         })
+        revision = edit.make_revision()
+        self.assertEqual(revision.changes, {
+            'reg': '-\n+',
+            'fleet number': '-\n+'
+        })
 
         # test user view
         response = self.client.get(self.staff_user.get_absolute_url())

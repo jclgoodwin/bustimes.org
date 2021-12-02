@@ -542,7 +542,7 @@ class VehicleEdit(models.Model):
                 if field == 'fleet_number':
                     from_value = self.vehicle.fleet_code
                     field = 'fleet number'
-                if to_value == f"-{from_value}":
+                if to_value.startswith('-') and (to_value == f"-{from_value}" or from_value == ''):
                     to_value = ''
                 elif from_value == to_value:
                     from_value = ''
