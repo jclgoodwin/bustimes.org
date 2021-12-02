@@ -9,7 +9,7 @@ from chardet.universaldetector import UniversalDetector
 from django.utils.dateparse import parse_duration
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Exists, OuterRef
 from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from busstops.models import Region, DataSource, StopPoint, Service, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
@@ -105,9 +105,11 @@ class Command(BaseCommand):
     def handle_route(self, line):
         try:
             service = Service.objects.filter(
-                Q(route__code=line['route_id']) | Q(service_code=line['route_id']),
+                Exists(Route.objects.filter(code=line['route_id'], service=OuterRef('id'))) | Q(service_code=line['route_id']),
                 source=self.source
             ).get()
+        except Service.DoesNotExist:
+            service = Service(source=self.source)
         except Service.DoesNotExist:
             service = Service(source=self.source)
 
@@ -346,19 +348,21 @@ class Command(BaseCommand):
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
     def handle(self, *args, **options):
+        prefix = "https://www.transportforireland.ie"
+
         if options['collections']:
             collections = [f'google_transit_{collection}.zip' for collection in options['collections']]
         else:
             session = HTMLSession()
 
-            response = session.get('https://www.transportforireland.ie/transitData/PT_Data.html')
+            response = session.get(f'{prefix}/transitData/PT_Data.html')
             collections = response.html.find('a[href^="google_transit_"]')
 
             collections = options['collections'] or set(element.attrs['href'] for element in collections)
 
         for collection in collections:
             path = os.path.join(settings.DATA_DIR, collection)
-            url = f'https://www.transportforireland.ie/transitData/{collection}'
+            url = f'{prefix}/transitData/{collection}'
             modifed, last_modified = download_if_changed(path, url)
             if modifed or options['force']:
 
