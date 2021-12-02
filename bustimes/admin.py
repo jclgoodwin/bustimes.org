@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db.models import Exists, OuterRef
-from django.contrib.gis.db.models import PointField
+from django.db.models.functions import Cast
+from django.contrib.gis.db.models import PointField, CharField
 from django.contrib.gis.forms import OSMWidget
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
@@ -110,3 +111,15 @@ class BankHolidayDateInline(admin.TabularInline):
 @admin.register(BankHoliday)
 class BankHolidayAdmin(admin.ModelAdmin):
     inlines = [BankHolidayDateInline]
+    list_display = ['name', 'dates']
+
+    def dates(self, obj):
+        return obj.dates
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if 'changelist' in request.resolver_match.view_name:
+            return queryset.annotate(
+                dates=StringAgg(Cast('bankholidaydate__date', output_field=CharField()), ', ')
+            )
+        return queryset
