@@ -229,7 +229,7 @@ def bus_open_data(api_key, operator):
         to_delete = DataSource.objects.filter(
             ~Q(id__in=all_source_ids),
             ~Exists(Route.objects.filter(source=OuterRef('id'))),
-            url__startswith=url_prefix
+            url__startswith=f"{url_prefix}/timetable/"
         )
         if to_delete:
             logger.info(to_delete)
