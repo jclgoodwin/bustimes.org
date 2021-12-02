@@ -271,30 +271,24 @@ PASSENGER_OPERATORS = [
         'BB': 'BORD',
         '': 'PERY',
     }),
+
     ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
-        'SQ': 'WDBC',
-        'DAM': 'DAMY',
-        'BLU': 'BLUS',
-    }),
-    ('UNIBUS', 'https://www.unibuses.co.uk/open-data', 'SW', {
-        'SQ': 'WDBC',
+        'WDBC': 'WDBC',
+        'DAMY': 'DAMY',
     }),
     ('Bluestar', 'https://www.bluestarbus.co.uk/open-data', 'SW', {
-        'SQ': 'BLUS',
+        'BLUS': 'BLUS',
         'UNIL': 'UNIL',
     }),
-    ('Unilink', 'https://www.unilinkbus.co.uk/open-data', 'SW', {
-        'SQ': 'UNIL',
-        'BLUS': 'BLUS',
-    }),
     ('Salisbury Reds', 'https://www.salisburyreds.co.uk/open-data', 'SW', {
-        'SQ': 'SWWD',
-        'SR': 'SWWD',
-        'DAM': 'DAMY',
+        'SWWD': 'SWWD',
     }),
     ('Southern Vectis', 'https://www.islandbuses.info/open-data', 'SW', {
-        'SQ': 'SVCT',
-        'DAM': 'DAMY',
+        'SVCT': 'SVCT',
+    }),
+    ('Swindon’s Bus Company', 'https://www.swindonbus.co.uk/open-data', 'SW', {
+        'TDTR': 'TDTR',
+        'SWIN': 'TDTR',
     }),
 
     ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
@@ -318,13 +312,6 @@ PASSENGER_OPERATORS = [
     }),
     ('Yellow Buses', 'https://www.yellowbuses.co.uk/open-data', 'SW', {
         'YELL': 'YELL',
-    }),
-    ('Swindon’s Bus Company', 'https://www.swindonbus.co.uk/open-data', 'SW', {
-        'TT': 'TDTR',
-        'SBCR': 'TDTR',  # rural
-        'SR': 'TDTR',  # rural
-        'SWIN': 'TDTR',
-        'NATI': 'TDTR',  # Nationwide Building Society
     }),
     ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
         'BH': 'BHBC',
