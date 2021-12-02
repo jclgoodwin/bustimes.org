@@ -19,7 +19,9 @@ fares    | fares
 vehicles | tracking buses' locations and showing them on a map, and pointless details about vehicles' colours and features
 vosa     | the Great Britain Traffic Commissioners' bus service registration data. VOSA is the name of a defunct UK government agency. 
 
-This documentation is incomplete and out of date. And that's OK (?) because I don't expect anyone to need to follow it. I will try to document some things for my own reference.
+This documentation is incomplete and out of date.
+And that's OK (?) because I don't expect anyone to need to follow it.
+I will try to document some things for my own reference.
 
 ## Installing
 

@@ -126,10 +126,12 @@ def bus_open_data(api_key, operator):
 
     command = get_command()
 
+    url_prefix = "https://data.bus-data.dft.gov.uk"
+
     datasets = []
 
     for params in get_bus_open_data_paramses(api_key, operator):
-        url = 'https://data.bus-data.dft.gov.uk/api/v1/dataset/'
+        url = f"{url_prefix}/api/v1/dataset/"
         while url:
             response = session.get(url, params=params)
             json = response.json()
@@ -216,7 +218,7 @@ def bus_open_data(api_key, operator):
                 Q(source__in=sources) | Q(route__source__in=sources), current=True, operator=o
             ).exists():
                 clean_up([o], sources, incomplete)
-            elif len(operators) == 1 or Service.objects.filter(current=True, operator=o).exists():
+            elif Service.objects.filter(current=True, operator=o, route__source__url__startswith=url_prefix).exists():
                 logger.warning(f'{o} has no current data')
 
         command.service_ids = service_ids
@@ -227,7 +229,7 @@ def bus_open_data(api_key, operator):
         to_delete = DataSource.objects.filter(
             ~Q(id__in=all_source_ids),
             ~Exists(Route.objects.filter(source=OuterRef('id'))),
-            url__startswith="https://data.bus-data.dft.gov.uk/timetable/dataset/"
+            url__startswith=url_prefix
         )
         if to_delete:
             logger.info(to_delete)

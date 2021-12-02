@@ -789,10 +789,6 @@ class Command(BaseCommand):
             if self.source.name != 'L':
                 if operators and all(operator.id in self.open_data_operators for operator in operators):
                     return
-        elif self.source.name in ('Oxford Bus Company', 'Carousel'):
-            if operators and operators[0].id not in self.operators.values():
-                logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
-                return
         elif self.source.name.startswith('Arriva') and 'tfl_' in filename:
             logger.info(f'skipping {filename} {txc_service.service_code} (Arriva London)')
             return
