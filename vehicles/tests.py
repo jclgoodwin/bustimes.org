@@ -493,6 +493,7 @@ class VehiclesTests(TestCase):
 
         url = self.vehicle_1.get_edit_url()
 
+        # create a revision and an edit
         with self.assertNumQueries(14):
             self.client.post(url, {
                 'fleet_number': '',
@@ -505,6 +506,7 @@ class VehiclesTests(TestCase):
 
         edit = VehicleEdit.objects.get()
 
+        # approve the edit
         with self.assertNumQueries(17):
             self.client.post('/admin/vehicles/vehicleedit/', {
                 'action': 'apply_edits',
@@ -518,6 +520,12 @@ class VehiclesTests(TestCase):
         self.assertIsNone(vehicle.fleet_number)
         self.assertEqual('', vehicle.fleet_code)
         self.assertEqual('', vehicle.reg)
+
+        revision = VehicleRevision.objects.last()
+        self.assertEqual(revision.changes, {
+            'reg': '-FD54JYA\n+',
+            'fleet number': '-1\n+'
+        })
 
         # test user view
         response = self.client.get(self.staff_user.get_absolute_url())
