@@ -1053,7 +1053,9 @@ class Command(BaseCommand):
                 route_links_to_create = {}
                 for route_link in self.get_route_links(journeys, transxchange):
                     geometry.append(route_link.track)
-                    if route_link.from_stop in stops and route_link.to_stop in stops:
+                    from_stop = stops.get(route_link.from_stop)
+                    to_stop = stops.get(route_link.to_stop)
+                    if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
                         key = (route_link.from_stop, route_link.to_stop)
                         if key in existing_route_links:
                             if key not in existing_route_links:
