@@ -677,7 +677,7 @@ class VehicleJourney(models.Model):
         if not datetime:
             datetime = self.datetime
 
-        routes = get_routes(self.service.route_set.select_related('source'), datetime)
+        routes = get_routes(self.service.route_set.select_related('source'), datetime.date())
         if not routes:
             return
         trips = Trip.objects.filter(route__in=routes)
