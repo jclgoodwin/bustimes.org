@@ -236,7 +236,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             try:
                 journey.save()
             except IntegrityError:
-                journey = vehicle.vehiclejourney_set.defer('data').using('default').get(datetime=journey.datetime)
+                try:
+                    journey = vehicle.vehiclejourney_set.defer('data').using('default').get(datetime=journey.datetime)
+                except VehicleJourney.DoesNotExist:
+                    return
             else:
                 if not existing_id:
                     # just in case the id has been reused
