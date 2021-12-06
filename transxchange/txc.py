@@ -16,9 +16,10 @@ class Stop:
     """A TransXChange StopPoint."""
     def __init__(self, element):
         if element:
-            self.atco_code = element.findtext('StopPointRef')
-            if not self.atco_code:
-                self.atco_code = element.findtext('AtcoCode', '')
+            atco_code = element.findtext('StopPointRef')
+            if not atco_code:
+                atco_code = element.findtext('AtcoCode', '')
+            self.atco_code = atco_code.upper()
 
             self.common_name = element.findtext('CommonName')
 
@@ -45,8 +46,8 @@ class RouteSection:
 class RouteLink:
     def __init__(self, element):
         self.id = element.get('id')
-        self.from_stop = element.findtext('From/StopPointRef')
-        self.to_stop = element.findtext('To/StopPointRef')
+        self.from_stop = element.findtext('From/StopPointRef').upper()
+        self.to_stop = element.findtext('To/StopPointRef').upper()
         locations = element.findall('Track/Mapping/Location/Translation')
         if not locations:
             locations = element.findall('Track/Mapping/Location')
@@ -105,8 +106,11 @@ class JourneyPatternStopUsage:
         if self.sequencenumber is not None:
             self.sequencenumber = int(self.sequencenumber)
 
-        self.stop = stops.get(element.find('StopPointRef').text)
-        if self.stop is None:
+        stop_ref = element.findtext('StopPointRef').upper()
+        try:
+            self.stop = stops[stop_ref]
+        except KeyError:
+            logger.warning(stop_ref)
             self.stop = Stop(element)
 
         self.timingstatus = element.findtext('TimingStatus')
