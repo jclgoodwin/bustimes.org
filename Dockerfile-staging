@@ -16,5 +16,6 @@ RUN npm install
 COPY . /app/
 
 ENV SECRET_KEY=f
+ENV STATIC_ROOT=/app/staticfiles
 RUN make build-static
 RUN poetry run ./manage.py collectstatic --noinput
