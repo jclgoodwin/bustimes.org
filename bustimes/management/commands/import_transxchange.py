@@ -229,8 +229,6 @@ class Command(BaseCommand):
 
         licence_number = operator_element.findtext('LicenceNumber')
         if licence_number:
-            if licence_number.startswith('YW'):
-                licence_number = licence_number.replace('YW', 'PB')
             try:
                 return Operator.objects.get(licences__licence_number=licence_number)
             except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
