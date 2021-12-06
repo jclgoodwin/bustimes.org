@@ -1,6 +1,6 @@
 # Digital Ocean App Platform
 
-FROM python:3.9-buster
+FROM python:3.10-bullseye
 
 RUN apt-get update && apt-get install -y gdal-bin npm
 
@@ -16,4 +16,5 @@ RUN npm install
 COPY . /app/
 
 ENV SECRET_KEY=f
+RUN make build-static
 RUN poetry run ./manage.py collectstatic --noinput
