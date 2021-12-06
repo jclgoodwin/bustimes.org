@@ -13,9 +13,9 @@
 <script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"bustimes.org","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
 {% load static %}
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}">
-<link rel="shortcut icon" href="/favicon.ico">
+<link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 <!--[if gte IE 9]><!-->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />    
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 <!--<![endif]-->
 <!--[if lt IE 9]>
     <link rel="stylesheet" href="{% static 'css/ie.css' %}" />

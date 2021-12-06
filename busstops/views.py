@@ -13,7 +13,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, Prefetch, F, Exists, OuterRef, Count, Min
 from django.db.models.functions import Now
-from django.http import JsonResponse, Http404, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, Http404, JsonResponse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
@@ -111,6 +111,10 @@ def not_found(request, exception):
 def offline(request):
     """Offline page (for service worker)"""
     return render(request, 'offline.html')
+
+
+def robots_txt(request):
+    return HttpResponse("User-Agent: *\nDisallow: /\n", content_type="text/plain")
 
 
 def change_password(request):

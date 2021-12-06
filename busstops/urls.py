@@ -22,6 +22,7 @@ urlpatterns = [
     path('cookies', views.cookies),
     path('data', views.data),
     path('status', views.status),
+    path('robots.txt', views.robots_txt),
     path('stops.json', views.stops),
     path('regions/<pk>', views.RegionDetailView.as_view(), name='region_detail'),
     path('places/<int:pk>', views.PlaceDetailView.as_view(), name='place_detail'),
