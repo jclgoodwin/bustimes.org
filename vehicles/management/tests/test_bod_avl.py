@@ -296,7 +296,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
         self.assertContains(
             response,
-            f'<td colspan="2"><a href="/trips/{whippet_journey.trip_id}">09:23</a></td>',
+            f'<td colspan="2"><a href="#journeys/{whippet_journey.id}">09:23</a></td>',
         )
 
     def test_handle_item(self):

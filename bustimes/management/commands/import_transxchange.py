@@ -1128,11 +1128,11 @@ class Command(BaseCommand):
 
         for garage_code in transxchange.garages:
             garage = transxchange.garages[garage_code]
-            name = garage.findtext('GarageName', '')
+            name = garage.findtext('GarageName', '').removesuffix(' Bus Depot')
             name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
             name = name.removesuffix(' garage').removesuffix(' Garage').strip()
             if garage_code not in self.garages or self.garages[garage_code].name != name:
-                garage = Garage.objects.filter(code=garage_code, name=name).first()
+                garage = Garage.objects.filter(code=garage_code, name__iexact=name).first()
                 if garage is None:
                     garage = Garage.objects.create(code=garage_code, name=name)
                 self.garages[garage_code] = garage
