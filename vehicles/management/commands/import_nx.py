@@ -1,7 +1,6 @@
 import ciso8601
 from time import sleep
 from datetime import timedelta
-from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 from requests import RequestException
 from django.contrib.gis.geos import Point
 from django.utils import timezone
@@ -14,12 +13,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 def parse_datetime(string):
     datetime = ciso8601.parse_datetime(string)
-    try:
-        return timezone.make_aware(datetime)
-    except AmbiguousTimeError:
-        return timezone.make_aware(datetime, is_dst=True)
-    except NonExistentTimeError:
-        return timezone.make_aware(datetime + timedelta(hours=1))
+    return timezone.make_aware(datetime)
 
 
 def get_trip_condition(date, time_since_midnight):

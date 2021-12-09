@@ -1,7 +1,6 @@
 import os
 import requests
 import datetime
-from pytz.exceptions import AmbiguousTimeError
 from django.utils.timezone import utc, make_aware
 from django.utils.http import http_date, parse_http_date
 
@@ -68,7 +67,4 @@ def time_datetime(time, date):
         seconds -= 86400
     time = datetime.time(int(seconds / 3600), int(seconds % 3600 / 60), int(seconds % 60))
     combined = datetime.datetime.combine(date, time)
-    try:
-        return make_aware(combined)
-    except AmbiguousTimeError:
-        return make_aware(combined, is_dst=True)
+    return make_aware(combined)

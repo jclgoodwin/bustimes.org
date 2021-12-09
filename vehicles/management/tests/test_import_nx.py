@@ -29,7 +29,7 @@ class NatExpTest(TestCase):
         self.assertEqual(str(parse_datetime("2021-10-31 02:05:00")), "2021-10-31 02:05:00+00:00")
 
         self.assertEqual(str(parse_datetime("2021-03-28 00:00:00")), "2021-03-28 00:00:00+00:00")
-        self.assertEqual(str(parse_datetime("2021-03-28 01:05:00")), "2021-03-28 02:05:00+01:00")  # non existent time
+        self.assertEqual(str(parse_datetime("2021-03-28 01:05:00")), "2021-03-28 01:05:00+00:00")  # non existent time
         self.assertEqual(str(parse_datetime("2021-03-28 02:05:00")), "2021-03-28 02:05:00+01:00")
 
     @patch("vehicles.management.commands.import_nx.sleep")
@@ -142,9 +142,7 @@ class NatExpTest(TestCase):
             "vehicles.management.commands.import_nx.Command.get_items",
             return_value=items,
         ) as get_items:
-            with patch('builtins.print') as mocked_print:
-                self.nat_exp_command.update()
-        mocked_print.assert_called()
+            self.nat_exp_command.update()
         get_items.assert_called()
 
         self.assertEqual(2, Vehicle.objects.all().count())
