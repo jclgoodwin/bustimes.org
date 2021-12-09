@@ -35,7 +35,7 @@
 
     {% if journeys %}
         <div class="table-wrapper">
-        <table{% if not vehicle %} class="sortable"{% endif %}>
+        <table>
             <thead>
                 <tr>
                     <th scope="col">{% if not vehicle %}Vehicle{% else %}Service{% endif %}</th>
@@ -115,11 +115,8 @@
 {% block ad %}{% endblock %}
 
 {% block foot %}
-    {% load static %}
-    {% if not vehicle %}
-        <script src="{% static 'js/sorttable.js' %}"></script>
-    {% endif %}
     {% if journeys %}
+        {% load static %}
         <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
         <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
         <script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
