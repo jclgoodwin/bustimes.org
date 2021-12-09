@@ -194,6 +194,8 @@ DATETIME_FORMAT = 'j M H:i'
 TIME_ZONE = 'Europe/London'
 USE_TZ = True
 USE_I18N = False
+LANGUAGE_CODE = 'en-gb'
+USE_L10N = False  # force use of TIME_FORMAT, DATE_FORMAT etc. Alas, deprecated
 
 
 def before_send(event, hint):
