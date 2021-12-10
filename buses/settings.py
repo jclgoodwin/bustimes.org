@@ -369,11 +369,11 @@ BOD_OPERATORS = [
         'FTVA': 'FTVA',
         # 'FHAM': 'FHAM',
         # 'FDOR': 'FDOR',
-        # 'FBOS': 'FBOS',
         'FCWL': 'FCWL',
         'FBRI': 'FBRI',
         # 'FLEI': 'FLEI',
         'RRAR': 'RRAR',
+        'FBOS': 'FBOS',
         # 'FWYO': 'FWYO',
     }, True),
 
