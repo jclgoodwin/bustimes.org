@@ -59,7 +59,11 @@ class Command(BaseCommand):
             stops = StopPoint.objects.in_bulk(stop_usage.stop_id for stop_usage in stop_usages)
             line_strings = []
             for pattern in get_journey_patterns(route.trip_set.all()):
-                points = (stops[stop_code].latlong for stop_code in pattern if stop_code in stops)
+                points = (
+                    stops[stop_code].latlong
+                    for stop_code in pattern
+                    if stop_code in stops and stops[stop_code].latlong
+                )
                 line_strings.append(LineString(*points))
             route.service.geometry = MultiLineString(*line_strings)
 
