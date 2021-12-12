@@ -103,15 +103,24 @@ class Command(BaseCommand):
         return StopPoint.objects.in_bulk(stops), stops_not_created
 
     def handle_route(self, line):
-        try:
-            service = Service.objects.filter(
-                Exists(Route.objects.filter(code=line['route_id'], service=OuterRef('id'))) | Q(service_code=line['route_id']),
-                source=self.source
-            ).get()
-        except Service.DoesNotExist:
-            service = Service(source=self.source)
-        except Service.DoesNotExist:
-            service = Service(source=self.source)
+        route_id = line['route_id']
+        parts = route_id.split('-')
+        if len(parts) == 4 and parts[0].isdigit() and parts[3].isdigit():
+            service = self.source.service_set.filter(
+                Q(service_code__startswith='-'.join(parts[:3])) |
+                Q(service_code__startswith=f"{parts[0]}", service_code__endswith=f"-{parts[2]}-{parts[3]}", line_name__iexact=line['route_short_name'])
+            ).order_by('id').first()
+        else:
+            service = None
+        if not service:
+            try:
+                service = self.source.service_set.filter(
+                    Exists(
+                        Route.objects.filter(code=line['route_id'], service=OuterRef('id'))
+                    ) | Q(service_code=line['route_id'])
+                ).get()
+            except Service.DoesNotExist:
+                service = Service(source=self.source)
 
         service.service_code = line['route_id']
         service.line_name = line['route_short_name']
@@ -209,7 +218,8 @@ class Command(BaseCommand):
                 trips[line['trip_id']] = Trip(
                     route=route,
                     calendar=calendars[line['service_id']],
-                    inbound=line['direction_id'] == '1'
+                    inbound=line['direction_id'] == '1',
+                    ticket_machine_code=line['trip_id']
                 )
                 if line['shape_id']:
                     if route.service_id not in self.service_shapes:
@@ -256,23 +266,9 @@ class Command(BaseCommand):
             stop_time = None
             for line in read_file(archive, 'stop_times.txt'):
                 if line['trip_id'] not in trips:
+                    logger.warning(f"trip {line['trip_id']} missing")
                     continue
-                if trip_id != line['trip_id']:
-                    # previous trip
-                    if trip:
-                        if not stop_time.arrival:
-                            stop_time.arrival = stop_time.departure
-                            stop_time.departure = None
-                        trip.start = stop_times[0].departure
-                        trip.end = stop_times[-1].arrival
-                        trip.save()
-                        for stop_time in stop_times:
-                            stop_time.trip = trip
-                        StopTime.objects.bulk_create(stop_times)
-                        stop_times = []
-                    trip = Trip()
-                trip_id = line['trip_id']
-                trip = trips[trip_id]
+
                 stop = stops.get(line['stop_id'])
                 arrival_time = parse_duration(line['arrival_time'])
                 departure_time = parse_duration(line['departure_time'])
@@ -280,14 +276,27 @@ class Command(BaseCommand):
                     # TODO: fix assumption of British Summer Time
                     arrival_time += timedelta(hours=1)
                     departure_time += timedelta(hours=1)
-
                 if arrival_time == departure_time:
                     arrival_time = None
+
+                if trip_id != line['trip_id']:
+                    if trip:
+                        # finish off previous trip
+                        if not stop_time.arrival:
+                            stop_time.arrival = stop_time.departure
+                            stop_time.departure = None
+                        trip.end = stop_time.arrival
+
+                    trip_id = line['trip_id']
+                    trip = trips[trip_id]
+                    trip.start = departure_time
+
                 stop_time = StopTime(
                     stop=stop,
                     arrival=arrival_time,
                     departure=departure_time,
                     sequence=line['stop_sequence'],
+                    trip=trip
                 )
                 if line.get('pickup_type') == '1':  # "No pickup available"
                     stop_time.pick_up = False
@@ -305,11 +314,11 @@ class Command(BaseCommand):
         if not stop_time.arrival:
             stop_time.arrival = stop_time.departure
             stop_time.departure = None
-        trip.start = stop_times[0].departure
-        trip.end = stop_times[-1].arrival
-        trip.save()
+        trip.end = stop_time.arrival
+
+        Trip.objects.bulk_create(trips.values())
         for stop_time in stop_times:
-            stop_time.trip = trip
+            stop_time.trip = stop_time.trip
         StopTime.objects.bulk_create(stop_times)
 
         for service in self.services.values():
@@ -374,5 +383,6 @@ class Command(BaseCommand):
                 )
                 if options['force'] or self.source.older_than(last_modified):
                     print(collection, last_modified)
-                    self.source.datetime = last_modified
+                    if last_modified:
+                        self.source.datetime = last_modified
                     self.handle_zipfile(path)
