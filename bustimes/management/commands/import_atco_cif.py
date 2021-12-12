@@ -101,7 +101,7 @@ class Command(BaseCommand):
                     if name and stop_code not in stops:
                         name = name.decode(encoding).strip()
                         stops[stop_code] = StopPoint(atco_code=stop_code, common_name=name, active=True)
-                else:
+                elif stop_code in stops:
                     easting = line[15:23].strip()
                     northing = line[23:31].strip()
                     if easting:
