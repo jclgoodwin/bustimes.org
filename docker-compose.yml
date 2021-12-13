@@ -22,7 +22,7 @@ services:
       - .:/app
     ports:
       - "8000:8000"
-    restart: unless-stopped
+    restart: on-failure
     depends_on:
       - postgres
       - redis
