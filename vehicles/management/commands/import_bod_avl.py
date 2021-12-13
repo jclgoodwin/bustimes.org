@@ -435,7 +435,23 @@ class Command(ImportLiveVehiclesCommand):
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref and '_' not in journey_ref):
-                journey.trip = journey.get_trip(datetime, destination_ref, origin_aimed_departure_time, journey_ref)
+
+                date = None
+                if journey_ref and len(journey_ref) > 11 and journey_ref[10] == ':':
+                    # code is like "2021-12-13:203" so separate the date from the other bit
+                    try:
+                        date = datetime.date.fromisoformat(journey_ref[:10])
+                        journey_ref = journey_ref[11:]
+                    except ValueError:
+                        pass
+
+                journey.trip = journey.get_trip(
+                    datetime=datetime,
+                    date=date,
+                    destination_ref=destination_ref,
+                    departure_time=origin_aimed_departure_time,
+                    journey_ref=journey_ref
+                )
 
                 if not journey.trip:
                     try:

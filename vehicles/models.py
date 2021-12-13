@@ -1,9 +1,9 @@
 import re
 import json
 
-import datetime
 from math import ceil
 from urllib.parse import quote
+from datetime import timedelta
 from webcolors import html5_parse_simple_color
 
 from django.conf import settings
@@ -667,26 +667,17 @@ class VehicleJourney(models.Model):
             ('vehicle', 'datetime'),
         )
 
-    def get_trip(self, datetime=None, destination_ref=None, origin_aimed_departure_time=None, journey_ref=None):
+    def get_trip(self, datetime=None, date=None, destination_ref=None, departure_time=None, journey_ref=None):
         if not self.service:
             return
 
         if journey_ref == self.code:
             journey_ref = None
 
-        date = None
-        if len(self.code) > 11 and self.code[10] == ':':
-            # code is like "2021-12-13:203" so separate the date from the other bit
-            try:
-                date = datetime.date.fromisoformat(self.code[:10])
-                self.code = self.code[11:]
-            except ValueError:
-                pass
-
         if not datetime:
             datetime = self.datetime
         if not date:
-            date = datetime.date()
+            date = (departure_time or datetime).date()
 
         routes = get_routes(self.service.route_set.select_related('source'), date)
         if not routes:
@@ -705,13 +696,13 @@ class VehicleJourney(models.Model):
         else:
             direction = None
 
-        if origin_aimed_departure_time:
-            start = timezone.localtime(origin_aimed_departure_time)
-            start = datetime.timedelta(hours=start.hour, minutes=start.minute)
+        if departure_time:
+            start = timezone.localtime(departure_time)
+            start = timedelta(hours=start.hour, minutes=start.minute)
         elif len(self.code) == 4 and self.code.isdigit() and int(self.code) < 2400:
             hours = int(self.code[:-2])
             minutes = int(self.code[-2:])
-            start = datetime.timedelta(hours=hours, minutes=minutes)
+            start = timedelta(hours=hours, minutes=minutes)
         else:
             start = None
 
@@ -735,7 +726,7 @@ class VehicleJourney(models.Model):
                     if not journey_ref:
                         return
             except Trip.DoesNotExist:
-                if destination and origin_aimed_departure_time:
+                if destination and departure_time:
                     try:
                         return trips.get(start, calendar__in=get_calendars(date))
                     except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
