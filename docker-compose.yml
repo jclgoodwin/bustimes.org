@@ -6,7 +6,7 @@ services:
       sh -c "
       make watch &
       poetry run ./manage.py migrate &&
-      poetry run ./manage.py collectstatic &&
+      poetry run ./manage.py collectstatic --noinput &&
       poetry run ./manage.py runserver 0.0.0.0:8000
       "
     container_name: django_web
