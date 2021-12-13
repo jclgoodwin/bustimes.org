@@ -591,7 +591,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "OriginAimedDepartureTime": "2021-05-08T12:30:00+00:00",
                 "VehicleLocation": {
                     "Longitude": "149.2244263",
-                    "Latitude": "87.8245926",
+                    "Latitude": "87.8245926",  # greater than 85.05112878
+
                 },
                 "Bearing": "0.0",
                 "VehicleJourneyRef": "2029",

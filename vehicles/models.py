@@ -1,9 +1,9 @@
 import re
 import json
 
+import datetime
 from math import ceil
 from urllib.parse import quote
-from datetime import timedelta
 from webcolors import html5_parse_simple_color
 
 from django.conf import settings
@@ -674,10 +674,21 @@ class VehicleJourney(models.Model):
         if journey_ref == self.code:
             journey_ref = None
 
+        date = None
+        if len(self.code) > 11 and self.code[10] == ':':
+            # code is like "2021-12-13:203" so separate the date from the other bit
+            try:
+                date = datetime.date.fromisoformat(self.code[:10])
+                self.code = self.code[11:]
+            except ValueError:
+                pass
+
         if not datetime:
             datetime = self.datetime
+        if not date:
+            date = datetime.date()
 
-        routes = get_routes(self.service.route_set.select_related('source'), datetime.date())
+        routes = get_routes(self.service.route_set.select_related('source'), date)
         if not routes:
             return
         trips = Trip.objects.filter(route__in=routes)
@@ -696,11 +707,11 @@ class VehicleJourney(models.Model):
 
         if origin_aimed_departure_time:
             start = timezone.localtime(origin_aimed_departure_time)
-            start = timedelta(hours=start.hour, minutes=start.minute)
+            start = datetime.timedelta(hours=start.hour, minutes=start.minute)
         elif len(self.code) == 4 and self.code.isdigit() and int(self.code) < 2400:
             hours = int(self.code[:-2])
             minutes = int(self.code[-2:])
-            start = timedelta(hours=hours, minutes=minutes)
+            start = datetime.timedelta(hours=hours, minutes=minutes)
         else:
             start = None
 
@@ -719,14 +730,14 @@ class VehicleJourney(models.Model):
                 return trips_at_start.get()
             except Trip.MultipleObjectsReturned:
                 try:
-                    return trips_at_start.get(calendar__in=get_calendars(datetime))
+                    return trips_at_start.get(calendar__in=get_calendars(date))
                 except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                     if not journey_ref:
                         return
             except Trip.DoesNotExist:
                 if destination and origin_aimed_departure_time:
                     try:
-                        return trips.get(start, calendar__in=get_calendars(datetime))
+                        return trips.get(start, calendar__in=get_calendars(date))
                     except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                         pass
 
@@ -736,7 +747,7 @@ class VehicleJourney(models.Model):
         try:
             return trips.get(ticket_machine_code=journey_ref)
         except Trip.MultipleObjectsReturned:
-            trips = trips.filter(calendar__in=get_calendars(datetime))
+            trips = trips.filter(calendar__in=get_calendars(date))
             try:
                 return trips.get(ticket_machine_code=journey_ref)
             except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
