@@ -1,6 +1,5 @@
 import os
 import zipfile
-from chardet.universaldetector import UniversalDetector
 from datetime import date, timedelta, datetime
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import LineString, MultiLineString, Point
@@ -83,16 +82,7 @@ class Command(BaseCommand):
         self.stop_times = []
         self.notes = []
 
-        # detect encoding
-        detector = UniversalDetector()
-        for line in open_file:
-            detector.feed(line)
-            if detector.done:
-                break
-        detector.close()
-        encoding = detector.result['encoding']
-
-        open_file.seek(0)
+        encoding = 'cp1252'
 
         # stops
         stops = {}
@@ -291,7 +281,7 @@ class Command(BaseCommand):
                 if note == 'pick up only' or note == 'pick up  only':
                     if previous_identity != b'QT':
                         self.stop_times[-1].set_down = False
-                elif note == 'set down only' or note == '.set down only':
+                elif note == 'set down only' or note == '.set down only' or note == 'drop off only':
                     if previous_identity != b'QT':
                         self.stop_times[-1].pick_up = False
                 else:
