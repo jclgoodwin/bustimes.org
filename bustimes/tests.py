@@ -4,7 +4,7 @@ from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import DataSource
 from vehicles.models import Livery, Vehicle
-from .models import Trip
+from .models import Calendar, Trip
 
 
 class BusTimesTest(TestCase):
@@ -39,6 +39,36 @@ class BusTimesTest(TestCase):
             cassette.rewind()
             response = self.client.get('/vehicles/tfl/LJ53NHP')
             self.assertContains(response, 'LJ53 NHP')
+
+    def test_calendar(self):
+        calendar = Calendar(
+            mon=False,
+            tue=False,
+            wed=False,
+            thu=False,
+            fri=False,
+            sat=False,
+            sun=False,
+            start_date=date(2021, 1, 3)
+        )
+        calendar.save()
+
+        self.assertEqual('', str(calendar))
+
+        calendar.mon = True
+        self.assertEqual('Mondays', str(calendar))
+
+        calendar.tue = True
+        self.assertEqual('Monday to Tuesday', str(calendar))
+
+        calendar.sat = True
+        self.assertEqual('Mondays, Tuesdays and Saturdays', str(calendar))
+
+        calendar.end_date = calendar.start_date
+        self.assertEqual('Mondays, Tuesdays and Saturdays', str(calendar))
+
+        calendar.summary = 'the third of january only'
+        self.assertEqual(calendar.summary, str(calendar))
 
     def test_trip(self):
         trip = Trip()

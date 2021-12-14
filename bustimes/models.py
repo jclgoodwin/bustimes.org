@@ -202,6 +202,8 @@ class Calendar(models.Model):
                 return True
 
     def __str__(self):
+        if self.summary and self.start_date == self.end_date:
+            return self.summary
         day_keys = (
             'Monday',
             'Tuesday',
