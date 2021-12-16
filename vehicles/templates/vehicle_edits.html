@@ -25,7 +25,13 @@
 
 <h1>Pending vehicle edits</h1>
 
-<p>Filters: <a href="?">clear</a> &bull;  <a href="?livery=600">new stagecoach livery</a> &bull; <a href="?change=vehicle_type">vehicle type change</a></p>
+<p>Filters: <a href="/vehicles/edits">clear</a> &bull;  <a href="?livery=600">new stagecoach livery</a> &bull; <a href="?change=vehicle_type">vehicle type change</a></p>
+
+<form>
+    {{ filter.form.as_p }}
+
+    <input type="submit">
+</form>
 
 {% include 'pagination.html' with page=edits %}
 
@@ -35,9 +41,11 @@
             <tr>
                 <th scope="col">date</th>
                 <th scope="col">user</th>
-                <th scope="col" colspan="3">vehicle</th>
+                <th scope="col">vehicle</th>
+                <th scope="col"><a href="?{{ toggle_order.vehicle }}">*</a></th>
+                <th scope="col"></th>
                 <th scope="col">proposed changes</th>
-                <th scope="col">score</th>
+                <th scope="col"><a href="?{{ toggle_order.score }}">score</a></th>
             </tr>
         </thead>
         <tbody>
@@ -46,7 +54,7 @@
                     <td>{{ edit.datetime }}</td>
                     <td><a href="?user={{ edit.user_id }}">{{ edit.user }}</a></td>
                     <td><a href="{{ edit.vehicle.get_absolute_url }}">{{ edit.vehicle }}</a></td>
-                    <td>{{ edit.vehicle.get_flickr_link }}</td>
+                    <td>{{ edit.edit_count }}</td>
                     <td><div class="livery{% if edit.vehicle.livery_id %} livery-{{ edit.vehicle.livery_id }}{% else %}" style="background:{{ edit.vehicle.get_livery }}{% endif %}"></div></td>
                     <td>{% for key, value in edit.get_changes.items %}
                         {% if key == 'features' %}
@@ -72,6 +80,7 @@
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/vote/up">👍</a></td>
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/vote/down">👎</a></td>
                     {% endif %}
+                    <td>{{ edit.vehicle.get_flickr_link }}</td>
                 </tr>
             {% endfor %}
         </tbody>

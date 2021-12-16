@@ -3,8 +3,10 @@ import json
 import xml.etree.cElementTree as ET
 import datetime
 import xmltodict
+from urllib.parse import urlencode
 from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
+
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Min, F, Case, When, Q
 from django.db.models.functions import Coalesce
@@ -20,12 +22,16 @@ from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
+
+from sql_util.utils import SubqueryCount
+
 from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from bustimes.models import Garage, Trip, StopTime
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
+from .filters import VehicleEditFilter
 from .forms import EditVehiclesForm, EditVehicleForm
 from .utils import redis_client, get_vehicle_edit, do_revision, do_revisions
 from .management.commands import import_bod_avl
@@ -584,29 +590,32 @@ def vehicle_edits(request):
     edits = edits.select_related('livery', 'vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey')
     edits = edits.prefetch_related('vehicleeditfeature_set')
 
-    if request.GET.get('vehicle'):
-        edits = edits.filter(vehicle=request.GET['vehicle'])
+    order = request.GET.get('order')
 
-    if request.GET.get('operator'):
-        edits = edits.filter(vehicle__operator=request.GET['operator'])
+    if order in ('score', '-score'):
+        edits = edits.order_by(order)
+    if order in ('edit_count', '-edit_count'):
+        edit_count = SubqueryCount('vehicle__vehicleedit', filter=Q(approved=None))
+        edits = edits.annotate(edit_count=edit_count)
+        edits = edits.order_by(order, 'vehicle')
 
-    if request.GET.get('user'):
-        edits = edits.filter(user=request.GET['user'])
+    f = VehicleEditFilter(request.GET, queryset=edits)
 
-    if request.GET.get('livery'):
-        edits = edits.filter(livery=request.GET['livery'])
+    paginator = Paginator(f.qs, 100)
 
-    if request.GET.get('change'):
-        if request.GET['change'] in ('vehicle_type', 'reg', 'notes', 'branding', 'name'):
-            edits = edits.filter(~Q(**{request.GET['change']: ''}))
+    parameters = {key: value for key, value in request.GET.items() if key != 'page'}
 
-    if request.GET.get('order'):
-        if request.GET['order'] in ('score', '-score'):
-            edits = edits.order_by(request.GET['order'])
+    toggle_order = {
+        'score': urlencode({**parameters, 'order': '-score' if order == 'score' else 'score'}),
+        'vehicle': urlencode({**parameters, 'order': '-edit_count' if order == 'edit_count' else 'edit_count'})
+    }
 
-    paginator = Paginator(edits, 100)
+    parameters = urlencode(parameters)
 
     return render(request, 'vehicle_edits.html', {
+        'filter': f,
+        'parameters': parameters,
+        'toggle_order': toggle_order,
         'edits': paginator.get_page(request.GET.get('page')),
         'liveries_css_version': cache.get('liveries_css_version', 0),
     })
