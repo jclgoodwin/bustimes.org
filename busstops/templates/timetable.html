@@ -8,7 +8,7 @@
     {% if timetable.calendar %}
         <p>
             {{ timetable.calendar }}
-            {% if timetable.start_date and timetable.start_date != timetable.end_date %}
+            {% if timetable.start_date %}
                 from {{ timetable.start_date }}
             {% endif %}
         </p>

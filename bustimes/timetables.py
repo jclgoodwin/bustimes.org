@@ -167,6 +167,9 @@ class Timetable:
                         self.start_date = date
                         break
 
+                    if calendar.start_date == calendar.end_date:
+                        self.start_date = None
+
         if self.calendars and not self.calendar:
             self.date_options = list(self.get_date_options())
             if not self.date:
