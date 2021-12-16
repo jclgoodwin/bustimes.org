@@ -92,7 +92,7 @@
                     {% endif %}
                     <tbody>
                         {% for row in grouping.rows %}
-                            <tr{% if row.is_minor %} class="minor"{% endif %}>
+                            <tr{% if row.is_minor %} class="minor{% if row.od %} od{% endif %}"{% endif %}>
                                 <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
                                     {% if row.stop.pk %}
                                         <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.suspended %}🚧 {% elif row.stop.situation %}⚠️ {% endif %}{{ row.stop.get_qualified_name }}</a>
@@ -107,7 +107,7 @@
                             {% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
-                                <tr class="{% if row.is_minor %}minor {% endif %}dep">
+                                <tr class="{% if row.is_minor %}minor {% if row.od %}od {% endif %}{% endif %}dep">
                                     {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}
                                         <td>{% if cell.wait_time or not cell.last %}{{ cell.departure_time }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% endif %}{% endif %}</td>
                                     {% endif %}{% endfor %}

@@ -574,6 +574,10 @@ class Row:
             if type(cell) is Cell and cell.wait_time:
                 return True
 
+    @cached_property
+    def od(self):
+        return any(cell.first or cell.last for cell in self.times if type(cell) is Cell)
+
     def is_minor(self):
         return self.timing_status == 'OTH'
 

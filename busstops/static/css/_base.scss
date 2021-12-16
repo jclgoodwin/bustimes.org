@@ -1034,6 +1034,10 @@ input:not(:checked) + label {
         .minor {
             display: none;
         }
+
+        .od {
+            display: table-row;
+        }
     }
 }
 
