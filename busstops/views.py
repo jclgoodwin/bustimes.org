@@ -737,7 +737,7 @@ def service_timetable(request, service_id):
     })
 
 
-@cache_control(max_age=86400)
+@cache_control(max_age=86400)  # cache for a day
 def service_map_data(request, service_id):
     service = get_object_or_404(Service.objects.only('geometry'), id=service_id)
     stops = service.stops.filter(
@@ -766,7 +766,7 @@ def service_map_data(request, service_id):
         }
     }
 
-    routes = get_routes(service.route_set.select_related('source'))
+    routes = get_routes(service.route_set.select_related('source'), timezone.localdate())
     geometry = None
     if len(routes) == 1:
         geometry = routes[0].geometry
