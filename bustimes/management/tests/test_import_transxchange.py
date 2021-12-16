@@ -683,11 +683,12 @@ class ImportTransXChangeTest(TestCase):
         with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
             call_command('import_transxchange', FIXTURES_DIR / 'notts_KRWL_DS_180DS_.xml')
 
+        self.assertEqual(1, len(cm.output))
+
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
-        self.assertContains(response, "Tuesdays from Tuesday 3 August 2021")
-
-        self.assertEqual(1, len(cm.output))
+        self.assertContains(response, "Tuesdays")
+        self.assertContains(response, "from Tuesday 3 August 2021")
 
     def test_service_error(self):
         """A file with some wrong references should be handled gracefully"""
