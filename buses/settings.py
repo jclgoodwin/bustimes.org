@@ -672,9 +672,9 @@ TICKETER_OPERATORS = [
     ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     # ('NW', ['GONW'], 'Go North West'),
 
-    # ('W', ['ACYM'], 'Arriva Cymru'),
-    # ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
-    # ('NW', ['AMSY'], 'Arriva Merseyside'),
+    ('W', ['ACYM'], 'Arriva Cymru'),
+    ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
+    ('NW', ['AMSY'], 'Arriva Merseyside'),
     ('NE', ['ARDU', 'ANEA'], 'Arriva Durham'),
     ('NE', ['ANUM'], 'Arriva Northumbria'),
     ('Y', ['WRAY', 'YTIG'], 'Arriva Yorkshire'),
