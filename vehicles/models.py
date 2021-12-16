@@ -403,12 +403,16 @@ class VehicleEdit(models.Model):
             if edit:
                 if field == 'reg':
                     edit = edit.upper().replace(' ', '')
-                if edit.startswith('-'):
-                    edit = ''
                 if field == 'fleet_number' and self.vehicle.fleet_code:
                     vehicle = self.vehicle.fleet_code
                 else:
                     vehicle = str(getattr(self.vehicle, field) or '')
+
+                if edit.startswith('-'):
+                    if edit == f'-{vehicle}':
+                        edit = format_html('<del>{}</del>', vehicle)
+                    else:
+                        edit = ''
                 if edit != vehicle:
                     changes[field] = edit
         changed_features = self.vehicleeditfeature_set.all()

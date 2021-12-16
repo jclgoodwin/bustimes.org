@@ -1,15 +1,23 @@
 from django.db.models import Q
-from django_filters.rest_framework import FilterSet, CharFilter, NumberFilter
+from django_filters.rest_framework import FilterSet, CharFilter, NumberFilter, ChoiceFilter
 
 
 class VehicleEditFilter(FilterSet):
-    change = CharFilter(method='change_filter', label='Change')
+    change = ChoiceFilter(
+        method='change_filter',
+        label='Change',
+        choices=(
+            ('reg', 'Number plate'),
+            ('vehicle_type', 'Type'),
+            ('name', 'Name'),
+            ('notes', 'Notes'),
+            ('branding', 'Branding'),
+        )
+    )
     vehicle = NumberFilter()
     user = NumberFilter()
-    vehicle__operator = CharFilter()
+    vehicle__operator = CharFilter(label='Operator')
     livery = NumberFilter()
 
     def change_filter(self, queryset, name, value):
-        if value in ('vehicle_type', 'reg', 'notes', 'branding', 'name'):
-            queryset = queryset.filter(~Q(**{value: ''}))
-        return queryset
+        return queryset.filter(~Q(**{value: ''}))

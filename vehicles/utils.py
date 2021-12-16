@@ -100,14 +100,18 @@ def do_revisions(vehicles, data, user):
 
     if user.trusted:
         if 'vehicle_type' in data:
-            vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
-            for revision in revisions:
-                if revision.vehicle.vehicle_type_id != vehicle_type.id:
-                    revision.from_type = revision.vehicle.vehicle_type
-                    revision.to_type = vehicle_type
-                    revision.vehicle.vehicle_type = vehicle_type
-            changed_fields.append('vehicle_type')
-            del data['vehicle_type']
+            try:
+                vehicle_type = VehicleType.objects.get(name=data['vehicle_type'])
+            except VehicleType.DoesNotExist:
+                pass
+            else:
+                for revision in revisions:
+                    if revision.vehicle.vehicle_type_id != vehicle_type.id:
+                        revision.from_type = revision.vehicle.vehicle_type
+                        revision.to_type = vehicle_type
+                        revision.vehicle.vehicle_type = vehicle_type
+                changed_fields.append('vehicle_type')
+                del data['vehicle_type']
 
         if 'colours' in data:
             if data['colours'].isdigit():

@@ -451,7 +451,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
         edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.get_changes(), {'reg': ''})
+        self.assertEqual(edit.get_changes(), {'reg': '<del>UWW2X</del>'})
 
         response = self.client.get('/vehicles/history')
         self.assertContains(response, 'Luther Blisset')
