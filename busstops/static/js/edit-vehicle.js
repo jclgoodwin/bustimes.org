@@ -18,7 +18,6 @@
 
         for (var i = elements.length - 1; i >= 0; i -= 1) {
             var element = elements[i];
-            console.dir(element.querySelector('input, label'));
             if (!element.querySelector('input, label') || element.querySelector('#id_withdrawn, #id_spare_ticket_machine')) {
                 // don't show/hide non-form field paragraph or check box
                 continue;

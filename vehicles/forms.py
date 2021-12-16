@@ -139,6 +139,7 @@ class EditVehicleForm(EditVehiclesForm):
                 del self.fields['branding']
 
         if vehicle.notes == 'Spare ticket machine':
+            del self.fields['notes']
             if not vehicle.reg:
                 del self.fields['reg']
             if not vehicle.vehicle_type_id:
