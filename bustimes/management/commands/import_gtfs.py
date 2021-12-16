@@ -5,7 +5,6 @@ import logging
 import zipfile
 from requests_html import HTMLSession
 from datetime import datetime, timedelta
-from chardet.universaldetector import UniversalDetector
 from django.utils.dateparse import parse_duration
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -34,14 +33,7 @@ def parse_date(string):
 def read_file(archive, name):
     try:
         with archive.open(name) as open_file:
-            detector = UniversalDetector()
-            for line in open_file:
-                detector.feed(line)
-                if detector.done:
-                    break
-            detector.close()
-            open_file.seek(0)
-            with io.TextIOWrapper(open_file, encoding=detector.result['encoding']) as wrapped_file:
+            with io.TextIOWrapper(open_file, encoding="utf-8-sig") as wrapped_file:
                 for line in csv.DictReader(wrapped_file):
                     yield line
     except KeyError:
