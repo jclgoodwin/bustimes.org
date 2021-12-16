@@ -15,6 +15,14 @@ from ..commands import import_gtfs
 FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 
 
+def make_zipfile(directory, collection):
+    dir_path = FIXTURES_DIR / f'google_transit_{collection}'
+    feed_path = Path(directory) / f'google_transit_{collection}.zip'
+    with zipfile.ZipFile(feed_path, 'a') as open_zipfile:
+        for item in dir_path.iterdir():
+            open_zipfile.write(item, item.name)
+
+
 @override_settings(DATA_DIR=FIXTURES_DIR)
 @time_machine.travel(datetime.datetime(2019, 8, 30))
 class GTFSTest(TestCase):
@@ -50,39 +58,32 @@ class GTFSTest(TestCase):
         # Create an existing operator (with a slightly different name) to test that it is re-used
         Operator.objects.create(id=132, name='Seumas Doherty', region=cls.leinster)
 
+    def test_import_gtfs(self):
         with TemporaryDirectory() as directory:
-            for collection in ('mortons', 'seamusdoherty'):
-                dir_path = FIXTURES_DIR / f'google_transit_{collection}'
-                feed_path = Path(directory) / f'google_transit_{collection}.zip'
-                with zipfile.ZipFile(feed_path, 'a') as open_zipfile:
-                    for item in dir_path.iterdir():
-                        open_zipfile.write(item, item.name)
+
+            make_zipfile(directory, 'seamusdoherty')
+            make_zipfile(directory, 'mortons')
 
             with override_settings(DATA_DIR=directory):
                 with vcr.use_cassette(str(FIXTURES_DIR / 'google_transit_ie.yaml')) as cassette:
-                    with patch('builtins.print') as mocked_print:
+                    with self.assertLogs('bustimes.management.commands.import_gtfs', 'INFO'):
                         call_command('import_gtfs', '--force', '-v2')
-                    mocked_print.assert_called_with((0, {}))
 
-                    cassette.rewind()
+                        cassette.rewind()
 
-                    # import a second time - test that it's OK if stuff already exists
-                    with patch('builtins.print') as mocked_print:
+                        # import a second time - test that it's OK if stuff already exists
                         call_command('import_gtfs', '--force')
-                    mocked_print.assert_called_with((0, {}))
 
-    def test_stops(self):
-        stops = StopPoint.objects.all()
-        self.assertEqual(len(stops), 75)
+        # stops
+        self.assertEqual(StopPoint.objects.count(), 75)
         stop = StopPoint.objects.get(atco_code='822000153')
         self.assertEqual(stop.common_name, 'Terenure Library')
         self.assertEqual(stop.admin_area_id, 822)
 
-    def test_operator(self):
         self.assertEqual(Operator.objects.count(), 2)
         self.assertEqual(Operator.objects.filter(service__current=True).distinct().count(), 2)
 
-    def test_small_timetable(self):
+        # small timetable
         with time_machine.travel('2017-06-07'):
             response = self.client.get('/services/165')
         timetable = response.context_data['timetable']
@@ -116,7 +117,7 @@ class GTFSTest(TestCase):
                 self.assertEqual(day, timetable.date)
                 self.assertEqual(timetable.groupings, [])
 
-    def test_big_timetable(self):
+        # big timetable
         service = Service.objects.get(route__code='21-963-1-y11-1')
         timetable = service.get_timetable(datetime.date(2017, 6, 7))
         self.assertEqual(str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]")
@@ -127,7 +128,7 @@ class GTFSTest(TestCase):
 
         self.assertEqual(str(service.source), 'seamusdoherty GTFS')
 
-    def test_admin_area(self):
+        # admin area
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)
         self.assertContains(res, '/services/165')
@@ -156,15 +157,15 @@ class GTFSTest(TestCase):
         path.unlink()
 
     def test_handle(self):
-        Route.objects.all().delete()
-
         with patch('bustimes.management.commands.import_gtfs.download_if_changed', return_value=(False, None)):
             call_command('import_gtfs', 'mortons')
         self.assertFalse(Route.objects.all())
 
         with patch('bustimes.management.commands.import_gtfs.download_if_changed', return_value=(True, None)):
-            with patch('builtins.print') as mocked_print:
+            with self.assertLogs('bustimes.management.commands.import_gtfs', 'INFO') as cm:
                 with self.assertRaises(FileNotFoundError):
                     call_command('import_gtfs', 'mortons')
-        mocked_print.assert_called_with('mortons', None)
+
+        self.assertEqual(cm.output, ['INFO:bustimes.management.commands.import_gtfs:mortons None'])
+
         self.assertFalse(Route.objects.all())

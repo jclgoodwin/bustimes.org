@@ -59,7 +59,7 @@ class Command(BaseCommand):
             'region_id': 'LE'
         }, id=line['agency_id'], region__in=['CO', 'UL', 'MU', 'LE', 'NI'])
         if operator.name != line['agency_name']:
-            print(operator, line)
+            logger.info(f"{operator} {line}")
         return operator
 
     def do_stops(self, archive):
@@ -342,9 +342,9 @@ class Command(BaseCommand):
                 operator.save(update_fields=['region'])
 
         current_services = self.source.service_set.filter(current=True)
-        print(current_services.exclude(route__in=self.routes.values()).update(current=False))
-        print(current_services.exclude(route__trip__isnull=False).update(current=False))
-        print(self.source.route_set.exclude(id__in=(route.id for route in self.routes.values())).delete())
+        logger.info(current_services.exclude(route__in=self.routes.values()).update(current=False))
+        logger.info(current_services.exclude(route__trip__isnull=False).update(current=False))
+        logger.info(self.source.route_set.exclude(id__in=(route.id for route in self.routes.values())).delete())
         StopPoint.objects.filter(active=False, service__current=True).update(active=True)
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
@@ -374,7 +374,7 @@ class Command(BaseCommand):
                     name=f'{collection} GTFS'
                 )
                 if options['force'] or self.source.older_than(last_modified):
-                    print(collection, last_modified)
+                    logger.info(f"{collection} {last_modified}")
                     if last_modified:
                         self.source.datetime = last_modified
                     self.handle_zipfile(path)
