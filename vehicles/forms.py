@@ -4,7 +4,6 @@ from datetime import timedelta
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.http import Http404
 from django.utils import timezone
 from django.db.models import Count, Q, Exists, OuterRef
 
@@ -107,19 +106,10 @@ class EditVehicleForm(EditVehiclesForm):
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
-        if vehicle.latest_journey and vehicle.latest_journey.data and not vehicle.reg:
-            try:
-                if vehicle.latest_journey.data['MonitoredVehicleJourney']['OperatorRef'] == 'TFLO':
-                    raise Http404("""
-                        Please don’t try to identify this vehicle.
-                        It might turn out to be a waste of time.
-                    """)
-            except (KeyError, TypeError):
-                pass
-
         if not user.is_staff:
             if vehicle.fleet_code and vehicle.fleet_code in vehicle.code.replace('_', ' ').split():
                 self.fields['fleet_number'].disabled = True
+                self.fields['fleet_number'].help_text = f"The ticket machine code ({vehicle.code}) can’t be contradicted"
             elif vehicle.fleet_code and vehicle.latest_journey and vehicle.latest_journey.data:
                 try:
                     vehicle_unique_id = vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId']
@@ -129,9 +119,12 @@ class EditVehicleForm(EditVehiclesForm):
                     if vehicle_unique_id == vehicle.fleet_code:
                         if not vehicle.code.isdigit() or vehicle.code == vehicle.fleet_code:
                             self.fields['fleet_number'].disabled = True
+                            self.fields['reg'].help_text = f"""The ticket machine code ({vehicle_unique_id})
+can’t be contradicted"""
 
             if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
                 self.fields['reg'].disabled = True
+                self.fields['reg'].help_text = f"The ticket machine code ({vehicle.code}) can’t be contradicted"
 
             if not vehicle.notes and vehicle.operator_id != 'NATX':
                 del self.fields['notes']
