@@ -70,6 +70,7 @@
                         {% else %}{{ key }}: {{ value }}
                         {% endif %}
                         <br>{% endfor %}
+                        {% if edit.url %}{{ edit.url|urlize }}{% endif %}
                     </td>
                     <td class="score">{{ edit.score }}</td>
                     {% if user.is_staff %}

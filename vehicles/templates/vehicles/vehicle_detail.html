@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<h1>{{ object }}</h1>
+<h1>{% if object.withdrawn %}<del>{{ object }}</del>{% else %}{{ object }}{% endif %}</h1>
 
 {% if vehicle %}
     {% include 'vehicle_info.html' %}

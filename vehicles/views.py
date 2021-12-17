@@ -459,9 +459,6 @@ class VehicleDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if self.object.withdrawn and not self.object.latest_journey_id:
-            raise Http404('Someone marked this vehicle as withdrawn. It will be unwithdrawn if it tracks again')
-
         journeys = self.object.vehiclejourney_set.select_related('service')
         journeys = journeys.annotate(line_name=Coalesce('trip__route__line_name', 'service__line_name', 'route_name'))
 
