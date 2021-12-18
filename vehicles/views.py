@@ -8,7 +8,7 @@ from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
 
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Min, F, Case, When, Q
+from django.db.models import Exists, OuterRef, Min, Max, F, Case, When, Q
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
@@ -53,10 +53,20 @@ def vehicles(request):
     operators = Operator.objects.filter(
         Exists(Vehicle.objects.filter(operator=OuterRef('pk'), withdrawn=False))
     )
+
+    new_operators = operators.annotate(
+        min=Min('vehicle__id'),
+    ).order_by('-min')[:36]
+
+    day_ago = timezone.now() - datetime.timedelta(days=1)
+
+    status = operators.annotate(
+        last_seen=Max('vehicle__latest_journey__datetime'),
+    ).filter(last_seen__isnull=False, last_seen__lte=day_ago).order_by('-last_seen')
+
     return render(request, 'vehicles.html', {
-        'new_operators': operators.annotate(
-            min=Min('vehicle__id'),
-        ).order_by('-min')[:36],
+        'status': status,
+        'new_operators': new_operators,
         'operators': operators
     })
 

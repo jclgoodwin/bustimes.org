@@ -28,6 +28,20 @@
     {% endfor %}
 </ul>
 
+<h3>Not tracking</h3>
+
+<table>
+    <thead><th scope="col"></th><th scope="col">Last seen</th></thead>
+    <tbody>
+    {% for operator in status %}
+        <tr>
+            <td><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></td>
+            <td>{{ operator.last_seen }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
 <h3>All</h3>
 
 <ul class="long">
