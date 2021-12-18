@@ -106,7 +106,7 @@ class VehicleAdmin(admin.ModelAdmin):
     raw_id_fields = ('operator', 'source')
     search_fields = ('code', 'fleet_code', 'reg')
     ordering = ('-id',)
-    actions = ('copy_livery', 'copy_type', 'make_livery', 'merge', 'spare_ticket_machine')
+    actions = ('copy_livery', 'copy_type', 'make_livery', 'deduplicate', 'spare_ticket_machine')
     inlines = [VehicleEditInline]
     readonly_fields = ['latest_journey_data']
 
@@ -134,27 +134,28 @@ class VehicleAdmin(admin.ModelAdmin):
         else:
             self.message_user(request, 'Select a vehicle with colours and branding.')
 
-    def merge(self, request, queryset):
-        first = None
+    def deduplicate(self, request, queryset):
         for vehicle in queryset.order_by('id'):
-            if not first:
-                first = vehicle
-            else:
-                vehicle.vehiclejourney_set.update(vehicle=first)
-                first.latest_location = vehicle.latest_location
-                first.latest_journey = vehicle.latest_journey
-                vehicle.latest_location = None
-                vehicle.latest_journey = None
-                vehicle.save(update_fields=['latest_location', 'latest_journey'])
-                first.save(update_fields=['latest_location', 'latest_journey'])
-                first.code = vehicle.code
-                first.fleet_code = vehicle.fleet_code
-                first.fleet_number = vehicle.fleet_number
-                first.reg = vehicle.reg
-                if first.withdrawn and not vehicle.withdrawn:
-                    first.withdrawn = False
-                vehicle.delete()
-                first.save(update_fields=['code', 'fleet_code', 'fleet_number', 'reg', 'withdrawn'])
+            try:
+                duplicate = models.Vehicle.objects.get(id__lt=vehicle.id, reg=vehicle.reg)
+            except models.Vehicle.DoesNotExist:
+                continue
+            vehicle.vehiclejourney_set.update(vehicle=duplicate)
+            duplicate.latest_location = vehicle.latest_location
+            duplicate.latest_journey = vehicle.latest_journey
+            vehicle.latest_location = None
+            vehicle.latest_journey = None
+            vehicle.save(update_fields=['latest_location', 'latest_journey'])
+            duplicate.save(update_fields=['latest_location', 'latest_journey'])
+            duplicate.code = vehicle.code
+            duplicate.fleet_code = vehicle.fleet_code
+            duplicate.fleet_number = vehicle.fleet_number
+            duplicate.reg = vehicle.reg
+            if duplicate.withdrawn and not vehicle.withdrawn:
+                duplicate.withdrawn = False
+            vehicle.delete()
+            duplicate.save(update_fields=['code', 'fleet_code', 'fleet_number', 'reg', 'withdrawn'])
+            self.message_user(request, f"{vehicle} deleted, merged with {duplicate}")
 
     def spare_ticket_machine(self, request, queryset):
         queryset.update(
