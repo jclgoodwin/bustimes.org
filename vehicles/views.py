@@ -119,6 +119,8 @@ def operator_vehicles(request, slug=None, parent=None):
 
     form = request.path.endswith('/edit')
 
+    now = timezone.localtime()
+
     if form:
         if not request.user.is_authenticated:
             return redirect(f'/accounts/login/?next={request.path}')
@@ -138,7 +140,6 @@ def operator_vehicles(request, slug=None, parent=None):
                 form.add_error(None, 'You haven\'t changed anything')
             elif form.is_valid():
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
-                now = timezone.now()
 
                 revisions, changed_fields = do_revisions(
                     Vehicle.objects.filter(id__in=vehicle_ids),
@@ -190,14 +191,20 @@ def operator_vehicles(request, slug=None, parent=None):
         vehicle.column_values = [vehicle.data and vehicle.data_get(key) or '' for key in columns]
 
     if not parent:
-        today = timezone.localdate()
+        # midnight or 12 hours ago, whichever happened first
+        if now.hour >= 12:
+            today = now - datetime.timedelta(hours=now.hour, minutes=now.minute)
+            today = today.replace(second=0, microsecond=0)
+        else:
+            today = now - datetime.timedelta(hours=12)
+
         for vehicle in vehicles:
             if vehicle.latest_journey:
                 when = vehicle.latest_journey.datetime
                 vehicle.last_seen = {
                     'service': vehicle.latest_journey.route_name,
                     'when': when,
-                    'today': timezone.localdate(when) == today,
+                    'today': when >= today
                 }
 
     context = {
