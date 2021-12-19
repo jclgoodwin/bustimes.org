@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 
 from sql_util.utils import SubqueryCount
 
+from .filters import VehicleEditFilter
+
 from busstops.models import Operator
 from . import models
 
@@ -265,18 +267,11 @@ class OperatorFilter(admin.SimpleListFilter):
     title = 'operator'
     parameter_name = 'operator'
 
-    def lookups(self, request, model_admin):
-        operators = Operator.objects.annotate(
-            count=SubqueryCount('vehicle__vehicleedit', filter=Q(approved=None))
-        ).filter(count__gt=0).order_by('-count')
-        try:
-            operators = list(operators.using('read-only-0'))
-        except ConnectionDoesNotExist:
-            pass
-        for operator in operators:
+    def lookups(self, _, __):
+        for operator in VehicleEditFilter.declared_filters['vehicle__operator'].queryset:
             yield (operator.pk, f'{operator} ({operator.count})')
 
-    def queryset(self, request, queryset):
+    def queryset(self, _, queryset):
         if self.value():
             return queryset.filter(vehicle__operator=self.value())
         return queryset
@@ -287,7 +282,7 @@ class ChangeFilter(admin.SimpleListFilter):
     parameter_name = 'change'
     vehicle_features = None
 
-    def lookups(self, request, model_admin):
+    def lookups(self, _, model_admin):
         self.vehicle_features = [
             feature.name for feature in models.VehicleFeature.objects.all()
         ]

@@ -610,7 +610,7 @@ def vehicle_edits(request):
     edits = VehicleEdit.objects.filter(approved=None).order_by('-id')
 
     edits = edits.select_related('livery', 'vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey')
-    edits = edits.prefetch_related('vehicleeditfeature_set')
+    edits = edits.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features')
 
     order = request.GET.get('order')
 

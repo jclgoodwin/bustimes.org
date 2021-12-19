@@ -392,7 +392,7 @@ class VehiclesTests(TestCase):
             f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">1</a></td>'
         )
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             response = self.client.get('/admin/vehicles/vehicleedit/')
         self.assertContains(response, '<ins>COCK</ins>')
         self.assertEqual(1, response.context_data['cl'].result_count)
@@ -510,8 +510,26 @@ class VehiclesTests(TestCase):
 
         edit = VehicleEdit.objects.get()
 
-        # approve the edit
-        with self.assertNumQueries(17):
+        # vote for edit
+        with self.assertNumQueries(12):
+            self.client.post(f'/vehicles/edits/{edit.id}/vote/up')
+        with self.assertNumQueries(10):
+            self.client.post(f'/vehicles/edits/{edit.id}/vote/down')
+        with self.assertNumQueries(10):
+            self.client.post(f'/vehicles/edits/{edit.id}/vote/down')
+
+        with self.assertNumQueries(4):
+            response = self.client.get('/vehicles/edits?change=livery')
+        self.assertEqual(len(response.context['edits']), 0)
+
+        with self.assertNumQueries(9):
+            response = self.client.get('/vehicles/edits?change=reg')
+        self.assertEqual(len(response.context['edits']), 1)
+        self.assertContains(response, '<option value="LYNX">Lynx (1)</option>')
+        self.assertContains(response, '<td class="score">-1</td>')
+
+        # apply the edit
+        with self.assertNumQueries(16):
             self.client.post('/admin/vehicles/vehicleedit/', {
                 'action': 'apply_edits',
                 '_selected_action': edit.id
