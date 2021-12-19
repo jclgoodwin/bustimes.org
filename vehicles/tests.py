@@ -573,13 +573,13 @@ class VehiclesTests(TestCase):
 
         self.client.force_login(self.trusted_user)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             # trusted user - can edit reg and remove branding
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'DA04 DDA',
                 'branding': ''
             })
-        # self.assertContains(response, 'Changed reg to DA04DDA')
+        self.assertContains(response, 'Changed reg to DA04DDA')
         self.assertContains(response, 'Changed branding from Coastliner to')
 
         with self.assertNumQueries(12):
@@ -601,7 +601,7 @@ class VehiclesTests(TestCase):
         revision = VehicleRevision.objects.first()
         self.assertEqual(list(revision.revert()), [
             f'vehicle {revision.vehicle_id} branding not reverted',
-            # f"vehicle {revision.vehicle_id} reverted ['reg']"
+            f"vehicle {revision.vehicle_id} reverted ['reg']"
         ])
         self.assertEqual(revision.vehicle.reg, '')
 

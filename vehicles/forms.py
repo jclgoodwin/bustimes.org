@@ -104,8 +104,10 @@ class EditVehicleForm(EditVehiclesForm):
                    'previous_reg', 'features', 'notes']
 
     def clean_reg(self):
-        if self.cleaned_data['spare_ticket_machine'] and self.cleaned_data['reg']:
+        reg = self.cleaned_data['reg']
+        if self.cleaned_data['spare_ticket_machine'] and reg:
             raise ValidationError("A spare ticket machine can’t have a number plate")
+        return reg
 
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
