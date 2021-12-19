@@ -28,7 +28,7 @@ from sql_util.utils import SubqueryCount
 from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
-from bustimes.models import Garage, Trip, StopTime
+from bustimes.models import Garage, Trip, StopTime, get_calendars
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from .filters import VehicleEditFilter
@@ -58,11 +58,19 @@ def vehicles(request):
         min=Min('vehicle__id'),
     ).order_by('-min')[:36]
 
-    day_ago = timezone.now() - datetime.timedelta(days=1)
+    yesterday = timezone.now() - datetime.timedelta(days=1)
+    today = timezone.localdate()
+    today_calendars = get_calendars(today)
 
     status = operators.annotate(
         last_seen=Max('vehicle__latest_journey__datetime'),
-    ).filter(last_seen__isnull=False, last_seen__lte=day_ago).order_by('-last_seen')
+    ).filter(
+        last_seen__isnull=False
+    ).order_by(
+        '-last_seen'
+    ).filter(
+        Exists(today_calendars.filter(trip__route__service__operator=OuterRef('id'))) & Q(last_seen__lt=yesterday)
+    )
 
     return render(request, 'vehicles.html', {
         'status': status,

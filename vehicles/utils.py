@@ -151,7 +151,7 @@ def do_revision(vehicle, data, user):
             changed_fields.append('fleet_code')
             del data['fleet_number']
 
-    if 'reg' in data:
+    if 'reg' in data and data['reg'] is not None:
         if user.trusted or data['reg'] and data['reg'] in re.sub('_- ', '', vehicle.code):
             revision.changes['reg'] = f"-{vehicle.reg}\n+{data['reg']}"
             vehicle.reg = data['reg']

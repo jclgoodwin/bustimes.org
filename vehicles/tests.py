@@ -215,14 +215,18 @@ class VehiclesTests(TestCase):
         response = self.client.get('/admin/vehicles/vehicle/')
         self.assertContains(response, "Updated 1 vehicles.")
 
-        self.assertEqual(Vehicle.objects.all().count(), 3)
-
         # test merge 2 vehicles
+
+        duplicate_1 = Vehicle.objects.create(reg="SA60TWP", code="60")
+        duplicate_2 = Vehicle.objects.create(reg="SA60TWP", code="SA60TWP")
+
+        self.assertEqual(Vehicle.objects.all().count(), 5)
+
         self.client.post('/admin/vehicles/vehicle/', {
-            'action': 'merge',
-            '_selected_action': [self.vehicle_1.id, self.vehicle_2.id]
+            'action': 'deduplicate',
+            '_selected_action': [duplicate_1.id, duplicate_2.id]
         })
-        self.assertEqual(Vehicle.objects.all().count(), 2)
+        self.assertEqual(Vehicle.objects.all().count(), 4)
 
     def test_livery_admin(self):
         self.client.force_login(self.staff_user)
@@ -569,13 +573,13 @@ class VehiclesTests(TestCase):
 
         self.client.force_login(self.trusted_user)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             # trusted user - can edit reg and remove branding
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'DA04 DDA',
                 'branding': ''
             })
-        self.assertContains(response, 'Changed reg to DA04DDA')
+        # self.assertContains(response, 'Changed reg to DA04DDA')
         self.assertContains(response, 'Changed branding from Coastliner to')
 
         with self.assertNumQueries(12):
@@ -597,7 +601,7 @@ class VehiclesTests(TestCase):
         revision = VehicleRevision.objects.first()
         self.assertEqual(list(revision.revert()), [
             f'vehicle {revision.vehicle_id} branding not reverted',
-            f"vehicle {revision.vehicle_id} reverted ['reg']"
+            # f"vehicle {revision.vehicle_id} reverted ['reg']"
         ])
         self.assertEqual(revision.vehicle.reg, '')
 
@@ -660,7 +664,7 @@ class VehiclesTests(TestCase):
             self.client.get('/map')
 
     def test_vehicles(self):
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             self.client.get('/vehicles')
 
     def test_journey_debug(self):
