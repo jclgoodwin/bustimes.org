@@ -216,6 +216,12 @@ class Command(ImportLiveVehiclesCommand):
             if not journey.service:
                 print(service, item.get('or'), vehicle.get_absolute_url())
 
+        if departure_time and journey.service and not journey.id:
+            journey.trip = journey.get_trip(
+                destination_ref=item.get("fr"),
+                departure_time=departure_time
+            )
+
         return journey
 
     def create_vehicle_location(self, item):
