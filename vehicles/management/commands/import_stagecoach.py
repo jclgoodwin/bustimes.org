@@ -71,7 +71,6 @@ class Command(ImportLiveVehiclesCommand):
         'SCEM': 'SCGH',
         'SCSO': 'SCCO'
     }
-    services = {}
 
     def get_items(self):
         for operator in self.operator_codes:
@@ -180,8 +179,6 @@ class Command(ImportLiveVehiclesCommand):
             service = journey.route_name
             alternatives = {
                 'PULS': 'Pulse',
-                # 'TUBE': 'Oxford Tube',
-                'SPRI': 'SPRING',
                 'YO-Y': 'Yo-Yo',
                 'TRIA': 'Triangle',
             }
@@ -193,11 +190,6 @@ class Command(ImportLiveVehiclesCommand):
             stop = item.get('or') or item.get('pr') or item.get('nr')
 
             if stop:
-                key = f'{stop}-{service}'
-                if key in self.services:
-                    journey.service = self.services[key]
-                    return journey
-
                 services = services.filter(has_stop(stop))
 
             if item.get('fr'):
@@ -209,9 +201,6 @@ class Command(ImportLiveVehiclesCommand):
                     journey.service = services.get(service_code__icontains=f'-{service}-')
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     pass
-
-            if stop:
-                self.services[key] = journey.service
 
             if not journey.service:
                 print(service, item.get('or'), vehicle.get_absolute_url())
