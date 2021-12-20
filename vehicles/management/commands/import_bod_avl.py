@@ -5,7 +5,7 @@ import functools
 from django.core.cache import cache
 from django.conf import settings
 from django.db import IntegrityError
-from datetime import timedelta
+from datetime import timedelta, date
 from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import GEOSGeometry
@@ -436,18 +436,18 @@ class Command(ImportLiveVehiclesCommand):
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref and '_' not in journey_ref):
 
-                date = None
+                journey_date = None
                 if journey_ref and len(journey_ref) > 11 and journey_ref[10] == ':':
                     # code is like "2021-12-13:203" so separate the date from the other bit
                     try:
-                        date = datetime.date.fromisoformat(journey_ref[:10])
+                        journey_date = date.fromisoformat(journey_ref[:10])
                         journey_ref = journey_ref[11:]
                     except ValueError:
                         pass
 
                 journey.trip = journey.get_trip(
                     datetime=datetime,
-                    date=date,
+                    date=journey_date,
                     destination_ref=destination_ref,
                     departure_time=origin_aimed_departure_time,
                     journey_ref=journey_ref
