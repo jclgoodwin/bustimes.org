@@ -52,15 +52,11 @@ class Vehicles:
 def vehicles(request):
     operators = Operator.objects.filter(
         Exists(Vehicle.objects.filter(operator=OuterRef('pk'), withdrawn=False))
-    )
+    ).only('name', 'slug')
 
     new_operators = operators.annotate(
         min=Min('vehicle__id'),
     ).order_by('-min')[:36]
-
-    yesterday = timezone.now() - datetime.timedelta(days=1)
-    today = timezone.localdate()
-    today_calendars = get_calendars(today)
 
     status = operators.annotate(
         last_seen=Max('vehicle__latest_journey__datetime'),
@@ -68,14 +64,12 @@ def vehicles(request):
         last_seen__isnull=False
     ).order_by(
         '-last_seen'
-    ).filter(
-        Exists(today_calendars.filter(trip__route__service__operator=OuterRef('id'))) & Q(last_seen__lt=yesterday)
     )
 
     return render(request, 'vehicles.html', {
-        'status': status,
-        'new_operators': new_operators,
-        'operators': operators
+        'status': list(status),
+        'new_operators': list(new_operators),
+        'operators': list(operators)
     })
 
 
