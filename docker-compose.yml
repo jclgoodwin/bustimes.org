@@ -15,7 +15,7 @@ services:
       - SECRET_KEY=${SECRET_KEY-d}
       - PGHOST=${PGHOST-postgres}
       - PGUSER=${PGUSER-postgres}
-      - PGPORT=${PGPORT}
+      - PGPORT=${PGPORT-}
       - PGPASSWORD=${PGPASSWORD-postgres}
       - DB_NAME=${DB_NAME-postgres}
       - REDIS_URL=${REDIS_URL-redis://redis:6379}

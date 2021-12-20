@@ -1,4 +1,5 @@
 import time_machine
+from ciso8601 import parse_datetime
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
@@ -45,9 +46,6 @@ class VehiclesTests(TestCase):
         cls.journey = VehicleJourney.objects.create(vehicle=cls.vehicle_1, datetime=cls.datetime, source=source,
                                                     service=service, route_name='2')
 
-        cls.location = VehicleLocation.objects.create(datetime=cls.datetime, latlong=Point(0, 51),
-                                                      journey=cls.journey, current=True)
-        # cls.vehicle_1.latest_location = cls.location
         cls.vehicle_1.latest_journey = cls.journey
         cls.vehicle_1.save()
 
@@ -113,18 +111,25 @@ class VehiclesTests(TestCase):
         self.assertEqual(404, response.status_code)
         self.assertFalse(str(response.context['exception']))
 
-        # last seen today - should only show time
+        # last seen today - should only show time, should link to map
         with time_machine.travel('2020-10-20 12:00+01:00'):
             with self.assertNumQueries(2):
                 response = self.client.get('/operators/lynx/vehicles')
         self.assertNotContains(response, '20 Oct')
         self.assertContains(response, '00:47')
+        self.assertContains(response, "/operators/lynx/map")
+
+        with self.assertNumQueries(6):
+            response = self.client.get('/operators/lynx')
+        self.assertContains(response, "/operators/lynx/vehicles")
+        self.assertNotContains(response, "/operators/lynx/map")
 
         # last seen yesterday - should show date
         with time_machine.travel('2020-10-21 00:10+01:00'):
             with self.assertNumQueries(2):
                 response = self.client.get('/operators/lynx/vehicles')
-        self.assertContains(response, '20 Oct 00:47')
+            self.assertContains(response, '20 Oct 00:47')
+            self.assertNotContains(response, "/operators/lynx/map")
 
         self.assertTrue(response.context['code_column'])
         self.assertContains(response, '<td class="number">2</td>')
@@ -153,11 +158,14 @@ class VehiclesTests(TestCase):
             f'/vehicles/{self.vehicle_1.id}?date=2020-10-19#journeys/{self.journey.id}'
         )
 
-        self.location.refresh_from_db()
-        self.assertEqual(str(self.location), '19 Oct 2020 23:47:00')
-
     def test_location_json(self):
-        location = VehicleLocation.objects.get()
+        location = VehicleLocation(latlong=Point(0, 51))
+        location.id = 1
+        location.journey = self.journey
+        location.datetime = parse_datetime(self.datetime)
+
+        self.assertEqual(str(location), '19 Oct 2020 23:47:00')
+
         self.assertEqual(location.get_redis_json()['coordinates'], (0.0, 51.0))
 
         location.occupancy = 'seatsAvailable'

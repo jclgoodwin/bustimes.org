@@ -26,6 +26,7 @@ from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
 from bustimes.models import get_routes
 from vehicles.models import Vehicle
+from vehicles.utils import redis_client
 from vosa.models import Registration
 from .utils import get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
@@ -517,7 +518,8 @@ class OperatorDetailView(DetailView):
             context['colours'] = get_colours(context['services'])
 
         if context['vehicles']:
-            context['map'] = vehicles.filter(latest_location__isnull=False).exists()
+            vehicles = vehicles.values_list('id', flat=True)
+            context['map'] = redis_client.exists(*[f"vehicle{vehicle_id}" for vehicle_id in vehicles])
 
         return context
 

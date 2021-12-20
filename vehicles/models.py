@@ -180,7 +180,7 @@ class Vehicle(models.Model):
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
-    latest_location = models.OneToOneField('VehicleLocation', models.SET_NULL, null=True, blank=True, editable=False)
+    # latest_location = models.OneToOneField('VehicleLocation', models.SET_NULL, null=True, blank=True, editable=False)
     latest_journey = models.OneToOneField(
         'VehicleJourney', models.SET_NULL, null=True, blank=True, editable=False, related_name='latest_vehicle'
     )
@@ -788,24 +788,21 @@ class Occupancy(models.TextChoices):
     FULL = 'full', 'Full'
 
 
-class VehicleLocation(models.Model):
-    datetime = models.DateTimeField()
-    latlong = models.PointField()
-    journey = models.ForeignKey(VehicleJourney, models.CASCADE)
-    heading = models.PositiveSmallIntegerField(null=True, blank=True)
-    early = models.SmallIntegerField(null=True, blank=True)
-    delay = models.SmallIntegerField(null=True, blank=True)
-    current = models.BooleanField(default=False)
-    occupancy = models.CharField(
-        max_length=17,
-        choices=Occupancy.choices,
-        blank=True
-    )
-    seated_occupancy = models.PositiveSmallIntegerField(null=True, blank=True)
-    seated_capacity = models.PositiveSmallIntegerField(null=True, blank=True)
-    wheelchair_occupancy = models.PositiveSmallIntegerField(null=True, blank=True)
-    wheelchair_capacity = models.PositiveSmallIntegerField(null=True, blank=True)
-    occupancy_thresholds = models.CharField(max_length=10, blank=True)
+class VehicleLocation:
+    def __init__(self, latlong, heading=None, delay=None, early=None, occupancy=None):
+        self.latlong = latlong
+        self.heading = heading
+        self.delay = delay
+        self.early = early
+        self.occupancy = occupancy
+        self.seated_occupancy = None
+        self.seated_capacity = None
+        self.wheelchair_occupancy = None
+        self.wheelchair_capacity = None
+        self.occupancy_thresholds = None
+
+    def get_occupancy_display(self):
+        return Occupancy(self.occupancy).label
 
     def __str__(self):
         return self.datetime.strftime('%-d %b %Y %H:%M:%S')
@@ -815,7 +812,7 @@ class VehicleLocation(models.Model):
 
     def get_appendage(self):
         appendage = [self.datetime, self.latlong.coords, self.heading, self.early]
-        return (f'journey{self.journey_id}', json.dumps(appendage, cls=DjangoJSONEncoder))
+        return (f'journey{self.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder))
 
     def get_redis_json(self):
         journey = self.journey

@@ -221,23 +221,24 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         ]
 
         consumer = SiriConsumer()
-        with self.assertNumQueries(36):
+        with self.assertNumQueries(33):
             consumer.sirivm({"when": "2020-10-15T07:46:08+00:00", "items": items})
         with self.assertNumQueries(1):
             consumer.sirivm({"when": "2020-10-15T07:46:08+00:00", "items": items})
 
-        self.assertEqual(3, VehicleLocation.objects.all().count())
+        journeys = VehicleJourney.objects.all()
 
-        location = VehicleLocation.objects.all()[1]
-        self.assertEqual(location.journey.route_name, "843X")
-        self.assertEqual(location.journey.destination, "Soho Road")
-        self.assertEqual(location.journey.vehicle.reg, "SN56AFE")
+        self.assertEqual(3, journeys.count())
 
-        location = VehicleLocation.objects.all()[2]
-        self.assertEqual(location.heading, 92)
-        self.assertEqual(location.journey.vehicle.operator_id, "HAMS")
-        self.assertEqual(location.journey.vehicle.reg, "DW18HAM")
-        self.assertEqual(location.journey.vehicle.reg, "DW18HAM")
+        journey = journeys[1]
+        self.assertEqual(journey.route_name, "843X")
+        self.assertEqual(journey.destination, "Soho Road")
+        self.assertEqual(journey.vehicle.reg, "SN56AFE")
+
+        journey = journeys[2]
+        self.assertEqual(journey.vehicle.operator_id, "HAMS")
+        self.assertEqual(journey.vehicle.reg, "DW18HAM")
+        self.assertEqual(journey.vehicle.reg, "DW18HAM")
 
         # test operator map
         with self.assertNumQueries(1):
@@ -247,10 +248,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             json,
             [
                 {
-                    "id": location.id,
+                    "id": journey.vehicle_id,
                     "coordinates": [0.285348, 51.2135],
                     "vehicle": {
-                        "url": f"/vehicles/{location.vehicle.id}",
+                        "url": f"/vehicles/{journey.vehicle_id}",
                         "name": "T2-1 - DW18 HAM",
                     },
                     "heading": 92.0,
@@ -379,7 +380,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
 
         vehicle = journey.vehicle
-        location = VehicleLocation.objects.get()
 
         with self.assertNumQueries(6):
             response = self.client.get(journey.get_absolute_url())
@@ -409,7 +409,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response.json(),
             [
                 {
-                    "id": location.id,
+                    "id": vehicle.id,
                     "coordinates": [1.675893, 52.328398],
                     "vehicle": {
                         "url": f"/vehicles/{vehicle.id}",
@@ -429,7 +429,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response.json(),
             [
                 {
-                    "id": location.id,
+                    "id": vehicle.id,
                     "coordinates": [1.675893, 52.328398],
                     "vehicle": {
                         "url": f"/vehicles/{vehicle.id}",
@@ -547,17 +547,17 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         command.save()
 
-        location = VehicleLocation.objects.get()
+        vehicle = Vehicle.objects.get(code="626")
 
         response = self.client.get("/vehicles.json")
         self.assertEqual(
             response.json(),
             [
                 {
-                    "id": location.id,
+                    "id": vehicle.id,
                     "coordinates": [-1.586568, 55.084628],
                     "vehicle": {
-                        "url": f"/vehicles/{location.vehicle.id}",
+                        "url": f"/vehicles/{vehicle.id}",
                         "name": "626",
                     },
                     "heading": 189.0,

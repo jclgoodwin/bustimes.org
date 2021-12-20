@@ -27,7 +27,7 @@ class EdinburghImportTest(TestCase):
             'last_gps_fix': 1554038242,
             'ineo_gps_fix': 1554038242,
         }
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             self.command.handle_item(item)
             self.command.save()
         with self.assertNumQueries(1):

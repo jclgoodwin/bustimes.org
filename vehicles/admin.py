@@ -143,12 +143,10 @@ class VehicleAdmin(admin.ModelAdmin):
             except models.Vehicle.DoesNotExist:
                 continue
             vehicle.vehiclejourney_set.update(vehicle=duplicate)
-            duplicate.latest_location = vehicle.latest_location
             duplicate.latest_journey = vehicle.latest_journey
-            vehicle.latest_location = None
             vehicle.latest_journey = None
-            vehicle.save(update_fields=['latest_location', 'latest_journey'])
-            duplicate.save(update_fields=['latest_location', 'latest_journey'])
+            vehicle.save(update_fields=['latest_journey'])
+            duplicate.save(update_fields=['latest_journey'])
             duplicate.code = vehicle.code
             duplicate.fleet_code = vehicle.fleet_code
             duplicate.fleet_number = vehicle.fleet_number
@@ -434,15 +432,15 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
-@admin.register(models.VehicleLocation)
-class VehicleLocationAdmin(admin.ModelAdmin):
-    raw_id_fields = ['journey']
-    list_display = ['datetime', '__str__']
-    list_select_related = ['journey']
-    list_filter = [
-        'occupancy',
-        ('journey__source', admin.RelatedOnlyFieldListFilter),
-    ]
+# @admin.register(models.VehicleLocation)
+# class VehicleLocationAdmin(admin.ModelAdmin):
+#     raw_id_fields = ['journey']
+#     list_display = ['datetime', '__str__']
+#     list_select_related = ['journey']
+#     list_filter = [
+#         'occupancy',
+#         ('journey__source', admin.RelatedOnlyFieldListFilter),
+#     ]
 
 
 @admin.register(models.JourneyCode)

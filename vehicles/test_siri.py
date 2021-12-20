@@ -1,16 +1,20 @@
 from django.test import TestCase
+
 from busstops.models import DataSource, Region, Operator
-from .models import VehicleLocation
+from .utils import flush_redis
+from .models import VehicleJourney
 
 
 class SiriSubscriptionReceiveTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        Region.objects.create(id='EA', name='East Anglia')
-        DataSource.objects.create(name='TransMach')
-        Operator.objects.create(region_id='EA', id='GOCH', name='Go-Coach')
+        Region.objects.create(id="EA", name="East Anglia")
+        DataSource.objects.create(name="TransMach")
+        Operator.objects.create(region_id="EA", id="GOCH", name="Go-Coach")
 
     def test_siri_vm(self):
+        flush_redis()
+
         xml = """<Siri xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.kizoom.com/standards/siri/schema/1.3/siri.xsd" version="1.3">
             <ServiceDelivery>
@@ -90,8 +94,11 @@ class SiriSubscriptionReceiveTest(TestCase):
         </Siri>
         """
 
-        with self.assertNumQueries(17):
-            self.client.post('/siri', xml, content_type='text/xml')
+        with self.assertNumQueries(15):
+            self.client.post("/siri", xml, content_type="text/xml")
 
-        location = VehicleLocation.objects.first()
-        self.assertEqual(location.journey.code, '2')
+        response = self.client.get("/vehicles.json?operator=GOCH")
+        self.assertEqual(len(response.json()), 2)
+
+        journey = VehicleJourney.objects.first()
+        self.assertEqual(journey.code, "2")

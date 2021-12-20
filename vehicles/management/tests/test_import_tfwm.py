@@ -21,7 +21,7 @@ class TfWMImportTest(TestCase):
             items = command.get_items()
 
         # print(items)
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(9):
             with patch('builtins.print') as mocked_print:
                 for item in items:
                     command.handle_item(item)

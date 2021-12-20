@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
 from busstops.models import DataSource, Region, Operator, Service
-from ...models import VehicleLocation
+from ...models import VehicleJourney
 from ..commands.import_stagecoach import Command
 
 
@@ -37,7 +37,7 @@ class StagecoachTest(TestCase):
 
         with vcr.use_cassette(os.path.join(DIR, 'vcr', 'stagecoach_vehicles.yaml')):
             with self.assertLogs(level='ERROR'):
-                with self.assertNumQueries(18):
+                with self.assertNumQueries(17):
                     with patch('builtins.print'):
                         with self.assertRaises(MockException):
                             command.handle()
@@ -49,4 +49,4 @@ class StagecoachTest(TestCase):
             'SCCM': None,
             'SCEK': None,
         })
-        self.assertEqual(VehicleLocation.objects.count(), 1)
+        self.assertEqual(VehicleJourney.objects.count(), 1)

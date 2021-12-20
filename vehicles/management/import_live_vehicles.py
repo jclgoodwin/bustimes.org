@@ -251,25 +251,23 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     journey.service.tracking = True
                     journey.service.save(update_fields=['tracking'])
 
-        if not location.id:
-            location.id = vehicle.latest_location_id
+        # if not location.id:
+        #     location.id = vehicle.latest_location_id
+        location.id = vehicle.id
         location.journey = journey
-        location.current = True
+        # location.current = True
 
-        to_update = False
+        # to_update = False
 
-        if not location.id:
-            location.save()
-            vehicle.latest_location = location
-            to_update = True
+        # if not location.id:
+        #     location.save()
+        #     vehicle.latest_location = location
+        #     to_update = True
 
         vehicle.withdrawn = False
 
         if vehicle.latest_journey_id != journey.id:
             vehicle.latest_journey = journey
-            to_update = True
-
-        if to_update:
             self.vehicles_to_update.append(vehicle)
 
         self.to_save.append((location, vehicle))
@@ -280,7 +278,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if self.vehicles_to_update:
             try:
-                Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'latest_location', 'withdrawn'])
+                Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'withdrawn'])
             except IntegrityError as e:
                 print(e)
                 self.vehicle_cache = {}  # for import_bod_avl

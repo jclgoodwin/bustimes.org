@@ -1,7 +1,7 @@
 from unittest.mock import patch
 from django.test import TestCase
 from busstops.models import Region, Operator, Service, DataSource
-from ...models import VehicleLocation, Vehicle
+from ...models import VehicleJourney, Vehicle
 from ..commands import import_bushub
 
 
@@ -60,7 +60,7 @@ class BusHubTest(TestCase):
             "Destination": None
         }
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             with patch('builtins.print') as mocked_print:
                 command.handle_item(item)
                 command.save()
@@ -71,20 +71,20 @@ class BusHubTest(TestCase):
             command.handle_item(item)
             command.save()
 
-        location = VehicleLocation.objects.get()
-        self.assertEqual('2018-08-31 21:49:33+00:00', str(location.datetime))
-        self.assertEqual(143, location.heading)
-        self.assertEqual('DIAM', location.journey.vehicle.operator_id)
-        self.assertIsNone(location.journey.service)
+        journey = VehicleJourney.objects.get()
+        self.assertEqual('2018-08-31 21:45:00+00:00', str(journey.datetime))
+        # self.assertEqual(143, location.heading)
+        self.assertEqual('DIAM', journey.vehicle.operator_id)
+        self.assertIsNone(journey.service)
 
         item['OperatorRef'] = 'WNGS'
         item['VehicleRef'] = '20052'
         item['Bearing'] = '-1'
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             command.handle_item(item)
             command.save()
         self.assertEqual(2, Vehicle.objects.count())
         self.vehicle.refresh_from_db()
-        self.assertIsNotNone(self.vehicle.latest_location)
-        self.assertIsNone(self.vehicle.latest_location.heading)
-        self.assertEqual(self.service_c, self.vehicle.latest_location.journey.service)
+        # self.assertIsNotNone(self.vehicle.latest_location)
+        # self.assertIsNone(self.vehicle.latest_location.heading)
+        self.assertEqual(self.service_c, self.vehicle.latest_journey.service)

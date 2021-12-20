@@ -28,7 +28,7 @@ from sql_util.utils import SubqueryCount
 from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
-from bustimes.models import Garage, Trip, StopTime, get_calendars
+from bustimes.models import Garage, Trip, StopTime
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from .filters import VehicleEditFilter
@@ -241,7 +241,7 @@ def operator_vehicles(request, slug=None, parent=None):
     }
 
     if not parent and not form:
-        context['map'] = any(vehicle.latest_location_id for vehicle in vehicles)
+        context['map'] = any(hasattr(vehicle, 'last_seen') and vehicle.last_seen['today'] for vehicle in vehicles)
 
     return render(request, 'operator_vehicles.html', context)
 
