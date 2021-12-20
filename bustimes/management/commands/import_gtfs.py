@@ -34,8 +34,7 @@ def read_file(archive, name):
     try:
         with archive.open(name) as open_file:
             with io.TextIOWrapper(open_file, encoding="utf-8-sig") as wrapped_file:
-                for line in csv.DictReader(wrapped_file):
-                    yield line
+                yield from csv.DictReader(wrapped_file)
     except KeyError:
         # file doesn't exist
         return

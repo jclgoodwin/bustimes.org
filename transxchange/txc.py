@@ -83,8 +83,7 @@ class JourneyPattern:
 
     def get_timinglinks(self):
         for section in self.sections:
-            for timinglink in section.timinglinks:
-                yield timinglink
+            yield from section.timinglinks
 
 
 class JourneyPatternSection:

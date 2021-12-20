@@ -23,8 +23,7 @@ class Command(BaseCommand):
 
     def get_rows(self, path):
         with open(settings.DATA_DIR / path) as open_file:
-            for line in csv.DictReader(open_file):
-                yield line
+            yield from csv.DictReader(open_file)
 
     def handle(self, regions, **kwargs):
         for region in regions:
