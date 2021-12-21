@@ -296,11 +296,15 @@ class Command(BaseCommand):
                             row_refs = [row_ref for row_ref in rows if row_ref.endswith(row_ref_suffix)]
                             assert len(row_refs) == 1
                             row = rows[row_refs[0]]
+                        try:
+                            distance_matrix_element = distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
+                        except KeyError as e:
+                            print(e)
                         cells.append(models.Cell(
                             column=columns[columnn_ref],
                             row=row,
                             price=price_group_prices[price_ref.attrib["ref"]],
-                            distance_matrix_element=distance_matrix_elements[distance_matrix_element_ref.attrib["ref"]]
+                            distance_matrix_element=distance_matrix_element
                         ))
 
                 sales_offer_package_ref = sub_fare_table_element.find("pricesFor/SalesOfferPackageRef")
