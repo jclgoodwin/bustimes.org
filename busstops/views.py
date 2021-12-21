@@ -593,9 +593,9 @@ class ServiceDetailView(DetailView):
 
         # disruptions
 
-        consequences = Consequence.objects.filter(services=self.object)
+        consequences = Consequence.objects.filter(Q(services=self.object) | (Q(operators__in=operators, services=None)))
         context['situations'] = Situation.objects.filter(
-            Q(consequence__services=self.object) | Q(consequence__services=None, consequence__operators__in=operators),
+            Exists(consequences.filter(situation=OuterRef('id'))) | Q(situation_number=''),
             publication_window__contains=Now(),
             current=True
         ).distinct().prefetch_related(
