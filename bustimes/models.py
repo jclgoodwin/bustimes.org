@@ -21,14 +21,11 @@ def get_routes(routes, when=None):
     if len(revision_numbers) > 1 and not any(route.code[:4].isupper() and route.code[4] == '_' for route in routes):
         revision_numbers = {}
         for route in routes:
-            if (
-                route.service_code not in revision_numbers
-                or route.revision_number > revision_numbers[route.service_code]
-            ):
-                revision_numbers[f'{route.service_code}:{route.service_id}'] = route.revision_number
+            route.key = f'{route.service_code}:{route.service_id}'
+            if route.key not in revision_numbers or route.revision_number > revision_numbers[route.key]:
+                revision_numbers[route.key] = route.revision_number
         routes = [
-            route for route in routes if route.revision_number ==
-            revision_numbers[f'{route.service_code}:{route.service_id}']
+            route for route in routes if route.revision_number == revision_numbers[route.key]
         ]
 
     sources = set(route.source_id for route in routes)
