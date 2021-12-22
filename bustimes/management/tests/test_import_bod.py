@@ -220,36 +220,40 @@ class ImportBusOpenDataTest(TestCase):
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                archive_name = 'stagecoach-sccm-route-schedule-data-transxchange.zip'
-                path = Path(directory) / archive_name
 
-                with zipfile.ZipFile(path, 'a') as open_zipfile:
-                    for filename in (
-                        '904_FE_PF_904_20210102.xml',
-                        '904_VI_PF_904_20200830.xml',
-                    ):
-                        open_zipfile.write(FIXTURES_DIR / filename, filename)
+                for archive_name in (
+                    'stagecoach-sccm-route-schedule-data-transxchange.zip',
+                    'stagecoach-sccm-route-schedule-data-transxchange_2_4.zip',
+                ):
+                    path = Path(directory) / archive_name
+
+                    with zipfile.ZipFile(path, 'a') as open_zipfile:
+                        for filename in (
+                            '904_FE_PF_904_20210102.xml',
+                            '904_VI_PF_904_20200830.xml',
+                        ):
+                            open_zipfile.write(FIXTURES_DIR / filename, filename)
 
                 with patch(
                     'bustimes.management.commands.import_bod.download_if_changed',
                     return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
                 ) as download_if_changed:
-                    with self.assertNumQueries(140):
+                    with self.assertNumQueries(153):
                         call_command('import_bod', 'stagecoach')
                     download_if_changed.assert_called_with(
                         path, 'https://opendata.stagecoachbus.com/' + archive_name
                     )
 
-                    with self.assertNumQueries(1):
+                    with self.assertNumQueries(4):
                         call_command('import_bod', 'stagecoach')
 
                     with self.assertNumQueries(0):
                         call_command('import_bod', 'stagecoach', 'scox')
 
-                    with self.assertNumQueries(81):
+                    with self.assertNumQueries(91):
                         call_command('import_bod', 'stagecoach', 'sccm')
 
-                source = DataSource.objects.get(name='Stagecoach East')
+                source = DataSource.objects.filter(name='Stagecoach East').first()
                 response = self.client.get(f'/sources/{source.id}/routes/')
 
                 self.assertEqual(response.content.decode(), '904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml')

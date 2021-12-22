@@ -48,6 +48,16 @@ def get_command():
     return command
 
 
+def get_sha1(path):
+    sha1 = hashlib.sha1()
+    with path.open('rb') as open_file:
+        while True:
+            data = open_file.read(65536)
+            if not data:
+                return sha1.hexdigest()
+            sha1.update(data)
+
+
 def handle_file(command, path, qualify_filename=False):
     # the downloaded file might be plain XML, or a zipped archive - we just don't know yet
     full_path = settings.DATA_DIR / path
@@ -79,17 +89,6 @@ def handle_file(command, path, qualify_filename=False):
                 command.handle_file(open_file, str(path))
             except (AttributeError, DataError) as e:
                 logger.error(e, exc_info=True)
-
-    if not qualify_filename:
-        sha1 = hashlib.sha1()
-        with full_path.open('rb') as open_file:
-            while True:
-                data = open_file.read(65536)
-                if data:
-                    sha1.update(data)
-                else:
-                    break
-        command.source.sha1 = sha1.hexdigest()
 
 
 def get_bus_open_data_paramses(api_key, operator):
@@ -200,8 +199,10 @@ def bus_open_data(api_key, operator):
                 command.source.name = filename
 
                 download(path, url)
+
                 handle_file(command, filename)
 
+                command.source.sha1 = get_sha1(path)
                 command.source.save()
 
                 operator_ids = get_operator_ids(command.source)
@@ -286,6 +287,7 @@ def ticketer(specific_operator=None):
 
             command.finish_services()
 
+            command.source.sha1 = get_sha1(path)
             command.source.datetime = last_modified
             command.source.save()
 
@@ -295,6 +297,25 @@ def ticketer(specific_operator=None):
     command.debrief()
 
 
+def do_stagecoach_source(command, last_modified, filename, nocs):
+    logger.info(f'{command.source.url} {last_modified}')
+
+    # avoid importing old data
+    command.source.datetime = timezone.now()
+
+    handle_file(command, filename)
+
+    command.mark_old_services_as_not_current()
+
+    command.source.datetime = last_modified
+    command.source.save()
+
+    logger.info(f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}")
+    operators = get_operator_ids(command.source)
+    logger.info(f'  {operators}')
+    logger.info(f'  {[o for o in operators if o not in nocs]}')
+
+
 def stagecoach(operator=None):
     command = get_command()
 
@@ -302,50 +323,50 @@ def stagecoach(operator=None):
         if operator and operator != noc:  # something like 'sswl'
             continue
 
-        filename = f'stagecoach-{noc}-route-schedule-data-transxchange_2_4.zip'
-        if noc not in ('scek', 'syrk', 'sdvn'):  # 'sccm', 'sblb', 'sccu', 'scfi', 'schi', 'scem', 'sswl'):
-            filename = filename.replace('_2_4', '')
-        url = f'https://opendata.stagecoachbus.com/{filename}'
-        path = settings.DATA_DIR / filename
+        command.region_id = region_id
+        command.service_ids = set()
+        command.route_ids = set()
+        command.garages = {}
+        command.operators = {  # sort of ~homogenise~ all the different OperatorCodes in the data
+            o: nocs[0] for o in nocs
+        }
 
-        command.source, created = DataSource.objects.get_or_create({'url': url}, name=name)
-        if not created:
-            command.source.url = url
+        sources = []
 
-        modified, last_modified = download_if_changed(path, url)
+        for filename in (
+            f'stagecoach-{noc}-route-schedule-data-transxchange.zip',
+            f'stagecoach-{noc}-route-schedule-data-transxchange_2_4.zip',
+        ):
+            if '_2_4' in filename:
+                if noc not in ('scek', 'syrk', 'sdvn', 'sccm'):
+                    continue  # completely defer to use 2.1 source
+                command.preferred_source = command.source  # prefer the 2.1 source
+            else:
+                command.preferred_source = None
 
-        if modified and not command.source.older_than(last_modified):
-            modified = False
+            url = f'https://opendata.stagecoachbus.com/{filename}'
+            path = settings.DATA_DIR / filename
 
-        if modified or operator:
-            logger.info(f'{url} {last_modified}')
+            command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
+            sources.append(command.source)
 
-            command.region_id = region_id
-            command.service_ids = set()
-            command.route_ids = set()
-            command.garages = {}
-            command.operators = {  # sort of ~homogenise~ all the different OperatorCodes in the data
-                o: nocs[0] for o in nocs
-            }
+            modified, last_modified = download_if_changed(path, url)
 
-            # avoid importing old data
-            command.source.datetime = timezone.now()
+            sha1 = get_sha1(path)
 
-            handle_file(command, filename)
+            if modified:
+                if not command.source.older_than(last_modified):
+                    modified = False
+                elif sha1 == command.source.sha1:
+                    modified = False
 
-            command.mark_old_services_as_not_current()
+            command.source.sha1 = sha1
 
-            clean_up(nocs, [command.source])
+            if modified or operator:
+                do_stagecoach_source(command, last_modified, filename, nocs)
 
-            command.finish_services()
-
-            command.source.datetime = last_modified
-            command.source.save()
-
-            logger.info(f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}")
-            operators = get_operator_ids(command.source)
-            logger.info(f'  {operators}')
-            logger.info(f'  {[o for o in operators if o not in nocs]}')
+        clean_up(nocs, sources)
+        command.finish_services()
 
     command.debrief()
 

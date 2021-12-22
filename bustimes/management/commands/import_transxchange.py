@@ -816,6 +816,12 @@ class Command(BaseCommand):
             if self.is_tnds() and self.should_defer_to_other_source(operators, line.line_name):
                 continue
 
+            if self.source.name.startswith('Stagecoach') and self.preferred_source and Service.objects.filter(
+                line_name__iexact=line.line_name, current=True,
+                route__source=self.preferred_source
+            ).exists():
+                continue
+
             # defer to the better Reading Buses source,
             # unless this service is only present in this worse source
             # (probably a football services)
