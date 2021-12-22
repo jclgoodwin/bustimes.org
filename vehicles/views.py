@@ -58,12 +58,13 @@ def vehicles(request):
         min=Min('vehicle__id'),
     ).order_by('-min')[:36]
 
+    operator_journeys = VehicleJourney.objects.filter(latest_vehicle__operator=OuterRef('id'))
     day_ago = timezone.now() - datetime.timedelta(days=1)
-    status = operators.annotate(
+    status = operators.filter(
+        Exists(operator_journeys),
+        ~Exists(operator_journeys.filter(datetime__gte=day_ago))
+    ).annotate(
         last_seen=Max('vehicle__latest_journey__datetime'),
-    ).filter(
-        last_seen__lte=day_ago,
-        last_seen__isnull=False
     ).order_by(
         '-last_seen'
     )
