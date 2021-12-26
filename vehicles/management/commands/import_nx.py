@@ -82,6 +82,10 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
         journey.destination = item['arrival']
+        if item['dir'] == "O":
+            journey.direction = 'outbound'
+        else:
+            journey.direction = 'inbound'
         journey.code = item['journeyId']
         journey.data = item
 
