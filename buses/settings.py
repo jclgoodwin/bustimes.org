@@ -263,7 +263,7 @@ PASSENGER_OPERATORS = [
         'GONW': 'GONW'
     }),
     ('Metrobus', 'https://www.metrobus.co.uk/open-data', 'SE', {
-        'METR': 'METR'
+        'MB': 'METR'
     }),
     ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
         'NCT': 'NCTR'
