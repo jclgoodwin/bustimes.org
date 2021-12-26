@@ -82,10 +82,7 @@ class Command(ImportLiveVehiclesCommand):
                 pass
 
         journey.destination = item['arrival']
-        if item['dir'] == "O":
-            journey.direction = 'outbound'
-        else:
-            journey.direction = 'inbound'
+        journey.direction = "outbound" if item["dir"] == "O" else "inbound"
         journey.code = item['journeyId']
         journey.data = item
 
@@ -96,15 +93,7 @@ class Command(ImportLiveVehiclesCommand):
             print(journey.route_name, e)
 
         if journey.service:
-            try:
-                departure_time = timezone.localtime(journey.datetime)
-                journey.trip = Trip.objects.filter(
-                    route__service=journey.service,
-                    calendar__in=get_calendars(departure_time),
-                    start=timedelta(hours=departure_time.hour, minutes=departure_time.minute)
-                ).get()
-            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
-                pass
+            journey.trip = journey.get_trip(departure_time=journey.datetime)
 
         return journey
 
