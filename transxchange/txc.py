@@ -109,7 +109,6 @@ class JourneyPatternStopUsage:
         try:
             self.stop = stops[stop_ref]
         except KeyError:
-            logger.warning(stop_ref)
             self.stop = Stop(element)
 
         self.timingstatus = element.findtext('TimingStatus')
