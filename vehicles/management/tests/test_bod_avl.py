@@ -312,7 +312,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response,
             f'<td colspan="2"><a href="#journeys/{whippet_journey.id}">09:23</a></td>',
         )
-        self.assertContains(response, "Great Yarmouth")  # garage
+        self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
+
+        response = self.client.get("/services/u/vehicles?date=2020-06-17")
+        self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
     def test_handle_item(self):
         command = import_bod_avl.Command()

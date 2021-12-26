@@ -444,26 +444,31 @@ class VehiclesTests(TestCase):
 
         with self.assertNumQueries(12):
             response = self.client.post(url, initial)
-        # self.assertTrue(response.context['form'].fields['fleet_number'].disabled)
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
+        self.assertContains(response, "You haven&#x27;t changed anything")
 
         self.assertEqual(0, VehicleEdit.objects.count())
+        self.assertEqual(0, VehicleRevision.objects.count())
 
         self.assertNotContains(response, '/operators/bova-and-over')
 
         initial['notes'] = 'Ex Ipswich Buses'
         initial['name'] = 'Luther Blisset'
         initial['branding'] = 'Coastliner'
+        initial['previous_reg'] = 'k292  jvf'
+        initial['reg'] = ''
         with self.assertNumQueries(12):
-            initial['reg'] = ''
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
 
         self.assertContains(response, '<p>I’ll update the other details shortly</p>')
 
         edit = VehicleEdit.objects.get()
-        self.assertEqual(edit.get_changes(), {'reg': '<del>UWW2X</del>'})
+        self.assertEqual(edit.get_changes(), {
+            'reg': '<del>UWW2X</del>',
+            'Previous reg': 'K292JVF',
+        })
 
         response = self.client.get('/vehicles/history')
         self.assertContains(response, 'Luther Blisset')
@@ -594,6 +599,7 @@ class VehiclesTests(TestCase):
                 'reg': self.vehicle_2.reg,
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'colours': 'Other',
+                "prevous_reg": "COCKS"  # doesn't match regex
             })
             self.assertContains(response, "I’ll update those details shortly")
 
@@ -603,9 +609,15 @@ class VehiclesTests(TestCase):
             # trusted user - can edit reg and remove branding
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'DA04 DDA',
-                'branding': ''
+                'branding': '',
+                'previous_reg': "K292  JVF"
             })
+        self.assertEqual(
+            str(response.context['revision']),
+            "reg:  → DA04DDA, previous reg:  → K292JVF, branding: Coastliner → "
+        )
         self.assertContains(response, 'Changed reg to DA04DDA')
+        self.assertContains(response, 'Changed previous reg to K292JVF')
         self.assertContains(response, 'Changed branding from Coastliner to')
 
         with self.assertNumQueries(12):
@@ -621,12 +633,13 @@ class VehiclesTests(TestCase):
 
         revision = VehicleRevision.objects.last()
         self.assertEqual(list(revision.revert()), [
-            f'vehicle {revision.vehicle_id} colours not reverted',
+            f"vehicle {revision.vehicle_id} colours not reverted",
             f"vehicle {revision.vehicle_id} reverted ['livery']"
         ])
         revision = VehicleRevision.objects.first()
         self.assertEqual(list(revision.revert()), [
-            f'vehicle {revision.vehicle_id} branding not reverted',
+            f"vehicle {revision.vehicle_id} branding not reverted",
+            f"vehicle {revision.vehicle_id} previous reg not reverted",
             f"vehicle {revision.vehicle_id} reverted ['reg']"
         ])
         self.assertEqual(revision.vehicle.reg, '')

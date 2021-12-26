@@ -4,7 +4,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from busstops.models import Service
 from ...models import Vehicle, VehicleLocation, VehicleJourney, JourneyCode
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -56,7 +56,7 @@ class Command(ImportLiveVehiclesCommand):
 
                     return self.vehicles.get_or_create(defaults, operator=operator, code=vehicle_code)
             except Service.DoesNotExist as e:
-                print(e, item.vehicle.trip.route_id, vehicle_code)
+                logger.info(f"{e} {item.vehicle.trip.route_id} {vehicle_code}")
                 pass
 
         reg = vehicle_code.replace('_', '')
@@ -70,7 +70,7 @@ class Command(ImportLiveVehiclesCommand):
         try:
             return self.vehicles.get_or_create(defaults, code=vehicle_code)
         except Vehicle.MultipleObjectsReturned:
-            print(vehicle_code, item)
+            logger.info(f"{vehicle_code} {item}")
             return self.vehicles.filter(code=vehicle_code).first(), False
 
     def get_journey(self, item, vehicle):
