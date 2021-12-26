@@ -28,7 +28,10 @@ class BusTimesTest(TestCase):
 
             self.assertContains(response, '<h2>8 to Tottenham Court Road</h2>')
             self.assertContains(response, '<h2>LTZ 1243</h2>')
-            self.assertContains(response, '<td class="stop-name"><a href="/stops/490010552N">Old Ford Road (OB)</a></td>')
+            self.assertContains(
+                response,
+                '<td class="stop-name">''<a href="/stops/490010552N">Old Ford Road (OB)</a></td>'
+            )
             self.assertContains(response, '<td>18:55</td>')
             self.assertContains(response, '<td class="stop-name"><a href="/stops/490004215M">Bow Church</a></td>')
 

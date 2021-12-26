@@ -99,7 +99,11 @@ class Command(BaseCommand):
         if len(parts) == 4 and parts[0].isdigit() and parts[3].isdigit():
             service = self.source.service_set.filter(
                 Q(service_code__startswith='-'.join(parts[:3])) |
-                Q(service_code__startswith=f"{parts[0]}", service_code__endswith=f"-{parts[2]}-{parts[3]}", line_name__iexact=line['route_short_name'])
+                Q(
+                    service_code__startswith=f"{parts[0]}",
+                    service_code__endswith=f"-{parts[2]}-{parts[3]}",
+                    line_name__iexact=line['route_short_name']
+                )
             ).order_by('id').first()
         else:
             service = None

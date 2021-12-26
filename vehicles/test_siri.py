@@ -95,7 +95,8 @@ class SiriSubscriptionReceiveTest(TestCase):
         """
 
         with self.assertNumQueries(15):
-            self.client.post("/siri", xml, content_type="text/xml")
+            response = self.client.post("/siri", xml, content_type="text/xml")
+        self.assertEqual(response.status_code, 200)
 
         response = self.client.get("/vehicles.json?operator=GOCH")
         self.assertEqual(len(response.json()), 2)

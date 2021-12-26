@@ -4,14 +4,12 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.db.models import Q, Exists, OuterRef
-from django.db.utils import ConnectionDoesNotExist
 from django.contrib.auth import get_user_model
 
 from sql_util.utils import SubqueryCount
 
 from .filters import VehicleEditFilter
 
-from busstops.models import Operator
 from . import models
 
 UserModel = get_user_model()
@@ -91,8 +89,8 @@ class DuplicateVehicleFilter(admin.SimpleListFilter):
 
 @admin.register(models.Vehicle)
 class VehicleAdmin(admin.ModelAdmin):
-    list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type',
-                    'get_flickr_link', 'withdrawn', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
+    list_display = ('code', 'fleet_number', 'fleet_code', 'reg', 'operator', 'vehicle_type', 'get_flickr_link',
+                    'withdrawn', 'last_seen', 'livery', 'colours', 'branding', 'name', 'notes', 'data')
     list_filter = (
         DuplicateVehicleFilter,
         'withdrawn',

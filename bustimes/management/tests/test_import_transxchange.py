@@ -873,7 +873,9 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(len(groupings[1].rows), 15)
         self.assertContains(res, """
             <tr>
-                <th class="stop-name" rowspan="2" scope="row"><a href="/stops/450030220">Leeds City Centre Bus Stn</a></th>
+                <th class="stop-name" rowspan="2" scope="row">
+                    <a href="/stops/450030220">Leeds City Centre Bus Stn</a>
+                </th>
                 <td></td><td>06:15</td><td rowspan="2">09:20</td><td rowspan="2">10:20</td><td></td><td></td><td></td>
                 <td></td><td></td><td rowspan="2"></td>
             </tr>

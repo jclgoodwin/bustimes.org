@@ -1,4 +1,6 @@
 import time_machine
+from datetime import date
+from unittest.mock import patch
 from pathlib import Path
 from django.core.cache import cache
 from vcr import use_cassette
@@ -13,8 +15,8 @@ from busstops.models import (
     AdminArea,
     Service,
 )
-from bustimes.models import Route, Trip
-from ...models import VehicleLocation, VehicleJourney, Vehicle
+from bustimes.models import Route, Trip, Garage
+from ...models import VehicleJourney, Vehicle
 from ...workers import SiriConsumer
 from ...utils import flush_redis
 from ..commands import import_bod_avl, import_bod_avl_channels
@@ -73,12 +75,14 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         cls.service_c = Service.objects.create(line_name="c")
         cls.service_c.operator.add("HAMS")
         route_u = Route.objects.create(service=service_u, source=cls.source, code="u", line_name="UU")
+        garage = Garage.objects.create(code="GY", name="Great Yarmouth")
         # route_c = Route.objects.create(service=service_c, source=cls.source, code='c')
         Trip.objects.create(
             route=route_u,
             start="09:23:00",
             end="10:50:00",
             destination_id="0500CCITY544",
+            garage=garage
         )
         # calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True,
         #                                    fri=True, sat=True, sun=True, start_date='2020-10-20')
@@ -221,7 +225,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         ]
 
         consumer = SiriConsumer()
-        with self.assertNumQueries(33):
+        with self.assertNumQueries(34):
             consumer.sirivm({"when": "2020-10-15T07:46:08+00:00", "items": items})
         with self.assertNumQueries(1):
             consumer.sirivm({"when": "2020-10-15T07:46:08+00:00", "items": items})
@@ -291,14 +295,24 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         # test history view
         whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
-        response = self.client.get(whippet_journey.get_absolute_url())
-        self.assertContains(
-            response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
-        )
+
+        with time_machine.travel("2020-06-17"):
+            with patch("django.core.cache.cache.set") as mock_cache_set:
+
+                response = self.client.get(whippet_journey.get_absolute_url())
+
+                mock_cache_set.assert_called_with(
+                    f"vehicle:{whippet_journey.vehicle_id}:dates",
+                    [date(2020, 6, 17)],
+                    86400.0
+                )
+
+        self.assertContains(response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>')
         self.assertContains(
             response,
             f'<td colspan="2"><a href="#journeys/{whippet_journey.id}">09:23</a></td>',
         )
+        self.assertContains(response, "Great Yarmouth")  # garage
 
     def test_handle_item(self):
         command = import_bod_avl.Command()

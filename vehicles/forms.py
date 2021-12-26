@@ -14,16 +14,26 @@ from .fields import RegField
 
 def get_livery_choices(operator):
     choices = {}
+
     vehicles = operator.vehicle_set.filter(withdrawn=False)
-    liveries = Livery.objects.filter(Q(vehicle__in=vehicles) | Q(operator=operator)).annotate(popularity=Count('vehicle'))
-    for livery in liveries.order_by('-popularity').distinct():
+
+    liveries = Livery.objects.filter(Q(vehicle__in=vehicles) | Q(operator=operator))
+    liveries = liveries.annotate(popularity=Count('vehicle')).order_by('-popularity')
+
+    for livery in liveries.distinct():
         choices[livery.id] = livery
+
+    # add ad hoc vehicle colours
     for vehicle in vehicles.distinct('colours'):
         if not vehicle.livery_id and vehicle.colours and vehicle.colours != 'Other':
             choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
+
+    # replace the dictionary with a list of key, label pairs
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
+
     if choices:
         choices.append(('Other', 'Other'))
+
     return choices
 
 
@@ -115,7 +125,8 @@ class EditVehicleForm(EditVehiclesForm):
         if not user.is_staff:
             if vehicle.fleet_code and vehicle.fleet_code in vehicle.code.replace('_', ' ').split():
                 self.fields['fleet_number'].disabled = True
-                self.fields['fleet_number'].help_text = f"The ticket machine code ({vehicle.code}) can’t be contradicted"
+                self.fields['fleet_number'].help_text = f"""The ticket machine code ({vehicle.code})
+can’t be contradicted"""
             elif vehicle.fleet_code and vehicle.latest_journey and vehicle.latest_journey.data:
                 try:
                     vehicle_unique_id = vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId']

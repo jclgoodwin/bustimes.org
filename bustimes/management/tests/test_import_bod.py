@@ -146,12 +146,14 @@ class ImportBusOpenDataTest(TestCase):
 
         # test get_trip
         journey = VehicleJourney(
-            datetime=datetime.datetime(2020, 11, 2, 15, 7, 6),
+            datetime=parse_datetime('2020-11-02T15:07:06+00:00'),
             service=Service.objects.get(),
-            code='1'
+            code='1',
+            source=route.source
         )
-        trip = journey.get_trip()
-        self.assertEqual(trip.ticket_machine_code, '1')
+        journey.trip = journey.get_trip()
+        self.assertEqual(journey.trip.ticket_machine_code, '1')
+        journey.save()  # for use later
 
         journey.code = '0915'
         trip = journey.get_trip()
@@ -173,6 +175,11 @@ class ImportBusOpenDataTest(TestCase):
         # test trip copy:
         trip = route.trip_set.first()
         trip.copy(datetime.timedelta(hours=1))
+
+        # test journey with trip json
+        response = self.client.get(f"/journeys/{journey.id}.json")
+        json = response.json()
+        self.assertIn("stops", json)
 
     def test_ticketer(self):
         with TemporaryDirectory() as directory:

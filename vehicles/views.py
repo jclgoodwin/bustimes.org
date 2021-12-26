@@ -764,8 +764,6 @@ def journey_debug(request, pk):
 @require_POST
 def siri(request):
     body = request.body.decode()
-    if not body:
-        return HttpResponse()
 
     if 'HeartbeatNotification' in body:  # subscription heartbeat
         for _, element in ET.iterparse(request):
