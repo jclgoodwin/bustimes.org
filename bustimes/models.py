@@ -67,7 +67,7 @@ def get_calendars(when, calendar_ids=None):
         calendar_dates = calendar_dates.filter(calendar__in=calendar_ids)
     exclusions = calendar_dates.filter(operation=False)
     inclusions = calendar_dates.filter(operation=True)
-    special_inclusions = inclusions.filter(special=True)
+    special_inclusions = Exists(inclusions.filter(special=True))
     only_certain_dates = Exists(calendar_calendar_dates.filter(special=False, operation=True))
 
     calendar_bank_holidays = CalendarBankHoliday.objects.filter(
@@ -78,9 +78,11 @@ def get_calendars(when, calendar_ids=None):
 
     return calendars.filter(
         ~Exists(exclusions),
-        ~Exists(calendar_bank_holidays.filter(operation=False)),
-        ~only_certain_dates | Exists(inclusions) | calendar_bank_holidays_inclusions,
-        Q(**{when.strftime('%a').lower(): True}) | Exists(special_inclusions) | calendar_bank_holidays_inclusions
+        Q(
+            ~Exists(calendar_bank_holidays.filter(operation=False)),
+            ~only_certain_dates | Exists(inclusions),
+            **{when.strftime('%a').lower(): True}
+        ) | special_inclusions | calendar_bank_holidays_inclusions,
     )
 
 
