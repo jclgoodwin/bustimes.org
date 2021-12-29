@@ -71,20 +71,25 @@ class Command(ImportLiveVehiclesCommand):
 
         latest_journey = vehicle.latest_journey
         if latest_journey and latest_journey.code == code and latest_journey.datetime == datetime:
-            journey = latest_journey
-        else:
+            return latest_journey
+
+        if datetime:
             try:
-                journey = VehicleJourney.objects.select_related('service').get(vehicle=vehicle, datetime=datetime)
+                return vehicle.vehiclejourney_set.select_related('service').get(datetime=datetime)
             except VehicleJourney.DoesNotExist:
-                journey = VehicleJourney(datetime=datetime, data=item)
+                pass
 
-        journey.code = code
-        journey.route_name = item['PublishedLineName']
+        journey = VehicleJourney(
+            datetime=datetime,
+            data=item,
+            code=code,
+            route_name=item['PublishedLineName'],
+            service=self.get_service(item),
+            destination=item['DestinationStopLocality']
+        )
 
-        if not journey.service_id:
-            journey.service = self.get_service(item)
-
-        journey.destination = item['DestinationStopLocality']
+        if journey.service_id and not journey.id:
+            journey.trip = journey.get_trip(departure_time=datetime, destination_ref=item['DestinationRef'])
 
         return journey
 
