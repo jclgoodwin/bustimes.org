@@ -304,14 +304,16 @@ textarea {
     width: 100%;
 }
 
-.errorlist {
+.errorlist:not(.nonfield) {
     color: #f00;
+    float: right;
     font-size: .875em;
 }
 
-.errorlist:not(.nonfield) {
-    float: right;
-    margin: 0 0 -1em;
+.errorlist.nonfield {
+    float: none;
+    border: 1px solid #f00;
+    padding: 1em;
 }
 
 input[type='text'],
