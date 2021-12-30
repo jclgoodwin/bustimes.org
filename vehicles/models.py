@@ -616,7 +616,7 @@ class VehicleRevision(models.Model):
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
                 before = before[1:]
-                if key == 'colours':
+                if key == 'colours' and html:
                     if before and before != 'Other':
                         before = format_html('<span class="livery" style="background:{}"></span>', before)
                     if after and after != 'Other':

@@ -1116,6 +1116,24 @@ class Command(BaseCommand):
 
         return stops
 
+    def do_garages(self, garages):
+        for garage_code in garages:
+            garage = garages[garage_code]
+
+            name = garage.findtext('GarageName', '')
+            if name == f"Garage '{garage_code}'":  # "Garage 'KB'"
+                name = ""
+            else:
+                name = name.removesuffix(' Bus Depot')
+                name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
+                name = name.removesuffix(' garage').removesuffix(' Garage').removesuffix(' GARAGE').strip()
+
+            if garage_code not in self.garages or self.garages[garage_code].name != name:
+                garage = Garage.objects.filter(code=garage_code, name__iexact=name).first()
+                if garage is None:
+                    garage = Garage.objects.create(code=garage_code, name=name)
+                self.garages[garage_code] = garage
+
     def handle_file(self, open_file, filename: str):
         transxchange = TransXChange(open_file)
 
@@ -1130,16 +1148,7 @@ class Command(BaseCommand):
 
         stops = self.do_stops(transxchange.stops)
 
-        for garage_code in transxchange.garages:
-            garage = transxchange.garages[garage_code]
-            name = garage.findtext('GarageName', '').removesuffix(' Bus Depot')
-            name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
-            name = name.removesuffix(' garage').removesuffix(' Garage').strip()
-            if garage_code not in self.garages or self.garages[garage_code].name != name:
-                garage = Garage.objects.filter(code=garage_code, name__iexact=name).first()
-                if garage is None:
-                    garage = Garage.objects.create(code=garage_code, name=name)
-                self.garages[garage_code] = garage
+        self.do_garages(transxchange.garages)
 
         for txc_service in transxchange.services.values():
             if txc_service.mode == 'underground':
