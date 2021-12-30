@@ -44,19 +44,15 @@
                 {% for key, from, to in revision.list_changes %}
                     {{ key }}
                     {% if from %}
-                        from
-                        {% if from.left_css %}
-                            <div class="livery" style="background:{{ from.left_css }}"></div>
-                        {% else %}{{ from }}{% endif %}
+                        from {{ from }}
                     {% endif %}
                     {% if to %}
                         to
-                        {% if to.left_css %}
-                            <div class="livery" style="background:{{ to.left_css }}"></div>
-                        {% else %}{{ to }}{% endif %}
+                        {{ to }}
                     {% endif %}
                     <br>
                 {% endfor %}
+                {{ revision.message }}
             </td>
         </tr>
         {% endfor %}

@@ -59,9 +59,7 @@ def get_vehicle_edit(vehicle, fields, now, request):
         edit.changes = changes
         changed = True
 
-    edit.url = fields.get('url', '')
-    if edit.url:
-        changed = True
+    edit.url = fields.get('summary', '')
 
     if fields.get('colours'):
         if fields['colours'].isdigit():
@@ -136,6 +134,10 @@ def do_revisions(vehicles, data, user):
             del data['colours']
             if 'other_colour' in data:
                 del data['other_colour']
+
+    if 'summary' in data:
+        for revision in revisions:
+            revision.message = data['summary']
 
     return revisions, changed_fields
 

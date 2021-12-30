@@ -347,6 +347,13 @@ class VehiclesTests(TestCase):
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
 
+        # edit nothing but summary
+        initial['summary'] = 'Poo poo pants'
+        with self.assertNumQueries(15):
+            response = self.client.post(url, initial)
+        self.assertFalse(response.context['form'].has_really_changed())
+        self.assertNotContains(response, 'already')
+
         # edit fleet number
         initial['fleet_number'] = '2'
         initial['previous_reg'] = 'cock'
@@ -355,29 +362,15 @@ class VehiclesTests(TestCase):
         self.assertIsNone(response.context['form'])
         self.assertContains(response, 'Changed fleet number from 1 to 2')
         self.assertContains(response, 'I’ll update the other details')
+        revision = response.context['revision']
+        self.assertEqual(revision.message, 'Poo poo pants')
 
-        edit = VehicleEdit.objects.filter(approved=None).get()
+        edit = response.context['edit']
         self.assertEqual(edit.colours, '')
+        self.assertEqual(edit.url, 'Poo poo pants')
         self.assertEqual(edit.get_changes(), {
             'Previous reg': 'COCK'
         })
-
-        # edit type, livery and name with bad URL
-        initial['colours'] = self.livery.id
-        with self.assertNumQueries(15):
-            response = self.client.post(url, {
-                **initial,
-                'url': 'http://localhost',
-                'vehicle_type': self.vehicle_2.vehicle_type_id,
-                'name': 'Colin'
-            })
-        self.assertTrue(response.context['form'].has_changed())
-        self.assertContains(response, 'That URL does')
-        self.assertContains(response, '/edit-vehicle.')
-
-        response = self.client.get('/admin/vehicles/vehicleedit/')
-        self.assertContains(response, '<td class="field-reg">FD54JYA</td>')
-        self.assertContains(response, '<td class="field-vehicle_type">Optare Tempo</td>')
 
         # should not create an edit
         with self.assertNumQueries(15):
@@ -628,7 +621,11 @@ class VehiclesTests(TestCase):
                 'operator': self.vehicle_2.operator_id,
                 'colours': 'Other',
             })
-        self.assertContains(response, 'Changed livery from black with lemon piping to None')
+        self.assertContains(
+            response,
+            'Changed livery from <span class="livery" '
+            'style="background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)"></span> to None'
+        )
         self.assertContains(response, 'Changed colours to Other')
 
         revision = VehicleRevision.objects.last()

@@ -528,8 +528,14 @@ class VehicleEdit(models.Model):
                 self.save(update_fields=['approved'])
 
     def make_revision(self):
-        revision = VehicleRevision(user_id=self.user_id, vehicle_id=self.vehicle_id, datetime=self.datetime)
-        revision.to_livery_id = self.livery_id
+        revision = VehicleRevision(
+            user_id=self.user_id,
+            vehicle_id=self.vehicle_id,
+            datetime=self.datetime,
+            message=self.url,
+            to_livery_id=self.livery_id,
+            changes={}
+        )
         if self.vehicle_type:
             try:
                 revision.to_type = VehicleType.objects.get(name=self.vehicle_type)
@@ -538,7 +544,6 @@ class VehicleEdit(models.Model):
             else:
                 if revision.to_type.id != self.vehicle.vehicle_type_id:
                     revision.from_type_id = self.vehicle.vehicle_type_id
-        revision.changes = {}
         for field in ('reg', 'name', 'branding', 'notes', 'fleet_number'):
             to_value = getattr(self, field)
             if to_value:
@@ -585,20 +590,37 @@ class VehicleRevision(models.Model):
 
     def __str__(self):
         return ', '.join(
-            f'{key}: {before} → {after}' for key, before, after in self.list_changes()
+            f'{key}: {before} → {after}' for key, before, after in self.list_changes(html=False)
         )
 
-    def list_changes(self):
+    def list_changes(self, html=True):
         for field in ('operator', 'type', 'livery'):
+
             if getattr(self, f'from_{field}_id') or getattr(self, f'to_{field}_id'):
+
                 if getattr(__class__, f'from_{field}').is_cached(self):
-                    yield (field, getattr(self, f'from_{field}'), getattr(self, f'to_{field}'))
+
+                    before = getattr(self, f'from_{field}')
+                    after = getattr(self, f'to_{field}')
+
+                    if field == 'livery':
+                        if before:
+                            before = format_html('<span class="livery" style="background:{}"></span>', before.left_css)
+                        if after:
+                            after = format_html('<span class="livery" style="background:{}"></span>', after.left_css)
                 else:
-                    yield (field, getattr(self, f'from_{field}_id'), getattr(self, f'to_{field}_id'))
+                    before = getattr(self, f'from_{field}_id')
+                    after = getattr(self, f'to_{field}_id')
+                yield (field, before, after)
         if self.changes:
             for key in self.changes:
                 before, after = self.changes[key].split('\n+')
                 before = before[1:]
+                if key == 'colours':
+                    if before and before != 'Other':
+                        before = format_html('<span class="livery" style="background:{}"></span>', before)
+                    if after and after != 'Other':
+                        after = format_html('<span class="livery" style="background:{}"></span>', after)
                 yield (key, before, after)
 
     def revert(self):

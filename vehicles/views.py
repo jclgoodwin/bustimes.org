@@ -128,9 +128,9 @@ def operator_vehicles(request, slug=None, parent=None):
         )
     ).select_related('livery')
 
-    submitted = False
-    revisions = False
-    breadcrumb = [operator.region, operator]
+    context = {
+        'breadcrumb': [operator.region, operator]
+    }
 
     form = request.path.endswith('/edit')
 
@@ -142,7 +142,7 @@ def operator_vehicles(request, slug=None, parent=None):
         if request.user.trusted is False:
             raise PermissionDenied
 
-        breadcrumb.append(Vehicles(operator))
+        context['breadcrumb'].append(Vehicles(operator))
         initial = {
             'operator': operator,
         }
@@ -168,8 +168,8 @@ def operator_vehicles(request, slug=None, parent=None):
                     for revision in revisions:
                         revision.datetime = now
                     VehicleRevision.objects.bulk_create(revisions)
-                    revisions = len(revisions)
                     varnish_ban('/vehicles/history')
+                    context['revisions'] = len(revisions)
 
                 if data:
                     # this will fetch the vehicles list
@@ -177,10 +177,10 @@ def operator_vehicles(request, slug=None, parent=None):
                     ticked_vehicles = [v for v in vehicles if str(v.id) in vehicle_ids]
                     edits = [get_vehicle_edit(vehicle, data, now, request) for vehicle in ticked_vehicles]
                     edits = VehicleEdit.objects.bulk_create(edit for edit, changed in edits if changed)
-                    submitted = len(edits)
                     if 'features' in data:
                         for edit in edits:
                             edit.features.set(data['features'])
+                    context['edits'] = edits
                 form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
         else:
             form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
@@ -223,7 +223,7 @@ def operator_vehicles(request, slug=None, parent=None):
                 }
 
     context = {
-        'breadcrumb': breadcrumb,
+        **context,
         'parent': parent,
         'operators': parent and operators,
         'object': operator,
@@ -236,9 +236,6 @@ def operator_vehicles(request, slug=None, parent=None):
         'garage_column': any(vehicle.garage_name for vehicle in vehicles),
         'features_column': features_column,
         'columns': columns,
-        'edits': submitted,
-        'revisions': revisions,
-        'revision': revisions and revision,
         'form': form,
         'liveries_css_version': cache.get('liveries_css_version', 0)
     }
@@ -519,7 +516,7 @@ def edit_vehicle(request, vehicle_id):
         id=vehicle_id
     )
 
-    submitted = False
+    context = {}
     revision = None
     initial = {
         'operator': vehicle.operator,
@@ -555,22 +552,23 @@ def edit_vehicle(request, vehicle_id):
                 else:
                     raise e
             else:
+                form = None
+
                 if revision:
                     revision.datetime = now
                     revision.save()
+                    context['revision'] = revision
                     varnish_ban('/vehicles/history')
-
-                form = None
 
                 if data:
                     edit, changed = get_vehicle_edit(vehicle, data, now, request)
                     if changed:
                         edit.save()
-                        submitted = True
+                        context['edit'] = edit
                     if 'features' in data:
-                        if not changed:  # .save() was not called before
+                        if not edit.id:  # .save() was not called before
                             edit.save()
-                            submitted = True
+                            context['edit'] = edit
                         for feature in vehicle.features.all():
                             if feature not in data['features']:
                                 VehicleEditFeature.objects.create(edit=edit, feature=feature, add=False)
@@ -579,21 +577,21 @@ def edit_vehicle(request, vehicle_id):
     else:
         form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
 
+    if form:
+        context['pending_edits'] = vehicle.vehicleedit_set.filter(approved=None).exists()
+
     if vehicle.operator:
-        breadcrumb = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
+        context['breadcrumb'] = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
     else:
-        breadcrumb = [vehicle]
+        context['breadcrumb'] = [vehicle]
 
     return render(request, 'edit_vehicle.html', {
-        'breadcrumb': breadcrumb,
+        **context,
         'form': form,
         'object': vehicle,
         'vehicle': vehicle,
         'previous': vehicle.get_previous(),
         'next': vehicle.get_next(),
-        'submitted': submitted,
-        'revision': revision,
-        'pending_edits': form and vehicle.vehicleedit_set.filter(approved=None).exists()
     })
 
 

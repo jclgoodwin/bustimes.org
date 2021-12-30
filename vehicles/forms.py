@@ -1,5 +1,3 @@
-import requests
-
 from datetime import timedelta
 
 from django import forms
@@ -46,16 +44,6 @@ class EditVehiclesForm(forms.Form):
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
 
-    def clean_url(self):
-        if self.cleaned_data['url']:
-            try:
-                response = requests.get(self.cleaned_data['url'], timeout=5)
-                if response.ok:
-                    return self.cleaned_data['url']
-            except requests.RequestException:
-                pass
-            raise ValidationError('That URL doesn’t work for me. Maybe it’s too long, or Facebook')
-
     def clean_other_colour(self):
         if self.cleaned_data['other_colour']:
             if self.cleaned_data.get('colours') != 'Other':
@@ -71,8 +59,8 @@ class EditVehiclesForm(forms.Form):
         if not self.has_changed():
             return False
         for key in self.changed_data:
-            if all(key == 'url' or key == 'other_colour' for key in self.changed_data):
-                if not self.data.get('other_colour'):
+            if all(key == 'summary' or key == 'other_colour' for key in self.changed_data):
+                if not ('other_colour' in self.changed_data and self.data.get('other_colour')):
                     return False
         return True
 
@@ -105,8 +93,8 @@ class EditVehicleForm(EditVehiclesForm):
     name = forms.CharField(label='Vehicle name', required=False, max_length=70)
     previous_reg = RegField(required=False, max_length=24)
     notes = forms.CharField(required=False, max_length=255)
-    url = forms.URLField(label='URL', help_text="Optional link to a public web page (not a private Facebook group)"
-                         " or picture confirming changes", required=False, max_length=255)
+    summary = forms.CharField(help_text="Briefly explain your changes",
+                              widget=forms.Textarea(attrs={'rows': 6}), required=False, max_length=255)
     field_order = ['withdrawn', 'spare_ticket_machine',
                    'fleet_number', 'reg',
                    'operator', 'vehicle_type',
