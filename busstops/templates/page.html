@@ -55,6 +55,14 @@
     {% block ad %}
         {% include 'ad.html' with slot='5070920457' %}
     {% endblock %}
+
+    {% if user.is_authenticated %}
+        <ul>
+            <li>user {{ user.id }}</li>
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+        </ul>
+    {% endif %}
+
     <ul>
         <li><a href="/contact">Contact</a></li>
         <li><a href="https://twitter.com/bustimes_org">Twitter</a></li>
