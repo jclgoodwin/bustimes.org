@@ -741,16 +741,19 @@ def journey_json(request, pk):
         pass
 
     if trip and locations:
-        haversine_vector_results = haversine_vector(
-            [stop['coordinates'] for stop in data['stops'] if stop['coordinates']],  # !
-            [location['coordinates'] for location in data['locations']],
-            Unit.METERS,
-            comb=True
-        )
-        for i, distances in enumerate(haversine_vector_results):
-            minimum, index_of_minimum = min(((value, index) for index, value in enumerate(distances)))
-            if minimum < 100:
-                data['stops'][index_of_minimum]['actual_departure_time'] = data['locations'][i]['datetime']
+        # only stops with coordinates
+        stops = [stop for stop in data['stops'] if stop['coordinates']]
+        if stops:
+            haversine_vector_results = haversine_vector(
+                [stop['coordinates'] for stop in stops],
+                [location['coordinates'] for location in data['locations']],
+                Unit.METERS,
+                comb=True
+            )
+            for i, distances in enumerate(haversine_vector_results):
+                minimum, index_of_minimum = min(((value, index) for index, value in enumerate(distances)))
+                if minimum < 100:
+                    stops[index_of_minimum]['actual_departure_time'] = data['locations'][i]['datetime']
 
     return JsonResponse(data)
 

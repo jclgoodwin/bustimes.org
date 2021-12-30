@@ -8,7 +8,7 @@ from unittest.mock import patch
 import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode
+from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode, StopPoint
 from vehicles.models import VehicleJourney
 from ...models import Route, BankHoliday, CalendarBankHoliday, VehicleType, Block, Garage
 
@@ -177,9 +177,25 @@ class ImportBusOpenDataTest(TestCase):
         trip.copy(datetime.timedelta(hours=1))
 
         # test journey with trip json
-        response = self.client.get(f"/journeys/{journey.id}.json")
-        json = response.json()
-        self.assertIn("stops", json)
+        with patch('vehicles.views.redis_client.lrange') as mock_lrange:
+            mock_lrange.return_value = []
+            response = self.client.get(f"/journeys/{journey.id}.json")
+            json = response.json()
+            self.assertIn("stops", json)
+            self.assertNotIn("locations", json)
+
+            # journey locations but no stop locations
+            mock_lrange.return_value = [b'["2019-05-29T13:03:34+01:00", [0.23, 52.729], null, null]']
+            response = self.client.get(f"/journeys/{journey.id}.json")
+            json = response.json()
+            self.assertIn("stops", json)
+            self.assertIn("locations", json)
+
+            # journey locations and stop location
+            StopPoint.objects.filter(atco_code="2900W0314").update(latlong="POINT(0.23 52.729)")
+            response = self.client.get(f"/journeys/{journey.id}.json")
+            json = response.json()
+            self.assertEqual(json["stops"][2]["actual_departure_time"], "2019-05-29T13:03:34+01:00")
 
     def test_ticketer(self):
         with TemporaryDirectory() as directory:
