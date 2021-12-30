@@ -676,6 +676,9 @@ class VehicleJourney(models.Model):
     def get_absolute_url(self):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
 
+    def get_path(self):
+        return settings.DATA_DIR / 'journeys' / str(self.id)
+
     def __str__(self):
         when = self.datetime.strftime('%-d %b %y %H:%M')
         when = f"{when} {self.route_name} {self.code} {self.direction}"

@@ -11,8 +11,9 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Min, Max, F, Case, When, Q
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
@@ -429,21 +430,22 @@ def journeys_list(request, journeys, service=None, vehicle=None):
 
         journeys = journeys.filter(datetime__date=date).select_related('trip').order_by('datetime')
 
-        try:
-            pipe = redis_client.pipeline(transaction=False)
-            for journey in journeys:
-                pipe.exists(f'journey{journey.id}')
-            locations = pipe.execute()
-            previous = None
-            for i, journey in enumerate(journeys):
-                journey.locations = locations[i]
-                if journey.locations:
-                    if previous:
-                        previous.next = journey
-                        journey.previous = previous
-                    previous = journey
-        except redis.exceptions.ConnectionError:
-            pass
+        pipe = redis_client.pipeline(transaction=False)
+        for journey in journeys:
+            pipe.exists(f'journey{journey.id}')
+
+        locations = pipe.execute()
+
+        previous = None
+
+        for i, journey in enumerate(journeys):
+            journey.locations = locations[i] or journey.get_path().exists()
+
+            if journey.locations:
+                if previous:
+                    previous.next = journey
+                    journey.previous = previous
+                previous = journey
 
         context['journeys'] = journeys
 
@@ -718,6 +720,11 @@ def journey_json(request, pk):
         } for stop_time in journey.trip.stoptime_set.select_related('stop__locality')]
 
     locations = redis_client.lrange(f'journey{pk}', 0, -1)
+    if not locations:
+        path = journey.get_path()
+        if path.exists():
+            locations = path.read_bytes().split(b'\n')
+
     if locations:
         locations = (json.loads(location) for location in locations)
         data['locations'] = [{
