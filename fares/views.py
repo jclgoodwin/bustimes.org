@@ -1,5 +1,6 @@
-from django.views.generic.detail import DetailView
+from django.http import Http404
 from django.shortcuts import render
+from django.views.generic.detail import DetailView
 
 from .forms import FaresForm
 from .models import DataSet, Tariff
@@ -8,7 +9,7 @@ from .models import DataSet, Tariff
 def index(request):
     datasets = DataSet.objects.order_by('-datetime')
 
-    return render(request, 'fares/index.html', {
+    return render(request, 'fares_index.html', {
         'datasets': datasets,
     })
 
@@ -56,3 +57,14 @@ class TariffDetailView(DetailView):
         context_data['form'] = form
 
         return context_data
+
+
+def service_fares(request, slug):
+    tariffs = Tariff.objects.filter(services__slug=slug)
+
+    if not tariffs:
+        raise Http404
+
+    return render(request, 'service_fares.html', {
+        'tariffs': tariffs,
+    })

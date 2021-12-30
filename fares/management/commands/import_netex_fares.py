@@ -3,9 +3,7 @@ import logging
 import xml.etree.cElementTree as ET
 import requests
 import zipfile
-from datetime import datetime, timezone
 from ciso8601 import parse_datetime
-from django.utils.http import parse_http_date
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from busstops.models import StopPoint, Operator, Service
@@ -388,31 +386,6 @@ class Command(BaseCommand):
         dataset.save(update_fields=["datetime"])
         return dataset
 
-    def ticketer(self, noc):
-        download_url = f"https://opendata.ticketer.com/uk/{noc}/fares/current.zip"
-
-        dataset, created = models.DataSet.objects.get_or_create({
-            'name': f"{noc} Ticketer fares"
-        }, url=download_url)
-
-        response = self.session.get(download_url, stream=True)
-        assert response.ok
-
-        last_modified = response.headers['last-modified']
-        last_modified = parse_http_date(last_modified)
-        last_modified = datetime.fromtimestamp(last_modified, timezone.utc)
-
-        if dataset.datetime == last_modified:
-            return dataset
-
-        logger.info(download_url)
-
-        self.handle_archive(dataset, response)
-
-        dataset.datetime = last_modified
-        dataset.save(update_fields=['datetime'])
-        return dataset
-
     def bod(self, api_key):
         datasets = []
         url = f"{self.base_url}/api/v1/fares/dataset/"
@@ -446,10 +419,5 @@ class Command(BaseCommand):
     def handle(self, api_key, **options):
         self.session = requests.Session()
 
-        if api_key == 'ticketer':
-            for noc in ('LYNX', 'FESX', 'FECS', 'FCWL', 'FGLA', 'FSYO', 'FWYO', 'FYOR'):
-                self.ticketer(noc)
-
-        else:
-            assert len(api_key) == 40
-            self.bod(api_key)
+        assert len(api_key) == 40
+        self.bod(api_key)

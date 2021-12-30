@@ -1,0 +1,9 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+{% for tariff in tariffs %}
+    <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
+{% endfor %}
+
+{% endblock %}
