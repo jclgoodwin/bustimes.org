@@ -287,6 +287,8 @@ def ticketer(specific_operator=None):
 
             command.finish_services()
 
+            logger.info(f"  ⏱️ {timezone.now() - command.source.datetime}")  # log time taken
+
             command.source.sha1 = get_sha1(path)
             command.source.datetime = last_modified
             command.source.save()
@@ -306,6 +308,8 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
     handle_file(command, filename)
 
     command.mark_old_services_as_not_current()
+
+    logger.info(f"  ⏱️ {timezone.now() - command.source.datetime}")  # log time taken
 
     command.source.datetime = last_modified
     command.source.save()
