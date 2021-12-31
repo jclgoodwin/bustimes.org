@@ -89,6 +89,10 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
         operator_ref = monitored_vehicle_journey['OperatorRef']
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
+
+        if vehicle_ref == '20920' and operator_ref == 'DIAM':  # correct BU52/BU54 RHU confusion
+            vehicle_ref = '20919'
+
         cache_key = f'{operator_ref}-{vehicle_ref}'.replace(' ', '')
 
         if cache_key in self.vehicle_cache:
@@ -159,7 +163,7 @@ class Command(ImportLiveVehiclesCommand):
                     condition |= Q(fleet_code=code)
         vehicles = vehicles.filter(condition)
 
-        if operator_ref == 'MSOT':
+        if operator_ref == 'MSOT':  # Marshalls of Sutton on Trent
             defaults['fleet_code'] = vehicle_ref
         elif 'fleet_number' not in defaults:
             # VehicleUniqueId
