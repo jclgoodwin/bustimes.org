@@ -252,16 +252,6 @@ AKISMET_SITE_URL = 'https://bustimes.org'
 
 # see bustimes.management.commands.import_passenger
 PASSENGER_OPERATORS = [
-    ('Go Cornwall Bus', 'https://www.gocornwallbus.co.uk/open-data', 'SW', {
-        'TFCN': 'TFCN',
-        'TfCN': 'TFCN'
-    }),
-    ('Plymouth Citybus', 'https://www.plymouthbus.co.uk/open-data', 'SW', {
-        'PLYC': 'PLYC'
-    }),
-    ('Go North West', 'https://www.gonorthwest.co.uk/open-data', 'NW', {
-        'GONW': 'GONW'
-    }),
     ('Metrobus', 'https://www.metrobus.co.uk/open-data', 'SE', {
         'MB': 'METR'
     }),
@@ -360,12 +350,12 @@ BOD_OPERATORS = [
         # 'FPOT': 'FPOT',
         # 'FSYO': 'FSYO',
         # 'FMAN': 'FMAN',
-        # 'FLDS': 'FLDS',
+        'FLDS': 'FLDS',
         # 'FSMR': 'FSMR',
         'FHUD': 'FHUD',
         'FHAL': 'FHUD',
         'FBRA': 'FBRA',
-        # 'FESX': 'FESX',
+        'FESX': 'FESX',
         'FECS': 'FECS',
         # 'FHDO': 'FHDO',
         'FTVA': 'FTVA',
@@ -376,7 +366,7 @@ BOD_OPERATORS = [
         # 'FLEI': 'FLEI',
         'RRAR': 'RRAR',
         'FBOS': 'FBOS',
-        # 'FWYO': 'FWYO',
+        'FWYO': 'FWYO',
     }, True),
 
     # these no longer operate services - this is just to prevent their TNDS data being used:
@@ -534,6 +524,7 @@ BOD_OPERATORS = [
     ('FALC', 'SE', {}, False),
     ('VECT', 'SE', {}, True),
     ('ACME', 'SE', {}, False),
+    #('LTKR', 'SE', {}, False),
 
     ('Viking Coaches', 'NW', {
         'VIKG': 'VIKG'
@@ -656,6 +647,7 @@ STAGECOACH_OPERATORS = [
 TICKETER_OPERATORS = [
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     ('EA', ['BDRB'], 'BorderBus'),
+    ('EA', ['LYNX'], 'Lynx'),
     ('WM', ['DIAM'], 'Diamond Bus'),
     ('NW', ['GTRI'], 'Diamond Bus North West'),
     ('NW', ['PBLT'], 'Preston Bus'),
@@ -667,10 +659,10 @@ TICKETER_OPERATORS = [
     ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
     ('Y', ['RELD'], 'Reliance Motor Services'),
 
-    # ('SW', ['PLYC', 'TFCN'], 'Go South West'),
+    ('SW', ['PLYC', 'TFCN'], 'Go South West'),
     # ('SE', ['METR'], 'Metrobus'),
     ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
-    # ('NW', ['GONW'], 'Go North West'),
+    ('NW', ['GONW'], 'Go North West'),
 
     ('W', ['ACYM'], 'Arriva Cymru'),
     ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
@@ -685,6 +677,7 @@ TICKETER_OPERATORS = [
     ('SE', ['AKSS', 'AMTM'], 'Arriva Kent & Surrey'),
 
     ('SE', ['Vectare', 'VECT']),
+    ('SE', ['FALC'], 'Falcon Buses'),
 
     ('EM', ['NOCT'], 'CT4N'),
     ('WM', ['LMST'], 'LMS Travel'),
@@ -701,6 +694,8 @@ TICKETER_OPERATORS = [
     ('SE', ['Sullivan_Buses', 'SULV']),
     ('EA', ['Simonds', 'SIMO']),
     ('NE', ['Coatham_Coaches', 'COTY']),
+
+    ('NW', ['STOT'], 'Stotts Tours'),
 
     ('Y',  ['HCTY'], 'Connexions Buses'),
     ('Y',  ['KJTR'], 'York Pullman'),

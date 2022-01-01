@@ -385,7 +385,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         return context
 
 
-class StopPointDetailView(UppercasePrimaryKeyMixin, DetailView):
+class StopPointDetailView(DetailView):
     """A stop, other stops in the same area, and the services servicing it"""
 
     model = StopPoint

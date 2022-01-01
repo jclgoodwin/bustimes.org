@@ -838,8 +838,6 @@ class Service(models.Model):
                 registration__in=self.route_set.values('registration'),
                 service=OuterRef('id')
             ))
-            if self.description and self.line_name:
-                q |= Q(description=self.description)
             services = Service.objects.filter(~Q(pk=self.pk), q, current=True).order_by().defer('geometry')
             services = sorted(services.annotate(operators=ArrayAgg('operator__name')), key=Service.get_order)
             cache.set(key, services, 86400)

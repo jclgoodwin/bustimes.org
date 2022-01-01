@@ -1,9 +1,5 @@
 {% load urlise %}
 
-{% if object.timetable_change %}
-    <p class="message">Timetable changes from <a href="?date={{ object.timetable_change|date:'c' }}">{{ object.timetable_change }}</a></p>
-{% endif %}
-
 {% if timetable %}
     {% if timetable.calendar %}
         <p>

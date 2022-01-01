@@ -74,15 +74,16 @@ def get_calendars(when, calendar_ids=None):
         Exists(BankHolidayDate.objects.filter(date=when, bank_holiday=OuterRef('bank_holiday'))),
         calendar=OuterRef('id'),
     )
-    calendar_bank_holidays_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
+    bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
+    bank_holiday_exclusions = ~Exists(calendar_bank_holidays.filter(operation=False))
 
     return calendars.filter(
         ~Exists(exclusions),
         Q(
-            ~Exists(calendar_bank_holidays.filter(operation=False)),
+            bank_holiday_exclusions,
             ~only_certain_dates | Exists(inclusions),
             **{when.strftime('%a').lower(): True}
-        ) | special_inclusions | calendar_bank_holidays_inclusions,
+        ) | special_inclusions | bank_holiday_inclusions & bank_holiday_exclusions,
     )
 
 

@@ -91,7 +91,7 @@ def get_versions(session, url):
             url = urljoin(element.base_url, element.attrs['href'])
             if '/current' in url:
                 if 'gtfs' not in url:
-                    current = session.head(url).headers['location']
+                    current = session.head(url).headers.get('location')
             elif '/txc' in url:
                 versions.append(get_version(url))
             elif '/gtfs' in url:
