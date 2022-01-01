@@ -124,7 +124,7 @@ can’t be contradicted"""
                     if vehicle_unique_id == vehicle.fleet_code:
                         if not vehicle.code.isdigit() or vehicle.code == vehicle.fleet_code:
                             self.fields['fleet_number'].disabled = True
-                            self.fields['reg'].help_text = f"""The ticket machine code ({vehicle_unique_id})
+                            self.fields['fleet_number'].help_text = f"""The ticket machine code ({vehicle_unique_id})
 can’t be contradicted"""
 
             if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
