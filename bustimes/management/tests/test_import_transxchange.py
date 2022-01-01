@@ -16,7 +16,7 @@ from django.contrib.gis.geos import Point
 
 from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource
 from vosa.models import Licence, Registration
-from ...models import Route, Trip, Calendar, CalendarDate
+from ...models import Route, Trip, Calendar, CalendarDate, BankHoliday, BankHolidayDate
 from ..commands import import_transxchange
 
 
@@ -242,6 +242,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual('2017-01-23', str(timetable.date))
         # self.assertEqual(0, len(timetable.groupings))
 
+        self.assertContains(
+            response,
+            'data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset</a>'
+        )
+
         self.assertEqual(response.context_data['links'], [{
             'url': 'https://www.traveline.cymru/timetables/?routeNum=305&direction_id=0&timetable_key=305MFMWA1',
             'text': 'Timetable on the Traveline Cymru website'
@@ -250,16 +255,10 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(service.get_absolute_url() + '/debug')
         self.assertContains(response, '2017-04-12–2017-05-30')
 
-        response = self.client.get(service.get_absolute_url() + '?date=2017-04-20')
-        timetable = response.context_data['timetable']
+        timetable = service.get_timetable(date(2017, 4, 20))
         self.assertEqual('2017-04-20', str(timetable.date))
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
-
-        self.assertContains(
-            response,
-            'data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset</a>'
-        )
 
         self.assertEqual(19, service.stopusage_set.count())
 
@@ -301,8 +300,7 @@ class ImportTransXChangeTest(TestCase):
         )
 
         service = Service.objects.get()
-        response = self.client.get(service.get_absolute_url())
-        timetable = response.context_data['timetable']
+        timetable = service.get_timetable()
 
         self.assertEqual(14, len(timetable.date_options))
         self.assertEqual(2, CalendarDate.objects.filter(operation=True, special=True).count())
@@ -327,8 +325,8 @@ class ImportTransXChangeTest(TestCase):
 
         self.handle_files('EA.zip', ['set_5-28-A-y08.xml'])
         service = Service.objects.get()
-        response = self.client.get(service.get_absolute_url())
-        timetable = response.context_data['timetable']
+        response = self.client.get(f'/services/{service.id}/timetable')
+        timetable = response.context['timetable']
         self.assertEqual('2017-08-29', str(timetable.date))
 
         self.assertEqual(
@@ -368,8 +366,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.handle_files('EA.zip', ['em_11-1-J-y08-1.xml'])
         service = Service.objects.get()
-        response = self.client.get(service.get_absolute_url())
-        timetable = response.context_data['timetable']
+        timetable = service.get_timetable()
         self.assertEqual('2017-12-10', str(timetable.date))
 
         self.assertEqual('109000009399', timetable.groupings[0].rows[49].stop.atco_code)
@@ -414,8 +411,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(timetable.groupings[1].rows[-2].stop), 'Gladstone Terrace')
         self.assertEqual(str(timetable.groupings[1].rows[-1].stop), 'Hare and Hounds')
 
-        response = self.client.get(service.get_absolute_url() + '?date=2017-04-16')
-        timetable = response.context_data['timetable']
+        timetable = service.get_timetable(date(2017, 4, 16))
         self.assertEqual('2017-04-16', str(timetable.date))
         self.assertEqual(str(timetable.groupings[0].rows[0].times[2:]), '[15:28, 16:27, 17:28, 18:28, 19:28]')
         self.assertEqual(str(timetable.groupings[0].rows[-26].times[-1]), '19:50')
@@ -432,8 +428,12 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(102, service.stopusage_set.count())
 
         # Several journeys a day on bank holidays
-        # deadruns = txc.timetable_from_filename(FIXTURES_DIR, 'SVRLABO024A.xml', date(2017, 4, 14))
-        # self.assertEqual(7, len(deadruns.groupings[0].rows[0].times))
+        BankHolidayDate.objects.create(
+            bank_holiday=BankHoliday.objects.get(name='AllBankHolidays'),
+            date='2017-04-14'
+        )
+        timetable = service.get_timetable(date(2017, 4, 14))
+        self.assertEqual(7, len(timetable.groupings[0].rows[0].times))
 
     @time_machine.travel('2017-08-30')
     def test_timetable_servicedorg(self):
@@ -741,24 +741,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(res, 'Glossop - Piccadilly Gardens, Manchester City Centre')
 
         with time_machine.travel('1 October 2017'):
-            with self.assertNumQueries(13):
-                res = self.client.get(service.get_absolute_url() + '?date=2017-10-03')
-        # self.assertContains(res, """
-        #         <thead>
-        #             <tr>
-        #                 <th></th>
-        #                 <td colspan="27">
-        #                     <a href="/services/237-glossop-stalybridge-ashton-2">237</a>
-        #                 </td>
-        #             </tr>
-        #         </thead>
-        # """, html=True)
-        self.assertEqual(str(res.context_data['timetable'].date), '2017-10-03')
-        self.assertEqual(27, len(res.context_data['timetable'].groupings[0].trips))
-        self.assertEqual(30, len(res.context_data['timetable'].groupings[1].trips))
-
-        # self.assertEqual(87, service.stopusage_set.all().count())
-        # self.assertEqual(121, duplicate.stopusage_set.all().count())
+            with self.assertNumQueries(7):
+                timetable = service.get_timetable(date(2017, 10, 3))
+        self.assertEqual(str(timetable.date), '2017-10-03')
+        self.assertEqual(27, len(timetable.groupings[0].trips))
+        self.assertEqual(30, len(timetable.groupings[1].trips))
 
     @time_machine.travel('25 June 2016')
     def test_do_service_scotland(self):

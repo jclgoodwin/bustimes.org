@@ -10,7 +10,7 @@ from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode, StopPoint
 from vehicles.models import VehicleJourney
-from ...models import Route, BankHoliday, CalendarBankHoliday, VehicleType, Block, Garage
+from ...models import Route, BankHoliday, CalendarBankHoliday, BankHolidayDate, VehicleType, Block, Garage
 
 
 FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
@@ -303,3 +303,11 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get('/services/904-huntingdon-peterborough')
         self.assertContains(response, '<option selected value="2020-08-31">Monday 31 August 2020</option>')
         self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
+
+        BankHolidayDate.objects.create(
+            bank_holiday=BankHoliday.objects.get(name='ChristmasDay'),
+            date='2020-12-25'
+        )
+        with self.assertNumQueries(12):
+            response = self.client.get('/services/904-huntingdon-peterborough?date=2020-12-25')
+            self.assertContains(response, "Sorry, no journeys found for Friday 25 December 2020")
