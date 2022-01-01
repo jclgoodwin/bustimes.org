@@ -251,18 +251,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     journey.service.tracking = True
                     journey.service.save(update_fields=['tracking'])
 
-        # if not location.id:
-        #     location.id = vehicle.latest_location_id
         location.id = vehicle.id
         location.journey = journey
-        # location.current = True
-
-        # to_update = False
-
-        # if not location.id:
-        #     location.save()
-        #     vehicle.latest_location = location
-        #     to_update = True
 
         vehicle.withdrawn = False
 

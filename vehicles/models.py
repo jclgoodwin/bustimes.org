@@ -180,7 +180,6 @@ class Vehicle(models.Model):
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
-    # latest_location = models.OneToOneField('VehicleLocation', models.SET_NULL, null=True, blank=True, editable=False)
     latest_journey = models.OneToOneField(
         'VehicleJourney', models.SET_NULL, null=True, blank=True, editable=False, related_name='latest_vehicle'
     )
