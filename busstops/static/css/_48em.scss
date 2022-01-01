@@ -47,6 +47,21 @@ h1 {
     }
 }
 
+.sidebar {
+    overflow: hidden;
+    margin-bottom: 1em;
+
+    p {
+        width: 30%;
+        margin: 0 3% 1em 0;
+        float: left;
+    }
+
+    p:last-child {
+        margin-top: 1.5em;
+    }
+}
+
 .journey {
     .trip + .map {
         bottom: 0;

@@ -10,13 +10,6 @@
 
 {% block content %}
 
-<style>
-    button {
-        /*background: none;*/
-        border: 0;
-        padding: 0;
-    }
-</style>
 
 <ul class="tabs">
     <li><a href="/vehicles/history">Recent changes</a></li>
@@ -26,18 +19,12 @@
 <h1>Pending vehicle edits</h1>
 
 <div class="sidebar">
+    <form>
+        {{ filter.form.as_p }}
 
-<p>Filters: <a href="/vehicles/edits">clear</a> &bull;  <a href="?livery=600">new stagecoach livery</a> &bull; <a href="?change=vehicle_type">vehicle type change</a></p>
-
-<form>
-    {{ filter.form.as_p }}
-
-    <p><input type="submit"></p>
-</form>
-
+        <p><input type="submit" value="Search"></p>
+    </form>
 </div>
-
-{% include 'pagination.html' with page=edits %}
 
 <div class="table-wrapper">
     <table class="fleet">
@@ -79,7 +66,7 @@
                     <td class="score">{{ edit.score }}</td>
                     {% if user.is_staff %}
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/apply" style="background:#0f0">👍 apply</a></td>
-                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/approve">(mark as approved)</a></td>
+                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/approve">approve</a></td>
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</a></td>
                     {% else %}
                         <td><a class="action" href="/vehicles/edits/{{ edit.id }}/vote/up">👍</a></td>
@@ -92,7 +79,31 @@
     </table>
 </div>
 
-{% include 'pagination.html' with page=edits %}
+{% if edits.has_other_pages %}
+    <nav>
+        <ul class="horizontal">
+            {% if edits.has_previous %}
+                <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}">1</a></li>
+                {% if edits.previous_page_number > 1 %}
+                    {% if edits.previous_page_number > 2 %}
+                        <li>&hellip;</li>
+                    {% endif %}
+                    <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ edits.previous_page_number }}">{{ edits.previous_page_number }}</a></li>
+                {% endif %}
+            {% endif %}
+
+            <li>{{ edits.number }}</li>
+
+            {% if edits.has_next %}
+                {% if edits.next_page_number < edits.paginator.num_pages %}
+                    <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ edits.next_page_number }}">{{ edits.next_page_number }}</a></li>
+                    <li>&hellip;</li>
+                {% endif %}
+                <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ edits.paginator.num_pages }}">{{ edits.paginator.num_pages }}</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
 
 {% endblock %}
 

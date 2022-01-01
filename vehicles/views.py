@@ -13,7 +13,6 @@ from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
@@ -147,8 +146,9 @@ def operator_vehicles(request, slug=None, parent=None):
         initial = {
             'operator': operator,
         }
-        if request.method == 'POST':
-            form = EditVehiclesForm(request.POST, initial=initial, operator=operator, user=request.user)
+        form = EditVehiclesForm(request.POST or None, initial=initial, operator=operator, user=request.user)
+
+        if request.POST:
             vehicle_ids = request.POST.getlist('vehicle')
             if not vehicle_ids:
                 form.add_error(None, 'Select some vehicles to change')
@@ -183,8 +183,6 @@ def operator_vehicles(request, slug=None, parent=None):
                             edit.features.set(data['features'])
                     context['edits'] = edits
                 form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
-        else:
-            form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
 
     vehicles = sorted(vehicles, key=lambda v: Service.get_line_name_order(v.fleet_code))
     if operator.name == 'National Express':
@@ -197,14 +195,16 @@ def operator_vehicles(request, slug=None, parent=None):
         paginator = Paginator(vehicles, 1000)
         page = request.GET.get('page')
         vehicles = paginator.get_page(page)
+        context['paginator'] = paginator
     else:
         paginator = None
 
-    features_column = not parent and any(vehicle.feature_names for vehicle in vehicles)
+        context['features_column'] = any(vehicle.feature_names for vehicle in vehicles)
 
     columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
     for vehicle in vehicles:
         vehicle.column_values = [vehicle.data and vehicle.data_get(key) or '' for key in columns]
+    context['columns'] = columns
 
     if not parent:
         # midnight or 12 hours ago, whichever happened first
@@ -223,26 +223,21 @@ def operator_vehicles(request, slug=None, parent=None):
                     'today': when >= today
                 }
 
+        context['map'] = any(hasattr(vehicle, 'last_seen') and vehicle.last_seen['today'] for vehicle in vehicles)
+
     context = {
         **context,
         'parent': parent,
-        'operators': parent and operators,
         'object': operator,
         'vehicles': vehicles,
-        'paginator': paginator,
         'code_column': any(vehicle.fleet_number_mismatch() for vehicle in vehicles),
         'branding_column': any(vehicle.branding and vehicle.branding != 'None' for vehicle in vehicles),
         'name_column': any(vehicle.name for vehicle in vehicles),
         'notes_column': any(vehicle.notes and vehicle.notes != 'Spare ticket machine' for vehicle in vehicles),
         'garage_column': any(vehicle.garage_name for vehicle in vehicles),
-        'features_column': features_column,
-        'columns': columns,
         'form': form,
         'liveries_css_version': cache.get('liveries_css_version', 0)
     }
-
-    if not parent and not form:
-        context['map'] = any(hasattr(vehicle, 'last_seen') and vehicle.last_seen['today'] for vehicle in vehicles)
 
     return render(request, 'operator_vehicles.html', context)
 
@@ -538,9 +533,12 @@ def edit_vehicle(request, vehicle_id):
     elif vehicle.fleet_number is not None:
         initial['fleet_number'] = str(vehicle.fleet_number)
 
-    if request.method == 'POST':
-        form = EditVehicleForm(request.POST,
-                               initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
+    form = EditVehicleForm(
+        request.POST or None,
+        initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user
+    )
+
+    if request.POST:
         if not form.has_really_changed():
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
@@ -576,8 +574,6 @@ def edit_vehicle(request, vehicle_id):
                                 VehicleEditFeature.objects.create(edit=edit, feature=feature, add=False)
                         for feature in data['features']:
                             VehicleEditFeature.objects.create(edit=edit, feature=feature, add=True)
-    else:
-        form = EditVehicleForm(initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user)
 
     if form:
         context['pending_edits'] = vehicle.vehicleedit_set.filter(approved=None).exists()
@@ -620,13 +616,17 @@ def vehicle_edits(request):
 
     f = VehicleEditFilter(request.GET, queryset=edits)
 
-    paginator = Paginator(f.qs, 100)
+    if f.is_valid():
+        paginator = Paginator(f.qs, 100)
+        page = paginator.get_page(request.GET.get('page'))
+    else:
+        page = None
 
     parameters = {key: value for key, value in request.GET.items() if key != 'page'}
 
     toggle_order = {
-        'score': urlencode({**parameters, 'order': '-score' if order == 'score' else 'score'}),
-        'vehicle': urlencode({**parameters, 'order': '-edit_count' if order == 'edit_count' else 'edit_count'})
+        'score': urlencode({**parameters, 'order': 'score' if order == '-score' else '-score'}),
+        'vehicle': urlencode({**parameters, 'order': 'edit_count' if order == '-edit_count' else '-edit_count'})
     }
 
     parameters = urlencode(parameters)
@@ -635,7 +635,7 @@ def vehicle_edits(request):
         'filter': f,
         'parameters': parameters,
         'toggle_order': toggle_order,
-        'edits': paginator.get_page(request.GET.get('page')),
+        'edits': page,
         'liveries_css_version': cache.get('liveries_css_version', 0),
     })
 
