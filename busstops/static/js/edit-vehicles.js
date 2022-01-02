@@ -5,18 +5,22 @@
 
     // checkbox ranges of rows
     var lastInput,
-        checkboxes = document.querySelectorAll('.fleet input');
+        table = document.querySelector('.fleet'),
+        checkboxes = table.querySelectorAll('input');
 
     function handleBoxCheck(event) {
         if (event.shiftKey && lastInput) {
-            var from = event.target.parentNode.parentNode.rowIndex - 1,
-                to = lastInput.parentNode.parentNode.rowIndex - 1,
+            var from = event.target.parentNode.parentNode.rowIndex,
+                to = lastInput.parentNode.parentNode.rowIndex,
                 min = Math.min(from, to),
                 max = Math.max(from, to);
             for (var i = min + 1; i < max; i += 1) {
-                var checkbox = checkboxes[i];
-                checkbox.checked = lastInput.checked;
-                checkbox.parentNode.parentNode.style.background = checkbox.checked ? '#ef9' : '';
+                var row = table.rows[i];
+                var checkbox = row.querySelector('input');
+                if (checkbox) {
+                    checkbox.checked = lastInput.checked;
+                    checkbox.parentNode.parentNode.style.background = checkbox.checked ? '#ef9' : '';
+                }
             }
         }
         lastInput = event.target;
