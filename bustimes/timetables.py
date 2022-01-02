@@ -2,7 +2,9 @@ import datetime
 from django.utils.timezone import localdate
 from difflib import Differ
 from functools import cmp_to_key, partial, cached_property
-from django.db.models import Prefetch, Q, OuterRef, Exists
+from django.db.models import Prefetch, Q, OuterRef
+from django.contrib.postgres.aggregates import ArrayAgg
+from sql_util.utils import Exists
 from .utils import format_timedelta
 from .models import get_calendars, get_routes, Calendar, Trip, StopTime
 
@@ -151,8 +153,10 @@ class Timetable:
             return
 
         self.calendars = Calendar.objects.filter(
-            trip__route__in=self.routes
-        ).distinct().prefetch_related('calendardate_set')
+            Exists('trip', filter=Q(route__in=routes))
+        ).annotate(
+            bank_holiday_dates=ArrayAgg('calendarbankholiday__bank_holiday__bankholidaydate'),
+        ).prefetch_related('calendardate_set')
 
         if not date and len(self.calendars) == 1 and len(routes) == 1:
             calendar = self.calendars[0]

@@ -202,6 +202,10 @@ class Calendar(models.Model):
             if calendar_date.operation and calendar_date.special and calendar_date.contains(date):
                 return True
 
+        # for date in self.bank_holiday_exclsions:
+        if date in self.bank_holiday_dates:
+            return True
+
     def __str__(self):
         if self.summary and self.start_date == self.end_date:
             return self.summary
