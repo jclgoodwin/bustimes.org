@@ -44,10 +44,6 @@
     {% include 'timetable.html' %}
 </div>
 
-{% if fares %}
-    {% include 'fares.html' with form=fares %}
-{% endif %}
-
 {% if object.public_use is not False and payment_methods %}
     <p>
         {% for method in payment_methods %}
@@ -70,6 +66,10 @@
             <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a>
         {% endif %}
     </ul>
+{% endif %}
+
+{% if fares %}
+    {% include 'fares.html' with form=fares %}
 {% endif %}
 
 {% if related %}
