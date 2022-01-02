@@ -534,13 +534,14 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<option value="LYNX">Lynx (1)</option>')
         self.assertContains(response, '<td class="score">-1</td>')
 
-        # apply the edit
+        # try to apply the edit
         with self.assertNumQueries(16):
             self.client.post('/admin/vehicles/vehicleedit/', {
                 'action': 'apply_edits',
                 '_selected_action': edit.id
             })
 
+        # not marked as approved cos there was no matching vehicle type
         edit.refresh_from_db()
         self.assertIsNone(edit.approved)
 
@@ -559,6 +560,14 @@ class VehiclesTests(TestCase):
             'reg': '-\n+',
             'fleet number': '-\n+'
         })
+
+        # apply too
+        with self.assertNumQueries(4):
+            self.client.post(f'/vehicles/edits/{edit.id}/approve')
+        with self.assertNumQueries(4):
+            self.client.post(f'/vehicles/edits/{edit.id}/disapprove')
+        with self.assertNumQueries(11):
+            self.client.post(f'/vehicles/edits/{edit.id}/apply')
 
         # test user view
         response = self.client.get(self.staff_user.get_absolute_url())

@@ -277,7 +277,10 @@ input[type='submit'] {
     padding: .25em .5em;
     position: relative;
     top: .0625em;
+}
 
+.button,
+input[type='submit'] {
     &:hover {
         border-bottom-width: .125em;
         margin-bottom: 0;

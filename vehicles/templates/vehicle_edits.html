@@ -10,6 +10,17 @@
 
 {% block content %}
 
+<style>
+    td button {
+        border: 0;
+        border-radius: 0;
+        display: block;
+        margin: -.25em -.5em;
+        padding: .25em .5em;
+        position: static;
+        cursor: pointer;
+    }
+</style>
 
 <ul class="tabs">
     <li><a href="/vehicles/history">Recent changes</a></li>
@@ -65,12 +76,12 @@
                     </td>
                     <td class="score">{{ edit.score }}</td>
                     {% if user.is_staff %}
-                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/apply" style="background:#0f0">👍 apply</a></td>
-                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/approve">approve</a></td>
-                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</a></td>
+                        <td><button class="action" data-url="{{ edit.id }}/apply" style="background:#0f0">👍 apply</button></td>
+                        <td><button class="action" data-url="{{ edit.id }}/approve">approve</button></td>
+                        <td><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</button></td>
                     {% else %}
-                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/vote/up">👍</a></td>
-                        <td><a class="action" href="/vehicles/edits/{{ edit.id }}/vote/down">👎</a></td>
+                        <td><button class="action" data-url="{{ edit.id }}/vote/up">👍</button></td>
+                        <td><button class="action" data-url="{{ edit.id }}/vote/down">👎</button></td>
                     {% endif %}
                     <td>{{ edit.vehicle.get_flickr_link }}</td>
                 </tr>
@@ -116,17 +127,17 @@
 (function () {
     'use strict';
 
-    for (const button of document.querySelectorAll('a.action')) {
+    for (const button of document.querySelectorAll('button.action')) {
         let row = button.parentElement.parentElement;
         button.onclick = function(event) {
-            let url = this.href;
-            fetch(this.href, {
+            let url = '/vehicles/edits/' + this.dataset.url;
+            fetch(url, {
                 method: 'POST'
             }).then(function(response) {
                 if (response.ok) {
                     button.style.opacity = '.5';
                     response.text().then(text => {
-                        if (text) {
+                        if (text && !isNan(parseInt(text))) {
                             row.querySelector('.score').innerText = text;
                         }
                     });
