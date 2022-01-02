@@ -108,9 +108,9 @@ def operator_vehicles(request, slug=None, parent=None):
         vehicles = operator.vehicle_set.filter(withdrawn=False)
     elif parent:
         operators = list(operators.filter(parent=parent))
-        vehicles = Vehicle.objects.filter(operator__in=operators, withdrawn=False).select_related('operator')
         if not operators:
             raise Http404
+        vehicles = Vehicle.objects.filter(operator__in=operators, withdrawn=False).select_related('operator')
         operator = operators[0]
 
     vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
