@@ -6,7 +6,6 @@ from busstops.models import DataSource, Region, Operator
 from ...models import Vehicle
 from ..commands.import_nx import parse_datetime
 from ..commands.import_aircoach import Command as AircoachCommand, NatExpCommand
-from ..commands.import_kings_ferry import Command as KingsFerryCommand
 
 
 @time_machine.travel("2019-11-17T16:17:49.000Z")
@@ -18,8 +17,6 @@ class NatExpTest(TestCase):
         )
         cls.aircoach_command = AircoachCommand()
         cls.aircoach_command.source = source
-        cls.kings_ferry_command = KingsFerryCommand()
-        cls.kings_ferry_command.source = source
         cls.nat_exp_command = NatExpCommand()
         cls.nat_exp_command.source = source
 
@@ -43,10 +40,6 @@ class NatExpTest(TestCase):
 
         with self.assertNumQueries(1):
             items = list(self.nat_exp_command.get_items())
-            self.assertEqual(len(items), 0)
-
-        with self.assertNumQueries(1):
-            items = list(self.kings_ferry_command.get_items())
             self.assertEqual(len(items), 0)
 
         self.assertFalse(sleep.called)
