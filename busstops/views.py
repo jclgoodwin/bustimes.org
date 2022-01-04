@@ -24,7 +24,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
-from bustimes.models import get_routes
+from bustimes.models import get_routes, StopTime
 from vehicles.models import Vehicle
 from vehicles.utils import redis_client
 from vosa.models import Registration
@@ -769,18 +769,45 @@ def service_map_data(request, service_id):
     }
 
     routes = get_routes(service.route_set.select_related('source'), timezone.localdate())
-    geometry = None
-    if len(routes) == 1:
-        geometry = routes[0].geometry
-    elif any(route.geometry for route in routes):
-        route_ids = [route.id for route in routes]
-        geometry = service.route_set.filter(id__in=route_ids).aggregate(Union('geometry'))['geometry__union']
+    if routes:
+        stops = StopTime.objects.filter(trip__route__in=routes)
+    else:
+        stops = StopTime.objects.filter(trip__route__service=service)
 
-    if not geometry:
-        geometry = service.geometry
+    stops = stops.select_related('stop').only('trip_id', 'stop_id', 'stop__latlong')
 
-    if geometry:
-        data['geometry'] = json.loads(geometry.simplify().json)
+    route_links = {
+        (route_link.from_stop_id, route_link.to_stop_id): route_link
+        for route_link in service.routelink_set.all()
+    }
+
+    pairs = set()
+    line_string = []
+    multi_line_string = [line_string]
+
+    previous_stop = None
+    for stop in stops:
+        if previous_stop and previous_stop.trip_id == stop.trip_id:
+            pair = (previous_stop.stop_id, stop.stop_id)
+            if pair not in pairs:
+                pairs.add(pair)
+                if pair in route_links:
+                    line_string += route_links[pair].geometry.coords
+                elif previous_stop.stop.latlong and stop.stop.latlong:
+                    line_string.append(previous_stop.stop.latlong.coords)
+                    line_string.append(stop.stop.latlong.coords)
+            elif line_string:
+                line_string = []
+                multi_line_string.append(line_string)
+        elif line_string:
+            line_string = []
+            multi_line_string.append(line_string)
+        previous_stop = stop
+
+    data["geometry"] = {
+        "type": "MultiLineString",
+        "coordinates": multi_line_string
+    }
 
     return JsonResponse(data)
 

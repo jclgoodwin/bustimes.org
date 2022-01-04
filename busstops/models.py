@@ -307,7 +307,7 @@ class StopPoint(models.Model):
     crossing = models.CharField(max_length=48, blank=True)
     indicator = models.CharField(max_length=48, blank=True)
 
-    latlong = models.PointField(null=True)
+    latlong = models.PointField(null=True, blank=True)
 
     stop_area = models.ForeignKey(StopArea, models.SET_NULL, null=True, editable=False)
     locality = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)

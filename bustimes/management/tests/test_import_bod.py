@@ -61,7 +61,7 @@ class ImportBusOpenDataTest(TestCase):
 
         self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(5):
             response = self.client.get(f'/services/{route.service_id}.json')
         self.assertTrue(response.json()['geometry'])
 
@@ -292,7 +292,7 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(Garage.objects.count(), 4)
         self.assertEqual(Block.objects.count(), 12)
 
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(5):
             response = self.client.get(f'/services/{route.service_id}.json')
         self.assertTrue(response.json()['geometry'])
 
