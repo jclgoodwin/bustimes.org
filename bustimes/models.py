@@ -16,9 +16,8 @@ def get_routes(routes, when=None):
     sources = set(route.source_id for route in routes)
     revision_numbers = set(route.revision_number for route in routes)
 
-    # use maximum revision number for each service_code (except for Ticketer data):
-
-    if len(revision_numbers) > 1 and not any(route.code[:4].isupper() and route.code[4] == '_' for route in routes):
+    # use maximum revision number for each service_code
+    if len(revision_numbers) > 1:
         revision_numbers = {}
         for route in routes:
             route.key = f'{route.service_code}:{route.service_id}'
