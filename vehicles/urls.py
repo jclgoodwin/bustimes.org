@@ -12,6 +12,7 @@ urlpatterns = [
     path('vehicles.json', views.vehicles_json),
     path('vehicles/history', views.vehicles_history),
     path('vehicles/edits', views.vehicle_edits),
+    path('vehicles/debug', views.debug),
     path('vehicles/edits/<int:edit_id>/vote/<direction>', views.vehicle_edit_vote),
     path('vehicles/edits/<int:edit_id>/<action>', views.vehicle_edit_action),
     path('vehicles/<int:pk>', views.VehicleDetailView.as_view(), name='vehicle_detail'),

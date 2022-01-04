@@ -439,11 +439,14 @@ class Command(ImportLiveVehiclesCommand):
             if journey.service and (origin_aimed_departure_time or journey_ref and '_' not in journey_ref):
 
                 journey_date = None
+
                 if journey_ref and len(journey_ref) > 11 and journey_ref[10] == ':':
+
                     # code is like "2021-12-13:203" so separate the date from the other bit
                     try:
                         journey_date = date.fromisoformat(journey_ref[:10])
                         journey_ref = journey_ref[11:]
+                        journey.code = journey_ref
                     except ValueError:
                         pass
 

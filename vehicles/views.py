@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
 
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction, connection
 from django.db.models import Exists, OuterRef, Min, Max, F, Case, When, Q
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
@@ -32,7 +32,7 @@ from bustimes.models import Garage, Trip, StopTime
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from .filters import VehicleEditFilter
-from .forms import EditVehiclesForm, EditVehicleForm
+from . import forms
 from .utils import redis_client, get_vehicle_edit, do_revision, do_revisions
 from .management.commands import import_bod_avl
 
@@ -146,7 +146,7 @@ def operator_vehicles(request, slug=None, parent=None):
         initial = {
             'operator': operator,
         }
-        form = EditVehiclesForm(request.POST or None, initial=initial, operator=operator, user=request.user)
+        form = forms.EditVehiclesForm(request.POST or None, initial=initial, operator=operator, user=request.user)
 
         if request.POST:
             vehicle_ids = request.POST.getlist('vehicle')
@@ -182,7 +182,7 @@ def operator_vehicles(request, slug=None, parent=None):
                         for edit in edits:
                             edit.features.set(data['features'])
                     context['edits'] = edits
-                form = EditVehiclesForm(initial=initial, operator=operator, user=request.user)
+                form = forms.EditVehiclesForm(initial=initial, operator=operator, user=request.user)
 
     vehicles = sorted(vehicles, key=lambda v: Service.get_line_name_order(v.fleet_code))
     if operator.name == 'National Express':
@@ -533,7 +533,7 @@ def edit_vehicle(request, vehicle_id):
     elif vehicle.fleet_number is not None:
         initial['fleet_number'] = str(vehicle.fleet_number)
 
-    form = EditVehicleForm(
+    form = forms.EditVehicleForm(
         request.POST or None,
         initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user
     )
@@ -757,6 +757,40 @@ def journey_json(request, pk):
 def journey_debug(request, pk):
     journey = get_object_or_404(VehicleJourney, id=pk)
     return JsonResponse(journey.data or {})
+
+
+def debug(request):
+    form = forms.DebuggerForm(request.POST or None)
+    result = None
+    if form.is_valid():
+        data = form.cleaned_data['data']
+        try:
+            item = json.loads(data)
+        except ValueError as e:
+            form.add_error('data', e)
+        else:
+            try:
+                with transaction.atomic():
+                    command = import_bod_avl.Command()
+                    command.do_source()
+                    vehicle, created = command.get_vehicle(item)
+                    journey = command.get_journey(item, vehicle)
+                    if not journey.datetime:
+                        journey.datetime = command.get_datetime(item)
+                    raise Exception
+            except Exception:
+                pass
+
+            result = {
+                'vehicle': vehicle,
+                'journey': journey,
+                'queries': connection.queries
+            }
+
+    return render(request, 'vehicles/debug.html', {
+        'form': form,
+        'result': result
+    })
 
 
 @require_POST

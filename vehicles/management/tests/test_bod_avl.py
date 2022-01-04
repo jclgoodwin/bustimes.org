@@ -15,7 +15,7 @@ from busstops.models import (
     AdminArea,
     Service,
 )
-from bustimes.models import Route, Trip, Garage
+from bustimes.models import Route, Trip, Garage, Calendar
 from ...models import VehicleJourney, Vehicle
 from ...workers import SiriConsumer
 from ...utils import flush_redis
@@ -36,6 +36,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 Operator(id="FBRI", region=region, parent="First"),
                 Operator(id="FECS", region=region, parent="First"),
                 Operator(id="NCTP", region=region),
+                Operator(id="NIBS", region=region),
             ]
         )
         Vehicle.objects.bulk_create(
@@ -622,3 +623,46 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         journey = VehicleJourney.objects.get()
         self.assertEqual(item, journey.data)
+
+    def test_debugger(self):
+        service = Service.objects.create(line_name='21C')
+        service.operator.add('NIBS')
+        route = Route.objects.create(service=service, source=self.source)
+        calendar = Calendar.objects.create(
+            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
+            start_date='2021-01-01'
+        )
+        trip = Trip.objects.create(start="18:08:000", end="19:00:00", route=route, calendar=calendar, inbound=True)
+
+        response = self.client.post("/vehicles/debug", {
+            'data': """{
+"Extensions": null,
+"ItemIdentifier": "86cc7f7f-d80d-4e49-beae-0ca20f90ed68",
+"RecordedAtTime": "2021-12-30T18:02:49+00:00",
+"ValidUntilTime": "2021-12-30T18:08:26.472197",
+"MonitoredVehicleJourney": {
+"Bearing": "328.0",
+"LineRef": "21C",
+"BlockRef": "7550",
+"VehicleRef": "nibs_443_-_YX10_FEU",
+"OperatorRef": "NIBS",
+"DirectionRef": "inbound",
+"VehicleLocation": {
+"Latitude": "51.712366",
+"Longitude": "0.245008"
+},
+"PublishedLineName": "21C",
+"VehicleJourneyRef": "2021-12-30:1808"
+}
+}"""
+        })
+
+        self.assertEqual(response.context['result']['journey'].code, "1808")
+        self.assertEqual(response.context['result']['journey'].service, service)
+        self.assertEqual(response.context['result']['journey'].trip, trip)
+
+    def test_debugger_error(self):
+        response = self.client.post("/vehicles/debug", {
+            "data": "trdgserawse/"
+        })
+        self.assertIn("Expecting value: line 1 column 1 (char 0)", str(response.context['form'].errors))

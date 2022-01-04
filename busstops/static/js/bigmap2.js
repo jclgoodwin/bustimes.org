@@ -107,7 +107,7 @@
         } else {
             marker = L.circleMarker(latLng, {
                 stroke: false,
-                fillColor: '#000',
+                fillColor: '#333',
                 fillOpacity: .5,
                 radius: 3,
                 url: data.properties.url
@@ -231,7 +231,7 @@
         } else {
             marker = L.circleMarker(latLng, {
                 stroke: false,
-                fillColor: '#111',
+                fillColor: '#333',
                 fillOpacity: .6,
                 radius: 3,
             });

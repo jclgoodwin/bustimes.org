@@ -93,7 +93,9 @@ class EditVehicleForm(EditVehiclesForm):
     name = forms.CharField(label='Vehicle name', required=False, max_length=70)
     previous_reg = RegField(required=False, max_length=24)
     notes = forms.CharField(required=False, max_length=255)
-    summary = forms.CharField(help_text="Briefly explain your changes",
+    summary = forms.CharField(help_text="""Briefly explain your changes,
+e.g. how you know a vehicle has been withdrawn or repainted,
+link to a picture to prove it""",
                               widget=forms.Textarea(attrs={'rows': 6}), required=False, max_length=255)
     field_order = ['withdrawn', 'spare_ticket_machine',
                    'fleet_number', 'reg',
@@ -181,3 +183,7 @@ can’t be contradicted"""
             self.fields['operator'].queryset = operators.filter(condition)
         else:
             del self.fields['operator']
+
+
+class DebuggerForm(forms.Form):
+    data = forms.CharField(widget=forms.Textarea(attrs={'rows': 6}))
