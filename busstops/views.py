@@ -1,13 +1,11 @@
 # coding=utf-8
 """View definitions."""
-import json
 import requests
 import datetime
 from ukpostcodeutils import validation
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.contrib.gis.geos import Point
-from django.contrib.gis.db.models import Union
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
@@ -769,12 +767,13 @@ def service_map_data(request, service_id):
     }
 
     routes = get_routes(service.route_set.select_related('source'), timezone.localdate())
-    if routes:
-        stops = StopTime.objects.filter(trip__route__in=routes)
-    else:
-        stops = StopTime.objects.filter(trip__route__service=service)
 
-    stops = stops.select_related('stop').only('trip_id', 'stop_id', 'stop__latlong')
+    stops = StopTime.objects.select_related('stop').filter(stop__isnull=False)
+    stops = stops.only('trip_id', 'stop_id', 'stop__latlong')
+    if routes:
+        stops = stops.filter(trip__route__in=routes)
+    else:
+        stops = stops.filter(trip__route__service=service)
 
     route_links = {
         (route_link.from_stop_id, route_link.to_stop_id): route_link
