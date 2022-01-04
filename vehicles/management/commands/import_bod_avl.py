@@ -108,8 +108,6 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
         vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
 
-        assert vehicle_ref
-
         if operator_ref == 'TFLO':
             try:
                 return self.vehicles.get(vehiclecode__scheme=operator_ref, vehiclecode__code=vehicle_ref), False
