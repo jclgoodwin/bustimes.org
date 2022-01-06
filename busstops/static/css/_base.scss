@@ -916,9 +916,15 @@ table {
     border-collapse: collapse;
 }
 
-.fleet {
+.compact {
     font-size: .875em;
 
+    td {
+        vertical-align: top;
+    }
+}
+
+.fleet {
     .livery-cell {
         padding-left: 3.25em;
         position: relative;
@@ -931,37 +937,35 @@ table {
         }
     }
 
-    .trivia {
-        display: none;
-    }
-
-    th {
-        white-space: normal;
-    }
-
     td {
         overflow: hidden;
-        vertical-align: top;
     }
 
     .number {
         text-align: right;
     }
 
+    .trivia {
+        display: none;  // we'll show it at bigger screen widths
+    }
+
     .last-seen {
         max-width: 5em;
     }
+}
 
-    tbody {
-        white-space: nowrap;
-    }
+.wrap {
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 td {
     border-top: 1px solid $border-color;
 }
 
-table a {
+th a,
+.link a,
+.fleet a {
     display: block;
     margin: -.25em -.5em;
     padding: .25em .5em;
@@ -1173,10 +1177,6 @@ input:not(:checked) + label {
     }
 }
 
-tfoot a {
-    display: inline;
-}
-
 .route {
     a {
         margin-left: 1em;
@@ -1222,6 +1222,7 @@ tfoot a {
     }
 
     td:first-child a {
+        display: block;
         margin: -.25rem -.5rem;
         margin-left: 0;
         padding: .25rem .5rem;
@@ -1278,6 +1279,7 @@ tfoot a {
         }
 
         a {
+            display: block;
             margin: -.125em -.5em;
             padding: .125em .5em;
         }

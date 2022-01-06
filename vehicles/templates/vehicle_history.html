@@ -25,7 +25,7 @@
 {% endif %}
 
 <div class="table-wrapper">
-<table>
+<table class="compact">
     <thead>
         <th scope="col">User</th>
         <th scope="col">Date</th>
@@ -35,10 +35,10 @@
     <tbody>
         {% for revision in revisions %}
         <tr>
-            <td>{% if revision.user %}<a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>{% endif %}</td>
+            <td class="link">{% if revision.user %}<a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>{% endif %}</td>
             <td>{{ revision.datetime }}</td>
             {% if not vehicle %}
-                <td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
+                <td class="link"><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
             {% endif %}
             <td>
                 {% for key, from, to in revision.list_changes %}
@@ -52,7 +52,9 @@
                     {% endif %}
                     <br>
                 {% endfor %}
-                {{ revision.message }}
+                {% if revision.message %}
+                    <div class="wrap">{{ revision.message }}</div>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

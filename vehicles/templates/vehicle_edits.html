@@ -38,7 +38,7 @@
 </div>
 
 <div class="table-wrapper">
-    <table class="fleet">
+    <table class="compact">
         <thead>
             <tr>
                 <th scope="col">date</th>
@@ -54,8 +54,8 @@
             {% for edit in edits %}
                 <tr>
                     <td>{{ edit.datetime }}</td>
-                    <td><a href="?user={{ edit.user_id }}">{{ edit.user }}</a></td>
-                    <td><a href="{{ edit.vehicle.get_absolute_url }}">{{ edit.vehicle }}</a></td>
+                    <td class="link"><a href="?user={{ edit.user_id }}">{{ edit.user }}</a></td>
+                    <td class="link"><a href="{{ edit.vehicle.get_absolute_url }}">{{ edit.vehicle }}</a></td>
                     <td>{{ edit.edit_count }}</td>
                     <td><div class="livery{% if edit.vehicle.livery_id %} livery-{{ edit.vehicle.livery_id }}{% else %}" style="background:{{ edit.vehicle.get_livery }}{% endif %}"></div></td>
                     <td>{% for key, value in edit.get_changes.items %}
@@ -72,7 +72,7 @@
                         {% else %}{{ key }}: {{ value }}
                         {% endif %}
                         <br>{% endfor %}
-                        {% if edit.url %}{{ edit.url|urlize }}{% endif %}
+                        {% if edit.url %}<div class="wrap">{{ edit.url|urlize }}</div>{% endif %}
                     </td>
                     <td class="score">{{ edit.score }}</td>
                     {% if user.is_staff %}
@@ -83,7 +83,7 @@
                         <td><button class="action" data-url="{{ edit.id }}/vote/up">👍</button></td>
                         <td><button class="action" data-url="{{ edit.id }}/vote/down">👎</button></td>
                     {% endif %}
-                    <td>{{ edit.vehicle.get_flickr_link }}</td>
+                    <td class="link">{{ edit.vehicle.get_flickr_link }}</td>
                 </tr>
             {% endfor %}
         </tbody>

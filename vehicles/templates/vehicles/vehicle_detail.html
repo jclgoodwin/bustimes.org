@@ -47,7 +47,7 @@
             <tbody>
                 {% for journey in journeys %}
                     <tr>
-                        <td>
+                        <td class="link">
                             {% if not vehicle %}
                                 <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
                             {% elif journey.service %}
@@ -57,7 +57,9 @@
                             {% endif %}
                         </td>
                         {% if journey.trip %}
-                            <td colspan="2"><a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a></td>
+                            <td colspan="2" class="link">
+                                <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
+                            </td>
                         {% elif journey.code and journey.code|length < 40 and '_' not in journey.code %}
                             <td>{{ journey.datetime|time }}</td>
                             <td>{{ journey.code }}</td>
@@ -66,7 +68,7 @@
                         {% endif %}
                         <td>{% firstof journey.destination journey.direction %}</td>
                         {% if journey.locations %}
-                            <td><a href="#journeys/{{ journey.id }}">Map</a></td>
+                            <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
                         {% endif %}
                     </tr>
                 {% endfor %}
