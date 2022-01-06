@@ -1,0 +1,25 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+<p>{{ description }}</p>
+
+{% for category in categories %}
+
+    <a href="https://mytrip.today/app/view-product/{{ category.id }}">
+        <h2>{{ category.title }}</h2>
+
+        <p>£{{ category.price }}</p>
+
+        <p>{{ category.description }}</p>
+    </a>
+
+{% endfor %}
+
+{{ json_ld }}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

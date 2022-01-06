@@ -8,7 +8,7 @@ from disruptions.urls import urlpatterns as disruptions_urls
 from vehicles.urls import urlpatterns as vehicles_urls
 from vosa.urls import urlpatterns as vosa_urls
 from fares.urls import urlpatterns as fares_urls
-from fares.views import service_fares
+from fares import views as fares_views
 from . import views
 
 sitemaps = {
@@ -34,10 +34,12 @@ urlpatterns = [
     path('stops/<pk>', views.StopPointDetailView.as_view(), name='stoppoint_detail'),
     re_path(r'^operators/(?P<pk>[A-Z]+)$', views.OperatorDetailView.as_view()),
     path('operators/<slug>', views.OperatorDetailView.as_view(), name='operator_detail'),
+    path('operators/<slug>/tickets', fares_views.operator_tickets),
+    path('operators/<slug>/tickets/<id>', fares_views.operator_ticket),
     path('services/<int:service_id>.json', views.service_map_data),
     path('services/<int:service_id>/timetable', views.service_timetable),
     path('services/<slug>', views.ServiceDetailView.as_view(), name='service_detail'),
-    path('services/<slug>/fares', service_fares),
+    path('services/<slug>/fares', fares_views.service_fares),
     path('sitemap.xml', index, {'sitemaps': sitemaps}),
     path('sitemap-<section>.xml', sitemap, {'sitemaps': sitemaps},
          name='django.contrib.sitemaps.views.sitemap'),

@@ -1,0 +1,25 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>Tickets</h1>
+
+{% for grouping in groupings %}
+    {% if grouping.categories %}
+        <h2>{{ grouping.title }}</h2>
+
+        {% for category in grouping.categories %}
+
+            <a href="tickets/{{ category.id }}">
+                <h3>{{ category.title }}</h3>
+
+                <p>{{ category.description }}</p>
+            </a>
+
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+
+{% endblock %}
+
+{% block ad %}{% endblock %}
