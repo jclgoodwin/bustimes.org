@@ -305,6 +305,7 @@ class Command(BaseCommand):
                             distance_matrix_element = distance_matrix_elements[distance_matrix_element_ref]
                         except KeyError as e:
                             print(e)
+                            distance_matrix_element = None
                         cells.append(models.Cell(
                             column=columns[columnn_ref],
                             row=row,
