@@ -340,6 +340,18 @@ PASSENGER_OPERATORS = [
 
 # see bustimes.management.commands.import_bod
 BOD_OPERATORS = [
+    # ('GDST', 'EM', {}, False),
+    # ('DCCL', 'NE', {}, False),
+    ('BEAT', 'NW', {}, False),
+    ('APTC', 'SE', {}, False),
+    ('FRNH', 'SE', {}, False),
+    ('HACO', 'EA', {}, False),
+    ('SMMM', 'SE', {}, False),
+    ('FWAY', 'SE', {}, False),
+    ('JPCO', 'SW', {}, False),
+    ('CACC', 'Y', {}, False),
+    ('SWEY', 'Y', {}, False),
+    # ('LEWO', 'Y', {}, False),
     ('WMSA', 'EM', {}, False),
     ('LANT', 'EM', {}, False),
     ('NWBT', 'NW', {}, False),
@@ -388,6 +400,7 @@ BOD_OPERATORS = [
         'BRTB': 'TBTN',
     }, False),
     ('KBUS', 'SE', {}, False),
+
     ('NIBS', 'SE', {}, False),
     # ('SESX', 'EA', {}, False),
     ('STCB', 'EA', {}, False),
@@ -461,7 +474,6 @@ BOD_OPERATORS = [
 
     # ('NATX', 'GB', {}, False),
     ('KETR', 'SE', {}, False),
-    # ('HACO', 'EA', {}, False),
     # ('PCCO', 'EM', {}, False),
     ('HCCL', 'NE', {
         'HCC': 'WGHC'
@@ -524,7 +536,7 @@ BOD_OPERATORS = [
     ('FALC', 'SE', {}, False),
     ('VECT', 'SE', {}, True),
     ('ACME', 'SE', {}, False),
-    #('LTKR', 'SE', {}, False),
+    # ('LTKR', 'SE', {}, False),
 
     ('Viking Coaches', 'NW', {
         'VIKG': 'VIKG'
