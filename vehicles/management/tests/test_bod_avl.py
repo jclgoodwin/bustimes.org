@@ -311,7 +311,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertContains(response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>')
         self.assertContains(
             response,
-            f'<td colspan="2" class="link"><a href="#journeys/{whippet_journey.id}">09:23</a></td>',
+            f"""<td colspan="2" class="link">
+                                <a href="#journeys/{whippet_journey.id}">09:23</a>
+                            </td>""",
         )
         self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
