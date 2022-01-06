@@ -1,3 +1,4 @@
+from functools import cached_property
 from django.db import models
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.urls import reverse
@@ -141,6 +142,28 @@ class FareTable(models.Model):
     def get_absolute_url(self):
         return self.tariff.get_absolute_url()
 
+    @cached_property
+    def is_triangular(self):
+        cols = [col.name for col in self.column_set.all()]
+        rows = [row.name for row in self.row_set.all()]
+        rows.reverse()
+        if len(cols) == len(rows):
+            if cols[1:] == rows[:-1]:
+                return True
+
+    def columns(self):
+        return self.column_set.all()
+
+    def rows(self):
+        rows = list(self.row_set.all())
+        if self.is_triangular:
+            i = 0
+            for row in rows:
+                i += 1
+                row.colspan = i
+            rows.reverse()
+        return rows
+
 
 class FareZone(models.Model):
     code = models.CharField(max_length=255)
@@ -179,7 +202,7 @@ class Column(models.Model):
     order = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return self.name.replace("/", "/\u200B")
+        return self.name
 
 
 class Row(models.Model):
@@ -187,6 +210,12 @@ class Row(models.Model):
     code = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255)
     order = models.PositiveSmallIntegerField(null=True, blank=True)
+
+    def cells(self):
+        return self.cell_set.all()
+
+    def __str__(self):
+        return self.name
 
 
 class Cell(models.Model):

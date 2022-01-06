@@ -1,48 +1,5 @@
 {% extends 'page.html' %}
 
-{% block head %}
-<style>
-table {
-    font-size: .875em;
-    white-space: nowrap;
-}
-
-th, td {
-    border-top: 0;
-    border-bottom: 1px solid #fe9;
-    border-right: 1px solid #fe9;
-    text-align: right;
-}
-
-th:last-child,
-td:last-child {
-    padding-right: .5em;
-    border-right: 1px solid #fe9;
-}
-
-th {
-    position: sticky;
-    left: 0;
-    top: 0;
-    background: #fff;
-}
-
-tr.head th {
-    z-index: 1;
-    white-space: normal;
-    hyphens: auto;
-    vertical-align: bottom;
-}
-
-/*
-tbody tr:hover th,
-td:hover {
-    background: #eee;
-}
-*/
-</style>
-{% endblock %}
-
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
@@ -89,22 +46,29 @@ td:hover {
             {{ table.sales_offer_package }}
         {% endif %}</p>
 
-        <table>
+        <table class="compact">
             <tbody>
+                {% if not table.is_triangular %}
                 <tr class="head">
                     <th></th>
-                    {% for column in table.column_set.all %}
+                    {% for column in table.columns %}
                         <th scope="col">{{ column }}</th>
                     {% endfor %}
                 </tr>
-                {% for row in table.row_set.all %}{% if row.cell_set.all %}
+                {% else %}
+                <tr>
+                    <th colspan="{{ table.columns|length|add:1 }}">{{ table.columns.0 }}</th>
+                </tr>
+                {% endif %}
+                {% for row in table.rows %}
                     <tr>
-                        <th>{{ row.name }}</th>
+                        {% if not table.is_triangular %}<th>{{ row }}</th>{% endif %}
                         {% for cell in row.cell_set.all %}
                             <td>£{{ cell.price.amount }}</td>
                         {% endfor %}
+                        {% if table.is_triangular %}<th colspan="{{ row.colspan }}">{{ row }}</th>{% endif %}
                     </tr>
-                {% endif %}{% endfor %}
+                {% endfor %}
         </table>
 
     {% endfor %}
