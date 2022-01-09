@@ -352,6 +352,7 @@ BOD_OPERATORS = [
     ('CACC', 'Y', {}, False),
     ('SWEY', 'Y', {}, False),
     # ('LEWO', 'Y', {}, False),
+    ('DEWS', 'EA', {}, False),
     ('WMSA', 'EM', {}, False),
     ('LANT', 'EM', {}, False),
     ('NWBT', 'NW', {}, False),
