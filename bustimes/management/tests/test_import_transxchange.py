@@ -453,9 +453,9 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual('2017-09-13', str(timetable.date))
         self.assertContains(response, 'Budehaven School')
         rows = timetable.groupings[1].rows
-        self.assertEqual(str(rows[-4].times), "[08:33, '', '', '', 15:30, '']")
+        self.assertEqual(str(rows[-6].times), "[08:32:18, '', '', '', 15:29:18, '']")
         self.assertEqual(str(rows[-5].times), "[08:33, '', '', '', 15:30, '']")
-        self.assertEqual(str(rows[-6].times), "[08:32, '', '', '', 15:29, '']")
+        self.assertEqual(str(rows[-4].times), "[08:33:10, '', '', '', 15:30:10, '']")
 
         self.assertEqual(114, service.stopusage_set.count())
 

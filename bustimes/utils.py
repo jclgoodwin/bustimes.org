@@ -50,13 +50,16 @@ def download_if_changed(path, url, params=None):
     return modified, last_modified
 
 
-def format_timedelta(timedelta):
-    if timedelta is not None:
-        timedelta = str(timedelta)[:-3]
-        timedelta = timedelta.replace('1 day, ', '', 1)
-        if len(timedelta) == 4:
-            return '0' + timedelta
-        return timedelta
+def format_timedelta(duration):
+    if duration is not None:
+        duration = duration.total_seconds()
+        hours = int(duration / 3600)
+        minutes = int(duration % 3600 / 60)
+        seconds = int(duration % 60)
+        duration = f'{hours:0>2}:{minutes:0>2}'
+        if seconds:
+            duration = f'{duration}:{seconds:0>2}'
+        return duration
 
 
 def time_datetime(time, date):
