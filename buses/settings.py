@@ -9,7 +9,7 @@ from django.db.utils import OperationalError
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split()
 
 TEST = 'test' in sys.argv or 'pytest' in sys.argv[0]
 DEBUG = bool(os.environ.get('DEBUG', False))
@@ -360,23 +360,23 @@ BOD_OPERATORS = [
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
-        # 'FPOT': 'FPOT',
-        # 'FSYO': 'FSYO',
-        # 'FMAN': 'FMAN',
+        'FPOT': 'FPOT',
+        'FSYO': 'FSYO',
+        'FMAN': 'FMAN',
         'FLDS': 'FLDS',
-        # 'FSMR': 'FSMR',
+        'FSMR': 'FSMR',
         'FHUD': 'FHUD',
         'FHAL': 'FHUD',
         'FBRA': 'FBRA',
         'FESX': 'FESX',
         'FECS': 'FECS',
-        # 'FHDO': 'FHDO',
+        'FHDO': 'FHDO',
         'FTVA': 'FTVA',
-        # 'FHAM': 'FHAM',
-        # 'FDOR': 'FDOR',
+        'FHAM': 'FHAM',
+        'FDOR': 'FDOR',
         'FCWL': 'FCWL',
         'FBRI': 'FBRI',
-        # 'FLEI': 'FLEI',
+        'FLEI': 'FLEI',
         'RRAR': 'RRAR',
         'FBOS': 'FBOS',
         'FWYO': 'FWYO',
