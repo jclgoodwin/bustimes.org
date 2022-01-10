@@ -40,6 +40,8 @@ flake8 = "^3.9.2"
 numpy = "^1.21.2"
 requests-toolbelt = "^0.9.1"
 redis = "^4.0.2"
+polyline = "^1.4.0"
+Shapely = "^1.8.0"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"
@@ -47,6 +49,7 @@ django-debug-toolbar-force = "^0.1.8"
 gunicorn = "^20.1.0"
 setproctitle = "^1.2.2"
 ipython = "^7.28.0"
+ipdb = "^0.13.9"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
