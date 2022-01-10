@@ -152,7 +152,10 @@ class Timetable:
             # self.calendars = ()
             return
 
-        routes = get_routes(routes, from_date=self.today)
+        if len(routes) > 1:
+            current_routes = get_routes(routes, from_date=self.today)
+            if len(current_routes) == 1:
+                routes = current_routes
 
         self.calendars = Calendar.objects.filter(
             Exists('trip', filter=Q(route__in=routes))
