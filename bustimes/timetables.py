@@ -152,6 +152,8 @@ class Timetable:
             # self.calendars = ()
             return
 
+        routes = get_routes(routes, from_date=self.today)
+
         self.calendars = Calendar.objects.filter(
             Exists('trip', filter=Q(route__in=routes))
         ).annotate(

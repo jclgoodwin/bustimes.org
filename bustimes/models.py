@@ -6,9 +6,11 @@ from .fields import SecondsField
 from .utils import format_timedelta, time_datetime
 
 
-def get_routes(routes, when=None):
+def get_routes(routes, when=None, from_date=None):
     if when:
         routes = [route for route in routes if route.contains(when)]
+    if from_date:
+        routes = [route for route in routes if route.start_date is None or route.start_date <= from_date]
 
     if len(routes) == 1:
         return routes
