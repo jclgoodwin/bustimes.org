@@ -40,7 +40,7 @@
 
 <details{% if forloop.first and forloop.last %} open{% endif %}>
     <summary>
-        {{ route.source}}/<a href="{{ route.get_absolute_url }}">{{ route.code }}</a>
+        <a href="{{ route.get_absolute_url }}">{{ route.source }}/{{ route.code }}</a>
         <br>{{ route.service_code }}
         <br>{{ route.revision_number }}
         <br>{{ route.start_date }}–{{ route.end_date }}

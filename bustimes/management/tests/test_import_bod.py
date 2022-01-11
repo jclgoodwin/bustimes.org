@@ -59,7 +59,8 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(route.source.url, 'https://data.bus-data.dft.gov.uk/category/dataset/35/download/')
         self.assertEqual(route.source.sha1, 'a5eaa3ef8ddefd702833d52d0148adfa0a504e9a')
 
-        self.assertEqual(route.code, 'Lynx_Clenchwarton_54_20200330')
+        self.assertEqual(route.code, '')
+        self.assertEqual(route.service_code, '54')
 
         with self.assertNumQueries(5):
             response = self.client.get(f'/services/{route.service_id}.json')

@@ -75,7 +75,7 @@ def route_xml(request, source, code=''):
             path = source.url.split('/')[4]
             path = Path('ticketer') / f'{path}.zip'
         else:
-            path = Path(source.name)
+            path = Path('bod') / str(source.id)
     elif '/' in code:
         path = code.split('/')[0]  # archive name
         code = code[len(path) + 1:]
