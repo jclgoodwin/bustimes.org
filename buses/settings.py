@@ -345,6 +345,9 @@ PASSENGER_OPERATORS = [
     ('Redline', 'https://www.redlinebuses.com/open-data', 'SE', {
         'RLNE': 'RLNE',
     }),
+    ('Coastliner', 'https://www.coastlinerbuses.co.uk/open-data', 'NW', {
+        'NUTT': 'NUTT',
+    }),
 ]
 
 # see bustimes.management.commands.import_bod
