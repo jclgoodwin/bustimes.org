@@ -54,11 +54,10 @@ def format_timedelta(duration):
     if duration is not None:
         duration = duration.total_seconds()
         hours = int(duration / 3600)
+        while hours >= 24:
+            hours -= 24
         minutes = int(duration % 3600 / 60)
-        seconds = int(duration % 60)
         duration = f'{hours:0>2}:{minutes:0>2}'
-        if seconds:
-            duration = f'{duration}:{seconds:0>2}'
         return duration
 
 
