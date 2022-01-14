@@ -115,7 +115,10 @@
         }
         var a = document.createElement('a');
 
-        a.innerHTML = '<span>' + data.properties.name + '</span><small>' + data.properties.services.join('</small><small>') + '</small>';
+        a.innerHTML = '<span>' + data.properties.name + '</span>';
+        if (data.properties.services) {
+            a.innerHTML += '<small>' + data.properties.services.join('</small><small>') + '</small>';
+        }
         a.href = data.properties.url;
 
         marker.bindPopup(a.outerHTML, {
