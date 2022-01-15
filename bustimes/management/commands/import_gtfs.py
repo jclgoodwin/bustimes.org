@@ -3,7 +3,6 @@ import io
 import csv
 import logging
 import zipfile
-from tqdm import tqdm
 from requests_html import HTMLSession
 from datetime import datetime
 from django.utils.dateparse import parse_duration
@@ -80,7 +79,7 @@ class Command(BaseCommand):
         stops = {}
         admin_areas = {}
         stops_not_created = {}
-        for line in tqdm(read_file(archive, 'stops.txt')):
+        for line in read_file(archive, 'stops.txt'):
             stop_id = get_stop_id(line['stop_id'])
             if stop_id[0] in '78' and len(stop_id) <= 16:
                 stops[stop_id] = StopPoint(
@@ -246,7 +245,7 @@ class Command(BaseCommand):
             trip = None
             previous_line = None
 
-            for line in tqdm(read_file(archive, 'stop_times.txt')):
+            for line in read_file(archive, 'stop_times.txt'):
 
                 if not previous_line or previous_line['trip_id'] != line['trip_id']:
 
@@ -268,7 +267,7 @@ class Command(BaseCommand):
             i = 0
             stop_times = []
 
-            for line in tqdm(read_file(archive, 'stop_times.txt')):
+            for line in read_file(archive, 'stop_times.txt'):
                 stop = stops.get(line['stop_id'])
 
                 stop_time = StopTime(

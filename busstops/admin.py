@@ -202,7 +202,7 @@ class ServiceLinkAdmin(admin.ModelAdmin):
 
 @admin.register(models.Locality)
 class LocalityAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug')
+    list_display = ('id', 'name', 'slug', 'modified_at', 'created_at')
     search_fields = ('id', 'name')
     raw_id_fields = ('adjacent',)
     list_filter = ('admin_area', 'admin_area__region')
