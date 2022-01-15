@@ -16,7 +16,7 @@ class Command(ImportFromCSVCommand):
     Imports localities from the NPTG
     """
     def handle_rows(self, rows):
-        existing_localities = Locality.objects.in_bulk()
+        existing_localities = Locality.objects.defer('search_vector', 'latlong').in_bulk()
         slugs = {
             locality.slug: locality for locality in existing_localities.values()
         }
@@ -24,24 +24,22 @@ class Command(ImportFromCSVCommand):
         to_create = []
 
         for row in rows:
+            modified_at = row['ModificationDateTime']
+            modified_at = parse_datetime(modified_at)
+            if not modified_at.tzinfo:
+                modified_at = make_aware(modified_at)
+
             locality_code = row['NptgLocalityCode']
             if locality_code in existing_localities:
                 locality = existing_localities[locality_code]
+                if modified_at and modified_at == locality.modified_at:
+                    continue
             else:
                 locality = Locality()
-
-            modified_at = row['ModificationDateTime']
-            if modified_at:
-                modified_at = parse_datetime(modified_at)
-                if not modified_at.tzinfo:
-                    modified_at = make_aware(modified_at)
 
             created_at = parse_datetime(row["CreationDateTime"])
             if not created_at.tzinfo:
                 created_at = make_aware(created_at)
-
-            if locality.id and modified_at == locality.modified_at:
-                continue
 
             locality.modified_at = modified_at
             locality.created_at = created_at
