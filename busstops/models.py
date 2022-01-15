@@ -134,7 +134,7 @@ class Locality(SearchMixin, models.Model):
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     qualifier_name = models.CharField(max_length=48, blank=True)
-    slug = AutoSlugField(always_update=True, populate_from='get_qualified_name', editable=True, unique=True)
+    slug = AutoSlugField(always_update=False, populate_from='get_qualified_name', editable=True, unique=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)

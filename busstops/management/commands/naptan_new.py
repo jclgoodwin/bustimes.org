@@ -1,7 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 from django.contrib.gis.geos import GEOSGeometry
-from django.utils.dateparse import parse_datetime
+from ciso8601 import parse_datetime
 from django.utils.timezone import make_aware
 from tqdm import tqdm
 from django.conf import settings
