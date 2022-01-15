@@ -726,8 +726,6 @@ class Command(BaseCommand):
 
     def should_defer_to_other_source(self, operators: list, line_name: str):
         if self.source.name == 'L':
-            if operators and operators[0].id == 'NXHH':
-                return True
             return False
         if operators and all(operator.id in self.incomplete_operators for operator in operators):
             services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
@@ -1151,7 +1149,4 @@ class Command(BaseCommand):
         self.do_garages(transxchange.garages)
 
         for txc_service in transxchange.services.values():
-            if txc_service.mode == 'underground':
-                continue
-
             self.handle_service(filename, transxchange, txc_service, today, stops)
