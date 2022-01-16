@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Map – {{ object }} – bustimes.org{% endblock %}
+{% block title %}Bus tracker map – {{ object }} – bustimes.org{% endblock %}
 
 {% block canonical %}
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/map">
@@ -52,7 +52,7 @@
     <script>OPERATOR_ID="{{ operator.id }}";</script>
     <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
     <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-        <script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
+    <script src="{% static 'js/leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}"></script>
     <script src="{% static 'js/reqwest.min.js' %}"></script>
     <script src="{% static 'js/maps.js' %}"></script>
     <script async src="{% static 'js/operator-map.js' %}"></script>
