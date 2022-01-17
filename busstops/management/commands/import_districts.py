@@ -3,20 +3,22 @@ Import districts from the NPTG.
 
 Usage:
 
-    import_districts > Districts.csv
+    ./manage.py import_districts < Districts.csv
 """
 
-from ..import_from_csv import ImportFromCSVCommand
+from ..import_nptg import ImportNPTGCommand
 from ...models import District
 
 
-class Command(ImportFromCSVCommand):
+class Command(ImportNPTGCommand):
+    model = District
+    update_fields = ["name", "admin_area_id"]
+
+    def get_pk(self, row):
+        return int(row["DistrictCode"])
 
     def handle_row(self, row):
-        District.objects.update_or_create(
-            id=row['DistrictCode'],
-            defaults={
-                'name': row['DistrictName'].replace('\'', '\u2019'),
-                'admin_area_id': row['AdministrativeAreaCode'],
-            }
+        return District(
+            name=row["DistrictName"].replace("'", "\u2019"),
+            admin_area_id=row["AdministrativeAreaCode"],
         )

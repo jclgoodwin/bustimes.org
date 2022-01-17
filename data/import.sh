@@ -31,14 +31,8 @@ function import_csv {
     # name of a CSV file contained in the zip archive:
     csv=$3
 
-    tail -n +2 "$csv" > "previous/$csv"
-    first=$? # 1 if previous command failed ($csv doesn't exist yet), 0 otherwise
     unzip -oq "$zip" "$csv"
-    if [[ $first == "0" ]]; then
-        diff -h "previous/$csv" "$csv" | grep '^> ' | sed 's/^> //' | ../../manage.py "import_$cmd"
-    else
-        ../../manage.py "import_$cmd" < "$csv"
-    fi
+    ../../manage.py "import_$cmd" < "$csv"
 }
 
 mkdir -p NPTG/previous NaPTAN TNDS variations

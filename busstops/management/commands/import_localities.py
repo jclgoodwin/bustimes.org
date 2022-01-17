@@ -3,11 +3,10 @@ Usage:
 
     import_localities < Localities.csv
 """
-from ciso8601 import parse_datetime
-from django.utils.timezone import make_aware
 from django.contrib.gis.geos import GEOSGeometry
 from django.utils.text import slugify
 from ..import_from_csv import ImportFromCSVCommand
+from ...utils import parse_nptg_datetime
 from ...models import Locality
 
 
@@ -24,10 +23,7 @@ class Command(ImportFromCSVCommand):
         to_create = []
 
         for row in rows:
-            modified_at = row['ModificationDateTime']
-            modified_at = parse_datetime(modified_at)
-            if not modified_at.tzinfo:
-                modified_at = make_aware(modified_at)
+            modified_at = parse_nptg_datetime(row["ModificationDateTime"])
 
             locality_code = row['NptgLocalityCode']
             if locality_code in existing_localities:
@@ -37,9 +33,7 @@ class Command(ImportFromCSVCommand):
             else:
                 locality = Locality()
 
-            created_at = parse_datetime(row["CreationDateTime"])
-            if not created_at.tzinfo:
-                created_at = make_aware(created_at)
+            created_at = parse_nptg_datetime(row["CreationDateTime"])
 
             locality.modified_at = modified_at
             locality.created_at = created_at
