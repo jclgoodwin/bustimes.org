@@ -10,10 +10,13 @@ from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colou
 from .fields import RegField
 
 
-def get_livery_choices(operator):
+def get_livery_choices(operator, vehicle=None):
     choices = {}
 
-    vehicles = operator.vehicle_set.filter(withdrawn=False)
+    q = Q(withdrawn=False)
+    if vehicle:
+        q |= Q(id=vehicle.id)
+    vehicles = operator.vehicle_set.filter(q)
 
     liveries = Livery.objects.filter(Q(vehicle__in=vehicles) | Q(operator=operator))
     liveries = liveries.annotate(popularity=Count('vehicle')).order_by('-popularity')
@@ -36,7 +39,10 @@ def get_livery_choices(operator):
 
 
 class EditVehiclesForm(forms.Form):
-    withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
+    withdrawn = forms.BooleanField(
+        label='Permanently withdrawn', required=False,
+        help_text="(A vehicle advertised for sale or involved in an accident has not necessarily been withdrawn)"
+    )
     spare_ticket_machine = forms.BooleanField(required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
@@ -70,7 +76,7 @@ class EditVehiclesForm(forms.Form):
         colours = None
 
         if operator:
-            colours = get_livery_choices(operator)
+            colours = get_livery_choices(operator, vehicle)
 
         if colours:
             if vehicle:
