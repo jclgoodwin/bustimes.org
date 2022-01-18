@@ -18,6 +18,8 @@
     function navigateToMap() {
         window.location.hash = '#map';
         hasHistory = true;
+
+        return false;
     }
 
     function navigateFromMap() {
@@ -26,6 +28,8 @@
         } else {
             window.location.hash = '';
         }
+
+        return false;
     }
 
     function openMap() {
@@ -44,8 +48,6 @@
                 loadjs(window.LIVERIES_CSS_URL);
             }
         }
-
-        return false;
     }
 
     button.onclick = navigateToMap;
@@ -177,8 +179,6 @@
         if (loadVehiclesTimeout) {
             clearTimeout(loadVehiclesTimeout);
         }
-
-        return false;
     }
 
     window.onkeydown = function(event) {
@@ -187,8 +187,8 @@
         }
     };
 
-    window.onhashchange = function(event) {
-        if (event.target.location.hash === '#map') {
+    window.onhashchange = function() {
+        if (window.location.hash === '#map') {
             openMap();
         } else {
             closeMap();
