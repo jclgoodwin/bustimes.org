@@ -19,15 +19,15 @@ class Command(BaseCommand):
             if not modified_at.tzinfo:
                 modified_at = make_aware(modified_at)
 
-        # if atco_code in self.existing_stops and modified_at == self.existing_stops[atco_code].modified_at:
-        #     return
+        if atco_code in self.existing_stops and modified_at == self.existing_stops[atco_code].modified_at:
+            return
 
         created_at = parse_datetime(element.attrib["CreationDateTime"])
         if not created_at.tzinfo:
             created_at = make_aware(created_at)
 
-        ET.indent(element)
-        print(ET.tostring(element).decode())
+        # ET.indent(element)
+        # print(ET.tostring(element).decode())
 
         lon = element.findtext("Place/Location/Translation/Longitude")
         if lon:
@@ -106,7 +106,6 @@ class Command(BaseCommand):
         self.stops_to_update = []
         atco_code_prefix = None
 
-        # with path.open("wb") as open_file:
         iterator = ET.iterparse(path)
         for _, element in tqdm(iterator):
 
@@ -120,7 +119,6 @@ class Command(BaseCommand):
                         StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields)
                         self.stops_to_create = []
                         self.stops_to_update = []
-                        return
 
                     atco_code_prefix = atco_code[:3]
 
@@ -133,3 +131,6 @@ class Command(BaseCommand):
                 self.get_stop(element)
 
                 element.clear()  # save memory
+
+        StopPoint.objects.bulk_create(self.stops_to_create)
+        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields)
