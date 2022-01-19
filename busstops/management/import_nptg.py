@@ -1,9 +1,4 @@
-"""
-Import districts from the NPTG.
-
-Usage:
-
-    ./manage.py import_districts < Districts.csv
+"""Base class for import_districts and import_areas
 """
 
 from ..utils import parse_nptg_datetime
