@@ -3,10 +3,9 @@ import xml.etree.ElementTree as ET
 from django.contrib.gis.geos import GEOSGeometry
 from ciso8601 import parse_datetime
 from django.utils.timezone import make_aware
-from tqdm import tqdm
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from busstops.models import StopPoint
+from busstops.models import DataSource, StopPoint
 
 
 class Command(BaseCommand):
@@ -89,25 +88,46 @@ class Command(BaseCommand):
         'active',
     ]
 
+    def download(self, source):
+        response = requests.get("https://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx", timeout=10)
+        new_rows = response.json()
+        old_rows = source.settings
+
+        url = "https://naptan.api.dft.gov.uk/v1/access-nodes"
+        params = {
+            "dataFormat": "xml"
+        }
+
+        if old_rows:
+            changes = [new_row['DataBaseID'] for i, new_row in enumerate(new_rows)
+                       if old_rows[i]['LastUpload'] != new_row['LastUpload']]
+
+            if not changes:
+                return
+
+            params["atcoAreaCodes"] = ",".join(changes)
+
+        source.settings = new_rows
+
+        return requests.get(url, params, timeout=10, stream=True)
+
     def handle(self, *args, **options):
+        source, created = DataSource.objects.get_or_create(name='NaPTAN')
 
         path = settings.DATA_DIR / "naptan.xml"
 
-        # url = "https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=xml"
-
-        # response = requests.get(url, timeout=10, stream=True)
-        # print(response.headers)
-
-        # with path.open("wb") as open_file:
-        #     for chunk in tqdm(response.iter_content(chunk_size=102400)):
-        #         open_file.write(chunk)
+        response = self.download(source)
+        if response:
+            with path.open("wb") as open_file:
+                for chunk in response.iter_content(chunk_size=102400):
+                    open_file.write(chunk)
 
         self.stops_to_create = []
         self.stops_to_update = []
         atco_code_prefix = None
 
         iterator = ET.iterparse(path)
-        for _, element in tqdm(iterator):
+        for _, element in iterator:
 
             element.tag = element.tag.removeprefix("{http://www.naptan.org.uk/}")
             if element.tag == "StopPoint":
@@ -134,3 +154,5 @@ class Command(BaseCommand):
 
         StopPoint.objects.bulk_create(self.stops_to_create)
         StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields)
+
+        source.save(update_fields=["settings"])

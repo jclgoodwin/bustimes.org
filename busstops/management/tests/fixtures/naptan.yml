@@ -23,9 +23,51 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.21.0]
     method: GET
-    uri: https://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv
+    uri: https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=xml
   response:
-    body: {string: this is all the data}
+    body: {string: '<?xml version="1.0" encoding="utf-8"?>
+<NaPTAN xml:lang="en" CreationDateTime="2022-01-19T12:56:29" ModificationDateTime="2022-01-19T12:56:29" Modification="revise" RevisionNumber="359" xmlns="http://www.naptan.org.uk/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.naptan.org.uk/ http://www.naptan.org.uk/schema/2.1/NaPTAN.xsd" FileName="NaPTAN290.xml" SchemaVersion="2.1">
+  <StopPoints>
+    <StopPoint CreationDateTime="2011-05-18T11:53:59" ModificationDateTime="2016-02-23T14:56:19" Modification="revise" RevisionNumber="2" Status="inactive">
+      <AtcoCode>2900FLEX1</AtcoCode>
+      <Descriptor>
+        <CommonName xml:lang="en">Wroxham</CommonName>
+        <ShortCommonName xml:lang="en">Wroxham</ShortCommonName>
+      </Descriptor>
+      <Place>
+        <LocalityCentre>0</LocalityCentre>
+        <Location>
+          <GridType>UKOS</GridType>
+          <Easting>630237</Easting>
+          <Northing>317922</Northing>
+        </Location>
+      </Place>
+      <StopClassification>
+        <StopType>BCT</StopType>
+        <OnStreet>
+          <Bus>
+            <BusStopType>MKD</BusStopType>
+            <TimingStatus>OTH</TimingStatus>
+            <MarkedPoint>
+              <Bearing>
+                <CompassPoint>N</CompassPoint>
+              </Bearing>
+            </MarkedPoint>
+          </Bus>
+        </OnStreet>
+      </StopClassification>
+      <AdministrativeAreaRef>091</AdministrativeAreaRef>
+      <StopAvailability>
+        <StopValidity CreationDateTime="2011-05-18T11:55:15" ModificationDateTime="2011-05-18T11:55:15">
+          <DateRange>
+            <StartDate>2011-05-18</StartDate>
+          </DateRange>
+          <Suspended />
+        </StopValidity>
+      </StopAvailability>
+    </StopPoint>
+  </StopPoints>
+</NaPTAN>'}
     headers:
       Content-Type: [application/zip]
       content-disposition: [attachment; filename=NaPTANcsv.zip]
@@ -54,9 +96,13 @@ interactions:
       Connection: [keep-alive]
       User-Agent: [python-requests/2.21.0]
     method: GET
-    uri: https://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv&LA=603
+    uri: https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=xml&atcoAreaCodes=603
   response:
-    body: {string: this is the shetland data}
+    body: {string: '<?xml version="1.0" encoding="utf-8"?>
+<NaPTAN xml:lang="en" CreationDateTime="2022-01-19T12:56:29" ModificationDateTime="2022-01-19T12:56:29" Modification="revise" RevisionNumber="359" xmlns="http://www.naptan.org.uk/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.naptan.org.uk/ http://www.naptan.org.uk/schema/2.1/NaPTAN.xsd" FileName="NaPTAN290.xml" SchemaVersion="2.1">
+  <StopPoints>
+  </StopPoints>
+</NaPTAN>'}
     headers:
       Content-Type: [application/zip]
       content-disposition: [attachment; filename=NaPTANcsv.zip]
