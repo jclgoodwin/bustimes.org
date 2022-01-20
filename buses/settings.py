@@ -628,6 +628,13 @@ BOD_OPERATORS = [
         'RR': 'RDRT',
         'RR1': 'RDRT'
     }, False),
+    
+    ('CUBU', 'NW', {}, False),
+    ('HUYT', 'NW', {}, False),
+    ('AJTX', 'NW', {}, False),
+    ('PPBU', 'NW', {}, False),
+    ('EAZI', 'NW', {}, False),
+    ('MAGH', 'NW', {}, False),
 ]
 
 # see bustimes.management.commands.import_bod
