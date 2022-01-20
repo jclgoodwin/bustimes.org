@@ -357,6 +357,7 @@ BOD_OPERATORS = [
     ('LANT', 'EM', {}, False),
     ('NWBT', 'NW', {}, False),
     ('MARS', 'SE', {}, False),
+    ('EMBR', 'S', {}, False),
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
@@ -483,6 +484,7 @@ BOD_OPERATORS = [
     ('SPSV', 'SE', {}, False),
     ('NVTR', 'SE', {}, False),
     ('LEMN', 'SE', {}, False),
+    ('CHLK', 'SE', {}, False),
     ('GOCH', 'SE', {
         'GO': 'GOCH'
     }, False),
@@ -495,7 +497,8 @@ BOD_OPERATORS = [
         'CBL': 'CBNL',
     }, False),
     # ('BULL', 'NW', {}, False),
-    ('SELT', 'NW', {}, False),  # Selwyns Ticketer
+
+    ('SELT', 'NW', {}, True),  # Selwyns
     ('ROSS', 'Y',  {}, False),  # Ross Travel Ticketer
 
     ('GRYC', 'EM',  {}, False),
