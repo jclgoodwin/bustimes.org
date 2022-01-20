@@ -109,7 +109,7 @@ class Command(BaseCommand):
 
         source.settings = new_rows
 
-        return requests.get(url, params, timeout=10, stream=True)
+        return requests.get(url, params, timeout=60, stream=True)
 
     def handle(self, *args, **options):
         source, created = DataSource.objects.get_or_create(name='NaPTAN')
@@ -121,6 +121,8 @@ class Command(BaseCommand):
             with path.open("wb") as open_file:
                 for chunk in response.iter_content(chunk_size=102400):
                     open_file.write(chunk)
+
+        source.save(update_fields=["settings"])
 
         self.stops_to_create = []
         self.stops_to_update = []
@@ -135,8 +137,8 @@ class Command(BaseCommand):
                 if atco_code[:3] != atco_code_prefix:
 
                     if atco_code_prefix:
-                        StopPoint.objects.bulk_create(self.stops_to_create)
-                        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields)
+                        StopPoint.objects.bulk_create(self.stops_to_create, batch_size=100)
+                        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields, batch_size=100)
                         self.stops_to_create = []
                         self.stops_to_update = []
 
@@ -152,7 +154,5 @@ class Command(BaseCommand):
 
                 element.clear()  # save memory
 
-        StopPoint.objects.bulk_create(self.stops_to_create)
-        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields)
-
-        source.save(update_fields=["settings"])
+        StopPoint.objects.bulk_create(self.stops_to_create, batch_size=100)
+        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields, batch_size=100)
