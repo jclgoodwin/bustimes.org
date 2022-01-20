@@ -651,16 +651,20 @@ class Command(BaseCommand):
         if not route_created:
             # reuse trip ids if the number and start times haven't changed
             existing_trips = route.trip_set.order_by('id')
-            if len(existing_trips) == len(trips):
-                for i, old_trip in enumerate(existing_trips):
-                    if old_trip.start == trips[i].start:
-                        trips[i].id = old_trip.id
-                    else:
-                        logger.info(f"{route_code} {old_trip.start} {trips[i].start}")
-                        existing_trips.delete()
-                        existing_trips = None
-                        break
-            else:
+            try:
+                if len(existing_trips) == len(trips):
+                    for i, old_trip in enumerate(existing_trips):
+                        if old_trip.start == trips[i].start:
+                            trips[i].id = old_trip.id
+                        else:
+                            logger.info(f"{route_code} {old_trip.start} {trips[i].start}")
+                            existing_trips.delete()
+                            existing_trips = None
+                            break
+                else:
+                    existing_trips.delete()
+                    existing_trips = None
+            except IntegrityError:
                 existing_trips.delete()
                 existing_trips = None
         else:
