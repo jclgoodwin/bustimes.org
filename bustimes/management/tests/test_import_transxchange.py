@@ -846,6 +846,13 @@ class ImportTransXChangeTest(TestCase):
         # should only be 6, despite running 'import_services' twice
         self.assertEqual(6, service.stopusage_set.count())
 
+        # trip timetable
+        trip = Trip.objects.first()
+        response = self.client.get(trip.get_absolute_url())
+        self.assertContains(response, "Book at")
+        self.assertContains(response, "megabus.com")
+        self.assertContains(response, "awin")
+
         # M12
 
         service = Service.objects.get(service_code='M12_MEGA')
