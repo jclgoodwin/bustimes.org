@@ -29,14 +29,6 @@
     </ul>
 {% endif %}
 
-{% for suspension in suspensions %}
-    <div class="situation">
-        {% load date_range %}
-        <h2>{{ suspension.dates|date_range }}</h2>
-        {{ suspension.text|linebreaks }}
-    </div>
-{% endfor %}
-
 {% include 'situations.html' %}
 
 <div class="asides">
