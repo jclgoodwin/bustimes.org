@@ -25,9 +25,6 @@ class Command(BaseCommand):
         if not created_at.tzinfo:
             created_at = make_aware(created_at)
 
-        # ET.indent(element)
-        # print(ET.tostring(element).decode())
-
         lon = element.findtext("Place/Location/Translation/Longitude")
         if lon:
             lat = element.findtext("Place/Location/Translation/Latitude")
@@ -64,7 +61,7 @@ class Command(BaseCommand):
             suburb=element.findtext("Place/Suburb", ""),
             town=element.findtext("Place/Town", ""),
 
-            active=element.attrib["Status"] == "active"
+            active="Status" not in element.attrib or element.attrib["Status"] == "active"
         )
 
         if atco_code in self.existing_stops:

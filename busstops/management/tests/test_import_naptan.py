@@ -5,13 +5,20 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from django.core.management import call_command
 from django.test import TestCase, override_settings
-from ...models import StopPoint, DataSource
+from ...models import Region, AdminArea, Locality, StopPoint, DataSource
 
 
 FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 
 
 class NaptanTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        Region.objects.create(id="EA", name="East Anglia")
+        AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
+        Locality.objects.create(id='E0017763', name="Old Catton", admin_area_id=91)
+        Locality.objects.create(id='E0017806', name="Berney Arms", admin_area_id=91)
+
     def test_download(self):
         with TemporaryDirectory() as temp_dir:
             with vcr.use_cassette(str(FIXTURES_DIR / 'naptan.yml')) as cassette:
@@ -43,6 +50,15 @@ class NaptanTest(TestCase):
         source.refresh_from_db()
         self.assertEqual(source.settings[0]['LastUpload'], '03/09/2020')
 
-        stop = StopPoint.objects.get()
+        # inactive stop in Wroxham
+        stop = StopPoint.objects.get(atco_code="2900FLEX1")
         self.assertEqual(str(stop), "Wroxham  ↑")
         self.assertEqual(stop.get_qualified_name(), "Wroxham")
+
+        response = self.client.get("/stops/2900FLEX1")
+        self.assertContains(response, " no services currently stop ", status_code=404)
+
+        # active stop
+        response = self.client.get("/stops/2900C1323")
+        self.assertContains(response, '<li title="NaPTAN code">NFOAJGDT</li>')
+        self.assertContains(response, '<p>On White Woman Lane, near Longe Lane</p>')
