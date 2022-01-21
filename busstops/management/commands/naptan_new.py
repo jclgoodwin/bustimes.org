@@ -9,6 +9,27 @@ from busstops.models import DataSource, StopPoint
 
 
 class Command(BaseCommand):
+    mapping = (
+        ("Descriptor/CommonName", "common_name"),
+        ("Descriptor/Landmark", "landmark"),
+        ("Descriptor/Street", "street"),
+        ("Descriptor/Indicator", "indicator"),
+        ("Place/Suburb", "suburb"),
+        ("Place/Town", "town"),
+    )
+    nothings = (
+        "-",
+        "---",
+        "Crossing not known",
+        "Street not known",
+        "Landmark not known",
+        "Unknown",
+        "*",
+        "Data Unavailable",
+        "N/A",
+        "Tba",
+    )
+
     def get_stop(self, element):
         atco_code = element.findtext("AtcoCode")
 
@@ -52,17 +73,16 @@ class Command(BaseCommand):
 
             bearing=bearing,
 
-            common_name=element.findtext("Descriptor/CommonName", ""),
-            landmark=element.findtext("Descriptor/Landmark", ""),
-            street=element.findtext("Descriptor/Street", ""),
-            indicator=element.findtext("Descriptor/Indicator", ""),
-
             locality_id=element.findtext("Place/NptgLocalityRef"),
-            suburb=element.findtext("Place/Suburb", ""),
-            town=element.findtext("Place/Town", ""),
 
             active="Status" not in element.attrib or element.attrib["Status"] == "active"
         )
+
+        for xml_path, key in self.mapping:
+            value = element.findtext(xml_path, "")
+            if value in self.nothings:
+                value = ""
+            setattr(stop, key, value)
 
         if atco_code in self.existing_stops:
             self.stops_to_update.append(stop)
