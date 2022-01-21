@@ -124,7 +124,7 @@ class Command(BaseCommand):
             fare_structure_elements = tariff_element.find("fareStructureElements")
 
             user_profile = None
-            trip_type = ''
+            trip_type = ""
             if fare_structure_elements:
                 user_profile = fare_structure_elements.find(
                     "FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
@@ -133,11 +133,10 @@ class Command(BaseCommand):
                     user_profile, created = get_user_profile(user_profile)
                     user_profiles[user_profile.code] = user_profile
 
-                round_trip = fare_structure_elements.find(
-                    "FareStructureElement/GenericParameterAssignment/limitations/RoundTrip"
+                trip_type = fare_structure_elements.findtext(
+                    "FareStructureElement/GenericParameterAssignment/limitations/RoundTrip/TripType",
+                    ""
                 )
-                if round_trip:
-                    trip_type = round_trip.findtext('TripType')
 
             type_of_tariff = tariff_element.find("TypeOfTariffRef")
             if type_of_tariff is not None:
