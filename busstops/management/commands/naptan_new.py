@@ -2,9 +2,10 @@ import requests
 import xml.etree.ElementTree as ET
 from django.contrib.gis.geos import GEOSGeometry
 from ciso8601 import parse_datetime
-from django.utils.timezone import make_aware
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db.models import Q
+from django.utils.timezone import make_aware
 from busstops.models import StopArea, DataSource, StopPoint
 
 
@@ -181,7 +182,7 @@ class Command(BaseCommand):
                     ).in_bulk()
 
                     self.stop_areas = StopArea.objects.filter(
-                        id__startswith=atco_code_prefix
+                        Q(id__startswith=atco_code_prefix) | Q(id__startswith='9')
                     ).in_bulk()
 
                 self.get_stop(element)
