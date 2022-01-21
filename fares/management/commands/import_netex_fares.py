@@ -60,14 +60,18 @@ class Command(BaseCommand):
         }
         # print(operators, lines)
 
-        user_profiles = {}
+        user_profiles = {
+            **self.user_profiles
+        }
         for usage_parameter in element.findall(
             "dataObjects/CompositeFrame/frames/FareFrame/usageParameters/UserProfile"
         ):
             user_profile, created = get_user_profile(usage_parameter)
             user_profiles[user_profile.code] = user_profile
 
-        sales_offer_packages = {}
+        sales_offer_packages = {
+            **self.sales_offer_packages
+        }
         for sales_offer_package in element.findall(
             "dataObjects/CompositeFrame/frames/FareFrame/salesOfferPackages/SalesOfferPackage"
         ):
@@ -94,49 +98,53 @@ class Command(BaseCommand):
                 name=fare_zone_element.findtext("Name")
             )
             fare_zones[fare_zone.code] = fare_zone
-            stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
+            # stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
             # if stop_refs:
-            if False:
-                    try:
-                        if stop_refs[0].startswith('atco'):
-                            fare_zone.stops.set(StopPoint.objects.filter(
-                                atco_code__in=[stop_ref.removeprefix('atco:') for stop_ref in stop_refs]
-                            ))
-                        # elif stop_refs[0].startswith('naptStop'):
-                        #     fare_zone.stops.set(StopPoint.objects.filter(
-                        #         naptan_code__iexact__in=[stop_ref.removeprefix('naptStop:') for stop_ref in stop_refs]
-                        #     ))
-                        else:
-                            print(stop_refs[0])
-                    except IntegrityError as e:
-                        print(e)
+            #     try:
+            #         if stop_refs[0].startswith('atco'):
+            #             fare_zone.stops.set(StopPoint.objects.filter(
+            #                 atco_code__in=[stop_ref.removeprefix('atco:') for stop_ref in stop_refs]
+            #             ))
+            #         # elif stop_refs[0].startswith('naptStop'):
+            #         #     fare_zone.stops.set(StopPoint.objects.filter(
+            #         #         naptan_code__iexact__in=[stop_ref.removeprefix('naptStop:') for stop_ref in stop_refs]
+            #         #     ))
+            #         else:
+            #             print(stop_refs[0])
+            #     except IntegrityError as e:
+            #         print(e)
+
+        prices = {}
 
         tariffs = {}
         time_intervals = {}
         for tariff_element in element.findall("dataObjects/CompositeFrame/frames/FareFrame/tariffs/Tariff"):
+            tariff_code = tariff_element.attrib['id']
+
             fare_structure_elements = tariff_element.find("fareStructureElements")
 
-            user_profile = fare_structure_elements.find(
-                "FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
-            )
-            if user_profile is not None:
-                user_profile, created = get_user_profile(user_profile)
-                user_profiles[user_profile.code] = user_profile
+            user_profile = None
+            trip_type = ''
+            if fare_structure_elements:
+                user_profile = fare_structure_elements.find(
+                    "FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
+                )
+                if user_profile is not None:
+                    user_profile, created = get_user_profile(user_profile)
+                    user_profiles[user_profile.code] = user_profile
 
-            round_trip = fare_structure_elements.find(
-                "FareStructureElement/GenericParameterAssignment/limitations/RoundTrip"
-            )
-            if round_trip:
-                trip_type = round_trip.findtext('TripType')
-            else:
-                trip_type = ''
+                round_trip = fare_structure_elements.find(
+                    "FareStructureElement/GenericParameterAssignment/limitations/RoundTrip"
+                )
+                if round_trip:
+                    trip_type = round_trip.findtext('TripType')
 
             type_of_tariff = tariff_element.find("TypeOfTariffRef")
             if type_of_tariff is not None:
                 type_of_tariff = type_of_tariff.attrib["ref"].removeprefix('fxc:')
 
             tariff = models.Tariff.objects.create(
-                code=tariff_element.attrib['id'],
+                code=tariff_code,
                 name=tariff_element.findtext("Name"),
                 source=source,
                 filename=filename,
@@ -167,32 +175,37 @@ class Command(BaseCommand):
                         tariff.services.add(service)
 
             distance_matrix_elements = {}
-            distance_matrix_element_elements = fare_structure_elements.find(
-                "FareStructureElement/distanceMatrixElements"
-            )
-            if distance_matrix_element_elements:
-                for distance_matrix_element in distance_matrix_element_elements:
-                    price_group_ref = distance_matrix_element.find("priceGroups/PriceGroupRef")
-                    if price_group_ref is None:
-                        continue
-                    price_group_ref = price_group_ref.attrib['ref']
-                    start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
-                    end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
-                    distance_matrix_element = models.DistanceMatrixElement(
-                        code=distance_matrix_element.attrib["id"],
-                        start_zone=fare_zones[start_zone],
-                        end_zone=fare_zones[end_zone],
-                        price=price_groups[price_group_ref],
-                        tariff=tariff,
-                    )
-                    distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
-            models.DistanceMatrixElement.objects.bulk_create(distance_matrix_elements.values())
+            if fare_structure_elements:
+                distance_matrix_element_elements = fare_structure_elements.find(
+                    "FareStructureElement/distanceMatrixElements"
+                )
+                if distance_matrix_element_elements:
+                    for distance_matrix_element in distance_matrix_element_elements:
 
-            access_zones = fare_structure_elements.find(
-                "FareStructureElement/GenericParameterAssignment/validityParameters/FareZoneRef"
-            )
-            if access_zones is not None:
-                tariff.access_zones.add(fare_zones[access_zones.attrib["ref"]])
+                        price_group_ref = distance_matrix_element.find("priceGroups/PriceGroupRef")
+                        if price_group_ref is None:
+                            continue
+                        price_group_ref = price_group_ref.attrib['ref']
+
+                        start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
+                        end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
+
+                        distance_matrix_element = models.DistanceMatrixElement(
+                            code=distance_matrix_element.attrib["id"],
+                            start_zone=fare_zones[start_zone],
+                            end_zone=fare_zones[end_zone],
+                            price=price_groups[price_group_ref],
+                            tariff=tariff,
+                        )
+                        distance_matrix_elements[distance_matrix_element.code] = distance_matrix_element
+                models.DistanceMatrixElement.objects.bulk_create(distance_matrix_elements.values())
+
+            if fare_structure_elements:
+                access_zones = fare_structure_elements.find(
+                    "FareStructureElement/GenericParameterAssignment/validityParameters/FareZoneRef"
+                )
+                if access_zones is not None:
+                    tariff.access_zones.add(fare_zones[access_zones.attrib["ref"]])
 
             time_intervals_element = tariff_element.find("timeIntervals")
             if time_intervals_element:
@@ -200,7 +213,7 @@ class Command(BaseCommand):
                     time_interval, _ = models.TimeInterval.objects.get_or_create(
                         code=time_interval.attrib["id"],
                         name=time_interval.findtext("Name"),
-                        description=time_interval.findtext("Description")
+                        description=time_interval.findtext("Description", "")
                     )
                     time_intervals[time_interval.code] = time_interval
 
@@ -216,7 +229,7 @@ class Command(BaseCommand):
             if user_profile_ref is not None:
                 user_profile_ref = user_profile_ref.attrib["ref"]
                 if user_profile_ref not in user_profiles:
-                    user_profile_ref = f"fxc:{user_profile}"
+                    user_profile_ref = f"fxc:{user_profile_ref}"
                 user_profile = user_profiles[user_profile_ref]
             else:
                 user_profile = None
@@ -274,9 +287,32 @@ class Command(BaseCommand):
             else:
                 table = None
 
+                # Stagecoach
+                distance_matrix_elements = tariff_element.find("distanceMatrixElements")
+                if distance_matrix_elements:
+                    distance_matrix_elements = {
+                        element.attrib["id"]: element for element in distance_matrix_elements
+                    }
+
+                    for price in fare_table_element.findall("prices/DistanceMatrixElementPrice"):
+                        distance_matrix_element_ref = price.find("DistanceMatrixElementRef").attrib["ref"]
+                        distance_matrix_element = distance_matrix_elements[distance_matrix_element_ref]
+                        amount = price.findtext("Amount")
+                        if amount not in prices:
+                            prices[amount] = models.Price.objects.create(amount=amount)
+                        start_zone = distance_matrix_element.find("StartTariffZoneRef").attrib["ref"]
+                        end_zone = distance_matrix_element.find("EndTariffZoneRef").attrib["ref"]
+                        models.DistanceMatrixElement.objects.create(
+                            tariff=tariff,
+                            start_zone=fare_zones[start_zone],
+                            end_zone=fare_zones[end_zone],
+                            price=prices[amount]
+                        )
+
             cells = []
 
-            for sub_fare_table_element in fare_table_element.find('includes'):  # fare tables within fare tables
+            for sub_fare_table_element in fare_table_element.findall('includes/FareTable'):
+                # fare tables within fare tables
                 cells_element = sub_fare_table_element.find('cells')
                 if cells_element:
                     for cell_element in cells_element:
@@ -341,13 +377,21 @@ class Command(BaseCommand):
 
             models.Cell.objects.bulk_create(cells)
 
+        # Stagecoach has user profiles and sales offer packages defined separately
+        if "_COMMON_" in filename:
+            if user_profiles:
+                self.user_profiles = user_profiles
+            if sales_offer_packages:
+                self.sales_offer_packages = sales_offer_packages
+
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('api_key', type=str)
 
-    def handle_archive(self, dataset, response):
-        assert response.headers['Content-Type'] == 'application/zip'
-        with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+    def handle_archive(self, dataset, file):
+        with zipfile.ZipFile(file) as archive:
+            self.user_profiles = {}
+            self.sales_offer_packages = {}
             for filename in archive.namelist():
                 logger.info(f"  {filename}")
                 self.handle_file(dataset, archive.open(filename), filename)
@@ -381,7 +425,8 @@ class Command(BaseCommand):
             logger.info(filename)
             self.handle_file(dataset, response.raw, filename)
         else:
-            self.handle_archive(dataset, response)
+            assert response.headers['Content-Type'] == 'application/zip'
+            self.handle_archive(dataset, io.BytesIO(response.content))
 
         dataset.datetime = modified
         dataset.save(update_fields=["datetime"])
