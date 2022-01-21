@@ -5,7 +5,7 @@ from ciso8601 import parse_datetime
 from django.utils.timezone import make_aware
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from busstops.models import DataSource, StopPoint
+from busstops.models import StopArea, DataSource, StopPoint
 
 
 class Command(BaseCommand):
@@ -74,9 +74,16 @@ class Command(BaseCommand):
             bearing=bearing,
 
             locality_id=element.findtext("Place/NptgLocalityRef"),
+            admin_area_id=element.findtext("AdministrativeAreaRef"),
+            stop_area_id=element.findtext("StopAreas/StopAreaRef"),
 
             active="Status" not in element.attrib or element.attrib["Status"] == "active"
         )
+
+        if stop.stop_area_id and stop.stop_area_id not in self.stop_areas:
+            stop_area = StopArea(id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id)
+            self.stop_areas_to_create.append(stop_area)
+            self.stop_areas[stop_area.id] = stop_area
 
         for xml_path, key in self.mapping:
             value = element.findtext(xml_path, "")
@@ -128,6 +135,14 @@ class Command(BaseCommand):
 
         return requests.get(url, params, timeout=60, stream=True)
 
+    def update_and_create(self):
+        StopArea.objects.bulk_create(self.stop_areas_to_create, batch_size=100)
+        self.stop_areas_to_create = []
+        StopPoint.objects.bulk_create(self.stops_to_create, batch_size=100)
+        self.stops_to_create = []
+        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields, batch_size=100)
+        self.stops_to_update = []
+
     def handle(self, *args, **options):
         source, created = DataSource.objects.get_or_create(name='NaPTAN')
 
@@ -143,6 +158,7 @@ class Command(BaseCommand):
 
         self.stops_to_create = []
         self.stops_to_update = []
+        self.stop_areas_to_create = []
         atco_code_prefix = None
 
         iterator = ET.iterparse(path)
@@ -154,10 +170,7 @@ class Command(BaseCommand):
                 if atco_code[:3] != atco_code_prefix:
 
                     if atco_code_prefix:
-                        StopPoint.objects.bulk_create(self.stops_to_create, batch_size=100)
-                        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields, batch_size=100)
-                        self.stops_to_create = []
-                        self.stops_to_update = []
+                        self.update_and_create()
 
                     atco_code_prefix = atco_code[:3]
 
@@ -167,9 +180,12 @@ class Command(BaseCommand):
                         atco_code__startswith=atco_code_prefix
                     ).in_bulk()
 
+                    self.stop_areas = StopArea.objects.filter(
+                        id__startswith=atco_code_prefix
+                    ).in_bulk()
+
                 self.get_stop(element)
 
                 element.clear()  # save memory
 
-        StopPoint.objects.bulk_create(self.stops_to_create, batch_size=100)
-        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields, batch_size=100)
+        self.update_and_create()

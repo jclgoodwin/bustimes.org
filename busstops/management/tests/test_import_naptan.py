@@ -16,6 +16,7 @@ class NaptanTest(TestCase):
     def setUpTestData(cls):
         Region.objects.create(id="EA", name="East Anglia")
         AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
+        AdminArea.objects.create(id=110, atco_code="910", name="National - National Rail", region_id="EA")
         Locality.objects.create(id='E0017763', name="Old Catton", admin_area_id=91)
         Locality.objects.create(id='E0017806', name="Berney Arms", admin_area_id=91)
 
