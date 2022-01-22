@@ -56749,7 +56749,7 @@
       <Garages>
         <Garage>
           <GarageCode>LE</GarageCode>
-          <GarageName xml:lang="en">Leicester</GarageName>
+          <GarageName xml:lang="en">LEICESTER</GarageName>
           <Address xmlns:apd="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails">
             <apd:Line>43 Wenlock Way</apd:Line>
             <apd:Line>Leicester</apd:Line>
@@ -56758,7 +56758,7 @@
         </Garage>
         <Garage>
           <GarageCode>GR</GarageCode>
-          <GarageName xml:lang="en">Grantham</GarageName>
+          <GarageName xml:lang="en">Garage 'GR'</GarageName>
           <Address xmlns:apd="http://www.govtalk.gov.uk/people/AddressAndPersonalDetails">
             <apd:Line>Tollemache Road North</apd:Line>
             <apd:Line>Grantham</apd:Line>
