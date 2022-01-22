@@ -843,10 +843,8 @@ class Command(BaseCommand):
                 if i > 0:
                     existing = service
                 else:
-                    other_q = Q()
                     for line_name in line_names:
-                        other_q &= Q(route__line_name__iexact=line_name)
-                    q |= other_q
+                        q |= Q(line_name__iexact=line_name)
 
             if not existing:
                 services = Service.objects.order_by('-current', 'id').filter(q)
@@ -954,7 +952,7 @@ class Command(BaseCommand):
 
                 if out_desc:
                     service.outbound_description = out_desc
-                    if not service.description:
+                    if not service.description or len(txc_service.lines) > 1:
                         service.description = out_desc
                 if in_desc:
                     service.inbound_description = in_desc
