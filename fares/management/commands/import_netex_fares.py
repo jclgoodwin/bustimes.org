@@ -389,8 +389,6 @@ class Command(BaseCommand):
 
     def handle_archive(self, dataset, file):
         with zipfile.ZipFile(file) as archive:
-            self.user_profiles = {}
-            self.sales_offer_packages = {}
             for filename in archive.namelist():
                 logger.info(f"  {filename}")
                 self.handle_file(dataset, archive.open(filename), filename)
@@ -417,6 +415,9 @@ class Command(BaseCommand):
             logger.warning(item["noc"])
 
         response = self.session.get(download_url, stream=True)
+
+        self.user_profiles = {}
+        self.sales_offer_packages = {}
 
         if response.headers['Content-Type'] == 'text/xml':
             # maybe not fully RFC 6266 compliant
