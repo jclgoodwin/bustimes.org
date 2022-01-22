@@ -53,7 +53,7 @@
                     <br>
                 {% endfor %}
                 {% if revision.message %}
-                    <div class="wrap">{{ revision.message }}</div>
+                    <div class="wrap">{{ revision.message|urlize }}</div>
                 {% endif %}
             </td>
         </tr>
