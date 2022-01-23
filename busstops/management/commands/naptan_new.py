@@ -81,11 +81,6 @@ class Command(BaseCommand):
             active="Status" not in element.attrib or element.attrib["Status"] == "active"
         )
 
-        if stop.stop_area_id and stop.stop_area_id not in self.stop_areas:
-            stop_area = StopArea(id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id)
-            self.stop_areas_to_create.append(stop_area)
-            self.stop_areas[stop_area.id] = stop_area
-
         for xml_path, key in self.mapping:
             value = element.findtext(xml_path, "")
             if value in self.nothings:
@@ -137,10 +132,21 @@ class Command(BaseCommand):
         return requests.get(url, params, timeout=60, stream=True)
 
     def update_and_create(self):
-        StopArea.objects.bulk_create(self.stop_areas_to_create, batch_size=100)
-        self.stop_areas_to_create = []
+        # create any new stop areas
+        stops = [stop for stop in self.stops_to_create if stop.stop_area_id]
+        stops += [stop for stop in self.stops_to_update if stop.stop_area_id]
+        stop_areas = StopArea.objects.in_bulk([stop.stop_area_id for stop in stops])
+        stop_areas_to_create = [
+            StopArea(id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id)
+            for stop in stops if stops if stop.stop_area_id not in stop_areas
+        ]
+        StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
+
+        # create new stops
         StopPoint.objects.bulk_create(self.stops_to_create, batch_size=100)
         self.stops_to_create = []
+
+        # update updated stops
         StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields, batch_size=100)
         self.stops_to_update = []
 
@@ -159,7 +165,6 @@ class Command(BaseCommand):
 
         self.stops_to_create = []
         self.stops_to_update = []
-        self.stop_areas_to_create = []
         atco_code_prefix = None
 
         iterator = ET.iterparse(path)
@@ -179,10 +184,6 @@ class Command(BaseCommand):
                         'atco_code', 'modified_at'
                     ).filter(
                         atco_code__startswith=atco_code_prefix
-                    ).in_bulk()
-
-                    self.stop_areas = StopArea.objects.filter(
-                        Q(id__startswith=atco_code_prefix) | Q(id__startswith='9')
                     ).in_bulk()
 
                 self.get_stop(element)
