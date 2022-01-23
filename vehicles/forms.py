@@ -97,7 +97,7 @@ class EditVehicleForm(EditVehiclesForm):
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
     name = forms.CharField(label='Vehicle name', required=False, max_length=70)
-    previous_reg = RegField(required=False, max_length=24)
+    previous_reg = RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
     notes = forms.CharField(required=False, max_length=255)
     summary = forms.CharField(help_text="""Briefly explain your changes,
 e.g. how you know a vehicle has been withdrawn or repainted,

@@ -809,8 +809,12 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(88, service.stopusage_set.count())
 
         # Test service colour
-        response = self.client.get("/operators/FABD")
+        response = self.client.get("/stops/639004592")
         self.assertContains(response, "background: #c0c0c0;")
+        self.assertContains(response, "border-color: #111111;")
+        self.assertContains(response, "color: #111111;")
+
+        response = self.client.get("/operators/FABD")
         self.assertContains(response, "background: #c0c0c0;")
         self.assertContains(response, "border-color: #111111;")
         self.assertContains(response, "color: #111111;")
