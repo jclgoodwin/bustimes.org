@@ -151,6 +151,98 @@ interactions:
         <PlusbusZoneRef CreationDateTime="2006-09-08T14:30:00" ModificationDateTime="2007-09-26T13:00:00" Modification="revise" RevisionNumber="1" Status="active">YARMTH</PlusbusZoneRef>
       </PlusbusZones>
     </StopPoint>
+    <StopPoint CreationDateTime="2005-09-06T00:00:00.000" ModificationDateTime="2009-09-14T08:30:00.000" Modification="revise" RevisionNumber="2" Status="active">
+      <AtcoCode>07605394</AtcoCode>
+      <NaptanCode>dloagdag</NaptanCode>
+      <Descriptor>
+        <CommonName>Brankin Drive</CommonName>
+        <Landmark>Brankin Drive</Landmark>
+        <Street>Brankin Road</Street>
+        <Indicator>I</Indicator>
+      </Descriptor>
+      <Place>
+        <NptgLocalityRef>N0078629</NptgLocalityRef>
+        <LocalityCentre>0</LocalityCentre>
+        <Location>
+        <Translation>
+          <GridType>UKOS</GridType>
+          <Easting>429950</Easting>
+          <Northing>513003</Northing>
+          <Longitude>-1.538928</Longitude>
+          <Latitude>54.511465</Latitude>
+        </Translation>
+        </Location>
+      </Place>
+      <StopClassification>
+        <StopType>BCT</StopType>
+        <OnStreet>
+          <Bus>
+            <BusStopType>MKD</BusStopType>
+            <TimingStatus>OTH</TimingStatus>
+            <MarkedPoint>
+              <Bearing>
+                <CompassPoint>W</CompassPoint>
+                <Degrees>270</Degrees>
+              </Bearing>
+            </MarkedPoint>
+          </Bus>
+        </OnStreet>
+      </StopClassification>
+      <StopAreas>
+        <StopAreaRef Modification="new" Status="active">077G5394</StopAreaRef>
+        <StopAreaRef Modification="new" Status="active">076G5394</StopAreaRef>
+      </StopAreas>
+      <AdministrativeAreaRef>015</AdministrativeAreaRef>
+      <PlusbusZones>
+        <PlusbusZoneRef CreationDateTime="2005-09-06T00:00:00.000" ModificationDateTime="2009-09-14T08:30:00.000" Modification="revise" RevisionNumber="2" Status="active">DLTN</PlusbusZoneRef>
+      </PlusbusZones>
+    </StopPoint>
+    <StopPoint CreationDateTime="2005-09-06T00:00:00.000" ModificationDateTime="2009-09-14T08:30:00.000" Modification="revise" RevisionNumber="2" Status="active">
+      <AtcoCode>07605395</AtcoCode>
+      <NaptanCode>dloagdaj</NaptanCode>
+      <Descriptor>
+        <CommonName>Brankin Drive</CommonName>
+        <Landmark>Brankin Drive</Landmark>
+        <Street>Brankin Road</Street>
+        <Indicator>O</Indicator>
+      </Descriptor>
+      <Place>
+        <NptgLocalityRef>N0078629</NptgLocalityRef>
+        <LocalityCentre>0</LocalityCentre>
+        <Location>
+        <Translation>
+          <GridType>UKOS</GridType>
+          <Easting>430006</Easting>
+          <Northing>513010</Northing>
+            <Longitude>-1.538063</Longitude>
+            <Latitude>54.511525</Latitude>
+        </Translation>
+        </Location>
+      </Place>
+      <StopClassification>
+        <StopType>BCT</StopType>
+        <OnStreet>
+        <Bus>
+          <BusStopType>MKD</BusStopType>
+          <TimingStatus>OTH</TimingStatus>
+          <MarkedPoint>
+            <Bearing>
+              <CompassPoint>E</CompassPoint>
+              <Degrees>90</Degrees>
+            </Bearing>
+          </MarkedPoint>
+        </Bus>
+        </OnStreet>
+      </StopClassification>
+      <StopAreas>
+        <StopAreaRef Modification="new" Status="active">077G5394</StopAreaRef>
+        <StopAreaRef Modification="new" Status="active">076G5394</StopAreaRef>
+      </StopAreas>
+      <AdministrativeAreaRef>076</AdministrativeAreaRef>
+      <PlusbusZones>
+        <PlusbusZoneRef CreationDateTime="2005-09-06T00:00:00.000" ModificationDateTime="2009-09-14T08:30:00.000" Modification="revise" RevisionNumber="2" Status="active">DLTN</PlusbusZoneRef>
+      </PlusbusZones>
+    </StopPoint>
   </StopPoints>
 </NaPTAN>'}
     headers:

@@ -4,7 +4,6 @@ from django.contrib.gis.geos import GEOSGeometry
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 from django.utils.timezone import make_aware
 from busstops.models import StopArea, DataSource, StopPoint, AdminArea
 

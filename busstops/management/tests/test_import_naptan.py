@@ -17,8 +17,12 @@ class NaptanTest(TestCase):
         Region.objects.create(id="EA", name="East Anglia")
         AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
         AdminArea.objects.create(id=110, atco_code="910", name="National - National Rail", region_id="EA")
+        AdminArea.objects.create(id=15, atco_code=76, name="Darlington", region_id="EA")
+        AdminArea.objects.create(id=90, atco_code=280, name="Merseyside", region_id="EA")
         Locality.objects.create(id='E0017763', name="Old Catton", admin_area_id=91)
         Locality.objects.create(id='E0017806', name="Berney Arms", admin_area_id=91)
+        Locality.objects.create(id='N0078629', name="Neasham Road", admin_area_id=15)
+        StopPoint.objects.create(atco_code="07605395", active=True)
 
     def test_download(self):
         with TemporaryDirectory() as temp_dir:
@@ -63,3 +67,7 @@ class NaptanTest(TestCase):
         response = self.client.get("/stops/2900C1323")
         self.assertContains(response, '<li title="NaPTAN code">NFOAJGDT</li>')
         self.assertContains(response, '<p>On White Woman Lane, near Longe Lane</p>')
+
+        # stop in area
+        response = self.client.get("/stops/07605395")
+        self.assertContains(response, 'Neasham Road')
