@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils.timezone import make_aware
-from busstops.models import StopArea, DataSource, StopPoint
+from busstops.models import StopArea, DataSource, StopPoint, AdminArea
 
 
 class Command(BaseCommand):
@@ -80,6 +80,8 @@ class Command(BaseCommand):
 
             active="Status" not in element.attrib or element.attrib["Status"] == "active"
         )
+        if atco_code.startswith(stop.admin_area_id):
+            stop.admin_area = self.admin_areas[int(stop.admin_area_id)]
 
         for xml_path, key in self.mapping:
             value = element.findtext(xml_path, "")
@@ -136,10 +138,10 @@ class Command(BaseCommand):
         stops = [stop for stop in self.stops_to_create if stop.stop_area_id]
         stops += [stop for stop in self.stops_to_update if stop.stop_area_id]
         stop_areas = StopArea.objects.in_bulk([stop.stop_area_id for stop in stops])
-        stop_areas_to_create = [
+        stop_areas_to_create = set(
             StopArea(id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id)
             for stop in stops if stops if stop.stop_area_id not in stop_areas
-        ]
+        )
         StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
 
         # create new stops
@@ -165,6 +167,7 @@ class Command(BaseCommand):
 
         self.stops_to_create = []
         self.stops_to_update = []
+        self.admin_areas = {admin_area.atco_code: admin_area for admin_area in AdminArea.objects.all()}
         atco_code_prefix = None
 
         iterator = ET.iterparse(path)
