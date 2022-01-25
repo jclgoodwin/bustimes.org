@@ -46,15 +46,17 @@ class Command(BaseCommand):
         if not created_at.tzinfo:
             created_at = make_aware(created_at)
 
-        lon = element.findtext("Place/Location/Translation/Longitude")
-        if lon:
+        easting = element.findtext("Place/Location/Easting")
+        northing = element.findtext("Place/Location/Northing")
+        if not easting:
+            easting = element.findtext("Place/Location/Translation/Easting")
+            northing = element.findtext("Place/Location/Translation/Northing")
+        if easting:
+            point = GEOSGeometry(f"SRID=27700;POINT({easting} {northing})")
+        else:
+            lon = element.findtext("Place/Location/Translation/Longitude")
             lat = element.findtext("Place/Location/Translation/Latitude")
             point = GEOSGeometry(f"POINT({lon} {lat})")
-        else:
-            easting = element.findtext("Place/Location/Easting")
-            northing = element.findtext("Place/Location/Northing")
-            point = GEOSGeometry(f"SRID=27700;POINT({easting} {northing})")
-        # print(point)
 
         bearing = element.findtext("StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint")
         if bearing is None:
@@ -87,6 +89,9 @@ class Command(BaseCommand):
             if value in self.nothings:
                 value = ""
             setattr(stop, key, value)
+
+        if stop.indicator == stop.naptan_code:
+            stop.indicator = ""
 
         if atco_code in self.existing_stops:
             self.stops_to_update.append(stop)
