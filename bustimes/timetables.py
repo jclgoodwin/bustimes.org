@@ -152,7 +152,7 @@ class Timetable:
             # self.calendars = ()
             return
 
-        if len(routes) > 1:
+        if not date and len(routes) > 1:
             current_routes = get_routes(routes, from_date=self.today)
             if len(current_routes) == 1:
                 routes = current_routes
