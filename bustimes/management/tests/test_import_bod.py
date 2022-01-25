@@ -8,7 +8,7 @@ from unittest.mock import patch
 import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode, StopPoint
+from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode, StopPoint, StopArea, AdminArea
 from vehicles.models import VehicleJourney
 from ...models import Route, BankHoliday, CalendarBankHoliday, BankHolidayDate, VehicleType, Block, Garage
 
@@ -145,22 +145,29 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get('/stops/2900W0321/times.json?when=yesterday')
         self.assertEqual(400, response.status_code)
 
-        with self.assertNumQueries(10):
+        admin_area = AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
+        stop_area = StopArea.objects.create(id='', active=True, admin_area=admin_area)
+        StopPoint.objects.filter(atco_code__in=['2900W0321', '2900W0322']).update(stop_area=stop_area)
+
+        with self.assertNumQueries(11):
             response = self.client.get('/stops/2900W0321?date=2020-05-02')
         self.assertContains(response, "<h3>Monday 4 May</h3>")
         self.assertContains(response, "<h3>Tuesday 5 May</h3>")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
-        with self.assertNumQueries(10):
+        self.assertContains(response, "Nearby stops")  # other stop in StopArea
+        self.assertContains(response, "<small>54</small>")
+
+        with self.assertNumQueries(11):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
         self.assertContains(response, "<h3>Tuesday 5 May</h3>")
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.get('/stops/2900W0321?date=poop')
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.get('/stops/2900W0321?date=2020-05-02&time=poop')
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
