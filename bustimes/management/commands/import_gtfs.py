@@ -187,11 +187,13 @@ class Command(BaseCommand):
                 calendars[line['service_id']] = calendar
 
             for line in read_file(archive, 'calendar_dates.txt'):
+                operation = line['exception_type'] == '1'  # '1' = operates, '2' = does not operate
                 CalendarDate.objects.create(
                     calendar=calendars[line['service_id']],
                     start_date=parse_date(line['date']),
                     end_date=parse_date(line['date']),
-                    operation=line['exception_type'] == '1'
+                    operation=operation,
+                    special=operation  # additional date of operation
                 )
 
             trips = {}
