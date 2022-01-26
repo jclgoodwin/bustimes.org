@@ -4,7 +4,10 @@ from django.conf import settings
 from .models import VehicleEdit, VehicleRevision, VehicleType, Livery
 
 
-redis_client = from_url(settings.REDIS_URL)
+if settings.REDIS_URL:
+    redis_client = from_url(settings.REDIS_URL)
+else:
+    redis_client = None
 
 
 def flush_redis():
