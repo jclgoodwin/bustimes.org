@@ -517,7 +517,8 @@ class OperatorDetailView(DetailView):
 
         if context['vehicles']:
             vehicles = vehicles.values_list('id', flat=True)
-            context['map'] = redis_client.exists(*[f"vehicle{vehicle_id}" for vehicle_id in vehicles])
+            if redis_client:
+                context['map'] = redis_client.exists(*[f"vehicle{vehicle_id}" for vehicle_id in vehicles])
 
         return context
 
