@@ -100,8 +100,9 @@ class EditVehicleForm(EditVehiclesForm):
     previous_reg = RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
     notes = forms.CharField(required=False, max_length=255)
     summary = forms.CharField(help_text="""Briefly explain your changes,
-e.g. how you know a vehicle has been withdrawn or repainted,
-link to a picture to prove it""",
+        if you think it’s necessary,
+        e.g. how you know a vehicle has been withdrawn or repainted,
+        link to a picture to prove it""",
                               widget=forms.Textarea(attrs={'rows': 6}), required=False, max_length=255)
     field_order = ['withdrawn', 'spare_ticket_machine',
                    'fleet_number', 'reg',
