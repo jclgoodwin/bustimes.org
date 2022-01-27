@@ -602,7 +602,7 @@ BOD_OPERATORS = [
     ('RBTS', 'EM', {}, False),
     ('DELA', 'EM', {}, False),
     ('RLNE', 'SE', {}, False),
-    ('HATT', 'NW', {}, False),
+    # ('HATT', 'NW', {}, False),
     ('SULV', 'SE', {}, False),
     ('WBSV', 'SE', {}, False),
     ('REDE', 'SE', {}, False),
