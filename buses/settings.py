@@ -322,6 +322,8 @@ PASSENGER_OPERATORS = [
         'HDT': 'HRGT',
         'YCD': 'YCST',
         'TPEN': 'TPEN',
+        'FLYE': 'FLYE',
+        'YACT': 'YACT',
     }),
     ('Go North East', 'https://www.gonortheast.co.uk/open-data', 'NE', {
         'GNE': 'GNEL',
