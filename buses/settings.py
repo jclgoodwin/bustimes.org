@@ -57,10 +57,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'beeline.middleware.django.HoneyMiddleware',
 ]
 
 SECURE_REFERRER_POLICY = None
+CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
 
 if DEBUG and 'runserver' in sys.argv:
     INSTALLED_APPS.append('debug_toolbar')
@@ -187,6 +187,7 @@ if VARNISH_HOST and VARNISH_PORT:
     VARNISH = (VARNISH_HOST, int(VARNISH_PORT))
 else:
     VARNISH = None
+
 
 TIME_FORMAT = 'H:i'
 DATE_FORMAT = 'l j F Y'
