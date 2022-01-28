@@ -156,7 +156,6 @@ class Command(BaseCommand):
                 id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id
             )
             for stop in stops
-            if stops
             if stop.stop_area_id not in stop_areas
         )
         StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
