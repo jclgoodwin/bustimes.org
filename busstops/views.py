@@ -392,6 +392,11 @@ class StopPointDetailView(DetailView):
                                             'locality__district')
     queryset = queryset.defer('locality__latlong', 'locality__parent__latlong')
 
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        return get_object_or_404(queryset, pk__iexact=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
