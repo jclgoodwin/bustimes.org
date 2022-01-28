@@ -243,6 +243,45 @@ interactions:
         <PlusbusZoneRef CreationDateTime="2005-09-06T00:00:00.000" ModificationDateTime="2009-09-14T08:30:00.000" Modification="revise" RevisionNumber="2" Status="active">DLTN</PlusbusZoneRef>
       </PlusbusZones>
     </StopPoint>
+    <StopPoint CreationDateTime="2014-01-06T12:00:00" ModificationDateTime="2014-02-03T12:00:00" RevisionNumber="0" Status="active">
+      <AtcoCode>3200GTAYTON0</AtcoCode>
+      <NaptanCode />
+      <PlateCode />
+      <Descriptor>
+        <CommonName>Great Ayton Rail Station</CommonName>
+        <ShortCommonName>Great Ayton R Stn</ShortCommonName>
+        <Landmark>Station</Landmark>
+        <Street>Station Road</Street>
+        <Indicator>entrance</Indicator>
+      </Descriptor>
+      <Place>
+        <NptgLocalityRef>E0048995</NptgLocalityRef>
+        <Suburb>Great Ayton</Suburb>
+        <Town>N/A</Town>
+        <LocalityCentre>false</LocalityCentre>
+        <Location>
+          <Translation>
+            <GridType>UKOS</GridType>
+            <Easting>457271</Easting>
+            <Northing>510803</Northing>
+            <Longitude>0.000000000</Longitude>
+            <Latitude>0.000000000</Latitude>
+          </Translation>
+        </Location>
+      </Place>
+      <StopClassification>
+        <StopType>RSE</StopType>
+        <OffStreet>
+          <Rail>
+            <Entrance />
+          </Rail>
+        </OffStreet>
+      </StopClassification>
+      <StopAreas>
+        <StopAreaRef>910GGTAYTON</StopAreaRef>
+      </StopAreas>
+      <AdministrativeAreaRef>092</AdministrativeAreaRef>
+    </StopPoint>
   </StopPoints>
 </NaPTAN>'}
     headers:

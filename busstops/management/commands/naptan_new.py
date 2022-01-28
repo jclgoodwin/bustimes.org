@@ -39,7 +39,10 @@ class Command(BaseCommand):
             if not modified_at.tzinfo:
                 modified_at = make_aware(modified_at)
 
-        if atco_code in self.existing_stops and modified_at == self.existing_stops[atco_code].modified_at:
+        if (
+            atco_code in self.existing_stops
+            and modified_at == self.existing_stops[atco_code].modified_at
+        ):
             return
 
         created_at = parse_datetime(element.attrib["CreationDateTime"])
@@ -58,31 +61,31 @@ class Command(BaseCommand):
             lat = element.findtext("Place/Location/Translation/Latitude")
             point = GEOSGeometry(f"POINT({lon} {lat})")
 
-        bearing = element.findtext("StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint")
+        bearing = element.findtext(
+            "StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint"
+        )
         if bearing is None:
-            bearing = element.findtext("StopClassification/OnStreet/Bus/UnmarkedPoint/Bearing/CompassPoint")
+            bearing = element.findtext(
+                "StopClassification/OnStreet/Bus/UnmarkedPoint/Bearing/CompassPoint"
+            )
         if bearing is None:
             bearing = ""
 
         stop = StopPoint(
             atco_code=atco_code,
             naptan_code=element.findtext("NaptanCode"),
-
             created_at=created_at,
             modified_at=modified_at,
-
             latlong=point,
-
             bearing=bearing,
-
             locality_id=element.findtext("Place/NptgLocalityRef"),
             admin_area_id=element.findtext("AdministrativeAreaRef"),
             stop_area_id=element.findtext("StopAreas/StopAreaRef"),
-
-            active="Status" not in element.attrib or element.attrib["Status"] == "active"
+            active="Status" not in element.attrib
+            or element.attrib["Status"] == "active",
         )
         if atco_code.startswith(stop.admin_area_id):
-            stop.admin_area = self.admin_areas[int(stop.admin_area_id)]
+            stop.admin_area = self.admin_areas[stop.admin_area_id]
 
         for xml_path, key in self.mapping:
             value = element.findtext(xml_path, "")
@@ -99,34 +102,40 @@ class Command(BaseCommand):
             self.stops_to_create.append(stop)
 
     bulk_update_fields = [
-        'created_at',
-        'modified_at',
-        'naptan_code',
-        'latlong',
-        'bearing',
-        'common_name',
-        'landmark',
-        'street',
-        'locality',
-        'indicator',
-        'suburb',
-        'town',
-        'active',
+        "created_at",
+        "modified_at",
+        "naptan_code",
+        "latlong",
+        "bearing",
+        "common_name",
+        "landmark",
+        "street",
+        "locality",
+        "admin_area",
+        "stop_area",
+        "indicator",
+        "suburb",
+        "town",
+        "active",
     ]
 
     def download(self, source):
-        response = requests.get("https://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx", timeout=10)
+        response = requests.get(
+            "https://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx",
+            timeout=10,
+        )
         new_rows = response.json()
         old_rows = source.settings
 
         url = "https://naptan.api.dft.gov.uk/v1/access-nodes"
-        params = {
-            "dataFormat": "xml"
-        }
+        params = {"dataFormat": "xml"}
 
         if old_rows:
-            changes = [new_row['DataBaseID'] for i, new_row in enumerate(new_rows)
-                       if old_rows[i]['LastUpload'] != new_row['LastUpload']]
+            changes = [
+                new_row["DataBaseID"]
+                for i, new_row in enumerate(new_rows)
+                if old_rows[i]["LastUpload"] != new_row["LastUpload"]
+            ]
 
             if not changes:
                 return
@@ -143,8 +152,12 @@ class Command(BaseCommand):
         stops += [stop for stop in self.stops_to_update if stop.stop_area_id]
         stop_areas = StopArea.objects.in_bulk([stop.stop_area_id for stop in stops])
         stop_areas_to_create = set(
-            StopArea(id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id)
-            for stop in stops if stops if stop.stop_area_id not in stop_areas
+            StopArea(
+                id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id
+            )
+            for stop in stops
+            if stops
+            if stop.stop_area_id not in stop_areas
         )
         StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
 
@@ -153,11 +166,13 @@ class Command(BaseCommand):
         self.stops_to_create = []
 
         # update updated stops
-        StopPoint.objects.bulk_update(self.stops_to_update, self.bulk_update_fields, batch_size=100)
+        StopPoint.objects.bulk_update(
+            self.stops_to_update, self.bulk_update_fields, batch_size=100
+        )
         self.stops_to_update = []
 
     def handle(self, *args, **options):
-        source, created = DataSource.objects.get_or_create(name='NaPTAN')
+        source, created = DataSource.objects.get_or_create(name="NaPTAN")
 
         path = settings.DATA_DIR / "naptan.xml"
 
@@ -171,7 +186,9 @@ class Command(BaseCommand):
 
         self.stops_to_create = []
         self.stops_to_update = []
-        self.admin_areas = {admin_area.atco_code: admin_area for admin_area in AdminArea.objects.all()}
+        self.admin_areas = {
+            admin_area.atco_code: admin_area for admin_area in AdminArea.objects.all()
+        }
         atco_code_prefix = None
 
         iterator = ET.iterparse(path)
@@ -187,11 +204,11 @@ class Command(BaseCommand):
 
                     atco_code_prefix = atco_code[:3]
 
-                    self.existing_stops = StopPoint.objects.only(
-                        'atco_code', 'modified_at'
-                    ).filter(
-                        atco_code__startswith=atco_code_prefix
-                    ).in_bulk()
+                    self.existing_stops = (
+                        StopPoint.objects.only("atco_code", "modified_at")
+                        .filter(atco_code__startswith=atco_code_prefix)
+                        .in_bulk()
+                    )
 
                 self.get_stop(element)
 
