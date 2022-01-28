@@ -66,7 +66,7 @@ class Command(BaseCommand):
 
         stop = StopPoint(
             atco_code=atco_code,
-            naptan_code=element.findtext("NaptanCode", ""),
+            naptan_code=element.findtext("NaptanCode"),
 
             created_at=created_at,
             modified_at=modified_at,

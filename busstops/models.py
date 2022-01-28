@@ -78,8 +78,8 @@ class AdminArea(models.Model):
     """An administrative area within a region,
     or possibly a national transport (rail/air/ferry) network
     """
-    id = models.PositiveIntegerField(primary_key=True)
-    atco_code = models.PositiveIntegerField()
+    id = models.PositiveSmallIntegerField(primary_key=True)
+    atco_code = models.CharField(max_length=3)
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     country = models.CharField(max_length=3, blank=True)
@@ -101,7 +101,7 @@ class District(models.Model):
     """A district within an administrative area.
     Note: some administrative areas *do not* have districts.
     """
-    id = models.PositiveIntegerField(primary_key=True)
+    id = models.PositiveSmallIntegerField(primary_key=True)
     name = models.CharField(max_length=48)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     created_at = models.DateTimeField(null=True, blank=True)
@@ -305,7 +305,7 @@ class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
     atco_code = models.CharField(max_length=16, primary_key=True)
-    naptan_code = models.CharField(max_length=16, blank=True)
+    naptan_code = models.CharField(max_length=16, null=True, blank=True)
 
     common_name = models.CharField(max_length=48)
     short_common_name = models.CharField(max_length=48, blank=True)
@@ -381,6 +381,9 @@ class StopPoint(models.Model):
         ordering = ('common_name', 'atco_code')
         indexes = [
             models.Index(Upper('naptan_code'), name='naptan_code'),
+        ]
+        constraints = [
+            models.UniqueConstraint(Upper('atco_code'), name='atco_code'),
         ]
 
     def __str__(self):
