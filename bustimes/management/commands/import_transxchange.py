@@ -13,7 +13,6 @@ import datetime
 from functools import cache
 from titlecase import titlecase
 from django.conf import settings
-from django.contrib.gis.geos import MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
@@ -1021,7 +1020,8 @@ class Command(BaseCommand):
                 'end_date': txc_service.operating_period.end,
                 'service': service,
                 'revision_number': transxchange.attributes['RevisionNumber'],
-                'service_code': txc_service.service_code
+                'service_code': txc_service.service_code,
+                'geometry': None
             }
 
             if txc_service.origin and txc_service.origin != 'Origin':
@@ -1046,7 +1046,6 @@ class Command(BaseCommand):
                     route_defaults['registration'] = registration
 
             if transxchange.route_sections:
-                geometry = []
                 if service_created:
                     existing_route_links = {}
                 else:
@@ -1056,7 +1055,6 @@ class Command(BaseCommand):
                 route_links_to_update = {}
                 route_links_to_create = {}
                 for route_link in self.get_route_links(journeys, transxchange):
-                    geometry.append(route_link.track)
                     from_stop = stops.get(route_link.from_stop)
                     to_stop = stops.get(route_link.to_stop)
                     if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
@@ -1074,12 +1072,6 @@ class Command(BaseCommand):
 
                 RouteLink.objects.bulk_update(route_links_to_update.values(), ['geometry'])
                 RouteLink.objects.bulk_create(route_links_to_create.values())
-
-                if geometry:
-                    geometry = MultiLineString(geometry).simplify()
-                    if not isinstance(geometry, MultiLineString):
-                        geometry = MultiLineString(geometry)
-                    route_defaults['geometry'] = geometry
 
             route_code = filename
             if len(transxchange.services) > 1:

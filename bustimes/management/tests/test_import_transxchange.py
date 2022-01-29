@@ -776,9 +776,12 @@ class ImportTransXChangeTest(TestCase):
                 'Timetable on the Traveline Scotland website')]
         )
         self.assertEqual(service.geometry.coords, ((
-            (53.7423055225, -2.504212506), (53.7398252112, -2.5083672338),
-            (53.7389877672, -2.5108434749), (53.7425523688, -2.4989239373)
-        ),))
+            (53.7389877672, -2.5108434749),
+            (53.7389877672, -2.4989239373),
+            (53.7425523688, -2.4989239373),
+            (53.7425523688, -2.5108434749), 
+            (53.7389877672, -2.5108434749)),
+        ))
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data['breadcrumb'], [self.sc, self.fabd])

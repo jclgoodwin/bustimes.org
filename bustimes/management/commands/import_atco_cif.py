@@ -2,11 +2,10 @@ import os
 import zipfile
 from datetime import date, timedelta, datetime
 from django.core.management.base import BaseCommand
-from django.contrib.gis.geos import LineString, MultiLineString, Point
+from django.contrib.gis.geos import Point
 from django.utils import timezone
 from busstops.models import Service, DataSource, StopPoint
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
-from ...timetables import get_journey_patterns
 
 
 def parse_date(string):
@@ -51,22 +50,13 @@ class Command(BaseCommand):
                         self.handle_file(open_file)
         assert self.stop_times == []
 
-        for route in self.routes.values():
-            stop_usages = route.service.do_stop_usages()
-
-            # self.stops doesn't contain all stops, and has latlongs in the Irish Grid projection
-            stops = StopPoint.objects.in_bulk(stop_usage.stop_id for stop_usage in stop_usages)
-            line_strings = []
-            for pattern in get_journey_patterns(route.trip_set.all()):
-                points = (
-                    stops[stop_code].latlong
-                    for stop_code in pattern
-                    if stop_code in stops and stops[stop_code].latlong
-                )
-                line_strings.append(LineString(*points))
-            route.service.geometry = MultiLineString(*line_strings)
-
         services = {route.service.id: route.service for route in self.routes.values()}.values()
+
+        for service in services:
+            service.do_stop_usages()
+
+            service.update_geometry(save=False)
+
         Service.objects.bulk_update(services,
                                     fields=['geometry', 'description', 'outbound_description', 'inbound_description'])
         for service in services:

@@ -9,8 +9,8 @@ from urllib.parse import urlencode
 from autoslug import AutoSlugField
 
 from django.contrib.gis.db import models
-from django.contrib.gis.db.models import Union
-from django.contrib.gis.geos import LineString, MultiLineString
+from django.contrib.gis.db.models import Extent
+from django.contrib.gis.geos import Polygon
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
@@ -948,33 +948,13 @@ class Service(models.Model):
 
         return stop_usages
 
-    def update_geometry(self):
-        geometry = self.route_set.aggregate(Union('geometry'))['geometry__union']
-        if geometry:
-            geometry = geometry.simplify()
-        else:
-            patterns = []
-            linestrings = []
-            for trip in Trip.objects.filter(route__service=self).prefetch_related('stoptime_set__stop'):
-                stops = [
-                    stoptime.stop for stoptime in trip.stoptime_set.all() if stoptime.stop and stoptime.stop.latlong
-                ]
-                pattern = [stop.pk for stop in stops]
-                if pattern in patterns:
-                    continue
-                patterns.append(pattern)
-                points = [stop.latlong for stop in stops]
-                if len(points) > 1:
-                    linestrings.append(LineString(points))
-            if linestrings:
-                geometry = MultiLineString(*linestrings).simplify()
-
-        if geometry:
-            if type(geometry) is LineString:
-                self.geometry = MultiLineString(geometry)
-            else:
-                self.geometry = geometry
-            self.save(update_fields=['geometry'])
+    def update_geometry(self, save=True):
+        extent = self.stopusage_set.aggregate(Extent('stop__latlong'))
+        extent = extent["stop__latlong__extent"]
+        if extent:
+            self.geometry = Polygon.from_bbox(extent)
+            if save:
+                self.save(update_fields=['geometry'])
 
 
 class ServiceCode(models.Model):
