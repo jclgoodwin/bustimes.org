@@ -8,6 +8,16 @@
 
 <p>The website is having technical difficulties</p>
 
+{{ request }}
+
+{% if exception %}
+    <p><code>{{ exception }}</code></p>
+
+    {% for line in traceback %}
+        <pre>{{ line }}</pre>
+    {% endfor %}
+{% endif %}
+
 {% endblock %}
 
 {% block ad %}{% endblock %}

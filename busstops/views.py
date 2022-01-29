@@ -1,7 +1,9 @@
 # coding=utf-8
 """View definitions."""
-import requests
 import datetime
+import sys
+import traceback
+import requests
 from ukpostcodeutils import validation
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
@@ -104,6 +106,17 @@ def not_found(request, exception):
         context = None
     response = render(request, '404.html', context)
     response.status_code = 404
+    return response
+
+
+def error(request):
+    context = {}
+    if request.user.is_staff:
+        _, exception, tb = sys.exc_info()
+        context["exception"] = exception 
+        context["traceback"] = traceback.format_tb(tb)
+    response = render(None, '500.html', context)
+    response.status_code = 500
     return response
 
 

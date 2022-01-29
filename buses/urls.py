@@ -11,3 +11,4 @@ urlpatterns = [
 
 
 handler404 = 'busstops.views.not_found'
+handler500 = 'busstops.views.error'
