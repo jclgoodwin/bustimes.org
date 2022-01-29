@@ -6,10 +6,8 @@
 
     <h1>{{ object }}</h1>
 
-    {{ object.source.credit }}
-
     {% for service in object.services.all %}
-        <p><a href="{{ service.get_absolute_url }}">{{ service }}</a></p>
+        <p><a href="{{ service.get_absolute_url }}/fares">{{ service }}</a></p>
     {% endfor %}
 
     {% if form.fields.origin.choices %}
@@ -72,6 +70,8 @@
         </table>
 
     {% endfor %}
+
+    {{ object.source.credit }}
 
 {% endblock %}
 

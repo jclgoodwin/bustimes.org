@@ -10,10 +10,13 @@ from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colou
 from .fields import RegField
 
 
-def get_livery_choices(operator):
+def get_livery_choices(operator, vehicle=None):
     choices = {}
 
-    vehicles = operator.vehicle_set.filter(withdrawn=False)
+    q = Q(withdrawn=False)
+    if vehicle:
+        q |= Q(id=vehicle.id)
+    vehicles = operator.vehicle_set.filter(q)
 
     liveries = Livery.objects.filter(Q(vehicle__in=vehicles) | Q(operator=operator))
     liveries = liveries.annotate(popularity=Count('vehicle')).order_by('-popularity')
@@ -22,9 +25,8 @@ def get_livery_choices(operator):
         choices[livery.id] = livery
 
     # add ad hoc vehicle colours
-    for vehicle in vehicles.distinct('colours'):
-        if not vehicle.livery_id and vehicle.colours and vehicle.colours != 'Other':
-            choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
+    for vehicle in vehicles.filter(~Q(colours=""), ~Q(colours="Other"), livery=None).distinct("colours"):
+        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
 
     # replace the dictionary with a list of key, label pairs
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
@@ -36,7 +38,10 @@ def get_livery_choices(operator):
 
 
 class EditVehiclesForm(forms.Form):
-    withdrawn = forms.BooleanField(label='Permanently withdrawn', required=False)
+    withdrawn = forms.BooleanField(
+        label='Permanently withdrawn', required=False,
+        help_text="(A vehicle advertised for sale or involved in an accident has not necessarily been withdrawn)"
+    )
     spare_ticket_machine = forms.BooleanField(required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
@@ -70,7 +75,7 @@ class EditVehiclesForm(forms.Form):
         colours = None
 
         if operator:
-            colours = get_livery_choices(operator)
+            colours = get_livery_choices(operator, vehicle)
 
         if colours:
             if vehicle:
@@ -91,11 +96,12 @@ class EditVehicleForm(EditVehiclesForm):
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
     name = forms.CharField(label='Vehicle name', required=False, max_length=70)
-    previous_reg = RegField(required=False, max_length=24)
+    previous_reg = RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
     notes = forms.CharField(required=False, max_length=255)
     summary = forms.CharField(help_text="""Briefly explain your changes,
-e.g. how you know a vehicle has been withdrawn or repainted,
-link to a picture to prove it""",
+        if you think it’s necessary,
+        e.g. how you know a vehicle has been withdrawn or repainted,
+        link to a picture to prove it""",
                               widget=forms.Textarea(attrs={'rows': 6}), required=False, max_length=255)
     field_order = ['withdrawn', 'spare_ticket_machine',
                    'fleet_number', 'reg',

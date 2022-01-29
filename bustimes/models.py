@@ -6,9 +6,11 @@ from .fields import SecondsField
 from .utils import format_timedelta, time_datetime
 
 
-def get_routes(routes, when=None):
+def get_routes(routes, when=None, from_date=None):
     if when:
         routes = [route for route in routes if route.contains(when)]
+    if from_date:
+        routes = [route for route in routes if route.start_date is None or route.start_date <= from_date]
 
     if len(routes) == 1:
         return routes
@@ -88,7 +90,7 @@ def get_calendars(when, calendar_ids=None):
 
 class Route(models.Model):
     source = models.ForeignKey('busstops.DataSource', models.CASCADE)
-    code = models.CharField(max_length=255)  # qualified filename
+    code = models.CharField(max_length=255, blank=True)  # qualified filename
     service_code = models.CharField(max_length=255, blank=True)
     registration = models.ForeignKey('vosa.Registration', models.SET_NULL, null=True, blank=True)
     line_brand = models.CharField(max_length=255, blank=True)

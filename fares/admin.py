@@ -20,7 +20,7 @@ class DataSetAdmin(admin.ModelAdmin):
 class TariffAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators", "services"]
     list_filter = [
-       ('source__operators', admin.RelatedOnlyFieldListFilter)
+       ('operators', admin.RelatedOnlyFieldListFilter)
     ]
     raw_id_fields = ["source", "user_profile", "access_zones"]
 

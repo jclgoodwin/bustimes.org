@@ -12,9 +12,19 @@ class Command(ImportFromCSVCommand):
     """
     Sets parent localities
     """
-    def handle_row(self, row):
-        child = Locality.objects.get(id=row['ChildNptgLocalityCode'])
-        parent_id = row['ParentNptgLocalityCode']
-        if child.parent_id != parent_id:
-            child.parent_id = parent_id
-            child.save()
+
+    def handle_rows(self, rows):
+        localities = Locality.objects.defer("search_vector", "latlong").in_bulk()
+        to_update = []
+
+        for row in rows:
+            child = row["ChildNptgLocalityCode"]
+            parent = row["ParentNptgLocalityCode"]
+
+            if parent in localities and child in localities:
+                child = localities[child]
+                if child.parent_id != parent:
+                    child.parent_id = parent
+                    to_update.append(child)
+
+        Locality.objects.bulk_update(to_update, ["parent"])

@@ -192,8 +192,14 @@ class Vehicle(models.Model):
         if (update_fields is None or 'fleet_number' in update_fields) and self.fleet_number:
             if not self.fleet_code or (self.fleet_code.isdigit() and self.fleet_number != int(self.fleet_code)):
                 self.fleet_code = str(self.fleet_number)
-                if update_fields and 'fleet_code' not in update_fields:
+                if update_fields is not None and 'fleet_code' not in update_fields:
                     update_fields.append('fleet_code')
+
+        if (update_fields is None or 'fleet_code' in update_fields) and self.fleet_code:
+            if not self.fleet_number and self.fleet_code.isdigit():
+                self.fleet_number = int(self.fleet_code)
+                if update_fields is not None and 'fleet_number' not in update_fields:
+                    update_fields.append('fleet_number')
 
         if update_fields is None and not self.reg:
             reg = re.match(r"^[A-Z]\w_?\d\d?[ _-]?[A-Z]{3}$", self.code)

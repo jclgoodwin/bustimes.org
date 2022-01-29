@@ -20,10 +20,6 @@
 
 <p>{{ trip.calendar }}</p>
 
-{% for note in trip.notes_set.all %}
-    <p>{{ note }}</p>
-{% endfor %}
-
 <table class="trip-timetable">
     <th></th><th>Timetable</th>
     <tbody>
@@ -82,7 +78,7 @@
     {% if stops_json %}
         <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
         <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-        <script src="{% static 'js/leaflet.locatecontrol/L.Control.Locate.min.js' %}"></script>
+        <script src="{% static 'js/leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}"></script>
         <script src="{% static 'js/maps.js' %}"></script>
         {% if object.route.service.tracking %}
             <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">

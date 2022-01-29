@@ -35,7 +35,7 @@
     <tbody>
     {% for operator in status %}
         <tr>
-            <td><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></td>
+            <td class="link"><a href="{{ operator.get_absolute_url }}/vehicles">{{ operator }}</a></td>
             <td>{{ operator.last_seen }}</td>
         </tr>
     {% endfor %}

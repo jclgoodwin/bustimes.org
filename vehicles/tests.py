@@ -623,15 +623,19 @@ class VehiclesTests(TestCase):
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'DA04 DDA',
                 'branding': '',
-                'previous_reg': "K292  JVF"
+                'previous_reg': "K292  JVF,P44CEX"  # has to match regex
             })
         self.assertEqual(
             str(response.context['revision']),
-            "reg:  → DA04DDA, previous reg:  → K292JVF, branding: Coastliner → "
+            "reg:  → DA04DDA, previous reg:  → K292JVF,P44CEX, branding: Coastliner → "
         )
         self.assertContains(response, 'Changed reg to DA04DDA')
-        self.assertContains(response, 'Changed previous reg to K292JVF')
+        self.assertContains(response, 'Changed previous reg to K292JVF,P44CEX')
         self.assertContains(response, 'Changed branding from Coastliner to')
+
+        # test previous reg display
+        response = self.client.get(self.vehicle_3.get_absolute_url())
+        self.assertContains(response, "Previous reg: K292 JVF, P44 CEX")
 
         with self.assertNumQueries(12):
             # trusted user - can edit colour

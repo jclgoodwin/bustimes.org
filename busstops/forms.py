@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from antispam.honeypot.forms import HoneypotField
+# from antispam.honeypot.forms import HoneypotField
 from antispam import akismet
 
 
@@ -8,7 +8,7 @@ class ContactForm(forms.Form):
     name = forms.CharField(label='Name')
     email = forms.EmailField(label='Email address')
     message = forms.CharField(label='Message', widget=forms.Textarea)
-    spam_honeypot_field = HoneypotField()
+    # spam_honeypot_field = HoneypotField()
     referrer = forms.CharField(label='Referrer', required=False,
                                widget=forms.HiddenInput)
 

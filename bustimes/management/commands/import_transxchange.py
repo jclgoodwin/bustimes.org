@@ -651,16 +651,20 @@ class Command(BaseCommand):
         if not route_created:
             # reuse trip ids if the number and start times haven't changed
             existing_trips = route.trip_set.order_by('id')
-            if len(existing_trips) == len(trips):
-                for i, old_trip in enumerate(existing_trips):
-                    if old_trip.start == trips[i].start:
-                        trips[i].id = old_trip.id
-                    else:
-                        logger.info(f"{route_code} {old_trip.start} {trips[i].start}")
-                        existing_trips.delete()
-                        existing_trips = None
-                        break
-            else:
+            try:
+                if len(existing_trips) == len(trips):
+                    for i, old_trip in enumerate(existing_trips):
+                        if old_trip.start == trips[i].start:
+                            trips[i].id = old_trip.id
+                        else:
+                            logger.info(f"{route_code} {old_trip.start} {trips[i].start}")
+                            existing_trips.delete()
+                            existing_trips = None
+                            break
+                else:
+                    existing_trips.delete()
+                    existing_trips = None
+            except IntegrityError:
                 existing_trips.delete()
                 existing_trips = None
         else:
@@ -726,8 +730,6 @@ class Command(BaseCommand):
 
     def should_defer_to_other_source(self, operators: list, line_name: str):
         if self.source.name == 'L':
-            if operators and operators[0].id == 'NXHH':
-                return True
             return False
         if operators and all(operator.id in self.incomplete_operators for operator in operators):
             services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
@@ -841,10 +843,8 @@ class Command(BaseCommand):
                 if i > 0:
                     existing = service
                 else:
-                    other_q = Q()
                     for line_name in line_names:
-                        other_q &= Q(route__line_name__iexact=line_name)
-                    q |= other_q
+                        q |= Q(line_name__iexact=line_name)
 
             if not existing:
                 services = Service.objects.order_by('-current', 'id').filter(q)
@@ -952,7 +952,7 @@ class Command(BaseCommand):
 
                 if out_desc:
                     service.outbound_description = out_desc
-                    if not service.description:
+                    if not service.description or len(txc_service.lines) > 1:
                         service.description = out_desc
                 if in_desc:
                     service.inbound_description = in_desc
@@ -1151,7 +1151,4 @@ class Command(BaseCommand):
         self.do_garages(transxchange.garages)
 
         for txc_service in transxchange.services.values():
-            if txc_service.mode == 'underground':
-                continue
-
             self.handle_service(filename, transxchange, txc_service, today, stops)

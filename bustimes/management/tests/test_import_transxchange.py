@@ -14,9 +14,9 @@ from django.utils import timezone
 from django.core.management import call_command
 from django.contrib.gis.geos import Point
 
-from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource
+from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource, ServiceColour
 from vosa.models import Licence, Registration
-from ...models import Route, Trip, Calendar, CalendarDate, BankHoliday, BankHolidayDate
+from ...models import Route, Trip, Calendar, CalendarDate, BankHoliday, BankHolidayDate, Garage
 from ..commands import import_transxchange
 
 
@@ -453,9 +453,9 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual('2017-09-13', str(timetable.date))
         self.assertContains(response, 'Budehaven School')
         rows = timetable.groupings[1].rows
-        self.assertEqual(str(rows[-4].times), "[08:33, '', '', '', 15:30, '']")
-        self.assertEqual(str(rows[-5].times), "[08:33, '', '', '', 15:30, '']")
         self.assertEqual(str(rows[-6].times), "[08:32, '', '', '', 15:29, '']")
+        self.assertEqual(str(rows[-5].times), "[08:33, '', '', '', 15:30, '']")
+        self.assertEqual(str(rows[-4].times), "[08:33, '', '', '', 15:30, '']")
 
         self.assertEqual(114, service.stopusage_set.count())
 
@@ -593,6 +593,8 @@ class ImportTransXChangeTest(TestCase):
     def test_start_dead_run(self):
         """Turns out WaitTimes and RunTimes should be ignored during a StartDeadRun"""
 
+        garage = Garage.objects.create(code="LE", name='Leicester')
+
         call_command('import_transxchange', os.path.join(FIXTURES_DIR, '22A 22B 22C 08032021.xml'))
 
         self.assertEqual(str(Trip.objects.get(ticket_machine_code='1935')), '19:35')
@@ -601,9 +603,15 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(trips[0]), '20:45')
         self.assertEqual(str(trips[1]), '20:45')
 
+        self.assertEqual(trips[0].garage, garage)  # Leicester = LEICESTER
+
         trips = Trip.objects.filter(ticket_machine_code='2145')
         self.assertEqual(str(trips[0]), '21:45')
         self.assertEqual(str(trips[1]), '21:45')
+
+        garage = Garage.objects.last()
+        self.assertEqual(garage.code, "GR")
+        self.assertEqual(garage.name, "")
 
     @time_machine.travel('2021-06-28')
     def test_difficult_layout(self):
@@ -749,12 +757,17 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel('25 June 2016')
     def test_do_service_scotland(self):
+
+        colour = ServiceColour.objects.create(name="Navy Blue Line", foreground="#111111", background="#c0c0c0")
+        source = DataSource.objects.create(name="S", url="ftp://ftp.tnds.basemap.co.uk/S.zip")
+        service = Service.objects.create(service_code="ABBN017", line_name="N17", colour=colour, source=source)
+
         # simulate a Scotland zipfile:
         self.handle_files('S.zip', ['SVRABBN017.xml'])
 
-        service = Service.objects.get(service_code='ABBN017')
+        service = Service.objects.get(line_name='N17')
 
-        self.assertEqual(str(service), 'N17 - Aberdeen - Dyce')
+        self.assertEqual(str(service), 'N17 - Navy Blue Line - Aberdeen - Dyce')
         self.assertEqual(service.operator.first(), self.fabd)
         self.assertEqual(
             list(service.get_traveline_links()),
@@ -794,6 +807,17 @@ class ImportTransXChangeTest(TestCase):
         """, html=True)
 
         self.assertEqual(88, service.stopusage_set.count())
+
+        # Test service colour
+        response = self.client.get("/stops/639004592")
+        self.assertContains(response, "background: #c0c0c0;")
+        self.assertContains(response, "border-color: #111111;")
+        self.assertContains(response, "color: #111111;")
+
+        response = self.client.get("/operators/FABD")
+        self.assertContains(response, "background: #c0c0c0;")
+        self.assertContains(response, "border-color: #111111;")
+        self.assertContains(response, "color: #111111;")
 
     @time_machine.travel('22 January 2017')
     def test_megabus(self):
@@ -845,6 +869,13 @@ class ImportTransXChangeTest(TestCase):
 
         # should only be 6, despite running 'import_services' twice
         self.assertEqual(6, service.stopusage_set.count())
+
+        # trip timetable
+        trip = Trip.objects.first()
+        response = self.client.get(trip.get_absolute_url())
+        self.assertContains(response, "Book at")
+        self.assertContains(response, "megabus.com")
+        self.assertContains(response, "awin")
 
         # M12
 

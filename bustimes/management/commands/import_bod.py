@@ -84,9 +84,10 @@ def handle_file(command, path, qualify_filename=False):
                             logger.info(filename)
                             logger.error(e, exc_info=True)
     except zipfile.BadZipFile:
+        # plain XML
         with full_path.open() as open_file:
             try:
-                command.handle_file(open_file, str(path))
+                command.handle_file(open_file, "")
             except (AttributeError, DataError) as e:
                 logger.error(e, exc_info=True)
 
@@ -126,6 +127,9 @@ def bus_open_data(api_key, operator):
     command = get_command()
 
     url_prefix = "https://data.bus-data.dft.gov.uk"
+    path_prefix = settings.DATA_DIR / 'bod'
+    if not path_prefix.exists():
+        path_prefix.mkdir()
 
     datasets = []
 
@@ -177,30 +181,35 @@ def bus_open_data(api_key, operator):
             if noc == 'EYMS' and not any(area["atco_code"] == "229" for area in dataset["adminAreas"]):
                 continue
 
-            filename = dataset['name']
-            url = dataset['url']
-            path = settings.DATA_DIR / filename
+            source = DataSource.objects.filter(url=dataset["url"]).first()
+            if not source and len(operator_datasets) == 1:
+                name_prefix = dataset["name"].split('_', 1)[0]
+                # if old dataset was made inactive, reuse id
+                source = DataSource.objects.filter(name__startswith=f"{name_prefix}_").first()
+            if not source:
+                source = DataSource.objects.create(name=dataset["name"], url=dataset["url"])
+            source.name = dataset["name"]
+            source.url = dataset["url"]
 
-            dataset['source'], created = DataSource.objects.get_or_create(
-                {'name': dataset['name']},
-                url=dataset['url']
-            )
-
-            command.source = dataset['source']
+            command.source = source
             sources.append(command.source)
 
-            if operator or dataset['source'].datetime != dataset['modified']:
-                logger.info(filename)
+            if operator or source.datetime != dataset['modified']:
+
+                logger.info(dataset["name"])
+
+                filename = str(source.id)
+                path = path_prefix / filename
+
                 command.service_ids = set()
                 command.route_ids = set()
                 command.garages = {}
 
                 command.source.datetime = dataset['modified']
-                command.source.name = filename
 
-                download(path, url)
+                download(path, source.url)
 
-                handle_file(command, filename)
+                handle_file(command, path)
 
                 command.source.sha1 = get_sha1(path)
                 command.source.save()

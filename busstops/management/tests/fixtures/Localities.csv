@@ -1,3 +1,5 @@
 "NptgLocalityCode","LocalityName","LocalityNameLang","ShortName","ShortNameLang","QualifierName","QualifierNameLang","QualifierLocalityRef","QualifierDistrictRef","AdministrativeAreaCode","NptgDistrictCode","SourceLocalityType","GridType","Easting","Northing","CreationDateTime","ModificationDateTime","RevisionNumber","Modification",""
 "E0055326","Cambridge","EN","","EN","Cambs","EN","","","071","29","U","U",545209,258271,"2005-10-05T11:29:27","2013-07-30T20:31:01",5,"rev",""
 "N0080359","Addenbrooke's","EN","","EN","Cambs","EN","","","071","29","Add","U",546707,255241,"2011-11-09T15:10:21","2013-03-26T16:43:28",1,"rev",""
+"E0054200","Dyserth","EN","","EN","","EN","","","016","310","Co","U",305954,379083,"2005-10-05T10:47:06","2011-02-15T14:21:00",2,"rev",""
+"N0071198","Dyserth","EN","","EN","Dyserth","EN","","","016","310","Add","U",305459,379170,"2005-10-05T10:46:57","2020-02-24T11:16:18",1,"rev",""

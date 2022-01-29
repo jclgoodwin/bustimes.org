@@ -4,7 +4,7 @@ import csv
 import logging
 import zipfile
 from requests_html import HTMLSession
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.utils.dateparse import parse_duration
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -47,6 +47,20 @@ def get_stop_id(stop_id):
     return stop_id
 
 
+def get_calendar(line):
+    return Calendar(
+        mon='1' == line['monday'],
+        tue='1' == line['tuesday'],
+        wed='1' == line['wednesday'],
+        thu='1' == line['thursday'],
+        fri='1' == line['friday'],
+        sat='1' == line['saturday'],
+        sun='1' == line['sunday'],
+        start_date=parse_date(line['start_date']),
+        end_date=parse_date(line['end_date']),
+    )
+
+
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--force', action='store_true', help="Import data even if the GTFS feeds haven't changed")
@@ -65,7 +79,6 @@ class Command(BaseCommand):
         stops = {}
         admin_areas = {}
         stops_not_created = {}
-        self.stop_timezones = {}
         for line in read_file(archive, 'stops.txt'):
             stop_id = get_stop_id(line['stop_id'])
             if stop_id[0] in '78' and len(stop_id) <= 16:
@@ -78,9 +91,7 @@ class Command(BaseCommand):
                 )
             else:
                 stops_not_created[stop_id] = line
-            if 'stop_timezone' in line:
-                self.stop_timezones[stop_id] = line['stop_timezone']
-        existing_stops = StopPoint.objects.in_bulk(stops)
+        existing_stops = StopPoint.objects.only('atco_code').in_bulk(stops)
         stops_to_create = [stop for stop in stops.values() if stop.atco_code not in existing_stops]
 
         for stop in stops_to_create:
@@ -90,41 +101,31 @@ class Command(BaseCommand):
             if admin_areas[admin_area_id]:
                 stop.admin_area_id = admin_area_id
 
-        StopPoint.objects.bulk_create(stops_to_create)
-        return StopPoint.objects.in_bulk(stops), stops_not_created
+        StopPoint.objects.bulk_create(stops_to_create, batch_size=1000)
+        return StopPoint.objects.only('atco_code').in_bulk(stops), stops_not_created
 
     def handle_route(self, line):
-        route_id = line['route_id']
-        parts = route_id.split('-')
-        if len(parts) == 4 and parts[0].isdigit() and parts[3].isdigit():
-            service = self.source.service_set.filter(
-                Q(service_code__startswith='-'.join(parts[:3])) |
-                Q(
-                    service_code__startswith=f"{parts[0]}",
-                    service_code__endswith=f"-{parts[2]}-{parts[3]}",
-                    line_name__iexact=line['route_short_name']
-                )
-            ).order_by('id').first()
-        else:
-            service = None
+
+        line_name = line['route_short_name']
+        description = line['route_long_name']
+        if not line_name and ' ' not in description:
+            line_name = description
+        if line_name.endswith('x'):  # Aircoach
+            line_name = line_name.replace('-', '').upper()
+
+        service = self.source.service_set.filter(
+            Q(line_name__iexact=line_name) |
+            Exists(
+                Route.objects.filter(code=line['route_id'], service=OuterRef('id'))
+            ) | Q(service_code=line['route_id'])
+        ).order_by('id').first()
         if not service:
-            try:
-                service = self.source.service_set.filter(
-                    Exists(
-                        Route.objects.filter(code=line['route_id'], service=OuterRef('id'))
-                    ) | Q(service_code=line['route_id'])
-                ).get()
-            except Service.DoesNotExist:
-                service = Service(source=self.source)
+            service = Service(source=self.source)
 
         service.service_code = line['route_id']
-        service.line_name = line['route_short_name']
-        service.description = line['route_long_name']
-        if not service.line_name and ' ' not in service.description:
-            service.line_name = service.description
-        if service.line_name.endswith('x'):  # Aircoach
-            service.line_name = service.line_name.replace('-', '').upper()
-        service.date = self.source.datetime.strftime('%Y-%m-%d')
+        service.line_name = line_name
+        service.description = description
+        service.date = self.source.datetime.date()
         service.mode = MODES.get(int(line['route_type']), '')
         service.current = True
         service.service_code = line['route_id']
@@ -159,7 +160,6 @@ class Command(BaseCommand):
         self.operators = {}
         self.routes = {}
         self.services = {}
-        self.agency_timezones = {}
         headsigns = {}
 
         with zipfile.ZipFile(path) as archive:
@@ -174,7 +174,6 @@ class Command(BaseCommand):
 
             for line in read_file(archive, 'agency.txt'):
                 self.operators[line['agency_id']] = self.handle_operator(line)
-                self.agency_timezones['agency_id'] = line['agency_timezone']
 
             for line in read_file(archive, 'routes.txt'):
                 self.handle_route(line)
@@ -183,26 +182,18 @@ class Command(BaseCommand):
 
             calendars = {}
             for line in read_file(archive, 'calendar.txt'):
-                calendar = Calendar(
-                    mon='1' == line['monday'],
-                    tue='1' == line['tuesday'],
-                    wed='1' == line['wednesday'],
-                    thu='1' == line['thursday'],
-                    fri='1' == line['friday'],
-                    sat='1' == line['saturday'],
-                    sun='1' == line['sunday'],
-                    start_date=parse_date(line['start_date']),
-                    end_date=parse_date(line['end_date']),
-                )
+                calendar = get_calendar(line)
                 calendar.save()
                 calendars[line['service_id']] = calendar
 
             for line in read_file(archive, 'calendar_dates.txt'):
+                operation = line['exception_type'] == '1'  # '1' = operates, '2' = does not operate
                 CalendarDate.objects.create(
                     calendar=calendars[line['service_id']],
                     start_date=parse_date(line['date']),
                     end_date=parse_date(line['date']),
-                    operation=line['exception_type'] == '1'
+                    operation=operation,
+                    special=operation  # additional date of operation
                 )
 
             trips = {}
@@ -253,67 +244,70 @@ class Command(BaseCommand):
 
                         route.service.save(update_fields=['description', 'inbound_description', 'outbound_description'])
 
-            utc = all(timezone == 'UTC' for timezone in self.agency_timezones.values())
-
-            stop_times = []
-            trip_id = None
             trip = None
-            stop_time = None
+            previous_line = None
+
             for line in read_file(archive, 'stop_times.txt'):
-                if line['trip_id'] not in trips:
-                    logger.warning(f"trip {line['trip_id']} missing")
-                    continue
 
-                stop = stops.get(line['stop_id'])
-                arrival_time = parse_duration(line['arrival_time'])
-                departure_time = parse_duration(line['departure_time'])
-                if utc and self.stop_timezones and self.stop_timezones[line['stop_id']] == 'Europe/London':
-                    # TODO: fix assumption of British Summer Time
-                    arrival_time += timedelta(hours=1)
-                    departure_time += timedelta(hours=1)
-                if arrival_time == departure_time:
-                    arrival_time = None
+                if not previous_line or previous_line['trip_id'] != line['trip_id']:
 
-                if trip_id != line['trip_id']:
                     if trip:
-                        # finish off previous trip
-                        if not stop_time.arrival:
-                            stop_time.arrival = stop_time.departure
-                            stop_time.departure = None
-                        trip.end = stop_time.arrival
+                        trip.destination = stops.get(previous_line['stop_id'])
+                        trip.end = parse_duration(previous_line['arrival_time'])
 
-                    trip_id = line['trip_id']
-                    trip = trips[trip_id]
-                    trip.start = departure_time
+                    trip = trips[line['trip_id']]
+                    trip.start = parse_duration(line['departure_time'])
+
+                previous_line = line
+
+            # last trip:
+            trip.destination = stops.get(line['stop_id'])
+            trip.end = parse_duration(line['arrival_time'])
+
+            Trip.objects.bulk_create(trips.values(), batch_size=1000)
+
+            i = 0
+            stop_times = []
+
+            for line in read_file(archive, 'stop_times.txt'):
+                stop = stops.get(line['stop_id'])
 
                 stop_time = StopTime(
-                    stop=stop,
-                    arrival=arrival_time,
-                    departure=departure_time,
+                    arrival=parse_duration(line['arrival_time']),
+                    departure=parse_duration(line['departure_time']),
                     sequence=line['stop_sequence'],
-                    trip=trip
+                    trip=trips[line['trip_id']]
                 )
                 if line.get('pickup_type') == '1':  # "No pickup available"
                     stop_time.pick_up = False
 
                 if stop:
-                    trip.destination = stop
+                    stop_time.stop = stop
                 elif line['stop_id'] in stops_not_created:
                     stop_time.stop_code = stops_not_created[line['stop_id']]['stop_name']
                 else:
                     stop_time.stop_code = line['stop_id']
                     print(line)
+
+                if stop_time.arrival == stop_time.departure:
+                    stop_time.arrival = None
+
                 stop_times.append(stop_time)
+
+                if i == 999:
+                    StopTime.objects.bulk_create(stop_times)
+                    stop_times = []
+                    i = 0
+                else:
+                    i += 1
+
+                previous_line = line
 
         # last trip
         if not stop_time.arrival:
             stop_time.arrival = stop_time.departure
             stop_time.departure = None
-        trip.end = stop_time.arrival
 
-        Trip.objects.bulk_create(trips.values())
-        for stop_time in stop_times:
-            stop_time.trip = stop_time.trip
         StopTime.objects.bulk_create(stop_times)
 
         for service in self.services.values():

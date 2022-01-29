@@ -9,7 +9,7 @@ from django.db.utils import OperationalError
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split()
 
 TEST = 'test' in sys.argv or 'pytest' in sys.argv[0]
 DEBUG = bool(os.environ.get('DEBUG', False))
@@ -57,10 +57,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'beeline.middleware.django.HoneyMiddleware',
 ]
 
 SECURE_REFERRER_POLICY = None
+CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
 
 if DEBUG and 'runserver' in sys.argv:
     INSTALLED_APPS.append('debug_toolbar')
@@ -122,7 +122,7 @@ else:
 DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
+REDIS_URL = os.environ.get('REDIS_URL')
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', REDIS_URL)
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
@@ -166,17 +166,17 @@ elif TEST:
     ])]
 
 
-CACHES = {}
 if TEST:
-    CACHES["default"] = {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache"
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.dummy.DummyCache"
+        }
     }
-else:
-    CACHES["default"] = {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+elif REDIS_URL:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
         }
     }
 
@@ -187,6 +187,7 @@ if VARNISH_HOST and VARNISH_PORT:
     VARNISH = (VARNISH_HOST, int(VARNISH_PORT))
 else:
     VARNISH = None
+
 
 TIME_FORMAT = 'H:i'
 DATE_FORMAT = 'l j F Y'
@@ -364,30 +365,32 @@ BOD_OPERATORS = [
     ('CACC', 'Y', {}, False),
     ('SWEY', 'Y', {}, False),
     # ('LEWO', 'Y', {}, False),
+    ('DEWS', 'EA', {}, False),
     ('WMSA', 'EM', {}, False),
     ('LANT', 'EM', {}, False),
     ('NWBT', 'NW', {}, False),
     ('MARS', 'SE', {}, False),
+    ('EMBR', 'S', {}, False),
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
-        # 'FPOT': 'FPOT',
-        # 'FSYO': 'FSYO',
-        # 'FMAN': 'FMAN',
+        'FPOT': 'FPOT',
+        'FSYO': 'FSYO',
+        'FMAN': 'FMAN',
         'FLDS': 'FLDS',
-        # 'FSMR': 'FSMR',
+        'FSMR': 'FSMR',
         'FHUD': 'FHUD',
         'FHAL': 'FHUD',
         'FBRA': 'FBRA',
         'FESX': 'FESX',
         'FECS': 'FECS',
-        # 'FHDO': 'FHDO',
+        'FHDO': 'FHDO',
         'FTVA': 'FTVA',
-        # 'FHAM': 'FHAM',
-        # 'FDOR': 'FDOR',
+        'FHAM': 'FHAM',
+        'FDOR': 'FDOR',
         'FCWL': 'FCWL',
         'FBRI': 'FBRI',
-        # 'FLEI': 'FLEI',
+        'FLEI': 'FLEI',
         'RRAR': 'RRAR',
         'FBOS': 'FBOS',
         'FWYO': 'FWYO',
@@ -494,6 +497,7 @@ BOD_OPERATORS = [
     ('SPSV', 'SE', {}, False),
     ('NVTR', 'SE', {}, False),
     ('LEMN', 'SE', {}, False),
+    ('CHLK', 'SE', {}, False),
     ('GOCH', 'SE', {
         'GO': 'GOCH'
     }, False),
@@ -506,7 +510,8 @@ BOD_OPERATORS = [
         'CBL': 'CBNL',
     }, False),
     # ('BULL', 'NW', {}, False),
-    ('SELT', 'NW', {}, False),  # Selwyns Ticketer
+
+    ('SELT', 'NW', {}, True),  # Selwyns
     ('ROSS', 'Y',  {}, False),  # Ross Travel Ticketer
 
     ('GRYC', 'EM',  {}, False),
@@ -639,6 +644,13 @@ BOD_OPERATORS = [
         'RR': 'RDRT',
         'RR1': 'RDRT'
     }, False),
+    
+    ('CUBU', 'NW', {}, False),
+    ('HUYT', 'NW', {}, False),
+    ('AJTX', 'NW', {}, False),
+    ('PPBU', 'NW', {}, False),
+    ('EAZI', 'NW', {}, False),
+    ('MAGH', 'NW', {}, False),
 ]
 
 # see bustimes.management.commands.import_bod
@@ -713,8 +725,7 @@ TICKETER_OPERATORS = [
     ('EM', ['Brylaine', 'BRYL']),
     ('EM', ['Midland_Classic', 'MDCL']),
     ('EM', ['RBTS'], 'Roberts Travel'),
-    # ('SE', ['Redline_Buses_Ltd', 'RLNE']),
-    ('NW', ['HATT'], 'Hattons'),
+    #('SE', ['Redline_Buses_Ltd', 'RLNE']),
     ('SE', ['Sullivan_Buses', 'SULV']),
     ('EA', ['Simonds', 'SIMO']),
     ('NE', ['Coatham_Coaches', 'COTY']),

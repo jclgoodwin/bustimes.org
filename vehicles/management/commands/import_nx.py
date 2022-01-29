@@ -1,11 +1,10 @@
 import ciso8601
 from time import sleep
 from datetime import timedelta
-from pytz.exceptions import AmbiguousTimeError, NonExistentTimeError
 from requests import RequestException
 from django.contrib.gis.geos import Point
 from django.utils import timezone
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Q
 from busstops.models import Service
 from bustimes.models import get_calendars, Trip
 from ...models import VehicleLocation, VehicleJourney
@@ -14,12 +13,15 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 def parse_datetime(string):
     datetime = ciso8601.parse_datetime(string)
-    try:
-        return timezone.make_aware(datetime)
-    except AmbiguousTimeError:
-        return timezone.make_aware(datetime, is_dst=True)
-    except NonExistentTimeError:
-        return timezone.make_aware(datetime + timedelta(hours=1))
+    return timezone.make_aware(datetime)
+
+
+def get_trip_condition(date, time_since_midnight):
+    return Q(
+        calendar__in=get_calendars(date),
+        start__lte=time_since_midnight + timedelta(minutes=5),
+        end__gte=time_since_midnight - timedelta(minutes=30)
+    )
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -34,12 +36,17 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         now = self.source.datetime
-        time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second,
-                                        microseconds=now.microsecond)
-        trips = Trip.objects.filter(calendar__in=get_calendars(now),
-                                    start__lte=time_since_midnight + timedelta(minutes=5),
-                                    end__gte=time_since_midnight - timedelta(minutes=30))
+        time_since_midnight = timedelta(hours=now.hour, minutes=now.minute, seconds=now.second)
+
+        yesterday = now - timedelta(hours=24)
+        time_since_yesterday_midnight = time_since_midnight + timedelta(hours=24)
+
+        trips = Trip.objects.filter(
+            get_trip_condition(now, time_since_midnight)
+            | get_trip_condition(yesterday, time_since_yesterday_midnight)
+        )
         has_trips = Exists(trips.filter(route__service=OuterRef('id')))
+
         services = Service.objects.filter(has_trips, operator__in=self.operators)
         for service in services.values('line_name'):
             line_name = service['line_name']

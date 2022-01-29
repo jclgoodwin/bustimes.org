@@ -1,7 +1,6 @@
 import os
 import requests
 import datetime
-from pytz.exceptions import AmbiguousTimeError
 from django.utils.timezone import utc, make_aware
 from django.utils.http import http_date, parse_http_date
 
@@ -50,13 +49,15 @@ def download_if_changed(path, url, params=None):
     return modified, last_modified
 
 
-def format_timedelta(timedelta):
-    if timedelta is not None:
-        timedelta = str(timedelta)[:-3]
-        timedelta = timedelta.replace('1 day, ', '', 1)
-        if len(timedelta) == 4:
-            return '0' + timedelta
-        return timedelta
+def format_timedelta(duration):
+    if duration is not None:
+        duration = duration.total_seconds()
+        hours = int(duration / 3600)
+        while hours >= 24:
+            hours -= 24
+        minutes = int(duration % 3600 / 60)
+        duration = f'{hours:0>2}:{minutes:0>2}'
+        return duration
 
 
 def time_datetime(time, date):
@@ -66,7 +67,4 @@ def time_datetime(time, date):
         seconds -= 86400
     time = datetime.time(int(seconds / 3600), int(seconds % 3600 / 60), int(seconds % 60))
     combined = datetime.datetime.combine(date, time)
-    try:
-        return make_aware(combined)
-    except AmbiguousTimeError:
-        return make_aware(combined, is_dst=True)
+    return make_aware(combined)

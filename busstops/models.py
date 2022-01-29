@@ -78,12 +78,14 @@ class AdminArea(models.Model):
     """An administrative area within a region,
     or possibly a national transport (rail/air/ferry) network
     """
-    id = models.PositiveIntegerField(primary_key=True)
-    atco_code = models.PositiveIntegerField()
+    id = models.PositiveSmallIntegerField(primary_key=True)
+    atco_code = models.CharField(max_length=3)
     name = models.CharField(max_length=48)
     short_name = models.CharField(max_length=48, blank=True)
     country = models.CharField(max_length=3, blank=True)
     region = models.ForeignKey(Region, models.CASCADE)
+    created_at = models.DateTimeField(null=True, blank=True)
+    modified_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -99,9 +101,11 @@ class District(models.Model):
     """A district within an administrative area.
     Note: some administrative areas *do not* have districts.
     """
-    id = models.PositiveIntegerField(primary_key=True)
+    id = models.PositiveSmallIntegerField(primary_key=True)
     name = models.CharField(max_length=48)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
+    created_at = models.DateTimeField(null=True, blank=True)
+    modified_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('name',)
@@ -128,15 +132,17 @@ class Locality(SearchMixin, models.Model):
     """
     id = models.CharField(max_length=48, primary_key=True)
     name = models.CharField(max_length=48)
-    # short_name?
+    short_name = models.CharField(max_length=48, blank=True)
     qualifier_name = models.CharField(max_length=48, blank=True)
-    slug = AutoSlugField(always_update=True, populate_from='get_qualified_name', editable=True, unique=True)
+    slug = AutoSlugField(always_update=False, populate_from='get_qualified_name', editable=True, unique=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
     parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
     latlong = models.PointField(null=True, blank=True)
     adjacent = models.ManyToManyField('self', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
+    created_at = models.DateTimeField(null=True, blank=True)
+    modified_at = models.DateTimeField(null=True, blank=True)
 
     objects = LocalityManager()
 
@@ -299,9 +305,10 @@ class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
     atco_code = models.CharField(max_length=16, primary_key=True)
-    naptan_code = models.CharField(max_length=16, blank=True)
+    naptan_code = models.CharField(max_length=16, null=True, blank=True)
 
     common_name = models.CharField(max_length=48)
+    short_common_name = models.CharField(max_length=48, blank=True)
     landmark = models.CharField(max_length=48, blank=True)
     street = models.CharField(max_length=48, blank=True)
     crossing = models.CharField(max_length=48, blank=True)
@@ -365,10 +372,18 @@ class StopPoint(models.Model):
     admin_area = models.ForeignKey('AdminArea', models.SET_NULL, null=True, blank=True)
     active = models.BooleanField(db_index=True)
 
+    created_at = models.DateTimeField(null=True, blank=True)
+    modified_at = models.DateTimeField(null=True, blank=True)
+    revision_number = models.PositiveSmallIntegerField(null=True, blank=True)
+    search_vector = SearchVectorField(null=True, blank=True)
+
     class Meta:
         ordering = ('common_name', 'atco_code')
         indexes = [
             models.Index(Upper('naptan_code'), name='naptan_code'),
+        ]
+        constraints = [
+            models.UniqueConstraint(Upper('atco_code'), name='atco_code'),
         ]
 
     def __str__(self):
@@ -434,7 +449,7 @@ class StopPoint(models.Model):
                                                 .replace('East ', 'E ') \
                                                 .replace('South ', 'S ') \
                                                 .replace('West ', 'W ')
-            if self.common_name in locality_name:
+            if self.common_name and self.common_name in locality_name:
                 return locality_name.replace(self.common_name, name)  # Cardiff Airport
             if slugify(locality_name) not in slugify(self.common_name):
                 if self.indicator in self.prepositions:
@@ -624,7 +639,7 @@ class Service(models.Model):
     date = models.DateField(null=True, blank=True)
     current = models.BooleanField(default=True, db_index=True)
     timetable_wrong = models.BooleanField(default=False)
-    geometry = models.MultiLineStringField(null=True, editable=False)
+    geometry = models.GeometryField(null=True, editable=False)
 
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     tracking = models.BooleanField(default=False)

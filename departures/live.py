@@ -476,12 +476,13 @@ def get_departures(stop, services, when):
     """
 
     # Transport for London
-    if not when and any(s.service_code[:4] == 'tfl_' for s in services):
-        departures = TflDepartures(stop, services)
-        return ({
-            'departures': departures.get_departures(),
-            'today': timezone.localdate(),
-        }, 60)
+    if not when and stop.atco_code[:3] == '490' and any(s.service_code[:4] == 'tfl_' for s in services):
+        departures = TflDepartures(stop, services).get_departures()
+        if departures:
+            return ({
+                'departures': departures,
+                'today': timezone.localdate(),
+            }, 60)
 
     now = timezone.localtime()
 

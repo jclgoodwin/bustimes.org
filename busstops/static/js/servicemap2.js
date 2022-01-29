@@ -12,16 +12,24 @@
         service = container.getAttribute('data-service'),
         map,
         busesOnline = document.getElementById('buses-online'),
-        button = busesOnline.getElementsByTagName('a')[0];
+        button = busesOnline.getElementsByTagName('a')[0],
+        hasHistory = false;
 
-    function setLocationHash(hash) {
-        if (history.replaceState) {
-            try {
-                history.replaceState(null, null, hash || '#');
-            } catch (error) {
-                // probably SecurityError (document is not fully active)
-            }
+    function navigateToMap() {
+        window.location.hash = '#map';
+        hasHistory = true;
+
+        return false;
+    }
+
+    function navigateFromMap() {
+        if (hasHistory) {
+            history.back();
+        } else {
+            window.location.hash = '';
         }
+
+        return false;
     }
 
     function openMap() {
@@ -29,8 +37,6 @@
         if (document.body.style.paddingTop) {
             container.style.top = document.body.style.paddingTop;
         }
-
-        setLocationHash('#map');
 
         if (map) {
             document.body.style.overflow = 'hidden';
@@ -42,11 +48,9 @@
                 loadjs(window.LIVERIES_CSS_URL);
             }
         }
-
-        return false;
     }
 
-    button.onclick = openMap;
+    button.onclick = navigateToMap;
 
     function getStopMarker(feature, latlng) {
         if (feature.properties.bearing !== null) {
@@ -96,7 +100,7 @@
             a.style.padding = '0 8px';
             a.setAttribute('role', 'button');
             a.innerHTML = 'Close map';
-            a.onclick = closeMap;
+            a.onclick = navigateFromMap;
 
             div.appendChild(a);
             return div;
@@ -171,23 +175,20 @@
     function closeMap() {
         container.className = container.className.replace(' expanded', '');
         document.body.style.overflow = '';
-        setLocationHash('');
 
         if (loadVehiclesTimeout) {
             clearTimeout(loadVehiclesTimeout);
         }
-
-        return false;
     }
 
     window.onkeydown = function(event) {
         if (event.keyCode === 27) {
-            closeMap();
+            navigateFromMap();
         }
     };
 
-    window.onhashchange = function(event) {
-        if (event.target.location.hash === '#map') {
+    window.onhashchange = function() {
+        if (window.location.hash === '#map') {
             openMap();
         } else {
             closeMap();

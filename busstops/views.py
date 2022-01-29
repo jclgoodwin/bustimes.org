@@ -1,7 +1,9 @@
 # coding=utf-8
 """View definitions."""
-import requests
 import datetime
+import sys
+import traceback
+import requests
 from ukpostcodeutils import validation
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
@@ -104,6 +106,17 @@ def not_found(request, exception):
         context = None
     response = render(request, '404.html', context)
     response.status_code = 404
+    return response
+
+
+def error(request):
+    context = {}
+    if request.user.is_staff:
+        _, exception, tb = sys.exc_info()
+        context["exception"] = exception 
+        context["traceback"] = traceback.format_tb(tb)
+    response = render(None, '500.html', context)
+    response.status_code = 500
     return response
 
 
@@ -392,6 +405,11 @@ class StopPointDetailView(DetailView):
                                             'locality__district')
     queryset = queryset.defer('locality__latlong', 'locality__parent__latlong')
 
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        return get_object_or_404(queryset, pk__iexact=self.kwargs['pk'])
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -517,7 +535,8 @@ class OperatorDetailView(DetailView):
 
         if context['vehicles']:
             vehicles = vehicles.values_list('id', flat=True)
-            context['map'] = redis_client.exists(*[f"vehicle{vehicle_id}" for vehicle_id in vehicles])
+            if redis_client:
+                context['map'] = redis_client.exists(*[f"vehicle{vehicle_id}" for vehicle_id in vehicles])
 
         return context
 

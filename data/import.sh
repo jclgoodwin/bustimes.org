@@ -31,19 +31,14 @@ function import_csv {
     # name of a CSV file contained in the zip archive:
     csv=$3
 
-    tail -n +2 "$csv" > "previous/$csv"
-    first=$? # 1 if previous command failed ($csv doesn't exist yet), 0 otherwise
     unzip -oq "$zip" "$csv"
-    if [[ $first == "0" ]]; then
-        diff -h "previous/$csv" "$csv" | grep '^> ' | sed 's/^> //' | ../../manage.py "import_$cmd"
-    else
-        ../../manage.py "import_$cmd" < "$csv"
-    fi
+    ../../manage.py "import_$cmd" < "$csv"
 }
 
 mkdir -p NPTG/previous NaPTAN TNDS variations
 
 cd NPTG
+
 nptg_old=$(shasum nptg.ashx\?format=csv)
 wget -qN https://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
 nptg_new=$(shasum nptg.ashx\?format=csv)
@@ -64,9 +59,7 @@ if [[ $nptg_old != "$nptg_new" ]]; then
     import_csv nptg.ashx\?format=csv locality_hierarchy LocalityHierarchy.csv
 fi
 
-
 cd ..
-
 
 
 ie_nptg_old=$(shasum NPTG_final.xml)
@@ -78,42 +71,8 @@ if [[ "$ie_nptg_old" != "$ie_nptg_new" ]]; then
 fi
 
 
+../manage.py naptan_new
 
-cd NaPTAN
-naptan_old=$(shasum naptan.zip)
-../../manage.py update_naptan
-naptan_new=$(shasum naptan.zip)
-
-if [[ "$naptan_old" != "$naptan_new" ]]; then
-    echo "NaPTAN"
-    unzip -oq naptan.zip
-fi
-
-if compgen -G "*csv.zip" > /dev/null; then
-    for file in *csv.zip; do
-        unzip -oq "$file" Stops.csv StopAreas.csv StopsInArea.csv
-        echo " $file"
-        echo "  Stops"
-        tr -d '\000' < Stops.csv | ../../manage.py import_stops && rm Stops.csv
-        ../../manage.py correct_stops
-        echo "  Stop areas"
-        tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas && rm StopAreas.csv
-        echo "  Stops in area"
-        tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area || continue && rm StopsInArea.csv
-        rm "$file"
-    done
-elif [ -f Stops.csv ]; then
-    echo "  Stops"
-    tr -d '\000' < Stops.csv | ../../manage.py import_stops && rm Stops.csv
-    echo "  Stop areas"
-    tr -d '\000' < StopAreas.csv | ../../manage.py import_stop_areas && rm StopAreas.csv
-    echo "  Stops in area"
-    tr -d '\000' < StopsInArea.csv | ../../manage.py import_stops_in_area && rm StopsInArea.csv
-    echo "  Stops in area"
-fi
-
-
-cd ..
 
 noc_old=$(ls -l NOC_DB.csv)
 wget -qN https://mytraveline.info/NOC/NOC_DB.csv
