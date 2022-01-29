@@ -25,8 +25,9 @@ def get_livery_choices(operator, vehicle=None):
         choices[livery.id] = livery
 
     # add ad hoc vehicle colours
-    for vehicle in vehicles.filter(~Q(colours=""), ~Q(colours="Other"), livery=None).distinct("colours"):
-        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
+    for vehicle in vehicles.distinct('colours'):
+        if not vehicle.livery_id and vehicle.colours and vehicle.colours != 'Other':
+            choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
 
     # replace the dictionary with a list of key, label pairs
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
@@ -103,6 +104,9 @@ class EditVehicleForm(EditVehiclesForm):
         e.g. how you know a vehicle has been withdrawn or repainted,
         link to a picture to prove it""",
                               widget=forms.Textarea(attrs={'rows': 6}), required=False, max_length=255)
+    confirm = forms.BooleanField(label="I confirm that I have checked the pending edits and that this edit is not already there", required=True, helptext="") 
+    #I would like to put in help text the link to pending edits but can't find out how to do it for the specific operator. 
+    
     field_order = ['withdrawn', 'spare_ticket_machine',
                    'fleet_number', 'reg',
                    'operator', 'vehicle_type',
