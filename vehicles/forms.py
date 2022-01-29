@@ -25,9 +25,8 @@ def get_livery_choices(operator, vehicle=None):
         choices[livery.id] = livery
 
     # add ad hoc vehicle colours
-    for vehicle in vehicles.distinct('colours'):
-        if not vehicle.livery_id and vehicle.colours and vehicle.colours != 'Other':
-            choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
+    for vehicle in vehicles.filter(~Q(colours=""), ~Q(colours="Other"), livery=None).distinct("colours"):
+        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
 
     # replace the dictionary with a list of key, label pairs
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
