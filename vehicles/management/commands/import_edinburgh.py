@@ -43,16 +43,17 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
+            route_name=item['service_name'] or '',
             code=item['journey_id'] or '',
-            destination=item['destination'] or ''
+            destination=item['destination'] or '',
+            data=item
         )
 
-        journey.route_name = item['service_name'] or ''
-
-        if not journey.route_name:
-            pass
-        elif vehicle.latest_journey and vehicle.latest_journey.route_name == journey.route_name:
-            journey.service_id = vehicle.latest_journey.service_id
+        latest = vehicle.latest_journey
+        if latest and latest.route_name == journey.route_name:
+            if latest.code == journey.code and latest.destination == journey.destination:
+                return latest
+            journey.service_id = latest.service_id
         else:
             try:
                 journey.service = self.services.get(line_name__iexact=journey.route_name)
