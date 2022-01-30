@@ -16,6 +16,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
+from django.db.models.functions import Upper
 from django.utils import timezone
 from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
 from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block, RouteLink,
@@ -1093,14 +1094,19 @@ class Command(BaseCommand):
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:
+        stops = StopPoint.objects.annotate(
+            atco_code_upper=Upper('atco_code')
+        ).filter(atco_code_upper__in=transxchange_stops.keys()).only('atco_code')
+
         stops = {
-            stop.atco_code.upper(): stop for stop in StopPoint.objects.only('atco_code')
+            stop.atco_code_upper: stop
+            for stop in stops
         }
 
         for atco_code, stop in transxchange_stops.items():
             if atco_code.upper() not in stops:
                 # logger.warning(f"{atco_code} {stop}")
-                stops[atco_code] = str(stop)[:255]
+                stops[atco_code.upper()] = str(stop)[:255]
 
         return stops
 
