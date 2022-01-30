@@ -48,11 +48,13 @@ class SiriConsumer(SyncConsumer):
                         self.command.save()
 
                 with beeline.tracer(name="set many"):
-                    cache.set_many({
+                    to_set = {
                         key: value
                         for key, value in self.command.vehicle_id_cache.items()
                         if key not in vehicle_ids or value != vehicle_ids[key]
-                    }, 43200)
+                    }
+                    if to_set:
+                        cache.set_many(to_set, 43200)
         except Exception as e:
             capture_exception(e)
             raise Exception
