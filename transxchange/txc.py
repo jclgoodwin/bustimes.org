@@ -23,12 +23,19 @@ class Stop:
 
             self.common_name = element.findtext('CommonName')
 
+            self.indicator = element.findtext("Indicator")
+
             self.locality = element.findtext('LocalityName')
 
     def __str__(self):
-        if not self.locality or self.locality in self.common_name:
-            return self.common_name or self.atco_code
-        return f'{self.locality} {self.common_name}'
+        name = self.common_name
+        if not name:
+            return self.atco_code
+        if self.indicator:
+            name = f"{name} ({self.indicator})"
+        if not self.locality or self.locality in name:
+            return name
+        return f'{self.locality} {name}'
 
 
 class Route:

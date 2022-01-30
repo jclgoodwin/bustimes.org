@@ -130,7 +130,7 @@ def stop_time_json(stop_time, date):
 
 @require_GET
 def stop_times_json(request, atco_code):
-    stop = get_object_or_404(StopPoint, atco_code=atco_code)
+    stop = get_object_or_404(StopPoint, atco_code__iexact=atco_code)
     times = []
 
     if 'when' in request.GET:

@@ -606,15 +606,15 @@ class Command(BaseCommand):
                 if trip.start is None:
                     trip.start = stop_time.departure_or_arrival()
 
-                atco_code = cell.stopusage.stop.atco_code
+                atco_code = cell.stopusage.stop.atco_code.upper()
                 if atco_code in stops:
                     if type(stops[atco_code]) is str:
                         stop_time.stop_code = stops[atco_code]
                     else:
-                        stop_time.stop_id = cell.stopusage.stop.atco_code
-                        trip.destination_id = stop_time.stop_id
+                        stop_time.stop = stops[atco_code]
+                        trip.destination = stop_time.stop
                 else:
-                    stop_time.stop_code = atco_code
+                    stop_time.stop_code = atco_code  # !
                 stop_times.append(stop_time)
 
             # last stop
@@ -1093,18 +1093,14 @@ class Command(BaseCommand):
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:
-        stops = StopPoint.objects.in_bulk(transxchange_stops.keys())
-        stops_to_create = {}
-        for atco_code, stop in transxchange_stops.items():
-            if atco_code not in stops:
-                if atco_code.startswith('000') or atco_code.startswith('999'):
-                    stops[atco_code] = str(stop)[:255]
-                else:
-                    stops_to_create[atco_code] = StopPoint(atco_code=atco_code, common_name=str(stop)[:48], active=True)
+        stops = {
+            stop.atco_code.upper(): stop for stop in StopPoint.objects.only('atco_code')
+        }
 
-        if stops_to_create:
-            StopPoint.objects.bulk_create(stops_to_create.values())
-            stops = {**stops, **stops_to_create}
+        for atco_code, stop in transxchange_stops.items():
+            if atco_code.upper() not in stops:
+                # logger.warning(f"{atco_code} {stop}")
+                stops[atco_code] = str(stop)[:255]
 
         return stops
 

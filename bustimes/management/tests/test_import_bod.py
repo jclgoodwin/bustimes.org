@@ -43,6 +43,42 @@ class ImportBusOpenDataTest(TestCase):
         }, False),
     ])
     def test_import_bod(self):
+        admin_area = AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
+        stop_area = StopArea.objects.create(id='', active=True, admin_area=admin_area)
+        StopPoint.objects.bulk_create([
+            StopPoint(
+                atco_code="2900w0321",
+                common_name="Lion Store",
+                indicator="opp",
+                admin_area=admin_area,
+                stop_area=stop_area,
+                active=True
+            ),
+            StopPoint(
+                atco_code="2900w0322",
+                common_name="Lion Store",
+                indicator="adj",
+                admin_area=admin_area,
+                stop_area=stop_area,
+                active=True
+            ),
+            StopPoint(
+                atco_code="2900W0314",
+                common_name="Holt Court",
+                indicator="opp",
+                admin_area=admin_area,
+                stop_area=stop_area,
+                active=True
+            ),
+            StopPoint(
+                atco_code="2900K132",
+                common_name="Kings Lynn Transport Interchange",
+                admin_area=admin_area,
+                stop_area=stop_area,
+                active=True
+            ),
+        ])
+
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
                 call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
@@ -78,7 +114,7 @@ class ImportBusOpenDataTest(TestCase):
         self.assertContains(response, """
             <tr>
                 <th class="stop-name" scope="row">
-                    <a href="/stops/2900W0321">Walpole St Peter Lion Store</a>
+                    <a href="/stops/2900w0321">Lion Store (opp)</a>
                 </th>
                 <td>12:19</td>
             </tr>""", html=True)
@@ -100,9 +136,9 @@ class ImportBusOpenDataTest(TestCase):
         response = self.client.get(trip.get_absolute_url())
 
         self.assertContains(response, """<tr class="minor">
-                <td class="stop-name">
-                        <a href="/stops/2900C1814">Clenchwarton Post Box</a>
-                </td>
+            <td class="stop-name">
+                Clenchwarton Post Box (adj)
+            </td>
             <td>
                 09:33
             </td>
@@ -145,11 +181,7 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get('/stops/2900W0321/times.json?when=yesterday')
         self.assertEqual(400, response.status_code)
 
-        admin_area = AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
-        stop_area = StopArea.objects.create(id='', active=True, admin_area=admin_area)
-        StopPoint.objects.filter(atco_code__in=['2900W0321', '2900W0322']).update(stop_area=stop_area)
-
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             response = self.client.get('/stops/2900W0321?date=2020-05-02')
         self.assertContains(response, "<h3>Monday 4 May</h3>")
         self.assertContains(response, "<h3>Tuesday 5 May</h3>")
@@ -158,7 +190,7 @@ class ImportBusOpenDataTest(TestCase):
         self.assertContains(response, "Nearby stops")  # other stop in StopArea
         self.assertContains(response, "<small>54</small>")
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
         self.assertContains(response, "<h3>Tuesday 5 May</h3>")
@@ -167,7 +199,7 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get('/stops/2900W0321?date=poop')
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             response = self.client.get('/stops/2900W0321?date=2020-05-02&time=poop')
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
@@ -268,9 +300,23 @@ class ImportBusOpenDataTest(TestCase):
     @time_machine.travel(datetime.datetime(2020, 6, 10))
     def test_import_stagecoach(self):
 
+        StopPoint.objects.bulk_create([
+            StopPoint(
+                atco_code="0500HSTIV054",
+                common_name="St John's Road",
+                indicator="opp",
+                active=True
+            ),
+            StopPoint(
+                atco_code="0500HHUNT049",
+                common_name="Church Lane",
+                indicator="near",
+                active=True
+            ),
+        ])
+
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-
                 for archive_name in (
                     'stagecoach-sccm-route-schedule-data-transxchange.zip',
                     'stagecoach-sccm-route-schedule-data-transxchange_2_4.zip',
@@ -288,7 +334,7 @@ class ImportBusOpenDataTest(TestCase):
                     'bustimes.management.commands.import_bod.download_if_changed',
                     return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
                 ) as download_if_changed:
-                    with self.assertNumQueries(152):
+                    with self.assertNumQueries(148):
                         call_command('import_bod', 'stagecoach')
                     download_if_changed.assert_called_with(
                         path, 'https://opendata.stagecoachbus.com/' + archive_name
