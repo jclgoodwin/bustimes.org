@@ -63,6 +63,8 @@ class ImportTransXChangeTest(TestCase):
                     ('049004705400', 'Kingston District Centre', 'o/s', 0, 0),
                     ('1000DDDV4248', 'Dinting Value Works', '', 0, 0),
                     ('2900A181', '', '', 0, 0),
+                    ('090079682980', 'Victoria Road', "", 0, 0),
+                    ('090079680705', 'Booths', "", 0, 0),
             )
         )
 
@@ -264,8 +266,16 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel('2016-12-15')
     def test_timetable_ne(self):
-        """Test timetable with some abbreviations"""
-        self.handle_files('NE.zip', ['NE_03_SCC_X6_1.xml'])
+        """Test timetable with some abbreviations and a missing leading 0 in an ATCO code"""
+
+        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
+            self.handle_files('NE.zip', ['NE_03_SCC_X6_1.xml'])
+
+        self.assertEqual(cm.output, [
+            'WARNING:bustimes.management.commands.import_transxchange:90079682980 090079682980',
+            'WARNING:bustimes.management.commands.import_transxchange:90079682980 090079682980']
+        )
+
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data['timetable']
@@ -285,7 +295,8 @@ class ImportTransXChangeTest(TestCase):
         # self.assertFalse(timetable.groupings[1].rows[45].has_waittimes)
         self.assertEqual(str(timetable.groupings[0].rows[0].times[:6]), '[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]'),
 
-        self.assertEqual(0, service.stopusage_set.count())
+        # created despite leading 0 in an ATCO code
+        self.assertEqual(2, service.stopusage_set.count())
 
     @time_machine.travel('2021-03-25')
     def test_delaine_101(self):

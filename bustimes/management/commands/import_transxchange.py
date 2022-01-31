@@ -615,7 +615,7 @@ class Command(BaseCommand):
                         stop_time.stop = stops[atco_code]
                         trip.destination = stop_time.stop
                 else:
-                    stop_time.stop_code = atco_code  # !
+                    stop_time.stop_code = cell.stopusage.stop.atco_code  # !
                 stop_times.append(stop_time)
 
             # last stop
@@ -1094,9 +1094,15 @@ class Command(BaseCommand):
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:
+        stops = list(transxchange_stops.keys())
+        for atco_code in transxchange_stops:
+            if len(atco_code) == 11 and atco_code.isdigit() and atco_code[0] != "0" and atco_code[2] == "0":
+                logger.warning(f"{atco_code} 0{atco_code}")
+                stops.append(f"0{atco_code}")
+
         stops = StopPoint.objects.annotate(
             atco_code_upper=Upper('atco_code')
-        ).filter(atco_code_upper__in=transxchange_stops.keys()).only('atco_code')
+        ).filter(atco_code_upper__in=stops).only('atco_code')
 
         stops = {
             stop.atco_code_upper: stop
@@ -1104,9 +1110,14 @@ class Command(BaseCommand):
         }
 
         for atco_code, stop in transxchange_stops.items():
-            if atco_code.upper() not in stops:
-                # logger.warning(f"{atco_code} {stop}")
-                stops[atco_code.upper()] = str(stop)[:255]
+            atco_code_upper = atco_code.upper()
+            if atco_code_upper not in stops:
+                if atco_code.isdigit() and f"0{atco_code}" in stops:  # "36006002112" = "036006002112"
+                    logger.warning(f"{atco_code} 0{atco_code}")
+                    stops[atco_code_upper] = stops[f"0{atco_code}"]
+                else:
+                    # logger.warning(f"{atco_code} {stop}")
+                    stops[atco_code.upper()] = str(stop)[:255]
 
         return stops
 

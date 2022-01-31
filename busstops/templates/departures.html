@@ -40,7 +40,7 @@
             </tbody>
             </table>
             {% if when %}
-                {% if departures|length >= 10 %}
+                {% if next_page %}
                     <p class="next"><a href="{{ next_page }}">Later &darr;</a></p>
                 {% endif %}
                 {% if when != now %}

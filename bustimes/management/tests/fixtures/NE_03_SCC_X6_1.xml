@@ -830,7 +830,7 @@
       <LocalityQualifier>Ulverston</LocalityQualifier>
     </AnnotatedStopPointRef>
     <AnnotatedStopPointRef>
-      <StopPointRef>090079682980</StopPointRef>
+      <StopPointRef>90079682980</StopPointRef>
       <CommonName>Victoria Road</CommonName>
       <LocalityName>Ulverston</LocalityName>
       <LocalityQualifier>Ulverston</LocalityQualifier>
@@ -901,7 +901,7 @@
       <JourneyPatternTimingLink id="JPSection-1-SEC2-POS88">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -1384,7 +1384,7 @@
       <JourneyPatternTimingLink id="JPSection-2-SEC2-POS88">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -3916,7 +3916,7 @@
         <To>
           <WaitTime>PT5M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT12M</RunTime>
@@ -3924,7 +3924,7 @@
       <JourneyPatternTimingLink id="JPSection-8-SEC2-POS88">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -4205,7 +4205,7 @@
         <To>
           <WaitTime>PT5M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT12M</RunTime>
@@ -4213,7 +4213,7 @@
       <JourneyPatternTimingLink id="JPSection-9-SEC2-POS88">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -5072,7 +5072,7 @@
         <To>
           <WaitTime>PT5M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT12M</RunTime>
@@ -5080,7 +5080,7 @@
       <JourneyPatternTimingLink id="JPSection-12-SEC2-POS88">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -5348,7 +5348,7 @@
         <To>
           <WaitTime>PT5M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT12M</RunTime>
@@ -5356,7 +5356,7 @@
       <JourneyPatternTimingLink id="JPSection-13-SEC2-POS88">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -10517,7 +10517,7 @@
       <JourneyPatternTimingLink id="JPSection-87-SEC1-POS39">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -10532,7 +10532,7 @@
       <JourneyPatternTimingLink id="JPSection-88-SEC1-POS39">
         <From>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </From>
         <To>
@@ -11339,7 +11339,7 @@
         <To>
           <WaitTime>PT1M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT1M</RunTime>
@@ -11622,7 +11622,7 @@
         <To>
           <WaitTime>PT5M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT7M</RunTime>
@@ -12118,7 +12118,7 @@
         <To>
           <WaitTime>PT5M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT12M</RunTime>
@@ -12434,7 +12434,7 @@
         <To>
           <WaitTime>PT3M</WaitTime>
           <Activity>pickUpAndSetDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT1M</RunTime>
@@ -13574,7 +13574,7 @@
         </From>
         <To>
           <Activity>setDown</Activity>
-          <StopPointRef>090079682980</StopPointRef>
+          <StopPointRef>90079682980</StopPointRef>
           <TimingStatus>PTP</TimingStatus>
         </To>
         <RunTime>PT10M</RunTime>
