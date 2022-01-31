@@ -440,25 +440,6 @@ class VehicleEdit(models.Model):
                     changes[key] = self.changes[key]
         return changes
 
-    def get_diff(self, field):
-        original = str(getattr(self.vehicle, field) or '')
-        edit = str(getattr(self, field) or '')
-        if field == 'reg':
-            edit = edit.upper().replace(' ', '')
-        elif field == 'fleet_number':
-            original = self.vehicle.fleet_code or original
-        if original != edit:
-            if edit:
-                if original:
-                    if edit.startswith('-'):
-                        if edit == f'-{original}':
-                            return format_html('<del>{}</del>', original)
-                    else:
-                        return format_html('<del>{}</del><br><ins>{}</ins>', original, edit)
-                else:
-                    return format_html('<ins>{}</ins>', edit)
-        return original
-
     def apply(self, save=True):
         ok = True
         vehicle = self.vehicle

@@ -24,43 +24,7 @@
     <p>They haven’t been verified or moderated. 😮</p>
 {% endif %}
 
-<div class="table-wrapper">
-<table class="compact">
-    <thead>
-        <th scope="col">User</th>
-        <th scope="col">Date</th>
-        {% if not vehicle %}<th scope="col">Vehicle</th>{% endif %}
-        <th scope="col">Changed</th>
-    </thead>
-    <tbody>
-        {% for revision in revisions %}
-        <tr>
-            <td class="link">{% if revision.user %}<a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>{% endif %}</td>
-            <td>{{ revision.datetime }}</td>
-            {% if not vehicle %}
-                <td class="link"><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
-            {% endif %}
-            <td>
-                {% for key, from, to in revision.list_changes %}
-                    {{ key }}
-                    {% if from %}
-                        from {{ from }}
-                    {% endif %}
-                    {% if to %}
-                        to
-                        {{ to }}
-                    {% endif %}
-                    <br>
-                {% endfor %}
-                {% if revision.message %}
-                    <div class="wrap">{{ revision.message|urlize }}</div>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+{% include 'vehicle_revisions.html' with revisions=revisions %}
 
 {% if not vehicle %}
     {% include 'pagination.html' with page=revisions %}
@@ -69,4 +33,4 @@
 {% endblock %}
 
 {% block ad %}{% endblock %}
-    
+

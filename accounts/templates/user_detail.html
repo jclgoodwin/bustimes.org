@@ -20,39 +20,7 @@
     {{ disapproved }} ha{{ disapproved|pluralize:"s,ve" }} been disapproved,
     and <a href="/vehicles/edits?user={{ object.id }}">{{ pending }} {{ pending|pluralize:"is,are" }} pending</a>.</p>
 
-    <table>
-        <thead>
-            <th scope="col">Date</th>
-            <th scope="col">Vehicle</th>
-            <th scope="col">Changed</th>
-        </thead>
-        <tbody>
-            {% for revision in revisions %}
-            <tr>
-                <td>{{ revision.datetime }}</td>
-                <td><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
-                <td>
-                    {% for key, from, to in revision.list_changes %}
-                        {{ key }}
-                        {% if from %}
-                            from
-                            {% if from.left_css %}
-                                <div class="livery" style="background:{{ from.left_css }}"></div>
-                            {% else %}{{ from }}{% endif %}
-                        {% endif %}
-                        {% if to %}
-                            to
-                            {% if to.left_css %}
-                                <div class="livery" style="background:{{ to.left_css }}"></div>
-                            {% else %}{{ to }}{% endif %}
-                        {% endif %}
-                        <br>
-                    {% endfor %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    {% include 'vehicle_revisions.html' with revisions=revisions by_user=object %}
 
     {% include 'pagination.html' with page=revisions %}
 

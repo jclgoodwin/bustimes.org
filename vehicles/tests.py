@@ -404,10 +404,9 @@ class VehiclesTests(TestCase):
             f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">1</a></td>'
         )
 
-        with self.assertNumQueries(8):
-            response = self.client.get('/admin/vehicles/vehicleedit/')
-        self.assertContains(response, '<ins>COCK</ins>')
-        self.assertEqual(1, response.context_data['cl'].result_count)
+        with self.assertNumQueries(7):
+            response = self.client.get('/vehicles/edits')
+        self.assertContains(response, 'Previous reg: COCK')
 
         del initial['colours']
 
@@ -546,11 +545,8 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<td class="score">-1</td>')
 
         # try to apply the edit
-        with self.assertNumQueries(16):
-            self.client.post('/admin/vehicles/vehicleedit/', {
-                'action': 'apply_edits',
-                '_selected_action': edit.id
-            })
+        with self.assertNumQueries(11):
+            self.client.post(f'/vehicles/edits/{edit.id}/apply')
 
         # not marked as approved cos there was no matching vehicle type
         edit.refresh_from_db()
@@ -572,13 +568,10 @@ class VehiclesTests(TestCase):
             'fleet number': '-\n+'
         })
 
-        # apply too
         with self.assertNumQueries(4):
             self.client.post(f'/vehicles/edits/{edit.id}/approve')
         with self.assertNumQueries(4):
             self.client.post(f'/vehicles/edits/{edit.id}/disapprove')
-        with self.assertNumQueries(11):
-            self.client.post(f'/vehicles/edits/{edit.id}/apply')
 
         # test user view
         response = self.client.get(self.staff_user.get_absolute_url())
