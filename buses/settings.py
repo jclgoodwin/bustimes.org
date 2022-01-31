@@ -337,6 +337,18 @@ PASSENGER_OPERATORS = [
     ('Newport Bus', 'https://www.newportbus.co.uk/open-data', 'W', {
         'NWPT': 'NWPT',
     }),
+    ('JMB Travel', 'https://www.jmbtravel.co.uk/open-data', 'S', {
+        'NJMT': 'NJMT',
+    }),
+    ('McColls Travel', 'https://www.mccolls.org.uk/open-data', 'S', {
+        'MCLS': 'MCLS',
+    }),
+    ('Redline', 'https://www.redlinebuses.com/open-data', 'SE', {
+        'RLNE': 'RLNE',
+    }),
+    ('Coastliner', 'https://www.coastlinerbuses.co.uk/open-data', 'NW', {
+        'NUTT': 'NUTT',
+    }),
 ]
 
 # see bustimes.management.commands.import_bod
@@ -713,7 +725,7 @@ TICKETER_OPERATORS = [
     ('EM', ['Brylaine', 'BRYL']),
     ('EM', ['Midland_Classic', 'MDCL']),
     ('EM', ['RBTS'], 'Roberts Travel'),
-    ('SE', ['Redline_Buses_Ltd', 'RLNE']),
+    #('SE', ['Redline_Buses_Ltd', 'RLNE']),
     ('SE', ['Sullivan_Buses', 'SULV']),
     ('EA', ['Simonds', 'SIMO']),
     ('NE', ['Coatham_Coaches', 'COTY']),
