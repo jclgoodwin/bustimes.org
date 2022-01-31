@@ -311,12 +311,17 @@ class TimetableDepartures(Departures):
         yesterday_date = (self.now - one_day).date()
         yesterday_time = time_since_midnight + one_day
 
+        yesterday_times = list(self.get_times(yesterday_date, yesterday_time)[:10])
+        all_today_times = self.get_times(date, time_since_midnight)
+        today_times = list(all_today_times[:10])
+
+        if len(today_times) == 10 and today_times[0].departure == today_times[9].departure:
+            today_times += all_today_times[10:20]
+
         times = [
-            self.get_row(stop_time, yesterday_date) for stop_time in
-            self.get_times(yesterday_date, yesterday_time)[:10]
+            self.get_row(stop_time, yesterday_date) for stop_time in yesterday_times
         ] + [
-            self.get_row(stop_time, date) for stop_time in
-            self.get_times(date, time_since_midnight)[:10]
+            self.get_row(stop_time, date) for stop_time in today_times
         ]
         i = 0
         while len(times) < 10 and i < 3:

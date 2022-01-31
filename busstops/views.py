@@ -4,6 +4,7 @@ import datetime
 import sys
 import traceback
 import requests
+from urllib.parse import urlencode
 from ukpostcodeutils import validation
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
@@ -423,8 +424,8 @@ class StopPointDetailView(DetailView):
 
         when = None
         date = self.request.GET.get('date')
-        time_string = self.request.GET.get('time')
         if date:
+            time_string = self.request.GET.get('time')
             try:
                 date = datetime.date.fromisoformat(date)
             except ValueError:
@@ -441,8 +442,14 @@ class StopPointDetailView(DetailView):
 
         departures, _ = live.get_departures(self.object, context['services'], when)
         context.update(departures)
-        if context['departures']:
-            context['live'] = any(item.get('live') for item in context['departures'])
+        if context["departures"]:
+            context["live"] = any(item.get("live") for item in context["departures"])
+            if context["departures"][-1].get("time"):
+                next_page = urlencode({
+                    "date": context["departures"][-1]["time"].date(),
+                    "time": context["departures"][-1]["time"].time().strftime("%H:%M"),
+                })
+                context["next_page"] = f"?{next_page}"
 
         text = ', '.join(part for part in (
             'on ' + self.object.street if self.object.street else None,
@@ -519,19 +526,22 @@ class OperatorDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # services list:
+
         services = self.object.service_set.with_line_names().filter(current=True).defer('geometry', 'search_vector')
         services = services.annotate(start_date=Min('route__start_date'))
         context['services'] = sorted(services, key=Service.get_order)
-        context['today'] = timezone.localdate()
-
-        vehicles = self.object.vehicle_set.filter(withdrawn=False)
-
-        context['vehicles'] = vehicles.exists()
 
         if context['services']:
+            context['today'] = timezone.localdate()  # for 'from {date}' for future services
             context['breadcrumb'] = [self.object.region]
-
             context['colours'] = get_colours(context['services'])
+
+        # vehicles tab:
+
+        vehicles = self.object.vehicle_set.filter(withdrawn=False)
+        context['vehicles'] = vehicles.exists()
 
         if context['vehicles']:
             vehicles = vehicles.values_list('id', flat=True)

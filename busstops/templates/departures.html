@@ -40,8 +40,8 @@
             </tbody>
             </table>
             {% if when %}
-                {% if departures|length == 10 %}
-                    <p class="next"><a href="?date={{ item.time.date.isoformat }}&amp;time={{ item.time.time }}">Later &darr;</a></p>
+                {% if departures|length >= 10 %}
+                    <p class="next"><a href="{{ next_page }}">Later &darr;</a></p>
                 {% endif %}
                 {% if when != now %}
                     <p><a href="{{ object.get_absolute_url }}">&uarr; Now</a></p>
