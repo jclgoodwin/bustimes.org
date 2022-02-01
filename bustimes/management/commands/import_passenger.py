@@ -139,7 +139,7 @@ class Command(BaseCommand):
 
             command.source, _ = DataSource.objects.get_or_create({'name': name}, url=url)
 
-            if new_versions:
+            if new_versions or operator:
                 logger.info(name)
 
                 command.source.datetime = timezone.now()
@@ -150,7 +150,7 @@ class Command(BaseCommand):
                 command.garages = {}
 
                 for version in versions:  # newest first
-                    if version['modified']:
+                    if version['modified'] or operator:
                         logger.info(version)
                         handle_file(command, version['filename'], qualify_filename=True)
 

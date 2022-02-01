@@ -51,6 +51,16 @@ class RouteSection:
 
 
 class RouteLink:
+    @staticmethod
+    def get_point(element):
+        lon = element.findtext('Longitude')
+        if lon is not None:
+            lat = element.findtext('Latitude')
+            return GEOSGeometry(f"POINT({lon} {lat})")
+        easting = element.findtext('Easting')
+        northing = element.findtext('Northing')
+        return GEOSGeometry(f"SRID=27700;POINT({easting} {northing})")
+
     def __init__(self, element):
         self.id = element.get('id')
         self.from_stop = element.findtext('From/StopPointRef').upper()
@@ -58,10 +68,8 @@ class RouteLink:
         locations = element.findall('Track/Mapping/Location/Translation')
         if not locations:
             locations = element.findall('Track/Mapping/Location')
-        locations = (
-            GEOSGeometry(f"POINT({location.findtext('Longitude')} {location.findtext('Latitude')})")
-            for location in locations
-        )
+
+        locations = (self.get_point(location) for location in locations)
         self.track = LineString(*locations)
 
 

@@ -345,8 +345,12 @@ PASSENGER_OPERATORS = [
     ('McColls Travel', 'https://www.mccolls.org.uk/open-data', 'S', {
         'MCLS': 'MCLS',
     }),
-    ('Redline', 'https://www.redlinebuses.com/open-data', 'SE', {
+    ('Redline Buses', 'https://www.redlinebuses.com/open-data', 'SE', {
         'RLNE': 'RLNE',
+        'REDL': 'RLNE',
+    }),
+    ('Red Rose Travel', 'https://www.redrosetravel.com/open-data', 'SE', {
+        'RRTR': 'RRTR',
     }),
     ('Coastliner', 'https://www.coastlinerbuses.co.uk/open-data', 'NW', {
         'NUTT': 'NUTT',
@@ -613,14 +617,14 @@ BOD_OPERATORS = [
     ('GOGO', 'NW', {}, False),
     ('RBTS', 'EM', {}, False),
     ('DELA', 'EM', {}, False),
-    ('RLNE', 'SE', {}, False),
+
     ('HATT', 'NW', {}, False),
     ('SULV', 'SE', {}, False),
     ('WBSV', 'SE', {}, False),
     ('REDE', 'SE', {}, False),
     ('GPLM', 'SE', {}, False),
     ('CLNB', 'SE', {}, False),
-    ('RRTR', 'SE', {}, False),
+
     ('RCHC', 'SE', {}, False),
     ('FCHS', 'NW', {}, False),
     ('CRSS', 'WM', {}, True),  # NN Cresswell
@@ -727,7 +731,7 @@ TICKETER_OPERATORS = [
     ('EM', ['Brylaine', 'BRYL']),
     ('EM', ['Midland_Classic', 'MDCL']),
     ('EM', ['RBTS'], 'Roberts Travel'),
-    #('SE', ['Redline_Buses_Ltd', 'RLNE']),
+
     ('SE', ['Sullivan_Buses', 'SULV']),
     ('EA', ['Simonds', 'SIMO']),
     ('NE', ['Coatham_Coaches', 'COTY']),
@@ -747,7 +751,6 @@ TICKETER_OPERATORS = [
     ('WM', ['Banga_Buses', 'BANG']),
     ('EM', ['DELA'], 'Delaine Buses'),
     ('SE', ['RCHC'], 'Richmonds Coaches'),
-    ('SE', ['RRTR'], 'Red Rose Travel'),
     ('NW', ['Finches', 'FCHS']),
     ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
     ('Y',  ['POWB', 'CTPL'], 'HCT Group'),

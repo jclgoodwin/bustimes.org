@@ -1005,7 +1005,7 @@ class Command(BaseCommand):
                     pass
 
             # a code used in Traveline Cymru URLs:
-            if self.source.name == 'W':
+            if self.source.name == 'W' and '_' not in txc_service.service_code:
                 private_code = journey.private_code
                 if private_code and ':' in private_code:
                     ServiceCode.objects.update_or_create({
