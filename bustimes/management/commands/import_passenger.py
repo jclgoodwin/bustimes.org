@@ -179,7 +179,7 @@ class Command(BaseCommand):
             old_services = command.source.service_set.filter(current=True, route=None)
             logger.info(f"  old services: {old_services.update(current=False)}")
 
-            if new_versions:
+            if new_versions or operator:
                 command.finish_services()
 
                 if name in ('Nottingham City Transport', 'Reading Buses', 'Transdev Blazefield', 'Cardiff Bus'):

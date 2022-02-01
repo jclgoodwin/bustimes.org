@@ -337,7 +337,7 @@ PASSENGER_OPERATORS = [
         'WOB': 'WBTR',
     }),
     ('Newport Bus', 'https://www.newportbus.co.uk/open-data', 'W', {
-        'NWPT': 'NWPT',
+        'NTO': 'NWPT',
     }),
     ('JMB Travel', 'https://www.jmbtravel.co.uk/open-data', 'S', {
         'NJMT': 'NJMT',
@@ -346,7 +346,6 @@ PASSENGER_OPERATORS = [
         'MCLS': 'MCLS',
     }),
     ('Redline Buses', 'https://www.redlinebuses.com/open-data', 'SE', {
-        'RLNE': 'RLNE',
         'REDL': 'RLNE',
     }),
     ('Red Rose Travel', 'https://www.redrosetravel.com/open-data', 'SE', {

@@ -86,8 +86,12 @@ def handle_file(command, path, qualify_filename=False):
     except zipfile.BadZipFile:
         # plain XML
         with full_path.open() as open_file:
+            if qualify_filename:
+                filename = path
+            else:
+                filename = ""
             try:
-                command.handle_file(open_file, "")
+                command.handle_file(open_file, filename)
             except (AttributeError, DataError) as e:
                 logger.error(e, exc_info=True)
 
