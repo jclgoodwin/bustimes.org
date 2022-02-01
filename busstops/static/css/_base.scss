@@ -1049,7 +1049,9 @@ input:not(:checked) + label {
             display: none;
         }
 
-        .od {
+        .od,
+        .referrer,
+        .referrer + .dep {
             display: table-row;
         }
     }
@@ -1081,13 +1083,6 @@ input:not(:checked) + label {
         th {
             border-top: 0;
         }
-    }
-
-    .referrer,
-    .referrer + .dep,
-    .minor:first-child,
-    .minor:first-child + .dep {
-        display: table-row !important;
     }
 
     .referrer,
@@ -1144,15 +1139,20 @@ input:not(:checked) + label {
         td {
             border-top: 0;
         }
+    }
 
+    .dep {
         td:first-child {
             padding-left: .5em;
         }
     }
 
     .minor {
-        th {
+        .stop-name {
+            padding-left: 1em;
+
             a {
+                margin-left: -1em;
                 padding-left: 1em;
             }
         }

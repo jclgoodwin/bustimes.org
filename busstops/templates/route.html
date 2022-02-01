@@ -8,7 +8,7 @@
                 {% firstof service.inbound_description stopusage.direction.capitalize %}
             {% else %}{{ stopusage.direction.capitalize }}{% endif %}
         </h2>
-        {% if has_minor_stops %}
+        {% if has_minor_stops and stopusages|length > 20 %}
             <input type="checkbox" id="show-all-stops-{{ forloop.counter }}">
             <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
         {% endif %}

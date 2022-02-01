@@ -588,6 +588,7 @@ class Row:
 
     @cached_property
     def od(self):
+        """is the origin or destination of any trip"""
         return any(cell.first or cell.last for cell in self.times if type(cell) is Cell)
 
     def is_minor(self):
