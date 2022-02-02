@@ -62,7 +62,6 @@ class ImportAtcoCifTest(TestCase):
                 response = self.client.get('/services/219a-belfast-europa-buscentre-antrim-buscentre?date=2019-10-01')
         self.assertContains(response, '<option selected value="2019-10-01">Tuesday 1 October 2019</option>')
         self.assertNotContains(response, 'Sunday')
-        self.assertContains(response, '<label for="show-all-stops-1">Show all stops</label>')
         self.assertContains(response, '<h1>219a - Belfast, Europa Buscentre - Antrim, Buscentre</h1>')
 
         with time_machine.travel('2019-08-12'):
