@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
 
-from django.db import IntegrityError, transaction, connection
+from django.db import IntegrityError, OperationalError, transaction, connection
 from django.db.models import Exists, OuterRef, Min, Max, F, Case, When, Q
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
@@ -390,7 +390,11 @@ def get_dates(journeys, vehicle=None, service=None):
     dates = cache.get(key)
 
     if not dates:
-        dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
+        try:
+            dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
+        except OperationalError:
+            return
+
         if dates:
             now = timezone.localtime()
             if dates[-1] == now.date():
@@ -406,19 +410,18 @@ def get_dates(journeys, vehicle=None, service=None):
 
 def journeys_list(request, journeys, service=None, vehicle=None):
     dates = get_dates(journeys, service=service, vehicle=vehicle)
-    if service and not dates:
-        raise Http404
 
     context = {}
 
-    if dates:
+    date = request.GET.get('date')
+    if date:
+        try:
+            date = datetime.date.fromisoformat(date)
+        except ValueError:
+            date = None
+
+    if date or dates:
         context['dates'] = dates
-        date = request.GET.get('date')
-        if date:
-            try:
-                date = datetime.date.fromisoformat(date)
-            except ValueError:
-                date = None
         if not date:
             date = context['dates'][-1]
         context['date'] = date
@@ -443,6 +446,8 @@ def journeys_list(request, journeys, service=None, vehicle=None):
                 previous = journey
 
         context['journeys'] = journeys
+    elif service:
+        raise Http404
 
     return context
 

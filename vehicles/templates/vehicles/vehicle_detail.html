@@ -25,11 +25,15 @@
 {% if date %}
 
     <form class="timetable-date" autocomplete="off">
-        <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
-            {% for option in dates %}
-                <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
-            {% endfor %}
-        </select>
+        {% if dates %}
+            <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
+                {% for option in dates %}
+                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
+        {% endif %}
         <noscript><input type="submit"></noscript>
     </form>
 

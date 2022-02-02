@@ -32,13 +32,18 @@
         weight: 0,
     };
 
-    var date = document.getElementById('date').value;
+    var date = document.getElementById('date').value,
+        hasHistory = false;
 
     function closeMap() {
         if (lastRequest) {
             lastRequest.abort();
         }
-        window.location.hash = ''; // triggers hashchange event
+        if (hasHistory) {
+            history.back(); // triggers hashchange event too
+        } else {
+            window.location.hash = ''; // triggers hashchange event
+        }
     }
 
     window.onkeydown = function(event) {
@@ -258,17 +263,26 @@
                 maxZoom: 14
             }).setMaxBounds(bounds.pad(.5));
         });
+
+        var canonical = document.querySelector('link[rel="canonical"]');
+        if (canonical) {
+            canonical.remove();
+        }
     }
 
     window.addEventListener('load', maybeOpenMap);
 
     function handleClick(event) {
-        window.history.replaceState(null, null, '?date=' + date + event.target.hash);
-        maybeOpenMap();
-
-        var canonical = document.querySelector('link[rel="canonical"]');
-        if (canonical) {
-            canonical.remove();
+        if (window.location.search) {
+            window.location.hash = event.target.hash; // triggers hashchange event
+        } else {
+            window.history.pushState(null, null, '?date=' + date + event.target.hash);
+            maybeOpenMap();
+        }
+        if (window.location.hash) {
+            hasHistory = false;
+        } else {
+            hasHistory = true;
         }
     }
 
