@@ -1097,7 +1097,6 @@ class Command(BaseCommand):
         stops = list(transxchange_stops.keys())
         for atco_code in transxchange_stops:
             if len(atco_code) == 11 and atco_code.isdigit() and atco_code[0] != "0" and atco_code[2] == "0":
-                logger.warning(f"{atco_code} 0{atco_code}")
                 stops.append(f"0{atco_code}")
 
         stops = StopPoint.objects.annotate(

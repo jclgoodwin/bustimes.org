@@ -272,9 +272,8 @@ class ImportTransXChangeTest(TestCase):
             self.handle_files('NE.zip', ['NE_03_SCC_X6_1.xml'])
 
         self.assertEqual(cm.output, [
-            'WARNING:bustimes.management.commands.import_transxchange:90079682980 090079682980',
-            'WARNING:bustimes.management.commands.import_transxchange:90079682980 090079682980']
-        )
+            'WARNING:bustimes.management.commands.import_transxchange:90079682980 090079682980'
+        ])
 
         service = Service.objects.get()
         response = self.client.get(service.get_absolute_url())
