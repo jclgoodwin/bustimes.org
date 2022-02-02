@@ -23,6 +23,10 @@ def get_routes(routes, when=None, from_date=None):
         revision_numbers = {}
         for route in routes:
             route.key = f'{route.service_code}:{route.service_id}'
+
+            if route.source.name.startswith('First Bus_'):  # journeys may be split between sources (First Bristol)
+                route.key = f"{route.key}:{route.source_id}"
+
             if route.key not in revision_numbers or route.revision_number > revision_numbers[route.key]:
                 revision_numbers[route.key] = route.revision_number
         routes = [
