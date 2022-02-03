@@ -732,12 +732,9 @@ class Command(BaseCommand):
         if self.source.name == 'L':
             return False
         if operators and all(operator.id in self.incomplete_operators for operator in operators):
-            services = Service.objects.filter(line_name__iexact=line_name, current=True).exclude(source=self.source)
-            if operators[0].parent and operators[0].id not in ('FBRI', 'FECS'):
-                services = services.filter(operator__parent=operators[0].parent)
-            else:
-                services = services.filter(operator__in=operators)
-            if services.exists():
+            if Service.objects.filter(
+                line_name__iexact=line_name, current=True, operator__in=operators
+            ).exclude(source=self.source).exists():
                 return True
 
     def get_route_links(self, journeys, transxchange):
