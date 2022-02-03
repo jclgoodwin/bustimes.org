@@ -65,7 +65,7 @@ def handle_file(command, path, qualify_filename=False):
     try:
         with zipfile.ZipFile(full_path) as archive:
             for filename in archive.namelist():
-                if filename.endswith('.csv'):
+                if filename.endswith('.csv') or '__MACOSX/' in filename:
                     continue
                 with archive.open(filename) as open_file:
                     if qualify_filename:

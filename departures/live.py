@@ -528,7 +528,7 @@ def get_departures(stop, services, when):
             if live_rows:
                 blend(departures, live_rows)
         elif departures:
-            if (
+            if stop.naptan_code and (
                 'Lothian Buses' in operators
                 or 'Lothian Country Buses' in operators
                 or 'East Coast Buses' in operators
