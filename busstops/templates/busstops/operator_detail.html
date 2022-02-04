@@ -32,6 +32,9 @@
 
 <ul class="tabs">
     <li>Services</li>
+    {% if tickets %}
+        <li><a href="{{ object.get_absolute_url }}/tickets">Tickets</a></li>
+    {% endif %}
     {% if vehicles %}
         {% if map %}
             <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>

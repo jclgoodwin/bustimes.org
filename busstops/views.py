@@ -538,6 +538,9 @@ class OperatorDetailView(DetailView):
             context['breadcrumb'] = [self.object.region]
             context['colours'] = get_colours(context['services'])
 
+            # tickets tab:
+            context['tickets'] = self.object.operatorcode_set.filter(source__name="MyTrip").exists()
+
         # vehicles tab:
 
         vehicles = self.object.vehicle_set.filter(withdrawn=False)

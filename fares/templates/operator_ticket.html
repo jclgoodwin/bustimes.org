@@ -1,17 +1,19 @@
 {% extends 'page.html' %}
 
+{% block title %}{{ title }} – {{ operator }} – bustimes.org{% endblock %}
+
 {% block content %}
 
-<h1>{{ title }}</h1>
+<h2>{{ title }}</h2>
 
 <p>{{ description }}</p>
 
 {% for category in categories %}
 
-    <a href="https://mytrip.today/app/view-product/{{ category.id }}">
-        <h2>{{ category.title }}</h2>
+    <a href="https://mytrip.today/app/view-product/{{ category.id }}" class="ticket">
+        <h3>{{ category.title }}</h3>
 
-        <p>£{{ category.price }}</p>
+        <p class="price">£{{ category.price }}</p>
 
         <p>{{ category.description }}</p>
     </a>

@@ -1368,6 +1368,37 @@ input:not(:checked) + label {
     }
 }
 
+.ticket {
+    border: 1px solid $border-color;
+    color: inherit;
+    display: block;
+    padding: 1em;
+    margin-bottom: -1px;
+    position: relative;
+
+    &:hover {
+        text-decoration: none;
+        border-color: $brand-color-darker-darker;
+        z-index: 1;
+    }
+
+    h2,
+    h3 {
+        margin: 0;
+        display: inline-block;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+
+    .price {
+        display: inline-block;
+        float: right;
+        margin: 0;
+    }
+}
+
 .contact-details {
     word-wrap: break-word;
 }

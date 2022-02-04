@@ -47,6 +47,7 @@ def operator_tickets(request, slug):
 
     context = {
         "breadcrumb": [operator],
+        "operator": operator,
         "groupings": groupings
     }
 
@@ -63,6 +64,7 @@ def operator_ticket(request, slug, id):
 
     context = {
         "breadcrumb": [operator, Tickets(operator)],
+        "operator": operator,
         "title": response["title"],
         "description": response["description"],
         "categories": response["_embedded"]["topup"],

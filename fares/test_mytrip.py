@@ -26,4 +26,4 @@ class MyTripTest(TestCase):
             self.assertContains(response, "Burton &amp; South Derbys zone (excluding contracts and route 20)")
 
             response = self.client.get("/operators/midland-classic/tickets/34876152-181c-59fc-8276-4cd7a235db69")
-            self.assertContains(response, "<p>£2.50</p>")
+            self.assertContains(response, """<p class="price">£2.50</p>""")

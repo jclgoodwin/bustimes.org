@@ -1,8 +1,13 @@
 {% extends 'page.html' %}
 
+{% block title %}Tickets – {{ operator }} – bustimes.org{% endblock %}
+
 {% block content %}
 
 <h1>Tickets</h1>
+
+<p>You can buy certain tickets in advance on <a href="https://mytrip.today/">the MyTrip app</a>.
+A wider range (singles, returns etc.) may be available from your driver.</p>
 
 {% for grouping in groupings %}
     {% if grouping.categories %}
@@ -10,10 +15,12 @@
 
         {% for category in grouping.categories %}
 
-            <a href="tickets/{{ category.id }}">
+            <a href="tickets/{{ category.id }}" class="ticket">
                 <h3>{{ category.title }}</h3>
 
-                <p>{{ category.description }}</p>
+                {% if category.description %}
+                    <p>{{ category.description }}</p>
+                {% endif %}
             </a>
 
         {% endfor %}
