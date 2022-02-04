@@ -20,7 +20,7 @@ A wider range (singles, returns etc.) may be available from your driver.</p>
             <a href="tickets/{{ category.id }}" class="ticket">
                 <h3>{{ category.title }}</h3>
 
-                {% if category.description %}
+                {% if category.description.strip %}
                     <p>{{ category.description }}</p>
                 {% endif %}
             </a>
