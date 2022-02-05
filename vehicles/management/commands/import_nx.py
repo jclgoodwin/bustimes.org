@@ -68,8 +68,11 @@ class Command(ImportLiveVehiclesCommand):
             sleep(self.sleep)
 
     def get_vehicle(self, item):
-        return self.vehicles.get_or_create(source=self.source, operator_id=self.operators[0],
-                                           code=item['live']['vehicle'])
+        return self.vehicles.get_or_create(
+            {'source': self.source},
+            operator_id=self.operators[0],
+            code=item['live']['vehicle']
+        )
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
