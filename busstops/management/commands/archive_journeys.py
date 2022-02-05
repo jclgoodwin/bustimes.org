@@ -31,10 +31,8 @@ class Command(BaseCommand):
             for journey in journeys:
                 pipe.exists(f'journey{journey.id}')
             exists = pipe.execute()
-            #exists = redis_client.exists(*[f'journey{journey.id}' for journey in journeys])
-            #print(exists)
 
-            for i, journey in enumerate(tqdm(journeys)):
+            for i, journey in enumerate(tqdm(journeys, disable=None)):
                 if not exists[i]:
                     continue
                 redis_key = f'journey{journey.id}'
@@ -43,9 +41,9 @@ class Command(BaseCommand):
                 last = json.loads(locations[-1])
                 age = timezone.now() - parse_datetime(last[0])
                 if age > one_day:
-                            locations = b'\n'.join(locations)
-                            path = journey.get_path()
-                            path.write_bytes(locations)
-                            redis_client.delete(redis_key)
+                    locations = b'\n'.join(locations)
+                    path = journey.get_path()
+                    path.write_bytes(locations)
+                    redis_client.delete(redis_key)
 
             while_ago += timedelta(days=1)
