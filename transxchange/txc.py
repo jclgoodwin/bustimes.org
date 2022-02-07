@@ -57,6 +57,7 @@ class RouteLink:
         if lon is not None:
             lat = element.findtext('Latitude')
             return GEOSGeometry(f"POINT({lon} {lat})")
+
         easting = element.findtext('Easting')
         northing = element.findtext('Northing')
         return GEOSGeometry(f"SRID=27700;POINT({easting} {northing})")
@@ -69,8 +70,10 @@ class RouteLink:
         if not locations:
             locations = element.findall('Track/Mapping/Location')
 
-        locations = (self.get_point(location) for location in locations)
+        locations = [self.get_point(location) for location in locations]
         self.track = LineString(*locations)
+        if locations:
+            self.track.srid = locations[0].srid
 
 
 class JourneyPattern:
