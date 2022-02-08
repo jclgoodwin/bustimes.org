@@ -1058,7 +1058,8 @@ class Command(BaseCommand):
                     if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
                         key = (route_link.from_stop, route_link.to_stop)
                         if key in existing_route_links:
-                            if key not in existing_route_links:
+                            if key not in route_links_to_update:
+                                route_links_to_update[key] = existing_route_links[key]
                                 route_links_to_update[key].geometry = route_link.track
                         else:
                             route_links_to_create[key] = RouteLink(
@@ -1098,7 +1099,7 @@ class Command(BaseCommand):
 
         stops = StopPoint.objects.annotate(
             atco_code_upper=Upper('atco_code')
-        ).filter(atco_code_upper__in=stops).only('atco_code')
+        ).filter(atco_code_upper__in=stops).only('atco_code').order_by()
 
         stops = {
             stop.atco_code_upper: stop
@@ -1112,8 +1113,7 @@ class Command(BaseCommand):
                     logger.warning(f"{atco_code} 0{atco_code}")
                     stops[atco_code_upper] = stops[f"0{atco_code}"]
                 else:
-                    # logger.warning(f"{atco_code} {stop}")
-                    stops[atco_code.upper()] = str(stop)[:255]
+                    stops[atco_code_upper] = str(stop)[:255]  # stop not in NaPTAN
 
         return stops
 

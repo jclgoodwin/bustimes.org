@@ -8,9 +8,13 @@ from unittest.mock import patch
 import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator, DataSource, OperatorCode, Service, ServiceCode, StopPoint, StopArea, AdminArea
+from busstops.models import (
+    Region, Operator, DataSource, OperatorCode, Service, ServiceCode, StopPoint, StopArea, AdminArea
+)
 from vehicles.models import VehicleJourney
-from ...models import Route, BankHoliday, CalendarBankHoliday, BankHolidayDate, VehicleType, Block, Garage
+from ...models import (
+    Route, BankHoliday, CalendarBankHoliday, BankHolidayDate, VehicleType, Block, Garage, RouteLink
+)
 
 
 FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
@@ -302,6 +306,24 @@ class ImportBusOpenDataTest(TestCase):
 
         StopPoint.objects.bulk_create([
             StopPoint(
+                atco_code='0500HYAXL033',
+                common_name='Folly Close',
+                indicator='opp',
+                active=True
+            ),
+            StopPoint(
+                atco_code='0500HYAXL007',
+                common_name='Motel',
+                indicator='opp',
+                active=True
+            ),
+            StopPoint(
+                atco_code='0500HFOLK002',
+                common_name='Folksworth Road',
+                indicator='opp',
+                active=True
+            ),
+            StopPoint(
                 atco_code="0500HSTIV054",
                 common_name="St John's Road",
                 indicator="opp",
@@ -334,11 +356,17 @@ class ImportBusOpenDataTest(TestCase):
                     'bustimes.management.commands.import_bod.download_if_changed',
                     return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
                 ) as download_if_changed:
-                    with self.assertNumQueries(148):
+                    with self.assertNumQueries(150):
                         call_command('import_bod', 'stagecoach')
                     download_if_changed.assert_called_with(
                         path, 'https://opendata.stagecoachbus.com/' + archive_name
                     )
+
+                    route_links = RouteLink.objects.order_by('id')
+                    self.assertEqual(len(route_links), 2)
+                    route_link = route_links[0]
+                    route_link.geometry = "SRID=4326;LINESTRING(0 0, 0 0)"  # should be overwritten later
+                    route_link.save()
 
                     with self.assertNumQueries(4):
                         call_command('import_bod', 'stagecoach')
@@ -346,8 +374,11 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(0):
                         call_command('import_bod', 'stagecoach', 'scox')
 
-                    with self.assertNumQueries(90):
+                    with self.assertNumQueries(92):
                         call_command('import_bod', 'stagecoach', 'sccm')
+
+                    route_link.refresh_from_db()
+                    self.assertEqual(len(route_link.geometry.coords), 32)
 
                 source = DataSource.objects.filter(name='Stagecoach East').first()
                 response = self.client.get(f'/sources/{source.id}/routes/')

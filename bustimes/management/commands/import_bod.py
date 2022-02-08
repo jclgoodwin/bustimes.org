@@ -109,13 +109,13 @@ def get_bus_open_data_paramses(api_key, operator):
 
     base_params = {
         'api_key': api_key,
-        'status': ['published', 'expiring'],
+        'status': 'published',
     }
 
     for search in searches:
         yield {
             **base_params,
-            'search': search
+            'search': search,
         }
 
     for nocs in nocses:

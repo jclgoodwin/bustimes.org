@@ -16,7 +16,7 @@ from django.contrib.gis.geos import Point
 
 from busstops.models import Region, StopPoint, Service, Operator, OperatorCode, DataSource, ServiceColour
 from vosa.models import Licence, Registration
-from ...models import Route, Trip, Calendar, CalendarDate, BankHoliday, BankHolidayDate, Garage
+from ...models import Route, Trip, Calendar, CalendarDate, BankHoliday, BankHolidayDate, Garage, RouteLink
 from ..commands import import_transxchange
 
 
@@ -65,6 +65,9 @@ class ImportTransXChangeTest(TestCase):
                     ('2900A181', '', '', 0, 0),
                     ('090079682980', 'Victoria Road', "", 0, 0),
                     ('090079680705', 'Booths', "", 0, 0),
+                    ('260006514', 'Sports Ground', 'opp', -1.122736635, 52.668973839),
+                    ('260006515', 'Acorn Close', 'adj', -1.121080085, 52.671200066),
+                    ('260006516', 'Church Hill', 'opp', -1.121200186, 52.673322583),
             )
         )
 
@@ -625,6 +628,8 @@ class ImportTransXChangeTest(TestCase):
         garage = Garage.objects.last()
         self.assertEqual(garage.code, "GR")
         self.assertEqual(garage.name, "")
+
+        self.assertEqual(RouteLink.objects.all().count(), 6)
 
     @time_machine.travel('2021-06-28')
     def test_difficult_layout(self):
