@@ -93,6 +93,14 @@ class ViewsTests(TestCase):
             region=cls.north
         )
 
+        Service.objects.bulk_create(
+            [Service(
+                line_name=str(i),
+                description='Sandwich - Deal',
+                current=True
+            ) for i in range(1, 30)]
+        )
+
         cls.chariots = Operator.objects.create(
             id='AINS',
             name='Ainsley\'s Chariots',
@@ -165,6 +173,24 @@ class ViewsTests(TestCase):
 
         response = self.client.get('/search?q=+')
         self.assertNotContains(response, 'found for')
+
+        services = Service.objects.with_documents()
+        for service in services:
+            service.search_vector = service.document
+        Service.objects.bulk_update(services, ['search_vector'])
+
+        response = self.client.get('/search?q=sandwich+deal')
+        self.assertContains(response, "Sandwich - Deal")
+        self.assertContains(
+            response,
+            '<p class="next"><a href="?q=sandwich deal&amp;page=2#services" rel="next">Page 2 &rarr;</a>'
+        )
+
+        response = self.client.get('/search?q=sandwich+deal&page=2')
+        self.assertContains(
+            response,
+            '<p class="previous"><a href="?q=sandwich deal&amp;page=1#services" rel="prev">&larr; Page 1</a>'
+        )
 
     def test_postcode(self):
         with vcr.use_cassette(str(VCR_DIR / 'postcode.yaml')):

@@ -19,8 +19,6 @@ class Command(ImportLiveVehiclesCommand):
 
     def update(self):
         items = self.get_items()
-        if not items:
-            return 300  # wait five minutes
 
         # encourage items to be grouped by operator
         items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])

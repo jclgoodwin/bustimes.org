@@ -511,6 +511,9 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
 
+        if not response.ok:
+            return ()
+
         data = self.items_from_response(response.content)
 
         self.when = data['Siri']['ServiceDelivery']['ResponseTimestamp']
