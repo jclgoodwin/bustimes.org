@@ -5,7 +5,7 @@
 
     // checkbox ranges of rows
     var lastInput,
-        table = document.querySelector('.fleet'),
+        table = document.querySelector('table'),
         checkboxes = table.querySelectorAll('input');
 
     function handleBoxCheck(event) {

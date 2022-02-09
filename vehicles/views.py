@@ -602,9 +602,24 @@ def is_staff(user):
     return user.is_staff
 
 
-@require_GET
 @login_required
 def vehicle_edits(request):
+    if request.method == "POST":
+        assert request.user.is_staff
+        edits = VehicleEdit.objects.filter(id__in=request.POST.getlist("edit"))
+        action = request.POST["action"]
+        for edit in edits:
+            if action == "apply":
+                edit.apply()
+            else:
+                if action == "approve":
+                    edit.approved = True
+                else:
+                    assert action == "disapprove"
+                    edit.approved = False
+        if action != "apply":
+            VehicleEdit.objects.bulk_update(edits, fields=["approved"])
+
     edits = VehicleEdit.objects.filter(approved=None).order_by('-id')
 
     edits = edits.select_related('livery', 'vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey')

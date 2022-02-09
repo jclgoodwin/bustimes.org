@@ -87,6 +87,9 @@ class EditVehiclesForm(forms.Form):
             del self.fields['colours']
             del self.fields['other_colour']
 
+        if user.id == 124:
+            self.fields['withdrawn'].disabled = True
+
 
 class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle

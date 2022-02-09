@@ -37,10 +37,19 @@
     </form>
 </div>
 
+{% if user.is_staff %}
+    <form id="edits" method="POST">
+
+    <input type="submit" name="action" value="apply">
+    <input type="submit" name="action" value="approve">
+    <input type="submit" name="action" value="disapprove">
+{% endif %}
+
 <div class="table-wrapper">
     <table class="compact">
         <thead>
             <tr>
+                {% if user.is_staff %}<th scope="col"></th>{% endif %}
                 <th scope="col">date</th>
                 <th scope="col">user</th>
                 <th scope="col">vehicle</th>
@@ -48,11 +57,13 @@
                 <th scope="col"></th>
                 <th scope="col">proposed changes</th>
                 <th scope="col"><a href="?{{ toggle_order.score }}">score</a></th>
+                <th scope="col" colspan="4"></th>
             </tr>
         </thead>
         <tbody>
             {% for edit in edits %}
                 <tr>
+                    {% if user.is_staff %}<td><input type="checkbox" name="edit" value="{{ edit.id }}"></td>{% endif %}
                     <td>{{ edit.datetime }}</td>
                     <td class="link">
                         <a href="?user={{ edit.user_id }}">
@@ -97,6 +108,14 @@
         </tbody>
     </table>
 </div>
+
+{% if user.is_staff %}
+    <input type="submit" name="action" value="apply">
+    <input type="submit" name="action" value="approve">
+    <input type="submit" name="action" value="disapprove">
+
+    </form>
+{% endif %}
 
 {% if edits.has_other_pages %}
     <nav>
@@ -163,5 +182,8 @@
     }
 })();
 </script>
+
+{% load static %}
+<script async src="{% static 'js/edit-vehicles.js' %}"></script>
 
 {% endblock %}
