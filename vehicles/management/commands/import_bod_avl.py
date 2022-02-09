@@ -1,12 +1,9 @@
-import io
-import zipfile
 import xmltodict
 import functools
 from django.core.cache import cache
 from django.conf import settings
 from django.db import IntegrityError
 from datetime import timedelta, date
-from xml.parsers.expat import ExpatError
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Q, Exists, OuterRef
@@ -328,8 +325,6 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
-        if journey_ref == 'UNKNOWN':
-            journey_ref = None
 
         if not journey_ref:
             try:
@@ -515,32 +510,8 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
-        if not response.ok:
-            if 'datafeed' in self.source.url:
-                print(response.content.decode())
-            else:
-                print(response)
-            return
 
-        if 'datafeed' in self.source.url:
-            try:
-                data = self.items_from_response(response.content)
-            except ExpatError:
-                print(response.content.decode())
-                return
-        else:
-            try:
-                with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                    assert archive.namelist() == ['siri.xml']
-                    with archive.open('siri.xml') as open_file:
-                        try:
-                            data = self.items_from_response(open_file)
-                        except ExpatError:
-                            print(open_file.read())
-                            return
-            except zipfile.BadZipFile:
-                print(response.content.decode())
-                return
+        data = self.items_from_response(response.content)
 
         self.when = data['Siri']['ServiceDelivery']['ResponseTimestamp']
         self.source.datetime = parse_datetime(self.when)
