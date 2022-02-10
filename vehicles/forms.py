@@ -122,7 +122,7 @@ class EditVehicleForm(EditVehiclesForm):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
         if not user.is_staff:
-            if vehicle.fleet_code and vehicle.fleet_code in vehicle.code.replace('_', ' ').split():
+            if vehicle.fleet_code and vehicle.fleet_code in vehicle.code.replace('_', ' ').replace('-', ' ').split():
                 self.fields['fleet_number'].disabled = True
                 self.fields['fleet_number'].help_text = f"""The ticket machine code ({vehicle.code})
 can’t be contradicted"""
