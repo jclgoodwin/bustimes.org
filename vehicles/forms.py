@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 
 from django import forms
@@ -121,12 +122,12 @@ class EditVehicleForm(EditVehiclesForm):
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
-        if not user.is_staff:
-            if vehicle.fleet_code and vehicle.fleet_code in vehicle.code.replace('_', ' ').replace('-', ' ').split():
+        if not user.is_staff and vehicle.fleet_code:
+            if vehicle.fleet_code in re.split(r'\W+', vehicle.code):
                 self.fields['fleet_number'].disabled = True
                 self.fields['fleet_number'].help_text = f"""The ticket machine code ({vehicle.code})
 can’t be contradicted"""
-            elif vehicle.fleet_code and vehicle.latest_journey and vehicle.latest_journey.data:
+            elif vehicle.latest_journey and vehicle.latest_journey.data:
                 try:
                     vehicle_unique_id = vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId']
                 except (KeyError, TypeError):
@@ -138,7 +139,8 @@ can’t be contradicted"""
                             self.fields['fleet_number'].help_text = f"""The ticket machine code ({vehicle_unique_id})
 can’t be contradicted"""
 
-            if vehicle.reg and vehicle.reg in vehicle.code.replace('_', '').replace(' ', '').replace('-', ''):
+        if not user.is_staff:
+            if vehicle.reg and vehicle.reg in re.sub(r'\W+', '', vehicle.code):
                 self.fields['reg'].disabled = True
                 self.fields['reg'].help_text = f"The ticket machine code ({vehicle.code}) can’t be contradicted"
 
