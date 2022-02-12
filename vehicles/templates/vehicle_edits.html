@@ -49,31 +49,7 @@
     </form>
 {% endif %}
 
-{% if edits.has_other_pages %}
-    <nav>
-        <ul class="horizontal">
-            {% if edits.has_previous %}
-                <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}">1</a></li>
-                {% if edits.previous_page_number > 1 %}
-                    {% if edits.previous_page_number > 2 %}
-                        <li>&hellip;</li>
-                    {% endif %}
-                    <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ edits.previous_page_number }}">{{ edits.previous_page_number }}</a></li>
-                {% endif %}
-            {% endif %}
-
-            <li>{{ edits.number }}</li>
-
-            {% if edits.has_next %}
-                {% if edits.next_page_number < edits.paginator.num_pages %}
-                    <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ edits.next_page_number }}">{{ edits.next_page_number }}</a></li>
-                    <li>&hellip;</li>
-                {% endif %}
-                <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ edits.paginator.num_pages }}">{{ edits.paginator.num_pages }}</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-{% endif %}
+{% include 'pagination.html' with page=edits hash='#services' %}
 
 {% endblock %}
 

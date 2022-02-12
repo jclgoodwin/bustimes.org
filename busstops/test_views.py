@@ -183,13 +183,13 @@ class ViewsTests(TestCase):
         self.assertContains(response, "Sandwich - Deal")
         self.assertContains(
             response,
-            '<p class="next"><a href="?q=sandwich deal&amp;page=2#services" rel="next">Page 2 &rarr;</a>'
+            '<li><a href="?q=sandwich+deal&amp;page=2#services">2</a></li>'
         )
 
         response = self.client.get('/search?q=sandwich+deal&page=2')
         self.assertContains(
             response,
-            '<p class="previous"><a href="?q=sandwich deal&amp;page=1#services" rel="prev">&larr; Page 1</a>'
+            '<li><a href="?q=sandwich+deal#services">1</a></li>'
         )
 
     def test_postcode(self):

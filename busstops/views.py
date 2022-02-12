@@ -891,6 +891,10 @@ def search(request):
 
             services = services.annotate(operators=ArrayAgg('operator__name', distinct=True))
 
+            context['parameters'] = urlencode({
+                'q': query_text
+            })
+
             for key, queryset in (
                 ('localities', localities),
                 ('operators', operators),

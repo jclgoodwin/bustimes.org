@@ -1,11 +1,25 @@
 {% if page.has_other_pages %}
-<nav>
-    {% if page.has_previous %}
-        <p class="previous"><a href="?{% if query %}q={{ query }}&amp;{% elif parameters %}{{ parameters }}&amp;{% endif %}page={{ page.previous_page_number }}{{ hash }}" rel="prev">&larr; Page {{ page.previous_page_number }}</a>
-    {% endif %}
+    <nav>
+        <ul class="horizontal">
+            {% if page.has_previous %}
+                <li><a href="{% if parameters %}?{{ parameters }}{% endif %}{{ hash }}">1</a></li>
+                {% if page.previous_page_number > 1 %}
+                    {% if page.previous_page_number > 2 %}
+                        <li>&hellip;</li>
+                    {% endif %}
+                    <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ page.previous_page_number }}{{ hash }}">{{ page.previous_page_number }}</a></li>
+                {% endif %}
+            {% endif %}
 
-    {% if page.has_next %}
-        <p class="next"><a href="?{% if query %}q={{ query }}&amp;{% elif parameters %}{{ parameters }}&amp;{% endif %}page={{ page.next_page_number }}{{ hash }}" rel="next">Page {{ page.next_page_number }} &rarr;</a>
-    {% endif %}
-</nav>
+            <li>{{ page.number }}</li>
+
+            {% if page.has_next %}
+                {% if page.next_page_number < page.paginator.num_pages %}
+                    <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ page.next_page_number }}{{ hash }}">{{ page.next_page_number }}</a></li>
+                    <li>&hellip;</li>
+                {% endif %}
+                <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ page.paginator.num_pages }}{{ hash }}">{{ page.paginator.num_pages }}</a></li>
+            {% endif %}
+        </ul>
+    </nav>
 {% endif %}
