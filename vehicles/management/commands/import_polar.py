@@ -56,6 +56,8 @@ class Command(ImportLiveVehiclesCommand):
 
         if len(code) > 4 and code[0].isalpha() and code[1] == '_':  # McGill
             defaults['fleet_code'] = code.replace('_', ' ')
+        elif code.isdigit():
+            defaults['fleet_code'] = code
 
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)

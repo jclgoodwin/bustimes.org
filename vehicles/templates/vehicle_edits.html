@@ -25,6 +25,8 @@
     </form>
 </div>
 
+{% if edits %}
+
 {% if user.is_staff %}
     <form id="edits" method="POST">
 
@@ -49,7 +51,9 @@
     </form>
 {% endif %}
 
-{% include 'pagination.html' with page=edits hash='#services' %}
+{% include 'pagination.html' with page=edits %}
+
+{% endif %}
 
 {% endblock %}
 

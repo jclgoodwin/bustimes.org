@@ -48,4 +48,6 @@ class PolarTest(TestCase):
 
         vehicle = Vehicle.objects.get()
         self.assertEqual(str(vehicle), '3635')
+        self.assertEqual(vehicle.fleet_code, '3635')
+        self.assertEqual(vehicle.fleet_number, 3635)
         self.assertEqual(str(vehicle.operator), 'Loaches’ Coaches')

@@ -154,7 +154,6 @@ def do_revision(vehicle, data, user):
         if user.trusted or data['fleet_number'] and data['fleet_number'] in re.split('_- ', vehicle.code):
             revision.changes['fleet number'] = f"-{vehicle.fleet_code}\n+{data['fleet_number']}"
             vehicle.fleet_code = data['fleet_number']
-            vehicle.fleet_number = re.sub(r'[^\d]', '', vehicle.fleet_code)
             changed_fields.append('fleet_code')
             del data['fleet_number']
 
@@ -166,7 +165,7 @@ def do_revision(vehicle, data, user):
             del data['reg']
 
     if user.trusted:
-        if 'previous_reg' in data and not vehicle.data and match_reg(data['previous_reg']):
+        if 'previous_reg' in data and match_reg(data['previous_reg']):
             revision.changes['previous reg'] = f"-\n+{data['previous_reg']}"
             vehicle.data = {
                 'Previous reg': data['previous_reg']
