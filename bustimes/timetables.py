@@ -2,7 +2,7 @@ import datetime
 from django.utils.timezone import localdate
 from difflib import Differ
 from functools import cmp_to_key, partial, cached_property
-from django.db.models import Prefetch, Q, OuterRef
+from django.db.models import Prefetch, Q
 from django.contrib.postgres.aggregates import ArrayAgg
 from sql_util.utils import Exists
 from .utils import format_timedelta
@@ -197,7 +197,9 @@ class Timetable:
         if not self.calendar:
             if self.calendars:
                 calendar_ids = [calendar.id for calendar in self.calendars]
-                trips = trips.filter(Exists(get_calendars(self.date, calendar_ids).filter(trip=OuterRef('id'))))
+                trips = trips.filter(
+                    Q(calendar__in=get_calendars(self.date, calendar_ids)) | Q(calendar=None)
+                )
             else:
                 trips = trips.filter(calendar=None)
 
