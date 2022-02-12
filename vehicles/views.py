@@ -473,15 +473,18 @@ def service_vehicles_history(request, slug):
 
 class VehicleDetailView(DetailView):
     model = Vehicle
-    queryset = model.objects.select_related('operator', 'operator__region',
-                                            'vehicle_type', 'livery').prefetch_related('features')
+    queryset = model.objects.select_related(
+        'operator', 'operator__region', 'vehicle_type', 'livery'
+    ).prefetch_related('features')
     slug_field = 'reg__iexact'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         journeys = self.object.vehiclejourney_set.select_related('service')
-        journeys = journeys.annotate(line_name=Coalesce('trip__route__line_name', 'service__line_name', 'route_name'))
+        journeys = journeys.annotate(
+            line_name=Coalesce('trip__route__line_name', 'service__line_name', 'route_name')
+        )
 
         context = {
             **context,
@@ -543,11 +546,20 @@ def edit_vehicle(request, vehicle_id):
         initial=initial, operator=vehicle.operator, vehicle=vehicle, user=request.user
     )
 
+    pending_edits = vehicle.vehicleedit_set.filter(approved=None)
+
     if request.POST:
         if not form.has_really_changed():
             form.add_error(None, 'You haven\'t changed anything')
         elif form.is_valid():
             data = {key: form.cleaned_data[key] for key in form.changed_data}
+            for edit in pending_edits:
+                if edit.livery_id and 'colours' in data and str(edit.livery_id) == data['colours']:
+                    form.add_error('colours', "There's already a pending edit for that")
+                if edit.vehicle_type and 'vehicle_type' in data and edit.vehicle_type == str(data['vehicle_type']):
+                    form.add_error('vehicle_type', "There's already a pending edit for that")
+
+        if form.is_valid():
             now = timezone.now()
             try:
                 revision = do_revision(vehicle, data, request.user)
@@ -581,7 +593,7 @@ def edit_vehicle(request, vehicle_id):
                             VehicleEditFeature.objects.create(edit=edit, feature=feature, add=True)
 
     if form:
-        context['pending_edits'] = vehicle.vehicleedit_set.filter(approved=None).exists()
+        context['pending_edits'] = pending_edits
 
     if vehicle.operator:
         context['breadcrumb'] = [vehicle.operator, Vehicles(vehicle.operator), vehicle]

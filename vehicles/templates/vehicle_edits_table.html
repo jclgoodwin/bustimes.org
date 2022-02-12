@@ -1,0 +1,100 @@
+<table class="compact">
+    <thead>
+        <tr>
+            {% if user.is_staff and not vehicle %}<th scope="col"></th>{% endif %}
+            <th scope="col">date</th>
+            <th scope="col">user</th>
+            {% if not vehicle %}
+                <th scope="col">vehicle</th>
+                <th scope="col"><a href="?{{ toggle_order.vehicle }}">*</a></th>
+                <th scope="col"></th>
+            {% endif %}
+            <th scope="col">proposed changes</th>
+            <th scope="col">{% if toggle_order %}<a href="?{{ toggle_order.score }}">score</a>{% else %}score{% endif %}</th>
+            <th scope="col" colspan="4"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for edit in edits %}
+            <tr>
+                {% if user.is_staff and not vehicle %}<td><input type="checkbox" name="edit" value="{{ edit.id }}"></td>{% endif %}
+                <td>{{ edit.datetime }}</td>
+                <td class="link">
+                    <a href="/vehicles/edits?user={{ edit.user_id }}">
+                        {% if user.is_staff %}
+                            {{ edit.user.username }}
+                        {% else %}
+                            {{ edit.user }}
+                        {% endif %}
+                    </a>
+                </td>
+                {% if not vehicle %}
+                    <td class="link"><a href="{{ edit.vehicle.get_absolute_url }}">{{ edit.vehicle }}</a></td>
+                    <td>{{ edit.edit_count }}</td>
+                    <td><div class="livery{% if edit.vehicle.livery_id %} livery-{{ edit.vehicle.livery_id }}{% else %}" style="background:{{ edit.vehicle.get_livery }}{% endif %}"></div></td>
+                {% endif %}
+                <td>{% for key, value in edit.get_changes.items %}
+                    {% if key == 'features' %}
+                        {% for feature in value %}{{ feature|safe }}{% if not forloop.last %}, {% endif %}{% endfor %}
+                    {% elif key == 'colours' %}
+                        colours: <div class="livery" style="background:{{ edit.get_css }}"></div>
+                    {% elif key == 'livery_id' %}
+                        livery:
+                        {% if edit.vehicle.livery %}{{ edit.vehicle.livery.name }} to {% endif %}
+                        <div class="livery livery-{{ value }}"></div> {{ edit.livery.name }}
+                    {% elif key == 'notes' and value == 'Duplicate' %}
+                        <a href="/admin/vehicles/vehicle/?q={{ edit.vehicle.reg }}">Duplicate</a>
+                    {% else %}{{ key }}: {{ value }}
+                    {% endif %}
+                    <br>{% endfor %}
+                    {% if edit.url %}<div class="wrap">{{ edit.url|urlize }}</div>{% endif %}
+                </td>
+                <td class="score">{{ edit.score }}</td>
+                {% if user.is_staff %}
+                    <td><button class="action" data-url="{{ edit.id }}/apply" style="background:#0f0">👍 apply</button></td>
+                    <td><button class="action" data-url="{{ edit.id }}/approve">approve</button></td>
+                    <td><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</button></td>
+                {% else %}
+                    <td><button class="action" data-url="{{ edit.id }}/vote/up">👍</button></td>
+                    <td><button class="action" data-url="{{ edit.id }}/vote/down">👎</button></td>
+                {% endif %}
+                {% if not vehicle %}
+                    <td class="link">{{ edit.vehicle.get_flickr_link }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+(function () {
+    'use strict';
+
+    for (const button of document.querySelectorAll('button.action')) {
+        let row = button.parentElement.parentElement;
+        button.onclick = function(event) {
+            let url = '/vehicles/edits/' + this.dataset.url;
+            fetch(url, {
+                method: 'POST'
+            }).then(function(response) {
+                if (response.ok) {
+                    button.style.opacity = '.5';
+                    response.text().then(text => {
+                        if (text && !isNan(parseInt(text))) {
+                            row.querySelector('.score').innerText = text;
+                        }
+                    });
+                    if (url.endsWith('/up')) {
+                        button.style.transition = 'transform .5s';
+                        button.style.transform = 'translateY(-2em)';
+                    } else if (url.endsWith('/down')) {
+                        button.style.transition = 'transform .5s';
+                        button.style.transform = 'translateY(2em)';
+                    }
+                }
+            });
+            return false;
+        };
+    }
+})();
+</script>

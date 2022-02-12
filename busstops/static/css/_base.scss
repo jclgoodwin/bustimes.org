@@ -923,6 +923,16 @@ table {
     td {
         vertical-align: top;
     }
+
+    button {
+        border: 0;
+        border-radius: 0;
+        display: block;
+        margin: -.25em -.5em;
+        padding: .25em .5em;
+        position: static;
+        cursor: pointer;
+    }
 }
 
 .fleet {
@@ -1323,6 +1333,10 @@ input:not(:checked) + label {
 .message {
     border: 1px solid $border-color;
     padding: 1em;
+
+    p {
+        margin-top: 0;
+    }
 }
 
 .situation {
