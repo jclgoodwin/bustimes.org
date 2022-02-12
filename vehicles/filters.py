@@ -51,3 +51,14 @@ class VehicleEditFilter(FilterSet):
         if value == 'livery':
             return queryset.filter(~Q(livery=None) | ~Q(colours=''))
         return queryset.filter(~Q(**{value: ''}))
+
+
+class VehicleRevisionFilter(FilterSet):
+    vehicle__operator = ModelChoiceFilter(
+        label='Operator',
+        queryset=Operator.objects.filter(
+            Exists('vehicle')
+        ).only('name')
+    )
+    vehicle = NumberFilter()
+    user = NumberFilter()

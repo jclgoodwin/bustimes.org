@@ -575,7 +575,6 @@ class VehiclesTests(TestCase):
 
         # test user view
         response = self.client.get(self.staff_user.get_absolute_url())
-        self.assertContains(response, '1 other edit,')
         self.assertContains(response, 'Trent Barton')
 
     def test_vehicle_edit_3(self):

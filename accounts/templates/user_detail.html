@@ -11,14 +11,16 @@
     {% if object.trusted is False %}
         <p>They have been banned.</p>
     {% else %}
-        <p>{% if object.trusted %}They appear to be trustworthy, so they have the power to edit various information without moderation.
+        <p>{% if object.trusted %}They appear to be trustworthy, so they have the power to edit some bits of information without moderation.
         If you disagree{% else %}If you notice any vandalism etc{% endif %}, please <a href="/contact?message=User+{{ object.id }}">let us know</a>.</p>
     {% endif %}
 
-    <p>As well as the activity listed below, they have done {{ edits }} other edit{{ edits|pluralize }},
-    of which {{ approved }} ha{{ approved|pluralize:"s,ve" }} been approved,
-    {{ disapproved }} ha{{ disapproved|pluralize:"s,ve" }} been disapproved,
-    and <a href="/vehicles/edits?user={{ object.id }}">{{ pending }} {{ pending|pluralize:"is,are" }} pending</a>.</p>
+    <ul class="tabs">
+        <li>Recent changes</li>
+        <li><a href="/vehicles/edits?user={{ object.id }}">Pending vehicle edits</a></li>
+    </ul>
+
+    {% include 'pagination.html' with page=revisions %}
 
     {% include 'vehicle_revisions.html' with revisions=revisions by_user=object %}
 

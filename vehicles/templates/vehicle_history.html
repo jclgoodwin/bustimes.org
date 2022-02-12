@@ -20,8 +20,11 @@
 
     <h1>Recent changes</h1>
 
-    <p>This is a list of recent changes that people have made to certain vehicle details.</p>
-    <p>They haven’t been verified or moderated. 😮</p>
+    <form>
+        {{ filter.form.as_p }}
+
+        <p><input type="submit" value="Search"></p>
+    </form>
 {% endif %}
 
 {% include 'vehicle_revisions.html' with revisions=revisions %}

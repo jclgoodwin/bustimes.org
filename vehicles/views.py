@@ -31,7 +31,7 @@ from busstops.models import Operator, Service
 from bustimes.models import Garage, Trip, StopTime
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
-from .filters import VehicleEditFilter
+from . import filters
 from . import forms
 from .utils import redis_client, get_vehicle_edit, do_revision, do_revisions
 from .management.commands import import_bod_avl
@@ -646,7 +646,7 @@ def vehicle_edits(request):
         edits = edits.annotate(edit_count=edit_count)
         edits = edits.order_by(order, 'vehicle')
 
-    f = VehicleEditFilter(request.GET, queryset=edits)
+    f = filters.VehicleEditFilter(request.GET, queryset=edits)
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)
@@ -729,10 +729,18 @@ def vehicles_history(request):
         'vehicle', 'from_livery', 'to_livery', 'from_type', 'to_type', 'user'
     )
     revisions = revisions.order_by('-id')
-    paginator = Paginator(revisions, 100)
-    page = request.GET.get('page')
+
+    f = filters.VehicleRevisionFilter(request.GET, queryset=revisions)
+
+    if f.is_valid():
+        paginator = Paginator(f.qs, 100)
+        page = paginator.get_page(request.GET.get('page'))
+    else:
+        page = None
+
     return render(request, 'vehicle_history.html', {
-        'revisions': paginator.get_page(page)
+        'filter': f,
+        'revisions': page,
     })
 
 
