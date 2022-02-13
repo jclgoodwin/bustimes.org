@@ -98,7 +98,10 @@ SBDR:
     url: http://www.sbdar.co.uk
     phone: 01525 220044
 PCLT:
-    url: http://pcltravel.uk
+    name: Rural Link
+    url: ""
+    phone: ""
+    address: ""
 MBGD:
     url: https://uk.megabus.com
 MEGA:
