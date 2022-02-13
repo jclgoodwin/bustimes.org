@@ -847,7 +847,10 @@ class Command(BaseCommand):
                 services = Service.objects.order_by('-current', 'id').filter(q)
 
                 if operators:
-                    existing = services.filter(operator__in=operators)
+                    q = services.filter(operator__in=operators)
+                    if description and self.source.name.startswith('Stagecoach'):
+                        q |= Q(source=self.source, description=description)
+                    existing = services.filter(q)
                 else:
                     existing = services
 
