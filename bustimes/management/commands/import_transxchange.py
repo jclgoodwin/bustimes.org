@@ -790,7 +790,7 @@ class Command(BaseCommand):
             logger.info(f'skipping {filename} {txc_service.service_code} (Arriva London)')
             return
         elif self.source.name.startswith('Stagecoach'):
-            if operators and operators[0].parent != 'Stagecoach':
+            if operators and operators[0].parent != 'Stagecoach' and not operators[0].name.startswith('Stagecoach '):
                 logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
                 return
 
@@ -847,10 +847,7 @@ class Command(BaseCommand):
                 services = Service.objects.order_by('-current', 'id').filter(q)
 
                 if operators:
-                    if self.source.name.startswith('Stagecoach'):
-                        existing = services.filter(Q(source=self.source) | Q(operator__in=operators))
-                    else:
-                        existing = services.filter(operator__in=operators)
+                    existing = services.filter(operator__in=operators)
                 else:
                     existing = services
 

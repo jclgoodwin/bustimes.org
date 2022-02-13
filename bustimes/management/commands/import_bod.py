@@ -344,9 +344,12 @@ def stagecoach(operator=None):
         command.service_ids = set()
         command.route_ids = set()
         command.garages = {}
-        command.operators = {  # sort of ~homogenise~ all the different OperatorCodes in the data
-            o: nocs[0] for o in nocs
-        }
+        if noc == 'scmy':
+            command.operators = {}
+        else:
+            command.operators = {  # sort of ~homogenise~ all the different OperatorCodes in the data
+                o: nocs[0] for o in nocs
+            }
 
         sources = []
 
