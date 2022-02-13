@@ -42,8 +42,6 @@
                         livery:
                         {% if edit.vehicle.livery %}{{ edit.vehicle.livery.name }} to {% endif %}
                         <div class="livery livery-{{ value }}"></div> {{ edit.livery.name }}
-                    {% elif key == 'notes' and value == 'Duplicate' %}
-                        <a href="/admin/vehicles/vehicle/?q={{ edit.vehicle.reg }}">Duplicate</a>
                     {% else %}{{ key }}: {{ value }}
                     {% endif %}
                     <br>{% endfor %}

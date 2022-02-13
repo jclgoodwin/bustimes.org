@@ -25,6 +25,8 @@ class VehicleEditFilter(FilterSet):
             ('branding', 'Branding'),
             ('withdrawn', 'Withdrawn'),
             ('livery', 'Livery'),
+            ('previous_reg', 'Previous reg'),
+            ('features', 'Features')
         )
     )
     vehicle = NumberFilter()
@@ -50,6 +52,10 @@ class VehicleEditFilter(FilterSet):
     def change_filter(self, queryset, name, value):
         if value == 'livery':
             return queryset.filter(~Q(livery=None) | ~Q(colours=''))
+        if value == 'previous_reg':
+            return queryset.filter(Q(**{'changes__Previous reg__isnull': False}))
+        if value == 'features':
+            return queryset.filter(Exists('features'))
         return queryset.filter(~Q(**{value: ''}))
 
 
