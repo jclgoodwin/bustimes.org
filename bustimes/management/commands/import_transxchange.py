@@ -849,7 +849,7 @@ class Command(BaseCommand):
                 if operators:
                     q = Q(operator__in=operators)
                     if description and self.source.name.startswith('Stagecoach'):
-                        q |= Q(source=self.source, description=description)
+                        q = (Q(source=self.source) | q) & Q(description=description)
                     existing = services.filter(q)
                 else:
                     existing = services
