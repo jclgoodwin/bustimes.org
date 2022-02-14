@@ -35,8 +35,8 @@
     <tbody>
         {% for dataset in datasets %}
             <tr>
-                <td style="white-space:nowrap"><a href="{{ dataset.get_absolute_url }}">{{ dataset.nice_name }}</a></td>
-                <td style="white-space:nowrap">{{ dataset.datetime|date:"j M Y" }}</td>
+                <td class="link nowrap"><a href="{{ dataset.get_absolute_url }}">{{ dataset.nice_name }}</a></td>
+                <td class="nowrap">{{ dataset.datetime|date:"j M Y" }}</td>
                 <td>{{ dataset.description|linebreaksbr }}</td>
             </tr>
         {% endfor %}

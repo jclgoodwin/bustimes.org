@@ -130,13 +130,25 @@ details {
     color: $text-color;
 }
 
-form p + ul {  // multiple choice list
-    margin-top: -1em;
+.errorlist:not(.nonfield) {
+    color: #f00;
+    float: right;
+    font-size: .875em;
+    margin: 0;
+}
+
+.errorlist.nonfield {
+    float: none;
+    border: 1px solid #f00;
+    padding: 1em;
+}
+
+#id_colours,
+#id_features {
+    margin-top: -.5em;
 }
 
 #id_colours {
-    margin-top: -.5em;
-
     label {
         display: inline-block;
         padding: .25em;
@@ -318,18 +330,6 @@ input[type='number'],
 textarea {
     display: block;
     width: 100%;
-}
-
-.errorlist:not(.nonfield) {
-    color: #f00;
-    float: right;
-    font-size: .875em;
-}
-
-.errorlist.nonfield {
-    float: none;
-    border: 1px solid #f00;
-    padding: 1em;
 }
 
 input[type='text'],
@@ -1034,6 +1034,10 @@ thead {
         padding-right: calc(env(safe-area-inset-right) + 1rem);
         white-space: nowrap;
     }
+}
+
+.nowrap {
+    white-space: nowrap;
 }
 
 .timetable-wrapper-wrapper {

@@ -17,11 +17,11 @@
             </div>
         {% endif %}
         {% if situation.text %}
-            {{ situation.text|linebreaks }}
+            {{ situation.text|linebreaks|urlize }}
         {% endif %}
         {% for consequence in situation.consequences %}
             {% ifchanged consequence.text %}{% if consequence.text %}
-                {{ consequence.text|linebreaks }}
+                {{ consequence.text|linebreaks|urlize }}
             {% endif %}{% endifchanged %}
         {% endfor %}
         {% for link in situation.link_set.all %}
