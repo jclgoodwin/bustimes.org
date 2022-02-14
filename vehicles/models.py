@@ -177,12 +177,13 @@ class Vehicle(models.Model):
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
     colours = models.CharField(max_length=255, blank=True)
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
-    name = models.CharField(max_length=255, blank=True)
-    branding = models.CharField(max_length=255, blank=True)
-    notes = models.CharField(max_length=255, blank=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    branding = models.CharField(max_length=255, null=True, blank=True)
+    notes = models.CharField(max_length=255, null=True, blank=True)
     latest_journey = models.OneToOneField(
         'VehicleJourney', models.SET_NULL, null=True, blank=True, editable=False, related_name='latest_vehicle'
     )
+    latest_journey_data = models.JSONField(null=True, blank=True)
     features = models.ManyToManyField(VehicleFeature, blank=True)
     withdrawn = models.BooleanField(default=False)
     data = models.JSONField(null=True, blank=True)
@@ -561,6 +562,14 @@ class VehicleEditVote(models.Model):
         unique_together = ('by_user', 'for_edit')
 
 
+class VehicleRevisionFeature(models.Model):
+    feature = models.ForeignKey(VehicleFeature, models.CASCADE)
+    revision = models.ForeignKey('VehicleRevision', models.CASCADE)
+    add = models.BooleanField(default=True)
+
+    __str__ = VehicleEditFeature.__str__
+
+
 class VehicleRevision(models.Model):
     datetime = models.DateTimeField()
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
@@ -573,6 +582,7 @@ class VehicleRevision(models.Model):
     changes = models.JSONField(null=True, blank=True)
     message = models.TextField(blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
+    features = models.ManyToManyField(VehicleFeature, blank=True, through=VehicleRevisionFeature)
 
     def __str__(self):
         return ', '.join(

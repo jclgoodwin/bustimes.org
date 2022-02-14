@@ -1,4 +1,5 @@
-from django.db.models.fields import EmailField, BooleanField
+from django.db import models
+
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.urls import reverse
 
@@ -8,9 +9,16 @@ class CustomUserManager(UserManager):
         return self.get(email__iexact=username)
 
 
+class OperatorUser(models.Model):
+    operator = models.ForeignKey('busstops.Operator', models.CASCADE)
+    user = models.ForeignKey('User', models.CASCADE)
+    staff = models.BooleanField(default=False)
+
+
 class User(AbstractUser):
-    email = EmailField(unique=True, verbose_name='email address')
-    trusted = BooleanField(null=True)
+    email = models.EmailField(unique=True, verbose_name='email address')
+    trusted = models.BooleanField(null=True)
+    operators = models.ManyToManyField('busstops.Operator', blank=True, through=OperatorUser)
 
     objects = CustomUserManager()
 

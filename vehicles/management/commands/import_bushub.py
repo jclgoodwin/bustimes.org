@@ -9,6 +9,7 @@ class Command(ImportLiveVehiclesCommand):
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('source_name', type=str)
+        ImportLiveVehiclesCommand.add_arguments(parser)
 
     def handle(self, source_name, **options):
         self.source_name = source_name
