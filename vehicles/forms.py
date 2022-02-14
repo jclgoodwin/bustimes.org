@@ -8,7 +8,7 @@ from django.db.models import Count, Q, Exists, OuterRef
 
 from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
-from .fields import RegField
+from . import fields
 
 
 def get_livery_choices(operator, vehicle=None):
@@ -49,6 +49,13 @@ class EditVehiclesForm(forms.Form):
     other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False, initial='#ffffff')
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
+    summary = fields.SummaryField(
+        required=False,
+        max_length=255,
+        help_text="""Briefly explain your changes,
+if necessary.
+E.g. how you know a vehicle has been withdrawn or repainted,
+link to a picture to prove it""")
 
     def clean_other_colour(self):
         if self.cleaned_data['other_colour']:
@@ -96,17 +103,12 @@ class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle
     """
     fleet_number = forms.CharField(required=False, max_length=24)
-    reg = RegField(label='Number plate', required=False, max_length=24)
+    reg = fields.RegField(label='Number plate', required=False, max_length=24)
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
     name = forms.CharField(label='Vehicle name', required=False, max_length=70)
-    previous_reg = RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
+    previous_reg = fields.RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
     notes = forms.CharField(required=False, max_length=255)
-    summary = forms.CharField(help_text="""Briefly explain your changes,
-        if you think it’s necessary,
-        e.g. how you know a vehicle has been withdrawn or repainted,
-        link to a picture to prove it""",
-                              widget=forms.Textarea(attrs={'rows': 6}), required=False, max_length=255)
     field_order = ['withdrawn', 'spare_ticket_machine',
                    'fleet_number', 'reg',
                    'operator', 'vehicle_type',

@@ -359,7 +359,15 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, 'already')
 
         # edit nothing but summary
-        initial['summary'] = 'Poo poo pants'
+        initial['summary'] = (
+            "Poo poo pants\r\r\n" "https://www.flickr.com/pho"
+            "tos/goodwinjoshua/51046126023/in/photolist-2n3qgFa-2n2eJqm-2mL2ptW-2k"
+            "LLJR6-2hXgjnC-2hTkN9R-2gRxwqk-2g3ut3U-29p2ZiJ-ZrgH1M-WjEYtY-SFzez8-Sh"
+            "KDfn-Pc9Xam-MvcHsg-2mvhSdj-FW3FiA-z9Xy5u-v8vKmD-taSCD6-uJFzob-orkudc-"
+            "mjXUYS-i2nbH2-hyrrxD-fabgxp-fbM7Gf-eR4fGA-eHtfHb-eAreVh-ekmQ1E-e8sxcb"
+            "-aWWgKX-aotzn6-aiadaL-adWEKk/ blah"
+        )
+
         with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertFalse(response.context['form'].has_really_changed())
@@ -374,11 +382,15 @@ class VehiclesTests(TestCase):
         self.assertContains(response, 'Changed fleet number from 1 to 2')
         self.assertContains(response, 'I’ll update the other details')
         revision = response.context['revision']
-        self.assertEqual(revision.message, 'Poo poo pants')
+        self.assertEqual(revision.message, """Poo poo pants
+
+https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
 
         edit = response.context['edit']
         self.assertEqual(edit.colours, '')
-        self.assertEqual(edit.url, 'Poo poo pants')
+        self.assertEqual(edit.url, """Poo poo pants
+
+https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertEqual(edit.get_changes(), {
             'Previous reg': 'COCK'
         })
