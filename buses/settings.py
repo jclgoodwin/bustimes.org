@@ -591,7 +591,6 @@ BOD_OPERATORS = [
     ('BRYL', 'EM', {}, False),
     ('MDCL', 'EM', {}, False),
     ('NDTR', 'EM', {}, False),
-    ('NOCT', 'EM', {}, False),
 
     ('RELD', 'Y', {}, False),
     ('SSSN', 'Y', {}, False),
@@ -720,7 +719,7 @@ TICKETER_OPERATORS = [
     ('SE', ['Vectare', 'VECT']),
     ('SE', ['FALC'], 'Falcon Buses'),
 
-    ('EM', ['NOCT'], 'CT4N'),
+    # ('EM', ['NOCT'], 'CT4N'),
     ('WM', ['LMST'], 'LMS Travel'),
     ('SE', ['ENSB'], 'Ensignbus'),
     ('EA', ['AMBS'], 'Ambassador Travel'),
