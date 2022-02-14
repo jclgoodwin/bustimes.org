@@ -15,20 +15,20 @@ header {
             padding: 0;
             position: relative;
             width: 8em;
+        }
 
-            input {
-                border: 1px solid $brand-color-darker;
-                border-bottom-left-radius: .5em;
-                border-top-left-radius: .5em;
-                left: 0;
-                padding: .25em .5em;
-                top: 0;
-                width: 100%;
-            }
+        input[type='search'] {
+            border: 1px solid $brand-color-darker;
+            border-bottom-left-radius: .5em;
+            border-top-left-radius: .5em;
+            left: 0;
+            top: 0;
+            width: 100%;
 
-            input:focus {
+            &:focus {
                 border-width: 1px;
             }
+
         }
 
         input[type='submit'] {

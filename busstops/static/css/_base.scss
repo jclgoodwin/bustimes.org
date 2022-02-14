@@ -6,7 +6,7 @@ body {
     // http://blog.55minutes.com/2012/04/iphone-text-resizing/
     -webkit-text-size-adjust: 100%;
     color: $text-color;
-    font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 16px;
     line-height: 1.5;
     margin: 0;
@@ -76,6 +76,13 @@ label {
 
 summary {
     font-weight: bold;
+}
+
+summary::marker {
+    color: $border-color;
+}
+
+details {
     margin: 1em 0;
 }
 
@@ -207,6 +214,7 @@ header {
             padding-left: 0;
 
             input {
+                border-radius: 0;
                 margin: 0;
                 position: absolute;
                 top: -3em;
@@ -336,12 +344,12 @@ textarea {
     appearance: none;
     background: #fff;
     border: 1px solid $border-color;
-    border-radius: 0;
+    border-radius: .5em;
     box-sizing: border-box;
     color: inherit;
     font: inherit;
     outline: 0;
-    padding: .25em;
+    padding: .25em .5em;
 
     &:focus {
         border-color: $border-color-darker;
@@ -373,7 +381,7 @@ select {
     background: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 4,8 8,0'/%3E%3C/svg%3E") no-repeat;
     background-position: right;
     border: 1px solid $border-color;
-    border-radius: 0;
+    border-radius: .5em;
     color: inherit;
     font: inherit;
     padding: .25em 1.5em .25em .25em;
@@ -400,7 +408,6 @@ form p select {
 
 .timetable-date {
     select {
-        border-radius: .5em;
         padding: .5em 1.5em .5em .5em;
     }
 
@@ -1447,6 +1454,7 @@ nav {
         &:before {
             color: $brand-color-darker;
             content: '  \2022  ';
+            font-weight: bold;
         }
 
         &:first-child::before {
@@ -1463,11 +1471,13 @@ nav {
         background: #fff;
         border: 1px solid $brand-color-darker;
         border-bottom: 0;
+        border-radius: .5em 0.5em 0 0;
         float: left;
         margin-right: -1px;
         padding: .75em 1em;
 
         a {
+            border-radius: .5em 0.5em 0 0;
             box-shadow: inset 0 -1px $brand-color-darker;
             float: left;
             margin: -.75em -1em;
