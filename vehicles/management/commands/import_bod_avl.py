@@ -199,16 +199,17 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
 
         destination_ref = monitored_vehicle_journey.get("DestinationRef")
-        if destination_ref:
-            if ' ' in destination_ref:  # a postcode or suttin
-                destination_ref = None
-            else:
-                destination_ref = destination_ref.removeprefix('NT')  # nottingham
 
         cache_key = f"{vehicle_operator_id}:{line_ref}:{destination_ref}".replace(' ', '')
         service = cache.get(cache_key)
         if service is not None:
             return service or None
+
+        if destination_ref:
+            if ' ' in destination_ref or len(destination_ref) < 4:  # a postcode or suttin
+                destination_ref = None
+            else:
+                destination_ref = destination_ref.removeprefix('NT')  # nottingham
 
         # filter by LineRef or (if present and different) TicketMachineServiceCode
         line_name_query = self.get_line_name_query(line_ref)
