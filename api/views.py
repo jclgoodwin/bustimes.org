@@ -1,9 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, pagination
+from rest_framework.exceptions import APIException
 
 from bustimes.models import Trip
 from vehicles.models import Vehicle, Livery, VehicleType, VehicleJourney
 from . import filters, serializers
+
+
+class BadException(APIException):
+    status_code = 400
 
 
 class LimitedPagination(pagination.LimitOffsetPagination):
@@ -33,6 +38,9 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.TripSerializer
     pagination_class = LimitedPagination
 
+    def list(self, request):
+        raise BadException(detail="Listing all trips is not allowed")
+
 
 class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = VehicleJourney.objects.select_related('vehicle')
@@ -40,3 +48,10 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = LimitedPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleJourneyFilter
+
+    def list(self, request):
+        if not request.GET.get('trip') and not request.GET.get('vehicle') and not request.GET.get('service'):
+            raise BadException(
+                detail="Listing all journeys without filtering by trip, vehicle, or service is not allowed"
+            )
+        return super().list(request)
