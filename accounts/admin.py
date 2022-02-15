@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from sql_util.utils import SubqueryCount
 
-from .models import User
+from .models import OperatorUser, User
 
 
 def get_count(obj, attribute, approved):
@@ -18,6 +18,11 @@ def get_count(obj, attribute, approved):
     )
 
 
+class OperatorUserInline(admin.TabularInline):
+    model = OperatorUser
+    raw_id_fields = ['operator']
+
+
 class UserAdmin(admin.ModelAdmin):
     raw_id_fields = ['user_permissions']
     actions = ['trust', 'distrust']
@@ -25,6 +30,7 @@ class UserAdmin(admin.ModelAdmin):
     readonly_fields = ['revisions', 'approved', 'disapproved', 'pending']
     list_display = ['id', 'username', 'email', 'last_login', 'is_active', 'trusted'] + readonly_fields
     list_display_links = ['id', 'username']
+    inlines = [OperatorUserInline]
 
     def revisions(self, obj):
         return format_html(

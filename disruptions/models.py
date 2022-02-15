@@ -6,8 +6,13 @@ from busstops.templatetags.date_range import date_range
 
 
 class Situation(models.Model):
-    source = models.ForeignKey('busstops.DataSource', models.CASCADE,
-                               limit_choices_to={'name__in': ['Transport for the North', 'bustimes.org']})
+    source = models.ForeignKey(
+        'busstops.DataSource',
+        models.CASCADE,
+        limit_choices_to={
+            'name__in': ('Transport for the North', 'Transport for West Midlands', 'bustimes.org')
+        }
+    )
     situation_number = models.CharField(max_length=36, blank=True)
     reason = models.CharField(max_length=25, blank=True)
     summary = models.CharField(max_length=255, blank=True)

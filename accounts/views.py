@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model, views as auth_views
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404
 from django.core.paginator import Paginator
 from . import forms
 
@@ -43,9 +42,6 @@ def user_detail(request, pk):
     paginator = Paginator(revisions, 100)
     page = request.GET.get('page')
     revisions = paginator.get_page(page)
-
-    if not revisions:
-        raise Http404
 
     return render(request, 'user_detail.html', {
         'object': user,

@@ -6,18 +6,24 @@
 
 {% block content %}
 
-    <h1>User {{ object.id }}</h1>
+    <h1>{% if object.trusted is False %}<del>{% endif %}User {{ object.id }}{% if object.trusted is False %}</del>{% endif %}</h1>
 
-    {% if object.trusted is False %}
-        <p>They have been banned.</p>
-    {% else %}
+    {% if object == user %}
+        <p>That's you!</p>
+    {% endif %}
+
+    {% for ou in object.operatoruser_set.all %}
+        <p>{{ ou.operator }} expert</p>
+    {% endfor %}
+
+    {% if object.trusted is not False %}
         <p>{% if object.trusted %}They appear to be trustworthy, so they have the power to edit some bits of information without moderation.
         If you disagree{% else %}If you notice any vandalism etc{% endif %}, please <a href="/contact?message=User+{{ object.id }}">let us know</a>.</p>
     {% endif %}
 
     <ul class="tabs">
         <li>Recent changes</li>
-        <li><a href="/vehicles/edits?user={{ object.id }}">Pending vehicle edits</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}">Pending edits</a></li>
     </ul>
 
     {% include 'pagination.html' with page=revisions %}

@@ -614,9 +614,13 @@ class VehicleRevision(models.Model):
                 before = before[1:]
                 if key == 'colours' and html:
                     if before and before != 'Other':
-                        before = format_html('<span class="livery" style="background:{}"></span>', before)
+                        before = format_html(
+                            '<span class="livery" style="background:{}"></span>', get_css(before.split())
+                        )
                     if after and after != 'Other':
-                        after = format_html('<span class="livery" style="background:{}"></span>', after)
+                        after = format_html(
+                            '<span class="livery" style="background:{}"></span>', get_css(after.split())
+                        )
                 yield (key, before, after)
 
     def revert(self):

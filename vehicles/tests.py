@@ -36,7 +36,7 @@ class VehiclesTests(TestCase):
         service.operator.add(cls.bova)
 
         cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
-                                               colours='#FF0000', notes='Trent Barton', operator=cls.lynx)
+                                               colours='#FF0000', notes='Trent Barton', operator=cls.lynx, branding="")
         cls.livery = Livery.objects.create(name='black with lemon piping', colours='#FF0000 #0000FF')
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=cls.livery,
                                                vehicle_type=spectra, operator=cls.lynx)
@@ -348,7 +348,6 @@ class VehiclesTests(TestCase):
             'features': self.wifi.id,
             'operator': self.lynx.id,
             'colours': '#FF0000',
-            'other_colour': '#ffffff',
             'notes': 'Trent Barton',
         }
 
@@ -453,7 +452,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
             'colours': self.livery.id,
-            'other_colour': '#ffffff',
             'notes': '',
         }
 
@@ -772,8 +770,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
                 {'id': self.vehicle_1.id,
                     'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
                     'livery': {'id': None, 'name': None, 'left': '#FF0000', 'right': '#FF0000'},
-                    'fleet_number': 1, 'fleet_code': '1', 'reg': 'FD54JYA', 'name': '',
-                    'branding': '', 'notes': 'Trent Barton', 'withdrawn': False,
+                    'fleet_number': 1, 'fleet_code': '1', 'reg': 'FD54JYA', 'name': None,
+                    'branding': "", 'notes': 'Trent Barton', 'withdrawn': False,
                     'vehicle_type': {
                         'id': self.vehicle_1.vehicle_type_id,
                         'name': 'Optare Tempo', 'double_decker': False, 'coach': False, 'electric': None}},
@@ -782,7 +780,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
                     'livery': {'id': self.livery.id, 'name': 'black with lemon piping',
                                'left': 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)',
                                'right': 'linear-gradient(to left,#FF0000 50%,#0000FF 50%)'},
-                    'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': '', 'branding': '', 'notes': '',
+                    'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': None, 'branding': None, 'notes': None,
                     'withdrawn': False,
                     'vehicle_type': {
                         'id': self.vehicle_2.vehicle_type_id,

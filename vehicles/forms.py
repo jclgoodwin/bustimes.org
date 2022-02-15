@@ -46,7 +46,9 @@ class EditVehiclesForm(forms.Form):
     spare_ticket_machine = forms.BooleanField(required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
-    other_colour = forms.CharField(widget=forms.TextInput(attrs={"type": "color"}), required=False, initial='#ffffff')
+    other_colour = forms.CharField(
+        label='Livery colours',
+        help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with a silver front)", required=False)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     summary = fields.SummaryField(
