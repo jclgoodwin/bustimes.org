@@ -86,6 +86,7 @@ class Command(BaseCommand):
         )
         if atco_code.startswith(stop.admin_area_id):
             stop.admin_area = self.admin_areas[stop.admin_area_id]
+            print(atco_code, stop.admin_area)
 
         for xml_path, key in self.mapping:
             value = element.findtext(xml_path, "")
@@ -202,6 +203,7 @@ class Command(BaseCommand):
                         self.update_and_create()
 
                     atco_code_prefix = atco_code[:3]
+                    print(atco_code_prefix)
 
                     self.existing_stops = (
                         StopPoint.objects.only("atco_code", "modified_at")

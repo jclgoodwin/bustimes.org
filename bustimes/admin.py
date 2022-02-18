@@ -41,6 +41,9 @@ class RouteAdmin(admin.ModelAdmin):
 class TripAdmin(admin.ModelAdmin):
     raw_id_fields = ['route'] + TripInline.raw_id_fields
     inlines = [StopTimeInline]
+    list_filter = [
+        ('calendar', admin.EmptyFieldListFilter)
+    ]
 
 
 class CalendarDateInline(admin.TabularInline):

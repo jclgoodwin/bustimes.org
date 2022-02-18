@@ -355,7 +355,7 @@ def stagecoach(operator=None):
             f'stagecoach-{noc}-route-schedule-data-transxchange_2_4.zip',
         ):
             if '_2_4' in filename:
-                if noc not in ('scek', 'syrk', 'sdvn', 'sccm'):
+                if noc not in ('scek', 'syrk', 'sdvn', 'sccm', 'scmn'):
                     continue  # completely defer to use 2.1 source
                 command.preferred_source = command.source  # prefer the 2.1 source
             else:

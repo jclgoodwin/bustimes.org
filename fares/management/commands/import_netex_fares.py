@@ -568,9 +568,6 @@ class Command(BaseCommand):
             for noc in (
                 "FECS",
                 "FESX",
-                "FBOS",
-                "FBRI",
-                "FLDS",
                 "FCWL",
                 "FGLA",
                 "FSYO",

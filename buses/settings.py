@@ -648,7 +648,7 @@ BOD_OPERATORS = [
         'RR': 'RDRT',
         'RR1': 'RDRT'
     }, False),
-    
+
     ('CUBU', 'NW', {}, False),
     ('HUYT', 'NW', {}, False),
     ('AJTX', 'NW', {}, False),

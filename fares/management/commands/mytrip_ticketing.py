@@ -21,10 +21,21 @@ class Command(BaseCommand):
         response = session.get("https://mytrip-bustimes.api.passengercloud.com/ticketing/topups")
 
         for item in response.json()["_embedded"]["topup:category"]:
+            name = item["title"]
+            code = item["id"]
+
+            if OperatorCode.objects.filter(code=code, source=source).exists():
+                print('✔️ ', name)
+                continue
+
             try:
-                operator = Operator.objects.get(name=item["title"])
+                operator = Operator.objects.get(name=name)
             except (Operator.DoesNotExist, Operator.MultipleObjectsReturned) as e:
-                print('❌ ', item["title"], e)
+                operator_id = input(f"{e} {name}. Manually enter NOC: ").upper()
+                try:
+                    OperatorCode.objects.create(operator_id=operator_id, code=code, source=source)
+                except Exception as e:
+                    print(e)
             else:
-                print('✔️ ', operator)
-                OperatorCode.objects.get_or_create(operator=operator, code=item["id"], source=source)
+                print('✔️ ', operator, name)
+                OperatorCode.objects.create(operator=operator, code=code, source=source)
