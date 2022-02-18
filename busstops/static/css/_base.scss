@@ -1469,7 +1469,8 @@ nav {
 
 .tabs {
     box-shadow: inset 0 -1px $brand-color-darker;
-    overflow: hidden;
+    display: flex;
+    overflow: visible;
 
     li {
         background: #fff;
@@ -1483,7 +1484,6 @@ nav {
         a {
             border-radius: .5em 0.5em 0 0;
             box-shadow: inset 0 -1px $brand-color-darker;
-            float: left;
             margin: -.75em -1em;
             padding: .75em 1em;
         }
