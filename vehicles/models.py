@@ -177,9 +177,9 @@ class Vehicle(models.Model):
     vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
     colours = models.CharField(max_length=255, blank=True)
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    branding = models.CharField(max_length=255, null=True, blank=True)
-    notes = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255, blank=True)
+    branding = models.CharField(max_length=255, blank=True)
+    notes = models.CharField(max_length=255, blank=True)
     latest_journey = models.OneToOneField(
         'VehicleJourney', models.SET_NULL, null=True, blank=True, editable=False, related_name='latest_vehicle'
     )
