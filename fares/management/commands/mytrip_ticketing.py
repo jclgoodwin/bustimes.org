@@ -1,7 +1,5 @@
 import requests
 from django.core.management.base import BaseCommand
-# from django.contrib.gis.geos import Point, LineString, MultiLineString
-# from bustimes.models import Trip
 from busstops.models import Operator, OperatorCode, DataSource
 
 
