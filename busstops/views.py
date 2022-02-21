@@ -679,6 +679,7 @@ class ServiceDetailView(DetailView):
 
             if operator.operatorcode_set.filter(source__name="MyTrip").exists():
                 context['app'] = {
+                    "url": f'/{operator.get_absolute_url()}/tickets',
                     "name": "MyTrip app"
                 }
             for method in operator.payment_methods.all():
