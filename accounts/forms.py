@@ -1,4 +1,4 @@
-from django.forms import EmailField, EmailInput
+from django.forms import EmailField, EmailInput, Form, NullBooleanField
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
 
@@ -35,3 +35,7 @@ class RegistrationForm(PasswordResetForm):
 
 class LoginForm(AuthenticationForm):
     username = EmailField(widget=EmailInput(attrs={'autofocus': True, 'autocomplete': 'email'}))
+
+
+class AdminUserForm(Form):
+    trusted = NullBooleanField()

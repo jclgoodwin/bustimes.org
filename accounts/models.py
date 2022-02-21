@@ -34,18 +34,3 @@ class User(AbstractUser):
         if self.trusted:
             return f'✨{self.id}'
         return f'{self.id}'
-
-    def revisions_count(self):
-        return self.vehiclerevision_set.count()
-
-    def edits_count(self):
-        return self.vehicleedit_set.count()
-
-    def approved_count(self):
-        return self.vehicleedit_set.filter(approved=True).count()
-
-    def disapproved_count(self):
-        return self.vehicleedit_set.filter(approved=False).count()
-
-    def pending_count(self):
-        return self.vehicleedit_set.filter(approved=None).count()

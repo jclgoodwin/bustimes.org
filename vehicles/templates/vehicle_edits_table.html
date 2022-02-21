@@ -20,7 +20,7 @@
                 {% if user.is_staff and not vehicle %}<td><input type="checkbox" name="edit" value="{{ edit.id }}"></td>{% endif %}
                 <td>{{ edit.datetime }}</td>
                 <td class="link">
-                    <a href="/vehicles/edits?user={{ edit.user_id }}">
+                    <a href="{{ edit.user.get_absolute_url }}">
                         {% if user.is_staff %}
                             {{ edit.user.username }}
                         {% else %}

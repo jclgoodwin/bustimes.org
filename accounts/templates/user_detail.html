@@ -8,8 +8,19 @@
 
     <h1>{% if object.trusted is False %}<del>{% endif %}User {{ object.id }}{% if object.trusted is False %}</del>{% endif %}</h1>
 
+    {% if user.is_staff %}
+        {{ user.username }}
+    {% endif %}
+
     {% if object == user %}
         <p>That's you!</p>
+    {% endif %}
+
+    {% if form %}
+        <form method="POST">
+            {{ form.as_p }}
+            <input type="submit" value="Save changes">
+        </form>
     {% endif %}
 
     {% for ou in object.operatoruser_set.all %}

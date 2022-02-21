@@ -43,11 +43,18 @@ def user_detail(request, pk):
     page = request.GET.get('page')
     revisions = paginator.get_page(page)
 
+    if request.user.is_staff:
+        form = forms.AdminUserForm(request.POST or None, initial={
+            'trusted': user.trusted
+        })
+        if request.POST and form.is_valid():
+            user.trusted = form.cleaned_data["trusted"]
+            user.save(update_fields=["trusted"])
+    else:
+        form = None
+
     return render(request, 'user_detail.html', {
         'object': user,
         'revisions': revisions,
-        # 'edits': user.edits_count(),
-        # 'approved': user.approved_count(),
-        # 'disapproved': user.disapproved_count(),
-        # 'pending': user.pending_count()
+        'form': form
     })
