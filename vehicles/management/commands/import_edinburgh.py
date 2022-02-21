@@ -50,7 +50,9 @@ class Command(ImportLiveVehiclesCommand):
         )
 
         latest = vehicle.latest_journey
-        if latest and latest.route_name == journey.route_name:
+        if not journey.route_name:
+            pass
+        elif latest and latest.route_name == journey.route_name:
             if latest.code == journey.code and latest.destination == journey.destination:
                 return latest
             journey.service_id = latest.service_id
