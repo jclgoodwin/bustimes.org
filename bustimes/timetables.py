@@ -264,7 +264,6 @@ class Timetable:
         stop_codes = (
             row.stop.atco_code for grouping in self.groupings
             for row in grouping.rows
-            if row.stop.atco_code[:3].isdigit() and ' ' not in row.stop.atco_code
         )
         stops = stops.in_bulk(stop_codes)
 
@@ -424,7 +423,7 @@ class Grouping:
             x = len(rows[0].times)  # number of existing columns
         else:
             x = 0
-        previous_list = [row.stop.atco_code for row in rows]
+        previous_list = [row.stop.stop_code for row in rows]
         current_list = [stoptime.get_key() for stoptime in trip.stoptime_set.all()]
         diff = differ.compare(previous_list, current_list)
 
@@ -453,7 +452,7 @@ class Grouping:
             assert instruction[2:] == key
 
             if instruction[0] == '+':
-                row = Row(Stop(key), [''] * x)
+                row = Row(Stop(stoptime.stop_id, stoptime.stop_code), [''] * x)
                 row.timing_status = stoptime.timing_status
                 if not existing_row:
                     rows.append(row)
@@ -461,7 +460,7 @@ class Grouping:
                     rows = self.rows = rows[:y] + [row] + rows[y:]
             else:
                 row = existing_row
-                assert instruction[2:] == existing_row.stop.atco_code
+                assert instruction[2:] == existing_row.stop.stop_code
 
             cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
             if first:
@@ -620,12 +619,13 @@ class Row:
 
 
 class Stop:
-    def __init__(self, atco_code):
+    def __init__(self, stop_id, stop_code):
         self.timing_status = None
-        self.atco_code = atco_code
+        self.atco_code = stop_id
+        self.stop_code = stop_code or stop_id
 
     def __str__(self):
-        return self.atco_code
+        return self.stop_code or self.atco_code
 
 
 class Cell:

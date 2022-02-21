@@ -382,8 +382,8 @@ class ImportTransXChangeTest(TestCase):
         timetable = service.get_timetable()
         self.assertEqual('2017-12-10', str(timetable.date))
 
-        self.assertEqual('Wilmorton Ascot Drive (Adj)', timetable.groupings[0].rows[49].stop.atco_code)
-        self.assertEqual('Wilmorton Ascot Drive (Adj)', timetable.groupings[0].rows[50].stop.atco_code)
+        self.assertEqual('Wilmorton Ascot Drive (Adj)', timetable.groupings[0].rows[49].stop.stop_code)
+        self.assertEqual('Wilmorton Ascot Drive (Adj)', timetable.groupings[0].rows[50].stop.stop_code)
         self.assertEqual(60, len(timetable.groupings[0].rows))
 
     @time_machine.travel('2017-04-13')
