@@ -32,9 +32,21 @@ class Command(BaseCommand):
                 pipe.exists(f'journey{journey.id}')
             exists = pipe.execute()
 
+            date_directory = directory / str(while_ago)
+            if not date_directory.exists():
+                date_directory.mkdir()
+
             for i, journey in enumerate(tqdm(journeys, disable=None)):
+                old_path = directory / str(journey.id)
+                path = journey.get_path()
+
+                if old_path.exists():
+                    old_path.rename(path)
+                    continue
+
                 if not exists[i]:
                     continue
+
                 redis_key = f'journey{journey.id}'
                 locations = redis_client.lrange(redis_key, 0, -1)
                 assert locations

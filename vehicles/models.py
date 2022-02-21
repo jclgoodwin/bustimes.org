@@ -677,7 +677,7 @@ class VehicleJourney(models.Model):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
 
     def get_path(self):
-        return settings.DATA_DIR / 'journeys' / str(self.id)
+        return settings.DATA_DIR / 'journeys' / str(self.datetime.date) / str(self.id)
 
     def __str__(self):
         when = self.datetime.strftime('%-d %b %y %H:%M')
