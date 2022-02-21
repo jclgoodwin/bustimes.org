@@ -260,6 +260,25 @@ class Timetable:
                     return True
         return False
 
+    def apply_stops(self, stops, stop_situations=None):
+        stop_codes = (
+            row.stop.atco_code for grouping in self.groupings
+            for row in grouping.rows
+            if row.stop.atco_code[:3].isdigit() and ' ' not in row.stop.atco_code
+        )
+        stops = stops.in_bulk(stop_codes)
+
+        if stop_situations:
+            for atco_code in stops:
+                if atco_code in stop_situations:
+                    if stop_situations[atco_code].summary == 'Does not stop here':
+                        stops[atco_code].suspended = True
+                    else:
+                        stops[atco_code].situation = True
+
+        for grouping in self.groupings:
+            grouping.apply_stops(stops)
+
     @cached_property
     def has_blocks(self) -> bool:
         return self.any_trip_has('block_id')

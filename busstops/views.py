@@ -655,16 +655,7 @@ class ServiceDetailView(DetailView):
 
         else:
             stops = StopPoint.objects.select_related('locality').defer('latlong', 'locality__latlong')
-            stop_codes = (row.stop.atco_code for grouping in context['timetable'].groupings for row in grouping.rows)
-            stops = stops.in_bulk(stop_codes)
-            for atco_code in stops:
-                if atco_code in stop_situations:
-                    if stop_situations[atco_code].summary == 'Does not stop here':
-                        stops[atco_code].suspended = True
-                    else:
-                        stops[atco_code].situation = True
-            for grouping in context['timetable'].groupings:
-                grouping.apply_stops(stops)
+            timetable.apply_stops(stops, stop_situations)
 
         try:
             context['breadcrumb'] = [Region.objects.filter(adminarea__stoppoint__service=self.object).distinct().get()]
@@ -685,6 +676,11 @@ class ServiceDetailView(DetailView):
             operator = operators[0]
             context['breadcrumb'].append(operator)
             context['payment_methods'] = []
+
+            if operator.operatorcode_set.filter(source__name="MyTrip").exists():
+                context['app'] = {
+                    "name": "MyTrip app"
+                }
             for method in operator.payment_methods.all():
                 if 'app' in method.name and method.url:
                     context['app'] = method
@@ -758,11 +754,10 @@ def service_timetable(request, service_id):
         date = datetime.date.fromisoformat(date)
     parallel = service.get_linked_services()
     timetable = service.get_timetable(date, parallel)
+
     stops = StopPoint.objects.select_related('locality').defer('latlong', 'locality__latlong')
-    stop_codes = (row.stop.atco_code for grouping in timetable.groupings for row in grouping.rows)
-    stops = stops.in_bulk(stop_codes)
-    for grouping in timetable.groupings:
-        grouping.apply_stops(stops)
+    timetable.apply_stops(stops)
+
     return render(request, 'timetable.html', {
         'object': service,
         'timetable': timetable

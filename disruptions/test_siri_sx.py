@@ -778,7 +778,7 @@ Services will observe all bus stops on the diverted route. </Details>
                          "From here its a short walk to the terminus. \n\n"
                          "Towards Manchester the 142 service will begin outside Didsbury Cricket club . ")
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.get('/services/156')
 
         self.assertContains(response, "<p>East Lancashire Road will be subjected to restrictions,"
