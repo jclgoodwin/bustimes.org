@@ -206,7 +206,8 @@ class Command(ImportLiveVehiclesCommand):
             return service or None
 
         if destination_ref:
-            if ' ' in destination_ref or len(destination_ref) < 4:  # a postcode or suttin
+            if ' ' in destination_ref or len(destination_ref) < 4 or destination_ref[:3] == '000':
+                # destination ref is a fake ATCO code, or maybe a postcode or suttin
                 destination_ref = None
             else:
                 destination_ref = destination_ref.removeprefix('NT')  # nottingham
