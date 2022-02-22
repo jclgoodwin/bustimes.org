@@ -41,23 +41,26 @@ def get_livery_choices(operator, vehicle=None):
 class EditVehiclesForm(forms.Form):
     withdrawn = forms.BooleanField(
         label='Permanently withdrawn', required=False,
-        help_text="(A vehicle advertised for sale or involved in an accident has not necessarily been withdrawn)"
+        help_text="""Do not tick this box"""
     )
-    spare_ticket_machine = forms.BooleanField(required=False)
+    spare_ticket_machine = forms.BooleanField(
+        required=False,
+        help_text="Only tick this box if the ticket machine code is something like SPARE"
+    )
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(
-        label='Livery colours',
-        help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with a silver front)", required=False)
+        label='Other colours',
+        help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with  silver front)", required=False)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     summary = fields.SummaryField(
         required=False,
         max_length=255,
         help_text="""Briefly explain your changes,
-if necessary.
-E.g. how you know a vehicle has been withdrawn or repainted,
-link to a picture to prove it""")
+if they need explaining.
+E.g. how you know a vehicle has definitely been withdrawn or repainted,
+link to a picture to prove it. Be polite.""")
 
     def clean_other_colour(self):
         if self.cleaned_data['other_colour']:
@@ -108,7 +111,7 @@ class EditVehicleForm(EditVehiclesForm):
     reg = fields.RegField(label='Number plate', required=False, max_length=24)
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
-    name = forms.CharField(label='Vehicle name', required=False, max_length=70)
+    name = forms.CharField(label='Vehicle name', required=False, max_length=70, help_text="Leave this blank")
     previous_reg = fields.RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
     notes = forms.CharField(required=False, max_length=255)
     field_order = ['withdrawn', 'spare_ticket_machine',
@@ -172,7 +175,7 @@ can’t be contradicted"""
         if not vehicle.withdrawn and vehicle.latest_journey:
             if timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3):
                 self.fields['withdrawn'].disabled = True
-                self.fields['withdrawn'].help_text = """Can't be ticked yet,
+                self.fields['withdrawn'].help_text = """Can’t be ticked yet,
  as this vehicle (or ticket machine) has tracked in the last 3 days"""
 
         if not vehicle.operator or vehicle.operator.parent:
