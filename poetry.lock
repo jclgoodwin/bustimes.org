@@ -143,14 +143,14 @@ python-versions = "*"
 
 [[package]]
 name = "boto3"
-version = "1.21.3"
+version = "1.21.5"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.6"
 
 [package.dependencies]
-botocore = ">=1.24.3,<1.25.0"
+botocore = ">=1.24.5,<1.25.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.5.0,<0.6.0"
 
@@ -159,7 +159,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.24.3"
+version = "1.24.5"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -1221,7 +1221,7 @@ crt = ["botocore[crt] (>=1.20.29,<2.0a.0)"]
 
 [[package]]
 name = "sentry-sdk"
-version = "1.5.5"
+version = "1.5.6"
 description = "Python client for Sentry (https://sentry.io)"
 category = "main"
 optional = false
@@ -1642,12 +1642,12 @@ billiard = [
     {file = "billiard-3.6.4.0.tar.gz", hash = "sha256:299de5a8da28a783d51b197d496bef4f1595dd023a93a4f59dde1886ae905547"},
 ]
 boto3 = [
-    {file = "boto3-1.21.3-py3-none-any.whl", hash = "sha256:ab4ab2392f7520c01ce6e40e6df4b5b65a575ee6bd9fb78db0239cb2a06de557"},
-    {file = "boto3-1.21.3.tar.gz", hash = "sha256:aa00024cc1f3d24b2318dae4d5dbaa173c8da8bc6f9d12f0b2e67467ec460989"},
+    {file = "boto3-1.21.5-py3-none-any.whl", hash = "sha256:c650c591e4d28689e1c9e673ad4ee4f9c6183f1e13c7a770c666305a12ae12a5"},
+    {file = "boto3-1.21.5.tar.gz", hash = "sha256:a07b466458a537a548ea8ce7032cfe3818d7d57e7087562ca44848aa369e9df7"},
 ]
 botocore = [
-    {file = "botocore-1.24.3-py3-none-any.whl", hash = "sha256:ca33f747c67cd0e109fab9398d39c38c1a2df352c1e1f9823839df8f1db58046"},
-    {file = "botocore-1.24.3.tar.gz", hash = "sha256:979e5c5e826ff115f4903fe9887b191f3809229f694a747f910e1221fe63efc7"},
+    {file = "botocore-1.24.5-py3-none-any.whl", hash = "sha256:9a15c25c7647adf1187b2a9c4b1426aca93851b969724c5e302a3b2e976904f1"},
+    {file = "botocore-1.24.5.tar.gz", hash = "sha256:10445743cb7a812ec34b0bca8366a830647d1d05c1bbbe4167d0ae872f45219d"},
 ]
 bs4 = [
     {file = "bs4-0.0.1.tar.gz", hash = "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"},
@@ -2379,8 +2379,8 @@ s3transfer = [
     {file = "s3transfer-0.5.1.tar.gz", hash = "sha256:69d264d3e760e569b78aaa0f22c97e955891cd22e32b10c51f784eeda4d9d10a"},
 ]
 sentry-sdk = [
-    {file = "sentry-sdk-1.5.5.tar.gz", hash = "sha256:98fd155fa5d5fec1dbabed32a1a4ae2705f1edaa5dae4e7f7b62a384ba30e759"},
-    {file = "sentry_sdk-1.5.5-py2.py3-none-any.whl", hash = "sha256:3817274fba2498c8ebf6b896ee98ac916c5598706340573268c07bf2bb30d831"},
+    {file = "sentry-sdk-1.5.6.tar.gz", hash = "sha256:ac2a50128409d57655279817aedcb7800cace1f76b266f3dd62055d5afd6e098"},
+    {file = "sentry_sdk-1.5.6-py2.py3-none-any.whl", hash = "sha256:1ab34e3851a34aeb3d1af1a0f77cec73978c4e9698e5210d050e4932953cb241"},
 ]
 service-identity = [
     {file = "service-identity-21.1.0.tar.gz", hash = "sha256:6e6c6086ca271dc11b033d17c3a8bea9f24ebff920c587da090afc9519419d34"},
