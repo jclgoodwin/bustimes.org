@@ -20,8 +20,9 @@ class Command(ImportLiveVehiclesCommand):
     def update(self):
         items = self.get_items()
 
-        # encourage items to be grouped by operator
-        items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])
+        if items:
+            # encourage items to be grouped by operator
+            items.sort(key=lambda item: item['MonitoredVehicleJourney']['OperatorRef'])
 
         if not self.identifiers:  # restore backup
             self.identifiers = cache.get('bod_avl_identifiers', {})

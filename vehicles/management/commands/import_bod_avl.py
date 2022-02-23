@@ -514,7 +514,7 @@ class Command(ImportLiveVehiclesCommand):
         response = self.session.get(self.source.url, params=self.source.settings)
 
         if not response.ok:
-            return ()
+            return
 
         data = self.items_from_response(response.content)
 
