@@ -1,3 +1,5 @@
+import io
+import zipfile
 import xmltodict
 import functools
 from django.core.cache import cache
@@ -516,7 +518,15 @@ class Command(ImportLiveVehiclesCommand):
         if not response.ok:
             return
 
-        data = self.items_from_response(response.content)
+        if 'datafeed' in self.source.url:
+            # api response
+            data = self.items_from_response(response.content)
+        else:
+            # bulk download
+            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                assert archive.namelist() == ['siri.xml']
+                with archive.open('siri.xml') as open_file:
+                    data = self.items_from_response(open_file)
 
         self.when = data['Siri']['ServiceDelivery']['ResponseTimestamp']
         self.source.datetime = parse_datetime(self.when)
