@@ -27,7 +27,7 @@ def get_livery_choices(operator, vehicle=None):
 
     # add ad hoc vehicle colours
     for vehicle in vehicles.filter(~Q(colours=""), ~Q(colours="Other"), livery=None).distinct("colours"):
-        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'Like {vehicle}')
+        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'{vehicle.colours}')
 
     # replace the dictionary with a list of key, label pairs
     choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
@@ -51,7 +51,7 @@ class EditVehiclesForm(forms.Form):
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(
         label='Other colours',
-        help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with  silver front)", required=False)
+        help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with a silver front)", required=False)
     features = forms.ModelMultipleChoiceField(queryset=VehicleFeature.objects, label='Features',
                                               widget=forms.CheckboxSelectMultiple, required=False)
     summary = fields.SummaryField(

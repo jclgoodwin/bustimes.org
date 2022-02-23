@@ -6,7 +6,8 @@
 
     // vehicle type
     accessibleAutocomplete.enhanceSelectElement({
-        selectElement: document.getElementById('id_vehicle_type')
+        selectElement: document.getElementById('id_vehicle_type'),
+        name: 'other_vehicle_type',
     });
 
     // other colour

@@ -8,7 +8,7 @@ from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
 
 from django.db import IntegrityError, OperationalError, transaction, connection
-from django.db.models import Exists, OuterRef, Min, Max, F, Case, When, Q
+from django.db.models import F, Case, When, Q, OuterRef
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
@@ -23,7 +23,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 
-from sql_util.utils import SubqueryCount
+from sql_util.utils import Exists, SubqueryCount, SubqueryMin, SubqueryMax
 
 from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
@@ -51,20 +51,21 @@ class Vehicles:
 @require_GET
 def vehicles(request):
     operators = Operator.objects.filter(
-        Exists(Vehicle.objects.filter(operator=OuterRef('pk'), withdrawn=False))
+        Exists('vehicle', filter=Q(withdrawn=False))
     ).only('name', 'slug')
 
     new_operators = operators.annotate(
-        min=Min('vehicle__id'),
+        min=SubqueryMin('vehicle__id'),
     ).order_by('-min')[:36]
 
     operator_journeys = VehicleJourney.objects.filter(latest_vehicle__operator=OuterRef('id'))
+
     day_ago = timezone.now() - datetime.timedelta(days=1)
     status = operators.filter(
         Exists(operator_journeys),
         ~Exists(operator_journeys.filter(datetime__gte=day_ago))
     ).annotate(
-        last_seen=Max('vehicle__latest_journey__datetime'),
+        last_seen=SubqueryMax('vehicle__latest_journey__datetime'),
     ).order_by(
         '-last_seen'
     )
@@ -116,8 +117,7 @@ def operator_vehicles(request, slug=None, parent=None):
     vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
     if not parent:
         vehicles = vehicles.annotate(feature_names=StringAgg('features__name', ', '))
-        pending_edits = VehicleEdit.objects.filter(approved=None, vehicle=OuterRef('id')).only('id')
-        vehicles = vehicles.annotate(pending_edits=Exists(pending_edits))
+        vehicles = vehicles.annotate(pending_edits=Exists('vehicleedit', filter=Q(approved=None)))
         vehicles = vehicles.select_related('latest_journey')
 
     vehicles = vehicles.annotate(
@@ -465,7 +465,7 @@ def service_vehicles_history(request, slug):
     operator = service.operator.select_related('region').first()
     return render(request, 'vehicles/vehicle_detail.html', {
         **context,
-        'garages': Garage.objects.filter(Exists(Trip.objects.filter(route__service=service, garage=OuterRef('id')))),
+        'garages': Garage.objects.filter(Exists('trip__route', filter=Q(route__service=service))),
         'breadcrumb': [operator, service],
         'object': service,
     })
