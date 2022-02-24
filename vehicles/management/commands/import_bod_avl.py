@@ -85,6 +85,8 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     def get_vehicle(self, item):
+        # cached wrapper for actually_get_vehicle
+
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
         operator_ref = monitored_vehicle_journey['OperatorRef']
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
@@ -102,8 +104,13 @@ class Command(ImportLiveVehiclesCommand):
         except (KeyError, Vehicle.DoesNotExist):
             pass
 
-        operators = self.get_operator(operator_ref)
+        vehicle, created = self.actually_get_vehicle(vehicle_ref, operator_ref, item)
 
+        self.vehicle_id_cache[cache_key] = vehicle.id
+
+        return vehicle, created
+
+    def actually_get_vehicle(self, vehicle_ref, operator_ref, item):
         vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
         vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
 
@@ -113,10 +120,18 @@ class Command(ImportLiveVehiclesCommand):
             except Vehicle.DoesNotExist:
                 pass
 
+        if not vehicle_ref.isdigit() and len(vehicle_ref) > 7:
+            try:
+                return self.vehicles.get(code=vehicle_ref), False
+            except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
+                pass
+
         defaults = {
             'code': vehicle_ref,
             'source': self.source
         }
+
+        operators = self.get_operator(operator_ref)
 
         if not operators:
             vehicles = self.vehicles.filter(operator=None)
@@ -194,7 +209,6 @@ class Command(ImportLiveVehiclesCommand):
             vehicle = vehicles.first()
             created = False
 
-        self.vehicle_id_cache[cache_key] = vehicle.id
         return vehicle, created
 
     def get_service(self, operators, item, line_ref, vehicle_operator_id):
