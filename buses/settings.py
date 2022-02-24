@@ -422,7 +422,7 @@ BOD_OPERATORS = [
     ('KBUS', 'SE', {}, False),
 
     ('NIBS', 'SE', {}, False),
-    # ('SESX', 'EA', {}, False),
+    ('SESX', 'EA', {}, True),
     ('STCB', 'EA', {}, False),
 
     ('CSVC', 'EA', {
@@ -655,7 +655,7 @@ BOD_OPERATORS = [
     ('PPBU', 'NW', {}, False),
     ('EAZI', 'NW', {}, False),
     ('MAGH', 'NW', {}, False),
-    
+    ('MAND', 'SE', {}, False),
     ('SOUT', 'SW', {}, False),
 ]
 
