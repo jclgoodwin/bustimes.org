@@ -655,6 +655,8 @@ BOD_OPERATORS = [
     ('PPBU', 'NW', {}, False),
     ('EAZI', 'NW', {}, False),
     ('MAGH', 'NW', {}, False),
+    
+    ('SOUT', 'SW', {}, False),
 ]
 
 # see bustimes.management.commands.import_bod
