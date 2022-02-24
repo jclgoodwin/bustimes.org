@@ -1,5 +1,4 @@
 import os
-import ssl
 from celery import Celery
 
 

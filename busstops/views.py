@@ -114,7 +114,7 @@ def error(request):
     context = {}
     if request.user.is_staff:
         _, exception, tb = sys.exc_info()
-        context["exception"] = exception 
+        context["exception"] = exception
         context["traceback"] = traceback.format_tb(tb)
     response = render(None, '500.html', context)
     response.status_code = 500

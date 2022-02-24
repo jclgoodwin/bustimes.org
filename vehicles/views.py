@@ -28,7 +28,7 @@ from sql_util.utils import Exists, SubqueryCount, SubqueryMin, SubqueryMax
 from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
-from bustimes.models import Garage, Trip, StopTime
+from bustimes.models import Garage, StopTime
 from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from . import filters
