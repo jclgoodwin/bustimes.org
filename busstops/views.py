@@ -774,7 +774,7 @@ def service_map_data(request, service_id):
                                          consequence__services=service)),
         latlong__isnull=False
     )
-    stops = stops.distinct().order_by().select_related('locality')
+    stops = stops.distinct().order_by().select_related('locality').in_bulk()
     data = {
         "stops": {
             'type': 'FeatureCollection',
@@ -790,18 +790,18 @@ def service_map_data(request, service_id):
                     'bearing': stop.get_heading(),
                     'url': stop.get_absolute_url(),
                 }
-            } for stop in stops]
+            } for stop in stops.values()]
         }
     }
 
     routes = get_routes(service.route_set.select_related('source'), timezone.localdate())
 
-    stops = StopTime.objects.select_related('stop').filter(stop__isnull=False)
-    stops = stops.only('trip_id', 'stop_id', 'stop__latlong')
+    stop_times = StopTime.objects.filter(stop__isnull=False)
+    stop_times = stop_times.only('trip_id', 'stop_id').order_by('trip_id', 'id')
     if routes:
-        stops = stops.filter(trip__route__in=routes)
+        stop_times = stop_times.filter(trip__route__in=routes)
     else:
-        stops = stops.filter(trip__route__service=service)
+        stop_times = stop_times.filter(trip__route__service=service)
 
     route_links = {
         (route_link.from_stop_id, route_link.to_stop_id): route_link
@@ -812,24 +812,28 @@ def service_map_data(request, service_id):
     line_string = []
     multi_line_string = [line_string]
 
+    previous_stop_time = None
     previous_stop = None
-    for stop in stops:
-        if previous_stop and previous_stop.trip_id == stop.trip_id:
-            pair = (previous_stop.stop_id, stop.stop_id)
+    for stop_time in stop_times:
+        stop = stops.get(stop_time.stop_id)
+        if previous_stop_time and previous_stop_time.trip_id == stop_time.trip_id:
+            pair = (previous_stop_time.stop_id, stop_time.stop_id)
             if pair not in pairs:
                 pairs.add(pair)
                 if pair in route_links:
                     line_string += route_links[pair].geometry.coords
-                elif previous_stop.stop.latlong and stop.stop.latlong:
-                    line_string.append(previous_stop.stop.latlong.coords)
-                    line_string.append(stop.stop.latlong.coords)
+                elif previous_stop and stop and stop.latlong:
+                    line_string.append(previous_stop.latlong.coords)
+                    line_string.append(stop.latlong.coords)
             elif line_string:
                 line_string = []
                 multi_line_string.append(line_string)
         elif line_string:
             line_string = []
             multi_line_string.append(line_string)
-        previous_stop = stop
+        previous_stop_time = stop_time
+        if stop and stop.latlong:
+            previous_stop = stop
 
     data["geometry"] = {
         "type": "MultiLineString",

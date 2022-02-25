@@ -11,26 +11,15 @@ from .models import get_calendars, get_routes, Calendar, Trip, StopTime
 differ = Differ(charjunk=lambda _: True)
 
 
-def get_journey_patterns(trips):
-    trips = trips.prefetch_related(Prefetch('stoptime_set', queryset=StopTime.objects.filter(stop__isnull=False)))
-
-    patterns = []
-    pattern_hashes = set()
-
-    for trip in trips:
-        pattern = [stoptime.stop_id for stoptime in trip.stoptime_set.all()]
-        pattern_hash = str(pattern)
-        if pattern_hash not in pattern_hashes:
-            patterns.append(pattern)
-            pattern_hashes.add(pattern_hash)
-
-    return patterns
-
-
 def get_stop_usages(trips):
     groupings = [[], []]
 
-    trips = trips.prefetch_related(Prefetch('stoptime_set', queryset=StopTime.objects.filter(stop__isnull=False)))
+    trips = trips.prefetch_related(
+        Prefetch(
+            'stoptime_set',
+            queryset=StopTime.objects.filter(stop__isnull=False).order_by('trip_id', 'id')
+        )
+    )
 
     for trip in trips:
         if trip.inbound:
@@ -193,7 +182,7 @@ class Timetable:
                 if routes:
                     self.current_routes = routes
 
-        trips = Trip.objects.filter(route__in=routes)
+        trips = Trip.objects.filter(route__in=list(routes))
         if not self.calendar:
             if self.calendars:
                 calendar_ids = [calendar.id for calendar in self.calendars]
@@ -203,19 +192,21 @@ class Timetable:
             else:
                 trips = trips.filter(calendar=None)
 
-        trips = trips.defer(
-            'route__service__geometry'
-        ).select_related(
-            'route__service'
-        ).prefetch_related(
-            Prefetch('stoptime_set', queryset=StopTime.objects.filter(Q(pick_up=True) | Q(set_down=True))),
+        trips = trips.prefetch_related(
+            Prefetch(
+                'stoptime_set',
+                queryset=StopTime.objects.filter(Q(pick_up=True) | Q(set_down=True)).order_by('trip_id', 'id')
+            ),
             'notes'
         )
 
         if detailed:
             trips = trips.select_related('block', 'garage')
 
+        routes = {route.id: route for route in routes}
+
         for trip in trips:
+            trip.route = routes[trip.route_id]
             if trip.inbound:
                 self.groupings[1].trips.append(trip)
             else:
