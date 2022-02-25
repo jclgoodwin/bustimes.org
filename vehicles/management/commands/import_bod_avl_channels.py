@@ -18,8 +18,6 @@ class Command(ImportLiveVehiclesCommand):
         })
 
     def update(self):
-        items = self.get_items()
-
         items = self.get_items() or []
 
         # encourage items to be grouped by operator
