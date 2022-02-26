@@ -362,6 +362,11 @@ def vehicles_json(request):
 
                     prev_time = prev_stop.departure_or_arrival()
                     next_time = next_stop.arrival_or_departure()
+
+                    # correct for timetable times being > 24 hours:
+                    if when - prev_time < -datetime.timedelta(hours=12):
+                        when += datetime.timedelta(hours=24)
+
                     if prev_time <= when <= next_time:
                         delay = 0
                     elif prev_time < when:
