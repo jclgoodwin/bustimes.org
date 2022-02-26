@@ -356,7 +356,9 @@ def vehicles_json(request):
                         'prev_stop': progress.from_stop_id,
                         'next_stop': progress.to_stop_id,
                     }
-                    prev_stop, next_stop = StopTime.objects.filter(trip=trip, id__gte=progress.from_stoptime)[:2]
+                    prev_stop, next_stop = StopTime.objects.filter(
+                        id__in=(progress.from_stoptime, progress.to_stoptime)
+                    )
                     when = parse_datetime(item['datetime'])
                     when = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
 
@@ -374,8 +376,6 @@ def vehicles_json(request):
                     else:
                         delay = (when - prev_time).total_seconds()  # early
                     item['delay'] = delay
-                    item['progress']['prev_time'] = prev_time
-                    item['progress']['next_time'] = next_time
 
         if service_ids and (not item or item.get('service_id') not in service_ids):
             for service_id in service_ids:

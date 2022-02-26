@@ -36,9 +36,23 @@
                         for (var id in window.bustimes.vehicleMarkers) {
                             if (window.bustimes.vehicleMarkers[id].options.item.trip_id === window.TRIP_ID) {
                                 window.bustimes.vehicleMarkers[id].openPopup();
-                                poppedUp = true;  // don't auto-open the popup again
+                                poppedUp = id;  // don't auto-open the popup again
                                 break;
                             }
+                        }
+                    }
+
+                    if (poppedUp) {
+                        var progress = window.bustimes.vehicleMarkers[poppedUp].options.item.progress;
+                        if (progress) {
+                            // highlight last visited stop in timetable
+                            var nowAtStop = window.bustimes.vehicleMarkers[poppedUp].options.item.progress.prev_stop;
+                            var wasAtStop = document.querySelector('.referrer');
+                            if (wasAtStop) {
+                                wasAtStop.classList.remove('referrer');
+                            }
+                            nowAtStop = document.querySelector('[href="/stops/' + nowAtStop + '"]').parentNode.parentNode;
+                            nowAtStop.classList.add('referrer');
                         }
                     }
                 }

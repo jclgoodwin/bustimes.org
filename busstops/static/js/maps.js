@@ -66,7 +66,7 @@
         });
     }
 
-    var agoTimeout;
+    var timestampTimeout;
 
     function getTimeDelta(seconds) {
         var minutes = Math.round(seconds / 60);
@@ -76,11 +76,9 @@
         return minutes + ' minutes';
     }
 
-    function getPopupContent(item) {
-        var now = new Date();
-        var then = new Date(item.datetime);
-        var ago = Math.round((now.getTime() - then.getTime()) / 1000);
+    var popupContent; // cache popup content without ' ago' at the end
 
+    function getPopupContent(item) {
         if (item.service) {
             var content = item.service.line_name;
             if (item.destination) {
@@ -127,34 +125,52 @@
             content += delay + '<br>';
         }
 
+        popupContent = content;
+
+        return content;
+    }
+
+    function getTimestamp(datetime) {
+        var now = new Date();
+        var then = new Date(datetime);
+        var ago = Math.round((now.getTime() - then.getTime()) / 1000);
+
         if (ago >= 1800) {
-            content += 'Updated at ' + then.toTimeString().slice(0, 8);
+            return 'Updated at ' + then.toTimeString().slice(0, 8);
         } else {
-            content += '<time datetime="' + item.datetime + '" title="' + then.toTimeString().slice(0, 8) + '">';
+            var content = '<time datetime="' + datetime + '" title="' + then.toTimeString().slice(0, 8) + '">';
             if (ago >= 59) {
                 content += getTimeDelta(ago);
-                agoTimeout = setTimeout(updatePopupContent, (61 - ago % 60) * 1000);
+                timestampTimeout = setTimeout(updateTimestamp, (61 - ago % 60) * 1000);
             } else {
                 if (ago === 1) {
                     content += '1 second';
                 } else {
                     content += ago + ' seconds';
                 }
-                agoTimeout = setTimeout(updatePopupContent, 1000);
+                timestampTimeout = setTimeout(updateTimestamp, 1000);
             }
-            content += ' ago</time>';
+            return content + ' ago</time>';
         }
-        return content;
     }
 
+    function updateTimestamp() {
+        var marker = window.bustimes.vehicleMarkers[window.bustimes.clickedMarker];
+        if (marker) {
+            var item = marker.options.item;
+            marker.getPopup().setContent(popupContent + getTimestamp(item.datetime));
+        }
+    }
+
+
     function updatePopupContent() {
-        if (agoTimeout) {
-            clearTimeout(agoTimeout);
+        if (timestampTimeout) {
+            clearTimeout(timestampTimeout);
         }
         var marker = window.bustimes.vehicleMarkers[window.bustimes.clickedMarker];
         if (marker) {
             var item = marker.options.item;
-            marker.getPopup().setContent(getPopupContent(item));
+            marker.getPopup().setContent(getPopupContent(item) + getTimestamp(item.datetime));
         }
     }
 
@@ -231,8 +247,6 @@
                 attribution: attribution
             }).addTo(map);
         },
-
-        getPopupContent: getPopupContent,
 
         updatePopupContent: updatePopupContent,
 

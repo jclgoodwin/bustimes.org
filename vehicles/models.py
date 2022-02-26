@@ -781,8 +781,8 @@ class VehicleJourney(models.Model):
         trip = self.trip_id
 
         return RouteLink.objects.filter(
-            geometry__bboverlaps=point.buffer(0.001),
             service=self.service_id,
+            geometry__bboverlaps=point.buffer(0.001),
             from_stop__stoptime__trip=trip,
             to_stop__stoptime__trip=trip,
             to_stop__stoptime__id__gt=F('from_stop__stoptime__id')
