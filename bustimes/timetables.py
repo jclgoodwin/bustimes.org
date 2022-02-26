@@ -182,7 +182,7 @@ class Timetable:
                 if routes:
                     self.current_routes = routes
 
-        trips = Trip.objects.filter(route__in=list(routes))
+        trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:
             if self.calendars:
                 calendar_ids = [calendar.id for calendar in self.calendars]
