@@ -750,7 +750,7 @@ TICKETER_OPERATORS = [
     ('WM', ['Travel_Express', 'TEXP']),
     ('WM', ['Banga_Buses', 'BANG']),
     ('EM', ['DELA'], 'Delaine Buses'),
-    ('SE', ['RCHC'], 'Richmonds Coaches'),
+    # ('SE', ['RCHC'], 'Richmonds Coaches'),
     ('NW', ['Finches', 'FCHS']),
     ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
     ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
