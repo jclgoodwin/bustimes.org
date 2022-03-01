@@ -86,8 +86,10 @@ class NaptanTest(TestCase):
         stop = response.context_data["object"]
         self.assertEqual(stop.admin_area.name, "Darlington")
         self.assertEqual(stop.stop_area_id, "077G5394")
-        self.assertEqual(stop.latlong.coords, (-1.538062647801621, 54.511514214023784))
+        self.assertAlmostEqual(stop.latlong.x, -1.538062647801621)
+        self.assertAlmostEqual(stop.latlong.y, 54.511514214023784)
 
         stop = StopPoint.objects.get(atco_code="3200GTAYTON0")
-        self.assertEqual(stop.latlong.coords, (-1.117418697321657, 54.48934185786758))
+        self.assertAlmostEqual(stop.latlong.x, -1.117418697321657)
+        self.assertAlmostEqual(stop.latlong.y, 54.48934185786758)
         self.assertEqual(str(stop), "Great Ayton Rail Station (entrance)")
