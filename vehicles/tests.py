@@ -130,7 +130,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '00:47')
         self.assertContains(response, "/operators/lynx/map")
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             response = self.client.get('/operators/lynx')
         self.assertContains(response, "/operators/lynx/vehicles")
         self.assertNotContains(response, "/operators/lynx/map")
