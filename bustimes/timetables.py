@@ -364,10 +364,10 @@ def abbreviate(grouping, i, in_a_row, difference):
     if (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
         return
     repetition = Repetition(in_a_row + 1, difference)
-    grouping.rows[0].times[i - in_a_row - 2] = repetition  # replace a cell with [then every] with colspan and rowspan
-    for j in range(i - in_a_row - 1, i - 1):  # remove (in_a_row - 1) other cells from top row
+    grouping.rows[0].times[i - in_a_row - 2] = repetition  # replace top left cell with [[then every] colspan= rowspan=]
+    for j in range(i - in_a_row - 1, i - 1):  # blank (in_a_row - 1) other cells from top row
         grouping.rows[0].times[j] = None
-    for j in range(i - in_a_row - 2, i - 1):  # remove (in_a_row) cells from rows below the top row
+    for j in range(i - in_a_row - 2, i - 1):  # remove (in_a_row) cells from each row below the top row
         for row in grouping.rows[1:]:
             row.times[j] = None
 
