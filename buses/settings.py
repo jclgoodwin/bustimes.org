@@ -513,7 +513,7 @@ BOD_OPERATORS = [
         'CBBH': 'CBBH',
         'CBNL': 'CBNL',
         'CBL': 'CBNL',
-    }, False),
+    }, True),
     # ('BULL', 'NW', {}, False),
 
     ('SELT', 'NW', {}, True),  # Selwyns
