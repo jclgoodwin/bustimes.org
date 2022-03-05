@@ -507,7 +507,7 @@ BOD_OPERATORS = [
         'GO': 'GOCH'
     }, False),
 
-    ('LAKC', 'WM', {}, True),  # incomplete
+    #('LAKC', 'WM', {}, True),  # incomplete
 
     ('CBBH', 'EM', {
         'CBBH': 'CBBH',
