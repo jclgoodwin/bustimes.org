@@ -6,7 +6,7 @@
             <th scope="col">user</th>
             {% if not vehicle %}
                 <th scope="col">vehicle</th>
-                <th scope="col"><a href="?{{ toggle_order.vehicle }}">*</a></th>
+                <th scope="col"><a href="?{{ toggle_order.vehicle }}" title="sort by vehicle's number of edits">*</a></th>
                 <th scope="col"></th>
             {% endif %}
             <th scope="col">proposed changes</th>
@@ -23,6 +23,8 @@
                     <a href="{{ edit.user.get_absolute_url }}">
                         {% if user.is_staff %}
                             {{ edit.user.username }}
+                        {% elif edit.user == user %}
+                            <strong>you</strong>
                         {% else %}
                             {{ edit.user }}
                         {% endif %}
@@ -52,6 +54,8 @@
                     <td><button class="action" data-url="{{ edit.id }}/apply" style="background:#0f0">👍 apply</button></td>
                     <td><button class="action" data-url="{{ edit.id }}/approve">approve</button></td>
                     <td><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</button></td>
+                {% elif edit.user == user %}
+                    <td colspan="2"><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">cancel</button></td>
                 {% else %}
                     <td><button class="action" data-url="{{ edit.id }}/vote/up">👍</button></td>
                     <td><button class="action" data-url="{{ edit.id }}/vote/down">👎</button></td>
@@ -78,7 +82,7 @@
                 if (response.ok) {
                     button.style.opacity = '.5';
                     response.text().then(text => {
-                        if (text && !isNan(parseInt(text))) {
+                        if (text && !isNaN(parseInt(text))) {
                             row.querySelector('.score').innerText = text;
                         }
                     });

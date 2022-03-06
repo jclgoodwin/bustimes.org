@@ -1,0 +1,19 @@
+{% extends 'page.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+<h1>Logged out</h1>
+
+<p>Thanks for spending some quality time with the web site today.</p>
+
+<p><a href="{% url 'login' %}">Log in again</a></p>
+
+{% endblock %}
+
+{% block ad %}{% endblock %}

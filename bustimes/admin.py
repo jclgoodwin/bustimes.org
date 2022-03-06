@@ -107,7 +107,7 @@ class GarageAdmin(admin.ModelAdmin):
         return queryset
 
 
-class BankHolidayDateInline(admin.TabularInline):
+class BankHolidayDateInline(admin.StackedInline):
     model = BankHolidayDate
 
 

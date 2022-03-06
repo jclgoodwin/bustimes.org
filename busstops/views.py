@@ -141,7 +141,9 @@ def contact(request):
         form = ContactForm(request.POST, request=request)
         if form.is_valid():
             subject = form.cleaned_data['message'][:50].splitlines()[0]
-            body = '{}\n\n{}'.format(form.cleaned_data['message'], form.cleaned_data['referrer'])
+            body = f"""{form.cleaned_data['message']}
+
+{form.cleaned_data['referrer']}"""
             message = EmailMessage(
                 subject,
                 body,
@@ -153,10 +155,13 @@ def contact(request):
             submitted = True
     else:
         referrer = request.META.get('HTTP_REFERER')
-        form = ContactForm(initial={
+        initial = {
             'referrer': referrer,
-            'message': request.GET.get('message')
-        })
+            'message': request.GET.get('message'),
+        }
+        if request.user.is_authenticated:
+            initial['email'] = request.user.email
+        form = ContactForm(initial=initial)
     return render(request, 'contact.html', {
         'form': form,
         'submitted': submitted

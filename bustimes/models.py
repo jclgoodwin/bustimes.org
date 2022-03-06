@@ -150,7 +150,7 @@ class BankHoliday(models.Model):
 class BankHolidayDate(models.Model):
     bank_holiday = models.ForeignKey(BankHoliday, models.CASCADE)
     date = models.DateField()
-    scotland = models.BooleanField(null=True)
+    scotland = models.BooleanField(null=True, help_text="Yes = Scotland only, No = not Scotland, Unknown = both")
 
 
 class CalendarBankHoliday(models.Model):

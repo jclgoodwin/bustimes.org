@@ -615,10 +615,6 @@ def edit_vehicle(request, vehicle_id):
     })
 
 
-def is_staff(user):
-    return user.is_staff
-
-
 @login_required
 def vehicle_edits(request):
     if request.method == "POST":
@@ -698,9 +694,12 @@ def vehicle_edit_vote(request, edit_id, direction):
 
 
 @require_POST
-@user_passes_test(is_staff)
+@login_required
 def vehicle_edit_action(request, edit_id, action):
     edit = get_object_or_404(VehicleEdit, id=edit_id)
+
+    if action != 'disapprove':
+        assert request.user.is_staff
 
     if action == 'apply':
         edit.apply()
