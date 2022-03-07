@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.db.models import Exists, OuterRef
 from django.db.models.functions import Cast
-from django.contrib.gis.db.models import PointField, CharField
-from django.contrib.gis.forms import OSMWidget
+from django.contrib.gis.db.models import CharField
+from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils.safestring import mark_safe
 from django.urls import reverse
@@ -84,16 +84,13 @@ class NoteAdmin(admin.ModelAdmin):
 
 
 @admin.register(Garage)
-class GarageAdmin(admin.ModelAdmin):
+class GarageAdmin(GISModelAdmin):
     search_fields = ['code', 'name']
     list_display = ['code', 'name', 'operators']
     list_filter = [
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
     ]
     raw_id_fields = ['operator']
-    formfield_overrides = {
-        PointField: {'widget': OSMWidget}
-    }
 
     def operators(self, obj):
         return obj.operators

@@ -433,7 +433,11 @@ class VehicleEdit(models.Model):
             if features:
                 changes['features'] = features
         if self.withdrawn is not None and self.withdrawn != self.vehicle.withdrawn:
-            if not self.withdrawn or not self.vehicle.latest_journey or self.datetime > self.vehicle.latest_journey.datetime:
+            if (
+                not self.withdrawn
+                or not self.vehicle.latest_journey
+                or self.datetime > self.vehicle.latest_journey.datetime
+            ):
                 changes['withdrawn'] = self.withdrawn
         if self.changes:
             for key in self.changes:

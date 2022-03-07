@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
-from django.contrib.gis.db.models import PointField
-from django.contrib.gis.forms import OSMWidget
+from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, F, Exists, OuterRef, CharField
@@ -29,16 +28,13 @@ class StopCodeInline(admin.TabularInline):
 
 
 @admin.register(models.StopPoint)
-class StopPointAdmin(admin.ModelAdmin):
-    list_display = ['atco_code', 'naptan_code', 'locality', 'admin_area', '__str__']
+class StopPointAdmin(GISModelAdmin):
+    list_display = ['atco_code', 'naptan_code', 'locality', 'admin_area', '__str__', 'modified_at', 'created_at']
     list_select_related = ['locality', 'admin_area']
-    list_filter = ['stop_type', 'service__region', 'admin_area']
-    raw_id_fields = ['places', 'admin_area']
+    list_filter = ['modified_at', 'created_at', 'stop_type', 'service__region', 'admin_area']
+    raw_id_fields = ['stop_area', 'locality', 'places', 'admin_area']
     search_fields = ['atco_code']
     ordering = ['atco_code']
-    formfield_overrides = {
-        PointField: {'widget': OSMWidget}
-    }
     inlines = [StopCodeInline]
     show_full_result_count = False
 
@@ -59,6 +55,11 @@ class StopPointAdmin(admin.ModelAdmin):
 class StopCodeAdmin(admin.ModelAdmin):
     list_display = ['stop', 'code', 'source']
     raw_id_fields = ['stop', 'source']
+
+
+@admin.register(models.StopArea)
+class StopAreaAdmin(GISModelAdmin):
+    raw_id_fields = ['admin_area', 'parent']
 
 
 class OperatorCodeInline(admin.TabularInline):
@@ -201,11 +202,11 @@ class ServiceLinkAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Locality)
-class LocalityAdmin(admin.ModelAdmin):
+class LocalityAdmin(GISModelAdmin):
     list_display = ('id', 'name', 'slug', 'modified_at', 'created_at')
     search_fields = ('id', 'name')
-    raw_id_fields = ('adjacent',)
-    list_filter = ('admin_area', 'admin_area__region')
+    raw_id_fields = ('adjacent', 'parent')
+    list_filter = ('modified_at', 'created_at', 'admin_area__region', 'admin_area')
 
 
 @admin.register(models.OperatorCode)
@@ -255,6 +256,7 @@ class ServiceColourAdmin(admin.ModelAdmin):
 class PlaceAdmin(admin.ModelAdmin):
     list_filter = ('source',)
     search_fields = ('name',)
+    raw_id_fields = ('parent',)
 
 
 @admin.register(models.DataSource)
@@ -344,4 +346,3 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Region)
 admin.site.register(models.District)
-admin.site.register(models.StopArea)

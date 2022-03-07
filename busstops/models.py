@@ -137,7 +137,7 @@ class Locality(SearchMixin, models.Model):
     slug = AutoSlugField(always_update=False, populate_from='get_qualified_name', editable=True, unique=True)
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
-    parent = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
+    parent = models.ForeignKey('Locality', models.SET_NULL, null=True, blank=True)
     latlong = models.PointField(null=True, blank=True)
     adjacent = models.ManyToManyField('self', blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
@@ -184,7 +184,7 @@ class StopArea(models.Model):
     )
     stop_area_type = models.CharField(max_length=4, choices=TYPE_CHOICES)
 
-    parent = models.ForeignKey('StopArea', models.SET_NULL, null=True, editable=False)
+    parent = models.ForeignKey('StopArea', models.SET_NULL, null=True, blank=True)
     latlong = models.PointField(null=True)
     active = models.BooleanField()
 
@@ -288,7 +288,7 @@ class Place(models.Model):
     name = models.CharField(max_length=255)
     latlong = models.PointField(null=True, blank=True)
     polygon = models.PolygonField(null=True, blank=True)
-    parent = models.ForeignKey('Place', models.SET_NULL, null=True, editable=False)
+    parent = models.ForeignKey('Place', models.SET_NULL, null=True, blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta:
@@ -316,8 +316,8 @@ class StopPoint(models.Model):
 
     latlong = models.PointField(null=True, blank=True)
 
-    stop_area = models.ForeignKey(StopArea, models.SET_NULL, null=True, editable=False)
-    locality = models.ForeignKey('Locality', models.SET_NULL, null=True, editable=False)
+    stop_area = models.ForeignKey(StopArea, models.SET_NULL, null=True, blank=True)
+    locality = models.ForeignKey('Locality', models.SET_NULL, null=True, blank=True)
     suburb = models.CharField(max_length=48, blank=True)
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField(null=True)
@@ -343,16 +343,16 @@ class StopPoint(models.Model):
         ('GAT', 'Air airside area'),
         ('FTD', 'Ferry terminal/dock entrance'),
         ('FER', 'Ferry/dock berth area'),
-        ('FBT', 'Ferry berth'),  # ?
+        ('FBT', 'Ferry berth'),
         ('RSE', 'Rail station entrance'),
         ('RLY', 'Rail platform access area'),
-        ('RPL', 'Rail platform'),  # ?
+        ('RPL', 'Rail platform'),
         ('TMU', 'Tram/metro/underground entrance'),
-        ('MET', 'MET'),  # ?
+        ('MET', 'Tram/metro/underground access area'),
         ('PLT', 'Metro and underground platform access area'),
         ('BCE', 'Bus/coach station entrance'),
         ('BCS', 'Bus/coach bay/stand/stance within bus/coach station'),
-        ('BCQ', 'Bus/coach bay'),  # ?
+        ('BCQ', 'Bus/coach bay'),
         ('BCT', 'On street bus/coach/tram stop'),
         ('TXR', 'Taxi rank (head of)'),
         ('STR', 'Shared taxi rank (head of)'),
@@ -634,12 +634,11 @@ class Service(models.Model):
     mode = models.CharField(max_length=11, blank=True)
     operator = models.ManyToManyField(Operator, blank=True)
     region = models.ForeignKey(Region, models.CASCADE, null=True, blank=True)
-    stops = models.ManyToManyField(StopPoint, editable=False,
-                                   through=StopUsage)
+    stops = models.ManyToManyField(StopPoint, through=StopUsage)
     date = models.DateField(null=True, blank=True)
     current = models.BooleanField(default=True, db_index=True)
     timetable_wrong = models.BooleanField(default=False)
-    geometry = models.GeometryField(null=True, editable=False)
+    geometry = models.GeometryField(null=True)
 
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     tracking = models.BooleanField(default=False)
