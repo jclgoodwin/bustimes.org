@@ -5,12 +5,12 @@ import warnings
 import zipfile
 from unittest.mock import patch, call
 from tempfile import TemporaryDirectory
-from django.test import TransactionTestCase
+from django.test import TestCase
 from django.core.management import call_command
 from ...models import Region, AdminArea, Locality, StopPoint
 
 
-class ImportIrelandTest(TransactionTestCase):
+class ImportIrelandTest(TestCase):
     """Test the import_ie_nptg and import_ie_nptg command
     """
     def test_ie_nptg_and_naptan(self):
