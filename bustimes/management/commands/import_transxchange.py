@@ -1019,7 +1019,6 @@ class Command(BaseCommand):
                 'service': service,
                 'revision_number': transxchange.attributes['RevisionNumber'],
                 'service_code': txc_service.service_code,
-                'geometry': None
             }
 
             if txc_service.origin and txc_service.origin != 'Origin':
