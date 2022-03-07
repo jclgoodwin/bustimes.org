@@ -13,7 +13,7 @@ from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest

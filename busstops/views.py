@@ -141,9 +141,11 @@ def contact(request):
         form = ContactForm(request.POST, request=request)
         if form.is_valid():
             subject = form.cleaned_data['message'][:50].splitlines()[0]
-            body = f"""{form.cleaned_data['message']}
 
-{form.cleaned_data['referrer']}"""
+            body = f"""{form.cleaned_data['message']}\n\n{form.cleaned_data['referrer']}"""
+            if request.user.is_authenticated:
+                body = f"""{body}\n\n{request.user.get_absolute_url()}"""
+
             message = EmailMessage(
                 subject,
                 body,
