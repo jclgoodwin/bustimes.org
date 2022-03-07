@@ -532,6 +532,7 @@ def edit_vehicle(request, vehicle_id):
         'operator': vehicle.operator,
         'reg': vehicle.reg,
         'vehicle_type': vehicle.vehicle_type,
+        'other_vehicle_type': str(vehicle.vehicle_type or ''),
         'features': vehicle.features.all(),
         'colours': str(vehicle.livery_id or vehicle.colours),
         'branding': vehicle.branding,
@@ -574,8 +575,6 @@ def edit_vehicle(request, vehicle_id):
                 else:
                     raise e
             else:
-                form = None
-
                 if revision:
                     revision.datetime = now
                     revision.save()
@@ -596,6 +595,11 @@ def edit_vehicle(request, vehicle_id):
                                 VehicleEditFeature.objects.create(edit=edit, feature=feature, add=False)
                         for feature in data['features']:
                             VehicleEditFeature.objects.create(edit=edit, feature=feature, add=True)
+
+                if revision or edit.id:
+                    form = None
+                else:
+                    form.add_error(None, 'You haven\'t changed anything')
 
     if form:
         context['pending_edits'] = pending_edits

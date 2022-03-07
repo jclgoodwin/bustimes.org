@@ -47,6 +47,7 @@ class EditVehiclesForm(forms.Form):
         required=False,
         help_text="Only tick this box if the ticket machine code is something like SPARE"
     )
+    other_vehicle_type = forms.CharField(required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
     other_colour = forms.CharField(

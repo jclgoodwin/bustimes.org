@@ -46,6 +46,10 @@ def get_vehicle_edit(vehicle, fields, now, request):
                 setattr(edit, field, f'-{getattr(vehicle, field)}')
             changed = True
 
+    if fields.get('other_vehicle_type') and fields['other_vehicle_type'] != str(vehicle.vehicle_type):
+        edit.vehicle_type = fields['other_vehicle_type']
+        changed = True
+
     if 'spare_ticket_machine' in fields:
         if fields['spare_ticket_machine']:
             edit.notes = 'Spare ticket machine'

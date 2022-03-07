@@ -345,6 +345,7 @@ class VehiclesTests(TestCase):
             'fleet_number': '1',
             'reg': 'FD54JYA',
             'vehicle_type': self.vehicle_1.vehicle_type_id,
+            'other_vehicle_type': str(self.vehicle_1.vehicle_type),
             'features': self.wifi.id,
             'operator': self.lynx.id,
             'colours': '#FF0000',
@@ -451,6 +452,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             'fleet_number': '50',
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
+            'other_vehicle_type': str(self.vehicle_2.vehicle_type),
             'colours': self.livery.id,
             'notes': '',
         }
@@ -501,6 +503,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             'fleet_number': '50',
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
+            'other_vehicle_type': "Optare Spectra",
             'colours': self.livery.id,
             'other_colour': '',
             'notes': '',
@@ -527,6 +530,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         with self.assertNumQueries(15):
             self.client.post(url, {
                 'fleet_number': '',
+                'other_vehicle_type': 'Optare Tempo',
                 'reg': '',
                 'operator': self.lynx.id,
             })
@@ -644,6 +648,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             response = self.client.post(self.vehicle_2.get_edit_url(), {
                 'reg': self.vehicle_2.reg,
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
+                'other_vehicle_type': str(self.vehicle_2.vehicle_type),
                 'operator': self.vehicle_2.operator_id,
                 'colours': 'Other',
             })

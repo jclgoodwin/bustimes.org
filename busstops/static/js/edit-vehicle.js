@@ -4,6 +4,8 @@
 (function () {
     'use strict';
 
+    document.getElementById('id_other_vehicle_type').parentNode.remove();
+
     // vehicle type
     accessibleAutocomplete.enhanceSelectElement({
         selectElement: document.getElementById('id_vehicle_type'),
