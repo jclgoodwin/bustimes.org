@@ -1,7 +1,7 @@
 <table class="compact">
     <thead>
         <tr>
-            {% if user.is_staff and not vehicle %}<th scope="col"></th>{% endif %}
+            {% if not vehicle and perms.vehicles_change_vehicle %}<th scope="col"></th>{% endif %}
             <th scope="col">date</th>
             <th scope="col">user</th>
             {% if not vehicle %}
@@ -17,11 +17,11 @@
     <tbody>
         {% for edit in edits %}
             <tr>
-                {% if user.is_staff and not vehicle %}<td><input type="checkbox" name="edit" value="{{ edit.id }}"></td>{% endif %}
+                {% if not vehicle and perms.vehicles_change_vehicle  %}<td><input type="checkbox" name="edit" value="{{ edit.id }}"></td>{% endif %}
                 <td>{{ edit.datetime }}</td>
                 <td class="link">
                     <a href="{{ edit.user.get_absolute_url }}">
-                        {% if user.is_staff %}
+                        {% if perms.accounts.change_user %}
                             {{ edit.user.username }}
                         {% elif edit.user == user %}
                             <strong>you</strong>
@@ -50,9 +50,9 @@
                     {% if edit.url %}<div class="wrap">{{ edit.url|urlize }}</div>{% endif %}
                 </td>
                 <td class="score">{{ edit.score }}</td>
-                {% if user.is_staff or user.trusted and edit.is_simple %}
+                {% if perms.vehicles_change_vehicle or user.trusted and edit.is_simple %}
                     <td><button class="action" data-url="{{ edit.id }}/apply" style="background:#0f0">👍 apply</button></td>
-                    {% if user.is_staff %}
+                    {% if perms.vehicles_change_vehicle %}
                         <td><button class="action" data-url="{{ edit.id }}/approve">approve</button></td>
                     {% endif %}
                     <td><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</button></td>

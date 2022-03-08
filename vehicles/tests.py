@@ -375,7 +375,7 @@ class VehiclesTests(TestCase):
 
         # edit fleet number
         initial['fleet_number'] = '2'
-        initial['previous_reg'] = 'cock'
+        initial['previous_reg'] = 'bean'
         with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
@@ -392,7 +392,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
 
 https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertEqual(edit.get_changes(), {
-            'Previous reg': 'COCK'
+            'Previous reg': 'BEAN'
         })
 
         # should not create an edit
@@ -418,7 +418,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
 
         with self.assertNumQueries(7):
             response = self.client.get('/vehicles/edits')
-        self.assertContains(response, 'Previous reg: COCK')
+        self.assertContains(response, 'Previous reg: BEAN')
 
         del initial['colours']
 
@@ -554,7 +554,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             response = self.client.get('/vehicles/edits?change=livery')
         self.assertEqual(len(response.context['edits']), 0)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(11):
             response = self.client.get('/vehicles/edits?change=reg')
         self.assertEqual(len(response.context['edits']), 1)
         self.assertContains(response, '<option value="LYNX">Lynx (1)</option>')
@@ -603,7 +603,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertNotContains(response, 'livery')
         self.assertNotContains(response, 'notes')
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(8):
             # new user - can create a VehicleEdit
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'D19 FOX',
@@ -617,18 +617,18 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         edit.apply(save=False)
         self.assertTrue(edit.vehicle.withdrawn)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(13):
             response = self.client.post(self.vehicle_2.get_edit_url(), {
                 'reg': self.vehicle_2.reg,
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
                 'colours': 'Other',
-                "prevous_reg": "COCKS"  # doesn't match regex
+                "prevous_reg": "SPIDERS"  # doesn't match regex
             })
             self.assertContains(response, "I’ll update those details shortly")
 
         self.client.force_login(self.trusted_user)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(9):
             # trusted user - can edit reg and remove branding
             response = self.client.post(self.vehicle_3.get_edit_url(), {
                 'reg': 'DA04 DDA',
@@ -647,7 +647,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         response = self.client.get(self.vehicle_3.get_absolute_url())
         self.assertContains(response, "Previous reg: K292 JVF, P44 CEX")
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(15):
             # trusted user - can edit colour
             response = self.client.post(self.vehicle_2.get_edit_url(), {
                 'reg': self.vehicle_2.reg,
@@ -689,12 +689,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         }
 
         # no vehicle ids specified
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             response = self.client.post('/operators/lynx/vehicles/edit', data)
         self.assertContains(response, "Select some vehicles to change")
 
         data['vehicle'] = self.vehicle_1.id
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(10):
             response = self.client.post('/operators/lynx/vehicles/edit', data)
         self.assertContains(response, "You haven&#x27;t changed anything")
 
@@ -702,7 +702,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertFalse(VehicleRevision.objects.all())
 
         # change vehicle type and colours:
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(19):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 **data,
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
@@ -717,7 +717,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertContains(response, 'FD54 JYA')
 
         # withdraw
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(15):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'withdrawn': 'on',

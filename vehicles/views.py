@@ -704,7 +704,7 @@ def vehicle_edit_vote(request, edit_id, direction):
 def vehicle_edit_action(request, edit_id, action):
     edit = get_object_or_404(VehicleEdit, id=edit_id)
 
-    if not request.user.is_staff:
+    if not request.user.has_perm('vehicles.change_vehicle'):
         assert (
             action == 'disapprove' and request.user.id == edit.user_id
         ) or request.user.trusted and edit.is_simple()

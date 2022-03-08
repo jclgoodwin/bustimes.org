@@ -43,7 +43,7 @@ def user_detail(request, pk):
     page = request.GET.get('page')
     revisions = paginator.get_page(page)
 
-    if request.user.is_staff:
+    if request.user.has_perm('accounts.change_user'):
         form = forms.AdminUserForm(request.POST or None, initial={
             'trusted': user.trusted
         })

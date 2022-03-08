@@ -244,6 +244,7 @@ class LiveryAdmin(admin.ModelAdmin):
     search_fields = ['name']
     list_display = ['id', 'name', 'vehicles', 'left', 'right', 'white_text', 'operator']
     actions = ['duplicate']
+    autocomplete_fields = ["operator"]
 
     def right(self, obj):
         if obj.right_css:

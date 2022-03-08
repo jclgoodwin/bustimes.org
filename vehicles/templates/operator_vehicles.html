@@ -62,11 +62,8 @@
 {% elif not parent %}
     <ul class="horizontal">
         <li><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></li>
+        <li><a href="/vehicles/history?vehicle__operator={{ object.id }}">Recent changes</a></li>
         <li><a href="/vehicles/edits?vehicle__operator={{ object.id }}">Pending vehicle edits</a></li>
-        {% if user.is_staff %}
-            <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}?o=2&amp;operator__id__exact={{ object.id }}">Vehicles</a></li>
-            <li><a href="{% url 'admin:vehicles_vehicleedit_changelist' %}?approved__isnull=True&amp;o=-3.2.-1&amp;operator={{ object.id }}">Vehicle edits</a></li>
-        {% endif %}
     </ul>
 {% endif %}
 

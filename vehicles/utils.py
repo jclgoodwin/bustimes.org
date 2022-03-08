@@ -183,7 +183,7 @@ def do_revision(vehicle, data, user):
             changed_fields.append('branding')
             del data['branding']
 
-    if user.is_staff:
+    if user.has_perm('vehicles.change_vehicle'):
         for field in ('notes', 'branding', 'name'):
             if field in data:
                 from_value = getattr(vehicle, field)

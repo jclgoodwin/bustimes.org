@@ -31,7 +31,7 @@
 
 {% if edits %}
 
-{% if user.is_staff %}
+{% if perms.vehicles_change_vehicle %}
     <form id="edits" method="POST">
 
     <p>
@@ -45,7 +45,7 @@
     {% include 'vehicle_edits_table.html' %}
 </div>
 
-{% if user.is_staff %}
+{% if perms.vehicles_change_vehicle %}
     <p>
         <input type="submit" name="action" value="apply">
         <input type="submit" name="action" value="approve">

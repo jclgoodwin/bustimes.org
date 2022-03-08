@@ -5,13 +5,15 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db.models import Count, Q, Exists, OuterRef
+from django.utils.html import format_html
+from django.urls import reverse
 
 from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
 from . import fields
 
 
-def get_livery_choices(operator, vehicle=None):
+def get_livery_choices(operator, vehicle, user):
     choices = {}
 
     q = Q(withdrawn=False)
@@ -23,14 +25,19 @@ def get_livery_choices(operator, vehicle=None):
     liveries = liveries.annotate(popularity=Count('vehicle')).order_by('-popularity')
 
     for livery in liveries.distinct():
-        choices[livery.id] = livery
+        choices[livery.id] = livery.preview(name=True)
+
+    if user.has_perm('vehicles.change_livery'):
+        for livery_id in choices:
+            url = reverse('admin:vehicles_livery_change', args=(livery_id,))
+            choices[livery_id] += format_html(' <a href="{}">(edit)</a>', url)
 
     # add ad hoc vehicle colours
     for vehicle in vehicles.filter(~Q(colours=""), ~Q(colours="Other"), livery=None).distinct("colours"):
-        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'{vehicle.colours}')
+        choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'{vehicle.colours}').preview(name=True)
 
     # replace the dictionary with a list of key, label pairs
-    choices = [(key, livery.preview(name=True)) for key, livery in choices.items()]
+    choices = list(choices.items())
 
     if choices:
         choices.append(('Other', 'Other'))
@@ -89,7 +96,7 @@ link to a picture to prove it. Be polite.""")
         colours = None
 
         if operator:
-            colours = get_livery_choices(operator, vehicle)
+            colours = get_livery_choices(operator, vehicle, user)
 
         if colours:
             if vehicle:
