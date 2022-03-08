@@ -540,6 +540,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
 
         edit = VehicleEdit.objects.get()
 
+        self.client.force_login(self.trusted_user)  # switch user to vote (can't vote on one's own edits)
+
         # vote for edit
         with self.assertNumQueries(12):
             self.client.post(f'/vehicles/edits/{edit.id}/vote/up')
@@ -557,6 +559,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertEqual(len(response.context['edits']), 1)
         self.assertContains(response, '<option value="LYNX">Lynx (1)</option>')
         self.assertContains(response, '<td class="score">-1</td>')
+
+        self.client.force_login(self.staff_user)
 
         # try to apply the edit
         with self.assertNumQueries(11):

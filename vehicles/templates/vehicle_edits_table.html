@@ -50,9 +50,11 @@
                     {% if edit.url %}<div class="wrap">{{ edit.url|urlize }}</div>{% endif %}
                 </td>
                 <td class="score">{{ edit.score }}</td>
-                {% if user.is_staff %}
+                {% if user.is_staff or user.trusted and edit.is_simple %}
                     <td><button class="action" data-url="{{ edit.id }}/apply" style="background:#0f0">👍 apply</button></td>
-                    <td><button class="action" data-url="{{ edit.id }}/approve">approve</button></td>
+                    {% if user.is_staff %}
+                        <td><button class="action" data-url="{{ edit.id }}/approve">approve</button></td>
+                    {% endif %}
                     <td><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</button></td>
                 {% elif edit.user == user %}
                     <td colspan="2"><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">cancel</button></td>

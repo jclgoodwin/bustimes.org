@@ -681,6 +681,8 @@ def vehicle_edits(request):
 def vehicle_edit_vote(request, edit_id, direction):
     edit = get_object_or_404(VehicleEdit, id=edit_id)
 
+    assert request.user.id != edit.user_id
+
     votes = edit.vehicleeditvote_set
     positive = direction == 'up'
 
@@ -702,8 +704,10 @@ def vehicle_edit_vote(request, edit_id, direction):
 def vehicle_edit_action(request, edit_id, action):
     edit = get_object_or_404(VehicleEdit, id=edit_id)
 
-    if action != 'disapprove':
-        assert request.user.is_staff
+    if not request.user.is_staff:
+        assert (
+            action == 'disapprove' and request.user.id == edit.user_id
+        ) or request.user.trusted and edit.is_simple()
 
     if action == 'apply':
         edit.apply()

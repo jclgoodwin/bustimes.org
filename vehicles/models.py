@@ -445,6 +445,12 @@ class VehicleEdit(models.Model):
                     changes[key] = self.changes[key]
         return changes
 
+    def is_simple(self):
+        for key in self.get_changes():
+            if key in ('name', 'branding', 'Previous reg'):
+                return False
+        return True
+
     def apply(self, save=True):
         ok = True
         vehicle = self.vehicle
