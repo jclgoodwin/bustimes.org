@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.db.models import Count, Q, Exists, OuterRef
 from django.utils.html import format_html
 from django.urls import reverse
+from urllib.parse import quote_plus
 
 from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
@@ -27,14 +28,22 @@ def get_livery_choices(operator, vehicle, user):
     for livery in liveries.distinct():
         choices[livery.id] = livery.preview(name=True)
 
-    if user.has_perm('vehicles.change_livery'):
-        for livery_id in choices:
-            url = reverse('admin:vehicles_livery_change', args=(livery_id,))
-            choices[livery_id] += format_html(' <a href="{}">(edit)</a>', url)
+        if user.has_perm('vehicles.change_livery'):
+            url = reverse('admin:vehicles_livery_change', args=(livery.id,))
+            choices[livery.id] += format_html(' <a href="{}">(edit)</a>', url)
 
     # add ad hoc vehicle colours
     for vehicle in vehicles.filter(~Q(colours=""), ~Q(colours="Other"), livery=None).distinct("colours"):
         choices[vehicle.colours] = Livery(colours=vehicle.colours, name=f'{vehicle.colours}').preview(name=True)
+
+        if user.has_perm('vehicles.change_livery'):
+            url = reverse('admin:vehicles_livery_add')
+            choices[vehicle.colours] += format_html(
+                ' <a href="{}?colours={}&amp;operator={}">(add proper livery)</a>',
+                url,
+                quote_plus(vehicle.colours),
+                vehicle.operator_id
+            )
 
     # replace the dictionary with a list of key, label pairs
     choices = list(choices.items())
