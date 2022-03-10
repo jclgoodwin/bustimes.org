@@ -11,7 +11,7 @@ from io import StringIO
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from django.db import DataError
+from django.db import DataError, IntegrityError
 from django.utils import timezone
 from busstops.models import DataSource, Operator, Service
 from .import_transxchange import Command as TransXChangeCommand
@@ -33,7 +33,10 @@ def clean_up(operators, sources, incomplete=False):
     )
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains='bus-data.dft.gov.uk')
-    routes.delete()
+    try:
+        routes.delete()
+    except IntegrityError:
+        routes.delete()
     Service.objects.filter(operator__in=operators, current=True, route=None).update(current=False)
 
 

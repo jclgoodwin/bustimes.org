@@ -1275,6 +1275,7 @@ input:not(:checked) + label {
 }
 
 .credit {
+    clear: both;
     font-size: .875em;
     word-wrap: break-word;
 }
