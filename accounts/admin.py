@@ -31,6 +31,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'email', 'last_login', 'is_active', 'trusted'] + readonly_fields
     list_display_links = ['id', 'username']
     inlines = [OperatorUserInline]
+    list_filter = ['is_staff', 'groups']
 
     def revisions(self, obj):
         return format_html(
