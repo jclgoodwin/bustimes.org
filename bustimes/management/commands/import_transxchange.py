@@ -615,7 +615,15 @@ class Command(BaseCommand):
                         stop_time.stop = stops[atco_code]
                         trip.destination = stop_time.stop
                 else:
-                    stop_time.stop_code = cell.stopusage.stop.atco_code  # !
+                    # stop missing from TransXChange StopPoints
+                    try:
+                        stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
+                    except StopPoint.DoesNotExist:
+                        logger.warning(atco_code)
+                        stop_time.stop_code = atco_code  # !
+                    else:
+                        stop_time.stop = stops[atco_code]
+                        trip.destination = stop_time.stop
                 stop_times.append(stop_time)
 
             # last stop
