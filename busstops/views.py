@@ -112,7 +112,7 @@ def not_found(request, exception):
 
 def error(request):
     context = {}
-    if request.user.is_staff:
+    if request.user.is_superuser:
         _, exception, tb = sys.exc_info()
         context["exception"] = exception
         context["traceback"] = traceback.format_tb(tb)

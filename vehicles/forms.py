@@ -163,7 +163,7 @@ can’t be contradicted"""
                             self.fields['fleet_number'].help_text = f"""The ticket machine code ({vehicle_unique_id})
 can’t be contradicted"""
 
-        if not user.is_staff:
+        if not user.is_superuser:
             if vehicle.reg and vehicle.reg in re.sub(r'\W+', '', vehicle.code):
                 self.fields['reg'].disabled = True
                 self.fields['reg'].help_text = f"The ticket machine code ({vehicle.code}) can’t be contradicted"
