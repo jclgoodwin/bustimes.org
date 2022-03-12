@@ -507,7 +507,7 @@ BOD_OPERATORS = [
         'GO': 'GOCH'
     }, False),
 
-    ('LAKC', 'WM', {}, True),  # incomplete
+    #('LAKC', 'WM', {}, True),  # incomplete
 
     ('CBBH', 'EM', {
         'CBBH': 'CBBH',
@@ -750,7 +750,7 @@ TICKETER_OPERATORS = [
     ('WM', ['Travel_Express', 'TEXP']),
     ('WM', ['Banga_Buses', 'BANG']),
     ('EM', ['DELA'], 'Delaine Buses'),
-    ('SE', ['RCHC'], 'Richmonds Coaches'),
+    # ('SE', ['RCHC'], 'Richmonds Coaches'),
     ('NW', ['Finches', 'FCHS']),
     ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
     ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
