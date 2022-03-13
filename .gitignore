@@ -5,6 +5,7 @@ config/gunicorn.py
 data/TNDS/*.zip
 data/*.zip
 data/bod
+data/journeys
 data/ticketer/*.zip
 data/gtfs/*.zip
 data/*.xml

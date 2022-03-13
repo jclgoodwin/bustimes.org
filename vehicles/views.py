@@ -424,6 +424,8 @@ def journeys_list(request, journeys, service=None, vehicle=None):
             date = datetime.date.fromisoformat(date)
         except ValueError:
             date = None
+    elif dates is None:
+        date = timezone.localdate()
 
     if date or dates:
         context['dates'] = dates
