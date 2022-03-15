@@ -8,7 +8,7 @@ from ...models import StopPoint
 class Command(BaseCommand):
     def handle(self, *args, **options):
         with open(settings.DATA_DIR / 'stops.yaml') as open_file:
-            records = yaml.load(open_file, Loader=yaml.FullLoader)
+            records = yaml.load(open_file, Loader=yaml.BaseLoader)
             for atco_code, record in records.items():
                 if 'latlong' in record:
                     record['latlong'] = GEOSGeometry(record['latlong'])

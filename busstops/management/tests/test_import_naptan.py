@@ -3,6 +3,7 @@
 import vcr
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from ...models import Region, AdminArea, Locality, StopPoint, DataSource
@@ -32,6 +33,7 @@ class NaptanTest(TestCase):
         Locality.objects.create(id="E0017806", name="Berney Arms", admin_area_id=91)
         Locality.objects.create(id="N0078629", name="Neasham Road", admin_area_id=15)
         Locality.objects.create(id="E0048995", name="Great Ayton", admin_area_id=92)
+        Locality.objects.create(id="E0048637", name="Briningham", admin_area_id=91)
         StopPoint.objects.create(atco_code="07605395", active=True)
 
     def test_download(self):
@@ -39,6 +41,10 @@ class NaptanTest(TestCase):
             with vcr.use_cassette(str(FIXTURES_DIR / "naptan.yml")) as cassette:
 
                 temp_dir_path = Path(temp_dir)
+
+                (temp_dir_path / "stops.yaml").symlink_to(
+                    settings.DATA_DIR / "stops.yaml"
+                )
 
                 with override_settings(DATA_DIR=temp_dir_path):
 
@@ -93,3 +99,7 @@ class NaptanTest(TestCase):
         self.assertAlmostEqual(stop.latlong.x, -1.117418697321657)
         self.assertAlmostEqual(stop.latlong.y, 54.48934185786758)
         self.assertEqual(str(stop), "Great Ayton Rail Station (entrance)")
+
+        # overriden stop
+        stop = StopPoint.objects.get(atco_code="2900B482")
+        self.assertEqual(str(stop), "green (adj) ↙︎")

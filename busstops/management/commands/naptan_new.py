@@ -1,3 +1,4 @@
+import yaml
 import requests
 import xml.etree.ElementTree as ET
 from django.contrib.gis.geos import GEOSGeometry
@@ -14,9 +15,12 @@ class Command(BaseCommand):
         ("Descriptor/Landmark", "landmark"),
         ("Descriptor/Street", "street"),
         ("Descriptor/Indicator", "indicator"),
+        ("Descriptor/Crossing", "crossing"),
         ("Place/Suburb", "suburb"),
         ("Place/Town", "town"),
     )
+
+    # dumb placeholders in the data that should be blank
     nothings = (
         "-",
         "---",
@@ -97,6 +101,12 @@ class Command(BaseCommand):
         if stop.indicator == stop.naptan_code:
             stop.indicator = ""
 
+        if atco_code in self.overrides:
+            for key, value in self.overrides[atco_code].items():
+                if key == 'latlong':
+                    value = GEOSGeometry(value)
+                setattr(stop, key, value)
+
         if atco_code in self.existing_stops:
             self.stops_to_update.append(stop)
         else:
@@ -111,6 +121,7 @@ class Command(BaseCommand):
         "common_name",
         "landmark",
         "street",
+        "crossing",
         "locality",
         "admin_area",
         "stop_area",
@@ -176,6 +187,7 @@ class Command(BaseCommand):
 
         path = settings.DATA_DIR / "naptan.xml"
 
+        # download new data if there is any
         response = self.download(source)
         if response:
             with path.open("wb") as open_file:
@@ -183,6 +195,11 @@ class Command(BaseCommand):
                     open_file.write(chunk)
 
         source.save(update_fields=["settings"])
+
+        # set up overrides/corrections
+        overrides_path = settings.DATA_DIR / "stops.yaml"
+        with overrides_path.open() as open_file:
+            self.overrides = yaml.load(open_file, yaml.BaseLoader)
 
         self.stops_to_create = []
         self.stops_to_update = []

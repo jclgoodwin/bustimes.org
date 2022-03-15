@@ -31,6 +31,8 @@
     common_name: Atherstone Surgery
 2900W5712:
     landmark: Congregational church
+
+# in Knaresborough, not Calcutt
 3200YNA06567:
     locality_id: E0056345
 3200YNA96390:
@@ -51,3 +53,15 @@
     locality_id: E0056345
 3200YND78380:
     locality_id: E0056345
+
+# in Oswestry, not Morda
+3500B067500:
+    locality_id: E0050657
+3500B212200:
+    locality_id: E0050657
+3500B212201:
+    locality_id: E0050657
+3500B254400:
+    locality_id: E0050657
+3500B254401:
+    locality_id: E0050657

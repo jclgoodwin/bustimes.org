@@ -103,6 +103,44 @@ interactions:
       </StopAreas>
       <AdministrativeAreaRef>091</AdministrativeAreaRef>
     </StopPoint>
+    <StopPoint CreationDateTime="2003-02-22T14:04:04" ModificationDateTime="2009-02-10T00:00:00" Modification="revise" RevisionNumber="2" Status="active">
+      <AtcoCode>2900B482</AtcoCode>
+      <NaptanCode>NFOAGJDM</NaptanCode>
+      <Descriptor>
+        <CommonName xml:lang="en">church</CommonName>
+        <ShortCommonName xml:lang="en">church</ShortCommonName>
+        <Landmark xml:lang="en">Church Road</Landmark>
+        <Street xml:lang="en">The Street</Street>
+        <Indicator xml:lang="en">adj</Indicator>
+      </Descriptor>
+      <Place>
+        <NptgLocalityRef>E0048637</NptgLocalityRef>
+        <LocalityCentre>0</LocalityCentre>
+        <Location>
+          <GridType>UKOS</GridType>
+          <Easting>603781</Easting>
+          <Northing>334348</Northing>
+        </Location>
+      </Place>
+      <StopClassification>
+        <StopType>BCT</StopType>
+        <OnStreet>
+          <Bus>
+            <BusStopType>CUS</BusStopType>
+            <TimingStatus>OTH</TimingStatus>
+            <UnmarkedPoint>
+              <Bearing>
+                <CompassPoint>E</CompassPoint>
+              </Bearing>
+            </UnmarkedPoint>
+          </Bus>
+        </OnStreet>
+      </StopClassification>
+      <StopAreas>
+        <StopAreaRef CreationDateTime="2006-04-27T10:33:30" ModificationDateTime="2006-04-27T10:33:30" Modification="revise" RevisionNumber="0" Status="active">290G1080</StopAreaRef>
+      </StopAreas>
+      <AdministrativeAreaRef>091</AdministrativeAreaRef>
+    </StopPoint>
     <StopPoint CreationDateTime="2006-09-08T14:30:00" ModificationDateTime="2007-09-26T13:00:00" Modification="revise" RevisionNumber="1" Status="active">
       <AtcoCode>9100BRNYARM</AtcoCode>
       <Descriptor>
