@@ -170,7 +170,7 @@ can’t be contradicted"""
 
             if not vehicle.notes and vehicle.operator_id != 'NATX':
                 del self.fields['notes']
-            if not vehicle.branding:
+            if not vehicle.branding and vehicle.operator_id != 'TNXB' and vehicle.operator_id != 'TCVW':
                 del self.fields['branding']
 
         if vehicle.notes == 'Spare ticket machine':
