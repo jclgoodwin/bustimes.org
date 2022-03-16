@@ -27,7 +27,7 @@ from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
 from bustimes.models import get_routes, StopTime
 from vehicles.models import Vehicle
-from vehicles.utils import redis_client
+from vehicles.utils import redis_client, liveries_css_version
 from vosa.models import Registration
 from .utils import get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
@@ -667,7 +667,7 @@ class ServiceDetailView(DetailView):
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):
             context['breadcrumb'] = [self.object.region]
 
-        context['liveries_css_version'] = cache.get('liveries_css_version', 0)
+        context['liveries_css_version'] = liveries_css_version()
 
         context['links'] = []
 

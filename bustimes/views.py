@@ -6,7 +6,6 @@ from datetime import timedelta
 from ciso8601 import parse_datetime
 
 from django.conf import settings
-from django.core.cache import cache
 from django.db.models import Prefetch, Exists, OuterRef
 from django.utils import timezone
 from django.utils.safestring import mark_safe
@@ -20,6 +19,7 @@ from api.serializers import TripSerializer
 from busstops.models import Service, DataSource, StopPoint, StopUsage
 from departures.live import TimetableDepartures
 from vehicles.models import Vehicle
+from vehicles.utils import liveries_css_version
 from .models import Route, Trip
 
 
@@ -217,7 +217,7 @@ class TripDetailView(DetailView):
 
         context['stops_json'] = mark_safe(stops_json.decode())
 
-        context['liveries_css_version'] = cache.get('liveries_css_version', 0)
+        context['liveries_css_version'] = liveries_css_version()
 
         context['breadcrumb'] = [self.object.route.service]
 

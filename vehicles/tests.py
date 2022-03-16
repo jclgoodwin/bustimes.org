@@ -68,7 +68,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_parent(self):
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             response = self.client.get('/groups/Madrigal Electromotive/vehicles')
         self.assertContains(response, 'Lynx')
         self.assertContains(response, 'Madrigal Electromotive')
@@ -124,7 +124,7 @@ class VehiclesTests(TestCase):
 
         # last seen today - should only show time, should link to map
         with time_machine.travel('2020-10-20 12:00+01:00'):
-            with self.assertNumQueries(2):
+            with self.assertNumQueries(3):
                 response = self.client.get('/operators/lynx/vehicles')
         self.assertNotContains(response, '20 Oct')
         self.assertContains(response, '00:47')
@@ -137,7 +137,7 @@ class VehiclesTests(TestCase):
 
         # last seen yesterday - should show date
         with time_machine.travel('2020-10-21 00:10+01:00'):
-            with self.assertNumQueries(2):
+            with self.assertNumQueries(3):
                 response = self.client.get('/operators/lynx/vehicles')
             self.assertContains(response, '20 Oct 00:47')
             self.assertNotContains(response, "/operators/lynx/map")
@@ -420,7 +420,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">1</a></td>'
         )
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get('/vehicles/edits')
         self.assertContains(response, 'Previous reg: BEAN')
 
@@ -554,11 +554,11 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         with self.assertNumQueries(10):
             self.client.post(f'/vehicles/edits/{edit.id}/vote/down')
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get('/vehicles/edits?change=livery')
         self.assertEqual(len(response.context['edits']), 0)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.get('/vehicles/edits?change=reg')
         self.assertEqual(len(response.context['edits']), 1)
         self.assertContains(response, '<option value="LYNX">Lynx (1)</option>')
@@ -693,12 +693,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         }
 
         # no vehicle ids specified
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.post('/operators/lynx/vehicles/edit', data)
         self.assertContains(response, "Select some vehicles to change")
 
         data['vehicle'] = self.vehicle_1.id
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.post('/operators/lynx/vehicles/edit', data)
         self.assertContains(response, "You haven&#x27;t changed anything")
 
@@ -706,7 +706,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertFalse(VehicleRevision.objects.all())
 
         # change vehicle type and colours:
-        with self.assertNumQueries(19):
+        with self.assertNumQueries(20):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 **data,
                 'vehicle_type': self.vehicle_2.vehicle_type_id,
@@ -721,7 +721,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertContains(response, 'FD54 JYA')
 
         # withdraw
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(16):
             response = self.client.post('/operators/lynx/vehicles/edit', {
                 'vehicle': self.vehicle_1.id,
                 'withdrawn': 'on',
@@ -750,7 +750,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         vehicle.clean()
 
     def test_big_map(self):
-        with self.assertNumQueries(0):
+        with self.assertNumQueries(1):
             self.client.get('/map')
 
     def test_vehicles(self):

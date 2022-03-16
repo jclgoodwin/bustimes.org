@@ -167,6 +167,7 @@ in which case you should leave this blank"""
             })
 
     def save(self, *args, update_fields=None, **kwargs):
+        self.updated_at = timezone.now()
         if update_fields is None and (self.css or self.colours):
             self.set_css()
             if self.colours and not self.id:

@@ -33,7 +33,7 @@ from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from . import filters
 from . import forms
-from .utils import redis_client, get_vehicle_edit, do_revision, do_revisions
+from .utils import redis_client, get_vehicle_edit, do_revision, do_revisions, liveries_css_version
 from .management.commands import import_bod_avl
 
 
@@ -80,7 +80,7 @@ def vehicles(request):
 @require_GET
 def map(request):
     return render(request, 'map.html', {
-        'liveries_css_version': cache.get('liveries_css_version', 0)
+        'liveries_css_version': liveries_css_version()
     })
 
 
@@ -236,7 +236,7 @@ def operator_vehicles(request, slug=None, parent=None):
         'notes_column': any(vehicle.notes and vehicle.notes != 'Spare ticket machine' for vehicle in vehicles),
         'garage_column': any(vehicle.garage_name for vehicle in vehicles),
         'form': form,
-        'liveries_css_version': cache.get('liveries_css_version', 0)
+        'liveries_css_version': liveries_css_version()
     }
 
     return render(request, 'operator_vehicles.html', context)
@@ -250,7 +250,7 @@ def operator_map(request, slug):
         'object': operator,
         'operator': operator,
         'breadcrumb': [operator.region, operator],
-        'liveries_css_version': cache.get('liveries_css_version', 0)
+        'liveries_css_version': liveries_css_version()
     })
 
 
@@ -675,7 +675,7 @@ def vehicle_edits(request):
         'parameters': parameters,
         'toggle_order': toggle_order,
         'edits': page,
-        'liveries_css_version': cache.get('liveries_css_version', 0),
+        'liveries_css_version': liveries_css_version()
     })
 
 

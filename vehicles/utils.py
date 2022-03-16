@@ -1,6 +1,8 @@
 import re
 from redis import from_url
 from django.conf import settings
+from django.core.cache import cache
+from django.db.models import Max
 from .models import VehicleEdit, VehicleRevision, VehicleType, Livery
 
 
@@ -21,6 +23,16 @@ def match_reg(string):
     return re.match("(^[A-Z]{2}[0-9]{2} ?[A-Z]{3}$)|(^[A-Z][0-9]{1,3}[A-Z]{3}$)"
                     "|(^[A-Z]{3}[0-9]{1,3}[A-Z]$)|(^[0-9]{1,4}[A-Z]{1,2}$)|(^[0-9]{1,3}[A-Z]{1,3}$)"
                     "|(^[A-Z]{1,2}[0-9]{1,4}$)|(^[A-Z]{1,3}[0-9]{1,3}$)|(^[A-Z]{1,3}[0-9]{1,4}$)", string)
+
+
+def liveries_css_version():
+    version = cache.get('liveries_css_version')
+    if not version:
+        version = Livery.objects.aggregate(Max('updated_at'))['updated_at__max']
+        if version:
+            version = int(version.timestamp())
+            cache.set('liveries_css_version', version)
+    return version
 
 
 def get_vehicle_edit(vehicle, fields, now, request):

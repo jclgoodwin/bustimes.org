@@ -246,6 +246,7 @@ class LiveryAdmin(admin.ModelAdmin):
     actions = ['duplicate']
     autocomplete_fields = ["operator"]
     readonly_fields = ['left', 'right', 'updated_at']
+    ordering = ["-id"]
 
     def right(self, obj):
         return format_html(

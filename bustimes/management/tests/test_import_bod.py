@@ -403,7 +403,7 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(1, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
 
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(16):
             response = self.client.get('/services/904-huntingdon-peterborough')
         self.assertContains(response, '<option selected value="2020-08-31">Monday 31 August 2020</option>')
         self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
@@ -412,6 +412,6 @@ class ImportBusOpenDataTest(TestCase):
             bank_holiday=BankHoliday.objects.get(name='ChristmasDay'),
             date='2020-12-25'
         )
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.get('/services/904-huntingdon-peterborough?date=2020-12-25')
             self.assertContains(response, "Sorry, no journeys found for Friday 25 December 2020")
