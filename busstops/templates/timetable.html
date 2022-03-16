@@ -80,7 +80,7 @@
                                 <tr>
                                     <th scope="col">Garage</th>
                                     {% for trip in grouping.trips %}
-                                        <td>{{ trip.garage.code }}</td>
+                                        <td title="{{ trip.garage.name }}">{{ trip.garage.code }}</td>
                                     {% endfor %}
                                 </tr>
                             {% endif %}

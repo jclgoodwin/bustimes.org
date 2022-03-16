@@ -702,7 +702,7 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(f'{service.get_absolute_url()}?detailed')
         self.assertContains(response, '<td>9032</td>')  # block number
         self.assertContains(response, '<td>1554</td>')  # block number
-        self.assertContains(response, '<td>SWBA</td>')  # garage
+        self.assertContains(response, '<td title="Barnstaple">SWBA</td>')  # garage
 
     @time_machine.travel('2021-07-07')
     def test_confusing_start_date(self):
