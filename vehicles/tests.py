@@ -253,12 +253,16 @@ class VehiclesTests(TestCase):
         response = self.client.get('/admin/vehicles/livery/')
         self.assertContains(response, '<td class="field-name">black with lemon piping</td>')
         self.assertContains(response, '<td class="field-vehicles">1</td>')
-        self.assertContains(response, '<td class="field-left">\
-<div style="height:1.5em;width:2.25em;background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">\
-</div></td>')
-        self.assertContains(response, '<td class="field-right">\
-<div style="height:1.5em;width:2.25em;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">\
-</div></td>')
+        self.assertContains(response, """<td class="field-left">\
+<div style="height:24px;width:36px;line-height:24px;font-size:24px;text-align:center;color:#fff;background:\
+linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
+                24
+            </div></td>""")
+        self.assertContains(response, """<td class="field-right">\
+<div style="height:24px;width:36px;line-height:24px;font-size:24px;text-align:center;color:#fff;background:\
+linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
+                42
+            </div></td>""")
 
     def test_vehicle_type_admin(self):
         self.client.force_login(self.staff_user)

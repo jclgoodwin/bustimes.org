@@ -97,7 +97,10 @@ class VehicleType(models.Model):
 
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
-    colours = models.CharField(max_length=255, blank=True, help_text="Keep it simple")
+    colours = models.CharField(
+        max_length=255, blank=True,
+        help_text="Keep it simple. Being able to read the route number on the map the is much more important than 'accuracy'"
+    )
     css = models.CharField(
         max_length=255, blank=True, verbose_name="CSS",
         help_text="""Most liveries can be adequately represented with a list of colours and an angle,
@@ -116,6 +119,7 @@ in which case you should leave this blank"""
     horizontal = models.BooleanField(default=False, help_text="Equivalent to setting the angle to 90")
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
     operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ('name',)
