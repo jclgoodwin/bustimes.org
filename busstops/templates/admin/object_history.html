@@ -18,7 +18,7 @@
         {% for action in action_list %}
         <tr>
             <th scope="row">{{ action.action_time|date:"DATETIME_FORMAT" }}</th>
-            <td>{{ action.user.id }}</td>
+            <td>{% if user.is_superuser %}{{ action.user.username }}{% else %}{{ action.user }}{% endif %}</td>
             <td>{{ action.get_change_message }}</td>
         </tr>
         {% endfor %}

@@ -159,12 +159,18 @@ in which case you should leave this blank"""
             return format_html(div + ' title="{}"></div>', self.name)
 
     def clean(self):
-        try:
-            get_text_colour(self.colours)
-        except ValueError as e:
-            raise ValidationError({
-                'colours': str(e)
-            })
+        Vehicle.clean(self)  # validate colours field
+
+        for attr in ('css', 'left_css', 'right_css'):
+            value = getattr(self, attr)
+            if value.count('(') != value.count(')'):
+                raise ValidationError({
+                    attr: 'Must contain equal numbers of ( and )'
+                })
+            if '{' in value or '}' in value:
+                raise ValidationError({
+                    attr: 'Must not contain { or }'
+                })
 
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
@@ -338,7 +344,13 @@ class Vehicle(models.Model):
 
     get_flickr_link.short_description = 'Flickr'
 
-    clean = Livery.clean  # validate colours field
+    def clean(self):
+        try:
+            get_text_colour(self.colours)
+        except ValueError as e:
+            raise ValidationError({
+                'colours': str(e)
+            })
 
     def get_json(self, heading):
         json = {
