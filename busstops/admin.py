@@ -77,7 +77,7 @@ class OperatorAdminForm(forms.ModelForm):
 @admin.register(models.Operator)
 class OperatorAdmin(admin.ModelAdmin):
     form = OperatorAdminForm
-    list_display = ['name', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region_id',
+    list_display = ['name', 'slug', 'operator_codes', 'id', 'vehicle_mode', 'parent', 'region_id',
                     'services', 'vehicles', 'twitter']
     list_filter = ('region', 'vehicle_mode', 'payment_methods', 'parent')
     search_fields = ('id', 'name')

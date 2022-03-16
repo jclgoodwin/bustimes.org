@@ -46,6 +46,7 @@ class Command(BaseCommand):
         if (
             atco_code in self.existing_stops
             and modified_at == self.existing_stops[atco_code].modified_at
+            and atco_code not in self.overrides
         ):
             return
 
