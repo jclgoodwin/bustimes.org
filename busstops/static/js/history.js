@@ -5,7 +5,7 @@
         browser: true
     */
     /*global
-        L, reqwest
+        L, reqwest, bustimes
     */
 
     var map;
@@ -82,6 +82,15 @@
     }
 
     function maybeOpenMap() {
+        if (window.location.hash.indexOf('journeys/') !== 1) {
+
+            if (window.location.hash == '#map') {
+                openLiveMap();
+            }
+
+            return;
+        }
+
         var journey = window.location.hash.slice(1);
 
         if (journey) {
@@ -290,5 +299,123 @@
     for (var i = links.length - 1; i >= 0; i -= 1) {
         links[i].addEventListener('click', handleClick);
     }
+
+
+    function getBusIcon(item) {
+        var className = 'bus selected';
+        var heading = item.heading;
+        if (heading !== null) {
+            var arrow = '<div class="arrow" style="' + bustimes.getTransform(heading, true) + '"></div>';
+            if (heading < 180) {
+                className += ' right';
+                heading -= 90;
+            } else {
+                heading -= 270;
+            }
+        }
+        var style = bustimes.getTransform(heading, true);
+        var livery = document.querySelector('.livery');
+        if (livery) {
+            style += 'background:' + livery.style.background;
+        }
+        style += ';font-size:12px';
+        var svg = document.createElement('svg');
+        svg.setAttribute('width', 18);
+        svg.setAttribute('height', 12);
+        svg.className = className;
+        svg.style = style;
+        if (item.service) {
+            var text = document.createElement('text');
+            text.setAttribute('x', '9');
+            text.setAttribute('y', '10');
+            if (window.TEXT_COLOUR === '#fff') {
+                text.setAttribute('fill', window.TEXT_COLOUR);
+                text.setAttribute('stroke', '#000');
+            } else {
+                text.setAttribute('fill', '#000');
+                text.setAttribute('stroke', '#fff');
+            }
+            text.setAttribute('paint-order', 'stroke');
+            text.setAttribute('stroke-width', '2px');
+            text.setAttribute('text-anchor', 'middle');
+            text.innerHTML = item.service.line_name;
+            svg.appendChild(text);
+        }
+        svg = svg.outerHTML;
+        if (arrow) {
+            svg += arrow;
+        }
+        return L.divIcon({
+            iconSize: [20, 20],
+            html: svg,
+            popupAnchor: [0, -5],
+        });
+    }
+
+    function openLiveMap() {
+        var mapContainer = document.getElementById('map');
+        if (!mapContainer) {
+            return;
+        }
+
+        mapContainer.className += ' expanded';
+
+        map = L.map(mapContainer, {
+            tap: false
+        });
+        window.bustimes.map = map;
+        window.bustimes.doTileLayer(map);
+
+        var closeButton = L.control();
+
+        closeButton.onAdd = function() {
+            var div = document.createElement('div');
+            div.className = 'leaflet-bar';
+
+            var a = document.createElement('a');
+            a.href = '#';
+            a.style.width = 'auto';
+            a.style.padding = '0 8px';
+            a.setAttribute('role', 'button');
+            a.innerHTML = 'Close map';
+            // a.onclick = navigateFromMap;
+
+            div.appendChild(a);
+            return div;
+        };
+
+        closeButton.addTo(map);
+
+        reqwest('/vehicles.json?id=' + window.VEHICLE_ID, function(data) {
+            if (data.length) {
+                var item = data[0];
+                var latLng = [item.coordinates[1], item.coordinates[0]];
+                window.bustimes.map.setView(latLng, 14);
+
+                var marker = L.marker(latLng, {
+                    icon: getBusIcon(item),
+                    zIndexOffset: 1000,
+                    item: item
+                });
+                marker.addTo(map);
+                marker.bindPopup('', {
+                    closeButton: false,
+                    closeOnEscapeKey: false,
+                    autoClose: false,
+                    closeOnClick: false
+                }).openPopup();
+
+                window.bustimes.clickedMarker = item.id;
+                window.bustimes.vehicleMarkers = {};
+                window.bustimes.vehicleMarkers[item.id] = marker;
+                bustimes.updatePopupContent();
+            }
+        });
+    }
+
+    // var mapButton = document.querySelector('.button[href="#map"');
+    // if (mapButton) {
+    //     mapButton.onclick = openLiveMap;
+    // }
 
 })();
