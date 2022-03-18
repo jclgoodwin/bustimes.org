@@ -87,15 +87,15 @@ def map(request):
 @require_GET
 def liveries_css(request, version=None):
     styles = []
-    liveries = Livery.objects.all()
+    liveries = Livery.objects.all().order_by('id')
     for livery in liveries:
         selector = f'.livery-{livery.id}'
-        css = f'background:{livery.left_css}'
+        css = f'background: {livery.left_css}'
         if livery.white_text:
-            css = f'{css};color:#fff'
-        styles.append(f'{selector}{{{css}}}')
+            css = f'{css};\n  color: #fff'
+        styles.append(f'{selector} {{\n  {css}\n}}\n')
         if livery.right_css != livery.left_css:
-            styles.append(f'{selector}.right{{background:{livery.right_css}}}')
+            styles.append(f'{selector}.right {{\n  background: {livery.right_css}\n}}\n')
     return HttpResponse(''.join(styles), content_type='text/css')
 
 

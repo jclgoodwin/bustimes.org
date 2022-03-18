@@ -324,7 +324,7 @@ linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         response = self.client.get('/liveries.44.css')
         self.assertContains(
             response,
-            "{background:linear-gradient(to right,#FF0000 50%,#0000FF 50%);color:#fff}.livery-"
+            "{\n  background: linear-gradient(to right,#FF0000 50%,#0000FF 50%);\n  color: #fff\n}\n.livery-"
         )
 
     def test_vehicle_edit_1(self):
