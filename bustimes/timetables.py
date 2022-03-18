@@ -240,9 +240,24 @@ class Timetable:
         if all(grouping.trips for grouping in self.groupings):
             self.groupings.sort(key=Grouping.get_order)
 
-        self.origins_and_destinations = {
+        self.origins_and_destinations = list({
             (route.origin, route.destination, route.via) for route in self.current_routes if route.origin
-        }
+        })
+        if len(self.origins_and_destinations) > 1:
+            if self.origins_and_destinations[0][0] == self.origins_and_destinations[1][1]:
+                self.origins_and_destinations[0] = (
+                    self.origins_and_destinations[1][0],
+                    self.origins_and_destinations[0][1],
+                    self.origins_and_destinations[1][1]
+                )
+                del self.origins_and_destinations[1]
+            elif self.origins_and_destinations[1][0] == self.origins_and_destinations[0][1]:
+                self.origins_and_destinations[0] = (
+                    self.origins_and_destinations[0][0],
+                    self.origins_and_destinations[1][1],
+                    self.origins_and_destinations[1][0]
+                )
+                del self.origins_and_destinations[1]
 
     def any_trip_has(self, attr: str) -> bool:
         for grouping in self.groupings:
