@@ -6,7 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 from django.views.generic.detail import DetailView
 
-from busstops.models import Operator, DataSource, OperatorCode
+from busstops.models import Operator, DataSource, OperatorCode, Service
 
 from .forms import FaresForm
 from .models import DataSet, Tariff
@@ -135,11 +135,13 @@ class TariffDetailView(DetailView):
 
 
 def service_fares(request, slug):
-    tariffs = Tariff.objects.filter(services__slug=slug)
+    service = get_object_or_404(Service, slug=slug)
+    tariffs = Tariff.objects.filter(services=service)
 
     if not tariffs:
         raise Http404
 
     return render(request, 'service_fares.html', {
+        'breadcrumb': [service],
         'tariffs': tariffs,
     })

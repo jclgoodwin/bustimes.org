@@ -451,7 +451,6 @@ class Command(BaseCommand):
     def handle_archive(self, dataset, file):
         with zipfile.ZipFile(file) as archive:
             for filename in archive.namelist():
-                logger.info(f"  {filename}")
                 self.handle_file(dataset, archive.open(filename), filename)
 
     def handle_bods_dataset(self, item):
@@ -487,7 +486,6 @@ class Command(BaseCommand):
             filename = response.headers["Content-Disposition"].split("filename", 1)[1][
                 2:-1
             ]
-            logger.info(filename)
             self.handle_file(dataset, response.raw, filename)
         else:
             assert response.headers["Content-Type"] == "application/zip"
@@ -538,7 +536,6 @@ class Command(BaseCommand):
         params = {"api_key": api_key, "status": "published"}
         while url:
             response = self.session.get(url, params=params)
-            logger.info(response.url)
 
             data = response.json()
 

@@ -3,7 +3,8 @@ from vcr import use_cassette
 from django.test import TestCase
 from django.core.management import call_command
 from busstops.models import Operator, Service
-from .models import Tariff, TimeInterval
+from .management.commands.import_netex_fares import Command
+from .models import Tariff, TimeInterval, DataSet
 
 
 class FaresTest(TestCase):
@@ -21,15 +22,9 @@ class FaresTest(TestCase):
                 call_command('import_netex_fares', 'XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8')
 
         self.assertEqual(cm.output, [
-            'INFO:fares.management.commands.import_netex_fares:https://data.bus-data.dft.gov.uk/'
-            'api/v1/fares/dataset/?api_key=XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8&status=published',
             'INFO:fares.management.commands.import_netex_fares:AC Williams_20201119 06:45:17',
-            'INFO:fares.management.commands.import_netex_fares:WMSA5f312755_1601531796591.xml',
             'WARNING:fares.management.commands.import_netex_fares:Service matching query does not exist. WMSA WM07',
-            'INFO:fares.management.commands.import_netex_fares:https://data.bus-data.dft.gov.uk/api/v1/fares/'
-            'dataset/?api_key=XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8&limit=1&noc=WMSA&offset=1&status=published',
             'INFO:fares.management.commands.import_netex_fares:AC Williams_20201119 06:46:57',
-            'INFO:fares.management.commands.import_netex_fares:WMSA6d2afadf_1601465195796.xml'
         ])
 
         tariff = Tariff.objects.get(name="A C Williams WM06 - single fares")
@@ -63,3 +58,31 @@ class FaresTest(TestCase):
         # self.assertContains(response, '£1.40–£1.70')
 
         self.assertEqual(TimeInterval.objects.count(), 0)
+
+    def test_ad_hoc(self):
+        command = Command()
+        command.user_profiles = {}
+        command.sales_offer_packages = {}
+
+        source = DataSet.objects.create()
+
+        path = Path(__file__).resolve().parent / 'data'
+
+        for filename in (
+            'connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml',
+            'FLDSa0eb4e10_1605250801329.xml',
+            'KBUS_FF_ArrivaAdd-on_2Multi_6d7e341a-0680-4397-9b3f-90a290087494_637613495098903655.xml',
+            'FECS_23A_Outbound_YPSingle_6764fa3b-4b05-4331-9bea-c7bb90212531_637829447220443476.xml',
+            'LYNX 39 single.xml',
+            'LYNX Coast.xml',
+            'LYNX Townrider.xml',
+            'NADS_103A_Inbound_AdultReturn_aae41d08-15c5-4fef-bf58-e8188410605e_637503825593765582.xml',
+            'STBC96615325_1597249888210_YFXY9eP.xml',
+            'TGTC238e19ce_1603195065008_yJWka80.xml',
+            'TWGT0b3b32d1_1600857778793_2gKCmVT_2.xml',
+            'connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml',
+        ):
+            filename = path / filename
+
+            with filename.open() as open_file:
+                command.handle_file(source, open_file)
