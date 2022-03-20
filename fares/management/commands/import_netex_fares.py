@@ -508,7 +508,7 @@ class Command(BaseCommand):
         )
 
         headers = {}
-        if dataset.datetime and noc != 'FGLA':
+        if dataset.datetime:
             headers["if-modified-since"] = http_date(dataset.datetime.timestamp())
 
         response = self.session.get(download_url, headers=headers, stream=True)
@@ -521,7 +521,7 @@ class Command(BaseCommand):
         last_modified = parse_http_date(last_modified)
         last_modified = datetime.fromtimestamp(last_modified, timezone.utc)
 
-        if dataset.datetime == last_modified and noc != 'FGLA':
+        if dataset.datetime == last_modified:
             return dataset
 
         dataset.tariff_set.all().delete()
