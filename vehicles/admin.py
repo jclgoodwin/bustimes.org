@@ -124,7 +124,7 @@ class VehicleAdmin(admin.ModelAdmin):
     def make_livery(self, request, queryset):
         vehicle = queryset.first()
         if vehicle.colours and vehicle.branding:
-            livery = models.Livery.objects.create(name=vehicle.branding, colours=vehicle.colours)
+            livery = models.Livery.objects.create(name=vehicle.branding, colours=vehicle.colours, published=True)
             vehicles = models.Vehicle.objects.filter(colours=vehicle.colours, branding=vehicle.branding)
             count = vehicles.update(colours='', branding='', livery=livery)
             self.message_user(request, f'Updated {count} vehicles.')
@@ -243,7 +243,6 @@ class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
     list_display = ['id', 'name', 'vehicles', 'left', 'right', 'operator', 'updated_at']
-    actions = ['duplicate']
     autocomplete_fields = ["operator"]
     readonly_fields = ['left', 'right', 'updated_at']
     ordering = ["-id"]
@@ -275,11 +274,6 @@ class LiveryAdmin(admin.ModelAdmin):
         if 'changelist' in request.resolver_match.view_name:
             return queryset.annotate(vehicles=SubqueryCount('vehicle'))
         return queryset
-
-    def duplicate(self, request, queryset):
-        for livery in queryset:
-            livery.pk = None
-            livery.save()
 
 
 class RevisionChangeFilter(admin.SimpleListFilter):

@@ -121,6 +121,9 @@ in which case you should leave this blank"""
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
     operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
+    published = models.BooleanField(
+        help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
+    )
 
     class Meta:
         ordering = ('name',)

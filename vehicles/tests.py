@@ -37,7 +37,7 @@ class VehiclesTests(TestCase):
 
         cls.vehicle_1 = Vehicle.objects.create(code='2', fleet_number=1, reg='FD54JYA', vehicle_type=tempo,
                                                colours='#FF0000', notes='Trent Barton', operator=cls.lynx, branding="")
-        cls.livery = Livery.objects.create(name='black with lemon piping', colours='#FF0000 #0000FF')
+        cls.livery = Livery.objects.create(name='black with lemon piping', colours='#FF0000 #0000FF', published=True)
         cls.vehicle_2 = Vehicle.objects.create(code='50', fleet_number=50, reg='UWW2X', livery=cls.livery,
                                                vehicle_type=spectra, operator=cls.lynx)
 
@@ -290,7 +290,7 @@ linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         self.assertContains(response, '1 vehicle')
 
     def test_livery(self):
-        livery = Livery(name='Go-Coach')
+        livery = Livery(name='Go-Coach', published=False)
         self.assertEqual('Go-Coach', str(livery))
         self.assertIsNone(livery.preview())
 

@@ -87,7 +87,7 @@ def map(request):
 @require_GET
 def liveries_css(request, version=None):
     styles = []
-    liveries = Livery.objects.all().order_by('id')
+    liveries = Livery.objects.filter(published=True).order_by('id')
     for livery in liveries:
         selector = f'.livery-{livery.id}'
         css = f'background: {livery.left_css}'

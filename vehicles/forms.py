@@ -22,7 +22,7 @@ def get_livery_choices(operator, vehicle, user):
         q |= Q(id=vehicle.id)
     vehicles = operator.vehicle_set.filter(q)
 
-    liveries = Livery.objects.filter(Q(vehicle__in=vehicles) | Q(operator=operator))
+    liveries = Livery.objects.filter(Q(vehicle__in=vehicles) | Q(operator=operator, published=True))
     liveries = liveries.annotate(popularity=Count('vehicle')).order_by('-popularity')
 
     for livery in liveries.distinct():

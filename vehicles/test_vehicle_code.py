@@ -8,7 +8,7 @@ from .models import Livery, Vehicle
 class VehicleCodeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        Livery.objects.create(id=262, name="red")
+        Livery.objects.create(id=262, name="red", published=True)
         Vehicle.objects.create(reg="LTZ1454")
         Vehicle.objects.create(reg="LTZ1454", code="LK67EOM")
         Vehicle.objects.create(code="LK67EOM")
