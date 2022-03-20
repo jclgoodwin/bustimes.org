@@ -42,7 +42,9 @@
 
         {% ifchanged table.name %}<h2>{{ table }}</h2>{% endifchanged %}
 
-        <p>{% if table.user_profile %}
+        <p>{% if table.preassigned_fare_product %}
+            {{ table.preassigned_fare_product.name }}
+        {% elif table.user_profile %}
             {{ table.user_profile|capfirst }} {{ table.sales_offer_package|lower }}
         {% elif table.sales_offer_package %}
             {{ table.sales_offer_package }}

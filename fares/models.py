@@ -240,9 +240,9 @@ class Row(models.Model):
                 prev_order += 1
             yield cell
             prev_order = cell.column.order
-        # while prev_order < self.order:
-        #     yield None
-        #     prev_order += 1
+        while prev_order <= (len(self.table.row_set.all()) - self.order):
+            yield None
+            prev_order += 1
         # return self.cell_set.all()
 
     def __str__(self):

@@ -34,6 +34,15 @@ def get_sales_offer_package(element):
     )
 
 
+def get_fare_product(element):
+    return models.PreassignedFareProduct.objects.get_or_create(
+        code=element.attrib["id"],
+        name=element.findtext("Name", ""),
+        charging_moment=element.findtext("ChargingMomentType", ""),
+        tariff_basis=element.findtext("ConditionSummary/TariffBasis", ""),
+    )
+
+
 class Command(BaseCommand):
     base_url = "https://data.bus-data.dft.gov.uk"
 
@@ -75,6 +84,13 @@ class Command(BaseCommand):
         ):
             sales_offer_package, created = get_sales_offer_package(sales_offer_package)
             sales_offer_packages[sales_offer_package.code] = sales_offer_package
+
+        fare_products = {}
+        for fare_product in element.findall(
+            "dataObjects/CompositeFrame/frames/FareFrame/fareProducts/PreassignedFareProduct"
+        ):
+            fare_product, created = get_fare_product(fare_product)
+            fare_products[fare_product.code] = fare_product
 
         price_groups = {}
         price_group_prices = {}
@@ -260,6 +276,15 @@ class Command(BaseCommand):
             else:
                 sales_offer_package = None
 
+            preassigned_fare_product_ref = fare_table_element.find(
+                "pricesFor/PreassignedFareProductRef"
+            )
+            if preassigned_fare_product_ref is not None:
+                preassigned_fare_product_ref = preassigned_fare_product_ref.attrib["ref"]
+                preassigned_fare_product = fare_products[preassigned_fare_product_ref]
+            else:
+                preassigned_fare_product = None
+
             columns_element = fare_table_element.find("columns")
             rows_element = fare_table_element.find("rows")
 
@@ -268,12 +293,15 @@ class Command(BaseCommand):
                     {
                         "user_profile": user_profile,
                         "sales_offer_package": sales_offer_package,
+                        "preassigned_fare_product": preassigned_fare_product,
                         "description": fare_table_element.findtext("Description", ""),
                     },
                     tariff=tariff,
                     code=fare_table_element.attrib["id"],
                     name=fare_table_element.findtext("Name", ""),
                 )
+
+                assert created
 
                 if not created:
                     table.column_set.all().delete()
