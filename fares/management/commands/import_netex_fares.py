@@ -348,13 +348,18 @@ class Command(BaseCommand):
                 cells_element = sub_fare_table_element.find("cells")
                 if cells_element:
                     for cell_element in cells_element:
-                        columnn_ref = cell_element.find("ColumnRef").attrib["ref"]
+                        column_ref = cell_element.find("ColumnRef")
+                        if column_ref is None:
+                            print(filename, ET.tostring(cell_element).decode())
+                            continue
+                        else:
+                            column_ref = column_ref.attrib["ref"]
                         row_ref = cell_element.find("RowRef").attrib["ref"]
                         distance_matrix_element_price = cell_element.find(
                             "DistanceMatrixElementPrice"
                         )
                         if distance_matrix_element_price is None:
-                            print(ET.tostring(cell_element).decode())
+                            print(filename, ET.tostring(cell_element).decode())
                             continue
                         price_ref = distance_matrix_element_price.find(
                             "GeographicalIntervalPriceRef"
@@ -392,7 +397,7 @@ class Command(BaseCommand):
                             distance_matrix_element = None
                         cells.append(
                             models.Cell(
-                                column=columns[columnn_ref],
+                                column=columns[column_ref],
                                 row=row,
                                 price=price_group_prices[price_ref.attrib["ref"]],
                                 distance_matrix_element=distance_matrix_element,
@@ -503,7 +508,7 @@ class Command(BaseCommand):
         )
 
         headers = {}
-        if dataset.datetime:
+        if dataset.datetime and noc != 'FGLA':
             headers["if-modified-since"] = http_date(dataset.datetime.timestamp())
 
         response = self.session.get(download_url, headers=headers, stream=True)
@@ -516,8 +521,10 @@ class Command(BaseCommand):
         last_modified = parse_http_date(last_modified)
         last_modified = datetime.fromtimestamp(last_modified, timezone.utc)
 
-        if dataset.datetime == last_modified:
+        if dataset.datetime == last_modified and noc != 'FGLA':
             return dataset
+
+        dataset.tariff_set.all().delete()
 
         logger.info(download_url)
 

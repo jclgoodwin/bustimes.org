@@ -125,6 +125,9 @@ class Tariff(models.Model):
     def get_absolute_url(self):
         return reverse('tariff_detail', args=(self.id,))
 
+    class Meta:
+        unique_together = ('source', 'filename', 'code')
+
 
 class Price(models.Model):
     amount = models.DecimalField(max_digits=6, decimal_places=2)  # maximum £9999.99

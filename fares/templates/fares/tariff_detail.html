@@ -6,6 +6,10 @@
 
     <h1>{{ object }}</h1>
 
+    <p>{{ object.filename }}</p>
+
+    <p>{{ object.code }}</p>
+
     {% for service in object.services.all %}
         <p><a href="{{ service.get_absolute_url }}/fares">{{ service }}</a></p>
     {% endfor %}
