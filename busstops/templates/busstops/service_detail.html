@@ -68,8 +68,21 @@
     </ul>
 {% endif %}
 
-{% if fares %}
-    {% include 'fares.html' with form=fares %}
+{% if fare_tables %}
+        <h2>Fare tables</h2>
+
+        <p>
+            <select id="fare-tables">
+                <option></option>
+                {% for table in fare_tables %}
+                    <option  value="{{ table.id }}">{{ table.tariff }}</option>
+                {% endfor %}
+            </select>
+            <noscript><input type="submit"></noscript>
+        </p>
+
+        <div id="fare-table"></div>
+    </div>
 {% endif %}
 
 {% if related %}
@@ -121,7 +134,7 @@
         <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
         <script src="{% static 'js/reqwest.min.js' %}"></script>
         <script async src="{% static 'js/servicemap2.js' %}">
-    {% elif timetable %}
+    {% elif timetable or fare_tables %}
         </script>
         <script src="{% static 'js/reqwest.min.js' %}">
     {% endif %}</script>

@@ -1,0 +1,28 @@
+<table class="compact nowrap">
+    <tbody>
+        {% if not object.is_triangular %}
+        <tr class="head">
+            <th></th>
+            {% for column in object.columns %}
+                <th scope="col">{{ column }}</th>
+            {% endfor %}
+        </tr>
+        {% else %}
+        <tr>
+            <th colspan="{{ object.columns|length|add:1 }}">{{ object.columns.0 }}</th>
+        </tr>
+        {% endif %}
+        {% for row in object.rows %}
+            <tr>
+                {% if not object.is_triangular %}<th>{{ row }}</th>{% endif %}
+                {% for cell in row.cells %}
+                    <td>{% if cell %}£{{ cell.price.amount }}{% endif %}</td>
+                {% empty %}
+                    {% if forloop.counter %}
+                        <td colspan="{{ forloop.counter }}"></td>
+                    {% endif %}
+                {% endfor %}
+                {% if object.is_triangular %}<th colspan="{{ row.colspan }}">{{ row }}</th>{% endif %}
+            </tr>
+        {% endfor %}
+</table>

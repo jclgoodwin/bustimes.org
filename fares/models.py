@@ -153,7 +153,7 @@ class FareTable(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return self.tariff.get_absolute_url()
+        return reverse('table_detail', args=(self.id,))
 
     @cached_property
     def is_triangular(self):

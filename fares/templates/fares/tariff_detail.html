@@ -50,35 +50,8 @@
             {{ table.sales_offer_package }}
         {% endif %}</p>
 
-        <table class="compact nowrap">
-            <tbody>
-                {% if not table.is_triangular %}
-                <tr class="head">
-                    <th></th>
-                    {% for column in table.columns %}
-                        <th scope="col">{{ column }}</th>
-                    {% endfor %}
-                </tr>
-                {% else %}
-                <tr>
-                    <th colspan="{{ table.columns|length|add:1 }}">{{ table.columns.0 }}</th>
-                </tr>
-                {% endif %}
-                {% for row in table.rows %}
-                    <tr>
-                        {% if not table.is_triangular %}<th>{{ row }}</th>{% endif %}
-                        {% for cell in row.cells %}
-                            <td>{% if cell %}£{{ cell.price.amount }}{% endif %}</td>
-                        {% empty %}
-                            {% if forloop.counter %}
-                                <td colspan="{{ forloop.counter }}"></td>
-                            {% endif %}
-                        {% endfor %}
-                        {% if table.is_triangular %}<th colspan="{{ row.colspan }}">{{ row }}</th>{% endif %}
-                    </tr>
-                {% endfor %}
-        </table>
 
+        {% include "fares/faretable_detail.html" with object=table %}
     {% endfor %}
 
     {{ object.source.credit }}

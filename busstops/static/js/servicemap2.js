@@ -137,12 +137,12 @@
 
             if (!busesOnlineCount) { // first load
                 busesOnlineCount = document.createElement('span');
-                busesOnline.appendChild(busesOnlineCount);
+                button.appendChild(busesOnlineCount);
             }
             if (vehiclesCount === 1) {
-                busesOnlineCount.innerHTML = 'Tracking 1 bus';
+                busesOnlineCount.innerHTML = ' (tracking 1 bus)';
             } else {
-                busesOnlineCount.innerHTML = 'Tracking ' + vehiclesCount + ' buses';
+                busesOnlineCount.innerHTML = ' (tracking ' + vehiclesCount + ' buses)';
             }
         }
 

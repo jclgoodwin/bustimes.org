@@ -9,7 +9,7 @@ from django.views.generic.detail import DetailView
 from busstops.models import Operator, DataSource, OperatorCode, Service
 
 from .forms import FaresForm
-from .models import DataSet, Tariff
+from .models import DataSet, Tariff, FareTable
 
 
 def index(request):
@@ -132,6 +132,14 @@ class TariffDetailView(DetailView):
         context_data['form'] = form
 
         return context_data
+
+
+class FareTableDetailView(DetailView):
+    model = FareTable
+    queryset = model.objects.prefetch_related(
+        'row_set__cell_set__price',
+        'column_set',
+    )
 
 
 def service_fares(request, slug):

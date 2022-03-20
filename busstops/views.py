@@ -25,6 +25,7 @@ from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.forms import FaresForm
+from fares.models import FareTable
 from bustimes.models import get_routes, StopTime
 from vehicles.models import Vehicle
 from vehicles.utils import redis_client, liveries_css_version
@@ -702,11 +703,7 @@ class ServiceDetailView(DetailView):
 
         tariffs = self.object.tariff_set
         tariffs = tariffs.filter(source__published=True)
-        if tariffs.exists():
-            if self.request.GET:
-                context['fares'] = FaresForm(tariffs, self.request.GET)
-            else:
-                context['fares'] = FaresForm(tariffs)
+        context['fare_tables'] = FareTable.objects.filter(tariff__in=tariffs).select_related('tariff').order_by('tariff')
 
         for url, text in self.object.get_traveline_links(date):
             context['links'].append({
