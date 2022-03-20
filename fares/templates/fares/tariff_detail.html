@@ -11,7 +11,7 @@
     {% endfor %}
 
     {% if form.fields.origin.choices %}
-        <form>
+        <form autocomplete="off">
             {{ form.as_p }}
 
             <input type="submit" value="Find fare">
