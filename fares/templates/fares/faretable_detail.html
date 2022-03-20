@@ -1,3 +1,4 @@
+<div class="table-wrapper">
 <table class="compact nowrap">
     <tbody>
         {% if not object.is_triangular %}
@@ -25,4 +26,6 @@
                 {% if object.is_triangular %}<th colspan="{{ row.colspan }}">{{ row }}</th>{% endif %}
             </tr>
         {% endfor %}
+    </tbody>
 </table>
+</div>

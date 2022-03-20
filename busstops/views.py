@@ -703,7 +703,24 @@ class ServiceDetailView(DetailView):
 
         tariffs = self.object.tariff_set
         tariffs = tariffs.filter(source__published=True)
-        context['fare_tables'] = FareTable.objects.filter(tariff__in=tariffs).select_related('tariff').order_by('tariff')
+        fare_tables = FareTable.objects.filter(tariff__in=tariffs).select_related('tariff').order_by('tariff')
+        if fare_tables:
+            for table in fare_tables:
+                table.tariff.name = table.tariff.name.removesuffix(' fares')\
+                    .replace(' Conc ', ' Concession ')\
+                    .replace(' YP ', ' Young Person ')\
+                    .replace(' Ch ', ' Child ')\
+                    .replace('_', ' ')\
+                    .replace(' AD ', ' Adult ')
+
+            if len(fare_tables) > 1:
+                parts = fare_tables[0].tariff.name.split()
+                while all(table.tariff.name.startswith(f'{parts[0]} ') for table in fare_tables):
+                    for table in fare_tables:
+                        table.tariff.name = table.tariff.name.removeprefix(f'{parts[0]} ')
+                    parts = parts[1:]
+            # if len
+            context['fare_tables'] = fare_tables
 
         for url, text in self.object.get_traveline_links(date):
             context['links'].append({

@@ -385,6 +385,7 @@ select {
     color: inherit;
     font: inherit;
     padding: .25em 1.5em .25em .25em;
+    max-width: 100%;
 
     &::-ms-expand {
         display: none;
