@@ -4,7 +4,8 @@ from .models import DataSet, Tariff, Price, FareZone, UserProfile, DistanceMatri
 
 
 class DataSetAdmin(admin.ModelAdmin):
-    list_display = ["__str__", "description", "noc"]
+    list_display = ["__str__", "description", "noc", "datetime"]
+    list_filter = ["published"]
     autocomplete_fields = ["operators"]
 
     def get_queryset(self, request):
