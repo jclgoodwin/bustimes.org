@@ -65,9 +65,18 @@ class SalesOfferPackage(models.Model):
     code = models.CharField(max_length=255, blank=True)
     name = models.CharField(max_length=255, blank=True)
     description = models.CharField(max_length=255, blank=True)
+    cash = models.BooleanField(default=False)
+    contactless = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+
+
+class PreassignedFareProduct(models.Model):
+    code = models.CharField(max_length=140, blank=True)
+    name = models.CharField(max_length=140, blank=True)
+    charging_moment = models.CharField(max_length=25, blank=True)
+    tariff_basis = models.CharField(max_length=25)
 
 
 class UserProfile(models.Model):
@@ -134,6 +143,7 @@ class FareTable(models.Model):
     description = models.CharField(max_length=255, blank=True)
     user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
     sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE, null=True, blank=True)
+    preassigned_fare_product = models.ForeignKey(PreassignedFareProduct, models.CASCADE, null=True, blank=True)
     tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
 
     def __str__(self):
