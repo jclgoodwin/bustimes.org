@@ -1082,7 +1082,6 @@ input:not(:checked) + label {
 .timetable {
     border-collapse: separate;
     border-spacing: 0;
-    font-variant-numeric: tabular-nums;
     padding: 0 1.14em;
     padding-left: calc(env(safe-area-inset-left) + 1.14em);
     padding-right: calc(env(safe-area-inset-right) + 1.14em);
@@ -1093,6 +1092,7 @@ input:not(:checked) + label {
 
     td {
         border-left: 0;
+        font-variant-numeric: tabular-nums;
     }
 
     td,
@@ -1330,6 +1330,10 @@ input:not(:checked) + label {
     input {  // datetime picker
         margin: 0 .5em .5em 0;
     }
+}
+
+#fare-table td {
+    font-variant-numeric: tabular-nums;
 }
 
 #hugemap {
