@@ -65,8 +65,8 @@
                 {% for row in table.rows %}
                     <tr>
                         {% if not table.is_triangular %}<th>{{ row }}</th>{% endif %}
-                        {% for cell in row.cell_set.all %}
-                            <td>£{{ cell.price.amount }}</td>
+                        {% for cell in row.cells %}
+                            <td>{% if cell %}£{{ cell.price.amount }}{% endif %}</td>
                         {% empty %}
                             {% if forloop.counter %}
                                 <td colspan="{{ forloop.counter }}"></td>

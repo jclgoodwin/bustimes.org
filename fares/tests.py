@@ -80,7 +80,6 @@ class FaresTest(TestCase):
             'STBC96615325_1597249888210_YFXY9eP.xml',
             'TGTC238e19ce_1603195065008_yJWka80.xml',
             'TWGT0b3b32d1_1600857778793_2gKCmVT_2.xml',
-            'connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml',
         ):
             filename = path / filename
 

@@ -168,13 +168,21 @@ class FareTable(models.Model):
         return self.column_set.all()
 
     def rows(self):
+        cols = {
+            col.id: col for col in self.column_set.all() 
+        }
+
         rows = list(self.row_set.all())
+        for row in rows:
+            for cell in row.cell_set.all():
+                cell.column = cols[cell.column_id]
         if self.is_triangular:
             i = 0
             for row in rows:
                 i += 1
                 row.colspan = i
             rows.reverse()
+
         return rows
 
 
@@ -225,7 +233,17 @@ class Row(models.Model):
     order = models.PositiveSmallIntegerField(null=True, blank=True)
 
     def cells(self):
-        return self.cell_set.all()
+        prev_order = 0
+        for cell in self.cell_set.all():
+            while cell.column.order - prev_order > 1:
+                yield None
+                prev_order += 1
+            yield cell
+            prev_order = cell.column.order
+        # while prev_order < self.order:
+        #     yield None
+        #     prev_order += 1
+        # return self.cell_set.all()
 
     def __str__(self):
         return self.name
