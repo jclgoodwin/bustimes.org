@@ -11,7 +11,7 @@ class BusTimesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         DataSource.objects.create(id=7, name='London')
-        Livery.objects.create(id=262, name='London', colours='#dc241f')
+        Livery.objects.create(id=262, name='London', colours='#dc241f', published=True)
 
     def test_tfl_vehicle_view(self):
         with use_cassette(
