@@ -242,7 +242,8 @@ class LiveryAdminForm(forms.ModelForm):
 class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
-    list_display = ['id', 'name', 'vehicles', 'left', 'right', 'operator', 'updated_at']
+    list_display = ['id', 'name', 'vehicles', 'left', 'right', 'operator_id', 'published', 'updated_at']
+    list_filter = ['published', 'updated_at', ('operator', admin.RelatedOnlyFieldListFilter)]
     autocomplete_fields = ["operator"]
     readonly_fields = ['left', 'right', 'updated_at']
     ordering = ["-id"]
