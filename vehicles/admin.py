@@ -242,11 +242,30 @@ class LiveryAdminForm(forms.ModelForm):
 class LiveryAdmin(admin.ModelAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
+    actions = ["merge"]
     list_display = ['id', 'name', 'vehicles', 'left', 'right', 'operator_id', 'published', 'updated_at']
     list_filter = ['published', 'updated_at', ('operator', admin.RelatedOnlyFieldListFilter)]
     autocomplete_fields = ["operator"]
     readonly_fields = ['left', 'right', 'updated_at']
     ordering = ["-id"]
+
+    def merge(self, request, queryset):
+        if not all(
+            queryset[0].name == livery.name
+            and queryset[0].name == livery.name
+            and queryset[0].colours == livery.colours
+            and queryset[0].left_css == livery.left_css
+            and queryset[0].right_css == livery.right_css
+            for livery in queryset[:0]
+        ):
+            self.message_user(request, "You can only merge liveries that are the same")
+        else:
+            for livery in queryset[1:]:
+                livery.vehicle_set.update(livery=queryset[0])
+                livery.revision_from.update(from_livery=queryset[0])
+                livery.revision_to.update(to_livery=queryset[0])
+                livery.vehicleedit_set.update(livery=queryset[0])
+            self.message_user(request, "Merged")
 
     def right(self, obj):
         return format_html(
