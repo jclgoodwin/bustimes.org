@@ -727,6 +727,14 @@ table .livery {
     line-height: 12px;
     margin-top: 3px;
     overflow: hidden;
+    fill: $black; // SVG text
+    stroke: $white;
+    paint-order: stroke;
+
+    text {
+        stroke-width: 2px;
+        text-anchor: middle;
+    }
 }
 
 .leaflet-marker-icon {
@@ -758,6 +766,8 @@ table .livery {
 
         .white-text {
             color: $white;
+            fill: $white;
+            stroke: $black;
         }
 
         .arrow {

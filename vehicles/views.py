@@ -92,7 +92,7 @@ def liveries_css(request, version=None):
         selector = f'.livery-{livery.id}'
         css = f'background: {livery.left_css}'
         if livery.white_text:
-            css = f'{css};\n  color: #fff'
+            css = f'{css};\n  color:#fff;fill:#fff;stroke:#000'
         styles.append(f'{selector} {{\n  {css}\n}}\n')
         if livery.right_css != livery.left_css:
             styles.append(f'{selector}.right {{\n  background: {livery.right_css}\n}}\n')

@@ -41,6 +41,7 @@
             }
         }
         var style = getTransform(heading, active);
+
         if (item.vehicle) {
             if (item.vehicle.livery) {
                 className += ' livery-' + item.vehicle.livery;
@@ -51,11 +52,21 @@
                 }
             }
         }
-        var html = '<div class="' + className + '" style="' + style + '">';
+
+        var svg = document.createElement('svg');
+        svg.setAttribute('width', 18);
+        svg.setAttribute('height', 12);
+        svg.className = className;
+        svg.style = style;
         if (item.service) {
-            html += item.service.line_name;
+            var text = document.createElement('text');
+            text.setAttribute('x', '9');
+            text.setAttribute('y', '10');
+            text.innerHTML = item.service.line_name;
+            svg.appendChild(text);
         }
-        html += '</div>';
+        var html = svg.outerHTML;
+
         if (arrow) {
             html += arrow;
         }
