@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.urls import reverse
 from django.utils.html import format_html
 from django.db.models import Q, Exists, OuterRef
@@ -256,9 +256,9 @@ class LiveryAdmin(admin.ModelAdmin):
             and queryset[0].colours == livery.colours
             and queryset[0].left_css == livery.left_css
             and queryset[0].right_css == livery.right_css
-            for livery in queryset[:0]
+            for livery in queryset
         ):
-            self.message_user(request, "You can only merge liveries that are the same")
+            self.message_user(request, "You can only merge liveries that are the same", messages.ERROR)
         else:
             for livery in queryset[1:]:
                 livery.vehicle_set.update(livery=queryset[0])
