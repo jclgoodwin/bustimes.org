@@ -1,7 +1,6 @@
 from django.conf import settings
-from django.conf.urls import static
 from django.urls import include, path, re_path
-from django.contrib import staticfiles
+from django.views.generic.base import TemplateView
 from django.contrib.sitemaps.views import sitemap, index
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
@@ -24,6 +23,7 @@ urlpatterns = [
     path('data', views.data),
     path('status', views.status),
     path('robots.txt', views.robots_txt),
+    path('ads.txt', TemplateView.as_view(template_name="ads.txt", content_type="text/plain")),
     path('stops.json', views.stops),
     path('regions/<pk>', views.RegionDetailView.as_view(), name='region_detail'),
     path('places/<int:pk>', views.PlaceDetailView.as_view(), name='place_detail'),
@@ -50,9 +50,9 @@ urlpatterns = [
 ] + bustimes_views + disruptions_urls + vehicles_urls + vosa_urls
 
 
-if settings.DEBUG and hasattr(staticfiles, 'views'):
+if settings.DEBUG:
     import debug_toolbar
 
     urlpatterns += [
         path('__debug__', include(debug_toolbar.urls)),
-    ] + static.static('/', document_root=settings.STATIC_ROOT)
+    ]
