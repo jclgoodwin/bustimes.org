@@ -122,7 +122,17 @@ def error(request):
 
 
 def robots_txt(request):
-    return HttpResponse("User-Agent: *\nDisallow: /\n", content_type="text/plain")
+    """robots.txt for the staging site only, should be overridden on the live site"""
+
+    return HttpResponse("""User-agent: Mediapartners-Google
+Disallow:
+
+User-agent: AdsBot-Google
+Disallow:
+
+User-agent: *
+Disallow: /
+""", content_type="text/plain")
 
 
 def change_password(request):
