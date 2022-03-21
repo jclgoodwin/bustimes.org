@@ -322,10 +322,16 @@ linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         self.assertEqual(livery.right_css, 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
 
         response = self.client.get('/liveries.44.css')
-        self.assertContains(
-            response,
-            "{\n  background: linear-gradient(to right,#FF0000 50%,#0000FF 50%);\n  color: #fff\n}\n.livery-"
-        )
+        self.assertEqual(
+            response.content.decode(),
+            f""".livery-{livery.id - 1} {{
+  background: linear-gradient(to right,#FF0000 50%,#0000FF 50%);
+  color:#fff;fill:#fff;stroke:#000
+}}
+.livery-{livery.id - 1}.right {{
+  background: linear-gradient(to left,#FF0000 50%,#0000FF 50%)
+}}
+""")
 
     def test_vehicle_edit_1(self):
         url = self.vehicle_1.get_edit_url()

@@ -99,20 +99,21 @@ class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     colours = models.CharField(
         max_length=512, blank=True,
-        help_text="Keep it simple. Being able to read the route number on the map the is much more important than 'accuracy'"
+        help_text="""Keep it simple.
+Simplicity (and being able to read the route number on the map) is much more important than 'accuracy'."""
     )
     css = models.CharField(
         max_length=1024, blank=True, verbose_name="CSS",
-        help_text="""Most liveries can be adequately represented with a list of colours and an angle,
-in which case you should leave this blank"""
+        help_text="""Leave this blank.
+A livery can be adequately represented with a list of colours and an angle."""
     )
     left_css = models.CharField(
         max_length=1024, blank=True, verbose_name="Left CSS",
-        help_text="Automatically generated from colours and angle if CSS field is blank"
+        help_text="Automatically generated from colours and angle"
     )
     right_css = models.CharField(
         max_length=1024, blank=True, verbose_name="Right CSS",
-        help_text="Automatically generated colours and angle if CSS field is blank"
+        help_text="Automatically generated from colours and angle"
     )
     white_text = models.BooleanField(default=False)
     text_colour = models.CharField(max_length=7, blank=True, editable=False)

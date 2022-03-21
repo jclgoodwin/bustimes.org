@@ -194,6 +194,8 @@ class Command(BaseCommand):
             with path.open("wb") as open_file:
                 for chunk in response.iter_content(chunk_size=102400):
                     open_file.write(chunk)
+        else:
+            return
 
         source.save(update_fields=["settings"])
 
