@@ -24,7 +24,6 @@ from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
-from fares.forms import FaresForm
 from fares.models import FareTable
 from bustimes.models import get_routes, StopTime
 from vehicles.models import Vehicle
@@ -122,11 +121,6 @@ def error(request):
     return response
 
 
-def offline(request):
-    """Offline page (for service worker)"""
-    return render(request, 'offline.html')
-
-
 def robots_txt(request):
     return HttpResponse("User-Agent: *\nDisallow: /\n", content_type="text/plain")
 
@@ -168,25 +162,6 @@ def contact(request):
     return render(request, 'contact.html', {
         'form': form,
         'submitted': submitted
-    })
-
-
-def cookies(request):
-    """Cookie policy"""
-    return render(request, 'cookies.html')
-
-
-def data(request):
-    """Data sources"""
-    sources = DataSource.objects.annotate(
-        count=Count('route__service', filter=Q(route__service__current=True), distinct=True),
-    ).order_by('url').filter(
-        ~Q(count=0),
-        ~Q(name__contains='GTFS'),
-        ~Q(name='MET'),
-    )
-    return render(request, 'data.html', {
-        'sources': sources
     })
 
 

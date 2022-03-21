@@ -17,10 +17,10 @@ sitemaps = {
 
 urlpatterns = [
     path('', views.index),
-    path('offline', views.offline),
+    path('offline', TemplateView.as_view(template_name="offline.html")),
     path('contact', views.contact),
-    path('cookies', views.cookies),
-    path('data', views.data),
+    path('cookies', TemplateView.as_view(template_name="cookies.html")),
+    path('data', TemplateView.as_view(template_name="data.html")),
     path('status', views.status),
     path('robots.txt', views.robots_txt),
     path('ads.txt', TemplateView.as_view(template_name="ads.txt", content_type="text/plain")),
