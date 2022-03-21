@@ -137,6 +137,8 @@ class Price(models.Model):
     tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
 
     def __str__(self):
+        if self.amount >= 10:
+            return str(self.amount).removesuffix('.00')
         return str(self.amount)
 
 
