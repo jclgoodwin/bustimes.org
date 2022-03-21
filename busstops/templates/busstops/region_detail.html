@@ -1,5 +1,9 @@
 {% extends 'page.html' %}
 
+{% block head %}
+    <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script> 
+{% endblock %}
+
 {% block content %}
 
 <h1>{{ region }}</h1>
@@ -10,7 +14,8 @@
     {% include 'list.html' with list=areas %}
 
     {% if operators %}
-        {% include 'ad.html' with slot='5070920457' %}
+        <!-- 71161633/home_incontent_1/home_incontent_1 -->
+        <div data-fuse="22699655431"></div>
     {% endif %}
 {% elif districts %}
     <h2>Districts in {{ region.the }}</h2>
