@@ -250,10 +250,9 @@ class LiveryAdmin(admin.ModelAdmin):
     ordering = ["-id"]
 
     def merge(self, request, queryset):
+        queryset = queryset.order_by('id')
         if not all(
-            queryset[0].name == livery.name
-            and queryset[0].name == livery.name
-            and queryset[0].colours == livery.colours
+            queryset[0].colours == livery.colours
             and queryset[0].left_css == livery.left_css
             and queryset[0].right_css == livery.right_css
             for livery in queryset

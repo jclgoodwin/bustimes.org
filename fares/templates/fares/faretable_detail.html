@@ -17,7 +17,7 @@
             <tr>
                 {% if not object.is_triangular %}<th>{{ row }}</th>{% endif %}
                 {% for cell in row.cells %}
-                    <td>{% if cell %}£{{ cell.price.amount }}{% endif %}</td>
+                    <td>{% if cell %}£{{ cell.price }}{% endif %}</td>
                 {% empty %}
                     {% if forloop.counter %}
                         <td colspan="{{ forloop.counter }}"></td>

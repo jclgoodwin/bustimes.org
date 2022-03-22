@@ -120,7 +120,11 @@ A livery can be adequately represented with a list of colours and an angle."""
     stroke_colour = models.CharField(max_length=7, blank=True)
     horizontal = models.BooleanField(default=False, help_text="Equivalent to setting the angle to 90")
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
-    operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
+    operator = models.ForeignKey(
+        'busstops.Operator', models.SET_NULL, null=True, blank=True,
+        help_text="""A livery may be assigned to vehicles from more than one operator.
+You can use this field to make this livery selectable for a new operator – that's its only purpose"""
+    )
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles"

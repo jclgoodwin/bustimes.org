@@ -7,6 +7,7 @@ class DataSetAdmin(admin.ModelAdmin):
     list_display = ["__str__", "description", "noc", "datetime"]
     list_filter = ["published"]
     autocomplete_fields = ["operators"]
+    search_fields = ["name", "description"]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
