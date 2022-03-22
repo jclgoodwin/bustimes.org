@@ -32,7 +32,7 @@
         }
         var heading = item.heading;
         if (heading !== null) {
-            var arrow = '<div class="arrow" style="' + getTransform(heading, active) + '"></div>';
+            var arrow = '<div class="arrow" style="' + getTransform(heading + 90, active) + '"></div>';
             if (heading < 180) {
                 className += ' right';
                 heading -= 90;
@@ -54,14 +54,14 @@
         }
 
         var svg = document.createElement('svg');
-        svg.setAttribute('width', 18);
-        svg.setAttribute('height', 12);
+        svg.setAttribute('width', 24);
+        svg.setAttribute('height', 16);
         svg.className = className;
         svg.style = style;
         if (item.service) {
             var text = document.createElement('text');
-            text.setAttribute('x', '9');
-            text.setAttribute('y', '10');
+            text.setAttribute('x', '12');
+            text.setAttribute('y', '12');
             text.innerHTML = item.service.line_name;
             svg.appendChild(text);
         }
@@ -71,9 +71,9 @@
             html += arrow;
         }
         return L.divIcon({
-            iconSize: [20, 20],
+            iconSize: [26, 13],
             html: html,
-            popupAnchor: [0, -5],
+            popupAnchor: [0, -6],
         });
     }
 
