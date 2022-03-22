@@ -727,12 +727,11 @@ table .livery {
     line-height: 16px;
     overflow: hidden;
     fill: $text-color; // SVG text
-    stroke: $white;
     paint-order: stroke;
 
     text {
-        stroke-width: 3px;
         stroke-linejoin: round;
+        stroke-width: 2px;
         text-anchor: middle;
     }
 }
@@ -767,7 +766,6 @@ table .livery {
         .white-text {
             color: $white;
             fill: $white;
-            stroke: $black;
         }
 
         .arrow {

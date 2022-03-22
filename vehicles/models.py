@@ -117,7 +117,7 @@ A livery can be adequately represented with a list of colours and an angle."""
     )
     white_text = models.BooleanField(default=False)
     text_colour = models.CharField(max_length=7, blank=True, editable=False)
-    stroke_colour = models.CharField(max_length=7, blank=True, editable=False)
+    stroke_colour = models.CharField(max_length=7, blank=True)
     horizontal = models.BooleanField(default=False, help_text="Equivalent to setting the angle to 90")
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
     operator = models.ForeignKey('busstops.Operator', models.SET_NULL, null=True, blank=True)
@@ -165,6 +165,22 @@ A livery can be adequately represented with a list of colours and an angle."""
 
     def clean(self):
         Vehicle.clean(self)  # validate colours field
+
+        if self.stroke_colour:
+            try:
+                html5_parse_simple_color(self.stroke_colour)
+            except ValueError as e:
+                raise ValidationError({
+                    'stroke_colour': str(e)
+                })
+
+        if self.text_colour:
+            try:
+                html5_parse_simple_color(self.text_colour)
+            except ValueError as e:
+                raise ValidationError({
+                    'text_colour': str(e)
+                })
 
         for attr in ('css', 'left_css', 'right_css'):
             value = getattr(self, attr)
