@@ -89,10 +89,18 @@ def liveries_css(request, version=None):
     styles = []
     liveries = Livery.objects.filter(published=True).order_by('id')
     for livery in liveries:
+        if not livery.left_css:
+            continue
         selector = f'.livery-{livery.id}'
         css = f'background: {livery.left_css}'
         if livery.white_text:
-            css = f'{css};\n  color:#fff;fill:#fff;stroke:#000'
+            css = f'{css};\n  color:#fff;fill:#fff'
+            if livery.left_css == livery.colours:
+                css = f'{css};stroke:{livery.colours}'
+            else:
+                css = f'{css};stroke:#000'
+        elif livery.left_css == livery.colours:
+            css = f'{css};stroke: {livery.colours}'
         styles.append(f'{selector} {{\n  {css}\n}}\n')
         if livery.right_css != livery.left_css:
             styles.append(f'{selector}.right {{\n  background: {livery.right_css}\n}}\n')
