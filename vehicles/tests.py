@@ -326,7 +326,7 @@ linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
             response.content.decode(),
             f""".livery-{livery.id - 1} {{
   background: linear-gradient(to right,#FF0000 50%,#0000FF 50%);
-  color:#fff;fill:#fff;stroke:#000
+  color:#fff;fill:#fff;stroke:#222
 }}
 .livery-{livery.id - 1}.right {{
   background: linear-gradient(to left,#FF0000 50%,#0000FF 50%)
