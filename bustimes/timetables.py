@@ -273,7 +273,7 @@ class Timetable:
         )
         stops = stops.in_bulk(stop_codes)
 
-        if stop_situations:
+        if stop_situations and len(stop_situations) < len(stops):
             for atco_code in stops:
                 if atco_code in stop_situations:
                     if stop_situations[atco_code].summary == 'Does not stop here':
