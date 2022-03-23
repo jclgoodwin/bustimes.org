@@ -652,12 +652,13 @@ class ServiceDetailView(DetailView):
                 'stop__latlong', 'stop__locality__latlong'
             )
             context['has_minor_stops'] = any(stop_usage.is_minor() for stop_usage in context['stopusages'])
-            for stop_usage in context['stopusages']:
-                if stop_usage.stop_id in stop_situations:
-                    if stop_situations[stop_usage.stop_id].summary == 'Does not stop here':
-                        stop_usage.suspended = True
-                    else:
-                        stop_usage.situation = True
+            if len(stop_situations) < len(context['stopusages']):
+                for stop_usage in context['stopusages']:
+                    if stop_usage.stop_id in stop_situations:
+                        if stop_situations[stop_usage.stop_id].summary == 'Does not stop here':
+                            stop_usage.suspended = True
+                        else:
+                            stop_usage.situation = True
 
         else:
             stops = StopPoint.objects.select_related('locality').defer('latlong', 'locality__latlong')
