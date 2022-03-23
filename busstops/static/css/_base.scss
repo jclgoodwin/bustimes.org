@@ -792,6 +792,20 @@ table .livery {
     }
 }
 
+.zoomed-out {
+    .bus {
+        height: 12px;
+        width: 18px;
+        margin: 2px 3px;
+        font-size: 10px;
+    }
+
+    .leaflet-marker-icon.leaflet-div-icon .arrow {
+        left: -3px;
+        transform-origin: 16px 4px;
+    }
+}
+
 #hugemap {
     .stop-arrow {
         position: absolute;

@@ -60,8 +60,8 @@
         svg.style = style;
         if (item.service) {
             var text = document.createElement('text');
-            text.setAttribute('x', '12');
-            text.setAttribute('y', '12');
+            text.setAttribute('x', '50%');
+            text.setAttribute('y', '80%');
             text.innerHTML = item.service.line_name;
             svg.appendChild(text);
         }

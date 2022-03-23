@@ -319,10 +319,17 @@
     }
 
     var first = true;
+    var mapContainer = map.getContainer();
 
     map.on('moveend', function() {
         if (!first) {
             loadVehicles(true);
+        }
+
+        if (map.getZoom() < 13) { // zoomed out
+            mapContainer.classList.add('zoomed-out');
+        } else {
+            mapContainer.classList.remove('zoomed-out');
         }
 
         if (showStops) {
