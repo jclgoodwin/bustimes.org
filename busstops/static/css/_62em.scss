@@ -1,3 +1,5 @@
+// 992px
+
 header {
     div {
         padding: 0 1em;
@@ -25,6 +27,10 @@ main {
     margin: 0 -2em;
     padding-left: 2em;
 
+}
+
+.narrow [data-fuse] {
+    margin: 1em -121px;
 }
 
 .wide {

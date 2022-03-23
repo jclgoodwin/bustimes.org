@@ -49,13 +49,6 @@ def get_colours(services):
         return ServiceColour.objects.filter(id__in=colours)
 
 
-def index(request):
-    """The home page with a list of regions"""
-    return render(request, 'index.html', {
-        'regions': True
-    })
-
-
 def not_found(request, exception):
     """Custom 404 handler view"""
     if request.resolver_match:

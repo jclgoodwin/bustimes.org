@@ -1340,7 +1340,9 @@ input:not(:checked) + label {
     }
 }
 
-#fare-table td {
+#fare-table td,
+.aside td,
+.trip-timetable td {
     font-variant-numeric: tabular-nums;
 }
 
@@ -1459,6 +1461,10 @@ nav {
 
 .adsbygoogle[style="width: 0px; height: 0px;"] {
     display: none;
+}
+
+[data-fuse] {
+    margin: 1em auto;
 }
 
 .horizontal {
