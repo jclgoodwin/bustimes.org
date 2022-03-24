@@ -1,5 +1,14 @@
 {% extends 'page.html' %}
 
+{% block head %}
+    <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script> 
+{% endblock %}
+
+{% block topad %}
+    <!-- 71161633/home_header/home_header -->
+    <div data-fuse="22699960949"></div>
+{% endblock %}
+
 {% block content %}
 
 <h1>{{ locality.get_qualified_name }}</h1>
@@ -16,7 +25,8 @@
     {% include 'stops.html' with stops=stops class=' long' %}
 
     {% if services|length > 6 %}
-        {% include 'ad.html' with slot='5070920457' %}
+        <!-- 71161633/home_incontent_1/home_incontent_1 -->
+        <div data-fuse="22699655431"></div>
     {% endif %}
 {% endif %}
 

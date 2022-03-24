@@ -1,7 +1,12 @@
 {% extends 'page.html' %}
 
+{% block head %}
+    <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>
+{% endblock %}
+
 {% block topad %}
-    {% include 'ad.html' %}
+    <!-- 71161633/stop_header/stop_header -->
+    <div data-fuse="22699655443"></div>
 {% endblock %}
 
 {% block content %}
@@ -37,16 +42,19 @@
 
 {% if services %}
     <div class="aside">
-    <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
-    {% include 'service_list.html' with services=services class="has-smalls" %}
+        <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
+        {% include 'service_list.html' with services=services class="has-smalls" %}
+
+        <!-- 71161633/stop_footer/stop_footer -->
+        <div data-fuse="22699655449"></div>
     </div>
 {% endif %}
 
 {% if nearby %}
-<div class="aside">
-    <h2>Nearby stops</h2>
-    {% include 'stops.html' with stops=nearby %}
-</div>
+    <div class="aside">
+        <h2>Nearby stops</h2>
+        {% include 'stops.html' with stops=nearby %}
+    </div>
 {% endif %}
 
 </div>

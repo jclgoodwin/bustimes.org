@@ -1334,6 +1334,10 @@ input:not(:checked) + label {
         margin: .25em 0 .5em;
     }
 
+    [data-fuse] + h2 {
+        margin-top: -.5em;
+    }
+
     h3,
     p {
         margin: .5em 0;
@@ -1354,7 +1358,9 @@ input:not(:checked) + label {
     }
 }
 
-#fare-table td {
+#fare-table td,
+.aside td,
+.trip-timetable td {
     font-variant-numeric: tabular-nums;
 }
 
@@ -1475,6 +1481,10 @@ nav {
     display: none;
 }
 
+main [data-fuse] {
+    margin: 1em auto;
+}
+
 .horizontal {
     li {
         display: inline;
@@ -1529,6 +1539,7 @@ footer {
     clear: both;
     margin-top: 1.5em;
     text-align: center;
+    margin-bottom: 60px;
 
     ul {
         border-top: 1px solid $brand-color-darker;

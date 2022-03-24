@@ -1,3 +1,5 @@
+// 728px
+
 header .search label {
     width: 10em;
 }
@@ -37,8 +39,33 @@ h1 {
     }
 }
 
-.adsbygoogle {
-    height: 90px;
+.asides {
+    margin: 0 -1.5%;
+    overflow: hidden;
+}
+
+.aside {
+    float: left;
+    margin: 0 1.5%;
+    width: 47%;
+}
+
+.adsbygoogle,
+[data-fuse="22699960949"], // home_header
+[data-fuse="22699655431"], // home_incontent_1
+[data-fuse="22699655428"], // services_header
+[data-fuse="22699655419"], // services_incontent_1
+[data-fuse="22699655443"], // stop_header
+{
+    min-height: 90px;
+}
+
+footer {
+    margin-bottom: 90px;
+}
+
+main [data-fuse] {
+    margin: 1em -1px;
 }
 
 .fleet {

@@ -171,7 +171,7 @@ class FareTable(models.Model):
 
     def rows(self):
         cols = {
-            col.id: col for col in self.column_set.all() 
+            col.id: col for col in self.column_set.all()
         }
 
         rows = list(self.row_set.all())

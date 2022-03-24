@@ -24,7 +24,6 @@ from django.core.cache import cache
 from django.core.mail import EmailMessage
 from departures import live
 from disruptions.models import Situation, Consequence
-from fares.forms import FaresForm
 from fares.models import FareTable
 from bustimes.models import get_routes, StopTime
 from vehicles.models import Vehicle
@@ -48,13 +47,6 @@ def get_colours(services):
     colours = set(service.colour_id for service in services if service.colour_id)
     if colours:
         return ServiceColour.objects.filter(id__in=colours)
-
-
-def index(request):
-    """The home page with a list of regions"""
-    return render(request, 'index.html', {
-        'regions': True
-    })
 
 
 def not_found(request, exception):
@@ -122,13 +114,18 @@ def error(request):
     return response
 
 
-def offline(request):
-    """Offline page (for service worker)"""
-    return render(request, 'offline.html')
-
-
 def robots_txt(request):
-    return HttpResponse("User-Agent: *\nDisallow: /\n", content_type="text/plain")
+    """robots.txt for the staging site only, should be overridden on the live site"""
+
+    return HttpResponse("""User-agent: Mediapartners-Google
+Disallow:
+
+User-agent: AdsBot-Google
+Disallow:
+
+User-agent: *
+Disallow: /
+""", content_type="text/plain")
 
 
 def change_password(request):
@@ -168,25 +165,6 @@ def contact(request):
     return render(request, 'contact.html', {
         'form': form,
         'submitted': submitted
-    })
-
-
-def cookies(request):
-    """Cookie policy"""
-    return render(request, 'cookies.html')
-
-
-def data(request):
-    """Data sources"""
-    sources = DataSource.objects.annotate(
-        count=Count('route__service', filter=Q(route__service__current=True), distinct=True),
-    ).order_by('url').filter(
-        ~Q(count=0),
-        ~Q(name__contains='GTFS'),
-        ~Q(name='MET'),
-    )
-    return render(request, 'data.html', {
-        'sources': sources
     })
 
 
