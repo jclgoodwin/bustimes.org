@@ -207,7 +207,7 @@ class Command(BaseCommand):
                     StopTime(
                         arrival=departure,
                         departure=departure,
-                        stop_id=line[2:14].decode(),
+                        stop_id=line[2:14].decode().strip(),
                         sequence=0,
                         trip=self.trip
                     )
