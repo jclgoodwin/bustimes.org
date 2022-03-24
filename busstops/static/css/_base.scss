@@ -1320,6 +1320,10 @@ input:not(:checked) + label {
         margin: .25em 0 .5em;
     }
 
+    [data-fuse] + h2 {
+        margin-top: -.5em;
+    }
+
     h3,
     p {
         margin: .5em 0;
