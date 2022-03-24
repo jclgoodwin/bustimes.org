@@ -116,7 +116,7 @@ A livery can be adequately represented with a list of colours and an angle."""
         help_text="Automatically generated from colours and angle"
     )
     white_text = models.BooleanField(default=False)
-    text_colour = models.CharField(max_length=7, blank=True, editable=False)
+    text_colour = models.CharField(max_length=7, blank=True)
     stroke_colour = models.CharField(max_length=7, blank=True)
     horizontal = models.BooleanField(default=False, help_text="Equivalent to setting the angle to 90")
     angle = models.PositiveSmallIntegerField(null=True, blank=True)

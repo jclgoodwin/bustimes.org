@@ -267,22 +267,44 @@ class LiveryAdmin(admin.ModelAdmin):
             self.message_user(request, "Merged")
 
     def right(self, obj):
+        if obj.text_colour:
+            text_colour = obj.text_colour
+        elif obj.white_text:
+            text_colour = '#fff'
+        else:
+            text_colour = '#222'
+        if obj.stroke_colour:
+            stroke = f'stroke:{obj.stroke_colour};stroke-width:3px;paint-order:stroke'
+        else:
+            stroke = ''
         return format_html(
-            """<div style="height:24px;width:36px;line-height:24px;font-size:24px;text-align:center;color:{};background:{}">
-                42
-            </div>""",
-            '#fff' if obj.white_text else '#222',
-            obj.right_css
+            """<svg style="height:24px;width:36px;line-height:24px;font-size:24px;background:{}">
+                <text x="50%" y="80%" style="fill:{};text-anchor:middle;{}">42</text>
+            </svg>""",
+            obj.left_css,
+            text_colour,
+            stroke
         )
     right.admin_order_field = 'right_css'
 
     def left(self, obj):
+        if obj.text_colour:
+            text_colour = obj.text_colour
+        elif obj.white_text:
+            text_colour = '#fff'
+        else:
+            text_colour = '#222'
+        if obj.stroke_colour:
+            stroke = f'stroke:{obj.stroke_colour};stroke-width:3px;paint-order:stroke'
+        else:
+            stroke = ''
         return format_html(
-            """<div style="height:24px;width:36px;line-height:24px;font-size:24px;text-align:center;color:{};background:{}">
-                24
-            </div>""",
-            '#fff' if obj.white_text else '#222',
-            obj.left_css
+            """<svg style="height:24px;width:36px;line-height:24px;font-size:24px;background:{}">
+                <text x="50%" y="80%" style="fill:{};text-anchor:middle;{}">24</text>
+            </text>""",
+            obj.left_css,
+            text_colour,
+            stroke
         )
     left.admin_order_field = 'left_css'
 
