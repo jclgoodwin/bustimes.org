@@ -2,8 +2,26 @@
 
 {% block content %}
 
-{% for tariff in tariffs %}
-    <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
-{% endfor %}
+    {% for table in tables %}
+
+        {% ifchanged table.name %}<h2>{{ table }}</h2>{% endifchanged %}
+
+        {% if table.preassigned_fare_product %}
+             <p>{{ table.preassigned_fare_product.name }}</p>
+        {% endif %}
+        <p>
+        {% if table.user_profile %}
+            {{ table.user_profile|capfirst }} {{ table.sales_offer_package|lower }}
+        {% elif table.sales_offer_package %}
+            {{ table.sales_offer_package }}
+        {% endif %}</p>
+
+
+        {% include "fares/faretable_detail.html" with object=table %}
+    {% endfor %}
+
+    {% for tariff in tariffs %}
+        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
+    {% endfor %}
 
 {% endblock %}

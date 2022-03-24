@@ -149,7 +149,13 @@ def service_fares(request, slug):
     if not tariffs:
         raise Http404
 
+    tables = FareTable.objects.filter(tariff__in=tariffs).prefetch_related(
+        'row_set__cell_set__price',
+        'column_set',
+    )
+
     return render(request, 'service_fares.html', {
         'breadcrumb': [service],
         'tariffs': tariffs,
+        'tables': tables,
     })

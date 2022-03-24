@@ -704,7 +704,8 @@ class ServiceDetailView(DetailView):
 
         tariffs = self.object.tariff_set
         tariffs = tariffs.filter(source__published=True)
-        fare_tables = FareTable.objects.filter(tariff__in=tariffs).select_related('tariff').order_by('tariff')
+        fare_tables = FareTable.objects.filter(tariff__in=tariffs)\
+            .select_related('tariff', 'user_profile', 'sales_offer_package').order_by('tariff')
         if fare_tables:
             for table in fare_tables:
                 table.tariff.name = table.tariff.name.removesuffix(' fares')\
@@ -714,7 +715,14 @@ class ServiceDetailView(DetailView):
                     .replace('_', ' ')\
                     .replace(' AD ', ' Adult ')
 
-            if len(fare_tables) > 1:
+            if not all(table.user_profile_id == fare_tables[0].user_profile_id for table in fare_tables[1:]):
+                for table in fare_tables:
+                    table.tariff.name = f'{table.tariff.name} - {table.user_profile} {table.tariff.trip_type}'
+            if not all(table.sales_offer_package_id == fare_tables[0].sales_offer_package_id for table in fare_tables[1:]):
+                for table in fare_tables:
+                    table.tariff.name = f'{table.tariff.name} - {table.sales_offer_package}'
+
+            if not all(table.tariff.name == fare_tables[0].tariff.name for table in fare_tables[1:]):
                 parts = fare_tables[0].tariff.name.split()
                 while all(table.tariff.name.startswith(f'{parts[0]} ') for table in fare_tables):
                     for table in fare_tables:
