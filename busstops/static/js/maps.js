@@ -32,6 +32,7 @@
         }
         var heading = item.heading;
         if (heading !== null) {
+            heading = parseInt(heading, 10);
             var arrow = '<div class="arrow" style="' + getTransform(heading + 90, active) + '"></div>';
             if (heading < 180) {
                 className += ' right';
