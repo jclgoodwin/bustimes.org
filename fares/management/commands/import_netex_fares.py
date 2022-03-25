@@ -524,7 +524,10 @@ class Command(BaseCommand):
             self.handle_file(dataset, response.raw, filename)
         else:
             assert response.headers["Content-Type"] == "application/zip"
-            self.handle_archive(dataset, io.BytesIO(response.content))
+            try:
+                self.handle_archive(dataset, io.BytesIO(response.content))
+            except KeyError:
+                return dataset  # don't update timestamp field, try re-importing next time
 
         dataset.datetime = modified
         dataset.save(update_fields=["datetime"])
