@@ -15,3 +15,4 @@ def vehicle_varnish_ban(sender, instance, created, **kwargs):
 def liveries_varnish_ban(sender, instance, **kwargs):
     cache.set('liveries_css_version', int(instance.updated_at.timestamp()))
     varnish_ban('/map')
+    varnish_ban('/api/liveries/')

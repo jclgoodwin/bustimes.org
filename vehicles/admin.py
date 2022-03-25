@@ -281,7 +281,7 @@ class LiveryAdmin(admin.ModelAdmin):
             """<svg style="height:24px;width:36px;line-height:24px;font-size:24px;background:{}">
                 <text x="50%" y="80%" style="fill:{};text-anchor:middle;{}">42</text>
             </svg>""",
-            obj.left_css,
+            obj.right_css,
             text_colour,
             stroke
         )
