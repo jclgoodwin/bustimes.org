@@ -63,6 +63,7 @@ class FaresTest(TestCase):
         command = Command()
         command.user_profiles = {}
         command.sales_offer_packages = {}
+        command.fare_products = {}
 
         source = DataSet.objects.create()
 
@@ -80,6 +81,8 @@ class FaresTest(TestCase):
             'STBC96615325_1597249888210_YFXY9eP.xml',
             'TGTC238e19ce_1603195065008_yJWka80.xml',
             'TWGT0b3b32d1_1600857778793_2gKCmVT_2.xml',
+            'FX_PI_01_UK_SCTE_PRODUCTS_COMMON_wef-20220208_20220211-0936.xml',
+            'FX_PI_01_UK_SCTE_LINE_FARE_Line-59t@Outbound_wef-20220208_20220211-0936.xml',
         ):
             filename = path / filename
 

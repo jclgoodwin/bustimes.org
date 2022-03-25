@@ -1,0 +1,1016 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PublicationDelivery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:siri="http://www.siri.org.uk/siri" xmlns:gml="http://www.opengis.net/gml/3.2" version="1.1" xsi:schemaLocation="http://www.netex.org.uk/netex http://netex.uk/netex/schema/1.10/xsd/NeTEx_publication.xsd" xmlns="http://www.netex.org.uk/netex">
+  <PublicationTimestamp>2022-02-11T09:36:56.4952531Z</PublicationTimestamp>
+  <ParticipantRef>SCTE</ParticipantRef>
+  <PublicationRequest version="1.0">
+    <RequestTimestamp>2022-02-11T09:36:56.4164641Z</RequestTimestamp>
+    <Description>Request for SCTE bus fares for line 59t</Description>
+    <topics>
+      <NetworkFrameTopic>
+        <selectionValidityConditions>
+          <AvailabilityCondition version="1.0" id="r1">
+            <FromDate>2022-02-08T03:50:00Z</FromDate>
+          </AvailabilityCondition>
+        </selectionValidityConditions>
+        <TypeOfFrameRef versionRef="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP" />
+        <NetworkFilterByValue>
+          <objectReferences>
+            <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+            <OperatorRef versionRef="1.0" ref="noc:SCTE">noc:135947</OperatorRef>
+            <BrandingRef versionRef="1.0" ref="op:SCTE@brand" />
+          </objectReferences>
+        </NetworkFilterByValue>
+      </NetworkFrameTopic>
+    </topics>
+  </PublicationRequest>
+  <Description>SCTE point to point bus fares for line 59t</Description>
+  <dataObjects>
+    <CompositeFrame version="1.1" id="epd:UK:SCTE:CompositeFrame:UK_PI_LINE_FARE_OFFER:Line_59t:op" dataSourceRef="op:src" responsibilitySetRef="op:tariff_data">
+      <Name>Fares for Line 59t</Name>
+      <Description>SCTE Line 59t is accessible as a single trip fare. Prices are given zone to zone, where each zone is a linear group of stops, i.e. fare stage.</Description>
+      <TypeOfFrameRef versionRef="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_LINE_FARE_OFFER:FXCP" />
+      <FrameDefaults>
+        <DefaultDataSourceRef versionRef="1.0" ref="op:src" />
+        <DefaultResponsibilitySetRef versionRef="1.0" ref="op:tariff_data" />
+        <DefaultCurrency>GBP</DefaultCurrency>
+      </FrameDefaults>
+      <prerequisites>
+        <CompositeFrameRef versionRef="1.0" ref="epd:UK:SCTE:CompositeFrame:UK_PI_METADATA_OFFER:Products:op" />
+        <CompositeFrameRef versionRef="1.0" ref="epd:UK:SCTE:CompositeFrame:UK_PI_NETWORK_OFFER:Products:op" />
+        <CompositeFrameRef versionRef="1.0" ref="epd:UK:SCTE:CompositeFrame:UK_PI_NETWORK_OFFER:Network_Data:op" />
+      </prerequisites>
+      <frames>
+        <FareFrame version="1.0" id="epd:UK:SCTE:FareFrame:UK_PI_FARE_NETWORK:Line_59t:op" dataSourceRef="op:src" responsibilitySetRef="op:network_data">
+          <TypeOfFrameRef versionRef="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_FARE_NETWORK:FXCP" />
+          <prerequisites>
+            <ServiceFrameRef versionRef="1.0" ref="epd:UK:SCTE:ServiceFrame:UK_PI_NETWORK:Network_Data:op" />
+            <ResourceFrameRef versionRef="1.0" ref="epd:UK:SCTE:ResourceFrame:UK_PI_COMMON:Products:op" />
+          </prerequisites>
+          <fareZones>
+            <FareZone version="1.0" id="zone@12@4@boarding">
+              <Name>StocktonHighSt</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072002R">High Street Stand R</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072001T">High Street Stand T</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072749A">Bishopton House</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072491B">Stockton Rail Station</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072389B">Bedford Street</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@12@4@alighting">
+              <Name>StocktonHighSt</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072002R">High Street Stand R</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072001T">High Street Stand T</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@13@5@boarding">
+              <Name>BrownsBridge</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072390A">Brown's Bridge</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072801B">Patterdale Avenue</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072382A">Coniston Road</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@13@5@alighting">
+              <Name>BrownsBridge</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072749A">Bishopton House</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072491B">Stockton Rail Station</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072389B">Bedford Street</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072390A">Brown's Bridge</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@14@6@boarding">
+              <Name>Stockton6Form</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072375B">Sixth Form College</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072398A">Dunelm Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072399A">Elm Tree Centre</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072618A">Midfield View</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@14@6@alighting">
+              <Name>Stockton6Form</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072801B">Patterdale Avenue</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072382A">Coniston Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072375B">Sixth Form College</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@15@7@boarding">
+              <Name>SorrelClose</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072400A">Welland Crescent</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072807A">Felton Lane</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072475A">The Mitre</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@15@7@alighting">
+              <Name>SorrelClose</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072398A">Dunelm Road</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072399A">Elm Tree Centre</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072618A">Midfield View</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072400A">Welland Crescent</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@16@8@boarding">
+              <Name>LeamLane</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072474A">Leam Lane</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072473B">Marske Lane</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@16@8@alighting">
+              <Name>LeamLane</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072807A">Felton Lane</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072475A">The Mitre</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072474A">Leam Lane</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@17@9@boarding">
+              <Name>TheFalcon</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072472A">Social Club</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072471B">Claxton Close</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072447A">Hardwick Green Primary School</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072469A">Cowshill Green</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072468B">Coatsay Close</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072466A">Tithebarn House</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@17@9@alighting">
+              <Name>TheFalcon</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072473B">Marske Lane</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072472A">Social Club</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@18@10@boarding">
+              <Name>NTeesHospORHardwick</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072835C">University Hospital of North Tees</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+            <FareZone version="1.0" id="zone@18@10@alighting">
+              <Name>NTeesHospORHardwick</Name>
+              <members>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072471B">Claxton Close</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072447A">Hardwick Green Primary School</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072469A">Cowshill Green</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072468B">Coatsay Close</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072466A">Tithebarn House</ScheduledStopPointRef>
+                <ScheduledStopPointRef versionRef="1.0" ref="atco:077072835C">University Hospital of North Tees</ScheduledStopPointRef>
+              </members>
+            </FareZone>
+          </fareZones>
+          <tariffs>
+            <Tariff version="1.0" id="Tariff@Line_59t@Outbound">
+              <Name>Distance matrix for line Line_59t@Outbound</Name>
+              <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              <TypeOfTariffRef versionRef="fxc:v1.0" ref="fxc:zone_to_zone" />
+              <TariffBasis>zoneToZone</TariffBasis>
+              <distanceMatrixElements>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@12@4+12@4">
+                  <Name>StocktonHighSt to StocktonHighSt</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@12@4@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@12@4@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@12@4+13@5">
+                  <Name>StocktonHighSt to BrownsBridge</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@12@4@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@13@5@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@12@4+14@6">
+                  <Name>StocktonHighSt to Stockton6Form</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@12@4@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@14@6@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@12@4+15@7">
+                  <Name>StocktonHighSt to SorrelClose</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@12@4@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@15@7@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@12@4+16@8">
+                  <Name>StocktonHighSt to LeamLane</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@12@4@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@16@8@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@12@4+17@9">
+                  <Name>StocktonHighSt to TheFalcon</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@12@4@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@17@9@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@12@4+18@10">
+                  <Name>StocktonHighSt to NTeesHospORHardwick</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@12@4@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@18@10@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@13@5+13@5">
+                  <Name>BrownsBridge to BrownsBridge</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@13@5@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@13@5@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@13@5+14@6">
+                  <Name>BrownsBridge to Stockton6Form</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@13@5@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@14@6@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@13@5+15@7">
+                  <Name>BrownsBridge to SorrelClose</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@13@5@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@15@7@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@13@5+16@8">
+                  <Name>BrownsBridge to LeamLane</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@13@5@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@16@8@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@13@5+17@9">
+                  <Name>BrownsBridge to TheFalcon</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@13@5@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@17@9@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@13@5+18@10">
+                  <Name>BrownsBridge to NTeesHospORHardwick</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@13@5@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@18@10@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@14@6+14@6">
+                  <Name>Stockton6Form to Stockton6Form</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@14@6@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@14@6@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@14@6+15@7">
+                  <Name>Stockton6Form to SorrelClose</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@14@6@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@15@7@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@14@6+16@8">
+                  <Name>Stockton6Form to LeamLane</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@14@6@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@16@8@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@14@6+17@9">
+                  <Name>Stockton6Form to TheFalcon</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@14@6@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@17@9@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@14@6+18@10">
+                  <Name>Stockton6Form to NTeesHospORHardwick</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@14@6@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@18@10@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@15@7+15@7">
+                  <Name>SorrelClose to SorrelClose</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@15@7@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@15@7@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@15@7+16@8">
+                  <Name>SorrelClose to LeamLane</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@15@7@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@16@8@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@15@7+17@9">
+                  <Name>SorrelClose to TheFalcon</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@15@7@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@17@9@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@15@7+18@10">
+                  <Name>SorrelClose to NTeesHospORHardwick</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@15@7@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@18@10@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@16@8+16@8">
+                  <Name>LeamLane to LeamLane</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@16@8@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@16@8@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@16@8+17@9">
+                  <Name>LeamLane to TheFalcon</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@16@8@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@17@9@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@16@8+18@10">
+                  <Name>LeamLane to NTeesHospORHardwick</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@16@8@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@18@10@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@17@9+17@9">
+                  <Name>TheFalcon to TheFalcon</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@17@9@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@17@9@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@17@9+18@10">
+                  <Name>TheFalcon to NTeesHospORHardwick</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@17@9@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@18@10@alighting" />
+                </DistanceMatrixElement>
+                <DistanceMatrixElement version="1.0" id="DistanceElement@18@10+18@10">
+                  <Name>NTeesHospORHardwick to NTeesHospORHardwick</Name>
+                  <StartTariffZoneRef version="1.0" ref="zone@18@10@boarding" />
+                  <EndTariffZoneRef version="1.0" ref="zone@18@10@alighting" />
+                </DistanceMatrixElement>
+              </distanceMatrixElements>
+            </Tariff>
+          </tariffs>
+        </FareFrame>
+        <FareFrame version="1.0" id="epd:UK:SCTE:FareFrame:UK_PI_FARE_PRICE:Line_59t:op" dataSourceRef="op:src" responsibilitySetRef="op:tariff_data">
+          <TypeOfFrameRef versionRef="fxc:v1.0" ref="fxc:UK:DFT:TypeOfFrame_UK_PI_PRICE:FXCP" />
+          <FrameDefaults>
+            <DefaultCurrency>GBP</DefaultCurrency>
+          </FrameDefaults>
+          <prerequisites>
+            <FareFrameRef versionRef="1.0" ref="epd:UK:SCTE:FareFrame:UK_PI_FARE_PRODUCT:Products:op" />
+            <FareFrameRef versionRef="1.0" ref="epd:UK:SCTE:FareFrame:UK_PI_METADATA:Products:op" />
+            <FareFrameRef version="1.0" ref="epd:UK:SCTE:FareFrame:UK_PI_FARE_NETWORK:Line_59t:op" />
+            <ServiceFrameRef versionRef="1.0" ref="epd:UK:SCTE:ServiceFrame:UK_PI_NETWORK:Network_Data:op" />
+          </prerequisites>
+          <fareTables>
+            <FareTable version="1.0" id="fareTable@Line_59t@Outbound@trip@Tsd_Job_Card_Half_Single">
+              <Name>Stk-ElmTree-NthTeesH - Tsd Job Card Half Single</Name>
+              <pricesFor>
+                <PreassignedFareProductRef versionRef="1.0" ref="trip@Tsd_Job_Card_Half_Single" />
+                <SalesOfferPackageRef versionRef="1.0" ref="SOP@trip@Tsd_Job_Card_Half_Single@paperOnBus" />
+                <UserProfileRef versionRef="1.0" ref="UserProfile@Adult" />
+              </pricesFor>
+              <specifics>
+                <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              </specifics>
+              <prices>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+13@5@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+13@5" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+14@6@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+15@7@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+16@8@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+17@9@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+18@10@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+14@6@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+15@7@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+16@8@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+17@9@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+18@10@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+15@7@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+16@8@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+17@9@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+18@10@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+16@8@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+17@9@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+18@10@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+17@9@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+18@10@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@17@9+18@10@trip@Tsd_Job_Card_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@17@9+18@10" />
+                </DistanceMatrixElementPrice>
+              </prices>
+            </FareTable>
+            <FareTable version="1.0" id="fareTable@Line_59t@Outbound@trip@Hpool_Adult_Single_Zone">
+              <Name>Stk-ElmTree-NthTeesH - Hpool Adult Single Zone</Name>
+              <pricesFor>
+                <PreassignedFareProductRef versionRef="1.0" ref="trip@Hpool_Adult_Single_Zone" />
+                <SalesOfferPackageRef versionRef="1.0" ref="SOP@trip@Hpool_Adult_Single_Zone@paperOnBus" />
+                <UserProfileRef versionRef="1.0" ref="UserProfile@Adult" />
+              </pricesFor>
+              <specifics>
+                <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              </specifics>
+              <prices>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+13@5@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.2</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+13@5" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+14@6@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+15@7@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+16@8@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+17@9@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+18@10@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+14@6@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.2</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+15@7@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+16@8@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+17@9@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+18@10@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+15@7@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.2</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+16@8@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+17@9@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+18@10@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+16@8@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.2</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+17@9@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+18@10@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+17@9@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.2</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+18@10@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@17@9+18@10@trip@Hpool_Adult_Single_Zone">
+                  <Amount>1.2</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@17@9+18@10" />
+                </DistanceMatrixElementPrice>
+              </prices>
+            </FareTable>
+            <FareTable version="1.0" id="fareTable@Line_59t@Outbound@trip@Hpool_Child_Half_Single">
+              <Name>Stk-ElmTree-NthTeesH - Hpool Child Half Single</Name>
+              <pricesFor>
+                <PreassignedFareProductRef versionRef="1.0" ref="trip@Hpool_Child_Half_Single" />
+                <SalesOfferPackageRef versionRef="1.0" ref="SOP@trip@Hpool_Child_Half_Single@paperOnBus" />
+                <UserProfileRef versionRef="1.0" ref="UserProfile@Child" />
+              </pricesFor>
+              <specifics>
+                <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              </specifics>
+              <prices>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+13@5@trip@Hpool_Child_Half_Single">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+13@5" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+14@6@trip@Hpool_Child_Half_Single">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+15@7@trip@Hpool_Child_Half_Single">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+16@8@trip@Hpool_Child_Half_Single">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+17@9@trip@Hpool_Child_Half_Single">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+18@10@trip@Hpool_Child_Half_Single">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+14@6@trip@Hpool_Child_Half_Single">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+15@7@trip@Hpool_Child_Half_Single">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+16@8@trip@Hpool_Child_Half_Single">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+17@9@trip@Hpool_Child_Half_Single">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+18@10@trip@Hpool_Child_Half_Single">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+15@7@trip@Hpool_Child_Half_Single">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+16@8@trip@Hpool_Child_Half_Single">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+17@9@trip@Hpool_Child_Half_Single">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+18@10@trip@Hpool_Child_Half_Single">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+16@8@trip@Hpool_Child_Half_Single">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+17@9@trip@Hpool_Child_Half_Single">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+18@10@trip@Hpool_Child_Half_Single">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+17@9@trip@Hpool_Child_Half_Single">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+18@10@trip@Hpool_Child_Half_Single">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@17@9+18@10@trip@Hpool_Child_Half_Single">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@17@9+18@10" />
+                </DistanceMatrixElementPrice>
+              </prices>
+            </FareTable>
+            <FareTable version="1.0" id="fareTable@Line_59t@Outbound@trip@Hpool_New_Deal_Half_Singl">
+              <Name>Stk-ElmTree-NthTeesH - Hpool New Deal Half Singl</Name>
+              <pricesFor>
+                <PreassignedFareProductRef versionRef="1.0" ref="trip@Hpool_New_Deal_Half_Singl" />
+                <SalesOfferPackageRef versionRef="1.0" ref="SOP@trip@Hpool_New_Deal_Half_Singl@paperOnBus" />
+                <UserProfileRef versionRef="1.0" ref="UserProfile@Adult" />
+              </pricesFor>
+              <specifics>
+                <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              </specifics>
+              <prices>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+13@5@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+13@5" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+14@6@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+15@7@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+16@8@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+17@9@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+18@10@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+14@6@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+15@7@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+16@8@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+17@9@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+18@10@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+15@7@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+16@8@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+17@9@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+18@10@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.95</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+16@8@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+17@9@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+18@10@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+17@9@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+18@10@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.75</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@17@9+18@10@trip@Hpool_New_Deal_Half_Singl">
+                  <Amount>0.6</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@17@9+18@10" />
+                </DistanceMatrixElementPrice>
+              </prices>
+            </FareTable>
+            <FareTable version="1.0" id="fareTable@Line_59t@Outbound@trip@Tsd_Child_Half_Single">
+              <Name>Stk-ElmTree-NthTeesH - Tsd Child Half Single</Name>
+              <pricesFor>
+                <PreassignedFareProductRef versionRef="1.0" ref="trip@Tsd_Child_Half_Single" />
+                <SalesOfferPackageRef versionRef="1.0" ref="SOP@trip@Tsd_Child_Half_Single@paperOnBus" />
+                <UserProfileRef versionRef="1.0" ref="UserProfile@Child" />
+              </pricesFor>
+              <specifics>
+                <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              </specifics>
+              <prices>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+13@5@trip@Tsd_Child_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+13@5" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+14@6@trip@Tsd_Child_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+15@7@trip@Tsd_Child_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+16@8@trip@Tsd_Child_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+17@9@trip@Tsd_Child_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+18@10@trip@Tsd_Child_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+14@6@trip@Tsd_Child_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+15@7@trip@Tsd_Child_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+16@8@trip@Tsd_Child_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+17@9@trip@Tsd_Child_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+18@10@trip@Tsd_Child_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+15@7@trip@Tsd_Child_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+16@8@trip@Tsd_Child_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+17@9@trip@Tsd_Child_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+18@10@trip@Tsd_Child_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+16@8@trip@Tsd_Child_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+17@9@trip@Tsd_Child_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+18@10@trip@Tsd_Child_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+17@9@trip@Tsd_Child_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+18@10@trip@Tsd_Child_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@17@9+18@10@trip@Tsd_Child_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@17@9+18@10" />
+                </DistanceMatrixElementPrice>
+              </prices>
+            </FareTable>
+            <FareTable version="1.0" id="fareTable@Line_59t@Outbound@trip@Tsd_Adult_Single_Zone">
+              <Name>Stk-ElmTree-NthTeesH - Tsd Adult Single Zone</Name>
+              <pricesFor>
+                <PreassignedFareProductRef versionRef="1.0" ref="trip@Tsd_Adult_Single_Zone" />
+                <SalesOfferPackageRef versionRef="1.0" ref="SOP@trip@Tsd_Adult_Single_Zone@paperOnBus" />
+                <UserProfileRef versionRef="1.0" ref="UserProfile@Adult" />
+              </pricesFor>
+              <specifics>
+                <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              </specifics>
+              <prices>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+13@5@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.3</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+13@5" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+14@6@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+15@7@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.1</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+16@8@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+17@9@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+18@10@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+14@6@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.3</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+15@7@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+16@8@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.1</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+17@9@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+18@10@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+15@7@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.3</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+16@8@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+17@9@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.1</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+18@10@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.5</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+16@8@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.3</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+17@9@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+18@10@trip@Tsd_Adult_Single_Zone">
+                  <Amount>2.1</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+17@9@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.3</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+18@10@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.8</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@17@9+18@10@trip@Tsd_Adult_Single_Zone">
+                  <Amount>1.3</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@17@9+18@10" />
+                </DistanceMatrixElementPrice>
+              </prices>
+            </FareTable>
+            <FareTable version="1.0" id="fareTable@Line_59t@Outbound@trip@Tsd_New_Deal_Half_Single">
+              <Name>Stk-ElmTree-NthTeesH - Tsd New Deal Half Single</Name>
+              <pricesFor>
+                <PreassignedFareProductRef versionRef="1.0" ref="trip@Tsd_New_Deal_Half_Single" />
+                <SalesOfferPackageRef versionRef="1.0" ref="SOP@trip@Tsd_New_Deal_Half_Single@paperOnBus" />
+                <UserProfileRef versionRef="1.0" ref="UserProfile@Adult" />
+              </pricesFor>
+              <specifics>
+                <LineRef versionRef="1.0" ref="Line_59t@Outbound" />
+              </specifics>
+              <prices>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+13@5@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+13@5" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+14@6@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+15@7@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+16@8@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+17@9@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@12@4+18@10@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@12@4+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+14@6@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+14@6" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+15@7@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+16@8@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+17@9@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@13@5+18@10@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@13@5+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+15@7@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+15@7" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+16@8@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+17@9@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@14@6+18@10@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.25</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@14@6+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+16@8@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+16@8" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+17@9@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@15@7+18@10@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>1.05</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@15@7+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+17@9@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+17@9" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@16@8+18@10@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.9</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@16@8+18@10" />
+                </DistanceMatrixElementPrice>
+                <DistanceMatrixElementPrice version="1.0" id="price@DistanceElement@17@9+18@10@trip@Tsd_New_Deal_Half_Single">
+                  <Amount>0.65</Amount>
+                  <DistanceMatrixElementRef version="1.0" ref="DistanceElement@17@9+18@10" />
+                </DistanceMatrixElementPrice>
+              </prices>
+            </FareTable>
+          </fareTables>
+        </FareFrame>
+      </frames>
+    </CompositeFrame>
+  </dataObjects>
+</PublicationDelivery>

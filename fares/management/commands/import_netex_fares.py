@@ -85,7 +85,7 @@ class Command(BaseCommand):
             sales_offer_package, created = get_sales_offer_package(sales_offer_package)
             sales_offer_packages[sales_offer_package.code] = sales_offer_package
 
-        fare_products = {}
+        fare_products = {**self.fare_products}
         for fare_product in element.findall(
             "dataObjects/CompositeFrame/frames/FareFrame/fareProducts/PreassignedFareProduct"
         ):
@@ -515,6 +515,7 @@ class Command(BaseCommand):
 
         self.user_profiles = {}
         self.sales_offer_packages = {}
+        self.fare_products = {}
 
         if response.headers["Content-Type"] == "text/xml":
             # maybe not fully RFC 6266 compliant
@@ -563,6 +564,7 @@ class Command(BaseCommand):
 
         self.user_profiles = {}
         self.sales_offer_packages = {}
+        self.fare_products = {}
 
         self.handle_archive(dataset, io.BytesIO(response.content))
 
