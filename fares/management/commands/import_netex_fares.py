@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django.utils.http import http_date, parse_http_date
-from busstops.models import StopPoint, Operator, Service
+from busstops.models import Operator, Service
 from ... import models
 
 

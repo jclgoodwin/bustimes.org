@@ -253,10 +253,12 @@ class VehiclesTests(TestCase):
         response = self.client.get('/admin/vehicles/livery/')
         self.assertContains(response, '<td class="field-name">black with lemon piping</td>')
         self.assertContains(response, '<td class="field-vehicles">1</td>')
-        self.assertContains(response, """<td class="field-left"><svg style="height:24px;width:36px;line-height:24px;font-size:24px;background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
+        self.assertContains(response, """<td class="field-left"><svg style="height:24px;width:36px;line-height:24px;\
+font-size:24px;background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
                 <text x="50%" y="80%" style="fill:#fff;text-anchor:middle;">24</text>
             </svg></td>""")
-        self.assertContains(response, """<td class="field-right"><svg style="height:24px;width:36px;line-height:24px;font-size:24px;background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
+        self.assertContains(response, """<td class="field-right"><svg style="height:24px;width:36px;line-height:24px;\
+font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
                 <text x="50%" y="80%" style="fill:#fff;text-anchor:middle;">42</text>
             </svg></td>""")
 

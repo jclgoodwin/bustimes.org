@@ -693,10 +693,12 @@ class ServiceDetailView(DetailView):
                     .replace('_', ' ')\
                     .replace(' AD ', ' Adult ')
 
-            if not all(table.user_profile_id == fare_tables[0].user_profile_id for table in fare_tables[1:]):
+            if not all(table.user_profile == fare_tables[0].user_profile for table in fare_tables[1:]):
                 for table in fare_tables:
                     table.tariff.name = f'{table.tariff.name} - {table.user_profile} {table.tariff.trip_type}'
-            if not all(table.sales_offer_package_id == fare_tables[0].sales_offer_package_id for table in fare_tables[1:]):
+            if not all(
+                table.sales_offer_package == fare_tables[0].sales_offer_package for table in fare_tables[1:]
+            ):
                 for table in fare_tables:
                     table.tariff.name = f'{table.tariff.name} - {table.sales_offer_package}'
 
