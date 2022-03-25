@@ -476,6 +476,8 @@ class Command(BaseCommand):
                 self.user_profiles = user_profiles
             if sales_offer_packages:
                 self.sales_offer_packages = sales_offer_packages
+            if fare_products:
+                self.fare_products = fare_products
 
     @staticmethod
     def add_arguments(parser):
