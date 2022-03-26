@@ -40,7 +40,7 @@ class VehicleTypeSerializer(serializers.ModelSerializer):
 class LiverySerializer(serializers.ModelSerializer):
     class Meta:
         model = Livery
-        fields = ['id', 'name', 'left_css', 'right_css']
+        fields = ['id', 'name', 'left_css', 'right_css', 'white_text', 'text_colour', 'stroke_colour']
 
 
 class TripSerializer(serializers.ModelSerializer):
