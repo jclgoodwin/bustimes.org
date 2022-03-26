@@ -34,7 +34,7 @@ class VehicleSerializer(serializers.ModelSerializer):
 class VehicleTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleType
-        fields = ['id', 'name', 'coach', 'double_decker']
+        fields = ['id', 'name', 'double_decker', 'coach', 'electric']
 
 
 class LiverySerializer(serializers.ModelSerializer):
