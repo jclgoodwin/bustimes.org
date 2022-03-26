@@ -28,7 +28,7 @@ class VehicleSerializer(serializers.ModelSerializer):
         model = Vehicle
         depth = 1
         fields = ['id', 'fleet_number', 'fleet_code', 'reg', 'vehicle_type', 'livery',
-                  'branding', 'operator', 'name', 'notes', 'withdrawn']
+                  'branding', 'operator', 'garage', 'name', 'notes', 'withdrawn']
 
 
 class VehicleTypeSerializer(serializers.ModelSerializer):
