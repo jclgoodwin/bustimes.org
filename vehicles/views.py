@@ -366,6 +366,7 @@ def vehicles_json(request):
                         id__in=(progress.from_stoptime, progress.to_stoptime)
                     )
                     when = parse_datetime(item['datetime'])
+                    when = timezone.localtime(when)
                     when = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
 
                     prev_time = prev_stop.departure_or_arrival()
