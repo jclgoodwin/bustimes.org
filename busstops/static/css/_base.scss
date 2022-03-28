@@ -1112,7 +1112,7 @@ input:not(:checked) + label {
         padding-left: 0;
     }
 
-    td {
+    tbody td {
         border-left: 0;
         font-variant-numeric: tabular-nums;
     }
@@ -1129,6 +1129,7 @@ input:not(:checked) + label {
         }
     }
 
+    // highlight stop
     .referrer,
     .referrer + .dep {
         td,

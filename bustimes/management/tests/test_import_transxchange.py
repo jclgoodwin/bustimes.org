@@ -868,18 +868,14 @@ class ImportTransXChangeTest(TestCase):
         self.assertTemplateUsed(res, 'busstops/service_detail.html')
         self.assertContains(res, '<h1>M11A - Belgravia - Liverpool</h1>')
         self.assertContains(res, '<option selected value="2017-01-22">Sunday 22 January 2017</option>')
-        self.assertContains(
-            res,
-            """
-            <td colspan="7">
-            Book at <a
-            href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p=https%3A%2F%2Fuk.megabus.com"
-            rel="nofollow">
-            megabus.com</a> or 0900 1600900 (65p/min + network charges)
+        self.assertContains(res, """<tr>
+            <td colspan="8">
+                Book at <a
+                href="https://www.awin1.com/awclick.php?mid=2678&amp;id=242611&amp;clickref=urlise&amp;p=https%3A%2F%2Fuk.megabus.com"
+                rel="nofollow">
+                megabus.com</a> or 0900 1600900 (65p/min + network charges)
             </td>
-            """,
-            html=True
-        )
+        </tr>""", html=True)
         self.assertContains(res, '/js/timetable.')
 
         timetable = res.context_data['timetable']

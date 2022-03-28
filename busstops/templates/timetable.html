@@ -114,9 +114,13 @@
                 {% if grouping.column_feet %}<tfoot>
                     {% for row in grouping.column_feet.values %}
                         <tr>
-                            <th></th>
+                            {% if row|length > 1 %}
+                                <th></th>
+                            {% endif %}
                             {% for foot in row %}
-                                <td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>{% if foot.notes %}{{ foot.notes|urlise }}{% endif %}</td>
+                                <td{% if foot.span > 1 or row|length == 1 %} colspan="{% if row|length == 1 %}{{ foot.span|add:1 }}{% else %}{{ foot.span }}{% endif %}"{% endif %}>
+                                    {% if foot.notes %}{{ foot.notes|urlise }}{% endif %}
+                                </td>
                             {% endfor %}
                         </tr>
                     {% endfor %}
