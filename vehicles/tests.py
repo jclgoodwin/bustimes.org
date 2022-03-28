@@ -781,29 +781,66 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
     def test_api(self):
         with self.assertNumQueries(2):
             response = self.client.get('/api/vehicles/?limit=2')
-        self.assertEqual(
-            response.json(),
-            {'count': 3, 'next': 'http://testserver/api/vehicles/?limit=2&offset=2', 'previous': None, 'results': [
-                {'id': self.vehicle_1.id,
-                    'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
-                    'livery': {'id': None, 'name': None, 'left': '#FF0000', 'right': '#FF0000'},
-                    'fleet_number': 1, 'fleet_code': '1', 'reg': 'FD54JYA', 'name': "",
-                    'branding': "", 'notes': 'Trent Barton', 'withdrawn': False,
-                    'vehicle_type': {
-                        'id': self.vehicle_1.vehicle_type_id,
-                        'name': 'Optare Tempo', 'double_decker': False, 'coach': False, 'electric': None}},
-                {'id': self.vehicle_2.id,
-                    'operator': {'id': 'LYNX', 'name': 'Lynx', 'parent': 'Madrigal Electromotive'},
-                    'livery': {'id': self.livery.id, 'name': 'black with lemon piping',
-                               'left': 'linear-gradient(to right,#FF0000 50%,#0000FF 50%)',
-                               'right': 'linear-gradient(to left,#FF0000 50%,#0000FF 50%)'},
-                    'fleet_number': 50, 'fleet_code': '50', 'reg': 'UWW2X', 'name': "", 'branding': "", 'notes': "",
-                    'withdrawn': False,
-                    'vehicle_type': {
-                        'id': self.vehicle_2.vehicle_type_id,
-                        'name': 'Optare Spectra', 'double_decker': True, 'coach': False, 'electric': None}}
-            ]}
-        )
+        self.assertEqual(response.json(), {
+            "count": 3,
+            "next": "http://testserver/api/vehicles/?limit=2&offset=2",
+            "previous": None,
+            "results": [
+                {
+                    "id": self.vehicle_1.id,
+                    "fleet_number": 1,
+                    "fleet_code": "1",
+                    "reg": "FD54JYA",
+                    "vehicle_type": {
+                        "id": self.vehicle_1.vehicle_type_id,
+                        "name": "Optare Tempo",
+                        "double_decker": False,
+                        "coach": False,
+                        "electric": None,
+                    },
+                    "livery": {"id": None, "name": None, "left": "#FF0000", "right": "#FF0000"},
+                    "branding": "",
+                    "operator": {
+                        "id": "LYNX",
+                        "name": "Lynx",
+                        "parent": "Madrigal Electromotive",
+                    },
+                    "garage": None,
+                    "name": "",
+                    "notes": "Trent Barton",
+                    "withdrawn": False,
+                },
+                {
+                    "id": self.vehicle_2.id,
+                    "fleet_number": 50,
+                    "fleet_code": "50",
+                    "reg": "UWW2X",
+                    "vehicle_type": {
+                        "id": self.vehicle_2.vehicle_type_id,
+                        "name": "Optare Spectra",
+                        "double_decker": True,
+                        "coach": False,
+                        "electric": None,
+                    },
+                    "livery": {
+                        "id": self.vehicle_2.livery_id,
+                        "name": "black with lemon piping",
+                        "left": "linear-gradient(to right,#FF0000 50%,#0000FF 50%)",
+                        "right": "linear-gradient(to left,#FF0000 50%,#0000FF 50%)",
+                    },
+                    "branding": "",
+                    "operator": {
+                        "id": "LYNX",
+                        "name": "Lynx",
+                        "parent": "Madrigal Electromotive",
+                    },
+                    "garage": None,
+                    "name": "",
+                    "notes": "",
+                    "withdrawn": False,
+                },
+            ],
+        })
 
         with self.assertNumQueries(1):
             response = self.client.get('/api/vehicles/?reg=sa60twp')
