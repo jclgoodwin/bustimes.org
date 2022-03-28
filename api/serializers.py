@@ -28,19 +28,19 @@ class VehicleSerializer(serializers.ModelSerializer):
         model = Vehicle
         depth = 1
         fields = ['id', 'fleet_number', 'fleet_code', 'reg', 'vehicle_type', 'livery',
-                  'branding', 'operator', 'name', 'notes', 'withdrawn']
+                  'branding', 'operator', 'garage', 'name', 'notes', 'withdrawn']
 
 
 class VehicleTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleType
-        fields = ['id', 'name', 'coach', 'double_decker']
+        fields = ['id', 'name', 'double_decker', 'coach', 'electric']
 
 
 class LiverySerializer(serializers.ModelSerializer):
     class Meta:
         model = Livery
-        fields = ['id', 'name', 'left_css', 'right_css']
+        fields = ['id', 'name', 'left_css', 'right_css', 'white_text', 'text_colour', 'stroke_colour']
 
 
 class TripSerializer(serializers.ModelSerializer):
