@@ -11,7 +11,7 @@
     <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script> 
 {% endblock %}
 
-{% block bodyclass %}{% endblock %}
+{% block bodyclass %}{% if not timetable %}wide{% endif %}{% endblock %}
 
 {% block topad %}
     <!-- 71161633/services_header/services_header --> 
