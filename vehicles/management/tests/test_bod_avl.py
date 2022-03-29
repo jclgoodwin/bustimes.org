@@ -3,6 +3,7 @@ from datetime import date
 from unittest.mock import patch
 from pathlib import Path
 from django.core.cache import cache
+from django.core.management import call_command
 from vcr import use_cassette
 from django.test import TestCase, override_settings
 from busstops.models import (
@@ -462,6 +463,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 }
             ],
         )
+
+        with self.assertNumQueries(10):
+            with time_machine.travel("2020-11-30", tick=False):
+                call_command('archive_journeys')
 
     def test_units(self):
         command = import_bod_avl.Command()

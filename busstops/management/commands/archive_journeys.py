@@ -25,7 +25,7 @@ class Command(BaseCommand):
         while_ago = today - timedelta(days=10)
 
         while while_ago < today:
-            journeys = VehicleJourney.objects.filter(datetime__date=while_ago).only('id')
+            journeys = VehicleJourney.objects.filter(datetime__date=while_ago).only('id', 'datetime')
 
             pipe = redis_client.pipeline(transaction=False)
             for journey in journeys:
