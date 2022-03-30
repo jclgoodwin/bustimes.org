@@ -6,7 +6,7 @@
 
 {% block topad %}
     <!-- 71161633/home_header/home_header -->
-    <div data-fuse="22699960949"></div>
+    <div class="wide-ad" data-fuse="22699960949"></div>
 {% endblock %}
 
 {% block content %}
@@ -18,14 +18,11 @@
 
     {% include 'list.html' with list=areas %}
 
-    {% if operators %}
-        <!-- 71161633/home_incontent_1/home_incontent_1 -->
-        <div data-fuse="22699655431"></div>
-    {% endif %}
 {% elif districts %}
     <h2>Districts in {{ region.the }}</h2>
 
     {% include 'list.html' with list=districts %}
+
 {% endif %}
 
 {% if services %}
@@ -35,6 +32,11 @@
 {% endif %}
 
 {% if operators %}
+    {% if areas or districts %}
+        <!-- 71161633/home_incontent_1/home_incontent_1 -->
+        <div class="wide-ad" data-fuse="22699655431"></div>
+    {% endif %}
+
     <h2>Operators in {{ region.the }}</h2>
 
     {% include 'list.html' with list=operators %}
