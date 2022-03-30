@@ -8,6 +8,10 @@
     @import '48em';
 }
 
+@media (min-width: 60em) {
+    @import '60em';
+}
+
 @media (min-width: 62.5em) {
     @import '62em';
 }
