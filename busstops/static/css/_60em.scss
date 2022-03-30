@@ -1,9 +1,15 @@
 // 960px
 
-.narrow main [data-fuse] {
+.narrow main .wide-ad {
     margin: 1em -121px;
 }
 
-.has-sideburns main {
-    padding: 0 12em;
+.has-sideburns {
+    main {
+        padding: 0 11em;
+    }
+
+    .wide-ad {
+        margin: 1em -11em;
+    }
 }
