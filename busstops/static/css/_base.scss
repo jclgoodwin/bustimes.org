@@ -1304,6 +1304,10 @@ input:not(:checked) + label {
     word-wrap: break-word;
 }
 
+.asides {
+    overflow: hidden;
+}
+
 .aside {
     margin-top: 1em;
 

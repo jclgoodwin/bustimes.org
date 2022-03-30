@@ -61,13 +61,18 @@ main {
     column-count: 3;
 }
 
-.asides {
-    margin: 0 -1.25%;
+.aside {
+    width: 31.66%;
+
+}
+
+.aside:first-child {
+    margin-left: 0;
+    margin-right: 0;
 }
 
 .aside {
-    margin: 0 1.25%;
-    width: 30.83%;
+    margin-left: 2.5%;
 }
 
 .fleet {
