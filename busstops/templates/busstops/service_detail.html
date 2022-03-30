@@ -139,6 +139,9 @@
     {% elif timetable or fare_tables %}
         </script>
         <script src="{% static 'js/reqwest.min.js' %}">
+        {% if fare_tables %}
+            <script async src="{% static 'js/fares.js' %}"></script>
+        {% endif %}
     {% endif %}</script>
     {% if timetable %}
         <script async src="{% static 'js/timetable.js' %}"></script>
