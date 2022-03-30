@@ -60,16 +60,21 @@ h1 {
     min-height: 90px;
 }
 
+[data-fuse="22699655446"],
+[data-fuse="22699655440"],
+{
+    width: 0;
+    margin-top: 0 !important;
+}
+
 [data-fuse="22699655446"] {
     float: left;
-    margin-left: -12em !important;
-    margin-top: 0 !important;
+    margin-left: -2em !important;
 }
 
 [data-fuse="22699655440"] {
     float: right;
-    margin-right: -23em !important;
-    margin-top: 0 !important;
+    margin-right: -2em !important;
 }
 
 footer {
