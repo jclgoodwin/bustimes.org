@@ -1493,17 +1493,13 @@ nav {
 }
 
 [data-fuse="22699655446"] {
-    float: left;
-    margin-left: -11em;
-    margin-bottom: 1em;
-    padding-right: 1em;
+    position: absolute;
+    left: 0;
 }
 
 [data-fuse="22699655440"] {
-    float: right;
-    margin-right: -11em;
-    margin-bottom: 1em;
-    padding-left: 1em;
+    position: absolute;
+    right: 0;
 }
 
 .horizontal {
