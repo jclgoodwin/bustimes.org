@@ -689,6 +689,7 @@ table {
 
 .service-map {
     display: none;
+    border-bottom: 60px solid #fff;
 
     &.expanded {
         display: block;
@@ -1499,7 +1500,7 @@ nav {
 
 [data-fuse="22699655440"] {
     float: right;
-    margin-right: -20em;
+    margin-right: -11em;
     margin-bottom: 1em;
 }
 
