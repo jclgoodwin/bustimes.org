@@ -402,6 +402,7 @@ def get_dates(journeys, vehicle=None, service=None):
     dates = cache.get(key)
 
     if not dates:
+        return
         try:
             dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         except OperationalError:
@@ -432,7 +433,10 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         except ValueError:
             date = None
     elif dates is None:
-        date = timezone.localdate()
+        if vehicle.latest_journey:
+            date = timezone.localdate(vehicle.latest_journey.datetime)
+        else:
+            date = timezone.localdate()
 
     if date or dates:
         context['dates'] = dates
