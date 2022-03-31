@@ -50,7 +50,7 @@ class Command(ImportLiveVehiclesCommand):
             try:
                 destination = Locality.objects.get(stoppoint=destination_ref).name
             except Locality.DoesNotExist:
-                if destination_ref.isdigit() and destination_ref[0] != '0' and destination_ref[2] == '0':
+                if destination_ref.isdigit() and destination_ref[0:1] != '0' and destination_ref[2:3] == '0':
                     destination = Command.get_destination_name(f'0{destination_ref}')
                 destination = ''
             cache.set(cache_key, destination)
