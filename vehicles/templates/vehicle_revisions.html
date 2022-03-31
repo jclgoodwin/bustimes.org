@@ -1,3 +1,5 @@
+{% load humanize %}
+
 <div class="table-wrapper">
 <table class="compact">
     <thead>
@@ -10,7 +12,7 @@
         {% for revision in revisions %}
         <tr>
             {% if not by_user %}<td class="link">{% if revision.user %}<a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>{% endif %}</td>{% endif %}
-            <td>{{ revision.datetime }}</td>
+            <td>{{ revision.datetime|naturaltime }}</td>
             {% if not vehicle %}
                 <td class="link"><a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a></td>
             {% endif %}

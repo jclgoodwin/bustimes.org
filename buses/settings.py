@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.gis',
     'django.contrib.sitemaps',
+    'django.contrib.humanize',
     'bustimes',
     'disruptions',
     'fares',
