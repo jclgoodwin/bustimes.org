@@ -433,7 +433,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         except ValueError:
             date = None
     elif dates is None:
-        if vehicle.latest_journey:
+        if vehicle and vehicle.latest_journey:
             date = timezone.localdate(vehicle.latest_journey.datetime)
         else:
             date = timezone.localdate()
