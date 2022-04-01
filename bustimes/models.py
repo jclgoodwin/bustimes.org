@@ -27,6 +27,17 @@ def get_routes(routes, when=None, from_date=None):
             if route.source.name.startswith('First Bus_'):  # journeys may be split between sources (First Bristol)
                 route.key = f"{route.key}:{route.source_id}"
 
+            # use some clues in the filename (or a very good clue in the source URL)
+            # to tell if the data is from Ticketer, and adapt accordingly
+            # - the revision number applies a bit of the filename, not the service_code
+            # e.g. in 'AMSY_10W_AMSYP...', the '10W' bit is important is and nowhere else in the data
+            parts = route.code.split('_')
+            if '.ticketer.' in route.source.url:
+                assert 7 >= len(parts) >= 6
+                route.key = f"{route.key}:{parts[1]}"
+            elif 7 >= len(parts) >= 6 and parts[2].startswith(parts[0]):
+                route.key = f"{route.key}:{parts[1]}"
+
             if route.key not in revision_numbers or route.revision_number > revision_numbers[route.key]:
                 revision_numbers[route.key] = route.revision_number
         routes = [
