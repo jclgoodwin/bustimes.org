@@ -492,7 +492,7 @@ def service_vehicles_history(request, slug):
 class VehicleDetailView(DetailView):
     model = Vehicle
     queryset = model.objects.select_related(
-        'operator', 'operator__region', 'vehicle_type', 'livery'
+        'operator', 'operator__region', 'vehicle_type', 'livery', 'latest_journey'
     ).prefetch_related('features')
     slug_field = 'reg__iexact'
 

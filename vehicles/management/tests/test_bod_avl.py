@@ -299,15 +299,15 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
 
         with time_machine.travel("2020-06-17"):
-            with patch("django.core.cache.cache.set") as mock_cache_set:
+            response = self.client.get(whippet_journey.get_absolute_url())
 
-                response = self.client.get(whippet_journey.get_absolute_url())
-
-                mock_cache_set.assert_called_with(
-                    f"vehicle:{whippet_journey.vehicle_id}:dates",
-                    [date(2020, 6, 17)],
-                    86400.0
-                )
+            # with patch("django.core.cache.cache.set") as mock_cache_set:
+            #     response = self.client.get(whippet_journey.get_absolute_url())
+            #     mock_cache_set.assert_called_with(
+            #         f"vehicle:{whippet_journey.vehicle_id}:dates",
+            #         [date(2020, 6, 17)],
+            #         86400.0
+            #     )
 
         self.assertContains(response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>')
         self.assertContains(
@@ -402,7 +402,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         vehicle = journey.vehicle
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             response = self.client.get(journey.get_absolute_url())
         self.assertContains(response, "146")
         self.assertContains(response, "to Southwold")
