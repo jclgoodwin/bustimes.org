@@ -29,8 +29,8 @@ def get_routes(routes, when=None, from_date=None):
 
             # use some clues in the filename (or a very good clue in the source URL)
             # to tell if the data is from Ticketer, and adapt accordingly
-            # - the revision number applies a bit of the filename, not the service_code
-            # e.g. in 'AMSY_10W_AMSYP...', the '10W' bit is important is and nowhere else in the data
+            # - the revision number applies to a bit of the filename, not just the service_code
+            # e.g. in 'AMSY_10W_AMSYP...', the '10W' bit is important and is nowhere else in the data
             parts = route.code.split('_')
             if '.ticketer.' in route.source.url:
                 assert 7 >= len(parts) >= 6
