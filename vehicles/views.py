@@ -29,7 +29,6 @@ from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
 from bustimes.models import Garage, StopTime
-from disruptions.views import siri_sx
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from . import filters
 from . import forms
@@ -883,9 +882,8 @@ def siri(request):
 
         command.save()
 
-    else:  # SIRI-SX
-        assert 'SituationElement' in body
-        siri_sx(request)
+    else:
+        assert False
 
     # ack
     return HttpResponse(f"""<?xml version="1.0" ?>

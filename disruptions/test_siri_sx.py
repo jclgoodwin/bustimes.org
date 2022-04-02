@@ -742,11 +742,9 @@ Services will observe all bus stops on the diverted route. </Details>
   </ServiceDelivery>
 </Siri>"""
 
-        with self.assertNumQueries(16):
-            self.client.post('/siri', xml, content_type='text/xml')
-
-        with self.assertNumQueries(2):
-            self.client.post('/siri', xml, content_type='text/xml')
+        with self.assertNumQueries(0):
+            with self.assertRaises(AssertionError):  # posting disruptions no longer works
+                self.client.post('/siri', xml, content_type='text/xml')
 
     def test_siri_sx_request(self):
         cassette = str(VCR_DIR / 'siri_sx.yaml')
@@ -770,7 +768,10 @@ Services will observe all bus stops on the diverted route. </Details>
         self.assertEqual(situation.reason, 'roadworks')
 
         response = self.client.get(situation.get_absolute_url())
-        self.assertContains(response, '2020-05-10T23:01:00Z')
+        self.assertContains(
+            response,
+            '<a href="https://tfgm.com/travel-updates/bus-update" rel="nofollow">tfgm.com/travel-updates/bus-update</a>'
+        )
 
         consequence = situation.consequence_set.get()
         self.assertEqual(consequence.text, "Towards East Didsbury terminus customers should alight opposite East "
