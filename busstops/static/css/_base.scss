@@ -1492,14 +1492,10 @@ nav {
     min-height: 60px;
 }
 
-[data-fuse="22699655446"] {
-    position: absolute;
-    left: 0;
-}
-
-[data-fuse="22699655440"] {
-    position: absolute;
-    right: 0;
+[data-fuse="22699655446"],
+[data-fuse="22699655440"],
+{
+    display: none;
 }
 
 .horizontal {
