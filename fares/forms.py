@@ -11,25 +11,30 @@ class FaresForm(forms.Form):
     def __init__(self, tariffs, *args, **kwargs):
         self.tariffs = tariffs
 
-        zones = FareZone.objects.filter(
-            Exists(
-                DistanceMatrixElement.objects.filter(
-                    Q(start_zone=OuterRef('pk')) | Q(end_zone=OuterRef('pk')),
-                    tariff__in=tariffs
-                )
+        if len(tariffs) == 1:
+            distance_matrix_elements = tariffs[0].distancematrixelement_set
+        else:
+            distance_matrix_elements = DistanceMatrixElement.objects.filter(
+                tariff__in=tariffs
             )
-        )
+
+        start_zones = FareZone.objects.filter(Exists(distance_matrix_elements.filter(start_zone=OuterRef('pk'))))
+        end_zones = FareZone.objects.filter(Exists(distance_matrix_elements.filter(end_zone=OuterRef('pk'))))
 
         super().__init__(*args, **kwargs)
 
         try:
-            if zones:
-                zones = [('', '')] + [
-                    (zone.id, str(zone)) for zone in zones
+            if start_zones:
+                start_zones = [('', '')] + [
+                    (zone.id, str(zone)) for zone in start_zones
+                ]
+            if end_zones:
+                end_zones = [('', '')] + [
+                    (zone.id, str(zone)) for zone in end_zones
                 ]
 
-            self.fields['origin'].choices = zones
-            self.fields['destination'].choices = zones
+            self.fields['origin'].choices = start_zones
+            self.fields['destination'].choices = end_zones
         except OperationalError:
             return
 
