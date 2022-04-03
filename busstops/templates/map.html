@@ -3,9 +3,10 @@
 {% block title %}Map – bustimes.org{% endblock %}
 
 {% block head %}
+    <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script> 
     <style>
     .wide main {
-        bottom: 0;
+        bottom: 60px;
         max-width: 100%;
         margin: 0;
         padding: 0;
@@ -14,9 +15,10 @@
         width: 100%;
     }
 
-    body {
-        margin-bottom: 0;
-    }
+    @media (min-width: 960px) {
+        .wide main {
+            bottom: 90px;
+        }
     </style>
 {% endblock %}
 
