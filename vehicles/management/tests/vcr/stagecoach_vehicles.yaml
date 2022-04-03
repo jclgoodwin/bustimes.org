@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python-requests/2.22.0
     method: GET
-    uri: "https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles?services=:SDVN:::"
+    uri: "https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles?services=:*:::"
   response:
     body:
       string: '{"header": {"requestId": "","returnedItemCount":

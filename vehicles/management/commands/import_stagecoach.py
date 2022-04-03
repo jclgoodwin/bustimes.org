@@ -63,44 +63,38 @@ def has_stop(stop):
 class Command(ImportLiveVehiclesCommand):
     url = 'https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles'
     source_name = 'Stagecoach'
-    operator_codes = [
-        'SDVN', 'SCMN', 'SCCU', 'SCGL', 'SSWL', 'SCNH', 'STWS', 'SCEM', 'SCCM', 'SCOX', 'SCHI', 'SCNE',
-        'SCFI', 'SBLB', 'SYRK', 'SCEK', 'SCMY', 'SCLK', 'SCSO'
-    ]
     operator_ids = {
         'SCEM': 'SCGH',
         'SCSO': 'SCCO'
     }
 
     def get_items(self):
-        for operator in self.operator_codes:
-            params = {
-                # 'clip': 1,
-                # 'descriptive_fields': 1,
-                'services': f':{operator}:::'
+        params = {
+            # 'clip': 1,
+            # 'descriptive_fields': 1,
+            'services': ':*:::'
+        }
+        try:
+            response = self.session.get(self.url, params=params, timeout=5)
+            items = response.json()['services']
+            vehicle_fleet_numbers = [item['fn'] for item in items]
+            self.vehicles_cache = {
+                vehicle.code: vehicle for vehicle in self.vehicles.filter(
+                    operator__in=self.operators,
+                    code__in=vehicle_fleet_numbers
+                )
             }
-            try:
-                response = self.session.get(self.url, params=params, timeout=5)
-                items = response.json()['services']
-                vehicle_fleet_numbers = [item['fn'] for item in items]
-                self.vehicles_cache = {
-                    vehicle.code: vehicle for vehicle in self.vehicles.filter(
-                        operator__in=self.operators,
-                        code__in=vehicle_fleet_numbers
-                    )
-                }
-                i = 0
-                for item in items:
-                    yield item
-                    i += 1
-                    if i == 100:
-                        self.save()
-                        i = 0
-                self.save()
-                sleep(1)
-            except (RequestException, KeyError) as e:
-                print(e)
-                continue
+            i = 0
+            for item in items:
+                yield item
+                i += 1
+                if i == 100:
+                    self.save()
+                    i = 0
+            self.save()
+            sleep(1)
+        except (RequestException, KeyError) as e:
+            print(e)
 
     @staticmethod
     def get_datetime(item):
