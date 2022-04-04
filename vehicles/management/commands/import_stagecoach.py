@@ -75,7 +75,7 @@ class Command(ImportLiveVehiclesCommand):
             'services': ':*:::'
         }
         try:
-            response = self.session.get(self.url, params=params, timeout=5)
+            response = self.session.get(self.url, params=params, timeout=20)
             items = response.json()['services']
             vehicle_fleet_numbers = [item['fn'] for item in items]
             self.vehicles_cache = {
