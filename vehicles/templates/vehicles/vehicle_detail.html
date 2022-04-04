@@ -6,12 +6,14 @@
 
 {% block content %}
 
-<h1>{% if object.withdrawn %}<del>{{ object }}</del>{% else %}{{ object }}{% endif %}</h1>
+<h1>{% if object.withdrawn %}
+    <del>{{ object }}</del>
+{% else %}{{ object }}{% endif %}</h1>
 
 {% if vehicle %}
     {% include 'vehicle_info.html' %}
 
-    {% if journeys %}
+    {% if tracking %}
         <p><a class="button" href="#map">Track this bus</a></p>
 
         <div id="map" class="service-map"></div>

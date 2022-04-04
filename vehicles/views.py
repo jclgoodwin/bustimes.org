@@ -396,23 +396,24 @@ def vehicles_json(request):
         vehicles = all_vehicles.in_bulk(vehicle_ids)
         for vehicle_id, vehicle in vehicles.items():
             location = redis_client.lindex(f'journey{vehicle.latest_journey_id}', -1)
-            location = json.loads(location)
-            item = {
-                "coordinates": location[1],
-                "heading": location[2],
-                "datetime": location[0],
-            }
-            if vehicle.service_slug:
-                item["service"] = {
-                    "line_name": vehicle.service_line_name,
-                    "url": f"/services/{vehicle.service_slug}"
+            if location:
+                location = json.loads(location)
+                item = {
+                    "coordinates": location[1],
+                    "heading": location[2],
+                    "datetime": location[0],
                 }
-            else:
-                item["service"] = {
-                    "line_name": vehicle.latest_journey.route_name,
-                }
+                if vehicle.service_slug:
+                    item["service"] = {
+                        "line_name": vehicle.service_line_name,
+                        "url": f"/services/{vehicle.service_slug}"
+                    }
+                else:
+                    item["service"] = {
+                        "line_name": vehicle.latest_journey.route_name,
+                    }
 
-            locations.append(item)
+                locations.append(item)
 
     return JsonResponse(locations, safe=False)
 
@@ -536,6 +537,9 @@ class VehicleDetailView(DetailView):
                 vehicle=self.object
             )
         }
+        del journeys
+
+        context['tracking'] = any(getattr(journey, 'locations', False) for journey in context['journeys'])
 
         if 'journeys' in context:
             garages = set(journey.trip.garage_id for journey in context['journeys']
