@@ -748,7 +748,7 @@ class VehicleJourney(models.Model):
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
-    data = models.JSONField(null=True, blank=True)
+    # data = models.JSONField(null=True, blank=True)
     trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):

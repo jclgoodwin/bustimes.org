@@ -271,6 +271,6 @@ class LiveDeparturesTest(TestCase):
             log_vehicle_journey(*args[:-1], trip_url)
 
         journey = VehicleJourney.objects.get()
-        self.assertEqual(journey.data, args[1])
+        self.assertEqual(journey.vehicle.latest_journey_data, args[1])
         self.assertEqual(journey.trip, self.trip)
         self.assertEqual(str(journey.datetime), '2019-02-09 12:10:00+00:00')

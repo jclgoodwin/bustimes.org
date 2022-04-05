@@ -258,6 +258,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if vehicle.latest_journey_id != journey.id:
             vehicle.latest_journey = journey
+            if type(item) is dict:
+                vehicle.latest_journey_data = item
             self.vehicles_to_update.append(vehicle)
 
         self.to_save.append((location, vehicle))
@@ -268,7 +270,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if self.vehicles_to_update:
             try:
-                Vehicle.objects.bulk_update(self.vehicles_to_update, ['latest_journey', 'withdrawn'])
+                Vehicle.objects.bulk_update(
+                    self.vehicles_to_update,
+                    ['latest_journey', 'latest_journey_data', 'withdrawn']
+                )
             except IntegrityError as e:
                 print(e)
                 self.vehicle_cache = {}  # for import_bod_avl

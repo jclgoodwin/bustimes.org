@@ -834,12 +834,6 @@ def journey_json(request, pk):
     return JsonResponse(data)
 
 
-@require_GET
-def journey_debug(request, pk):
-    journey = get_object_or_404(VehicleJourney, id=pk)
-    return JsonResponse(journey.data or {})
-
-
 def debug(request):
     form = forms.DebuggerForm(request.POST or None)
     result = None

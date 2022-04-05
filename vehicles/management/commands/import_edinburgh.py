@@ -46,7 +46,6 @@ class Command(ImportLiveVehiclesCommand):
             route_name=item['service_name'] or '',
             code=item['journey_id'] or '',
             destination=item['destination'] or '',
-            data=item
         )
 
         latest = vehicle.latest_journey

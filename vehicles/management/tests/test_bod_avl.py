@@ -1,6 +1,4 @@
 import time_machine
-from datetime import date
-from unittest.mock import patch
 from pathlib import Path
 from django.core.cache import cache
 from django.core.management import call_command
@@ -629,7 +627,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.save()
 
         journey = VehicleJourney.objects.get()
-        self.assertEqual(item, journey.data)
+        self.assertEqual(item, journey.vehicle.latest_journey_data)
 
     def test_debugger(self):
         service = Service.objects.create(line_name='21C')

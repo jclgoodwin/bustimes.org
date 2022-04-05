@@ -19,7 +19,6 @@ urlpatterns = [
     path('vehicles/<slug>', views.VehicleDetailView.as_view()),
     path('vehicles/<int:vehicle_id>/edit', views.edit_vehicle, name='vehicle_edit'),
     path('vehicles/<int:vehicle_id>/history', views.vehicle_history, name='vehicle_history'),
-    path('journeys/<int:pk>/debug', views.journey_debug),
     path('journeys/<int:pk>.json', views.journey_json),
     path('liveries.<int:version>.css', views.liveries_css),
     path('siri', views.siri),

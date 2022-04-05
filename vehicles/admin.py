@@ -107,10 +107,6 @@ class VehicleAdmin(admin.ModelAdmin):
     inlines = [VehicleEditInline]
     readonly_fields = ['latest_journey_data']
 
-    def latest_journey_data(self, obj):
-        if obj.latest_journey:
-            return obj.latest_journey.data
-
     def copy_livery(self, request, queryset):
         livery = models.Livery.objects.filter(vehicle__in=queryset).first()
         count = queryset.update(livery=livery)

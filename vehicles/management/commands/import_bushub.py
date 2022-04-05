@@ -82,7 +82,6 @@ class Command(ImportLiveVehiclesCommand):
 
         journey = VehicleJourney(
             datetime=datetime,
-            data=item,
             code=code,
             route_name=item['PublishedLineName'],
             service=self.get_service(item),

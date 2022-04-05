@@ -98,7 +98,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
 
     try:
         journey = VehicleJourney.objects.create(
-            vehicle=vehicle, service_id=service, route_name=route_name, data=data, code=journey_ref,
+            vehicle=vehicle, service_id=service, route_name=route_name, code=journey_ref,
             datetime=time, source=data_source, destination=destination, trip_id=trip_id
         )
     except IntegrityError:
@@ -106,4 +106,5 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
 
     if not vehicle.latest_journey or vehicle.latest_journey.datetime < journey.datetime:
         vehicle.latest_journey = journey
-        vehicle.save(update_fields=['latest_journey'])
+        vehicle.latest_journey_data = data
+        vehicle.save(update_fields=['latest_journey', 'latest_journey_data'])

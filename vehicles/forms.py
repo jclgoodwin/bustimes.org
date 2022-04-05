@@ -151,9 +151,9 @@ class EditVehicleForm(EditVehiclesForm):
                 self.fields['fleet_number'].disabled = True
                 self.fields['fleet_number'].help_text = f"""The ticket machine code ({vehicle.code})
 can’t be contradicted"""
-            elif vehicle.latest_journey and vehicle.latest_journey.data:
+            elif vehicle.latest_journey_data:
                 try:
-                    vehicle_unique_id = vehicle.latest_journey.data['Extensions']['VehicleJourney']['VehicleUniqueId']
+                    vehicle_unique_id = vehicle.latest_journey_data['Extensions']['VehicleJourney']['VehicleUniqueId']
                 except (KeyError, TypeError):
                     pass
                 else:

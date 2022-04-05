@@ -88,7 +88,6 @@ class Command(ImportLiveVehiclesCommand):
             direction=item['properties']['direction'][:8],
             destination=item['properties'].get('destination', ''),
         )
-        journey.data = item
 
         operator = self.get_operator(item)
         if not operator:

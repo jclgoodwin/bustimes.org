@@ -409,7 +409,6 @@ class Command(ImportLiveVehiclesCommand):
                 route_name=route_name,
                 vehicle=vehicle,
                 source=self.source,
-                data=item,
                 datetime=origin_aimed_departure_time,
             )
 

@@ -94,7 +94,6 @@ class Command(ImportLiveVehiclesCommand):
         journey.destination = item['arrival']
         journey.direction = "outbound" if item["dir"] == "O" else "inbound"
         journey.code = item['journeyId']
-        journey.data = item
 
         try:
             journey.service = Service.objects.get(operator__in=self.operators, line_name__iexact=journey.route_name,
