@@ -217,8 +217,9 @@ class EdinburghDepartures(Departures):
                 ).only('id', 'code')
             }
             for item in departures:
-                vehicle = vehicles[item['vehicleId']]
-                item['link'] = f'{vehicle.get_absolute_url()}#map'
+                vehicle = vehicles.get(item['vehicleId'])
+                if vehicle:
+                    item['link'] = f'{vehicle.get_absolute_url()}#map'
             hour = datetime.timedelta(hours=1)
             if all(
                 ((departure['time'] or departure['live']) - self.now) >= hour for departure in departures
