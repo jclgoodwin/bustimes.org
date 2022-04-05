@@ -11,6 +11,7 @@ from django.core.cache import cache
 from django.utils import timezone
 from busstops.models import Service, SIRISource
 from bustimes.models import get_calendars, get_routes, Route, StopTime
+from vehicles.models import Vehicle
 from vehicles.tasks import log_vehicle_journey
 
 
@@ -205,8 +206,19 @@ class EdinburghDepartures(Departures):
                         'time': None if departure['isLive'] else time,
                         'live': time if departure['isLive'] else None,
                         'service': service,
-                        'destination': departure['destination']
+                        'destination': departure['destination'],
+                        'vehicleId': departure['vehicleId'],
                     })
+            vehicles = {
+                vehicle.code: vehicle for vehicle in
+                Vehicle.objects.filter(
+                    source__name='TfE',
+                    code__in=[item['vehicleId'] for item in departures]
+                ).only('id', 'code')
+            }
+            for item in departures:
+                vehicle = vehicles[item['vehicleId']]
+                item['link'] = f'{vehicle.get_absolute_url()}#map'
             hour = datetime.timedelta(hours=1)
             if all(
                 ((departure['time'] or departure['live']) - self.now) >= hour for departure in departures
