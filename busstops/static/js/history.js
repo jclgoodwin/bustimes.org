@@ -162,7 +162,7 @@
             var mapContainer = element.querySelector('.map');
             if (!mapContainer) {
                 mapContainer = document.createElement('div');
-                mapContainer.classList.add('expanded');
+                mapContainer.className = 'map';
                 element.appendChild(mapContainer);
             }
 
@@ -303,6 +303,8 @@
         links[i].addEventListener('click', handleClick);
     }
 
+    var liveMap;
+
     function openLiveMap() {
         var mapContainer = document.getElementById('map');
         if (!mapContainer) {
@@ -311,9 +313,16 @@
 
         mapContainer.className += ' expanded';
 
+        if (liveMap) {
+            liveMap.invalidateSize();
+            return;
+        }
+
         map = L.map(mapContainer, {
             tap: false
         });
+        liveMap = map;
+
         window.bustimes.map = map;
         window.bustimes.doTileLayer(map);
 
