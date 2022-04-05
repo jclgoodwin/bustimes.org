@@ -86,6 +86,9 @@
 
             if (window.location.hash == '#map') {
                 openLiveMap();
+            } else {
+                var mapContainer = document.getElementById('map');
+                mapContainer.classList.remove('expanded');
             }
 
             return;
@@ -159,7 +162,7 @@
             var mapContainer = element.querySelector('.map');
             if (!mapContainer) {
                 mapContainer = document.createElement('div');
-                mapContainer.className = 'map';
+                mapContainer.classList.add('expanded');
                 element.appendChild(mapContainer);
             }
 
@@ -282,7 +285,7 @@
     window.addEventListener('load', maybeOpenMap);
 
     function handleClick(event) {
-        if (window.location.search) {
+        if (window.location.search) { // ?date=
             window.location.hash = event.target.hash; // triggers hashchange event
         } else {
             window.history.pushState(null, null, '?date=' + date + event.target.hash);
@@ -298,58 +301,6 @@
     var links = document.querySelectorAll('a[href^="#journeys/"]');
     for (var i = links.length - 1; i >= 0; i -= 1) {
         links[i].addEventListener('click', handleClick);
-    }
-
-
-    function getBusIcon(item) {
-        var className = 'bus selected';
-        var heading = item.heading;
-        if (heading !== null) {
-            var arrow = '<div class="arrow" style="' + bustimes.getTransform(heading, true) + '"></div>';
-            if (heading < 180) {
-                className += ' right';
-                heading -= 90;
-            } else {
-                heading -= 270;
-            }
-        }
-        var style = bustimes.getTransform(heading, true);
-        var livery = document.querySelector('.livery');
-        if (livery) {
-            style += 'background:' + livery.style.background;
-        }
-        style += ';font-size:12px';
-        var svg = document.createElement('svg');
-        svg.setAttribute('width', 18);
-        svg.setAttribute('height', 12);
-        svg.className = className;
-        svg.style = style;
-        if (item.service) {
-            var text = document.createElement('text');
-            text.setAttribute('x', '9');
-            text.setAttribute('y', '10');
-            if (window.TEXT_COLOUR === '#fff') {
-                text.setAttribute('fill', window.TEXT_COLOUR);
-                text.setAttribute('stroke', '#000');
-            } else {
-                text.setAttribute('fill', '#000');
-                text.setAttribute('stroke', '#fff');
-            }
-            text.setAttribute('paint-order', 'stroke');
-            text.setAttribute('stroke-width', '2px');
-            text.setAttribute('text-anchor', 'middle');
-            text.innerHTML = item.service.line_name;
-            svg.appendChild(text);
-        }
-        svg = svg.outerHTML;
-        if (arrow) {
-            svg += arrow;
-        }
-        return L.divIcon({
-            iconSize: [20, 20],
-            html: svg,
-            popupAnchor: [0, -5],
-        });
     }
 
     function openLiveMap() {
@@ -393,7 +344,7 @@
                 window.bustimes.map.setView(latLng, 14);
 
                 var marker = L.marker(latLng, {
-                    icon: getBusIcon(item),
+                    icon: bustimes.getBusIcon(item, true),
                     zIndexOffset: 1000,
                     item: item
                 });

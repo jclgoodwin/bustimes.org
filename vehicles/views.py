@@ -88,19 +88,7 @@ def liveries_css(request, version=None):
     styles = []
     liveries = Livery.objects.filter(published=True).order_by('id')
     for livery in liveries:
-        if not livery.left_css:
-            continue
-        selector = f'.livery-{livery.id}'
-        css = f'background: {livery.left_css}'
-        if livery.text_colour:
-            css = f'{css};\n  color:{livery.text_colour};fill:{livery.text_colour}'
-        elif livery.white_text:
-            css = f'{css};\n  color:#fff;fill:#fff'
-        if livery.stroke_colour:
-            css = f'{css};stroke:{livery.stroke_colour}'
-        styles.append(f'{selector} {{\n  {css}\n}}\n')
-        if livery.right_css != livery.left_css:
-            styles.append(f'{selector}.right {{\n  background: {livery.right_css}\n}}\n')
+        styles += livery.get_styles()
     return HttpResponse(''.join(styles), content_type='text/css')
 
 
@@ -539,13 +527,13 @@ class VehicleDetailView(DetailView):
         }
         del journeys
 
-        context['tracking'] = any(getattr(journey, 'locations', False) for journey in context['journeys'])
-
         if 'journeys' in context:
             garages = set(journey.trip.garage_id for journey in context['journeys']
                           if journey.trip and journey.trip.garage_id)
             if len(garages) == 1:
                 context['garage'] = Garage.objects.get(id=garages.pop())
+
+            context['tracking'] = any(getattr(journey, 'locations', False) for journey in context['journeys'])
 
         context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
 

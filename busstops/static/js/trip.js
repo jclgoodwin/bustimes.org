@@ -22,10 +22,13 @@
         poppedUp = false;
 
     function loadVehicles() {
-        if (!window.SERVICE) {
+        if (window.SERVICE) {
+            var params = '?service=' + window.SERVICE + '&trip=' +  window.TRIP_ID;
+        } else if (window.VEHICLE_ID) {
+            params = '?id=' + window.VEHICLE_ID;
+        } else {
             return;
         }
-        var params = '?service=' + window.SERVICE + '&trip=' +  window.TRIP_ID;
         reqwest(
             '/vehicles.json' + params,
             function(data) {
