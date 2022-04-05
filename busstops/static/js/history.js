@@ -318,13 +318,12 @@
             return;
         }
 
-        map = L.map(mapContainer, {
+        liveMap = L.map(mapContainer, {
             tap: false
         });
-        liveMap = map;
 
-        window.bustimes.map = map;
-        window.bustimes.doTileLayer(map);
+        window.bustimes.map = liveMap;
+        window.bustimes.doTileLayer(liveMap);
 
         var closeButton = L.control();
 
@@ -344,7 +343,7 @@
             return div;
         };
 
-        closeButton.addTo(map);
+        closeButton.addTo(liveMap);
 
         reqwest('/vehicles.json?id=' + window.VEHICLE_ID, function(data) {
             if (data.length) {
@@ -357,7 +356,7 @@
                     zIndexOffset: 1000,
                     item: item
                 });
-                marker.addTo(map);
+                marker.addTo(liveMap);
                 marker.bindPopup('', {
                     closeButton: false,
                     closeOnEscapeKey: false,
