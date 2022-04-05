@@ -84,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': os.environ.get('DB_NAME', 'bustimes'),
-        'CONN_MAX_AGE': os.environ.get('CONN_MAX_AGE'),
+        'CONN_MAX_AGE': os.environ.get('CONN_MAX_AGE', 0),
         # 'DISABLE_SERVER_SIDE_CURSORS': True,
         'OPTIONS': {
             'application_name': os.environ.get('APPLICATION_NAME') or ' '.join(sys.argv)[:63],
