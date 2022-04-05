@@ -599,8 +599,7 @@ table {
     right: 0;
     top: 0;
 
-    &.service-map.expanded,
-    &.full-screen {
+    &.service-map.expanded {
         position: fixed;
     }
 }
@@ -689,12 +688,11 @@ table {
 
 .service-map {
     display: none;
-    border-bottom: 60px solid #fff;
+    margin-bottom: 60px;
 
     &.expanded {
         display: block;
         height: auto;
-        margin: 0;
         z-index: 1;
     }
 }
@@ -1468,18 +1466,6 @@ nav {
 
 .ad {
     text-align: center;
-}
-
-.adsbygoogle {
-    margin: 1em auto;
-    display: block;
-    max-width: 60.5em;
-    height: 100px;
-    width: 100%;
-}
-
-.adsbygoogle[style="width: 0px; height: 0px;"] {
-    display: none;
 }
 
 .wide-ad {

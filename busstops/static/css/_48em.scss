@@ -49,21 +49,6 @@ h1 {
     margin-right: 3%;
 }
 
-.adsbygoogle,
-.wide-ad
-{
-    min-height: 90px;
-    margin: 1em -1px;
-}
-
-.service-map {
-    border-bottom-width: 90px;
-}
-
-footer {
-    margin-bottom: 90px;  // make room for sticky footer ad
-}
-
 .fleet {
     .trivia {
         display: table-cell;
@@ -86,16 +71,17 @@ footer {
 }
 
 .journey {
-    .trip + .map {
-        bottom: 0;
-        left: 35em;
+    .trip {
+        top: 96px;
+        height: auto;
+        width: 420px;
     }
 
-    .trip {
-        top: 6.125em;
-        height: auto;
-        width: 24.25em;
+    .trip + .map {
+        bottom: 0;
+        left: 420px;
     }
+
 }
 
 .trip-map-wrapper {

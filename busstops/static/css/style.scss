@@ -23,3 +23,17 @@
 @media print {
     @import 'print';
 }
+
+@media (max-width: 600px) {
+    footer,
+    .service-map {
+        margin-bottom: 50px;
+    }
+}
+
+@media (min-width: 960px) {
+    footer,
+    .service-map {
+        margin-bottom: 90px;
+    }
+}

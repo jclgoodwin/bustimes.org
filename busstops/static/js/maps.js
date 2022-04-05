@@ -107,10 +107,12 @@
             content = '';
         }
 
-        content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
+        if (item.vehicle) {
+            content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
 
-        if (item.vehicle.features) {
-            content += item.vehicle.features + '<br>';
+            if (item.vehicle.features) {
+                content += item.vehicle.features + '<br>';
+            }
         }
         if (item.seats) {
             content += '<img src="/static/svg/seat.svg" width="14" height="14" alt="seats"> ' + item.seats + '<br>';

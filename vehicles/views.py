@@ -88,19 +88,7 @@ def liveries_css(request, version=None):
     styles = []
     liveries = Livery.objects.filter(published=True).order_by('id')
     for livery in liveries:
-        if not livery.left_css:
-            continue
-        selector = f'.livery-{livery.id}'
-        css = f'background: {livery.left_css}'
-        if livery.text_colour:
-            css = f'{css};\n  color:{livery.text_colour};fill:{livery.text_colour}'
-        elif livery.white_text:
-            css = f'{css};\n  color:#fff;fill:#fff'
-        if livery.stroke_colour:
-            css = f'{css};stroke:{livery.stroke_colour}'
-        styles.append(f'{selector} {{\n  {css}\n}}\n')
-        if livery.right_css != livery.left_css:
-            styles.append(f'{selector}.right {{\n  background: {livery.right_css}\n}}\n')
+        styles += livery.get_styles()
     return HttpResponse(''.join(styles), content_type='text/css')
 
 
@@ -267,17 +255,18 @@ def vehicles_json(request):
     except KeyError:
         bounds = None
 
-    vehicles = Vehicle.objects.select_related('vehicle_type').annotate(
+    all_vehicles = Vehicle.objects.select_related('vehicle_type').annotate(
         feature_names=StringAgg('features__name', ', '),
         service_line_name=Coalesce('latest_journey__trip__route__line_name', 'latest_journey__service__line_name'),
         service_slug=F('latest_journey__service__slug')
     ).defer('data')
 
     if 'service__isnull' in request.GET:
-        vehicles = vehicles.filter(
+        all_vehicles = all_vehicles.filter(
             latest_journey__service__isnull=BooleanField().to_python(request.GET['service__isnull'])
         )
 
+    vehicles = all_vehicles
     vehicle_ids = None
     service_ids = None
 
@@ -300,22 +289,24 @@ def vehicles_json(request):
             )
         except redis.exceptions.ResponseError as e:
             return HttpResponseBadRequest(e)
+    elif 'service' in request.GET:
+        try:
+            service_ids = [int(service_id) for service_id in request.GET['service'].split(',')]
+        except ValueError:
+            return HttpResponseBadRequest()
+        vehicle_ids = list(redis_client.sunion(
+            [f'service{service_id}vehicles' for service_id in service_ids]
+        ))
+    elif 'operator' in request.GET:
+        vehicles = vehicles.filter(
+            operator__in=request.GET['operator'].split(',')
+        ).in_bulk()
+    elif 'id' in request.GET:
+        # specified vehicle ids
+        vehicle_ids = request.GET['id'].split(',')
     else:
-        if 'service' in request.GET:
-            try:
-                service_ids = [int(service_id) for service_id in request.GET['service'].split(',')]
-            except ValueError:
-                return HttpResponseBadRequest()
-            vehicle_ids = list(redis_client.sunion(
-                [f'service{service_id}vehicles' for service_id in service_ids]
-            ))
-        elif 'operator' in request.GET:
-            vehicles = vehicles.filter(
-                operator__in=request.GET['operator'].split(',')
-            ).in_bulk()
-        else:
-            # ids of all vehicles
-            vehicle_ids = redis_client.zrange('vehicle_location_locations', 0, -1)
+        # ids of all vehicles
+        vehicle_ids = redis_client.zrange('vehicle_location_locations', 0, -1)
 
     if vehicle_ids is None:
         vehicle_ids = list(vehicles.keys())
@@ -388,6 +379,29 @@ def vehicles_json(request):
                 redis_client.srem(f'service{service_id}vehicles', vehicle_id)
         elif item:
             locations.append(item)
+
+    if not locations and 'id' in request.GET:
+        vehicles = all_vehicles.in_bulk(vehicle_ids)
+        for vehicle_id, vehicle in vehicles.items():
+            location = redis_client.lindex(f'journey{vehicle.latest_journey_id}', -1)
+            if location:
+                location = json.loads(location)
+                item = {
+                    "coordinates": location[1],
+                    "heading": location[2],
+                    "datetime": location[0],
+                }
+                if vehicle.service_slug:
+                    item["service"] = {
+                        "line_name": vehicle.service_line_name,
+                        "url": f"/services/{vehicle.service_slug}"
+                    }
+                else:
+                    item["service"] = {
+                        "line_name": vehicle.latest_journey.route_name,
+                    }
+
+                locations.append(item)
 
     return JsonResponse(locations, safe=False)
 
@@ -511,12 +525,15 @@ class VehicleDetailView(DetailView):
                 vehicle=self.object
             )
         }
+        del journeys
 
         if 'journeys' in context:
             garages = set(journey.trip.garage_id for journey in context['journeys']
                           if journey.trip and journey.trip.garage_id)
             if len(garages) == 1:
                 context['garage'] = Garage.objects.get(id=garages.pop())
+
+            context['tracking'] = any(getattr(journey, 'locations', False) for journey in context['journeys'])
 
         context['pending_edits'] = self.object.vehicleedit_set.filter(approved=None).exists()
 

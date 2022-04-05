@@ -5,7 +5,7 @@
         browser: true
     */
     /*global
-        L, reqwest
+        L, reqwest, bustimes
     */
 
     var map;
@@ -82,6 +82,18 @@
     }
 
     function maybeOpenMap() {
+        if (window.location.hash.indexOf('journeys/') !== 1) {
+
+            if (window.location.hash == '#map') {
+                openLiveMap();
+            } else {
+                var mapContainer = document.getElementById('map');
+                mapContainer.classList.remove('expanded');
+            }
+
+            return;
+        }
+
         var journey = window.location.hash.slice(1);
 
         if (journey) {
@@ -273,7 +285,7 @@
     window.addEventListener('load', maybeOpenMap);
 
     function handleClick(event) {
-        if (window.location.search) {
+        if (window.location.search) { // ?date=
             window.location.hash = event.target.hash; // triggers hashchange event
         } else {
             window.history.pushState(null, null, '?date=' + date + event.target.hash);
@@ -290,5 +302,79 @@
     for (var i = links.length - 1; i >= 0; i -= 1) {
         links[i].addEventListener('click', handleClick);
     }
+
+    var liveMap;
+
+    function openLiveMap() {
+        var mapContainer = document.getElementById('map');
+        if (!mapContainer) {
+            return;
+        }
+
+        mapContainer.className += ' expanded';
+
+        if (liveMap) {
+            liveMap.invalidateSize();
+            return;
+        }
+
+        liveMap = L.map(mapContainer, {
+            tap: false
+        });
+
+        window.bustimes.map = liveMap;
+        window.bustimes.doTileLayer(liveMap);
+
+        var closeButton = L.control();
+
+        closeButton.onAdd = function() {
+            var div = document.createElement('div');
+            div.className = 'leaflet-bar';
+
+            var a = document.createElement('a');
+            a.href = '#';
+            a.style.width = 'auto';
+            a.style.padding = '0 8px';
+            a.setAttribute('role', 'button');
+            a.innerHTML = 'Close map';
+            // a.onclick = navigateFromMap;
+
+            div.appendChild(a);
+            return div;
+        };
+
+        closeButton.addTo(liveMap);
+
+        reqwest('/vehicles.json?id=' + window.VEHICLE_ID, function(data) {
+            if (data.length) {
+                var item = data[0];
+                var latLng = [item.coordinates[1], item.coordinates[0]];
+                window.bustimes.map.setView(latLng, 14);
+
+                var marker = L.marker(latLng, {
+                    icon: bustimes.getBusIcon(item, true),
+                    zIndexOffset: 1000,
+                    item: item
+                });
+                marker.addTo(liveMap);
+                marker.bindPopup('', {
+                    closeButton: false,
+                    closeOnEscapeKey: false,
+                    autoClose: false,
+                    closeOnClick: false
+                }).openPopup();
+
+                window.bustimes.clickedMarker = item.id;
+                window.bustimes.vehicleMarkers = {};
+                window.bustimes.vehicleMarkers[item.id] = marker;
+                bustimes.updatePopupContent();
+            }
+        });
+    }
+
+    // var mapButton = document.querySelector('.button[href="#map"');
+    // if (mapButton) {
+    //     mapButton.onclick = openLiveMap;
+    // }
 
 })();

@@ -205,6 +205,22 @@ You can use this field to make this livery selectable for a new operator – tha
                 self.white_text = (get_text_colour(self.colours) == '#fff')
         super().save(*args, update_fields=update_fields, **kwargs)
 
+    def get_styles(self):
+        if not self.left_css:
+            return []
+        selector = f'.livery-{self.id}'
+        css = f'background: {self.left_css}'
+        if self.text_colour:
+            css = f'{css};\n  color:{self.text_colour};fill:{self.text_colour}'
+        elif self.white_text:
+            css = f'{css};\n  color:#fff;fill:#fff'
+        if self.stroke_colour:
+            css = f'{css};stroke:{self.stroke_colour}'
+        styles = [f'{selector} {{\n  {css}\n}}\n']
+        if self.right_css != self.left_css:
+            styles.append(f'{selector}.right {{\n  background: {self.right_css}\n}}\n')
+        return styles
+
 
 class VehicleFeature(models.Model):
     name = models.CharField(max_length=255, unique=True)

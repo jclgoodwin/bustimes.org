@@ -6,11 +6,24 @@
 
 {% block content %}
 
-<h1>{% if object.withdrawn %}<del>{{ object }}</del>{% else %}{{ object }}{% endif %}</h1>
+<h1>{% if object.withdrawn %}
+    <del>{{ object }}</del>
+{% else %}{{ object }}{% endif %}</h1>
 
 {% if vehicle %}
     {% include 'vehicle_info.html' %}
 
+    {% if tracking %}
+        <style>
+            {% for style in vehicle.livery.get_styles %}
+                {{ style }}
+            {% endfor %}
+        </style>
+
+        <p><a class="button" href="#map">Track this bus</a></p>
+
+        <div id="map" class="service-map"></div>
+    {% endif %}
 {% else %}
     {% if garages %}
         <p>{% for garage in garages %}{{ garage }}{% if not forloop.last %}/{% endif %}{% endfor %}</p>
@@ -122,6 +135,12 @@
 
 {% block foot %}
     {% if journeys %}
+        {% if vehicle %}
+            <script>
+                VEHICLE_ID = {{ object.id }};
+                TEXT_COLOUR = "{{ object.get_text_colour }}";
+            </script>
+        {% endif %}
         {% load static %}
         <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
         <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
