@@ -259,7 +259,7 @@ def vehicles_json(request):
         feature_names=StringAgg('features__name', ', '),
         service_line_name=Coalesce('latest_journey__trip__route__line_name', 'latest_journey__service__line_name'),
         service_slug=F('latest_journey__service__slug')
-    ).defer('data')
+    ).defer('data', 'latest_journey_data')
 
     if 'service__isnull' in request.GET:
         all_vehicles = all_vehicles.filter(
