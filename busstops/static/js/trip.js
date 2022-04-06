@@ -35,7 +35,7 @@
                 if (data) {
                     window.bustimes.handleVehicles(data);
 
-                    if (!window.bustimes.clickedMarker && window.TRIP_ID && !poppedUp) {
+                    if (!window.bustimes.clickedMarker && (window.TRIP_ID || window.VEHICLE_ID) && !poppedUp) {
                         for (var id in window.bustimes.vehicleMarkers) {
                             var marker = window.bustimes.vehicleMarkers[id];
                             if (marker.options.item.trip_id === window.TRIP_ID || marker.id === window.VEHICLE_ID) {
