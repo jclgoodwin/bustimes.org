@@ -37,8 +37,9 @@
 
                     if (!window.bustimes.clickedMarker && window.TRIP_ID && !poppedUp) {
                         for (var id in window.bustimes.vehicleMarkers) {
-                            if (window.bustimes.vehicleMarkers[id].options.item.trip_id === window.TRIP_ID) {
-                                window.bustimes.vehicleMarkers[id].openPopup();
+                            var marker = window.bustimes.vehicleMarkers[id];
+                            if (marker.options.item.trip_id === window.TRIP_ID || marker.id === window.VEHICLE_ID) {
+                                marker.openPopup();
                                 poppedUp = id;  // don't auto-open the popup again
                                 break;
                             }
@@ -86,7 +87,8 @@
 
         window.bustimes.map = map;
 
-        var bounds = L.latLngBounds();
+        var bounds = L.latLngBounds(),
+            previousLocation;
 
         window.STOPS.times.forEach(function(time) {
             var stop = time.stop;
@@ -101,6 +103,13 @@
                     'type': 'LineString',
                     'coordinates': time.track
                 }).addTo(map);
+            } else if (previousLocation) {
+                L.polyline(
+                    [previousLocation, location],
+                    {
+                        dashArray: '4',
+                    }
+                ).addTo(map);
             }
 
             if (stop.bearing !== null) {
@@ -118,6 +127,8 @@
             }).bindTooltip(time.aimed_arrival_time || time.aimed_departure_time).addTo(map);
 
             bounds.extend(location);
+
+            previousLocation = location;
         });
 
         map.fitBounds(bounds);
