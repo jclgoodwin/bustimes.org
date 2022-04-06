@@ -38,7 +38,7 @@
                     if (!window.bustimes.clickedMarker && (window.TRIP_ID || window.VEHICLE_ID) && !poppedUp) {
                         for (var id in window.bustimes.vehicleMarkers) {
                             var marker = window.bustimes.vehicleMarkers[id];
-                            if (marker.options.item.trip_id === window.TRIP_ID || id === window.VEHICLE_ID) {
+                            if (marker.options.item.trip_id === window.TRIP_ID || marker.options.item.id === window.VEHICLE_ID) {
                                 marker.openPopup();
                                 poppedUp = id;  // don't auto-open the popup again
                                 break;
