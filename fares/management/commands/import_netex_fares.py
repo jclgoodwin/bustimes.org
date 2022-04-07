@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django.utils.http import http_date, parse_http_date
+from psycopg2.extras import DateTimeTZRange
 from busstops.models import Operator, Service
 from ... import models
 
@@ -168,6 +169,11 @@ class Command(BaseCommand):
                 trip_type=trip_type,
                 user_profile=user_profile,
                 type_of_tariff=type_of_tariff or "",
+                valid_between=DateTimeTZRange(
+                    tariff_element.findtext("validityConditions/ValidBetween/FromDate"),
+                    tariff_element.findtext("validityConditions/ValidBetween/ToDate"),
+                    '[]'
+                )
             )
             tariffs[tariff.code] = tariff
 

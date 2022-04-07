@@ -2,6 +2,8 @@
 
 {% block bodyclass %}{% endblock %}
 
+{% load date_range %}
+
 {% block content %}
 
     <h1>{{ object }}</h1>
@@ -9,6 +11,8 @@
     <p>{{ object.filename }}</p>
 
     <p>{{ object.code }}</p>
+
+    <p>{{ object.valid_between|date_range }}</p>
 
     {% for service in object.services.all %}
         <p><a href="{{ service.get_absolute_url }}/fares">{{ service }}</a></p>

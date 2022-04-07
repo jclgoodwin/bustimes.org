@@ -2,6 +2,8 @@
 
 {% block bodyclass %}narrow{% endblock %}
 
+{% load date_range %}
+
 {% block content %}
 
     <h1>{{ object }}</h1>
@@ -26,7 +28,13 @@
     <h2>Tariffs</h2>
 
     {% for tariff in object.tariff_set.all %}
-        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
+        <p>
+            <a href="{{ tariff.get_absolute_url }}">
+                {{ tariff }}
+                {% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}
+                {% ifchanged tariff.valid_between %} ({{ tariff.valid_between|date_range }}){% endifchanged %}
+            </a>
+        </p>
     {% endfor %}
 
 {% endblock %}

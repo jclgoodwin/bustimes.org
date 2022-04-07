@@ -67,7 +67,7 @@ class FaresTest(TestCase):
 
         source = DataSet.objects.create()
 
-        path = Path(__file__).resolve().parent / 'data'
+        base_path = Path(__file__).resolve().parent / 'data'
 
         for filename in (
             'connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml',
@@ -84,7 +84,12 @@ class FaresTest(TestCase):
             'FX_PI_01_UK_SCTE_PRODUCTS_COMMON_wef-20220208_20220211-0936.xml',
             'FX_PI_01_UK_SCTE_LINE_FARE_Line-59t@Outbound_wef-20220208_20220211-0936.xml',
         ):
-            filename = path / filename
+            path = base_path / filename
 
-            with filename.open() as open_file:
-                command.handle_file(source, open_file)
+            with path.open() as open_file:
+                command.handle_file(source, open_file, filename)
+
+        tariff = Tariff.objects.get(
+            filename="KBUS_FF_ArrivaAdd-on_2Multi_6d7e341a-0680-4397-9b3f-90a290087494_637613495098903655.xml"
+        )
+        self.assertEqual(str(tariff.valid_between), '[2021-07-08 00:00:00+00:00, 2121-07-08 00:00:00+00:00]')
