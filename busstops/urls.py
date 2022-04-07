@@ -23,6 +23,7 @@ urlpatterns = [
     path("data", TemplateView.as_view(template_name="data.html")),
     path("status", views.status),
     path("robots.txt", views.robots_txt),
+    path("stops.csv", views.stops_csv),
     path(
         "ads.txt",
         TemplateView.as_view(template_name="ads.txt", content_type="text/plain"),
