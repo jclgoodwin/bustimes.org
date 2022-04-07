@@ -892,10 +892,9 @@ class Occupancy(models.TextChoices):
 
 
 class VehicleLocation:
-    def __init__(self, latlong, heading=None, delay=None, early=None, occupancy=None):
+    def __init__(self, latlong, heading=None, early=None, occupancy=None):
         self.latlong = latlong
         self.heading = heading
-        self.delay = delay
         self.early = early
         self.occupancy = occupancy
         self.seated_occupancy = None
@@ -914,7 +913,10 @@ class VehicleLocation:
         ordering = ('id',)
 
     def get_appendage(self):
-        appendage = [self.datetime, self.latlong.coords, self.heading, self.early]
+        early = self.early
+        if early is not None:
+            early = early.total_seconds() / 60
+        appendage = [self.datetime, self.latlong.coords, self.heading, early]
         return (f'journey{self.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder))
 
     def get_redis_json(self):
@@ -927,6 +929,9 @@ class VehicleLocation:
             'datetime': self.datetime,
             'destination': journey.destination,
         }
+
+        if self.early is not None:
+            json['delay'] = -self.early.total_seconds()
 
         if journey.trip_id:
             json['trip_id'] = journey.trip_id

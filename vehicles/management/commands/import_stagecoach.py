@@ -214,17 +214,13 @@ class Command(ImportLiveVehiclesCommand):
         if aimed and expected:
             aimed = parse_timestamp(aimed)
             expected = parse_timestamp(expected)
-            early = (aimed - expected).total_seconds() / 60
-            early = round(early)
-            delay = -early
+            early = aimed - expected
         else:
-            delay = None
             early = None
 
         return VehicleLocation(
             latlong=get_latlong(item),
             heading=bearing,
-            delay=delay,
             early=early
         )
 

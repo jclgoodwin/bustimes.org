@@ -100,6 +100,157 @@ class NatExpTest(TestCase):
                     "mins": 0,
                     "time": "13:00",
                 },
+                "timetables": [
+                    {
+                        "arrive": {
+                            "dateTime": "2022-04-07 01:55:00",
+                            "hrs": 1,
+                            "mins": 55,
+                            "time": "01:55"
+                        },
+                        "depart": {
+                            "dateTime": "2022-04-07 02:00:00",
+                            "hrs": 2,
+                            "mins": 0,
+                            "time": "02:00"
+                        },
+                        "layover": 5,
+                        "timingPoint": 0,
+                        "fareStage": 0,
+                        "distance": 0,
+                        "status": None,
+                        "timeZone": "BST",
+                        "actualStatus": -1,
+                        "duplicateCount": 0,
+                        "delayed": False,
+                        "eta": {
+                            "etaArrive": {
+                                "dateTime": "2022-04-07 02:02:58",
+                                "hrs": 2,
+                                "mins": 2,
+                                "time": "02:02"
+                            },
+                            "etaDepart": {
+                                "dateTime": "2022-04-07 02:03:58",
+                                "hrs": 2,
+                                "mins": 3,
+                                "time": "02:03"
+                            },
+                            "etaLayover": 1,
+                            "arrive": {
+                                "dateTime": "2022-04-07 02:02:58",
+                                "hrs": 2,
+                                "mins": 2,
+                                "time": "02:02"
+                            },
+                            "depart": {
+                                "dateTime": "2022-04-07 02:04:12",
+                                "hrs": 2,
+                                "mins": 4,
+                                "time": "02:04"
+                            },
+                            "atStop": False,
+                            "late": False,
+                            "status": "visited",
+                            "timestamp": "2022-04-07 02:02:58 +0000",
+                            "gate": None
+                        },
+                        "stopActivity": None
+                    },
+                    None,
+                    {
+                        "arrive": {
+                            "dateTime": "2022-04-07 02:28:00",
+                            "hrs": 2,
+                            "mins": 28,
+                            "time": "02:28"
+                        },
+                        "depart": {
+                            "dateTime": "2022-04-07 02:28:00",
+                            "hrs": 2,
+                            "mins": 28,
+                            "time": "02:28"
+                        },
+                        "layover": 0,
+                        "timingPoint": 0,
+                        "fareStage": 0,
+                        "distance": 0,
+                        "status": None,
+                        "timeZone": "BST",
+                        "actualStatus": -1,
+                        "duplicateCount": 0,
+                        "delayed": False,
+                        "eta": {
+                            "etaArrive": {
+                                "dateTime": "2022-04-07 02:34:00",
+                                "hrs": 2,
+                                "mins": 34,
+                                "time": "02:34"
+                            },
+                            "etaDepart": {
+                                "dateTime": "2022-04-07 02:34:00",
+                                "hrs": 2,
+                                "mins": 34,
+                                "time": "02:34"
+                            },
+                            "etaLayover": 0,
+                            "arrive": None,
+                            "depart": None,
+                            "atStop": False,
+                            "late": False,
+                            "status": "next_stop",
+                            "timestamp": "2022-04-07 02:16:10 +0000",
+                            "gate": None
+                        },
+                        "stopActivity": None
+                    },
+                    {
+                        "arrive": {
+                            "dateTime": "2022-04-07 02:30:00",
+                            "hrs": 2,
+                            "mins": 30,
+                            "time": "02:30"
+                        },
+                        "depart": {
+                            "dateTime": "2022-04-07 02:30:00",
+                            "hrs": 2,
+                            "mins": 30,
+                            "time": "02:30"
+                        },
+                        "layover": 0,
+                        "timingPoint": 0,
+                        "fareStage": 0,
+                        "distance": 0,
+                        "status": None,
+                        "timeZone": "BST",
+                        "actualStatus": -1,
+                        "duplicateCount": 0,
+                        "delayed": False,
+                        "eta": {
+                            "etaArrive": {
+                                "dateTime": "2022-04-07 02:36:00",
+                                "hrs": 2,
+                                "mins": 36,
+                                "time": "02:36"
+                            },
+                            "etaDepart": {
+                                "dateTime": "2022-04-07 02:36:00",
+                                "hrs": 2,
+                                "mins": 36,
+                                "time": "02:36"
+                            },
+                            "etaLayover": 0,
+                            "arrive": None,
+                            "depart": None,
+                            "atStop": False,
+                            "late": False,
+                            "status": "future",
+                            "timestamp": "2022-04-07 02:16:10 +0000",
+                            "gate": None
+                        },
+                        "stopActivity": None
+                    },
+                ],
                 "route": "491",
                 "dir": "O",
                 "journeyId": "HC",
