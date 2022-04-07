@@ -55,6 +55,7 @@ class NatExpTest(TestCase):
                     "mins": 30,
                     "time": "09:30",
                 },
+                "timetables": [],
                 "route": "491",
                 "dir": "O",
                 "journeyId": "HA",
@@ -295,5 +296,9 @@ class NatExpTest(TestCase):
         ) as get_items:
             self.nat_exp_command.update()
         get_items.assert_called()
+
+        response = self.client.get('/vehicles.json').json()
+        self.assertEqual(response[0]['destination'], 'Great Yarmouth')
+        self.assertEqual(response[0]['delay'], 360.0)
 
         self.assertEqual(2, Vehicle.objects.all().count())
