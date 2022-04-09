@@ -3,6 +3,7 @@ import logging
 import xml.etree.cElementTree as ET
 import requests
 import zipfile
+from functools import cache
 from ciso8601 import parse_datetime
 from datetime import datetime, timezone
 from django.core.management.base import BaseCommand
@@ -42,6 +43,16 @@ def get_fare_product(element):
         charging_moment=element.findtext("ChargingMomentType", ""),
         tariff_basis=element.findtext("ConditionSummary/TariffBasis", ""),
     )
+
+
+@cache
+def get_service(operator, line_name):
+    try:
+        return Service.objects.get(
+            operator=operator, line_name__iexact=line_name, current=True
+        )
+    except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+        logger.warning(f"{e} {operator} {line_name}")
 
 
 class Command(BaseCommand):
@@ -192,13 +203,8 @@ class Command(BaseCommand):
                 if line_ref is not None:
                     line = lines[line_ref.attrib["ref"]]
                     line_name = line.findtext("PublicCode")
-                    try:
-                        service = Service.objects.get(
-                            operator=operator, line_name__iexact=line_name, current=True
-                        )
-                    except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                        logger.warning(f"{e} {operator} {line_name}")
-                    else:
+                    service = get_service(operator, line_name)
+                    if service:
                         tariff.services.add(service)
 
             distance_matrix_elements = {}
