@@ -1,5 +1,9 @@
 // 960px
 
+.wide-ad {
+    min-height: 90px;
+}
+
 .narrow main .wide-ad {
     margin: 1em -121px;
 }
@@ -21,10 +25,19 @@
     display: block;
 }
 
-[data-fuse="22699655446"] {
+[data-fuse="22699655446"] { // stop_vrec
     left: 0;
 }
 
-[data-fuse="22699655440"] {
+[data-fuse="22699655440"] { // stop_vrec
     right: 0;
+}
+
+[data-fuse="22699655449"] { // stop_footer
+    display: none;
+}
+
+footer,
+.service-map {
+    margin-bottom: 90px;
 }
