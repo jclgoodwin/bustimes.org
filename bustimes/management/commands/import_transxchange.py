@@ -357,8 +357,10 @@ class Command(BaseCommand):
         for element in holiday_elements:
             bank_holiday_name = element.tag
             if bank_holiday_name == 'OtherPublicHoliday':
+                date = element.findtext('Date')
+                description = element.findtext('Description')
                 calendar_dates.append(
-                    get_calendar_date(element.findtext('Date'), operation, element.findtext('Description'))
+                    get_calendar_date(date, operation, description)
                 )
             else:
                 if bank_holiday_name == 'HolidaysOnly':
@@ -490,15 +492,22 @@ class Command(BaseCommand):
 
         calendar.save()
 
-        weird = False
+        # filter out calendar dates with no or impossible date ranges
+        good_calendar_dates = []
         for date in calendar_dates:
             date.calendar = calendar
-            if date.end_date < date.start_date:
-                weird = True
+            if not date.start_date:
                 logger.warning(date)
-        if weird:
-            calendar_dates = [date for date in calendar_dates if date.end_date >= date.start_date]
-        CalendarDate.objects.bulk_create(calendar_dates)
+                if date.summary == 'Jubilee bank holiday':
+                    date.start_date = date.end_date = '2022-06-03'
+                else:
+                    continue
+            if date.end_date < date.start_date:
+                logger.warning(date)
+                continue
+            good_calendar_dates.append(date)
+
+        CalendarDate.objects.bulk_create(good_calendar_dates)
 
         for bank_holiday in bank_holidays.values():
             bank_holiday.calendar = calendar
