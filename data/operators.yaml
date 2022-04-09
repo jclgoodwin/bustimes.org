@@ -453,7 +453,7 @@ YSTN:
     url: https://www.stationcoaches.co.uk/
 SPMW:
     url: https://www.stringerscoaches.co.uk/
-WNGS: 
+WNGS:
     name: Diamond Bus South East
     url: https://www.diamondbuses.com/south-east
     twitter: DiamondBusSE
@@ -478,3 +478,6 @@ EXLN:
     url: https://www.expresslines.co.uk/
 SSSN:
     name: Shoreline Suncruisers
+COAC:
+    url: http://www.coachstyle.uk/
+    email: coachstyleltd@btconnect.com
