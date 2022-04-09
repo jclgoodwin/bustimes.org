@@ -219,7 +219,7 @@ class TripDetailView(DetailView):
 
         context['liveries_css_version'] = liveries_css_version()
 
-        context['breadcrumb'] = [self.object.route.service]
+        context['breadcrumb'] = list(self.object.route.service.operator.all()) + [self.object.route.service]
 
         return context
 

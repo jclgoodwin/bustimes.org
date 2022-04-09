@@ -100,14 +100,17 @@
 
             if (time.track) {
                 L.geoJSON({
-                    'type': 'LineString',
-                    'coordinates': time.track
+                    type: 'LineString',
+                    coordinates: time.track,
+                }, {
+                    interactive: false,
                 }).addTo(map);
             } else if (previousLocation) {
                 L.polyline(
                     [previousLocation, location],
                     {
                         dashArray: '4',
+                        interactive: false,
                     }
                 ).addTo(map);
             }
