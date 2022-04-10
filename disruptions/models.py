@@ -10,7 +10,12 @@ class Situation(models.Model):
         'busstops.DataSource',
         models.CASCADE,
         limit_choices_to={
-            'name__in': ('Transport for the North', 'Transport for West Midlands', 'bustimes.org')
+            'name__in': (
+                'Ito World',
+                'Transport for the North',
+                'Transport for West Midlands',
+                'bustimes.org',
+            )
         }
     )
     situation_number = models.CharField(max_length=36, blank=True)

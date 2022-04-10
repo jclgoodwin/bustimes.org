@@ -58,7 +58,11 @@ class CalendarBankHolidayInline(admin.TabularInline):
 @admin.register(CalendarDate)
 class CalendarDateAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'start_date', 'end_date']
-    list_filter = ['start_date', 'end_date']
+    list_filter = [
+        'start_date',
+        'end_date',
+        ('summary', admin.EmptyFieldListFilter)
+    ]
     raw_id_fields = ['calendar']
 
 
