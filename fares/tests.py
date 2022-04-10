@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core.management import call_command
 from busstops.models import Operator, Service
 from .management.commands.import_netex_fares import Command
-from .models import Tariff, TimeInterval, DataSet
+from .models import Tariff, TimeInterval, DataSet, FareZone
 
 
 class FaresTest(TestCase):
@@ -38,18 +38,15 @@ class FaresTest(TestCase):
         self.assertContains(response, "<td>£1.70</td>")
         self.assertContains(response, "RAF Cranwell")
 
-        origins = list(response.context_data['form'].fields['origin'].choices)
-        destinations = list(response.context_data['form'].fields['destination'].choices)
-
-        origin = origins[6][0]
-        destination = destinations[5][0]
-        response = self.client.get(f'{tariff.get_absolute_url()}?origin={origin}&destination={destination}')
+        origin = FareZone.objects.get(name='Welbourn')
+        destination = FareZone.objects.get(name='Cranwell')
+        response = self.client.get(f'{tariff.get_absolute_url()}?origin={origin.id}&destination={destination.id}')
 
         self.assertContains(response, "<h3>Welbourn to Cranwell</h3>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
         # dataset detail view
-        response = self.client.get(f'{tariff.source.get_absolute_url()}?origin={origin}&destination={destination}')
+        response = self.client.get(f'{tariff.source.get_absolute_url()}?origin={origin.id}&destination={destination.id}')
         self.assertContains(response, "<h3>Welbourn to Cranwell</h3>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 

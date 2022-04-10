@@ -111,7 +111,6 @@ class LiveDeparturesTest(TestCase):
             response = self.client.get('/stops/' + self.london_stop.pk)
 
         self.assertContains(response, """
-            <div class="aside">
                 <h2>Next departures</h2>
                 <table><tbody>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
@@ -138,7 +137,6 @@ class LiveDeparturesTest(TestCase):
                         <td><a href="/vehicles/tfl/LTZ1393">18:49⚡</a></td></tr>
                 </tbody></table>
                 <p class="credit">⚡ denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations </p>
-            </div>
         """, html=True)
 
     @time_machine.travel(datetime.date(2018, 10, 27))
@@ -197,7 +195,6 @@ class LiveDeparturesTest(TestCase):
             ]
         })
         self.assertContains(response, """
-            <div class="aside">
                 <h2>Next departures</h2>
                 <h3>Wednesday 4 May</h3>
                 <table><tbody>
@@ -207,7 +204,6 @@ class LiveDeparturesTest(TestCase):
                 <table><tbody>
                     <tr><td>9</td><td>Shilbottle</td><td>11:53</td></tr>
                 </tbody></table>
-            </div>
         """, html=True)
 
     @patch('vehicles.tasks.log_vehicle_journey.delay')
