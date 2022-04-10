@@ -406,16 +406,18 @@ def vehicles_json(request):
     return JsonResponse(locations, safe=False)
 
 
-def get_dates(journeys, vehicle=None, service=None):
+def get_dates(vehicle=None, service=None):
     if vehicle:
         key = f'vehicle:{vehicle.id}:dates'
+        journeys = vehicle.vehiclejourney_set
     else:
         key = f'service:{service.id}:dates'
+        journeys = service.vehiclejourney_set
 
     dates = cache.get(key)
 
     if not dates:
-        return
+        # return
         try:
             dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
         except OperationalError:
@@ -435,7 +437,7 @@ def get_dates(journeys, vehicle=None, service=None):
 
 
 def journeys_list(request, journeys, service=None, vehicle=None):
-    dates = get_dates(journeys, service=service, vehicle=vehicle)
+    dates = get_dates(service=service, vehicle=vehicle)
 
     context = {}
 

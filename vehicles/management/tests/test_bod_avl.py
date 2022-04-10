@@ -400,7 +400,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         vehicle = journey.vehicle
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(6):
             response = self.client.get(journey.get_absolute_url())
         self.assertContains(response, "146")
         self.assertContains(response, "to Southwold")
