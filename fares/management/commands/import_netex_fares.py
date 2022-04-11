@@ -7,7 +7,7 @@ from functools import cache
 from ciso8601 import parse_datetime
 from datetime import datetime, timezone
 from django.core.management.base import BaseCommand
-from django.db.utils import IntegrityError
+from django.db import IntegrityError, DataError
 from django.utils.http import http_date, parse_http_date
 from psycopg2.extras import DateTimeTZRange
 from busstops.models import Operator, Service
@@ -539,7 +539,7 @@ class Command(BaseCommand):
             assert response.headers["Content-Type"] == "application/zip"
             try:
                 self.handle_archive(dataset, io.BytesIO(response.content))
-            except KeyError:
+            except (KeyError, DataError):
                 return dataset  # don't update timestamp field, try re-importing next time
 
         dataset.datetime = modified
