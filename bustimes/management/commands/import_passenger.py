@@ -92,13 +92,13 @@ def get_versions(session, url):
             if '/current' in url:
                 if 'gtfs' not in url:
                     current = session.head(url).headers.get('location')
+                    versions.append(get_version(url))
             elif '/txc' in url:
+                if url == current:
+                    break  # stop - not interested in older data
                 versions.append(get_version(url))
             elif '/gtfs' in url:
                 versions[-1]['gtfs'] = url
-
-                if versions[-1]['url'] == current:  # stop - not interested in older data
-                    break
 
     return versions
 
