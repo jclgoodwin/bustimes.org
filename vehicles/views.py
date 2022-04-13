@@ -742,14 +742,16 @@ def vehicle_edit_action(request, edit_id, action):
         ) or request.user.trusted and edit.is_simple()
 
     if action == 'apply':
-        edit.apply()
+        edit.apply(user=request.user)
     else:
         if action == 'disapprove':
             edit.approved = False
-        elif action == 'approve':
+        else:
+            assert action == 'approve'
             edit.approved = True
+        edit.arbiter = request.user
 
-        edit.save(update_fields=['approved'])
+        edit.save(update_fields=['approved', 'arbiter'])
 
     return HttpResponse()
 
