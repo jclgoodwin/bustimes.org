@@ -22,7 +22,7 @@ class ImportPassengerTest(TestCase):
 
     def test_import(self):
 
-        fixtures_dir = Path(__file__).resolve().parent / '/fixtures'
+        fixtures_dir = Path(__file__).resolve().parent / 'fixtures'
 
         with use_cassette(str(fixtures_dir / 'passenger.yaml'), decode_compressed_response=True):
             with patch('bustimes.management.commands.import_passenger.write_file'):
