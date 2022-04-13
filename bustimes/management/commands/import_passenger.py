@@ -120,6 +120,8 @@ class Command(BaseCommand):
             if operator and operator != name:
                 continue
 
+            url = f'https://data.discoverpassenger.com/operator/{url}'
+
             versions = get_versions(session, url)
 
             if versions:

@@ -255,66 +255,66 @@ AKISMET_SITE_URL = 'https://bustimes.org'
 
 # see bustimes.management.commands.import_passenger
 PASSENGER_OPERATORS = [
-    ('Metrobus', 'https://www.metrobus.co.uk/open-data', 'SE', {
+    ('Metrobus', 'metrobus', 'SE', {
         'MB': 'METR'
     }),
-    ('Nottingham City Transport', 'https://www.nctx.co.uk/open-data', 'EM', {
+    ('Nottingham City Transport', 'nctx', 'EM', {
         'NCT': 'NCTR'
     }),
-    ('Borders Buses', 'https://www.bordersbuses.co.uk/open-data', 'S', {
+    ('Borders Buses', 'bordersbuses', 'S', {
         'PERY': 'BORD',
         'BB': 'BORD',
         '': 'PERY',
     }),
 
-    ('morebus', 'https://www.morebus.co.uk/open-data', 'SW', {
+    ('morebus', 'morebus', 'SW', {
         'WDBC': 'WDBC',
         'DAMY': 'DAMY',
     }),
-    ('Bluestar', 'https://www.bluestarbus.co.uk/open-data', 'SW', {
+    ('Bluestar', 'bluestar', 'SW', {
         'BLUS': 'BLUS',
         'UNIL': 'UNIL',
     }),
-    ('Salisbury Reds', 'https://www.salisburyreds.co.uk/open-data', 'SW', {
+    ('Salisbury Reds', 'salisburyreds', 'SW', {
         'SWWD': 'SWWD',
     }),
-    ('Southern Vectis', 'https://www.islandbuses.info/open-data', 'SW', {
+    ('Southern Vectis', 'southernvectis', 'SW', {
         'SVCT': 'SVCT',
     }),
-    ('Swindon’s Bus Company', 'https://www.swindonbus.co.uk/open-data', 'SW', {
+    ('Swindon’s Bus Company', 'swindonbus', 'SW', {
         'TDTR': 'TDTR',
         'SWIN': 'TDTR',
     }),
 
-    ('Reading Buses', 'https://www.reading-buses.co.uk/open-data', 'SE', {
+    ('Reading Buses', 'readingbuses', 'SE', {
         'RBUS': 'RBUS',
     }),
-    ('Thames Valley Buses', 'https://www.thamesvalleybuses.com/open-data', 'SE', {
+    ('Thames Valley Buses', 'courtney', 'SE', {
         'THVB': 'THVB',
         'CTNY': 'CTNY',
     }),
-    ('Newbury & District', 'https://data.discoverpassenger.com/operator/kennections', 'SE', {
+    ('Newbury & District', 'kennections', 'SE', {
         'NADS': 'NADS',
     }),
 
-    ('West Coast Motors', 'https://www.westcoastmotors.co.uk/open-data', 'S', {
+    ('West Coast Motors', 'westcoastmotors', 'S', {
         'WCM': 'WCMO',
         'GCB': 'GCTB',  # Glasgow Citybus
     }),
-    ('Cardiff Bus', 'https://www.cardiffbus.com/open-data', 'W', {
+    ('Cardiff Bus', 'ccts', 'W', {
         'CB': 'CBUS',
         # 'NB': '',
     }),
-    ('Yellow Buses', 'https://www.yellowbuses.co.uk/open-data', 'SW', {
+    ('Yellow Buses', 'bybus', 'SW', {
         'YELL': 'YELL',
     }),
-    ('Brighton & Hove Buses', 'https://www.buses.co.uk/open-data', 'SE', {
+    ('Brighton & Hove Buses', 'brightonhove', 'SE', {
         'BH': 'BHBC',
     }),
-    ('Blackpool Transport', 'https://www.blackpooltransport.com/open-data', 'NW', {
+    ('Blackpool Transport', 'bts', 'NW', {
         'RR': 'BLAC',
     }),
-    ('Transdev Blazefield', 'https://www.transdevbus.co.uk/open-data', 'NW', {
+    ('Transdev Blazefield', 'transdevblazefield', 'NW', {
         'LUI': 'LNUD',
         'ROS': 'ROST',
         'BPT': 'BPTR',
@@ -325,35 +325,35 @@ PASSENGER_OPERATORS = [
         'FLYE': 'FLYE',
         'YACT': 'YACT',
     }),
-    ('Go North East', 'https://www.gonortheast.co.uk/open-data', 'NE', {
+    ('Go North East', 'gonortheast', 'NE', {
         'GNE': 'GNEL',
     }),
-    ('East Yorkshire', 'https://www.eastyorkshirebuses.co.uk/open-data', 'Y', {
+    ('East Yorkshire', 'eyms', 'Y', {
         'EYMS': 'EYMS',
     }),
-    ('McGill’s', 'https://data.discoverpassenger.com/operator/mcgills', 'S', {
+    ('McGill’s', 'mcgills', 'S', {
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
-    ('Warringtons Own Buses', 'https://www.warringtonsownbuses.co.uk/open-data', 'NW', {
+    ('Warringtons Own Buses', 'warrington', 'NW', {
         'WOB': 'WBTR',
     }),
-    ('Newport Bus', 'https://www.newportbus.co.uk/open-data', 'W', {
+    ('Newport Bus', 'newportbus', 'W', {
         'NTO': 'NWPT',
     }),
-    ('JMB Travel', 'https://www.jmbtravel.co.uk/open-data', 'S', {
+    ('JMB Travel', 'jmbtravel', 'S', {
         'NJMT': 'NJMT',
     }),
-    ('McColls Travel', 'https://www.mccolls.org.uk/open-data', 'S', {
+    ('McColls Travel', 'mccolls', 'S', {
         'MCLS': 'MCLS',
     }),
-    ('Redline Buses', 'https://www.redlinebuses.com/open-data', 'SE', {
+    ('Redline Buses', 'redline', 'SE', {
         'REDL': 'RLNE',
     }),
-    ('Red Rose Travel', 'https://www.redrosetravel.com/open-data', 'SE', {
+    ('Red Rose Travel', 'redrose', 'SE', {
         'RRTR': 'RRTR',
     }),
-    ('Coastliner', 'https://www.coastlinerbuses.co.uk/open-data', 'NW', {
+    ('Coastliner', 'coastliner', 'NW', {
         'NUTT': 'NUTT',
     }),
 ]
