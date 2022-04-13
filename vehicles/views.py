@@ -658,15 +658,16 @@ def vehicle_edits(request):
         action = request.POST["action"]
         for edit in edits:
             if action == "apply":
-                edit.apply()
+                edit.apply(user=request.user)
             else:
                 if action == "approve":
                     edit.approved = True
                 else:
                     assert action == "disapprove"
                     edit.approved = False
+                edit.arbiter = request.user
         if action != "apply":
-            VehicleEdit.objects.bulk_update(edits, fields=["approved"])
+            VehicleEdit.objects.bulk_update(edits, fields=["approved", "arbiter"])
 
     edits = VehicleEdit.objects.filter(approved=None).order_by('-id')
 

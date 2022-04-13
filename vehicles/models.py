@@ -462,6 +462,7 @@ class VehicleEdit(models.Model):
     changes = models.JSONField(null=True, blank=True)
     url = models.URLField(blank=True, max_length=255)
     approved = models.BooleanField(null=True, db_index=True)
+    arbiter = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True, related_name='arbited')
     score = models.SmallIntegerField(default=0)
     datetime = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
@@ -519,7 +520,7 @@ class VehicleEdit(models.Model):
                 return False
         return True
 
-    def apply(self, save=True):
+    def apply(self, save=True, user=None):
         ok = True
         vehicle = self.vehicle
         if save:
@@ -590,7 +591,8 @@ class VehicleEdit(models.Model):
                     vehicle.features.remove(feature.feature)
             if ok:
                 self.approved = True
-                self.save(update_fields=['approved'])
+                self.arbiter = user
+                self.save(update_fields=['approved', 'arbiter'])
 
     def make_revision(self):
         revision = VehicleRevision(
