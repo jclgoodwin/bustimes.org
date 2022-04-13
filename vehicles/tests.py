@@ -345,7 +345,7 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
 
         self.client.force_login(self.staff_user)
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(11):
             response = self.client.get(url)
         self.assertNotContains(response, 'already')
 
@@ -361,7 +361,7 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         }
 
         # edit nothing
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
@@ -376,7 +376,7 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
             "-aWWgKX-aotzn6-aiadaL-adWEKk/ blah"
         )
 
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertFalse(response.context['form'].has_really_changed())
         self.assertNotContains(response, 'already')
@@ -404,7 +404,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         })
 
         # should not create an edit
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(16):
             initial['colours'] = '#FFFF00'
             response = self.client.post(url, initial)
         self.assertTrue(response.context['form'].has_changed())
@@ -459,13 +459,14 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         initial = {
             'fleet_number': '50',
             'reg': 'UWW2X',
+            'operator': self.vehicle_2.operator_id,
             'vehicle_type': self.vehicle_2.vehicle_type_id,
             'other_vehicle_type': str(self.vehicle_2.vehicle_type),
             'colours': self.livery.id,
             'notes': '',
         }
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
         self.assertFalse(response.context['form'].has_changed())
         self.assertNotContains(response, 'already')
@@ -481,7 +482,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         initial['branding'] = 'Coastliner'
         initial['previous_reg'] = 'k292  jvf'
         initial['reg'] = ''
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context['form'])
 
@@ -512,18 +513,19 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             'reg': 'UWW2X',
             'vehicle_type': self.vehicle_2.vehicle_type_id,
             'other_vehicle_type': "Optare Spectra",
+            'operator': self.vehicle_2.operator_id,
             'colours': self.livery.id,
             'other_colour': '',
             'notes': '',
         }
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
             self.assertContains(response, 'You haven&#x27;t changed anything')
 
         initial['colours'] = 'Other'
         initial['other_colour'] = 'Bath is my favourite spa town, and so is Harrogate'
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
             self.assertEqual(response.context['form'].errors, {'other_colour': [
                 'An HTML5 simple color must be a Unicode string exactly seven characters long.'
