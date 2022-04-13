@@ -65,7 +65,7 @@
                 {% else %}
                     <td><button class="action" data-url="{{ edit.id }}/vote/up">👍</button></td>
                     <td><button class="action" data-url="{{ edit.id }}/vote/down">👎</button></td>
-                {% endif %}{% endif %}
+                {% endif %}{% else %}<td>{% if not edit.approved %}dis{% endif %}approved{% if edit.arbiter_id %} by {{ edit.arbiter_id }}{% endif %}{% endif %}
                 {% if not vehicle %}
                     <td class="link">{{ edit.vehicle.get_flickr_link }}</td>
                 {% endif %}
