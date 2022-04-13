@@ -16,7 +16,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates import StringAgg
 from django.forms import BooleanField
-from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest
+from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest, QueryDict
 from django.views.generic.detail import DetailView
 from django.views.decorators.http import require_GET, require_POST
 from django.shortcuts import render, get_object_or_404, redirect
@@ -669,7 +669,7 @@ def vehicle_edits(request):
         if action != "apply":
             VehicleEdit.objects.bulk_update(edits, fields=["approved", "arbiter"])
 
-    edits = VehicleEdit.objects.filter(approved=None).order_by('-id')
+    edits = VehicleEdit.objects.order_by('-id')
 
     edits = edits.select_related('livery', 'vehicle__livery', 'user', 'vehicle__operator', 'vehicle__latest_journey')
     edits = edits.prefetch_related('vehicleeditfeature_set__feature', 'vehicle__features')
@@ -683,7 +683,9 @@ def vehicle_edits(request):
         edits = edits.annotate(edit_count=edit_count)
         edits = edits.order_by(order, 'vehicle')
 
-    f = filters.VehicleEditFilter(request.GET, queryset=edits)
+    query_dict = QueryDict('pending=true', mutable=True)
+    query_dict.update(request.GET)
+    f = filters.VehicleEditFilter(query_dict, queryset=edits)
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)

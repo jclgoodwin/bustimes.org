@@ -43,6 +43,7 @@ class VehicleEditFilter(FilterSet):
     vehicle__withdrawn = BooleanFilter(label='Withdrawn')
     url = BooleanFilter(label='URL', method=filter_not_empty)
     livery = NumberFilter()
+    pending = BooleanFilter(label='Pending', method='pending_filter', required=True)
 
     def __init__(self, *args, **kwargs):
         super(FilterSet, self).__init__(*args, **kwargs)
@@ -57,6 +58,9 @@ class VehicleEditFilter(FilterSet):
         if value == 'features':
             return queryset.filter(Exists('features'))
         return queryset.filter(~Q(**{value: ''}))
+
+    def pending_filter(self, queryset, name, value):
+        return queryset.filter(approved__isnull=value)
 
 
 class VehicleRevisionFilter(FilterSet):
