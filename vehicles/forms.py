@@ -4,7 +4,7 @@ from datetime import timedelta
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
-from django.db.models import Count, Q, Exists, OuterRef
+from django.db.models import Count, Q, OuterRef
 from django.utils.html import format_html
 from django.urls import reverse
 from urllib.parse import quote_plus
@@ -12,6 +12,8 @@ from urllib.parse import quote_plus
 from busstops.models import Operator, Service
 from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
 from . import fields
+
+from sql_util.utils import Exists
 
 
 def get_livery_choices(operator, vehicle, user):
@@ -63,6 +65,7 @@ class EditVehiclesForm(forms.Form):
         required=False,
         help_text="Only tick this box if the ticket machine code is something like SPARE"
     )
+    operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     other_vehicle_type = forms.CharField(required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
     colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
@@ -120,13 +123,18 @@ link to a picture to prove it. Be polite.""")
         if user.id == 124:
             self.fields['withdrawn'].disabled = True
 
+        if user.is_staff:
+            self.fields['operator'].queryset = Operator.objects.all()
+            self.fields['operator'].widget = forms.TextInput()
+        elif not vehicle:
+            del self.fields['operator']
+
 
 class EditVehicleForm(EditVehiclesForm):
     """With some extra fields, only applicable to editing a single vehicle
     """
     fleet_number = forms.CharField(required=False, max_length=24)
     reg = fields.RegField(label='Number plate', required=False, max_length=24)
-    operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     branding = forms.CharField(label="Other branding", required=False, max_length=255)
     name = forms.CharField(label='Vehicle name', required=False, max_length=70, help_text="Leave this blank")
     previous_reg = fields.RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
@@ -196,13 +204,15 @@ can’t be contradicted"""
                 self.fields['withdrawn'].help_text = """Can’t be ticked yet,
  as this vehicle (or ticket machine) has tracked in the last 3 days"""
 
-        if not vehicle.operator or vehicle.operator.parent:
+        if user.is_staff:
+            pass
+        elif not vehicle.operator or vehicle.operator.parent:  # vehicle has no operator, or operator is part of a group
             operators = Operator.objects
             if user.trusted and vehicle.operator:
                 # any sibling operator
                 operators = operators.filter(parent=vehicle.operator.parent)
                 condition = Exists(Service.objects.filter(current=True, operator=OuterRef('pk')).only('id'))
-                condition |= Exists(Vehicle.objects.filter(operator=OuterRef('pk')).only('id'))
+                condition |= Exists('vehicle')
             elif vehicle.latest_journey:
                 # only operators whose services the vehicle has operated
                 condition = Exists(

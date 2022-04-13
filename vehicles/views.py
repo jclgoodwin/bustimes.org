@@ -99,13 +99,16 @@ def operator_vehicles(request, slug=None, parent=None):
             operator = operators.get(slug=slug.lower())
         except Operator.DoesNotExist:
             operator = get_object_or_404(operators, operatorcode__code=slug, operatorcode__source__name='slug')
-        vehicles = operator.vehicle_set.filter(withdrawn=False)
+        vehicles = operator.vehicle_set
     elif parent:
         operators = list(operators.filter(parent=parent))
         if not operators:
             raise Http404
-        vehicles = Vehicle.objects.filter(operator__in=operators, withdrawn=False).select_related('operator')
+        vehicles = Vehicle.objects.filter(operator__in=operators).select_related('operator')
         operator = operators[0]
+
+    if 'withdrawn' not in request.GET:
+        vehicles = vehicles.filter(withdrawn=False)
 
     vehicles = vehicles.order_by('fleet_number', 'fleet_code', 'reg', 'code')
     if not parent:
