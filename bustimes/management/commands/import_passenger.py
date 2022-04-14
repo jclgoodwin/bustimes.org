@@ -89,13 +89,7 @@ def get_versions(session, url):
     for element in response.html.find():
         if element.tag == 'a':
             url = urljoin(element.base_url, element.attrs['href'])
-            if '/current' in url:
-                if 'gtfs' not in url:
-                    current = session.head(url).headers.get('location')
-                    versions.append(get_version(url))
-            elif '/txc' in url:
-                if url == current:
-                    break  # stop - not interested in older data
+            if '/txc' in url:
                 versions.append(get_version(url))
             elif '/gtfs' in url:
                 versions[-1]['gtfs'] = url
@@ -114,7 +108,9 @@ class Command(BaseCommand):
 
         session = HTMLSession()
 
-        sources = DataSource.objects.filter(url__in=[values[1] for values in settings.PASSENGER_OPERATORS])
+        sources = DataSource.objects.filter(url__in=[
+            f'https://data.discoverpassenger.com/operator/{values[1]}' for values in settings.PASSENGER_OPERATORS
+        ])
 
         for name, url, region_id, operators_dict in settings.PASSENGER_OPERATORS:
             if operator and operator != name:
