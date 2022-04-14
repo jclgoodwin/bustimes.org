@@ -5,6 +5,7 @@ import sys
 import traceback
 import requests
 import csv
+import json
 from urllib.parse import urlencode
 from ukpostcodeutils import validation
 
@@ -23,6 +24,7 @@ from django.core.paginator import Paginator
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
+from django.conf import settings
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.models import FareTable
@@ -807,7 +809,10 @@ def service_timetable(request, service_id):
 
 @cache_control(max_age=86400)  # cache for a day
 def service_map_data(request, service_id):
-    service = get_object_or_404(Service.objects.only('geometry'), id=service_id)
+    service = get_object_or_404(
+        Service.objects.only('geometry', 'line_name', 'service_code'),
+        id=service_id,
+    )
     stops = service.stops.filter(
         ~Exists(Situation.objects.filter(summary='Does not stop here',
                                          consequence__stops=OuterRef('pk'),
@@ -831,8 +836,25 @@ def service_map_data(request, service_id):
                     'url': stop.get_absolute_url(),
                 }
             } for stop in stops.values()]
+        },
+        "geometry": {
+            "type": "MultiLineString",
+            "coordinates": []
         }
     }
+
+    if service.service_code.startswith('tfl_'):
+        response = requests.get(
+            f'https://api.tfl.gov.uk/Line/{service.line_name}/Route/Sequence/all',
+            params=settings.TFL
+        )
+        if response.ok:
+            response = response.json()
+
+            for line_string in response['lineStrings']:
+                data["geometry"]["coordinates"] += json.loads(line_string)
+
+            return JsonResponse(data)
 
     routes = get_routes(service.route_set.select_related('source'), timezone.localdate())
 
@@ -875,10 +897,7 @@ def service_map_data(request, service_id):
         if stop and stop.latlong:
             previous_stop = stop
 
-    data["geometry"] = {
-        "type": "MultiLineString",
-        "coordinates": multi_line_string
-    }
+    data["geometry"]["coordinates"] = multi_line_string
 
     return JsonResponse(data)
 

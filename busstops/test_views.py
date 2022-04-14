@@ -328,10 +328,18 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_service_map_data(self):
+        # normal service
         with self.assertNumQueries(5):
             response = self.client.get(f'/services/{self.service.id}.json')
         self.assertEqual(response['Content-Type'], 'application/json')
         self.assertEqual(response.status_code, 200)
+
+        # tfl service
+        service = Service.objects.create(line_name='69', service_code='tfl_69')
+        with self.assertNumQueries(2):
+            with vcr.use_cassette(str(VCR_DIR / 'tfl_sequence.yaml')):
+                response = self.client.get(f'/services/{service.id}.json')
+        self.assertEqual(len(response.json()['geometry']['coordinates']), 2)
 
     def test_modes(self):
         """A list of transport modes is turned into English"""
