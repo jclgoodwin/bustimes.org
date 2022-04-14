@@ -120,7 +120,7 @@ class Command(ImportLiveVehiclesCommand):
             except Vehicle.DoesNotExist:
                 pass
 
-        if not vehicle_ref.isdigit() and len(vehicle_ref) > 7:
+        if not vehicle_ref.isdigit() and len(vehicle_ref) >= 6:  # assume unique (vehicle reg?)
             try:
                 return self.vehicles.get(code=vehicle_ref), False
             except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
