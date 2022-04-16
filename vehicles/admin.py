@@ -5,6 +5,8 @@ from django.utils.html import format_html
 from django.db.models import Q, Exists, OuterRef
 from django.contrib.auth import get_user_model
 
+from simple_history.admin import SimpleHistoryAdmin
+
 from sql_util.utils import SubqueryCount
 
 from . import models
@@ -235,7 +237,7 @@ class LiveryAdminForm(forms.ModelForm):
 
 
 @admin.register(models.Livery)
-class LiveryAdmin(admin.ModelAdmin):
+class LiveryAdmin(SimpleHistoryAdmin):
     form = LiveryAdminForm
     search_fields = ['name']
     actions = ["merge"]

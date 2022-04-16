@@ -18,7 +18,9 @@
         {% for action in action_list %}
         <tr>
             <th scope="row">{{ action.action_time|date:"DATETIME_FORMAT" }}</th>
-            <td>{% if user.is_superuser %}{{ action.user.username }}{% else %}{{ action.user }}{% endif %}</td>
+            <td>{% if user.is_superuser %}
+                <a href="{% url 'admin:accounts_user_change' action.user_id %}">{{ action.user.username }}</a>
+            {% else %}{{ action.user }}{% endif %}</td>
             <td>{{ action.get_change_message }}</td>
         </tr>
         {% endfor %}

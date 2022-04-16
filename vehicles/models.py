@@ -16,6 +16,9 @@ from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils import timezone
+
+from simple_history.models import HistoricalRecords
+
 from busstops.models import Operator, Service, DataSource, SIRISource
 from bustimes.models import get_calendars, get_routes, Trip, RouteLink
 
@@ -129,6 +132,8 @@ You can use this field to make this livery selectable for a new operator – tha
     published = models.BooleanField(
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
     )
+
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ('name',)

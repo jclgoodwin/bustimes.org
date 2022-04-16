@@ -8,48 +8,49 @@ from django.db.utils import OperationalError
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ['SECRET_KEY']
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost').split()
+SECRET_KEY = os.environ["SECRET_KEY"]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split()
 
-TEST = 'test' in sys.argv or 'pytest' in sys.argv[0]
-DEBUG = bool(os.environ.get('DEBUG', False))
+TEST = "test" in sys.argv or "pytest" in sys.argv[0]
+DEBUG = bool(os.environ.get("DEBUG", False))
 
-SERVER_EMAIL = 'contact@bustimes.org'
-DEFAULT_FROM_EMAIL = 'bustimes.org <contact@bustimes.org>'
+SERVER_EMAIL = "contact@bustimes.org"
+DEFAULT_FROM_EMAIL = "bustimes.org <contact@bustimes.org>"
 
 if TEST:
-    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+    EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 else:
-    EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
-    EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-    EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+    EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
     EMAIL_PORT = 465
     EMAIL_USE_SSL = True
     EMAIL_TIMEOUT = 10
 
 INSTALLED_APPS = [
-    'accounts',
-    'busstops',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.gis',
-    'django.contrib.sitemaps',
-    'django.contrib.humanize',
-    'bustimes',
-    'disruptions',
-    'fares',
-    'vehicles',
-    'vosa',
-    'antispam',
-    'email_obfuscator',
-    'channels',
-    'api',
-    'rest_framework',
-    'django_filters'
+    "accounts",
+    "busstops",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.gis",
+    "django.contrib.sitemaps",
+    "django.contrib.humanize",
+    "bustimes",
+    "disruptions",
+    "fares",
+    "vehicles",
+    "vosa",
+    "antispam",
+    "email_obfuscator",
+    "channels",
+    "api",
+    "rest_framework",
+    "django_filters",
+    "simple_history",
 ]
 
 MIDDLEWARE = [
