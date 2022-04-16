@@ -248,7 +248,7 @@ class Vehicle(models.Model):
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     latest_journey = models.OneToOneField(
-        'VehicleJourney', models.SET_NULL, null=True, blank=True, editable=False, related_name='latest_vehicle'
+        'VehicleJourney', models.SET_NULL, null=True, blank=True, related_name='latest_vehicle'
     )
     latest_journey_data = models.JSONField(null=True, blank=True)
     features = models.ManyToManyField(VehicleFeature, blank=True)

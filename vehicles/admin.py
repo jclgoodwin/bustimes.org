@@ -102,7 +102,7 @@ class VehicleAdmin(admin.ModelAdmin):
     list_editable = ('fleet_number', 'fleet_code', 'reg', 'operator',
                      'branding', 'name', 'notes')
     autocomplete_fields = ('vehicle_type', 'livery')
-    raw_id_fields = ('operator', 'source')
+    raw_id_fields = ('operator', 'source', 'latest_journey')
     search_fields = ('code', 'fleet_code', 'reg')
     ordering = ('-id',)
     actions = ('copy_livery', 'copy_type', 'make_livery', 'deduplicate', 'spare_ticket_machine')
