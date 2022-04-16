@@ -1485,7 +1485,13 @@ nav {
 }
 
 [data-fuse="22699655449"] { // stop_footer
+    clear: both;
     margin: 1em auto;
+}
+
+.publift-widget-22704101655-container-background {
+    background: $brand-color;
+    opacity: .5 !important;
 }
 
 .horizontal {
