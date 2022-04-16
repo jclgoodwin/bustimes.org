@@ -846,7 +846,8 @@ def service_map_data(request, service_id):
     if service.service_code.startswith('tfl_'):
         response = requests.get(
             f'https://api.tfl.gov.uk/Line/{service.line_name}/Route/Sequence/all',
-            params=settings.TFL
+            params=settings.TFL,
+            timeout=4
         )
         if response.ok:
             response = response.json()

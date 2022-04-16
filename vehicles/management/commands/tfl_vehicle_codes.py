@@ -29,7 +29,7 @@ class Command(BaseCommand):
         existing_codes = VehicleCode.objects.filter(scheme=scheme).select_related('vehicle')
         existing_codes = {code.code: code.vehicle for code in existing_codes}
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
 
         for line in response.text.split()[1:]:
             line = json.loads(line)

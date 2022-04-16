@@ -31,14 +31,21 @@ class Tickets:
         return f"{self.operator.get_absolute_url()}/tickets"
 
 
+def get_source():
+    return get_object_or_404(DataSource, name="MyTrip")
+
+
+def get_response(source, code):
+    return requests.get(f"{source.url}/{code}", headers={
+        "x-api-key": source.settings["x-api-key"]
+    }, timeout=3).json()
+
+
 def operator_tickets(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
-    source = get_object_or_404(DataSource, name="MyTrip")
+    source = get_source()
     code = get_object_or_404(OperatorCode, operator=operator, source=source)
-
-    response = requests.get(f"{source.url}/{code.code}", headers={
-        "x-api-key": source.settings["x-api-key"]
-    }).json()
+    response = get_response(source, code.code)
 
     categories = response["_links"]["topup:category"]
     groupings = response["_embedded"]["render"]["group_by"]
@@ -56,11 +63,8 @@ def operator_tickets(request, slug):
 
 def operator_ticket(request, slug, id):
     operator = get_object_or_404(Operator, slug=slug)
-    source = get_object_or_404(DataSource, name="MyTrip")
-
-    response = requests.get(f"{source.url}/{id}", headers={
-        "x-api-key": source.settings["x-api-key"]
-    }).json()
+    source = get_source()
+    response = get_response(source, id)
 
     context = {
         "breadcrumb": [operator, Tickets(operator)],
