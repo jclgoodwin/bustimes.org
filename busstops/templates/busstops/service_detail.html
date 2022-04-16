@@ -8,15 +8,10 @@
     {% if object.service_code %}
         <link rel="shortlink" href="https://bustimes.org/services/{{ object.service_code }}">
     {% endif %}
-    <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script> 
+    <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>
 {% endblock %}
 
 {% block bodyclass %}{% if not timetable %}wide{% endif %}{% endblock %}
-
-{% block topad %}
-    <!-- 71161633/services_header/services_header --> 
-    <div class="wide-ad" data-fuse="22699655428"></div>
-{% endblock %}
 
 {% block content %}
 
@@ -34,6 +29,9 @@
 {% if object.public_use is False %}
     <p>🚫 Not available for public use</p>
 {% endif %}
+
+<!-- 71161633/services_header/services_header -->
+<div class="wide-ad" data-fuse="22699655428"></div>
 
 {% include 'situations.html' %}
 

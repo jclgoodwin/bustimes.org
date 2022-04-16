@@ -7,11 +7,6 @@
     <script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>
 {% endblock %}
 
-{% block topad %}
-    <!-- 71161633/home_header/home_header -->
-    <div class="wide-ad" data-fuse="22699960949"></div>
-{% endblock %}
-
 {% block content %}
 
 <div itemscope itemtype="http://schema.org/LocalBusiness">
@@ -30,6 +25,9 @@
     <p class="message">{{ note|safe }}</p>
 {% endfor %}
 
+<!-- 71161633/home_header/home_header -->
+<div class="wide-ad" data-fuse="22699960949"></div>
+
 <ul class="tabs">
     <li>Services</li>
     {% if tickets %}
@@ -44,7 +42,6 @@
 </ul>
 
 {% include 'services.html' with services=services %}
-
 
 {% if operator.licences.all or object.address or object.url or object.email or object.phone %}
     <h2>{{ object }}</h2>
