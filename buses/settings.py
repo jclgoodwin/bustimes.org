@@ -555,6 +555,8 @@ BOD_OPERATORS = [
 
     ('PLNG', 'EA', {}, False),
     ('SNDR', 'EA', {}, False),
+    ('AWAY', 'EA', {}, False),
+    ('COMM', 'EM', {}, False),
     ('STOT', 'NW', {}, False),
     ('CARL', 'SE', {}, False),
     ('IRVD', 'NW', {}, False),
