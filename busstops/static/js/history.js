@@ -88,7 +88,9 @@
                 openLiveMap();
             } else {
                 var mapContainer = document.getElementById('map');
-                mapContainer.classList.remove('expanded');
+                if (mapContainer) {
+                    mapContainer.classList.remove('expanded');
+                }
             }
 
             return;

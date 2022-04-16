@@ -87,6 +87,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
     url = ''
     vehicles = Vehicle.objects.select_related('latest_journey')
     wait = 60
+    history = True
 
     @staticmethod
     def add_arguments(parser):
@@ -268,6 +269,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not self.to_save:
             return
 
+        # update vehicle records if necessary
+
         if self.vehicles_to_update:
             try:
                 Vehicle.objects.bulk_update(
@@ -278,6 +281,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 print(e)
                 self.vehicle_cache = {}  # for import_bod_avl
             self.vehicles_to_update = []
+
+        # update locations in Redis
 
         pipeline = redis_client.pipeline(transaction=False)
 
@@ -298,18 +303,21 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except redis.exceptions.ConnectionError:
                 pass
 
-        pipeline = redis_client.pipeline(transaction=False)
+        if self.history:
+            # add locations to journey history
 
-        for location, vehicle in self.to_save:
-            pipeline.rpush(*location.get_appendage())
+            pipeline = redis_client.pipeline(transaction=False)
 
-        self.to_save = []
+            for location, vehicle in self.to_save:
+                pipeline.rpush(*location.get_appendage())
 
-        with beeline.tracer(name="pipeline"):
-            try:
-                pipeline.execute()
-            except redis.exceptions.ConnectionError:
-                pass
+            self.to_save = []
+
+            with beeline.tracer(name="pipeline"):
+                try:
+                    pipeline.execute()
+                except redis.exceptions.ConnectionError:
+                    pass
 
     def do_source(self):
         if self.url:
