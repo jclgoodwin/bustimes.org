@@ -939,6 +939,10 @@ body {
 
 table {
     border-collapse: collapse;
+
+    .is-highlighted {
+        background: $brand-color;
+    }
 }
 
 .compact {

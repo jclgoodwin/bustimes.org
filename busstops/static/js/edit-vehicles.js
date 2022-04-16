@@ -19,19 +19,19 @@
                 var checkbox = row.querySelector('input');
                 if (checkbox) {
                     checkbox.checked = lastInput.checked;
-                    checkbox.parentNode.parentNode.style.background = checkbox.checked ? '#ef9' : '';
+                    checkbox.parentNode.parentNode.className = checkbox.checked ? 'is-highlighted' : '';
                 }
             }
         }
         lastInput = event.target;
-        lastInput.parentNode.parentNode.style.background = lastInput.checked ? '#ef9' : '';
+        lastInput.parentNode.parentNode.className = lastInput.checked ? 'is-highlighted' : '';
     }
 
     for (var i = checkboxes.length - 1; i >= 0; i -= 1) {
         var checkbox = checkboxes[i];
         checkbox.addEventListener('click', handleBoxCheck);
         if (checkbox.checked) {
-            checkbox.parentNode.parentNode.style.background = '#ef9';
+            checkbox.parentNode.parentNode.className = 'is-highlighted';
         }
     }
 })();
