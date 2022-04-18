@@ -315,6 +315,10 @@ def vehicles_json(request):
         vehicle_ids = list(vehicles.keys())
 
     vehicle_locations = redis_client.mget([f'vehicle{int(vehicle_id)}' for vehicle_id in vehicle_ids])
+    vehicle_locations = [
+        json.loads(item) if item else item
+        for item in vehicle_locations
+    ]
 
     if type(vehicles) is not dict:
         # remove expired items from 'vehicle_location_locations'
@@ -323,9 +327,17 @@ def vehicles_json(request):
         if to_remove:
             redis_client.zrem('vehicle_location_locations', *to_remove)
 
+        journeys = cache.get_many([f"journey{item['journey_id']}" for item in vehicle_locations])
+
         # only get vehicles with unexpired locations
         try:
-            vehicles = vehicles.in_bulk([vehicle_ids[i] for i, item in enumerate(vehicle_locations) if item])
+            vehicles = vehicles.in_bulk(
+                [
+                    vehicle_ids[i]
+                    for i, item in enumerate(vehicle_locations)
+                    if item and f"journey{item['journey_id']}" not in journeys
+                ]
+            )
         except OperationalError:
             vehicles = {}
 
@@ -335,22 +347,33 @@ def vehicles_json(request):
     if trip:
         trip = int(trip)
 
+    journeys_to_cache_later = {}
+
     for i, item in enumerate(vehicle_locations):
         vehicle_id = int(vehicle_ids[i])
         if item:
-            item = json.loads(item)
+            journey_cache_key = f"journey{item['journey_id']}"
+
             if vehicles:
                 try:
                     vehicle = vehicles[vehicle_id]
                 except KeyError:
                     continue  # vehicle was deleted?
                 else:
-                    item['vehicle'] = vehicle.get_json(item['heading'])
+                    journey = {
+                        "vehicle": vehicle.get_json(item['heading'])
+                    }
                     if vehicle.service_line_name:
-                        item["service"] = {
+                        journey["service"] = {
                             "line_name": vehicle.service_line_name,
                             "url": f"/services/{vehicle.service_slug}"
                         }
+                    journeys_to_cache_later[journey_cache_key] = journey
+                    item.update(journey)
+            elif journey_cache_key in journeys:
+                item.update(journeys[journey_cache_key])
+
+            del item['journey_id']
 
             if trip and 'trip_id' in item and item['trip_id'] == trip:
                 vj = VehicleJourney(service_id=item['service_id'], trip_id=trip)
@@ -387,6 +410,9 @@ def vehicles_json(request):
                 redis_client.srem(f'service{service_id}vehicles', vehicle_id)
         elif item:
             locations.append(item)
+
+    if journeys_to_cache_later:
+        cache.set_many(journeys_to_cache_later, 3600)  # an hour
 
     if not locations and 'id' in request.GET:
         vehicles = all_vehicles.in_bulk(vehicle_ids)

@@ -272,17 +272,17 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertContains(response, "/operators/hams/map")
 
         # test other maps
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(0):
             response = self.client.get(f"/vehicles.json?service={self.service_c.id},-2")
         self.assertEqual(response.json(), json)
 
         with self.assertNumQueries(1):
             response = self.client.get("/vehicles.json")
-        self.assertEqual(len(response.json()), 3)
+        self.assertEqual(len(response.json()), 2)
 
-        with self.assertNumQueries(1):
-            response = self.client.get("/vehicles.json?service__isnull=True")
-        self.assertEqual(len(response.json()), 1)
+        # with self.assertNumQueries(0):
+        #     response = self.client.get("/vehicles.json?service__isnull=True")
+        # self.assertEqual(len(response.json()), 1)
 
         with self.assertNumQueries(0):
             response = self.client.get("/vehicles.json?service=ff")

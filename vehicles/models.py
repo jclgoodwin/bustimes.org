@@ -899,6 +899,8 @@ class Occupancy(models.TextChoices):
 
 
 class VehicleLocation:
+    """This used to be a model, is no longer stored in the database but this code is still here for historical reasons
+    """
     def __init__(self, latlong, heading=None, early=None, occupancy=None):
         self.latlong = latlong
         self.heading = heading
@@ -930,7 +932,8 @@ class VehicleLocation:
         journey = self.journey
 
         json = {
-            'id': self.id,
+            'id': self.id,  # (same as vehicle id)
+            'journey_id': journey.id,
             'coordinates': self.latlong.coords,
             'heading': self.heading,
             'datetime': self.datetime,
