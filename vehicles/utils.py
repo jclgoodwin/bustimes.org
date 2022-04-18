@@ -31,7 +31,7 @@ def liveries_css_version():
         version = Livery.objects.aggregate(Max('updated_at'))['updated_at__max']
         if version:
             version = int(version.timestamp())
-            cache.set('liveries_css_version', version)
+            cache.set('liveries_css_version', version, None)
     return version
 
 

@@ -13,6 +13,6 @@ def vehicle_varnish_ban(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Livery)
 def liveries_varnish_ban(sender, instance, **kwargs):
-    cache.set('liveries_css_version', int(instance.updated_at.timestamp()))
+    cache.set('liveries_css_version', int(instance.updated_at.timestamp()), None)
     varnish_ban('/map')
     varnish_ban('/api/liveries/')
