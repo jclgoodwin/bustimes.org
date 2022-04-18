@@ -339,17 +339,18 @@ def vehicles_json(request):
         vehicle_id = int(vehicle_ids[i])
         if item:
             item = json.loads(item)
-            try:
-                vehicle = vehicles[vehicle_id]
-            except KeyError:
-                pass  # vehicle was deleted?
-            else:
-                item['vehicle'] = vehicle.get_json(item['heading'])
-                if vehicle.service_line_name:
-                    item["service"] = {
-                        "line_name": vehicle.service_line_name,
-                        "url": f"/services/{vehicle.service_slug}"
-                    }
+            if vehicles:
+                try:
+                    vehicle = vehicles[vehicle_id]
+                except KeyError:
+                    continue  # vehicle was deleted?
+                else:
+                    item['vehicle'] = vehicle.get_json(item['heading'])
+                    if vehicle.service_line_name:
+                        item["service"] = {
+                            "line_name": vehicle.service_line_name,
+                            "url": f"/services/{vehicle.service_slug}"
+                        }
 
             if trip and 'trip_id' in item and item['trip_id'] == trip:
                 vj = VehicleJourney(service_id=item['service_id'], trip_id=trip)
