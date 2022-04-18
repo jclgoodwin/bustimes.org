@@ -167,7 +167,7 @@ def do_revisions(vehicles, data, user):
             revision.from_operator = revision.vehicle.operator
             revision.to_operator = data['operator']
             revision.vehicle.operator = data['operator']
-            changed_fields.append('operator')
+        changed_fields.append('operator')
         del data['operator']
 
     return revisions, changed_fields
