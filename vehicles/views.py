@@ -327,7 +327,7 @@ def vehicles_json(request):
         if to_remove:
             redis_client.zrem('vehicle_location_locations', *to_remove)
 
-        journeys = cache.get_many([f"journey{item['journey_id']}" for item in vehicle_locations])
+        journeys = cache.get_many([f"journey{item['journey_id']}" for item in vehicle_locations if item])
 
         # only get vehicles with unexpired locations
         try:
