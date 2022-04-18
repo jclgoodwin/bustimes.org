@@ -340,6 +340,8 @@ def vehicles_json(request):
             )
         except OperationalError:
             vehicles = {}
+    else:
+        journeys = {}
 
     locations = []
 
