@@ -160,6 +160,16 @@ def do_revisions(vehicles, data, user):
         for revision in revisions:
             revision.message = data['summary']
 
+    # operator has its own ForeignKey fields:
+
+    if 'operator' in data:
+        for revision in revisions:
+            revision.from_operator = revision.vehicle.operator
+            revision.to_operator = data['operator']
+            revision.vehicle.operator = data['operator']
+            changed_fields.append('operator')
+        del data['operator']
+
     return revisions, changed_fields
 
 
@@ -204,15 +214,6 @@ def do_revision(vehicle, data, user):
                 setattr(vehicle, field, to_value)
                 changed_fields.append(field)
                 del data[field]
-
-    # operator has its own ForeignKey fields:
-
-    if 'operator' in data:
-        revision.from_operator = vehicle.operator
-        revision.to_operator = data['operator']
-        vehicle.operator = data['operator']
-        changed_fields.append('operator')
-        del data['operator']
 
     if changed_fields:
         vehicle.save(update_fields=changed_fields)
