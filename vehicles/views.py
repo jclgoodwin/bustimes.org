@@ -354,7 +354,9 @@ def vehicles_json(request):
         if item:
             journey_cache_key = f"journey{item['journey_id']}"
 
-            if vehicles:
+            if journey_cache_key in journeys:
+                item.update(journeys[journey_cache_key])
+            elif vehicles:
                 try:
                     vehicle = vehicles[vehicle_id]
                 except KeyError:
@@ -370,8 +372,6 @@ def vehicles_json(request):
                         }
                     journeys_to_cache_later[journey_cache_key] = journey
                     item.update(journey)
-            elif journey_cache_key in journeys:
-                item.update(journeys[journey_cache_key])
 
             del item['journey_id']
 
