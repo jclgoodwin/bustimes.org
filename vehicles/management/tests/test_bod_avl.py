@@ -278,7 +278,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         with self.assertNumQueries(1):
             response = self.client.get("/vehicles.json")
-        self.assertEqual(len(response.json()), 2)
+        self.assertEqual(len(response.json()), 3)
 
         # with self.assertNumQueries(0):
         #     response = self.client.get("/vehicles.json?service__isnull=True")
