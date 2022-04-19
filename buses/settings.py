@@ -183,6 +183,8 @@ elif REDIS_URL:
         }
     }
 
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
 
 VARNISH_HOST = os.environ.get('VARNISH_HOST')
 VARNISH_PORT = os.environ.get('VARNISH_PORT')
