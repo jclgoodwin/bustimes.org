@@ -82,22 +82,24 @@ ROOT_URLCONF = 'buses.urls'
 ASGI_APPLICATION = 'vehicles.routing.application'
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.environ.get('DB_NAME', 'bustimes'),
-        'CONN_MAX_AGE': os.environ.get('CONN_MAX_AGE', 0),
-        # 'DISABLE_SERVER_SIDE_CURSORS': True,
-        'OPTIONS': {
-            'application_name': os.environ.get('APPLICATION_NAME') or ' '.join(sys.argv)[:63],
-            'connect_timeout': 3
+    "default": {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.environ.get("DB_NAME", "bustimes"),
+        "CONN_MAX_AGE": None,
+        "OPTIONS": {
+            "application_name": os.environ.get("APPLICATION_NAME") or " ".join(sys.argv)[-63:],
+            "connect_timeout": 9,
         },
-        'TEST': {
-            'SERIALIZE': False
+        "TEST": {
+            "SERIALIZE": False
         }
     }
 }
+if DEBUG and "runserver" in sys.argv:
+    DATABASES["default"]["CONN_MAX_AGE"] = 0
+
 TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
-NUM_SLOW_TESTS = 20
+NUM_SLOW_TESTS = 10
 
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/vehicles'
