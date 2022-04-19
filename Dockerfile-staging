@@ -1,8 +1,8 @@
 # Digital Ocean App Platform
 
-FROM python:3.10-bullseye
+FROM nikolaik/python-nodejs:python3.10-nodejs17-bullseye
 
-RUN apt-get update && apt-get install -y gdal-bin npm
+RUN apt-get clean && apt-get update && apt-get install -y gdal-bin && rm -rf /var/lib/apt/lists/*
 
 RUN pip install poetry
 
