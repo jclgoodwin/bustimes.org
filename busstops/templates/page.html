@@ -21,8 +21,8 @@
     <link rel="stylesheet" href="{% static 'css/ie.css' %}" />
     <script src="{% static "js/html5shiv/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
-{% block head %}
-{% endblock %}
+{% block head %}{% endblock %}
+{% block fuse %}<script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>{% endblock %}
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
 <a href="#content" class="skip">Skip to main content</a>
@@ -52,9 +52,6 @@
 
 {% block footer %}
 <footer>
-    {% block ad %}
-    {% endblock %}
-
     {% if user.is_authenticated %}
         <ul>
             <li>user {{ user.id }}</li>

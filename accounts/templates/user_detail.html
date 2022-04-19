@@ -4,6 +4,8 @@
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
+{% block fuse %}{% endblock %}
+
 {% block content %}
 
     <h1>{% if object.trusted is False %}<del>{% endif %}User {{ object.id }}{% if object.trusted is False %}</del>{% endif %}</h1>
@@ -44,5 +46,3 @@
     {% include 'pagination.html' with page=revisions %}
 
 {% endblock %}
-
-{% block ad %}{% endblock %}

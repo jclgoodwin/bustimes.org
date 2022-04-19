@@ -11,7 +11,7 @@
     #map {
         top: 104px;
         position: absolute;
-        bottom: 42px;
+        bottom: 102px;
         width: 100%;
     }
 
@@ -24,7 +24,6 @@
 
     footer {
         bottom: 0;
-        margin-bottom: 0;
         position: absolute;
         width: 100%;
     }
@@ -33,6 +32,18 @@
     .breadcrumb {
         border: 0;
     }
+
+    @media (max-width: 600px) {
+        #map {
+            bottom: 92px;
+        }
+    }
+
+    @media (min-width: 960px) {
+        #map {
+            bottom: 132px;
+        }
+    }    
     </style>
 {% endblock %}
 
@@ -45,8 +56,6 @@
     </div>
 
 {% endblock %}
-
-{% block ad %}{% endblock %}
 
 {% block foot %}
     {% load static %}
