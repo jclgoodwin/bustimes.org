@@ -113,11 +113,15 @@ class Command(BaseCommand):
         if line_name.endswith('x'):  # Aircoach
             line_name = line_name.replace('-', '').upper()
 
+        q = Exists(
+            Route.objects.filter(code=line['route_id'], service=OuterRef('id'))
+        ) | Q(service_code=line['route_id'])
+
+        if line_name:
+            q |= Q(line_name__iexact=line_name)
+
         service = self.source.service_set.filter(
-            Q(line_name__iexact=line_name) |
-            Exists(
-                Route.objects.filter(code=line['route_id'], service=OuterRef('id'))
-            ) | Q(service_code=line['route_id'])
+            q
         ).order_by('id').first()
         if not service:
             service = Service(source=self.source)
