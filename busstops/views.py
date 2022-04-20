@@ -611,7 +611,9 @@ class ServiceDetailView(DetailView):
 
         # timetable
 
-        if not self.object.timetable_wrong:
+        if self.object.timetable_wrong or self.object.mode in ('metro', 'rail', 'underground', 'tram'):
+            date = None
+        else:
             date = self.request.GET.get('date')
             if date:
                 try:
@@ -632,9 +634,6 @@ class ServiceDetailView(DetailView):
 
                 registrations = {route.registration_id for route in timetable.routes if route.registration_id}
                 context['registrations'] = Registration.objects.filter(id__in=registrations)
-
-        else:
-            date = None
 
         if self.object.tracking and self.object.vehiclejourney_set.exists():
             context['vehicles'] = True
