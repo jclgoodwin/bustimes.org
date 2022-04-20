@@ -10,6 +10,7 @@ from time import sleep
 from django.core.management.base import BaseCommand
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.gis.geos import Point
+from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
@@ -222,6 +223,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 changed.append('destination')
             if changed:
                 latest_journey.save(update_fields=changed)
+                if changed != ['source']:
+                    cache.delete(f"journey{latest_journey.id}")
 
             journey = latest_journey
 
