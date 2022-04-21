@@ -22,7 +22,19 @@
     <script src="{% static "js/html5shiv/html5shiv-printshiv.min.js" %}"></script>
 <![endif]-->
 {% block head %}{% endblock %}
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-65987478-1"></script>
+<script>
+window['gtag_enable_tcf_support'] = true;
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'UA-65987478-1');
+</script>
+
 {% block fuse %}<script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>{% endblock %}
+
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
 <a href="#content" class="skip">Skip to main content</a>
@@ -69,8 +81,6 @@
 {% endblock %}
 
 {% block foot %}{% endblock %}
-
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "9ebb5dd4394643d3a23e799cc3c43e12"}'></script>
 
 </body>
 </html>
