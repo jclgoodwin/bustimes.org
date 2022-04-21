@@ -6,20 +6,22 @@
 
 {% block bodyclass %}narrow{% endblock %}
 
+{% block breadcrumb %}{% endblock %}
+
 {% block content %}
 
-<h1>Page not found</h1>
+    <h1>Page not found</h1>
 
-{% if exception.args %}
-    <p>{{ exception }}</p>
-{% else %}
-    <p>Sorry, this page doesn’t exist</p>
-{% endif %}
+    {% if exception.args %}
+        <p>{{ exception }}</p>
+    {% else %}
+        <p>Sorry, this page doesn’t exist. Try searching?</p>
+    {% endif %}
 
-<form method="get" action="/search" class="search">
-    <h2><label for="q">Search</label></h2>
-    <input name="q" id="q" type="search" required>
-    <input type="submit" value="Search">
-</form>
+    <form method="get" action="/search" class="search">
+        <h2><label for="q">Search</label></h2>
+        <input name="q" id="q" type="search" required>
+        <input type="submit" value="Search">
+    </form>
 
 {% endblock %}

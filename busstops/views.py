@@ -108,9 +108,9 @@ def not_found(request, exception):
 
 def error(request):
     context = {}
+    _, exception, tb = sys.exc_info()
+    context["exception"] = exception
     if request.user.is_superuser:
-        _, exception, tb = sys.exc_info()
-        context["exception"] = exception
         context["traceback"] = traceback.format_tb(tb)
     response = render(None, '500.html', context)
     response.status_code = 500

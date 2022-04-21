@@ -1,23 +1,29 @@
 {% extends 'page.html' %}
 
-{% block title %}Error{% endblock %}
+{% block title %}Error 500{% endblock %}
 
 {% block fuse %}{% endblock %}
 
 {% block bodyclass %}narrow{% endblock %}
 
+{% block breadcrumb %}{% endblock %}
+
 {% block content %}
 
-<p>The website is having technical difficulties</p>
+    <h1>Error</h1>
 
-{{ request }}
+    <p>Sorry, something has gone wrong. That’s all we know.</p>
 
-{% if exception %}
-    <p><code>{{ exception }}</code></p>
+    {% if exception %}
+        <details>
+            <summary>Technical details</summary>
 
-    {% for line in traceback %}
-        <pre>{{ line }}</pre>
-    {% endfor %}
-{% endif %}
+            <p><code>{{ exception }}</code></p>
+
+            {% for line in traceback %}
+                <pre>{{ line }}</pre>
+            {% endfor %}
+        </details>
+    {% endif %}
 
 {% endblock %}
