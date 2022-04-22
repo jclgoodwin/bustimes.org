@@ -4,7 +4,7 @@
 import os
 import sys
 from pathlib import Path
-from django.db.utils import OperationalError
+from django.security import DisallowedHost
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -207,9 +207,11 @@ USE_L10N = False  # force use of TIME_FORMAT, DATE_FORMAT etc. Alas, deprecated
 
 
 def before_send(event, hint):
+    """Stop some uninteresting types of error from being sent to Sentry
+    """
     if 'exc_info' in hint:
         exc_type, exc_value, traceback = hint['exc_info']
-        if isinstance(exc_value, OperationalError):
+        if isinstance(exc_value, DisallowedHost):
             return
     return event
 

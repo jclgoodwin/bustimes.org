@@ -118,9 +118,30 @@ def error(request):
 
 
 def robots_txt(request):
-    """robots.txt for the staging site only, should be overridden on the live site"""
+    if request.get_host() == "bustimes.org":  # live site
+        content = """User-agent: *
+Disallow: /search
+Disallow: /trips/
+Disallow: /accounts/
+Disallow: /fares/
 
-    return HttpResponse("""User-agent: Mediapartners-Google
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: dotbot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+"""
+    else:  # staging site/other
+        content = """User-agent: Mediapartners-Google
 Disallow:
 
 User-agent: AdsBot-Google
@@ -128,7 +149,9 @@ Disallow:
 
 User-agent: *
 Disallow: /
-""", content_type="text/plain")
+"""
+
+    return HttpResponse(content, content_type="text/plain")
 
 
 def change_password(request):
