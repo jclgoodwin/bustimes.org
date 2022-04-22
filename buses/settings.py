@@ -4,7 +4,6 @@
 import os
 import sys
 from pathlib import Path
-from django.security import DisallowedHost
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -206,16 +205,6 @@ LANGUAGE_CODE = 'en-gb'
 USE_L10N = False  # force use of TIME_FORMAT, DATE_FORMAT etc. Alas, deprecated
 
 
-def before_send(event, hint):
-    """Stop some uninteresting types of error from being sent to Sentry
-    """
-    if 'exc_info' in hint:
-        exc_type, exc_value, traceback = hint['exc_info']
-        if isinstance(exc_value, DisallowedHost):
-            return
-    return event
-
-
 if TEST:
     pass
 elif not DEBUG and 'collectstatic' not in sys.argv and 'SENTRY_DSN' in os.environ:
@@ -223,13 +212,15 @@ elif not DEBUG and 'collectstatic' not in sys.argv and 'SENTRY_DSN' in os.enviro
     from sentry_sdk.integrations.django import DjangoIntegration
     from sentry_sdk.integrations.redis import RedisIntegration
     from sentry_sdk.integrations.celery import CeleryIntegration
+    from sentry_sdk.integrations.logging import ignore_logger
 
     sentry_sdk.init(
         dsn=os.environ['SENTRY_DSN'],
         integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()],
         ignore_errors=[KeyboardInterrupt],
-        before_send=before_send
     )
+    ignore_logger("django.security.DisallowedHost")
+
 if not TEST:
     LOGGING = {
         'version': 1,
