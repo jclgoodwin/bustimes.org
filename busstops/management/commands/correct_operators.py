@@ -35,7 +35,7 @@ class Command(BaseCommand):
             if regions:
                 maybe_move_operator(operator, regions)
 
-        with open(settings.DATA_DIR / 'operators.yaml') as open_file:
+        with open(settings.BASE_DIR / 'fixtures' / 'operators.yaml') as open_file:
             records = yaml.load(open_file, Loader=yaml.BaseLoader)
             for code in records:
                 Operator.objects.filter(id=code).update(**records[code])

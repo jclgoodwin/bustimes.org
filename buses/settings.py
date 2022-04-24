@@ -12,6 +12,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split()
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))
+DEBUG = False
 
 SERVER_EMAIL = "contact@bustimes.org"
 DEFAULT_FROM_EMAIL = "bustimes.org <contact@bustimes.org>"
@@ -245,7 +246,11 @@ TFWM = {
     'app_key': os.environ.get('TFWM_APP_KEY')
 }
 
-DATA_DIR = BASE_DIR / 'data'
+DATA_DIR = os.environ.get('DATA_DIR')
+if DATA_DIR:
+    DATA_DIR = Path(DATA_DIR)
+else:
+    DATA_DIR = BASE_DIR / 'data'
 TNDS_DIR = DATA_DIR / 'TNDS'
 
 AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')

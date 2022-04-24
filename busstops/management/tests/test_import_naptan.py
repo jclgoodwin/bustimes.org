@@ -43,10 +43,10 @@ class NaptanTest(TestCase):
                 temp_dir_path = Path(temp_dir)
 
                 (temp_dir_path / "stops.yaml").symlink_to(
-                    settings.DATA_DIR / "stops.yaml"
+                    settings.DATA_DIR / "fixtures" / "stops.yaml"
                 )
 
-                with override_settings(DATA_DIR=temp_dir_path):
+                with override_settings(DATA_DIR=temp_dir_path, BASE_DIR=temp_dir_path / "fixtures"):
 
                     self.assertFalse((temp_dir_path / "naptan.xml").exists())
 
