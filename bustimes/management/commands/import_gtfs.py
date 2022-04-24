@@ -119,6 +119,8 @@ class Command(BaseCommand):
 
         if line_name:
             q |= Q(line_name__iexact=line_name)
+        elif description:
+            q |= Q(description=description)
 
         service = self.source.service_set.filter(
             q
