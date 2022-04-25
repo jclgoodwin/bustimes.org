@@ -10,7 +10,7 @@ from django.urls import reverse
 from urllib.parse import quote_plus
 
 from busstops.models import Operator, Service
-from .models import VehicleType, VehicleFeature, Livery, Vehicle, get_text_colour
+from .models import VehicleType, VehicleFeature, Livery, get_text_colour
 from . import fields
 
 from sql_util.utils import Exists

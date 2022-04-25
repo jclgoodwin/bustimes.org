@@ -467,7 +467,9 @@ class VehicleEdit(models.Model):
     changes = models.JSONField(null=True, blank=True)
     url = models.URLField(blank=True, max_length=255)
     approved = models.BooleanField(null=True, db_index=True)
-    arbiter = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True, related_name='arbited')
+    arbiter = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True, related_name='arbited'
+    )
     score = models.SmallIntegerField(default=0)
     datetime = models.DateTimeField(null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)

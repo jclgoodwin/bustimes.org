@@ -40,13 +40,17 @@ class FaresTest(TestCase):
 
         origin = FareZone.objects.get(name='Welbourn')
         destination = FareZone.objects.get(name='Cranwell')
-        response = self.client.get(f'{tariff.get_absolute_url()}?origin={origin.id}&destination={destination.id}')
+        response = self.client.get(
+            f'{tariff.get_absolute_url()}?origin={origin.id}&destination={destination.id}'
+        )
 
         self.assertContains(response, "<h3>Welbourn to Cranwell</h3>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
         # dataset detail view
-        response = self.client.get(f'{tariff.source.get_absolute_url()}?origin={origin.id}&destination={destination.id}')
+        response = self.client.get(
+            f'{tariff.source.get_absolute_url()}?origin={origin.id}&destination={destination.id}'
+        )
         self.assertContains(response, "<h3>Welbourn to Cranwell</h3>")
         self.assertContains(response, "<p>adult single: £1.50</p>")
 
