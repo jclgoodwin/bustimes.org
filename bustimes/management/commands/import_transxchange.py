@@ -794,7 +794,7 @@ class Command(BaseCommand):
 
         if not operators:
             basename = os.path.basename(filename)  # e.g. 'KCTB_'
-            if basename[4] == '_':
+            if basename[4:5] == '_':
                 maybe_operator_code = basename[:4]
                 if maybe_operator_code.isupper() and maybe_operator_code.isalpha():
                     try:
