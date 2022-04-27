@@ -16,7 +16,7 @@
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script>
-    fetch("https://bustimes.org/stats.json").then(response => response.json()).then(data => {
+    fetch("/stats.json").then(response => response.json()).then(data => {
         var journeys = d3.select("#journeys");
         var edits = d3.select("#edits");
 
@@ -104,7 +104,7 @@
 <svg id="timetables" width="792" height="800"></svg>
 
 <script>
-    fetch("https://bustimes.org/timetable-source-stats.json").then(response => response.json()).then(data => {
+    fetch("/timetable-source-stats.json").then(response => response.json()).then(data => {
         var timetables = d3.select("#timetables");
 
         data = data.map(item => {

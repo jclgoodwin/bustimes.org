@@ -1,6 +1,5 @@
-import json
 from django.core.management.base import BaseCommand
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core.cache import cache
 from django.db.models import Count, Q
 from django.utils import timezone
 from ...models import DataSource
@@ -30,16 +29,9 @@ class Command(BaseCommand):
             else:
                 stats['sources'][name] = source.count
 
-        filename = "timetable-source-stats.json"
-
-        try:
-            with open(filename, 'r') as open_file:
-                history = json.load(open_file)
-                history = history[-3000:]
-        except (FileNotFoundError, json.decoder.JSONDecodeError):
-            history = []
+        history = cache.get("timetable-source-stats", [])
+        history = history[-3000:]
 
         history.append(stats)
 
-        with open(filename, 'w') as open_file:
-            json.dump(history, open_file, cls=DjangoJSONEncoder)
+        cache.set("timetable-source-stats", history, None)

@@ -23,6 +23,8 @@ urlpatterns = [
     path("503", TemplateView.as_view(template_name="503.html")),
     path("data", TemplateView.as_view(template_name="data.html")),
     path("status", views.status),
+    path("timetable-source-stats.json", views.timetable_source_stats),
+    path("stats.json", views.stats),
     path("robots.txt", views.robots_txt),
     path("stops.csv", views.stops_csv),
     path(

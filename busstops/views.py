@@ -208,6 +208,14 @@ def status(request):
     })
 
 
+def stats(request):
+    return JsonResponse(cache.get("vehicle-tracking-stats", []), safe=False)
+
+
+def timetable_source_stats(request):
+    return JsonResponse(cache.get("timetable-source-stats", []), safe=False)
+
+
 def stops(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
