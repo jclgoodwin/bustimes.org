@@ -1538,6 +1538,14 @@ nav {
 }
 
 .regions {
+    li {
+        padding: .125em 0;
+    }
+
+    a {
+        margin: -.125em 0;
+    }
+
     ul {
         margin: .25em 0 .25em 1em;
     }
