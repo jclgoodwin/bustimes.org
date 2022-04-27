@@ -60,11 +60,8 @@
 {% block foot %}
     {% load static %}
     <script>OPERATOR_ID="{{ operator.id }}";</script>
-    <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-    <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-    <script src="{% static 'js/leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}"></script>
+    {% include "maps_js.html" %}
     <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script src="{% static 'js/maps.js' %}"></script>
     <script async src="{% static 'js/operator-map.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}

@@ -74,10 +74,7 @@
 
 {% block foot %}
     {% if stops_json %}
-        <link rel="stylesheet" href="{% static 'js/leaflet/leaflet.css' %}">
-        <script src="{% static 'js/leaflet/leaflet.js' %}"></script>
-        <script src="{% static 'js/leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}"></script>
-        <script src="{% static 'js/maps.js' %}"></script>
+        {% include "maps_js.html" %}
         {% if object.route.service.tracking %}
             <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
             <script src="{% static 'js/reqwest.min.js' %}"></script>
