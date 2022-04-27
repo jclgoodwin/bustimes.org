@@ -95,7 +95,7 @@ DATABASES = {
     }
 }
 if DEBUG and "runserver" in sys.argv:
-    DATABASES["default"]["CONN_MAX_AGE"] = 0
+    DATABASES["default"]["CONN_MAX_AGE"] = 0  # reset to the default
 
 TEST_RUNNER = 'django_slowtests.testrunner.DiscoverSlowestTestsRunner'
 NUM_SLOW_TESTS = 10
@@ -405,7 +405,9 @@ BOD_OPERATORS = [
     ('PTSG', None, {
         'ABUS': 'ABUS',
         'PTSG': 'PTSG',
+        'MPTR': 'MPTR',
     }, False),
+
     ('TNXB', 'WM', {
         'TNXB': 'TNXB',
         'TCVW': 'TCVW',
@@ -490,14 +492,12 @@ BOD_OPERATORS = [
     ('NRTL', 'SW', {}, False),
     ('PRIC', 'SW', {}, False),
     ('LIHO', 'SW', {}, False),
-    ('DPCR', 'SW', {}, False),
+    # ('DPCR', 'SW', {}, False),
 
     # ('NATX', 'GB', {}, False),
     ('KETR', 'SE', {}, False),
     # ('PCCO', 'EM', {}, False),
-    ('HCCL', 'NE', {
-        'HCC': 'WGHC'
-    }, False),
+    ('WGHC', 'NE', {}, False),
 
     ('SPSV', 'SE', {}, False),
     ('NVTR', 'SE', {}, False),
@@ -531,7 +531,7 @@ BOD_OPERATORS = [
     # }, False),
 
     ('LAWS', 'EM',  {}, False),
-    ('BMCS', 'SE',  {}, False),
+    # ('BMCS', 'SE',  {}, False),
 
     ('AJCO', 'EA', {}, False),
     ('LTEA', 'EA', {}, False),
