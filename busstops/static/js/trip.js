@@ -11,7 +11,6 @@
     if (document.referrer.indexOf('/stops/') > -1) {
         var links = document.querySelectorAll('.trip-timetable a');
         links.forEach(function(link) {
-            // debugger;
             if (link.href === document.referrer) {
                 link.parentNode.parentNode.classList.add('referrer');
             }
@@ -87,16 +86,22 @@
 
         window.bustimes.map = map;
 
-        var bounds = L.latLngBounds(),
-            previousLocation;
+        var stops = window.STOPS.times.filter(function(time) {
+            return time.stop.location;
+        });
 
-        window.STOPS.times.forEach(function(time) {
-            var stop = time.stop;
-            if (!stop.location) {
-                return;
-            }
+        var bounds = L.latLngBounds(stops.map(function(time) {
+            time.stop.location = L.GeoJSON.coordsToLatLng(time.stop.location);
+            return time.stop.location;
+        }));
 
-            var location = L.GeoJSON.coordsToLatLng(stop.location);
+        map.fitBounds(bounds);
+
+        var previousLatLng;
+
+        stops.forEach(function(time) {
+            var stop = time.stop,
+                latLng = stop.location;
 
             if (time.track) {
                 L.geoJSON({
@@ -105,9 +110,9 @@
                 }, {
                     interactive: false,
                 }).addTo(map);
-            } else if (previousLocation) {
+            } else if (previousLatLng) {
                 L.polyline(
-                    [previousLocation, location],
+                    [previousLatLng, latLng],
                     {
                         dashArray: '4',
                         interactive: false,
@@ -121,7 +126,7 @@
                 html = '<div class="stop-arrow no-direction"></div>';
             }
 
-            L.marker(location, {
+            L.marker(latLng, {
                 icon: L.divIcon({
                     iconSize: [9, 9],
                     html: html,
@@ -129,12 +134,8 @@
                 })
             }).bindTooltip(time.aimed_arrival_time || time.aimed_departure_time).addTo(map);
 
-            bounds.extend(location);
-
-            previousLocation = location;
+            previousLatLng = latLng;
         });
-
-        map.fitBounds(bounds);
 
         loadVehicles();
 
