@@ -10,7 +10,8 @@ def get_routes(routes, when=None, from_date=None):
     if when:
         routes = [route for route in routes if route.contains(when)]
     if from_date:
-        routes = [route for route in routes if route.start_date is None or route.start_date <= from_date]
+        # just filter out previous versions
+        routes = [route for route in routes if route.end_date is None or route.end_date >= from_date]
 
     if len(routes) == 1:
         return routes
