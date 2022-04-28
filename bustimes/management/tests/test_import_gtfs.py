@@ -58,6 +58,9 @@ class GTFSTest(TestCase):
         # Create an existing operator (with a slightly different name) to test that it is re-used
         Operator.objects.create(id=132, name='Seumas Doherty', region=cls.leinster)
 
+        # this should get updated later
+        StopPoint.objects.create(atco_code="8220DB000759", common_name="Estadio Donnybrook", active=True)
+
     def test_import_gtfs(self):
         with TemporaryDirectory() as directory:
 
@@ -67,12 +70,20 @@ class GTFSTest(TestCase):
             with override_settings(DATA_DIR=directory):
                 with vcr.use_cassette(str(FIXTURES_DIR / 'google_transit_ie.yaml')) as cassette:
                     with self.assertLogs('bustimes.management.commands.import_gtfs', 'INFO'):
-                        call_command('import_gtfs', '--force', '-v2')
+                        with self.assertLogs('bustimes.utils', 'ERROR') as cm:
+                            call_command('import_gtfs', '--force', '-v2')
 
-                        cassette.rewind()
+                            cassette.rewind()
 
-                        # import a second time - test that it's OK if stuff already exists
-                        call_command('import_gtfs', '--force')
+                            # import a second time - test that it's OK if stuff already exists
+                            call_command('import_gtfs', '--force')
+
+        self.assertEqual(cm.output, [
+            'ERROR:bustimes.utils:<Response [404]> '
+            'https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip',
+            'ERROR:bustimes.utils:<Response [404]> '
+            'https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip'
+        ])
 
         # stops
         self.assertEqual(StopPoint.objects.count(), 75)
@@ -132,6 +143,11 @@ class GTFSTest(TestCase):
         res = self.client.get(self.dublin.get_absolute_url())
         self.assertContains(res, 'Bus services in Dublin', html=True)
         self.assertContains(res, '/services/165')
+
+        # check that the common_name and latlong of the existing stop were updated
+        stop = StopPoint.objects.get(atco_code="8220DB000759")
+        self.assertEqual(stop.common_name, "Donnybrook, Old Wesley Rugby Football Club")
+        self.assertEqual(str(stop.latlong), "SRID=4326;POINT (-6.23334551683733 53.3203488508422)")
 
     def test_download_if_modified(self):
         path = Path('poop.txt')

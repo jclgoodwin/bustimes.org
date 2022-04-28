@@ -1,8 +1,12 @@
 import os
 import requests
 import datetime
+import logging
 from django.utils.timezone import utc, make_aware
 from django.utils.http import http_date, parse_http_date
+
+
+logger = logging.getLogger(__name__)
 
 
 def write_file(path, response):
@@ -34,7 +38,7 @@ def download_if_changed(path, url, params=None):
             modified = False
         elif not response.ok:
             modified = False
-            print(response, url)
+            logger.error(f"{response} {url}")
         else:
             write_file(path, response)
 
