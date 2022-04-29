@@ -507,7 +507,7 @@ class Command(ImportLiveVehiclesCommand):
             heading=bearing,
             occupancy=monitored_vehicle_journey.get('Occupancy', '')
         )
-        extensions = item['Extensions']
+        extensions = item.get('Extensions')
         if extensions:
             extensions = extensions.get('VehicleJourney') or extensions.get('VehicleJourneyExtensions')
         if extensions:
