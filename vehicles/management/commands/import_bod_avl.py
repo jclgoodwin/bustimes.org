@@ -507,16 +507,19 @@ class Command(ImportLiveVehiclesCommand):
             heading=bearing,
             occupancy=monitored_vehicle_journey.get('Occupancy', '')
         )
-        try:
-            extensions = item['Extensions']
-            extensions = extensions.get('VehicleJourney') or extensions['VehicleJourneyExtensions']
-            location.occupancy_thresholds = extensions['OccupancyThresholds']
-            location.seated_occupancy = int(extensions['SeatedOccupancy'])
-            location.seated_capacity = int(extensions['SeatedCapacity'])
-            location.wheelchair_occupancy = int(extensions['WheelchairOccupancy'])
-            location.wheelchair_capacity = int(extensions['WheelchairCapacity'])
-        except (KeyError, TypeError):
-            pass
+        extensions = item['Extensions']
+        if extensions:
+            extensions = extensions.get('VehicleJourney') or extensions.get('VehicleJourneyExtensions')
+        if extensions:
+            location.occupancy_thresholds = extensions.get('OccupancyThresholds')
+            if 'SeatedOccupancy' in extensions:
+                location.seated_occupancy = int(extensions['SeatedOccupancy'])
+            if 'SeatedCapacity' in extensions:
+                location.seated_capacity = int(extensions['SeatedCapacity'])
+            if 'WheelchairOccupancy' in extensions:
+                location.wheelchair_occupancy = int(extensions['WheelchairOccupancy'])
+            if 'WheelchairCapacity' in extensions:
+                location.wheelchair_capacity = int(extensions['WheelchairCapacity'])
         return location
 
     @staticmethod
