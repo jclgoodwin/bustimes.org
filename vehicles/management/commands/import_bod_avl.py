@@ -508,7 +508,8 @@ class Command(ImportLiveVehiclesCommand):
             occupancy=monitored_vehicle_journey.get('Occupancy', '')
         )
         try:
-            extensions = item['Extensions']['VehicleJourney']
+            extensions = item['Extensions']
+            extensions = extensions.get('VehicleJourney') or extensions['VehicleJourneyExtensions']
             location.occupancy_thresholds = extensions['OccupancyThresholds']
             location.seated_occupancy = int(extensions['SeatedOccupancy'])
             location.seated_capacity = int(extensions['SeatedCapacity'])
