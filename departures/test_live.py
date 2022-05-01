@@ -96,7 +96,7 @@ class LiveDeparturesTest(TestCase):
     def test_tfl(self):
         """Test the Transport for London live departures source
         """
-        with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
+        with vcr.use_cassette('fixtures/vcr/tfl_arrivals.yaml'):
             row = live.TflDepartures(
                 self.london_stop,
                 [self.london_service]
@@ -107,7 +107,7 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(7, row['live'].date().month)
         self.assertEqual(26, row['live'].date().day)
 
-        with vcr.use_cassette('data/vcr/tfl_arrivals.yaml'):
+        with vcr.use_cassette('fixtures/vcr/tfl_arrivals.yaml'):
             response = self.client.get('/stops/' + self.london_stop.pk)
 
         self.assertContains(response, """
@@ -141,14 +141,14 @@ class LiveDeparturesTest(TestCase):
 
     @time_machine.travel(datetime.date(2018, 10, 27))
     def test_translink_metro(self):
-        with vcr.use_cassette('data/vcr/translink_metro.yaml'):
+        with vcr.use_cassette('fixtures/vcr/translink_metro.yaml'):
             res = self.client.get(self.translink_metro_stop.get_absolute_url())
         self.assertNotContains(res, '<h3>')
         self.assertContains(res, '<tr><td>14B</td><td>City Express</td><td>08:22</td></tr>', html=True)
         self.assertContains(res, '<tr><td>1A</td><td>City Centre</td><td>07:54⚡</td></tr>', html=True)
 
     def test_translink_metro_no_services_running(self):
-        with vcr.use_cassette('data/vcr/translink_metro.yaml', match_on=['body']):
+        with vcr.use_cassette('fixtures/vcr/translink_metro.yaml', match_on=['body']):
             departures = live.AcisHorizonDepartures(StopPoint(pk='700000000748'), ())
             self.assertEqual([], departures.get_departures())
 
@@ -209,7 +209,7 @@ class LiveDeparturesTest(TestCase):
     @patch('vehicles.tasks.log_vehicle_journey.delay')
     def test_worcestershire(self, mocked_log_vehicle_journey):
         with time_machine.travel('Sat Feb 09 10:45:45 GMT 2019'):
-            with vcr.use_cassette('data/vcr/worcester.yaml'):
+            with vcr.use_cassette('fixtures/vcr/worcester.yaml'):
                 with self.assertNumQueries(11):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
 

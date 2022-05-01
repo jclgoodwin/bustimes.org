@@ -17,8 +17,8 @@ class VehicleCodeTest(TestCase):
         Vehicle.objects.create(code="7642")
 
     def test_import_tfl(self):
-        path = settings.DATA_DIR / 'vcr' / 'tfl_vehicle_code.yaml'
+        path = settings.BASE_DIR / "fixtures" / "vcr" / "tfl_vehicle_code.yaml"
         with use_cassette(str(path)):
-            call_command('tfl_vehicle_codes')
+            call_command("tfl_vehicle_codes")
 
         self.assertEqual(Vehicle.objects.all().count(), 6)

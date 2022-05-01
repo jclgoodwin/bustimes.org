@@ -26,7 +26,9 @@ class Command(BaseCommand):
 
         scheme = "TFLO"
 
-        existing_codes = VehicleCode.objects.filter(scheme=scheme).select_related('vehicle')
+        existing_codes = VehicleCode.objects.filter(scheme=scheme).select_related(
+            "vehicle"
+        )
         existing_codes = {code.code: code.vehicle for code in existing_codes}
 
         response = requests.get(url, timeout=10)
@@ -41,6 +43,8 @@ class Command(BaseCommand):
                 vehicle = get_tfl_vehicle(reg)
                 if not vehicle:
                     continue
-                code = VehicleCode.objects.create(code=vehicle_id, scheme=scheme, vehicle=vehicle)
+                code = VehicleCode.objects.create(
+                    code=vehicle_id, scheme=scheme, vehicle=vehicle
+                )
                 existing_codes[vehicle_id] = code
                 Vehicle.objects.filter(code=vehicle_id, operator=None).delete()

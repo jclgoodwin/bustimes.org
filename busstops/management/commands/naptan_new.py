@@ -200,7 +200,7 @@ class Command(BaseCommand):
         source.save(update_fields=["settings"])
 
         # set up overrides/corrections
-        overrides_path = settings.DATA_DIR / "stops.yaml"
+        overrides_path = settings.BASE_DIR / "fixtures" / "stops.yaml"
         with overrides_path.open() as open_file:
             self.overrides = yaml.load(open_file, yaml.BaseLoader)
 
