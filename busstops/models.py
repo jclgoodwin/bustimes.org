@@ -270,8 +270,7 @@ class DataSource(models.Model):
             else:
                 text = escape(text)
             if date:
-                date = date.strftime('%-d %B %Y')
-                text = mark_safe(f'{text}, {date}')
+                text = mark_safe(f'{text}, {date:%-d %B %Y}')
             return text
 
         return ''
@@ -812,8 +811,7 @@ class Service(models.Model):
 
                     text = 'Timetable'
                     if i:  # probably a future-dated version
-                        date = route.start_date.strftime('%-d %B')
-                        text = f'{text} from {date}'
+                        text = f'{text} from {route.start_date:%-d %B}'
                     text = f'{text} on the Traveline South West website'
 
                     yield (

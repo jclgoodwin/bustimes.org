@@ -46,8 +46,7 @@ class DataSet(models.Model):
             text = format_html('<a href="{}">{}</a>', self.url, text)
 
         if self.datetime:
-            date = self.datetime.strftime('%-d %B %Y')
-            text = f'{text}, {date}'
+            text = f'{text}, {self.datetime:%-d %B %Y}'
 
         return mark_safe(f'<p class="credit">Fares data from {text}</p>')
 

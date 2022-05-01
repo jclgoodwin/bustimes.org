@@ -767,8 +767,7 @@ class VehicleJourney(models.Model):
         return settings.DATA_DIR / 'journeys' / str(self.datetime.date()) / str(self.id)
 
     def __str__(self):
-        when = self.datetime.strftime('%-d %b %y %H:%M')
-        when = f"{when} {self.route_name} {self.code} {self.direction}"
+        when = f"{self.datetime:%-d %b %y %H:%M} {self.route_name} {self.code} {self.direction}"
         if self.destination:
             when = f'{when} to {self.destination}'
         return when

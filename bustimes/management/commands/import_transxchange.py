@@ -459,7 +459,7 @@ class Command(BaseCommand):
         if operating_period.start == operating_period.end:
             if summary:
                 summary = f"{summary}, "
-            summary = f"{summary}{operating_period.start.strftime('%A %-d %B %Y')} only"
+            summary = f"{summary}{operating_period.start:%A %-d %B %Y} only"
 
         if summary:
             summary = get_summary(summary)
