@@ -887,7 +887,7 @@ def service_map_data(request, service_id):
 
             return JsonResponse(data)
 
-    routes = get_routes(service.route_set.select_related('source'), timezone.localdate())
+    routes = get_routes(service.route_set.select_related('source'), when=timezone.localdate())
 
     stop_times = StopTime.objects.filter(stop__isnull=False)
     stop_times = stop_times.only('trip_id', 'stop_id').order_by('trip_id', 'id')

@@ -178,7 +178,7 @@ class Timetable:
 
             if len(routes) > 1:
                 # consider revision numbers:
-                routes = get_routes(routes, self.date)
+                routes = get_routes(routes, when=self.date)
                 if routes:
                     self.current_routes = routes
 

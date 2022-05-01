@@ -170,22 +170,34 @@ class BusTimesTest(TestCase):
         ]
 
         # maximum revision number
-        self.assertEqual(get_routes(routes[:5]), [routes[4]])
+        self.assertEqual(
+            get_routes(routes[:5], when=date(2022, 4, 4)),
+            [routes[4]]
+        )
 
         # ignore duplicate source with the same sha1
-        self.assertEqual(get_routes(routes[:2]), [routes[1]])
+        self.assertEqual(
+            get_routes(routes[:2]),
+            [routes[1]]
+        )
 
         # Ticketer filename - treat '5B' and '5BH' despite having the same service_code
-        self.assertEqual(get_routes(routes[5:7]), routes[5:7])
+        self.assertEqual(
+            get_routes(routes[5:7]),
+            routes[5:7]
+        )
 
         # from_date - include future versions
         self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 3)), routes[2:4]
+            get_routes(routes[2:4], from_date=date(2022, 4, 3)),
+            routes[2:4]
         )
         self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 4)), routes[2:4]
+            get_routes(routes[2:4], from_date=date(2022, 4, 4)),
+            routes[2:4]
         )
         # ignore old versions:
         self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 5)), routes[3:4]
+            get_routes(routes[2:4], from_date=date(2022, 4, 5)),
+            routes[3:4]
         )
