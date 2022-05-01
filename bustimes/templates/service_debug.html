@@ -46,6 +46,10 @@
         <br>{{ route.service_code }}
         <br>{{ route.revision_number }}
         <br>{{ route.start_date }}–{{ route.end_date }}
+        <br>{{ route.description }}
+        <br>{{ route.origin }} to {{ route.destination }} via {{ route.via }}
+        <br>dates: {{ route.start_date }}–{{ route.end_date }}
+
         <br><a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a>
     </summary>
 
@@ -72,17 +76,17 @@
     <td>{% if trip.block %}{{ trip.block }}{% endif %}</td>
     <td>{{ trip.ticket_machine_code }}</td>
     <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
-    <td><a href="{{ trip.get_absolute_url }}">{{ trip.start_time }}</a></td>
+    <td class="date"><a href="{{ trip.get_absolute_url }}">{{ trip.start_time }}</a></td>
     <td>{{ trip.end_time }}</td>
     {% if trip.rowspan and trip.calendar %}
         <td rowspan="{{ trip.rowspan }}">{{ trip.calendar.start_date }}–<br>{{ trip.calendar.end_date }}</td>
-        <td rowspan="{{ trip.rowspan }}"><a href="{% url 'admin:bustimes_calendar_change' trip.calendar.id %}">{{ trip.calendar }}</a></td>
+        <td rowspan="{{ trip.rowspan }}" class="date"><a href="{% url 'admin:bustimes_calendar_change' trip.calendar.id %}">{{ trip.calendar }}</a></td>
         <td rowspan="{{ trip.rowspan }}">
             {% for bank_holiday in trip.calendar.calendarbankholiday_set.all %}
                 {{ bank_holiday }}<br>
             {% endfor %}
         </td>
-        <td rowspan="{{ trip.rowspan }}">
+        <td rowspan="{{ trip.rowspan }}" class="date">
             {% for calendar_date in trip.calendar.calendardate_set.all %}
                 <a href="{% url 'admin:bustimes_calendardate_change' calendar_date.id %}">{{ calendar_date }}</a>
             {% endfor %}
