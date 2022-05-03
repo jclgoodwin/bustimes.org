@@ -58,8 +58,7 @@ def get_livery_choices(operator, vehicle, user):
 
 class EditVehiclesForm(forms.Form):
     withdrawn = forms.BooleanField(
-        label='Permanently withdrawn', required=False,
-        help_text="""Do not tick this box"""
+        label='Permanently withdrawn', required=False
     )
     spare_ticket_machine = forms.BooleanField(
         required=False,
@@ -135,7 +134,7 @@ class EditVehicleForm(EditVehiclesForm):
     """
     fleet_number = forms.CharField(required=False, max_length=24)
     reg = fields.RegField(label='Number plate', required=False, max_length=24)
-    branding = forms.CharField(label="Other branding", required=False, max_length=255)
+    branding = forms.CharField(label="Other branding", required=False, max_length=255, help_text="Leave this blank")
     name = forms.CharField(label='Vehicle name', required=False, max_length=70, help_text="Leave this blank")
     previous_reg = fields.RegField(required=False, max_length=24, help_text="Separate multiple regs with a comma (,)")
     notes = forms.CharField(required=False, max_length=255)
