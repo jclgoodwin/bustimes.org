@@ -245,7 +245,11 @@ TFWM = {
     'app_key': os.environ.get('TFWM_APP_KEY')
 }
 
-DATA_DIR = BASE_DIR / 'data'
+DATA_DIR = os.environ.get('DATA_DIR')
+if DATA_DIR:
+    DATA_DIR = Path(DATA_DIR)
+else:
+    DATA_DIR = BASE_DIR / 'data'
 TNDS_DIR = DATA_DIR / 'TNDS'
 
 AKISMET_API_KEY = os.environ.get('AKISMET_API_KEY')

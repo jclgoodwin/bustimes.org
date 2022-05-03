@@ -1,13 +1,13 @@
 from vcr import use_cassette
-from pathlib import Path
 from django.test import TestCase, override_settings
 from django.core.cache import cache
 from django.core.management import call_command
+from django.conf import settings
 from busstops.models import Region, Operator, Service, DataSource, StopPoint, StopUsage
 from .models import Situation
 
 
-VCR_DIR = Path(__file__).resolve().parent.parent / 'data' / 'vcr'
+VCR_DIR = settings.BASE_DIR / 'fixtures' / 'vcr'
 
 
 class SiriSXTest(TestCase):

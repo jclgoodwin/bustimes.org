@@ -3,7 +3,6 @@
 import vcr
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 from ...models import Region, AdminArea, Locality, StopPoint, DataSource
@@ -41,10 +40,6 @@ class NaptanTest(TestCase):
             with vcr.use_cassette(str(FIXTURES_DIR / "naptan.yml")) as cassette:
 
                 temp_dir_path = Path(temp_dir)
-
-                (temp_dir_path / "stops.yaml").symlink_to(
-                    settings.DATA_DIR / "stops.yaml"
-                )
 
                 with override_settings(DATA_DIR=temp_dir_path):
 

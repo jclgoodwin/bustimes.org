@@ -7,12 +7,6 @@ from busstops.models import Region, Operator
 from ...models import Route
 
 
-@override_settings(PASSENGER_OPERATORS=[
-    ('Unilink', 'unilink', 'SW', {
-        'SQ': 'UNIL',
-        'BLUS': 'BLUS',
-    })
-])
 class ImportPassengerTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -24,11 +18,20 @@ class ImportPassengerTest(TestCase):
 
         fixtures_dir = Path(__file__).resolve().parent / 'fixtures'
 
-        with use_cassette(str(fixtures_dir / 'passenger.yaml'), decode_compressed_response=True):
-            with patch('bustimes.management.commands.import_passenger.write_file'):
-                with self.assertRaises(FileNotFoundError):
-                    with self.assertLogs('bustimes.management.commands.import_bod') as cm:
-                        call_command('import_passenger')
+        with override_settings(
+            DATA_DIR=fixtures_dir,
+            PASSENGER_OPERATORS=[
+                ('Unilink', 'unilink', 'SW', {
+                    'SQ': 'UNIL',
+                    'BLUS': 'BLUS',
+                })
+            ]
+        ):
+            with use_cassette(str(fixtures_dir / 'passenger.yaml'), decode_compressed_response=True):
+                with patch('bustimes.management.commands.import_passenger.write_file'):
+                    with self.assertRaises(FileNotFoundError):
+                        with self.assertLogs('bustimes.management.commands.import_bod') as cm:
+                            call_command('import_passenger')
 
         self.assertEqual(cm.output, [
             "INFO:bustimes.management.commands.import_bod:Unilink",

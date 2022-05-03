@@ -2,16 +2,7 @@
 .metadata_never_index
 *.pyc
 config/gunicorn.py
-data/TNDS/*.zip
-data/*.zip
-data/bod
-data/journeys
-data/ticketer/*.zip
-data/gtfs/*.zip
-data/*.xml
-data/*_*_*_*
-data/*.csv
-data/NPTG
+data
 node_modules
 htmlcov
 busstops/static/css/*.css
