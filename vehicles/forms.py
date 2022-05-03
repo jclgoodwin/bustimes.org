@@ -67,7 +67,7 @@ class EditVehiclesForm(forms.Form):
     operator = forms.ModelChoiceField(queryset=None, label='Operator', empty_label='')
     other_vehicle_type = forms.CharField(required=False)
     vehicle_type = forms.ModelChoiceField(queryset=VehicleType.objects, label='Type', required=False, empty_label='')
-    colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False)
+    colours = forms.ChoiceField(label='Livery', widget=forms.RadioSelect, required=False, help_text="Please only change a livery if you can provide proof of the vehicle in the new livery.")
     other_colour = forms.CharField(
         label='Other colours',
         help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with a silver front)", required=False)
@@ -80,6 +80,10 @@ class EditVehiclesForm(forms.Form):
 if they need explaining.
 E.g. how you know a vehicle has definitely been withdrawn or repainted,
 link to a picture to prove it. Be polite.""")
+    confirm = fields.BooleanField(
+        required=True,
+        help_text="I can confirm that this change is fact, not speculation. Where possible, I have provided proof of the change and I acknowledge that any edits based off speculation could lead to limitations on my account"
+    )
 
     def clean_other_colour(self):
         if self.cleaned_data['other_colour']:
