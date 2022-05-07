@@ -289,14 +289,26 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
 
     def test_livery(self):
         livery = Livery(name='Go-Coach', published=False)
+        livery.text_colour = '#c0c0c0'
+        livery.stroke_colour = '#ffee99'
         self.assertEqual('Go-Coach', str(livery))
         self.assertIsNone(livery.preview())
+        self.assertEqual(
+            '<div style="height:1.5em;width:2.25em;background:"></div> Go-Coach',
+            livery.preview(name=True)
+        )
 
         livery.colours = '#7D287D #FDEE00 #FDEE00'
         livery.horizontal = True
         livery.save()
         self.assertEqual('<div style="height:1.5em;width:2.25em;background:linear-gradient' +
                          '(to top,#7D287D 34%,#FDEE00 34%)" title="Go-Coach"></div>', livery.preview())
+        self.assertEqual(
+            livery.get_styles(),
+            [f""".livery-{livery.id} {{\n  background: linear-gradient(to top,#7D287D 34%,#FDEE00 34%);
+  color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""]
+        )
+
         livery.horizontal = False
         livery.angle = 45
         livery.save()
@@ -319,17 +331,53 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         self.assertEqual(livery.left_css, 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
         self.assertEqual(livery.right_css, 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
 
+
+    def test_liveries_css(self):
         response = self.client.get('/liveries.44.css')
         self.assertEqual(
             response.content.decode(),
-            f""".livery-{livery.id - 1} {{
+            f""".livery-{self.livery.id} {{
   background: linear-gradient(to right,#FF0000 50%,#0000FF 50%);
   color:#fff;fill:#fff
 }}
-.livery-{livery.id - 1}.right {{
+.livery-{self.livery.id}.right {{
   background: linear-gradient(to left,#FF0000 50%,#0000FF 50%)
 }}
 """)
+
+    def test_livery_validation(self):
+        livery = Livery()
+
+        livery.clean()  # should not raise an exception
+
+        livery.text_colour = '#c0c0c0'
+        livery.stroke_colour = '#ff00a9'
+        livery.right_css = '{'
+        with self.assertRaises(ValidationError) as cm:
+            livery.clean()
+        self.assertEqual(
+            cm.exception.args,
+            ({'right_css': 'Must not contain { or }'}, None, None)
+        )
+
+        livery.right_css = ''
+        livery.left_css = 'url(('
+        with self.assertRaises(ValidationError) as cm:
+            livery.clean()
+        self.assertEqual(
+            cm.exception.args,
+            ({'left_css': 'Must contain equal numbers of ( and )'}, None, None)
+        )
+
+        livery.left_css = ''
+        livery.stroke_colour = 'red'
+        with self.assertRaises(ValidationError) as cm:
+            livery.clean()
+        self.assertEqual(
+            cm.exception.args,
+            ({'stroke_colour': 'An HTML5 simple color must be a Unicode string '
+                'exactly seven characters long.'}, None, None)
+        )
 
     def test_vehicle_edit_1(self):
         url = self.vehicle_1.get_edit_url()
@@ -747,7 +795,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         response = self.client.get('/admin/vehicles/vehiclerevision/')
         self.assertContains(response, "reverted [&#x27;withdrawn&#x27;]")
 
-    def test_validation(self):
+    def test_vehicle_validation(self):
         vehicle = Vehicle(colours='ploop')
         with self.assertRaises(ValidationError):
             vehicle.clean()

@@ -1,5 +1,4 @@
 import math
-import beeline
 import requests
 import logging
 import redis

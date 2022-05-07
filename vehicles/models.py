@@ -175,21 +175,15 @@ You can use this field to make this livery selectable for a new operator – tha
     def clean(self):
         Vehicle.clean(self)  # validate colours field
 
-        if self.stroke_colour:
-            try:
-                html5_parse_simple_color(self.stroke_colour)
-            except ValueError as e:
-                raise ValidationError({
-                    'stroke_colour': str(e)
-                })
-
-        if self.text_colour:
-            try:
-                html5_parse_simple_color(self.text_colour)
-            except ValueError as e:
-                raise ValidationError({
-                    'text_colour': str(e)
-                })
+        for attr in ('stroke_colour', 'text_colour'):
+            value = getattr(self, attr)
+            if value:
+                try:
+                    html5_parse_simple_color(value)
+                except ValueError as e:
+                    raise ValidationError({
+                        attr: str(e)
+                    })
 
         for attr in ('css', 'left_css', 'right_css'):
             value = getattr(self, attr)
@@ -317,9 +311,7 @@ class Vehicle(models.Model):
             value = self.data.get(key)
             if value:
                 if key == 'Previous reg':
-                    if ',' in value:
-                        return ', '.join(format_reg(reg) for reg in value.split(','))
-                    return format_reg(value)
+                    return ', '.join(format_reg(reg) for reg in value.split(','))
                 return value
         return ''
 
