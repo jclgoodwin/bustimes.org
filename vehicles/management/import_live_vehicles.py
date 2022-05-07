@@ -300,11 +300,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
                 pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
 
-        with beeline.tracer(name="pipeline"):
-            try:
-                pipeline.execute()
-            except redis.exceptions.ConnectionError:
-                pass
+        try:
+            pipeline.execute()
+        except redis.exceptions.ConnectionError:
+            pass
 
         if self.history:
             # add locations to journey history
@@ -316,11 +315,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             self.to_save = []
 
-            with beeline.tracer(name="pipeline"):
-                try:
-                    pipeline.execute()
-                except redis.exceptions.ConnectionError:
-                    pass
+            try:
+                pipeline.execute()
+            except redis.exceptions.ConnectionError:
+                pass
 
     def do_source(self):
         if self.url:
