@@ -7,11 +7,10 @@ services:
       make watch &
       poetry run ./manage.py migrate &&
       poetry run ./manage.py collectstatic --noinput &&
-      poetry run ./manage.py runserver 0.0.0.0:8000
+      DEBUG=1 poetry run ./manage.py runserver 0.0.0.0:8000
       "
     container_name: django_web
     environment:
-      - DEBUG=${DEBUG-1}
       - SECRET_KEY=${SECRET_KEY-d}
       - PGHOST=${PGHOST-postgres}
       - PGUSER=${PGUSER-postgres}
@@ -30,6 +29,11 @@ services:
 
   postgres:
     image: ghcr.io/baosystems/postgis:latest  # unofficial image that properly supports arm64 instead of 'postgis/postgis'
+    tmpfs:
+      - "/var/lib/postgresql/data/"
+    # sloppy non-durable settings, which allegedly make the tests run faster
+    # not to be used in production!
+    command: --autovacuum=off --fsync=off --synchronous_commit=off --full_page_writes=off --work_mem=12MB --max-connections=10 --max_wal_senders=0
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
