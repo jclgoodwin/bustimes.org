@@ -361,9 +361,6 @@ PASSENGER_OPERATORS = [
     ('Go North West', 'gonorthwest', 'NW', {
         'GONW': 'GONW',
     }),
-    ('Go North West', 'gonorthwest', 'NW', {
-        'GONW': 'GONW',
-    }),
     ('Konectbus', 'konectbus', 'EA', {
         'KCTB': 'KCTB',
     }),
