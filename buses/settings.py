@@ -361,6 +361,12 @@ PASSENGER_OPERATORS = [
     ('Go North West', 'gonorthwest', 'NW', {
         'GONW': 'GONW',
     }),
+    ('Go North West', 'gonorthwest', 'NW', {
+        'GONW': 'GONW',
+    }),
+    ('Konectbus', 'konectbus', 'EA', {
+        'KCTB': 'KCTB',
+    }),
 ]
 
 # see bustimes.management.commands.import_bod
@@ -762,7 +768,8 @@ TICKETER_OPERATORS = [
     # ('SE', ['METR'], 'Metrobus'),
     ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     #('NW', ['GONW'], 'Go North West'),
-    ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
+    ('EA', ['GOEA', 'HEDO', 'CHAM'], 'Go East Anglia'),
+    # ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     
     # Rotala Operators
     ('WM', ['DIAM'], 'Diamond Bus'),
