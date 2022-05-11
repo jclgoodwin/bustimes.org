@@ -7,7 +7,7 @@ from disruptions.urls import urlpatterns as disruptions_urls
 from vehicles.urls import urlpatterns as vehicles_urls
 from vosa.urls import urlpatterns as vosa_urls
 from fares.urls import urlpatterns as fares_urls
-from fares import views as fares_views
+from fares import views as fares_views, mytrip
 from . import views
 
 sitemaps = {
@@ -64,8 +64,8 @@ urlpatterns = [
         views.OperatorDetailView.as_view(),
         name="operator_detail",
     ),
-    path("operators/<slug>/tickets", fares_views.operator_tickets),
-    path("operators/<slug>/tickets/<id>", fares_views.operator_ticket),
+    path("operators/<slug>/tickets", mytrip.operator_tickets),
+    path("operators/<slug>/tickets/<id>", mytrip.operator_ticket),
     path("services/<int:service_id>.json", views.service_map_data),
     path("services/<int:service_id>/timetable", views.service_timetable),
     path(

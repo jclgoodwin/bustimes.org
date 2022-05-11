@@ -9,18 +9,18 @@ from busstops.models import Operator, DataSource
 class MyTripTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.midland_classic = Operator.objects.create(id='MDCL', name="Midland Classic")
-        Operator.objects.create(id='NIBS', name="Nibs")
+        cls.midland_classic = Operator.objects.create(id="MDCL", name="Midland Classic")
+        Operator.objects.create(id="NIBS", name="Nibs")
         cls.source = DataSource.objects.create(
             name="MyTrip",
             url="https://mytrip-bustimes.api.passengercloud.com/ticketing/topups",
-            settings={"x-api-key": ""}
+            settings={"x-api-key": ""},
         )
 
     def test_mytrip(self):
-        path = Path(__file__).resolve().parent / 'data'
+        path = Path(__file__).resolve().parent / "data"
 
-        with use_cassette(str(path / 'mytrip.yaml'), decode_compressed_response=True):
+        with use_cassette(str(path / "mytrip.yaml"), decode_compressed_response=True):
 
             with patch("builtins.print") as mocked_print:
                 with patch("builtins.input", return_value="NIBS") as mocked_input:
@@ -34,7 +34,12 @@ class MyTripTest(TestCase):
             )
 
             response = self.client.get("/operators/midland-classic/tickets")
-            self.assertContains(response, "Burton &amp; South Derbys zone (excluding contracts and route 20)")
+            self.assertContains(
+                response,
+                "Burton &amp; South Derbys zone (excluding contracts and route 20)",
+            )
 
-            response = self.client.get("/operators/midland-classic/tickets/34876152-181c-59fc-8276-4cd7a235db69")
+            response = self.client.get(
+                "/operators/midland-classic/tickets/34876152-181c-59fc-8276-4cd7a235db69"
+            )
             self.assertContains(response, """<p class="price">£2.50</p>""")
