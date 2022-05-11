@@ -213,17 +213,6 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     ordering = ('-id',)
 
 
-@admin.register(models.JourneyCode)
-class JourneyCodeAdmin(admin.ModelAdmin):
-    list_display = ['code', 'service', 'destination']
-    list_select_related = ['service']
-    list_filter = [
-        ('data_source', admin.RelatedOnlyFieldListFilter),
-        ('siri_source', admin.RelatedOnlyFieldListFilter),
-    ]
-    raw_id_fields = ['service', 'data_source']
-
-
 class LiveryAdminForm(forms.ModelForm):
     save_as = True
 

@@ -749,8 +749,8 @@ class VehicleJourney(models.Model):
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
-    # data = models.JSONField(null=True, blank=True)
     trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
+    # block = models.ForeignKey('bustimes.Block', models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
@@ -871,18 +871,8 @@ class VehicleJourney(models.Model):
         ).order_by('distance').first()
 
 
-class JourneyCode(models.Model):
-    code = models.CharField(max_length=64, blank=True)
-    service = models.ForeignKey(Service, models.SET_NULL, null=True, blank=True)
-    data_source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
-    siri_source = models.ForeignKey(SIRISource, models.SET_NULL, null=True, blank=True)
-    destination = models.CharField(max_length=255, blank=True)
-
-    class Meta:
-        unique_together = (
-            ('code', 'service', 'siri_source'),
-            ('code', 'service', 'data_source'),
-        )
+# class VehiclePosition:
+#     journey = models.ForeignKey(VehicleJourney, on_delete)
 
 
 class Occupancy(models.TextChoices):
