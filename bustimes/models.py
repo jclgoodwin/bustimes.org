@@ -114,12 +114,15 @@ class Route(models.Model):
     line_name = models.CharField(max_length=255, blank=True)
     revision_number = models.PositiveIntegerField(null=True, blank=True)
     description = models.CharField(max_length=255, blank=True)
+    outbound_description = models.CharField(max_length=255, blank=True)
+    inbound_description = models.CharField(max_length=255, blank=True)
     origin = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     via = models.CharField(max_length=255, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     service = models.ForeignKey('busstops.Service', models.CASCADE)
+    public_use = models.BooleanField(null=True)
 
     def contains(self, date):
         if not self.start_date or self.start_date <= date:

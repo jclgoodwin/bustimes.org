@@ -750,7 +750,7 @@ class VehicleJourney(models.Model):
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
     trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
-    # block = models.ForeignKey('bustimes.Block', models.SET_NULL, null=True, blank=True)
+    block = models.ForeignKey('bustimes.Block', models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
