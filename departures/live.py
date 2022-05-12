@@ -10,7 +10,8 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 from busstops.models import Service, SIRISource
-from bustimes.models import get_calendars, get_routes, Route, StopTime
+from bustimes.models import Route, StopTime
+from bustimes.utils import get_calendars, get_routes
 from vehicles.models import Vehicle
 from vehicles.tasks import log_vehicle_journey
 

@@ -6,7 +6,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from busstops.models import DataSource
-from ...utils import download
+from ...download_utils import download
 from .import_atco_cif import Command as ImportAtcoCif
 
 

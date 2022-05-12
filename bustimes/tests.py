@@ -4,7 +4,8 @@ from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import DataSource, Service
 from vehicles.models import Livery, Vehicle
-from .models import Route, Calendar, Trip, get_routes
+from .models import Route, Calendar, Trip
+from .utils import get_routes
 
 
 class BusTimesTest(TestCase):

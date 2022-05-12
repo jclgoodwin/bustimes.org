@@ -15,7 +15,7 @@ from django.db import DataError, IntegrityError
 from django.utils import timezone
 from busstops.models import DataSource, Operator, Service
 from .import_transxchange import Command as TransXChangeCommand
-from ...utils import download, download_if_changed
+from ...download_utils import download, download_if_changed
 from ...models import Route
 
 

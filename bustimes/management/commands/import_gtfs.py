@@ -12,7 +12,7 @@ from django.db.models import Count, Q, Exists, OuterRef
 from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from busstops.models import Region, DataSource, StopPoint, Service, Operator, AdminArea
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime
-from ...utils import download_if_changed
+from ...download_utils import download_if_changed
 
 
 logger = logging.getLogger(__name__)

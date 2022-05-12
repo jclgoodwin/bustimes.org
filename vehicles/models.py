@@ -19,8 +19,9 @@ from django.utils import timezone
 
 from simple_history.models import HistoricalRecords
 
-from busstops.models import Operator, Service, DataSource, SIRISource
-from bustimes.models import get_calendars, get_routes, Trip, RouteLink
+from busstops.models import Operator, Service, DataSource
+from bustimes.utils import get_calendars, get_routes
+from bustimes.models import Trip, RouteLink
 
 
 def format_reg(reg):
@@ -522,10 +523,16 @@ class VehicleEdit(models.Model):
     def apply(self, save=True, user=None):
         ok = True
         vehicle = self.vehicle
+        revision = None
         if save:
             revision = self.make_revision()
         update_fields = []
         if self.withdrawn is not None:
+            if revision:
+                if self.withdrawn:
+                    revision.changes['withdrawn'] = '-No\n+Yes'
+                else:
+                    revision.changes['withdrawn'] = '-Yes\n+No'
             vehicle.withdrawn = self.withdrawn
             update_fields.append('withdrawn')
         if self.fleet_number:

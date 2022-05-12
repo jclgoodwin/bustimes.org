@@ -15,7 +15,7 @@ from busstops.models import DataSource, Service, ServiceColour
 from .import_bod import handle_file, get_operator_ids, clean_up, logger
 from .import_transxchange import Command as TransXChangeCommand
 from .import_gtfs import read_file
-from ...utils import write_file
+from ...download_utils import write_file
 
 
 def handle_gtfs(operators, url):

@@ -28,7 +28,8 @@ from django.conf import settings
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.models import FareTable
-from bustimes.models import get_routes, StopTime
+from bustimes.models import StopTime
+from bustimes.utils import get_routes
 from vehicles.models import Vehicle
 from vehicles.utils import redis_client, liveries_css_version
 from vosa.models import Registration

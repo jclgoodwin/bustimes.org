@@ -2,7 +2,7 @@ import csv
 from datetime import datetime
 from django.conf import settings
 from django.core.management import BaseCommand
-from bustimes.utils import download_if_changed
+from bustimes.download_utils import download_if_changed
 from ...models import Licence, Registration, Variation
 
 

@@ -5,8 +5,9 @@ from functools import cmp_to_key, partial, cached_property
 from django.db.models import Prefetch, Q
 from django.contrib.postgres.aggregates import ArrayAgg
 from sql_util.utils import Exists
-from .utils import format_timedelta
-from .models import get_calendars, get_routes, Calendar, Trip, StopTime
+from .formatting import format_timedelta
+from .utils import get_calendars, get_routes
+from .models import Calendar, Trip, StopTime
 
 differ = Differ(charjunk=lambda _: True)
 
