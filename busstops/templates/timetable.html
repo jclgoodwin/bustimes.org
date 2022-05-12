@@ -32,21 +32,13 @@
         {% if forloop.first != forloop.last %}
             <h2>
                 {% if grouping.inbound %}
-                    {% if object.inbound_description and timetable.origins_and_destinations|length <= 1 %}
-                        {{ object.inbound_description }}
-                    {% else %}
-                        {% for origin, destination, via in timetable.origins_and_destinations %} 
-                            {{ destination }} - {{ origin }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
-                        {% empty %}Inbound{% endfor %}
-                    {% endif %}
+                    {% for origin, destination, via in timetable.origins_and_destinations %} 
+                        {{ destination }} - {{ origin }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
+                    {% empty %}{% firstof object.inbound_description grouping %}{% endfor %}
                 {% else %}
-                    {% if object.outbound_description and timetable.origins_and_destinations|length <= 1 %}
-                        {{ object.outbound_description }}
-                    {% else %}
-                        {% for origin, destination, via in timetable.origins_and_destinations %} 
-                            {{ origin }} - {{ destination }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
-                        {% empty %}Outbound{% endfor %}
-                    {% endif %}
+                    {% for origin, destination, via in timetable.origins_and_destinations %} 
+                        {{ origin }} - {{ destination }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
+                    {% empty %}{% firstof object.outbound_description grouping %}{% endfor %}
                 {% endif %}
             </h2>
         {% endif %}
