@@ -358,6 +358,12 @@ PASSENGER_OPERATORS = [
     ('Coastliner', 'coastliner', 'NW', {
         'NUTT': 'NUTT',
     }),
+    ('Go North West', 'gonorthwest', 'NW', {
+        'GONW': 'GONW',
+    }),
+    ('Konectbus', 'konectbus', 'EA', {
+        'KCTB': 'KCTB',
+    }),
 ]
 
 # see bustimes.management.commands.import_bod
@@ -574,8 +580,6 @@ BOD_OPERATORS = [
     ('LCAC', 'NW', {}, False),
     ('LNNE', 'NW', {}, False),
 
-    ('RBUS', 'SE', {}, True),  # incomplete
-
     ('ROOS', 'SW', {}, False),
     ('SEWR', 'SW', {}, False),
     ('HRBT', 'SE', {}, False),
@@ -693,26 +697,57 @@ STAGECOACH_OPERATORS = [
 # rather than via the Bus Open Data site,
 # because sometimes BODS doesn't detect updates
 TICKETER_OPERATORS = [
-    ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
     ('EA', ['BDRB'], 'BorderBus'),
     ('EA', ['LYNX'], 'Lynx'),
-    ('WM', ['DIAM'], 'Diamond Bus'),
-    ('NW', ['GTRI'], 'Diamond Bus North West'),
-    ('NW', ['PBLT'], 'Preston Bus'),
     ('EA', ['WHIP'], 'Whippet'),
-    ('WM', ['Johnsons', 'JOHS']),
-    ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC']),
-    ('NW', ['BEVC'], 'Belle Vue'),
-
     ('EA', ['Ipswich_Buses', 'IPSW'], 'Ipswich Buses'),
+    ('EA', ['AMBS'], 'Ambassador Travel'),
+    ('EA', ['WNCT'], 'West Norfolk Community Transport'),
+    ('EA', ['Simonds', 'SIMO']),
+    ('EA', ['Beestons_(Hadleigh)_Ltd', 'BEES']),
+    
+    ('EM', ['Brylaine', 'BRYL']),
+    ('EM', ['Midland_Classic', 'MDCL']),
+    ('EM', ['RBTS'], 'Roberts Travel'),
     ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
+    # ('EM', ['NOCT'], 'CT4N'),
+    ('EM', ['DELA'], 'Delaine Buses'),
+    
+    ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC']),
+    ('NE', ['Coatham_Coaches', 'COTY']),
+    
+    ('NW', ['STOT'], 'Stotts Tours'),
+    ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
+    ('NW', ['Finches', 'FCHS']),
+    ('NW', ['GOGO'], 'Go Goodwins'),
+    ('NW', ['BEVC'], 'Belle Vue'),
+    
+    ('SE', ['WBSV'], 'White Bus'),
+    ('SE', ['REDE'], 'Red Eagle'),
+    ('SE', ['GPLM'], 'Grant Palmer'),
+    ('SE', ['CLNB'], 'Carlone Buses'),
+    # ('SE', ['RCHC'], 'Richmonds Coaches'),
+    ('SE', ['Vectare', 'VECT']),
+    ('SE', ['FALC'], 'Falcon Buses'),
+    ('SE', ['Sullivan_Buses', 'SULV']),
+    ('SE', ['ENSB'], 'Ensignbus'),
+    
+    ('SW', ['NTCP', 'NCTP'], 'HCT Group'),
+
+    ('WM', ['Travel_Express', 'TEXP']),
+    ('WM', ['Banga_Buses', 'BANG']),
+    ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
+    ('WM', ['LMST'], 'LMS Travel'),
+    ('WM', ['Johnsons', 'JOHS']),
+
+    ('Y',  ['Shoreline_Suncruisers', 'SSSN']),
+    ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
     ('Y', ['RELD'], 'Reliance Motor Services'),
+    ('Y',  ['HCTY'], 'Connexions Buses'),
+    ('Y',  ['KJTR'], 'York Pullman'),
+    
 
-    ('SW', ['PLYC', 'TFCN'], 'Go South West'),
-    # ('SE', ['METR'], 'Metrobus'),
-    ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
-    ('NW', ['GONW'], 'Go North West'),
-
+    # Arriva Operators
     ('W', ['ACYM'], 'Arriva Cymru'),
     ('NW', ['AMAN', 'ANWE'], 'Arriva North West'),
     ('NW', ['AMSY'], 'Arriva Merseyside'),
@@ -724,42 +759,17 @@ TICKETER_OPERATORS = [
     ('SE', ['ARBB', 'ASES', 'GLAR'], 'Arriva Beds & Bucks'),
     ('SE', ['AMTM', 'ARHE'], 'Arriva Kent Thameside'),
     ('SE', ['AKSS', 'AMTM'], 'Arriva Kent & Surrey'),
-
-    ('SE', ['Vectare', 'VECT']),
-    ('SE', ['FALC'], 'Falcon Buses'),
-
-    # ('EM', ['NOCT'], 'CT4N'),
-    ('WM', ['LMST'], 'LMS Travel'),
-    ('SE', ['ENSB'], 'Ensignbus'),
-    ('EA', ['AMBS'], 'Ambassador Travel'),
-    ('EA', ['WNCT'], 'West Norfolk Community Transport'),
-
-    ('NW', ['GOGO'], 'Go Goodwins'),
-    ('EM', ['Brylaine', 'BRYL']),
-    ('EM', ['Midland_Classic', 'MDCL']),
-    ('EM', ['RBTS'], 'Roberts Travel'),
-
-    ('SE', ['Sullivan_Buses', 'SULV']),
-    ('EA', ['Simonds', 'SIMO']),
-    ('NE', ['Coatham_Coaches', 'COTY']),
-
-    ('NW', ['STOT'], 'Stotts Tours'),
-
-    ('Y',  ['HCTY'], 'Connexions Buses'),
-    ('Y',  ['KJTR'], 'York Pullman'),
-    ('SE', ['WBSV'], 'White Bus'),
-    ('SE', ['REDE'], 'Red Eagle'),
-    ('SE', ['GPLM'], 'Grant Palmer'),
-    ('SE', ['CLNB'], 'Carlone Buses'),
-    ('NW', ['D&G_Bus_Ltd', 'DAGC', 'CRDR']),
-    ('EA', ['Beestons_(Hadleigh)_Ltd', 'BEES']),
-    ('Y',  ['Shoreline_Suncruisers', 'SSSN']),
-    ('WM', ['Travel_Express', 'TEXP']),
-    ('WM', ['Banga_Buses', 'BANG']),
-    ('EM', ['DELA'], 'Delaine Buses'),
-    # ('SE', ['RCHC'], 'Richmonds Coaches'),
-    ('NW', ['Finches', 'FCHS']),
-    ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
-    ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
-    ('SW', ['NTCP', 'NCTP'], 'HCT Group'),
+    
+    # GoAhead Operators
+    ('SW', ['PLYC', 'TFCN'], 'Go South West'),
+    # ('SE', ['METR'], 'Metrobus'),
+    ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
+    #('NW', ['GONW'], 'Go North West'),
+    ('EA', ['GOEA', 'HEDO', 'CHAM'], 'Go East Anglia'),
+    # ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
+    
+    # Rotala Operators
+    ('WM', ['DIAM'], 'Diamond Bus'),
+    ('NW', ['GTRI'], 'Diamond Bus North West'),
+    ('NW', ['PBLT'], 'Preston Bus'),    
 ]
