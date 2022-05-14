@@ -70,7 +70,7 @@ class GTFSTest(TestCase):
             with override_settings(DATA_DIR=directory):
                 with vcr.use_cassette(str(FIXTURES_DIR / 'google_transit_ie.yaml')) as cassette:
                     with self.assertLogs('bustimes.management.commands.import_gtfs', 'INFO'):
-                        with self.assertLogs('bustimes.utils', 'ERROR') as cm:
+                        with self.assertLogs('bustimes.download_utils', 'ERROR') as cm:
                             call_command('import_gtfs', '--force', '-v2')
 
                             cassette.rewind()
@@ -79,9 +79,9 @@ class GTFSTest(TestCase):
                             call_command('import_gtfs', '--force')
 
         self.assertEqual(cm.output, [
-            'ERROR:bustimes.utils:<Response [404]> '
+            'ERROR:bustimes.download_utils:<Response [404]> '
             'https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip',
-            'ERROR:bustimes.utils:<Response [404]> '
+            'ERROR:bustimes.download_utils:<Response [404]> '
             'https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip'
         ])
 
