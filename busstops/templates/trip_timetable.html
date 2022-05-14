@@ -1,0 +1,43 @@
+<table class="trip-timetable">
+    <th></th><th>Timetable</th>
+    <tbody>
+{% for stop in stops %}
+    {% if stop.arrival %}
+        <tr{% if stop.is_minor %} class="minor"{% endif %}>
+            <td {% if stop.departure and stop.departure != stop.arrival %} rowspan="2"{% endif %} class="stop-name">
+                {% if stop.stop %}
+                    <a href="{{ stop.stop.get_absolute_url }}">{{ stop.stop.get_name_for_timetable }}</a>
+                {% else %}
+                    {{ stop.stop_code }}
+                {% endif %}
+            </td>
+            <td>
+                {{ stop.arrival_time }}
+            </td>
+        </tr>
+    {% endif %}
+    {% if stop.departure and stop.departure != stop.arrival %}
+        <tr{% if stop.is_minor %} class="minor"{% endif %}>
+            {% if not stop.arrival %}
+                <td class="stop-name">
+                    {% if stop.stop %}
+                        <a href="{{ stop.stop.get_absolute_url }}">{{ stop.stop.get_name_for_timetable }}</a>
+                    {% else %}
+                        {{ stop.stop_code }}
+                    {% endif %}
+                </td>
+                {% endif %}
+            <td>
+                {{ stop.departure_time }}
+            </td>
+        </tr>
+    {% endif %}
+{% endfor %}
+</tbody>
+</table>
+
+{% load urlise %}
+
+{% for note in trip.notes.all %}
+    <p>{{ note.text|urlise }}</p>
+{% endfor %}

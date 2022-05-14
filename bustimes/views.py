@@ -20,7 +20,7 @@ from busstops.models import Service, DataSource, StopPoint, StopUsage
 from departures.live import TimetableDepartures
 from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
-from .models import Route, Trip
+from .models import Route, Trip, Block
 
 
 class ServiceDebugView(DetailView):
@@ -222,6 +222,11 @@ class TripDetailView(DetailView):
         context['breadcrumb'] = list(self.object.route.service.operator.all()) + [self.object.route.service]
 
         return context
+
+
+class BlockDetailView(DetailView):
+    model = Block
+    queryset = model.objects.prefetch_related('trip_set__stoptime_set__stop__locality', 'trip_set__notes')
 
 
 @require_GET

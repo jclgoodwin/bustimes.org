@@ -1,0 +1,16 @@
+{% extends 'page.html' %}
+
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+
+    {% for trip in object.trip_set.all %}
+        <h3><a href="{{ trip.get_absolute_url }}">{{ trip }}</a></h3>
+
+        {% include 'trip_timetable.html' with stops=trip.stoptime_set.all %}
+
+    {% endfor %}
+
+{% endblock %}

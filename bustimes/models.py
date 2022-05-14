@@ -183,7 +183,7 @@ class Note(models.Model):
     text = models.CharField(max_length=255)
 
     def get_absolute_url(self):
-        return self.trip_set.first().route.service.get_absolute_url()
+        return self.trip_set.first().get_absolute_url()
 
 
 class Trip(models.Model):
@@ -302,6 +302,9 @@ class Block(models.Model):
 
     def __str__(self):
         return self.code
+
+    def get_absolute_url(self):
+        return reverse('block_detail', args=(self.id,))
 
 
 class Garage(models.Model):
