@@ -152,7 +152,7 @@ class Timetable:
             bank_holiday_dates=ArrayAgg('calendarbankholiday__bank_holiday__bankholidaydate'),
         ).prefetch_related('calendardate_set')
 
-        if not date and len(routes) == 1 and self.calendars:
+        if not date and self.calendars:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
                 # calendar has a summary like 'school days only', or no exceptions within 21 days

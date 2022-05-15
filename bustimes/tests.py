@@ -72,7 +72,10 @@ class BusTimesTest(TestCase):
         self.assertEqual("Mondays, Tuesdays and Saturdays", str(calendar))
 
         calendar.summary = "the third of january only"
-        self.assertEqual(calendar.summary, str(calendar))
+        self.assertEqual(
+            "Mondays, Tuesdays and Saturdays, the third of january only",
+            str(calendar)
+        )
 
     def test_trip(self):
         trip = Trip()
