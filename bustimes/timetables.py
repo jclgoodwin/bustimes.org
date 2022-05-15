@@ -168,18 +168,22 @@ class Timetable:
 
             else:
                 calendars_overlap = False
-                days = set()
+                all_days = set()
                 for calendar in self.calendars:
-                    for day in calendar.get_days():
-                        if day in days:
-                            calendars_overlap = True
-                            self.calendar = None
-                            break
-                        days.add(day)
-                    if calendar.id == calendar_id:
-                        self.calendar = calendar
+                    calendar_days = calendar.get_days()
+                    if calendar_days and all_days.isdisjoint(calendar_days):
+                        all_days = all_days.union(calendar_days)
+                    else:
+                        calendars_overlap = True
+                        break
 
                 if not calendars_overlap:
+                    for calendar in self.calendars:
+                        if calendar.id == calendar_id:
+                            self.calendar = calendar
+                        elif calendar_id is None and calendar.allows(self.today):
+                            self.calendar = calendar
+
                     self.calendar_options = list(self.calendars)
                     self.calendar_options.sort(key=Calendar.get_order)
                     if not self.calendar:
