@@ -1489,9 +1489,14 @@ nav {
     margin: 1em auto;
 }
 
-.publift-widget-22704101655-container-background {
-    background: $brand-color;
-    opacity: .5 !important;
+.fuse-slot-scroll-to-stick,
+.publift-widget-22704101655-container {
+    pointer-events: none;
+
+    iframe {
+        background: $brand-color;
+        pointer-events: auto;
+    }
 }
 
 .horizontal {
