@@ -54,4 +54,7 @@ class Command(ImportLiveVehiclesCommand):
 
         cache.set('bod_avl_identifiers', self.identifiers)  # backup
 
+        # if i == 0:
+        #     return 11
+
         return 32

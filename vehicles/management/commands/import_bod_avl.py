@@ -462,6 +462,7 @@ class Command(ImportLiveVehiclesCommand):
                     try:
                         journey_date = date.fromisoformat(journey_ref[:10])
                         journey_ref = journey_ref[11:]
+                        journey.direction = ""
                         journey.code = journey_ref
                     except ValueError:
                         pass
@@ -470,7 +471,7 @@ class Command(ImportLiveVehiclesCommand):
                     datetime=datetime,
                     date=journey_date,
                     destination_ref=destination_ref,
-                    departure_time=origin_aimed_departure_time,
+                    # departure_time=origin_aimed_departure_time,
                     journey_ref=journey_ref
                 )
 

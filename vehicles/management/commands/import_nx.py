@@ -8,7 +8,7 @@ from django.db.models import Exists, OuterRef, Q
 from busstops.models import Service
 from bustimes.utils import get_calendars
 from bustimes.models import Trip
-from ...models import VehicleLocation, VehicleJourney
+from ...models import Vehicle, VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -69,6 +69,19 @@ class Command(ImportLiveVehiclesCommand):
             sleep(self.sleep)
 
     def get_vehicle(self, item):
+        code = item['live']['vehicle']
+        if ' - ' in code:
+            parts = code.split(' - ')
+            if len(parts) == 2 and len(parts[1]) > 7:
+                try:
+                    return self.vehicles.get(code=parts[1]), False
+                except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
+                    pass
+        else:
+            try:
+                return self.vehicles.get(code__endswith=f' - {code}'), False
+            except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
+                pass
         return self.vehicles.get_or_create(
             {'source': self.source},
             operator_id=self.operators[0],

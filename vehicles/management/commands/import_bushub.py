@@ -1,3 +1,4 @@
+import requests
 from django.contrib.gis.geos import Point
 from busstops.models import Service
 from ...models import VehicleLocation, VehicleJourney
@@ -6,6 +7,12 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
+    wait = 92
+
+    def get_items(self):
+        self.session = requests.Session()
+        return super().get_items()
+
     @staticmethod
     def add_arguments(parser):
         parser.add_argument('source_name', type=str)
