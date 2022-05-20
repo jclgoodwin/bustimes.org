@@ -167,30 +167,7 @@ class Timetable:
                             break
 
             else:
-                calendars_overlap = False
-                all_days = set()
-                for calendar in self.calendars:
-                    calendar_days = calendar.get_days()
-                    if calendar_days and all_days.isdisjoint(calendar_days):
-                        all_days = all_days.union(calendar_days)
-                    else:
-                        calendars_overlap = True
-                        break
-
-                if not calendars_overlap:
-                    for calendar in self.calendars:
-                        if calendar.id == calendar_id:
-                            self.calendar = calendar
-                        elif calendar_id is None and calendar.allows(self.today):
-                            self.calendar = calendar
-
-                    self.calendar_options = list(self.calendars)
-                    self.calendar_options.sort(key=Calendar.get_order)
-                    if not self.calendar:
-                        self.calendar = self.calendar_options[0]
-
-                    if calendar.start_date == calendar.end_date:
-                        self.start_date = None
+                self.get_calendar_options(calendar_id)
 
         if self.calendars and not self.calendar:
             self.date_options = list(self.get_date_options())
@@ -325,6 +302,29 @@ class Timetable:
     @cached_property
     def has_ticket_machine_codes(self) -> bool:
         return self.any_trip_has('ticket_machine_code')
+
+    def get_calendar_options(self, calendar_id):
+        all_days = set()
+        for calendar in self.calendars:
+            calendar_days = calendar.get_days()
+            if calendar_days and all_days.isdisjoint(calendar_days):
+                all_days = all_days.union(calendar_days)
+            else:
+                return
+
+        for calendar in self.calendars:
+            if calendar.id == calendar_id:
+                self.calendar = calendar
+            elif calendar_id is None and calendar.allows(self.today):
+                self.calendar = calendar
+
+        self.calendar_options = list(self.calendars)
+        self.calendar_options.sort(key=Calendar.get_order)
+        if not self.calendar:
+            self.calendar = self.calendar_options[0]
+
+        if calendar.start_date == calendar.end_date:
+            self.start_date = None
 
     def get_date_options(self):
         date = self.today

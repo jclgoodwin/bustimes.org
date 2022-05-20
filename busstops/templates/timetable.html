@@ -4,8 +4,16 @@
     {% if timetable.calendar_options %}
         <form class="timetable-date">
             <select onchange="this.form.submit()" name="calendar" id="id_date" aria-label="Date">
-                {% for option in timetable.calendar_options %}
-                    <option{% if option == timetable.calendar %} selected{% endif %} value="{{ option.id }}">{{ option }}</option>
+                {% for calendar in timetable.calendar_options %}
+                    <option{% if calendar == timetable.calendar %} selected{% endif %} value="{{ calendar.id }}">
+                        {{ calendar }}
+                        {% if calendar.start_date > timetable.today %}
+                            from {{ calendar.start_date }}
+                        {% endif %}
+                        {% if calendar.end_date <= timetable.today %}
+                            until {{ calendar.end_date }}
+                        {% endif %}
+                    </option>
                 {% endfor %}
             </select>
             <noscript><input type="submit"></noscript>

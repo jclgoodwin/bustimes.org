@@ -1055,6 +1055,10 @@ class Command(BaseCommand):
             else:
                 route_defaults['destination'] = ''
 
+            if txc_service.vias:
+                route_defaults['via'] = ', '.join(txc_service.vias)
+                print(route_defaults)
+
             if description:
                 route_defaults['description'] = description
 
