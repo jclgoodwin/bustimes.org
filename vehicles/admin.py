@@ -131,9 +131,13 @@ class VehicleAdmin(admin.ModelAdmin):
 
     def deduplicate(self, request, queryset):
         for vehicle in queryset.order_by('id'):
+            if not vehicle.reg:
+                self.message_user(request, f"{vehicle} has no reg")
+                continue
             try:
                 duplicate = models.Vehicle.objects.get(id__lt=vehicle.id, reg=vehicle.reg)
-            except models.Vehicle.DoesNotExist:
+            except (models.Vehicle.DoesNotExist, models.Vehicle.MultipleObjectsReturned) as e:
+                self.message_user(request, f"{vehicle} {e}")
                 continue
             vehicle.vehiclejourney_set.update(vehicle=duplicate)
             duplicate.latest_journey = vehicle.latest_journey
