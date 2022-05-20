@@ -1035,6 +1035,8 @@ class Command(BaseCommand):
             route_defaults = {
                 'line_name': line.line_name,
                 'line_brand': line_brand,
+                'outbound_description': line.outbound_description,
+                'inbound_description': line.inbound_description,
                 'start_date': txc_service.operating_period.start,
                 'end_date': txc_service.operating_period.end,
                 'service': service,
@@ -1057,7 +1059,6 @@ class Command(BaseCommand):
 
             if txc_service.vias:
                 route_defaults['via'] = ', '.join(txc_service.vias)
-                print(route_defaults)
 
             if description:
                 route_defaults['description'] = description
