@@ -24,7 +24,7 @@
     @import 'print';
 }
 
-@media (max-width: 600px) {
+@media (min-width: 600px) {
     footer,
     .service-map {
         margin-bottom: 90px;
