@@ -112,7 +112,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def actually_get_vehicle(self, vehicle_ref, operator_ref, item):
         vehicle_ref = vehicle_ref.removeprefix(f'{operator_ref}-')
-        vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_').removeprefix('coachservices_')
+        vehicle_ref = vehicle_ref.removeprefix('nibs_').removeprefix('stephensons_')
 
         if operator_ref == 'TFLO':
             try:
@@ -154,11 +154,27 @@ class Command(ImportLiveVehiclesCommand):
             defaults['operator'] = operators[0]
             vehicles = self.vehicles.filter(operator__in=operators)
 
+        if operator_ref == 'MSOT':  # Marshalls of Sutton on Trent
+            defaults['fleet_code'] = vehicle_ref
+        elif 'fleet_number' not in defaults:
+            # VehicleUniqueId
+            try:
+                fleet_number = item['Extensions']['VehicleJourney']['VehicleUniqueId']
+                if len(fleet_number) < len(vehicle_ref):
+                    defaults['fleet_code'] = fleet_number
+                if fleet_number.isdigit():
+                    defaults['fleet_number'] = fleet_number
+            except (KeyError, TypeError):
+                pass
+
         condition = Q(code=vehicle_ref)
         if operators:
             if vehicle_ref.isdigit():
                 defaults['fleet_number'] = vehicle_ref
                 condition |= Q(code__endswith=f'-{vehicle_ref}') | Q(code__startswith=f'{vehicle_ref}_')
+            elif operator_ref[:1] == 'F' and 'fleet_number' in defaults and len(defaults['fleet_number']) == 5:
+                # 20 may 2022 - some First vehicle refs changed :(
+                condition |= Q(code=defaults['fleet_number'])
             else:
                 if '_-_' in vehicle_ref:
                     fleet_number, reg = vehicle_ref.split('_-_', 2)
@@ -175,19 +191,6 @@ class Command(ImportLiveVehiclesCommand):
                     code = vehicle_ref.replace('_', '')
                     condition |= Q(fleet_code=code)
         vehicles = vehicles.filter(condition)
-
-        if operator_ref == 'MSOT':  # Marshalls of Sutton on Trent
-            defaults['fleet_code'] = vehicle_ref
-        elif 'fleet_number' not in defaults:
-            # VehicleUniqueId
-            try:
-                fleet_number = item['Extensions']['VehicleJourney']['VehicleUniqueId']
-                if len(fleet_number) < len(vehicle_ref):
-                    defaults['fleet_code'] = fleet_number
-                if fleet_number.isdigit():
-                    defaults['fleet_number'] = fleet_number
-            except (KeyError, TypeError):
-                pass
 
         try:
             vehicle, created = vehicles.get_or_create(defaults)
