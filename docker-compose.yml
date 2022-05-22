@@ -7,7 +7,7 @@ services:
       make watch &
       poetry run ./manage.py migrate &&
       poetry run ./manage.py collectstatic --noinput &&
-      DEBUG=1 poetry run ./manage.py runserver 0.0.0.0:8000
+      DEBUG=1 exec poetry run ./manage.py runserver 0.0.0.0:8000
       "
     container_name: django_web
     environment:
