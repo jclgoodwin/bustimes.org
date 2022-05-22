@@ -1456,6 +1456,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "uritemplate"
+version = "4.1.1"
+description = "Implementation of RFC 6570 URI Templates"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "urllib3"
 version = "1.26.9"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -1592,7 +1600,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.9,<3.11"
-content-hash = "bd7c49dd950726b1914404567ea198e00300b2e1c27b5f2420b1347f16b5c83c"
+content-hash = "18b00f27d19743483e81399338135b628f20b846447039955ae17da9a6ede909"
 
 [metadata.files]
 aioredis = [
@@ -2599,6 +2607,10 @@ tzdata = [
 uk-postcode-utils = [
     {file = "uk-postcode-utils-1.1.tar.gz", hash = "sha256:d198638c6324807bd238c4b875165e850c01c26ec926223a82e0f0e5959c54b8"},
     {file = "uk_postcode_utils-1.1-py2.py3-none-any.whl", hash = "sha256:caefbfbf276986f1aa063b1cb55d810f5509f8ea6e5731da4db4451f462c23bf"},
+]
+uritemplate = [
+    {file = "uritemplate-4.1.1-py2.py3-none-any.whl", hash = "sha256:830c08b8d99bdd312ea4ead05994a38e8936266f84b9a7878232db50b044e02e"},
+    {file = "uritemplate-4.1.1.tar.gz", hash = "sha256:4346edfc5c3b79f694bccd6d6099a322bbeb628dbf2cd86eea55a456ce5124f0"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.9-py2.py3-none-any.whl", hash = "sha256:44ece4d53fb1706f667c9bd1c648f5469a2ec925fcf3a776667042d645472c14"},
