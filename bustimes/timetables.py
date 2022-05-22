@@ -323,9 +323,6 @@ class Timetable:
         if not self.calendar:
             self.calendar = self.calendar_options[0]
 
-        if calendar.start_date == calendar.end_date:
-            self.start_date = None
-
     def get_date_options(self):
         date = self.today
 

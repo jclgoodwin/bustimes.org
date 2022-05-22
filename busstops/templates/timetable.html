@@ -83,18 +83,22 @@
                             </tr>
                             {% endif %}
                             {% if timetable.detailed %}
-                                <tr>
-                                    <th scope="col">Block</th>
-                                    {% for trip in grouping.trips %}
-                                        <td>{{ trip.block }}</td>
-                                    {% endfor %}
-                                </tr>
-                                <tr>
-                                    <th scope="col">Garage</th>
-                                    {% for trip in grouping.trips %}
-                                        <td title="{{ trip.garage.name }}">{{ trip.garage.code }}</td>
-                                    {% endfor %}
-                                </tr>
+                                {% if timetable.has_blocks %}
+                                    <tr>
+                                        <th scope="col">Block</th>
+                                        {% for trip in grouping.trips %}
+                                            <td>{{ trip.block }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endif %}
+                                {% if timetable.has_garages %}
+                                    <tr>
+                                        <th scope="col">Garage</th>
+                                        {% for trip in grouping.trips %}
+                                            <td title="{{ trip.garage.name }}">{{ trip.garage.code }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endif %}
                             {% endif %}
                         </thead>
                     {% endif %}
