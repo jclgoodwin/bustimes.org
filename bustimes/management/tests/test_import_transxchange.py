@@ -700,9 +700,10 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "Barnstaple")  # garage
 
         service = route_2.service
+        # detailed version
         response = self.client.get(f'{service.get_absolute_url()}?detailed')
-        self.assertContains(response, '<td>9032</td>')  # block number
-        self.assertContains(response, '<td>1554</td>')  # block number
+        self.assertContains(response, '">9032</a>')  # block number
+        self.assertContains(response, '">1554</a>')  # block number
         self.assertContains(response, '<td title="Barnstaple">SWBA</td>')  # garage
 
     @time_machine.travel('2021-07-07')

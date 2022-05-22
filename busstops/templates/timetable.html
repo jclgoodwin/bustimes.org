@@ -84,10 +84,10 @@
                             {% endif %}
                             {% if timetable.detailed %}
                                 {% if timetable.has_blocks %}
-                                    <tr>
+                                    <tr class="link">
                                         <th scope="col">Block</th>
                                         {% for trip in grouping.trips %}
-                                            <td>{{ trip.block }}</td>
+                                            <td><a href="{{ trip.block.get_absolute_url }}">{{ trip.block }}</a></td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
@@ -96,6 +96,14 @@
                                         <th scope="col">Garage</th>
                                         {% for trip in grouping.trips %}
                                             <td title="{{ trip.garage.name }}">{{ trip.garage.code }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endif %}
+                                {% if timetable.has_ticket_machine_codes %}
+                                    <tr>
+                                        <th scope="col">Code</th>
+                                        {% for trip in grouping.trips %}
+                                            <td>{{ trip.ticket_machine_code }}</td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
