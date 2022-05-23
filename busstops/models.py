@@ -441,13 +441,6 @@ class StopPoint(models.Model):
         if self.locality:
             locality_name = self.locality.name.replace(' Town Centre', '') \
                                                 .replace(' City Centre', '')
-            if short:
-                locality_name = locality_name.replace('-next-the-Sea', '') \
-                                                .replace(' Next The Sea', '') \
-                                                .replace('North ', 'N ') \
-                                                .replace('East ', 'E ') \
-                                                .replace('South ', 'S ') \
-                                                .replace('West ', 'W ')
             if self.common_name and self.common_name in locality_name:
                 return locality_name.replace(self.common_name, name)  # Cardiff Airport
             if slugify(locality_name) not in slugify(self.common_name):
@@ -455,10 +448,10 @@ class StopPoint(models.Model):
                     indicator = self.indicator.lower()
                     if not short:
                         indicator = self.prepositions[indicator]
-                    return '%s, %s %s' % (locality_name, indicator, self.common_name)
-                return '%s %s' % (locality_name, name)
+                    return f"{locality_name}, {indicator} {self.common_name}"
+                return f"{locality_name} {name}"
         elif self.town not in self.common_name:
-            return f'{self.town} {name}'
+            return f"{self.town} {name}"
         return name
 
     def get_name_for_timetable(self):
