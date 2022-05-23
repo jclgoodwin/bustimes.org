@@ -79,8 +79,7 @@ poetry run ./manage.py runserver 0.0.0.0:8000
 
 ### Static data (stops, timetables, etc)
 
-	cd data
-	pipenv run ./import.sh
+    poetry run ./import.sh
 
 will download *some* data from various [sources](https://bustimes.org/data) and run the necessary Django [management commands](busstops/management/commands) to import it, in a sensible order (place names, then stops, then timetables).
 When run repeatedly, it will only download and import the stuff that's changed.

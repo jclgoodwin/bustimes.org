@@ -2,8 +2,7 @@
 
 # Usage:
 #
-#     cd data
-#     ./import.sh username password
+#     poetry run ./import.sh username password
 #
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server
@@ -35,9 +34,9 @@ function import_csv {
     ../../manage.py "import_$cmd" < "$csv"
 }
 
-mkdir -p NPTG/previous NaPTAN TNDS variations
+mkdir -p data/NPTG/previous data/variations
 
-cd NPTG
+cd data/NPTG
 
 nptg_old=$(shasum nptg.ashx\?format=csv)
 wget -qN https://naptan.app.dft.gov.uk/datarequest/nptg.ashx?format=csv
