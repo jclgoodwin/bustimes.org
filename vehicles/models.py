@@ -588,7 +588,7 @@ class VehicleEdit(models.Model):
             update_fields.append('colours')
         if save:
             vehicle.save(update_fields=update_fields)
-            if revision:
+            if revision.has_changes():
                 revision.save()
             for feature in self.vehicleeditfeature_set.all():
                 if feature.add:
@@ -629,8 +629,7 @@ class VehicleEdit(models.Model):
                 elif from_value == to_value:
                     from_value = ''
                 revision.changes[field] = f"-{from_value}\n+{to_value}"
-        if revision.to_livery_id or revision.to_type_id or revision.changes:
-            return revision
+        return revision
 
     def get_absolute_url(self):
         return self.vehicle.get_absolute_url()
@@ -674,6 +673,11 @@ class VehicleRevision(models.Model):
         return ', '.join(
             f'{key}: {before} → {after}' for key, before, after in self.list_changes(html=False)
         )
+
+    def has_changes(self):
+        for field in self.list_changes(html=False):
+            return True
+        return False
 
     def list_changes(self, html=True):
         for field in ('operator', 'type', 'livery'):
