@@ -89,9 +89,6 @@ class Command(ImportLiveVehiclesCommand):
         operator_ref = monitored_vehicle_journey['OperatorRef']
         vehicle_ref = monitored_vehicle_journey['VehicleRef']
 
-        if vehicle_ref == '20920' and operator_ref == 'DIAM':  # correct BU52/BU54 RHU confusion
-            vehicle_ref = '20919'
-
         cache_key = f'{operator_ref}-{vehicle_ref}'.replace(' ', '')
 
         if cache_key in self.vehicle_cache:

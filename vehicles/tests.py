@@ -287,6 +287,9 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         response = self.client.get('/search?q=fd54jya')
         self.assertContains(response, '1 vehicle')
 
+        response = self.client.get('/search?q=11111')
+        self.assertNotContains(response, 'vehicle')
+
     def test_livery(self):
         livery = Livery(name='Go-Coach', published=False)
         livery.text_colour = '#c0c0c0'
