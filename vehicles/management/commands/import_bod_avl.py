@@ -526,6 +526,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
+        assert response.ok
 
         data = xmltodict.parse(
             response.content,

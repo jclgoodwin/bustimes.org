@@ -16,7 +16,7 @@ from busstops.models import (
     Service,
 )
 from bustimes.models import Route, Trip, Garage, Calendar
-from ...models import VehicleJourney, Vehicle
+from ...models import VehicleJourney, Vehicle, Livery
 from ...workers import SiriConsumer
 from ...utils import flush_redis
 from ..commands import import_bod_avl, import_bod_avl_channels
@@ -37,6 +37,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 Operator(id="FECS", region=region, parent="First"),
                 Operator(id="NCTP", region=region),
                 Operator(id="NIBS", region=region),
+                Operator(id="TCVW", region=region, name="National Express Coventry"),
+                Operator(
+                    id="TNXB", region=region, name="National Express West Midlands"
+                ),
             ]
         )
         Vehicle.objects.bulk_create(
@@ -56,6 +60,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 OperatorCode(operator_id="WHIP", source=cls.source, code="FOO"),
                 OperatorCode(operator_id="UNOE", source=cls.source, code="UNOE"),
                 OperatorCode(operator_id="UNOE", source=cls.source, code="UNIB"),
+                OperatorCode(operator_id="TCVW", source=cls.source, code="CV"),
+                OperatorCode(operator_id="TNXB", source=cls.source, code="CV"),
             ]
         )
 
@@ -75,7 +81,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         service_u.operator.add("WHIP")
         cls.service_c = Service.objects.create(line_name="c")
         cls.service_c.operator.add("HAMS")
-        route_u = Route.objects.create(service=service_u, source=cls.source, code="u", line_name="UU")
+        route_u = Route.objects.create(
+            service=service_u, source=cls.source, code="u", line_name="UU"
+        )
         garage = Garage.objects.create(code="GY", name="Great Yarmouth")
         # route_c = Route.objects.create(service=service_c, source=cls.source, code='c')
         Trip.objects.create(
@@ -83,7 +91,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             start="09:23:00",
             end="10:50:00",
             destination_id="0500CCITY544",
-            garage=garage
+            garage=garage,
         )
         # calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True,
         #                                    fri=True, sat=True, sun=True, start_date='2020-10-20')
@@ -308,7 +316,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             #         86400.0
             #     )
 
-        self.assertContains(response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>')
+        self.assertContains(
+            response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
+        )
         self.assertContains(
             response,
             f"""<td colspan="2" class="link">
@@ -466,10 +476,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with self.assertNumQueries(10):
             with time_machine.travel("2020-11-30", tick=False):
                 with TemporaryDirectory() as directory:
-                    with override_settings(
-                        DATA_DIR=Path(directory)
-                    ):
-                        call_command('archive_journeys')
+                    with override_settings(DATA_DIR=Path(directory)):
+                        call_command("archive_journeys")
 
     def test_units(self):
         command = import_bod_avl.Command()
@@ -620,7 +628,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "VehicleLocation": {
                     "Longitude": "149.2244263",
                     "Latitude": "87.8245926",  # greater than 85.05112878
-
                 },
                 "Bearing": "0.0",
                 "VehicleJourneyRef": "2029",
@@ -634,18 +641,135 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         journey = VehicleJourney.objects.get()
         self.assertEqual(item, journey.vehicle.latest_journey_data)
 
+    def test_tfl(self):
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        livery = Livery.objects.create(id=262, name="TfL", published=True)
+
+        item = {
+            "RecordedAtTime": "2022-05-23T12:15:47+00:00",
+            "ItemIdentifier": "701f4d34-e231-40c8-b303-ee2500e05baa",
+            "ValidUntilTime": "2022-05-23T12:21:28.747249",
+            "MonitoredVehicleJourney": {
+                "LineRef": "124",
+                "DirectionRef": "2",
+                "PublishedLineName": "498",
+                "OperatorRef": "TFLO",
+                "OriginRef": "1500BD1",
+                "OriginName": "Brentwood Sainsbury s",
+                "DestinationRef": "1500IM1041",
+                "DestinationName": "Holiday Inn",
+                "OriginAimedDepartureTime": "2022-05-23T12:08:00+00:00",
+                "VehicleLocation": {"Longitude": "0.285472", "Latitude": "51.61536"},
+                "Bearing": "225.0",
+                "VehicleJourneyRef": "393473",
+                "VehicleRef": "SN16OLO",
+            },
+            "Extensions": None,
+        }
+
+        command.handle_item(item)
+        command.save()
+
+        journey = VehicleJourney.objects.get()
+        vehicle = journey.vehicle
+
+        self.assertEqual(vehicle.livery, livery)
+        self.assertEqual(vehicle.reg, "SN16OLO")
+
+    def test_ambigious_operator(self):
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        vehicle = Vehicle.objects.create(
+            operator_id="TNXB", code="4407", fleet_code="4407", fleet_number=4407
+        )
+
+        command.handle_item(
+            {
+                "RecordedAtTime": "2022-05-23T09:19:56+00:00",
+                "ItemIdentifier": "8fa84dbe-e4f7-45ed-abbc-8709de59b7e9",
+                "ValidUntilTime": "2022-05-23T12:36:03.702621",
+                "MonitoredVehicleJourney": {
+                    "LineRef": "DEAD",
+                    "FramedVehicleJourneyRef": {
+                        "DataFrameRef": "2022-05-23",
+                        "DatedVehicleJourneyRef": "0",
+                    },
+                    "PublishedLineName": "DEAD",
+                    "OperatorRef": "CV",
+                    "VehicleLocation": {
+                        "Longitude": "-1.505448",
+                        "Latitude": "52.421363",
+                    },
+                    "Bearing": "205.0",
+                    "VehicleRef": "CV-4407",
+                },
+                "Extensions": None,
+            }
+        )
+        command.handle_item(
+            {
+                "RecordedAtTime": "2022-05-23T12:30:32+00:00",
+                "ItemIdentifier": "7da087e7-0143-4738-9951-36eb6b190932",
+                "ValidUntilTime": "2022-05-23T12:36:03.780564",
+                "MonitoredVehicleJourney": {
+                    "LineRef": "C19",
+                    "FramedVehicleJourneyRef": {
+                        "DataFrameRef": "2022-05-23",
+                        "DatedVehicleJourneyRef": "15",
+                    },
+                    "PublishedLineName": "C19",
+                    "OperatorRef": "CV",
+                    "VehicleLocation": {
+                        "Longitude": "-1.52882",
+                        "Latitude": "52.392785",
+                    },
+                    "Bearing": "210.0",
+                    "VehicleRef": "CV-840",
+                },
+                "Extensions": None,
+            }
+        )
+        command.save()
+
+        journey_1, journey_2 = VehicleJourney.objects.all()
+
+        self.assertEqual(journey_1.vehicle, vehicle)
+        self.assertEqual(
+            journey_1.vehicle.operator.name, "National Express West Midlands"
+        )
+
+        self.assertEqual(journey_2.vehicle.reg, "")
+        self.assertEqual(journey_2.vehicle.operator.name, "National Express Coventry")
+
     def test_debugger(self):
-        service = Service.objects.create(line_name='21C')
-        service.operator.add('NIBS')
+        service = Service.objects.create(line_name="21C")
+        service.operator.add("NIBS")
         route = Route.objects.create(service=service, source=self.source)
         calendar = Calendar.objects.create(
-            mon=True, tue=True, wed=True, thu=True, fri=True, sat=True, sun=True,
-            start_date='2021-01-01'
+            mon=True,
+            tue=True,
+            wed=True,
+            thu=True,
+            fri=True,
+            sat=True,
+            sun=True,
+            start_date="2021-01-01",
         )
-        trip = Trip.objects.create(start="18:08:000", end="19:00:00", route=route, calendar=calendar, inbound=True)
+        trip = Trip.objects.create(
+            start="18:08:000",
+            end="19:00:00",
+            route=route,
+            calendar=calendar,
+            inbound=True,
+        )
 
-        response = self.client.post("/vehicles/debug", {
-            'data': """{
+        response = self.client.post(
+            "/vehicles/debug",
+            {
+                "data": """{
 "Extensions": null,
 "ItemIdentifier": "86cc7f7f-d80d-4e49-beae-0ca20f90ed68",
 "RecordedAtTime": "2021-12-30T18:02:49+00:00",
@@ -665,14 +789,16 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 "VehicleJourneyRef": "2021-12-30:1808"
 }
 }"""
-        })
+            },
+        )
 
-        self.assertEqual(response.context['result']['journey'].code, "1808")
-        self.assertEqual(response.context['result']['journey'].service, service)
-        self.assertEqual(response.context['result']['journey'].trip, trip)
+        self.assertEqual(response.context["result"]["journey"].code, "1808")
+        self.assertEqual(response.context["result"]["journey"].service, service)
+        self.assertEqual(response.context["result"]["journey"].trip, trip)
 
     def test_debugger_error(self):
-        response = self.client.post("/vehicles/debug", {
-            "data": "trdgserawse/"
-        })
-        self.assertIn("Expecting value: line 1 column 1 (char 0)", str(response.context['form'].errors))
+        response = self.client.post("/vehicles/debug", {"data": "trdgserawse/"})
+        self.assertIn(
+            "Expecting value: line 1 column 1 (char 0)",
+            str(response.context["form"].errors),
+        )
