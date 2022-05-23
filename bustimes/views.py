@@ -234,7 +234,7 @@ class TripDetailView(DetailView):
 
 class BlockDetailView(DetailView):
     model = Block
-    queryset = model.objects.prefetch_related('trip_set__stoptime_set__stop__locality', 'trip_set__notes')
+    queryset = model.objects.prefetch_related('trip_set__destination__locality', 'trip_set__route')
 
 
 @require_GET

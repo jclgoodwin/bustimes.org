@@ -164,6 +164,7 @@ class Command(BaseCommand):
     def set_up(self):
         self.service_descriptions = {}
         self.calendar_cache = {}
+        self.blocks = {}
         self.operators = {}
         self.missing_operators = []
         self.notes = {}
@@ -1167,7 +1168,6 @@ class Command(BaseCommand):
             logger.warning(f'{filename} has no journeys')
             return
 
-        self.blocks = {}
         self.vehicle_types = {}
 
         today = self.source.datetime.date()
