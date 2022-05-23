@@ -1,5 +1,3 @@
-import io
-import zipfile
 import xmltodict
 import functools
 from django.core.cache import cache
@@ -526,29 +524,14 @@ class Command(ImportLiveVehiclesCommand):
                 location.wheelchair_capacity = int(extensions['WheelchairCapacity'])
         return location
 
-    @staticmethod
-    def items_from_response(response):
-        return xmltodict.parse(
-            response,
-            dict_constructor=dict,  # override OrderedDict, cos dict is ordered in modern versions of Python
-            force_list=['VehicleActivity']
-        )
-
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
 
-        if not response.ok:
-            return
-
-        if 'datafeed' in self.source.url:
-            # api response
-            data = self.items_from_response(response.content)
-        else:
-            # bulk download
-            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                assert archive.namelist() == ['siri.xml']
-                with archive.open('siri.xml') as open_file:
-                    data = self.items_from_response(open_file)
+        data = xmltodict.parse(
+            response.content,
+            dict_constructor=dict,  # override OrderedDict, cos dict is ordered in modern versions of Python
+            force_list=['VehicleActivity']
+        )
 
         self.when = data['Siri']['ServiceDelivery']['ResponseTimestamp']
         self.source.datetime = parse_datetime(self.when)
