@@ -15,7 +15,6 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates import StringAgg
-from django.forms import BooleanField
 from django.http import HttpResponse, JsonResponse, Http404, HttpResponseBadRequest, QueryDict
 from django.views.generic.detail import DetailView
 from django.views.decorators.http import require_GET, require_POST
@@ -263,11 +262,6 @@ def vehicles_json(request):
         service_line_name=Coalesce('latest_journey__trip__route__line_name', 'latest_journey__service__line_name'),
         service_slug=F('latest_journey__service__slug')
     ).defer('data', 'latest_journey_data')
-
-    if 'service__isnull' in request.GET:
-        all_vehicles = all_vehicles.filter(
-            latest_journey__service__isnull=BooleanField().to_python(request.GET['service__isnull'])
-        )
 
     vehicles = all_vehicles
     vehicle_ids = None

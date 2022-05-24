@@ -334,7 +334,6 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         self.assertEqual(livery.left_css, 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
         self.assertEqual(livery.right_css, 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
 
-
     def test_liveries_css(self):
         response = self.client.get('/liveries.44.css')
         self.assertEqual(
@@ -736,6 +735,26 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
             f"vehicle {revision.vehicle_id} reverted ['reg']"
         ])
         self.assertEqual(revision.vehicle.reg, '')
+
+        # bulk approve edit
+        with self.assertRaises(AssertionError):
+            response = self.client.post('/vehicles/edits', {
+                "action": "apply",
+                "edit": edit.id
+            })
+
+        self.client.force_login(self.staff_user)
+        with self.assertNumQueries(14):
+            response = self.client.post('/vehicles/edits', {
+                "action": "apply",
+                "edit": edit.id
+            })
+        revision = VehicleRevision.objects.last()
+        self.assertEqual(revision.changes, {
+            "reg": "-\n+D19FOX",
+            "branding": "-\n+",
+            "withdrawn": "-No\n+Yes"
+        })
 
     def test_vehicles_edit(self):
         # user isn't logged in
