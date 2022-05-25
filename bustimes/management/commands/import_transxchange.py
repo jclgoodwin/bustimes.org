@@ -1089,8 +1089,8 @@ class Command(BaseCommand):
                                 route_links_to_update[key].geometry = route_link.track
                         else:
                             route_links_to_create[key] = RouteLink(
-                                from_stop_id=route_link.from_stop,
-                                to_stop_id=route_link.to_stop,
+                                from_stop_id=from_stop.atco_code,
+                                to_stop_id=to_stop.atco_code,
                                 geometry=route_link.track,
                                 service=service
                             )

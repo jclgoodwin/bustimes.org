@@ -329,7 +329,7 @@
       </Location>
     </AnnotatedStopPointRef>
     <AnnotatedStopPointRef>
-      <StopPointRef>260006514</StopPointRef>
+      <StopPointRef>260006514A</StopPointRef>
       <CommonName>Birstall, Sports Ground (opp)</CommonName>
       <Location id="L41">
         <Longitude>-1.122736635</Longitude>
@@ -28528,7 +28528,7 @@
           <StopPointRef>260006513</StopPointRef>
         </From>
         <To>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </To>
         <Distance>227</Distance>
         <Direction>inbound</Direction>
@@ -28603,7 +28603,7 @@
       </RouteLink>
       <RouteLink id="RL264">
         <From>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </From>
         <To>
           <StopPointRef>260006515</StopPointRef>
@@ -33664,7 +33664,7 @@
           <StopPointRef>260006513</StopPointRef>
         </From>
         <To>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </To>
         <Distance>227</Distance>
         <Direction>inbound</Direction>
@@ -33739,7 +33739,7 @@
       </RouteLink>
       <RouteLink id="RL313">
         <From>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </From>
         <To>
           <StopPointRef>260006515</StopPointRef>
@@ -39164,7 +39164,7 @@
           <StopPointRef>260006513</StopPointRef>
         </From>
         <To>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </To>
         <Distance>227</Distance>
         <Direction>inbound</Direction>
@@ -39239,7 +39239,7 @@
       </RouteLink>
       <RouteLink id="RL364">
         <From>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </From>
         <To>
           <StopPointRef>260006515</StopPointRef>
@@ -44634,7 +44634,7 @@
           <StopPointRef>260006513</StopPointRef>
         </From>
         <To>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </To>
         <Distance>227</Distance>
         <Direction>inbound</Direction>
@@ -44709,7 +44709,7 @@
       </RouteLink>
       <RouteLink id="RL414">
         <From>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </From>
         <To>
           <StopPointRef>260006515</StopPointRef>
@@ -49996,7 +49996,7 @@
           <StopPointRef>260006513</StopPointRef>
         </From>
         <To>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </To>
         <Distance>227</Distance>
         <Direction>inbound</Direction>
@@ -50071,7 +50071,7 @@
       </RouteLink>
       <RouteLink id="RL466">
         <From>
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
         </From>
         <To>
           <StopPointRef>260006515</StopPointRef>
@@ -52614,7 +52614,7 @@
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU270" SequenceNumber="58">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </To>
         <RouteLinkRef>RL413</RouteLinkRef>
@@ -52622,7 +52622,7 @@
       </JourneyPatternTimingLink>
       <JourneyPatternTimingLink id="JPTL136">
         <From id="JPSU271" SequenceNumber="58">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU272" SequenceNumber="59">
@@ -53243,7 +53243,7 @@
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU374" SequenceNumber="46">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </To>
         <RouteLinkRef>RL465</RouteLinkRef>
@@ -53251,7 +53251,7 @@
       </JourneyPatternTimingLink>
       <JourneyPatternTimingLink id="JPTL188">
         <From id="JPSU375" SequenceNumber="46">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU376" SequenceNumber="47">
@@ -55096,7 +55096,7 @@
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU680" SequenceNumber="58">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </To>
         <RouteLinkRef>RL312</RouteLinkRef>
@@ -55104,7 +55104,7 @@
       </JourneyPatternTimingLink>
       <JourneyPatternTimingLink id="JPTL341">
         <From id="JPSU681" SequenceNumber="58">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU682" SequenceNumber="59">
@@ -55713,7 +55713,7 @@
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU782" SequenceNumber="46">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </To>
         <RouteLinkRef>RL363</RouteLinkRef>
@@ -55721,7 +55721,7 @@
       </JourneyPatternTimingLink>
       <JourneyPatternTimingLink id="JPTL392">
         <From id="JPSU783" SequenceNumber="46">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU784" SequenceNumber="47">
@@ -56653,7 +56653,7 @@
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU938" SequenceNumber="58">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </To>
         <RouteLinkRef>RL263</RouteLinkRef>
@@ -56661,7 +56661,7 @@
       </JourneyPatternTimingLink>
       <JourneyPatternTimingLink id="JPTL470">
         <From id="JPSU939" SequenceNumber="58">
-          <StopPointRef>260006514</StopPointRef>
+          <StopPointRef>260006514A</StopPointRef>
           <TimingStatus>OTH</TimingStatus>
         </From>
         <To id="JPSU940" SequenceNumber="59">
