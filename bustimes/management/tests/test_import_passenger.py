@@ -37,8 +37,7 @@ class ImportPassengerTest(TestCase):
             "INFO:bustimes.management.commands.import_bod:Unilink",
             "INFO:bustimes.management.commands.import_bod:{"
             "'url': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1648047602.zip', "
-            "'filename': 'unilink_1648047602.zip', 'modified': True, "
-            "'gtfs': 'https://data.discoverpassenger.com/operator/unilink/dataset/current/download/gtfs'}"
+            "'filename': 'unilink_1648047602.zip', 'modified': True}"
         ])
 
         self.assertFalse(Route.objects.all())

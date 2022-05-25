@@ -3,7 +3,6 @@
 
 import os
 import requests
-import zipfile
 from urllib.parse import urljoin, urlparse
 from time import sleep
 from requests_html import HTMLSession
@@ -11,44 +10,10 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.db.models import Q
-from busstops.models import DataSource, Service, ServiceColour
+from busstops.models import DataSource
 from .import_bod import handle_file, get_operator_ids, clean_up, logger
 from .import_transxchange import Command as TransXChangeCommand
-from .import_gtfs import read_file
 from ...download_utils import write_file
-
-
-def handle_gtfs(operators, url):
-    gtfs_dir = os.path.join(settings.DATA_DIR, 'gtfs')
-    if not os.path.exists(gtfs_dir):
-        os.mkdir(gtfs_dir)
-
-    filename = os.path.basename(urlparse(url).path)
-    path = os.path.join(gtfs_dir, filename)
-
-    if os.path.exists(path):
-        return
-
-    response = requests.get(url, stream=True)
-    write_file(path, response)
-
-    with zipfile.ZipFile(path) as archive:
-        for line in read_file(archive, 'routes.txt'):
-            foreground = line['route_text_color']
-            background = line['route_color']
-            if foreground == '000000' and background == 'FFFFFF':
-                continue
-            try:
-                service = Service.objects.get(operator__in=operators, line_name=line['route_short_name'], current=True)
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                continue
-            colour, _ = ServiceColour.objects.get_or_create(
-                {'name': service.line_brand},
-                foreground=f"#{foreground}",
-                background=f"#{background}",
-            )
-            service.colour = colour
-            service.save(update_fields=['colour'])
 
 
 def get_version(url):
@@ -91,8 +56,6 @@ def get_versions(session, url):
             url = urljoin(element.base_url, element.attrs['href'])
             if '/txc' in url:
                 versions.append(get_version(url))
-            elif '/gtfs' in url:
-                versions[-1]['gtfs'] = url
 
     return versions
 
@@ -179,13 +142,6 @@ class Command(BaseCommand):
 
             if new_versions or operator:
                 command.finish_services()
-
-                if name in ('Nottingham City Transport', 'Reading Buses', 'Transdev Blazefield', 'Cardiff Bus'):
-                    # get colours from the GTFS data
-                    for version in versions:
-                        if 'gtfs' in version:
-                            handle_gtfs(list(operators), version['gtfs'])
-                            break
 
                 command.source.save()
 

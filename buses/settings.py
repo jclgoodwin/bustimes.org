@@ -640,6 +640,7 @@ BOD_OPERATORS = [
         'OXBC': 'OXBC',
         'CSLB': 'CSLB',
         'THTR': 'THTR',
+        'CSSO': 'CSSO',
     }, False),
 
     ('DRMC', 'WM', {}, True),
@@ -759,7 +760,8 @@ TICKETER_OPERATORS = [
     ('SW', ['PLYC', 'TFCN'], 'Go South West'),
     # ('SE', ['METR'], 'Metrobus'),
     ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
-    # ('NW', ['GONW'], 'Go North West'),
+    ('NW', ['GONW'], 'Go North West'),
+    ('NE', ['GNEL'], 'Go North East'),
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
 
     # Rotala Operators
