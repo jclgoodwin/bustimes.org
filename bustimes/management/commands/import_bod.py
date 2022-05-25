@@ -185,7 +185,7 @@ def bus_open_data(api_key, operator):
                 continue
 
             source = DataSource.objects.filter(url=dataset["url"]).first()
-            if not source and len(operator_datasets) == 1:
+            if not source and ' ' not in noc and len(operator_datasets) == 1:
                 name_prefix = dataset["name"].split('_', 1)[0]
                 # if old dataset was made inactive, reuse id
                 source = DataSource.objects.filter(name__startswith=f"{name_prefix}_").first()
