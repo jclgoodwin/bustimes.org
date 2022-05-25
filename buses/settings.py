@@ -260,9 +260,7 @@ PASSENGER_OPERATORS = [
     ('Metrobus', 'metrobus', 'SE', {
         'MB': 'METR'
     }),
-    ('Nottingham City Transport', 'nctx', 'EM', {
-        'NCT': 'NCTR'
-    }),
+
     ('Borders Buses', 'bordersbuses', 'S', {
         'PERY': 'BORD',
         'BB': 'BORD',
@@ -380,6 +378,8 @@ BOD_OPERATORS = [
     ('NWBT', 'NW', {}, False),
     ('MARS', 'SE', {}, False),
     ('EMBR', 'S', {}, False),
+
+    ('NCTR', 'EM', {}, False),
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
