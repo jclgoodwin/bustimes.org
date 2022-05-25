@@ -240,9 +240,6 @@ class Timetable:
 
             grouping.do_heads_and_feet(detailed)
 
-        if all(grouping.trips for grouping in self.groupings):
-            self.groupings.sort(key=Grouping.get_order)
-
         self.origins_and_destinations = list({
             (route.origin, route.destination, route.via) for route in self.current_routes if route.origin
         })

@@ -187,18 +187,18 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url() + '?date=2016-10-16')
         timetable = res.context_data['timetable']
 
-        self.assertEqual('Inbound', str(timetable.groupings[0]))
+        self.assertEqual('Outbound', str(timetable.groupings[0]))
 
-        self.assertTrue(timetable.groupings[0].has_minor_stops())
         self.assertTrue(timetable.groupings[1].has_minor_stops())
+        self.assertTrue(timetable.groupings[0].has_minor_stops())
 
-        self.assertEqual(87, len(timetable.groupings[0].rows))
-        self.assertEqual(91, len(timetable.groupings[1].rows))
+        self.assertEqual(87, len(timetable.groupings[1].rows))
+        self.assertEqual(91, len(timetable.groupings[0].rows))
 
-        self.assertEqual(5, len(timetable.groupings[0].rows[0].times))
-        self.assertEqual(4, len(timetable.groupings[1].rows[0].times))
+        self.assertEqual(5, len(timetable.groupings[1].rows[0].times))
+        self.assertEqual(4, len(timetable.groupings[0].rows[0].times))
 
-        self.assertEqual('', timetable.groupings[0].rows[0].times[-1])
+        self.assertEqual('', timetable.groupings[1].rows[0].times[-1])
 
         # self.assertEqual(['', '', '', '', '', '', '', ''], timetable.groupings[1].rows[0].times[-8:])
 
@@ -286,16 +286,16 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual('2016-12-15', str(timetable.date))
 
-        self.assertEqual(str(timetable.groupings[0].rows[0].times[:3]), '[05:20, 06:20, 07:15]')
-        self.assertEqual(str(timetable.groupings[1].rows[0].times[:3]), '[07:00, 08:00, 09:00]')
+        self.assertEqual(str(timetable.groupings[0].rows[0].times[:3]), '[07:00, 08:00, 09:00]')
+        self.assertEqual(str(timetable.groupings[1].rows[0].times[:3]), '[05:20, 06:20, 07:15]')
 
         # Test abbreviations (check the colspan and rowspan attributes of Cells)
-        self.assertEqual(timetable.groupings[1].rows[0].times[3].colspan, 6)
+        self.assertEqual(timetable.groupings[0].rows[0].times[3].colspan, 6)
         # self.assertEqual(timetable.groupings[1].rows[0].times[3].rowspan, 104)
-        self.assertFalse(timetable.groupings[1].rows[43].has_waittimes)
+        self.assertFalse(timetable.groupings[0].rows[43].has_waittimes)
         # self.assertTrue(timetable.groupings[1].rows[44].has_waittimes)
         # self.assertFalse(timetable.groupings[1].rows[45].has_waittimes)
-        self.assertEqual(str(timetable.groupings[0].rows[0].times[:6]), '[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]'),
+        self.assertEqual(str(timetable.groupings[1].rows[0].times[:6]), '[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]'),
 
         # created despite leading 0 in an ATCO code
         self.assertEqual(2, service.stopusage_set.count())
@@ -342,26 +342,27 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context['timetable']
         self.assertEqual('2017-08-29', str(timetable.date))
 
+        grouping = timetable.groupings[1]
         self.assertEqual(
-            str(timetable.groupings[0].rows[0].times[:16]),
+            str(grouping.rows[0].times[:16]),
             "[05:06, '', 05:33, '', '', 06:08, 06:29, 06:46, 06:58, 07:21, 07:35, 07:44, 07:59, 08:14, 08:49, 09:07]"
         )
-        self.assertEqual(str(timetable.groupings[0].rows[0].times[17]), 'then every 20 minutes until')
-        self.assertEqual(timetable.groupings[0].rows[0].times[17].colspan, 17)
-        self.assertEqual(timetable.groupings[0].rows[0].times[17].rowspan, 60)
+        self.assertEqual(str(grouping.rows[0].times[17]), 'then every 20 minutes until')
+        self.assertEqual(grouping.rows[0].times[17].colspan, 17)
+        self.assertEqual(grouping.rows[0].times[17].rowspan, 60)
         self.assertEqual(
-            str(timetable.groupings[0].rows[0].times[18:22]),
+            str(timetable.groupings[1].rows[0].times[18:22]),
             "[15:33, 15:53, 15:58, 16:13]"
         )
-        self.assertEqual(str(timetable.groupings[0].rows[0].times[22]), 'then every 20 minutes until')
-        self.assertEqual(timetable.groupings[0].rows[0].times[22].colspan, 2)
-        self.assertEqual(timetable.groupings[0].rows[0].times[22].rowspan, 60)
-        self.assertEqual(str(timetable.groupings[0].rows[0].times[23:]), '[17:13, 17:29, 17:59, 18:07, 18:44, 19:54]')
+        self.assertEqual(str(grouping.rows[0].times[22]), 'then every 20 minutes until')
+        self.assertEqual(grouping.rows[0].times[22].colspan, 2)
+        self.assertEqual(grouping.rows[0].times[22].rowspan, 60)
+        self.assertEqual(str(grouping.rows[0].times[23:]), '[17:13, 17:29, 17:59, 18:07, 18:44, 19:54]')
 
-        self.assertEqual(str(timetable.groupings[0].rows[1].times[15:20]), '[09:08, 09:34, 15:34, 15:54, 15:59]')
-        self.assertEqual(str(timetable.groupings[0].rows[11].times[15:20]), '[09:24, 09:47, 15:47, 16:07, 16:12]')
+        self.assertEqual(str(grouping.rows[1].times[15:20]), '[09:08, 09:34, 15:34, 15:54, 15:59]')
+        self.assertEqual(str(grouping.rows[11].times[15:20]), '[09:24, 09:47, 15:47, 16:07, 16:12]')
 
-        feet = list(timetable.groupings[0].column_feet.values())[0]
+        feet = list(grouping.column_feet.values())[0]
         self.assertEqual(feet[0].span, 9)
         self.assertEqual(feet[1].span, 2)
         self.assertEqual(feet[2].span, 24)
@@ -396,47 +397,50 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context_data['timetable']
         self.assertEqual('2017-04-13', str(timetable.date))
 
-        self.assertEqual(len(timetable.groupings[0].rows), 49)
-        self.assertEqual(len(timetable.groupings[1].rows), 29)
+        outbound, inbound = timetable.groupings
 
-        self.assertEqual(str(timetable.groupings[0].rows[0].times), "[19:12, '', '']")
-        self.assertEqual(str(timetable.groupings[0].rows[21].times), "[19:29, '', '']")
-        self.assertEqual(str(timetable.groupings[0].rows[22].times), "[19:30, 21:00, 22:30]")
-        self.assertEqual(str(timetable.groupings[0].rows[-25].times), '[19:32, 21:02, 22:32]')
-        self.assertEqual(str(timetable.groupings[0].rows[-24].times), '[19:33, 21:03, 22:33]')
-        self.assertEqual(str(timetable.groupings[0].rows[-12].times), '[19:42, 21:12, 22:42]')
-        self.assertEqual(str(timetable.groupings[0].rows[-8].times), '[19:47, 21:17, 22:47]')
-        self.assertEqual(str(timetable.groupings[0].rows[-7].times), '[19:48, 21:18, 22:48]')
-        self.assertEqual(str(timetable.groupings[0].rows[-1].times), '[19:53, 21:23, 22:53]')
+        self.assertEqual(len(inbound.rows), 49)
+        self.assertEqual(len(outbound.rows), 29)
 
-        self.assertEqual(str(timetable.groupings[1].rows[0].times), '[20:35, 22:05, 23:30]')
-        self.assertEqual(str(timetable.groupings[1].rows[-25].times), '[20:38, 22:08, 23:33]')
-        self.assertEqual(str(timetable.groupings[1].rows[-24].times), '[20:39, 22:09, 23:34]')
-        self.assertEqual(str(timetable.groupings[1].rows[-12].times), '[20:52, 22:22, 23:47]')
-        self.assertEqual(str(timetable.groupings[1].rows[-8].times), '[20:55, 22:25, 23:50]')
-        self.assertEqual(str(timetable.groupings[1].rows[-7].times), '[20:55, 22:25, 23:50]')
-        self.assertEqual(str(timetable.groupings[1].rows[-1].times), '[20:58, 22:28, 23:53]')
+        self.assertEqual(str(inbound.rows[0].times), "[19:12, '', '']")
+        self.assertEqual(str(inbound.rows[21].times), "[19:29, '', '']")
+        self.assertEqual(str(inbound.rows[22].times), "[19:30, 21:00, 22:30]")
+        self.assertEqual(str(inbound.rows[-25].times), '[19:32, 21:02, 22:32]')
+        self.assertEqual(str(inbound.rows[-24].times), '[19:33, 21:03, 22:33]')
+        self.assertEqual(str(inbound.rows[-12].times), '[19:42, 21:12, 22:42]')
+        self.assertEqual(str(inbound.rows[-8].times), '[19:47, 21:17, 22:47]')
+        self.assertEqual(str(inbound.rows[-7].times), '[19:48, 21:18, 22:48]')
+        self.assertEqual(str(inbound.rows[-1].times), '[19:53, 21:23, 22:53]')
 
-        self.assertEqual(str(timetable.groupings[0].rows[-3].stop), 'Eldon Street')
-        self.assertEqual(str(timetable.groupings[0].rows[-2].stop), 'Railway Station')
-        self.assertEqual(str(timetable.groupings[0].rows[-1].stop), 'Bus Station')
-        self.assertEqual(str(timetable.groupings[1].rows[-3].stop), 'Twist Moor Lane')
-        self.assertEqual(str(timetable.groupings[1].rows[-2].stop), 'Gladstone Terrace')
-        self.assertEqual(str(timetable.groupings[1].rows[-1].stop), 'Hare and Hounds')
+        self.assertEqual(str(outbound.rows[0].times), '[20:35, 22:05, 23:30]')
+        self.assertEqual(str(outbound.rows[-25].times), '[20:38, 22:08, 23:33]')
+        self.assertEqual(str(outbound.rows[-24].times), '[20:39, 22:09, 23:34]')
+        self.assertEqual(str(outbound.rows[-12].times), '[20:52, 22:22, 23:47]')
+        self.assertEqual(str(outbound.rows[-8].times), '[20:55, 22:25, 23:50]')
+        self.assertEqual(str(outbound.rows[-7].times), '[20:55, 22:25, 23:50]')
+        self.assertEqual(str(outbound.rows[-1].times), '[20:58, 22:28, 23:53]')
+
+        self.assertEqual(str(inbound.rows[-3].stop), 'Eldon Street')
+        self.assertEqual(str(inbound.rows[-2].stop), 'Railway Station')
+        self.assertEqual(str(inbound.rows[-1].stop), 'Bus Station')
+        self.assertEqual(str(outbound.rows[-3].stop), 'Twist Moor Lane')
+        self.assertEqual(str(outbound.rows[-2].stop), 'Gladstone Terrace')
+        self.assertEqual(str(outbound.rows[-1].stop), 'Hare and Hounds')
 
         timetable = service.get_timetable(date(2017, 4, 16))
+        outbound = timetable.groupings[0]
         self.assertEqual('2017-04-16', str(timetable.date))
-        self.assertEqual(str(timetable.groupings[0].rows[0].times[2:]), '[15:28, 16:27, 17:28, 18:28, 19:28]')
-        self.assertEqual(str(timetable.groupings[0].rows[-26].times[-1]), '19:50')
-        self.assertEqual(str(timetable.groupings[0].rows[-25].times[-1]), '19:51')
-        self.assertEqual(str(timetable.groupings[0].rows[-24].times[-1]), '')
-        self.assertEqual(str(timetable.groupings[0].rows[-23].times[-1]), '')
-        self.assertEqual(str(timetable.groupings[0].rows[-6].times[-1]), '')
-        self.assertEqual(str(timetable.groupings[0].rows[-5].times[-1]), '')
-        self.assertEqual(str(timetable.groupings[0].rows[-4].times[-1]), '')
-        self.assertEqual(str(timetable.groupings[0].rows[-3].times[2:]), "[17:04, 18:05, 19:05, '']")
-        self.assertEqual(str(timetable.groupings[0].rows[-2].times[2:]), "[17:04, 18:05, 19:05, '']")
-        self.assertEqual(str(timetable.groupings[0].rows[-1].times[2:]), "[17:06, 18:07, 19:07, '']")
+        self.assertEqual(str(outbound.rows[0].times[2:]), '[15:28, 16:27, 17:28, 18:28, 19:28]')
+        self.assertEqual(str(outbound.rows[-26].times[-1]), '19:50')
+        self.assertEqual(str(outbound.rows[-25].times[-1]), '19:51')
+        self.assertEqual(str(outbound.rows[-24].times[-1]), '')
+        self.assertEqual(str(outbound.rows[-23].times[-1]), '')
+        self.assertEqual(str(outbound.rows[-6].times[-1]), '')
+        self.assertEqual(str(outbound.rows[-5].times[-1]), '')
+        self.assertEqual(str(outbound.rows[-4].times[-1]), '')
+        self.assertEqual(str(outbound.rows[-3].times[2:]), "[17:04, 18:05, 19:05, '']")
+        self.assertEqual(str(outbound.rows[-2].times[2:]), "[17:04, 18:05, 19:05, '']")
+        self.assertEqual(str(outbound.rows[-1].times[2:]), "[17:06, 18:07, 19:07, '']")
 
         self.assertEqual(0, service.stopusage_set.count())
 
@@ -465,7 +469,7 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context_data['timetable']
         self.assertEqual('2017-09-13', str(timetable.date))
         self.assertContains(response, 'Budehaven School')
-        rows = timetable.groupings[1].rows
+        rows = timetable.groupings[0].rows
         self.assertEqual(str(rows[-6].times), "[08:32, '', '', '', 15:29, '']")
         self.assertEqual(str(rows[-5].times), "[08:33, '', '', '', 15:30, '']")
         self.assertEqual(str(rows[-4].times), "[08:33, '', '', '', 15:30, '']")
@@ -646,8 +650,8 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(Service.objects.get().get_absolute_url())
         timetable = response.context_data['timetable']
 
-        self.assertEqual(27, len(timetable.groupings[0].trips))
-        self.assertEqual(25, len(timetable.groupings[1].trips))
+        self.assertEqual(25, len(timetable.groupings[0].trips))
+        self.assertEqual(27, len(timetable.groupings[1].trips))
         self.assertEqual(179, len(timetable.groupings[0].rows))
         self.assertEqual(179, len(timetable.groupings[1].rows))
 
@@ -772,8 +776,8 @@ class ImportTransXChangeTest(TestCase):
             with self.assertNumQueries(7):
                 timetable = service.get_timetable(date(2017, 10, 3))
         self.assertEqual(str(timetable.date), '2017-10-03')
-        self.assertEqual(27, len(timetable.groupings[0].trips))
-        self.assertEqual(30, len(timetable.groupings[1].trips))
+        self.assertEqual(27, len(timetable.groupings[1].trips))
+        self.assertEqual(30, len(timetable.groupings[0].trips))
 
     @time_machine.travel('25 June 2016')
     def test_do_service_scotland(self):
@@ -883,7 +887,7 @@ class ImportTransXChangeTest(TestCase):
         timetable = res.context_data['timetable']
         self.assertFalse(timetable.groupings[0].has_minor_stops())
         self.assertFalse(timetable.groupings[1].has_minor_stops())
-        self.assertEqual(str(timetable.groupings[1].rows[0].times), '[13:00, 15:00, 16:00, 16:30, 18:00, 20:00, 23:45]')
+        self.assertEqual(str(timetable.groupings[0].rows[0].times), '[13:00, 15:00, 16:00, 16:30, 18:00, 20:00, 23:45]')
 
         # should only be 6, despite running 'import_services' twice
         self.assertEqual(0, service.stopusage_set.count())
