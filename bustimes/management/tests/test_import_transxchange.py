@@ -332,6 +332,12 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(1, CalendarDate.objects.filter(summary='Christmas Week').count())
         self.assertTrue(service.public_use)
 
+        response = self.client.get(f"{service.get_absolute_url()}/debug")
+        self.assertContains(response, "not 2021-12-31 (Christmas week)")
+
+        trip = Trip.objects.first()
+        self.assertEqual("09:02", str(trip))
+
     @time_machine.travel('2017-08-29')
     def test_timetable_abbreviations_notes(self):
         """Test a timetable with a note which should determine the bounds of an abbreviation"""
@@ -486,15 +492,25 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(service.get_absolute_url())
         self.assertEqual([], response.context_data['timetable'].groupings)
 
+        BankHolidayDate.objects.create(
+            bank_holiday=BankHoliday.objects.get(name='SpringBank'),
+            date='2017-05-15'  # not a real bank holiday - this is a test
+        )
+
         # Has some journeys that operate on 1 May 2017
         with time_machine.travel(date(2017, 4, 28)):
             response = self.client.get(service.get_absolute_url())
-            timetable = response.context_data['timetable']
-            self.assertEqual(timetable.date, date(2017, 5, 1))
-            self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
-            self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
+        timetable = response.context_data['timetable']
+        self.assertEqual(timetable.date, date(2017, 5, 1))
+        self.assertEqual(8, len(timetable.groupings[0].rows[0].times))
+        self.assertEqual(8, len(timetable.groupings[1].rows[0].times))
 
-        self.assertEqual(0, service.stopusage_set.count())
+        # BankHolidayDate
+        self.assertContains(response, '<option value="2017-05-15">Monday 15 May 2017</option>')
+
+        response = self.client.get(f"{service.get_absolute_url()}/debug")
+        self.assertContains(response, "SpringBank")
+        self.assertContains(response, "GoodFriday")
 
     @time_machine.travel('2012-06-27')
     def test_timetable_goole(self):
