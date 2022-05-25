@@ -162,7 +162,7 @@ def bus_open_data(api_key, operator):
         else:
             operators = [noc]
 
-        if operator and operator not in operators:
+        if operator and ' ' not in operator and operator not in operators:
             continue
 
         if ' ' in noc:
@@ -181,10 +181,6 @@ def bus_open_data(api_key, operator):
                 # only certain First operators
                 if not any(code in dataset['description'] for code in operator_codes_dict):
                     continue
-                if 'FECS' in dataset['description']:
-                    # ignore FECS datasets older than 1 sep 2021
-                    if dataset['modified'] < parse_datetime('2021-09-01T00:00:00+00:00'):
-                        continue
             if noc == 'EYMS' and not any(area["atco_code"] == "229" for area in dataset["adminAreas"]):
                 continue
 

@@ -267,25 +267,6 @@ PASSENGER_OPERATORS = [
         '': 'PERY',
     }),
 
-    ('morebus', 'morebus', 'SW', {
-        'WDBC': 'WDBC',
-        'DAMY': 'DAMY',
-    }),
-    ('Bluestar', 'bluestar', 'SW', {
-        'BLUS': 'BLUS',
-        'UNIL': 'UNIL',
-    }),
-    ('Salisbury Reds', 'salisburyreds', 'SW', {
-        'SWWD': 'SWWD',
-    }),
-    ('Southern Vectis', 'southernvectis', 'SW', {
-        'SVCT': 'SVCT',
-    }),
-    ('Swindon’s Bus Company', 'swindonbus', 'SW', {
-        'TDTR': 'TDTR',
-        'SWIN': 'TDTR',
-    }),
-
     ('Reading Buses', 'readingbuses', 'SE', {
         'RBUS': 'RBUS',
     }),
@@ -314,17 +295,7 @@ PASSENGER_OPERATORS = [
     ('Blackpool Transport', 'bts', 'NW', {
         'RR': 'BLAC',
     }),
-    ('Transdev Blazefield', 'transdevblazefield', 'NW', {
-        'LUI': 'LNUD',
-        'ROS': 'ROST',
-        'BPT': 'BPTR',
-        'KDT': 'KDTR',
-        'HDT': 'HRGT',
-        'YCD': 'YCST',
-        'TPEN': 'TPEN',
-        'FLYE': 'FLYE',
-        'YACT': 'YACT',
-    }),
+
     ('Go North East', 'gonortheast', 'NE', {
         'GNE': 'GNEL',
     }),
@@ -380,6 +351,17 @@ BOD_OPERATORS = [
     ('EMBR', 'S', {}, False),
 
     ('NCTR', 'EM', {}, False),
+    ('YCST', 'NW', {
+        'LUI': 'LNUD',
+        'ROS': 'ROST',
+        'BPT': 'BPTR',
+        'KDT': 'KDTR',
+        'HDT': 'HRGT',
+        'YCD': 'YCST',
+        'TPEN': 'TPEN',
+        'FLYE': 'FLYE',
+        'YACT': 'YACT',
+    }, False),
 
     ('FBOS', None, {
         'FYOR': 'FYOR',
@@ -634,11 +616,22 @@ BOD_OPERATORS = [
         'DAGC': 'DAGC',
         'CRDR': 'CRDR'
     }, False),
-    # ('Go East Anglia', 'EA', {
-    #     'KCTB': 'KCTB',
-    #     'HEDO': 'HEDO',
-    #     'CHAM': 'CHAM',
-    # }, False),
+
+    # Go-Ahead
+    ('Go East Anglia', 'EA', {
+        'KCTB': 'KCTB',
+        'HEDO': 'HEDO',
+        'CHAM': 'CHAM',
+    }, False),
+    ('Go South Coast', 'SW', {
+        'BLUS': 'BLUS',
+        'DAMY': 'DAMY',
+        'SWWD': 'SWWD',
+        'SVCT': 'SVCT',
+        'TDTR': 'TDTR',
+        'UNIL': 'UNIL',
+        'WDBC': 'WDBC',
+    }, False),
 
     ('DRMC', 'WM', {}, True),
     ('SARG', 'WM', {}, False),
