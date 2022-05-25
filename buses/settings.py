@@ -257,60 +257,30 @@ AKISMET_SITE_URL = 'https://bustimes.org'
 
 # see bustimes.management.commands.import_passenger
 PASSENGER_OPERATORS = [
-    ('Metrobus', 'metrobus', 'SE', {
-        'MB': 'METR'
-    }),
-
     ('Borders Buses', 'bordersbuses', 'S', {
         'PERY': 'BORD',
         'BB': 'BORD',
         '': 'PERY',
     }),
-
-    ('Reading Buses', 'readingbuses', 'SE', {
-        'RBUS': 'RBUS',
-    }),
-    ('Thames Valley Buses', 'courtney', 'SE', {
-        'THVB': 'THVB',
-        'CTNY': 'CTNY',
-    }),
-    ('Newbury & District', 'kennections', 'SE', {
-        'NADS': 'NADS',
-    }),
-
     ('West Coast Motors', 'westcoastmotors', 'S', {
         'WCM': 'WCMO',
         'GCB': 'GCTB',  # Glasgow Citybus
     }),
+
     ('Cardiff Bus', 'ccts', 'W', {
         'CB': 'CBUS',
         # 'NB': '',
     }),
-    ('Yellow Buses', 'bybus', 'SW', {
-        'YELL': 'YELL',
-    }),
-    ('Brighton & Hove Buses', 'brightonhove', 'SE', {
-        'BH': 'BHBC',
-    }),
-    ('Blackpool Transport', 'bts', 'NW', {
-        'RR': 'BLAC',
+    ('Newport Bus', 'newportbus', 'W', {
+        'NTO': 'NWPT',
     }),
 
-    ('Go North East', 'gonortheast', 'NE', {
-        'GNE': 'GNEL',
-    }),
-    ('East Yorkshire', 'eyms', 'Y', {
-        'EYMS': 'EYMS',
-    }),
     ('McGill’s', 'mcgills', 'S', {
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
     ('Warringtons Own Buses', 'warrington', 'NW', {
         'WOB': 'WBTR',
-    }),
-    ('Newport Bus', 'newportbus', 'W', {
-        'NTO': 'NWPT',
     }),
     ('JMB Travel', 'jmbtravel', 'S', {
         'NJMT': 'NJMT',
@@ -324,12 +294,32 @@ PASSENGER_OPERATORS = [
     ('Red Rose Travel', 'redrose', 'SE', {
         'RRTR': 'RRTR',
     }),
-    ('Coastliner', 'coastliner', 'NW', {
-        'NUTT': 'NUTT',
+
+    # Reading
+    ('Reading Buses', 'readingbuses', 'SE', {
+        'RBUS': 'RBUS',
     }),
-    ('Go North West', 'gonorthwest', 'NW', {
-        'GONW': 'GONW',
+    ('Thames Valley Buses', 'courtney', 'SE', {
+        'THVB': 'THVB',
+        'CTNY': 'CTNY',
     }),
+    ('Newbury & District', 'kennections', 'SE', {
+        'NADS': 'NADS',
+    }),
+
+    # Go-Ahead
+    ('Metrobus', 'metrobus', 'SE', {
+        'MB': 'METR'
+    }),
+    # ('Go North East', 'gonortheast', 'NE', {
+    #     'GNE': 'GNEL',
+    # }),
+    ('East Yorkshire', 'eyms', 'Y', {
+        'EYMS': 'EYMS',
+    }),
+    # ('Go North West', 'gonorthwest', 'NW', {
+    #     'GONW': 'GONW',
+    # }),
 ]
 
 # see bustimes.management.commands.import_bod
@@ -480,6 +470,9 @@ BOD_OPERATORS = [
     ('LIHO', 'SW', {}, False),
     # ('DPCR', 'SW', {}, False),
 
+    ('YCOA', 'SW', {}, False),
+    ('YELL', 'SW', {}, False),
+
     # ('NATX', 'GB', {}, False),
     ('KETR', 'SE', {}, False),
     # ('PCCO', 'EM', {}, False),
@@ -555,6 +548,8 @@ BOD_OPERATORS = [
     ('ALSC', 'NW', {}, False),  # Happy Al's
     ('LCAC', 'NW', {}, False),
     ('LNNE', 'NW', {}, False),
+    ('NUTT', 'NW', {}, False),
+    ('BLAC', 'NW', {}, False),
 
     ('ROOS', 'SW', {}, False),
     ('SEWR', 'SW', {}, False),
@@ -614,7 +609,7 @@ BOD_OPERATORS = [
     ('CRSS', 'WM', {}, True),  # NN Cresswell
     ('DAGC', None, {
         'DAGC': 'DAGC',
-        'CRDR': 'CRDR'
+        'CRDR': 'CRDR',
     }, False),
 
     # Go-Ahead
@@ -631,6 +626,20 @@ BOD_OPERATORS = [
         'TDTR': 'TDTR',
         'UNIL': 'UNIL',
         'WDBC': 'WDBC',
+    }, False),
+    ('Brighton and Hove Buses', 'SE', {
+        'BHBC': 'BHBC',
+    }, False),
+    ('Go North East', 'NE', {
+        'GNEL': 'GNEL',
+    }, False),
+    ('Go North West', 'NW', {
+        'GONW': 'GONW',
+    }, False),
+    ('Oxford Bus Company', 'SE', {
+        'OXBC': 'OXBC',
+        'CSLB': 'CSLB',
+        'THTR': 'THTR',
     }, False),
 
     ('DRMC', 'WM', {}, True),

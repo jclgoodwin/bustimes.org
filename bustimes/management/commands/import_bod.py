@@ -284,24 +284,30 @@ def ticketer(specific_operator=None):
         if noc == specific_operator or not command.source.datetime or last_modified > command.source.datetime:
             logger.info(f"{url} {last_modified}")
 
-            command.region_id = region_id
-            command.service_ids = set()
-            command.route_ids = set()
+            sha1 = get_sha1(path)
 
-            # avoid importing old data
-            command.source.datetime = timezone.now()
+            if DataSource.objects.filter(url__contains='.gov.uk', sha1=sha1).exists():
+                # hash matches that hash of some BODS data
+                logger.info(sha1)
+            else:
+                command.region_id = region_id
+                command.service_ids = set()
+                command.route_ids = set()
 
-            handle_file(command, path)
+                # for "end date is in the past" warnings
+                command.source.datetime = timezone.now()
 
-            command.mark_old_services_as_not_current()
+                handle_file(command, path)
 
-            clean_up(operators, [command.source])
+                command.mark_old_services_as_not_current()
 
-            command.finish_services()
+                clean_up(operators, [command.source])
 
-            logger.info(f"  ⏱️ {timezone.now() - command.source.datetime}")  # log time taken
+                command.finish_services()
 
-            command.source.sha1 = get_sha1(path)
+                logger.info(f"  ⏱️ {timezone.now() - command.source.datetime}")  # log time taken
+
+            command.source.sha1 = sha1
             command.source.datetime = last_modified
             command.source.save()
 
