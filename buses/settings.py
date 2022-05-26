@@ -296,18 +296,6 @@ PASSENGER_OPERATORS = [
        'RRTR': 'RRTR',
     }),
 
-    ('Transdev Blazefield', 'transdevblazefield', 'NW', {
-        'LUI': 'LNUD',
-        'ROS': 'ROST',
-        'BPT': 'BPTR',
-        'KDT': 'KDTR',
-        'HDT': 'HRGT',
-        'YCD': 'YCST',
-        'TPEN': 'TPEN',
-        'FLYE': 'FLYE',
-        'YACT': 'YACT',
-    }),
-
     # Reading
     ('Reading Buses', 'readingbuses', 'SE', {
         'RBUS': 'RBUS',
