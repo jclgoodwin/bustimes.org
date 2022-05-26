@@ -99,6 +99,7 @@ jobs:
 
     - name: Upload coverage
       # upload the Python coverage.py report to https://bustimes-coverage.ams3.digitaloceanspaces.com/index.html
+      continue-on-error: true
       env:
         AWS_EC2_METADATA_DISABLED: true
         AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
