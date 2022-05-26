@@ -1,5 +1,9 @@
 <table class="trip-timetable">
-    <th></th><th>Timetable</th>
+    <thead>
+        <th></th>
+        <th scope="row">Timetable</th>
+        {% if trip_update %}<th scope="row">Expected</th>{% endif %}
+    </thead>
     <tbody>
 {% for stop in stops %}
     {% if stop.arrival %}
@@ -14,6 +18,9 @@
             <td>
                 {{ stop.arrival_time }}
             </td>
+            {% if stop.update %}
+                <td>{{ stop.expected_arrival }}</td>
+            {% endif %}
         </tr>
     {% endif %}
     {% if stop.departure and stop.departure != stop.arrival %}
@@ -30,6 +37,9 @@
             <td>
                 {{ stop.departure_time }}
             </td>
+            {% if stop.update %}
+                <td>{{ stop.expected_departure }}</td>
+            {% endif %}
         </tr>
     {% endif %}
 {% endfor %}

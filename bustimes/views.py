@@ -17,7 +17,7 @@ from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
 from busstops.models import Service, DataSource, StopPoint, StopUsage
-from departures.live import TimetableDepartures
+from departures import live, gtfsr
 from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
 from .models import Route, Trip, Block
@@ -166,7 +166,7 @@ def stop_times_json(request, atco_code):
         else:
             routes[route.service_id] = [route]
 
-    departures = TimetableDepartures(stop, services, None, routes)
+    departures = live.TimetableDepartures(stop, services, None, routes)
     time_since_midnight = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second,
                                     microseconds=when.microsecond)
 
@@ -228,6 +228,11 @@ class TripDetailView(DetailView):
         context['liveries_css_version'] = liveries_css_version()
 
         context['breadcrumb'] = list(self.object.route.service.operator.all()) + [self.object.route.service]
+
+        trip_update = gtfsr.get_trip_update(self.object)
+        if trip_update:
+            context['trip_update'] = trip_update
+            gtfsr.apply_trip_update(context['stops'], trip_update)
 
         return context
 

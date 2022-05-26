@@ -236,14 +236,15 @@ if not TEST:
         },
     }
 
-TFL = {
+TFL = {  # London
     'app_id': os.environ.get('TFL_APP_ID'),
     'app_key': os.environ.get('TFL_APP_KEY')
 }
-TFWM = {
+TFWM = {  # West Midlands
     'app_id': os.environ.get('TFWM_APP_ID'),
     'app_key': os.environ.get('TFWM_APP_KEY')
 }
+NTA_API_KEY = os.environ.get('NTA_API_KEY')  # Ireland
 
 DATA_DIR = os.environ.get('DATA_DIR')
 if DATA_DIR:
