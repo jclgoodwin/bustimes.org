@@ -204,7 +204,7 @@ class Timetable:
         )
 
         if detailed:
-            trips = trips.select_related('block', 'garage')
+            trips = trips.select_related('block', 'garage', 'vehicle_type')
 
         routes = {route.id: route for route in routes}
 

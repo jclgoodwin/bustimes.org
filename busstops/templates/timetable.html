@@ -91,11 +91,19 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
+                                {% if timetable.has_vehicle_types %}
+                                    <tr>
+                                        <th scope="col">Vehicle type</th>
+                                        {% for trip in grouping.trips %}
+                                            <td>{{ trip.vehicle_type }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endif %}
                                 {% if timetable.has_garages %}
                                     <tr>
                                         <th scope="col">Garage</th>
                                         {% for trip in grouping.trips %}
-                                            <td title="{{ trip.garage.name }}">{{ trip.garage.code }}</td>
+                                            <td>{{ trip.garage }}</td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
