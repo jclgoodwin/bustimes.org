@@ -518,27 +518,19 @@ BOD_OPERATORS = [
         'OURH': 'OURH',
         'OBUS': 'OBUS',
     }, False),
-
-    #('WNGS', None, {  # Rotala Group of Companies
-    #    'WINGS': 'WNGS',
-    #    'TGM': 'WNGS',  # Diamond SE
-    #    'NXHH': 'NXHH',  # Hotel Hoppa
-    #    'DIAM': 'DIAM',  # Diamond WM
-    #    'GTRI': 'GTRI',  # Diamond NW
-    #    'PBLT': 'PBLT',  # Preston
-    #}, False),
-
     ('PLNG', 'EA', {}, False),
     ('SNDR', 'EA', {}, False),
     ('AWAY', 'EA', {}, False),
-    ('COMM', 'EM', {}, False),
-    ('STOT', 'NW', {}, False),
-    ('CARL', 'SE', {}, False),
-    ('IRVD', 'NW', {}, False),
-    ('FALC', 'SE', {}, False),
-    ('VECT', 'SE', {}, True),
-    ('ACME', 'SE', {}, False),
-    # ('LTKR', 'SE', {}, False),
+
+    ('WNGS', None, {  # Rotala Group of Companies
+        'WINGS': 'WNGS',
+        'TGM': 'WNGS',  # Diamond SE
+        'NXHH': 'NXHH',  # Hotel Hoppa
+        'DIAM': 'DIAM',  # Diamond WM
+        'GTRI': 'GTRI',  # Diamond NW
+        'PBLT': 'PBLT',  # Preston
+    }, False),
+
 
     ('Viking Coaches', 'NW', {
         'VIKG': 'VIKG'
@@ -549,12 +541,11 @@ BOD_OPERATORS = [
     ('LNNE', 'NW', {}, False),
     ('NUTT', 'NW', {}, False),
     ('BLAC', 'NW', {}, False),
+    ('STOT', 'NW', {}, False),
+    ('IRVD', 'NW', {}, False),
 
     ('ROOS', 'SW', {}, False),
-    ('SEWR', 'SW', {}, False),
-    ('HRBT', 'SE', {}, False),
-    ('KENS', 'Y', {}, False),
-    ('AWAN', 'SE', {}, False),
+    ('SEWR', 'SW', {}, False),  
     ('LUCK', 'SW', {}, False),
 
     ('GVTR', 'NE', {}, False),
@@ -567,10 +558,18 @@ BOD_OPERATORS = [
     ('JOHS', 'WM', {}, False),
 
     ('ENSB', 'SE', {}, True),
+    ('AWAN', 'SE', {}, False),
+    ('HRBT', 'SE', {}, False),
+    ('CARL', 'SE', {}, False),
+    ('FALC', 'SE', {}, False),
+    ('VECT', 'SE', {}, True),
+    ('ACME', 'SE', {}, False),
+    # ('LTKR', 'SE', {}, False),
 
     ('BRYL', 'EM', {}, False),
     ('MDCL', 'EM', {}, False),
     ('NDTR', 'EM', {}, False),
+    ('COMM', 'EM', {}, False),
 
     ('RELD', 'Y', {}, False),
     ('SSSN', 'Y', {}, False),
@@ -579,6 +578,7 @@ BOD_OPERATORS = [
         'HCTY': 'HCTY',  # Connexions
         'YRRB': 'YRRB',  # 'Road Runner'
     }, False),
+    ('KENS', 'Y', {}, False),
 
     ('NCTP', None, {
         'NCTP': 'NCTP',  # CT Plus Bristol (/London)
@@ -593,18 +593,18 @@ BOD_OPERATORS = [
     ('SIMO', 'EA', {}, False),
     ('BEES', 'EA', {}, False),
     ('GOGO', 'NW', {}, False),
+    ('HATT', 'NW', {}, False),
+    ('FCHS', 'NW', {}, False),
     ('RBTS', 'EM', {}, False),
     ('DELA', 'EM', {}, False),
 
-    ('HATT', 'NW', {}, False),
     ('SULV', 'SE', {}, False),
     ('WBSV', 'SE', {}, False),
     ('REDE', 'SE', {}, False),
     ('GPLM', 'SE', {}, False),
     ('CLNB', 'SE', {}, False),
-
-    ('RCHC', 'SE', {}, False),
-    ('FCHS', 'NW', {}, False),
+    #('RCHC', 'SE', {}, False),
+    
     ('CRSS', 'WM', {}, True),  # NN Cresswell
     ('DAGC', None, {
         'DAGC': 'DAGC',
@@ -641,6 +641,9 @@ BOD_OPERATORS = [
         'THTR': 'THTR',
         'CSSO': 'CSSO',
     }, False),
+    ('East Yorkshire', 'Y', {
+        'EYMS': 'EYMS',
+    }, False),
 
     ('DRMC', 'WM', {}, True),
     ('SARG', 'WM', {}, False),
@@ -654,6 +657,9 @@ BOD_OPERATORS = [
         'RR': 'RDRT',
         'RR1': 'RDRT'
     }, False),
+    ('REDL', 'SE', {
+        'REDL': 'RLNE',
+    }, False),
 
     ('CUBU', 'NW', {}, False),
     ('HUYT', 'NW', {}, False),
@@ -661,7 +667,9 @@ BOD_OPERATORS = [
     ('PPBU', 'NW', {}, False),
     ('EAZI', 'NW', {}, False),
     ('MAGH', 'NW', {}, False),
+    ('WBTR', 'NW', {}, False),
     ('MAND', 'SE', {}, False),
+    ('RLNE', 'SE', {}, False),
     ('SOUT', 'SW', {}, False),
 ]
 
