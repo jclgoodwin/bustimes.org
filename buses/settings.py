@@ -409,6 +409,7 @@ BOD_OPERATORS = [
     ('HIPK', 'EM', {
         'OP': 'HIPK',
         'HPB': 'HIPK',
+    }, False),
     ('HNTS', 'EM', {}, False),
     # ('SLBS', 'WM', {}, True),
 
@@ -779,5 +780,5 @@ TICKETER_OPERATORS = [
     ('WM', ['DIAM'], 'Diamond Bus'),
     ('NW', ['GTRI'], 'Diamond Bus North West'),
     ('NW', ['PBLT'], 'Preston Bus'),
-    {'SE', ['WNGS'], 'Diamond South East'),
+    ('SE', ['WNGS'], 'Diamond South East'),
 ]
