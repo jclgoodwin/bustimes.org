@@ -832,22 +832,14 @@ class Command(BaseCommand):
         service = None
 
         for i, line in enumerate(txc_service.lines):
-            # defer to a Bus Open Data type source
+            # prefer a BODS-type source over TNDS
             if self.is_tnds() and self.should_defer_to_other_source(operators, line.line_name):
                 continue
 
+            # Stagecoach: prefer TXC 2.1 to 2.4
             if self.source.name.startswith('Stagecoach') and self.preferred_source and Service.objects.filter(
                 line_name__iexact=line.line_name, current=True,
                 route__source=self.preferred_source
-            ).exists():
-                continue
-
-            # defer to the better Reading Buses source,
-            # unless this service is only present in this worse source
-            # (probably a football services)
-            if self.source.name.startswith('Reading Buses_') and Service.objects.filter(
-                line_name__iexact=line.line_name, current=True,
-                route__source__name__in=('Reading Buses', 'Newbury & District')
             ).exists():
                 continue
 
