@@ -281,7 +281,7 @@ PASSENGER_OPERATORS = [
         'McG': 'MCGL',
     }),
     ('Warringtons Own Buses', 'warrington', 'NW', {
-        'WOB': 'WBTR',
+       'WOB': 'WBTR',
     }),
     ('JMB Travel', 'jmbtravel', 'S', {
         'NJMT': 'NJMT',
@@ -290,10 +290,22 @@ PASSENGER_OPERATORS = [
         'MCLS': 'MCLS',
     }),
     ('Redline Buses', 'redline', 'SE', {
-        'REDL': 'RLNE',
+       'REDL': 'RLNE',
     }),
     ('Red Rose Travel', 'redrose', 'SE', {
-        'RRTR': 'RRTR',
+       'RRTR': 'RRTR',
+    }),
+
+    ('Transdev Blazefield', 'transdevblazefield', 'NW', {
+        'LUI': 'LNUD',
+        'ROS': 'ROST',
+        'BPT': 'BPTR',
+        'KDT': 'KDTR',
+        'HDT': 'HRGT',
+        'YCD': 'YCST',
+        'TPEN': 'TPEN',
+        'FLYE': 'FLYE',
+        'YACT': 'YACT',
     }),
 
     # Reading
@@ -316,7 +328,7 @@ PASSENGER_OPERATORS = [
     #     'GNE': 'GNEL',
     # }),
     ('East Yorkshire', 'eyms', 'Y', {
-        'EYMS': 'EYMS',
+       'EYMS': 'EYMS',
     }),
     # ('Go North West', 'gonorthwest', 'NW', {
     #     'GONW': 'GONW',
@@ -328,13 +340,11 @@ BOD_OPERATORS = [
     ('BEAT', 'NW', {}, False),
     ('APTC', 'SE', {}, False),
     ('FRNH', 'SE', {}, False),
-    ('HACO', 'EA', {}, False),
     ('SMMM', 'SE', {}, False),
     ('FWAY', 'SE', {}, False),
     ('JPCO', 'SW', {}, False),
     ('CACC', 'Y', {}, False),
     ('SWEY', 'Y', {}, False),
-    ('DEWS', 'EA', {}, False),
     ('WMSA', 'EM', {}, False),
     ('LANT', 'EM', {}, False),
     ('NWBT', 'NW', {}, False),
@@ -520,8 +530,20 @@ BOD_OPERATORS = [
         'OURH': 'OURH',
         'OBUS': 'OBUS',
     }, False),
+    ('PLNG', 'EA', {}, False),
+    ('SNDR', 'EA', {}, False),
+    ('AWAY', 'EA', {}, False),
+    ('LYNX', 'EA', {}, False),
+    ('IPSW', 'EA', {}, False),
+    ('WNCT', 'EA', {}, False),
+    ('WHIP', 'EA', {}, False),
+    ('SIMO', 'EA', {}, False),
+    ('BEES', 'EA', {}, False),
+    ('HACO', 'EA', {}, False),
+    ('DEWS', 'EA', {}, False),
 
-    ('WNGS', None, {  # Rotala Group of Companies
+    # Rotala Group of Companies
+    ('WNGS', None, {
         'WINGS': 'WNGS',
         'TGM': 'WNGS',  # Diamond SE
         'NXHH': 'NXHH',  # Hotel Hoppa
@@ -529,18 +551,6 @@ BOD_OPERATORS = [
         'GTRI': 'GTRI',  # Diamond NW
         'PBLT': 'PBLT',  # Preston
     }, False),
-
-    ('PLNG', 'EA', {}, False),
-    ('SNDR', 'EA', {}, False),
-    ('AWAY', 'EA', {}, False),
-    ('COMM', 'EM', {}, False),
-    ('STOT', 'NW', {}, False),
-    ('CARL', 'SE', {}, False),
-    ('IRVD', 'NW', {}, False),
-    ('FALC', 'SE', {}, False),
-    ('VECT', 'SE', {}, True),
-    ('ACME', 'SE', {}, False),
-    # ('LTKR', 'SE', {}, False),
 
     ('Viking Coaches', 'NW', {
         'VIKG': 'VIKG'
@@ -551,12 +561,11 @@ BOD_OPERATORS = [
     ('LNNE', 'NW', {}, False),
     ('NUTT', 'NW', {}, False),
     ('BLAC', 'NW', {}, False),
+    ('STOT', 'NW', {}, False),
+    ('IRVD', 'NW', {}, False),
 
     ('ROOS', 'SW', {}, False),
-    ('SEWR', 'SW', {}, False),
-    ('HRBT', 'SE', {}, False),
-    ('KENS', 'Y', {}, False),
-    ('AWAN', 'SE', {}, False),
+    ('SEWR', 'SW', {}, False),  
     ('LUCK', 'SW', {}, False),
 
     ('GVTR', 'NE', {}, False),
@@ -569,10 +578,18 @@ BOD_OPERATORS = [
     ('JOHS', 'WM', {}, False),
 
     ('ENSB', 'SE', {}, True),
+    ('AWAN', 'SE', {}, False),
+    ('HRBT', 'SE', {}, False),
+    ('CARL', 'SE', {}, False),
+    ('FALC', 'SE', {}, False),
+    ('VECT', 'SE', {}, True),
+    ('ACME', 'SE', {}, False),
+    # ('LTKR', 'SE', {}, False),
 
     ('BRYL', 'EM', {}, False),
     ('MDCL', 'EM', {}, False),
     ('NDTR', 'EM', {}, False),
+    ('COMM', 'EM', {}, False),
 
     ('RELD', 'Y', {}, False),
     ('SSSN', 'Y', {}, False),
@@ -581,6 +598,7 @@ BOD_OPERATORS = [
         'HCTY': 'HCTY',  # Connexions
         'YRRB': 'YRRB',  # 'Road Runner'
     }, False),
+    ('KENS', 'Y', {}, False),
 
     ('NCTP', None, {
         'NCTP': 'NCTP',  # CT Plus Bristol (/London)
@@ -588,25 +606,16 @@ BOD_OPERATORS = [
         'CTPL': 'CTPL',  # CT Plus Yorkshire
     }, False),
 
-    ('LYNX', 'EA', {}, False),
-    ('IPSW', 'EA', {}, False),
-    ('WNCT', 'EA', {}, False),
-    ('WHIP', 'EA', {}, False),
-    ('SIMO', 'EA', {}, False),
-    ('BEES', 'EA', {}, False),
-    ('GOGO', 'NW', {}, False),
     ('RBTS', 'EM', {}, False),
     ('DELA', 'EM', {}, False),
 
-    ('HATT', 'NW', {}, False),
     ('SULV', 'SE', {}, False),
     ('WBSV', 'SE', {}, False),
     ('REDE', 'SE', {}, False),
     ('GPLM', 'SE', {}, False),
     ('CLNB', 'SE', {}, False),
-
-    ('RCHC', 'SE', {}, False),
-    ('FCHS', 'NW', {}, False),
+    ('RCHC', 'SE', {}, True),
+    
     ('CRSS', 'WM', {}, True),  # NN Cresswell
     ('DAGC', None, {
         'DAGC': 'DAGC',
@@ -643,6 +652,9 @@ BOD_OPERATORS = [
         'THTR': 'THTR',
         'CSSO': 'CSSO',
     }, False),
+    # ('East Yorkshire', 'Y', {
+    #     'EYMS': 'EYMS',
+    # }, False),
 
     ('DRMC', 'WM', {}, True),
     ('SARG', 'WM', {}, False),
@@ -656,14 +668,23 @@ BOD_OPERATORS = [
         'RR': 'RDRT',
         'RR1': 'RDRT'
     }, False),
+    # ('REDL', 'SE', {
+    #     'REDL': 'RLNE',
+    # }, False),
 
+    ('GOGO', 'NW', {}, False),
+    ('HATT', 'NW', {}, False),
+    ('FCHS', 'NW', {}, False),
     ('CUBU', 'NW', {}, False),
     ('HUYT', 'NW', {}, False),
     ('AJTX', 'NW', {}, False),
     ('PPBU', 'NW', {}, False),
     ('EAZI', 'NW', {}, False),
     ('MAGH', 'NW', {}, False),
+    # ('WBTR', 'NW', {}, False),
+
     ('MAND', 'SE', {}, False),
+    # ('RLNE', 'SE', {}, False),
     ('SOUT', 'SW', {}, False),
 ]
 
@@ -719,6 +740,7 @@ TICKETER_OPERATORS = [
     ('NW', ['Finches', 'FCHS']),
     ('NW', ['GOGO'], 'Go Goodwins'),
     ('NW', ['BEVC'], 'Belle Vue'),
+    ('NW', ['WBTR'], 'Warringtons Own Buses'),
 
     ('SE', ['WBSV'], 'White Bus'),
     ('SE', ['REDE'], 'Red Eagle'),
@@ -729,6 +751,8 @@ TICKETER_OPERATORS = [
     ('SE', ['FALC'], 'Falcon Buses'),
     ('SE', ['Sullivan_Buses', 'SULV']),
     ('SE', ['ENSB'], 'Ensignbus'),
+    # ('SE', ['RRTR'], 'Red Rose Travel'),
+    ('SE', ['Redline_Buses_Ltd', 'REDL']),
 
     ('SW', ['NTCP', 'NCTP'], 'HCT Group'),
 
@@ -763,10 +787,12 @@ TICKETER_OPERATORS = [
     ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     ('NW', ['GONW'], 'Go North West'),
     ('NE', ['GNEL'], 'Go North East'),
+    ('Y', ['EYMS'], 'East Yorkshire'),
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
 
     # Rotala Operators
     ('WM', ['DIAM'], 'Diamond Bus'),
     ('NW', ['GTRI'], 'Diamond Bus North West'),
     ('NW', ['PBLT'], 'Preston Bus'),
+    ('SE', ['WNGS'], 'Diamond South East'),
 ]
