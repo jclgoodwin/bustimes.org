@@ -895,7 +895,7 @@ class Occupancy(models.TextChoices):
 class VehicleLocation:
     """This used to be a model, is no longer stored in the database but this code is still here for historical reasons
     """
-    def __init__(self, latlong, heading=None, early=None, occupancy=None):
+    def __init__(self, latlong, heading=None, early=None, occupancy=None, block=None):
         self.latlong = latlong
         self.heading = heading
         self.early = early
@@ -905,6 +905,7 @@ class VehicleLocation:
         self.wheelchair_occupancy = None
         self.wheelchair_capacity = None
         self.occupancy_thresholds = None
+        self.block = block
 
     def get_occupancy_display(self):
         return Occupancy(self.occupancy).label
@@ -932,6 +933,7 @@ class VehicleLocation:
             'heading': self.heading,
             'datetime': self.datetime,
             'destination': journey.destination,
+            'block': self.block,
         }
 
         if self.early is not None:

@@ -262,6 +262,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             [
                 {
                     "id": journey.vehicle_id,
+                    "block": "503",
                     "coordinates": [0.285348, 51.2135],
                     "vehicle": {
                         "url": f"/vehicles/{journey.vehicle_id}",
@@ -440,6 +441,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             [
                 {
                     "id": vehicle.id,
+                    "block": "2",
                     "coordinates": [1.675893, 52.328398],
                     "vehicle": {
                         "url": f"/vehicles/{vehicle.id}",
@@ -460,6 +462,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             [
                 {
                     "id": vehicle.id,
+                    "block": "2",
                     "coordinates": [1.675893, 52.328398],
                     "vehicle": {
                         "url": f"/vehicles/{vehicle.id}",
@@ -591,6 +594,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             [
                 {
                     "id": vehicle.id,
+                    "block": "52",
                     "coordinates": [-1.586568, 55.084628],
                     "vehicle": {
                         "url": f"/vehicles/{vehicle.id}",

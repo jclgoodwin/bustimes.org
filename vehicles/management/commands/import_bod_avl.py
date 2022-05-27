@@ -504,7 +504,8 @@ class Command(ImportLiveVehiclesCommand):
         location = VehicleLocation(
             latlong=latlong,
             heading=bearing,
-            occupancy=monitored_vehicle_journey.get('Occupancy', '')
+            occupancy=monitored_vehicle_journey.get('Occupancy'),
+            block=monitored_vehicle_journey.get('BlockRef'),
         )
         extensions = item.get('Extensions')
         if extensions:
