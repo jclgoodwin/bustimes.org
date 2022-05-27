@@ -566,7 +566,7 @@ class OperatorDetailView(DetailView):
     def get_object(self, **kwargs):
         try:
             return super().get_object(**kwargs)
-        except Http404 as e:
+        except Http404:
             if 'slug' in self.kwargs:
                 try:
                     return get_object_or_404(self.queryset, operatorcode__code=self.kwargs['slug'],
@@ -574,7 +574,7 @@ class OperatorDetailView(DetailView):
                 except Http404:
                     self.kwargs['pk'] = self.kwargs['slug'].upper()
                     return super().get_object(**kwargs)
-            raise e
+            raise
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

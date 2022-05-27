@@ -630,11 +630,14 @@ def edit_vehicle(request, vehicle_id):
             now = timezone.now()
             try:
                 revision = do_revision(vehicle, data, request.user)
-            except IntegrityError as e:
-                if 'operator' in data:
-                    form.add_error('operator', f"{data['operator']} already has a vehicle with the code {vehicle.code}")
+            except IntegrityError:
+                if 'operator' in form.changed_data:
+                    form.add_error(
+                        'operator',
+                        f"{form.cleaned_data['operator']} already has a vehicle with the code {vehicle.code}"
+                    )
                 else:
-                    raise e
+                    raise
             else:
                 if revision:
                     revision.datetime = now

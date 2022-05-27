@@ -2,7 +2,7 @@ import time_machine
 from ciso8601 import parse_datetime
 from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
-from django.core.exceptions import ValidationError
+from django.db.transaction import TransactionManagementError
 from accounts.models import User
 from busstops.models import DataSource, Region, Operator, Service
 from .models import (Vehicle, VehicleType, VehicleFeature, Livery,
@@ -712,6 +712,17 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         })
         response = self.client.get('/admin/vehicles/vehiclerevision/')
         self.assertContains(response, "reverted [&#x27;withdrawn&#x27;]")
+
+    def test_vehicle_code_uniqueness(self):
+        vehicle_1 = Vehicle.objects.create(code='11111', operator_id='BOVA')
+        Vehicle.objects.create(code='11111', operator_id='LYNX')  # same code, different operator
+
+        self.client.force_login(self.staff_user)
+
+        with self.assertRaises(TransactionManagementError):
+            self.client.post(vehicle_1.get_edit_url(), {
+                'operator': 'LYNX'
+            })
 
     def test_big_map(self):
         with self.assertNumQueries(1):
