@@ -843,8 +843,7 @@ def journey_json(request, pk):
     locations = redis_client.lrange(f'journey{pk}', 0, -1)
     if not locations:
         path = journey.get_path()
-        if path.exists():
-            locations = path.read_bytes().split(b'\n')
+        locations = path.read_bytes().split(b'\n')
 
     if locations:
         locations = (json.loads(location) for location in locations)

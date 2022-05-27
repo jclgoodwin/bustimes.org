@@ -13,7 +13,8 @@ class Command(BaseCommand):
 
         # Access to the subscription endpoint is restricted to certain IP addresses,
         # so use a Digital Ocean floating IP address
-        session.mount('https://', SourceAddressAdapter('10.16.0.7'))
+        # https://docs.digitalocean.com/products/networking/floating-ips/how-to/outbound-traffic/
+        session.mount('https://', SourceAddressAdapter('10.16.0.6'))
 
         url = "https://siri-sx-tfn.itoworld.com"
         requestor_ref = "BusTimes"
@@ -39,7 +40,8 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
             headers={
                 'Content-Type': 'application/xml'
             },
-            stream=True
+            stream=True,
+            timeout=10
         )
 
         for _, element in ET.iterparse(response.raw):

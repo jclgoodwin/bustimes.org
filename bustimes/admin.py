@@ -92,6 +92,8 @@ class GarageAdmin(GISModelAdmin):
     search_fields = ['code', 'name']
     list_display = ['code', 'name', 'operators']
     list_filter = [
+        ('vehicle', admin.EmptyFieldListFilter),
+        ('trip', admin.EmptyFieldListFilter),
         ('vehicle__operator', admin.RelatedOnlyFieldListFilter)
     ]
     raw_id_fields = ['operator']
