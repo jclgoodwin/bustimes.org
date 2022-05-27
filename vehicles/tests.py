@@ -78,38 +78,6 @@ class VehiclesTests(TestCase):
             response = self.client.get('/groups/Shatton Group/vehicles')
         self.assertEqual(404, response.status_code)
 
-    def test_vehicle(self):
-        vehicle = Vehicle(reg='3990ME')
-        self.assertEqual(str(vehicle), '3990 ME')
-        self.assertIn('search/?text=3990ME%20or%20%223990%20ME%22&sort', vehicle.get_flickr_url())
-
-        vehicle.reg = 'J122018'
-        self.assertEqual(str(vehicle), 'J122018')
-
-        vehicle.notes = 'Spare ticket machine'
-        self.assertEqual('', vehicle.get_flickr_link())
-
-        vehicle = Vehicle(code='RML2604')
-        self.assertIn('search/?text=RML2604&sort', vehicle.get_flickr_url())
-
-        vehicle.operator = Operator(name='Lynx')
-        self.assertIn('search/?text=Lynx%20RML2604&sort', vehicle.get_flickr_url())
-
-        vehicle.fleet_number = '11111'
-        self.assertIn('search/?text=Lynx%2011111&sort', vehicle.get_flickr_url())
-
-        vehicle.reg = 'YN69GHA'
-        vehicle.operator.parent = 'Stagecoach'
-        vehicle.fleet_number = '11111'
-
-        self.assertIn('search/?text=YN69GHA%20or%20%22YN69%20GHA%22%20or%20Stagecoach%2011111&sort',
-                      vehicle.get_flickr_url())
-
-        vehicle.code = 'YN_69_GHA'
-        self.assertFalse(vehicle.fleet_number_mismatch())
-        vehicle.code = 'YN19GHA'
-        self.assertTrue(vehicle.fleet_number_mismatch())
-
     def test_fleet_lists(self):
         # operator has no vehicles
         with self.assertNumQueries(2):
@@ -234,12 +202,18 @@ class VehiclesTests(TestCase):
         response = self.client.get('/admin/vehicles/vehicle/')
         self.assertContains(response, "Updated 1 vehicles.")
 
-        # test merge 2 vehicles
+        # test merge 2 vehicles:
 
         duplicate_1 = Vehicle.objects.create(reg="SA60TWP", code="60")
         duplicate_2 = Vehicle.objects.create(reg="SA60TWP", code="SA60TWP")
 
         self.assertEqual(Vehicle.objects.all().count(), 5)
+
+        response = self.client.get('/admin/vehicles/vehicle/?duplicate=reg')
+        self.assertContains(response, '2 results (<a href="?">5 total</a>')
+
+        response = self.client.get('/admin/vehicles/vehicle/?duplicate=operator')
+        self.assertContains(response, '0 results (<a href="?">5 total</a>')
 
         self.client.post('/admin/vehicles/vehicle/', {
             'action': 'deduplicate',
@@ -290,50 +264,6 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         response = self.client.get('/search?q=11111')
         self.assertNotContains(response, 'vehicle')
 
-    def test_livery(self):
-        livery = Livery(name='Go-Coach', published=False)
-        livery.text_colour = '#c0c0c0'
-        livery.stroke_colour = '#ffee99'
-        self.assertEqual('Go-Coach', str(livery))
-        self.assertIsNone(livery.preview())
-        self.assertEqual(
-            '<div style="height:1.5em;width:2.25em;background:"></div> Go-Coach',
-            livery.preview(name=True)
-        )
-
-        livery.colours = '#7D287D #FDEE00 #FDEE00'
-        livery.horizontal = True
-        livery.save()
-        self.assertEqual('<div style="height:1.5em;width:2.25em;background:linear-gradient' +
-                         '(to top,#7D287D 34%,#FDEE00 34%)" title="Go-Coach"></div>', livery.preview())
-        self.assertEqual(
-            livery.get_styles(),
-            [f""".livery-{livery.id} {{\n  background: linear-gradient(to top,#7D287D 34%,#FDEE00 34%);
-  color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""]
-        )
-
-        livery.horizontal = False
-        livery.angle = 45
-        livery.save()
-        self.assertEqual('linear-gradient(45deg,#7D287D 34%,#FDEE00 34%)', livery.left_css)
-        self.assertEqual('linear-gradient(315deg,#7D287D 34%,#FDEE00 34%)', livery.right_css)
-
-        livery.angle = None
-        livery.save()
-        self.vehicle_1.livery = livery
-        self.assertEqual('linear-gradient(to left,#7D287D 34%,#FDEE00 34%)',
-                         self.vehicle_1.get_livery(179))
-        self.assertIsNone(self.vehicle_1.get_text_colour())
-
-        self.vehicle_1.livery.colours = '#c0c0c0'
-        self.vehicle_1.livery.save()
-        self.assertEqual('#c0c0c0', self.vehicle_1.get_livery(200))
-
-        livery.css = 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)'
-        livery.set_css()
-        self.assertEqual(livery.left_css, 'linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
-        self.assertEqual(livery.right_css, 'linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)')
-
     def test_liveries_css(self):
         response = self.client.get('/liveries.44.css')
         self.assertEqual(
@@ -346,40 +276,6 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
   background: linear-gradient(to left,#FF0000 50%,#0000FF 50%)
 }}
 """)
-
-    def test_livery_validation(self):
-        livery = Livery()
-
-        livery.clean()  # should not raise an exception
-
-        livery.text_colour = '#c0c0c0'
-        livery.stroke_colour = '#ff00a9'
-        livery.right_css = '{'
-        with self.assertRaises(ValidationError) as cm:
-            livery.clean()
-        self.assertEqual(
-            cm.exception.args,
-            ({'right_css': 'Must not contain { or }'}, None, None)
-        )
-
-        livery.right_css = ''
-        livery.left_css = 'url(('
-        with self.assertRaises(ValidationError) as cm:
-            livery.clean()
-        self.assertEqual(
-            cm.exception.args,
-            ({'left_css': 'Must contain equal numbers of ( and )'}, None, None)
-        )
-
-        livery.left_css = ''
-        livery.stroke_colour = 'red'
-        with self.assertRaises(ValidationError) as cm:
-            livery.clean()
-        self.assertEqual(
-            cm.exception.args,
-            ({'stroke_colour': 'An HTML5 simple color must be a Unicode string '
-                'exactly seven characters long.'}, None, None)
-        )
 
     def test_vehicle_edit_1(self):
         url = self.vehicle_1.get_edit_url()
@@ -816,14 +712,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         })
         response = self.client.get('/admin/vehicles/vehiclerevision/')
         self.assertContains(response, "reverted [&#x27;withdrawn&#x27;]")
-
-    def test_vehicle_validation(self):
-        vehicle = Vehicle(colours='ploop')
-        with self.assertRaises(ValidationError):
-            vehicle.clean()
-
-        vehicle.colours = ''
-        vehicle.clean()
 
     def test_big_map(self):
         with self.assertNumQueries(1):

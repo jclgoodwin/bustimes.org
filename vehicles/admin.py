@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin, messages
 from django.urls import reverse
 from django.utils.html import format_html
+from django.db import IntegrityError
 from django.db.models import Q, Exists, OuterRef
 from django.contrib.auth import get_user_model
 
@@ -139,7 +140,10 @@ class VehicleAdmin(admin.ModelAdmin):
             except (models.Vehicle.DoesNotExist, models.Vehicle.MultipleObjectsReturned) as e:
                 self.message_user(request, f"{vehicle} {e}")
                 continue
-            vehicle.vehiclejourney_set.update(vehicle=duplicate)
+            try:
+                vehicle.vehiclejourney_set.update(vehicle=duplicate)
+            except IntegrityError:
+                pass
             duplicate.latest_journey = vehicle.latest_journey
             vehicle.latest_journey = None
             vehicle.save(update_fields=['latest_journey'])
