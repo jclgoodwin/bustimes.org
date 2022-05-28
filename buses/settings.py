@@ -594,7 +594,6 @@ BOD_OPERATORS = [
         'CTPL': 'CTPL',  # CT Plus Yorkshire
     }, False),
 
-    ('RBTS', 'EM', {}, False),
     ('DELA', 'EM', {}, False),
 
     ('SULV', 'SE', {}, False),
@@ -715,9 +714,7 @@ TICKETER_OPERATORS = [
 
     ('EM', ['Brylaine', 'BRYL']),
     ('EM', ['Midland_Classic', 'MDCL']),
-    ('EM', ['RBTS'], 'Roberts Travel'),
     ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
-    # ('EM', ['NOCT'], 'CT4N'),
     ('EM', ['DELA'], 'Delaine Buses'),
 
     ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC']),
