@@ -280,9 +280,9 @@ PASSENGER_OPERATORS = [
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
-    ('Warringtons Own Buses', 'warrington', 'NW', {
-       'WOB': 'WBTR',
-    }),
+    #('Warringtons Own Buses', 'warrington', 'NW', {
+    #   'WOB': 'WBTR',
+    #}),
     ('JMB Travel', 'jmbtravel', 'S', {
         'NJMT': 'NJMT',
     }),
