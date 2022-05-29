@@ -500,7 +500,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         previous = None
 
         for i, journey in enumerate(journeys):
-            journey.locations = locations[i] or journey.get_path().exists()
+            journey.locations = locations[i]
 
             if journey.locations:
                 if previous:
@@ -841,9 +841,6 @@ def journey_json(request, pk):
         } for stop_time in journey.trip.stoptime_set.select_related('stop__locality')]
 
     locations = redis_client.lrange(f'journey{pk}', 0, -1)
-    if not locations:
-        path = journey.get_path()
-        locations = path.read_bytes().split(b'\n')
 
     if locations:
         locations = (json.loads(location) for location in locations)
