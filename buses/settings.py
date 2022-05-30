@@ -280,9 +280,9 @@ PASSENGER_OPERATORS = [
         'MCG': 'MCGL',
         'McG': 'MCGL',
     }),
-    #('Warringtons Own Buses', 'warrington', 'NW', {
-    #   'WOB': 'WBTR',
-    #}),
+    ("Warrington’s Own Buses", 'warrington', 'NW', {
+      'WOB': 'WBTR',
+    }),
     ('JMB Travel', 'jmbtravel', 'S', {
         'NJMT': 'NJMT',
     }),
@@ -668,7 +668,6 @@ BOD_OPERATORS = [
     ('PPBU', 'NW', {}, False),
     ('EAZI', 'NW', {}, False),
     ('MAGH', 'NW', {}, False),
-    # ('WBTR', 'NW', {}, False),
 
     ('MAND', 'SE', {}, False),
     # ('RLNE', 'SE', {}, False),
@@ -725,7 +724,6 @@ TICKETER_OPERATORS = [
     ('NW', ['Finches', 'FCHS']),
     ('NW', ['GOGO'], 'Go Goodwins'),
     ('NW', ['BEVC'], 'Belle Vue'),
-    ('NW', ['WBTR'], 'Warringtons Own Buses'),
 
     ('SE', ['WBSV'], 'White Bus'),
     ('SE', ['REDE'], 'Red Eagle'),
