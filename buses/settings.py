@@ -295,6 +295,9 @@ PASSENGER_OPERATORS = [
     ('Red Rose Travel', 'redrose', 'SE', {
        'RRTR': 'RRTR',
     }),
+    ('Yellow Buses', 'bybus', 'SW', {
+        'YELL': 'YELL',
+    }),
 
     # Reading
     ('Reading Buses', 'readingbuses', 'SE', {
@@ -321,6 +324,9 @@ PASSENGER_OPERATORS = [
     # ('Go North West', 'gonorthwest', 'NW', {
     #     'GONW': 'GONW',
     # }),
+    ('Brighton & Hove Buses', 'brightonhove', 'SE', {
+        'BH': 'BHBC',
+    }),
 ]
 
 # see bustimes.management.commands.import_bod
@@ -381,6 +387,7 @@ BOD_OPERATORS = [
         'ABUS': 'ABUS',
         'PTSG': 'PTSG',
         'MPTR': 'MPTR',
+        'JOHS': 'JOHS',
     }, False),
 
     ('TNXB', 'WM', {
@@ -470,7 +477,7 @@ BOD_OPERATORS = [
     # ('DPCR', 'SW', {}, False),
 
     ('YCOA', 'SW', {}, False),
-    ('YELL', 'SW', {}, False),
+    # ('YELL', 'SW', {}, False),
 
     # ('NATX', 'GB', {}, False),
     ('KETR', 'SE', {}, False),
@@ -563,7 +570,6 @@ BOD_OPERATORS = [
     ('TEXP', 'WM', {}, False),
     ('BANG', 'WM', {}, False),
     ('SLVL', 'WM', {}, False),
-    ('JOHS', 'WM', {}, False),
 
     ('ENSB', 'SE', {}, True),
     ('AWAN', 'SE', {}, False),
@@ -624,9 +630,9 @@ BOD_OPERATORS = [
         'UNIL': 'UNIL',
         'WDBC': 'WDBC',
     }, False),
-    ('Brighton and Hove Buses', 'SE', {
-        'BHBC': 'BHBC',
-    }, False),
+    # ('Brighton and Hove Buses', 'SE', {
+    #     'BHBC': 'BHBC',
+    # }, False),
     ('Go North East', 'NE', {
         'GNEL': 'GNEL',
     }, False),
@@ -743,7 +749,6 @@ TICKETER_OPERATORS = [
     ('WM', ['Banga_Buses', 'BANG']),
     ('WM', ['Silverline_LandFlight_Limited', 'SLVL']),
     ('WM', ['LMST'], 'LMS Travel'),
-    ('WM', ['Johnsons', 'JOHS']),
 
     ('Y',  ['Shoreline_Suncruisers', 'SSSN']),
     ('Y',  ['POWB', 'CTPL'], 'HCT Group'),
@@ -770,7 +775,7 @@ TICKETER_OPERATORS = [
     ('SE', ['OXBC', 'CSLB', 'THTR'], 'Oxford Bus Company'),
     ('NW', ['GONW'], 'Go North West'),
     ('NE', ['GNEL'], 'Go North East'),
-    ('Y', ['EYMS'], 'East Yorkshire'),
+    # ('Y', ['EYMS'], 'East Yorkshire'),
     ('EA', ['GOEA', 'KCTB', 'HEDO', 'CHAM'], 'Go East Anglia'),
 
     # Rotala Operators
