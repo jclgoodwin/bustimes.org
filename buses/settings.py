@@ -295,9 +295,6 @@ PASSENGER_OPERATORS = [
     ('Red Rose Travel', 'redrose', 'SE', {
        'RRTR': 'RRTR',
     }),
-    ('Yellow Buses', 'bybus', 'SW', {
-        'YELL': 'YELL',
-    }),
 
     # Reading
     ('Reading Buses', 'readingbuses', 'SE', {
@@ -477,7 +474,7 @@ BOD_OPERATORS = [
     # ('DPCR', 'SW', {}, False),
 
     ('YCOA', 'SW', {}, False),
-    # ('YELL', 'SW', {}, False),
+    ('YELL', 'SW', {}, False),
 
     # ('NATX', 'GB', {}, False),
     ('KETR', 'SE', {}, False),
