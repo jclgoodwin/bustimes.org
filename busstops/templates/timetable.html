@@ -13,6 +13,11 @@
                         {% if calendar.end_date <= timetable.today %}
                             until {{ calendar.end_date }}
                         {% endif %}
+                        {% if calendar.bank_holiday_inclusions %}
+                            and bank holidays
+                        {% elif calendar.bank_holiday_exclusions %}
+                            (not bank holidays)
+                        {% endif %}
                     </option>
                 {% endfor %}
             </select>
@@ -26,6 +31,11 @@
             {% endif %}
             {% if timetable.calendar.end_date <= timetable.today %}
                 until {{ timetable.calendar.end_date }}
+            {% endif %}
+            {% if timetable.calendar.bank_holiday_inclusions %}
+                and bank holidays
+            {% elif timetable.calendar.bank_holiday_exclusions %}
+                (not bank holidays)
             {% endif %}
         </p>
     {% elif timetable.date_options|length > 1 %}

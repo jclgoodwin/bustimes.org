@@ -133,7 +133,9 @@ class Calendar(models.Model):
             if calendar_date.operation and calendar_date.special and calendar_date.contains(date):
                 return True
 
-        if date in self.bank_holiday_dates:
+        if date in self.bank_holiday_exclusions:
+            return False
+        if date in self.bank_holiday_inclusions:
             return True
 
     def get_days(self):

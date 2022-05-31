@@ -151,8 +151,13 @@ class Timetable:
         self.calendars = (
             Calendar.objects.filter(Exists("trip", filter=Q(route__in=routes)))
             .annotate(
-                bank_holiday_dates=ArrayAgg(
-                    "calendarbankholiday__bank_holiday__bankholidaydate__date"
+                bank_holiday_inclusions=ArrayAgg(
+                    "calendarbankholiday__bank_holiday__bankholidaydate__date",
+                    filter=Q(calendarbankholiday__operation=True)
+                ),
+                bank_holiday_exclusions=ArrayAgg(
+                    "calendarbankholiday__bank_holiday__bankholidaydate__date",
+                    filter=Q(calendarbankholiday__operation=False)
                 ),
             )
             .prefetch_related("calendardate_set")
