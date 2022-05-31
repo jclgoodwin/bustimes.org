@@ -153,11 +153,17 @@ class Timetable:
             .annotate(
                 bank_holiday_inclusions=ArrayAgg(
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
-                    filter=Q(calendarbankholiday__operation=True)
+                    filter=Q(
+                        calendarbankholiday__operation=True,
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today
+                    )
                 ),
                 bank_holiday_exclusions=ArrayAgg(
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
-                    filter=Q(calendarbankholiday__operation=False)
+                    filter=Q(
+                        calendarbankholiday__operation=False,
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today
+                    )
                 ),
             )
             .prefetch_related("calendardate_set")
