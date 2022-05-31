@@ -17,8 +17,10 @@ def get_stop_usages(trips):
 
     trips = trips.prefetch_related(
         Prefetch(
-            'stoptime_set',
-            queryset=StopTime.objects.filter(stop__isnull=False).order_by('trip_id', 'id')
+            "stoptime_set",
+            queryset=StopTime.objects.filter(stop__isnull=False).order_by(
+                "trip_id", "id"
+            ),
         )
     )
 
@@ -45,8 +47,8 @@ def get_stop_usages(trips):
 
             instruction = next(diff)
 
-            while instruction[0] in '-?':
-                if instruction[0] == '-':
+            while instruction[0] in "-?":
+                if instruction[0] == "-":
                     y += 1
                     if y < len(old_rows):
                         existing_row = old_rows[y]
@@ -56,7 +58,7 @@ def get_stop_usages(trips):
 
             assert instruction[2:] == stop_time.stop_id
 
-            if instruction[0] == '+':
+            if instruction[0] == "+":
                 if not existing_row:
                     grouping.append(stop_time)
                     old_rows.append(stop_time.stop_id)
@@ -126,7 +128,7 @@ class Timetable:
     def __init__(self, routes, date, calendar_id=None, detailed=False):
         self.today = localdate()
 
-        routes = list(routes.select_related('source'))
+        routes = list(routes.select_related("source"))
         self.routes = routes
         self.current_routes = routes
 
@@ -146,17 +148,23 @@ class Timetable:
             if len(current_routes) == 1:
                 routes = current_routes
 
-        self.calendars = Calendar.objects.filter(
-            Exists('trip', filter=Q(route__in=routes))
-        ).annotate(
-            bank_holiday_dates=ArrayAgg('calendarbankholiday__bank_holiday__bankholidaydate__date'),
-        ).prefetch_related('calendardate_set')
+        self.calendars = (
+            Calendar.objects.filter(Exists("trip", filter=Q(route__in=routes)))
+            .annotate(
+                bank_holiday_dates=ArrayAgg(
+                    "calendarbankholiday__bank_holiday__bankholidaydate__date"
+                ),
+            )
+            .prefetch_related("calendardate_set")
+        )
 
         if not date and self.calendars:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
                 # calendar has a summary like 'school days only', or no exceptions within 21 days
-                if calendar.is_sufficiently_simple(self.today + datetime.timedelta(days=21)):
+                if calendar.is_sufficiently_simple(
+                    self.today + datetime.timedelta(days=21)
+                ):
                     self.calendar = calendar
                     if calendar.start_date > self.today:  # starts in the future
                         self.start_date = calendar.start_date
@@ -188,7 +196,8 @@ class Timetable:
             if self.calendars:
                 calendar_ids = [calendar.id for calendar in self.calendars]
                 trips = trips.filter(
-                    Q(calendar__in=get_calendars(self.date, calendar_ids)) | Q(calendar=None)
+                    Q(calendar__in=get_calendars(self.date, calendar_ids))
+                    | Q(calendar=None)
                 )
             else:
                 trips = trips.filter(calendar=None)
@@ -197,14 +206,16 @@ class Timetable:
 
         trips = trips.prefetch_related(
             Prefetch(
-                'stoptime_set',
-                queryset=StopTime.objects.filter(Q(pick_up=True) | Q(set_down=True)).order_by('trip_id', 'id')
+                "stoptime_set",
+                queryset=StopTime.objects.filter(
+                    Q(pick_up=True) | Q(set_down=True)
+                ).order_by("trip_id", "id"),
             ),
-            'notes'
+            "notes",
         )
 
         if detailed:
-            trips = trips.select_related('block', 'garage', 'vehicle_type')
+            trips = trips.select_related("block", "garage", "vehicle_type")
 
         routes = {route.id: route for route in routes}
 
@@ -229,7 +240,9 @@ class Timetable:
             trip_ids = [trip.id for trip in grouping.trips]
 
             # sort columns properly, now we have the rows
-            grouping.trips.sort(key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids)))
+            grouping.trips.sort(
+                key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids))
+            )
 
             new_trip_ids = [trip.id for trip in grouping.trips]
             indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
@@ -240,22 +253,32 @@ class Timetable:
 
             grouping.do_heads_and_feet(detailed)
 
-        self.origins_and_destinations = list({
-            (route.origin, route.destination, route.via) for route in self.current_routes if route.origin
-        })
+        self.origins_and_destinations = list(
+            {
+                (route.origin, route.destination, route.via)
+                for route in self.current_routes
+                if route.origin
+            }
+        )
         if len(self.origins_and_destinations) > 1:
-            if self.origins_and_destinations[0][0] == self.origins_and_destinations[1][1]:
+            if (
+                self.origins_and_destinations[0][0]
+                == self.origins_and_destinations[1][1]
+            ):
                 self.origins_and_destinations[0] = (
                     self.origins_and_destinations[1][0],
                     self.origins_and_destinations[0][1],
-                    self.origins_and_destinations[1][1]
+                    self.origins_and_destinations[1][1],
                 )
                 del self.origins_and_destinations[1]
-            elif self.origins_and_destinations[1][0] == self.origins_and_destinations[0][1]:
+            elif (
+                self.origins_and_destinations[1][0]
+                == self.origins_and_destinations[0][1]
+            ):
                 self.origins_and_destinations[0] = (
                     self.origins_and_destinations[0][0],
                     self.origins_and_destinations[1][1],
-                    self.origins_and_destinations[1][0]
+                    self.origins_and_destinations[1][0],
                 )
                 del self.origins_and_destinations[1]
 
@@ -268,15 +291,14 @@ class Timetable:
 
     def apply_stops(self, stops, stop_situations=None):
         stop_codes = (
-            row.stop.atco_code for grouping in self.groupings
-            for row in grouping.rows
+            row.stop.atco_code for grouping in self.groupings for row in grouping.rows
         )
         stops = stops.in_bulk(stop_codes)
 
         if stop_situations and len(stop_situations) < len(stops):
             for atco_code in stops:
                 if atco_code in stop_situations:
-                    if stop_situations[atco_code].summary == 'Does not stop here':
+                    if stop_situations[atco_code].summary == "Does not stop here":
                         stops[atco_code].suspended = True
                     else:
                         stops[atco_code].situation = True
@@ -286,19 +308,19 @@ class Timetable:
 
     @cached_property
     def has_blocks(self) -> bool:
-        return self.any_trip_has('block_id')
+        return self.any_trip_has("block_id")
 
     @cached_property
     def has_garages(self) -> bool:
-        return self.any_trip_has('garage_id')
+        return self.any_trip_has("garage_id")
 
     @cached_property
     def has_vehicle_types(self) -> bool:
-        return self.any_trip_has('vehicle_type_id')
+        return self.any_trip_has("vehicle_type_id")
 
     @cached_property
     def has_ticket_machine_codes(self) -> bool:
-        return self.any_trip_has('ticket_machine_code')
+        return self.any_trip_has("ticket_machine_code")
 
     def get_calendar_options(self, calendar_id):
         all_days = set()
@@ -327,7 +349,7 @@ class Timetable:
             for calendar_date in calendar.calendardate_set.all():
                 if not calendar_date.operation and calendar_date.contains(date):
                     calendar.start_date = calendar_date.end_date
-                    break
+
         start_dates = [calendar.start_date for calendar in self.calendars]
         if start_dates:
             date = max(date, min(start_dates))
@@ -335,7 +357,9 @@ class Timetable:
         end_date = date + datetime.timedelta(days=21)
         end_dates = [route.end_date for route in self.routes]
         if end_dates and all(end_dates):
-            end_date = min(end_date, max(end_dates))  # 21 days in the future, or the end date, whichever is sooner
+            end_date = min(
+                end_date, max(end_dates)
+            )  # 21 days in the future, or the end date, whichever is sooner
 
             if end_date < date:  # allow users to select past dates
                 self.expired = end_date
@@ -346,7 +370,10 @@ class Timetable:
         if self.date and self.date < date:
             yield self.date
         while date <= end_date:
-            if any(calendar.allows(date) for calendar in self.calendars) or date == self.date:
+            if (
+                any(calendar.allows(date) for calendar in self.calendars)
+                or date == self.date
+            ):
                 yield date
             date += datetime.timedelta(days=1)
         if self.date and self.date >= date:
@@ -356,7 +383,11 @@ class Timetable:
         for grouping in self.groupings:
             for row in grouping.rows:
                 for cell in row.times:
-                    if type(cell) is Cell and cell.stoptime.pick_up is False and not cell.last:
+                    if (
+                        type(cell) is Cell
+                        and cell.stoptime.pick_up is False
+                        and not cell.last
+                    ):
                         return True
 
     def credits(self):
@@ -367,6 +398,7 @@ class Repetition:
     """Represents a special cell in a timetable, spanning multiple rows and columns,
     with some text like 'then every 5 minutes until'.
     """
+
     def __init__(self, colspan, duration):
         self.colspan = colspan
         self.duration = duration
@@ -375,17 +407,19 @@ class Repetition:
         # cleverly add non-breaking spaces if there aren't many rows
         if self.duration.seconds == 3600:
             if self.min_height < 3:
-                return 'then\u00A0hourly until'
-            return 'then hourly until'
+                return "then\u00A0hourly until"
+            return "then hourly until"
         if self.duration.seconds % 3600 == 0:
-            duration = '{} hours'.format(int(self.duration.seconds / 3600))
+            duration = "{} hours".format(int(self.duration.seconds / 3600))
         else:
-            duration = '{} minutes'.format(int(self.duration.seconds / 60))
+            duration = "{} minutes".format(int(self.duration.seconds / 60))
         if self.min_height < 3:
-            return 'then\u00A0every {}\u00A0until'.format(duration.replace(' ', '\u00A0'))
+            return "then\u00A0every {}\u00A0until".format(
+                duration.replace(" ", "\u00A0")
+            )
         if self.min_height < 4:
-            return 'then every\u00A0{} until'.format(duration.replace(' ', '\u00A0'))
-        return 'then every {} until'.format(duration)
+            return "then every\u00A0{} until".format(duration.replace(" ", "\u00A0"))
+        return "then every {} until".format(duration)
 
 
 def abbreviate(grouping, i, in_a_row, difference):
@@ -396,13 +430,21 @@ def abbreviate(grouping, i, in_a_row, difference):
             for row in grouping.rows:
                 row.times[j] = None
         return
-    if (seconds != 3600 and seconds > 1800):  # neither hourly nor more than every 30 minutes
+    if (
+        seconds != 3600 and seconds > 1800
+    ):  # neither hourly nor more than every 30 minutes
         return
     repetition = Repetition(in_a_row + 1, difference)
-    grouping.rows[0].times[i - in_a_row - 2] = repetition  # replace top left cell with [[then every] colspan= rowspan=]
-    for j in range(i - in_a_row - 1, i - 1):  # blank (in_a_row - 1) other cells from top row
+    grouping.rows[0].times[
+        i - in_a_row - 2
+    ] = repetition  # replace top left cell with [[then every] colspan= rowspan=]
+    for j in range(
+        i - in_a_row - 1, i - 1
+    ):  # blank (in_a_row - 1) other cells from top row
         grouping.rows[0].times[j] = None
-    for j in range(i - in_a_row - 2, i - 1):  # remove (in_a_row) cells from each row below the top row
+    for j in range(
+        i - in_a_row - 2, i - 1
+    ):  # remove (in_a_row) cells from each row below the top row
         for row in grouping.rows[1:]:
             row.times[j] = None
 
@@ -426,8 +468,8 @@ class Grouping:
 
     def __str__(self):
         if self.inbound:
-            return 'Inbound'
-        return 'Outbound'
+            return "Inbound"
+        return "Outbound"
 
     def has_minor_stops(self):
         return any(row.is_minor() for row in self.rows)
@@ -446,7 +488,9 @@ class Grouping:
         return sum(2 if row.has_waittimes else 1 for row in self.rows)
 
     def min_height(self):
-        return sum(2 if row.has_waittimes else 1 for row in self.rows if not row.is_minor())
+        return sum(
+            2 if row.has_waittimes else 1 for row in self.rows if not row.is_minor()
+        )
 
     def handle_trip(self, trip):
         rows = self.rows
@@ -471,8 +515,8 @@ class Grouping:
 
             instruction = next(diff)
 
-            while instruction[0] in '-?':
-                if instruction[0] == '-':
+            while instruction[0] in "-?":
+                if instruction[0] == "-":
                     y += 1
                     if y < len(rows):
                         existing_row = rows[y]
@@ -482,8 +526,8 @@ class Grouping:
 
             assert instruction[2:] == key
 
-            if instruction[0] == '+':
-                row = Row(Stop(stoptime.stop_id, stoptime.stop_code), [''] * x)
+            if instruction[0] == "+":
+                row = Row(Stop(stoptime.stop_id, stoptime.stop_code), [""] * x)
                 row.timing_status = stoptime.timing_status
                 if not existing_row:
                     rows.append(row)
@@ -507,7 +551,7 @@ class Grouping:
         if x:
             for row in rows:
                 if len(row.times) == x:
-                    row.times.append('')
+                    row.times.append("")
 
     def do_heads_and_feet(self, detailed=False):
         if not self.trips:
@@ -542,7 +586,10 @@ class Grouping:
                         for note_id in self.column_feet:
                             self.column_feet[note_id].append(ColumnFoot(note))
                     else:
-                        self.column_feet[note.id] = [ColumnFoot(None, i), ColumnFoot(note)]
+                        self.column_feet[note.id] = [
+                            ColumnFoot(None, i),
+                            ColumnFoot(note),
+                        ]
                 else:
                     self.column_feet[note.id] = [ColumnFoot(note)]
 
@@ -560,7 +607,11 @@ class Grouping:
             if previous_trip:
                 if previous_trip.route.line_name != trip.route.line_name:
                     self.heads.append(
-                        ColumnHead(previous_trip.route, i - sum(head.span for head in self.heads)))
+                        ColumnHead(
+                            previous_trip.route,
+                            i - sum(head.span for head in self.heads),
+                        )
+                    )
 
                 if detailed:
                     pass
@@ -586,8 +637,12 @@ class Grouping:
             previous_note_ids = note_ids
 
         if previous_trip:
-            self.heads.append(ColumnHead(previous_trip.route,
-                                         len(self.trips) - sum(head.span for head in self.heads)))
+            self.heads.append(
+                ColumnHead(
+                    previous_trip.route,
+                    len(self.trips) - sum(head.span for head in self.heads),
+                )
+            )
 
         if in_a_row > 1:
             abbreviate(self, len(self.trips), in_a_row - 1, prev_difference)
@@ -643,10 +698,10 @@ class Row:
         return any(cell.first or cell.last for cell in self.times if type(cell) is Cell)
 
     def is_minor(self):
-        return self.timing_status == 'OTH'
+        return self.timing_status == "OTH"
 
     def permanently_suspended(self):
-        return hasattr(self.stop, 'suspended') and self.stop.suspended
+        return hasattr(self.stop, "suspended") and self.stop.suspended
 
 
 class Stop:
