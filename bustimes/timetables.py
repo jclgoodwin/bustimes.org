@@ -148,6 +148,8 @@ class Timetable:
             if len(current_routes) == 1:
                 routes = current_routes
 
+        four_weeks_time = self.today + datetime.timedelta(days=28)
+
         self.calendars = (
             Calendar.objects.filter(Exists("trip", filter=Q(route__in=routes)))
             .annotate(
@@ -155,14 +157,16 @@ class Timetable:
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
                     filter=Q(
                         calendarbankholiday__operation=True,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time
                     )
                 ),
                 bank_holiday_exclusions=ArrayAgg(
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
                     filter=Q(
                         calendarbankholiday__operation=False,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time
                     )
                 ),
             )
@@ -179,10 +183,8 @@ class Timetable:
         if not date and self.calendars:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
-                # calendar has a summary like 'school days only', or no exceptions within 21 days
-                if calendar.is_sufficiently_simple(
-                    self.today + datetime.timedelta(days=21)
-                ):
+                # calendar has a summary like 'school days only', or no exceptions within 28 days
+                if calendar.is_sufficiently_simple(four_weeks_time):
                     self.calendar = calendar
                     if calendar.start_date > self.today:  # starts in the future
                         self.start_date = calendar.start_date

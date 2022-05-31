@@ -15,7 +15,7 @@
                         {% endif %}
                         {% if calendar.bank_holiday_inclusions and not calendar.bank_holiday_exclusions %}
                             and bank holidays
-                        {% elif calendar.bank_holiday_exclusions %}
+                        {% elif calendar.bank_holiday_exclusions and not calendar.bank_holiday_inclusions %}
                             (not bank holidays)
                         {% endif %}
                     </option>
@@ -34,7 +34,7 @@
             {% endif %}
             {% if timetable.calendar.bank_holiday_inclusions and not timetable.calendar.bank_holiday_exclusions %}
                 and bank holidays
-            {% elif timetable.calendar.bank_holiday_exclusions %}
+            {% elif timetable.calendar.bank_holiday_exclusions and not timetable.calendar.bank_holiday_inclusions %}
                 (not bank holidays)
             {% endif %}
         </p>
