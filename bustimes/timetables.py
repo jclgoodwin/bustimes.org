@@ -158,6 +158,13 @@ class Timetable:
             .prefetch_related("calendardate_set")
         )
 
+        for calendar in self.calendars:
+            for calendar_date in calendar.calendardate_set.all():
+                if not calendar_date.operation:
+                    # "until 30 may 2020, but not from 20 may to 30 may" - simplify to "until 19 may"
+                    if calendar.end_date and calendar_date.end_date >= calendar.end_date:
+                        calendar.end_date = calendar_date.start_date - datetime.timedelta(days=1)
+
         if not date and self.calendars:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
