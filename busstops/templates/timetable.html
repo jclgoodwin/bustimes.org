@@ -13,7 +13,7 @@
                         {% if calendar.end_date <= timetable.today %}
                             until {{ calendar.end_date }}
                         {% endif %}
-                        {% if calendar.bank_holiday_inclusions %}
+                        {% if calendar.bank_holiday_inclusions and not calendar.bank_holiday_exclusions %}
                             and bank holidays
                         {% elif calendar.bank_holiday_exclusions %}
                             (not bank holidays)
@@ -32,7 +32,7 @@
             {% if timetable.calendar.end_date <= timetable.today %}
                 until {{ timetable.calendar.end_date }}
             {% endif %}
-            {% if timetable.calendar.bank_holiday_inclusions %}
+            {% if timetable.calendar.bank_holiday_inclusions and not timetable.calendar.bank_holiday_exclusions %}
                 and bank holidays
             {% elif timetable.calendar.bank_holiday_exclusions %}
                 (not bank holidays)
