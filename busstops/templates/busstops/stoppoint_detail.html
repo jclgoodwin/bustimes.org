@@ -4,6 +4,10 @@
 
 {% block content %}
 
+{% if object.region_id != 'UL' and object.region_id != 'MU' and object.region_id != 'LE' and object.region_id != 'CO' and object.region_id != 'IM' %}
+    <p class="message">👑 &nbsp;Bank holiday Thursday and Friday: bank holiday timetables will be operating in most cases, so fewer buses will be running, like on a Sunday. Check the bus operator’s website if in doubt, don't trust bustimes.org</p>
+{% endif %}
+
 <h1>{{ stoppoint.get_long_name }}</h1>
 
 {% if text %}
