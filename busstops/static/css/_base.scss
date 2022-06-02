@@ -1366,6 +1366,7 @@ input:not(:checked) + label {
 .aside td,
 .trip-timetable td {
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
 #hugemap {
