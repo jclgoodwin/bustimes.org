@@ -782,7 +782,7 @@ class Service(models.Model):
                 yield (self.get_tfl_url(), 'Timetable on the Transport for London website')
                 return
 
-            if self.service_code.startswith('tfl_'):
+            if self.service_code.startswith('tfl_') or self.service_code.startswith('nrc_'):
                 return
 
             try:
