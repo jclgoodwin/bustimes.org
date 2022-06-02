@@ -1112,8 +1112,13 @@ class Command(BaseCommand):
     def do_stops(transxchange_stops: dict) -> dict:
         stops = list(transxchange_stops.keys())
         for atco_code in transxchange_stops:
-            if len(atco_code) == 11 and atco_code.isdigit() and atco_code[0] != "0" and atco_code[2] == "0":
+            # deal with leading 0 being removed by Microsoft Excel maybe
+            if len(atco_code) == 11 and atco_code.isdigit() and atco_code[:1] != "0" and atco_code[2:3] == "0":
                 stops.append(f"0{atco_code}")
+
+            # rail services in the London dataset
+            if atco_code[:3] == "910":
+                stops.append(atco_code[:-1])
 
         stops = StopPoint.objects.annotate(
             atco_code_upper=Upper('atco_code')
@@ -1130,6 +1135,8 @@ class Command(BaseCommand):
                 if atco_code.isdigit() and f"0{atco_code}" in stops:  # "36006002112" = "036006002112"
                     logger.warning(f"{atco_code} 0{atco_code}")
                     stops[atco_code_upper] = stops[f"0{atco_code}"]
+                elif atco_code[:3] == "910" and atco_code[:-1] in stops:
+                    stops[atco_code_upper] = stops[atco_code[:-1]]
                 else:
                     stops[atco_code_upper] = str(stop)[:255]  # stop not in NaPTAN
 
