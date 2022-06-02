@@ -747,7 +747,13 @@ class ServiceDetailView(DetailView):
                 if operator.name == 'National Express':
                     context["links"].append({
                         "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
-                        "text": "Buy tickets at nationalexpress.com"
+                        "text": "Buy tickets at National Express"
+                    })
+                    break
+                if operator.slug == 'flixbus':
+                    context["links"].append({
+                        "url": "https://sovrn.co/1zcqdyq",
+                        "text": "Buy tickets at FlixBus"
                     })
                     break
 
