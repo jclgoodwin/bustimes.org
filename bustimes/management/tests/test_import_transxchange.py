@@ -44,11 +44,11 @@ class ImportTransXChangeTest(TestCase):
         cls.megabus = Operator.objects.create(pk='MEGA', region_id='GB', name='Megabus')
         cls.fabd = Operator.objects.create(pk='FABD', region_id='S', name='First Aberdeen')
 
-        nocs = DataSource.objects.create(name='National Operator Codes')
-        OperatorCode.objects.create(operator=cls.megabus, source=nocs, code='MEGA')
-        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='FABD')
-        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='SDVN')
-        OperatorCode.objects.create(operator=cls.fabd, source=nocs, code='CBNL')
+        cls.nocs = DataSource.objects.create(name='National Operator Codes')
+        OperatorCode.objects.create(operator=cls.megabus, source=cls.nocs, code='MEGA')
+        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='FABD')
+        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='SDVN')
+        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='CBNL')
 
         StopPoint.objects.bulk_create(
             StopPoint(
@@ -941,6 +941,24 @@ class ImportTransXChangeTest(TestCase):
                 <td>02:45</td><td>06:20</td><td>11:30</td><td>12:30</td><td>13:45</td><td>16:20</td><td>18:40</td>
             </tr>
         """, html=True)
+
+    def test_rail(self):
+        Operator.objects.create(id="LM", name="West Midlands Railroad")
+        OperatorCode.objects.create(operator_id="LM", code="LM", source=self.nocs)
+        StopPoint.objects.create(
+            atco_code="9100STRBDGT",
+            common_name="Stourbridge Town Rail Station",
+            active=True
+        )
+
+        call_command("import_transxchange", FIXTURES_DIR / "nrc_90-72-_-r08-1.xml")
+
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(response, '<a href="/stops/9100STRBDGT">Stourbridge Town Rail Station</a>')
+        self.assertContains(response, '<a href="/operators/west-midlands-railroad">West Midlands Railroad</a>')
+        self.assertContains(response, '9100STRBDGJ0')
+        self.assertEqual(2, service.stopusage_set.count())
 
     def test_get_service_code(self):
         self.assertEqual(import_transxchange.get_service_code('ea_21-2-_-y08-1.xml'),     'ea_21-2-_-y08')
