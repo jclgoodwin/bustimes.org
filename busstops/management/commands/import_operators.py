@@ -31,10 +31,11 @@ class Command(ImportFromCSVCommand):
 
     @staticmethod
     def get_region_id(region_id):
-        if region_id in {'ADMIN', 'Admin', 'Taxi', ''}:
-            return 'GB'
-        elif region_id in {'SC', 'YO', 'WA', 'LO'}:
-            return region_id[0]
+        match region_id:
+            case 'ADMIN' | 'Admin' | 'Taxi' | '':
+                return 'GB'
+            case 'SC' | 'YO' | 'WA' | 'LO':
+                return region_id[0]
 
         return region_id
 
@@ -81,12 +82,13 @@ class Command(ImportFromCSVCommand):
             return
 
         mode = row['Mode'].lower()
-        if mode == 'airline':
-            return
-        if mode == 'ct operator':
-            mode = 'community transport'
-        elif mode == 'drt':
-            mode = 'demand responsive transport'
+        match mode:
+            case 'airline':
+                return
+            case 'ct operator':
+                mode = 'community transport'
+            case 'drt':
+                mode = 'demand responsive transport'
 
         defaults = {
             'name': operator_name,

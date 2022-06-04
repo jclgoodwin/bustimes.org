@@ -37,7 +37,7 @@ docker-compose up
 
 These need to be available:
 
-- Python 3.9+
+- Python 3.10+
 - [Poetry](https://python-poetry.org/) to install necessary Python packages (Django, etc)
 - PostgreSQL with PostGIS
     - On my Macintosh computer I use [Postgres.app](https://postgresapp.com/)

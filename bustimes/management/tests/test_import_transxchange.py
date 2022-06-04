@@ -974,14 +974,20 @@ class ImportTransXChangeTest(TestCase):
         command.set_region('EA.zip')
         element = ET.fromstring("""
             <Operator id="OId_RRS">
-                <OperatorCode>RRS</OperatorCode>
-                <OperatorShortName>Replacement Service</OperatorShortName>
+                <OperatorCode>LOTR</OperatorCode>
+                <OperatorShortName>London Transit</OperatorShortName>
                 <OperatorNameOnLicence>Replacement Service</OperatorNameOnLicence>
                 <TradingName>Replacement Service</TradingName>
             </Operator>
         """)
         self.assertIsNone(command.get_operator(element))
-        self.assertEqual(1, len(command.missing_operators))
+        self.assertEqual(
+            command.missing_operators,
+            [{'OperatorCode': 'LOTR',
+                'OperatorNameOnLicence': 'Replacement Service',
+                'OperatorShortName': 'London Transit',
+                'TradingName': 'Replacement Service'}]
+        )
 
         self.assertIsNone(command.get_operator(ET.fromstring("""
             <Operator id="OId_RRS">

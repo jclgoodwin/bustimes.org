@@ -196,12 +196,13 @@ class Command(BaseCommand):
         self.region_id = region_id.upper()  # EA
 
         if len(self.region_id) > 2:
-            if self.region_id == 'NCSD':
-                self.region_id = 'GB'
-            elif self.region_id == 'IOM':
-                self.region_id = 'IM'
-            else:
-                self.region_id = None
+            match self.region_id:
+                case 'NCSD':
+                    self.region_id = 'GB'
+                case 'IOM':
+                    self.region_id = 'IM'
+                case _:
+                    self.region_id = None
 
         if self.region_id:
             self.source, _ = DataSource.objects.get_or_create(
@@ -479,20 +480,23 @@ class Command(BaseCommand):
         )
 
         for day in operating_profile.regular_days:
-            if day == 0:
-                calendar.mon = True
-            elif day == 1:
-                calendar.tue = True
-            elif day == 2:
-                calendar.wed = True
-            elif day == 3:
-                calendar.thu = True
-            elif day == 4:
-                calendar.fri = True
-            elif day == 5:
-                calendar.sat = True
-            elif day == 6:
-                calendar.sun = True
+            match day:
+                case 0:
+                    calendar.mon = True
+                case 1:
+                    calendar.tue = True
+                case 2:
+                    calendar.wed = True
+                case 3:
+                    calendar.thu = True
+                case 4:
+                    calendar.fri = True
+                case 5:
+                    calendar.sat = True
+                case 6:
+                    calendar.sun = True
+                case _:
+                    assert False
 
         calendar.save()
 
@@ -502,10 +506,7 @@ class Command(BaseCommand):
             date.calendar = calendar
             if not date.start_date:
                 logger.warning(date)
-                if date.summary == 'Jubilee bank holiday':
-                    date.start_date = date.end_date = '2022-06-03'
-                else:
-                    continue
+                continue
             if date.end_date < date.start_date:
                 logger.warning(date)
                 continue
@@ -588,14 +589,15 @@ class Command(BaseCommand):
                     timing_status = ''
                     blank = True
                 elif len(timing_status) > 3:
-                    if timing_status == 'otherPoint':
-                        timing_status = 'OTH'
-                    elif timing_status == 'timeInfoPoint':
-                        timing_status = 'TIP'
-                    elif timing_status == 'principleTimingPoint' or timing_status == 'principalTimingPoint':
-                        timing_status = 'PTP'
-                    else:
-                        logger.warning(timing_status)
+                    match timing_status:
+                        case 'otherPoint':
+                            timing_status = 'OTH'
+                        case 'timeInfoPoint':
+                            timing_status = 'TIP'
+                        case 'principleTimingPoint' | 'principalTimingPoint':
+                            timing_status = 'PTP'
+                        case _:
+                            logger.warning(timing_status)
 
                 stop_time = StopTime(
                     trip=trip,
@@ -605,13 +607,14 @@ class Command(BaseCommand):
                 if stop_time.sequence is not None and stop_time.sequence > 32767:  # too big for smallint
                     stop_time.sequence = None
 
-                if cell.stopusage.activity == 'pickUp':
-                    stop_time.set_down = False
-                elif cell.stopusage.activity == 'setDown':
-                    stop_time.pick_up = False
-                elif cell.stopusage.activity == 'pass':
-                    stop_time.pick_up = False
-                    stop_time.set_down = False
+                match cell.stopusage.activity:
+                    case 'pickUp':
+                        stop_time.set_down = False
+                    case 'setDown':
+                        stop_time.pick_up = False
+                    case 'pass':
+                        stop_time.pick_up = False
+                        stop_time.set_down = False
 
                 stop_time.departure = cell.departure_time
                 if cell.arrival_time != cell.departure_time:
@@ -912,11 +915,11 @@ class Command(BaseCommand):
                 logger.warning(f'{txc_service.service_code} has no journeys')
                 continue
 
-            if txc_service.public_use:
-                if txc_service.public_use in ('0', 'false'):
+            match txc_service.public_use:
+                case '0' | 'false':
                     if len(journeys) < 5:
                         service.public_use = False
-                elif txc_service.public_use in ('1', 'true'):
+                case '1', 'true':
                     service.public_use = True
 
             if service_code:
