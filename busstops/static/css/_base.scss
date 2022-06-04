@@ -1495,7 +1495,7 @@ nav {
     pointer-events: none;
 
     iframe {
-        background: $brand-color;
+        box-shadow: inset 0 -1px $brand-color-darker;
         pointer-events: auto;
     }
 }
