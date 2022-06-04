@@ -919,7 +919,7 @@ class Command(BaseCommand):
                 case '0' | 'false':
                     if len(journeys) < 5:
                         service.public_use = False
-                case '1', 'true':
+                case '1' | 'true':
                     service.public_use = True
 
             if service_code:
