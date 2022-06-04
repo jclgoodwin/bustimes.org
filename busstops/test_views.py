@@ -345,7 +345,7 @@ class ViewsTests(TestCase):
         self.assertEqual(
             response.context_data["links"][0],
             {
-                "text": "Buy tickets at nationalexpress.com",
+                "text": "Buy tickets at National Express",
                 "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
             },
         )
