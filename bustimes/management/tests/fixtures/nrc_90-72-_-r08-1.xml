@@ -154,6 +154,7 @@
       </StopRequirements>
       <Mode>rail</Mode>
       <Description>Stourbridge Junction - Stourbridge Town</Description>
+      <MarketingName>Stourbridge Shuttle</MarketingName>
       <StandardService>
         <Origin>Stourbridge Junction Rail Station</Origin>
         <Destination>Stourbridge Town Rail Station</Destination>

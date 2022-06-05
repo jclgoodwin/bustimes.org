@@ -873,8 +873,18 @@ class ImportTransXChangeTest(TestCase):
                 write_to_zipfile(path / 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
                 write_to_zipfile('IncludedServices.csv')
             call_command('import_transxchange', zipfile_path)
+
+            m11a_trip_ids = Trip.objects.filter(route__line_name="M11A").last().id
+            m12_trip_ids = Trip.objects.filter(route__line_name="M12").last().id
+            Trip.objects.filter(route__line_name="M12").update(start="00:00")
+
             # test re-importing a previously imported service again
             call_command('import_transxchange', zipfile_path)
+
+            # ids should have kept the same
+            self.assertEqual(m11a_trip_ids, Trip.objects.filter(route__line_name="M11A").last().id)
+            # ids should not have kept the same
+            self.assertNotEqual(m12_trip_ids, Trip.objects.filter(route__line_name="M12").last().id)
 
         # M11A
 
@@ -942,6 +952,7 @@ class ImportTransXChangeTest(TestCase):
             </tr>
         """, html=True)
 
+    @time_machine.travel('4 June 2022')
     def test_rail(self):
         Operator.objects.create(id="LM", name="West Midlands Railroad")
         OperatorCode.objects.create(operator_id="LM", code="LM", source=self.nocs)
@@ -954,6 +965,8 @@ class ImportTransXChangeTest(TestCase):
         call_command("import_transxchange", FIXTURES_DIR / "nrc_90-72-_-r08-1.xml")
 
         service = Service.objects.get()
+        self.assertEqual("Stourbridge Shuttle", service.line_brand)
+
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, '<a href="/stops/9100STRBDGT">Stourbridge Town Rail Station</a>')
         self.assertContains(response, '<a href="/operators/west-midlands-railroad">West Midlands Railroad</a>')

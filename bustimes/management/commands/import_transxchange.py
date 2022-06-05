@@ -356,10 +356,10 @@ class Command(BaseCommand):
             service.update_geometry()
 
     @cache
-    def get_bank_holiday(self, bank_holiday_name):
+    def get_bank_holiday(self, bank_holiday_name: str):
         return BankHoliday.objects.get_or_create(name=bank_holiday_name)[0]
 
-    def do_bank_holidays(self, holiday_elements, operating_period, operation, calendar_dates):
+    def do_bank_holidays(self, holiday_elements, operation: bool, calendar_dates: list):
         if not holiday_elements:
             return
 
@@ -401,7 +401,6 @@ class Command(BaseCommand):
 
         for bank_holiday in self.do_bank_holidays(
             holiday_elements=operating_profile.operation_bank_holidays,
-            operating_period=operating_period,
             operation=True,
             calendar_dates=calendar_dates
         ):
@@ -412,7 +411,6 @@ class Command(BaseCommand):
 
         for bank_holiday in self.do_bank_holidays(
             holiday_elements=operating_profile.nonoperation_bank_holidays,
-            operating_period=operating_period,
             operation=False,
             calendar_dates=calendar_dates
         ):
@@ -499,8 +497,6 @@ class Command(BaseCommand):
                     calendar.sat = True
                 case 6:
                     calendar.sun = True
-                case _:
-                    assert False
 
         calendar.save()
 
@@ -526,7 +522,64 @@ class Command(BaseCommand):
 
         return calendar
 
-    def handle_journeys(self, route_code, route_defaults, stops, journeys, txc_service, line_id):
+    def get_stop_time(self, trip, cell, stops: dict):
+        timing_status = cell.stopusage.timingstatus or ''
+        if len(timing_status) > 3:
+            match timing_status:
+                case 'otherPoint':
+                    timing_status = 'OTH'
+                case 'timeInfoPoint':
+                    timing_status = 'TIP'
+                case 'principleTimingPoint' | 'principalTimingPoint':
+                    timing_status = 'PTP'
+                case _:
+                    logger.warning(timing_status)
+
+        stop_time = StopTime(
+            trip=trip,
+            sequence=cell.stopusage.sequencenumber,
+            timing_status=timing_status
+        )
+        if stop_time.sequence is not None and stop_time.sequence > 32767:  # too big for smallint
+            stop_time.sequence = None
+
+        match cell.stopusage.activity:
+            case 'pickUp':
+                stop_time.set_down = False
+            case 'setDown':
+                stop_time.pick_up = False
+            case 'pass':
+                stop_time.pick_up = False
+                stop_time.set_down = False
+
+        stop_time.departure = cell.departure_time
+        if cell.arrival_time != cell.departure_time:
+            stop_time.arrival = cell.arrival_time
+
+        if trip.start is None:
+            trip.start = stop_time.departure_or_arrival()
+
+        atco_code = cell.stopusage.stop.atco_code.upper()
+        if atco_code in stops:
+            if type(stops[atco_code]) is str:
+                stop_time.stop_code = stops[atco_code]
+            else:
+                stop_time.stop = stops[atco_code]
+                trip.destination = stop_time.stop
+        else:
+            # stop missing from TransXChange StopPoints
+            try:
+                stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
+            except StopPoint.DoesNotExist:
+                logger.warning(atco_code)
+                stop_time.stop_code = atco_code  # !
+            else:
+                stop_time.stop = stops[atco_code]
+                trip.destination = stop_time.stop
+
+        return stop_time
+
+    def handle_journeys(self, route_code: str, route_defaults: dict, stops: dict, journeys, txc_service):
         default_calendar = None
 
         route, route_created = Route.objects.update_or_create(
@@ -588,63 +641,11 @@ class Command(BaseCommand):
 
             blank = False
             for cell in journey.get_times():
-                timing_status = cell.stopusage.timingstatus
-                if timing_status is None:
-                    timing_status = ''
-                    blank = True
-                elif len(timing_status) > 3:
-                    match timing_status:
-                        case 'otherPoint':
-                            timing_status = 'OTH'
-                        case 'timeInfoPoint':
-                            timing_status = 'TIP'
-                        case 'principleTimingPoint' | 'principalTimingPoint':
-                            timing_status = 'PTP'
-                        case _:
-                            logger.warning(timing_status)
-
-                stop_time = StopTime(
-                    trip=trip,
-                    sequence=cell.stopusage.sequencenumber,
-                    timing_status=timing_status
-                )
-                if stop_time.sequence is not None and stop_time.sequence > 32767:  # too big for smallint
-                    stop_time.sequence = None
-
-                match cell.stopusage.activity:
-                    case 'pickUp':
-                        stop_time.set_down = False
-                    case 'setDown':
-                        stop_time.pick_up = False
-                    case 'pass':
-                        stop_time.pick_up = False
-                        stop_time.set_down = False
-
-                stop_time.departure = cell.departure_time
-                if cell.arrival_time != cell.departure_time:
-                    stop_time.arrival = cell.arrival_time
-
-                if trip.start is None:
-                    trip.start = stop_time.departure_or_arrival()
-
-                atco_code = cell.stopusage.stop.atco_code.upper()
-                if atco_code in stops:
-                    if type(stops[atco_code]) is str:
-                        stop_time.stop_code = stops[atco_code]
-                    else:
-                        stop_time.stop = stops[atco_code]
-                        trip.destination = stop_time.stop
-                else:
-                    # stop missing from TransXChange StopPoints
-                    try:
-                        stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
-                    except StopPoint.DoesNotExist:
-                        logger.warning(atco_code)
-                        stop_time.stop_code = atco_code  # !
-                    else:
-                        stop_time.stop = stops[atco_code]
-                        trip.destination = stop_time.stop
+                stop_time = self.get_stop_time(trip, cell, stops)
                 stop_times.append(stop_time)
+
+                if not stop_time.timing_status:
+                    blank = True
 
             # last stop
             if not stop_time.arrival:
@@ -1103,7 +1104,7 @@ class Command(BaseCommand):
             if len(txc_service.lines) > 1:
                 route_code += f'#{line.id}'
 
-            self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service, line.id)
+            self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service)
 
         if len(linked_services) > 1:
             for i, from_service in enumerate(linked_services):
