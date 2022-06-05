@@ -229,8 +229,6 @@ class Command(BaseCommand):
             if operator_code == 'LUTD':
                 if operator_element.findtext('OperatorNameOnLicence') == 'London Transit':
                     operator_code = 'LOTR'
-            elif operator_code.startswith('Rail'):
-                operator_code = operator_code.removeprefix('Rail')
 
             operator = get_operator_by('National Operator Codes', operator_code)
             if operator:
@@ -253,6 +251,9 @@ class Command(BaseCommand):
         # Get by regional operator code
         operator_code = operator_element.findtext('OperatorCode')
         if operator_code:
+            if operator_code.startswith('Rail'):
+                operator_code = operator_code.removeprefix('Rail')
+
             operator = get_operator_by(self.region_id, operator_code)
             if not operator:
                 operator = get_operator_by('National Operator Codes', operator_code)
