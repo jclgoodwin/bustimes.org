@@ -943,11 +943,6 @@ class Command(BaseCommand):
                     service.public_use = False
                 else:
                     line_brand = txc_service.marketing_name
-                    if line.line_name in line_brand:
-                        line_brand_parts = line_brand.split()
-                        if line.line_name in line_brand_parts:
-                            line_brand_parts.remove(line.line_name)
-                            line_brand = ' '.join(line_brand_parts)
             if not line_brand and service.colour and service.colour.name and service.colour.name != service.line_name:
                 line_brand = service.colour.name  # e.g. (First Eastern Counties) 'Yellow Line'
             service.line_brand = line_brand or ''

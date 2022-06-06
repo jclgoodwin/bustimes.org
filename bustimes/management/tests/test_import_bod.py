@@ -408,6 +408,10 @@ class ImportBusOpenDataTest(TestCase):
         self.assertContains(response, '<option selected value="2020-08-31">Monday 31 August 2020</option>')
         self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
 
+        with time_machine.travel('2021-01-11'):
+            response = self.client.get('/services/904-huntingdon-peterborough')
+        self.assertContains(response, "The timetable data for this service was valid until Sunday 10 January 2021. But")
+
         BankHolidayDate.objects.create(
             bank_holiday=BankHoliday.objects.get(name='ChristmasDay'),
             date='2020-12-25'

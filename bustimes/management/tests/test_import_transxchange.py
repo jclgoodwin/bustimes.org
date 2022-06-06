@@ -600,6 +600,10 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(service.slug, 'abao421')
 
+        with time_machine.travel('1 January 2022'):
+            response = self.client.get('/services/abao421')
+            self.assertContains(response, "until Thursday 19 August 2021")
+
         # after operating period - shouldn't create routes or trips
         with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
             with patch('os.path.getmtime', return_value=1645544079):

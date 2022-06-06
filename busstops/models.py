@@ -660,7 +660,7 @@ class Service(models.Model):
             description = self.description
         if description == line_name:
             description = None
-        elif ' ' in line_name and line_name in description:
+        elif ' ' in line_name and line_name in description or line_name in self.line_brand:
             line_name = None
         if line_name or self.line_brand or description:
             parts = (line_name, self.line_brand, description)
