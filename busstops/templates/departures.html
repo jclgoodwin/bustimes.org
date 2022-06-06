@@ -22,7 +22,7 @@
             {% endif %}
         {% endifchanged %}
         <tr>
-            <td>
+            <td{% if item.route.line_name and item.route.line_name|length <= 5 %} class="nowrap"{% endif %}>
             {% if item.service.id %}
                 <a href="{{ item.service.get_absolute_url }}">{% firstof item.route.line_name item.service.line_name item.service %}</a>
             {% elif item.service %}{{ item.service }}{% endif %}
