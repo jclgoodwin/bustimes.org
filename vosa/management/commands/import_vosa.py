@@ -33,17 +33,7 @@ class Command(BaseCommand):
                 print(region, last_modified_1, last_modified_2)
                 self.handle_region(region)
 
-    def handle_region(self, region):
-        lics = Licence.objects.filter(traffic_area=region)
-        lics = lics.in_bulk(field_name="licence_number")
-        lics_to_update = set()
-        lics_to_create = []
-
-        regs = Registration.objects.filter(licence__traffic_area=region)
-        regs = regs.in_bulk(field_name="registration_number")
-        regs_to_update = set()
-        regs_to_create = []
-
+    def get_existing_variations(self, region):
         variations = Variation.objects.filter(registration__licence__traffic_area=region)
         variations = variations.select_related('registration').all()
         variations_dict = {}
@@ -55,6 +45,20 @@ class Command(BaseCommand):
                 variations_dict[reg_no] = {
                     variation.variation_number: variation
                 }
+        return variations_dict
+
+    def handle_region(self, region):
+        lics = Licence.objects.filter(traffic_area=region)
+        lics = lics.in_bulk(field_name="licence_number")
+        lics_to_update = set()
+        lics_to_create = []
+
+        regs = Registration.objects.filter(licence__traffic_area=region)
+        regs = regs.in_bulk(field_name="registration_number")
+        regs_to_update = set()
+        regs_to_create = []
+
+        variations = self.get_existing_variations(region)
 
         # vars_to_update = set()
         vars_to_create = []
@@ -181,13 +185,13 @@ class Command(BaseCommand):
             #                         # print(line)
 
             variation = Variation(registration=registration, variation_number=var_no)
-            if reg_no in variations_dict:
-                if var_no in variations_dict[reg_no]:
+            if reg_no in variations:
+                if var_no in variations[reg_no]:
                     continue  # ?
                 else:
-                    variations_dict[reg_no][var_no] = variation
+                    variations[reg_no][var_no] = variation
             else:
-                variations_dict[reg_no] = {var_no: variation}
+                variations[reg_no] = {var_no: variation}
 
             variation.effective_date = parse_date(line['effective_date'])
             variation.date_received = parse_date(line['received_date'])

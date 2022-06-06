@@ -557,7 +557,7 @@ BOD_OPERATORS = [
     ('IRVD', 'NW', {}, False),
 
     ('ROOS', 'SW', {}, False),
-    ('SEWR', 'SW', {}, False),  
+    ('SEWR', 'SW', {}, False),
     ('LUCK', 'SW', {}, False),
 
     ('GVTR', 'NE', {}, False),
@@ -605,7 +605,7 @@ BOD_OPERATORS = [
     ('GPLM', 'SE', {}, False),
     ('CLNB', 'SE', {}, False),
     ('RCHC', 'SE', {}, True),
-    
+
     ('CRSS', 'WM', {}, True),  # NN Cresswell
     ('DAGC', None, {
         'DAGC': 'DAGC',
