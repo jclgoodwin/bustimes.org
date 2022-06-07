@@ -27,7 +27,7 @@ class Command(ImportFromCSVCommand):
     }
 
     # Eastons Coaches and Arriva Trains Wales clash with some Irish operators, etc
-    removed_operator_ids = {'EAST', 'AW', 'JSSN', 'SCHI', 'HGCT', 'SDMS'}
+    removed_operator_ids = {'JSSN', 'SCHI', 'HGCT', 'SDMS'}
 
     @staticmethod
     def get_region_id(region_id):
