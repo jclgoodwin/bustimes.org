@@ -489,6 +489,9 @@ class ImportTransXChangeTest(TestCase):
         self.handle_files('EA.zip', ['twm_6-14B-_-y11-1.xml'])
         service = Service.objects.get()
 
+        calendar_date = CalendarDate.objects.get()
+        self.assertEqual(calendar_date.summary, "Early May Bank Holiday")
+
         response = self.client.get(service.get_absolute_url())
         self.assertEqual([], response.context_data['timetable'].groupings)
 
