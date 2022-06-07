@@ -340,6 +340,8 @@ class ServicedOrganisation:
         else:
             self.holidays = []
 
+        self.hash = ET.tostring(element)
+
 
 class ServicedOrganisationDayType:
     operation_holidays = None
@@ -403,7 +405,7 @@ class OperatingProfile:
     nonoperation_days = ()
     operation_days = ()
 
-    def __init__(self, element, serviced_organisations):
+    def __init__(self, element, serviced_organisations: dict):
         element = element
 
         week_days = element.find('RegularDayType/DaysOfWeek')
@@ -442,8 +444,10 @@ class OperatingProfile:
         serviced_organisation_day_type_element = element.find('ServicedOrganisationDayType')
 
         if serviced_organisation_day_type_element is not None:
-            self.serviced_organisation_day_type = ServicedOrganisationDayType(serviced_organisation_day_type_element,
-                                                                              serviced_organisations)
+            self.serviced_organisation_day_type = ServicedOrganisationDayType(
+                serviced_organisation_day_type_element,
+                serviced_organisations
+            )
 
         # Bank Holidays
 
@@ -456,6 +460,9 @@ class OperatingProfile:
                 self.operation_bank_holidays = element.find('RegularDayType')
 
         self.hash = ET.tostring(element)
+        if serviced_organisations:
+            for organisation in serviced_organisations.values():
+                self.hash += organisation.hash
 
 
 class DateRange:
