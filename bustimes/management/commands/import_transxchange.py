@@ -130,6 +130,23 @@ def get_open_data_operators():
     return open_data_operators, incomplete_operators
 
 
+def get_calendar_date(date_range=None, date=None, special=False, operation=None, summary=""):
+    if date_range:
+        start_date = date_range.start
+        end_date = date_range.end
+        summary = date_range.note or date_range.description
+    else:
+        start_date = date
+        end_date = date
+    return CalendarDate(
+        start_date=start_date,
+        end_date=end_date,
+        special=special,
+        operation=operation,
+        summary=summary
+    )
+
+
 def get_registration(service_code):
     parts = service_code.split('_')[0].split(':')
     if len(parts[0]) != 9:
@@ -216,10 +233,6 @@ class Command(BaseCommand):
             operator_code = self.operators.get(operator_code, operator_code)
 
         if operator_code:
-            if operator_code == 'LUTD':
-                if operator_element.findtext('OperatorNameOnLicence') == 'London Transit':
-                    operator_code = 'LOTR'
-
             operator = get_operator_by('National Operator Codes', operator_code)
             if operator:
                 return operator
@@ -358,14 +371,11 @@ class Command(BaseCommand):
             bank_holiday_name = element.tag
             if bank_holiday_name == 'OtherPublicHoliday':
                 date = element.findtext('Date')
-                calendar_dates.append(
-                    CalendarDate(
-                        start_date=date,
-                        end_date=date,
-                        special=operation,
-                        operation=operation,
-                        summary=element.findtext('Description')
-                    )
+                get_calendar_date(
+                    date=date,
+                    special=operation,
+                    operation=operation,
+                    summary=element.findtext('Description'),
                 )
             else:
                 if bank_holiday_name == 'HolidaysOnly':
@@ -379,21 +389,12 @@ class Command(BaseCommand):
             return self.calendar_cache[calendar_hash]
 
         calendar_dates = [
-            CalendarDate(
-                start_date=date_range.start,
-                end_date=date_range.end,
-                operation=False,
-                summary=date_range.note or date_range.description
-            ) for date_range in operating_profile.nonoperation_days
+            get_calendar_date(date_range=date_range, operation=False)
+            for date_range in operating_profile.nonoperation_days
         ]
         for date_range in operating_profile.operation_days:
-            calendar_date = CalendarDate(
-                start_date=date_range.start,
-                end_date=date_range.end,
-                special=True,
-                operation=True,
-                summary=date_range.note or date_range.description
-            )
+            calendar_date = get_calendar_date(date_range=date_range, operation=True, special=True)
+
             difference = date_range.end - date_range.start
             if difference > datetime.timedelta(days=5):
                 # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation
@@ -441,12 +442,8 @@ class Command(BaseCommand):
                 non_operation_days += sodt.non_operation_holidays.holidays
 
             calendar_dates += [
-                CalendarDate(
-                    start_date=date_range.start,
-                    end_date=date_range.end,
-                    operation=False,
-                    summary=date_range.note or date_range.description
-                ) for date_range in non_operation_days
+                get_calendar_date(date_range=date_range, operation=False)
+                for date_range in non_operation_days
             ]
 
             if sodt.operation_working_days is sodt.operation_holidays:
@@ -461,12 +458,7 @@ class Command(BaseCommand):
                 operation_days += sodt.operation_holidays.holidays
 
             calendar_dates += [
-                CalendarDate(
-                    start_date=date_range.start,
-                    end_date=date_range.end,
-                    operation=True,
-                    summary=date_range.note or date_range.description
-                )
+                get_calendar_date(date_range=date_range, operation=True)
                 for date_range in operation_days
             ]
 

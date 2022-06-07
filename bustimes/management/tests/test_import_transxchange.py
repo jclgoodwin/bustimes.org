@@ -1012,10 +1012,10 @@ class ImportTransXChangeTest(TestCase):
         command.set_region('EA.zip')
         element = ET.fromstring("""
             <Operator id="OId_RRS">
-                <OperatorCode>LOTR</OperatorCode>
+                <OperatorCode>LUTD</OperatorCode>
                 <OperatorShortName>London Transit</OperatorShortName>
-                <OperatorNameOnLicence>Replacement Service</OperatorNameOnLicence>
-                <TradingName>Replacement Service</TradingName>
+                <OperatorNameOnLicence>London Transit</OperatorNameOnLicence>
+                <TradingName>London Transit</TradingName>
             </Operator>
         """)
         self.assertIsNone(command.get_operator(element))
