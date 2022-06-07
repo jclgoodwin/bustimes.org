@@ -1021,10 +1021,10 @@ class ImportTransXChangeTest(TestCase):
         self.assertIsNone(command.get_operator(element))
         self.assertEqual(
             command.missing_operators,
-            [{'OperatorCode': 'LOTR',
-                'OperatorNameOnLicence': 'Replacement Service',
+            [{'OperatorCode': 'LUTD',
+                'OperatorNameOnLicence': 'London Transit',
                 'OperatorShortName': 'London Transit',
-                'TradingName': 'Replacement Service'}]
+                'TradingName': 'London Transit'}]
         )
 
         self.assertIsNone(command.get_operator(ET.fromstring("""

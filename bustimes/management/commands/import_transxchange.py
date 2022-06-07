@@ -371,11 +371,13 @@ class Command(BaseCommand):
             bank_holiday_name = element.tag
             if bank_holiday_name == 'OtherPublicHoliday':
                 date = element.findtext('Date')
-                get_calendar_date(
-                    date=date,
-                    special=operation,
-                    operation=operation,
-                    summary=element.findtext('Description'),
+                calendar_dates.append(
+                    get_calendar_date(
+                        date=date,
+                        special=operation,
+                        operation=operation,
+                        summary=element.findtext('Description'),
+                    )
                 )
             else:
                 if bank_holiday_name == 'HolidaysOnly':
