@@ -369,6 +369,15 @@ class Command(ImportLiveVehiclesCommand):
         if origin_aimed_departure_time:
             origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
 
+            # detect and correct Tickerer timezone bug during British Summer Time
+            if len(journey_code) == 4 and journey_code.isdigit() and int(journey_code) < 2400:
+                hours = int(journey_code[:-2])
+                minutes = int(journey_code[-2:])
+                if minutes == origin_aimed_departure_time.minute and hours == origin_aimed_departure_time.hour:
+                    origin_aimed_departure_time = localtime(origin_aimed_departure_time)
+                    if origin_aimed_departure_time.hour == hours + 1:
+                        origin_aimed_departure_time -= origin_aimed_departure_time.utcoffset()
+
         journey = None
 
         journeys = vehicle.vehiclejourney_set
@@ -466,7 +475,7 @@ class Command(ImportLiveVehiclesCommand):
                     datetime=datetime,
                     date=journey_date,
                     destination_ref=destination_ref,
-                    # departure_time=origin_aimed_departure_time,
+                    departure_time=origin_aimed_departure_time,
                     journey_ref=journey_ref
                 )
 
