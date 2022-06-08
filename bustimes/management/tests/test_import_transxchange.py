@@ -879,14 +879,17 @@ class ImportTransXChangeTest(TestCase):
                 write_to_zipfile(path / 'Megabus_Megabus14032016 163144_MEGA_M11A.xml')
                 write_to_zipfile(path / 'Megabus_Megabus14032016 163144_MEGA_M12.xml')
                 write_to_zipfile('IncludedServices.csv')
-            call_command('import_transxchange', zipfile_path)
+
+            with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING'):
+                call_command('import_transxchange', zipfile_path)
 
             m11a_trip_ids = Trip.objects.filter(route__line_name="M11A").last().id
             m12_trip_ids = Trip.objects.filter(route__line_name="M12").last().id
             Trip.objects.filter(route__line_name="M12").update(start="00:00")
 
             # test re-importing a previously imported service again
-            call_command('import_transxchange', zipfile_path)
+            with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING'):
+                call_command('import_transxchange', zipfile_path)
 
             # ids should have kept the same
             self.assertEqual(m11a_trip_ids, Trip.objects.filter(route__line_name="M11A").last().id)

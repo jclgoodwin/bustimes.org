@@ -578,6 +578,7 @@ class Command(BaseCommand):
                 stops[atco_code] = StopPoint.objects.get(atco_code__iexact=atco_code)
             except StopPoint.DoesNotExist:
                 logger.warning(atco_code)
+                stops[atco_code] = atco_code
                 stop_time.stop_code = atco_code  # !
             else:
                 stop_time.stop = stops[atco_code]

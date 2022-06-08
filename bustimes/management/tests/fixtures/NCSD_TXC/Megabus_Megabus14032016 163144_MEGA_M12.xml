@@ -32,12 +32,6 @@
       <LocalityQualifier>Nottingham</LocalityQualifier>
     </AnnotatedStopPointRef>
     <AnnotatedStopPointRef>
-      <StopPointRef>370010201</StopPointRef>
-      <CommonName>Meadowhall Interchange</CommonName>
-      <LocalityName>Meadowhall</LocalityName>
-      <LocalityQualifier>Sheffield</LocalityQualifier>
-    </AnnotatedStopPointRef>
-    <AnnotatedStopPointRef>
       <StopPointRef>41000008NC67</StopPointRef>
       <CommonName>John Dobson Street</CommonName>
       <LocalityName>Newcastle upon Tyne</LocalityName>
