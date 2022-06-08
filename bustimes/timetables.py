@@ -158,16 +158,16 @@ class Timetable:
                     filter=Q(
                         calendarbankholiday__operation=True,
                         calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time
-                    )
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time,
+                    ),
                 ),
                 bank_holiday_exclusions=ArrayAgg(
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
                     filter=Q(
                         calendarbankholiday__operation=False,
                         calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time
-                    )
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time,
+                    ),
                 ),
             )
             .prefetch_related("calendardate_set")
@@ -177,8 +177,13 @@ class Timetable:
             for calendar_date in calendar.calendardate_set.all():
                 if not calendar_date.operation:
                     # "until 30 may 2020, but not from 20 may to 30 may" - simplify to "until 19 may"
-                    if calendar.end_date and calendar_date.end_date >= calendar.end_date:
-                        calendar.end_date = calendar_date.start_date - datetime.timedelta(days=1)
+                    if (
+                        calendar.end_date
+                        and calendar_date.end_date >= calendar.end_date
+                    ):
+                        calendar.end_date = (
+                            calendar_date.start_date - datetime.timedelta(days=1)
+                        )
 
         if not date and self.calendars:
             if len(self.calendars) == 1:

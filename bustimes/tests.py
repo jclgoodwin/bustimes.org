@@ -59,6 +59,14 @@ class BusTimesTest(TestCase):
 
         self.assertEqual("", str(calendar))
 
+        calendar.wed = True
+        calendar.thu = True
+        calendar.fri = True
+        self.assertEqual("Wednesday to Friday", str(calendar))
+
+        calendar.wed = False
+        calendar.thu = False
+        calendar.fri = False
         calendar.mon = True
         self.assertEqual("Mondays", str(calendar))
 

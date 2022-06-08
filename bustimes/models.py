@@ -151,7 +151,7 @@ class Calendar(models.Model):
             return self.summary
         if len(days) == 1:
             days = f'{days[0]}s'
-        elif days[0] == 'Monday' and days[-1] == day_keys[len(days)-1]:
+        elif day_keys.index(days[-1]) - day_keys.index(days[0]) == len(days) - 1:
             days = f'{days[0]} to {days[-1]}'
         else:
             days = f"{'s, '.join(days[:-1])}s and {days[-1]}s"
