@@ -56,7 +56,7 @@ class GTFSTest(TestCase):
         )
 
         # Create an existing operator (with a slightly different name) to test that it is re-used
-        Operator.objects.create(id=132, name='Seumas Doherty', region=cls.leinster)
+        Operator.objects.create(id="ie-132", name='Seumas Doherty', region=cls.leinster)
 
         # this should get updated later
         StopPoint.objects.create(atco_code="8220DB000759", common_name="Estadio Donnybrook", active=True)
