@@ -908,7 +908,7 @@ class VehicleLocation:
         return Occupancy(self.occupancy).label
 
     def __str__(self):
-        return self.datetime.strftime('%-d %b %Y %H:%M:%S')
+        return f"{self.datetime:%-d %b %Y %H:%M:%S}"
 
     class Meta:
         ordering = ('id',)

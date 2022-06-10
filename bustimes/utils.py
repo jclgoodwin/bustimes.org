@@ -100,6 +100,6 @@ def get_calendars(when, calendar_ids=None):
         Q(
             bank_holiday_exclusions,
             ~only_certain_dates | Exists(inclusions),
-            **{when.strftime('%a').lower(): True}
+            **{f"{when:%a}".lower(): True}
         ) | special_inclusions | bank_holiday_inclusions & bank_holiday_exclusions,
     )

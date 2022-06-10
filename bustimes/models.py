@@ -123,7 +123,7 @@ class Calendar(models.Model):
         if not self.contains(date):
             return False
 
-        if getattr(self, date.strftime('%a').lower()):
+        if getattr(self, f"{date:%a}".lower()):
             for calendar_date in self.calendardate_set.all():
                 if not calendar_date.operation and calendar_date.contains(date):
                     return False
