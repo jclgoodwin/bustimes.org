@@ -30,16 +30,6 @@ class Command(ImportLiveVehiclesCommand):
         return parse_datetime(item['RecordedAtTime'])
 
     @staticmethod
-    def get_by_vehicle_journey_ref(services, monitored_vehicle_journey):
-        vehicle_journey_ref = monitored_vehicle_journey.get('VehicleJourneyRef')
-        if vehicle_journey_ref and vehicle_journey_ref.isdigit():
-            trips = Trip.objects.filter(route__service=OuterRef("pk"), ticket_machine_code=vehicle_journey_ref)
-            try:
-                return services.get(Exists(trips))
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                pass
-
-    @staticmethod
     def get_destination_name(destination_ref):
         destination_ref = destination_ref.removeprefix('NT')
         cache_key = f'stop{destination_ref}locality'
@@ -335,8 +325,6 @@ class Command(ImportLiveVehiclesCommand):
             return services.get(Exists(trips))
         except (Service.DoesNotExist, Service.MultipleObjectsReturned):
             pass
-
-        return self.get_by_vehicle_journey_ref(services, monitored_vehicle_journey)
 
     def get_journey(self, item, vehicle):
         monitored_vehicle_journey = item['MonitoredVehicleJourney']
