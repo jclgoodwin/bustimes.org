@@ -705,10 +705,14 @@ STAGECOACH_OPERATORS = [
 # rather than via the Bus Open Data site,
 # because sometimes BODS doesn't detect updates
 TICKETER_OPERATORS = [
+    # https://opendata.ticketer.com/uk/Ipswich_Buses/routes_and_timetables/current.zip
+    ('EA', ['Ipswich_Buses', 'IPSW']),
+
+    # URL happens to contain operator code -
+    # https://opendata.ticketer.com/uk/BDRB/routes_and_timetables/current.zip
     ('EA', ['BDRB'], 'BorderBus'),
     ('EA', ['LYNX'], 'Lynx'),
     ('EA', ['WHIP'], 'Whippet'),
-    ('EA', ['Ipswich_Buses', 'IPSW'], 'Ipswich Buses'),
     ('EA', ['AMBS'], 'Ambassador Travel'),
     ('EA', ['WNCT'], 'West Norfolk Community Transport'),
     ('EA', ['Simonds', 'SIMO']),
@@ -716,7 +720,7 @@ TICKETER_OPERATORS = [
 
     ('EM', ['Brylaine', 'BRYL']),
     ('EM', ['Midland_Classic', 'MDCL']),
-    ('EM', ['Notts_and_Derby', 'NDTR'], 'Notts and Derby'),
+    ('EM', ['Notts_and_Derby', 'NDTR']),
     ('EM', ['DELA'], 'Delaine Buses'),
 
     ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC']),
@@ -739,6 +743,7 @@ TICKETER_OPERATORS = [
     ('SE', ['ENSB'], 'Ensignbus'),
     # ('SE', ['RRTR'], 'Red Rose Travel'),
     ('SE', ['Redline_Buses_Ltd', 'REDL']),
+    ('SE', ['Compass_Travel', 'COMT']),
 
     ('SW', ['NTCP', 'NCTP'], 'HCT Group'),
 
