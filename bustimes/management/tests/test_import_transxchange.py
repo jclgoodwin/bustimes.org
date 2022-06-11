@@ -935,6 +935,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "megabus.com")
         self.assertContains(response, "awin")
 
+        self.assertEqual(str(trip), "02:10")
+
+        note = trip.notes.get()
+        self.assertEqual(f"/trios/{trip.id}", note.get_absolute_url())
+
         # M12
 
         service = Service.objects.get(service_code='M12_MEGA')

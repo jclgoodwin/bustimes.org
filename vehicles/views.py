@@ -172,11 +172,22 @@ def operator_vehicles(request, slug=None, parent=None):
                     # - slightly important that it occurs before any change of operator
                     ticked_vehicles = [v for v in vehicles if str(v.id) in vehicle_ids]
                     edits = [get_vehicle_edit(vehicle, data, now, request) for vehicle in ticked_vehicles]
-                    edits = VehicleEdit.objects.bulk_create(edit for edit, changed in edits if changed)
+                    edits = VehicleEdit.objects.bulk_create(
+                        edit
+                        for edit, changed in edits
+                        if changed or 'features' in data
+                    )
+
                     if 'features' in data:
-                        for edit in edits:
-                            edit.features.set(data['features'])
+                        vehicle_edit_features = []
+                        for feature in data['features']:
+                            for edit in edits:
+                                vehicle_edit_features.append(
+                                    VehicleEditFeature(edit=edit, feature=feature)
+                                )
+                        VehicleEditFeature.objects.bulk_create(vehicle_edit_features)
                     context['edits'] = edits
+
                 form = forms.EditVehiclesForm(initial=initial, operator=operator, user=request.user)
 
     vehicles = sorted(vehicles, key=lambda v: Service.get_line_name_order(v.fleet_code))

@@ -692,6 +692,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertEqual('Optare Spectra', revision.to_type.name)
         self.assertContains(response, 'FD54 JYA')
 
+        self.assertFalse(VehicleEdit.objects.all())
+
         # withdraw
         with self.assertNumQueries(16):
             response = self.client.post('/operators/lynx/vehicles/edit', {
@@ -703,6 +705,17 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""")
         self.assertContains(response, '1 vehicle updated')
         self.assertNotContains(response, 'FD54 JYA')
 
+        self.assertFalse(VehicleEdit.objects.all())
+
+        # add feature
+        with self.assertNumQueries(17):
+            response = self.client.post('/operators/lynx/vehicles/edit', {
+                'vehicle': self.vehicle_2.id,
+                'features': self.wifi.id,
+            })
+            self.assertContains(response, "I’ll update those details (1 vehicle) shortly")
+
+        # log in to Django admin
         self.client.force_login(self.staff_user)
 
         # revert

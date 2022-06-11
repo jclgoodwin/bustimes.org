@@ -22,7 +22,7 @@
     {% endif %}
 
     {% if edits %}
-        <p class="message">I’ll update {% if revisions %}the other{% else %}those{% endif %} details ({{ edits }} vehicle{{ edits|pluralize }}) shortly</p>
+        <p class="message">I’ll update {% if revisions %}the other{% else %}those{% endif %} details ({{ edits|length }} vehicle{{ edits|length|pluralize }}) shortly</p>
     {% endif %}
 
     <p>Select vehicles to update:</p>
