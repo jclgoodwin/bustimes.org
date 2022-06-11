@@ -938,7 +938,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(trip), "02:10")
 
         note = trip.notes.get()
-        self.assertEqual(f"/trios/{trip.id}", note.get_absolute_url())
+        self.assertEqual(f"/trips/{trip.id}", note.get_absolute_url())
 
         # M12
 
