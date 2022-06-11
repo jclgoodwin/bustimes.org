@@ -177,7 +177,7 @@ class Timetable:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
                 # calendar has a summary like 'school days only', or no exceptions within 28 days
-                if calendar.is_sufficiently_simple(four_weeks_time):
+                if calendar.is_sufficiently_simple(self.today, four_weeks_time):
                     self.calendar = calendar
                     if calendar.start_date > self.today:  # starts in the future
                         self.start_date = calendar.start_date

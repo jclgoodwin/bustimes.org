@@ -115,8 +115,11 @@ class Calendar(models.Model):
             ('start_date', 'end_date'),
         )
 
-    def is_sufficiently_simple(self, future):
-        if self.summary or all(date.start_date > future for date in self.calendardate_set.all()):
+    def is_sufficiently_simple(self, today, future):
+        if self.summary or all(
+            date.start_date > future or date.end_date and date.end_date < today
+            for date in self.calendardate_set.all()
+        ):
             if str(self):
                 return True
         return False
