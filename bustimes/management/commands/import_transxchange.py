@@ -466,11 +466,6 @@ class Command(BaseCommand):
 
         summary = ', '.join(summary)
 
-        if operating_period.start == operating_period.end:
-            if summary:
-                summary = f"{summary}, "
-            summary = f"{summary}{operating_period.start:%A %-d %B %Y} only"
-
         if summary:
             summary = get_summary(summary)
 

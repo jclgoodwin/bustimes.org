@@ -4,40 +4,16 @@
     {% if timetable.calendar_options %}
         <form class="timetable-date">
             <select onchange="this.form.submit()" name="calendar" id="id_date" aria-label="Date">
-                {% for calendar in timetable.calendar_options %}
-                    <option{% if calendar == timetable.calendar %} selected{% endif %} value="{{ calendar.id }}">
-                        {{ calendar }}
-                        {% if calendar.start_date > timetable.today %}
-                            from {{ calendar.start_date }}
-                        {% endif %}
-                        {% if calendar.end_date <= timetable.today %}
-                            until {{ calendar.end_date }}
-                        {% endif %}
-                        {% if calendar.bank_holiday_inclusions and not calendar.bank_holiday_exclusions %}
-                            and bank holidays
-                        {% elif calendar.bank_holiday_exclusions and not calendar.bank_holiday_inclusions %}
-                            (not bank holidays)
-                        {% endif %}
+                {% for id, description in timetable.calendar_options %}
+                    <option{% if id == timetable.calendar.id %} selected{% endif %} value="{{ id }}">
+                        {{ description }}
                     </option>
                 {% endfor %}
             </select>
             <noscript><input type="submit"></noscript>
         </form>
     {% elif timetable.calendar %}
-        <p>
-            {{ timetable.calendar }}
-            {% if timetable.start_date %}
-                from {{ timetable.start_date }}
-            {% endif %}
-            {% if timetable.calendar.end_date <= timetable.today %}
-                until {{ timetable.calendar.end_date }}
-            {% endif %}
-            {% if timetable.calendar.bank_holiday_inclusions and not timetable.calendar.bank_holiday_exclusions %}
-                and bank holidays
-            {% elif timetable.calendar.bank_holiday_exclusions and not timetable.calendar.bank_holiday_inclusions %}
-                (not bank holidays)
-            {% endif %}
-        </p>
+        <p>{{ timetable.calendar.describe_for_timetable }}</p>
     {% elif timetable.date_options|length > 1 %}
         <form class="timetable-date" autocomplete="off">
             <select onchange="this.form.submit()" name="date" id="id_date" aria-label="Date">

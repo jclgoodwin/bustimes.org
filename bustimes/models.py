@@ -1,6 +1,8 @@
+from datetime import timedelta
 from django.contrib.gis.db import models
 from django.db.models.functions import Upper
 from django.urls import reverse
+from django.utils.timezone import localdate
 from .fields import SecondsField
 from .formatting import format_timedelta, time_datetime
 
@@ -144,6 +146,44 @@ class Calendar(models.Model):
 
     def get_order(self):
         return [day_keys.index(day) for day in self.get_days()]
+
+    def describe_for_timetable(self, today=None):
+        start_date = self.start_date
+        end_date = self.end_date
+
+        for i in range(0, 5):
+            if not self.allows(start_date):
+                start_date += timedelta(days=1)
+
+        if end_date:
+            for calendar_date in self.calendardate_set.all():
+                if not calendar_date.operation and calendar_date.end_date >= end_date:
+                    # "until 30 may 2020, but not from 20 may to 30 may" - simplify to "until 19 may"
+                    end_date = calendar_date.start_date - timedelta(days=1)
+
+            for i in range(0, 5):
+                if not self.allows(end_date):
+                    end_date -= timedelta(days=1)
+
+            if start_date == end_date:
+                return f"{start_date:%A %-d %B %Y} only"
+
+        description = str(self)
+
+        if self.bank_holiday_inclusions and not self.bank_holiday_exclusions:
+            description = f" {description} and bank holidays"
+        elif self.bank_holiday_exclusions and not self.bank_holiday_inclusions:
+            description = f" {description} (not bank holidays)"
+
+        if not today:
+            today = localdate()
+
+        if start_date > today:
+            description = f"{description} from {start_date:%A %-d %B %Y}"
+        if end_date and end_date - today < timedelta(days=21):
+            description = f"{description} until {end_date:%A %-d %B %Y}"
+
+        return description
 
     def __str__(self):
         days = self.get_days()

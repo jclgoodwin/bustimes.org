@@ -173,18 +173,6 @@ class Timetable:
             .prefetch_related("calendardate_set")
         )
 
-        for calendar in self.calendars:
-            for calendar_date in calendar.calendardate_set.all():
-                if not calendar_date.operation:
-                    # "until 30 may 2020, but not from 20 may to 30 may" - simplify to "until 19 may"
-                    if (
-                        calendar.end_date
-                        and calendar_date.end_date >= calendar.end_date
-                    ):
-                        calendar.end_date = (
-                            calendar_date.start_date - datetime.timedelta(days=1)
-                        )
-
         if not date and self.calendars:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
@@ -362,10 +350,14 @@ class Timetable:
             elif calendar_id is None and calendar.allows(self.today):
                 self.calendar = calendar
 
-        self.calendar_options = list(self.calendars)
-        self.calendar_options.sort(key=Calendar.get_order)
+        calendar_options = list(self.calendars)
+        calendar_options.sort(key=Calendar.get_order)
         if not self.calendar:
-            self.calendar = self.calendar_options[0]
+            self.calendar = calendar_options[0]
+        self.calendar_options = [
+            (calendar.id, calendar.describe_for_timetable(self.today))
+            for calendar in calendar_options
+        ]
 
     def get_date_options(self):
         date = self.today
