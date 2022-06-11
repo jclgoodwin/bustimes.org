@@ -4,7 +4,7 @@ from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import DataSource, Service
 from vehicles.models import Livery, Vehicle
-from .models import Route, Calendar, Trip
+from .models import Route, Calendar, Trip, StopTime, Garage
 from .utils import get_routes
 
 
@@ -76,12 +76,34 @@ class BusTimesTest(TestCase):
         calendar.sat = True
         self.assertEqual("Mondays, Tuesdays and Saturdays", str(calendar))
 
-        calendar.end_date = calendar.start_date
-        self.assertEqual("Mondays, Tuesdays and Saturdays", str(calendar))
+        calendar.mon = False
+        calendar.sat = False
+        calendar.wed = True
 
-        calendar.summary = "the third of january only"
+        calendar.start_date = date(2020, 2, 5)
+        calendar.end_date = date(2020, 2, 10)
+        self.assertEqual("Tuesday to Wednesday", str(calendar))
+        calendar.bank_holiday_exclusions = [date(2021, 1, 2)]
+        calendar.bank_holiday_inclusions = []
         self.assertEqual(
-            "Mondays, Tuesdays and Saturdays, the third of january only",
+            "Wednesday 5 February 2020 only",
+            calendar.describe_for_timetable()
+        )
+        calendar.end_date = None
+        self.assertEqual(
+            "Tuesday to Wednesday (not bank holidays)",
+            calendar.describe_for_timetable()
+        )
+        calendar.bank_holiday_inclusions = [date(2021, 1, 2)]
+        calendar.bank_holiday_exclusions = []
+        self.assertEqual(
+            "Tuesday to Wednesday and bank holidays from Wednesday 5 February 2020",
+            calendar.describe_for_timetable(date(2020, 1, 1))
+        )
+
+        calendar.summary = "Toby Young School of Assholery days"
+        self.assertEqual(
+            "Tuesday to Wednesday, Toby Young School of Assholery days",
             str(calendar)
         )
 
@@ -112,6 +134,18 @@ class BusTimesTest(TestCase):
             trip.start_datetime(date(2021, 10, 31)),
             datetime(2021, 11, 1, 1, 47, 30, tzinfo=timezone(timedelta())),
         )
+
+        self.assertEqual(str(trip), "01:47")
+
+    def test_stop_time(self):
+        time = StopTime(
+            departure=timedelta(hours=10, minutes=47, seconds=30)
+        )
+        self.assertEqual(str(time), "10:47")
+
+        time.arrival = timedelta(hours=10, minutes=30, seconds=2)
+        time.departure = None
+        self.assertEqual(time.departure_or_arrival(), timedelta(hours=10, minutes=30, seconds=2))
 
     def test_get_routes(self):
         sources = DataSource.objects.bulk_create(
@@ -213,3 +247,9 @@ class BusTimesTest(TestCase):
             get_routes(routes[2:4], from_date=date(2022, 4, 5)),
             routes[3:4]
         )
+
+    def test_garage(self):
+        garage = Garage(code="LOW", name="LOWESTOFT TOWN")
+        self.assertEqual(str(garage), "Lowestoft Town")
+        garage.name = "LOW"
+        self.assertEqual(str(garage), "LOW")

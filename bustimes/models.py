@@ -115,7 +115,7 @@ class Calendar(models.Model):
             ('start_date', 'end_date'),
         )
 
-    def is_sufficiently_simple(self, today, future):
+    def is_sufficiently_simple(self, today, future) -> bool:
         if self.summary or all(
             date.start_date > future or date.end_date and date.end_date < today
             for date in self.calendardate_set.all()
@@ -124,7 +124,7 @@ class Calendar(models.Model):
                 return True
         return False
 
-    def allows(self, date):
+    def allows(self, date) -> bool:
         if not self.contains(date):
             return False
 
@@ -143,14 +143,14 @@ class Calendar(models.Model):
         if date in self.bank_holiday_inclusions:
             return True
 
-    def get_days(self):
+    def get_days(self) -> list:
         day_values = (self.mon, self.tue, self.wed, self.thu, self.fri, self.sat, self.sun)
         return [day_keys[i] for i, value in enumerate(day_values) if value]
 
-    def get_order(self):
+    def get_order(self) -> list:
         return [day_keys.index(day) for day in self.get_days()]
 
-    def describe_for_timetable(self, today=None):
+    def describe_for_timetable(self, today=None) -> str:
         start_date = self.start_date
         end_date = self.end_date
 
@@ -174,9 +174,9 @@ class Calendar(models.Model):
         description = str(self)
 
         if self.bank_holiday_inclusions and not self.bank_holiday_exclusions:
-            description = f" {description} and bank holidays"
+            description = f"{description} and bank holidays"
         elif self.bank_holiday_exclusions and not self.bank_holiday_inclusions:
-            description = f" {description} (not bank holidays)"
+            description = f"{description} (not bank holidays)"
 
         if not today:
             today = localdate()
