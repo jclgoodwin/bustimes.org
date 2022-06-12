@@ -453,12 +453,12 @@ YSTN:
     url: https://www.stationcoaches.co.uk/
 SPMW:
     url: https://www.stringerscoaches.co.uk/
-WNGS:
-    name: Diamond Bus South East
-    url: https://www.diamondbuses.com/south-east
-    twitter: DiamondBusSE
-    email: Comments-DiamondSE@rotala.co.uk
-    phone: 01784 425 621
+#WNGS:
+#    name: Diamond Bus South East
+#    url: https://www.diamondbuses.com/south-east
+#    twitter: DiamondBusSE
+#    email: Comments-DiamondSE@rotala.co.uk
+#    phone: 01784 425 621
 CTNY:
     name: Thames Valley Buses
     url: https://www.thamesvalleybuses.com/
