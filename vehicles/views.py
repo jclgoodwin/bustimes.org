@@ -457,7 +457,7 @@ def get_dates(vehicle=None, service=None):
 
     dates = cache.get(key)
 
-    if not dates:
+    if not dates and vehicle:
         # return
         try:
             dates = list(journeys.values_list('datetime__date', flat=True).distinct().order_by('datetime__date'))
