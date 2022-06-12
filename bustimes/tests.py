@@ -55,7 +55,6 @@ class BusTimesTest(TestCase):
             sun=False,
             start_date=date(2021, 1, 3),
         )
-        calendar.save()
 
         self.assertEqual("", str(calendar))
 
@@ -105,6 +104,16 @@ class BusTimesTest(TestCase):
         self.assertEqual(
             "Tuesday to Wednesday, Toby Young School of Assholery days",
             str(calendar)
+        )
+
+        calendar.summary = ""
+        calendar.tue = False
+        calendar.wed = False
+        calendar.sat = True
+        calendar.start_date = date(2022, 6, 12)  # a Sunday – won't actually operate til Saturday...
+        self.assertEqual(
+            "Saturdays and bank holidays from Saturday 18 June 2022",
+            calendar.describe_for_timetable(date(2022, 6, 17))
         )
 
     def test_trip(self):
