@@ -488,11 +488,15 @@ def journeys_list(request, journeys, service=None, vehicle=None):
             date = datetime.date.fromisoformat(date)
         except ValueError:
             date = None
-    elif dates is None:
-        if vehicle and vehicle.latest_journey:
-            date = timezone.localdate(vehicle.latest_journey.datetime)
+
+    if not date and dates is None:
+        if vehicle:
+            latest_journey = vehicle.latest_journey
         else:
-            date = timezone.localdate()
+            latest_journey = journeys.last()
+        if latest_journey:
+            date = latest_journey.datetime
+        date = timezone.localdate(date)
 
     if date or dates:
         context['dates'] = dates
