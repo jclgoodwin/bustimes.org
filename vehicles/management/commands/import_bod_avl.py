@@ -43,9 +43,6 @@ class Command(ImportLiveVehiclesCommand):
 
     @functools.cache
     def get_operator(self, operator_ref):
-        if operator_ref == 'TFLO':
-            return
-
         # all operators with a matching OperatorCode,
         # or (if no such OperatorCode) the one with a matching id
         operator_codes = self.source.operatorcode_set.filter(code=operator_ref)
@@ -432,7 +429,8 @@ class Command(ImportLiveVehiclesCommand):
             operators = self.get_operator(operator_ref)
             journey.service = self.get_service(operators, item, route_name, vehicle.operator_id)
 
-            if not operators and journey.service and operator_ref != 'TFLO' and journey.service.operator.all():
+            if not operators and journey.service and journey.service.operator.all():
+                # create new OperatorCode
                 operator = journey.service.operator.all()[0]
                 try:
                     OperatorCode.objects.create(source=self.source, operator=operator, code=operator_ref)
