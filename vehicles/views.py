@@ -8,7 +8,7 @@ from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit
 
 from django.db import IntegrityError, OperationalError, transaction, connection
-from django.db.models import F, Case, When, Q, OuterRef
+from django.db.models import F, Case, When, Q, OuterRef, Max
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
@@ -490,13 +490,10 @@ def journeys_list(request, journeys, service=None, vehicle=None):
             date = None
 
     if not date and dates is None:
-        if vehicle:
-            latest_journey = vehicle.latest_journey
+        if vehicle and vehicle.latest_journey:
+            date = timezone.localdate(vehicle.latest_journey.datetime)
         else:
-            latest_journey = journeys.last()
-        if latest_journey:
-            date = latest_journey.datetime
-        date = timezone.localdate(date)
+            date = journeys.aggregate(max_date=Max('datetime__date'))['max_date']
 
     if date or dates:
         context['dates'] = dates

@@ -233,6 +233,15 @@ class Command(BaseCommand):
             operator_code = self.operators.get(operator_code, operator_code)
 
         if operator_code:
+            if operator_code == 'GAHL':
+                match operator_element.findtext('OperatorCode'):
+                    case 'LC':
+                        operator_code = 'LONC'
+                    case 'LG':
+                        operator_code = 'LGEN'
+                    case 'BE':
+                        operator_code = 'BTRI'
+
             operator = get_operator_by('National Operator Codes', operator_code)
             if operator:
                 return operator
