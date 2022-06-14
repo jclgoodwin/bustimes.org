@@ -985,7 +985,10 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(service.get_absolute_url())
         self.assertContains(response, '<a href="/stops/9100STRBDGT">Stourbridge Town Rail Station</a>')
         self.assertContains(response, '<a href="/operators/west-midlands-railroad">West Midlands Railroad</a>')
-        self.assertContains(response, '9100STRBDGJ0')
+        self.assertContains(response, """
+                                <th class="stop-name" scope="row">
+                                    Stourbridge Junction Rail Station
+                                </th>""")
         self.assertEqual(2, service.stopusage_set.count())
 
     def test_get_service_code(self):

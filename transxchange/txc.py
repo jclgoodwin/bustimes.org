@@ -22,6 +22,8 @@ class Stop:
             self.atco_code = atco_code.upper()
 
             self.common_name = element.findtext('CommonName')
+            if not self.common_name:
+                self.common_name = element.findtext('Descriptor/CommonName')
 
             self.indicator = element.findtext("Indicator")
 
