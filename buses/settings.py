@@ -553,7 +553,7 @@ BOD_OPERATORS = [
     ('LNNE', 'NW', {}, False),
     ('NUTT', 'NW', {}, False),
     ('BLAC', 'NW', {}, False),
-    ('STOT', 'NW', {}, False),
+    #('STOT', 'NW', {}, False),
     ('IRVD', 'NW', {}, False),
 
     ('ROOS', 'SW', {}, False),
