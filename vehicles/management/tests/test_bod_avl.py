@@ -84,7 +84,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
         garage = Garage.objects.create(code="GY", name="Great Yarmouth")
         # route_c = Route.objects.create(service=service_c, source=cls.source, code='c')
-        Trip.objects.create(
+        cls.trip = Trip.objects.create(
             route=route_u,
             start="09:23:00",
             end="10:50:00",
@@ -286,7 +286,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         with self.assertNumQueries(1):
             response = self.client.get("/vehicles.json")
-        self.assertEqual(len(response.json()), 3)
+        json = response.json()
+        self.assertEqual(len(json), 3)
+
+        with self.assertNumQueries(2):
+            response = self.client.get(f"/vehicles.json?trip={self.trip.id}")
+        json = response.json()
+        self.assertEqual(len(json), 3)
 
         with self.assertNumQueries(1):
             response = self.client.get("/vehicles.json?id=-1")
