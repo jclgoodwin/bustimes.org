@@ -480,7 +480,7 @@ class StopPointDetailView(DetailView):
             date = form.cleaned_data['date']
             time = form.cleaned_data['time']
             if time is None:
-                time = datetime.time()
+                time = datetime.time()  # 00:00
             when = datetime.datetime.combine(date, time)
             context['when'] = when
 
