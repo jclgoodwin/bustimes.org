@@ -36,7 +36,7 @@ from vosa.models import Registration
 from .utils import get_bounding_box
 from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
                      Service, Place, ServiceColour, DataSource)
-from .forms import ContactForm, SearchForm
+from . import forms
 
 
 operator_has_current_services = Exists(
@@ -163,7 +163,7 @@ def contact(request):
     """Contact page with form"""
     submitted = False
     if request.method == 'POST':
-        form = ContactForm(request.POST, request=request)
+        form = forms.ContactForm(request.POST, request=request)
         if form.is_valid():
             subject = form.cleaned_data['message'][:50].splitlines()[0]
 
@@ -188,7 +188,7 @@ def contact(request):
         }
         if request.user.is_authenticated:
             initial['email'] = request.user.email
-        form = ContactForm(initial=initial)
+        form = forms.ContactForm(initial=initial)
     return render(request, 'contact.html', {
         'form': form,
         'submitted': submitted
@@ -475,22 +475,14 @@ class StopPointDetailView(DetailView):
             raise Http404(f'Sorry, it looks like no services currently stop at {self.object}')
 
         when = None
-        date = self.request.GET.get('date')
-        if date:
-            time_string = self.request.GET.get('time')
-            try:
-                date = datetime.date.fromisoformat(date)
-            except ValueError:
-                pass
-            else:
+        form = forms.DeparturesForm(self.request.GET)
+        if form.is_valid():
+            date = form.cleaned_data['date']
+            time = form.cleaned_data['time']
+            if time is None:
                 time = datetime.time()
-                if time_string:
-                    try:
-                        time = datetime.time.fromisoformat(time_string)
-                    except ValueError:
-                        pass
-                when = datetime.datetime.combine(date, time)
-                context['when'] = when
+            when = datetime.datetime.combine(date, time)
+            context['when'] = when
 
         departures, _ = live.get_departures(self.object, context['services'], when)
         context.update(departures)
@@ -646,18 +638,14 @@ class ServiceDetailView(DetailView):
         if self.object.timetable_wrong or self.object.mode in ('metro', 'underground', 'tram'):
             date = None
         else:
-            date = self.request.GET.get('date')
-            if date:
-                try:
-                    date = datetime.date.fromisoformat(date)
-                except ValueError:
-                    date = None
-            calendar = self.request.GET.get('calendar')
-            if calendar:
-                try:
-                    calendar = int(calendar)
-                except ValueError:
-                    calendar = None
+            form = forms.TimetableForm(self.request.GET)
+            if form.is_valid():
+                date = form.cleaned_data["date"]
+                calendar = form.cleaned_data["calendar"]
+            else:
+                date = None
+                calendar = None
+
             if context['related']:
                 parallel = self.object.get_linked_services()
                 context['linked_services'] = parallel
@@ -835,12 +823,13 @@ class ServiceDetailView(DetailView):
 
 def service_timetable(request, service_id):
     service = get_object_or_404(Service.objects.defer('geometry'), id=service_id)
-    date = request.GET.get('date')
-    calendar = request.GET.get('calendar')
-    if date:
-        date = datetime.date.fromisoformat(date)
-    elif calendar:
-        calendar = int(calendar)
+    form = forms.TimetableForm(request.GET)
+    if form.is_valid():
+        date = form.cleaned_data["date"]
+        calendar = form.cleaned_data["calendar"]
+    else:
+        date = None
+        calendar = None
     parallel = service.get_linked_services()
     timetable = service.get_timetable(day=date, calendar_id=calendar, related=parallel)
     stops = StopPoint.objects.select_related('locality').defer('latlong', 'locality__latlong')
@@ -963,7 +952,7 @@ class ServiceSitemap(Sitemap):
 
 
 def search(request):
-    form = SearchForm(request.GET)
+    form = forms.SearchForm(request.GET)
 
     context = {
         'form': form,

@@ -204,7 +204,7 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
         with self.assertNumQueries(10):
-            response = self.client.get('/stops/2900W0321?date=2020-05-02&time=poop')
+            response = self.client.get('/stops/2900W0321?date=2020-05-02')
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
         # test get_trip

@@ -482,12 +482,11 @@ def journeys_list(request, journeys, service=None, vehicle=None):
 
     context = {}
 
-    date = request.GET.get('date')
-    if date:
-        try:
-            date = datetime.date.fromisoformat(date)
-        except ValueError:
-            date = None
+    form = forms.DateForm(request.GET)
+    if form.is_valid():
+        date = form.cleaned_data["date"]
+    else:
+        date = None
 
     if not date and dates is None:
         if vehicle and vehicle.latest_journey:

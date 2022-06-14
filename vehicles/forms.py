@@ -232,3 +232,7 @@ can’t be contradicted"""
 
 class DebuggerForm(forms.Form):
     data = forms.CharField(widget=forms.Textarea(attrs={'rows': 6}))
+
+
+class DateForm(forms.Form):
+    date = forms.DateField()

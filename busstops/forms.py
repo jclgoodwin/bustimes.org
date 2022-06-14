@@ -33,3 +33,13 @@ class ContactForm(forms.Form):
 
 class SearchForm(forms.Form):
     q = forms.CharField(widget=forms.TextInput(attrs={"type": "search"}))
+
+
+class TimetableForm(forms.Form):
+    date = forms.DateField(required=False)
+    calendar = forms.IntegerField(required=False)
+
+
+class DeparturesForm(forms.Form):
+    date = forms.DateField()
+    time = forms.TimeField(required=False)
