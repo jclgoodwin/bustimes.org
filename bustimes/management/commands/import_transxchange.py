@@ -675,12 +675,15 @@ class Command(BaseCommand):
                     if not stop_time.timing_status:
                         stop_time.timing_status = 'OTH'
 
-            for note in journey.notes:
-                note_cache_key = f'{note}:{journey.notes[note]}'
+            for note, text in journey.notes.items():
+                note_cache_key = f'{note}:{text}'
                 if note_cache_key in self.notes:
                     note = self.notes[note_cache_key]
                 else:
-                    note, _ = Note.objects.get_or_create(code=note or '', text=journey.notes[note])
+                    if len(text) > 255:
+                        logger.warning(f"{text}")
+                        text = text[:255]
+                    note, _ = Note.objects.get_or_create(code=note or '', text=text)
                     self.notes[note_cache_key] = note
                 trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
