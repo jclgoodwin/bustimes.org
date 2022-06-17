@@ -47,5 +47,5 @@ class ImportPassengerTest(TestCase):
         # date from timestamp in code (1653042367)
         self.assertEqual(
             source.credit(route),
-            """<a href="https://data.discoverpassenger.com/operator/unilink">Unilink</a>, 20 May 2022."""
+            """<a href="https://data.discoverpassenger.com/operator/unilink">Unilink</a>, 20 May 2022"""
         )
