@@ -181,7 +181,7 @@ class Calendar(models.Model):
         if not today:
             today = localdate()
 
-        if start_date > today:
+        if self.start_date > today:
             description = f"{description} from {start_date:%A %-d %B %Y}"
         if end_date and end_date - today < timedelta(days=21):
             description = f"{description} until {end_date:%A %-d %B %Y}"
