@@ -200,12 +200,10 @@ def status(request):
         count=Count('route__service', filter=Q(route__service__current=True), distinct=True),
     ).order_by('url')
 
-    tnds = sources.filter(url__contains='tnds.basemap')
-
     return render(request, 'status.html', {
         'bod_avl_status': cache.get('bod_avl_status', []),
         'tfn_disruption_heartbeat': cache.get('Heartbeat:TransportAPI'),
-        'tnds': tnds
+        'tnds': sources.filter(url__contains='tnds.basemap')
     })
 
 

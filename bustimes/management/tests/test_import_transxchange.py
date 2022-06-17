@@ -868,6 +868,18 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "border-color: #111111;")
         self.assertContains(response, "color: #111111;")
 
+        self.assertEqual(colour.preview(), """<div style="background:#c0c0c0;color:#111111">Navy Blue Line</div>""")
+
+        response = self.client.get("/status")
+        self.assertContains(
+            response,
+            """<tr>
+                <td>S</td>
+                <td>1</td>
+                <td>None</td>
+            </tr>"""
+        )
+
     @time_machine.travel('22 January 2017')
     def test_megabus(self):
         # simulate a National Coach Service Database zip file

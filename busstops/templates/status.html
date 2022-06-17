@@ -205,7 +205,7 @@
     <tbody>
         {% for source in tnds %}
             <tr>
-                <td>{{ source.get_nice_link }}</td>
+                <td>{{ source.name }}</td>
                 <td>{{ source.count }}</td>
                 <td>{{ source.datetime|naturaltime }}</td>
             </tr>

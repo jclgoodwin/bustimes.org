@@ -130,7 +130,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         self.assertEqual(841, len(command.identifiers))
 
+        # status page
+
         response = self.client.get("/status")
+
         self.assertContains(
             response,
             """

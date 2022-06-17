@@ -218,13 +218,6 @@ class DataSource(models.Model):
         if self.settings and 'url' in self.settings:
             return self.settings['url']
 
-    def get_nice_link(self):
-        name = self.get_nice_name()
-        url = self.get_nice_url()
-        if url:
-            return format_html('<a href="{}">{}</a>', url, name)
-        return name
-
     def credit(self, route=None):
         url = self.get_nice_url()
         text = None
@@ -236,14 +229,11 @@ class DataSource(models.Model):
         elif url:
             text = self.get_nice_name()
             date = self.datetime
-            if self.name == 'flixbus GTFS':
-                text = 'FlixBus'
+            # if self.name == 'flixbus GTFS':
+            #     text = 'FlixBus'
         elif 'transportforireland' in self.url:
             url = 'https://www.transportforireland.ie/transitData/PT_Data.html'
             text = 'Transport for Ireland'
-            date = self.datetime
-        elif self.url.startswith('http://travelinedatahosting.basemap.co.uk/'):
-            text = self.name
             date = self.datetime
         elif self.url.startswith('https://opendata.ticketer.com/uk/'):
             text = self.url
@@ -609,9 +599,6 @@ class ServiceManager(models.Manager):
         return self.get_queryset().annotate(
             line_names=ArrayAgg(Coalesce('route__line_name', 'line_name'), distinct=True)
         )
-
-    def with_operators(self):
-        return self.get_queryset().annotate(operators=ArrayAgg('operator_name'))
 
 
 class Service(models.Model):

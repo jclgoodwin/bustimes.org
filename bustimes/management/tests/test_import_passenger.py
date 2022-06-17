@@ -3,7 +3,7 @@ from unittest.mock import patch
 from vcr import use_cassette
 from django.test import TestCase, override_settings
 from django.core.management import call_command
-from busstops.models import Region, Operator
+from busstops.models import Region, Operator, DataSource
 from ...models import Route
 
 
@@ -41,3 +41,11 @@ class ImportPassengerTest(TestCase):
         ])
 
         self.assertFalse(Route.objects.all())
+
+        source = DataSource.objects.get()
+        route = Route(code="gocornwallbus_1653042367.zip/TXC Export 20220520-1013.xml#SER23")
+        # date from timestamp in code (1653042367)
+        self.assertEqual(
+            source.credit(route),
+            """<a href="https://data.discoverpassenger.com/operator/unilink">Unilink</a>, 20 May 2022."""
+        )
