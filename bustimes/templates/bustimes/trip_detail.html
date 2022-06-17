@@ -17,9 +17,13 @@
     <h2>
         {{ object.route.line_name }}
         -
-        {% for stop in stops %}{% if forloop.first or forloop.last %}
-            {% firstof stop.stop.locality stop.stop %}{% if forloop.first %} to {% endif %}
-        {% endif %}{% endfor %}
+        {% if origin and destination %}
+            {{ origin }} to {{ destination }}
+        {% elif object.outbound %}
+            {{ object.route.service.outbound_description }}
+        {% else %}
+            {{ object.route.service.inbound_description }}
+        {% endif %}
     </h2>
 
     <p>{{ trip.calendar }}</p>

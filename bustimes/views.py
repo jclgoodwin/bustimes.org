@@ -218,7 +218,12 @@ class TripDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['stops'] = self.object.stoptime_set.all()
+        stops = list(self.object.stoptime_set.all())
+        if stops[0].stop:
+            context['origin'] = stops[0].stop.locality
+        if stops[-1].stop:
+            context['destination'] = stops[-1].stop.locality
+        context['stops'] = stops
 
         trip_serializer = TripSerializer(self.object)
         stops_json = JSONRenderer().render(trip_serializer.data)
