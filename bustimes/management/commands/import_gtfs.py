@@ -255,39 +255,48 @@ class Command(BaseCommand):
                     )
             for route_id in headsigns:
                 route = self.routes[route_id]
-                if not route.service.description:
-                    origins = headsigns[route_id]["1"]
-                    destinations = headsigns[route_id]["0"]
-                    origin = None
-                    destination = None
-                    if len(origins) <= 1 and len(destinations) <= 1:
-                        if len(origins) == 1:
-                            origin = list(origins)[0]
-                        if len(destinations) == 1:
-                            destination = list(destinations)[0]
+                origins = headsigns[route_id]["1"]  # inbound destinations
+                destinations = headsigns[route_id]["0"]  # outbound destinations
+                origin = ""
+                destination = ""
+                if len(origins) <= 1 and len(destinations) <= 1:
+                    if origins:
+                        origin = list(origins)[0]
+                    if destinations:
+                        destination = list(destinations)[0]
 
-                        if origin and " - " in origin:
-                            route.service.inbound_description = origin
-                            route.service.description = origin
-                        if destination and " - " in destination:
-                            route.service.outbound_description = destination
-                            route.service.description = destination
+                    # if headsign contains ' - ' assume it's 'origin - destination', not just destination
+                    if origin and " - " in origin:
+                        route.inbound_description = origin
+                        route.service.inbound_description = origin
+                    if destination and " - " in destination:
+                        route.outbound_description = destination
+                        route.service.outbound_description = destination
 
-                        if origin and destination and " - " not in origin:
-                            route.service.description = (
-                                route.service.outbound_description
-                            ) = f"{origin} - {destination}"
-                            route.service.inbound_description = (
-                                f"{destination} - {origin}"
-                            )
+                    if origin and destination and " - " not in origin:
+                        route.service.outbound_description = f"{origin} - {destination}"
+                        route.service.inbound_description = f"{destination} - {origin}"
+                    route.origin = origin
+                    route.destination = destination
 
-                        route.service.save(
-                            update_fields=[
-                                "description",
-                                "inbound_description",
-                                "outbound_description",
-                            ]
-                        )
+                    if not route.service.description:
+                        route.service.description = route.outbound_description or route.inbound_description
+
+                    route.save(
+                        update_fields=[
+                            "origin",
+                            "destination",
+                            "inbound_description",
+                            "outbound_description",
+                        ]
+                    )
+                    route.service.save(
+                        update_fields=[
+                            "description",
+                            "inbound_description",
+                            "outbound_description",
+                        ]
+                    )
 
             trip = None
             previous_line = None
