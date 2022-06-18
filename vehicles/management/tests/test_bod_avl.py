@@ -13,7 +13,7 @@ from busstops.models import (
     AdminArea,
     Service,
 )
-from bustimes.models import Route, Trip, Garage, Calendar
+from bustimes.models import Route, Trip, Garage, Calendar, StopTime
 from ...models import VehicleJourney, Vehicle, Livery
 from ...workers import SiriConsumer
 from ...utils import flush_redis
@@ -292,9 +292,19 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         json = response.json()
         self.assertEqual(len(json), 3)
 
+        # trip progress
+
+        StopPoint.objects.create(atco_code="a", latlong="POINT (0.14 52.17)", active=True)
+        StopPoint.objects.create(atco_code="b", latlong="POINT (0.15 52.20)", active=True)
+
+        StopTime.objects.create(trip=self.trip, stop_id="a", arrival="25:00:00")
+        StopTime.objects.create(trip=self.trip, stop_id="b", arrival="25:01:00")
+
         response = self.client.get(f"/vehicles.json?trip={self.trip.id}")
         json = response.json()
         self.assertEqual(len(json), 3)
+        self.assertEqual(json[-1]["progress"], {'prev_stop': 'a', 'next_stop': 'b'})
+        self.assertEqual(json[-1]["delay"], 27908.0)
 
         with self.assertNumQueries(1):
             response = self.client.get("/vehicles.json?id=-1")

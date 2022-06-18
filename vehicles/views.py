@@ -27,7 +27,7 @@ from sql_util.utils import Exists, SubqueryCount, SubqueryMin, SubqueryMax
 from buses.utils import varnish_ban
 from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
-from bustimes.models import Garage, StopTime
+from bustimes.models import Garage
 from .models import Vehicle, VehicleJourney, VehicleEdit, VehicleEditFeature, VehicleRevision, Livery, VehicleEditVote
 from . import filters
 from . import forms
@@ -384,15 +384,13 @@ def vehicles_json(request):
 
             if trip and 'trip_id' in item and item['trip_id'] == trip:
                 vj = VehicleJourney(service_id=item['service_id'], trip_id=trip)
-                progress = vj.get_progress(item)
+                progress = vj.get_progress(*item['coordinates'])
                 if progress:
+                    prev_stop, next_stop = progress
                     item['progress'] = {
-                        'prev_stop': progress.from_stop_id,
-                        'next_stop': progress.to_stop_id,
+                        'prev_stop': prev_stop.stop_id,
+                        'next_stop': next_stop.stop_id,
                     }
-                    prev_stop, next_stop = StopTime.objects.filter(
-                        id__in=(progress.from_stoptime, progress.to_stoptime)
-                    )
                     when = parse_datetime(item['datetime'])
                     when = timezone.localtime(when)
                     when = datetime.timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)

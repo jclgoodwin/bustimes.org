@@ -3,15 +3,12 @@ import json
 
 from math import ceil
 from urllib.parse import quote
-from datetime import timedelta
 from webcolors import html5_parse_simple_color
 
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
-from django.db.models import Q, F
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
@@ -20,8 +17,7 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from busstops.models import Operator, Service, DataSource
-from bustimes.utils import get_calendars, get_routes
-from bustimes.models import Trip, RouteLink
+from . import rtpi
 
 
 def format_reg(reg):
@@ -274,10 +270,12 @@ class Vehicle(models.Model):
         super().save(*args, update_fields=update_fields, **kwargs)
 
     class Meta:
-        unique_together = ('code', 'operator')
         indexes = [
             models.Index(Upper('fleet_code'), name='fleet_code'),
             models.Index(Upper('reg'), name='reg'),
+        ]
+        constraints = [
+            models.UniqueConstraint(Upper('code'), Upper('operator'), name='vehicle_operator_and_code'),
         ]
 
     def __str__(self):
@@ -782,102 +780,8 @@ class VehicleJourney(models.Model):
             ('vehicle', 'datetime'),
         )
 
-    def get_trip(self, datetime=None, date=None, destination_ref=None, departure_time=None, journey_ref=None):
-        if not self.service:
-            return
-
-        if journey_ref == self.code:
-            journey_ref = None
-
-        if not datetime:
-            datetime = self.datetime
-        if not date:
-            date = (departure_time or datetime).date()
-
-        routes = get_routes(self.service.route_set.select_related('source'), date)
-        if not routes:
-            return
-        trips = Trip.objects.filter(route__in=routes)
-
-        if destination_ref and ' ' not in destination_ref and destination_ref[:3].isdigit():
-            destination = Q(destination=destination_ref)
-        else:
-            destination = None
-
-        if self.direction == 'outbound':
-            direction = Q(inbound=False)
-        elif self.direction == 'inbound':
-            direction = Q(inbound=True)
-        else:
-            direction = None
-
-        if departure_time:
-            start = timezone.localtime(departure_time)
-            start = timedelta(hours=start.hour, minutes=start.minute)
-        elif len(self.code) == 4 and self.code.isdigit() and int(self.code) < 2400:
-            hours = int(self.code[:-2])
-            minutes = int(self.code[-2:])
-            start = timedelta(hours=hours, minutes=minutes)
-        else:
-            start = None
-
-        if start is not None:
-            start = Q(start=start)
-            trips_at_start = trips.filter(start)
-
-            if destination:
-                if direction:
-                    destination |= direction
-                trips_at_start = trips_at_start.filter(destination)
-            elif direction:
-                trips_at_start = trips_at_start.filter(direction)
-
-            try:
-                return trips_at_start.get()
-            except Trip.MultipleObjectsReturned:
-                try:
-                    return trips_at_start.get(calendar__in=get_calendars(date))
-                except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                    if not journey_ref:
-                        return
-            except Trip.DoesNotExist:
-                if destination and departure_time:
-                    try:
-                        return trips.get(start, calendar__in=get_calendars(date))
-                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                        pass
-
-        if not journey_ref:
-            journey_ref = self.code
-
-        try:
-            return trips.get(ticket_machine_code=journey_ref)
-        except Trip.MultipleObjectsReturned:
-            trips = trips.filter(calendar__in=get_calendars(date))
-            try:
-                return trips.get(ticket_machine_code=journey_ref)
-            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                pass
-        except Trip.DoesNotExist:
-            pass
-
-    def get_progress(self, location):
-        point = Point(location["coordinates"][0], location["coordinates"][1], srid=4326)
-
-        trip = self.trip_id
-
-        return RouteLink.objects.filter(
-            service=self.service_id,
-            geometry__bboverlaps=point.buffer(0.001),
-            from_stop__stoptime__trip=trip,
-            to_stop__stoptime__trip=trip,
-            to_stop__stoptime__id__gt=F('from_stop__stoptime__id')
-        ).annotate(
-            distance=models.functions.Distance('geometry', point),
-            from_stoptime=F('from_stop__stoptime'),
-            to_stoptime=F('to_stop__stoptime')
-        ).order_by('distance').first()
-
+    get_trip = rtpi.get_trip
+    get_progress = rtpi.get_progress
 
 # class VehiclePosition:
 #     journey = models.ForeignKey(VehicleJourney, on_delete)
