@@ -135,8 +135,8 @@ class Command(BaseCommand):
         description = line["route_long_name"]
         if not line_name and " " not in description:
             line_name = description
-        if line_name.endswith("x"):  # Aircoach
-            line_name = line_name.replace("-", "").upper()
+            if len(line_name) < 5:
+                description = ''
 
         q = Exists(
             Route.objects.filter(code=line["route_id"], service=OuterRef("id"))

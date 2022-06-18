@@ -50,7 +50,7 @@ class Command(ImportLiveVehiclesCommand):
 
         services = Service.objects.filter(has_trips, operator__in=self.operators)
         for service in services.values('line_name'):
-            line_name = service['line_name']
+            line_name = service['line_name'].upper()
             for direction in 'OI':
                 try:
                     res = self.session.get(self.url.format(line_name, direction), timeout=5)
