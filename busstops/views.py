@@ -7,14 +7,16 @@ import requests
 import csv
 import json
 from urllib.parse import urlencode
+
 from ukpostcodeutils import validation
+
 
 from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Q, Prefetch, F, Exists, OuterRef, Count, Min
+from django.db.models import Q, Prefetch, F, OuterRef, Count, Min
 from django.db.models.functions import Now
 from django.http import HttpResponse, HttpResponseBadRequest, Http404, JsonResponse
 from django.utils import timezone
@@ -25,6 +27,9 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.conf import settings
+
+from sql_util.utils import Exists
+
 from departures import live
 from disruptions.models import Situation, Consequence
 from fares.models import FareTable
@@ -39,12 +44,8 @@ from .models import (Region, StopPoint, AdminArea, Locality, District, Operator,
 from . import forms
 
 
-operator_has_current_services = Exists(
-    Service.objects.filter(current=True, operator=OuterRef('pk'))
-)
-operator_has_current_services_or_vehicles = operator_has_current_services | Exists(
-    Vehicle.objects.filter(withdrawn=False, operator=OuterRef('pk'))
-)
+operator_has_current_services = Exists('service', filter=Q(service__current=True))
+operator_has_current_services_or_vehicles = operator_has_current_services | Exists('vehicle', filter=Q(withdrawn=False))
 
 
 def get_colours(services):
@@ -345,7 +346,7 @@ class AdminAreaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        stops = StopPoint.objects.filter(active=True)
+        stops = StopPoint.objects.filter(Exists('service', filter=Q(service__current=True)))
 
         # Districts in this administrative area
         context['districts'] = self.object.district_set.filter(Exists(
@@ -413,6 +414,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         stops = StopPoint.objects.filter(active=True)
+
         has_stops = Exists(stops.filter(locality=OuterRef('pk')))
         has_stops |= Exists(stops.filter(locality__parent=OuterRef('pk')))
 
