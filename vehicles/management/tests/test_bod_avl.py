@@ -294,8 +294,12 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         # trip progress
 
-        StopPoint.objects.create(atco_code="a", latlong="POINT (0.14 52.17)", active=True)
-        StopPoint.objects.create(atco_code="b", latlong="POINT (0.15 52.20)", active=True)
+        StopPoint.objects.create(
+            atco_code="a", latlong="POINT (0.14 52.17)", active=True
+        )
+        StopPoint.objects.create(
+            atco_code="b", latlong="POINT (0.15 52.20)", active=True
+        )
 
         StopTime.objects.create(trip=self.trip, stop_id="a", arrival="25:00:00")
         StopTime.objects.create(trip=self.trip, stop_id="b", arrival="25:01:00")
@@ -303,7 +307,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         response = self.client.get(f"/vehicles.json?trip={self.trip.id}")
         json = response.json()
         self.assertEqual(len(json), 3)
-        self.assertEqual(json[-1]["progress"], {'prev_stop': 'a', 'next_stop': 'b'})
+        self.assertEqual(json[-1]["progress"], {"prev_stop": "a", "next_stop": "b"})
         self.assertEqual(json[-1]["delay"], 27908.0)
 
         with self.assertNumQueries(1):
@@ -660,6 +664,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.source = self.source
 
         livery = Livery.objects.create(id=262, name="TfL", published=True)
+        OperatorCode.objects.create(code="TFLO", operator_id="HAMS", source=self.source)
 
         item = {
             "RecordedAtTime": "2022-05-23T12:15:47+00:00",

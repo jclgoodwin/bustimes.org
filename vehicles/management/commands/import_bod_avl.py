@@ -113,10 +113,11 @@ class Command(ImportLiveVehiclesCommand):
 
         operators = self.get_operator(operator_ref)
 
-        if not operators:
+        if operator_ref == 'TFLO':
+            defaults['livery_id'] = 262
             vehicles = self.vehicles.filter(operator=None)
-            if operator_ref == 'TFLO':
-                defaults['livery_id'] = 262
+        elif not operators:
+            vehicles = self.vehicles.filter(operator=None)
         elif len(operators) == 1:
             operator = operators[0]
 
