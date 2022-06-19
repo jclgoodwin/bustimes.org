@@ -476,6 +476,8 @@ BOD_OPERATORS = [
     ('YCOA', 'SW', {}, False),
     ('YELL', 'SW', {}, False),
 
+    ('COEV', 'SW', {}, False),
+
     # ('NATX', 'GB', {}, False),
     ('KETR', 'SE', {}, False),
     # ('PCCO', 'EM', {}, False),
