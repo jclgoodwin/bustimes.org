@@ -188,6 +188,13 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "Copied Optare Spectra to 2 vehicles.")
         self.assertContains(response, "Copied black with lemon piping to 2 vehicles.")
 
+        # spare ticket machine should disable form fields
+        response = self.client.get(self.vehicle_1.get_edit_url())
+        self.assertNotContains(response, 'previous_reg')
+
+        response = self.client.get('/operators/lynx/vehicles/edit')
+        self.assertContains(response, '<td>Spare ticket machine</td>')
+
         # test make livery
         self.client.post('/admin/vehicles/vehicle/', {
             'action': 'make_livery',
