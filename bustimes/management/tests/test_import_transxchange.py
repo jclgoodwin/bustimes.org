@@ -29,7 +29,7 @@ FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
 class ImportTransXChangeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.ea = Region.objects.create(pk='EA', name='East Anglia')
+        cls.ea = Region.objects.create(pk='EA', name='L')
         cls.w = Region.objects.create(pk='W', name='Wales')
         cls.gb = Region.objects.create(pk='GB', name='Großbritannien')
         cls.sc = Region.objects.create(pk='S', name='Scotland')
@@ -49,6 +49,9 @@ class ImportTransXChangeTest(TestCase):
         OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='FABD')
         OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='SDVN')
         OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='CBNL')
+        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='BTRI')
+        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='LONC')
+        OperatorCode.objects.create(operator=cls.fabd, source=cls.nocs, code='LGEN')
 
         StopPoint.objects.bulk_create(
             StopPoint(
@@ -324,6 +327,12 @@ class ImportTransXChangeTest(TestCase):
     def test_other_public_holiday(self):
         """Test timetable with an OtherPublicHoliday and a BODS profile compliant ServiceCode"""
 
+        lic = Licence.objects.create(licence_number='PF0007024', discs=0, authorised_discs=0)
+        Registration.objects.create(
+            licence=lic, registration_number='PF0007024/15', registered=True,
+            service_number='69', start_point='Ham', finish_point='Sandwich'
+        )
+
         self.handle_files('EA.zip', ['Grayscroft Coaches_Mablethorpe_28_20210419.xml'])
 
         service = Service.objects.get()
@@ -337,6 +346,14 @@ class ImportTransXChangeTest(TestCase):
 
         trip = Trip.objects.first()
         self.assertEqual("09:02", str(trip))
+
+        # test matching to traffic commissioner (VOSA) registration
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(response, '<li><a href="/registrations/PF0007024/15">PF0007024/15</a>')
+
+        response = self.client.get('/registrations/PF0007024/15')
+        self.assertContains(response, "Timetables")
+        self.assertContains(response, service.get_absolute_url())
 
     @time_machine.travel('2017-08-29')
     def test_timetable_abbreviations_notes(self):
@@ -1057,6 +1074,26 @@ class ImportTransXChangeTest(TestCase):
             </Operator>
         """)))
         self.assertEqual(2, len(command.missing_operators))
+
+        element = ET.fromstring("""
+    <Operator id="OId_BE">
+      <NationalOperatorCode>GAHL</NationalOperatorCode>
+      <OperatorCode>BE</OperatorCode>
+      <OperatorShortName>BLUE TRIANGLE BUSES LIM</OperatorShortName>
+      <OperatorNameOnLicence>BLUE TRIANGLE BUSES LIMITED</OperatorNameOnLicence>
+      <TradingName>BLUE TRIANGLE BUSES LIMITED</TradingName>
+    </Operator>
+""")
+        self.assertEqual(self.fabd, command.get_operator(element))
+
+        element.find('OperatorCode').text = 'PO'
+        self.assertIsNone(command.get_operator(element))
+
+        element.find('OperatorCode').text = 'LC'
+        self.assertEqual(self.fabd, command.get_operator(element))
+
+        element.find('OperatorCode').text = 'LG'
+        self.assertEqual(self.fabd, command.get_operator(element))
 
     def test_get_registration(self):
         lic = Licence.objects.create(licence_number='PH0000153', discs=0, authorised_discs=0)
