@@ -562,6 +562,7 @@ BOD_OPERATORS = [
 
     ('GVTR', 'NE', {}, False),
     ('COTY', 'NE', {}, False),
+    ('SBBC', 'NE', {}, True),
 
     ('LMST', 'WM', {}, False),
     ('TEXP', 'WM', {}, False),
@@ -579,7 +580,9 @@ BOD_OPERATORS = [
 
     ('BRYL', 'EM', {}, False),
     ('MDCL', 'EM', {}, False),
-    ('NDTR', 'EM', {}, False),
+    ('Notts & Derby', 'EM', {  # they don't have a NOC assigned on BODS, so can't be searched for using the API
+        'NDTR': 'NDTR'
+    }, True),
     ('COMM', 'EM', {}, False),
 
     ('RELD', 'Y', {}, False),
@@ -720,7 +723,7 @@ TICKETER_OPERATORS = [
 
     ('EM', ['Brylaine', 'BRYL']),
     ('EM', ['Midland_Classic', 'MDCL']),
-    ('EM', ['Notts_and_Derby', 'NDTR']),
+    # ('EM', ['Notts_and_Derby', 'NDTR']),
     ('EM', ['DELA'], 'Delaine Buses'),
 
     ('NE', ['A-Line_Coaches_Tyne_&_Wear', 'ALGC']),
