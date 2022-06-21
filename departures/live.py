@@ -185,10 +185,12 @@ class WestMidlandsDepartures(Departures):
         }
 
     def departures_from_response(self, res):
-        return sorted([
-            self.get_row(item)
-            for item in res.json()['Predictions']['Prediction'] if item['ExpectedArrival']
-        ], key=lambda d: d['live'])
+        data = res.json()
+        if 'Predictions' in data and 'Prediction' in data['Predictions']:
+            return sorted([
+                self.get_row(item)
+                for item in data['Predictions']['Prediction'] if item['ExpectedArrival']
+            ], key=lambda d: d['live'])
 
 
 class EdinburghDepartures(Departures):
