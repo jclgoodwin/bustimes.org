@@ -53,6 +53,8 @@ setproctitle = "^1.2.2"
 ipython = "^7.28.0"
 ipdb = "^0.13.9"
 uritemplate = "^4.1.1"
+pre-commit = "^2.19.0"
+django-rich = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
