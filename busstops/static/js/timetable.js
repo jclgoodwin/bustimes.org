@@ -38,7 +38,9 @@
                     doStuff();
                     search = newSearch;
                     history.pushState(null, null, newSearch);
-                    fusetag.registerZone('services-incontent');
+                    if (fusetag) {
+                        fusetag.registerZone('services-incontent');
+                    }
                 });
             };
         }
@@ -61,7 +63,9 @@
                 timetableWrapper.className = '';
                 timetableWrapper.innerHTML = response;
                 doStuff();
-                fusetag.registerZone('services-incontent');
+                if (fusetag) {
+                    fusetag.registerZone('services-incontent');
+                }
             });
         }
     });

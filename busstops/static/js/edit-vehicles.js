@@ -5,8 +5,11 @@
 
     // checkbox ranges of rows
     var lastInput,
-        table = document.querySelector('table'),
-        checkboxes = table.querySelectorAll('input');
+        table = document.querySelector('table');
+
+    if (table) {
+        return;
+    }
 
     function handleBoxCheck(event) {
         if (event.shiftKey && lastInput) {
@@ -26,6 +29,8 @@
         lastInput = event.target;
         lastInput.parentNode.parentNode.className = lastInput.checked ? 'is-highlighted' : '';
     }
+
+    var checkboxes = table.querySelectorAll('input');
 
     for (var i = checkboxes.length - 1; i >= 0; i -= 1) {
         var checkbox = checkboxes[i];
