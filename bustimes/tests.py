@@ -85,39 +85,39 @@ class BusTimesTest(TestCase):
         calendar.bank_holiday_exclusions = [date(2021, 1, 2)]
         calendar.bank_holiday_inclusions = []
         self.assertEqual(
-            "Wednesday 5 February 2020 only",
-            calendar.describe_for_timetable()
+            "Wednesday 5 February 2020 only", calendar.describe_for_timetable()
         )
         calendar.end_date = None
         self.assertEqual(
             "Tuesday to Wednesday (not bank holidays)",
-            calendar.describe_for_timetable()
+            calendar.describe_for_timetable(),
         )
         calendar.bank_holiday_inclusions = [date(2021, 1, 2)]
         calendar.bank_holiday_exclusions = []
         self.assertEqual(
             "Tuesday to Wednesday and bank holidays from Wednesday 5 February 2020",
-            calendar.describe_for_timetable(date(2020, 1, 1))
+            calendar.describe_for_timetable(date(2020, 1, 1)),
         )
 
         calendar.summary = "Toby Young School of Assholery days"
         self.assertEqual(
-            "Tuesday to Wednesday, Toby Young School of Assholery days",
-            str(calendar)
+            "Tuesday to Wednesday, Toby Young School of Assholery days", str(calendar)
         )
 
         calendar.summary = ""
         calendar.tue = False
         calendar.wed = False
         calendar.sat = True
-        calendar.start_date = date(2022, 6, 12)  # a Sunday – won't actually operate til Saturday...
+        calendar.start_date = date(
+            2022, 6, 12
+        )  # a Sunday – won't actually operate til Saturday...
         self.assertEqual(
             "Saturdays and bank holidays from Saturday 18 June 2022",
-            calendar.describe_for_timetable(date(2022, 6, 10))
+            calendar.describe_for_timetable(date(2022, 6, 10)),
         )
         self.assertEqual(
             "Saturdays and bank holidays",  # (from this Saturday, no need to specify)
-            calendar.describe_for_timetable(date(2022, 6, 16))
+            calendar.describe_for_timetable(date(2022, 6, 16)),
         )
 
     def test_trip(self):
@@ -151,14 +151,14 @@ class BusTimesTest(TestCase):
         self.assertEqual(str(trip), "01:47")
 
     def test_stop_time(self):
-        time = StopTime(
-            departure=timedelta(hours=10, minutes=47, seconds=30)
-        )
+        time = StopTime(departure=timedelta(hours=10, minutes=47, seconds=30))
         self.assertEqual(str(time), "10:47")
 
         time.arrival = timedelta(hours=10, minutes=30, seconds=2)
         time.departure = None
-        self.assertEqual(time.departure_or_arrival(), timedelta(hours=10, minutes=30, seconds=2))
+        self.assertEqual(
+            time.departure_or_arrival(), timedelta(hours=10, minutes=30, seconds=2)
+        )
 
     def test_get_routes(self):
         sources = DataSource.objects.bulk_create(
@@ -229,36 +229,24 @@ class BusTimesTest(TestCase):
         ]
 
         # maximum revision number
-        self.assertEqual(
-            get_routes(routes[:5], when=date(2022, 4, 4)),
-            [routes[4]]
-        )
+        self.assertEqual(get_routes(routes[:5], when=date(2022, 4, 4)), [routes[4]])
 
         # ignore duplicate source with the same sha1
-        self.assertEqual(
-            get_routes(routes[:2]),
-            [routes[1]]
-        )
+        self.assertEqual(get_routes(routes[:2]), [routes[1]])
 
         # Ticketer filename - treat '5B' and '5BH' despite having the same service_code
-        self.assertEqual(
-            get_routes(routes[5:7]),
-            routes[5:7]
-        )
+        self.assertEqual(get_routes(routes[5:7]), routes[5:7])
 
         # from_date - include future versions
         self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 3)),
-            routes[2:4]
+            get_routes(routes[2:4], from_date=date(2022, 4, 3)), routes[2:4]
         )
         self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 4)),
-            routes[2:4]
+            get_routes(routes[2:4], from_date=date(2022, 4, 4)), routes[2:4]
         )
         # ignore old versions:
         self.assertEqual(
-            get_routes(routes[2:4], from_date=date(2022, 4, 5)),
-            routes[3:4]
+            get_routes(routes[2:4], from_date=date(2022, 4, 5)), routes[3:4]
         )
 
     def test_garage(self):

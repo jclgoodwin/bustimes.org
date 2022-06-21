@@ -7,69 +7,68 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    url = 'http://tfe-opendata.com/api/v1/vehicle_locations'
-    source_name = 'TfE'
+    url = "http://tfe-opendata.com/api/v1/vehicle_locations"
+    source_name = "TfE"
     services = Service.objects.filter(
-        operator__in=('LOTH', 'EDTR', 'ECBU', 'NELB'),
-        current=True
-    ).defer('geometry', 'search_vector')
+        operator__in=("LOTH", "EDTR", "ECBU", "NELB"), current=True
+    ).defer("geometry", "search_vector")
 
     @staticmethod
     def get_datetime(item):
-        if item['ineo_gps_fix'] - item['last_gps_fix'] == 3600:
-            return datetime.fromtimestamp(item['ineo_gps_fix'], timezone.utc)
-        return datetime.fromtimestamp(item['last_gps_fix'], timezone.utc)
+        if item["ineo_gps_fix"] - item["last_gps_fix"] == 3600:
+            return datetime.fromtimestamp(item["ineo_gps_fix"], timezone.utc)
+        return datetime.fromtimestamp(item["last_gps_fix"], timezone.utc)
 
     def get_items(self):
         items = super().get_items()
-        return items['vehicles']
+        return items["vehicles"]
 
     def get_vehicle(self, item):
-        if item['longitude'] == -7.557172 and item['latitude'] == 49.7668:
+        if item["longitude"] == -7.557172 and item["latitude"] == 49.7668:
             return None, None
 
-        vehicle_defaults = {
-            'operator_id': 'LOTH'
-        }
-        vehicle_code = item['vehicle_id']
+        vehicle_defaults = {"operator_id": "LOTH"}
+        vehicle_code = item["vehicle_id"]
         if vehicle_code.isdigit():
-            vehicle_defaults['fleet_number'] = vehicle_code
+            vehicle_defaults["fleet_number"] = vehicle_code
 
         return self.vehicles.get_or_create(
-            vehicle_defaults,
-            source=self.source,
-            code=vehicle_code
+            vehicle_defaults, source=self.source, code=vehicle_code
         )
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
-            route_name=item['service_name'] or '',
-            code=item['journey_id'] or '',
-            destination=item['destination'] or '',
+            route_name=item["service_name"] or "",
+            code=item["journey_id"] or "",
+            destination=item["destination"] or "",
         )
 
         latest = vehicle.latest_journey
         if not journey.route_name:
             pass
         elif latest and latest.route_name == journey.route_name:
-            if latest.code == journey.code and latest.destination == journey.destination:
+            if (
+                latest.code == journey.code
+                and latest.destination == journey.destination
+            ):
                 return latest
             journey.service_id = latest.service_id
         else:
             try:
-                journey.service = self.services.get(line_name__iexact=journey.route_name)
+                journey.service = self.services.get(
+                    line_name__iexact=journey.route_name
+                )
                 if journey.service:
                     operator = journey.service.operator.first()
                     if not vehicle.operator_id or vehicle.operator_id != operator.id:
                         vehicle.operator = operator
-                        vehicle.save(update_fields=['operator'])
+                        vehicle.save(update_fields=["operator"])
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(e, item['service_name'])
+                print(e, item["service_name"])
 
         return journey
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
-            latlong=Point(item['longitude'], item['latitude']),
-            heading=item['heading']
+            latlong=Point(item["longitude"], item["latitude"]), heading=item["heading"]
         )

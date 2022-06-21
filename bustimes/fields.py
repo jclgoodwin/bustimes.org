@@ -11,6 +11,7 @@ class SecondsField(DurationField):
     (and uses too much space).
     This is a happy medium.
     """
+
     @staticmethod
     def get_internal_type():
         return "IntegerField"

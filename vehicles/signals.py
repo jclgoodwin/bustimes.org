@@ -8,11 +8,11 @@ from .models import Vehicle, Livery
 @receiver(post_save, sender=Vehicle)
 def vehicle_varnish_ban(sender, instance, created, **kwargs):
     if not created:
-        varnish_ban(f'/vehicles/{instance.id}')
+        varnish_ban(f"/vehicles/{instance.id}")
 
 
 @receiver(post_save, sender=Livery)
 def liveries_varnish_ban(sender, instance, **kwargs):
-    cache.set('liveries_css_version', int(instance.updated_at.timestamp()), None)
-    varnish_ban('/map')
-    varnish_ban('/api/liveries/')
+    cache.set("liveries_css_version", int(instance.updated_at.timestamp()), None)
+    varnish_ban("/map")
+    varnish_ban("/api/liveries/")

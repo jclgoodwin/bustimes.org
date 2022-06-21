@@ -6,18 +6,18 @@ from django.utils.text import normalize_newlines
 class RegField(forms.CharField):
     def to_python(self, value):
         reg = super().to_python(value)
-        return reg.upper().replace(' ', '')
+        return reg.upper().replace(" ", "")
 
 
 class SummaryField(forms.CharField):
-    widget = forms.Textarea(attrs={'rows': 6})
+    widget = forms.Textarea(attrs={"rows": 6})
 
     def to_python(self, value):
         if value:
             value = super().to_python(normalize_newlines(value))
 
             # trim crap from Flickr URLs
-            if '/in/photolist-' in value:
-                value = re.sub(r'/in/photolist(-\w+)+', '', value)
+            if "/in/photolist-" in value:
+                value = re.sub(r"/in/photolist(-\w+)+", "", value)
 
         return value

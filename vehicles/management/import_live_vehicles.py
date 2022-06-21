@@ -35,7 +35,9 @@ def calculate_bearing(a, b):
     b_lon = math.radians(b.x)
 
     y = math.sin(b_lon - a_lon) * math.cos(b_lat)
-    x = math.cos(a_lat) * math.sin(b_lat) - math.sin(a_lat) * math.cos(b_lat) * math.cos(b_lon - b_lon)
+    x = math.cos(a_lat) * math.sin(b_lat) - math.sin(a_lat) * math.cos(
+        b_lat
+    ) * math.cos(b_lon - b_lon)
 
     bearing_radians = math.atan2(y, x)
     bearing_degrees = math.degrees(bearing_radians)
@@ -84,14 +86,14 @@ def same_journey(latest_journey, journey, latest_datetime, when):
 
 
 class ImportLiveVehiclesCommand(BaseCommand):
-    url = ''
-    vehicles = Vehicle.objects.select_related('latest_journey')
+    url = ""
+    vehicles = Vehicle.objects.select_related("latest_journey")
     wait = 60
     history = True
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('--immediate', action='store_true')
+        parser.add_argument("--immediate", action="store_true")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -117,13 +119,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     Route.objects.filter(
                         Q(end_date__gte=Now()) | Q(end_date=None),
                         Q(start_date__lte=Now()) | Q(start_date=None),
-                        service=OuterRef('id')
+                        service=OuterRef("id"),
                     )
                 )
             ),
             queryset.filter(geometry__bboverlaps=latlong.buffer(0.1)),
             queryset.filter(geometry__bboverlaps=latlong.buffer(0.05)),
-            queryset.filter(geometry__bboverlaps=latlong)
+            queryset.filter(geometry__bboverlaps=latlong),
         ):
             try:
                 return filtered_queryset.get()
@@ -151,11 +153,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
         latest = None
         latest_datetime = None
 
-        latest = redis_client.get(f'vehicle{vehicle.id}')
+        latest = redis_client.get(f"vehicle{vehicle.id}")
         if latest:
             latest = json.loads(latest)
-            latest_datetime = parse_datetime(latest['datetime'])
-            latest_latlong = Point(*latest['coordinates'])
+            latest_datetime = parse_datetime(latest["datetime"])
+            latest_latlong = Point(*latest["coordinates"])
 
             if datetime:
                 if latest_datetime >= datetime:
@@ -183,8 +185,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
         journey.vehicle = vehicle
 
         if latest and latest_journey:
-            if latest_journey.source_id != self.source.id and self.source.name != 'Bus Open Data':
-                if ((datetime or now) - latest_datetime).total_seconds() < 300:  # less than 5 minutes old
+            if (
+                latest_journey.source_id != self.source.id
+                and self.source.name != "Bus Open Data"
+            ):
+                if (
+                    (datetime or now) - latest_datetime
+                ).total_seconds() < 300:  # less than 5 minutes old
                     if latest_journey.service_id or not journey.service_id:
                         return  # defer to other source
 
@@ -198,7 +205,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if (
             not location.latlong
             or not (location.latlong.x or location.latlong.y)  # (0, 0) - null island
-            or location.latlong.x == 1 and location.latlong.y == 1
+            or location.latlong.x == 1
+            and location.latlong.y == 1
         ):
             return
 
@@ -213,16 +221,16 @@ class ImportLiveVehiclesCommand(BaseCommand):
             changed = []
             if latest_journey.source_id != self.source.id:
                 latest_journey.source = self.source
-                changed.append('source')
+                changed.append("source")
             if journey.service_id and not original_service_id:
                 latest_journey.service_id = journey.service_id
-                changed.append('service')
+                changed.append("service")
             if journey.destination and not original_destination:
                 latest_journey.destination = journey.destination
-                changed.append('destination')
+                changed.append("destination")
             if changed:
                 latest_journey.save(update_fields=changed)
-                if changed != ['source']:
+                if changed != ["source"]:
                     cache.delete(f"journey{latest_journey.id}")
 
             journey = latest_journey
@@ -230,7 +238,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest and location.heading is None:
                 location.heading = calculate_bearing(latest_latlong, location.latlong)
                 if location.heading is None:
-                    location.heading = latest['heading']
+                    location.heading = latest["heading"]
         else:
             existing_id = journey.id
             journey.source = self.source
@@ -240,19 +248,21 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 journey.save()
             except IntegrityError:
                 try:
-                    journey = vehicle.vehiclejourney_set.using('default').get(datetime=journey.datetime)
+                    journey = vehicle.vehiclejourney_set.using("default").get(
+                        datetime=journey.datetime
+                    )
                 except VehicleJourney.DoesNotExist:
                     return
             else:
                 if not existing_id:
                     # just in case the id has been reused
                     # (after a database backup restore)
-                    redis_client.delete(f'journey{journey.id}')
+                    redis_client.delete(f"journey{journey.id}")
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
                     journey.service.tracking = True
-                    journey.service.save(update_fields=['tracking'])
+                    journey.service.save(update_fields=["tracking"])
 
         location.id = vehicle.id
         location.journey = journey
@@ -277,7 +287,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             try:
                 Vehicle.objects.bulk_update(
                     self.vehicles_to_update,
-                    ['latest_journey', 'latest_journey_data', 'withdrawn']
+                    ["latest_journey", "latest_journey_data", "withdrawn"],
                 )
             except IntegrityError as e:
                 print(e)
@@ -292,12 +302,14 @@ class ImportLiveVehiclesCommand(BaseCommand):
             lon = location.latlong.x
             lat = location.latlong.y
             if -180 <= lon <= 180 and -85.05112878 <= lat <= 85.05112878:
-                pipeline.geoadd('vehicle_location_locations', [lon, lat, vehicle.id])
+                pipeline.geoadd("vehicle_location_locations", [lon, lat, vehicle.id])
                 if location.journey.service_id:
-                    pipeline.sadd(f'service{location.journey.service_id}vehicles', vehicle.id)
+                    pipeline.sadd(
+                        f"service{location.journey.service_id}vehicles", vehicle.id
+                    )
                 redis_json = location.get_redis_json()
                 redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
-                pipeline.set(f'vehicle{vehicle.id}', redis_json, ex=900)
+                pipeline.set(f"vehicle{vehicle.id}", redis_json, ex=900)
 
         try:
             pipeline.execute()
@@ -322,8 +334,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
     def do_source(self):
         if self.url:
             self.source, _ = DataSource.objects.get_or_create(
-                {'name': self.source_name},
-                url=self.url
+                {"name": self.source_name}, url=self.url
             )
         else:
             self.source = DataSource.objects.get(name=self.source_name)

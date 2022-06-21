@@ -24,13 +24,25 @@ class NatExpTest(TestCase):
         Operator.objects.create(id="NATX", name="Nathaniel Express", region=gb)
 
     def test_parse_datetime(self):
-        self.assertEqual(str(parse_datetime("2021-10-31 00:00:00")), "2021-10-31 00:00:00+01:00")
-        self.assertEqual(str(parse_datetime("2021-10-31 01:05:00")), "2021-10-31 01:05:00+01:00")  # ambiguous time
-        self.assertEqual(str(parse_datetime("2021-10-31 02:05:00")), "2021-10-31 02:05:00+00:00")
+        self.assertEqual(
+            str(parse_datetime("2021-10-31 00:00:00")), "2021-10-31 00:00:00+01:00"
+        )
+        self.assertEqual(
+            str(parse_datetime("2021-10-31 01:05:00")), "2021-10-31 01:05:00+01:00"
+        )  # ambiguous time
+        self.assertEqual(
+            str(parse_datetime("2021-10-31 02:05:00")), "2021-10-31 02:05:00+00:00"
+        )
 
-        self.assertEqual(str(parse_datetime("2021-03-28 00:00:00")), "2021-03-28 00:00:00+00:00")
-        self.assertEqual(str(parse_datetime("2021-03-28 01:05:00")), "2021-03-28 01:05:00+00:00")  # non existent time
-        self.assertEqual(str(parse_datetime("2021-03-28 02:05:00")), "2021-03-28 02:05:00+01:00")
+        self.assertEqual(
+            str(parse_datetime("2021-03-28 00:00:00")), "2021-03-28 00:00:00+00:00"
+        )
+        self.assertEqual(
+            str(parse_datetime("2021-03-28 01:05:00")), "2021-03-28 01:05:00+00:00"
+        )  # non existent time
+        self.assertEqual(
+            str(parse_datetime("2021-03-28 02:05:00")), "2021-03-28 02:05:00+01:00"
+        )
 
     @patch("vehicles.management.commands.import_nx.sleep")
     def test_get_items(self, sleep):
@@ -107,13 +119,13 @@ class NatExpTest(TestCase):
                             "dateTime": "2022-04-07 01:55:00",
                             "hrs": 1,
                             "mins": 55,
-                            "time": "01:55"
+                            "time": "01:55",
                         },
                         "depart": {
                             "dateTime": "2022-04-07 02:00:00",
                             "hrs": 2,
                             "mins": 0,
-                            "time": "02:00"
+                            "time": "02:00",
                         },
                         "layover": 5,
                         "timingPoint": 0,
@@ -129,34 +141,34 @@ class NatExpTest(TestCase):
                                 "dateTime": "2022-04-07 02:02:58",
                                 "hrs": 2,
                                 "mins": 2,
-                                "time": "02:02"
+                                "time": "02:02",
                             },
                             "etaDepart": {
                                 "dateTime": "2022-04-07 02:03:58",
                                 "hrs": 2,
                                 "mins": 3,
-                                "time": "02:03"
+                                "time": "02:03",
                             },
                             "etaLayover": 1,
                             "arrive": {
                                 "dateTime": "2022-04-07 02:02:58",
                                 "hrs": 2,
                                 "mins": 2,
-                                "time": "02:02"
+                                "time": "02:02",
                             },
                             "depart": {
                                 "dateTime": "2022-04-07 02:04:12",
                                 "hrs": 2,
                                 "mins": 4,
-                                "time": "02:04"
+                                "time": "02:04",
                             },
                             "atStop": False,
                             "late": False,
                             "status": "visited",
                             "timestamp": "2022-04-07 02:02:58 +0000",
-                            "gate": None
+                            "gate": None,
                         },
-                        "stopActivity": None
+                        "stopActivity": None,
                     },
                     None,
                     {
@@ -164,13 +176,13 @@ class NatExpTest(TestCase):
                             "dateTime": "2022-04-07 02:28:00",
                             "hrs": 2,
                             "mins": 28,
-                            "time": "02:28"
+                            "time": "02:28",
                         },
                         "depart": {
                             "dateTime": "2022-04-07 02:28:00",
                             "hrs": 2,
                             "mins": 28,
-                            "time": "02:28"
+                            "time": "02:28",
                         },
                         "layover": 0,
                         "timingPoint": 0,
@@ -186,13 +198,13 @@ class NatExpTest(TestCase):
                                 "dateTime": "2022-04-07 02:34:00",
                                 "hrs": 2,
                                 "mins": 34,
-                                "time": "02:34"
+                                "time": "02:34",
                             },
                             "etaDepart": {
                                 "dateTime": "2022-04-07 02:34:00",
                                 "hrs": 2,
                                 "mins": 34,
-                                "time": "02:34"
+                                "time": "02:34",
                             },
                             "etaLayover": 0,
                             "arrive": None,
@@ -201,22 +213,22 @@ class NatExpTest(TestCase):
                             "late": False,
                             "status": "next_stop",
                             "timestamp": "2022-04-07 02:16:10 +0000",
-                            "gate": None
+                            "gate": None,
                         },
-                        "stopActivity": None
+                        "stopActivity": None,
                     },
                     {
                         "arrive": {
                             "dateTime": "2022-04-07 02:30:00",
                             "hrs": 2,
                             "mins": 30,
-                            "time": "02:30"
+                            "time": "02:30",
                         },
                         "depart": {
                             "dateTime": "2022-04-07 02:30:00",
                             "hrs": 2,
                             "mins": 30,
-                            "time": "02:30"
+                            "time": "02:30",
                         },
                         "layover": 0,
                         "timingPoint": 0,
@@ -232,13 +244,13 @@ class NatExpTest(TestCase):
                                 "dateTime": "2022-04-07 02:36:00",
                                 "hrs": 2,
                                 "mins": 36,
-                                "time": "02:36"
+                                "time": "02:36",
                             },
                             "etaDepart": {
                                 "dateTime": "2022-04-07 02:36:00",
                                 "hrs": 2,
                                 "mins": 36,
-                                "time": "02:36"
+                                "time": "02:36",
                             },
                             "etaLayover": 0,
                             "arrive": None,
@@ -247,9 +259,9 @@ class NatExpTest(TestCase):
                             "late": False,
                             "status": "future",
                             "timestamp": "2022-04-07 02:16:10 +0000",
-                            "gate": None
+                            "gate": None,
                         },
-                        "stopActivity": None
+                        "stopActivity": None,
                     },
                 ],
                 "route": "491",
@@ -297,8 +309,8 @@ class NatExpTest(TestCase):
             self.nat_exp_command.update()
         get_items.assert_called()
 
-        response = self.client.get('/vehicles.json').json()
-        self.assertEqual(response[0]['destination'], 'Great Yarmouth')
-        self.assertEqual(response[0]['delay'], 360.0)
+        response = self.client.get("/vehicles.json").json()
+        self.assertEqual(response[0]["destination"], "Great Yarmouth")
+        self.assertEqual(response[0]["delay"], 360.0)
 
         self.assertEqual(2, Vehicle.objects.all().count())

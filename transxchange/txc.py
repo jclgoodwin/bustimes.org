@@ -14,20 +14,21 @@ WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}  # {'Monday:' 0,
 
 class Stop:
     """A TransXChange StopPoint."""
+
     def __init__(self, element):
         if element:
-            atco_code = element.findtext('StopPointRef')
+            atco_code = element.findtext("StopPointRef")
             if not atco_code:
-                atco_code = element.findtext('AtcoCode', '')
+                atco_code = element.findtext("AtcoCode", "")
             self.atco_code = atco_code.upper()
 
-            self.common_name = element.findtext('CommonName')
+            self.common_name = element.findtext("CommonName")
             if not self.common_name:
-                self.common_name = element.findtext('Descriptor/CommonName')
+                self.common_name = element.findtext("Descriptor/CommonName")
 
             self.indicator = element.findtext("Indicator")
 
-            self.locality = element.findtext('LocalityName')
+            self.locality = element.findtext("LocalityName")
 
     def __str__(self):
         name = self.common_name
@@ -37,40 +38,42 @@ class Stop:
             name = f"{name} ({self.indicator})"
         if not self.locality or self.locality in name:
             return name
-        return f'{self.locality} {name}'
+        return f"{self.locality} {name}"
 
 
 class Route:
     def __init__(self, element):
-        self.id = element.get('id')
-        self.route_section_refs = [section.text for section in element.findall('RouteSectionRef')]
+        self.id = element.get("id")
+        self.route_section_refs = [
+            section.text for section in element.findall("RouteSectionRef")
+        ]
 
 
 class RouteSection:
     def __init__(self, element):
-        self.id = element.get('id')
-        self.links = [RouteLink(link) for link in element.findall('RouteLink')]
+        self.id = element.get("id")
+        self.links = [RouteLink(link) for link in element.findall("RouteLink")]
 
 
 class RouteLink:
     @staticmethod
     def get_point(element):
-        lon = element.findtext('Longitude')
+        lon = element.findtext("Longitude")
         if lon is not None:
-            lat = element.findtext('Latitude')
+            lat = element.findtext("Latitude")
             return GEOSGeometry(f"POINT({lon} {lat})")
 
-        easting = element.findtext('Easting')
-        northing = element.findtext('Northing')
+        easting = element.findtext("Easting")
+        northing = element.findtext("Northing")
         return GEOSGeometry(f"SRID=27700;POINT({easting} {northing})")
 
     def __init__(self, element):
-        self.id = element.get('id')
-        self.from_stop = element.findtext('From/StopPointRef').upper()
-        self.to_stop = element.findtext('To/StopPointRef').upper()
-        locations = element.findall('Track/Mapping/Location/Translation')
+        self.id = element.get("id")
+        self.from_stop = element.findtext("From/StopPointRef").upper()
+        self.to_stop = element.findtext("To/StopPointRef").upper()
+        locations = element.findall("Track/Mapping/Location/Translation")
         if not locations:
-            locations = element.findall('Track/Mapping/Location')
+            locations = element.findall("Track/Mapping/Location")
 
         locations = [self.get_point(location) for location in locations]
         self.track = LineString(*locations)
@@ -80,26 +83,33 @@ class RouteLink:
 
 class JourneyPattern:
     """A collection of JourneyPatternSections, in order."""
+
     def __init__(self, element, sections, serviced_organisations):
-        self.id = element.attrib.get('id')
+        self.id = element.attrib.get("id")
         self.sections = [
             sections[section_element.text]
-            for section_element in element.findall('JourneyPatternSectionRefs')
+            for section_element in element.findall("JourneyPatternSectionRefs")
             if section_element.text in sections
         ]
 
-        self.route_ref = element.findtext('RouteRef')
-        self.direction = element.findtext('Direction')
-        if self.direction and self.direction != 'inbound' and self.direction != 'outbound':
+        self.route_ref = element.findtext("RouteRef")
+        self.direction = element.findtext("Direction")
+        if (
+            self.direction
+            and self.direction != "inbound"
+            and self.direction != "outbound"
+        ):
             # clockwise/anticlockwise? Not supported, not sure if that's a problem
             self.direction = self.direction.lower()
 
-        self.operating_profile = element.find('OperatingProfile')
+        self.operating_profile = element.find("OperatingProfile")
         if self.operating_profile is not None:
-            self.operating_profile = OperatingProfile(self.operating_profile, serviced_organisations)
+            self.operating_profile = OperatingProfile(
+                self.operating_profile, serviced_organisations
+            )
 
     def is_inbound(self):
-        return self.direction in ('inbound', 'anticlockwise')
+        return self.direction in ("inbound", "anticlockwise")
 
     def get_timinglinks(self):
         for section in self.sections:
@@ -108,8 +118,9 @@ class JourneyPattern:
 
 class JourneyPatternSection:
     """A collection of JourneyPatternStopUsages, in order."""
+
     def __init__(self, element, stops):
-        self.id = element.get('id')
+        self.id = element.get("id")
         self.timinglinks = [
             JourneyPatternTimingLink(timinglink_element, stops)
             for timinglink_element in element
@@ -118,22 +129,23 @@ class JourneyPatternSection:
 
 class JourneyPatternStopUsage:
     """Either a 'From' or 'To' element in TransXChange."""
-    def __init__(self, element, stops):
-        self.activity = element.findtext('Activity')
 
-        self.sequencenumber = element.get('SequenceNumber')
+    def __init__(self, element, stops):
+        self.activity = element.findtext("Activity")
+
+        self.sequencenumber = element.get("SequenceNumber")
         if self.sequencenumber is not None:
             self.sequencenumber = int(self.sequencenumber)
 
-        stop_ref = element.findtext('StopPointRef').upper()
+        stop_ref = element.findtext("StopPointRef").upper()
         try:
             self.stop = stops[stop_ref]
         except KeyError:
             self.stop = Stop(element)
 
-        self.timingstatus = element.findtext('TimingStatus')
+        self.timingstatus = element.findtext("TimingStatus")
 
-        self.wait_time = element.find('WaitTime')
+        self.wait_time = element.find("WaitTime")
         if self.wait_time is not None:
             self.wait_time = parse_duration(self.wait_time.text)
             if self.wait_time.total_seconds() > 10000:
@@ -147,18 +159,18 @@ class JourneyPatternStopUsage:
 
 class JourneyPatternTimingLink:
     def __init__(self, element, stops):
-        self.origin = JourneyPatternStopUsage(element.find('From'), stops)
-        self.destination = JourneyPatternStopUsage(element.find('To'), stops)
+        self.origin = JourneyPatternStopUsage(element.find("From"), stops)
+        self.destination = JourneyPatternStopUsage(element.find("To"), stops)
         self.origin.parent = self.destination.parent = self
-        self.runtime = parse_duration(element.find('RunTime').text)
-        self.id = element.get('id')
-        self.route_link_ref = element.findtext('RouteLinkRef')
+        self.runtime = parse_duration(element.find("RunTime").text)
+        self.id = element.get("id")
+        self.route_link_ref = element.findtext("RouteLinkRef")
 
 
 def get_deadruns(journey_element):
     """Given a VehicleJourney element, return a tuple."""
-    start_element = journey_element.find('StartDeadRun')
-    end_element = journey_element.find('EndDeadRun')
+    start_element = journey_element.find("StartDeadRun")
+    end_element = journey_element.find("EndDeadRun")
     return (get_deadrun_ref(start_element), get_deadrun_ref(end_element))
 
 
@@ -167,108 +179,122 @@ def get_deadrun_ref(deadrun_element):
     return the ID of a JourneyPetternTimingLink.
     """
     if deadrun_element is not None:
-        return deadrun_element.findtext('ShortWorking/JourneyPatternTimingLinkRef')
+        return deadrun_element.findtext("ShortWorking/JourneyPatternTimingLinkRef")
         # ignore PositioningLinks
 
 
 class VehicleJourneyTimingLink:
     def __init__(self, element):
-        self.id = element.attrib.get('id')
-        self.journeypatterntiminglinkref = element.find('JourneyPatternTimingLinkRef').text
-        self.run_time = element.findtext('RunTime')
+        self.id = element.attrib.get("id")
+        self.journeypatterntiminglinkref = element.find(
+            "JourneyPatternTimingLinkRef"
+        ).text
+        self.run_time = element.findtext("RunTime")
         if self.run_time is not None:
             self.run_time = parse_duration(self.run_time)
 
-        self.from_wait_time = element.findtext('From/WaitTime')
+        self.from_wait_time = element.findtext("From/WaitTime")
         if self.from_wait_time is not None:
             self.from_wait_time = parse_duration(self.from_wait_time)
 
-        self.to_wait_time = element.findtext('To/WaitTime')
+        self.to_wait_time = element.findtext("To/WaitTime")
         if self.to_wait_time is not None:
             self.to_wait_time = parse_duration(self.to_wait_time)
 
-        self.from_activity = element.findtext('From/Activity')
-        self.to_activity = element.findtext('To/Activity')
+        self.from_activity = element.findtext("From/Activity")
+        self.to_activity = element.findtext("To/Activity")
 
 
 class VehicleType:
     def __init__(self, element):
-        self.code = element.findtext('VehicleTypeCode')
-        self.description = element.findtext('Description')
+        self.code = element.findtext("VehicleTypeCode")
+        self.description = element.findtext("Description")
 
 
 class Block:
     def __init__(self, element):
-        self.code = element.findtext('BlockNumber')
-        self.description = element.findtext('Description')
+        self.code = element.findtext("BlockNumber")
+        self.description = element.findtext("Description")
 
 
 class VehicleJourney:
     """A scheduled journey that happens at most once per day"""
+
     def __str__(self):
         return str(self.departure_time)
 
     def __init__(self, element, services, serviced_organisations):
-        self.code = element.find('VehicleJourneyCode').text
-        self.private_code = element.findtext('PrivateCode')
+        self.code = element.find("VehicleJourneyCode").text
+        self.private_code = element.findtext("PrivateCode")
 
-        self.ticket_machine_journey_code = element.findtext('Operational/TicketMachine/JourneyCode')
-        self.ticket_machine_service_code = element.findtext('Operational/TicketMachine/TicketMachineServiceCode')
+        self.ticket_machine_journey_code = element.findtext(
+            "Operational/TicketMachine/JourneyCode"
+        )
+        self.ticket_machine_service_code = element.findtext(
+            "Operational/TicketMachine/TicketMachineServiceCode"
+        )
 
-        self.block = element.find('Operational/Block')
+        self.block = element.find("Operational/Block")
         if self.block is not None:
             self.block = Block(self.block)
-        self.vehicle_type = element.find('Operational/VehicleType')
+        self.vehicle_type = element.find("Operational/VehicleType")
         if self.vehicle_type is not None:
             self.vehicle_type = VehicleType(self.vehicle_type)
 
-        self.garage_ref = element.findtext('GarageRef')
+        self.garage_ref = element.findtext("GarageRef")
 
-        self.service_ref = element.find('ServiceRef').text.strip()
-        self.line_ref = element.find('LineRef').text
+        self.service_ref = element.find("ServiceRef").text.strip()
+        self.line_ref = element.find("LineRef").text
 
-        journeypatternref_element = element.find('JourneyPatternRef')
+        journeypatternref_element = element.find("JourneyPatternRef")
         if journeypatternref_element is not None:
             self.journey_ref = None
-            self.journey_pattern = services[self.service_ref].journey_patterns.get(journeypatternref_element.text)
+            self.journey_pattern = services[self.service_ref].journey_patterns.get(
+                journeypatternref_element.text
+            )
         else:
             # Journey has no direct reference to a JourneyPattern.
             # Instead, it has a reference to another journey...
-            self.journey_ref = element.find('VehicleJourneyRef').text
+            self.journey_ref = element.find("VehicleJourneyRef").text
             self.journey_pattern = None
 
-        self.operating_profile = element.find('OperatingProfile')
+        self.operating_profile = element.find("OperatingProfile")
         if self.operating_profile is not None:
-            self.operating_profile = OperatingProfile(self.operating_profile, serviced_organisations)
+            self.operating_profile = OperatingProfile(
+                self.operating_profile, serviced_organisations
+            )
 
-        hours, minutes, seconds = element.find('DepartureTime').text.split(':')
-        self.departure_time = datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
-        departure_day_shift = element.findtext('DepartureDayShift')
+        hours, minutes, seconds = element.find("DepartureTime").text.split(":")
+        self.departure_time = datetime.timedelta(
+            hours=int(hours), minutes=int(minutes), seconds=int(seconds)
+        )
+        departure_day_shift = element.findtext("DepartureDayShift")
         if departure_day_shift:
             self.departure_time += datetime.timedelta(days=int(departure_day_shift))
 
         self.start_deadrun, self.end_deadrun = get_deadruns(element)
 
-        self.operator = element.findtext('OperatorRef')
+        self.operator = element.findtext("OperatorRef")
 
-        sequencenumber = element.get('SequenceNumber')
+        sequencenumber = element.get("SequenceNumber")
         self.sequencenumber = sequencenumber and int(sequencenumber)
 
-        timing_links = element.findall('VehicleJourneyTimingLink')
-        self.timing_links = [VehicleJourneyTimingLink(timing_link) for timing_link in timing_links]
+        timing_links = element.findall("VehicleJourneyTimingLink")
+        self.timing_links = [
+            VehicleJourneyTimingLink(timing_link) for timing_link in timing_links
+        ]
 
-        note_elements = element.findall('Note')
+        note_elements = element.findall("Note")
         if note_elements is not None:
             self.notes = {
-                note_element.find('NoteCode').text: note_element.find('NoteText').text
+                note_element.find("NoteCode").text: note_element.find("NoteText").text
                 for note_element in note_elements
             }
 
     def get_timinglinks(self):
         pattern_links = self.journey_pattern.get_timinglinks()
         journey_links = {
-            link.journeypatterntiminglinkref: link
-            for link in self.timing_links
+            link.journeypatterntiminglinkref: link for link in self.timing_links
         }
         for link in pattern_links:
             yield link, journey_links.get(link.id)
@@ -326,19 +352,24 @@ class VehicleJourney:
 
 class ServicedOrganisation:
     """Like a school, college, or workplace"""
-    def __init__(self, element):
-        self.code = element.find('OrganisationCode').text
-        self.name = element.findtext('Name')
 
-        working_days_element = element.find('WorkingDays')
+    def __init__(self, element):
+        self.code = element.find("OrganisationCode").text
+        self.name = element.findtext("Name")
+
+        working_days_element = element.find("WorkingDays")
         if working_days_element is not None:
-            self.working_days = [DateRange(e) for e in working_days_element.findall('DateRange')]
+            self.working_days = [
+                DateRange(e) for e in working_days_element.findall("DateRange")
+            ]
         else:
             self.working_days = []
 
-        holidays_element = element.find('Holidays')
+        holidays_element = element.find("Holidays")
         if holidays_element is not None:
-            self.holidays = [DateRange(e) for e in holidays_element.findall('DateRange')]
+            self.holidays = [
+                DateRange(e) for e in holidays_element.findall("DateRange")
+            ]
         else:
             self.holidays = []
 
@@ -355,33 +386,57 @@ class ServicedOrganisationDayType:
         if not serviced_organisations:
             return
 
-        operation_holidays = element.findtext('DaysOfOperation/Holidays/ServicedOrganisationRef')
-        operation_working_days = element.findtext('DaysOfOperation/WorkingDays/ServicedOrganisationRef')
-        non_operation_holidays = element.findtext('DaysOfNonOperation/Holidays/ServicedOrganisationRef')
-        non_operation_working_days = element.findtext('DaysOfNonOperation/WorkingDays/ServicedOrganisationRef')
+        operation_holidays = element.findtext(
+            "DaysOfOperation/Holidays/ServicedOrganisationRef"
+        )
+        operation_working_days = element.findtext(
+            "DaysOfOperation/WorkingDays/ServicedOrganisationRef"
+        )
+        non_operation_holidays = element.findtext(
+            "DaysOfNonOperation/Holidays/ServicedOrganisationRef"
+        )
+        non_operation_working_days = element.findtext(
+            "DaysOfNonOperation/WorkingDays/ServicedOrganisationRef"
+        )
 
         if operation_holidays != operation_working_days:
             if operation_holidays:
                 self.operation_holidays = serviced_organisations[operation_holidays]
-                if not self.operation_holidays.holidays and self.operation_holidays.working_days:
+                if (
+                    not self.operation_holidays.holidays
+                    and self.operation_holidays.working_days
+                ):
                     self.non_operation_working_days = self.operation_holidays
                     self.operation_holidays = None
 
             if operation_working_days:
-                self.operation_working_days = serviced_organisations[operation_working_days]
-                if not self.operation_working_days.working_days and self.operation_working_days.holidays:
+                self.operation_working_days = serviced_organisations[
+                    operation_working_days
+                ]
+                if (
+                    not self.operation_working_days.working_days
+                    and self.operation_working_days.holidays
+                ):
                     self.non_operation_holidays = self.operation_working_days
                     self.operation_working_days = None
 
         if non_operation_holidays:
             self.non_operation_holidays = serviced_organisations[non_operation_holidays]
-            if not self.non_operation_holidays.holidays and self.non_operation_holidays.working_days:
+            if (
+                not self.non_operation_holidays.holidays
+                and self.non_operation_holidays.working_days
+            ):
                 self.operation_working_days = self.non_operation_holidays
                 self.non_operation_holidays = None
 
         if non_operation_working_days:
-            self.non_operation_working_days = serviced_organisations[non_operation_working_days]
-            if not self.non_operation_working_days.working_days and self.non_operation_working_days.holidays:
+            self.non_operation_working_days = serviced_organisations[
+                non_operation_working_days
+            ]
+            if (
+                not self.non_operation_working_days.working_days
+                and self.non_operation_working_days.holidays
+            ):
                 self.operation_holidays = self.non_operation_working_days
                 self.non_operation_working_days = None
 
@@ -410,56 +465,67 @@ class OperatingProfile:
     def __init__(self, element, serviced_organisations: dict):
         element = element
 
-        week_days = element.find('RegularDayType/DaysOfWeek')
+        week_days = element.find("RegularDayType/DaysOfWeek")
         self.regular_days = []
         if week_days is not None:
             week_days = [e.tag for e in week_days]
             for day in week_days:
-                if 'To' in day:
-                    day_range_bounds = [WEEKDAYS[i] for i in day.split('To')]
+                if "To" in day:
+                    day_range_bounds = [WEEKDAYS[i] for i in day.split("To")]
                     day_range = range(day_range_bounds[0], day_range_bounds[1] + 1)
                     self.regular_days += [DayOfWeek(i) for i in day_range]
-                elif day == 'Weekend':
+                elif day == "Weekend":
                     self.regular_days += [DayOfWeek(5), DayOfWeek(6)]
-                elif day[:3] == 'Not':
-                    self.regular_days += [DayOfWeek(WEEKDAYS[key]) for key in WEEKDAYS if key != day[3:]]
+                elif day[:3] == "Not":
+                    self.regular_days += [
+                        DayOfWeek(WEEKDAYS[key]) for key in WEEKDAYS if key != day[3:]
+                    ]
                 else:
                     self.regular_days.append(DayOfWeek(day))
 
         # Special Days:
 
-        special_days_element = element.find('SpecialDaysOperation')
+        special_days_element = element.find("SpecialDaysOperation")
 
         if special_days_element is not None:
-            nonoperation_days_element = special_days_element.find('DaysOfNonOperation')
+            nonoperation_days_element = special_days_element.find("DaysOfNonOperation")
 
             if nonoperation_days_element is not None:
-                self.nonoperation_days = list(map(DateRange, nonoperation_days_element.findall('DateRange')))
+                self.nonoperation_days = list(
+                    map(DateRange, nonoperation_days_element.findall("DateRange"))
+                )
 
-            operation_days_element = special_days_element.find('DaysOfOperation')
+            operation_days_element = special_days_element.find("DaysOfOperation")
 
             if operation_days_element is not None:
-                self.operation_days = list(map(DateRange, operation_days_element.findall('DateRange')))
+                self.operation_days = list(
+                    map(DateRange, operation_days_element.findall("DateRange"))
+                )
 
         # Serviced Organisation:
 
-        serviced_organisation_day_type_element = element.find('ServicedOrganisationDayType')
+        serviced_organisation_day_type_element = element.find(
+            "ServicedOrganisationDayType"
+        )
 
         if serviced_organisation_day_type_element is not None:
             self.serviced_organisation_day_type = ServicedOrganisationDayType(
-                serviced_organisation_day_type_element,
-                serviced_organisations
+                serviced_organisation_day_type_element, serviced_organisations
             )
 
         # Bank Holidays
 
-        self.operation_bank_holidays = element.find('BankHolidayOperation/DaysOfOperation')
-        self.nonoperation_bank_holidays = element.find('BankHolidayOperation/DaysOfNonOperation')
+        self.operation_bank_holidays = element.find(
+            "BankHolidayOperation/DaysOfOperation"
+        )
+        self.nonoperation_bank_holidays = element.find(
+            "BankHolidayOperation/DaysOfNonOperation"
+        )
 
         if not self.operation_bank_holidays:
-            holidays_only = element.find('RegularDayType/HolidaysOnly')
+            holidays_only = element.find("RegularDayType/HolidaysOnly")
             if holidays_only is not None:
-                self.operation_bank_holidays = element.find('RegularDayType')
+                self.operation_bank_holidays = element.find("RegularDayType")
 
         self.hash = ET.tostring(element)
         if serviced_organisations:
@@ -480,7 +546,7 @@ class DateRange:
     def __str__(self):
         if self.start == self.end:
             return str(self.start)
-        return f'{self.start} to {self.end}'
+        return f"{self.start} to {self.end}"
 
     def contains(self, date):
         return self.start <= date and (not self.end or self.end >= date)
@@ -488,76 +554,88 @@ class DateRange:
 
 class Service:
     def __init__(self, element, serviced_organisations, journey_pattern_sections):
-        self.mode = element.findtext('Mode', '')
+        self.mode = element.findtext("Mode", "")
 
-        self.operator = element.findtext('RegisteredOperatorRef')
+        self.operator = element.findtext("RegisteredOperatorRef")
 
-        self.operating_profile = element.find('OperatingProfile')
+        self.operating_profile = element.find("OperatingProfile")
         if self.operating_profile is not None:
-            self.operating_profile = OperatingProfile(self.operating_profile, serviced_organisations)
+            self.operating_profile = OperatingProfile(
+                self.operating_profile, serviced_organisations
+            )
 
-        self.operating_period = DateRange(element.find('OperatingPeriod'))
+        self.operating_period = DateRange(element.find("OperatingPeriod"))
 
-        self.public_use = element.findtext('PublicUse')
+        self.public_use = element.findtext("PublicUse")
 
-        self.service_code = element.find('ServiceCode').text.strip()
+        self.service_code = element.find("ServiceCode").text.strip()
 
-        self.marketing_name = element.findtext('MarketingName')
+        self.marketing_name = element.findtext("MarketingName")
 
-        self.description = element.findtext('Description')
+        self.description = element.findtext("Description")
         if self.description:
             self.description = self.description.strip()
 
-        self.origin = element.findtext('StandardService/Origin')
+        self.origin = element.findtext("StandardService/Origin")
         if self.origin:
-            self.origin = self.origin.replace('`', "'").strip()
+            self.origin = self.origin.replace("`", "'").strip()
 
-        self.destination = element.findtext('StandardService/Destination')
+        self.destination = element.findtext("StandardService/Destination")
         if self.destination:
-            self.destination = self.destination.replace('`', "'").strip()
+            self.destination = self.destination.replace("`", "'").strip()
 
-        self.vias = element.find('StandardService/Vias')
+        self.vias = element.find("StandardService/Vias")
         if self.vias:
             self.vias = [via.text for via in self.vias]
 
         self.journey_patterns = {
-            journey_pattern.id: journey_pattern for journey_pattern in (
-               JourneyPattern(journey_pattern, journey_pattern_sections, serviced_organisations)
-               for journey_pattern in element.findall('StandardService/JourneyPattern')
-            ) if journey_pattern.sections
+            journey_pattern.id: journey_pattern
+            for journey_pattern in (
+                JourneyPattern(
+                    journey_pattern, journey_pattern_sections, serviced_organisations
+                )
+                for journey_pattern in element.findall("StandardService/JourneyPattern")
+            )
+            if journey_pattern.sections
         }
 
-        self.lines = [
-            Line(line_element) for line_element in element.find('Lines')
-        ]
+        self.lines = [Line(line_element) for line_element in element.find("Lines")]
 
 
 class Line:
     def __init__(self, element):
-        self.id = element.attrib['id']
-        line_name = element.findtext('LineName') or ''
-        if '|' in line_name:
-            line_name, line_brand = line_name.split('|', 1)
+        self.id = element.attrib["id"]
+        line_name = element.findtext("LineName") or ""
+        if "|" in line_name:
+            line_name, line_brand = line_name.split("|", 1)
             self.line_brand = line_brand.strip()
         else:
-            self.line_brand = ''
+            self.line_brand = ""
         self.line_name = line_name.strip()
 
-        if element.findtext('LineColour') or element.findtext('LineFontColour') or element.findtext('LineImage'):
+        if (
+            element.findtext("LineColour")
+            or element.findtext("LineFontColour")
+            or element.findtext("LineImage")
+        ):
             logger.info(ET.tostring(element).decode())
 
-        self.outbound_description = element.findtext('OutboundDescription/Description')
-        self.inbound_description = element.findtext('InboundDescription/Description')
+        self.outbound_description = element.findtext("OutboundDescription/Description")
+        self.inbound_description = element.findtext("InboundDescription/Description")
 
 
 class TransXChange:
     def get_journeys(self, service_code, line_id):
-        return [journey for journey in self.journeys
-                if journey.service_ref == service_code and journey.line_ref == line_id]
+        return [
+            journey
+            for journey in self.journeys
+            if journey.service_ref == service_code and journey.line_ref == line_id
+        ]
 
     def __get_journeys(self, journeys_element, serviced_organisations):
         journeys = {
-            journey.code: journey for journey in (
+            journey.code: journey
+            for journey in (
                 VehicleJourney(element, self.services, serviced_organisations)
                 for element in journeys_element
             )
@@ -590,51 +668,56 @@ class TransXChange:
         journey_pattern_sections = {}
 
         for _, element in iterator:
-            if element.tag[:33] == '{http://www.transxchange.org.uk/}':
+            if element.tag[:33] == "{http://www.transxchange.org.uk/}":
                 element.tag = element.tag[33:]
             tag = element.tag
 
-            if tag == 'StopPoints':
+            if tag == "StopPoints":
                 for stop_element in element:
                     stop = Stop(stop_element)
                     self.stops[stop.atco_code] = stop
                 element.clear()
-            elif tag == 'RouteSections':
+            elif tag == "RouteSections":
                 for section_element in element:
                     section = RouteSection(section_element)
                     self.route_sections[section.id] = section
                 element.clear()
-            elif tag == 'Routes':
+            elif tag == "Routes":
                 for route_element in element:
                     route = Route(route_element)
                     self.routes[route.id] = route
                 element.clear()
-            elif tag == 'Operators':
+            elif tag == "Operators":
                 self.operators = element
-            elif tag == 'JourneyPatternSections':
+            elif tag == "JourneyPatternSections":
                 for section in element:
                     section = JourneyPatternSection(section, self.stops)
                     if section.timinglinks:
                         journey_pattern_sections[section.id] = section
                 element.clear()
-            elif tag == 'ServicedOrganisations':
-                serviced_organisations = (ServicedOrganisation(child) for child in element)
+            elif tag == "ServicedOrganisations":
+                serviced_organisations = (
+                    ServicedOrganisation(child) for child in element
+                )
                 serviced_organisations = {
-                    organisation.code: organisation for organisation in serviced_organisations
+                    organisation.code: organisation
+                    for organisation in serviced_organisations
                 }
-            elif tag == 'VehicleJourneys':
+            elif tag == "VehicleJourneys":
                 try:
                     self.journeys = self.__get_journeys(element, serviced_organisations)
                 except (AttributeError, KeyError) as e:
                     logger.error(e, exc_info=True)
                     return
                 element.clear()
-            elif tag == 'Service':
-                service = Service(element, serviced_organisations, journey_pattern_sections)
+            elif tag == "Service":
+                service = Service(
+                    element, serviced_organisations, journey_pattern_sections
+                )
                 self.services[service.service_code] = service
-            elif tag == 'Garages':
+            elif tag == "Garages":
                 for garage_element in element:
-                    self.garages[garage_element.findtext('GarageCode')] = garage_element
+                    self.garages[garage_element.findtext("GarageCode")] = garage_element
                 element.clear()
 
         self.attributes = element.attrib
@@ -647,7 +730,11 @@ class Cell:
         self.stopusage = stopusage
         self.arrival_time = arrival_time
         self.departure_time = departure_time
-        if arrival_time is not None and departure_time is not None and arrival_time != departure_time:
+        if (
+            arrival_time is not None
+            and departure_time is not None
+            and arrival_time != departure_time
+        ):
             self.wait_time = True
         else:
             self.wait_time = None

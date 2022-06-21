@@ -74,8 +74,7 @@ class Command(BaseCommand):
         agency_id = line["agency_id"]
         agency_id = f"ie-{agency_id}"
         operator, created = Operator.objects.get_or_create(
-            {"name": line["agency_name"]},
-            id=agency_id
+            {"name": line["agency_name"]}, id=agency_id
         )
         if operator.name != line["agency_name"]:
             logger.info(f"{operator} {line}")
@@ -136,7 +135,7 @@ class Command(BaseCommand):
         if not line_name and " " not in description:
             line_name = description
             if len(line_name) < 5:
-                description = ''
+                description = ""
 
         q = Exists(
             Route.objects.filter(code=line["route_id"], service=OuterRef("id"))
@@ -280,7 +279,9 @@ class Command(BaseCommand):
                     route.destination = destination
 
                     if not route.service.description:
-                        route.service.description = route.outbound_description or route.inbound_description
+                        route.service.description = (
+                            route.outbound_description or route.inbound_description
+                        )
 
                     route.save(
                         update_fields=[

@@ -48,7 +48,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 def get_latlong(item):
-    return Point(float(item['lo']), float(item['la']))
+    return Point(float(item["lo"]), float(item["la"]))
 
 
 def parse_timestamp(timestamp):
@@ -57,31 +57,30 @@ def parse_timestamp(timestamp):
 
 
 def has_stop(stop):
-    return Exists(StopPoint.objects.filter(service=OuterRef('pk'), locality__stoppoint=stop))
+    return Exists(
+        StopPoint.objects.filter(service=OuterRef("pk"), locality__stoppoint=stop)
+    )
 
 
 class Command(ImportLiveVehiclesCommand):
-    url = 'https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles'
-    source_name = 'Stagecoach'
-    operator_ids = {
-        'SCEM': 'SCGH',
-        'SCSO': 'SCCO'
-    }
+    url = "https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles"
+    source_name = "Stagecoach"
+    operator_ids = {"SCEM": "SCGH", "SCSO": "SCCO"}
 
     def get_items(self):
         params = {
             # 'clip': 1,
             # 'descriptive_fields': 1,
-            'services': ':*:::'
+            "services": ":*:::"
         }
         try:
             response = self.session.get(self.url, params=params, timeout=20)
-            items = response.json()['services']
-            vehicle_fleet_numbers = [item['fn'] for item in items]
+            items = response.json()["services"]
+            vehicle_fleet_numbers = [item["fn"] for item in items]
             self.vehicles_cache = {
-                vehicle.code: vehicle for vehicle in self.vehicles.filter(
-                    operator__in=self.operators,
-                    code__in=vehicle_fleet_numbers
+                vehicle.code: vehicle
+                for vehicle in self.vehicles.filter(
+                    operator__in=self.operators, code__in=vehicle_fleet_numbers
                 )
             }
             i = 0
@@ -98,37 +97,33 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_datetime(item):
-        return parse_timestamp(item['ut'])
+        return parse_timestamp(item["ut"])
 
     def get_vehicle(self, item):
-        vehicle_code = item['fn']
+        vehicle_code = item["fn"]
 
-        if 'lo' not in item or len(vehicle_code) != 5:
+        if "lo" not in item or len(vehicle_code) != 5:
             return None, None
 
         if vehicle_code in self.vehicles_cache:
             vehicle = self.vehicles_cache[vehicle_code]
         else:
-            operator_id = self.operator_ids.get(item['oc'], item['oc'])
+            operator_id = self.operator_ids.get(item["oc"], item["oc"])
             if operator_id in self.operators:
                 operator = self.operators[operator_id]
             else:
                 try:
                     operator = Operator.objects.get(id=operator_id)
                 except Operator.DoesNotExist as e:
-                    logger.error(e, exc_info=True, extra={
-                        'operator': operator_id
-                    })
+                    logger.error(e, exc_info=True, extra={"operator": operator_id})
                     operator = None
                 self.operators[operator_id] = operator
 
-            defaults = {
-                'source': self.source
-            }
+            defaults = {"source": self.source}
             if vehicle_code.isdigit():
-                defaults['fleet_number'] = vehicle_code
+                defaults["fleet_number"] = vehicle_code
             if operator:
-                defaults['operator'] = operator
+                defaults["operator"] = operator
                 vehicles = self.vehicles.filter(operator__in=self.operators)
                 vehicle, created = vehicles.get_or_create(defaults, code=vehicle_code)
             else:
@@ -137,12 +132,12 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle, False
 
     def get_journey(self, item, vehicle):
-        if item['ao']:  # aimedOriginStopDepartureTime
-            departure_time = parse_timestamp(item['ao'])
+        if item["ao"]:  # aimedOriginStopDepartureTime
+            departure_time = parse_timestamp(item["ao"])
         else:
             departure_time = None
 
-        code = item.get('td', '')  # trip id
+        code = item.get("td", "")  # trip id
 
         latest_journey = vehicle.latest_journey
 
@@ -154,63 +149,68 @@ class Command(ImportLiveVehiclesCommand):
                     return vehicle.vehiclejourney_set.get(datetime=departure_time)
                 except VehicleJourney.DoesNotExist:
                     pass
-        elif item['eo']:  # expectedOriginStopDepartureTime
-            departure_time = parse_timestamp(item['eo'])
+        elif item["eo"]:  # expectedOriginStopDepartureTime
+            departure_time = parse_timestamp(item["eo"])
 
         journey = VehicleJourney(
             datetime=departure_time,
-            destination=item.get('dd', ''),  # destinationDisplay
-            route_name=item.get('sn', '')  # serviceNumber
+            destination=item.get("dd", ""),  # destinationDisplay
+            route_name=item.get("sn", ""),  # serviceNumber
         )
 
         if code:
             journey.code = code
-        elif not departure_time and latest_journey and journey.route_name == latest_journey.route_name:
+        elif (
+            not departure_time
+            and latest_journey
+            and journey.route_name == latest_journey.route_name
+        ):
             journey = latest_journey
 
         if not journey.service_id and journey.route_name:
             service = journey.route_name
             alternatives = {
-                'PULS': 'Pulse',
-                'YO-Y': 'Yo-Yo',
-                'TRIA': 'Triangle',
+                "PULS": "Pulse",
+                "YO-Y": "Yo-Yo",
+                "TRIA": "Triangle",
             }
             if service in alternatives:
                 service = alternatives[service]
 
             services = Service.objects.filter(current=True, operator__in=self.operators)
 
-            stop = item.get('or') or item.get('pr') or item.get('nr')
+            stop = item.get("or") or item.get("pr") or item.get("nr")
 
             if stop:
                 services = services.filter(has_stop(stop))
 
-            if item.get('fr'):
-                services = services.filter(has_stop(item['fr']))
+            if item.get("fr"):
+                services = services.filter(has_stop(item["fr"]))
 
             journey.service = services.filter(line_name__iexact=service).first()
             if not journey.service:
                 try:
-                    journey.service = services.get(service_code__icontains=f'-{service}-')
+                    journey.service = services.get(
+                        service_code__icontains=f"-{service}-"
+                    )
                 except (Service.DoesNotExist, Service.MultipleObjectsReturned):
                     pass
 
             if not journey.service:
-                print(service, item.get('or'), vehicle.get_absolute_url())
+                print(service, item.get("or"), vehicle.get_absolute_url())
 
         if departure_time and journey.service and not journey.id:
             journey.trip = journey.get_trip(
-                destination_ref=item.get("fr"),
-                departure_time=departure_time
+                destination_ref=item.get("fr"), departure_time=departure_time
             )
 
         return journey
 
     def create_vehicle_location(self, item):
-        bearing = item.get('hg')
+        bearing = item.get("hg")
 
-        aimed = item.get('an') or item.get('ax')
-        expected = item.get('en') or item.get('ex')
+        aimed = item.get("an") or item.get("ax")
+        expected = item.get("en") or item.get("ex")
         if aimed and expected:
             aimed = parse_timestamp(aimed)
             expected = parse_timestamp(expected)
@@ -218,13 +218,11 @@ class Command(ImportLiveVehiclesCommand):
         else:
             early = None
 
-        return VehicleLocation(
-            latlong=get_latlong(item),
-            heading=bearing,
-            early=early
-        )
+        return VehicleLocation(latlong=get_latlong(item), heading=bearing, early=early)
 
     def handle(self, *args, **options):
-        self.operators = Operator.objects.filter(Q(parent='Stagecoach') | Q(id__in=['SCLK', 'MEGA'])).in_bulk()
+        self.operators = Operator.objects.filter(
+            Q(parent="Stagecoach") | Q(id__in=["SCLK", "MEGA"])
+        ).in_bulk()
 
         return super().handle(*args, **options)

@@ -5,7 +5,7 @@ from django.utils.timezone import make_aware
 
 def get_bounding_box(request):
     return Polygon.from_bbox(
-        [request.GET[key] for key in ('xmin', 'ymin', 'xmax', 'ymax')]
+        [request.GET[key] for key in ("xmin", "ymin", "xmax", "ymax")]
     )
 
 

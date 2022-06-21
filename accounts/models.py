@@ -10,25 +10,27 @@ class CustomUserManager(UserManager):
 
 
 class OperatorUser(models.Model):
-    operator = models.ForeignKey('busstops.Operator', models.CASCADE)
-    user = models.ForeignKey('User', models.CASCADE)
+    operator = models.ForeignKey("busstops.Operator", models.CASCADE)
+    user = models.ForeignKey("User", models.CASCADE)
     staff = models.BooleanField(default=False)
 
 
 class User(AbstractUser):
-    email = models.EmailField(unique=True, verbose_name='email address')
+    email = models.EmailField(unique=True, verbose_name="email address")
     trusted = models.BooleanField(null=True)
-    operators = models.ManyToManyField('busstops.Operator', blank=True, through=OperatorUser)
+    operators = models.ManyToManyField(
+        "busstops.Operator", blank=True, through=OperatorUser
+    )
 
     objects = CustomUserManager()
 
     REQUIRED_FIELDS = []
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
 
     def get_absolute_url(self):
-        return reverse('user_detail', args=(self.id,))
+        return reverse("user_detail", args=(self.id,))
 
     def __str__(self):
-        if '@' not in self.username:
+        if "@" not in self.username:
             return self.username
-        return f'{self.id}'
+        return f"{self.id}"

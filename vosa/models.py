@@ -4,20 +4,20 @@ from django.urls import reverse
 
 
 class TrafficArea(models.TextChoices):
-    WEST = 'H', 'West of England'
-    WM = 'D', 'West Midlands'
-    WALES = 'G', 'Wales'
-    SE = 'K', 'London and the South East of England'
-    SCOTLAND = 'M', 'Scotland'
-    NW = 'C', 'North West of England'
-    NE = 'B', 'North East of England'
-    EAST = 'F', 'East of England'
+    WEST = "H", "West of England"
+    WM = "D", "West Midlands"
+    WALES = "G", "Wales"
+    SE = "K", "London and the South East of England"
+    SCOTLAND = "M", "Scotland"
+    NW = "C", "North West of England"
+    NE = "B", "North East of England"
+    EAST = "F", "East of England"
 
 
 class Description(models.TextChoices):
-    RESTRICTED = 'Restricted'
-    STANDARD_INTERNATIONAL = 'Standard International'
-    STANDARD_NATIONAL = 'Standard National'
+    RESTRICTED = "Restricted"
+    STANDARD_INTERNATIONAL = "Standard International"
+    STANDARD_NATIONAL = "Standard National"
 
 
 class Licence(models.Model):
@@ -34,15 +34,17 @@ class Licence(models.Model):
     licence_status = models.CharField(max_length=255)
 
     def get_operators(self):
-        return self.operator_set.annotate(
-            services=Count('service', current=True)
-        ).filter(services__gt=0).order_by('-services')
+        return (
+            self.operator_set.annotate(services=Count("service", current=True))
+            .filter(services__gt=0)
+            .order_by("-services")
+        )
 
     def __str__(self):
         return self.licence_number
 
     def get_absolute_url(self):
-        return reverse('licence_detail', args=(self.licence_number,))
+        return reverse("licence_detail", args=(self.licence_number,))
 
 
 class Registration(models.Model):
@@ -59,16 +61,20 @@ class Registration(models.Model):
     traffic_area_office_covered_by_area = models.CharField(max_length=100)
     authority_description = models.CharField(max_length=255, blank=True)
     registered = models.BooleanField()
-    latest_variation = models.ForeignKey('Variation', models.SET_NULL, null=True, blank=True, related_name='latest')
+    latest_variation = models.ForeignKey(
+        "Variation", models.SET_NULL, null=True, blank=True, related_name="latest"
+    )
 
     def __str__(self):
-        string = '{} - {} to {}'.format(self.service_number, self.start_point, self.finish_point)
+        string = "{} - {} to {}".format(
+            self.service_number, self.start_point, self.finish_point
+        )
         if self.via:
-            string = '{} via {}'.format(string, self.via)
+            string = "{} via {}".format(string, self.via)
         return string
 
     def get_absolute_url(self):
-        return reverse('registration_detail', args=(self.registration_number,))
+        return reverse("registration_detail", args=(self.registration_number,))
 
 
 class Variation(models.Model):
@@ -82,14 +88,16 @@ class Variation(models.Model):
     publication_text = models.TextField()
     short_notice = models.CharField(max_length=255)
 
-    class Meta():
-        ordering = ('-variation_number',)
-        unique_together = ('registration', 'variation_number')
+    class Meta:
+        ordering = ("-variation_number",)
+        unique_together = ("registration", "variation_number")
 
     def __str__(self):
         return str(self.registration)
 
     def get_absolute_url(self):
-        url = reverse('registration_detail', args=(self.registration.registration_number,))
-        url = f'{url}#{self.variation_number}'
+        url = reverse(
+            "registration_detail", args=(self.registration.registration_number,)
+        )
+        url = f"{url}#{self.variation_number}"
         return url

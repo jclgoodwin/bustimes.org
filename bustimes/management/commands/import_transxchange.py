@@ -18,9 +18,29 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Upper
 from django.utils import timezone
-from busstops.models import Operator, Service, DataSource, StopPoint, StopUsage, ServiceCode, ServiceLink
-from ...models import (Route, Trip, StopTime, Note, Garage, VehicleType, Block, RouteLink,
-                       Calendar, CalendarDate, CalendarBankHoliday, BankHoliday)
+from busstops.models import (
+    Operator,
+    Service,
+    DataSource,
+    StopPoint,
+    StopUsage,
+    ServiceCode,
+    ServiceLink,
+)
+from ...models import (
+    Route,
+    Trip,
+    StopTime,
+    Note,
+    Garage,
+    VehicleType,
+    Block,
+    RouteLink,
+    Calendar,
+    CalendarDate,
+    CalendarBankHoliday,
+    BankHoliday,
+)
 from transxchange.txc import TransXChange
 from vosa.models import Registration
 
@@ -54,24 +74,24 @@ ________________________________________________________________________________
 |_________________|______________|
 """
 
-BODS_SERVICE_CODE_REGEX = re.compile(r'^P[BCDFGHKM]\d+:\d+.*$')
+BODS_SERVICE_CODE_REGEX = re.compile(r"^P[BCDFGHKM]\d+:\d+.*$")
 
 
 def initialisms(word, **kwargs):
-    if word in ('YMCA', 'PH'):
+    if word in ("YMCA", "PH"):
         return word
 
 
 def get_summary(summary):
     # London wtf
-    if summary == 'not School vacation in free public holidays regulation holidays':
-        return 'not school holidays'
+    if summary == "not School vacation in free public holidays regulation holidays":
+        return "not school holidays"
 
-    summary = summary.replace(' days days', ' days')
-    summary = summary.replace('olidays holidays', 'olidays')
-    summary = summary.replace('AnySchool', 'school')
+    summary = summary.replace(" days days", " days")
+    summary = summary.replace("olidays holidays", "olidays")
+    summary = summary.replace("AnySchool", "school")
 
-    summary = re.sub(r'(?i)(school(day)?s)', 'school', summary)
+    summary = re.sub(r"(?i)(school(day)?s)", "school", summary)
 
     return summary
 
@@ -81,27 +101,33 @@ def get_service_code(filename):
     Given a filename like 'ea_21-45A-_-y08-1.xml',
     returns a service_code like 'ea_21-45A-_-y08'
     """
-    parts = filename.split('-')  # ['ea_21', '3', '_', '1']
+    parts = filename.split("-")  # ['ea_21', '3', '_', '1']
     if len(parts) == 5:
-        net = parts[0].split('_')[0]
+        net = parts[0].split("_")[0]
         if len(net) <= 3 and net.isalpha() and net.islower():
-            return '-'.join(parts[:-1])
+            return "-".join(parts[:-1])
 
 
 def get_operator_name(operator_element):
     "Given an Operator element, returns the operator name or None"
 
-    for element_name in ('TradingName', 'OperatorNameOnLicence', 'OperatorShortName'):
+    for element_name in ("TradingName", "OperatorNameOnLicence", "OperatorShortName"):
         name = operator_element.findtext(element_name)
         if name:
-            return name.replace('&amp;', '&')
+            return name.replace("&amp;", "&")
 
 
 @cache
 def get_operator_by(scheme, code):
     if code:
         try:
-            return Operator.objects.filter(operatorcode__code=code, operatorcode__source__name=scheme).distinct().get()
+            return (
+                Operator.objects.filter(
+                    operatorcode__code=code, operatorcode__source__name=scheme
+                )
+                .distinct()
+                .get()
+            )
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             pass
 
@@ -130,7 +156,9 @@ def get_open_data_operators():
     return open_data_operators, incomplete_operators
 
 
-def get_calendar_date(date_range=None, date=None, special=False, operation=None, summary=""):
+def get_calendar_date(
+    date_range=None, date=None, special=False, operation=None, summary=""
+):
     if date_range:
         start_date = date_range.start
         end_date = date_range.end
@@ -143,20 +171,20 @@ def get_calendar_date(date_range=None, date=None, special=False, operation=None,
         end_date=end_date,
         special=special,
         operation=operation,
-        summary=summary
+        summary=summary,
     )
 
 
 def get_registration(service_code):
-    parts = service_code.split('_')[0].split(':')
+    parts = service_code.split("_")[0].split(":")
     if len(parts[0]) != 9:
         prefix = parts[0][:2]
         suffix = str(int(parts[0][2:]))
-        parts[0] = f'{prefix}{suffix.zfill(7)}'
+        parts[0] = f"{prefix}{suffix.zfill(7)}"
     if parts[1] and parts[1].isdigit():
         try:
             return Registration.objects.get(
-                registration_number=f'{parts[0]}/{int(parts[1])}'
+                registration_number=f"{parts[0]}/{int(parts[1])}"
             )
         except Registration.DoesNotExist:
             pass
@@ -165,8 +193,8 @@ def get_registration(service_code):
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument('archives', nargs=1, type=str)
-        parser.add_argument('files', nargs='*', type=str)
+        parser.add_argument("archives", nargs=1, type=str)
+        parser.add_argument("files", nargs="*", type=str)
 
     def set_up(self):
         self.service_descriptions = {}
@@ -182,8 +210,8 @@ class Command(BaseCommand):
 
         self.open_data_operators, self.incomplete_operators = get_open_data_operators()
 
-        for archive_name in options['archives']:
-            self.handle_archive(archive_name, options['files'])
+        for archive_name in options["archives"]:
+            self.handle_archive(archive_name, options["files"])
 
         self.debrief()
 
@@ -204,19 +232,17 @@ class Command(BaseCommand):
 
         if len(self.region_id) > 2:
             match self.region_id:
-                case 'NCSD':
-                    self.region_id = 'GB'
-                case 'IOM':
-                    self.region_id = 'IM'
+                case "NCSD":
+                    self.region_id = "GB"
+                case "IOM":
+                    self.region_id = "IM"
                 case _:
                     self.region_id = None
 
         if self.region_id:
             self.source, _ = DataSource.objects.get_or_create(
-                {
-                    'url': 'ftp://ftp.tnds.basemap.co.uk/' + archive_name
-                },
-                name=self.region_id
+                {"url": "ftp://ftp.tnds.basemap.co.uk/" + archive_name},
+                name=self.region_id,
             )
         else:
             self.source, _ = DataSource.objects.get_or_create(name=archive_name)
@@ -226,27 +252,27 @@ class Command(BaseCommand):
         Given an Operator element, returns an operator code for an operator that exists
         """
 
-        operator_code = operator_element.findtext('NationalOperatorCode')
+        operator_code = operator_element.findtext("NationalOperatorCode")
         if not self.is_tnds():
             if not operator_code:
-                operator_code = operator_element.findtext('OperatorCode')
+                operator_code = operator_element.findtext("OperatorCode")
             operator_code = self.operators.get(operator_code, operator_code)
 
         if operator_code:
-            if operator_code == 'GAHL':
-                match operator_element.findtext('OperatorCode'):
-                    case 'LC':
-                        operator_code = 'LONC'
-                    case 'LG':
-                        operator_code = 'LGEN'
-                    case 'BE':
-                        operator_code = 'BTRI'
+            if operator_code == "GAHL":
+                match operator_element.findtext("OperatorCode"):
+                    case "LC":
+                        operator_code = "LONC"
+                    case "LG":
+                        operator_code = "LGEN"
+                    case "BE":
+                        operator_code = "BTRI"
 
-            operator = get_operator_by('National Operator Codes', operator_code)
+            operator = get_operator_by("National Operator Codes", operator_code)
             if operator:
                 return operator
 
-        licence_number = operator_element.findtext('LicenceNumber')
+        licence_number = operator_element.findtext("LicenceNumber")
         if licence_number:
             try:
                 return Operator.objects.get(licences__licence_number=licence_number)
@@ -261,19 +287,21 @@ class Command(BaseCommand):
             pass
 
         # Get by regional operator code
-        operator_code = operator_element.findtext('OperatorCode')
+        operator_code = operator_element.findtext("OperatorCode")
         if operator_code:
-            if operator_code.startswith('Rail'):
-                operator_code = operator_code.removeprefix('Rail')
+            if operator_code.startswith("Rail"):
+                operator_code = operator_code.removeprefix("Rail")
 
             operator = get_operator_by(self.region_id, operator_code)
             if not operator:
-                operator = get_operator_by('National Operator Codes', operator_code)
+                operator = get_operator_by("National Operator Codes", operator_code)
             if operator:
                 return operator
 
         missing_operator = {
-            element.tag: element.text.strip() for element in operator_element if element.text
+            element.tag: element.text.strip()
+            for element in operator_element
+            if element.text
         }
         if missing_operator not in self.missing_operators:
             self.missing_operators.append(missing_operator)
@@ -282,11 +310,16 @@ class Command(BaseCommand):
         operators = transxchange.operators
         if len(operators) > 1:
             journey_operators = {
-                journey.operator for journey in transxchange.journeys
+                journey.operator
+                for journey in transxchange.journeys
                 if journey.operator and journey.service_ref == service.service_code
             }
             journey_operators.add(service.operator)
-            operators = [operator for operator in operators if operator.get('id') in journey_operators]
+            operators = [
+                operator
+                for operator in operators
+                if operator.get("id") in journey_operators
+            ]
         operators = (self.get_operator(operator) for operator in operators)
         return [operator for operator in operators if operator]
 
@@ -294,26 +327,28 @@ class Command(BaseCommand):
         """
         If there's a file named 'IncludedServices.csv', as there is in 'NCSD.zip', use it
         """
-        if 'IncludedServices.csv' in archive.namelist():
-            with archive.open('IncludedServices.csv') as csv_file:
-                reader = csv.DictReader(line.decode('utf-8') for line in csv_file)
+        if "IncludedServices.csv" in archive.namelist():
+            with archive.open("IncludedServices.csv") as csv_file:
+                reader = csv.DictReader(line.decode("utf-8") for line in csv_file)
                 # e.g. {'NATX323': 'Cardiff - Liverpool'}
                 for row in reader:
                     key = f"{row['Operator']}{row['LineName']}{row['Dir']}"
-                    self.service_descriptions[key] = row['Description']
+                    self.service_descriptions[key] = row["Description"]
 
     def get_service_descriptions(self, filename):
-        parts = filename.split('_')
+        parts = filename.split("_")
         operator = parts[-2]
         line_name = parts[-1][:-4]
-        key = f'{operator}{line_name}'
-        outbound = self.service_descriptions.get(f'{key}O', '')
-        inbound = self.service_descriptions.get(f'{key}I', '')
+        key = f"{operator}{line_name}"
+        outbound = self.service_descriptions.get(f"{key}O", "")
+        inbound = self.service_descriptions.get(f"{key}I", "")
         return outbound, inbound
 
     def mark_old_services_as_not_current(self):
         self.source.route_set.exclude(id__in=self.route_ids).delete()
-        old_services = self.source.service_set.filter(current=True, route=None).exclude(id__in=self.service_ids)
+        old_services = self.source.service_set.filter(current=True, route=None).exclude(
+            id__in=self.service_ids
+        )
         old_services.update(current=False)
 
     def handle_archive(self, archive_name, filenames):
@@ -322,7 +357,9 @@ class Command(BaseCommand):
 
         self.set_region(archive_name)
 
-        self.source.datetime = datetime.datetime.fromtimestamp(os.path.getmtime(archive_name), timezone.utc)
+        self.source.datetime = datetime.datetime.fromtimestamp(
+            os.path.getmtime(archive_name), timezone.utc
+        )
 
         try:
             with zipfile.ZipFile(archive_name) as archive:
@@ -331,11 +368,15 @@ class Command(BaseCommand):
 
                 namelist = archive.namelist()
 
-                if 'NCSD_TXC_2_4/' in namelist:
-                    filenames = [filename for filename in namelist if filename.startswith('NCSD_TXC_2_4/')]
+                if "NCSD_TXC_2_4/" in namelist:
+                    filenames = [
+                        filename
+                        for filename in namelist
+                        if filename.startswith("NCSD_TXC_2_4/")
+                    ]
 
                 for filename in filenames or namelist:
-                    if filename.endswith('.xml'):
+                    if filename.endswith(".xml"):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)
         except zipfile.BadZipfile:
@@ -344,14 +385,19 @@ class Command(BaseCommand):
 
         if not filenames:
             self.mark_old_services_as_not_current()
-            self.source.service_set.filter(current=False, geometry__isnull=False).update(geometry=None)
+            self.source.service_set.filter(
+                current=False, geometry__isnull=False
+            ).update(geometry=None)
 
         self.finish_services()
 
-        self.source.save(update_fields=['datetime'])
+        self.source.save(update_fields=["datetime"])
 
         StopPoint.objects.filter(
-            ~Exists(StopUsage.objects.filter(stop=OuterRef('pk'), service__current=True)), active=False
+            ~Exists(
+                StopUsage.objects.filter(stop=OuterRef("pk"), service__current=True)
+            ),
+            active=False,
         ).update(active=True)
 
     def finish_services(self):
@@ -378,23 +424,23 @@ class Command(BaseCommand):
 
         for element in holiday_elements:
             bank_holiday_name = element.tag
-            if bank_holiday_name == 'OtherPublicHoliday':
-                date = element.findtext('Date')
+            if bank_holiday_name == "OtherPublicHoliday":
+                date = element.findtext("Date")
                 calendar_dates.append(
                     get_calendar_date(
                         date=date,
                         special=operation,
                         operation=operation,
-                        summary=element.findtext('Description'),
+                        summary=element.findtext("Description"),
                     )
                 )
             else:
-                if bank_holiday_name == 'HolidaysOnly':
-                    bank_holiday_name = 'AllBankHolidays'
+                if bank_holiday_name == "HolidaysOnly":
+                    bank_holiday_name = "AllBankHolidays"
                 yield self.get_bank_holiday(bank_holiday_name)
 
     def get_calendar(self, operating_profile, operating_period):
-        calendar_hash = f'{operating_profile.hash}{operating_period}'
+        calendar_hash = f"{operating_profile.hash}{operating_period}"
 
         if calendar_hash in self.calendar_cache:
             return self.calendar_cache[calendar_hash]
@@ -404,36 +450,38 @@ class Command(BaseCommand):
             for date_range in operating_profile.nonoperation_days
         ]
         for date_range in operating_profile.operation_days:
-            calendar_date = get_calendar_date(date_range=date_range, operation=True, special=True)
+            calendar_date = get_calendar_date(
+                date_range=date_range, operation=True, special=True
+            )
 
             difference = date_range.end - date_range.start
             if difference > datetime.timedelta(days=5):
                 # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation
                 # (school term dates etc)
                 calendar_date.special = False
-                logger.warning(f'{date_range} is {difference.days} days long')
+                logger.warning(f"{date_range} is {difference.days} days long")
             calendar_dates.append(calendar_date)
 
-        bank_holidays = {}  # a dictionary to remove duplicates! (non-operation overrides operation)
+        bank_holidays = (
+            {}
+        )  # a dictionary to remove duplicates! (non-operation overrides operation)
 
         for bank_holiday in self.do_bank_holidays(
             holiday_elements=operating_profile.operation_bank_holidays,
             operation=True,
-            calendar_dates=calendar_dates
+            calendar_dates=calendar_dates,
         ):
             bank_holidays[bank_holiday] = CalendarBankHoliday(
-                operation=True,
-                bank_holiday=bank_holiday
+                operation=True, bank_holiday=bank_holiday
             )
 
         for bank_holiday in self.do_bank_holidays(
             holiday_elements=operating_profile.nonoperation_bank_holidays,
             operation=False,
-            calendar_dates=calendar_dates
+            calendar_dates=calendar_dates,
         ):
             bank_holidays[bank_holiday] = CalendarBankHoliday(
-                operation=False,
-                bank_holiday=bank_holiday
+                operation=False, bank_holiday=bank_holiday
             )
 
         sodt = operating_profile.serviced_organisation_day_type
@@ -445,11 +493,11 @@ class Command(BaseCommand):
                 pass
             elif sodt.non_operation_working_days:
                 if sodt.non_operation_working_days.name:
-                    summary.append(f'not {sodt.non_operation_working_days.name} days')
+                    summary.append(f"not {sodt.non_operation_working_days.name} days")
                 non_operation_days += sodt.non_operation_working_days.working_days
             elif sodt.non_operation_holidays:
                 if sodt.non_operation_holidays.name:
-                    summary.append(f'not {sodt.non_operation_holidays.name} holidays')
+                    summary.append(f"not {sodt.non_operation_holidays.name} holidays")
                 non_operation_days += sodt.non_operation_holidays.holidays
 
             calendar_dates += [
@@ -461,11 +509,11 @@ class Command(BaseCommand):
                 pass
             elif sodt.operation_working_days:
                 if sodt.operation_working_days.name:
-                    summary.append(f'{sodt.operation_working_days.name} days')
+                    summary.append(f"{sodt.operation_working_days.name} days")
                 operation_days += sodt.operation_working_days.working_days
             elif sodt.operation_holidays:
                 if sodt.operation_holidays.name:
-                    summary.append(f'{sodt.operation_holidays.name} holidays')
+                    summary.append(f"{sodt.operation_holidays.name} holidays")
                 operation_days += sodt.operation_holidays.holidays
 
             calendar_dates += [
@@ -473,7 +521,7 @@ class Command(BaseCommand):
                 for date_range in operation_days
             ]
 
-        summary = ', '.join(summary)
+        summary = ", ".join(summary)
 
         if summary:
             summary = get_summary(summary)
@@ -488,7 +536,7 @@ class Command(BaseCommand):
             sun=False,
             start_date=operating_period.start,
             end_date=operating_period.end,
-            summary=summary
+            summary=summary,
         )
 
         for day in operating_profile.regular_days:
@@ -533,32 +581,34 @@ class Command(BaseCommand):
         return calendar
 
     def get_stop_time(self, trip, cell, stops: dict):
-        timing_status = cell.stopusage.timingstatus or ''
+        timing_status = cell.stopusage.timingstatus or ""
         if len(timing_status) > 3:
             match timing_status:
-                case 'otherPoint':
-                    timing_status = 'OTH'
-                case 'timeInfoPoint':
-                    timing_status = 'TIP'
-                case 'principleTimingPoint' | 'principalTimingPoint':
-                    timing_status = 'PTP'
+                case "otherPoint":
+                    timing_status = "OTH"
+                case "timeInfoPoint":
+                    timing_status = "TIP"
+                case "principleTimingPoint" | "principalTimingPoint":
+                    timing_status = "PTP"
                 case _:
                     logger.warning(timing_status)
 
         stop_time = StopTime(
             trip=trip,
             sequence=cell.stopusage.sequencenumber,
-            timing_status=timing_status
+            timing_status=timing_status,
         )
-        if stop_time.sequence is not None and stop_time.sequence > 32767:  # too big for smallint
+        if (
+            stop_time.sequence is not None and stop_time.sequence > 32767
+        ):  # too big for smallint
             stop_time.sequence = None
 
         match cell.stopusage.activity:
-            case 'pickUp':
+            case "pickUp":
                 stop_time.set_down = False
-            case 'setDown':
+            case "setDown":
                 stop_time.pick_up = False
-            case 'pass':
+            case "pass":
                 stop_time.pick_up = False
                 stop_time.set_down = False
 
@@ -590,7 +640,9 @@ class Command(BaseCommand):
 
         return stop_time
 
-    def handle_journeys(self, route_code: str, route_defaults: dict, stops: dict, journeys, txc_service):
+    def handle_journeys(
+        self, route_code: str, route_defaults: dict, stops: dict, journeys, txc_service
+    ):
         default_calendar = None
 
         route, route_created = Route.objects.update_or_create(
@@ -609,12 +661,19 @@ class Command(BaseCommand):
         for journey in journeys:
             calendar = None
             if journey.operating_profile:
-                calendar = self.get_calendar(journey.operating_profile, txc_service.operating_period)
+                calendar = self.get_calendar(
+                    journey.operating_profile, txc_service.operating_period
+                )
             elif journey.journey_pattern.operating_profile:
-                calendar = self.get_calendar(journey.journey_pattern.operating_profile, txc_service.operating_period)
+                calendar = self.get_calendar(
+                    journey.journey_pattern.operating_profile,
+                    txc_service.operating_period,
+                )
             elif txc_service.operating_profile:
                 if not default_calendar:
-                    default_calendar = self.get_calendar(txc_service.operating_profile, txc_service.operating_period)
+                    default_calendar = self.get_calendar(
+                        txc_service.operating_profile, txc_service.operating_period
+                    )
                 calendar = default_calendar
             else:
                 calendar = None
@@ -624,15 +683,14 @@ class Command(BaseCommand):
                 calendar=calendar,
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
-                ticket_machine_code=journey.ticket_machine_journey_code or '',
-                sequence=journey.sequencenumber
+                ticket_machine_code=journey.ticket_machine_journey_code or "",
+                sequence=journey.sequencenumber,
             )
 
             if journey.block and journey.block.code:
                 if journey.block.code not in self.blocks:
                     trip.block = Block(
-                        code=journey.block.code,
-                        description=journey.block.description
+                        code=journey.block.code, description=journey.block.description
                     )
                     blocks.append(trip.block)
                     self.blocks[journey.block.code] = trip.block
@@ -641,9 +699,12 @@ class Command(BaseCommand):
 
             if journey.vehicle_type and journey.vehicle_type.code:
                 if journey.vehicle_type.code not in self.vehicle_types:
-                    self.vehicle_types[journey.vehicle_type.code], _ = VehicleType.objects.get_or_create(
+                    (
+                        self.vehicle_types[journey.vehicle_type.code],
+                        _,
+                    ) = VehicleType.objects.get_or_create(
                         code=journey.vehicle_type.code,
-                        description=journey.vehicle_type.description
+                        description=journey.vehicle_type.description,
                     )
                 trip.vehicle_type = self.vehicle_types[journey.vehicle_type.code]
 
@@ -673,17 +734,17 @@ class Command(BaseCommand):
                 # not all timing statuses are blank - mark any blank ones as minor
                 for stop_time in stop_times:
                     if not stop_time.timing_status:
-                        stop_time.timing_status = 'OTH'
+                        stop_time.timing_status = "OTH"
 
             for note, text in journey.notes.items():
-                note_cache_key = f'{note}:{text}'
+                note_cache_key = f"{note}:{text}"
                 if note_cache_key in self.notes:
                     note = self.notes[note_cache_key]
                 else:
                     if len(text) > 255:
                         logger.warning(f"{text}")
                         text = text[:255]
-                    note, _ = Note.objects.get_or_create(code=note or '', text=text)
+                    note, _ = Note.objects.get_or_create(code=note or "", text=text)
                     self.notes[note_cache_key] = note
                 trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
@@ -693,14 +754,16 @@ class Command(BaseCommand):
 
         if not route_created:
             # reuse trip ids if the number and start times haven't changed
-            existing_trips = route.trip_set.order_by('id')
+            existing_trips = route.trip_set.order_by("id")
             try:
                 if len(existing_trips) == len(trips):
                     for i, old_trip in enumerate(existing_trips):
                         if old_trip.start == trips[i].start:
                             trips[i].id = old_trip.id
                         else:
-                            logger.info(f"{route_code} {old_trip.start} {trips[i].start}")
+                            logger.info(
+                                f"{route_code} {old_trip.start} {trips[i].start}"
+                            )
                             existing_trips.delete()
                             existing_trips = None
                             break
@@ -714,18 +777,21 @@ class Command(BaseCommand):
             existing_trips = None
 
         if existing_trips:
-            Trip.objects.bulk_update(trips, fields=[
-                'inbound',
-                'journey_pattern',
-                'ticket_machine_code',
-                'block',
-                'destination',
-                'calendar',
-                'sequence',
-                'end',
-                'garage',
-                'vehicle_type',
-            ])
+            Trip.objects.bulk_update(
+                trips,
+                fields=[
+                    "inbound",
+                    "journey_pattern",
+                    "ticket_machine_code",
+                    "block",
+                    "destination",
+                    "calendar",
+                    "sequence",
+                    "end",
+                    "garage",
+                    "vehicle_type",
+                ],
+            )
             Trip.notes.through.objects.filter(trip__route=route).delete()
             StopTime.objects.filter(trip__route=route).delete()
         else:
@@ -740,7 +806,7 @@ class Command(BaseCommand):
     def get_description(self, txc_service):
         description = txc_service.description
         if description:
-            if self.source.name.startswith('Stagecoach'):
+            if self.source.name.startswith("Stagecoach"):
                 description = None
             elif description.isupper():
                 description = titlecase(description, callback=initialisms)
@@ -751,42 +817,56 @@ class Command(BaseCommand):
         if origin and destination:
             if origin.isupper() and destination.isupper():
                 txc_service.origin = origin = titlecase(origin, callback=initialisms)
-                txc_service.destination = destination = titlecase(destination, callback=initialisms)
+                txc_service.destination = destination = titlecase(
+                    destination, callback=initialisms
+                )
 
             if not description:
-                description = f'{origin} - {destination}'
+                description = f"{origin} - {destination}"
                 vias = txc_service.vias
                 if vias:
                     if all(via.isupper() for via in vias):
                         vias = [titlecase(via, callback=initialisms) for via in vias]
                     if len(vias) == 1:
                         via = vias[0]
-                        if 'via ' in via:
+                        if "via " in via:
                             return f"{description} {via}"
-                        elif (',' in via or ' and ' in via or '&' in via):
+                        elif "," in via or " and " in via or "&" in via:
                             return f"{description} via {via}"
-                    description = ' - '.join([origin] + vias + [destination])
+                    description = " - ".join([origin] + vias + [destination])
         return description
 
     def is_tnds(self):
-        return self.source.url.startswith('ftp://ftp.tnds.basemap.co.uk/')
+        return self.source.url.startswith("ftp://ftp.tnds.basemap.co.uk/")
 
     def should_defer_to_other_source(self, operators: list, line_name: str):
-        if self.source.name == 'L':
+        if self.source.name == "L":
             return False
-        if operators and all(operator.id in self.incomplete_operators for operator in operators):
-            if Service.objects.filter(
-                line_name__iexact=line_name, current=True, operator__in=operators
-            ).exclude(source=self.source).exists():
+        if operators and all(
+            operator.id in self.incomplete_operators for operator in operators
+        ):
+            if (
+                Service.objects.filter(
+                    line_name__iexact=line_name, current=True, operator__in=operators
+                )
+                .exclude(source=self.source)
+                .exists()
+            ):
                 return True
 
     def get_route_links(self, journeys, transxchange):
         patterns = {
             journey.journey_pattern.id: journey.journey_pattern for journey in journeys
         }
-        route_refs = [pattern.route_ref for pattern in patterns.values() if pattern.route_ref]
+        route_refs = [
+            pattern.route_ref for pattern in patterns.values() if pattern.route_ref
+        ]
         if route_refs:
-            routes = [transxchange.routes[route_id] for route_id in transxchange.routes if route_id in route_refs]
+            routes = [
+                transxchange.routes[route_id]
+                for route_id in transxchange.routes
+                if route_id in route_refs
+            ]
             for route in routes:
                 for section_ref in route.route_section_refs:
                     route_section = transxchange.route_sections[section_ref]
@@ -807,7 +887,10 @@ class Command(BaseCommand):
                                 yield route_link
 
     def handle_service(self, filename: str, transxchange, txc_service, today, stops):
-        if txc_service.operating_period.end and txc_service.operating_period.end < txc_service.operating_period.start:
+        if (
+            txc_service.operating_period.end
+            and txc_service.operating_period.end < txc_service.operating_period.start
+        ):
             logger.warning(
                 f"skipping {filename} {txc_service.service_code}: "
                 f"end {txc_service.operating_period.end} is before start {txc_service.operating_period.start}"
@@ -817,7 +900,7 @@ class Command(BaseCommand):
 
         if not operators:
             basename = os.path.basename(filename)  # e.g. 'KCTB_'
-            if basename[4:5] == '_':
+            if basename[4:5] == "_":
                 maybe_operator_code = basename[:4]
                 if maybe_operator_code.isupper() and maybe_operator_code.isalpha():
                     try:
@@ -826,23 +909,31 @@ class Command(BaseCommand):
                         pass
 
         if self.is_tnds():
-            if self.source.name != 'L':
-                if operators and all(operator.id in self.open_data_operators for operator in operators):
+            if self.source.name != "L":
+                if operators and all(
+                    operator.id in self.open_data_operators for operator in operators
+                ):
                     return
-        elif self.source.name.startswith('Arriva') and 'tfl_' in filename:
-            logger.info(f'skipping {filename} {txc_service.service_code} (Arriva London)')
+        elif self.source.name.startswith("Arriva") and "tfl_" in filename:
+            logger.info(
+                f"skipping {filename} {txc_service.service_code} (Arriva London)"
+            )
             return
-        elif self.source.name.startswith('Stagecoach'):
-            if operators and operators[0].parent != 'Stagecoach' and not operators[0].name.startswith('Stagecoach '):
-                logger.info(f'skipping {txc_service.service_code} ({operators[0].id})')
+        elif self.source.name.startswith("Stagecoach"):
+            if (
+                operators
+                and operators[0].parent != "Stagecoach"
+                and not operators[0].name.startswith("Stagecoach ")
+            ):
+                logger.info(f"skipping {txc_service.service_code} ({operators[0].id})")
                 return
 
         linked_services = []
 
         description = self.get_description(txc_service)
 
-        if description == 'Origin - Destination':
-            description = ''
+        if description == "Origin - Destination":
+            description = ""
 
         if re.match(BODS_SERVICE_CODE_REGEX, txc_service.service_code):
             unique_service_code = txc_service.service_code
@@ -855,14 +946,21 @@ class Command(BaseCommand):
 
         for i, line in enumerate(txc_service.lines):
             # prefer a BODS-type source over TNDS
-            if self.is_tnds() and self.should_defer_to_other_source(operators, line.line_name):
+            if self.is_tnds() and self.should_defer_to_other_source(
+                operators, line.line_name
+            ):
                 continue
 
             # Stagecoach: prefer TXC 2.1 to 2.4
-            if self.source.name.startswith('Stagecoach') and self.preferred_source and Service.objects.filter(
-                line_name__iexact=line.line_name, current=True,
-                route__source=self.preferred_source
-            ).exists():
+            if (
+                self.source.name.startswith("Stagecoach")
+                and self.preferred_source
+                and Service.objects.filter(
+                    line_name__iexact=line.line_name,
+                    current=True,
+                    route__source=self.preferred_source,
+                ).exists()
+            ):
                 continue
 
             service_code = None
@@ -871,7 +969,7 @@ class Command(BaseCommand):
 
             existing = None
 
-            if self.source.name.startswith('Sanders') and len(line_names) > 1:
+            if self.source.name.startswith("Sanders") and len(line_names) > 1:
                 if i > 0:
                     existing = service
                 else:
@@ -879,24 +977,33 @@ class Command(BaseCommand):
                         q |= Q(line_name__iexact=line_name)
 
             if not existing:
-                services = Service.objects.order_by('-current', 'id').filter(q)
+                services = Service.objects.order_by("-current", "id").filter(q)
 
                 if operators:
                     q = Q(operator__in=operators)
-                    if description and self.source.name.startswith('Stagecoach'):
+                    if description and self.source.name.startswith("Stagecoach"):
                         q = (Q(source=self.source) | q) & Q(description=description)
                     existing = services.filter(q)
                 else:
                     existing = services
 
                 if len(transxchange.services) == 1:
-                    has_stop_time = Exists(StopTime.objects.filter(stop__in=stops, trip__route__service=OuterRef('id')))
-                    has_stop_usage = Exists(StopUsage.objects.filter(stop__in=stops, service=OuterRef('id')))
-                    has_no_route = ~Exists(Route.objects.filter(service=OuterRef('id')))
+                    has_stop_time = Exists(
+                        StopTime.objects.filter(
+                            stop__in=stops, trip__route__service=OuterRef("id")
+                        )
+                    )
+                    has_stop_usage = Exists(
+                        StopUsage.objects.filter(stop__in=stops, service=OuterRef("id"))
+                    )
+                    has_no_route = ~Exists(Route.objects.filter(service=OuterRef("id")))
                     condition = has_stop_time | (has_stop_usage & has_no_route)
                 else:
                     condition = Exists(
-                        Route.objects.filter(service_code=txc_service.service_code, service=OuterRef('id'))
+                        Route.objects.filter(
+                            service_code=txc_service.service_code,
+                            service=OuterRef("id"),
+                        )
                     )
                     if description:
                         condition |= Q(description=description)
@@ -908,9 +1015,11 @@ class Command(BaseCommand):
                 if service_code is None:
                     service_code = txc_service.service_code
 
-                if service_code.startswith('nrc_') or not existing:
+                if service_code.startswith("nrc_") or not existing:
                     # assume service code is at least unique within a TNDS region
-                    existing = self.source.service_set.filter(service_code=service_code).first()
+                    existing = self.source.service_set.filter(
+                        service_code=service_code
+                    ).first()
             elif unique_service_code:
                 service_code = unique_service_code
 
@@ -931,14 +1040,14 @@ class Command(BaseCommand):
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
             if not journeys:
-                logger.warning(f'{txc_service.service_code} has no journeys')
+                logger.warning(f"{txc_service.service_code} has no journeys")
                 continue
 
             match txc_service.public_use:
-                case '0' | 'false':
+                case "0" | "false":
                     if len(journeys) < 5:
                         service.public_use = False
-                case '1' | 'true':
+                case "1" | "true":
                     service.public_use = True
 
             if service_code:
@@ -950,15 +1059,25 @@ class Command(BaseCommand):
             line_brand = line.line_brand
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
-                if txc_service.marketing_name in ('CornwallbyKernow', 'Cardiff Bus'):
+                if txc_service.marketing_name in ("CornwallbyKernow", "Cardiff Bus"):
                     pass
-                elif 'tudents only' in txc_service.marketing_name or 'pupils only' in txc_service.marketing_name:
+                elif (
+                    "tudents only" in txc_service.marketing_name
+                    or "pupils only" in txc_service.marketing_name
+                ):
                     service.public_use = False
                 else:
                     line_brand = txc_service.marketing_name
-            if not line_brand and service.colour and service.colour.name and service.colour.name != service.line_name:
-                line_brand = service.colour.name  # e.g. (First Eastern Counties) 'Yellow Line'
-            service.line_brand = line_brand or ''
+            if (
+                not line_brand
+                and service.colour
+                and service.colour.name
+                and service.colour.name != service.line_name
+            ):
+                line_brand = (
+                    service.colour.name
+                )  # e.g. (First Eastern Counties) 'Yellow Line'
+            service.line_brand = line_brand or ""
 
             if txc_service.mode:
                 service.mode = txc_service.mode
@@ -968,9 +1087,12 @@ class Command(BaseCommand):
 
             # inbound and outbound descriptions
 
-            service.outbound_description = ''
-            service.inbound_description = ''
-            if line.outbound_description != line.inbound_description or txc_service.origin == 'Origin':
+            service.outbound_description = ""
+            service.inbound_description = ""
+            if (
+                line.outbound_description != line.inbound_description
+                or txc_service.origin == "Origin"
+            ):
                 out_desc = line.outbound_description
                 in_desc = line.inbound_description
 
@@ -988,11 +1110,18 @@ class Command(BaseCommand):
                         service.description = in_desc
 
             if self.service_descriptions:  # NCSD
-                outbound_description, inbound_description = self.get_service_descriptions(filename)
+                (
+                    outbound_description,
+                    inbound_description,
+                ) = self.get_service_descriptions(filename)
                 if inbound_description:
-                    service.description = service.inbound_description = inbound_description
+                    service.description = (
+                        service.inbound_description
+                    ) = inbound_description
                 if outbound_description:
-                    service.description = service.outbound_description = outbound_description
+                    service.description = (
+                        service.outbound_description
+                    ) = outbound_description
 
             # does is the service already exist in the database?
 
@@ -1003,9 +1132,14 @@ class Command(BaseCommand):
             service.save()
 
             if not service_created:
-                if '_' in service.slug or '-' not in service.slug or existing and not existing.current:
-                    service.slug = ''
-                    service.save(update_fields=['slug'])
+                if (
+                    "_" in service.slug
+                    or "-" not in service.slug
+                    or existing
+                    and not existing.current
+                ):
+                    service.slug = ""
+                    service.save(update_fields=["slug"])
 
             if operators:
                 if service_created:
@@ -1018,7 +1152,10 @@ class Command(BaseCommand):
             self.service_ids.add(service.id)
             linked_services.append(service.id)
 
-            if txc_service.operating_period.end and txc_service.operating_period.end < today:
+            if (
+                txc_service.operating_period.end
+                and txc_service.operating_period.end < today
+            ):
                 logger.warning(
                     f"{filename}: {txc_service.service_code} end {txc_service.operating_period.end} is in the past"
                 )
@@ -1026,64 +1163,75 @@ class Command(BaseCommand):
             journey = journeys[0]
 
             ticket_machine_service_code = journey.ticket_machine_service_code
-            if ticket_machine_service_code and ticket_machine_service_code != line.line_name:
+            if (
+                ticket_machine_service_code
+                and ticket_machine_service_code != line.line_name
+            ):
                 try:
-                    ServiceCode.objects.create(scheme='SIRI', code=ticket_machine_service_code, service=service)
+                    ServiceCode.objects.create(
+                        scheme="SIRI", code=ticket_machine_service_code, service=service
+                    )
                 except IntegrityError:
                     pass
 
             # a code used in Traveline Cymru URLs:
-            if self.source.name == 'W' and '_' not in txc_service.service_code:
+            if self.source.name == "W" and "_" not in txc_service.service_code:
                 private_code = journey.private_code
-                if private_code and ':' in private_code:
-                    ServiceCode.objects.update_or_create({
-                        'code': private_code.split(':', 1)[0]
-                    }, service=service, scheme='Traveline Cymru')
+                if private_code and ":" in private_code:
+                    ServiceCode.objects.update_or_create(
+                        {"code": private_code.split(":", 1)[0]},
+                        service=service,
+                        scheme="Traveline Cymru",
+                    )
 
             # timetable data:
 
             route_defaults = {
-                'line_name': line.line_name,
-                'line_brand': line_brand,
-                'outbound_description': line.outbound_description or '',
-                'inbound_description': line.inbound_description or '',
-                'start_date': txc_service.operating_period.start,
-                'end_date': txc_service.operating_period.end,
-                'service': service,
-                'revision_number': transxchange.attributes['RevisionNumber'],
-                'service_code': txc_service.service_code,
+                "line_name": line.line_name,
+                "line_brand": line_brand,
+                "outbound_description": line.outbound_description or "",
+                "inbound_description": line.inbound_description or "",
+                "start_date": txc_service.operating_period.start,
+                "end_date": txc_service.operating_period.end,
+                "service": service,
+                "revision_number": transxchange.attributes["RevisionNumber"],
+                "service_code": txc_service.service_code,
             }
 
-            if txc_service.origin and txc_service.origin != 'Origin':
-                route_defaults['origin'] = txc_service.origin
+            if txc_service.origin and txc_service.origin != "Origin":
+                route_defaults["origin"] = txc_service.origin
             else:
-                route_defaults['origin'] = ''
+                route_defaults["origin"] = ""
 
-            if txc_service.destination and txc_service.destination != 'Destination':
-                if ' via ' in txc_service.destination:
-                    route_defaults['destination'], route_defaults['via'] = txc_service.destination.split(' via ', 1)
+            if txc_service.destination and txc_service.destination != "Destination":
+                if " via " in txc_service.destination:
+                    (
+                        route_defaults["destination"],
+                        route_defaults["via"],
+                    ) = txc_service.destination.split(" via ", 1)
                 else:
-                    route_defaults['destination'] = txc_service.destination
+                    route_defaults["destination"] = txc_service.destination
             else:
-                route_defaults['destination'] = ''
+                route_defaults["destination"] = ""
 
             if txc_service.vias:
-                route_defaults['via'] = ', '.join(txc_service.vias)
+                route_defaults["via"] = ", ".join(txc_service.vias)
 
             if description:
-                route_defaults['description'] = description
+                route_defaults["description"] = description
 
             if unique_service_code:
                 registration = get_registration(unique_service_code)
                 if registration:
-                    route_defaults['registration'] = registration
+                    route_defaults["registration"] = registration
 
             if transxchange.route_sections:
                 if service_created:
                     existing_route_links = {}
                 else:
                     existing_route_links = {
-                        (link.from_stop_id, link.to_stop_id): link for link in service.routelink_set.all()
+                        (link.from_stop_id, link.to_stop_id): link
+                        for link in service.routelink_set.all()
                     }
                 route_links_to_update = {}
                 route_links_to_create = {}
@@ -1101,55 +1249,66 @@ class Command(BaseCommand):
                                 from_stop_id=from_stop.atco_code,
                                 to_stop_id=to_stop.atco_code,
                                 geometry=route_link.track,
-                                service=service
+                                service=service,
                             )
 
-                RouteLink.objects.bulk_update(route_links_to_update.values(), ['geometry'])
+                RouteLink.objects.bulk_update(
+                    route_links_to_update.values(), ["geometry"]
+                )
                 RouteLink.objects.bulk_create(route_links_to_create.values())
 
             route_code = filename
             if len(transxchange.services) > 1:
-                route_code += f'#{txc_service.service_code}'
+                route_code += f"#{txc_service.service_code}"
             if len(txc_service.lines) > 1:
-                route_code += f'#{line.id}'
+                route_code += f"#{line.id}"
 
-            self.handle_journeys(route_code, route_defaults, stops, journeys, txc_service)
+            self.handle_journeys(
+                route_code, route_defaults, stops, journeys, txc_service
+            )
 
         if len(linked_services) > 1:
             for i, from_service in enumerate(linked_services):
-                for i, to_service in enumerate(linked_services[i+1:]):
+                for i, to_service in enumerate(linked_services[i + 1 :]):
                     kwargs = {
-                        'from_service_id': from_service,
-                        'to_service_id': to_service,
+                        "from_service_id": from_service,
+                        "to_service_id": to_service,
                     }
                     if not ServiceLink.objects.filter(**kwargs).exists():
-                        ServiceLink.objects.create(**kwargs, how='also')
+                        ServiceLink.objects.create(**kwargs, how="also")
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:
         stops = list(transxchange_stops.keys())
         for atco_code in transxchange_stops:
             # deal with leading 0 being removed by Microsoft Excel maybe
-            if len(atco_code) == 11 and atco_code.isdigit() and atco_code[:1] != "0" and atco_code[2:3] == "0":
+            if (
+                len(atco_code) == 11
+                and atco_code.isdigit()
+                and atco_code[:1] != "0"
+                and atco_code[2:3] == "0"
+            ):
                 stops.append(f"0{atco_code}")
 
             # rail services in the London dataset
             if atco_code[:3] == "910":
                 stops.append(atco_code[:-1])
 
-        stops = StopPoint.objects.annotate(
-            atco_code_upper=Upper('atco_code')
-        ).filter(atco_code_upper__in=stops).only('atco_code').order_by()
+        stops = (
+            StopPoint.objects.annotate(atco_code_upper=Upper("atco_code"))
+            .filter(atco_code_upper__in=stops)
+            .only("atco_code")
+            .order_by()
+        )
 
-        stops = {
-            stop.atco_code_upper: stop
-            for stop in stops
-        }
+        stops = {stop.atco_code_upper: stop for stop in stops}
 
         for atco_code, stop in transxchange_stops.items():
             atco_code_upper = atco_code.upper()
             if atco_code_upper not in stops:
-                if atco_code.isdigit() and f"0{atco_code}" in stops:  # "36006002112" = "036006002112"
+                if (
+                    atco_code.isdigit() and f"0{atco_code}" in stops
+                ):  # "36006002112" = "036006002112"
                     logger.warning(f"{atco_code} 0{atco_code}")
                     stops[atco_code_upper] = stops[f"0{atco_code}"]
                 elif atco_code[:3] == "910" and atco_code[:-1] in stops:
@@ -1163,16 +1322,30 @@ class Command(BaseCommand):
         for garage_code in garages:
             garage = garages[garage_code]
 
-            name = garage.findtext('GarageName', '')
+            name = garage.findtext("GarageName", "")
             if name == f"Garage '{garage_code}'":  # "Garage 'KB'"
                 name = ""
             else:
-                name = name.removesuffix(' Bus Depot')
-                name = name.removesuffix(' depot').removesuffix(' Depot').removesuffix(' DEPOT')
-                name = name.removesuffix(' garage').removesuffix(' Garage').removesuffix(' GARAGE').strip()
+                name = name.removesuffix(" Bus Depot")
+                name = (
+                    name.removesuffix(" depot")
+                    .removesuffix(" Depot")
+                    .removesuffix(" DEPOT")
+                )
+                name = (
+                    name.removesuffix(" garage")
+                    .removesuffix(" Garage")
+                    .removesuffix(" GARAGE")
+                    .strip()
+                )
 
-            if garage_code not in self.garages or self.garages[garage_code].name != name:
-                garage = Garage.objects.filter(code=garage_code, name__iexact=name).first()
+            if (
+                garage_code not in self.garages
+                or self.garages[garage_code].name != name
+            ):
+                garage = Garage.objects.filter(
+                    code=garage_code, name__iexact=name
+                ).first()
                 if garage is None:
                     garage = Garage.objects.create(code=garage_code, name=name)
                 self.garages[garage_code] = garage
@@ -1181,7 +1354,7 @@ class Command(BaseCommand):
         transxchange = TransXChange(open_file)
 
         if not transxchange.journeys:
-            logger.warning(f'{filename} has no journeys')
+            logger.warning(f"{filename} has no journeys")
             return
 
         self.vehicle_types = {}

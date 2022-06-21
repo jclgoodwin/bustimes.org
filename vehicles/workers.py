@@ -15,13 +15,19 @@ class SiriConsumer(SyncConsumer):
 
             response_timestamp = parse_datetime(message["when"])
 
-            vehicle_cache_keys = [self.command.get_vehicle_cache_key(item) for item in message["items"]]
+            vehicle_cache_keys = [
+                self.command.get_vehicle_cache_key(item) for item in message["items"]
+            ]
 
             vehicle_ids = cache.get_many(vehicle_cache_keys)  # code: id
 
-            vehicles = self.command.vehicles.in_bulk(vehicle_ids.values())  # id: vehicle
+            vehicles = self.command.vehicles.in_bulk(
+                vehicle_ids.values()
+            )  # id: vehicle
             self.command.vehicle_cache = {  # code: vehicle
-                key: vehicles[vehicle_id] for key, vehicle_id in vehicle_ids.items() if vehicle_id in vehicles
+                key: vehicles[vehicle_id]
+                for key, vehicle_id in vehicle_ids.items()
+                if vehicle_id in vehicles
             }
 
             for item in message["items"]:

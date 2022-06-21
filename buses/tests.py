@@ -5,12 +5,13 @@ from . import utils
 
 
 class UtilsTests(TestCase):
-    """Tests for the buses.utils module
-    """
+    """Tests for the buses.utils module"""
+
     def test_minify(self):
-        """Test that the minify function minifies (while preserving some characters) as expected
-        """
-        self.assertEqual(utils.minify("""
+        """Test that the minify function minifies (while preserving some characters) as expected"""
+        self.assertEqual(
+            utils.minify(
+                """
                    \n
             <marquee>
                 {% if foo %}\n     \n                    {% if bar %}
@@ -18,7 +19,9 @@ class UtilsTests(TestCase):
                     {% endif %}
                 {% endif %}
             </marquee>
-            """), """
+            """
+            ),
+            """
 
 <marquee>
 {% if foo %}
@@ -27,4 +30,5 @@ class UtilsTests(TestCase):
 <strong>Golf sale</strong>  \n{% endif %}
 {% endif %}
 </marquee>
-""")
+""",
+        )

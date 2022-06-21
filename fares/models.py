@@ -23,7 +23,7 @@ class DataSet(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField(blank=True)
     description = models.CharField(max_length=255, blank=True)
-    operators = models.ManyToManyField('busstops.Operator', blank=True)
+    operators = models.ManyToManyField("busstops.Operator", blank=True)
     datetime = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(default=False)
 
@@ -31,7 +31,7 @@ class DataSet(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('dataset_detail', args=(self.id,))
+        return reverse("dataset_detail", args=(self.id,))
 
     def nice_name(self):
         return self.name.split("_", 1)[0]
@@ -46,7 +46,7 @@ class DataSet(models.Model):
             text = format_html('<a href="{}">{}</a>', self.url, text)
 
         if self.datetime:
-            text = f'{text}, {self.datetime:%-d %B %Y}'
+            text = f"{text}, {self.datetime:%-d %B %Y}"
 
         return mark_safe(f'<p class="credit">Fares data from {text}</p>')
 
@@ -104,40 +104,42 @@ class TypeOfTariff(models.TextChoices):
 class Tariff(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
-    services = models.ManyToManyField('busstops.Service', blank=True)
-    operators = models.ManyToManyField('busstops.Operator', blank=True)
+    services = models.ManyToManyField("busstops.Service", blank=True)
+    operators = models.ManyToManyField("busstops.Operator", blank=True)
     source = models.ForeignKey(DataSet, models.CASCADE)
     filename = models.CharField(max_length=255)
     user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
     trip_type = models.CharField(max_length=255, blank=True)
     valid_between = DateTimeRangeField(null=True, blank=True)
     type_of_tariff = models.CharField(
-        max_length=19,
-        choices=TypeOfTariff.choices,
-        blank=True
+        max_length=19, choices=TypeOfTariff.choices, blank=True
     )
-    access_zones = models.ManyToManyField('FareZone', blank=True)
+    access_zones = models.ManyToManyField("FareZone", blank=True)
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('tariff_detail', args=(self.id,))
+        return reverse("tariff_detail", args=(self.id,))
 
     class Meta:
-        unique_together = ('source', 'filename', 'code')
+        unique_together = ("source", "filename", "code")
 
 
 class Price(models.Model):
     amount = models.DecimalField(max_digits=6, decimal_places=2)  # maximum £9999.99
-    time_interval = models.ForeignKey(TimeInterval, models.CASCADE, null=True, blank=True)
+    time_interval = models.ForeignKey(
+        TimeInterval, models.CASCADE, null=True, blank=True
+    )
     user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
-    sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE, null=True, blank=True)
+    sales_offer_package = models.ForeignKey(
+        SalesOfferPackage, models.CASCADE, null=True, blank=True
+    )
     tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         if self.amount >= 10:
-            return str(self.amount).removesuffix('.00')
+            return str(self.amount).removesuffix(".00")
         return str(self.amount)
 
 
@@ -146,15 +148,19 @@ class FareTable(models.Model):
     name = models.CharField(max_length=255)
     description = models.CharField(max_length=255, blank=True)
     user_profile = models.ForeignKey(UserProfile, models.CASCADE, null=True, blank=True)
-    sales_offer_package = models.ForeignKey(SalesOfferPackage, models.CASCADE, null=True, blank=True)
-    preassigned_fare_product = models.ForeignKey(PreassignedFareProduct, models.CASCADE, null=True, blank=True)
+    sales_offer_package = models.ForeignKey(
+        SalesOfferPackage, models.CASCADE, null=True, blank=True
+    )
+    preassigned_fare_product = models.ForeignKey(
+        PreassignedFareProduct, models.CASCADE, null=True, blank=True
+    )
     tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('table_detail', args=(self.id,))
+        return reverse("table_detail", args=(self.id,))
 
     @cached_property
     def is_triangular(self):
@@ -169,9 +175,7 @@ class FareTable(models.Model):
         return self.column_set.all()
 
     def rows(self):
-        cols = {
-            col.id: col for col in self.column_set.all()
-        }
+        cols = {col.id: col for col in self.column_set.all()}
 
         rows = list(self.row_set.all())
         for row in rows:
@@ -199,19 +203,19 @@ class FareZone(models.Model):
 class DistanceMatrixElement(models.Model):
     code = models.CharField(max_length=255)
     price = models.ForeignKey(Price, models.CASCADE)
-    start_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='starting')
-    end_zone = models.ForeignKey(FareZone, models.CASCADE, related_name='ending')
+    start_zone = models.ForeignKey(FareZone, models.CASCADE, related_name="starting")
+    end_zone = models.ForeignKey(FareZone, models.CASCADE, related_name="ending")
     tariff = models.ForeignKey(Tariff, models.CASCADE)
 
     def html(self):
         if self.tariff.user_profile:
             tariff = self.tariff.user_profile
             if self.tariff.trip_type:
-                tariff = f'{tariff} {self.tariff.trip_type}'
+                tariff = f"{tariff} {self.tariff.trip_type}"
         else:
             tariff = self.tariff
 
-        return f'{tariff}: £{self.price.amount}'
+        return f"{tariff}: £{self.price.amount}"
 
     def __str__(self):
         return self.code
@@ -253,5 +257,7 @@ class Row(models.Model):
 class Cell(models.Model):
     column = models.ForeignKey(Column, models.CASCADE)
     row = models.ForeignKey(Row, models.CASCADE)
-    distance_matrix_element = models.ForeignKey(DistanceMatrixElement, models.CASCADE, null=True)
+    distance_matrix_element = models.ForeignKey(
+        DistanceMatrixElement, models.CASCADE, null=True
+    )
     price = models.ForeignKey(Price, models.CASCADE, null=True)

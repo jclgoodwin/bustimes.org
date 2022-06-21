@@ -183,8 +183,8 @@ class Command(BaseCommand):
                 valid_between=DateTimeTZRange(
                     tariff_element.findtext("validityConditions/ValidBetween/FromDate"),
                     tariff_element.findtext("validityConditions/ValidBetween/ToDate"),
-                    '[]'
-                )
+                    "[]",
+                ),
             )
             tariffs[tariff.code] = tariff
 
@@ -292,7 +292,9 @@ class Command(BaseCommand):
                 "pricesFor/PreassignedFareProductRef"
             )
             if preassigned_fare_product_ref is not None:
-                preassigned_fare_product_ref = preassigned_fare_product_ref.attrib["ref"]
+                preassigned_fare_product_ref = preassigned_fare_product_ref.attrib[
+                    "ref"
+                ]
                 preassigned_fare_product = fare_products[preassigned_fare_product_ref]
             else:
                 preassigned_fare_product = None
@@ -540,7 +542,9 @@ class Command(BaseCommand):
             try:
                 self.handle_archive(dataset, io.BytesIO(response.content))
             except (KeyError, DataError):
-                return dataset  # don't update timestamp field, try re-importing next time
+                return (
+                    dataset  # don't update timestamp field, try re-importing next time
+                )
 
         dataset.datetime = modified
         dataset.save(update_fields=["datetime"])

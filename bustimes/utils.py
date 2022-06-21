@@ -11,7 +11,11 @@ def get_routes(routes, when=None, from_date=None):
         routes = [route for route in routes if route.contains(when)]
     if from_date:
         # just filter out previous versions
-        routes = [route for route in routes if route.end_date is None or route.end_date >= from_date]
+        routes = [
+            route
+            for route in routes
+            if route.end_date is None or route.end_date >= from_date
+        ]
 
     if len(routes) == 1:
         return routes
@@ -22,49 +26,64 @@ def get_routes(routes, when=None, from_date=None):
     if when and len(set(route.revision_number for route in routes)) > 1:
         revision_numbers = {}
         for route in routes:
-            route.key = f'{route.service_code}:{route.service_id}'
+            route.key = f"{route.service_code}:{route.service_id}"
 
-            if route.source.name.startswith('First Bus_'):  # journeys may be split between sources (First Bristol)
+            if route.source.name.startswith(
+                "First Bus_"
+            ):  # journeys may be split between sources (First Bristol)
                 route.key = f"{route.key}:{route.source_id}"
 
             # use some clues in the filename (or a very good clue in the source URL)
             # to tell if the data is from Ticketer, and adapt accordingly
             # - the revision number applies to a bit of the filename, not just the service_code
             # e.g. in 'AMSY_10W_AMSYP...', the '10W' bit is important and is nowhere else in the data
-            parts = route.code.split('_')
-            if '.ticketer.' in route.source.url:
+            parts = route.code.split("_")
+            if ".ticketer." in route.source.url:
                 assert 7 >= len(parts) >= 6
                 route.key = f"{route.key}:{parts[1]}"
             elif 7 >= len(parts) >= 6 and parts[2].startswith(parts[0]):
                 route.key = f"{route.key}:{parts[1]}"
 
-            if route.key not in revision_numbers or route.revision_number > revision_numbers[route.key]:
+            if (
+                route.key not in revision_numbers
+                or route.revision_number > revision_numbers[route.key]
+            ):
                 revision_numbers[route.key] = route.revision_number
         routes = [
-            route for route in routes if route.revision_number == revision_numbers[route.key]
+            route
+            for route in routes
+            if route.revision_number == revision_numbers[route.key]
         ]
 
     sources = set(route.source_id for route in routes)
 
     # remove duplicates
     if len(sources) > 1:
-        sources_by_sha1 = {route.source.sha1: route.source_id for route in routes if route.source.sha1}
+        sources_by_sha1 = {
+            route.source.sha1: route.source_id for route in routes if route.source.sha1
+        }
         # if multiple sources have the same sha1 hash, we're only interested in one
         routes = [
-            route for route in routes
-            if not route.source.sha1 or route.source_id == sources_by_sha1[route.source.sha1]
+            route
+            for route in routes
+            if not route.source.sha1
+            or route.source_id == sources_by_sha1[route.source.sha1]
         ]
 
     if when:
         # use latest passenger zipfile filename
-        if all('.zip' in route.code for route in routes):
-            prefixes = set(route.code.split('.zip')[0] for route in routes)
+        if all(".zip" in route.code for route in routes):
+            prefixes = set(route.code.split(".zip")[0] for route in routes)
             if len(prefixes) > 1:
-                latest_prefix = f'{max(prefixes)}.zip'
-                routes = [route for route in routes if route.code.startswith(latest_prefix)]
+                latest_prefix = f"{max(prefixes)}.zip"
+                routes = [
+                    route for route in routes if route.code.startswith(latest_prefix)
+                ]
 
         elif len(sources) == 1:
-            override_routes = [route for route in routes if route.start_date == route.end_date == when]
+            override_routes = [
+                route for route in routes if route.start_date == route.end_date == when
+            ]
             if override_routes:  # e.g. Lynx BoxingDayHoliday
                 routes = override_routes
 
@@ -72,12 +91,12 @@ def get_routes(routes, when=None, from_date=None):
 
 
 def get_calendars(when, calendar_ids=None):
-    calendars = Calendar.objects.filter(Q(end_date__gte=when) | Q(end_date=None),
-                                        start_date__lte=when)
-    calendar_calendar_dates = CalendarDate.objects.filter(calendar=OuterRef('id'))
+    calendars = Calendar.objects.filter(
+        Q(end_date__gte=when) | Q(end_date=None), start_date__lte=when
+    )
+    calendar_calendar_dates = CalendarDate.objects.filter(calendar=OuterRef("id"))
     calendar_dates = calendar_calendar_dates.filter(
-        Q(end_date__gte=when) | Q(end_date=None),
-        start_date__lte=when
+        Q(end_date__gte=when) | Q(end_date=None), start_date__lte=when
     )
     if calendar_ids is not None:
         # cunningly make the query faster
@@ -86,11 +105,17 @@ def get_calendars(when, calendar_ids=None):
     exclusions = calendar_dates.filter(operation=False)
     inclusions = calendar_dates.filter(operation=True)
     special_inclusions = Exists(inclusions.filter(special=True))
-    only_certain_dates = Exists(calendar_calendar_dates.filter(special=False, operation=True))
+    only_certain_dates = Exists(
+        calendar_calendar_dates.filter(special=False, operation=True)
+    )
 
     calendar_bank_holidays = CalendarBankHoliday.objects.filter(
-        Exists(BankHolidayDate.objects.filter(date=when, bank_holiday=OuterRef('bank_holiday'))),
-        calendar=OuterRef('id'),
+        Exists(
+            BankHolidayDate.objects.filter(
+                date=when, bank_holiday=OuterRef("bank_holiday")
+            )
+        ),
+        calendar=OuterRef("id"),
     )
     bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
     bank_holiday_exclusions = ~Exists(calendar_bank_holidays.filter(operation=False))
@@ -100,6 +125,8 @@ def get_calendars(when, calendar_ids=None):
         Q(
             bank_holiday_exclusions,
             ~only_certain_dates | Exists(inclusions),
-            **{f"{when:%a}".lower(): True}
-        ) | special_inclusions | bank_holiday_inclusions & bank_holiday_exclusions,
+            **{f"{when:%a}".lower(): True},
+        )
+        | special_inclusions
+        | bank_holiday_inclusions & bank_holiday_exclusions,
     )

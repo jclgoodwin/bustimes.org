@@ -9,7 +9,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         now = timezone.now()
         half_hour_ago = now - timedelta(minutes=30)
-        journeys = VehicleJourney.objects.filter(latest_vehicle__isnull=False, datetime__gte=half_hour_ago)
+        journeys = VehicleJourney.objects.filter(
+            latest_vehicle__isnull=False, datetime__gte=half_hour_ago
+        )
 
         stats = {
             "datetime": now,

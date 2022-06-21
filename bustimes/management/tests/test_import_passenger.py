@@ -10,42 +10,56 @@ from ...models import Route
 class ImportPassengerTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        sw = Region.objects.create(pk='SW', name='South West')
-        Operator.objects.create(id='BLUS', region=sw, name='Bluestar')
-        Operator.objects.create(id='UNIL', region=sw, name='Unilink')
+        sw = Region.objects.create(pk="SW", name="South West")
+        Operator.objects.create(id="BLUS", region=sw, name="Bluestar")
+        Operator.objects.create(id="UNIL", region=sw, name="Unilink")
 
     def test_import(self):
 
-        fixtures_dir = Path(__file__).resolve().parent / 'fixtures'
+        fixtures_dir = Path(__file__).resolve().parent / "fixtures"
 
         with override_settings(
             DATA_DIR=fixtures_dir,
             PASSENGER_OPERATORS=[
-                ('Unilink', 'unilink', 'SW', {
-                    'SQ': 'UNIL',
-                    'BLUS': 'BLUS',
-                })
-            ]
+                (
+                    "Unilink",
+                    "unilink",
+                    "SW",
+                    {
+                        "SQ": "UNIL",
+                        "BLUS": "BLUS",
+                    },
+                )
+            ],
         ):
-            with use_cassette(str(fixtures_dir / 'passenger.yaml'), decode_compressed_response=True):
-                with patch('bustimes.management.commands.import_passenger.write_file'):
+            with use_cassette(
+                str(fixtures_dir / "passenger.yaml"), decode_compressed_response=True
+            ):
+                with patch("bustimes.management.commands.import_passenger.write_file"):
                     with self.assertRaises(FileNotFoundError):
-                        with self.assertLogs('bustimes.management.commands.import_bod') as cm:
-                            call_command('import_passenger')
+                        with self.assertLogs(
+                            "bustimes.management.commands.import_bod"
+                        ) as cm:
+                            call_command("import_passenger")
 
-        self.assertEqual(cm.output, [
-            "INFO:bustimes.management.commands.import_bod:Unilink",
-            "INFO:bustimes.management.commands.import_bod:{"
-            "'url': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1648047602.zip', "
-            "'filename': 'unilink_1648047602.zip', 'modified': True}"
-        ])
+        self.assertEqual(
+            cm.output,
+            [
+                "INFO:bustimes.management.commands.import_bod:Unilink",
+                "INFO:bustimes.management.commands.import_bod:{"
+                "'url': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1648047602.zip', "
+                "'filename': 'unilink_1648047602.zip', 'modified': True}",
+            ],
+        )
 
         self.assertFalse(Route.objects.all())
 
         source = DataSource.objects.get()
-        route = Route(code="gocornwallbus_1653042367.zip/TXC Export 20220520-1013.xml#SER23")
+        route = Route(
+            code="gocornwallbus_1653042367.zip/TXC Export 20220520-1013.xml#SER23"
+        )
         # date from timestamp in code (1653042367)
         self.assertEqual(
             source.credit(route),
-            """<a href="https://data.discoverpassenger.com/operator/unilink">Unilink</a>, 20 May 2022"""
+            """<a href="https://data.discoverpassenger.com/operator/unilink">Unilink</a>, 20 May 2022""",
         )

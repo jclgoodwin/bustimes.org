@@ -104,7 +104,7 @@ class Command(BaseCommand):
 
         if atco_code in self.overrides:
             for key, value in self.overrides[atco_code].items():
-                if key == 'latlong':
+                if key == "latlong":
                     value = GEOSGeometry(value)
                 setattr(stop, key, value)
 

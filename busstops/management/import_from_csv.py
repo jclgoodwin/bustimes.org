@@ -13,14 +13,14 @@ class ImportFromCSVCommand(BaseCommand):
     """
 
     input = 0
-    encoding = 'cp1252'
+    encoding = "cp1252"
 
     @staticmethod
     def to_camel_case(field_name):
         """
         Given a string like 'naptan_code', returns a string like 'NaptanCode'
         """
-        return ''.join(s.title() for s in field_name.split('_'))
+        return "".join(s.title() for s in field_name.split("_"))
 
     def handle_row(self, row):
         """

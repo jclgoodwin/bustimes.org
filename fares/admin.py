@@ -1,6 +1,14 @@
 from django.contrib import admin
 from django.contrib.postgres.aggregates import StringAgg
-from .models import DataSet, Tariff, Price, FareZone, UserProfile, DistanceMatrixElement, FareTable
+from .models import (
+    DataSet,
+    Tariff,
+    Price,
+    FareZone,
+    UserProfile,
+    DistanceMatrixElement,
+    FareTable,
+)
 
 
 class DataSetAdmin(admin.ModelAdmin):
@@ -11,8 +19,8 @@ class DataSetAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        if 'changelist' in request.resolver_match.view_name:
-            return queryset.annotate(noc=StringAgg('operators', ', ', distinct=True))
+        if "changelist" in request.resolver_match.view_name:
+            return queryset.annotate(noc=StringAgg("operators", ", ", distinct=True))
         return queryset
 
     def noc(self, obj):
@@ -21,9 +29,7 @@ class DataSetAdmin(admin.ModelAdmin):
 
 class TariffAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators", "services"]
-    list_filter = [
-       ('operators', admin.RelatedOnlyFieldListFilter)
-    ]
+    list_filter = [("operators", admin.RelatedOnlyFieldListFilter)]
     raw_id_fields = ["source", "user_profile", "access_zones"]
 
 

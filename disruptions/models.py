@@ -7,16 +7,16 @@ from busstops.templatetags.date_range import date_range
 
 class Situation(models.Model):
     source = models.ForeignKey(
-        'busstops.DataSource',
+        "busstops.DataSource",
         models.CASCADE,
         limit_choices_to={
-            'name__in': (
-                'Ito World',
-                'Transport for the North',
-                'Transport for West Midlands',
-                'bustimes.org',
+            "name__in": (
+                "Ito World",
+                "Transport for the North",
+                "Transport for West Midlands",
+                "bustimes.org",
             )
-        }
+        },
     )
     situation_number = models.CharField(max_length=36, blank=True)
     reason = models.CharField(max_length=25, blank=True)
@@ -34,10 +34,10 @@ class Situation(models.Model):
         return camel_case_to_spaces(self.reason)
 
     def get_absolute_url(self):
-        return reverse('situation', args=(self.id,))
+        return reverse("situation", args=(self.id,))
 
     class Meta:
-        unique_together = ('source', 'situation_number')
+        unique_together = ("source", "situation_number")
 
 
 class Link(models.Model):
@@ -60,9 +60,9 @@ class ValidityPeriod(models.Model):
 
 class Consequence(models.Model):
     situation = models.ForeignKey(Situation, models.CASCADE)
-    stops = models.ManyToManyField('busstops.StopPoint', blank=True)
-    services = models.ManyToManyField('busstops.Service', blank=True)
-    operators = models.ManyToManyField('busstops.Operator', blank=True)
+    stops = models.ManyToManyField("busstops.StopPoint", blank=True)
+    services = models.ManyToManyField("busstops.Service", blank=True)
+    operators = models.ManyToManyField("busstops.Operator", blank=True)
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
 
@@ -73,4 +73,4 @@ class Consequence(models.Model):
         service = self.services.first()
         if service:
             return service.get_absolute_url()
-        return ''
+        return ""

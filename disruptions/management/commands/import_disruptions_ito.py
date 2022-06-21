@@ -14,11 +14,13 @@ class Command(BaseCommand):
         # Access to the subscription endpoint is restricted to certain IP addresses,
         # so use a Digital Ocean floating IP address
         # https://docs.digitalocean.com/products/networking/floating-ips/how-to/outbound-traffic/
-        session.mount('https://', SourceAddressAdapter('10.16.0.6'))
+        session.mount("https://", SourceAddressAdapter("10.16.0.6"))
 
         url = "https://siri-sx-tfn.itoworld.com"
         requestor_ref = "BusTimes"
-        timestamp = f"<RequestTimestamp>{datetime.utcnow().isoformat()}</RequestTimestamp>"
+        timestamp = (
+            f"<RequestTimestamp>{datetime.utcnow().isoformat()}</RequestTimestamp>"
+        )
 
         source = DataSource.objects.get_or_create(name="Ito World")[0]
 
@@ -37,22 +39,22 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
         </SituationExchangeRequest>
     </ServiceRequest>
 </Siri>""",
-            headers={
-                'Content-Type': 'application/xml'
-            },
+            headers={"Content-Type": "application/xml"},
             stream=True,
-            timeout=10
+            timeout=10,
         )
 
         for _, element in ET.iterparse(response.raw):
-            if element.tag[:29] == '{http://www.siri.org.uk/siri}':
+            if element.tag[:29] == "{http://www.siri.org.uk/siri}":
                 element.tag = element.tag[29:]
 
-            if element.tag.endswith('PtSituationElement'):
+            if element.tag.endswith("PtSituationElement"):
                 situations.append(handle_item(element, source))
                 element.clear()
 
-        source.situation_set.filter(current=True).exclude(id__in=situations).update(current=False)
+        source.situation_set.filter(current=True).exclude(id__in=situations).update(
+            current=False
+        )
 
     def handle(self, *args, **options):
         self.fetch()

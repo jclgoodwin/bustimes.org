@@ -1,1 +1,1 @@
-default_app_config = 'busstops.apps.BusTimesConfig'
+default_app_config = "busstops.apps.BusTimesConfig"

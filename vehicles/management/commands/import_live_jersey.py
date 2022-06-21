@@ -5,14 +5,14 @@ from ...models import VehicleLocation, VehicleJourney
 
 
 class Command(ImportLiveVehiclesCommand):
-    source_name = 'jersey'
-    operator = 'libertybus'
-    url = 'http://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360'
+    source_name = "jersey"
+    operator = "libertybus"
+    url = "http://sojbuslivetimespublic.azurewebsites.net/api/Values/GetMin?secondsAgo=360"
 
     @staticmethod
     def get_datetime(item):
         now_datetime = datetime.datetime.now(datetime.timezone.utc)
-        then_time = datetime.datetime.strptime(item['time'], '%H:%M:%S').time()
+        then_time = datetime.datetime.strptime(item["time"], "%H:%M:%S").time()
 
         now_time = now_datetime.time().replace(tzinfo=now_datetime.tzinfo)
         then_time = then_time.replace(tzinfo=now_datetime.tzinfo)
@@ -23,29 +23,26 @@ class Command(ImportLiveVehiclesCommand):
         return datetime.datetime.combine(now_datetime, then_time)
 
     def get_vehicle(self, item):
-        parts = item['bus'].split('-')
+        parts = item["bus"].split("-")
         vehicle_code = parts[-1]
         defaults = {
-            'operator_id': self.operator,
+            "operator_id": self.operator,
         }
         if vehicle_code.isdigit():
-            defaults['fleet_number'] = vehicle_code
+            defaults["fleet_number"] = vehicle_code
         return self.vehicles.get_or_create(
-            defaults,
-            source=self.source,
-            code=vehicle_code
+            defaults, source=self.source, code=vehicle_code
         )
 
     def get_items(self):
-        return super().get_items()['minimumInfoUpdates']
+        return super().get_items()["minimumInfoUpdates"]
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney()
-        journey.route_name = item['line']
+        journey.route_name = item["line"]
         return journey
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
-            latlong=Point(item['lon'], item['lat']),
-            heading=item['bearing']
+            latlong=Point(item["lon"], item["lat"]), heading=item["bearing"]
         )

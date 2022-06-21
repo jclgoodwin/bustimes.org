@@ -18,25 +18,20 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        base_url = 'https://www.opendatani.gov.uk/api/3/action/package_show'
+        base_url = "https://www.opendatani.gov.uk/api/3/action/package_show"
         ids = [
-            'ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016',
-            'metro-timetable-data-valid-from-18-june-until-31-august-2016'
+            "ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016",
+            "metro-timetable-data-valid-from-18-june-until-31-august-2016",
         ]
 
         for _id in ids:
-            response = requests.get(
-                base_url,
-                params={
-                    'id': _id
-                }
-            )
+            response = requests.get(base_url, params={"id": _id})
             data = response.json()
 
             source = DataSource.objects.get(url__endswith=_id)
 
-            for resource in data['result']['resources']:
-                datetime = resource['last_modified'] or resource['created']
+            for resource in data["result"]["resources"]:
+                datetime = resource["last_modified"] or resource["created"]
                 datetime = parse_datetime(datetime)
                 datetime = datetime.replace(tzinfo=timezone.utc)
 
@@ -45,7 +40,7 @@ class Command(BaseCommand):
 
                     pprint.pprint(resource)
 
-                    url = resource['url']
+                    url = resource["url"]
                     path = Path(settings.DATA_DIR) / Path(url).name
                     download(path, url)
 

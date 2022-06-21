@@ -9,15 +9,30 @@ import time_machine
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import (
-    Region, Operator, DataSource, OperatorCode, Service, ServiceCode, StopPoint, StopArea, AdminArea
+    Region,
+    Operator,
+    DataSource,
+    OperatorCode,
+    Service,
+    ServiceCode,
+    StopPoint,
+    StopArea,
+    AdminArea,
 )
 from vehicles.models import VehicleJourney
 from ...models import (
-    Route, BankHoliday, CalendarBankHoliday, BankHolidayDate, VehicleType, Block, Garage, RouteLink
+    Route,
+    BankHoliday,
+    CalendarBankHoliday,
+    BankHolidayDate,
+    VehicleType,
+    Block,
+    Garage,
+    RouteLink,
 )
 
 
-FIXTURES_DIR = Path(__file__).resolve().parent / 'fixtures'
+FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 
 class MockZipFile:
@@ -28,165 +43,204 @@ class MockZipFile:
 class ImportBusOpenDataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        ea = Region.objects.create(pk='EA', name='East Anglia')
-        lynx = Operator.objects.create(id='LYNX', region=ea, name='Lynx')
-        scpb = Operator.objects.create(id='SCCM', region=ea, name='Stagecoach East', parent='Stagecoach')
-        schu = Operator.objects.create(id='SCHU', region=ea, name='Huntingdon', parent='Stagecoach')
-        source = DataSource.objects.create(name='National Operator Codes')
-        OperatorCode.objects.bulk_create([
-            OperatorCode(operator=lynx, source=source, code='LYNX'),
-            OperatorCode(operator=scpb, source=source, code='SCPB'),
-            OperatorCode(operator=schu, source=source, code='SCHU')
-        ])
+        ea = Region.objects.create(pk="EA", name="East Anglia")
+        lynx = Operator.objects.create(id="LYNX", region=ea, name="Lynx")
+        scpb = Operator.objects.create(
+            id="SCCM", region=ea, name="Stagecoach East", parent="Stagecoach"
+        )
+        schu = Operator.objects.create(
+            id="SCHU", region=ea, name="Huntingdon", parent="Stagecoach"
+        )
+        source = DataSource.objects.create(name="National Operator Codes")
+        OperatorCode.objects.bulk_create(
+            [
+                OperatorCode(operator=lynx, source=source, code="LYNX"),
+                OperatorCode(operator=scpb, source=source, code="SCPB"),
+                OperatorCode(operator=schu, source=source, code="SCHU"),
+            ]
+        )
 
-    @use_cassette(str(FIXTURES_DIR / 'bod_lynx.yaml'))
+    @use_cassette(str(FIXTURES_DIR / "bod_lynx.yaml"))
     @time_machine.travel(datetime.datetime(2020, 5, 1), tick=False)
-    @override_settings(BOD_OPERATORS=[
-        ('LYNX', 'EA', {
-            'CO': 'LYNX',
-        }, False),
-    ])
+    @override_settings(
+        BOD_OPERATORS=[
+            (
+                "LYNX",
+                "EA",
+                {
+                    "CO": "LYNX",
+                },
+                False,
+            ),
+        ]
+    )
     def test_import_bod(self):
-        admin_area = AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
-        stop_area = StopArea.objects.create(id='', active=True, admin_area=admin_area)
-        StopPoint.objects.bulk_create([
-            StopPoint(
-                atco_code="2900w0321",
-                common_name="Lion Store",
-                indicator="opp",
-                admin_area=admin_area,
-                stop_area=stop_area,
-                active=True
-            ),
-            StopPoint(
-                atco_code="2900w0322",
-                common_name="Lion Store",
-                indicator="adj",
-                admin_area=admin_area,
-                stop_area=stop_area,
-                active=True
-            ),
-            StopPoint(
-                atco_code="2900W0314",
-                common_name="Holt Court",
-                indicator="opp",
-                admin_area=admin_area,
-                stop_area=stop_area,
-                active=True
-            ),
-            StopPoint(
-                atco_code="2900K132",
-                common_name="Kings Lynn Transport Interchange",
-                admin_area=admin_area,
-                stop_area=stop_area,
-                active=True
-            ),
-        ])
+        admin_area = AdminArea.objects.create(
+            id=91, atco_code="290", name="Norfolk", region_id="EA"
+        )
+        stop_area = StopArea.objects.create(id="", active=True, admin_area=admin_area)
+        StopPoint.objects.bulk_create(
+            [
+                StopPoint(
+                    atco_code="2900w0321",
+                    common_name="Lion Store",
+                    indicator="opp",
+                    admin_area=admin_area,
+                    stop_area=stop_area,
+                    active=True,
+                ),
+                StopPoint(
+                    atco_code="2900w0322",
+                    common_name="Lion Store",
+                    indicator="adj",
+                    admin_area=admin_area,
+                    stop_area=stop_area,
+                    active=True,
+                ),
+                StopPoint(
+                    atco_code="2900W0314",
+                    common_name="Holt Court",
+                    indicator="opp",
+                    admin_area=admin_area,
+                    stop_area=stop_area,
+                    active=True,
+                ),
+                StopPoint(
+                    atco_code="2900K132",
+                    common_name="Kings Lynn Transport Interchange",
+                    admin_area=admin_area,
+                    stop_area=stop_area,
+                    active=True,
+                ),
+            ]
+        )
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
+                call_command("import_bod", "0123456789abc19abc190123456789abc19abc19")
 
                 with self.assertNumQueries(5):
-                    call_command('import_bod', '0123456789abc19abc190123456789abc19abc19')
+                    call_command(
+                        "import_bod", "0123456789abc19abc190123456789abc19abc19"
+                    )
 
                 route = Route.objects.get()
 
                 response = self.client.get(route.get_absolute_url())
                 self.assertEqual(200, response.status_code)
 
-        self.assertEqual(route.source.name, 'Lynx_Clenchwarton_54_20200330')
-        self.assertEqual(route.source.url, 'https://data.bus-data.dft.gov.uk/category/dataset/35/download/')
-        self.assertEqual(route.source.sha1, 'a5eaa3ef8ddefd702833d52d0148adfa0a504e9a')
+        self.assertEqual(route.source.name, "Lynx_Clenchwarton_54_20200330")
+        self.assertEqual(
+            route.source.url,
+            "https://data.bus-data.dft.gov.uk/category/dataset/35/download/",
+        )
+        self.assertEqual(route.source.sha1, "a5eaa3ef8ddefd702833d52d0148adfa0a504e9a")
 
-        self.assertEqual(route.code, '')
-        self.assertEqual(route.service_code, '54')
+        self.assertEqual(route.code, "")
+        self.assertEqual(route.service_code, "54")
 
         with self.assertNumQueries(5):
-            response = self.client.get(f'/services/{route.service_id}.json')
-        self.assertTrue(response.json()['geometry'])
+            response = self.client.get(f"/services/{route.service_id}.json")
+        self.assertTrue(response.json()["geometry"])
 
         self.assertFalse(route.service.public_use)
 
         # a TicketMachineServiceCode should have been created
         service_code = ServiceCode.objects.get()
-        self.assertEqual(service_code.code, '1')
-        self.assertEqual(service_code.scheme, 'SIRI')
+        self.assertEqual(service_code.code, "1")
+        self.assertEqual(service_code.scheme, "SIRI")
 
-        response = self.client.get(f'/services/{route.service_id}/timetable')
+        response = self.client.get(f"/services/{route.service_id}/timetable")
 
-        self.assertContains(response, """
+        self.assertContains(
+            response,
+            """
             <tr>
                 <th class="stop-name" scope="row">
                     <a href="/stops/2900w0321">Lion Store (opp)</a>
                 </th>
                 <td>12:19</td>
-            </tr>""", html=True)
+            </tr>""",
+            html=True,
+        )
 
         self.assertContains(
             response,
-            'Timetable data from '
+            "Timetable data from "
             '<a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/Bus Open Data Service</a>, '
-            '1 April 2020.'
+            "1 April 2020.",
         )
 
         # test views:
 
         trip = route.trip_set.first()
 
-        response = self.client.get(f'/trips/{trip.id}.json')
-        self.assertEqual(27, len(response.json()['times']))
+        response = self.client.get(f"/trips/{trip.id}.json")
+        self.assertEqual(27, len(response.json()["times"]))
 
         response = self.client.get(trip.get_absolute_url())
 
-        self.assertContains(response, """<tr class="minor">
+        self.assertContains(
+            response,
+            """<tr class="minor">
             <td class="stop-name">
                 Clenchwarton Post Box (adj)
             </td>
             <td>
                 09:33
             </td>
-        </tr>""", html=True)
+        </tr>""",
+            html=True,
+        )
 
         expected_json = {
-            'times': [
+            "times": [
                 {
-                    'service': {'line_name': '54', 'operators': [{'id': 'LYNX', 'name': 'Lynx', 'parent': ''}]},
-                    'trip_id': trip.id,
-                    'destination': {
-                        'atco_code': '2900K132', 'name': 'Kings Lynn Transport Interchange'
+                    "service": {
+                        "line_name": "54",
+                        "operators": [{"id": "LYNX", "name": "Lynx", "parent": ""}],
                     },
-                    'aimed_arrival_time': None, 'aimed_departure_time': '2020-05-01T09:15:00+01:00'
+                    "trip_id": trip.id,
+                    "destination": {
+                        "atco_code": "2900K132",
+                        "name": "Kings Lynn Transport Interchange",
+                    },
+                    "aimed_arrival_time": None,
+                    "aimed_departure_time": "2020-05-01T09:15:00+01:00",
                 }
             ]
         }
 
         with self.assertNumQueries(6):
-            response = self.client.get('/stops/2900W0321/times.json')
+            response = self.client.get("/stops/2900W0321/times.json")
         self.assertEqual(response.json(), expected_json)
 
         with self.assertNumQueries(6):
-            response = self.client.get('/stops/2900W0321/times.json?when=2020-05-01T09:15:00%2b01:00')
+            response = self.client.get(
+                "/stops/2900W0321/times.json?when=2020-05-01T09:15:00%2b01:00"
+            )
         self.assertEqual(response.json(), expected_json)
 
         with self.assertNumQueries(6):
-            response = self.client.get('/stops/2900W0321/times.json?when=2020-05-01T09:15:00')
+            response = self.client.get(
+                "/stops/2900W0321/times.json?when=2020-05-01T09:15:00"
+            )
         self.assertEqual(response.json(), expected_json)
 
         with self.assertNumQueries(6):
-            response = self.client.get('/stops/2900W0321/times.json?limit=10')
-        self.assertEqual(1, len(response.json()['times']))
+            response = self.client.get("/stops/2900W0321/times.json?limit=10")
+        self.assertEqual(1, len(response.json()["times"]))
 
         with self.assertNumQueries(1):
-            response = self.client.get('/stops/2900W0321/times.json?limit=nine')
+            response = self.client.get("/stops/2900W0321/times.json?limit=nine")
         self.assertEqual(400, response.status_code)
 
         with self.assertNumQueries(1):
-            response = self.client.get('/stops/2900W0321/times.json?when=yesterday')
+            response = self.client.get("/stops/2900W0321/times.json?when=yesterday")
         self.assertEqual(400, response.status_code)
 
         with self.assertNumQueries(10):
-            response = self.client.get('/stops/2900W0321?date=2020-05-02')
+            response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertContains(response, "<h3>Monday 4 May</h3>")
         self.assertContains(response, "<h3>Tuesday 5 May</h3>")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
@@ -200,39 +254,39 @@ class ImportBusOpenDataTest(TestCase):
         self.assertContains(response, "<h3>Tuesday 5 May</h3>")
 
         with self.assertNumQueries(12):
-            response = self.client.get('/stops/2900W0321?date=poop')
+            response = self.client.get("/stops/2900W0321?date=poop")
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
         with self.assertNumQueries(10):
-            response = self.client.get('/stops/2900W0321?date=2020-05-02')
+            response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
         # test get_trip
         journey = VehicleJourney(
-            datetime=parse_datetime('2020-11-02T15:07:06+00:00'),
+            datetime=parse_datetime("2020-11-02T15:07:06+00:00"),
             service=Service.objects.get(),
-            code='1',
-            source=route.source
+            code="1",
+            source=route.source,
         )
         journey.trip = journey.get_trip()
-        self.assertEqual(journey.trip.ticket_machine_code, '1')
+        self.assertEqual(journey.trip.ticket_machine_code, "1")
         journey.save()  # for use later
 
-        journey.code = '0915'
+        journey.code = "0915"
         trip = journey.get_trip()
-        self.assertEqual(trip.ticket_machine_code, '1')
+        self.assertEqual(trip.ticket_machine_code, "1")
 
-        trip = journey.get_trip(destination_ref='290J34')
+        trip = journey.get_trip(destination_ref="290J34")
         self.assertIsNone(trip)
 
-        trip = journey.get_trip(destination_ref='2900K132')
-        self.assertEqual(trip.ticket_machine_code, '1')
+        trip = journey.get_trip(destination_ref="2900K132")
+        self.assertEqual(trip.ticket_machine_code, "1")
 
-        journey.code = '0916'
+        journey.code = "0916"
         trip = journey.get_trip()
         self.assertIsNone(trip)
 
-        trip = journey.get_trip(destination_ref='2900K132')
+        trip = journey.get_trip(destination_ref="2900K132")
         self.assertIsNone(trip)
 
         # test trip copy:
@@ -240,7 +294,7 @@ class ImportBusOpenDataTest(TestCase):
         trip.copy(datetime.timedelta(hours=1))
 
         # test journey with trip json
-        with patch('vehicles.views.redis_client.lrange') as mock_lrange:
+        with patch("vehicles.views.redis_client.lrange") as mock_lrange:
             mock_lrange.return_value = []
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
@@ -248,38 +302,55 @@ class ImportBusOpenDataTest(TestCase):
             self.assertNotIn("locations", json)
 
             # journey locations but no stop locations
-            mock_lrange.return_value = [b'["2019-05-29T13:03:34+01:00", [0.23, 52.729], null, null]']
+            mock_lrange.return_value = [
+                b'["2019-05-29T13:03:34+01:00", [0.23, 52.729], null, null]'
+            ]
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertIn("stops", json)
             self.assertIn("locations", json)
 
             # journey locations and stop location
-            StopPoint.objects.filter(atco_code="2900W0314").update(latlong="POINT(0.23 52.729)")
+            StopPoint.objects.filter(atco_code="2900W0314").update(
+                latlong="POINT(0.23 52.729)"
+            )
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
-            self.assertEqual(json["stops"][2]["actual_departure_time"], "2019-05-29T13:03:34+01:00")
+            self.assertEqual(
+                json["stops"][2]["actual_departure_time"], "2019-05-29T13:03:34+01:00"
+            )
 
     def test_ticketer(self):
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                with use_cassette(str(FIXTURES_DIR / 'bod_ticketer.yaml')):
+                with use_cassette(str(FIXTURES_DIR / "bod_ticketer.yaml")):
                     with override_settings(
-                        TICKETER_OPERATORS=[('EA', ['Completely_Coach_Travel', 'CPLT'], 'Completely Coach Travel')]
+                        TICKETER_OPERATORS=[
+                            (
+                                "EA",
+                                ["Completely_Coach_Travel", "CPLT"],
+                                "Completely Coach Travel",
+                            )
+                        ]
                     ):
-                        with self.assertLogs('bustimes.management.commands.import_transxchange', 'WARNING') as cm:
-                            call_command('import_bod', 'ticketer')
+                        with self.assertLogs(
+                            "bustimes.management.commands.import_transxchange",
+                            "WARNING",
+                        ) as cm:
+                            call_command("import_bod", "ticketer")
 
                     with override_settings(
-                        TICKETER_OPERATORS=[('EA', ['Completely_Coach_Travel', 'CPLT'])]
+                        TICKETER_OPERATORS=[("EA", ["Completely_Coach_Travel", "CPLT"])]
                     ):
                         with self.assertNumQueries(1):
-                            call_command('import_bod', 'ticketer')  # not modified
+                            call_command("import_bod", "ticketer")  # not modified
 
                         with self.assertNumQueries(0):
-                            call_command('import_bod', 'ticketer', 'POOP')  # no matching setting
+                            call_command(
+                                "import_bod", "ticketer", "POOP"
+                            )  # no matching setting
 
-                source = DataSource.objects.get(name='Completely Coach Travel')
+                source = DataSource.objects.get(name="Completely Coach Travel")
                 service = source.service_set.first()
                 route = service.route_set.first()
 
@@ -291,104 +362,115 @@ class ImportBusOpenDataTest(TestCase):
             response,
             "Timetable data from "
             "https://opendata.ticketer.com/uk/Completely_Coach_Travel/routes_and_timetables/current.zip, "
-            "24 September 2021"
+            "24 September 2021",
         )
 
         self.assertEqual(
             cm.output,
-            ["WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'CPLT', "
-             "'OperatorShortName': 'Completely Coach Travel', 'LicenceNumber': 'PF2024545'}"]
+            [
+                "WARNING:bustimes.management.commands.import_transxchange:{'NationalOperatorCode': 'CPLT', "
+                "'OperatorShortName': 'Completely Coach Travel', 'LicenceNumber': 'PF2024545'}"
+            ],
         )
 
-    @override_settings(STAGECOACH_OPERATORS=[('EA', 'sccm', 'Stagecoach East', ['SCHU', 'SCPB'])])
+    @override_settings(
+        STAGECOACH_OPERATORS=[("EA", "sccm", "Stagecoach East", ["SCHU", "SCPB"])]
+    )
     @time_machine.travel(datetime.datetime(2020, 6, 10))
     def test_import_stagecoach(self):
 
-        StopPoint.objects.bulk_create([
-            StopPoint(
-                atco_code='0500HYAXL033',
-                common_name='Folly Close',
-                indicator='opp',
-                active=True
-            ),
-            StopPoint(
-                atco_code='0500HYAXL007',
-                common_name='Motel',
-                indicator='opp',
-                active=True
-            ),
-            StopPoint(
-                atco_code='0500HFOLK002',
-                common_name='Folksworth Road',
-                indicator='opp',
-                active=True
-            ),
-            StopPoint(
-                atco_code="0500HSTIV054",
-                common_name="St John's Road",
-                indicator="opp",
-                active=True
-            ),
-            StopPoint(
-                atco_code="0500HHUNT049",
-                common_name="Church Lane",
-                indicator="near",
-                active=True
-            ),
-        ])
+        StopPoint.objects.bulk_create(
+            [
+                StopPoint(
+                    atco_code="0500HYAXL033",
+                    common_name="Folly Close",
+                    indicator="opp",
+                    active=True,
+                ),
+                StopPoint(
+                    atco_code="0500HYAXL007",
+                    common_name="Motel",
+                    indicator="opp",
+                    active=True,
+                ),
+                StopPoint(
+                    atco_code="0500HFOLK002",
+                    common_name="Folksworth Road",
+                    indicator="opp",
+                    active=True,
+                ),
+                StopPoint(
+                    atco_code="0500HSTIV054",
+                    common_name="St John's Road",
+                    indicator="opp",
+                    active=True,
+                ),
+                StopPoint(
+                    atco_code="0500HHUNT049",
+                    common_name="Church Lane",
+                    indicator="near",
+                    active=True,
+                ),
+            ]
+        )
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
                 for archive_name in (
-                    'stagecoach-sccm-route-schedule-data-transxchange.zip',
-                    'stagecoach-sccm-route-schedule-data-transxchange_2_4.zip',
+                    "stagecoach-sccm-route-schedule-data-transxchange.zip",
+                    "stagecoach-sccm-route-schedule-data-transxchange_2_4.zip",
                 ):
                     path = Path(directory) / archive_name
 
-                    with zipfile.ZipFile(path, 'a') as open_zipfile:
+                    with zipfile.ZipFile(path, "a") as open_zipfile:
                         for filename in (
-                            '904_FE_PF_904_20210102.xml',
-                            '904_VI_PF_904_20200830.xml',
+                            "904_FE_PF_904_20210102.xml",
+                            "904_VI_PF_904_20200830.xml",
                         ):
                             open_zipfile.write(FIXTURES_DIR / filename, filename)
 
                 with patch(
-                    'bustimes.management.commands.import_bod.download_if_changed',
-                    return_value=(True, parse_datetime('2020-06-10T12:00:00+01:00')),
+                    "bustimes.management.commands.import_bod.download_if_changed",
+                    return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
                     with self.assertNumQueries(150):
-                        call_command('import_bod', 'stagecoach')
+                        call_command("import_bod", "stagecoach")
                     download_if_changed.assert_called_with(
-                        path, 'https://opendata.stagecoachbus.com/' + archive_name
+                        path, "https://opendata.stagecoachbus.com/" + archive_name
                     )
 
-                    route_links = RouteLink.objects.order_by('id')
+                    route_links = RouteLink.objects.order_by("id")
                     self.assertEqual(len(route_links), 2)
                     route_link = route_links[0]
-                    route_link.geometry = "SRID=4326;LINESTRING(0 0, 0 0)"  # should be overwritten later
+                    route_link.geometry = (
+                        "SRID=4326;LINESTRING(0 0, 0 0)"  # should be overwritten later
+                    )
                     route_link.save()
 
                     with self.assertNumQueries(4):
-                        call_command('import_bod', 'stagecoach')
+                        call_command("import_bod", "stagecoach")
 
                     with self.assertNumQueries(0):
-                        call_command('import_bod', 'stagecoach', 'scox')
+                        call_command("import_bod", "stagecoach", "scox")
 
                     with self.assertNumQueries(92):
-                        call_command('import_bod', 'stagecoach', 'sccm')
+                        call_command("import_bod", "stagecoach", "sccm")
 
                     route_link.refresh_from_db()
                     self.assertEqual(len(route_link.geometry.coords), 32)
 
-                source = DataSource.objects.filter(name='Stagecoach East').first()
-                response = self.client.get(f'/sources/{source.id}/routes/')
+                source = DataSource.objects.filter(name="Stagecoach East").first()
+                response = self.client.get(f"/sources/{source.id}/routes/")
 
-                self.assertEqual(response.content.decode(), '904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml')
+                self.assertEqual(
+                    response.content.decode(),
+                    "904_FE_PF_904_20210102.xml\n904_VI_PF_904_20200830.xml",
+                )
 
                 route = Route.objects.first()
                 response = self.client.get(route.get_absolute_url())
                 self.assertEqual(200, response.status_code)
-                self.assertEqual('', response.filename)
+                self.assertEqual("", response.filename)
 
         self.assertEqual(BankHoliday.objects.count(), 13)
         self.assertEqual(CalendarBankHoliday.objects.count(), 130)
@@ -397,25 +479,34 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(Block.objects.count(), 12)
 
         with self.assertNumQueries(5):
-            response = self.client.get(f'/services/{route.service_id}.json')
-        self.assertTrue(response.json()['geometry'])
+            response = self.client.get(f"/services/{route.service_id}.json")
+        self.assertTrue(response.json()["geometry"])
 
         self.assertEqual(1, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
 
         with self.assertNumQueries(16):
-            response = self.client.get('/services/904-huntingdon-peterborough')
-        self.assertContains(response, '<option selected value="2020-08-31">Monday 31 August 2020</option>')
+            response = self.client.get("/services/904-huntingdon-peterborough")
+        self.assertContains(
+            response,
+            '<option selected value="2020-08-31">Monday 31 August 2020</option>',
+        )
         self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
 
-        with time_machine.travel('2021-01-11'):
-            response = self.client.get('/services/904-huntingdon-peterborough')
-        self.assertContains(response, "The timetable data for this service was valid until Sunday 10 January 2021. But")
+        with time_machine.travel("2021-01-11"):
+            response = self.client.get("/services/904-huntingdon-peterborough")
+        self.assertContains(
+            response,
+            "The timetable data for this service was valid until Sunday 10 January 2021. But",
+        )
 
         BankHolidayDate.objects.create(
-            bank_holiday=BankHoliday.objects.get(name='ChristmasDay'),
-            date='2020-12-25'
+            bank_holiday=BankHoliday.objects.get(name="ChristmasDay"), date="2020-12-25"
         )
         with self.assertNumQueries(14):
-            response = self.client.get('/services/904-huntingdon-peterborough?date=2020-12-25')
-            self.assertContains(response, "Sorry, no journeys found for Friday 25 December 2020")
+            response = self.client.get(
+                "/services/904-huntingdon-peterborough?date=2020-12-25"
+            )
+            self.assertContains(
+                response, "Sorry, no journeys found for Friday 25 December 2020"
+            )

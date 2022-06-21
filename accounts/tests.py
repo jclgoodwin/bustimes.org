@@ -53,15 +53,12 @@ class RegistrationTest(TestCase):
         self.assertEqual(3, len(mail.outbox))
 
         # username (email address) should be case insensitive
-        user.set_password('swim green twenty eggs')
+        user.set_password("swim green twenty eggs")
         user.save()
         with self.assertNumQueries(9):
             response = self.client.post(
                 "/accounts/login/",
-                {
-                    "username": "roY@hoTmail.com",
-                    "password": "swim green twenty eggs"
-                },
+                {"username": "roY@hoTmail.com", "password": "swim green twenty eggs"},
             )
             self.assertEqual(302, response.status_code)
 

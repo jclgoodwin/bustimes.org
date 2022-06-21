@@ -21,13 +21,13 @@ from . import rtpi
 
 
 def format_reg(reg):
-    if '-' not in reg:
+    if "-" not in reg:
         if reg[-3:].isalpha():
-            return reg[:-3] + ' ' + reg[-3:]
+            return reg[:-3] + " " + reg[-3:]
         if reg[:3].isalpha():
-            return reg[:3] + ' ' + reg[3:]
+            return reg[:3] + " " + reg[3:]
         if reg[-2:].isalpha():
-            return reg[:-2] + ' ' + reg[-2:]
+            return reg[:-2] + " " + reg[-2:]
     return reg
 
 
@@ -38,25 +38,25 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
         direction = 180
     else:
         direction = int(direction)
-    background = 'linear-gradient('
+    background = "linear-gradient("
     if horizontal:
-        background += 'to top'
+        background += "to top"
     elif direction < 180:
         if angle:
-            background += f'{360-angle}deg'
+            background += f"{360-angle}deg"
         else:
-            background += 'to left'
+            background += "to left"
     elif angle:
-        background += f'{angle}deg'
+        background += f"{angle}deg"
     else:
-        background += 'to right'
+        background += "to right"
     percentage = 100 / len(colours)
     for i, colour in enumerate(colours):
         if i != 0 and colour != colours[i - 1]:
-            background += ',{} {}%'.format(colour, ceil(percentage * i))
+            background += ",{} {}%".format(colour, ceil(percentage * i))
         if i != len(colours) - 1 and colour != colours[i + 1]:
-            background += ',{} {}%'.format(colour, ceil(percentage * (i + 1)))
-    background += ')'
+            background += ",{} {}%".format(colour, ceil(percentage * (i + 1)))
+    background += ")"
 
     return background
 
@@ -66,7 +66,7 @@ def get_brightness(colour):
 
 
 def get_text_colour(colours):
-    if not colours or colours == 'Other':
+    if not colours or colours == "Other":
         return
     colours = colours.split()
     colours = [html5_parse_simple_color(colour) for colour in colours]
@@ -74,12 +74,14 @@ def get_text_colour(colours):
     colours_length = len(colours)
     if colours_length > 2:
         middle_brightness = sum(brightnesses[1:-1])
-        outer_brightness = (brightnesses[0] + brightnesses[-1])
-        brightness = (middle_brightness * 2 + outer_brightness) / ((colours_length - 2) * 2 + 2)
+        outer_brightness = brightnesses[0] + brightnesses[-1]
+        brightness = (middle_brightness * 2 + outer_brightness) / (
+            (colours_length - 2) * 2 + 2
+        )
     else:
         brightness = sum(brightnesses) / colours_length
-    if brightness < .5:
-        return '#fff'
+    if brightness < 0.5:
+        return "#fff"
 
 
 class VehicleType(models.Model):
@@ -89,7 +91,7 @@ class VehicleType(models.Model):
     electric = models.BooleanField(null=True)
 
     class Meta:
-        ordering = ('name',)
+        ordering = ("name",)
 
     def __str__(self):
         return self.name
@@ -98,32 +100,44 @@ class VehicleType(models.Model):
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
     colours = models.CharField(
-        max_length=512, blank=True,
+        max_length=512,
+        blank=True,
         help_text="""Keep it simple.
-Simplicity (and being able to read the route number on the map) is much more important than 'accuracy'."""
+Simplicity (and being able to read the route number on the map) is much more important than 'accuracy'.""",
     )
     css = models.CharField(
-        max_length=1024, blank=True, verbose_name="CSS",
+        max_length=1024,
+        blank=True,
+        verbose_name="CSS",
         help_text="""Leave this blank.
-A livery can be adequately represented with a list of colours and an angle."""
+A livery can be adequately represented with a list of colours and an angle.""",
     )
     left_css = models.CharField(
-        max_length=1024, blank=True, verbose_name="Left CSS",
-        help_text="Automatically generated from colours and angle"
+        max_length=1024,
+        blank=True,
+        verbose_name="Left CSS",
+        help_text="Automatically generated from colours and angle",
     )
     right_css = models.CharField(
-        max_length=1024, blank=True, verbose_name="Right CSS",
-        help_text="Automatically generated from colours and angle"
+        max_length=1024,
+        blank=True,
+        verbose_name="Right CSS",
+        help_text="Automatically generated from colours and angle",
     )
     white_text = models.BooleanField(default=False)
     text_colour = models.CharField(max_length=7, blank=True)
     stroke_colour = models.CharField(max_length=7, blank=True)
-    horizontal = models.BooleanField(default=False, help_text="Equivalent to setting the angle to 90")
+    horizontal = models.BooleanField(
+        default=False, help_text="Equivalent to setting the angle to 90"
+    )
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
     operator = models.ForeignKey(
-        'busstops.Operator', models.SET_NULL, null=True, blank=True,
+        "busstops.Operator",
+        models.SET_NULL,
+        null=True,
+        blank=True,
         help_text="""A livery may be assigned to vehicles from more than one operator.
-You can use this field to make this livery selectable for a new operator – that's its only purpose"""
+You can use this field to make this livery selectable for a new operator – that's its only purpose""",
     )
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
@@ -133,8 +147,8 @@ You can use this field to make this livery selectable for a new operator – tha
     history = HistoricalRecords()
 
     class Meta:
-        ordering = ('name',)
-        verbose_name_plural = 'liveries'
+        ordering = ("name",)
+        verbose_name_plural = "liveries"
 
     def __str__(self):
         return self.name
@@ -143,15 +157,19 @@ You can use this field to make this livery selectable for a new operator – tha
         if self.css:
             css = self.css
             self.left_css = css
-            for angle in re.findall(r'\((\d+)deg,', css):
+            for angle in re.findall(r"\((\d+)deg,", css):
                 replacement = 360 - int(angle)
-                css = css.replace(f'({angle}deg,', f'({replacement}deg,', 1)
+                css = css.replace(f"({angle}deg,", f"({replacement}deg,", 1)
                 # doesn't work with e.g. angles {a, b} where a = 360 - b
-            self.right_css = css.replace('left', 'right')
+            self.right_css = css.replace("left", "right")
 
-        elif self.colours and self.colours != 'Other':
-            self.left_css = get_css(self.colours.split(), None, self.horizontal, self.angle)
-            self.right_css = get_css(self.colours.split(), 90, self.horizontal, self.angle)
+        elif self.colours and self.colours != "Other":
+            self.left_css = get_css(
+                self.colours.split(), None, self.horizontal, self.angle
+            )
+            self.right_css = get_css(
+                self.colours.split(), 90, self.horizontal, self.angle
+            )
 
     def preview(self, name=False):
         if self.left_css:
@@ -159,62 +177,56 @@ You can use this field to make this livery selectable for a new operator – tha
         elif self.colours:
             background = get_css(self.colours.split())
         elif name:
-            background = ''
+            background = ""
         else:
             return
 
         div = f'<div style="height:1.5em;width:2.25em;background:{background}"'
         if name:
-            return format_html(div + '></div> {}', self.name)
+            return format_html(div + "></div> {}", self.name)
         else:
             return format_html(div + ' title="{}"></div>', self.name)
 
     def clean(self):
         Vehicle.clean(self)  # validate colours field
 
-        for attr in ('stroke_colour', 'text_colour'):
+        for attr in ("stroke_colour", "text_colour"):
             value = getattr(self, attr)
             if value:
                 try:
                     html5_parse_simple_color(value)
                 except ValueError as e:
-                    raise ValidationError({
-                        attr: str(e)
-                    })
+                    raise ValidationError({attr: str(e)})
 
-        for attr in ('css', 'left_css', 'right_css'):
+        for attr in ("css", "left_css", "right_css"):
             value = getattr(self, attr)
-            if value.count('(') != value.count(')'):
-                raise ValidationError({
-                    attr: 'Must contain equal numbers of ( and )'
-                })
-            if '{' in value or '}' in value:
-                raise ValidationError({
-                    attr: 'Must not contain { or }'
-                })
+            if value.count("(") != value.count(")"):
+                raise ValidationError({attr: "Must contain equal numbers of ( and )"})
+            if "{" in value or "}" in value:
+                raise ValidationError({attr: "Must not contain { or }"})
 
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
         if update_fields is None and (self.css or self.colours):
             self.set_css()
             if self.colours and not self.id:
-                self.white_text = (get_text_colour(self.colours) == '#fff')
+                self.white_text = get_text_colour(self.colours) == "#fff"
         super().save(*args, update_fields=update_fields, **kwargs)
 
     def get_styles(self):
         if not self.left_css:
             return []
-        selector = f'.livery-{self.id}'
-        css = f'background: {self.left_css}'
+        selector = f".livery-{self.id}"
+        css = f"background: {self.left_css}"
         if self.text_colour:
-            css = f'{css};\n  color:{self.text_colour};fill:{self.text_colour}'
+            css = f"{css};\n  color:{self.text_colour};fill:{self.text_colour}"
         elif self.white_text:
-            css = f'{css};\n  color:#fff;fill:#fff'
+            css = f"{css};\n  color:#fff;fill:#fff"
         if self.stroke_colour:
-            css = f'{css};stroke:{self.stroke_colour}'
-        styles = [f'{selector} {{\n  {css}\n}}\n']
+            css = f"{css};stroke:{self.stroke_colour}"
+        styles = [f"{selector} {{\n  {css}\n}}\n"]
         if self.right_css != self.left_css:
-            styles.append(f'{selector}.right {{\n  background: {self.right_css}\n}}\n')
+            styles.append(f"{selector}.right {{\n  background: {self.right_css}\n}}\n")
         return styles
 
 
@@ -232,71 +244,89 @@ class Vehicle(models.Model):
     reg = models.CharField(max_length=24, blank=True)
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True)
-    vehicle_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True)
+    vehicle_type = models.ForeignKey(
+        VehicleType, models.SET_NULL, null=True, blank=True
+    )
     colours = models.CharField(max_length=255, blank=True)
     livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
     latest_journey = models.OneToOneField(
-        'VehicleJourney', models.SET_NULL, null=True, blank=True, related_name='latest_vehicle'
+        "VehicleJourney",
+        models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="latest_vehicle",
     )
     latest_journey_data = models.JSONField(null=True, blank=True)
     features = models.ManyToManyField(VehicleFeature, blank=True)
     withdrawn = models.BooleanField(default=False)
     data = models.JSONField(null=True, blank=True)
-    garage = models.ForeignKey('bustimes.Garage', models.SET_NULL, null=True, blank=True)
+    garage = models.ForeignKey(
+        "bustimes.Garage", models.SET_NULL, null=True, blank=True
+    )
 
     def save(self, *args, update_fields=None, **kwargs):
-        if (update_fields is None or 'fleet_number' in update_fields) and self.fleet_number:
-            if not self.fleet_code or (self.fleet_code.isdigit() and self.fleet_number != int(self.fleet_code)):
+        if (
+            update_fields is None or "fleet_number" in update_fields
+        ) and self.fleet_number:
+            if not self.fleet_code or (
+                self.fleet_code.isdigit() and self.fleet_number != int(self.fleet_code)
+            ):
                 self.fleet_code = str(self.fleet_number)
-                if update_fields is not None and 'fleet_code' not in update_fields:
-                    update_fields.append('fleet_code')
+                if update_fields is not None and "fleet_code" not in update_fields:
+                    update_fields.append("fleet_code")
 
-        if (update_fields is None or 'fleet_code' in update_fields) and self.fleet_code:
+        if (update_fields is None or "fleet_code" in update_fields) and self.fleet_code:
             if not self.fleet_number and self.fleet_code.isdigit():
                 self.fleet_number = int(self.fleet_code)
-                if update_fields is not None and 'fleet_number' not in update_fields:
-                    update_fields.append('fleet_number')
+                if update_fields is not None and "fleet_number" not in update_fields:
+                    update_fields.append("fleet_number")
 
         if update_fields is None and not self.reg:
             reg = re.match(r"^[A-Z]\w_?\d\d?[ _-]?[A-Z]{3}$", self.code)
             if reg:
                 self.reg = re.sub("[-_ ]", "", self.code)
-        elif update_fields is None or 'reg' in update_fields:
-            self.reg = self.reg.upper().replace(' ', '')
+        elif update_fields is None or "reg" in update_fields:
+            self.reg = self.reg.upper().replace(" ", "")
 
         super().save(*args, update_fields=update_fields, **kwargs)
 
     class Meta:
         indexes = [
-            models.Index(Upper('fleet_code'), name='fleet_code'),
-            models.Index(Upper('reg'), name='reg'),
+            models.Index(Upper("fleet_code"), name="fleet_code"),
+            models.Index(Upper("reg"), name="reg"),
         ]
         constraints = [
-            models.UniqueConstraint(Upper('code'), Upper('operator'), name='vehicle_operator_and_code'),
+            models.UniqueConstraint(
+                Upper("code"), Upper("operator"), name="vehicle_operator_and_code"
+            ),
         ]
 
     def __str__(self):
         fleet_code = self.fleet_code or self.fleet_number
         if self.reg:
             if fleet_code:
-                return f'{fleet_code} - {self.get_reg()}'
+                return f"{fleet_code} - {self.get_reg()}"
             return self.get_reg()
         if fleet_code:
             return str(fleet_code)
-        return self.code.replace('_', ' ')
+        return self.code.replace("_", " ")
 
     def get_previous(self):
         if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set.filter(withdrawn=False, fleet_number__lt=self.fleet_number)
-            return vehicles.order_by('-fleet_number').first()
+            vehicles = self.operator.vehicle_set.filter(
+                withdrawn=False, fleet_number__lt=self.fleet_number
+            )
+            return vehicles.order_by("-fleet_number").first()
 
     def get_next(self):
         if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set.filter(withdrawn=False, fleet_number__gt=self.fleet_number)
-            return vehicles.order_by('fleet_number').first()
+            vehicles = self.operator.vehicle_set.filter(
+                withdrawn=False, fleet_number__gt=self.fleet_number
+            )
+            return vehicles.order_by("fleet_number").first()
 
     def get_reg(self):
         return format_reg(self.reg)
@@ -309,15 +339,15 @@ class Vehicle(models.Model):
         if self.data:
             value = self.data.get(key)
             if value:
-                if key == 'Previous reg':
-                    return ', '.join(format_reg(reg) for reg in value.split(','))
+                if key == "Previous reg":
+                    return ", ".join(format_reg(reg) for reg in value.split(","))
                 return value
-        return ''
+        return ""
 
     def get_text_colour(self):
         if self.livery:
             if self.livery.white_text:
-                return '#fff'
+                return "#fff"
         elif self.colours:
             return get_text_colour(self.colours)
 
@@ -328,27 +358,27 @@ class Vehicle(models.Model):
             return escape(self.livery.left_css)
 
         colours = self.colours
-        if colours and colours != 'Other':
+        if colours and colours != "Other":
             colours = colours.split()
             return get_css(colours, direction, self.livery and self.livery.horizontal)
 
     def get_absolute_url(self):
-        return reverse('vehicle_detail', args=(self.id,))
+        return reverse("vehicle_detail", args=(self.id,))
 
     def get_edit_url(self):
-        return reverse('vehicle_edit', args=(self.id,))
+        return reverse("vehicle_edit", args=(self.id,))
 
     def get_history_url(self):
-        return reverse('vehicle_history', args=(self.id,))
+        return reverse("vehicle_history", args=(self.id,))
 
     def fleet_number_mismatch(self):
         if self.code.isdigit():
             if self.fleet_number and self.fleet_number != int(self.code):
                 return True
         elif self.reg:
-            code = self.code.replace('-', '').replace('_', '').replace(' ', '').upper()
+            code = self.code.replace("-", "").replace("_", "").replace(" ", "").upper()
             if self.reg not in code:
-                fleet_code = self.fleet_code.replace(' ', '') or self.fleet_number
+                fleet_code = self.fleet_code.replace(" ", "") or self.fleet_number
                 if not fleet_code or str(fleet_code) not in code:
                     return True
 
@@ -359,65 +389,76 @@ class Vehicle(models.Model):
             if self.fleet_number and self.operator and self.operator.parent:
                 number = str(self.fleet_number)
                 if len(number) >= 5:
-                    search = f'{search} or {self.operator.parent} {number}'
+                    search = f"{search} or {self.operator.parent} {number}"
         else:
             if self.fleet_code or self.fleet_number:
                 search = self.fleet_code or str(self.fleet_number)
             else:
-                search = str(self).replace('/', ' ')
+                search = str(self).replace("/", " ")
             if self.operator:
-                name = str(self.operator).split(' (', 1)[0]
-                if 'Yellow' not in name:
-                    name = str(self.operator).replace(' Buses', '', 1).replace(' Coaches', '', 1)
-                if name.startswith('First ') or name.startswith('Stagecoach ') or name.startswith('Arriva '):
+                name = str(self.operator).split(" (", 1)[0]
+                if "Yellow" not in name:
+                    name = (
+                        str(self.operator)
+                        .replace(" Buses", "", 1)
+                        .replace(" Coaches", "", 1)
+                    )
+                if (
+                    name.startswith("First ")
+                    or name.startswith("Stagecoach ")
+                    or name.startswith("Arriva ")
+                ):
                     name = name.split()[0]
-                search = f'{name} {search}'
-        return f'https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc'
+                search = f"{name} {search}"
+        return (
+            f"https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc"
+        )
 
     def get_flickr_link(self):
-        if self.notes == 'Spare ticket machine':
-            return ''
-        return format_html('<a href="{}" target="_blank" rel="noopener">Flickr</a>', self.get_flickr_url())
+        if self.notes == "Spare ticket machine":
+            return ""
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener">Flickr</a>',
+            self.get_flickr_url(),
+        )
 
-    get_flickr_link.short_description = 'Flickr'
+    get_flickr_link.short_description = "Flickr"
 
     def clean(self):
         try:
             get_text_colour(self.colours)
         except ValueError as e:
-            raise ValidationError({
-                'colours': str(e)
-            })
+            raise ValidationError({"colours": str(e)})
 
     def get_json(self, heading):
         json = {
-            'url': self.get_absolute_url(),
-            'name': str(self),
+            "url": self.get_absolute_url(),
+            "name": str(self),
         }
 
         features = self.feature_names
         if self.vehicle_type:
             if self.vehicle_type.double_decker:
-                vehicle_type = 'Double decker'
+                vehicle_type = "Double decker"
                 if self.vehicle_type.coach:
-                    vehicle_type = f'{vehicle_type} coach'
+                    vehicle_type = f"{vehicle_type} coach"
             elif self.vehicle_type.coach:
-                vehicle_type = 'Coach'
+                vehicle_type = "Coach"
             else:
                 vehicle_type = None
             if vehicle_type:
                 if features:
-                    features = f'{vehicle_type}<br>{features}'
+                    features = f"{vehicle_type}<br>{features}"
                 else:
                     features = vehicle_type
         if features:
-            json['features'] = features
+            json["features"] = features
 
         if self.livery_id:
-            json['livery'] = self.livery_id
+            json["livery"] = self.livery_id
         elif self.colours:
-            json['css'] = self.get_livery(heading)
-            json['text_colour'] = self.get_text_colour()
+            json["css"] = self.get_livery(heading)
+            json["text_colour"] = self.get_text_colour()
         return json
 
 
@@ -427,19 +468,19 @@ class VehicleCode(models.Model):
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
 
     class Meta:
-        index_together = ('code', 'scheme')
+        index_together = ("code", "scheme")
 
 
 class VehicleEditFeature(models.Model):
     feature = models.ForeignKey(VehicleFeature, models.CASCADE)
-    edit = models.ForeignKey('VehicleEdit', models.CASCADE)
+    edit = models.ForeignKey("VehicleEdit", models.CASCADE)
     add = models.BooleanField(default=True)
 
     def __str__(self):
         if self.add:
-            fmt = '<ins>{}</ins>'
+            fmt = "<ins>{}</ins>"
         else:
-            fmt = '<del>{}</del>'
+            fmt = "<del>{}</del>"
         return format_html(fmt, self.feature)
 
 
@@ -453,39 +494,56 @@ class VehicleEdit(models.Model):
     name = models.CharField(max_length=255, blank=True)
     branding = models.CharField(max_length=255, blank=True)
     notes = models.CharField(max_length=255, blank=True)
-    features = models.ManyToManyField(VehicleFeature, blank=True, through=VehicleEditFeature)
+    features = models.ManyToManyField(
+        VehicleFeature, blank=True, through=VehicleEditFeature
+    )
     withdrawn = models.BooleanField(null=True)
     changes = models.JSONField(null=True, blank=True)
     url = models.URLField(blank=True, max_length=255)
     approved = models.BooleanField(null=True, db_index=True)
     arbiter = models.ForeignKey(
-        settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True, related_name='arbited'
+        settings.AUTH_USER_MODEL,
+        models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="arbited",
     )
     score = models.SmallIntegerField(default=0)
     datetime = models.DateTimeField(null=True, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True
+    )
 
     def get_css(self):
-        if self.colours and self.colours != 'Other':
+        if self.colours and self.colours != "Other":
             return get_css(self.colours.split())
 
     def get_changes(self):
         changes = {}
-        for field in ('fleet_number', 'reg', 'vehicle_type', 'branding', 'name', 'notes', 'colours', 'livery_id'):
-            edit = str(getattr(self, field) or '')
+        for field in (
+            "fleet_number",
+            "reg",
+            "vehicle_type",
+            "branding",
+            "name",
+            "notes",
+            "colours",
+            "livery_id",
+        ):
+            edit = str(getattr(self, field) or "")
             if edit:
-                if field == 'reg':
-                    edit = edit.upper().replace(' ', '')
-                if field == 'fleet_number' and self.vehicle.fleet_code:
+                if field == "reg":
+                    edit = edit.upper().replace(" ", "")
+                if field == "fleet_number" and self.vehicle.fleet_code:
                     vehicle = self.vehicle.fleet_code
                 else:
-                    vehicle = str(getattr(self.vehicle, field) or '')
+                    vehicle = str(getattr(self.vehicle, field) or "")
 
-                if edit.startswith('-'):
-                    if edit == f'-{vehicle}':
-                        edit = format_html('<del>{}</del>', vehicle)
+                if edit.startswith("-"):
+                    if edit == f"-{vehicle}":
+                        edit = format_html("<del>{}</del>", vehicle)
                     else:
-                        edit = ''
+                        edit = ""
                 if edit != vehicle:
                     changes[field] = edit
         changed_features = self.vehicleeditfeature_set.all()
@@ -498,23 +556,25 @@ class VehicleEdit(models.Model):
                 elif feature.feature in self.vehicle.features.all():
                     features.append(feature)
             if features:
-                changes['features'] = features
+                changes["features"] = features
         if self.withdrawn is not None and self.withdrawn != self.vehicle.withdrawn:
             if (
                 not self.withdrawn
                 or not self.vehicle.latest_journey
                 or self.datetime > self.vehicle.latest_journey.datetime
             ):
-                changes['withdrawn'] = self.withdrawn
+                changes["withdrawn"] = self.withdrawn
         if self.changes:
             for key in self.changes:
-                if not self.vehicle.data or self.changes[key] != self.vehicle.data.get(key):
+                if not self.vehicle.data or self.changes[key] != self.vehicle.data.get(
+                    key
+                ):
                     changes[key] = self.changes[key]
         return changes
 
     def is_simple(self):
         for key in self.get_changes():
-            if key in ('name', 'branding', 'Previous reg'):
+            if key in ("name", "branding", "Previous reg"):
                 return False
         return True
 
@@ -528,15 +588,18 @@ class VehicleEdit(models.Model):
         if self.withdrawn is not None:
             if revision:
                 if self.withdrawn:
-                    revision.changes['withdrawn'] = '-No\n+Yes'
+                    revision.changes["withdrawn"] = "-No\n+Yes"
                 else:
-                    revision.changes['withdrawn'] = '-Yes\n+No'
+                    revision.changes["withdrawn"] = "-Yes\n+No"
             vehicle.withdrawn = self.withdrawn
-            update_fields.append('withdrawn')
+            update_fields.append("withdrawn")
         if self.fleet_number:
-            if self.fleet_number.startswith('-'):
-                if self.fleet_number == f'-{vehicle.fleet_code or vehicle.fleet_number}':
-                    vehicle.fleet_code = ''
+            if self.fleet_number.startswith("-"):
+                if (
+                    self.fleet_number
+                    == f"-{vehicle.fleet_code or vehicle.fleet_number}"
+                ):
+                    vehicle.fleet_code = ""
                     vehicle.fleet_number = None
             else:
                 vehicle.fleet_code = self.fleet_number
@@ -544,25 +607,23 @@ class VehicleEdit(models.Model):
                     vehicle.fleet_number = self.fleet_number
                 else:
                     vehicle.fleet_number = None
-            update_fields.append('fleet_code')
-            update_fields.append('fleet_number')
+            update_fields.append("fleet_code")
+            update_fields.append("fleet_number")
         if self.changes:
             if vehicle.data:
-                vehicle.data = {
-                    **vehicle.data, **self.changes
-                }
+                vehicle.data = {**vehicle.data, **self.changes}
                 for field in self.changes:
                     if not self.changes[field]:
                         del vehicle.data[field]
             else:
                 vehicle.data = self.changes
-            update_fields.append('data')
-        for field in ('branding', 'name', 'notes', 'reg'):
+            update_fields.append("data")
+        for field in ("branding", "name", "notes", "reg"):
             new_value = getattr(self, field)
             if new_value:
-                if new_value.startswith('-'):
-                    if new_value == f'-{getattr(vehicle, field)}':
-                        setattr(vehicle, field, '')
+                if new_value.startswith("-"):
+                    if new_value == f"-{getattr(vehicle, field)}":
+                        setattr(vehicle, field, "")
                     else:
                         continue
                 else:
@@ -570,20 +631,22 @@ class VehicleEdit(models.Model):
                 update_fields.append(field)
         if self.vehicle_type:
             try:
-                vehicle.vehicle_type = VehicleType.objects.get(name__iexact=self.vehicle_type)
-                update_fields.append('vehicle_type')
+                vehicle.vehicle_type = VehicleType.objects.get(
+                    name__iexact=self.vehicle_type
+                )
+                update_fields.append("vehicle_type")
             except VehicleType.DoesNotExist:
                 ok = False
         if self.livery_id:
             vehicle.livery_id = self.livery_id
-            vehicle.colours = ''
-            update_fields.append('livery')
-            update_fields.append('colours')
-        elif self.colours and self.colours != 'Other':
+            vehicle.colours = ""
+            update_fields.append("livery")
+            update_fields.append("colours")
+        elif self.colours and self.colours != "Other":
             vehicle.livery = None
             vehicle.colours = self.colours
-            update_fields.append('livery')
-            update_fields.append('colours')
+            update_fields.append("livery")
+            update_fields.append("colours")
         if save:
             vehicle.save(update_fields=update_fields)
             if revision.has_changes():
@@ -596,7 +659,7 @@ class VehicleEdit(models.Model):
             if ok:
                 self.approved = True
                 self.arbiter = user
-                self.save(update_fields=['approved', 'arbiter'])
+                self.save(update_fields=["approved", "arbiter"])
 
     def make_revision(self):
         revision = VehicleRevision(
@@ -605,7 +668,7 @@ class VehicleEdit(models.Model):
             datetime=self.datetime,
             message=self.url,
             to_livery_id=self.livery_id,
-            changes={}
+            changes={},
         )
         if self.vehicle_type:
             try:
@@ -615,17 +678,19 @@ class VehicleEdit(models.Model):
             else:
                 if revision.to_type.id != self.vehicle.vehicle_type_id:
                     revision.from_type_id = self.vehicle.vehicle_type_id
-        for field in ('reg', 'name', 'branding', 'notes', 'fleet_number'):
+        for field in ("reg", "name", "branding", "notes", "fleet_number"):
             to_value = getattr(self, field)
             if to_value:
                 from_value = getattr(self.vehicle, field)
-                if field == 'fleet_number':
+                if field == "fleet_number":
                     from_value = self.vehicle.fleet_code
-                    field = 'fleet number'
-                if to_value.startswith('-') and (to_value == f"-{from_value}" or from_value == ''):
-                    to_value = ''
+                    field = "fleet number"
+                if to_value.startswith("-") and (
+                    to_value == f"-{from_value}" or from_value == ""
+                ):
+                    to_value = ""
                 elif from_value == to_value:
-                    from_value = ''
+                    from_value = ""
                 revision.changes[field] = f"-{from_value}\n+{to_value}"
         return revision
 
@@ -642,12 +707,12 @@ class VehicleEditVote(models.Model):
     positive = models.BooleanField()
 
     class Meta:
-        unique_together = ('by_user', 'for_edit')
+        unique_together = ("by_user", "for_edit")
 
 
 class VehicleRevisionFeature(models.Model):
     feature = models.ForeignKey(VehicleFeature, models.CASCADE)
-    revision = models.ForeignKey('VehicleRevision', models.CASCADE)
+    revision = models.ForeignKey("VehicleRevision", models.CASCADE)
     add = models.BooleanField(default=True)
 
     __str__ = VehicleEditFeature.__str__
@@ -656,20 +721,41 @@ class VehicleRevisionFeature(models.Model):
 class VehicleRevision(models.Model):
     datetime = models.DateTimeField()
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
-    from_operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True, related_name='revision_from')
-    to_operator = models.ForeignKey(Operator, models.SET_NULL, null=True, blank=True, related_name='revision_to')
-    from_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True, related_name='revision_from')
-    to_type = models.ForeignKey(VehicleType, models.SET_NULL, null=True, blank=True, related_name='revision_to')
-    from_livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True, related_name='revision_from')
-    to_livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True, related_name='revision_to')
+    from_operator = models.ForeignKey(
+        Operator, models.SET_NULL, null=True, blank=True, related_name="revision_from"
+    )
+    to_operator = models.ForeignKey(
+        Operator, models.SET_NULL, null=True, blank=True, related_name="revision_to"
+    )
+    from_type = models.ForeignKey(
+        VehicleType,
+        models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="revision_from",
+    )
+    to_type = models.ForeignKey(
+        VehicleType, models.SET_NULL, null=True, blank=True, related_name="revision_to"
+    )
+    from_livery = models.ForeignKey(
+        Livery, models.SET_NULL, null=True, blank=True, related_name="revision_from"
+    )
+    to_livery = models.ForeignKey(
+        Livery, models.SET_NULL, null=True, blank=True, related_name="revision_to"
+    )
     changes = models.JSONField(null=True, blank=True)
     message = models.TextField(blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True)
-    features = models.ManyToManyField(VehicleFeature, blank=True, through=VehicleRevisionFeature)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True
+    )
+    features = models.ManyToManyField(
+        VehicleFeature, blank=True, through=VehicleRevisionFeature
+    )
 
     def __str__(self):
-        return ', '.join(
-            f'{key}: {before} → {after}' for key, before, after in self.list_changes(html=False)
+        return ", ".join(
+            f"{key}: {before} → {after}"
+            for key, before, after in self.list_changes(html=False)
         )
 
     def has_changes(self):
@@ -678,75 +764,82 @@ class VehicleRevision(models.Model):
         return False
 
     def list_changes(self, html=True):
-        for field in ('operator', 'type', 'livery'):
+        for field in ("operator", "type", "livery"):
 
-            if getattr(self, f'from_{field}_id') or getattr(self, f'to_{field}_id'):
+            if getattr(self, f"from_{field}_id") or getattr(self, f"to_{field}_id"):
 
-                if getattr(__class__, f'from_{field}').is_cached(self):
+                if getattr(__class__, f"from_{field}").is_cached(self):
 
-                    before = getattr(self, f'from_{field}')
-                    after = getattr(self, f'to_{field}')
+                    before = getattr(self, f"from_{field}")
+                    after = getattr(self, f"to_{field}")
 
-                    if field == 'livery':
+                    if field == "livery":
                         if before:
-                            before = format_html('<span class="livery" style="background:{}"></span>', before.left_css)
+                            before = format_html(
+                                '<span class="livery" style="background:{}"></span>',
+                                before.left_css,
+                            )
                         if after:
-                            after = format_html('<span class="livery" style="background:{}"></span>', after.left_css)
+                            after = format_html(
+                                '<span class="livery" style="background:{}"></span>',
+                                after.left_css,
+                            )
                 else:
-                    before = getattr(self, f'from_{field}_id')
-                    after = getattr(self, f'to_{field}_id')
+                    before = getattr(self, f"from_{field}_id")
+                    after = getattr(self, f"to_{field}_id")
                 yield (field, before, after)
         if self.changes:
             for key in self.changes:
-                before, after = self.changes[key].split('\n+')
+                before, after = self.changes[key].split("\n+")
                 before = before[1:]
-                if key == 'colours' and html:
-                    if before and before != 'Other':
+                if key == "colours" and html:
+                    if before and before != "Other":
                         before = format_html(
-                            '<span class="livery" style="background:{}"></span>', get_css(before.split())
+                            '<span class="livery" style="background:{}"></span>',
+                            get_css(before.split()),
                         )
-                    if after and after != 'Other':
+                    if after and after != "Other":
                         after = format_html(
-                            '<span class="livery" style="background:{}"></span>', get_css(after.split())
+                            '<span class="livery" style="background:{}"></span>',
+                            get_css(after.split()),
                         )
                 yield (key, before, after)
 
     def revert(self):
-        """Revert various values to how they were before the revision
-        """
+        """Revert various values to how they were before the revision"""
         vehicle = self.vehicle
         fields = []
 
         for key, vehicle_key in (
-            ('operator', 'operator'),
-            ('type',     'vehicle_type'),
-            ('livery',   'livery')
+            ("operator", "operator"),
+            ("type", "vehicle_type"),
+            ("livery", "livery"),
         ):
-            before = getattr(self, f'from_{key}_id')
-            after = getattr(self, f'to_{key}_id')
+            before = getattr(self, f"from_{key}_id")
+            after = getattr(self, f"to_{key}_id")
             if before or after:
-                if getattr(vehicle, f'{vehicle_key}_id') == after:
-                    setattr(vehicle, f'{vehicle_key}_id', before)
+                if getattr(vehicle, f"{vehicle_key}_id") == after:
+                    setattr(vehicle, f"{vehicle_key}_id", before)
                     fields.append(vehicle_key)
 
         if self.changes:
             for key in self.changes:
-                before, after = self.changes[key].split('\n+')
+                before, after = self.changes[key].split("\n+")
                 before = before[1:]
-                if key == 'reg' or key == 'name':
+                if key == "reg" or key == "name":
                     if getattr(vehicle, key) == after:
                         setattr(vehicle, key, before)
-                        fields.append('reg')
-                elif key == 'withdrawn':
-                    if vehicle.withdrawn and after == 'Yes':
+                        fields.append("reg")
+                elif key == "withdrawn":
+                    if vehicle.withdrawn and after == "Yes":
                         vehicle.withdrawn = False
-                        fields.append('withdrawn')
+                        fields.append("withdrawn")
                 else:
-                    yield f'vehicle {vehicle.id} {key} not reverted'
+                    yield f"vehicle {vehicle.id} {key} not reverted"
 
         if fields:
             self.vehicle.save(update_fields=fields)
-            yield f'vehicle {vehicle.id} reverted {fields}'
+            yield f"vehicle {vehicle.id} reverted {fields}"
 
 
 class VehicleJourney(models.Model):
@@ -758,8 +851,8 @@ class VehicleJourney(models.Model):
     code = models.CharField(max_length=255, blank=True)
     destination = models.CharField(max_length=255, blank=True)
     direction = models.CharField(max_length=8, blank=True)
-    trip = models.ForeignKey('bustimes.Trip', models.SET_NULL, null=True, blank=True)
-    block = models.ForeignKey('bustimes.Block', models.SET_NULL, null=True, blank=True)
+    trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
+    block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
 
     def get_absolute_url(self):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
@@ -767,35 +860,38 @@ class VehicleJourney(models.Model):
     def __str__(self):
         when = f"{self.datetime:%-d %b %y %H:%M} {self.route_name} {self.code} {self.direction}"
         if self.destination:
-            when = f'{when} to {self.destination}'
+            when = f"{when} to {self.destination}"
         return when
 
     class Meta:
-        ordering = ('id',)
+        ordering = ("id",)
         indexes = [
-            models.Index('service', TruncDate('datetime').asc(), name='service_datetime_date'),
-            models.Index('vehicle', TruncDate('datetime').asc(), name='vehicle_datetime_date')
+            models.Index(
+                "service", TruncDate("datetime").asc(), name="service_datetime_date"
+            ),
+            models.Index(
+                "vehicle", TruncDate("datetime").asc(), name="vehicle_datetime_date"
+            ),
         ]
-        unique_together = (
-            ('vehicle', 'datetime'),
-        )
+        unique_together = (("vehicle", "datetime"),)
 
     get_trip = rtpi.get_trip
     get_progress = rtpi.get_progress
+
 
 # class VehiclePosition:
 #     journey = models.ForeignKey(VehicleJourney, on_delete)
 
 
 class Occupancy(models.TextChoices):
-    SEATS_AVAILABLE = 'seatsAvailable', 'Seats available'
-    STANDING_AVAILABLE = 'standingAvailable', 'Standing available'
-    FULL = 'full', 'Full'
+    SEATS_AVAILABLE = "seatsAvailable", "Seats available"
+    STANDING_AVAILABLE = "standingAvailable", "Standing available"
+    FULL = "full", "Full"
 
 
 class VehicleLocation:
-    """This used to be a model, is no longer stored in the database but this code is still here for historical reasons
-    """
+    """This used to be a model, is no longer stored in the database but this code is still here for historical reasons"""
+
     def __init__(self, latlong, heading=None, early=None, occupancy=None, block=None):
         self.latlong = latlong
         self.heading = heading
@@ -815,51 +911,52 @@ class VehicleLocation:
         return f"{self.datetime:%-d %b %Y %H:%M:%S}"
 
     class Meta:
-        ordering = ('id',)
+        ordering = ("id",)
 
     def get_appendage(self):
         early = self.early
         if early is not None:
             early = early.total_seconds() / 60
         appendage = [self.datetime, self.latlong.coords, self.heading, early]
-        return (f'journey{self.journey.id}', json.dumps(appendage, cls=DjangoJSONEncoder))
+        return (
+            f"journey{self.journey.id}",
+            json.dumps(appendage, cls=DjangoJSONEncoder),
+        )
 
     def get_redis_json(self):
         journey = self.journey
 
         json = {
-            'id': self.id,  # (same as vehicle id)
-            'journey_id': journey.id,
-            'coordinates': self.latlong.coords,
-            'heading': self.heading,
-            'datetime': self.datetime,
-            'destination': journey.destination,
-            'block': self.block,
+            "id": self.id,  # (same as vehicle id)
+            "journey_id": journey.id,
+            "coordinates": self.latlong.coords,
+            "heading": self.heading,
+            "datetime": self.datetime,
+            "destination": journey.destination,
+            "block": self.block,
         }
 
         if self.early is not None:
-            json['delay'] = -self.early.total_seconds()
+            json["delay"] = -self.early.total_seconds()
 
         if journey.trip_id:
-            json['trip_id'] = journey.trip_id
+            json["trip_id"] = journey.trip_id
         if journey.service_id:
-            json['service_id'] = journey.service_id
+            json["service_id"] = journey.service_id
         if journey.route_name:
-            json['service'] = {
-                'line_name': journey.route_name
-            }
+            json["service"] = {"line_name": journey.route_name}
 
         if self.seated_occupancy is not None and self.seated_capacity is not None:
-            if self.occupancy == 'full':
-                json['seats'] = self.occupancy
+            if self.occupancy == "full":
+                json["seats"] = self.occupancy
             else:
-                json['seats'] = f'{self.seated_capacity - self.seated_occupancy} free'
+                json["seats"] = f"{self.seated_capacity - self.seated_occupancy} free"
         elif self.occupancy:
-            json['seats'] = self.get_occupancy_display()
+            json["seats"] = self.get_occupancy_display()
         if self.wheelchair_occupancy is not None and self.wheelchair_capacity:
             if self.wheelchair_occupancy < self.wheelchair_capacity:
-                json['wheelchair'] = 'free'
+                json["wheelchair"] = "free"
             else:
-                json['wheelchair'] = 'occupied'
+                json["wheelchair"] = "occupied"
 
         return json

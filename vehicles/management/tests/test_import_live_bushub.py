@@ -9,20 +9,30 @@ class BusHubTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         DataSource.objects.create()
-        Region.objects.create(id='WM')
-        Operator.objects.create(id='DIAM', name='Graphite Buses', region_id='WM', parent='Rotala')
-        Operator.objects.create(id='WNGS', name='Paul McCartney & Wings', region_id='WM', parent='Rotala')
-        service_a = Service.objects.create(service_code='44a', line_name='44', date='2018-08-06', tracking=True)
-        service_b = Service.objects.create(service_code='44b', line_name='44', date='2018-08-06', tracking=True)
-        service_a.operator.add('DIAM')
-        service_b.operator.add('DIAM')
-        cls.service_c = Service.objects.create(service_code='44', line_name='44', date='2018-08-06', tracking=True)
-        cls.service_c.operator.add('WNGS')
-        cls.vehicle = Vehicle.objects.create(code='20052', operator_id='WNGS')
+        Region.objects.create(id="WM")
+        Operator.objects.create(
+            id="DIAM", name="Graphite Buses", region_id="WM", parent="Rotala"
+        )
+        Operator.objects.create(
+            id="WNGS", name="Paul McCartney & Wings", region_id="WM", parent="Rotala"
+        )
+        service_a = Service.objects.create(
+            service_code="44a", line_name="44", date="2018-08-06", tracking=True
+        )
+        service_b = Service.objects.create(
+            service_code="44b", line_name="44", date="2018-08-06", tracking=True
+        )
+        service_a.operator.add("DIAM")
+        service_b.operator.add("DIAM")
+        cls.service_c = Service.objects.create(
+            service_code="44", line_name="44", date="2018-08-06", tracking=True
+        )
+        cls.service_c.operator.add("WNGS")
+        cls.vehicle = Vehicle.objects.create(code="20052", operator_id="WNGS")
 
     def test_handle(self):
         command = import_bushub.Command()
-        command.source_name = ''
+        command.source_name = ""
         command.do_source()
 
         item = {
@@ -57,11 +67,11 @@ class BusHubTest(TestCase):
             "VehicleAtStop": False,
             "VisitNumber": "",
             "VehicleRef": "11111",
-            "Destination": None
+            "Destination": None,
         }
 
         with self.assertNumQueries(10):
-            with patch('builtins.print') as mocked_print:
+            with patch("builtins.print") as mocked_print:
                 command.handle_item(item)
                 command.save()
 
@@ -72,14 +82,14 @@ class BusHubTest(TestCase):
             command.save()
 
         journey = VehicleJourney.objects.get()
-        self.assertEqual('2018-08-31 21:45:00+00:00', str(journey.datetime))
+        self.assertEqual("2018-08-31 21:45:00+00:00", str(journey.datetime))
         # self.assertEqual(143, location.heading)
-        self.assertEqual('DIAM', journey.vehicle.operator_id)
+        self.assertEqual("DIAM", journey.vehicle.operator_id)
         self.assertIsNone(journey.service)
 
-        item['OperatorRef'] = 'WNGS'
-        item['VehicleRef'] = '20052'
-        item['Bearing'] = '-1'
+        item["OperatorRef"] = "WNGS"
+        item["VehicleRef"] = "20052"
+        item["Bearing"] = "-1"
         with self.assertNumQueries(6):
             command.handle_item(item)
             command.save()

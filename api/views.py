@@ -17,7 +17,9 @@ class LimitedPagination(pagination.LimitOffsetPagination):
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Vehicle.objects.select_related('operator', 'vehicle_type', 'livery').order_by('id')
+    queryset = Vehicle.objects.select_related(
+        "operator", "vehicle_type", "livery"
+    ).order_by("id")
     serializer_class = serializers.VehicleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleFilter
@@ -34,7 +36,9 @@ class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Trip.objects.select_related('route__service').prefetch_related('stoptime_set__stop__locality')
+    queryset = Trip.objects.select_related("route__service").prefetch_related(
+        "stoptime_set__stop__locality"
+    )
     serializer_class = serializers.TripSerializer
     pagination_class = LimitedPagination
 
@@ -43,14 +47,18 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = VehicleJourney.objects.select_related('vehicle')
+    queryset = VehicleJourney.objects.select_related("vehicle")
     serializer_class = serializers.VehicleJourneySerializer
     pagination_class = LimitedPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleJourneyFilter
 
     def list(self, request):
-        if not request.GET.get('trip') and not request.GET.get('vehicle') and not request.GET.get('service'):
+        if (
+            not request.GET.get("trip")
+            and not request.GET.get("vehicle")
+            and not request.GET.get("service")
+        ):
             raise BadException(
                 detail="Listing all journeys without filtering by trip, vehicle, or service is not allowed"
             )

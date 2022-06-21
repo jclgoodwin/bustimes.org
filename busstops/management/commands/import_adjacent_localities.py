@@ -10,5 +10,5 @@ from ...models import Locality
 
 class Command(ImportFromCSVCommand):
     def handle_row(self, row):
-        locality = Locality.objects.get(id=row['NptgLocalityCode'])
-        locality.adjacent.add(row['AdjacentNptgLocalityCode'])
+        locality = Locality.objects.get(id=row["NptgLocalityCode"])
+        locality.adjacent.add(row["AdjacentNptgLocalityCode"])

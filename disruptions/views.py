@@ -5,6 +5,10 @@ from .models import Situation
 def situation(request, id):
     situation = get_object_or_404(Situation, id=id)
 
-    return render(request, 'situations.html', {
-        'situations': [situation],
-    })
+    return render(
+        request,
+        "situations.html",
+        {
+            "situations": [situation],
+        },
+    )
