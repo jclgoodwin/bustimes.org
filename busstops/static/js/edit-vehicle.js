@@ -7,10 +7,13 @@
     document.getElementById('id_other_vehicle_type').parentNode.remove();
 
     // vehicle type
-    accessibleAutocomplete.enhanceSelectElement({
-        selectElement: document.getElementById('id_vehicle_type'),
-        name: 'other_vehicle_type',
-    });
+    var selectElement = document.getElementById('id_vehicle_type');
+    if (selectElement) {
+        accessibleAutocomplete.enhanceSelectElement({
+            selectElement: selectElement,
+            name: 'other_vehicle_type',
+        });
+    }
 
     // other colour
     function toggleOtherColour() {

@@ -7,7 +7,7 @@
     var lastInput,
         table = document.querySelector('table');
 
-    if (table) {
+    if (!table) {
         return;
     }
 
