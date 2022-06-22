@@ -38,7 +38,7 @@
                     doStuff();
                     search = newSearch;
                     history.pushState(null, null, newSearch);
-                    if (fusetag) {
+                    if (typeof fusetag !== 'undefined') {
                         fusetag.registerZone('services-incontent');
                     }
                 });
@@ -63,7 +63,7 @@
                 timetableWrapper.className = '';
                 timetableWrapper.innerHTML = response;
                 doStuff();
-                if (fusetag) {
+                if (typeof fusetag !== 'undefined') {
                     fusetag.registerZone('services-incontent');
                 }
             });
