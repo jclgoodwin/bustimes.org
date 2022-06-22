@@ -57,7 +57,7 @@ class StagecoachTest(TestCase):
         self.assertEqual(
             command.operators,
             {
-                "SCOX": Operator(id="SCOX"),
+                "SCOX": Operator(noc="SCOX"),
                 "SCCM": None,
                 "SCEK": None,
             },

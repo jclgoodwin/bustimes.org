@@ -7,6 +7,20 @@ from .fields import SecondsField
 from .formatting import format_timedelta, time_datetime
 
 
+class TimetableDataSource(models.Model):
+    name = models.CharField(max_length=255)
+    search = models.CharField(max_length=255, blank=True)
+    url = models.URLField(blank=True)
+    modified_at = models.DateTimeField(null=True, blank=True)
+    operators = models.ManyToManyField("busstops.Operator", blank=True)
+    settings = models.JSONField(null=True, blank=True)
+    complete = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
+    region = models.ForeignKey(
+        "busstops.Region", models.SET_NULL, null=True, blank=True
+    )
+
+
 class Route(models.Model):
     source = models.ForeignKey("busstops.DataSource", models.CASCADE)
     code = models.CharField(max_length=255, blank=True)  # qualified filename

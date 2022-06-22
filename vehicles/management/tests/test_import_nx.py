@@ -21,7 +21,7 @@ class NatExpTest(TestCase):
         cls.nat_exp_command.source = source
 
         gb = Region.objects.create(id="GB")
-        Operator.objects.create(id="NATX", name="Nathaniel Express", region=gb)
+        Operator.objects.create(noc="NATX", name="Nathaniel Express", region=gb)
 
     def test_parse_datetime(self):
         self.assertEqual(

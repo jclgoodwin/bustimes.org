@@ -131,7 +131,7 @@ class ViewsTests(TestCase):
         )
 
         cls.chariots = Operator.objects.create(
-            id="AINS",
+            noc="AINS",
             name="Ainsley's Chariots",
             vehicle_mode="airline",
             region_id="N",
@@ -142,7 +142,7 @@ class ViewsTests(TestCase):
             twitter="dril\ncoldwarsteve",
         )
         cls.nuventure = Operator.objects.create(
-            pk="VENT", name="Nu-Venture", vehicle_mode="bus", region_id="N"
+            noc="VENT", name="Nu-Venture", vehicle_mode="bus", region_id="N"
         )
         cls.service.operator.add(cls.chariots)
         cls.inactive_service.operator.add(cls.chariots)

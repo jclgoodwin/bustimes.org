@@ -9,8 +9,8 @@ from busstops.models import Operator, DataSource
 class MyTripTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.midland_classic = Operator.objects.create(id="MDCL", name="Midland Classic")
-        Operator.objects.create(id="NIBS", name="Nibs")
+        cls.midland_classic = Operator.objects.create(noc="MDCL", name="Midland Classic")
+        Operator.objects.create(noc="NIBS", name="Nibs")
         cls.source = DataSource.objects.create(
             name="MyTrip",
             url="https://mytrip-bustimes.api.passengercloud.com/ticketing/topups",

@@ -33,19 +33,19 @@ class VehiclesTests(TestCase):
         cls.bova = Operator.objects.create(
             region=ea,
             name="Bova and Over",
-            id="BOVA",
+            noc="BOVA",
             slug="bova-and-over",
             parent="Madrigal Electromotive",
         )
         cls.lynx = Operator.objects.create(
             region=ea,
             name="Lynx",
-            id="LYNX",
+            noc="LYNX",
             slug="lynx",
             parent="Madrigal Electromotive",
         )
         cls.chicken = Operator.objects.create(
-            region=ea, name="Chicken Bus", id="CLUCK", slug="chicken"
+            region=ea, name="Chicken Bus", noc="CLUCK", slug="chicken"
         )
 
         tempo = VehicleType.objects.create(
@@ -396,7 +396,7 @@ font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
             "vehicle_type": self.vehicle_1.vehicle_type_id,
             "other_vehicle_type": str(self.vehicle_1.vehicle_type),
             "features": self.wifi.id,
-            "operator": self.lynx.id,
+            "operator": self.lynx.noc,
             "colours": "#FF0000",
             "notes": "Trent Barton",
         }
@@ -603,7 +603,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "fleet_number": "",
                     "other_vehicle_type": "Optare Tempo",
                     "reg": "",
-                    "operator": self.lynx.id,
+                    "operator": self.lynx.noc,
                 },
             )
 
@@ -785,7 +785,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.client.force_login(self.trusted_user)
 
-        data = {"operator": self.lynx.id}
+        data = {"operator": self.lynx.noc}
 
         # no vehicle ids specified
         with self.assertNumQueries(11):

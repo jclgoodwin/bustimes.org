@@ -95,7 +95,7 @@ class OperatorAdmin(admin.ModelAdmin):
         "name",
         "slug",
         "operator_codes",
-        "id",
+        "noc",
         "vehicle_mode",
         "parent",
         "region_id",
@@ -104,7 +104,7 @@ class OperatorAdmin(admin.ModelAdmin):
         "twitter",
     ]
     list_filter = ("region", "vehicle_mode", "payment_methods", "parent")
-    search_fields = ("id", "name")
+    search_fields = ("noc", "name")
     raw_id_fields = ("region", "regions", "siblings", "colour")
     inlines = [OperatorCodeInline]
     readonly_fields = ["search_vector"]
@@ -124,14 +124,14 @@ class OperatorAdmin(admin.ModelAdmin):
     def services(self, obj):
         url = reverse("admin:busstops_service_changelist")
         return format_html(
-            '<a href="{}?operator__id__exact={}">{}</a>', url, obj.id, obj.services
+            '<a href="{}?operator__id__exact={}">{}</a>', url, obj.noc, obj.services
         )
 
     @admin.display(ordering="vehicles")
     def vehicles(self, obj):
         url = reverse("admin:vehicles_vehicle_changelist")
         return format_html(
-            '<a href="{}?operator__id__exact={}">{}</a>', url, obj.id, obj.vehicles
+            '<a href="{}?operator__id__exact={}">{}</a>', url, obj.noc, obj.vehicles
         )
 
     def get_search_results(self, request, queryset, search_term):

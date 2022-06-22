@@ -43,7 +43,7 @@
         #map {
             bottom: 132px;
         }
-    }    
+    }
     </style>
 {% endblock %}
 
@@ -59,7 +59,7 @@
 
 {% block foot %}
     {% load static %}
-    <script>OPERATOR_ID="{{ operator.id }}";</script>
+    <script>OPERATOR_ID="{{ operator.noc }}";</script>
     {% include "maps_js.html" %}
     <script src="{% static 'js/reqwest.min.js' %}"></script>
     <script async src="{% static 'js/operator-map.js' %}"></script>

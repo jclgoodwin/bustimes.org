@@ -125,7 +125,7 @@ def stop_time_json(stop_time, date):
         "line_name": stop_time.trip.route.service.line_name,
         "operators": [
             {
-                "id": operator.id,
+                "id": operator.noc,
                 "name": operator.name,
                 "parent": operator.parent,
             }

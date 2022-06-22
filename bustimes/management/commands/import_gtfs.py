@@ -74,7 +74,7 @@ class Command(BaseCommand):
         agency_id = line["agency_id"]
         agency_id = f"ie-{agency_id}"
         operator, created = Operator.objects.get_or_create(
-            {"name": line["agency_name"]}, id=agency_id
+            {"name": line["agency_name"]}, noc=agency_id
         )
         if operator.name != line["agency_name"]:
             logger.info(f"{operator} {line}")

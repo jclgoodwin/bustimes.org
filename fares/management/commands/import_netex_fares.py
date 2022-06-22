@@ -192,7 +192,7 @@ class Command(BaseCommand):
             if operator is not None:
                 try:
                     operator = Operator.objects.get(
-                        id=operator.attrib["ref"].removeprefix("noc:")
+                        noc=operator.attrib["ref"].removeprefix("noc:")
                     )
                 except Operator.DoesNotExist:
                     pass

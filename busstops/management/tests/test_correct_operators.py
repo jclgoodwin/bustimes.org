@@ -12,10 +12,10 @@ class CorrectOperatorsTest(TestCase):
         cls.north = Region.objects.create(id="N", name="North")
 
         cls.goodwins = Operator.objects.create(
-            region=cls.east, pk="GDWN", name="Go Goodwins"
+            region=cls.east, noc="GDWN", name="Go Goodwins"
         )
         cls.tellings = Operator.objects.create(
-            region=cls.east, pk="TGML", name="Tellings Golden Miller"
+            region=cls.east, noc="TGML", name="Tellings Golden Miller"
         )
 
         cls.west_midlands_service = Service.objects.create(
@@ -31,8 +31,8 @@ class CorrectOperatorsTest(TestCase):
             correct_operators.Command().handle()
         mock_print.assert_called_with("moved Go Goodwins to West")
 
-        self.assertEqual(Operator.objects.get(id="GDWN").region_id, "W")
-        self.assertEqual(Operator.objects.get(id="TGML").region_id, "E")
+        self.assertEqual(Operator.objects.get(noc="GDWN").region_id, "W")
+        self.assertEqual(Operator.objects.get(noc="TGML").region_id, "E")
 
     def test_maybe(self):
         self.assertEqual(self.tellings.region_id, "E")

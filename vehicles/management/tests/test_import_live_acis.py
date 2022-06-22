@@ -16,9 +16,9 @@ class ACISImportTest(TestCase):
         Region.objects.create(id="NI")
         Operator.objects.bulk_create(
             [
-                Operator(id="MET", region_id="NI"),
-                Operator(id="GDR", region_id="NI"),
-                Operator(id="ULB", region_id="NI"),
+                Operator(noc="MET", region_id="NI"),
+                Operator(noc="GDR", region_id="NI"),
+                Operator(noc="ULB", region_id="NI"),
             ]
         )
 

@@ -39,7 +39,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
 
     operator = None
     if operator_ref:
-        operator = Operator.objects.filter(id=operator_ref).first()
+        operator = Operator.objects.filter(noc=operator_ref).first()
 
     if not operator:
         try:
@@ -47,9 +47,9 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             return
 
-    if operator.id == "FABD":  # Aberdeen
+    if operator.noc == "FABD":  # Aberdeen
         vehicle = vehicle.removeprefix("111-").removeprefix("S-")
-    elif operator.parent == "Stagecoach" or operator.id == "MCGL":
+    elif operator.parent == "Stagecoach" or operator.noc == "MCGL":
         return
 
     data_source, _ = DataSource.objects.get_or_create({"url": url}, name=source_name)

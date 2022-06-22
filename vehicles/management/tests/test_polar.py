@@ -14,7 +14,7 @@ class PolarTest(TestCase):
         )
 
         region = Region.objects.create(id="WM")
-        Operator.objects.create(id="LCHS", name="Loaches’ Coaches", region=region)
+        Operator.objects.create(noc="LCHS", name="Loaches’ Coaches", region=region)
 
     def test_do_source(self):
         command = Command()

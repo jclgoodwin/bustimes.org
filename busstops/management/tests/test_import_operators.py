@@ -19,11 +19,11 @@ class ImportOperatorsTest(TestCase):
 
         command.handle()
 
-        cls.first_aberdeen = Operator.objects.get(id="FABD")
-        cls.c2c = Operator.objects.get(id="CC")
-        cls.ace_travel = Operator.objects.get(id="ACER")
-        cls.weardale = Operator.objects.get(id="WRCT")
-        cls.catch22bus = Operator.objects.get(id="NWOT")
+        cls.first_aberdeen = Operator.objects.get(noc="FABD")
+        cls.c2c = Operator.objects.get(noc="CC")
+        cls.ace_travel = Operator.objects.get(noc="ACER")
+        cls.weardale = Operator.objects.get(noc="WRCT")
+        cls.catch22bus = Operator.objects.get(noc="NWOT")
 
         service = Service.objects.create(current=True, region=cls.scotland)
         service.operator.set(["BLUE", "NWOT"])
@@ -34,7 +34,7 @@ class ImportOperatorsTest(TestCase):
 
     def test_operator_id(self):
         """Is a strange NOC code (with an equals sign) correctly handled?"""
-        self.assertEqual(self.c2c.id, "CC")
+        self.assertEqual(self.c2c.noc, "CC")
         self.assertEqual(self.c2c.name, "c2c")
 
     def test_operator_region(self):
@@ -83,4 +83,4 @@ class ImportOperatorsTest(TestCase):
     @skip
     def test_operator_ignore(self):
         """Were some rows correctly ignored?"""
-        self.assertFalse(len(Operator.objects.filter(id="TVSR")))
+        self.assertFalse(len(Operator.objects.filter(noc="TVSR")))

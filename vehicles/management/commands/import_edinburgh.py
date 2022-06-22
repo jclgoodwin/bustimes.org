@@ -60,7 +60,7 @@ class Command(ImportLiveVehiclesCommand):
                 )
                 if journey.service:
                     operator = journey.service.operator.first()
-                    if not vehicle.operator_id or vehicle.operator_id != operator.id:
+                    if not vehicle.operator_id or vehicle.operator_id != operator.noc:
                         vehicle.operator = operator
                         vehicle.save(update_fields=["operator"])
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:

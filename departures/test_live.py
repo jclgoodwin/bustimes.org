@@ -79,12 +79,12 @@ class LiveDeparturesTest(TestCase):
             service_code="44", line_name="44", region_id="W", date="2017-01-01"
         )
         worcester_44.operator.add(
-            Operator.objects.create(id="FMR", name="First Midland Red", region_id="W")
+            Operator.objects.create(noc="FMR", name="First Midland Red", region_id="W")
         )
         StopUsage.objects.create(stop=cls.worcester_stop, service=worcester_44, order=0)
 
         translink_metro_operator = Operator.objects.create(
-            id="MET", name="Translink Metro", region_id="W"
+            noc="MET", name="Translink Metro", region_id="W"
         )
         cls.translink_metro_stop = StopPoint.objects.create(
             atco_code="700000001415", active=True, locality_centre=False
@@ -209,7 +209,7 @@ class LiveDeparturesTest(TestCase):
             common_name="Crewe Bank",
             active=True,
         )
-        operator = Operator.objects.create(id="LOTH", name="Lothian Buses")
+        operator = Operator.objects.create(noc="LOTH", name="Lothian Buses")
         service = Service.objects.create(line_name="14")
         service.operator.add(operator)
         StopUsage.objects.create(stop=stop, service=service, order=1)

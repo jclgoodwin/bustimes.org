@@ -69,7 +69,7 @@ class Command(ImportFromCSVCommand):
         operator_id = row["NOCCODE"].replace("=", "")
 
         if row["Date Ceased"]:
-            if Operator.objects.filter(service__current=True, id=operator_id).exists():
+            if Operator.objects.filter(service__current=True, noc=operator_id).exists():
                 print(row)
             return
 
@@ -95,7 +95,7 @@ class Command(ImportFromCSVCommand):
 
         defaults = {"name": operator_name, "vehicle_mode": mode, "region_id": region_id}
 
-        operator = Operator.objects.update_or_create(id=operator_id, defaults=defaults)[
+        operator = Operator.objects.update_or_create(noc=operator_id, defaults=defaults)[
             0
         ]
         for key in self.code_sources:
@@ -115,7 +115,6 @@ class Command(ImportFromCSVCommand):
                 pass
 
     def handle(self, *args, **options):
-        # Operator.objects.filter(id__in=self.removed_operator_ids).delete()
         for key in self.code_sources:
             self.code_sources[key] = DataSource.objects.get_or_create(
                 name=self.code_sources[key], defaults={"datetime": timezone.now()}

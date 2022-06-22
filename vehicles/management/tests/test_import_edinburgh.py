@@ -11,10 +11,10 @@ class EdinburghImportTest(TestCase):
         )
         Region.objects.create(name="Scotland", id="S")
         cls.operator_1 = Operator.objects.create(
-            name="Lothian Buses", id="LOTH", region_id="S"
+            name="Lothian Buses", noc="LOTH", region_id="S"
         )
         cls.operator_2 = Operator.objects.create(
-            name="Edinburgh Trams", id="EDTR", region_id="S"
+            name="Edinburgh Trams", noc="EDTR", region_id="S"
         )
         cls.service = Service.objects.create(
             line_name="11", date="1904-05-05", current=True

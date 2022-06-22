@@ -48,9 +48,9 @@ def clean_up(operators, sources, incomplete=False):
 
 def get_operator_ids(source):
     operators = (
-        Operator.objects.filter(service__route__source=source).distinct().values("id")
+        Operator.objects.filter(service__route__source=source).distinct().values("noc")
     )
-    return [operator["id"] for operator in operators]
+    return [operator["noc"] for operator in operators]
 
 
 def get_command():

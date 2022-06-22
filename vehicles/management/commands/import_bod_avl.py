@@ -62,8 +62,8 @@ class Command(ImportLiveVehiclesCommand):
         # or (if no such OperatorCode) the one with a matching id
         operator_codes = self.source.operatorcode_set.filter(code=operator_ref)
         return Operator.objects.filter(
-            Exists(operator_codes.filter(operator=OuterRef("id")))
-            | Q(id=operator_ref) & ~Exists(operator_codes)
+            Exists(operator_codes.filter(operator=OuterRef("pk")))
+            | Q(noc=operator_ref) & ~Exists(operator_codes)
         )
 
     @staticmethod
@@ -152,7 +152,7 @@ class Command(ImportLiveVehiclesCommand):
             if operator.parent:
                 condition = Q(operator__parent=operator.parent)
 
-                if operator.id == "FBRI" and len(vehicle_ref) == 4:
+                if operator.noc == "FBRI" and len(vehicle_ref) == 4:
                     condition |= Q(operator="NCTP")
                 vehicles = self.vehicles.filter(condition)
             else:
@@ -280,8 +280,8 @@ class Command(ImportLiveVehiclesCommand):
             condition = Q(parent=operator.parent)
 
             # in case the vehicle operator has a different parent (e.g. HCTY)
-            if vehicle_operator_id != operator.id:
-                condition |= Q(id=vehicle_operator_id)
+            if vehicle_operator_id != operator.noc:
+                condition |= Q(noc=vehicle_operator_id)
 
             services = services.filter(
                 Exists(Operator.objects.filter(condition, service=OuterRef("pk")))
@@ -296,7 +296,7 @@ class Command(ImportLiveVehiclesCommand):
             if len(operators) == 1:
                 operator = operators[0]
                 condition = Q(operator=operator)
-                if vehicle_operator_id != operator.id:
+                if vehicle_operator_id != operator.noc:
                     condition |= Q(operator=vehicle_operator_id)
                 services = services.filter(condition)
             else:

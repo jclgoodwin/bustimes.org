@@ -843,7 +843,7 @@ class Command(BaseCommand):
         if self.source.name == "L":
             return False
         if operators and all(
-            operator.id in self.incomplete_operators for operator in operators
+            operator.noc in self.incomplete_operators for operator in operators
         ):
             if (
                 Service.objects.filter(
@@ -904,14 +904,14 @@ class Command(BaseCommand):
                 maybe_operator_code = basename[:4]
                 if maybe_operator_code.isupper() and maybe_operator_code.isalpha():
                     try:
-                        operators = [Operator.objects.get(id=maybe_operator_code)]
+                        operators = [Operator.objects.get(noc=maybe_operator_code)]
                     except Operator.DoesNotExist:
                         pass
 
         if self.is_tnds():
             if self.source.name != "L":
                 if operators and all(
-                    operator.id in self.open_data_operators for operator in operators
+                    operator.noc in self.open_data_operators for operator in operators
                 ):
                     return
         elif self.source.name.startswith("Arriva") and "tfl_" in filename:

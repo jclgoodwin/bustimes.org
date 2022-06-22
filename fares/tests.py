@@ -10,7 +10,7 @@ from .models import Tariff, TimeInterval, DataSet, FareZone
 class FaresTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.a_c_williams = Operator.objects.create(id="WMSA")
+        cls.a_c_williams = Operator.objects.create(noc="WMSA")
         cls.wm06 = Service.objects.create(line_name="wm06", current=True)
         cls.wm06.operator.add(cls.a_c_williams)
 

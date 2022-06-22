@@ -14,7 +14,7 @@ class JerseyImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         Region.objects.create(id="JE")
-        Operator.objects.create(id="libertybus", region_id="JE")
+        Operator.objects.create(noc="libertybus", region_id="JE")
 
     @use_cassette(
         os.path.join(DIR, "vcr", "import_live_jersey.yaml"),

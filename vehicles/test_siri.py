@@ -10,7 +10,7 @@ class SiriSubscriptionReceiveTest(TestCase):
     def setUpTestData(cls):
         Region.objects.create(id="EA", name="East Anglia")
         DataSource.objects.create(name="TransMach")
-        Operator.objects.create(region_id="EA", id="GOCH", name="Go-Coach")
+        Operator.objects.create(region_id="EA", noc="GOCH", name="Go-Coach")
 
     def test_siri_vm(self):
         flush_redis()

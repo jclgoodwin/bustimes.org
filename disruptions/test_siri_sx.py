@@ -15,7 +15,7 @@ class SiriSXTest(TestCase):
     def setUpTestData(cls):
         region = Region.objects.create(id="NW", name="North West")
         operator = Operator.objects.create(
-            region=region, id="HATT", name="Hattons of Huyton"
+            region=region, noc="HATT", name="Hattons of Huyton"
         )
         service = Service.objects.create(
             line_name="156",

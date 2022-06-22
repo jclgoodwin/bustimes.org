@@ -113,7 +113,7 @@ class Command(ImportLiveVehiclesCommand):
                 operator = self.operators[operator_id]
             else:
                 try:
-                    operator = Operator.objects.get(id=operator_id)
+                    operator = Operator.objects.get(noc=operator_id)
                 except Operator.DoesNotExist as e:
                     logger.error(e, exc_info=True, extra={"operator": operator_id})
                     operator = None
@@ -222,7 +222,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def handle(self, *args, **options):
         self.operators = Operator.objects.filter(
-            Q(parent="Stagecoach") | Q(id__in=["SCLK", "MEGA"])
+            Q(parent="Stagecoach") | Q(noc__in=["SCLK", "MEGA"])
         ).in_bulk()
 
         return super().handle(*args, **options)

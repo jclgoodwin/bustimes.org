@@ -26,18 +26,18 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         region = Region.objects.create(id="EA")
         Operator.objects.bulk_create(
             [
-                Operator(id="WHIP", region=region),
-                Operator(id="TGTC", region=region),
-                Operator(id="HAMS", region=region),
-                Operator(id="UNOE", region=region),
-                Operator(id="UNIB", region=region),
-                Operator(id="FBRI", region=region, parent="First"),
-                Operator(id="FECS", region=region, parent="First"),
-                Operator(id="NCTP", region=region),
-                Operator(id="NIBS", region=region),
-                Operator(id="TCVW", region=region, name="National Express Coventry"),
+                Operator(noc="WHIP", region=region),
+                Operator(noc="TGTC", region=region),
+                Operator(noc="HAMS", region=region),
+                Operator(noc="UNOE", region=region),
+                Operator(noc="UNIB", region=region),
+                Operator(noc="FBRI", region=region, parent="First"),
+                Operator(noc="FECS", region=region, parent="First"),
+                Operator(noc="NCTP", region=region),
+                Operator(noc="NIBS", region=region),
+                Operator(noc="TCVW", region=region, name="National Express Coventry"),
                 Operator(
-                    id="TNXB", region=region, name="National Express West Midlands"
+                    noc="TNXB", region=region, name="National Express West Midlands"
                 ),
             ]
         )
@@ -99,16 +99,16 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl_channels.Command()
         command.source = self.source
 
-        self.assertEqual(command.get_operator("HAMS").get().id, "HAMS")
-        self.assertEqual(command.get_operator("HAMSTRA").get().id, "HAMS")
-        self.assertEqual(command.get_operator("UNOE").get().id, "UNOE")
+        self.assertEqual(command.get_operator("HAMS").get().noc, "HAMS")
+        self.assertEqual(command.get_operator("HAMSTRA").get().noc, "HAMS")
+        self.assertEqual(command.get_operator("UNOE").get().noc, "UNOE")
 
         # should ignore operator with id 'UNIB' in favour of one with OperatorCode:
-        self.assertEqual(command.get_operator("UNIB").get().id, "UNOE")
+        self.assertEqual(command.get_operator("UNIB").get().noc, "UNOE")
 
         self.assertEqual(
-            list(command.get_operator("FOO").values("id")),
-            [{"id": "WHIP"}, {"id": "TGTC"}],
+            list(command.get_operator("FOO").values("noc")),
+            [{"noc": "WHIP"}, {"noc": "TGTC"}],
         )
 
     @time_machine.travel("2020-05-01", tick=False)
@@ -697,7 +697,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(vehicle.livery, livery)
         self.assertEqual(vehicle.reg, "SN16OLO")
 
-    def test_ambigious_operator(self):
+    def test_ambiguous_operator(self):
         command = import_bod_avl.Command()
         command.source = self.source
 

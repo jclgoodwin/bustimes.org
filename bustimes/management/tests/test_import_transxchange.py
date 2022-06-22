@@ -59,12 +59,12 @@ class ImportTransXChangeTest(TestCase):
         )
 
         cls.fecs = Operator.objects.create(
-            pk="FECS", region_id="EA", name="First in Norfolk & Suffolk"
+            noc="FECS", region_id="EA", name="First in Norfolk & Suffolk"
         )
-        Operator.objects.create(id="bus-vannin", region_id="EA", name="Bus Vannin")
-        cls.megabus = Operator.objects.create(pk="MEGA", region_id="GB", name="Megabus")
+        Operator.objects.create(noc="bus-vannin", region_id="EA", name="Bus Vannin")
+        cls.megabus = Operator.objects.create(noc="MEGA", region_id="GB", name="Megabus")
         cls.fabd = Operator.objects.create(
-            pk="FABD", region_id="S", name="First Aberdeen"
+            noc="FABD", region_id="S", name="First Aberdeen"
         )
 
         cls.nocs = DataSource.objects.create(name="National Operator Codes")
@@ -1205,7 +1205,7 @@ class ImportTransXChangeTest(TestCase):
 
     @time_machine.travel("4 June 2022")
     def test_rail(self):
-        Operator.objects.create(id="LM", name="West Midlands Railroad")
+        Operator.objects.create(noc="LM", name="West Midlands Railroad")
         OperatorCode.objects.create(operator_id="LM", code="LM", source=self.nocs)
         StopPoint.objects.create(
             atco_code="9100STRBDGT",

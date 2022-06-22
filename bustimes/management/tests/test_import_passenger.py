@@ -11,8 +11,8 @@ class ImportPassengerTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         sw = Region.objects.create(pk="SW", name="South West")
-        Operator.objects.create(id="BLUS", region=sw, name="Bluestar")
-        Operator.objects.create(id="UNIL", region=sw, name="Unilink")
+        Operator.objects.create(noc="BLUS", region=sw, name="Bluestar")
+        Operator.objects.create(noc="UNIL", region=sw, name="Unilink")
 
     def test_import(self):
 

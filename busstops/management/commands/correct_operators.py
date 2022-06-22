@@ -51,4 +51,4 @@ class Command(BaseCommand):
         with open(settings.BASE_DIR / "fixtures" / "operators.yaml") as open_file:
             records = yaml.load(open_file, Loader=yaml.BaseLoader)
             for code in records:
-                Operator.objects.filter(id=code).update(**records[code])
+                Operator.objects.filter(noc=code).update(**records[code])

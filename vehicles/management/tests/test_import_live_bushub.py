@@ -11,10 +11,10 @@ class BusHubTest(TestCase):
         DataSource.objects.create()
         Region.objects.create(id="WM")
         Operator.objects.create(
-            id="DIAM", name="Graphite Buses", region_id="WM", parent="Rotala"
+            noc="DIAM", name="Graphite Buses", region_id="WM", parent="Rotala"
         )
         Operator.objects.create(
-            id="WNGS", name="Paul McCartney & Wings", region_id="WM", parent="Rotala"
+            noc="WNGS", name="Paul McCartney & Wings", region_id="WM", parent="Rotala"
         )
         service_a = Service.objects.create(
             service_code="44a", line_name="44", date="2018-08-06", tracking=True

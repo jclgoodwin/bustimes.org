@@ -27,7 +27,7 @@ class ImportAtcoCifTest(TestCase):
     def setUpTestData(cls):
         cls.ni = Region.objects.create(pk="NI", name="Northern Ireland")
         cls.gle = Operator.objects.create(
-            pk="GLE", name="Goldline Express", region=cls.ni
+            noc="GLE", name="Goldline Express", region=cls.ni
         )
 
         StopPoint.objects.bulk_create(

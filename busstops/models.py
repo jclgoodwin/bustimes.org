@@ -488,7 +488,7 @@ class StopPoint(models.Model):
 class OperatorManager(models.Manager):
     def with_documents(self):
         vector = SearchVector("name", weight="A", config="english")
-        vector += SearchVector("id", weight="A", config="english")
+        vector += SearchVector("noc", weight="A", config="english")
         vector += SearchVector("aka", weight="B", config="english")
         return self.get_queryset().annotate(document=vector)
 
@@ -496,7 +496,7 @@ class OperatorManager(models.Manager):
 class Operator(SearchMixin, models.Model):
     """An entity that operates public transport services"""
 
-    id = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
+    noc = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
     aka = models.CharField(max_length=100, blank=True)
     slug = AutoSlugField(populate_from=str, unique=True, editable=True)
@@ -524,10 +524,10 @@ class Operator(SearchMixin, models.Model):
         indexes = [GinIndex(fields=["search_vector"])]
 
     def __str__(self):
-        return str(self.name or self.id)
+        return str(self.name or self.noc)
 
     def get_absolute_url(self):
-        return reverse("operator_detail", args=(self.slug or self.id,))
+        return reverse("operator_detail", args=(self.slug or self.noc,))
 
     def mode(self):
         return self.vehicle_mode

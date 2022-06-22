@@ -25,7 +25,7 @@ class VosaTest(TestCase):
 
         Region.objects.create(id="SW", name="South West")
         operator = Operator.objects.create(
-            region_id="SW", id="AINS", name="Ainsley's Chariots"
+            region_id="SW", noc="AINS", name="Ainsley's Chariots"
         )
         service = Service.objects.create(current=True, line_name="33B")
         service.operator.add(operator)

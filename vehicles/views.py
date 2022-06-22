@@ -77,7 +77,7 @@ def vehicles(request):
     )[:36]
 
     operator_journeys = VehicleJourney.objects.filter(
-        latest_vehicle__operator=OuterRef("id")
+        latest_vehicle__operator=OuterRef("noc")
     )
 
     day_ago = timezone.now() - datetime.timedelta(days=1)

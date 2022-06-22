@@ -41,7 +41,7 @@ class GTFSTest(TestCase):
         cls.donegal = AdminArea.objects.create(id=853, atco_code=853, region_id="UL")
 
         # Create an existing operator (with a slightly different name) to test that it is re-used
-        Operator.objects.create(id="ie-132", name="Seumas Doherty", region=cls.leinster)
+        Operator.objects.create(noc="ie-132", name="Seumas Doherty", region=cls.leinster)
 
         # this should get updated later
         StopPoint.objects.create(
