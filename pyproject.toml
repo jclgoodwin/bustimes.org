@@ -56,6 +56,9 @@ uritemplate = "^4.1.1"
 pre-commit = "^2.19.0"
 django-rich = "^1.4.0"
 
+[tool.black]
+target-version = ['py310']
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

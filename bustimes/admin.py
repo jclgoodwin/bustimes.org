@@ -17,6 +17,7 @@ from .models import (
     Note,
     StopTime,
     Garage,
+    TimetableDataSource,
 )
 
 
@@ -38,6 +39,11 @@ class TripInline(admin.TabularInline):
 class StopTimeInline(admin.TabularInline):
     model = StopTime
     autocomplete_fields = ["stop"]
+
+
+@admin.register(TimetableDataSource)
+class TimetableDataSourceAdmin(admin.ModelAdmin):
+    raw_id_fields = ["operators"]
 
 
 @admin.register(Route)
