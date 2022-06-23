@@ -158,6 +158,9 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, "20 Oct")
         self.assertContains(response, "00:47")
         self.assertContains(response, "/operators/lynx/map")
+        self.assertContains(response, "/vehicles/history?vehicle__operator=LYNX")
+        self.assertContains(response, "/vehicles/edits?vehicle__operator=LYNX")
+        self.assertContains(response, "/operators/lynx/map")
 
         with self.assertNumQueries(6):
             response = self.client.get("/operators/lynx")
@@ -168,8 +171,8 @@ class VehiclesTests(TestCase):
         with time_machine.travel("2020-10-21 00:10+01:00"):
             with self.assertNumQueries(3):
                 response = self.client.get("/operators/lynx/vehicles")
-            self.assertContains(response, "20 Oct 00:47")
-            self.assertNotContains(response, "/operators/lynx/map")
+        self.assertContains(response, "20 Oct 00:47")
+        self.assertNotContains(response, "/operators/lynx/map")
 
         self.assertTrue(response.context["code_column"])
         self.assertContains(response, '<td class="number">2</td>')

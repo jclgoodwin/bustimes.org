@@ -58,8 +58,8 @@
 {% elif not parent %}
     <ul class="horizontal">
         <li><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></li>
-        <li><a href="/vehicles/history?vehicle__operator={{ object.id }}">Recent changes</a></li>
-        <li><a href="/vehicles/edits?vehicle__operator={{ object.id }}">Pending vehicle edits</a></li>
+        <li><a href="/vehicles/history?vehicle__operator={{ object.noc }}">Recent changes</a></li>
+        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}">Pending vehicle edits</a></li>
     </ul>
 {% endif %}
 

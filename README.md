@@ -12,12 +12,12 @@ app      | concern
 ---------|------------
 buses    | contains the site settings.py
 busstops | bus stops - but also operating companies, places, and routes 🤯 and all the site CSS and JavaScript
-bustimes | getting timetable data out of various formats (GTFS, TransXChange, ATCO-CIF) and into a database and doing stuff therewith 
+bustimes | getting timetable data out of various formats (GTFS, TransXChange, ATCO-CIF) and into a database and doing stuff therewith
 departures | listing the "next departures" at a bus stop – from a timetable and/or predicted by an API
 disruptions | information about like roadworks, diversions and stuff
 fares    | fares
 vehicles | tracking buses' locations and showing them on a map, and pointless details about vehicles' colours and features
-vosa     | the Great Britain Traffic Commissioners' bus service registration data. VOSA is the name of a defunct UK government agency. 
+vosa     | the Great Britain Traffic Commissioners' bus service registration data. VOSA is the name of a defunct UK government agency.
 
 This documentation is incomplete and out of date.
 And that's OK (?) because I don't expect anyone to need to follow it.
@@ -27,11 +27,13 @@ I will try to document some things for my own reference.
 
 ### Using Docker
 
-You need Docker installed with docker-compose 1.27.0+. Then you can start the whole environment:
+Docker Compose is probably the easiest way to install all the required components at once.
 
 ```
-docker-compose up
+docker compose up
 ```
+
+Then head to http://localhost:8000
 
 ### Using local install
 
@@ -63,14 +65,14 @@ CELERY_BROKER_URL=redis://localhost:6379
 #AWS_SECRET_ACCESS_KEY=
 ```
 
-Then run, preferably in a virtual environment, those commands:
+Then run these commands:
 
 ```
 npm install
 make build-static
 poetry install
 poetry run ./manage.py migrate
-poetry run ./manage.py runserver 0.0.0.0:8000 
+poetry run ./manage.py runserver 0.0.0.0:8000
 ```
 
 [.github/workflows/pythonapp.yml](.github/workflows/pythonapp.yml) sort of documents the process of installing dependencies and running tests.

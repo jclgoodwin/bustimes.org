@@ -298,10 +298,15 @@ class ViewsTests(TestCase):
 
     def test_operator_found(self):
         response = self.client.get("/operators/ains")
+
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "An airline operator")
         self.assertContains(response, "<h2>Ainsley&#x27;s Chariots</h2>")
         self.assertContains(response, "10 King Road<br />Ipswich", html=True)
+        self.assertContains(
+            response,
+            """<link rel="shortlink" href="https://bustimes.org/operators/AINS">""",
+        )
         self.assertContains(
             response,
             "&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;"
