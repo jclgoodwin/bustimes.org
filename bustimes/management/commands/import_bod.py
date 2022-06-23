@@ -389,7 +389,7 @@ def stagecoach(operator=None):
         command.route_ids = set()
         command.garages = {}
 
-        nocs = source.operators.values_list("noc", flat=True)
+        nocs = list(source.operators.values_list("noc", flat=True))
 
         sources = []  # one (TXC 2.1) or two (2.1 and 2.4) sources
 
@@ -424,7 +424,7 @@ def stagecoach(operator=None):
             if modified or operator:
                 do_stagecoach_source(command, last_modified, filename, nocs)
 
-            if nocs[0] in ("SCEK", "SYRK", "SDVN", "SCMN", "SSWL"):
+            if nocs[0] in ("SCEK", "SYRK", "SCCM", "SDVN", "SCMN", "SSWL"):
                 command.preferred_source = command.source  # just *prefer* 2.1 source
             else:
                 break  # don't use 2.4 source at all

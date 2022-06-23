@@ -383,6 +383,9 @@ class ImportBusOpenDataTest(TestCase):
             url="https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange.zip",
         )
         source.operators.add("SCCM")
+        nocs = DataSource.objects.create(name="National Operator Codes")
+        OperatorCode.objects.create(source=nocs, code="SCCM", operator_id="SCHU")
+        OperatorCode.objects.create(source=nocs, code="SCPB", operator_id="SCHU")
 
         StopPoint.objects.bulk_create(
             [
@@ -438,7 +441,7 @@ class ImportBusOpenDataTest(TestCase):
                     "bustimes.management.commands.import_bod.download_if_changed",
                     return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
-                    with self.assertNumQueries(153):
+                    with self.assertNumQueries(158):
                         call_command("import_bod", "stagecoach")
                     download_if_changed.assert_called_with(
                         path, "https://opendata.stagecoachbus.com/" + archive_name
@@ -458,7 +461,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command("import_bod", "stagecoach", "SCOX")
 
-                    with self.assertNumQueries(95):
+                    with self.assertNumQueries(97):
                         call_command("import_bod", "stagecoach", "SCCM")
 
                     route_link.refresh_from_db()
