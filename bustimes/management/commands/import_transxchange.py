@@ -925,7 +925,7 @@ class Command(BaseCommand):
                 and operators[0].parent != "Stagecoach"
                 and not operators[0].name.startswith("Stagecoach ")
             ):
-                logger.info(f"skipping {txc_service.service_code} ({operators[0].id})")
+                logger.info(f"skipping {txc_service.service_code} ({operators[0].noc})")
                 return
 
         linked_services = []
