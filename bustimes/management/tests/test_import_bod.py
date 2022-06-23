@@ -29,6 +29,7 @@ from ...models import (
     Block,
     Garage,
     RouteLink,
+    TimetableDataSource,
 )
 
 
@@ -373,11 +374,15 @@ class ImportBusOpenDataTest(TestCase):
             ],
         )
 
-    @override_settings(
-        STAGECOACH_OPERATORS=[("EA", "sccm", "Stagecoach East", ["SCHU", "SCPB"])]
-    )
     @time_machine.travel(datetime.datetime(2020, 6, 10))
     def test_import_stagecoach(self):
+
+        source = TimetableDataSource.objects.create(
+            name="Stagecoach East",
+            region_id="EA",
+            url="https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange.zip",
+        )
+        source.operators.add("SCCM")
 
         StopPoint.objects.bulk_create(
             [
@@ -433,7 +438,7 @@ class ImportBusOpenDataTest(TestCase):
                     "bustimes.management.commands.import_bod.download_if_changed",
                     return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
-                    with self.assertNumQueries(150):
+                    with self.assertNumQueries(153):
                         call_command("import_bod", "stagecoach")
                     download_if_changed.assert_called_with(
                         path, "https://opendata.stagecoachbus.com/" + archive_name
@@ -447,14 +452,14 @@ class ImportBusOpenDataTest(TestCase):
                     )
                     route_link.save()
 
-                    with self.assertNumQueries(4):
+                    with self.assertNumQueries(6):
                         call_command("import_bod", "stagecoach")
 
-                    with self.assertNumQueries(0):
-                        call_command("import_bod", "stagecoach", "scox")
+                    with self.assertNumQueries(1):
+                        call_command("import_bod", "stagecoach", "SCOX")
 
-                    with self.assertNumQueries(92):
-                        call_command("import_bod", "stagecoach", "sccm")
+                    with self.assertNumQueries(95):
+                        call_command("import_bod", "stagecoach", "SCCM")
 
                     route_link.refresh_from_db()
                     self.assertEqual(len(route_link.geometry.coords), 32)

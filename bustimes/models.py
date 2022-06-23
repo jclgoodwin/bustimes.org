@@ -20,6 +20,9 @@ class TimetableDataSource(models.Model):
         "busstops.Region", models.SET_NULL, null=True, blank=True
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Route(models.Model):
     source = models.ForeignKey("busstops.DataSource", models.CASCADE)

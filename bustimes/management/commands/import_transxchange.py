@@ -40,6 +40,7 @@ from ...models import (
     CalendarDate,
     CalendarBankHoliday,
     BankHoliday,
+    TimetableDataSource,
 )
 from transxchange.txc import TransXChange
 from vosa.models import Registration
@@ -145,8 +146,11 @@ def get_open_data_operators():
         open_data_operators += operators
     for _, _, _, operators in settings.PASSENGER_OPERATORS:
         open_data_operators += operators.values()
-    for _, _, _, operators in settings.STAGECOACH_OPERATORS:
-        open_data_operators += operators
+
+    open_data_operators += TimetableDataSource.operators.through.objects.filter(
+        timetabledatasource__active=True
+    ).values_list("operator_id", flat=True)
+
     for setting in settings.TICKETER_OPERATORS:
         open_data_operators += setting[1]
 

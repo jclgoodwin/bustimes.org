@@ -809,34 +809,6 @@ BOD_OPERATORS = [
     ("SOUT", "SW", {}, False),
 ]
 
-# see bustimes.management.commands.import_bod
-STAGECOACH_OPERATORS = [
-    ("S", "sblb", "Stagecoach Bluebird", ["SBLB"]),
-    ("S", "scfi", "Stagecoach East Scotland", ["SCFI", "SCPE", "SSPH", "STSY", "SSTY"]),
-    ("S", "schi", "Stagecoach Highlands", ["SCHI", "SCOR", "SINV"]),
-    ("NE", "scne", "Stagecoach North East", ["SCNE", "SCSS", "SCSU", "SCTE", "SCHA"]),
-    ("S", "stws", "Stagecoach West Scotland", ["STWS", "SCGS", "STGS"]),
-    ("EM", "scem", "Stagecoach East Midlands", ["SCLI", "SCGH", "SCGR", "NFKG"]),
-    (
-        "SE",
-        "scso",
-        "Stagecoach South",
-        ["SCPY", "SCHM", "SCHW", "SCCO", "SMSO", "SCHS", "SCHN"],
-    ),
-    ("SE", "scek", "Stagecoach South East", ["SCEK", "SCEB", "SCHT"]),
-    ("Y", "syrk", "Stagecoach Yorkshire", ["SYRK", "YSYC", "CLTL"]),
-    ("NW", "sccu", "Stagecoach Cumbria", ["SCCU", "SCMB", "SCNW"]),
-    ("NW", "scmn", "Stagecoach Manchester", ["SCMN", "SWIG"]),
-    ("NW", "scmy", "Stagecoach Merseyside", ["SCMY", "STCR", "STWR", "SCLA"]),
-    ("SW", "sdvn", "Stagecoach South West", ["SDVN", "SDVN"]),
-    ("SE", "sccm", "Stagecoach East", ["SCCM", "SCBD", "SCPB", "SCHU"]),
-    ("EM", "scnh", "Stagecoach Midlands", ["SCNH", "SCWW"]),
-    ("SE", "scox", "Stagecoach Oxfordshire", ["SCOX"]),
-    ("SW", "scgl", "Stagecoach West", ["SCGL", "SSWN", "STWD", "SCCH"]),
-    ("W", "sswl", "Stagecoach South Wales", ["SSWL"]),
-    ("Y", "tram", "Stagecoach Supertram", ["SCST"]),
-]
-
 # Some operators' timetables are fetched directly from e.g.
 # https://opendata.ticketer.com/uk/LYNX/routes_and_timetables/current.zip
 # rather than via the Bus Open Data site,

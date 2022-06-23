@@ -16,7 +16,7 @@ from django.utils import timezone
 from busstops.models import DataSource, Operator, Service
 from .import_transxchange import Command as TransXChangeCommand
 from ...download_utils import download, download_if_changed
-from ...models import Route
+from ...models import Route, TimetableDataSource
 
 
 logger = logging.getLogger(__name__)
@@ -376,38 +376,34 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
 def stagecoach(operator=None):
     command = get_command()
 
-    for region_id, noc, name, nocs in settings.STAGECOACH_OPERATORS:
-        if operator and operator != noc:  # something like 'sswl'
-            continue
+    timetable_data_sources = TimetableDataSource.objects.filter(
+        url__startswith="https://opendata.stagecoachbus.com", active=True
+    )
+    if operator:
+        timetable_data_sources = timetable_data_sources.filter(operators=operator)
 
-        command.region_id = region_id
+    for source in timetable_data_sources:
+
+        command.region_id = source.region_id
         command.service_ids = set()
         command.route_ids = set()
         command.garages = {}
-        command.operators = (
-            {  # sort of ~homogenise~ all the different OperatorCodes in the data
-                o: nocs[0] for o in nocs
-            }
-        )
 
-        sources = []
+        nocs = source.operators.values_list("noc", flat=True)
 
-        for filename in (
-            f"stagecoach-{noc}-route-schedule-data-transxchange.zip",
-            f"stagecoach-{noc}-route-schedule-data-transxchange_2_4.zip",
+        sources = []  # one (TXC 2.1) or two (2.1 and 2.4) sources
+
+        command.preferred_source = None
+
+        for url in (
+            source.url,
+            source.url.replace(".zip", "_2_4.zip"),
         ):
-            if "_2_4" in filename:
-                if noc not in ("scek", "syrk", "sdvn", "sccm", "scmn", "sswl"):
-                    continue  # completely defer to use 2.1 source
-                command.preferred_source = command.source  # prefer the 2.1 source
-            else:
-                command.preferred_source = None
-
-            url = f"https://opendata.stagecoachbus.com/{filename}"
+            filename = Path(url).name
             path = settings.DATA_DIR / filename
 
             command.source, _ = DataSource.objects.get_or_create(
-                {"name": name}, url=url
+                {"name": source.name}, url=url
             )
             sources.append(command.source)
 
@@ -420,11 +416,18 @@ def stagecoach(operator=None):
                     modified = False
                 elif sha1 == command.source.sha1:
                     modified = False
+            elif command.source.older_than(last_modified):
+                modified = True
 
             command.source.sha1 = sha1
 
             if modified or operator:
                 do_stagecoach_source(command, last_modified, filename, nocs)
+
+            if nocs[0] in ("SCEK", "SYRK", "SDVN", "SCMN", "SSWL"):
+                command.preferred_source = command.source  # just *prefer* 2.1 source
+            else:
+                break  # don't use 2.4 source at all
 
         clean_up(nocs, sources)
         command.finish_services()
