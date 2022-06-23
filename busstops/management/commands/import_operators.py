@@ -95,16 +95,17 @@ class Command(ImportFromCSVCommand):
 
         defaults = {"name": operator_name, "vehicle_mode": mode, "region_id": region_id}
 
-        operator = Operator.objects.update_or_create(noc=operator_id, defaults=defaults)[
-            0
-        ]
+        operator, created = Operator.objects.update_or_create(
+            noc=operator_id, defaults=defaults
+        )
         for key in self.code_sources:
-            if row[key]:
-                OperatorCode.objects.update_or_create(
-                    code=row[key].replace("=", ""),
-                    source=self.code_sources[key],
-                    defaults={"operator": operator},
-                )
+            if created or key != "NOCCODE":
+                if row[key]:
+                    OperatorCode.objects.update_or_create(
+                        code=row[key].replace("=", ""),
+                        source=self.code_sources[key],
+                        defaults={"operator": operator},
+                    )
 
         if row["Licence"]:
             try:
