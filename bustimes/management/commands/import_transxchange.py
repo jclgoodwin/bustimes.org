@@ -149,9 +149,6 @@ def get_open_data_operators():
         timetabledatasource__active=True
     ).values_list("operator_id", flat=True)
 
-    for setting in settings.TICKETER_OPERATORS:
-        open_data_operators += setting[1]
-
     open_data_operators = set(open_data_operators)
     incomplete_operators = set(incomplete_operators)
     open_data_operators -= incomplete_operators
