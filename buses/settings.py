@@ -831,6 +831,7 @@ TICKETER_OPERATORS = [
     ("EM", ["DELA"], "Delaine Buses"),
     ("NE", ["A-Line_Coaches_Tyne_&_Wear", "ALGC"]),
     ("NE", ["Coatham_Coaches", "COTY"]),
+    ("NE", ["L&G_Coaches", "LAGC"], "L & G Coaches"),
     ("NW", ["STOT"], "Stotts Tours"),
     ("NW", ["D&G_Bus_Ltd", "DAGC", "CRDR"]),
     ("NW", ["Finches", "FCHS"]),
