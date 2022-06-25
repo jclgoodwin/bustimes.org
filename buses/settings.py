@@ -428,43 +428,22 @@ BOD_OPERATORS = [
     ("NRTL", "SW", {}, False),
     ("PRIC", "SW", {}, False),
     ("LIHO", "SW", {}, False),
-    # ('DPCR', 'SW', {}, False),
     ("YCOA", "SW", {}, False),
     ("YELL", "SW", {}, False),
     ("COEV", "SW", {}, False),
-    # ('NATX', 'GB', {}, False),
     ("KETR", "SE", {}, False),
-    # ('PCCO', 'EM', {}, False),
     ("WGHC", "NE", {}, False),
     ("SPSV", "SE", {}, False),
     ("NVTR", "SE", {}, False),
     ("LEMN", "SE", {}, False),
     ("CHLK", "SE", {}, False),
     ("GOCH", "SE", {"GO": "GOCH"}, False),
-    # ('LAKC', 'WM', {}, True),  # incomplete
-    (
-        "CBBH",
-        "EM",
-        {
-            "CBBH": "CBBH",
-            "CBNL": "CBNL",
-            "CBL": "CBNL",
-        },
-        True,
-    ),
-    # ('BULL', 'NW', {}, False),
     ("SELT", "NW", {}, True),  # Selwyns
     ("ROSS", "Y", {}, False),  # Ross Travel Ticketer
     ("GRYC", "EM", {}, False),
     ("CKMR", "SE", {}, False),
-    # ('A2BR', 'EA',  {}, False),
     ("A2BV", "NW", {}, False),
-    # ('STNE', 'NE',  {
-    #     'STNE': 'STNE',
-    #     'STNT': 'STNT',
-    # }, False),
     ("LAWS", "EM", {}, False),
-    # ('BMCS', 'SE',  {}, False),
     ("AJCO", "EA", {}, False),
     ("LTEA", "EA", {}, False),
     ("CPLT", "EA", {}, False),
@@ -639,9 +618,6 @@ BOD_OPERATORS = [
         },
         False,
     ),
-    # ('East Yorkshire', 'Y', {
-    #     'EYMS': 'EYMS',
-    # }, False),
     ("DRMC", "WM", {}, True),
     ("SARG", "WM", {}, False),
     (
@@ -654,9 +630,6 @@ BOD_OPERATORS = [
         True,
     ),
     ("RDRT", "SE", {"RR": "RDRT", "RR1": "RDRT"}, False),
-    # ('REDL', 'SE', {
-    #     'REDL': 'RLNE',
-    # }, False),
     ("GOGO", "NW", {}, False),
     ("HATT", "NW", {}, False),
     ("FCHS", "NW", {}, False),
@@ -667,7 +640,6 @@ BOD_OPERATORS = [
     ("EAZI", "NW", {}, False),
     ("MAGH", "NW", {}, False),
     ("MAND", "SE", {}, False),
-    # ('RLNE', 'SE', {}, False),
     ("SOUT", "SW", {}, False),
 ]
 
@@ -708,8 +680,6 @@ TICKETER_OPERATORS = [
     ("SE", ["FALC"], "Falcon Buses"),
     ("SE", ["Sullivan_Buses", "SULV"]),
     ("SE", ["ENSB"], "Ensignbus"),
-    # ('SE', ['RRTR'], 'Red Rose Travel'),
-    ("SE", ["Redline_Buses_Ltd", "REDL"]),
     ("SE", ["Compass_Travel", "COMT"]),
     ("SW", ["NTCP", "NCTP"], "HCT Group"),
     ("WM", ["Travel_Express", "TEXP"]),
