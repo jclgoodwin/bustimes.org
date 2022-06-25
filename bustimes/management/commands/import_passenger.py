@@ -13,6 +13,7 @@ from django.db.models import Q
 from busstops.models import DataSource
 from .import_bod import handle_file, get_operator_ids, clean_up, logger
 from .import_transxchange import Command as TransXChangeCommand
+from ...models import TimetableDataSource
 from ...download_utils import write_file
 
 
@@ -63,28 +64,27 @@ def get_versions(session, url):
 class Command(BaseCommand):
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument("operator", type=str, nargs="?")
+        parser.add_argument("operator_name", type=str, nargs="?")
 
-    def handle(self, operator, *args, **options):
+    def handle(self, operator_name, *args, **options):
         command = TransXChangeCommand()
         command.set_up()
 
         session = HTMLSession()
 
-        sources = DataSource.objects.filter(
-            url__in=[
-                f"https://data.discoverpassenger.com/operator/{values[1]}"
-                for values in settings.PASSENGER_OPERATORS
-            ]
+        prefix = "https://data.discoverpassenger.com/operator"
+
+        sources = DataSource.objects.filter(url__startswith=prefix)
+
+        timetable_data_sources = TimetableDataSource.objects.filter(
+            active=True, url__startswith=prefix
         )
+        if operator_name:
+            timetable_data_sources = timetable_data_sources.filter(name=operator_name)
 
-        for name, url, region_id, operators_dict in settings.PASSENGER_OPERATORS:
-            if operator and operator != name:
-                continue
+        for source in timetable_data_sources:
 
-            url = f"https://data.discoverpassenger.com/operator/{url}"
-
-            versions = get_versions(session, url)
+            versions = get_versions(session, source.url)
 
             if versions:
                 prefix = versions[0]["filename"].split("_")[0]
@@ -101,24 +101,23 @@ class Command(BaseCommand):
 
             new_versions = any(version["modified"] for version in versions)
 
-            operators = operators_dict.values()
-
             command.source, _ = DataSource.objects.get_or_create(
-                {"name": name}, url=url
+                {"name": source.name}, url=source.url
             )
 
-            if new_versions or operator:
-                logger.info(name)
+            if new_versions or operator_name:
+                logger.info(source.name)
+
+                operators = list(source.operators.values_list("noc", flat=True))
 
                 command.source.datetime = timezone.now()
-                command.operators = operators_dict
-                command.region_id = region_id
+                command.region_id = source.region_id
                 command.service_ids = set()
                 command.route_ids = set()
                 command.garages = {}
 
                 for version in versions:  # newest first
-                    if version["modified"] or operator:
+                    if version["modified"] or operator_name:
                         logger.info(version)
                         handle_file(command, version["filename"], qualify_filename=True)
 
@@ -137,7 +136,7 @@ class Command(BaseCommand):
             old_routes = old_routes.delete()
             if not new_versions:
                 if old_routes[0]:
-                    logger.info(name)
+                    logger.info(source.name)
                 else:
                     sleep(2)
                     continue
@@ -147,7 +146,7 @@ class Command(BaseCommand):
             old_services = command.source.service_set.filter(current=True, route=None)
             logger.info(f"  old services: {old_services.update(current=False)}")
 
-            if new_versions or operator:
+            if new_versions or operator_name:
                 command.finish_services()
 
                 command.source.save()

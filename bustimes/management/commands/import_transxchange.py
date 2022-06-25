@@ -144,8 +144,6 @@ def get_open_data_operators():
         if incomplete:
             incomplete_operators += operators
         open_data_operators += operators
-    for _, _, _, operators in settings.PASSENGER_OPERATORS:
-        open_data_operators += operators.values()
 
     open_data_operators += TimetableDataSource.operators.through.objects.filter(
         timetabledatasource__active=True
