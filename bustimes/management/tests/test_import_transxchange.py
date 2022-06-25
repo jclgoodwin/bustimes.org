@@ -62,7 +62,9 @@ class ImportTransXChangeTest(TestCase):
             noc="FECS", region_id="EA", name="First in Norfolk & Suffolk"
         )
         Operator.objects.create(noc="bus-vannin", region_id="EA", name="Bus Vannin")
-        cls.megabus = Operator.objects.create(noc="MEGA", region_id="GB", name="Megabus")
+        cls.megabus = Operator.objects.create(
+            noc="MEGA", region_id="GB", name="Megabus"
+        )
         cls.fabd = Operator.objects.create(
             noc="FABD", region_id="S", name="First Aberdeen"
         )

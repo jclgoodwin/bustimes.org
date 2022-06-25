@@ -4,7 +4,7 @@ from vcr import use_cassette
 from django.test import TestCase, override_settings
 from django.core.management import call_command
 from busstops.models import Region, Operator, DataSource
-from ...models import Route
+from ...models import Route, TimetableDataSource
 
 
 class ImportPassengerTest(TestCase):
@@ -15,23 +15,14 @@ class ImportPassengerTest(TestCase):
         Operator.objects.create(noc="UNIL", region=sw, name="Unilink")
 
     def test_import(self):
-
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
+        TimetableDataSource.objects.create(
+            active=True,
+            url="https://data.discoverpassenger.com/operator/unilink",
+            name="Unilink",
+        )
 
-        with override_settings(
-            DATA_DIR=fixtures_dir,
-            PASSENGER_OPERATORS=[
-                (
-                    "Unilink",
-                    "unilink",
-                    "SW",
-                    {
-                        "SQ": "UNIL",
-                        "BLUS": "BLUS",
-                    },
-                )
-            ],
-        ):
+        with override_settings(DATA_DIR=fixtures_dir):
             with use_cassette(
                 str(fixtures_dir / "passenger.yaml"), decode_compressed_response=True
             ):

@@ -284,7 +284,7 @@ class Command(BaseCommand):
         name = get_operator_name(operator_element)
 
         try:
-            return Operator.objects.get(name=name)
+            return Operator.objects.get(name__iexact=name)
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             pass
 
