@@ -342,7 +342,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return self
 
     def update(self):
-        now = timezone.now()
+        now = timezone.localtime()
         self.source.datetime = now
 
         try:
