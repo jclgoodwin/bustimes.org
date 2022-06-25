@@ -44,7 +44,20 @@ class StopTimeInline(admin.TabularInline):
 @admin.register(TimetableDataSource)
 class TimetableDataSourceAdmin(admin.ModelAdmin):
     raw_id_fields = ["operators"]
+    list_display = ["id", "name", "url", "nocs", "active"]
+    list_filter = ["active"]
+    search_fields = ["url"]
 
+    def nocs(self, obj):
+        return obj.nocs
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if "changelist" in request.resolver_match.view_name:
+            return queryset.annotate(
+                nocs=StringAgg("operators", ", ", distinct=True)
+            )
+        return queryset
 
 @admin.register(Route)
 class RouteAdmin(admin.ModelAdmin):
