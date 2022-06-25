@@ -280,38 +280,32 @@ def ticketer(specific_operator=None):
     if not base_dir.exists():
         base_dir.mkdir()
 
-    for setting in settings.TICKETER_OPERATORS:
-        if len(setting) == 3:
-            region_id, operators, name = setting
-        else:
-            region_id, operators = setting
-            name = operators[0].replace("_", " ")
-
-        noc = operators[0]
-        if noc == "AMTM":  # AMTM data is only in the AKSS dataset...
-            operators = operators[1:]
-
-        if specific_operator and specific_operator != noc:
-            continue
-
-        url = (
-            f"https://opendata.ticketer.com/uk/{noc}/routes_and_timetables/current.zip"
+    timetable_data_sources = TimetableDataSource.objects.filter(
+        url__startswith="https://opendata.ticketer.com", active=True
+    )
+    if specific_operator:
+        timetable_data_sources = timetable_data_sources.filter(
+            operators=specific_operator
         )
-        filename = f"{noc}.zip"
+
+    for source in timetable_data_sources:
+        path = Path(source.url)
+
+        filename = f"{path.parts[3]}.zip"
         path = base_dir / filename
         command.source, created = DataSource.objects.get_or_create(
-            {"name": name}, url=url
+            {"name": source.name}, url=source.url
         )
         command.garages = {}
 
-        modified, last_modified = download_if_changed(path, url)
+        modified, last_modified = download_if_changed(path, source.url)
 
         if (
-            noc == specific_operator
+            specific_operator
             or not command.source.datetime
             or last_modified > command.source.datetime
         ):
-            logger.info(f"{url} {last_modified}")
+            logger.info(f"{source.url} {last_modified}")
 
             sha1 = get_sha1(path)
 
@@ -319,7 +313,7 @@ def ticketer(specific_operator=None):
                 # hash matches that hash of some BODS data
                 logger.info(sha1)
             else:
-                command.region_id = region_id
+                command.region_id = source.region_id
                 command.service_ids = set()
                 command.route_ids = set()
 
@@ -330,7 +324,9 @@ def ticketer(specific_operator=None):
 
                 command.mark_old_services_as_not_current()
 
-                clean_up(operators, [command.source])
+                nocs = list(source.operators.values_list("noc", flat=True))
+
+                clean_up(nocs, [command.source])
 
                 command.finish_services()
 

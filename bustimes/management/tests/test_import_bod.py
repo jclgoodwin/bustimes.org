@@ -323,34 +323,28 @@ class ImportBusOpenDataTest(TestCase):
             )
 
     def test_ticketer(self):
+        source = TimetableDataSource.objects.create(
+            name="Completely Coach Travel",
+            region_id="EA",
+            url="https://opendata.ticketer.com/uk/Completely_Coach_Travel/routes_and_timetables/current.zip",
+        )
+
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
                 with use_cassette(str(FIXTURES_DIR / "bod_ticketer.yaml")):
-                    with override_settings(
-                        TICKETER_OPERATORS=[
-                            (
-                                "EA",
-                                ["Completely_Coach_Travel", "CPLT"],
-                                "Completely Coach Travel",
-                            )
-                        ]
-                    ):
-                        with self.assertLogs(
-                            "bustimes.management.commands.import_transxchange",
-                            "WARNING",
-                        ) as cm:
-                            call_command("import_bod", "ticketer")
+                    with self.assertLogs(
+                        "bustimes.management.commands.import_transxchange",
+                        "WARNING",
+                    ) as cm:
+                        call_command("import_bod", "ticketer")
 
-                    with override_settings(
-                        TICKETER_OPERATORS=[("EA", ["Completely_Coach_Travel", "CPLT"])]
-                    ):
-                        with self.assertNumQueries(1):
-                            call_command("import_bod", "ticketer")  # not modified
+                    with self.assertNumQueries(2):
+                        call_command("import_bod", "ticketer")  # not modified
 
-                        with self.assertNumQueries(0):
-                            call_command(
-                                "import_bod", "ticketer", "POOP"
-                            )  # no matching setting
+                    with self.assertNumQueries(1):
+                        call_command(
+                            "import_bod", "ticketer", "POOP"
+                        )  # no matching setting
 
                 source = DataSource.objects.get(name="Completely Coach Travel")
                 service = source.service_set.first()
