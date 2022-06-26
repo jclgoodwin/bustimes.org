@@ -5,7 +5,7 @@ import vcr
 import time_machine
 from datetime import datetime, date
 from unittest.mock import patch
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.shortcuts import render
 
 from busstops.models import (
@@ -241,6 +241,50 @@ class LiveDeparturesTest(TestCase):
                 with self.assertNumQueries(12):
                     response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, f'<a href="/vehicles/{vehicle.id}#map">')
+
+    def test_west_midlands(self):
+        stop = StopPoint.objects.create(
+            atco_code="3800C419101",
+            common_name="Farewell Lane",
+            active=True,
+        )
+        operator = Operator.objects.create(noc="TCVW", name="National Express Coventry")
+        service = Service.objects.create(line_name="8")
+        service.operator.add(operator)
+        StopUsage.objects.create(stop=stop, service=service, order=1)
+        route = Route.objects.create(
+            line_name="8", service=service, source=self.source, start_date="2022-06-13"
+        )
+        calendar = Calendar.objects.create(
+            mon=True,
+            tue=True,
+            wed=True,
+            thu=True,
+            fri=True,
+            sat=True,
+            sun=True,
+            start_date="2022-06-13",
+        )
+        trip = Trip.objects.create(
+            calendar=calendar, route=route, destination=stop, start="0", end="24:00:00"
+        )
+        StopTime.objects.create(
+            trip=trip, sequence=0, arrival="13:19:00", departure="13:19:00", stop=stop
+        )
+
+        with override_settings(
+            TFWM={
+                "app_id": "app_id",
+                "app_key": "app_key",
+            }
+        ):
+            with time_machine.travel(datetime(2022, 6, 26, 13, 10)):
+                with vcr.use_cassette(
+                    "fixtures/vcr/tfwm.yaml", decode_compressed_response=True
+                ):
+                    with self.assertNumQueries(11):
+                        response = self.client.get(stop.get_absolute_url())
+        self.assertContains(response, "13:20⚡")
 
     def test_blend(self):
         service = Service(line_name="X98")

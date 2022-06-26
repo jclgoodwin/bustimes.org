@@ -634,7 +634,12 @@ def get_departures(stop, services, when):
 
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
-            elif stop.atco_code[:3] == "430":
+            elif (
+                "National Express West Midlands" in operators
+                or "National Express Coventry" in operators
+                or "Diamond Bus" in operators
+                or "Landflight" in operators
+            ):
                 live_rows = WestMidlandsDepartures(stop, services).get_departures()
 
             if live_rows:

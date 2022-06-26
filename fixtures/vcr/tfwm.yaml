@@ -1,0 +1,47 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.27.1
+    method: GET
+    uri: http://api.tfwm.org.uk/stoppoint/3800C419101/arrivals?app_id=app_id&app_key=app_key&formatter=json
+  response:
+    body:
+      string: "{\n  \"Predictions\" : {\n    \"Prediction\" : [ {\n      \"DestinationName\"
+        : \"Bus Station\",\n      \"DestinationNaptanId\" : \"3800C403907\",\n      \"Direction\"
+        : \"outbound\",\n      \"ExpectedArrival\" : \"2022-06-26T13:20:26+01:00\",\n
+        \     \"ScheduledArrival\" : \"2022-06-26T13:19:00+01:00\",\n      \"Id\"
+        : \"6c68173b021f87faa618a2f9a83328286a5ce766\",\n      \"LineId\" : \"47\",\n
+        \     \"LineName\" : \"8\",\n      \"ModeName\" : \"bus\",\n      \"StopSequence\"
+        : \"58\",\n      \"NaptanId\" : \"3800C419101\",\n      \"PlatformName\" :
+        \"\",\n      \"StationName\" : \"Farewell Lane\",\n      \"TimeToLive\" :
+        \"2022-06-26T13:13:52+01:00\",\n      \"TimeToStation\" : \"394\",\n      \"Timestamp\"
+        : \"2022-06-26T13:13:40+01:00\",\n      \"Towards\" : \"Lichfield City Centre\",\n
+        \     \"VehicleId\" : \"VJ6c68173b021f87faa618a2f9a83328286a5ce766_1656243600\",\n
+        \     \"Operator\" : {\n        \"Name\" : \"National Express West Midlands\",\n
+        \       \"Code\" : \"NXB\",\n        \"Id\" : \"100\"\n      }\n    } ]\n
+        \ }\n}"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '921'
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 26 Jun 2022 12:13:52 GMT
+      Server:
+      - openresty/1.7.4.1
+      X-Cache-Status:
+      - MISS
+    status:
+      code: 200
+      message: ''
+version: 1
