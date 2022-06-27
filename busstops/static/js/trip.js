@@ -31,43 +31,42 @@
         reqwest(
             '/vehicles.json' + params,
             function(data) {
-                if (data) {
-                    if (window.VEHICLE_ID && !data[0].vehicle) {
-                        // data is more than 15 minutes old
-                        return;
-                    }
+                if (!data || !data.length) {
+                    return;
+                }
+                if (window.VEHICLE_ID && !data[0].vehicle) {
+                    // data is more than 15 minutes old
+                    return;
+                }
 
-                    window.bustimes.handleVehicles(data);
+                window.bustimes.handleVehicles(data);
 
-                    if (!window.bustimes.clickedMarker && (window.TRIP_ID || window.VEHICLE_ID) && !poppedUp) {
-                        for (var id in window.bustimes.vehicleMarkers) {
-                            var marker = window.bustimes.vehicleMarkers[id];
-                            if (marker.options.item.trip_id === window.TRIP_ID || marker.options.item.id === window.VEHICLE_ID) {
-                                marker.openPopup();
-                                poppedUp = id;  // don't auto-open the popup again
-                                break;
-                            }
-                        }
-                    }
-
-                    if (poppedUp) {
-                        var progress = window.bustimes.vehicleMarkers[poppedUp].options.item.progress;
-                        if (progress) {
-                            // highlight last visited stop in timetable
-                            var nowAtStop = window.bustimes.vehicleMarkers[poppedUp].options.item.progress.prev_stop;
-                            var wasAtStop = document.querySelector('.referrer');
-                            if (wasAtStop) {
-                                wasAtStop.classList.remove('referrer');
-                            }
-                            nowAtStop = document.querySelector('[href="/stops/' + nowAtStop + '"]').parentNode.parentNode;
-                            nowAtStop.classList.add('referrer');
+                if (!window.bustimes.clickedMarker && (window.TRIP_ID || window.VEHICLE_ID) && !poppedUp) {
+                    for (var id in window.bustimes.vehicleMarkers) {
+                        var marker = window.bustimes.vehicleMarkers[id];
+                        if (marker.options.item.trip_id === window.TRIP_ID || marker.options.item.id === window.VEHICLE_ID) {
+                            marker.openPopup();
+                            poppedUp = id;  // don't auto-open the popup again
+                            break;
                         }
                     }
                 }
 
-                if (data.length) {
-                    loadVehiclesTimeout = setTimeout(loadVehicles, 10000);
+                if (poppedUp) {
+                    var progress = window.bustimes.vehicleMarkers[poppedUp].options.item.progress;
+                    if (progress) {
+                        // highlight last visited stop in timetable
+                        var nowAtStop = window.bustimes.vehicleMarkers[poppedUp].options.item.progress.prev_stop;
+                        var wasAtStop = document.querySelector('.referrer');
+                        if (wasAtStop) {
+                            wasAtStop.classList.remove('referrer');
+                        }
+                        nowAtStop = document.querySelector('[href="/stops/' + nowAtStop + '"]').parentNode.parentNode;
+                        nowAtStop.classList.add('referrer');
+                    }
                 }
+
+                loadVehiclesTimeout = setTimeout(loadVehicles, 10000);
             }
         );
     }
