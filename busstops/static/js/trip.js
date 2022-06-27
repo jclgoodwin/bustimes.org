@@ -32,6 +32,11 @@
             '/vehicles.json' + params,
             function(data) {
                 if (data) {
+                    if (window.VEHICLE_ID && !data[0].vehicle) {
+                        // data is more than 15 minutes old
+                        return;
+                    }
+
                     window.bustimes.handleVehicles(data);
 
                     if (!window.bustimes.clickedMarker && (window.TRIP_ID || window.VEHICLE_ID) && !poppedUp) {

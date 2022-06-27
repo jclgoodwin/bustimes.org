@@ -32,9 +32,13 @@
 </tbody>
 </table>
 
-<h2>{{ object }}</h2>
+{% if object %}
 
-{% include 'vehicle_info.html' with vehicle=object %}
+    <h2>{{ object }}</h2>
+
+    {% include 'vehicle_info.html' with vehicle=object %}
+
+{% endif %}
 
 {% endblock %}
 
@@ -46,7 +50,9 @@
         <script src="{% static 'js/reqwest.min.js' %}"></script>
         <script>
             window.STOPS = {{ stops_json }};
-            window.VEHICLE_ID = {{ object.id }};
+            {% if object %}
+                window.VEHICLE_ID = {{ object.id }};
+            {% endif %}
         </script>
     {% endif %}
     <script src="{% static 'js/trip.js' %}"></script>

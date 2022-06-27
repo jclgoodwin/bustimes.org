@@ -291,12 +291,11 @@ def tfl_vehicle(request, reg):
         data = None
 
     vehicles = Vehicle.objects.select_related("livery", "operator", "vehicle_type")
+    vehicle = vehicles.filter(code=reg).first()
 
     if not data:
-        try:
-            vehicle = get_object_or_404(vehicles, code=reg)
-        except Vehicle.MultipleObjectsReturned:
-            vehicle = get_object_or_404(vehicles, source=7, code=reg)
+        if not vehicle:
+            raise Http404
         return render(
             request,
             "vehicles/vehicle_detail.html",
@@ -312,21 +311,14 @@ def tfl_vehicle(request, reg):
             line_name__iexact=data[0]["lineName"],
             current=True,
         )
-        operator = service.operator.first()
     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
         service = None
-        operator = None
 
-    try:
-        vehicle = vehicles.get(reg=reg)
-    except Vehicle.DoesNotExist:
-        vehicle = vehicles.create(
-            source_id=7, code=reg, reg=reg, livery_id=262, operator=operator
-        )
-
-    if operator and not vehicle.operator:
-        vehicle.operator = operator
-        vehicle.save(update_fields=["operator"])
+    if service and vehicle:
+        operator = service.operator.first()
+        if vehicle.operator != operator:
+            vehicle.operator = operator
+            vehicle.save(update_fields=["operator"])
 
     stops = StopPoint.objects.in_bulk(atco_codes)
 
