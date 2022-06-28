@@ -64,18 +64,6 @@ class ImportBusOpenDataTest(TestCase):
 
     @use_cassette(str(FIXTURES_DIR / "bod_lynx.yaml"))
     @time_machine.travel(datetime.datetime(2020, 5, 1), tick=False)
-    @override_settings(
-        BOD_OPERATORS=[
-            (
-                "LYNX",
-                "EA",
-                {
-                    "CO": "LYNX",
-                },
-                False,
-            ),
-        ]
-    )
     def test_import_bod(self):
         admin_area = AdminArea.objects.create(
             id=91, atco_code="290", name="Norfolk", region_id="EA"
@@ -117,11 +105,14 @@ class ImportBusOpenDataTest(TestCase):
             ]
         )
 
+        source = TimetableDataSource.objects.create(name="LYNX", search="LYNX")
+        source.operators.add("LYNX")
+
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
                 call_command("import_bod", "0123456789abc19abc190123456789abc19abc19")
 
-                with self.assertNumQueries(5):
+                with self.assertNumQueries(7):
                     call_command(
                         "import_bod", "0123456789abc19abc190123456789abc19abc19"
                     )

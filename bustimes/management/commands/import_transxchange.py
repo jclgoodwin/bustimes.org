@@ -134,24 +134,17 @@ def get_operator_by(scheme, code):
 
 
 def get_open_data_operators():
-    open_data_operators = []
-    incomplete_operators = []
-    for operator_code, _, operators, incomplete in settings.BOD_OPERATORS:
-        if operators:
-            operators = operators.values()
-        else:
-            operators = [operator_code]
-        if incomplete:
-            incomplete_operators += operators
-        open_data_operators += operators
-
-    open_data_operators += TimetableDataSource.operators.through.objects.filter(
-        timetabledatasource__active=True
+    timetable_data_sources = TimetableDataSource.operators.through.objects.filter(
+        timetabledatasource__active=True,
     ).values_list("operator_id", flat=True)
 
-    open_data_operators = set(open_data_operators)
-    incomplete_operators = set(incomplete_operators)
-    open_data_operators -= incomplete_operators
+    open_data_operators = set(
+        timetable_data_sources.filter(timetabledatasource__complete=True)
+    )
+    incomplete_operators = set(
+        timetable_data_sources.filter(timetabledatasource__complete=False)
+    )
+
     return open_data_operators, incomplete_operators
 
 

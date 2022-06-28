@@ -107,15 +107,15 @@ def handle_file(command, path, qualify_filename=False):
                 logger.error(e, exc_info=True)
 
 
-def get_bus_open_data_paramses(api_key, operator):
-    if operator:
-        nocs = [operator]
-    else:
-        nocs = [operator[0] for operator in settings.BOD_OPERATORS]
+def get_bus_open_data_paramses(sources, api_key):
+    searches = [
+        source.search for source in sources if " " in source.search
+    ]  # e.g. 'TM Travel'
+    nocs = [
+        source.search for source in sources if " " not in source.search
+    ]  # e.g. 'TMTL'
 
-    searches = [noc for noc in nocs if " " in noc]  # e.g. 'TM Travel'
-    nocs = [noc for noc in nocs if " " not in noc]  # e.g. 'TMTL'
-
+    # chunk – we will search for nocs 20 at a time
     nocses = [nocs[i : i + 20] for i in range(0, len(nocs), 20)]
 
     base_params = {
@@ -123,6 +123,7 @@ def get_bus_open_data_paramses(api_key, operator):
         "status": "published",
     }
 
+    # and search phrases one at a time
     for search in searches:
         yield {
             **base_params,
@@ -133,7 +134,7 @@ def get_bus_open_data_paramses(api_key, operator):
         yield {**base_params, "noc": ",".join(nocs)}
 
 
-def bus_open_data(api_key, operator):
+def bus_open_data(api_key, specific_operator):
     assert len(api_key) == 40
 
     command = get_command()
@@ -145,7 +146,11 @@ def bus_open_data(api_key, operator):
 
     datasets = []
 
-    for params in get_bus_open_data_paramses(api_key, operator):
+    timetable_data_sources = TimetableDataSource.objects.filter(url="", active=True)
+    if specific_operator:
+        timetable_data_sources = timetable_data_sources.filter(name=specific_operator)
+
+    for params in get_bus_open_data_paramses(timetable_data_sources, api_key):
         url = f"{url_prefix}/api/v1/dataset/"
         while url:
             response = session.get(url, params=params)
@@ -161,64 +166,58 @@ def bus_open_data(api_key, operator):
 
     all_source_ids = []
 
-    for noc, region_id, operator_codes_dict, incomplete in settings.BOD_OPERATORS:
-        if operator_codes_dict:
-            operators = operator_codes_dict.values()
-        else:
-            operators = [noc]
-
-        if operator and " " not in operator and operator not in operators:
-            continue
-
-        if " " in noc:
+    for source in timetable_data_sources:
+        if " " in source.search:
             operator_datasets = [
                 item
                 for item in datasets
-                if noc in item["name"] or noc in item["description"]
+                if source.search in item["name"] or source.search in item["description"]
             ]
         else:
-            operator_datasets = [item for item in datasets if noc in item["noc"]]
+            operator_datasets = [
+                item for item in datasets if source.search in item["noc"]
+            ]
 
-        command.operators = operator_codes_dict
-        command.region_id = region_id
+        command.region_id = source.region_id
 
         sources = []
         service_ids = set()
 
-        for dataset in operator_datasets:
-            if noc == "FBOS":
-                # only certain First operators
-                if not any(
-                    code in dataset["description"] for code in operator_codes_dict
-                ):
-                    continue
-            if noc == "EYMS" and not any(
-                area["atco_code"] == "229" for area in dataset["adminAreas"]
-            ):
-                continue
+        operators = source.operators.values_list("noc", flat=True)
 
-            source = DataSource.objects.filter(url=dataset["url"]).first()
-            if not source and " " not in noc and len(operator_datasets) == 1:
+        for dataset in operator_datasets:
+            # if source.name == "FBOS":
+            #     # only certain First operators
+            #     if not any(
+            #         code in dataset["description"] for code in operator_codes_dict
+            #     ):
+            #         continue
+
+            command.source = DataSource.objects.filter(url=dataset["url"]).first()
+            if (
+                not command.source
+                and " " not in source.search
+                and len(operator_datasets) == 1
+            ):
                 name_prefix = dataset["name"].split("_", 1)[0]
                 # if old dataset was made inactive, reuse id
-                source = DataSource.objects.filter(
+                command.source = DataSource.objects.filter(
                     name__startswith=f"{name_prefix}_"
                 ).first()
-            if not source:
-                source = DataSource.objects.create(
+            if not command.source:
+                command.source = DataSource.objects.create(
                     name=dataset["name"], url=dataset["url"]
                 )
-            source.name = dataset["name"]
-            source.url = dataset["url"]
+            command.source.name = dataset["name"]
+            command.source.url = dataset["url"]
 
-            command.source = source
             sources.append(command.source)
 
-            if operator or source.datetime != dataset["modified"]:
+            if specific_operator or command.source.datetime != dataset["modified"]:
 
                 logger.info(dataset["name"])
 
-                filename = str(source.id)
+                filename = str(command.source.id)
                 path = path_prefix / filename
 
                 command.service_ids = set()
@@ -227,7 +226,7 @@ def bus_open_data(api_key, operator):
 
                 command.source.datetime = dataset["modified"]
 
-                download(path, source.url)
+                download(path, command.source.url)
 
                 handle_file(command, path)
 
@@ -249,7 +248,7 @@ def bus_open_data(api_key, operator):
                 current=True,
                 operator=o,
             ).exists():
-                clean_up([o], sources, incomplete)
+                clean_up([o], sources, not source.complete)
             elif Service.objects.filter(
                 current=True, operator=o, route__source__url__startswith=url_prefix
             ).exists():
@@ -259,7 +258,7 @@ def bus_open_data(api_key, operator):
         command.finish_services()
         all_source_ids += [source.id for source in sources]
 
-    if not operator:
+    if not specific_operator:
         to_delete = DataSource.objects.filter(
             ~Q(id__in=all_source_ids),
             ~Exists(Route.objects.filter(source=OuterRef("id"))),
