@@ -608,7 +608,7 @@ class StopPointDetailView(DetailView):
         context.update(departures)
         if context["departures"]:
             context["live"] = any(item.get("live") for item in context["departures"])
-            if context["departures"][-1].get("time"):
+            if len(context["departures"]) > 1 and context["departures"][-1].get("time"):
                 next_page = urlencode(
                     {
                         "date": context["departures"][-1]["time"].date(),

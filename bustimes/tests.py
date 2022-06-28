@@ -12,6 +12,7 @@ class BusTimesTest(TestCase):
     def test_tfl_vehicle_view(self):
         DataSource.objects.create(id=7, name="London")
         Livery.objects.create(id=262, name="London", colours="#dc241f", published=True)
+        Vehicle.objects.create(code="LTZ1243", reg="LTZ1243")
 
         with use_cassette(
             os.path.join(
@@ -19,9 +20,8 @@ class BusTimesTest(TestCase):
             ),
             decode_compressed_response=True,
         ) as cassette:
-            with self.assertNumQueries(7):
+            with self.assertNumQueries(5):
                 response = self.client.get("/vehicles/tfl/LTZ1243")
-            # vehicle = response.context["object"]
 
             self.assertContains(response, "<h2>8 to Tottenham Court Road</h2>")
             self.assertContains(response, "<h2>LTZ 1243</h2>")
