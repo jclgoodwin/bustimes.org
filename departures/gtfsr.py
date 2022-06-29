@@ -67,12 +67,12 @@ def apply_trip_update(stops, trip_update):
 
         if stop_time_update:
             stop_time.update = stop_time_update
-            if stop_time.arrival:
+            if stop_time.arrival and "arrival" in stop_time_update:
                 stop_time.expected_arrival = format_timedelta(
                     stop_time.arrival
                     + timedelta(seconds=stop_time_update["arrival"]["delay"])
                 )
-            if stop_time.departure:
+            if stop_time.departure and "departure" in stop_time_update:
                 stop_time.expected_departure = format_timedelta(
                     stop_time.departure
                     + timedelta(seconds=stop_time_update["departure"]["delay"])
