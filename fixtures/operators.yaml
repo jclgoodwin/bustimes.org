@@ -429,7 +429,7 @@ NUTT:
     address: |
         Brinwell Road Bus Garage
         Mereside
-        Blackpool 
+        Blackpool
         FY4 4QU
 LNNE:
     url: ""
@@ -443,9 +443,9 @@ TANV:
     email: ""
     url: https://tanat.co.uk/
     twitter: ""
-LNGS: 
+LNGS:
     url: http://www.lylescoaches.co.uk/home
-POWB: 
+POWB:
     twitter: powellsbus
 CTPL:
     twitter: CTPlusYorkshire
@@ -453,12 +453,8 @@ YSTN:
     url: https://www.stationcoaches.co.uk/
 SPMW:
     url: https://www.stringerscoaches.co.uk/
-#WNGS:
-#    name: Diamond Bus South East
-#    url: https://www.diamondbuses.com/south-east
-#    twitter: DiamondBusSE
-#    email: Comments-DiamondSE@rotala.co.uk
-#    phone: 01784 425 621
+UNOE:
+   twitter: UnoHerts
 CTNY:
     name: Thames Valley Buses
     url: https://www.thamesvalleybuses.com/
