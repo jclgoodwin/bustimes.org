@@ -39,6 +39,12 @@ class GTFSRTTest(TestCase):
             start="06:45:00",
             end="07:49:00",
         )
+        cls.cancellable_trip = Trip.objects.create(
+            route=route,
+            ticket_machine_code="3966.2.60-77A-b12-1.56.I",
+            start="06:45:00",
+            end="07:49:00",
+        )
         StopTime.objects.bulk_create(
             [
                 StopTime(
@@ -107,11 +113,28 @@ class GTFSRTTest(TestCase):
                     stop_id="8250DB000429",
                     departure="06:45:00",
                 ),
+                StopTime(
+                    trip=cls.cancellable_trip,
+                    sequence=1,
+                    stop_id="8250DB000429",
+                    departure="06:45:00",
+                ),
             ]
         )
 
     def test_nta_ie(self):
-        with override_settings(NTA_API_KEY="letsturn"):
+        with override_settings(
+            NTA_API_KEY="letsturn",
+            CACHES={
+                "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+            },
+        ):
             with vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):
+
+                # trip with some delays
                 response = self.client.get(self.trip.get_absolute_url())
-        self.assertContains(response, "<td>06:47</td>")
+                self.assertContains(response, "<td>06:47</td>")
+
+                # cancelled trip:
+                response = self.client.get(self.cancellable_trip.get_absolute_url())
+                self.assertContains(response, "<p>Cancelled</p>")

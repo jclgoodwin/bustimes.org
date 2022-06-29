@@ -44,6 +44,9 @@ def get_trip_update(trip):
 
 
 def apply_trip_update(stops, trip_update):
+    if "stopTimeUpdate" not in trip_update["tripUpdate"]:
+        return
+
     stops_by_sequence = {}
     for stop in stops:
         assert stop.sequence not in stops_by_sequence

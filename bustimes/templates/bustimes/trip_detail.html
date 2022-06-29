@@ -28,6 +28,10 @@
 
     <p>{{ trip.calendar }}</p>
 
+    {% if trip_update.tripUpdate.trip.scheduleRelationship == "CANCELED" %}
+        <p>Cancelled</p>
+    {% endif %}
+
     {% include 'trip_timetable.html' %}
 
     {% if trip.garage %}
