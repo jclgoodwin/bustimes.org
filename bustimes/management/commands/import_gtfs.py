@@ -87,15 +87,19 @@ class Command(BaseCommand):
         for line in read_file(archive, "stops.txt"):
             stop_id = get_stop_id(line["stop_id"])
             if stop_id[0] in "78" and len(stop_id) <= 16:
-                stops[stop_id] = StopPoint(
+                stop = StopPoint(
                     atco_code=stop_id,
-                    common_name=line["stop_name"][:48],
+                    common_name=line["stop_name"],
                     latlong=GEOSGeometry(
                         f"POINT({line['stop_lon']} {line['stop_lat']})"
                     ),
                     locality_centre=False,
                     active=True,
                 )
+                if ", stop" in stop.common_name and stop.common_name.count(", ") == 1:
+                    stop.common_name, stop.indicator = stop.common_name.split(", ")
+                stop.common_name = stop.common_name[:48]
+                stops[stop_id] = stop
             else:
                 stops_not_created[stop_id] = line
         existing_stops = StopPoint.objects.only(
@@ -114,7 +118,9 @@ class Command(BaseCommand):
                 or existing_stops[stop.atco_code].common_name != stop.common_name
             )
         ]
-        StopPoint.objects.bulk_update(stops_to_update, ["common_name", "latlong"])
+        StopPoint.objects.bulk_update(
+            stops_to_update, ["common_name", "latlong", "indicator"]
+        )
 
         for stop in stops_to_create:
             admin_area_id = stop.atco_code[:3]

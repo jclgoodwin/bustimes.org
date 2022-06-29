@@ -19,7 +19,7 @@ def get_response():
 
 
 def update(trip_id):
-    content = cache.get_or_set("naie", get_response)
+    content = cache.get_or_set("ntaie", get_response)
 
     if not content:
         return
@@ -48,6 +48,7 @@ def apply_trip_update(stops, trip_update):
     for stop in stops:
         assert stop.sequence not in stops_by_sequence
         stops_by_sequence[stop.sequence] = stop
+        stop.update = None
 
     for stop_time_update in trip_update["tripUpdate"]["stopTimeUpdate"]:
         sequence = stop_time_update["stopSequence"]
@@ -56,13 +57,20 @@ def apply_trip_update(stops, trip_update):
         assert stop_time_update["stopId"] == stop_time.stop_id
         stop_time.update = stop_time_update
 
-        if stop_time.arrival:
-            stop_time.expected_arrival = format_timedelta(
-                stop_time.arrival
-                + timedelta(seconds=stop_time_update["arrival"]["delay"])
-            )
-        if stop_time.departure:
-            stop_time.expected_departure = format_timedelta(
-                stop_time.departure
-                + timedelta(seconds=stop_time_update["departure"]["delay"])
-            )
+    stop_time_update = None
+    for stop_time in stops:
+        if stop_time.update:
+            stop_time_update = stop_time.update
+
+        if stop_time_update:
+            stop_time.update = stop_time_update
+            if stop_time.arrival:
+                stop_time.expected_arrival = format_timedelta(
+                    stop_time.arrival
+                    + timedelta(seconds=stop_time_update["arrival"]["delay"])
+                )
+            if stop_time.departure:
+                stop_time.expected_departure = format_timedelta(
+                    stop_time.departure
+                    + timedelta(seconds=stop_time_update["departure"]["delay"])
+                )
