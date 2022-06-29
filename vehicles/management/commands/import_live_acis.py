@@ -158,12 +158,16 @@ class Command(ImportLiveVehiclesCommand):
         try:
             try:
                 journey.service = Service.objects.get(
-                    line_name__iexact=journey.route_name, operator=operator
+                    line_name__iexact=journey.route_name,
+                    operator=operator,
+                    current=True,
                 )
             except Service.DoesNotExist:
                 operator = "GLE"
                 journey.service = Service.objects.get(
-                    line_name__iexact=journey.route_name, operator=operator
+                    line_name__iexact=journey.route_name,
+                    operator=operator,
+                    current=True,
                 )
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, journey.route_name)
