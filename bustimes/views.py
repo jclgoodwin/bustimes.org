@@ -262,7 +262,12 @@ class TripDetailView(DetailView):
         operators = list(self.object.route.service.operator.all())
         context["breadcrumb"] = operators + [self.object.route.service]
 
-        if operators and operators[0].name in ("Dublin Bus", "Go-Ahead Ireland"):
+        if operators and operators[0].name in (
+            "Dublin Bus",
+            "Go-Ahead Ireland",
+            "Go-Ahead Commuter",
+            "Bus Éireann",
+        ):
             trip_update = gtfsr.get_trip_update(self.object)
             if trip_update:
                 context["trip_update"] = trip_update
