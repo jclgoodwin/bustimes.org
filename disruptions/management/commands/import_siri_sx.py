@@ -3,8 +3,9 @@ import xml.etree.cElementTree as ET
 from ciso8601 import parse_datetime
 from base64 import b64encode
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
 from psycopg2.extras import DateTimeTZRange
-from busstops.models import DataSource, Service
+from busstops.models import DataSource, Service, StopPoint
 from ...models import Situation, Consequence, ValidityPeriod, Link
 
 
@@ -84,6 +85,7 @@ def handle_item(item, source):
 
         stops = consequence_element.findall("Affects/StopPoints/AffectedStopPoint")
         stops = [stop.find("StopPointRef").text for stop in stops]
+        stops = StopPoint.objects.filter(atco_code__in=stops)
         consequence.stops.set(stops)
 
         consequence.services.clear()

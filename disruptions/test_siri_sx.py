@@ -76,8 +76,6 @@ class SiriSXTest(TestCase):
                 StopPoint(atco_code="2800S11031B", active=True),
                 StopPoint(atco_code="2800S11050A", active=True),
                 StopPoint(atco_code="2800S11051B", active=True),
-                StopPoint(atco_code="2800S11052A", active=True),
-                StopPoint(atco_code="2800S11053A", active=True),
                 StopPoint(atco_code="2800S11085A", active=True),
                 StopPoint(atco_code="2800S46043C", active=True),
                 StopPoint(atco_code="2800S46075A", active=True),
