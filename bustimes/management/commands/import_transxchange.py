@@ -12,7 +12,6 @@ import zipfile
 import datetime
 from functools import cache
 from titlecase import titlecase
-from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q

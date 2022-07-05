@@ -311,7 +311,6 @@ def operator_map(request, slug):
 
 @require_GET
 def vehicles_json(request):
-
     try:
         bounds = get_bounding_box(request)
     except KeyError:

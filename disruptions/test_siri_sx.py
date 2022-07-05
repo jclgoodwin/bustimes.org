@@ -75,7 +75,7 @@ class SiriSXTest(TestCase):
                 StopPoint(atco_code="1800SB33851", active=True),
                 StopPoint(atco_code="2800S11031B", active=True),
                 StopPoint(atco_code="2800S11050A", active=True),
-                StopPoint(atco_code="2800S11051B", active=True),
+                StopPoint(atco_code="2800S11053A", active=True),  # see StopUsage below
                 StopPoint(atco_code="2800S11085A", active=True),
                 StopPoint(atco_code="2800S46043C", active=True),
                 StopPoint(atco_code="2800S46075A", active=True),
@@ -766,7 +766,7 @@ Services will observe all bus stops on the diverted route. </Details>
         cassette = str(VCR_DIR / "siri_sx.yaml")
 
         with use_cassette(cassette, match_on=["body"]):
-            with self.assertNumQueries(110):
+            with self.assertNumQueries(120):
                 call_command("import_siri_sx")
         with use_cassette(cassette, match_on=["body"]):
             with self.assertNumQueries(11):

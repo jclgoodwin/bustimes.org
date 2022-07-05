@@ -3,7 +3,6 @@ import xml.etree.cElementTree as ET
 from ciso8601 import parse_datetime
 from base64 import b64encode
 from django.core.management.base import BaseCommand
-from django.db import IntegrityError
 from psycopg2.extras import DateTimeTZRange
 from busstops.models import DataSource, Service, StopPoint
 from ...models import Situation, Consequence, ValidityPeriod, Link
