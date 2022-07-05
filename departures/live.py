@@ -14,6 +14,7 @@ from bustimes.models import Route, StopTime
 from bustimes.utils import get_calendars, get_routes
 from vehicles.models import Vehicle
 from vehicles.tasks import log_vehicle_journey
+from . import gtfsr
 
 
 logger = logging.getLogger(__name__)
@@ -338,6 +339,7 @@ class TimetableDepartures(Departures):
             "route": trip.route,
             "service": trip.route.service,
             "link": trip.get_absolute_url(),
+            "stop_time": stop_time,
         }
 
     def get_times(self, date, time=None):
@@ -583,6 +585,19 @@ def get_departures(stop, services, when):
     one_hour = datetime.timedelta(hours=1)
     one_hour_ago = now - one_hour
 
+    operators = set()
+    for service in services:
+        if service.operators:
+            operators.update(service.operators)
+
+    if departures and (
+        "Dublin Bus" in operators
+        or "Go-Ahead Ireland" in operators
+        or "Go-Ahead Commuter" in operators
+        or "Bus Éireann" in operators
+    ):
+        gtfsr.update_stop_departures(departures)
+
     if when:
         pass
     elif not departures or (
@@ -594,12 +609,6 @@ def get_departures(stop, services, when):
             routes,
         ).exists()
     ):
-
-        operators = set()
-        for service in services:
-            for operator in service.operators:
-                if operator:
-                    operators.add(operator)
 
         live_rows = None
 

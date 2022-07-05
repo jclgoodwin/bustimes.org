@@ -29,7 +29,9 @@
             </td>
             <td>{{ item.destination }}</td>
             <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
-                {% if item.live %}
+                {% if item.cancelled %}
+                    <del>{{ item.time.time }}</del>
+                {% elif item.live %}
                     {{ item.live.time }}⚡
                 {% else %}
                     {% firstof item.time.time item.time %}

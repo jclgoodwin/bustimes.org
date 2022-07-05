@@ -1,0 +1,28 @@
+{% extends 'page.html' %}
+
+{% block title %}trip updates{% endblock %}
+
+{% block fuse %}{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
+{% block content %}
+
+<h1>{{ trip_updates|length }} trip_updates</h1>
+
+{% for entity, trip in trip_updates %}
+    <details>
+        <summary>
+            {{ entity.trip_update.trip.trip_id }}
+            {% if trip %}
+                <a href="{{ trip.get_absolute_url }}">{{ trip }}</a>
+            {% endif %}
+            {{ entity.trip_update.trip.schedule_relationship }}
+        </summary>
+        <pre>{{ entity }}</pre>
+    </details>
+{% endfor %}
+
+{% endblock %}

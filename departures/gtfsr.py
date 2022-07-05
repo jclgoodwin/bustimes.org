@@ -18,29 +18,22 @@ def get_response():
             return response.content
 
 
-def update(trip_id):
+def get_feed():
     content = cache.get_or_set("ntaie", get_response)
-
-    if not content:
-        return
-
-    feed = gtfs_realtime_pb2.FeedMessage()
-    feed.ParseFromString(content)
-
-    for entity in feed.entity:
-        if entity.trip_update.trip.trip_id == trip_id:
-            return json_format.MessageToDict(entity)
+    if content:
+        feed = gtfs_realtime_pb2.FeedMessage()
+        feed.ParseFromString(content)
+        return feed
 
 
 def get_trip_update(trip):
-    if trip.ticket_machine_code:
-        key = f"trip{trip.ticket_machine_code}"
-
-        trip_update = cache.get(key)
-
-        trip_update = update(trip.ticket_machine_code)
-        if trip_update:
-            return trip_update
+    trip_id = trip.ticket_machine_code
+    if trip_id:
+        feed = get_feed()
+        if feed:
+            for entity in feed.entity:
+                if entity.trip_update.trip.trip_id == trip_id:
+                    return json_format.MessageToDict(entity)
 
 
 def apply_trip_update(stops, trip_update):
@@ -67,6 +60,8 @@ def apply_trip_update(stops, trip_update):
 
         if stop_time_update:
             stop_time.update = stop_time_update
+            if stop_time_update["scheduleRelationship"] == "SKIPPED":
+                continue
             if stop_time.arrival and "arrival" in stop_time_update:
                 stop_time.expected_arrival = format_timedelta(
                     stop_time.arrival
@@ -77,3 +72,28 @@ def apply_trip_update(stops, trip_update):
                     stop_time.departure
                     + timedelta(seconds=stop_time_update["departure"]["delay"])
                 )
+
+
+def update_stop_departures(departures):
+    for departure in departures:
+        stop_time = departure["stop_time"]
+        trip = stop_time.trip
+
+        trip_update = get_trip_update(trip)
+        if trip_update:
+            if trip_update["tripUpdate"]["trip"]["scheduleRelationship"] == "CANCELED":
+                departure["cancelled"] = True
+            else:
+                stop_time_update = None
+                for update in trip_update["tripUpdate"]["stopTimeUpdate"]:
+                    if update["stopSequence"] > stop_time.sequence:
+                        break
+                    stop_time_update = update
+                if stop_time_update:
+                    if stop_time_update["scheduleRelationship"] == "SKIPPED":
+                        departure["cancelled"] = True
+                    elif "departure" in stop_time_update:
+                        delay = timedelta(
+                            seconds=stop_time_update["departure"]["delay"]
+                        )
+                        departure["live"] = departure["time"] + delay

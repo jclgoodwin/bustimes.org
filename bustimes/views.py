@@ -361,3 +361,18 @@ def tfl_vehicle(request, reg):
             "stops_json": mark_safe(stops_json),
         },
     )
+
+
+@require_GET
+def trip_updates(request):
+    feed = gtfsr.get_feed()
+
+    journey_codes = [entity.trip_update.trip.trip_id for entity in feed.entity]
+    trips = Trip.objects.filter(ticket_machine_code__in=journey_codes)
+    trips = {trip.ticket_machine_code: trip for trip in trips}
+
+    trip_updates = [
+        (entity, trips.get(entity.trip_update.trip.trip_id)) for entity in feed.entity
+    ]
+
+    return render(request, "trip_updates.html", {"trip_updates": trip_updates})
