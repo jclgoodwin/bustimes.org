@@ -143,6 +143,8 @@ class Command(BaseCommand):
             if len(line_name) < 5:
                 description = ""
 
+        operator = self.operators[line["agency_id"]]
+
         q = Exists(
             Route.objects.filter(code=line["route_id"], service=OuterRef("id"))
         ) | Q(service_code=line["route_id"])
@@ -152,7 +154,13 @@ class Command(BaseCommand):
         elif description:
             q |= Q(description=description)
 
-        service = self.source.service_set.filter(q).order_by("id").first()
+        if self.source.name == "combined GTFS":
+            services = Service.objects.filter(operator=operator)
+        else:
+            service = Service.objects.filter(
+                Q(source=self.source) | Q(operator=operator)
+            )
+        service = services.filter(q).order_by("id").first()
         if not service:
             service = Service(source=self.source)
 
@@ -163,16 +171,13 @@ class Command(BaseCommand):
         service.mode = MODES.get(int(line["route_type"]), "")
         service.current = True
         service.service_code = line["route_id"]
+        service.source = self.source
         service.save()
 
-        try:
-            operator = self.operators[line["agency_id"]]
-            if service.id in self.services:
-                service.operator.add(operator)
-            else:
-                service.operator.set([operator])
-        except KeyError:
-            pass
+        if service.id in self.services:
+            service.operator.add(operator)
+        else:
+            service.operator.set([operator])
         self.services[service.id] = service
 
         route, created = Route.objects.update_or_create(
@@ -249,15 +254,19 @@ class Command(BaseCommand):
                     if route.service_id not in self.service_shapes:
                         self.service_shapes[route.service_id] = set()
                     self.service_shapes[route.service_id].add(line["shape_id"])
-                if line["trip_headsign"]:
-                    if line["route_id"] not in headsigns:
-                        headsigns[line["route_id"]] = {
-                            "0": set(),
-                            "1": set(),
-                        }
-                    headsigns[line["route_id"]][line["direction_id"]].add(
-                        line["trip_headsign"]
-                    )
+                headsign = line["trip_headsign"]
+                if headsign:
+                    if headsign.endswith(" -"):
+                        headsign = None
+                    elif headsign.startswith("- "):
+                        headsign = headsign[2:]
+                    if headsign:
+                        if line["route_id"] not in headsigns:
+                            headsigns[line["route_id"]] = {
+                                "0": set(),
+                                "1": set(),
+                            }
+                        headsigns[line["route_id"]][line["direction_id"]].add(headsign)
             for route_id in headsigns:
                 route = self.routes[route_id]
                 origins = headsigns[route_id]["1"]  # inbound destinations
@@ -442,9 +451,11 @@ class Command(BaseCommand):
             response = session.get(f"{prefix}/transitData/PT_Data.html")
             collections = response.html.find('a[href^="google_transit_"]')
 
-            collections = options["collections"] or set(
-                element.attrs["href"] for element in collections
-            )
+            collections = set(element.attrs["href"] for element in collections)
+            collections.add("combined")
+            collections.remove("goahead")
+            collections.remove("buseireann")
+            collections.remove("dublinbus")
 
         for collection in collections:
             path = os.path.join(settings.DATA_DIR, collection)

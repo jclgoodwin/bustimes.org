@@ -244,7 +244,10 @@ class Timetable:
         for grouping in self.groupings:
 
             # longest trips first, to minimise duplicate rows
-            grouping.trips.sort(key=lambda t: -len(t.stoptime_set.all()))
+            try:
+                grouping.trips.sort(key=lambda t: -len(t.stoptime_set.all()))
+            except TypeError:
+                pass
 
             # build the table
             for trip in grouping.trips:
@@ -253,9 +256,12 @@ class Timetable:
             trip_ids = [trip.id for trip in grouping.trips]
 
             # sort columns properly, now we have the rows
-            grouping.trips.sort(
-                key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids))
-            )
+            try:
+                grouping.trips.sort(
+                    key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids))
+                )
+            except TypeError:
+                pass
 
             new_trip_ids = [trip.id for trip in grouping.trips]
             indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]

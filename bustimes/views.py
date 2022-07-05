@@ -245,12 +245,28 @@ class TripDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        operators = list(self.object.route.service.operator.all())
+        context["breadcrumb"] = operators + [self.object.route.service]
+
         stops = list(self.object.stoptime_set.all())
-        if stops[0].stop:
-            context["origin"] = stops[0].stop.locality
-        if stops[-1].stop:
-            context["destination"] = stops[-1].stop.locality
         context["stops"] = stops
+
+        if stops:
+            if stops[0].stop:
+                context["origin"] = stops[0].stop.locality
+            if stops[-1].stop:
+                context["destination"] = stops[-1].stop.locality
+
+            if operators and operators[0].name in (
+                "Dublin Bus",
+                "Go-Ahead Ireland",
+                "Go-Ahead Commuter",
+                "Bus Éireann",
+            ):
+                trip_update = gtfsr.get_trip_update(self.object)
+                if trip_update:
+                    context["trip_update"] = trip_update
+                    gtfsr.apply_trip_update(context["stops"], trip_update)
 
         trip_serializer = TripSerializer(self.object)
         stops_json = JSONRenderer().render(trip_serializer.data)
@@ -258,20 +274,6 @@ class TripDetailView(DetailView):
         context["stops_json"] = mark_safe(stops_json.decode())
 
         context["liveries_css_version"] = liveries_css_version()
-
-        operators = list(self.object.route.service.operator.all())
-        context["breadcrumb"] = operators + [self.object.route.service]
-
-        if operators and operators[0].name in (
-            "Dublin Bus",
-            "Go-Ahead Ireland",
-            "Go-Ahead Commuter",
-            "Bus Éireann",
-        ):
-            trip_update = gtfsr.get_trip_update(self.object)
-            if trip_update:
-                context["trip_update"] = trip_update
-                gtfsr.apply_trip_update(context["stops"], trip_update)
 
         return context
 
@@ -375,4 +377,11 @@ def trip_updates(request):
         (entity, trips.get(entity.trip_update.trip.trip_id)) for entity in feed.entity
     ]
 
-    return render(request, "trip_updates.html", {"trip_updates": trip_updates})
+    return render(
+        request,
+        "trip_updates.html",
+        {
+            "trips": len(trips),
+            "trip_updates": trip_updates,
+        },
+    )
