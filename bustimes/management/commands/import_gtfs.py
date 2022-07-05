@@ -455,9 +455,7 @@ class Command(BaseCommand):
 
             collections = set(element.attrs["href"] for element in collections)
             collections.add("combined")
-            collections.remove("goahead")
-            collections.remove("buseireann")
-            collections.remove("dublinbus")
+            collections -= {"buseireann", "dublinbus", "goahead"}
 
         for collection in collections:
             path = os.path.join(settings.DATA_DIR, collection)
