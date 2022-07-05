@@ -828,7 +828,7 @@ table .livery {
                 width: 10px;
             }
         }
-        
+
         &.stop-1 {  // one character - bigger text
             font-size: 11px;
         }
@@ -1287,6 +1287,7 @@ input:not(:checked) + label {
         }
     }
 
+    tr:target,
     .referrer {
         background: $brand-color;
 

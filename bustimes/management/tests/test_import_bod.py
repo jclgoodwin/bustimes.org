@@ -173,9 +173,10 @@ class ImportBusOpenDataTest(TestCase):
 
         response = self.client.get(trip.get_absolute_url())
 
+        stop_time_id = response.context_data["stops"][15].id
         self.assertContains(
             response,
-            """<tr class="minor">
+            f"""<tr class="minor" id="stop-time-{stop_time_id}">
             <td class="stop-name">
                 Clenchwarton Post Box (adj)
             </td>

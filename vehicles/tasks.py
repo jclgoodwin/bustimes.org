@@ -9,7 +9,7 @@ from .models import Vehicle, VehicleJourney
 
 
 @shared_task
-def log_vehicle_journey(service, data, time, destination, source_name, url, link):
+def log_vehicle_journey(service, data, time, destination, source_name, url, trip_id):
     operator_ref = data.get("OperatorRef")
     if operator_ref and operator_ref == "McG":
         return
@@ -83,11 +83,6 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, link
 
     if vehicle.latest_journey and vehicle.latest_journey.datetime == time:
         return
-
-    if link and "/trips/" in link:
-        trip_id = int(link.removeprefix("/trips/"))
-    else:
-        trip_id = None
 
     destination = destination or ""
     route_name = data.get("LineName") or data.get("LineRef")

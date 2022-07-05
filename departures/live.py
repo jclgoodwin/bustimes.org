@@ -338,7 +338,7 @@ class TimetableDepartures(Departures):
             "destination": destination or "",
             "route": trip.route,
             "service": trip.route.service,
-            "link": trip.get_absolute_url(),
+            "link": f"{trip.get_absolute_url()}#stop-time-{stop_time.id}",
             "stop_time": stop_time,
         }
 
@@ -666,7 +666,9 @@ def get_departures(stop, services, when):
                                 str(row["destination"]),
                                 source.name,
                                 source.url,
-                                row.get("link"),
+                                row["stop_time"].trip_id
+                                if "stop_time" in row
+                                else None,
                             )
 
     max_age = 60

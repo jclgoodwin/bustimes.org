@@ -24,7 +24,7 @@
         </tr>
     {% endif %}
     {% if stop.departure and stop.departure != stop.arrival %}
-        <tr{% if stop.is_minor %} class="minor"{% endif %}>
+        <tr{% if stop.is_minor %} class="minor"{% endif %} id="stop-time-{{ stop.id }}">
             {% if not stop.arrival %}
                 <td class="stop-name">
                     {% if stop.stop %}

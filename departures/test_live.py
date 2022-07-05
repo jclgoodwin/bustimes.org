@@ -118,7 +118,7 @@ class LiveDeparturesTest(TestCase):
             start="0",
             end="11:00:00",
         )
-        StopTime.objects.create(
+        cls.worcs_stop_time = StopTime.objects.create(
             trip=cls.trip,
             sequence=0,
             arrival="10:54:00",
@@ -369,7 +369,7 @@ class LiveDeparturesTest(TestCase):
                 with self.assertNumQueries(11):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
 
-        trip_url = self.trip.get_absolute_url()
+        trip_url = f"{self.trip.get_absolute_url()}#stop-time-{self.worcs_stop_time.id}"
 
         self.assertContains(
             response,
@@ -424,15 +424,15 @@ class LiveDeparturesTest(TestCase):
 
         # test the actual task
         with self.assertNumQueries(13):
-            log_vehicle_journey(*args[:-1], trip_url)
+            log_vehicle_journey(*args[:-1], self.trip.id)
 
         with self.assertNumQueries(3):
-            log_vehicle_journey(*args[:-1], trip_url)
+            log_vehicle_journey(*args[:-1], self.trip.id)
 
         Vehicle.objects.update(latest_journey=None)
 
         with self.assertNumQueries(4):
-            log_vehicle_journey(*args[:-1], trip_url)
+            log_vehicle_journey(*args[:-1], self.trip.id)
 
         journey = VehicleJourney.objects.get()
         self.assertEqual(journey.vehicle.latest_journey_data, args[1])

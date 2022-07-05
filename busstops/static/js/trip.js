@@ -8,15 +8,6 @@
         L, reqwest
     */
 
-    if (document.referrer.indexOf('/stops/') > -1) {
-        var links = document.querySelectorAll('.trip-timetable a');
-        links.forEach(function(link) {
-            if (link.href === document.referrer) {
-                link.parentNode.parentNode.classList.add('referrer');
-            }
-        });
-    }
-
     var loadVehiclesTimeout,
         poppedUp = false;
 
