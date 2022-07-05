@@ -1,4 +1,3 @@
-import os
 import io
 import csv
 import logging
@@ -143,7 +142,7 @@ class Command(BaseCommand):
             if len(line_name) < 5:
                 description = ""
 
-        operator = self.operators[line["agency_id"]]
+        operator = self.operators.get(line["agency_id"])
 
         if self.source.name == "combined GTFS":
             q = Q(operator=operator)
@@ -176,10 +175,11 @@ class Command(BaseCommand):
         service.source = self.source
         service.save()
 
-        if service.id in self.services:
-            service.operator.add(operator)
-        else:
-            service.operator.set([operator])
+        if operator:
+            if service.id in self.services:
+                service.operator.add(operator)
+            else:
+                service.operator.set([operator])
         self.services[service.id] = service
 
         route, created = Route.objects.update_or_create(
@@ -454,14 +454,18 @@ class Command(BaseCommand):
             collections = response.html.find('a[href^="google_transit_"]')
 
             collections = set(element.attrs["href"] for element in collections)
-            collections.add("combined")
-            collections -= {"buseireann", "dublinbus", "goahead"}
+            collections.add("google_transit_combined.zip")
+            collections -= {
+                "google_transit_buseireann.zip",
+                "google_transit_dublinbus.zip",
+                "google_transit_goahead.zip",
+            }
 
         for collection in collections:
-            path = os.path.join(settings.DATA_DIR, collection)
+            path = settings.DATA_DIR / collection
             url = f"{prefix}/transitData/{collection}"
             modifed, last_modified = download_if_changed(path, url)
-            if modifed or options["force"]:
+            if modifed or options["force"] and path.exists():
 
                 collection = collection.removeprefix("google_transit_").removesuffix(
                     ".zip"

@@ -56,7 +56,7 @@ class GTFSTest(TestCase):
             make_zipfile(directory, "seamusdoherty")
             make_zipfile(directory, "mortons")
 
-            with override_settings(DATA_DIR=directory):
+            with override_settings(DATA_DIR=Path(directory)):
                 with vcr.use_cassette(
                     str(FIXTURES_DIR / "google_transit_ie.yaml")
                 ) as cassette:
@@ -77,7 +77,11 @@ class GTFSTest(TestCase):
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
+                "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
+                "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
+                "ERROR:bustimes.download_utils:<Response [404]> "
+                "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
             ],
         )
 

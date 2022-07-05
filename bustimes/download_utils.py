@@ -23,7 +23,7 @@ def download(path, url):
 def download_if_changed(path, url, params=None):
     headers = {"User-Agent": "bustimes.org"}
     modified = True
-    if os.path.exists(path):
+    if path.exists():
         headers["if-modified-since"] = http_date(os.path.getmtime(path))
         response = requests.head(url, params=params, headers=headers, timeout=10)
         if response.status_code == 304:
