@@ -145,6 +145,14 @@ class Command(BaseCommand):
 
         operator = self.operators[line["agency_id"]]
 
+        if self.source.name == "combined GTFS":
+            q = Q(operator=operator)
+            if operator.name == "Expressway":
+                q |= Q(operator__name="Bus Éireann")
+        else:
+            q = Q(source=self.source) | Q(operator=operator)
+        services = Service.objects.filter(q)
+
         q = Exists(
             Route.objects.filter(code=line["route_id"], service=OuterRef("id"))
         ) | Q(service_code=line["route_id"])
@@ -154,12 +162,6 @@ class Command(BaseCommand):
         elif description:
             q |= Q(description=description)
 
-        if self.source.name == "combined GTFS":
-            services = Service.objects.filter(operator=operator)
-        else:
-            service = Service.objects.filter(
-                Q(source=self.source) | Q(operator=operator)
-            )
         service = services.filter(q).order_by("id").first()
         if not service:
             service = Service(source=self.source)

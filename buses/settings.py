@@ -246,6 +246,13 @@ TFWM = {  # West Midlands
     "app_key": os.environ.get("TFWM_APP_KEY"),
 }
 NTA_API_KEY = os.environ.get("NTA_API_KEY")  # Ireland
+NTA_OPERATORS = {
+    "Bus Éireann",
+    "Dublin Bus",
+    "Expressway",
+    "Go-Ahead Ireland",
+    "Go-Ahead Commuter",
+}
 
 DATA_DIR = os.environ.get("DATA_DIR")
 if DATA_DIR:

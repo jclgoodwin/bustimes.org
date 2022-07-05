@@ -590,12 +590,7 @@ def get_departures(stop, services, when):
         if service.operators:
             operators.update(service.operators)
 
-    if departures and (
-        "Dublin Bus" in operators
-        or "Go-Ahead Ireland" in operators
-        or "Go-Ahead Commuter" in operators
-        or "Bus Éireann" in operators
-    ):
+    if departures and not operators.isdisjoint(settings.NTA_OPERATORS):
         gtfsr.update_stop_departures(departures)
 
     if when:

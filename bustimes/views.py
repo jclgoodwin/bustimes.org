@@ -22,7 +22,7 @@ from django.http import (
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
-from busstops.models import Service, DataSource, StopPoint, StopUsage
+from busstops.models import Service, DataSource, StopPoint, StopUsage, Operator
 from departures import live, gtfsr
 from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
@@ -257,12 +257,7 @@ class TripDetailView(DetailView):
             if stops[-1].stop:
                 context["destination"] = stops[-1].stop.locality
 
-            if operators and operators[0].name in (
-                "Dublin Bus",
-                "Go-Ahead Ireland",
-                "Go-Ahead Commuter",
-                "Bus Éireann",
-            ):
+            if operators and operators[0].name in settings.NTA_OPERATORS:
                 trip_update = gtfsr.get_trip_update(self.object)
                 if trip_update:
                     context["trip_update"] = trip_update
@@ -371,6 +366,9 @@ def trip_updates(request):
 
     journey_codes = [entity.trip_update.trip.trip_id for entity in feed.entity]
     trips = Trip.objects.filter(ticket_machine_code__in=journey_codes)
+    operators = Operator.objects.filter(
+        service__route__in=set(trip.route_id for trip in trips)
+    ).distinct()
     trips = {trip.ticket_machine_code: trip for trip in trips}
 
     trip_updates = [
@@ -382,6 +380,7 @@ def trip_updates(request):
         "trip_updates.html",
         {
             "trips": len(trips),
+            "operators": operators,
             "trip_updates": trip_updates,
         },
     )
