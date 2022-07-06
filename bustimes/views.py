@@ -2,7 +2,7 @@ import zipfile
 import requests
 import json
 from pathlib import Path
-from datetime import timedelta
+from datetime import datetime, timedelta
 from ciso8601 import parse_datetime
 
 from django.conf import settings
@@ -381,6 +381,7 @@ def trip_updates(request):
         {
             "trips": len(trips),
             "operators": operators,
+            "timestamp": datetime.fromtimestamp(feed.header.timestamp),
             "trip_updates": trip_updates,
         },
     )
