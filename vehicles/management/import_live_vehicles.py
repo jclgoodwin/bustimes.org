@@ -203,12 +203,14 @@ class ImportLiveVehiclesCommand(BaseCommand):
             location = self.create_vehicle_location(item)
 
         if (
-            not location.latlong
-            or not (location.latlong.x or location.latlong.y)  # (0, 0) - null island
-            or location.latlong.x == 1
-            and location.latlong.y == 1
+            not (location.latlong.x or location.latlong.y)  # (0, 0) - null island
+            or (location.latlong.x == 1 and location.latlong.y == 1)
+            or not (
+                -180 <= location.latlong.x <= 180
+                and -85.05112878 <= location.latlong.y <= 85.05112878
+            )
         ):
-            return
+            location.latlong = None
 
         if location.heading == -1:
             location.heading = None
@@ -235,7 +237,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             journey = latest_journey
 
-            if latest and location.heading is None:
+            if latest and location.latlong and location.heading is None:
                 location.heading = calculate_bearing(latest_latlong, location.latlong)
                 if location.heading is None:
                     location.heading = latest["heading"]
@@ -299,17 +301,19 @@ class ImportLiveVehiclesCommand(BaseCommand):
         pipeline = redis_client.pipeline(transaction=False)
 
         for location, vehicle in self.to_save:
-            lon = location.latlong.x
-            lat = location.latlong.y
-            if -180 <= lon <= 180 and -85.05112878 <= lat <= 85.05112878:
-                pipeline.geoadd("vehicle_location_locations", [lon, lat, vehicle.id])
-                if location.journey.service_id:
-                    pipeline.sadd(
-                        f"service{location.journey.service_id}vehicles", vehicle.id
-                    )
-                redis_json = location.get_redis_json()
-                redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
-                pipeline.set(f"vehicle{vehicle.id}", redis_json, ex=900)
+            if not location.latlong:
+                continue
+            pipeline.geoadd(
+                "vehicle_location_locations",
+                [location.latlong.x, location.latlong.y, vehicle.id],
+            )
+            if location.journey.service_id:
+                pipeline.sadd(
+                    f"service{location.journey.service_id}vehicles", vehicle.id
+                )
+            redis_json = location.get_redis_json()
+            redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
+            pipeline.set(f"vehicle{vehicle.id}", redis_json, ex=900)
 
         try:
             pipeline.execute()
@@ -322,7 +326,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             pipeline = redis_client.pipeline(transaction=False)
 
             for location, vehicle in self.to_save:
-                pipeline.rpush(*location.get_appendage())
+                if location.latlong:
+                    pipeline.rpush(*location.get_appendage())
 
             self.to_save = []
 
