@@ -569,9 +569,7 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         context["date"] = date
 
         journeys = (
-            journeys.filter(datetime__date=date)
-            .select_related("trip")
-            .order_by("datetime")
+            journeys.filter(datetime__date=date).select_related("trip").order_by("id")
         )
 
         pipe = redis_client.pipeline(transaction=False)
