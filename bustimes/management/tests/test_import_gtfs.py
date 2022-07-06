@@ -72,14 +72,14 @@ class GTFSTest(TestCase):
                             call_command("import_gtfs", "--force")
 
         self.assertEqual(
-            cm.output,
+            sorted(cm.output),
             [
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
-                "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
-                "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
+                "ERROR:bustimes.download_utils:<Response [404]> "
+                "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
             ],
