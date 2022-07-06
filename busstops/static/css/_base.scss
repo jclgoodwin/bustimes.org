@@ -1290,6 +1290,7 @@ input:not(:checked) + label {
     tr:target,
     .referrer {
         background: $brand-color;
+        scroll-margin-top: 50vh;
 
         a {
             color: $active-link-color;

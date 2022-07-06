@@ -167,7 +167,7 @@ class TflDepartures(Departures):
                     "live": parse_datetime(item.get("expectedArrival")),
                     "service": self.get_service(item.get("lineName")),
                     "destination": item.get("destinationName"),
-                    "link": f"/vehicles/tfl/{item['vehicleId']}",
+                    "link": f"/vehicles/tfl/{item['vehicleId']}#stop-{item['naptanId']}",
                 }
                 for item in rows
             ],
