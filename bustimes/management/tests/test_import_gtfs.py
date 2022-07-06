@@ -75,13 +75,13 @@ class GTFSTest(TestCase):
             cm.output,
             [
                 "ERROR:bustimes.download_utils:<Response [404]> "
-                "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
-                "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
                 "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
+                "ERROR:bustimes.download_utils:<Response [404]> "
+                "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
             ],
         )
 

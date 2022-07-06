@@ -186,13 +186,6 @@ def bus_open_data(api_key, specific_operator):
         operators = source.operators.values_list("noc", flat=True)
 
         for dataset in operator_datasets:
-            # if source.name == "FBOS":
-            #     # only certain First operators
-            #     if not any(
-            #         code in dataset["description"] for code in operator_codes_dict
-            #     ):
-            #         continue
-
             command.source = DataSource.objects.filter(url=dataset["url"]).first()
             if (
                 not command.source
