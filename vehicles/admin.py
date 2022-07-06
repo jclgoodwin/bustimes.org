@@ -190,7 +190,7 @@ class VehicleAdmin(admin.ModelAdmin):
             try:
                 duplicate = models.Vehicle.objects.get(
                     id__lt=vehicle.id, reg=vehicle.reg
-                )
+                )  # vehicle with lower id number we will keep
             except (
                 models.Vehicle.DoesNotExist,
                 models.Vehicle.MultipleObjectsReturned,
@@ -205,10 +205,10 @@ class VehicleAdmin(admin.ModelAdmin):
             vehicle.latest_journey = None
             vehicle.save(update_fields=["latest_journey"])
             duplicate.save(update_fields=["latest_journey"])
-            duplicate.code = vehicle.code
+            if vehicle.latest_journey_id > duplicate.latest_journey_id:
+                duplicate.code = vehicle.code
             duplicate.fleet_code = vehicle.fleet_code
             duplicate.fleet_number = vehicle.fleet_number
-            duplicate.reg = vehicle.reg
             if duplicate.withdrawn and not vehicle.withdrawn:
                 duplicate.withdrawn = False
             vehicle.delete()
