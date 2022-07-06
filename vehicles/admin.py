@@ -201,12 +201,16 @@ class VehicleAdmin(admin.ModelAdmin):
                 vehicle.vehiclejourney_set.update(vehicle=duplicate)
             except IntegrityError:
                 pass
-            duplicate.latest_journey = vehicle.latest_journey
+            if (
+                not duplicate.latest_journey_id
+                or vehicle.latest_journey_id
+                and vehicle.latest_journey_id > duplicate.latest_journey_id
+            ):
+                duplicate.code = vehicle.code
+                duplicate.latest_journey = vehicle.latest_journey
             vehicle.latest_journey = None
             vehicle.save(update_fields=["latest_journey"])
             duplicate.save(update_fields=["latest_journey"])
-            if vehicle.latest_journey_id > duplicate.latest_journey_id:
-                duplicate.code = vehicle.code
             duplicate.fleet_code = vehicle.fleet_code
             duplicate.fleet_number = vehicle.fleet_number
             if duplicate.withdrawn and not vehicle.withdrawn:
