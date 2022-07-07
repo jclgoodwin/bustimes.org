@@ -278,7 +278,7 @@ class Trip(models.Model):
     ticket_machine_code = models.CharField(max_length=255, blank=True, db_index=True)
     block = models.ForeignKey("Block", models.SET_NULL, null=True, blank=True)
     destination = models.ForeignKey(
-        "busstops.StopPoint", models.SET_NULL, null=True, blank=True
+        "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
     calendar = models.ForeignKey(Calendar, models.DO_NOTHING, null=True, blank=True)
     sequence = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -340,7 +340,7 @@ class StopTime(models.Model):
     trip = models.ForeignKey(Trip, models.CASCADE)
     stop_code = models.CharField(max_length=255, blank=True)
     stop = models.ForeignKey(
-        "busstops.StopPoint", models.SET_NULL, null=True, blank=True
+        "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
     arrival = SecondsField(null=True, blank=True)
     departure = SecondsField(null=True, blank=True)
