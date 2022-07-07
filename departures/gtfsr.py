@@ -11,19 +11,24 @@ url = "https://api.nationaltransport.ie/gtfsr/v1"
 
 def get_response():
     if settings.NTA_API_KEY:
+        url = "https://api.nationaltransport.ie/gtfsr/v1"
         response = requests.get(
             url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10
         )
+        cache.set("ntaie", True, 30)
         if response.ok:
             return response.content
 
 
 def get_feed():
-    content = cache.get_or_set("ntaie", get_response)
-    if content:
-        feed = gtfs_realtime_pb2.FeedMessage()
-        feed.ParseFromString(content)
-        return feed
+    if not cache.get("ntaie"):
+        content = get_response()
+        if content:
+            feed = gtfs_realtime_pb2.FeedMessage()
+            feed.ParseFromString(content)
+            cache.set("ntaie_feed", 300)
+            return feed
+    return cache.get("ntaie_feed")
 
 
 def get_trip_update(trip):
