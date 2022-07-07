@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip, RouteLink
 from vehicles.models import Vehicle, VehicleType, Livery, VehicleJourney
 
@@ -49,6 +50,24 @@ class VehicleTypeSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "double_decker", "coach", "electric"]
 
 
+class OperatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Operator
+        fields = ["noc", "slug", "name", "region_id"]
+
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ["id", "slug", "line_name", "region_id", "mode"]
+
+
+class StopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StopPoint
+        fields = ["atco_code", "naptan_code", "common_name"]
+
+
 class LiverySerializer(serializers.ModelSerializer):
     class Meta:
         model = Livery
@@ -81,16 +100,21 @@ class TripSerializer(serializers.ModelSerializer):
         previous_stop_id = None
         for stop_time in obj.stoptime_set.all():
             route_link = route_links.get((previous_stop_id, stop_time.stop_id))
+            if stop_time.stop:
+                if stop_time.stop.latlong:
+                    location = stop_time.stop.latlong.coords
+                bearing = stop_time.stop.get_heading()
+                name = stop_time.stop.get_name_for_timetable()
+            else:
+                location = None
+                bearing = None
+                name = stop_time.stop_code
             yield {
                 "stop": {
                     "atco_code": stop_time.stop_id,
-                    "name": stop_time.stop.get_name_for_timetable()
-                    if stop_time.stop
-                    else stop_time.stop_code,
-                    "location": stop_time.stop
-                    and stop_time.stop.latlong
-                    and stop_time.stop.latlong.coords,
-                    "bearing": stop_time.stop and stop_time.stop.get_heading(),
+                    "name": name,
+                    "location": location,
+                    "bearing": bearing,
                 },
                 "aimed_arrival_time": stop_time.arrival_time(),
                 "aimed_departure_time": stop_time.departure_time(),

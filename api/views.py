@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, pagination
 from rest_framework.exceptions import APIException
 
+from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip
 from vehicles.models import Vehicle, Livery, VehicleType, VehicleJourney
 from . import filters, serializers
@@ -35,6 +36,23 @@ class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializers.VehicleTypeSerializer
 
 
+class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Operator.objects.all()
+    serializer_class = serializers.OperatorSerializer
+
+
+class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Service.objects.filter(current=True)
+    serializer_class = serializers.ServiceSerializer
+
+
+class StopViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = StopPoint.objects.all()
+    serializer_class = serializers.StopSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = filters.StopFilter
+
+
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Trip.objects.select_related("route__service").prefetch_related(
         "stoptime_set__stop__locality"
@@ -54,10 +72,10 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_class = filters.VehicleJourneyFilter
 
     def list(self, request):
-        if (
-            not request.GET.get("trip")
-            and not request.GET.get("vehicle")
-            and not request.GET.get("service")
+        if not (
+            request.GET.get("trip")
+            or request.GET.get("vehicle")
+            or request.GET.get("service")
         ):
             raise BadException(
                 detail="Listing all journeys without filtering by trip, vehicle, or service is not allowed"
