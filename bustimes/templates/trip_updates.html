@@ -21,13 +21,13 @@
 {% for entity, trip in trip_updates %}
     <details>
         <summary>
-            {{ entity.trip_update.trip.trip_id }}
+            {{ entity.tripUpdate.trip.tripId }}
             {% if trip %}
                 <a href="{{ trip.get_absolute_url }}">{{ trip }}</a>
             {% endif %}
-            {{ entity.trip_update.trip.schedule_relationship }}
+            {{ entity.tripUpdate.trip.scheduleRelationship }}
         </summary>
-        <pre>{{ entity }}</pre>
+        <code>{{ entity }}</code>
     </details>
 {% endfor %}
 

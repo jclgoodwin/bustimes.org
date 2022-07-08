@@ -15,7 +15,6 @@ def get_feed():
         )
         cache.set("ntaie_response", True, 30)
         if response.ok:
-            cache.set("ntaie", 300)
             feed = gtfs_realtime_pb2.FeedMessage()
             feed.ParseFromString(response.content)
             return feed
