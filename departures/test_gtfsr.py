@@ -138,3 +138,7 @@ class GTFSRTTest(TestCase):
                 # cancelled trip:
                 response = self.client.get(self.cancellable_trip.get_absolute_url())
                 self.assertContains(response, "<p>Cancelled</p>")
+
+                response = self.client.get("/trip_updates")
+                self.assertContains(response, "1785 trip_updates")
+                self.assertContains(response, "2 matching trips")
