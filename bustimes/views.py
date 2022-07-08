@@ -364,7 +364,9 @@ def tfl_vehicle(request, reg):
 def trip_updates(request):
     feed = gtfsr.get_feed()
 
-    journey_codes = [entity.trip_update.trip.trip_id for entity in feed.entity]
+    journey_codes = [
+        entity["tripUpdate"]["trip"]["tripId"] for entity in feed["entity"]
+    ]
     trips = Trip.objects.filter(ticket_machine_code__in=journey_codes)
     operators = Operator.objects.filter(
         service__route__in=set(trip.route_id for trip in trips)
@@ -372,7 +374,8 @@ def trip_updates(request):
     trips = {trip.ticket_machine_code: trip for trip in trips}
 
     trip_updates = [
-        (entity, trips.get(entity.trip_update.trip.trip_id)) for entity in feed.entity
+        (entity, trips.get(entity["tripUpdate"]["trip"]["tripId"]))
+        for entity in feed.entity
     ]
 
     return render(
@@ -381,7 +384,7 @@ def trip_updates(request):
         {
             "trips": len(trips),
             "operators": operators,
-            "timestamp": datetime.fromtimestamp(feed.header.timestamp),
+            "timestamp": datetime.fromtimestamp(feed["header"]["timestamp"]),
             "trip_updates": trip_updates,
         },
     )
