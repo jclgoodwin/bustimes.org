@@ -6,8 +6,6 @@ from django.conf import settings
 from google.protobuf import json_format
 from bustimes.formatting import format_timedelta
 
-url = "https://api.nationaltransport.ie/gtfsr/v1"
-
 
 def get_response():
     if settings.NTA_API_KEY:

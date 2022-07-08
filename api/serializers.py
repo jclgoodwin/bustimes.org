@@ -101,14 +101,14 @@ class TripSerializer(serializers.ModelSerializer):
         for stop_time in obj.stoptime_set.all():
             route_link = route_links.get((previous_stop_id, stop_time.stop_id))
             if stop_time.stop:
-                if stop_time.stop.latlong:
-                    location = stop_time.stop.latlong.coords
-                bearing = stop_time.stop.get_heading()
-                name = stop_time.stop.get_name_for_timetable()
+                stop = stop_time.stop
+                name = stop.get_name_for_timetable()
+                bearing = stop.get_heading()
+                location = stop.latlong and stop.latlong.coords
             else:
-                location = None
-                bearing = None
                 name = stop_time.stop_code
+                bearing = None
+                location = None
             yield {
                 "stop": {
                     "atco_code": stop_time.stop_id,

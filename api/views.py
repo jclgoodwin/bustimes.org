@@ -27,7 +27,7 @@ class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class LiveryViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Livery.objects.all()
+    queryset = Livery.objects.order_by("id")
     serializer_class = serializers.LiverySerializer
 
 
@@ -37,7 +37,7 @@ class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Operator.objects.all()
+    queryset = Operator.objects.order_by("noc")
     serializer_class = serializers.OperatorSerializer
 
 
@@ -47,7 +47,7 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class StopViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = StopPoint.objects.all()
+    queryset = StopPoint.objects.order_by("atco_code")
     serializer_class = serializers.StopSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.StopFilter
