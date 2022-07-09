@@ -444,7 +444,12 @@ def vehicles_json(request):
 
             del item["journey_id"]
 
-            if trip and "trip_id" in item and item["trip_id"] == trip:
+            if (
+                trip
+                and "delay" not in item
+                and "trip_id" in item
+                and item["trip_id"] == trip
+            ):
                 vj = VehicleJourney(service_id=item["service_id"], trip_id=trip)
                 progress = vj.get_progress(*item["coordinates"])
                 if progress:
@@ -1044,6 +1049,8 @@ def debug(request):
         except ValueError as e:
             form.add_error("data", e)
         else:
+            vehicle = None
+            journey = None
             try:
                 with transaction.atomic():
                     command = import_bod_avl.Command()
