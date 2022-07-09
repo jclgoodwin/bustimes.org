@@ -552,29 +552,34 @@ class Command(ImportLiveVehiclesCommand):
                     journey_ref=journey_ref,
                 )
 
-                if not journey.trip:
-                    try:
+                try:
+                    if (
+                        latest_journey
+                        and latest_journey.trip_id
+                        and (
+                            not journey.trip
+                            or origin_aimed_departure_time
+                            and origin_aimed_departure_time - latest_journey.datetime
+                            == timedelta(hours=1)
+                        )
+                    ):
                         # if driver change caused bogus journey code change (Ticketer), continue previous journey
                         if (
-                            latest_journey
-                            and latest_journey.trip
-                            and latest_journey.route_name == journey.route_name
+                            latest_journey.route_name == journey.route_name
+                            and latest_journey.destination == journey.destination
                         ):
-                            if latest_journey.destination == journey.destination:
-                                start = localtime(datetime)
-                                start = timedelta(
-                                    hours=start.hour, minutes=start.minute
-                                )
-                                if (
-                                    latest_journey.trip.start
-                                    < start
-                                    < latest_journey.trip.end
-                                ):
-                                    journey.trip = latest_journey.trip
-                    except Trip.DoesNotExist:
-                        pass
+                            start = localtime(datetime)
+                            start = timedelta(hours=start.hour, minutes=start.minute)
+                            if (
+                                latest_journey.trip.start
+                                < start
+                                < latest_journey.trip.end
+                            ):
+                                journey.trip = latest_journey.trip
+                except Trip.DoesNotExist:
+                    pass
 
-                elif journey.trip.destination_id:
+                if journey.trip and journey.trip.destination_id:
                     if (
                         not journey.destination
                         or destination_ref != journey.trip.destination_id
