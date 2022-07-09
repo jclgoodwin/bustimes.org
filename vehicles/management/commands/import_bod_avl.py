@@ -87,7 +87,7 @@ class Command(ImportLiveVehiclesCommand):
         operator_ref = monitored_vehicle_journey["OperatorRef"]
         vehicle_ref = monitored_vehicle_journey["VehicleRef"]
 
-        cache_key = f"{operator_ref}-{vehicle_ref}".replace(" ", "")
+        cache_key = f"{operator_ref}-{vehicle_ref}".replace(" ", "_")
 
         if cache_key in self.vehicle_cache:
             return self.vehicle_cache[cache_key], False
@@ -579,18 +579,15 @@ class Command(ImportLiveVehiclesCommand):
                 except Trip.DoesNotExist:
                     pass
 
-                if journey.trip and journey.trip.destination_id:
-                    if (
-                        not journey.destination
-                        or destination_ref != journey.trip.destination_id
-                    ):
+                if journey.trip:
+                    if not journey.destination and journey.trip.destination_id:
                         journey.destination = self.get_destination_name(
                             journey.trip.destination_id
                         )
 
-                if journey.trip and journey.trip.garage_id != vehicle.garage_id:
-                    vehicle.garage_id = journey.trip.garage_id
-                    vehicle.save(update_fields=["garage"])
+                    if journey.trip.garage_id != vehicle.garage_id:
+                        vehicle.garage_id = journey.trip.garage_id
+                        vehicle.save(update_fields=["garage"])
 
         return journey
 

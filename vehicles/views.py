@@ -1039,6 +1039,12 @@ def journey_json(request, pk):
     return JsonResponse(data)
 
 
+@require_GET
+def latest_journey_debug(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, pk=vehicle_id)
+    return JsonResponse(vehicle.latest_journey_data)
+
+
 def debug(request):
     form = forms.DebuggerForm(request.POST or None)
     result = None
