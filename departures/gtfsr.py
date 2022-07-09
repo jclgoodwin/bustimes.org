@@ -25,8 +25,13 @@ def get_feed_entities():
         feed = get_feed()
         if feed:
             feed = json_format.MessageToDict(feed)
-            cache.set("ntaie", feed, 300)
-            return feed
+            if "entity" in feed:
+                feed["entity"] = {
+                    entity["tripUpdate"]["trip"]["tripId"]: entity
+                    for entity in feed["entity"]
+                }
+                cache.set("ntaie", feed, 300)
+                return feed
     return cache.get("ntaie")
 
 
@@ -34,10 +39,8 @@ def get_trip_update(trip):
     trip_id = trip.ticket_machine_code
     if trip_id:
         feed = get_feed_entities()
-        if feed:
-            for entity in feed["entity"]:
-                if entity["tripUpdate"]["trip"]["tripId"] == trip_id:
-                    return entity
+        if feed and trip_id in feed["entity"]:
+            return feed["entity"][trip_id]
 
 
 def apply_trip_update(stops, trip_update):
@@ -79,11 +82,14 @@ def apply_trip_update(stops, trip_update):
 
 
 def update_stop_departures(departures):
+    feed = get_feed()
+    if not feed:
+        return
+
     for departure in departures:
         stop_time = departure["stop_time"]
         trip = stop_time.trip
-
-        trip_update = get_trip_update(trip)
+        trip_update = feed["entity"][trip.ticket_machine_code]
         if trip_update:
             if trip_update["tripUpdate"]["trip"]["scheduleRelationship"] == "CANCELED":
                 departure["cancelled"] = True
