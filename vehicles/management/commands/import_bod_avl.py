@@ -67,13 +67,6 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     @staticmethod
-    def get_vehicle_cache_key(item):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-        operator_ref = monitored_vehicle_journey["OperatorRef"]
-        vehicle_ref = monitored_vehicle_journey["VehicleRef"].replace(" ", "")
-        return f"{operator_ref}-{vehicle_ref}"
-
-    @staticmethod
     def get_line_name_query(line_ref):
         return (
             Exists(

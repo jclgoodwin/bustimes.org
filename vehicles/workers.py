@@ -8,6 +8,13 @@ from .management.commands import import_bod_avl
 class SiriConsumer(SyncConsumer):
     command = None
 
+    @staticmethod
+    def get_vehicle_cache_key(item):
+        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
+        operator_ref = monitored_vehicle_journey["OperatorRef"]
+        vehicle_ref = monitored_vehicle_journey["VehicleRef"]
+        return f"{operator_ref}-{vehicle_ref}".replace(" ", "_")
+
     def sirivm(self, message):
         try:
             if self.command is None:
