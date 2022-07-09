@@ -23,7 +23,7 @@ class SiriConsumer(SyncConsumer):
             response_timestamp = parse_datetime(message["when"])
 
             vehicle_cache_keys = [
-                self.command.get_vehicle_cache_key(item) for item in message["items"]
+                self.get_vehicle_cache_key(item) for item in message["items"]
             ]
 
             vehicle_ids = cache.get_many(vehicle_cache_keys)  # code: id
