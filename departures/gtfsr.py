@@ -30,7 +30,7 @@ def get_feed_entities():
                     entity["tripUpdate"]["trip"]["tripId"]: entity
                     for entity in feed["entity"]
                 }
-                cache.set("ntaie", feed, 300)
+                cache.set("ntaie", feed, 300)  # cache for 5 minutes
                 return feed
     return cache.get("ntaie")
 
@@ -82,7 +82,7 @@ def apply_trip_update(stops, trip_update):
 
 
 def update_stop_departures(departures):
-    feed = get_feed()
+    feed = get_feed_entities()
     if not feed:
         return
 
