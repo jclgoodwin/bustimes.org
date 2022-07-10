@@ -1,6 +1,7 @@
 import requests
 
 import json
+from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.utils.safestring import mark_safe
 
@@ -23,11 +24,15 @@ def get_source():
 
 
 def get_response(source, code):
-    return requests.get(
+    response = requests.get(
         f"{source.url}/{code}",
         headers={"x-api-key": source.settings["x-api-key"]},
         timeout=3,
-    ).json()
+    )
+    if response.ok:
+        return response.json()
+    if response.status_code == 404:
+        raise Http404
 
 
 def operator_tickets(request, slug):
