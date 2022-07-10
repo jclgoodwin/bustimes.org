@@ -89,7 +89,7 @@ def update_stop_departures(departures):
     for departure in departures:
         stop_time = departure["stop_time"]
         trip = stop_time.trip
-        trip_update = feed["entity"][trip.ticket_machine_code]
+        trip_update = feed["entity"].get(trip.ticket_machine_code)
         if trip_update:
             if trip_update["tripUpdate"]["trip"]["scheduleRelationship"] == "CANCELED":
                 departure["cancelled"] = True
