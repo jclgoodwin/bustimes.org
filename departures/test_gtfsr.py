@@ -1,8 +1,8 @@
 import vcr
 from django.test import TestCase, override_settings
 
-from busstops.models import StopPoint, Service, Operator, DataSource
-from bustimes.models import Route, Trip, StopTime
+from busstops.models import StopPoint, Service, Operator, DataSource, StopUsage
+from bustimes.models import Route, Trip, StopTime, Calendar
 
 
 class GTFSRTTest(TestCase):
@@ -33,17 +33,31 @@ class GTFSRTTest(TestCase):
         service.operator.add(operator)
 
         route = Route.objects.create(service=service, source=source, code="7")
+
+        calendar = Calendar.objects.create(
+            mon=True,
+            tue=True,
+            wed=True,
+            thu=True,
+            fri=True,
+            sat=True,
+            sun=True,
+            start_date="2022-05-04",
+        )
+
         cls.trip = Trip.objects.create(
             route=route,
             ticket_machine_code="1767.2.60-7-b12-1.138.O",
             start="06:45:00",
             end="07:49:00",
+            calendar=calendar,
         )
         cls.cancellable_trip = Trip.objects.create(
             route=route,
             ticket_machine_code="3966.2.60-77A-b12-1.56.I",
             start="06:45:00",
             end="07:49:00",
+            calendar=calendar,
         )
         StopTime.objects.bulk_create(
             [
@@ -122,6 +136,8 @@ class GTFSRTTest(TestCase):
             ]
         )
 
+        StopUsage.objects.create(service=service, stop_id="8250DB000429", order=0)
+
     def test_nta_ie(self):
         with override_settings(
             NTA_API_KEY="letsturn",
@@ -142,3 +158,9 @@ class GTFSRTTest(TestCase):
                 response = self.client.get("/trip_updates")
                 self.assertContains(response, "1785 trip_updates")
                 self.assertContains(response, "2 matching trips")
+
+                response = self.client.get(
+                    "/stops/8250DB000429?date=2022-05-04&time=05:00"
+                )
+                self.assertContains(response, "06:47⚡")
+                self.assertContains(response, "<del>06:45</del>")

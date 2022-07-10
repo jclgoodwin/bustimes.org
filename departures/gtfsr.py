@@ -7,22 +7,22 @@ from google.protobuf import json_format
 from bustimes.formatting import format_timedelta
 
 
-def get_feed():
+def _get_feed():
     if settings.NTA_API_KEY:
         url = "https://api.nationaltransport.ie/gtfsr/v1"
+        cache.set("ntaie_response", True, 30)
         response = requests.get(
             url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10
         )
-        cache.set("ntaie_response", True, 30)
         if response.ok:
             feed = gtfs_realtime_pb2.FeedMessage()
             feed.ParseFromString(response.content)
             return feed
 
 
-def get_feed_entities():
+def get_feed_entities() -> dict:
     if not cache.get("ntaie_response"):  # staler than 30 seconds
-        feed = get_feed()
+        feed = _get_feed()
         if feed:
             feed = json_format.MessageToDict(feed)
             if "entity" in feed:
@@ -35,7 +35,7 @@ def get_feed_entities():
     return cache.get("ntaie")
 
 
-def get_trip_update(trip):
+def get_trip_update(trip) -> dict:
     trip_id = trip.ticket_machine_code
     if trip_id:
         feed = get_feed_entities()
@@ -43,7 +43,7 @@ def get_trip_update(trip):
             return feed["entity"][trip_id]
 
 
-def apply_trip_update(stops, trip_update):
+def apply_trip_update(stops, trip_update: dict):
     if "stopTimeUpdate" not in trip_update["tripUpdate"]:
         return
 
