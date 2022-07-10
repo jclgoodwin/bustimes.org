@@ -58,7 +58,7 @@ def operator_ticket(request, slug, id):
         "operator": operator,
         "title": response["title"],
         "description": response["description"],
-        "categories": response["_embedded"]["topup"],
+        "categories": response["_embedded"].get("topup", []),
     }
     for category in context["categories"]:
         category["price"] = f"{category['price'] / 100:.2f}"
