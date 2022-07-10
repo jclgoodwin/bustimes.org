@@ -35,11 +35,11 @@
         {% if forloop.first != forloop.last %}
             <h2>
                 {% if grouping.inbound %}
-                    {% for origin, destination, via in timetable.origins_and_destinations %} 
+                    {% for origin, destination, via in timetable.origins_and_destinations %}
                         {{ destination }} - {{ origin }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
                     {% empty %}{% firstof object.inbound_description grouping %}{% endfor %}
                 {% else %}
-                    {% for origin, destination, via in timetable.origins_and_destinations %} 
+                    {% for origin, destination, via in timetable.origins_and_destinations %}
                         {{ origin }} - {{ destination }}{% if via %} via {{ via }}{% endif %}{% if not forloop.last %}<br>{% endif %}
                     {% empty %}{% firstof object.outbound_description grouping %}{% endfor %}
                 {% endif %}
@@ -109,7 +109,7 @@
                             <tr{% if row.is_minor %} class="minor{% if row.od %} od{% endif %}"{% endif %}>
                                 <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
                                     {% if row.stop.pk %}
-                                        <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.situation %}⚠️ {% endif %}{{ row.stop.get_qualified_name }}</a>
+                                        <a href="{{ row.stop.get_absolute_url }}">{% if row.stop.situation %}⚠️&#xfe0f; {% endif %}{{ row.stop.get_qualified_name }}</a>
                                     {% else %}{{ row.stop }}{% endif %}
                                 </th>
                             {% for cell in row.times %}
@@ -148,7 +148,7 @@
         </div>
 
         {% if not forloop.last %}
-            <!-- 71161633/services_incontent_1/services_incontent_1 --> 
+            <!-- 71161633/services_incontent_1/services_incontent_1 -->
             <div class="wide-ad" data-fuse="22699655419" id="services-incontent"></div>
         {% endif %}
 

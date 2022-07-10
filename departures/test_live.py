@@ -157,29 +157,29 @@ class LiveDeparturesTest(TestCase):
                 <h2>Next departures</h2>
                 <table><tbody>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
-                        <td><a href="/vehicles/tfl/LTZ1414#stop-490014721F">18:22⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1414#stop-490014721F">18:22⚡&#xfe0f;</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
-                        <td><a href="/vehicles/tfl/LX59AOM#stop-490014721F">18:23⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOM#stop-490014721F">18:23⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
-                        <td><a href="/vehicles/tfl/LTZ1243#stop-490014721F">18:26⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1243#stop-490014721F">18:26⚡&#xfe0f;</a></td></tr>
                     <tr><td>388</td><td>Stratford City</td>
-                        <td><a href="/vehicles/tfl/YR59NPF#stop-490014721F">18:26⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/YR59NPF#stop-490014721F">18:26⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
-                        <td><a href="/vehicles/tfl/LTZ1407#stop-490014721F">18:33⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1407#stop-490014721F">18:33⚡&#xfe0f;</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
-                        <td><a href="/vehicles/tfl/LX59AOL#stop-490014721F">18:33⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOL#stop-490014721F">18:33⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
-                        <td><a href="/vehicles/tfl/LTZ1412#stop-490014721F">18:37⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1412#stop-490014721F">18:37⚡&#xfe0f;</a></td></tr>
                     <tr><td>388</td><td>Stratford City</td>
-                        <td><a href="/vehicles/tfl/PF52TFX#stop-490014721F">18:44⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/PF52TFX#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
-                        <td><a href="/vehicles/tfl/LX59AOA#stop-490014721F">18:44⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOA#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
-                        <td><a href="/vehicles/tfl/LTZ1269#stop-490014721F">18:44⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1269#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
-                        <td><a href="/vehicles/tfl/LTZ1393#stop-490014721F">18:49⚡</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1393#stop-490014721F">18:49⚡&#xfe0f;</a></td></tr>
                 </tbody></table>
-                <p class="credit">⚡ denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations </p>
+            <p class="credit">⚡&#xfe0f; denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
         """,
             html=True,
         )
@@ -193,7 +193,9 @@ class LiveDeparturesTest(TestCase):
             res, "<tr><td>14B</td><td>City Express</td><td>08:22</td></tr>", html=True
         )
         self.assertContains(
-            res, "<tr><td>1A</td><td>City Centre</td><td>07:54⚡</td></tr>", html=True
+            res,
+            "<tr><td>1A</td><td>City Centre</td><td>07:54⚡&#xfe0f;</td></tr>",
+            html=True,
         )
 
     def test_translink_metro_no_services_running(self):

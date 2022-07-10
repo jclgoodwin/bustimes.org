@@ -32,7 +32,7 @@
                 {% if item.cancelled %}
                     <del>{{ item.time.time }}</del>
                 {% elif item.live %}
-                    {{ item.live.time }}⚡
+                    {{ item.live.time }}⚡&#xfe0f;
                 {% else %}
                     {% firstof item.time.time item.time %}
                 {% endif %}{% if item.link %}</a>{% endif %}
@@ -52,7 +52,7 @@
         {% endif %}
     {% endfor %}
     {% if live %}
-        <p class="credit">⚡ denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
+        <p class="credit">⚡&#xfe0f; denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
     {% endif %}
 </div>
 {% endif %}

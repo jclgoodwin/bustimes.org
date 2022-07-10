@@ -16,7 +16,7 @@
     {% endifchanged %}
     {% ifchanged stopusage.stop stopusage.direction %}{% if not stopusage.suspended %}
         <li{% if stopusage.is_minor %} class="minor"{% endif %}>
-            <a href="{{ stopusage.stop.get_absolute_url }}">{% if stopusage.situation %}⚠️ {% endif %}{{ stopusage.stop.get_qualified_name }}</a>
+            <a href="{{ stopusage.stop.get_absolute_url }}">{% if stopusage.situation %}⚠️&#xfe0f; {% endif %}{{ stopusage.stop.get_qualified_name }}</a>
         </li>
     {% endif %}{% endifchanged %}
     {% if forloop.last %}
