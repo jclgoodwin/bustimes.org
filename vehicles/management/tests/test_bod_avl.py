@@ -659,6 +659,27 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         journey = VehicleJourney.objects.get()
         self.assertEqual(item, journey.vehicle.latest_journey_data)
 
+        item = {
+            "Extensions": None,
+            "ItemIdentifier": "1708f9be-0585-4b68-bc2d-c6fb84ebb983",
+            "MonitoredVehicleJourney": {
+                "DestinationName": "Theatre Royal",
+                "DestinationRef": "036006218220",
+                "DirectionRef": "OUTBOUND",
+                "LineRef": "WindsorEtonCircular",
+                "OperatorRef": "Awan",
+                "OriginAimedDepartureTime": "2022-07-09T17:00:00+00:00",
+                "OriginName": "Theatre Royal",
+                "OriginRef": "036006218220",
+                "PublishedLineName": "WindsorEtonCircular",
+                "VehicleLocation": {"Latitude": "0.0", "Longitude": "0.0"},
+                "VehicleRef": None,
+            },
+            "RecordedAtTime": "2022-07-09T17:03:26+00:00",
+            "ValidUntilTime": "2022-07-11T00:20:56.514340",
+        }
+        command.handle_item(item)
+
     def test_tfl(self):
         command = import_bod_avl.Command()
         command.source = self.source
