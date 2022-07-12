@@ -574,12 +574,12 @@ class VehicleEdit(models.Model):
 
     def is_simple(self):
         for key in self.get_changes():
-            if key in ("name", "branding", "Previous reg"):
-                return False
-        return True
+            if key not in ("name", "branding", "Previous reg"):
+                return True
+        return False
 
     def apply(self, save=True, user=None):
-        ok = True
+        ok = True  # stays True if we can mark the edit as approved at the end
         vehicle = self.vehicle
         revision = None
         if save:
@@ -627,7 +627,10 @@ class VehicleEdit(models.Model):
                     else:
                         continue
                 else:
-                    setattr(vehicle, field, new_value)
+                    if field != "reg" and not user.has_perm("vehicles.change_vehicle"):
+                        ok = False
+                    else:
+                        setattr(vehicle, field, new_value)
                 update_fields.append(field)
         if self.vehicle_type:
             try:
