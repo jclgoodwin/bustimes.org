@@ -337,21 +337,22 @@ def vehicles_json(request):
         # ids of vehicles within box
         xmin, ymin, xmax, ymax = bounds.extent
 
-        # convert to kilometres (only for redis to convert back to degrees)
-        width = haversine((ymin, xmax), (ymin, xmin)) or 1
-        height = haversine((ymin, xmax), (ymax, xmax)) or 1
-
         try:
-            vehicle_ids = redis_client.geosearch(
-                "vehicle_location_locations",
-                longitude=(xmax + xmin) / 2,
-                latitude=(ymax + ymin) / 2,
-                unit="km",
-                width=width,
-                height=height,
-            )
-        except redis.exceptions.ResponseError as e:
+            # convert to kilometres (only for Redis to convert back to degrees)
+            width = haversine((ymin, xmax), (ymin, xmin)) or 1
+            height = haversine((ymin, xmax), (ymax, xmax)) or 1
+        except ValueError as e:
             return HttpResponseBadRequest(e)
+
+        vehicle_ids = redis_client.geosearch(
+            "vehicle_location_locations",
+            longitude=(xmax + xmin) / 2,
+            latitude=(ymax + ymin) / 2,
+            unit="km",
+            width=width,
+            height=height,
+        )
+
     elif "service" in request.GET:
         try:
             service_ids = [
