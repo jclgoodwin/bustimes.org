@@ -272,27 +272,35 @@ class Timetable:
 
             if not detailed:
                 previous_trip = None
+                previous_origin = None
+                previous_destination = None
                 for i, trip in enumerate(grouping.trips):
-                    origin = trip.stoptime_set.all()[0].stop_id
+                    stops = list(trip.stoptime_set.all())
+                    origin = stops[0].stop_id or stops[0].stop_code
+                    destination = stops[-1].stop_id or stops[-1].stop_code
                     if (
                         previous_trip
-                        and previous_trip.route_id == trip.route_id
+                        # and previous_trip.route_id == trip.route_id
                         and previous_trip.end <= trip.start
-                        and origin != trip.destination_id
-                        and previous_trip.destination_id == origin
+                        and previous_origin != previous_destination
+                        and origin != destination
+                        and (
+                            previous_destination == origin
+                            or previous_origin == destination
+                        )
                     ):
-                        print(previous_trip, trip)
                         for row in grouping.rows:
                             if row.times[i]:
                                 if row.times[i - 1]:
-                                    row.times[i - 1].departure = row.times[i].departure
-                                    row.times[i - 1].wait_time = (
-                                        trip.start - previous_trip.end
-                                    )
+                                    cell = row.times[i - 1]
+                                    cell.departure = row.times[i].departure
+                                    cell.wait_time = trip.start - previous_trip.end
                                 else:
                                     row.times[i - 1] = row.times[i]
                                 row.times[i] = ""
                     previous_trip = trip
+                    previous_origin = origin
+                    previous_destination = destination
 
             grouping.do_heads_and_feet(detailed)
 
