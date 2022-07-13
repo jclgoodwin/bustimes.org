@@ -270,6 +270,30 @@ class Timetable:
                 # reassemble in order
                 row.times = [row.times[i] for i in indices]
 
+            if not detailed:
+                previous_trip = None
+                for i, trip in enumerate(grouping.trips):
+                    origin = trip.stoptime_set.all()[0].stop_id
+                    if (
+                        previous_trip
+                        and previous_trip.route_id == trip.route_id
+                        and previous_trip.end <= trip.start
+                        and origin != trip.destination_id
+                        and previous_trip.destination_id == origin
+                    ):
+                        print(previous_trip, trip)
+                        for row in grouping.rows:
+                            if row.times[i]:
+                                if row.times[i - 1]:
+                                    row.times[i - 1].departure = row.times[i].departure
+                                    row.times[i - 1].wait_time = (
+                                        trip.start - previous_trip.end
+                                    )
+                                else:
+                                    row.times[i - 1] = row.times[i]
+                                row.times[i] = ""
+                    previous_trip = trip
+
             grouping.do_heads_and_feet(detailed)
 
         self.origins_and_destinations = list(

@@ -138,13 +138,13 @@ class GTFSTest(TestCase):
         timetable = service.get_timetable(datetime.date(2017, 6, 7))
         self.assertEqual(str(timetable.groupings[0]), "Outbound")
         self.assertEqual(
-            str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]"
+            str(timetable.groupings[0].rows[0].times), "[10:15, '', 14:15, 17:45, '']"
         )
         self.assertEqual(
-            str(timetable.groupings[0].rows[1].times), "['', 10:20, '', 14:20, 17:50]"
+            str(timetable.groupings[0].rows[1].times), "[10:20, '', 14:20, 17:50, '']"
         )
         self.assertEqual(
-            str(timetable.groupings[0].rows[2].times), "['', 10:22, '', 14:22, 17:52]"
+            str(timetable.groupings[0].rows[2].times), "[10:22, '', 14:22, 17:52, '']"
         )
 
         self.assertTrue(service.geometry)
