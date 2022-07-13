@@ -280,14 +280,10 @@ class Timetable:
                     destination = stops[-1].stop_id or stops[-1].stop_code
                     if (
                         previous_trip
-                        # and previous_trip.route_id == trip.route_id
                         and previous_trip.end <= trip.start
                         and previous_origin != previous_destination
                         and origin != destination
-                        and (
-                            previous_destination == origin
-                            or previous_origin == destination
-                        )
+                        and previous_destination == origin
                     ):
                         for row in grouping.rows:
                             if row.times[i]:
