@@ -627,7 +627,10 @@ class VehicleEdit(models.Model):
                     else:
                         continue
                 else:
-                    if field != "reg" and not user.has_perm("vehicles.change_vehicle"):
+                    if field in ("branding", "name") and not user.has_perm(
+                        "vehicles.change_vehicle"
+                    ):
+                        del revision.changes[field]
                         ok = False
                     else:
                         setattr(vehicle, field, new_value)
