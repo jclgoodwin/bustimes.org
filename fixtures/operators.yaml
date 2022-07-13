@@ -9,8 +9,6 @@ IGOB:
     email: ""
     address: ""
     twitter: ""
-MHCO:
-    email: info@mandhcoaches.co.uk
 AVMT:
     name: Axe Valley Mini Travel (AVMT)
 GRTL:
@@ -20,18 +18,12 @@ GRTL:
     address: ""
 VCBO:
     url: http://villagerbus.co.uk/
-SEAD:
-    url: http://www.seafordanddistrict.co.uk
 STAR:
     address: |
         177 Cambridge Street
         Aylesbury
         Buckinghamshire
         HP20 1BQ
-    url: http://startravelbuses.co.uk
-    phone: 01296 422225
-YHCS:
-    name: Pride of the Dales
 WWFD:
     name: Wyre Forest Dial-a-Ride
     address: |
@@ -50,14 +42,6 @@ BS4U:
         RH8 0BT
     email: rtp@tandridge.gov.uk
     phone: 01883 732791
-GRCC:
-    address: |
-        21 Dumont Avenue
-        St Osyth
-        Clacton on Sea
-        CO16 8JP
-    email: goridebus@outlook.com
-    url: ""
 SPOT:
     url: http://www.spottravel.co.uk/leeds-castle/
 THAN:
@@ -76,9 +60,6 @@ CRES:
         70 Marks Tey Road
         Fareham
         PO14 3UR
-    email: ""
-    url: ""
-    phone: ""
 RBNC:
     name: Roy Brown’s Coaches of Builth Wells
 DJWA:
@@ -99,9 +80,6 @@ SBDR:
     phone: 01525 220044
 PCLT:
     name: Rural Link
-    url: ""
-    phone: ""
-    address: ""
 MBGD:
     url: https://uk.megabus.com
 MEGA:
@@ -117,23 +95,9 @@ DOCC:
     url: https://www.dorsetforyou.gov.uk
     email: dt@dorsetcc.gov.uk
     phone: 01305 224537
-A2BR:
-    email: a2bbusandcoach@gmail.com
-    url: https://www.a2bbusandcoach.com/
-    phone: ""
-HWCO:
-    phone: 01704 821245
 CTSL:
     name: C Toms & Son Ltd
     url: http://www.ctomsandson.co.uk
-DIAC:
-    address: |
-        Unit 4 Knuston Home Farm
-        Knuston
-        Wellingborough
-        Northants
-        NN29 7EX
-    phone: 01933 698628
 CNTY:
     name: Country Bus (Newton Abbot)
 MULB:
@@ -158,39 +122,10 @@ EBLY:
 HCMN:
     name: MacNeil Coaches
     phone: 075060 72309
-BBSR: # Banga Buses
-    phone: 07472634061
-JSBT:
-    address: |
-        13 Hillside Road
-        Coundon
-        Bishop Auckland
-        DL14 8LS
-    url: ""
-    email: ""
-    phone: ""
-FRMN:
-    name: FromeBus
-    url: http://www.fromebus.co.uk
-    email: ""
-    address: |
-        Georges Ground
-        Frome
-        BA11 4RP
 FALC:
     name: Falcon Buses
     url: https://www.falconbuses.co.uk
     email: ""
-VISB:
-    address: |
-        Blackrod Interchange
-        Station Road
-        Blackrod
-        Bolton
-        BL6 5JE
-    phone: 01204 468288
-    url: http://www.visionbus.co.uk/
-    email: info@visionbus.co.uk
 CBBH:
     name: Centrebus (South)
 CBNL:
@@ -242,26 +177,14 @@ LNUD:
     url: https://www.transdevbus.co.uk/blackburn/
 BPTR:
     url: https://www.transdevbus.co.uk/burnley/
-ROSM:
-    url: ""
-SFGC:
-    twitter: SafeguardBus
-    url: https://www.guildfordbus.co.uk/
 FECS:
     twitter: |
         FirstNorwich
         FirstIpswich
         FirstYar_Low
         First_Excel
-    address: |
-        Davey House
-        7b Castle Meadow
-        Norwich
-        NR1 3DE
 GECL:
     twitter: GallowayLive
-JOHS:
-    twitter: JohnsonsTraffic
 RWSW:
     name: R & S Waterson Ltd
     address: |
@@ -284,6 +207,14 @@ SWDC:
         EX7 9QH
 TRDU:
     twitter: XploreDundee
+    url: https://www.xploredundee.com/
+    address: |
+        Xplore Dundee Travel Centre
+        80-82 Commercial Street
+        Dundee
+        DD1 2AP
+    phone: 01382 221609
+    email: xploredundee@mcgillsbuses.co.uk
 RYCA:
     url: https://ryedalect.org/regular-bus-routes/
     address: |
@@ -292,15 +223,11 @@ RYCA:
         Norton
         Malton
         YO17 9NJ
-    phone: 01653 699 059
     email: post@ryedalect.org
     twitter: RyedaleCT
 NXHH:
-    name: Hotel Hoppa
-    url: https://www.hotelhoppa.co.uk/
-    twitter: HotelHoppaLHR
     address: ""
-    email: ""
+    email: Comments-Hallmark@rotala.co.uk
     phone: ""
 MAYC:
     name: Maynes Coaches
@@ -319,7 +246,7 @@ CTCL:
         CV6 6HH
     phone: 024 7669 1433
 TEXP:
-    phone: ""
+    phone: 07545 164579
 ECWY:
     twitter: ""
     phone: 01424 210744
@@ -338,7 +265,6 @@ EOSB:
     address: ""
     phone: ""
 KCTB:
-    url: https://www.konectbus.co.uk/
     phone: 03300 539358
     address: |
         Norwich Bus Station
@@ -365,8 +291,6 @@ ENSB:
     name: Ensignbus
 NOTB:
     twitter: NottsCC
-FSCE:
-    url: https://www.firstgroup.com/south-east-and-central-scotland
 MCGL:
     name: McGill’s
 BHBC:
@@ -385,10 +309,6 @@ WNCT:
         King’s Lynn
         PE30 4JX
     email: enquiries@wnct.co.uk
-TFCN:
-    name: Go Cornwall Bus
-    twitter: GoCornwallBuses
-    url: https://www.gocornwallbus.co.uk/
 HAIN:
     name: Phil Haines Coaches
 TLCT:
@@ -433,14 +353,10 @@ NUTT:
         FY4 4QU
 LNNE:
     url: ""
-MPTR:
-    twitter: _mptravel
-STEW:
-    twitter: stewartscoaches
 DDIS:
     url: https://procterscoaches.com/dales-district-timetable/
 TANV:
-    email: ""
+    email: contact@tanat.co.uk
     url: https://tanat.co.uk/
     twitter: ""
 LNGS:
@@ -455,17 +371,6 @@ SPMW:
     url: https://www.stringerscoaches.co.uk/
 UNOE:
    twitter: UnoHerts
-CTNY:
-    name: Thames Valley Buses
-    url: https://www.thamesvalleybuses.com/
-    twitter: ThamesValleyBus
-    email: customerservices@thamesvalleybuses.com
-    address: |
-        Unit 3 The Maple Centre
-        Downmill Road
-        Bracknell
-        Berkshire
-        RG12 1QS
 FCWL:
     twitter: by_Kernow
 AKSS:
