@@ -1,4 +1,3 @@
-import redis
 import json
 import xml.etree.cElementTree as ET
 import datetime
@@ -40,6 +39,7 @@ from .models import (
     VehicleEdit,
     VehicleEditFeature,
     VehicleRevision,
+    VehicleRevisionFeature,
     Livery,
     VehicleEditVote,
 )
@@ -184,18 +184,21 @@ def operator_vehicles(request, slug=None, parent=None):
             elif form.is_valid():
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
 
-                revisions, changed_fields = do_revisions(
+                revisions, features, changed_fields = do_revisions(
                     Vehicle.objects.filter(id__in=vehicle_ids), data, request.user
                 )
-                revisions = [revision for revision in revisions if str(revision)]
+                if not features:
+                    revisions = [revision for revision in revisions if str(revision)]
 
-                if revisions and changed_fields:
-                    Vehicle.objects.bulk_update(
-                        (revision.vehicle for revision in revisions), changed_fields
-                    )
+                if revisions:
+                    if changed_fields:
+                        Vehicle.objects.bulk_update(
+                            (revision.vehicle for revision in revisions), changed_fields
+                        )
                     for revision in revisions:
                         revision.datetime = now
                     VehicleRevision.objects.bulk_create(revisions)
+                    VehicleRevisionFeature.objects.bulk_create(features)
                     varnish_ban("/vehicles/history")
                     context["revisions"] = len(revisions)
 
@@ -743,7 +746,7 @@ def edit_vehicle(request, vehicle_id):
         if form.is_valid():
             now = timezone.now()
             try:
-                revision = do_revision(vehicle, data, request.user)
+                revision, features = do_revision(vehicle, data, request.user)
             except IntegrityError:
                 if "operator" in form.changed_data:
                     form.add_error(
@@ -756,6 +759,10 @@ def edit_vehicle(request, vehicle_id):
                 if revision:
                     revision.datetime = now
                     revision.save()
+                    if features:
+                        # for feature in features:
+                        #     feature.revision = feature.revision
+                        VehicleRevisionFeature.objects.bulk_create(features)
                     context["revision"] = revision
                     varnish_ban("/vehicles/history")
 

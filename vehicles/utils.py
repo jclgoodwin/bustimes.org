@@ -3,7 +3,13 @@ from redis import from_url
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Max
-from .models import VehicleEdit, VehicleRevision, VehicleType, Livery
+from .models import (
+    VehicleEdit,
+    VehicleRevision,
+    VehicleType,
+    Livery,
+    VehicleRevisionFeature,
+)
 
 
 if settings.REDIS_URL:
@@ -107,6 +113,7 @@ def do_revisions(vehicles, data, user):
     revisions = [
         VehicleRevision(vehicle=vehicle, user=user, changes={}) for vehicle in vehicles
     ]
+    features = []
     changed_fields = []
 
     # actually edit some vehicle fields, depending on how trusted the user is,
@@ -167,6 +174,25 @@ def do_revisions(vehicles, data, user):
             if "other_colour" in data:
                 del data["other_colour"]
 
+        if "features" in data:
+            for revision in revisions:
+                for feature in revision.vehicle.features.all():
+                    if feature not in data["features"]:
+                        features.append(
+                            VehicleRevisionFeature(
+                                revision=revision, feature=feature, add=False
+                            )
+                        )
+                        revision.vehicle.features.remove(feature)
+                for feature in data["features"]:
+                    features.append(
+                        VehicleRevisionFeature(
+                            revision=revision, feature=feature, add=True
+                        )
+                    )
+                    revision.vehicle.features.add(feature)
+            del data["features"]
+
     if "summary" in data:
         for revision in revisions:
             revision.message = data["summary"]
@@ -181,11 +207,11 @@ def do_revisions(vehicles, data, user):
         changed_fields.append("operator")
         del data["operator"]
 
-    return revisions, changed_fields
+    return revisions, features, changed_fields
 
 
 def do_revision(vehicle, data, user):
-    (revision,), changed_fields = do_revisions((vehicle,), data, user)
+    (revision,), features, changed_fields = do_revisions((vehicle,), data, user)
 
     if "fleet_number" in data:
         if (
@@ -237,4 +263,6 @@ def do_revision(vehicle, data, user):
     if changed_fields:
         vehicle.save(update_fields=changed_fields)
 
-        return revision
+    if changed_fields or features:
+        return revision, features
+    return None, None

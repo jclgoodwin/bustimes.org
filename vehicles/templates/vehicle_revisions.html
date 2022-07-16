@@ -28,6 +28,9 @@
                     {% endif %}
                     <br>
                 {% endfor %}
+                {% for feature in revision.vehiclerevisionfeature_set.all %}
+                    {{ feature }}
+                {% endfor %}
                 {% if revision.message %}
                     <div class="wrap">{{ revision.message|urlize }}</div>
                 {% endif %}

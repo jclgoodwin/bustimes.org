@@ -640,7 +640,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.client.force_login(self.staff_user)
 
         # try to apply the edit
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             self.client.post(f"/vehicles/edits/{edit.id}/apply")
 
         # not marked as approved cos there was no matching vehicle type
@@ -840,7 +840,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertFalse(VehicleEdit.objects.all())
 
         # add feature
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(19):
             response = self.client.post(
                 "/operators/lynx/vehicles/edit",
                 {
@@ -848,9 +848,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "features": self.wifi.id,
                 },
             )
-            self.assertContains(
-                response, "I’ll update those details (1 vehicle) shortly"
-            )
+            self.assertContains(response, "1 vehicle updated")
 
         # log in to Django admin
         self.client.force_login(self.staff_user)

@@ -662,6 +662,12 @@ class VehicleEdit(models.Model):
                     vehicle.features.add(feature.feature)
                 else:
                     vehicle.features.remove(feature.feature)
+                if not revision.id:
+                    revision.save()
+                VehicleRevisionFeature.objects.create(
+                    add=feature.add, feature=feature.feature, revision=revision
+                )
+
             if ok:
                 self.approved = True
                 self.arbiter = user
