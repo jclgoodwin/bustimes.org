@@ -5,10 +5,11 @@ from django.core.cache import cache
 from django.db.models import Max
 from .models import (
     VehicleEdit,
+    VehicleEditFeature,
     VehicleRevision,
+    VehicleRevisionFeature,
     VehicleType,
     Livery,
-    VehicleRevisionFeature,
 )
 
 
@@ -106,7 +107,18 @@ def get_vehicle_edit(vehicle, fields, now, request):
         edit.colours = fields["other_colour"]
         changed = True
 
-    return edit, changed
+    features = []
+    if "features" in fields:
+        for feature in fields["features"]:
+            if feature not in vehicle.features.all():
+                features.append(VehicleEditFeature(edit=edit, feature=feature))
+        for feature in vehicle.features.all():
+            if feature not in fields["features"]:
+                features.append(
+                    VehicleEditFeature(edit=edit, feature=feature, add=False)
+                )
+
+    return edit, features, changed
 
 
 def do_revisions(vehicles, data, user):
@@ -183,14 +195,14 @@ def do_revisions(vehicles, data, user):
                                 revision=revision, feature=feature, add=False
                             )
                         )
-                        revision.vehicle.features.remove(feature)
                 for feature in data["features"]:
-                    features.append(
-                        VehicleRevisionFeature(
-                            revision=revision, feature=feature, add=True
+                    if feature not in revision.vehicle.features.all():
+                        features.append(
+                            VehicleRevisionFeature(
+                                revision=revision, feature=feature, add=True
+                            )
                         )
-                    )
-                    revision.vehicle.features.add(feature)
+                revision.vehicle.features.set(data["features"])
             del data["features"]
 
     if "summary" in data:
@@ -211,7 +223,7 @@ def do_revisions(vehicles, data, user):
 
 
 def do_revision(vehicle, data, user):
-    (revision,), features, changed_fields = do_revisions((vehicle,), data, user)
+    (revision,), features, changed_fields = do_revisions([vehicle], data, user)
 
     if "fleet_number" in data:
         if (

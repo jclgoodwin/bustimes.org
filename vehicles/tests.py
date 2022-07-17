@@ -839,8 +839,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.assertFalse(VehicleEdit.objects.all())
 
-        # add feature
-        with self.assertNumQueries(19):
+        # add feature as a trusted user
+        with self.assertNumQueries(20):
             response = self.client.post(
                 "/operators/lynx/vehicles/edit",
                 {
@@ -849,6 +849,20 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                 },
             )
             self.assertContains(response, "1 vehicle updated")
+
+        # add feature as a normal user
+        self.client.force_login(self.user)
+        with self.assertNumQueries(18):
+            response = self.client.post(
+                "/operators/lynx/vehicles/edit",
+                {
+                    "vehicle": self.vehicle_2.id,
+                    "features": self.usb.id,
+                },
+            )
+            self.assertContains(
+                response, "I’ll update those details (1 vehicle) shortly"
+            )
 
         # log in to Django admin
         self.client.force_login(self.staff_user)

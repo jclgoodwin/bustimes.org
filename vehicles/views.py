@@ -184,8 +184,12 @@ def operator_vehicles(request, slug=None, parent=None):
             elif form.is_valid():
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
 
+                ticked_vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
+                if "features" in data:
+                    ticked_vehicles = ticked_vehicles.prefetch_related("features")
+
                 revisions, features, changed_fields = do_revisions(
-                    Vehicle.objects.filter(id__in=vehicle_ids), data, request.user
+                    ticked_vehicles, data, request.user
                 )
                 if not features:
                     revisions = [revision for revision in revisions if str(revision)]
@@ -205,23 +209,17 @@ def operator_vehicles(request, slug=None, parent=None):
                 if data:
                     # this will fetch the vehicles list
                     # - slightly important that it occurs before any change of operator
-                    ticked_vehicles = [v for v in vehicles if str(v.id) in vehicle_ids]
                     edits = [
                         get_vehicle_edit(vehicle, data, now, request)
                         for vehicle in ticked_vehicles
                     ]
+                    features = [
+                        feature for _, features, _ in edits for feature in features
+                    ]
                     edits = VehicleEdit.objects.bulk_create(
-                        edit for edit, changed in edits if changed or "features" in data
+                        edit for edit, features, changed in edits if changed or features
                     )
-
-                    if "features" in data:
-                        vehicle_edit_features = []
-                        for feature in data["features"]:
-                            for edit in edits:
-                                vehicle_edit_features.append(
-                                    VehicleEditFeature(edit=edit, feature=feature)
-                                )
-                        VehicleEditFeature.objects.bulk_create(vehicle_edit_features)
+                    VehicleEditFeature.objects.bulk_create(features)
                     context["edits"] = edits
 
                 form = forms.EditVehiclesForm(
@@ -760,30 +758,18 @@ def edit_vehicle(request, vehicle_id):
                     revision.datetime = now
                     revision.save()
                     if features:
-                        # for feature in features:
-                        #     feature.revision = feature.revision
                         VehicleRevisionFeature.objects.bulk_create(features)
                     context["revision"] = revision
                     varnish_ban("/vehicles/history")
 
                 if data:
-                    edit, changed = get_vehicle_edit(vehicle, data, now, request)
-                    if changed:
+                    edit, features, changed = get_vehicle_edit(
+                        vehicle, data, now, request
+                    )
+                    if changed or features:
                         edit.save()
                         context["edit"] = edit
-                    if "features" in data:
-                        if not edit.id:  # .save() was not called before
-                            edit.save()
-                            context["edit"] = edit
-                        for feature in vehicle.features.all():
-                            if feature not in data["features"]:
-                                VehicleEditFeature.objects.create(
-                                    edit=edit, feature=feature, add=False
-                                )
-                        for feature in data["features"]:
-                            VehicleEditFeature.objects.create(
-                                edit=edit, feature=feature, add=True
-                            )
+                        VehicleEditFeature.objects.bulk_create(features)
 
                 if revision or edit.id:
                     form = None
