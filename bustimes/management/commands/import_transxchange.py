@@ -336,10 +336,14 @@ class Command(BaseCommand):
         return outbound, inbound
 
     def mark_old_services_as_not_current(self):
-        self.source.route_set.exclude(id__in=self.route_ids).delete()
-        old_services = self.source.service_set.filter(current=True, route=None).exclude(
-            id__in=self.service_ids
-        )
+        old_routes = self.source.route_set.exclude(id__in=self.route_ids)
+        try:
+            old_routes.delete()
+        except IntegrityError:
+            old_routes.delete()
+
+        old_services = self.source.service_set.filter(current=True, route=None)
+        old_services = old_services.exclude(id__in=self.service_ids)
         old_services.update(current=False)
 
     def handle_archive(self, archive_name, filenames):
