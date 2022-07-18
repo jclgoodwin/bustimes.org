@@ -415,6 +415,8 @@ class SiriSmDepartures(Departures):
         if expected_time:
             expected_time = parse_datetime(expected_time)
 
+        departure_status = call.get("DepartureStatus")
+
         line_name = journey.get("LineName") or journey.get("LineRef")
         destination = journey.get("DestinationName") or journey.get(
             "DestinationDisplay"
@@ -428,6 +430,7 @@ class SiriSmDepartures(Departures):
             "service": service,
             "destination": destination,
             "data": journey,
+            "cancelled": departure_status == "cancelled",
         }
 
     def get_poorly_key(self):
@@ -525,6 +528,8 @@ def blend(departures, live_rows, stop=None):
                     row["live"] = live_row["live"]
                 if "data" in live_row:
                     row["data"] = live_row["data"]
+                if "cancelled" in live_row:
+                    row["cancelled"] = live_row["cancelled"]
                 replaced = True
                 break
         if not replaced and (live_row.get("live") or live_row["time"]):
@@ -649,7 +654,7 @@ def get_departures(stop, services, when):
             if live_rows:
                 blend(departures, live_rows)
 
-                if source:
+                if source and source.name in ("Aberdeen", "SPT"):
                     # Record some information about the vehicle and journey,
                     # for enthusiasts,
                     # because the source doesn't support vehicle locations
