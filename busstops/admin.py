@@ -34,7 +34,7 @@ class StopPointAdmin(GISModelAdmin):
         "naptan_code",
         "locality",
         "admin_area",
-        "__str__",
+        "common_name",
         "modified_at",
         "created_at",
     ]
@@ -42,6 +42,7 @@ class StopPointAdmin(GISModelAdmin):
     list_filter = [
         "modified_at",
         "created_at",
+        "active",
         "stop_type",
         "service__region",
         "admin_area",
