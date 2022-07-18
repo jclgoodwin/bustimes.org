@@ -223,14 +223,14 @@ def bus_open_data(api_key, specific_operator):
 
                 handle_file(command, path)
 
+                command.mark_old_services_as_not_current()
+
                 command.source.sha1 = get_sha1(path)
                 command.source.save()
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
                 logger.info(f"  {[o for o in operator_ids if o not in operators]}")
-
-                command.mark_old_services_as_not_current()
 
                 service_ids |= command.service_ids
 
