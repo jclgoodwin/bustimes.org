@@ -756,15 +756,13 @@ class ImportTransXChangeTest(TestCase):
             with patch("os.path.getmtime", return_value=1645544079):
                 self.write_files_to_zipfile_and_import("EA.zip", ["SVRABAO421.xml"])
         service = Service.objects.get()
-        self.assertEqual(1, service.route_set.count())
-        self.assertEqual(service.slug, "421-inverurie-alford")
+        self.assertEqual(0, service.route_set.count())
+        self.assertEqual(service.slug, "abao421")
 
         self.assertEqual(
             [
                 "WARNING:bustimes.management.commands.import_transxchange:"
-                "SVRABAO421.xml: ABAO421 end 2021-08-19 is in the past",
-                "WARNING:bustimes.management.commands.import_transxchange:"
-                "{'NationalOperatorCode': 'SBLB', 'OperatorCode': 'BLB', 'OperatorShortName': 'Stagecoach North Scotlan'}",
+                "skipping SVRABAO421.xml: ABAO421 end 2021-08-19 is in the past"
             ],
             cm.output,
         )
