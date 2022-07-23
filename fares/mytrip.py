@@ -67,6 +67,7 @@ def operator_ticket(request, slug, id):
     }
     for category in context["categories"]:
         category["price"] = f"{category['price'] / 100:.2f}"
+        category["url"] = category["_links"]["public:view-product"]["href"]
 
     json_ld = json.dumps(
         [
@@ -75,11 +76,14 @@ def operator_ticket(request, slug, id):
                 "@type": "Product",
                 "name": category["title"],
                 "description": category["description"],
+                "brand": category["_embedded"]["operator"]["name"],
+                "image": category["_embedded"]["operator"]["logo"],
                 "offers": {
                     "@type": "Offer",
-                    "url": f"https://mytrip.today/app/view-product/{category['id']}",
+                    "url": category["url"],
                     "priceCurrency": "GBP",
                     "price": category["price"],
+                    "availability": "https://schema.org/InStock",
                 },
             }
             for category in context["categories"]

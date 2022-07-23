@@ -14,7 +14,7 @@
 
 {% for category in categories %}
 
-    <a href="https://mytrip.today/app/view-product/{{ category.id }}" class="ticket">
+    <a href="{{ category.url }}" class="ticket">
         <h3>{{ category.title }}</h3>
 
         <p class="price">£{{ category.price }}</p>
