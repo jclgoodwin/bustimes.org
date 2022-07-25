@@ -654,7 +654,7 @@ def get_departures(stop, services, when):
             if live_rows:
                 blend(departures, live_rows)
 
-                if source and source.name in ("Aberdeen", "SPT"):
+                if source and source.name in ("Aberdeen", "Pembrokeshire", "SPT"):
                     # Record some information about the vehicle and journey,
                     # for enthusiasts,
                     # because the source doesn't support vehicle locations
