@@ -969,6 +969,7 @@ def vehicles_history(request):
         {
             "filter": f,
             "revisions": page,
+            "parameters": urlencode(f.data),
         },
     )
 
