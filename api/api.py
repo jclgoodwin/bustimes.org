@@ -2,7 +2,9 @@ from rest_framework import routers
 from . import views
 
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(
+    # trailing_slash=False
+)
 router.register("vehicles", views.VehicleViewSet)
 router.register("vehiclejourneys", views.VehicleJourneyViewSet)
 router.register("liveries", views.LiveryViewSet)

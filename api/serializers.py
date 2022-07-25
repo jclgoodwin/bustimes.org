@@ -65,7 +65,16 @@ class ServiceSerializer(serializers.ModelSerializer):
 class StopSerializer(serializers.ModelSerializer):
     class Meta:
         model = StopPoint
-        fields = ["atco_code", "naptan_code", "common_name"]
+        fields = [
+            "atco_code",
+            "naptan_code",
+            "common_name",
+            "indicator",
+            "bearing",
+            "heading",
+            "created_at",
+            "modified_at",
+        ]
 
 
 class LiverySerializer(serializers.ModelSerializer):
