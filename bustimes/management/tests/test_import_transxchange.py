@@ -193,16 +193,18 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.line_brand, "Turquoise Line")
         self.assertTrue(service.current)
         self.assertEqual(service.operator.first(), self.fecs)
-        self.assertEqual(
-            list(service.get_traveline_links()),
-            [
-                (
-                    "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST"
-                    "?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0",
-                    "Timetable on the Traveline South West website",
-                )
-            ],
-        )
+
+        with patch("busstops.models.Now", return_value="2016-10-10"):
+            self.assertEqual(
+                list(service.get_traveline_links()),
+                [
+                    (
+                        "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST"
+                        "?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0",
+                        "Timetable on the Traveline South West website",
+                    )
+                ],
+            )
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data["breadcrumb"], [self.ea, self.fecs])

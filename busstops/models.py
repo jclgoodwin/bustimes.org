@@ -16,7 +16,7 @@ from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.core.cache import cache
 from django.db.models import Q, OuterRef, Exists
-from django.db.models.functions import Upper, Coalesce
+from django.db.models.functions import Upper, Coalesce, Now
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.html import format_html, escape
@@ -782,7 +782,11 @@ class Service(models.Model):
         if not self.source:
             return
 
-        if self.source.name == "S":
+        if (
+            self.source.name == "S"
+            and self.service_code.startswith("SVR")
+            and "_" not in self.service_code
+        ):
             yield self.get_trapeze_link(date)
             return
 
@@ -820,7 +824,10 @@ class Service(models.Model):
                 return
 
             try:
-                for i, route in enumerate(self.route_set.order_by("start_date")):
+                routes = self.route_set.filter(
+                    Q(end_date__gte=Now()) | Q(end_date=None)
+                ).order_by("start_date")
+                for i, route in enumerate(routes):
 
                     parts = route.code.split("-")
                     net, line = parts[0].split("_")
