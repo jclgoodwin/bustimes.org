@@ -83,7 +83,8 @@
         button.onclick = function(event) {
             let url = '/vehicles/edits/' + this.dataset.url;
             fetch(url, {
-                method: 'POST'
+                method: 'POST',
+                redirect: 'error',
             }).then(function(response) {
                 if (response.ok) {
                     button.style.opacity = '.5';

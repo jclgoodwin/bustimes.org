@@ -878,6 +878,7 @@ def vehicle_edits(request):
     )
 
 
+@require_POST
 @login_required
 def vehicle_edit_vote(request, edit_id, direction):
     edit = get_object_or_404(VehicleEdit, id=edit_id)
@@ -898,6 +899,18 @@ def vehicle_edit_vote(request, edit_id, direction):
     edit.save(update_fields=["score"])
 
     return HttpResponse(edit.score)
+
+
+@require_POST
+@login_required
+def vehicle_revision_revert(request, revision_id):
+    assert request.user.is_superuser
+
+    revision = get_object_or_404(VehicleRevision, id=revision_id)
+
+    messages = list(revision.revert())
+
+    return HttpResponse("\n".join(messages))
 
 
 @require_POST

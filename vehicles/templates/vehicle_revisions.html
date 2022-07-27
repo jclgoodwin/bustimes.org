@@ -35,8 +35,37 @@
                     <div class="wrap">{{ revision.message|urlize }}</div>
                 {% endif %}
             </td>
+            <td>
+                <button class="action" data-url="{{ revision.id }}/revert">revert</button>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 </div>
+
+<script>
+(function () {
+    'use strict';
+
+    for (const button of document.querySelectorAll('button.action')) {
+        let row = button.parentElement.parentElement;
+        button.onclick = function(event) {
+            let url = '/vehicles/history/' + this.dataset.url;
+            fetch(url, {
+                method: 'POST',
+                redirect: 'error',
+            }).then(function(response) {
+                if (response.ok) {
+                    response.text().then(text => {
+                        if (text) {
+                            window.alert(text);
+                        }
+                    });
+                }
+            });
+            return false;
+        };
+    }
+})();
+</script>
