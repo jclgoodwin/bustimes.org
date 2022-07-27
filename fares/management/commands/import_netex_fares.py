@@ -390,56 +390,39 @@ class Command(BaseCommand):
                 cells_element = sub_fare_table_element.find("cells")
                 if cells_element:
                     for cell_element in cells_element:
-                        column_ref = cell_element.find("ColumnRef")
-                        if column_ref is None:
-                            print(filename, ET.tostring(cell_element).decode())
-                            continue
-                        else:
-                            column_ref = column_ref.attrib["ref"]
-                        row_ref = cell_element.find("RowRef").attrib["ref"]
                         distance_matrix_element_price = cell_element.find(
                             "DistanceMatrixElementPrice"
                         )
                         if distance_matrix_element_price is None:
-                            print(filename, ET.tostring(cell_element).decode())
                             continue
+
                         price_ref = distance_matrix_element_price.find(
                             "GeographicalIntervalPriceRef"
                         )
                         if price_ref is None:
                             continue
+
                         distance_matrix_element_ref = (
                             distance_matrix_element_price.find(
                                 "DistanceMatrixElementRef"
                             )
                         )
+                        distance_matrix_element = distance_matrix_elements[
+                            distance_matrix_element_ref.attrib["ref"]
+                        ]
 
-                        if row_ref in rows:
-                            row = rows[row_ref]
-                        else:
-                            # sometimes the RowRef doesn't correspond exactly to a Row id
-                            row_ref_suffix = row_ref.split("@")[-1]
-                            row_ref_suffix = f"@{row_ref_suffix}"
-                            row_refs = [
-                                row_ref
-                                for row_ref in rows
-                                if row_ref.endswith(row_ref_suffix)
-                            ]
-                            assert len(row_refs) == 1
-                            row = rows[row_refs[0]]
-                        try:
-                            distance_matrix_element_ref = (
-                                distance_matrix_element_ref.attrib["ref"]
-                            )
-                            distance_matrix_element = distance_matrix_elements[
-                                distance_matrix_element_ref
-                            ]
-                        except KeyError as e:
-                            print(e)
-                            distance_matrix_element = None
+                        column_ref = cell_element.find("ColumnRef").attrib["ref"]
+                        column = columns.get(column_ref)
+
+                        row_ref = cell_element.find("RowRef").attrib["ref"]
+                        row = rows.get(row_ref)
+
+                        if row is None or column is None:
+                            continue
+
                         cells.append(
                             models.Cell(
-                                column=columns[column_ref],
+                                column=column,
                                 row=row,
                                 price=price_group_prices[price_ref.attrib["ref"]],
                                 distance_matrix_element=distance_matrix_element,
