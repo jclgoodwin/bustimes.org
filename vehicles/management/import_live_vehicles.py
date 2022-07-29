@@ -165,7 +165,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     return
             else:
                 location = self.create_vehicle_location(item)
-                if location.latlong.equals_exact(latest_latlong, 0.001):
+                if not location or location.latlong.equals_exact(latest_latlong, 0.001):
                     # position hasn't changed
                     return
         elif now and datetime and (now - datetime).total_seconds() > 600:
@@ -201,6 +201,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         if not location:
             location = self.create_vehicle_location(item)
+            if not location:
+                return
 
         if (
             not (location.latlong.x or location.latlong.y)  # (0, 0) - null island

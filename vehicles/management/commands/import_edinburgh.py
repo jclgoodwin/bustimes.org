@@ -12,11 +12,9 @@ class Command(ImportLiveVehiclesCommand):
     services = Service.objects.filter(
         operator__in=("LOTH", "EDTR", "ECBU", "NELB"), current=True
     ).defer("geometry", "search_vector")
+    previous_locations = {}
 
-    @staticmethod
-    def get_datetime(item):
-        if item["ineo_gps_fix"] - item["last_gps_fix"] == 3600:
-            return datetime.fromtimestamp(item["ineo_gps_fix"], timezone.utc)
+    def get_datetime(self, item):
         return datetime.fromtimestamp(item["last_gps_fix"], timezone.utc)
 
     def get_items(self):
@@ -42,6 +40,9 @@ class Command(ImportLiveVehiclesCommand):
             code=item["journey_id"] or "",
             destination=item["destination"] or "",
         )
+
+        if not journey.route_name and vehicle.operator_id == "EDTR":
+            journey.route_name = "T50"
 
         latest = vehicle.latest_journey
         if not journey.route_name:
@@ -69,6 +70,16 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
-        return VehicleLocation(
+        location = VehicleLocation(
             latlong=Point(item["longitude"], item["latitude"]), heading=item["heading"]
         )
+
+        # stationary bus - ignore (?)
+        key = item["vehicle_id"]
+        if key in self.previous_locations:
+            prev = self.previous_locations[key]
+            if prev.latlong == location.latlong and prev.heading == location.heading:
+                return
+        self.previous_locations[key] = location
+
+        return location
