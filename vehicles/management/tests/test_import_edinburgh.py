@@ -61,6 +61,7 @@ class EdinburghImportTest(TestCase):
 
     def test_vehicle_location(self):
         item = {
+            "vehicle_id": "3030",
             "heading": 76,
             "latitude": 55.95376,
             "longitude": -3.18718,
@@ -72,5 +73,5 @@ class EdinburghImportTest(TestCase):
         self.assertTrue(location.latlong)
 
         self.assertEqual(
-            "2019-03-31 13:17:22+00:00", str(self.command.get_datetime(item))
+            "2019-03-31 12:17:22+00:00", str(self.command.get_datetime(item))
         )
