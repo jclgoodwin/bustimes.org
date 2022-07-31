@@ -35,17 +35,25 @@ class Command(ImportLiveVehiclesCommand):
 
         if self.source.settings and "OperatorRef" in self.source.settings:
             item["OperatorRef"] = self.source.settings["OperatorRef"]
+        else:
+            item["OperatorRef"] = [item["OperatorRef"]]
 
-        defaults = {"fleet_number": fleet_number, "source": self.source}
-
-        operator = item["OperatorRef"]
+        operators = item["OperatorRef"]
+        defaults = {
+            "fleet_number": fleet_number,
+            "source": self.source,
+            "operator_id": operators[0],
+        }
 
         try:
             return self.vehicles.get_or_create(
-                defaults, code=code, operator_id=operator
+                defaults, code=code, operator__in=operators
             )
         except self.vehicles.model.MultipleObjectsReturned:
-            return self.vehicles.filter(code=code, operator=operator).first(), False
+            return (
+                self.vehicles.filter(code=code, operator__in=operators).first(),
+                False,
+            )
 
     @classmethod
     def get_service(cls, item):
@@ -53,7 +61,7 @@ class Command(ImportLiveVehiclesCommand):
         if not line_name:
             return
         services = Service.objects.filter(current=True, line_name__iexact=line_name)
-        services = services.filter(operator=item["OperatorRef"])
+        services = services.filter(operator__in=item["OperatorRef"])
         try:
             return services.get()
         except Service.DoesNotExist as e:

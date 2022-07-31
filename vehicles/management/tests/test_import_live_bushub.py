@@ -77,6 +77,8 @@ class BusHubTest(TestCase):
 
         mocked_print.assert_called()
 
+        item["OperatorRef"] = "DIAM"
+
         with self.assertNumQueries(1):
             command.handle_item(item)
             command.save()
