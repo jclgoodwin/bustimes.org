@@ -242,7 +242,8 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url() + "?date=2016-10-16")
         timetable = res.context_data["timetable"]
 
-        self.assertEqual("Outbound", str(timetable.groupings[0]))
+        self.assertEqual("Ivy Road - Queens Square", str(timetable.groupings[0]))
+        self.assertEqual("Queens Square - Ivy Road", str(timetable.groupings[1]))
 
         self.assertTrue(timetable.groupings[1].has_minor_stops())
         self.assertTrue(timetable.groupings[0].has_minor_stops())

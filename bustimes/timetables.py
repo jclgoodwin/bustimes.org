@@ -135,7 +135,7 @@ class Timetable:
         self.date = date
         self.detailed = detailed
 
-        self.groupings = [Grouping(), Grouping(True)]
+        self.groupings = [Grouping(False, self), Grouping(True, self)]
         self.calendar_options = None
 
         self.calendar = None
@@ -302,9 +302,9 @@ class Timetable:
 
         self.origins_and_destinations = list(
             {
-                (route.origin, route.destination, route.via)
+                tuple(filter(None, [route.origin, route.via, route.destination]))
                 for route in self.current_routes
-                if route.origin
+                if route.origin and route.destination
             }
         )
         if len(self.origins_and_destinations) > 1:
@@ -510,14 +510,20 @@ def journey_patterns_match(trip_a, trip_b):
 
 
 class Grouping:
-    def __init__(self, inbound=False):
+    def __init__(self, inbound: bool, parent: Timetable):
         self.heads = []
         self.rows = []
         self.trips = []
         self.inbound = inbound
         self.column_feet = {}
+        self.parent = parent
 
     def __str__(self):
+        if self.parent.origins_and_destinations:
+            if self.inbound:
+                return " - ".join(reversed(self.parent.origins_and_destinations[0]))
+            return " - ".join(self.parent.origins_and_destinations[0])
+
         if self.inbound:
             return "Inbound"
         return "Outbound"
