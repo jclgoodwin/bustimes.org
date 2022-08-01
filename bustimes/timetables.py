@@ -308,26 +308,19 @@ class Timetable:
             }
         )
         if len(self.origins_and_destinations) > 1:
-            if (
-                self.origins_and_destinations[0][0]
-                == self.origins_and_destinations[1][1]
-            ):
-                self.origins_and_destinations[0] = (
-                    self.origins_and_destinations[1][0],
-                    self.origins_and_destinations[0][1],
-                    self.origins_and_destinations[1][1],
-                )
-                del self.origins_and_destinations[1]
-            elif (
-                self.origins_and_destinations[1][0]
-                == self.origins_and_destinations[0][1]
-            ):
-                self.origins_and_destinations[0] = (
-                    self.origins_and_destinations[0][0],
-                    self.origins_and_destinations[1][1],
-                    self.origins_and_destinations[1][0],
-                )
-                del self.origins_and_destinations[1]
+            for i, parts in enumerate(self.origins_and_destinations):
+                for j, other in enumerate(self.origins_and_destinations[i:]):
+                    if parts[0] == other[-1]:
+                        self.origins_and_destinations[i + j] = other + parts[1:]
+                        self.origins_and_destinations[i] = None
+                        break
+                    elif parts[-1] == other[0]:
+                        self.origins_and_destinations[i + j] = parts + other[1:]
+                        self.origins_and_destinations[i] = None
+                        break
+            self.origins_and_destinations = list(
+                filter(None, self.origins_and_destinations)
+            )
 
     def any_trip_has(self, attr: str) -> bool:
         for grouping in self.groupings:
@@ -520,9 +513,10 @@ class Grouping:
 
     def __str__(self):
         if self.parent.origins_and_destinations:
+            partses = self.parent.origins_and_destinations
             if self.inbound:
-                return " - ".join(reversed(self.parent.origins_and_destinations[0]))
-            return " - ".join(self.parent.origins_and_destinations[0])
+                partses = [reversed(parts) for parts in partses]
+            return "\n".join([" - ".join(parts) for parts in partses])
 
         if self.inbound:
             return "Inbound"

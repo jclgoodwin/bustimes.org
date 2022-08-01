@@ -33,7 +33,7 @@
     {% for grouping in timetable.groupings %}
 
         {% if forloop.first != forloop.last %}
-            <h2>{{ grouping }}</h2>
+            <h2>{{ grouping|linebreaksbr }}</h2>
         {% endif %}
 
         <div class="timetable-wrapper-wrapper">
