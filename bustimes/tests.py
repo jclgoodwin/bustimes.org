@@ -4,7 +4,7 @@ from vcr import use_cassette
 from django.test import TestCase
 from busstops.models import DataSource, Service
 from vehicles.models import Livery, Vehicle
-from .models import Route, Calendar, Trip, StopTime, Garage
+from .models import Route, Calendar, CalendarDate, Trip, StopTime, Garage
 from .utils import get_routes
 
 
@@ -118,6 +118,31 @@ class BusTimesTest(TestCase):
         self.assertEqual(
             "Saturdays and bank holidays",  # (from this Saturday, no need to specify)
             calendar.describe_for_timetable(date(2022, 6, 16)),
+        )
+
+        calendar.bank_holiday_inclusions = []
+        calendar.mon = True
+        calendar.tue = True
+        calendar.wed = True
+        calendar.thu = True
+        calendar.fri = True
+        calendar.end_date = date(2022, 7, 29)
+        self.assertEqual(
+            "Monday to Saturday until Friday 29 July 2022",
+            calendar.describe_for_timetable(date(2022, 7, 20)),
+        )
+
+        calendar.save()
+        # calendar date outside calendar date range – should have no effect
+        CalendarDate.objects.create(
+            start_date=date(2022, 8, 28),
+            end_date=date(2022, 8, 29),
+            operation=False,
+            calendar=calendar,
+        )
+        self.assertEqual(
+            "Monday to Saturday until Friday 29 July 2022",
+            calendar.describe_for_timetable(date(2022, 7, 20)),
         )
 
     def test_trip(self):
