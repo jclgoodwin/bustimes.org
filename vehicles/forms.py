@@ -63,18 +63,21 @@ def get_livery_choices(operator, vehicle, user):
 
 
 class EditVehiclesForm(forms.Form):
-    withdrawn = forms.BooleanField(label="Permanently withdrawn", required=False)
     spare_ticket_machine = forms.BooleanField(
         required=False,
         help_text="Only tick this box if the ticket machine code is something like SPARE",
     )
+    withdrawn = forms.BooleanField(label="Permanently withdrawn", required=False)
     operator = forms.ModelChoiceField(queryset=None, label="Operator", empty_label="")
     other_vehicle_type = forms.CharField(required=False)
     vehicle_type = forms.ModelChoiceField(
         queryset=VehicleType.objects, label="Type", required=False, empty_label=""
     )
     colours = forms.ChoiceField(
-        label="Livery", widget=forms.RadioSelect, required=False
+        label="Livery",
+        widget=forms.RadioSelect,
+        required=False,
+        help_text="Wait until the bus has definitely been repainted before updating it here",
     )
     other_colour = forms.CharField(
         label="Other colours",
@@ -173,8 +176,8 @@ class EditVehicleForm(EditVehiclesForm):
     )
     notes = forms.CharField(required=False, max_length=255)
     field_order = [
-        "withdrawn",
         "spare_ticket_machine",
+        "withdrawn",
         "fleet_number",
         "reg",
         "operator",
