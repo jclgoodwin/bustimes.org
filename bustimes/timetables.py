@@ -300,6 +300,8 @@ class Timetable:
 
             grouping.do_heads_and_feet(detailed)
 
+        self.inbound_outbound_descriptions = []
+
         self.origins_and_destinations = list(
             {
                 tuple(filter(None, [route.origin, route.via, route.destination]))
@@ -320,6 +322,14 @@ class Timetable:
                         break
             self.origins_and_destinations = list(
                 filter(None, self.origins_and_destinations)
+            )
+        else:
+            self.inbound_outbound_descriptions = list(
+                {
+                    (route.outbound_description, route.inbound_description)
+                    for route in self.current_routes
+                    if route.outbound_description != route.inbound_description
+                }
             )
 
     def any_trip_has(self, attr: str) -> bool:
@@ -512,6 +522,17 @@ class Grouping:
         self.parent = parent
 
     def __str__(self):
+        if self.parent.inbound_outbound_descriptions:
+            if self.inbound:
+                descriptions = (
+                    pair[1] for pair in self.parent.inbound_outbound_descriptions
+                )
+            else:
+                descriptions = (
+                    pair[0] for pair in self.parent.inbound_outbound_descriptions
+                )
+            return "\n".join(descriptions)
+
         if self.parent.origins_and_destinations:
             partses = self.parent.origins_and_destinations
             if self.inbound:
