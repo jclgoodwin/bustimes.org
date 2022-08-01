@@ -76,7 +76,10 @@ def operator_ticket(request, slug, id):
                 "@type": "Product",
                 "name": category["title"],
                 "description": category["description"],
-                "brand": category["_embedded"]["operator"]["name"],
+                "brand": {
+                    "@type": "Brand",
+                    "name": category["_embedded"]["operator"]["name"],
+                },
                 "image": category["_embedded"]["operator"]["logo"],
                 "offers": {
                     "@type": "Offer",
