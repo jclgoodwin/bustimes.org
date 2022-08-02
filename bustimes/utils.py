@@ -70,22 +70,19 @@ def get_routes(routes, when=None, from_date=None):
             or route.source_id == sources_by_sha1[route.source.sha1]
         ]
 
-    if when:
-        # use latest passenger zipfile filename
-        if all(".zip" in route.code for route in routes):
-            prefixes = set(route.code.split(".zip")[0] for route in routes)
-            if len(prefixes) > 1:
-                latest_prefix = f"{max(prefixes)}.zip"
-                routes = [
-                    route for route in routes if route.code.startswith(latest_prefix)
-                ]
+    # use latest passenger zipfile filename
+    if all(".zip" in route.code for route in routes):
+        prefixes = set(route.code.split(".zip")[0] for route in routes)
+        if len(prefixes) > 1:
+            latest_prefix = f"{max(prefixes)}.zip"
+            return [route for route in routes if route.code.startswith(latest_prefix)]
 
-        elif len(sources) == 1:
-            override_routes = [
-                route for route in routes if route.start_date == route.end_date == when
-            ]
-            if override_routes:  # e.g. Lynx BoxingDayHoliday
-                routes = override_routes
+    elif when and len(sources) == 1:
+        override_routes = [
+            route for route in routes if route.start_date == route.end_date == when
+        ]
+        if override_routes:  # e.g. Lynx BoxingDayHoliday
+            routes = override_routes
 
     return routes
 
