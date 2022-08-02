@@ -107,6 +107,11 @@ class Command(ImportLiveVehiclesCommand):
         vehicle_ref = vehicle_ref.removeprefix(f"{operator_ref}-")
         vehicle_ref = vehicle_ref.removeprefix("nibs_").removeprefix("stephensons_")
 
+        try:
+            vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
+        except (KeyError, TypeError):
+            vehicle_unique_id = None
+
         if operator_ref == "TFLO":
             try:
                 return (
@@ -128,6 +133,10 @@ class Command(ImportLiveVehiclesCommand):
                 return self.vehicles.get(code=vehicle_ref), False
             except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
                 pass
+
+        # ffs
+        if operator_ref == "MARS" and vehicle_unique_id:
+            vehicle_ref = vehicle_unique_id.replace(" ", "_")
 
         defaults = {"code": vehicle_ref, "source": self.source}
 
@@ -156,16 +165,12 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref == "MSOT":  # Marshalls of Sutton on Trent
             defaults["fleet_code"] = vehicle_ref
-        elif "fleet_number" not in defaults:
+        elif "fleet_number" not in defaults and vehicle_unique_id:
             # VehicleUniqueId
-            try:
-                fleet_number = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
-                if len(fleet_number) < len(vehicle_ref):
-                    defaults["fleet_code"] = fleet_number
-                if fleet_number.isdigit():
-                    defaults["fleet_number"] = fleet_number
-            except (KeyError, TypeError):
-                pass
+            if len(vehicle_unique_id) < len(vehicle_ref):
+                defaults["fleet_code"] = vehicle_unique_id
+                if vehicle_unique_id.isdigit():
+                    defaults["fleet_number"] = vehicle_unique_id
 
         condition = Q(code=vehicle_ref)
         if operators:
