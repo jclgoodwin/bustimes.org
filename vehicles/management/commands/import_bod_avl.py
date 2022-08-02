@@ -87,7 +87,14 @@ class Command(ImportLiveVehiclesCommand):
         operator_ref = monitored_vehicle_journey["OperatorRef"]
         vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
 
-        cache_key = f"{operator_ref}-{vehicle_ref}".replace(" ", "_")
+        try:
+            vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
+        except (KeyError, TypeError):
+            vehicle_unique_id = ""
+
+        cache_key = f"{operator_ref}-{vehicle_ref}-{vehicle_unique_id}".replace(
+            " ", "_"
+        )
 
         if cache_key in self.vehicle_cache:
             return self.vehicle_cache[cache_key], False
@@ -136,7 +143,7 @@ class Command(ImportLiveVehiclesCommand):
 
         # ffs
         if operator_ref == "MARS" and vehicle_unique_id:
-            vehicle_ref = vehicle_unique_id.replace(" ", "_")
+            vehicle_ref = vehicle_unique_id
 
         defaults = {"code": vehicle_ref, "source": self.source}
 
