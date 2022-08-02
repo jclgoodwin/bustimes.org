@@ -13,7 +13,13 @@ class SiriConsumer(SyncConsumer):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
         operator_ref = monitored_vehicle_journey["OperatorRef"]
         vehicle_ref = monitored_vehicle_journey["VehicleRef"]
-        return f"{operator_ref}-{vehicle_ref}".replace(" ", "_")
+
+        try:
+            vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
+        except (KeyError, TypeError):
+            vehicle_unique_id = ""
+
+        return f"{operator_ref}-{vehicle_ref}-{vehicle_unique_id}".replace(" ", "_")
 
     def sirivm(self, message):
         try:
