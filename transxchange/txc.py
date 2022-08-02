@@ -151,7 +151,6 @@ class JourneyPatternStopUsage:
             if self.wait_time.total_seconds() > 10000:
                 # bad data detected
                 logger.warning(f"long wait time {self.wait_time} at stop {self.stop}")
-                self.wait_time = None
 
         self.row = None
         self.parent = None

@@ -41,7 +41,7 @@ class Command(ImportLiveVehiclesCommand):
             Calendar.objects.filter(
                 Exists(
                     "trip__route__service",
-                    filter=Q(service__operator__in=self.operators),
+                    filter=Q(operator__in=self.operators),
                 )
             ).values_list("id", flat=True)
         )

@@ -24,7 +24,7 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 def get_vehicle_cache_key(item):
     monitored_vehicle_journey = item["MonitoredVehicleJourney"]
     operator_ref = monitored_vehicle_journey["OperatorRef"]
-    vehicle_ref = monitored_vehicle_journey["VehicleRef"]
+    vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
 
     try:
         vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
@@ -32,6 +32,22 @@ def get_vehicle_cache_key(item):
         vehicle_unique_id = ""
 
     return f"{operator_ref}-{vehicle_ref}-{vehicle_unique_id}".replace(" ", "_")
+
+
+def get_destination_ref(destination_ref):
+    if (
+        " " in destination_ref
+        or len(destination_ref) < 4
+        or not destination_ref[:4].isdigit()
+        or destination_ref[:3] == "000"
+        or destination_ref[:3] == "999"
+    ):
+        # destination ref is a fake ATCO code, or maybe a postcode or other placeholder
+        return
+
+    # destination_ref = destination_ref.removeprefix("NT")  # Nottingham City Transport
+
+    return destination_ref
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -52,7 +68,6 @@ class Command(ImportLiveVehiclesCommand):
 
     @staticmethod
     def get_destination_name(destination_ref):
-        destination_ref = destination_ref.removeprefix("NT")
         cache_key = f"stop{destination_ref}locality"
         destination = cache.get(cache_key)
         if destination is None:
@@ -254,15 +269,7 @@ class Command(ImportLiveVehiclesCommand):
             return service or None
 
         if destination_ref:
-            if (
-                " " in destination_ref
-                or len(destination_ref) < 4
-                or destination_ref[:3] == "000"
-            ):
-                # destination ref is a fake ATCO code, or maybe a postcode or suttin
-                destination_ref = None
-            else:
-                destination_ref = destination_ref.removeprefix("NT")  # nottingham
+            destination_ref = get_destination_ref(destination_ref)
 
         # filter by LineRef or (if present and different) TicketMachineServiceCode
         line_name_query = self.get_line_name_query(line_ref)
@@ -508,6 +515,8 @@ class Command(ImportLiveVehiclesCommand):
             journey.code = journey_code
 
         destination_ref = monitored_vehicle_journey.get("DestinationRef")
+        if destination_ref:
+            destination_ref = get_destination_ref(destination_ref)
 
         if not journey.destination:
             # use stop locality

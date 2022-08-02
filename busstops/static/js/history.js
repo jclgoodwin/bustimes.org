@@ -132,7 +132,7 @@
                 var table = document.createElement('table');
                 table.className = 'trip-timetable';
                 var thead = document.createElement('thead');
-                thead.innerHTML = '<tr><th scope="col">Stop</th><th scope="col">Timetable</th><th>Actual</th></tr>';
+                thead.innerHTML = '<tr><th scope="col">Stop</th><th scope="col">Schedule</th><th>Actual</th></tr>';
                 table.appendChild(thead);
 
                 var tbody = document.createElement('tbody');
@@ -260,7 +260,7 @@
                 previousCoordinates = coordinates;
                 previousTimestamp = timestamp;
             });
-            if (previousSkippedLocation) { 
+            if (previousSkippedLocation) {
                 arrowMarker(previousSkippedLocation).addTo(map);
             }
 
