@@ -2,34 +2,21 @@ from sentry_sdk import capture_exception
 from ciso8601 import parse_datetime
 from channels.consumer import SyncConsumer
 from django.core.cache import cache
-from .management.commands import import_bod_avl
+from .management.commands.import_bod_avl import Command, get_vehicle_cache_key
 
 
 class SiriConsumer(SyncConsumer):
     command = None
 
-    @staticmethod
-    def get_vehicle_cache_key(item):
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-        operator_ref = monitored_vehicle_journey["OperatorRef"]
-        vehicle_ref = monitored_vehicle_journey["VehicleRef"]
-
-        try:
-            vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
-        except (KeyError, TypeError):
-            vehicle_unique_id = ""
-
-        return f"{operator_ref}-{vehicle_ref}-{vehicle_unique_id}".replace(" ", "_")
-
     def sirivm(self, message):
         try:
             if self.command is None:
-                self.command = import_bod_avl.Command().do_source()
+                self.command = Command().do_source()
 
             response_timestamp = parse_datetime(message["when"])
 
             vehicle_cache_keys = [
-                self.get_vehicle_cache_key(item) for item in message["items"]
+                get_vehicle_cache_key(item) for item in message["items"]
             ]
 
             vehicle_ids = cache.get_many(vehicle_cache_keys)  # code: id

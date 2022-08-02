@@ -21,6 +21,19 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 
 
+def get_vehicle_cache_key(item):
+    monitored_vehicle_journey = item["MonitoredVehicleJourney"]
+    operator_ref = monitored_vehicle_journey["OperatorRef"]
+    vehicle_ref = monitored_vehicle_journey["VehicleRef"]
+
+    try:
+        vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
+    except (KeyError, TypeError):
+        vehicle_unique_id = ""
+
+    return f"{operator_ref}-{vehicle_ref}-{vehicle_unique_id}".replace(" ", "_")
+
+
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
     wait = 20
@@ -81,20 +94,9 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     def get_vehicle(self, item):
-        # cached wrapper for actually_get_vehicle
+        """cached wrapper for actually_get_vehicle"""
 
-        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-        operator_ref = monitored_vehicle_journey["OperatorRef"]
-        vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
-
-        try:
-            vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
-        except (KeyError, TypeError):
-            vehicle_unique_id = ""
-
-        cache_key = f"{operator_ref}-{vehicle_ref}-{vehicle_unique_id}".replace(
-            " ", "_"
-        )
+        cache_key = get_vehicle_cache_key(item)
 
         if cache_key in self.vehicle_cache:
             return self.vehicle_cache[cache_key], False
@@ -103,6 +105,12 @@ class Command(ImportLiveVehiclesCommand):
             return self.vehicles.get(id=self.vehicle_id_cache[cache_key]), False
         except (KeyError, Vehicle.DoesNotExist):
             pass
+
+        # not in cache
+
+        monitored_vehicle_journey = item["MonitoredVehicleJourney"]
+        operator_ref = monitored_vehicle_journey["OperatorRef"]
+        vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
 
         vehicle, created = self.actually_get_vehicle(vehicle_ref, operator_ref, item)
 
