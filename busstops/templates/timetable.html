@@ -14,7 +14,7 @@
         </form>
     {% elif timetable.calendar %}
         <p>{{ timetable.calendar.describe_for_timetable }}</p>
-    {% elif timetable.date_options|length > 1 %}
+    {% elif timetable.date_options %}
         <form class="timetable-date" autocomplete="off">
             <select onchange="this.form.submit()" name="date" id="id_date" aria-label="Date">
                 {% for option in timetable.date_options %}
