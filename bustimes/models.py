@@ -42,7 +42,9 @@ class Route(models.Model):
     via = models.CharField(max_length=255, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    service = models.ForeignKey("busstops.Service", models.CASCADE)
+    service = models.ForeignKey(
+        "busstops.Service", models.CASCADE, null=True, blank=True
+    )
     public_use = models.BooleanField(null=True)
 
     def contains(self, date):
