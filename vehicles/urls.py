@@ -33,6 +33,5 @@ urlpatterns = [
     path("vehicles/<int:vehicle_id>/debug", views.latest_journey_debug),
     path("journeys/<int:pk>.json", views.journey_json),
     path("liveries.<int:version>.css", views.liveries_css),
-    path("siri", views.siri),
     path("map", views.map),
 ]
