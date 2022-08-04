@@ -156,7 +156,8 @@ class Command(ImportLiveVehiclesCommand):
         if (
             not vehicle_ref.isdigit()
             and vehicle_ref.isupper()
-            and len(vehicle_ref) >= 6
+            and len(vehicle_ref) > 6
+            and not vehicle_ref.startswith("BUS")
         ):
             # assume vehicle ref is globally unique (cos it looks like a vehicle reg?)
             try:
