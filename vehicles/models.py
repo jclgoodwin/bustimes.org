@@ -928,7 +928,7 @@ class VehicleLocation:
     def get_appendage(self):
         early = self.early
         if early is not None:
-            early = early.total_seconds() / 60
+            early = round(early.total_seconds() / 60)
         appendage = [self.datetime, self.latlong.coords, self.heading, early]
         return (
             f"journey{self.journey.id}",

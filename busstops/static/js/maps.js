@@ -107,7 +107,7 @@
             content = '';
         }
 
-        if (item.vehicle) {
+        if (item.vehicle && item.vehicle.url) {
             content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
 
             if (item.vehicle.features) {
@@ -136,7 +136,7 @@
                     delay += ' late';
                 }
             }
-            content += delay + '<br>';
+            content += '<div>' + delay + '</div>';
         }
 
         popupContent = content;

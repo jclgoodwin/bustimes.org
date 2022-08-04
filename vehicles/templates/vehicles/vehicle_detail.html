@@ -63,34 +63,34 @@
                     <th scope="col">To</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for journey in journeys %}
-                    <tr>
-                        <td class="link">
-                            {% if not vehicle %}
+            <tbody>{% for journey in journeys %}
+                <tr>
+                    <td class="link">
+                        {% if not vehicle %}
+                            {% if journey.vehicle %}
                                 <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
-                            {% elif journey.service %}
-                                <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.line_name }}</a>
-                            {% else %}
-                                {{ journey.line_name }}
                             {% endif %}
-                        </td>
-                        {% if journey.trip %}
-                            <td colspan="2" class="link">
-                                <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
-                            </td>
-                        {% elif journey.code and journey.code|length < 40 and '_' not in journey.code %}
-                            <td>{{ journey.datetime|time }}</td>
-                            <td>{{ journey.code }}</td>
+                        {% elif journey.service %}
+                            <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.line_name }}</a>
                         {% else %}
-                            <td colspan="2">{{ journey.datetime|time }}</td>
+                            {{ journey.line_name }}
                         {% endif %}
-                        <td>{% firstof journey.destination journey.direction %}</td>
-                        {% if journey.locations %}
-                            <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
+                    </td>
+                    {% if journey.trip %}
+                        <td colspan="2" class="link">
+                            <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
+                        </td>
+                    {% elif journey.code and journey.code|length < 40 and '_' not in journey.code %}
+                        <td>{{ journey.datetime|time }}</td>
+                        <td>{{ journey.code }}</td>
+                    {% else %}
+                        <td colspan="2">{{ journey.datetime|time }}</td>
+                    {% endif %}
+                    <td>{% firstof journey.destination journey.direction %}</td>
+                    {% if journey.locations %}
+                        <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
+                    {% endif %}
+                </tr>{% endfor %}
             </tbody>
         </table>
         </div>

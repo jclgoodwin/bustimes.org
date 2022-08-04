@@ -67,7 +67,11 @@ class EditVehiclesForm(forms.Form):
         required=False,
         help_text="Only tick this box if the ticket machine code is something like SPARE",
     )
-    withdrawn = forms.BooleanField(label="Permanently withdrawn", required=False)
+    withdrawn = forms.BooleanField(
+        label="Permanently withdrawn",
+        required=False,
+        help_text="This removes the vehicle from the fleet list. Wait a few days before ticking",
+    )
     operator = forms.ModelChoiceField(queryset=None, label="Operator", empty_label="")
     other_vehicle_type = forms.CharField(required=False)
     vehicle_type = forms.ModelChoiceField(
@@ -141,9 +145,6 @@ link to a picture to prove it. Be polite.""",
         else:
             del self.fields["colours"]
             del self.fields["other_colour"]
-
-        if user.id == 124:
-            self.fields["withdrawn"].disabled = True
 
         if user.is_staff:
             self.fields["operator"].queryset = Operator.objects.all()
