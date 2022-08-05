@@ -77,6 +77,9 @@ class Command(NatExpCommand):
             if latest_datetime >= updated_at:
                 return
 
+        if (now - updated_at).total_seconds() > 600:
+            return
+
         delay = item["tracking"]["current_delay_seconds"]
         location = VehicleLocation(
             latlong=Point(
