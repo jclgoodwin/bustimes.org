@@ -346,6 +346,16 @@ class Command(BaseCommand):
         old_services = old_services.exclude(id__in=self.service_ids)
         old_services.update(current=False)
 
+    def handle_sub_archive(self, archive, filename):
+        with archive.open(filename) as open_file:
+            with zipfile.ZipFile(open_file) as sub_archive:
+                for filename in sub_archive.namelist():
+                    if filename.endswith(".xml"):
+                        with sub_archive.open(filename) as open_file:
+                            self.handle_file(open_file, filename)
+                    elif filename.endswith(".zip"):
+                        self.handle_sub_archive(sub_archive, filename)
+
     def handle_archive(self, archive_name, filenames):
         self.service_ids = set()
         self.route_ids = set()
@@ -371,6 +381,9 @@ class Command(BaseCommand):
                     ]
 
                 for filename in filenames or namelist:
+                    if filename.endswith(".zip"):
+                        self.handle_sub_archive(archive, filename)
+
                     if filename.endswith(".xml"):
                         with archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)

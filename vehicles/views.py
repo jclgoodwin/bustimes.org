@@ -1,7 +1,5 @@
 import json
-import xml.etree.cElementTree as ET
 import datetime
-import xmltodict
 from urllib.parse import urlencode
 from ciso8601 import parse_datetime
 from haversine import haversine, haversine_vector, Unit

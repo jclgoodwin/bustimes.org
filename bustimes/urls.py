@@ -1,5 +1,6 @@
 from django.urls import path, re_path
 from . import views
+from .frequency_map import frequency_map
 
 
 urlpatterns = [
@@ -15,4 +16,5 @@ urlpatterns = [
     path("trips/<int:id>.json", views.trip_json),
     path("blocks/<int:pk>", views.BlockDetailView.as_view(), name="block_detail"),
     path("trip_updates", views.trip_updates),
+    path("frequency_map", frequency_map),
 ]
