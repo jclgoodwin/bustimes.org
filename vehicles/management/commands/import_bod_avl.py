@@ -142,17 +142,6 @@ class Command(ImportLiveVehiclesCommand):
         except (KeyError, TypeError):
             vehicle_unique_id = None
 
-        if operator_ref == "TFLO":
-            try:
-                return (
-                    self.vehicles.get(
-                        vehiclecode__scheme=operator_ref, vehiclecode__code=vehicle_ref
-                    ),
-                    False,
-                )
-            except Vehicle.DoesNotExist:
-                pass
-
         if (
             not vehicle_ref.isdigit()
             and vehicle_ref.isupper()
@@ -175,7 +164,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref == "TFLO":
             defaults["livery_id"] = 262
-            vehicles = self.vehicles.filter(operator=None)
+            vehicles = self.vehicles.filter(operator__in=operators)
         elif not operators:
             vehicles = self.vehicles.filter(operator=None)
         elif len(operators) == 1:
