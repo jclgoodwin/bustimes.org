@@ -15,7 +15,7 @@ from ...utils import redis_client
 class Command(NatExpCommand):
     source_name = "Megabus"
     url = ""
-    operators = ["MEGA"]
+    operators = ["MEGA", "SCLK"]
     sleep = 10
     livery = 910
 
@@ -31,23 +31,34 @@ class Command(NatExpCommand):
                 print(res.url, res)
                 continue
             for item in res.json()["routes"][0]["chronological_departures"]:
-                if item["active_vehicle"]:
+                if item["active_vehicle"] and not item["tracking"]["is_future_trip"]:
                     yield (item)
             self.save()
             sleep(self.sleep)
 
     @functools.cache
-    def get_service(self, line_name):
-        service = Service.objects.get(
+    def get_service(self, line_name, class_code):
+        services = Service.objects.filter(
             line_name__iexact=line_name, operator__in=self.operators, current=True
         )
+        try:
+            service = services.get()
+        except Service.MultipleObjectsReturned:
+            service = self.operators
+            if class_code == "ST":
+                service = services.get(operator="MEGA")
+            elif class_code == "C":
+                service = services.get(operator="SCLK")
+        except Service.DoesNotExist:
+            return
+
         if not service.tracking:
             service.tracking = True
             service.save(update_fields=["tracking"])
         return service
 
     def handle_item(self, item, now):
-        service = self.get_service(item["trip"]["route_id"])
+        service = self.get_service(item["trip"]["route_id"], item["trip"]["class_code"])
         departure_time = parse_datetime(item["trip"]["departure_time_formatted_local"])
         destination = item["trip"]["arrival_location_name"]
 
