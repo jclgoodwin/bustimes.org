@@ -70,7 +70,7 @@ class BusHubTest(TestCase):
             "Destination": None,
         }
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             with patch("builtins.print") as mocked_print:
                 command.handle_item(item)
                 command.save()

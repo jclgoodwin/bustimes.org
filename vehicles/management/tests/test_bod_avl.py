@@ -235,7 +235,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         ]
 
         consumer = SiriConsumer()
-        with self.assertNumQueries(36):
+        with self.assertNumQueries(39):
             consumer.sirivm({"when": "2020-10-15T07:46:08+00:00", "items": items})
         with self.assertNumQueries(1):
             consumer.sirivm({"when": "2020-10-15T07:46:08+00:00", "items": items})
@@ -343,8 +343,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertContains(
             response,
             f"""<td colspan="2" class="link">
-                                <a href="#journeys/{whippet_journey.id}">09:23</a>
-                            </td>""",
+                    <a href="#journeys/{whippet_journey.id}">09:23</a>
+                </td>
+            """,
+            html=True,
         )
         self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
