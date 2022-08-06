@@ -627,7 +627,6 @@ class VehicleDetailView(DetailView):
     queryset = model.objects.select_related(
         "operator", "operator__region", "vehicle_type", "livery", "latest_journey"
     ).prefetch_related("features")
-    slug_field = "reg__iexact"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

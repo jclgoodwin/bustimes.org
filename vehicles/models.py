@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.utils.html import escape, format_html
 from django.utils import timezone
 
+from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 
 from busstops.models import Operator, Service, DataSource
@@ -237,7 +238,14 @@ class VehicleFeature(models.Model):
         return self.name
 
 
+def vehicle_slug(vehicle):
+    return f"{vehicle.operator_id} {vehicle.code}"
+
+
 class Vehicle(models.Model):
+    slug = AutoSlugField(
+        populate_from=vehicle_slug, editable=True, unique=True, null=True
+    )
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
     fleet_code = models.CharField(max_length=24, blank=True)
