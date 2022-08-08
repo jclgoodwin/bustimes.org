@@ -1,20 +1,16 @@
-from datetime import timedelta
-
 from django import forms
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.views.decorators.http import require_GET
 
 from busstops.models import StopPoint
-from .utils import get_calendars
 from .models import StopTime, RouteLink
 
 
 class Form(forms.Form):
     source = forms.IntegerField()
-    # date = forms.DateField()
     day = forms.CharField()
-    from_time = forms.TimeField()
-    to_time = forms.TimeField()
+    from_time = forms.DurationField()
+    to_time = forms.DurationField()
 
 
 @require_GET
@@ -27,8 +23,6 @@ def frequency_map(request):
 
     from_time = form.cleaned_data["from_time"]
     to_time = form.cleaned_data["to_time"]
-    from_time = timedelta(hours=from_time.hour, minutes=from_time.minute)
-    to_time = timedelta(hours=to_time.hour, minutes=to_time.minute)
 
     day = form.cleaned_data["day"]
 

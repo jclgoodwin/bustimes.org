@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>map</title>
+</head>
+<body>
+
+<style>
+  a {
+    color: #00f;
+  }
+  body {
+    font-family: Helvetica, sans-serif;
+  }
+  path:hover {
+    stroke-width: 2
+  }
+</style>
+
+<p>
+  <a href="?source=16&day=mon&from_time=07:00:00&to_time=09:00:00">07:00 - 09:00</a>
+  •
+  <a href="?source=16&day=mon&from_time=09:00:00&to_time=19:00:00">09:00 - 1900</a>
+  •
+  <a href="?source=16&day=mon&from_time=07:00:00&to_time=09:00:00">19:00 - 24:00</a>
+  •
+  <a href="?source=16&day=sat&from_time=09:00:00&to_time=24:00:00">Sat 09:00 - 24:00</a>
+  •
+  <a href="?source=16&day=sun&from_time=09:00:00&to_time=24:00:00">Sun 09:00 - 24:00</a>
+</p>
+
+<p>
+  <a href="#" id="downloadsvg">Download SVG</a>
+  •
+  <a href="#" id="downloadgeojson">GeoJSON</a>
+</p>
+
+<div id="map">
+  <svg xmlns="http://www.w3.org/2000/svg" width="4000" height="2700" fill="none" stroke-width="1">
+    <text x="0" y="120" fill="red" id="loading">Loading...</text>
+  </svg>
+</div>
+
+<script type="module">
+
+import * as d3 from "https://cdn.skypack.dev/d3@7";
+
+const div = d3.selectAll("div");
+
+const svg = d3.select('svg');
+
+let legend = [
+  'every 10 minutes or less',
+  '11–30 minutes',
+  '31–59 minutes',
+  '60 minutes+',
+];
+
+svg.selectAll()
+  .data(legend)
+  .enter()
+  .append("rect")
+    .attr("x", 0)
+    .attr("y", function(d,i){ return 0 + i*(20+5)})
+    .attr("width", 20)
+    .attr("height", 20)
+    .attr("fill", function(d, i) {
+      return d3.schemePaired[i];
+    })
+    ;
+
+svg.selectAll('.label')
+  .data(legend)
+  .enter()
+  .append("text")
+    .attr('class', 'label')
+    .attr("fill", "black")
+    .attr("x", 25)
+    .attr("y", function(d,i){ return 15 + i*(20+6)})
+    .text(function(d) {
+      return d;
+    })
+    ;
+
+const geojsonurl = "/frequency_map" + window.location.search;
+
+d3.select("#downloadgeojson").attr("href", geojsonurl);
+
+const geojson = await d3.json(geojsonurl);
+
+svg.select('#loading').remove();
+
+// geo stuff
+
+let projection = d3.geoMercator();
+
+projection.fitSize([4000, 2700], geojson);
+
+let geoGenerator = d3.geoPath()
+  .projection(projection);
+
+svg.selectAll('path')
+  .data(geojson.features)
+  .join('path')
+  .attr('d', geoGenerator)
+  .attr('stroke', function(d) {
+    if (d.properties.frequency <= 10) {
+      return d3.schemePaired[0];
+    }
+    if (d.properties.frequency <= 30) {
+      return d3.schemePaired[1];
+    }
+    if (d.properties.frequency < 60) {
+      return d3.schemePaired[2];
+    }
+    return d3.schemePaired[3];
+  })
+  ;
+
+d3.select("#downloadsvg").on("click", function() {
+  d3.select(this)
+    .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#map").html()))
+    .attr("download", "map.svg")
+});
+
+</script>
+
+
+</body>
+</html>
