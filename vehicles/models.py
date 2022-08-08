@@ -239,7 +239,7 @@ class VehicleFeature(models.Model):
 
 
 def vehicle_slug(vehicle):
-    return f"{vehicle.operator_id} {vehicle.code}"
+    return f"{vehicle.operator_id or ''} {vehicle.code}"
 
 
 class Vehicle(models.Model):
