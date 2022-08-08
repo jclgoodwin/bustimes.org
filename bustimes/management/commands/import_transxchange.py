@@ -348,8 +348,12 @@ class Command(BaseCommand):
 
     def handle_sub_archive(self, archive, filename):
         with archive.open(filename) as open_file:
+            if filename.startswith("__MACOSX"):
+                return
             with zipfile.ZipFile(open_file) as sub_archive:
                 for filename in sub_archive.namelist():
+                    if filename.startswith("__MACOSX"):
+                        continue
                     if filename.endswith(".xml"):
                         with sub_archive.open(filename) as open_file:
                             self.handle_file(open_file, filename)

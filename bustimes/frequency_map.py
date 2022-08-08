@@ -11,7 +11,8 @@ from .models import StopTime, RouteLink
 
 class Form(forms.Form):
     source = forms.IntegerField()
-    date = forms.DateField()
+    # date = forms.DateField()
+    day = forms.CharField()
     from_time = forms.TimeField()
     to_time = forms.TimeField()
 
@@ -24,16 +25,16 @@ def frequency_map(request):
     if not form.is_valid():
         return HttpResponseBadRequest()
 
-    calendars = get_calendars(form.cleaned_data["date"])
-
     from_time = form.cleaned_data["from_time"]
     to_time = form.cleaned_data["to_time"]
     from_time = timedelta(hours=from_time.hour, minutes=from_time.minute)
     to_time = timedelta(hours=to_time.hour, minutes=to_time.minute)
 
+    day = form.cleaned_data["day"]
+
     stop_times = StopTime.objects.filter(
+        **{f"trip__calendar__{day}": True},
         trip__route__source=form.cleaned_data["source"],
-        trip__calendar__in=calendars,
         trip__start__gte=from_time,
         trip__start__lt=to_time,
     ).iterator()
@@ -68,6 +69,21 @@ def frequency_map(request):
 
     locations = StopPoint.objects.only("latlong").in_bulk(stops)
 
+    pairs = [
+        (
+            route_links[pair].coords
+            if pair in route_links
+            else [
+                locations[pair[0]].latlong.coords,
+                locations[pair[1]].latlong.coords,
+            ],
+            (duration / pairs[pair]).total_seconds() / 60,
+        )
+        for pair in pairs
+    ]
+
+    pairs.sort(key=lambda pair: -pair[1])  # most frequent lasti
+
     return JsonResponse(
         {
             "type": "FeatureCollection",
@@ -76,21 +92,11 @@ def frequency_map(request):
                     "type": "Feature",
                     "geometry": {
                         "type": "LineString",
-                        "coordinates": route_links[pair].coords
-                        if pair in route_links
-                        else [
-                            locations[pair[0]].latlong.coords,
-                            locations[pair[1]].latlong.coords,
-                        ],
+                        "coordinates": coordinates,
                     },
-                    "properties": {
-                        # "from": pair[0],
-                        # "to": pair[1],
-                        "frequency": (duration / pairs[pair]).total_seconds()
-                        / 60,
-                    },
+                    "properties": {"frequency": frequency},
                 }
-                for pair in pairs
+                for coordinates, frequency in pairs
             ],
         },
         headers={
