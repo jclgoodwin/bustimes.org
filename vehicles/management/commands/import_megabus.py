@@ -46,7 +46,7 @@ class Command(NatExpCommand):
     def get_service(self, line_name, class_code):
         operators = self.operators
 
-        if class_code == "ZSF":
+        if class_code == "FALC":
             operators = ["SDVN"]
 
         services = Service.objects.filter(
