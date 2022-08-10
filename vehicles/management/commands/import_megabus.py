@@ -35,7 +35,7 @@ class Command(NatExpCommand):
                     yield (item)
             self.save()
             sleep(self.sleep)
-        if self.souece_name == "Megabus":
+        if self.source_name == "Megabus":
             yield "FALC"
 
     @functools.cache
