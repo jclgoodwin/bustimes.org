@@ -107,13 +107,14 @@
             content = '';
         }
 
-        if (item.vehicle && item.vehicle.url) {
-            content += '<a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a>';
-
-            if (item.vehicle.features) {
-                content += item.vehicle.features + '<br>';
+        if (item.vehicle) {
+            if (item.vehicle.url) {
+                content += '<div><a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a></div>';
+            } else if (item.vehicle.name) {
+                content += '<div>' + item.vehicle.name + '</div>';
             }
         }
+
         if (item.seats) {
             content += '<img src="/static/svg/seat.svg" width="14" height="14" alt="seats"> ' + item.seats + '<br>';
         }

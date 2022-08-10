@@ -19,6 +19,11 @@ class Command(NatExpCommand):
     sleep = 10
     livery = 910
 
+    def get_line_names(self):
+        for line_name in super().get_line_names():
+            yield line_name
+        yield "FALC"
+
     def get_items(self):
         for line_name in self.get_line_names():
             line_name = line_name.upper()
@@ -35,13 +40,16 @@ class Command(NatExpCommand):
                     yield (item)
             self.save()
             sleep(self.sleep)
-        if self.source_name == "Megabus":
-            yield "FALC"
 
     @functools.cache
     def get_service(self, line_name, class_code):
+        operators = self.operators
+
+        if class_code == "ZSF":
+            operators = ["SDVN"]
+
         services = Service.objects.filter(
-            line_name__iexact=line_name, operator__in=self.operators, current=True
+            line_name__iexact=line_name, operator__in=operators, current=True
         )
         try:
             service = services.get()
@@ -115,8 +123,16 @@ class Command(NatExpCommand):
         )
         pipeline.sadd(f"service{journey.service_id}vehicles", journey.id)
         redis_json = location.get_redis_json()
-        redis_json["vehicle"] = {"livery": self.livery}
-        redis_json["service"]["url"] = service.get_absolute_url()
+
+        livery = self.livery
+        if item["trip"]["class_code"] == "SCL":
+            livery = 896
+        redis_json["vehicle"] = {
+            "name": item["trip"]["operator_name"],
+            "livery": livery,
+        }
+        if service:
+            redis_json["service"]["url"] = service.get_absolute_url()
         redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
         pipeline.set(f"vehicle{journey.id}", redis_json, ex=900)
 
