@@ -68,14 +68,22 @@ class Command(NatExpCommand):
             service.save(update_fields=["tracking"])
         return service
 
+    @functools.lru_cache
+    def get_journey(self, service, departure_time, destination):
+        return VehicleJourney.objects.filter(
+            service=service,
+            datetime=departure_time,
+            destination=destination,
+            vehicle=None,
+            source=self.source,
+        ).first()
+
     def handle_item(self, item, now):
         service = self.get_service(item["trip"]["route_id"], item["trip"]["class_code"])
         departure_time = parse_datetime(item["trip"]["departure_time_formatted_local"])
         destination = item["trip"]["arrival_location_name"]
 
-        journey = VehicleJourney.objects.filter(
-            service=service, datetime=departure_time, destination=destination
-        ).first()
+        journey = self.get_journey(service, departure_time, destination)
 
         if not journey:
             journey = VehicleJourney(
