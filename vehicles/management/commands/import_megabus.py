@@ -15,7 +15,7 @@ from ...utils import redis_client
 class Command(NatExpCommand):
     source_name = "Megabus"
     url = ""
-    operators = ["MEGA", "SCLK"]
+    operators = ["MEGA", "SCLK", "SCUL"]
     sleep = 10
     livery = 910
 
@@ -35,6 +35,8 @@ class Command(NatExpCommand):
                     yield (item)
             self.save()
             sleep(self.sleep)
+        if self.souece_name == "Megabus":
+            yield "FALC"
 
     @functools.cache
     def get_service(self, line_name, class_code):
@@ -48,7 +50,7 @@ class Command(NatExpCommand):
             if class_code == "ST":
                 service = services.get(operator="MEGA")
             elif class_code == "C":
-                service = services.get(operator="SCLK")
+                service = services.get(operator__in=["SCLK", "SCUL"])
         except Service.DoesNotExist:
             return
 
