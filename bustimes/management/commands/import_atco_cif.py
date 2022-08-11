@@ -1,9 +1,8 @@
 import os
 import zipfile
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, timezone
 from django.core.management.base import BaseCommand
 from django.contrib.gis.geos import Point
-from django.utils import timezone
 from busstops.models import Service, DataSource, StopPoint
 from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
 

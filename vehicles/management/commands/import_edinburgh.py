@@ -1,5 +1,4 @@
-from datetime import datetime
-from django.utils import timezone
+from datetime import datetime, timezone
 from django.contrib.gis.geos import Point
 from busstops.models import Service
 from ...models import VehicleLocation, VehicleJourney

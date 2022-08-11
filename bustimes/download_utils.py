@@ -2,7 +2,6 @@ import os
 import requests
 import datetime
 import logging
-from django.utils.timezone import utc
 from django.utils.http import http_date, parse_http_date
 
 
@@ -49,7 +48,7 @@ def download_if_changed(path, url, params=None):
         last_modified = response.headers["last-modified"]
     if last_modified:
         last_modified = datetime.datetime.fromtimestamp(
-            parse_http_date(last_modified), utc
+            parse_http_date(last_modified), datetime.timezone.utc
         )
 
     return modified, last_modified

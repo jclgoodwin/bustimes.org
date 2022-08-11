@@ -1,9 +1,8 @@
 from time import sleep
-from datetime import datetime
+from datetime import datetime, timezone
 from requests.exceptions import RequestException
 from django.db.models import Exists, OuterRef, Q
 from django.contrib.gis.geos import Point
-from django.utils import timezone
 from busstops.models import Operator, Service, StopPoint
 from ...models import VehicleLocation, VehicleJourney
 from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
