@@ -1043,6 +1043,8 @@ def journey_json(request, pk):
 @require_GET
 def latest_journey_debug(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, pk=vehicle_id)
+    if not vehicle.latest_journey_data:
+        raise Http404
     return JsonResponse(vehicle.latest_journey_data)
 
 

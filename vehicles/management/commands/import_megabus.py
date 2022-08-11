@@ -70,21 +70,13 @@ class Command(NatExpCommand):
 
     @functools.lru_cache
     def get_journey(self, service, departure_time, destination):
-        return VehicleJourney.objects.filter(
+        journey = VehicleJourney.objects.filter(
             service=service,
             datetime=departure_time,
             destination=destination,
             vehicle=None,
             source=self.source,
         ).first()
-
-    def handle_item(self, item, now):
-        service = self.get_service(item["trip"]["route_id"], item["trip"]["class_code"])
-        departure_time = parse_datetime(item["trip"]["departure_time_formatted_local"])
-        destination = item["trip"]["arrival_location_name"]
-
-        journey = self.get_journey(service, departure_time, destination)
-
         if not journey:
             journey = VehicleJourney(
                 source=self.source,
@@ -94,7 +86,14 @@ class Command(NatExpCommand):
             )
             journey.trip = journey.get_trip(departure_time=departure_time)
             journey.save()
-        journey.route_name = item["trip"]["route_id"]
+        return journey
+
+    def handle_item(self, item, now):
+        service = self.get_service(item["trip"]["route_id"], item["trip"]["class_code"])
+        departure_time = parse_datetime(item["trip"]["departure_time_formatted_local"])
+        destination = item["trip"]["arrival_location_name"]
+
+        journey = self.get_journey(service, departure_time, destination)
 
         updated_at = parse_datetime(
             item["active_vehicle"]["last_update_time_formatted_local"]
