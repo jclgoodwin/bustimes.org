@@ -135,7 +135,9 @@ class Command(NatExpCommand):
         redis_json = location.get_redis_json()
 
         livery = self.livery
-        if item["trip"]["class_code"] == "SCL":
+        if item["trip"]["class_code"] == "SCLK":
+            livery = 896
+        if item["trip"]["class_code"] == "SCUL":
             livery = 896
         if item["trip"]["class_code"] == "FALC":
             livery = 583
