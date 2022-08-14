@@ -89,13 +89,13 @@ class BusTimesTest(TestCase):
         )
         calendar.end_date = None
         self.assertEqual(
-            "Tuesday to Wednesday (not bank holidays)",
+            "Tuesdays and Wednesdays (not bank holidays)",
             calendar.describe_for_timetable(),
         )
         calendar.bank_holiday_inclusions = [date(2021, 1, 2)]
         calendar.bank_holiday_exclusions = []
         self.assertEqual(
-            "Tuesday to Wednesday and bank holidays from Wednesday 5 February 2020",
+            "Tuesdays and Wednesdays and bank holidays from Wednesday 5 February 2020",
             calendar.describe_for_timetable(date(2020, 1, 1)),
         )
 
