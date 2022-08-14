@@ -140,11 +140,13 @@ class VehicleJourneySerializer(serializers.ModelSerializer):
     vehicle = serializers.SerializerMethodField()
 
     def get_vehicle(self, obj):
-        return {
-            "id": obj.vehicle_id,
-            "fleet_code": obj.vehicle.fleet_code,
-            "reg": obj.vehicle.reg,
-        }
+        if obj.vehicle_id:
+            return {
+                "id": obj.vehicle_id,
+                "slug": obj.vehicle.slug,
+                "fleet_code": obj.vehicle.fleet_code,
+                "reg": obj.vehicle.reg,
+            }
 
     class Meta:
         model = VehicleJourney
