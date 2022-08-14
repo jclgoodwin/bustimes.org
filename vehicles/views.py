@@ -8,7 +8,6 @@ from django.db import IntegrityError, OperationalError, transaction, connection
 from django.db.models import F, Case, When, Q, OuterRef, Max
 from django.db.models.functions import Coalesce
 from django.core.cache import cache
-from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates import StringAgg
@@ -162,8 +161,6 @@ def operator_vehicles(request, slug=None, parent=None):
     if form:
         if not request.user.is_authenticated:
             return redirect(f"/accounts/login/?next={request.path}")
-        if request.user.trusted is False:
-            raise PermissionDenied
 
         context["breadcrumb"].append(Vehicles(operator))
         initial = {
@@ -179,7 +176,7 @@ def operator_vehicles(request, slug=None, parent=None):
                 form.add_error(None, "Select some vehicles to change")
             if not form.has_really_changed():
                 form.add_error(None, "You haven't changed anything")
-            elif form.is_valid():
+            elif form.is_valid() and request.user.trusted is not False:
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
 
                 ticked_vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
@@ -673,8 +670,6 @@ class VehicleDetailView(DetailView):
 
 @login_required
 def edit_vehicle(request, vehicle_id):
-    if request.user.trusted is False:
-        raise PermissionDenied
     vehicle = get_object_or_404(
         Vehicle.objects.select_related(
             "vehicle_type", "livery", "operator", "latest_journey"
@@ -734,7 +729,7 @@ def edit_vehicle(request, vehicle_id):
                         "vehicle_type", "There's already a pending edit for that"
                     )
 
-        if form.is_valid():
+        if form.is_valid() and request.user.trusted is not False:
             now = timezone.now()
             try:
                 revision, features = do_revision(vehicle, data, request.user)
