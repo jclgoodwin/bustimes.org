@@ -53,6 +53,8 @@ from .management.commands import import_bod_avl
 
 
 class Vehicles:
+    """for linking to an operator's /vehicles page (fleet list) in a breadcrumb list"""
+
     def __init__(self, operator):
         self.operator = operator
 
@@ -65,6 +67,8 @@ class Vehicles:
 
 @require_GET
 def vehicles(request):
+    """index of recently AVL-enabled operators, etc"""
+
     operators = Operator.objects.filter(
         Exists("vehicle", filter=Q(withdrawn=False))
     ).only("name", "slug")
@@ -115,6 +119,8 @@ def liveries_css(request, version=None):
 
 
 def operator_vehicles(request, slug=None, parent=None):
+    """fleet list"""
+
     operators = Operator.objects.select_related("region")
     if slug:
         try:
@@ -306,7 +312,7 @@ def operator_map(request, slug):
 
 
 @require_GET
-def vehicles_json(request):
+def vehicles_json(request) -> JsonResponse:
     try:
         bounds = get_bounding_box(request)
     except KeyError:

@@ -120,13 +120,16 @@ class VehiclesTests(TestCase):
     def test_untrusted_user(self):
         self.client.force_login(self.untrusted_user)
 
-        with self.assertNumQueries(2):
-            response = self.client.get(self.vehicle_1.get_edit_url())
-        self.assertEqual(response.status_code, 403)
-
-        with self.assertNumQueries(3):
-            response = self.client.get("/operators/lynx/vehicles/edit")
-        self.assertEqual(response.status_code, 403)
+        with self.assertNumQueries(10):
+            response = self.client.post(
+                self.vehicle_1.get_edit_url(),
+                {
+                    "fleet_number": "2",
+                },
+            )
+            # pretend successful response but don't actually do anything
+            self.assertContains(response, "Thank you")
+            self.assertTrue(response.context["edit"] is True)
 
     def test_parent(self):
         with self.assertNumQueries(3):
