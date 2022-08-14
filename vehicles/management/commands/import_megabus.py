@@ -139,17 +139,16 @@ class Command(NatExpCommand):
             "name": item["trip"]["operator_name"],
         }
 
-        if item["trip"]["class_code"] == "DE":
-            redis_json["vehicle"]["css"] = "#002e5a"
-        else:
-            match item["trip"]["class_code"]:
-                case "C" | "SCUL":
-                    livery = 896
-                case "FALC":
-                    livery = 583
-                case _:
-                    livery = self.livery
-            redis_json["vehicle"]["livery"] = livery
+        match item["trip"]["class_code"]:
+            case "DE":  # Dublin Express
+                livery = 2455
+            case "C" | "SCUL":  # Citylink
+                livery = 896
+            case "FALC":  # South West Falcon
+                livery = 583
+            case _:
+                livery = self.livery
+        redis_json["vehicle"]["livery"] = livery
 
         if service:
             redis_json["service"]["url"] = service.get_absolute_url()
