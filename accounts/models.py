@@ -21,6 +21,7 @@ class User(AbstractUser):
     operators = models.ManyToManyField(
         "busstops.Operator", blank=True, through=OperatorUser
     )
+    ip_address = models.GenericIPAddressField(blank=True, null=True)
 
     objects = CustomUserManager()
 

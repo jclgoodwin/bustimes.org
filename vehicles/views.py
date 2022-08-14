@@ -677,6 +677,11 @@ def edit_vehicle(request, vehicle_id):
         id=vehicle_id,
     )
 
+    ip_address = request.headers.get("CF-Connecting-IP")
+    if request.user.ip_address != ip_address:
+        request.user.ip_address = ip_address
+        request.user.save(update_fields=["ip_address"])
+
     context = {}
     revision = None
     initial = {
@@ -791,6 +796,11 @@ def edit_vehicle(request, vehicle_id):
 
 @login_required
 def vehicle_edits(request):
+    ip_address = request.headers.get("CF-Connecting-IP")
+    if request.user.ip_address != ip_address:
+        request.user.ip_address = ip_address
+        request.user.save(update_fields=["ip_address"])
+
     if request.method == "POST":
         assert request.user.is_staff
         edits = VehicleEdit.objects.filter(id__in=request.POST.getlist("edit"))
