@@ -109,21 +109,21 @@
 
         if (item.vehicle) {
             if (item.vehicle.url) {
-                content += '<div><a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a></div>';
+                content += '<div class="vehicle"><a href="' + item.vehicle.url + '">' + item.vehicle.name + '</a></div>';
 
                 if (item.vehicle.features) {
-                    content += '<div>' + item.vehicle.features + '</div>';
+                    content += '<div class="features">' + item.vehicle.features + '</div>';
                 }
             } else if (item.vehicle.name) {
-                content += '<div>' + item.vehicle.name + '</div>';
+                content += '<div class="operator">' + item.vehicle.name + '</div>';
             }
         }
 
         if (item.seats) {
-            content += '<div><img src="/static/svg/seat.svg" width="14" height="14" alt="seats"> ' + item.seats + '</div>';
+            content += '<div class="occupancy"><img src="/static/svg/seat.svg" width="14" height="14" alt="seats"> ' + item.seats + '</div>';
         }
         if (item.wheelchair) {
-            content += '<div><img src="/static/svg/wheelchair.svg" width="14" height="14" alt="wheelchair space"> ' + item.wheelchair + '</div>';
+            content += '<div class="occupancy"><img src="/static/svg/wheelchair.svg" width="14" height="14" alt="wheelchair space"> ' + item.wheelchair + '</div>';
         }
 
         if (typeof item.delay !== 'undefined') {
