@@ -23,7 +23,8 @@ class Command(NatExpCommand):
         if self.source_name == "Megabus":
             yield "FALC"
         for line_name in super().get_line_names():
-            yield line_name
+            if line_name != "783":
+                yield line_name
 
     def get_items(self):
         for line_name in self.get_line_names():
@@ -134,17 +135,22 @@ class Command(NatExpCommand):
         pipeline.sadd(f"service{journey.service_id}vehicles", journey.id)
         redis_json = location.get_redis_json()
 
-        livery = self.livery
-        if item["trip"]["class_code"] == "SCLK":
-            livery = 896
-        if item["trip"]["class_code"] == "SCUL":
-            livery = 896
-        if item["trip"]["class_code"] == "FALC":
-            livery = 583
         redis_json["vehicle"] = {
             "name": item["trip"]["operator_name"],
-            "livery": livery,
         }
+
+        if item["trip"]["class_code"] == "DE":
+            redis_json["vehicle"]["css"] = "#002e5a"
+        else:
+            match item["trip"]["class_code"]:
+                case "C" | "SCUL":
+                    livery = 896
+                case "FALC":
+                    livery = 583
+                case _:
+                    livery = self.livery
+            redis_json["vehicle"]["livery"] = livery
+
         if service:
             redis_json["service"]["url"] = service.get_absolute_url()
         redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
