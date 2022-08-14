@@ -729,7 +729,10 @@ def edit_vehicle(request, vehicle_id):
                         "vehicle_type", "There's already a pending edit for that"
                     )
 
-        if form.is_valid() and request.user.trusted is not False:
+        if request.user.trusted is False:
+            context["edit"] = True
+            form = None
+        elif form.is_valid():
             now = timezone.now()
             try:
                 revision, features = do_revision(vehicle, data, request.user)

@@ -235,6 +235,8 @@ class Calendar(models.Model):
             return self.summary
         if len(days) == 1:
             days = f"{days[0]}s"
+        elif len(days) == 2:
+            days = f"{days[0]} and {days[-1]}"
         elif day_keys.index(days[-1]) - day_keys.index(days[0]) == len(days) - 1:
             days = f"{days[0]} to {days[-1]}"
         else:
