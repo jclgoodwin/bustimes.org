@@ -140,7 +140,7 @@ class Command(NatExpCommand):
         }
 
         if item["trip"]["class_code"] == "DE":
-            redis_json["vehicle"]["css"] = "#002e5a"
+            livery = 2455
         else:
             match item["trip"]["class_code"]:
                 case "C" | "SCUL":
