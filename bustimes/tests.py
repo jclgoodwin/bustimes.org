@@ -70,7 +70,7 @@ class BusTimesTest(TestCase):
         self.assertEqual("Mondays", str(calendar))
 
         calendar.tue = True
-        self.assertEqual("Monday to Tuesday", str(calendar))
+        self.assertEqual("Mondays and Tuesdays", str(calendar))
 
         calendar.sat = True
         self.assertEqual("Mondays, Tuesdays and Saturdays", str(calendar))
@@ -81,7 +81,7 @@ class BusTimesTest(TestCase):
 
         calendar.start_date = date(2020, 2, 5)
         calendar.end_date = date(2020, 2, 10)
-        self.assertEqual("Tuesday to Wednesday", str(calendar))
+        self.assertEqual("Tuesdays and Wednesdays", str(calendar))
         calendar.bank_holiday_exclusions = [date(2021, 1, 2)]
         calendar.bank_holiday_inclusions = []
         self.assertEqual(
@@ -101,7 +101,8 @@ class BusTimesTest(TestCase):
 
         calendar.summary = "Toby Young School of Assholery days"
         self.assertEqual(
-            "Tuesday to Wednesday, Toby Young School of Assholery days", str(calendar)
+            "Tuesdays and Wednesdays, Toby Young School of Assholery days",
+            str(calendar),
         )
 
         calendar.summary = ""
