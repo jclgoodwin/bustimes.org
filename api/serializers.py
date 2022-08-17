@@ -68,12 +68,17 @@ class StopSerializer(serializers.ModelSerializer):
         fields = [
             "atco_code",
             "naptan_code",
+            "get_long_name",
             "common_name",
+            "latlong",            
             "indicator",
             "bearing",
             "heading",
+            "stop_type",
+            "bus_stop_type",
             "created_at",
             "modified_at",
+            "active",
         ]
 
 
