@@ -198,6 +198,7 @@ class ImportBusOpenDataTest(TestCase):
                     "destination": {
                         "atco_code": "2900K132",
                         "name": "Kings Lynn Transport Interchange",
+                        "locality": None,
                     },
                     "aimed_arrival_time": None,
                     "aimed_departure_time": "2020-05-01T09:15:00+01:00",

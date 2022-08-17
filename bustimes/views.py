@@ -121,21 +121,8 @@ def route_xml(request, source, code=""):
 
 
 def stop_time_json(stop_time, date):
-    service = {
-        "line_name": stop_time.trip.route.service.line_name,
-        "operators": [
-            {
-                "id": operator.noc,
-                "name": operator.name,
-                "parent": operator.parent,
-            }
-            for operator in stop_time.trip.route.service.operator.all()
-        ],
-    }
-    destination = {
-        "atco_code": stop_time.trip.destination_id,
-        "name": stop_time.trip.destination.get_qualified_name(),
-    }
+    destination = stop_time.trip.destination
+    route = stop_time.trip.route
     arrival = stop_time.arrival
     departure = stop_time.departure
     if arrival is not None:
@@ -143,9 +130,23 @@ def stop_time_json(stop_time, date):
     if departure is not None:
         departure = stop_time.departure_datetime(date)
     return {
-        "service": service,
+        "service": {
+            "line_name": route.line_name,
+            "operators": [
+                {
+                    "id": operator.noc,
+                    "name": operator.name,
+                    "parent": operator.parent,
+                }
+                for operator in route.service.operator.all()
+            ],
+        },
         "trip_id": stop_time.trip_id,
-        "destination": destination,
+        "destination": {
+            "atco_code": destination.atco_code,
+            "name": destination.get_qualified_name(),
+            "locality": destination.locality,
+        },
         "aimed_arrival_time": arrival,
         "aimed_departure_time": departure,
     }
