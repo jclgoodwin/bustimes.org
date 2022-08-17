@@ -276,6 +276,7 @@ def stops(request):
                     "properties": {
                         "name": stop.get_qualified_name(),
                         "indicator": stop.indicator,
+                        "icon": stop.get_icon(),
                         "bearing": stop.get_heading(),
                         "url": stop.get_absolute_url(),
                         "services": stop.get_line_names(),
@@ -285,57 +286,6 @@ def stops(request):
             ],
         }
     )
-
-
-# ATCOCode,NaptanCode,PlateCode,CleardownCode,CommonName,CommonNameLang,ShortCommonName,ShortCommonNameLang,Landmark,LandmarkLang,
-# Street,StreetLang,Crossing,CrossingLang,Indicator,IndicatorLang,Bearing,NptgLocalityCode,LocalityName,ParentLocalityName,
-# GrandParentLocalityName,Town,TownLang,Suburb,SuburbLang,LocalityCentre,GridType,Easting,Northing,Longitude,Latitude,StopType,
-# BusStopType,TimingStatus,DefaultWaitTime,Notes,NotesLang,AdministrativeAreaCode,
-# CreationDateTime,ModificationDateTime,RevisionNumber,Modification,Status
-def stops_csv(request):
-    response = HttpResponse(
-        content_type="text/plain",
-        # headers={'Content-Disposition': 'attachment; filename="stops.csv"'},
-    )
-
-    writer = csv.writer(response)
-    writer.writerow(
-        [
-            "ATCOCode",
-            "NaptanCode",
-            "CommonName",
-            "Indicator",
-            "Bearing",
-            "LocalityName",
-            "Longitude",
-            "Latitude",
-            "CreationDateTime",
-            "ModificationDateTime",
-        ]
-    )
-
-    stops = StopPoint.objects.all().filter(
-        latlong__isnull=False, modified_at__isnull=False
-    )
-    stops = stops.annotate(locality_name=F("locality__name"))
-
-    for stop in stops.order_by("-modified_at")[:50000]:
-        writer.writerow(
-            [
-                stop.atco_code,
-                stop.naptan_code,
-                stop.common_name,
-                stop.indicator,
-                stop.bearing,
-                stop.locality_name,
-                stop.latlong.x,
-                stop.latlong.y,
-                stop.created_at,
-                stop.modified_at,
-            ]
-        )
-
-    return response
 
 
 class UppercasePrimaryKeyMixin:

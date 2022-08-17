@@ -480,6 +480,18 @@ class StopPoint(models.Model):
     def get_absolute_url(self):
         return reverse("stoppoint_detail", args=(self.atco_code,))
 
+    def get_icon(self):
+        if self.indicator:
+            if len(self.indicator) < 3 and not self.indicator.isupper():
+                return self.indicator
+
+            parts = self.indicator.split()
+            if len(parts) == 2 and len(parts[1]) < 3:
+                a, b = parts
+                match a.lower():
+                    case "stop" | "bay" | "stand" | "stance" | "gate" | "platform":
+                        return b
+
     def get_line_names(self):
         if self.line_names:
             return sorted(self.line_names, key=Service.get_line_name_order)

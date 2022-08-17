@@ -68,19 +68,8 @@
 
     vehiclesGroup.addTo(map);
 
-    function getStopIcon(indicator, bearing) {
-        var html = '';
-        if (indicator) {
-            var parts = indicator.split(' ');
-            if (parts.length === 2) {
-                var firstPart = parts[0].toLowerCase();
-                if (firstPart === 'stop' || firstPart === 'bay' || firstPart === 'stand' || firstPart === 'stance' || firstPart === 'gate') {
-                    html = parts[1];
-                }
-            } else if (parts.length === 0 || indicator.length < 3) {
-                html = indicator;
-            }
-        }
+    function getStopIcon(html, bearing) {
+        html = html || '';
         var className = 'stop stop-' + html.length;
         if (bearing !== null) {
             html += '<div class="stop-arrow" style="' + bustimes.getTransform(bearing + 45) + '"></div>';
@@ -101,7 +90,7 @@
         var latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
         if (bigStopMarkers) {
             var marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
-                icon: getStopIcon(data.properties.indicator, data.properties.bearing),
+                icon: getStopIcon(data.properties.icon, data.properties.bearing),
                 url: data.properties.url
             });
         } else {
@@ -140,7 +129,7 @@
         if (map.hasLayer(event.target)) {
             clickedStopMarker = null;
         }
-    }    
+    }
 
     function loadStops() {
         if (lastStopsReq) {
