@@ -43,6 +43,7 @@ whitenoise = "^6.0.0"
 django-multidb-router = "^0.10"
 django-simple-history = "^3.0.0"
 protobuf = "3.20"
+dj-database-url = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"
