@@ -5,6 +5,7 @@ config/gunicorn.py
 data
 node_modules
 htmlcov
+staticfiles
 busstops/static/css/*.css
 busstops/static/css/*.css.map
 .env

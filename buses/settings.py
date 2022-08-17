@@ -3,6 +3,7 @@
 
 import os
 import sys
+import dj_database_url
 from pathlib import Path
 
 
@@ -81,21 +82,17 @@ ROOT_URLCONF = "buses.urls"
 
 ASGI_APPLICATION = "vehicles.routing.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": os.environ.get("DB_NAME", "bustimes"),
-        "CONN_MAX_AGE": None,
-        "OPTIONS": {
-            "application_name": os.environ.get("APPLICATION_NAME")
-            or " ".join(sys.argv)[-63:],
-            "connect_timeout": 9,
-        },
-        "TEST": {"SERIALIZE": False},
-    }
+
+DATABASES = {"default": dj_database_url.config(conn_max_age=None)}
+
+DATABASES["default"]["options"] = {
+    "application_name": os.environ.get("APPLICATION_NAME") or " ".join(sys.argv)[-63:],
+    "connect_timeout": 9,
 }
+DATABASES["default"]["TEST"] = {"SERIALIZE": False}
+DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 if DEBUG and "runserver" in sys.argv:
-    DATABASES["default"]["CONN_MAX_AGE"] = 0  # reset to the default
+    del DATABASES["default"]["CONN_MAX_AGE"]  # reset to the default (0)
 
 TEST_RUNNER = "django_slowtests.testrunner.DiscoverSlowestTestsRunner"
 NUM_SLOW_TESTS = 10

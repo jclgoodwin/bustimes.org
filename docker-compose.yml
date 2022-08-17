@@ -12,11 +12,7 @@ services:
     container_name: django_web
     environment:
       - SECRET_KEY=${SECRET_KEY-d}
-      - PGHOST=${PGHOST-postgres}
-      - PGUSER=${PGUSER-postgres}
-      - PGPORT=${PGPORT-}
-      - PGPASSWORD=${PGPASSWORD-postgres}
-      - DB_NAME=${DB_NAME-postgres}
+      - DATABASE_URL=${DATABASE_URL-postgis://postgres:postgres@postgres/postgres}
       - REDIS_URL=${REDIS_URL-redis://redis:6379}
     volumes:
       - .:/app

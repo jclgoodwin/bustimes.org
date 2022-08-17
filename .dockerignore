@@ -1,3 +1,5 @@
+staticfiles/
 node_modules/
 .git/
-venv/
+*.sql
+fly.toml
