@@ -274,6 +274,8 @@ class ServiceAdmin(admin.ModelAdmin):
 
         first.varnish_ban()
 
+        first.update_description()
+
         self.message_user(request, f"merged {others} into {first}")
 
 

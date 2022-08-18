@@ -426,6 +426,8 @@ class Command(BaseCommand):
             # using routes
             service.update_geometry()
 
+            service.update_description()
+
     @cache
     def get_bank_holiday(self, bank_holiday_name: str):
         return BankHoliday.objects.get_or_create(name=bank_holiday_name)[0]

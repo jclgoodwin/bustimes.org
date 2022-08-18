@@ -24,6 +24,7 @@ from django.utils.safestring import mark_safe
 
 from bustimes.models import Route, Trip
 from bustimes.timetables import Timetable, get_stop_usages
+from bustimes.utils import get_descriptions
 from buses.utils import varnish_ban
 
 
@@ -653,8 +654,6 @@ class Service(models.Model):
     line_name = models.CharField(max_length=64, blank=True)
     line_brand = models.CharField(max_length=64, blank=True)
     description = models.CharField(max_length=255, blank=True, db_index=True)
-    outbound_description = models.CharField(max_length=255, blank=True)
-    inbound_description = models.CharField(max_length=255, blank=True)
     slug = AutoSlugField(populate_from=str, editable=True, unique=True)
     mode = models.CharField(max_length=11, blank=True)
     operator = models.ManyToManyField(Operator, blank=True)
@@ -713,8 +712,6 @@ class Service(models.Model):
                     "line_name": self.line_name,
                     "line_brand": self.line_brand,
                     "description": self.description,
-                    "outbound_description": self.outbound_description,
-                    "inbound_description": self.inbound_description,
                     "current": self.current,
                 }
             }
@@ -1030,6 +1027,21 @@ class Service(models.Model):
             StopUsage.objects.bulk_create(stop_usages)
 
         return stop_usages
+
+    def update_description(self):
+        (
+            inbound_outbound_descriptions,
+            origins_and_destinations,
+        ) = get_descriptions(self.route_set.all())
+
+        if (
+            len(inbound_outbound_descriptions) > 1
+            and len(origins_and_destinations) == 1
+        ):
+            description = " - ".join(origins_and_destinations[0])
+            if description != self.description:
+                self.description = description
+                self.save(update_fields=["description"])
 
     def update_geometry(self, save=True):
         extent = self.stopusage_set.aggregate(Extent("stop__latlong"))
