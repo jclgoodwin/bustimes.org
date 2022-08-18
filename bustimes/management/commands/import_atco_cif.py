@@ -65,10 +65,9 @@ class Command(BaseCommand):
             fields=[
                 "geometry",
                 "description",
-                "outbound_description",
-                "inbound_description",
             ],
         )
+        Route.objects.bulk_update(self.routes.values(), ["inbound_description"])
         for service in services:
             service.update_search_vector()
 
@@ -168,35 +167,36 @@ class Command(BaseCommand):
             if key in self.routes:
                 self.route = self.routes[key]
                 if direction == b"O":
-                    self.routes[key].service.description = description
-                    self.routes[key].service.outbound_description = description
+                    self.route.service.description = description
+                    self.route.outbound_description = description
                 else:
-                    self.routes[key].service.inbound_description = description
+                    self.route.inbound_description = description
             else:
                 defaults = {
                     "line_name": line_name,
-                    "description": description,
                     "date": self.source.datetime.date(),
                     "current": True,
                     "source": self.source,
                     "region_id": "NI",
                 }
+                route_defaults = {
+                    "line_name": line_name,
+                    "description": "description",
+                }
                 if direction == b"O":
                     defaults["description"] = description
-                    defaults["outbound_description"] = description
+                    route_defaults["description"] = description
+                    route_defaults["outbound_description"] = description
                 else:
-                    defaults["inbound_description"] = description
+                    route_defaults["inbound_description"] = description
                 service, _ = Service.objects.update_or_create(
                     defaults, service_code=key
                 )
+                route_defaults["service"] = service
                 if operator:
                     service.operator.add(operator)
                 self.route, created = Route.objects.update_or_create(
-                    {
-                        "service": service,
-                        "line_name": line_name,
-                        "description": description,
-                    },
+                    route_defaults,
                     code=key,
                     source=self.source,
                 )

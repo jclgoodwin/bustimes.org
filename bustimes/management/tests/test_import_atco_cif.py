@@ -56,15 +56,16 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual(106, StopUsage.objects.count())
 
         service = Service.objects.get(service_code="219A_GLE")
+        route = Route.objects.get(code="219A_GLE")
         self.assertEqual(
             "Belfast, Europa Buscentre - Antrim, Buscentre", service.description
         )
         self.assertEqual(
             "Belfast, Europa Buscentre - Antrim, Buscentre",
-            service.outbound_description,
+            route.outbound_description,
         )
         self.assertEqual(
-            "Antrim, Buscentre - Belfast, Europa Buscentre", service.inbound_description
+            "Antrim, Buscentre - Belfast, Europa Buscentre", route.inbound_description
         )
 
         with time_machine.travel("2019-10-01"):

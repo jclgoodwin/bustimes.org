@@ -494,9 +494,6 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(feet[3].span, 1)
         self.assertEqual(feet[4].span, 10)
 
-        self.assertEqual(service.outbound_description, "")
-        self.assertEqual(service.inbound_description, "")
-
         self.assertEqual(0, service.stopusage_set.count())
 
     @time_machine.travel("2017-12-10")

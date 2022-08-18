@@ -284,14 +284,9 @@ class Command(BaseCommand):
                     # if headsign contains ' - ' assume it's 'origin - destination', not just destination
                     if origin and " - " in origin:
                         route.inbound_description = origin
-                        route.service.inbound_description = origin
                     if destination and " - " in destination:
                         route.outbound_description = destination
-                        route.service.outbound_description = destination
 
-                    if origin and destination and " - " not in origin:
-                        route.service.outbound_description = f"{origin} - {destination}"
-                        route.service.inbound_description = f"{destination} - {origin}"
                     route.origin = origin
                     route.destination = destination
 
@@ -308,13 +303,7 @@ class Command(BaseCommand):
                             "outbound_description",
                         ]
                     )
-                    route.service.save(
-                        update_fields=[
-                            "description",
-                            "inbound_description",
-                            "outbound_description",
-                        ]
-                    )
+                    route.service.save(update_fields=["description"])
 
             trip = None
             previous_line = None

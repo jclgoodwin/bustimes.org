@@ -964,8 +964,6 @@ class Command(BaseCommand):
         else:
             unique_service_code = None
 
-        line_names = [line.line_name for line in txc_service.lines]
-
         service = None
 
         for i, line in enumerate(txc_service.lines):
@@ -1003,7 +1001,12 @@ class Command(BaseCommand):
 
                 if operators:
                     q = Q(operator__in=operators)
-                    if description and self.source.name.startswith("Stagecoach"):
+                    if (
+                        description
+                        and self.source.name.startswith("Stagecoach")
+                        and line.line_name == "1"
+                        and "Chester" in description
+                    ):
                         q = (Q(source=self.source) | q) & Q(description=description)
                     existing = services.filter(q)
                 else:
