@@ -996,13 +996,6 @@ class Command(BaseCommand):
 
             existing = None
 
-            if self.source.name.startswith("Sanders") and len(line_names) > 1:
-                if i > 0:
-                    existing = service
-                else:
-                    for line_name in line_names:
-                        q |= Q(line_name__iexact=line_name)
-
             if not existing:
                 services = Service.objects.order_by("-current", "id").filter(q)
 
@@ -1063,7 +1056,6 @@ class Command(BaseCommand):
 
             service.line_name = line.line_name
             service.date = today
-            service.current = True
             service.source = self.source
 
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
@@ -1106,7 +1098,12 @@ class Command(BaseCommand):
                 line_brand = (
                     service.colour.name
                 )  # e.g. (First Eastern Counties) 'Yellow Line'
-            service.line_brand = line_brand or ""
+            if line_brand:
+                service.line_brand = line_brand
+            elif not service.current:
+                service.line_brand = ""
+
+            service.current = True
 
             if txc_service.mode:
                 service.mode = txc_service.mode

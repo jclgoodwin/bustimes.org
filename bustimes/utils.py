@@ -127,3 +127,36 @@ def get_calendars(when, calendar_ids=None):
         | special_inclusions
         | bank_holiday_inclusions & bank_holiday_exclusions,
     )
+
+
+def get_descriptions(routes):
+    inbound_outbound_descriptions = list(
+        {
+            (route.outbound_description, route.inbound_description)
+            for route in routes
+            if route.outbound_description != route.inbound_description
+        }
+    )
+
+    origins_and_destinations = list(
+        {
+            tuple(filter(None, [route.origin, route.via, route.destination]))
+            for route in routes
+            if route.origin and route.destination
+        }
+    )
+    if len(origins_and_destinations) > 1:
+        for i, parts in enumerate(origins_and_destinations):
+            for j, other in enumerate(origins_and_destinations[i:]):
+                if parts[0] == other[-1]:
+                    origins_and_destinations[i + j] = other + parts[1:]
+                    origins_and_destinations[i] = None
+                    break
+                elif parts[-1] == other[0]:
+                    origins_and_destinations[i + j] = parts + other[1:]
+                    origins_and_destinations[i] = None
+                    break
+        origins_and_destinations = list(filter(None, origins_and_destinations))
+        inbound_outbound_descriptions = []
+
+    return inbound_outbound_descriptions, origins_and_destinations

@@ -6,7 +6,7 @@ from django.db.models import Prefetch, Q
 from django.contrib.postgres.aggregates import ArrayAgg
 from sql_util.utils import Exists
 from .formatting import format_timedelta
-from .utils import get_calendars, get_routes
+from .utils import get_calendars, get_routes, get_descriptions
 from .models import Calendar, Trip, StopTime
 
 differ = Differ(charjunk=lambda _: True)
@@ -300,36 +300,10 @@ class Timetable:
 
             grouping.do_heads_and_feet(detailed)
 
-        self.inbound_outbound_descriptions = list(
-            {
-                (route.outbound_description, route.inbound_description)
-                for route in self.current_routes
-                if route.outbound_description != route.inbound_description
-            }
-        )
-
-        self.origins_and_destinations = list(
-            {
-                tuple(filter(None, [route.origin, route.via, route.destination]))
-                for route in self.current_routes
-                if route.origin and route.destination
-            }
-        )
-        if len(self.origins_and_destinations) > 1:
-            for i, parts in enumerate(self.origins_and_destinations):
-                for j, other in enumerate(self.origins_and_destinations[i:]):
-                    if parts[0] == other[-1]:
-                        self.origins_and_destinations[i + j] = other + parts[1:]
-                        self.origins_and_destinations[i] = None
-                        break
-                    elif parts[-1] == other[0]:
-                        self.origins_and_destinations[i + j] = parts + other[1:]
-                        self.origins_and_destinations[i] = None
-                        break
-            self.origins_and_destinations = list(
-                filter(None, self.origins_and_destinations)
-            )
-            self.inbound_outbound_descriptions = []
+        (
+            self.inbound_outbound_descriptions,
+            self.origins_and_destinations,
+        ) = get_descriptions(self.current_routes)
 
     def any_trip_has(self, attr: str) -> bool:
         for grouping in self.groupings:

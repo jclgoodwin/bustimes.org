@@ -4,14 +4,13 @@ import datetime
 import sys
 import traceback
 import requests
-import csv
 import json
 from urllib.parse import urlencode
 
 from ukpostcodeutils import validation
 
 
-from django.shortcuts import render, get_object_or_404, get_list_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.aggregates import ArrayAgg
