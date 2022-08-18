@@ -145,7 +145,7 @@ def stop_time_json(stop_time, date):
         "destination": {
             "atco_code": destination.atco_code,
             "name": destination.get_qualified_name(),
-            "locality": destination.locality,
+            "locality": destination.locality and str(destination.locality),
         },
         "aimed_arrival_time": arrival,
         "aimed_departure_time": departure,
