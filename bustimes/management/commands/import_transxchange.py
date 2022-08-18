@@ -988,6 +988,11 @@ class Command(BaseCommand):
             service_code = None
 
             q = Q(line_name__iexact=line.line_name)
+            q |= Exists(
+                Route.objects.filter(
+                    line_name__iexact=line.line_name, service=OuterRef("id")
+                )
+            )
 
             existing = None
 
@@ -1018,7 +1023,9 @@ class Command(BaseCommand):
                     has_stop_usage = Exists(
                         StopUsage.objects.filter(stop__in=stops, service=OuterRef("id"))
                     )
-                    has_no_route = ~Exists(Route.objects.filter(service=OuterRef("id")))
+                    has_no_route = ~Exists(
+                        Trip.objects.filter(route__service=OuterRef("id"))
+                    )
                     condition = has_stop_time | (has_stop_usage & has_no_route)
                 else:
                     condition = Exists(

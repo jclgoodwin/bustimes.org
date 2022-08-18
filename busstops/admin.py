@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.db import IntegrityError
 from django.db.models import Q, F, Exists, OuterRef, CharField
 from django.db.models.functions import Cast
 from django.urls import reverse
@@ -213,6 +214,7 @@ class ServiceAdmin(admin.ModelAdmin):
     readonly_fields = ["search_vector"]
     list_editable = ["colour", "line_brand"]
     list_select_related = ["colour"]
+    actions = ["merge"]
 
     def routes(self, obj):
         return obj.routes
@@ -239,6 +241,30 @@ class ServiceAdmin(admin.ModelAdmin):
             return queryset, False
 
         return super().get_search_results(request, queryset, search_term)
+
+    def merge(self, request, queryset):
+        first = queryset[0]
+        others = queryset[1:]
+
+        first.current = True
+
+        for other in others:
+            other.route_set.update(service=first)
+            other.vehiclejourney_set.update(service=first)
+            other.servicecode_set.update(service=first)
+            try:
+                models.ServiceCode.objects.create(
+                    code=other.slug, service=first, scheme="slug"
+                )
+            except IntegrityError:
+                pass
+
+        first.do_stop_usages()
+        first.update_search_vector()
+        first.update_geometry()
+        first.save()
+
+        self.message_user(request, f"merged {others} into {first}")
 
 
 @admin.register(models.ServiceLink)
