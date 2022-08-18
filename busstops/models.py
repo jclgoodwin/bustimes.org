@@ -482,7 +482,7 @@ class StopPoint(models.Model):
 
     def get_icon(self):
         if self.indicator:
-            if len(self.indicator) < 3 and not self.indicator.isupper():
+            if len(self.indicator) < 3 and not self.indicator.islower():
                 return self.indicator
 
             parts = self.indicator.split()

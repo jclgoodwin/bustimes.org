@@ -63,15 +63,30 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 
 class StopSerializer(serializers.ModelSerializer):
+    long_name = serializers.SerializerMethodField()
+    location = serializers.SerializerMethodField()
+    icon = serializers.SerializerMethodField()
+
+    def get_long_name(self, obj):
+        return obj.get_long_name()
+
+    def get_location(self, obj):
+        if obj.latlong:
+            return obj.latlong.coords
+
+    def get_icon(self, obj):
+        return obj.get_icon()
+
     class Meta:
         model = StopPoint
         fields = [
             "atco_code",
             "naptan_code",
-            "get_long_name",
             "common_name",
-            "latlong",            
+            "long_name",
+            "location",
             "indicator",
+            "icon",
             "bearing",
             "heading",
             "stop_type",

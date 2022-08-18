@@ -47,7 +47,7 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class StopViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = StopPoint.objects.order_by("atco_code")
+    queryset = StopPoint.objects.order_by("atco_code").select_related("locality")
     serializer_class = serializers.StopSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.StopFilter
