@@ -256,6 +256,10 @@ class ServiceAdmin(admin.ModelAdmin):
                 models.ServiceCode.objects.create(
                     code=other.slug, service=first, scheme="slug"
                 )
+                if other.service_code and other.service_code != first.service_code:
+                    models.ServiceCode.objects.create(
+                        code=other.service_code, service=first, scheme="ServiceCode"
+                    )
             except IntegrityError:
                 pass
 
