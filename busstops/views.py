@@ -68,31 +68,15 @@ def get_colours(services):
 
 def not_found(request, exception):
     """Custom 404 handler view"""
+
     if request.resolver_match:
         if request.resolver_match.url_name == "service_detail" and exception.args:
             code = request.resolver_match.kwargs["slug"]
-
-            services = Service.objects.filter(current=True)
-
-            if code.lower():
-                try:
-                    return redirect(
-                        services.get(servicecode__scheme="slug", servicecode__code=code)
-                    )
-                except Service.DoesNotExist:
-                    pass
-            try:
-                return redirect(
-                    services.get(
-                        servicecode__scheme="ServiceCode", servicecode__code=code
-                    )
-                )
-            except Service.DoesNotExist:
-                pass
-
             service_code_parts = code.split("-")
+
             if len(service_code_parts) >= 4:
                 suggestion = None
+                services = Service.objects.filter(current=True).only("slug")
 
                 # e.g. from '17-N4-_-y08-1' to '17-N4-_-y08':
                 suggestion = services.filter(
@@ -730,10 +714,59 @@ class ServiceDetailView(DetailView):
     )
 
     def get_object(self, **kwargs):
+        services = Service.objects.all()
+
         try:
-            return super().get_object(**kwargs)
-        except Http404:
-            return get_list_or_404(self.model, service_code=self.kwargs["slug"])[0]
+            service = super().get_object(**kwargs)
+        except Http404 as e:
+            slug = self.kwargs["slug"]
+
+            service = services.filter(service_code=slug).first()
+
+            if not service and slug.islower():
+                service = services.filter(
+                    servicecode__scheme="slug", servicecode__code=slug
+                ).first()
+
+            if not service:
+                service = services.filter(
+                    servicecode__scheme="ServiceCode", servicecode__code=slug
+                ).first()
+
+            if not service:
+                raise e
+
+        if not service.current:
+            alternative = None
+
+            services = services.only("slug", "current").filter(current=True)
+
+            if service.line_name:
+                alternative = services.filter(
+                    line_name__iexact=service.line_name,
+                    operator__in=service.operator.all(),
+                    stops__service=service,
+                ).first()
+                if not alternative:
+                    alternative = services.filter(
+                        line_name__iexact=service.line_name,
+                        stops__service=service,
+                    ).first()
+                if not alternative:
+                    alternative = services.filter(
+                        line_name__iexact=service.line_name,
+                        operator__in=service.operator.all(),
+                    ).first()
+
+            if not alternative and service.description:
+                alternative = services.filter(description=service.description).first()
+
+            if alternative:
+                return alternative
+
+            raise Http404()
+
+        return service
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -957,38 +990,7 @@ class ServiceDetailView(DetailView):
         return context
 
     def render_to_response(self, context):
-        if not self.object.current:
-            services = Service.objects.filter(current=True).only("slug")
-            alternative = None
-
-            if self.object.line_name:
-                alternative = services.filter(
-                    line_name__iexact=self.object.line_name,
-                    operator__in=self.object.operator.all(),
-                    stops__service=self.object,
-                ).first()
-                if not alternative:
-                    alternative = services.filter(
-                        line_name__iexact=self.object.line_name,
-                        stops__service=self.object,
-                    ).first()
-                if not alternative:
-                    alternative = services.filter(
-                        line_name__iexact=self.object.line_name,
-                        operator__in=self.object.operator.all(),
-                    ).first()
-
-            if not alternative and self.object.description:
-                alternative = services.filter(
-                    description=self.object.description
-                ).first()
-
-            if alternative:
-                return redirect(alternative)
-
-            raise Http404()
-
-        if self.object.slug != self.kwargs["slug"]:
+        if self.object.current and self.object.slug != self.kwargs["slug"]:
             return redirect(self.object)
 
         return super().render_to_response(context)
