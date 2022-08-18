@@ -990,6 +990,8 @@ class Service(models.Model):
 
     def varnish_ban(self):
         varnish_ban(self.get_absolute_url())
+        varnish_ban(reverse("service_timetable", args=(self.id,)))
+        varnish_ban(reverse("service_map_data", args=(self.id,)))
 
     def do_stop_usages(self):
         outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=self))

@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Q, F, Exists, OuterRef, CharField
 from django.db.models.functions import Cast
@@ -268,6 +269,10 @@ class ServiceAdmin(admin.ModelAdmin):
         first.update_search_vector()
         first.update_geometry()
         first.save()
+        cache.delete(first.get_linked_services_cache_key())
+        cache.delete(first.get_similar_services_cache_key())
+
+        first.varnish_ban()
 
         self.message_user(request, f"merged {others} into {first}")
 
