@@ -262,6 +262,7 @@ class ServiceAdmin(admin.ModelAdmin):
                     )
             except IntegrityError:
                 pass
+            other.delete()
 
         first.do_stop_usages()
         first.update_search_vector()
