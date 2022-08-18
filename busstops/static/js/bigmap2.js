@@ -7,8 +7,14 @@
 
     var map = L.map('hugemap', {
             worldCopyJump: true,
-            tap: false
+            tap: false,
+            minZoom: 6,
+            maxBounds: [
+                [48, -12],
+                [62, 3,],
+            ],
         }),
+
         stopsGroup = L.layerGroup(),
         vehiclesGroup = L.layerGroup();
 
