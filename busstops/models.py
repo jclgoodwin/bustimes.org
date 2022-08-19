@@ -771,7 +771,7 @@ class Service(models.Model):
 
     def is_megabus(self):
         return (
-            self.line_name in {"FALC", "FLCN", "TUBE"}
+            self.line_name in {"FALC", "FAL", "FLCN", "TUBE"}
             or self.service_code.startswith("460-X5_STB_PF_X5")
             or any(o.pk in {"MEGA", "SCMG"} for o in self.operator.all())
         )

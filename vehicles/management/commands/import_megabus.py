@@ -20,8 +20,8 @@ class Command(NatExpCommand):
     livery = 910
 
     def get_line_names(self):
-        if self.source_name == "Megabus":
-            yield "FALC"
+        # if self.source_name == "Megabus":
+        #     yield "FALC"
         for line_name in super().get_line_names():
             if line_name != "783":
                 yield line_name
