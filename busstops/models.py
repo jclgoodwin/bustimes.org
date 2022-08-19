@@ -662,7 +662,7 @@ class Service(models.Model):
     date = models.DateField(null=True, blank=True)
     current = models.BooleanField(default=True, db_index=True)
     timetable_wrong = models.BooleanField(default=False)
-    geometry = models.GeometryField(null=True)
+    geometry = models.GeometryField(null=True, blank=True)
 
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     tracking = models.BooleanField(default=False)

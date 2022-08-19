@@ -273,6 +273,8 @@ class ServiceAdmin(admin.ModelAdmin):
         cache.delete(first.get_similar_services_cache_key())
 
         first.varnish_ban()
+        for operator in first.operator.all():
+            models.varnish_ban(operator.get_absolute_url())
 
         first.update_description()
 
