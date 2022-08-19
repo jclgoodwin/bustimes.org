@@ -130,13 +130,11 @@ def get_calendars(when, calendar_ids=None):
 
 
 def get_descriptions(routes):
-    inbound_outbound_descriptions = list(
-        {
-            (route.outbound_description, route.inbound_description)
-            for route in routes
-            if route.outbound_description != route.inbound_description
-        }
-    )
+    inbound_outbound_descriptions = {
+        (route.outbound_description, route.inbound_description)
+        for route in routes
+        if route.outbound_description != route.inbound_description
+    }
 
     origins_and_destinations = list(
         {
@@ -145,18 +143,39 @@ def get_descriptions(routes):
             if route.origin and route.destination
         }
     )
+
     if len(origins_and_destinations) > 1:
         for i, parts in enumerate(origins_and_destinations):
-            for j, other in enumerate(origins_and_destinations[i:]):
-                if parts[0] == other[-1]:
-                    origins_and_destinations[i + j] = other + parts[1:]
+            for j, other_parts in enumerate(origins_and_destinations[i:]):
+                if parts[0] == other_parts[-1]:
+                    origins_and_destinations[i + j] = other_parts + parts[1:]
                     origins_and_destinations[i] = None
                     break
-                elif parts[-1] == other[0]:
-                    origins_and_destinations[i + j] = parts + other[1:]
+                elif parts[-1] == other_parts[0]:
+                    origins_and_destinations[i + j] = parts + other_parts[1:]
                     origins_and_destinations[i] = None
                     break
         origins_and_destinations = list(filter(None, origins_and_destinations))
-        inbound_outbound_descriptions = []
+        inbound_outbound_descriptions = ()
+
+        if (
+            len(origins_and_destinations) == 2
+            and len(origins_and_destinations[0]) == 2
+            and len(origins_and_destinations[1]) == 2
+        ):
+            if origins_and_destinations[0][1] == origins_and_destinations[1][1]:
+                origins_and_destinations = [
+                    (
+                        f"{origins_and_destinations[0][0]} or {origins_and_destinations[1][0]}",
+                        origins_and_destinations[0][1],
+                    )
+                ]
+            elif origins_and_destinations[0][0] == origins_and_destinations[1][0]:
+                origins_and_destinations = [
+                    (
+                        origins_and_destinations[0][0],
+                        f"{origins_and_destinations[0][1]} or {origins_and_destinations[1][1]}",
+                    )
+                ]
 
     return inbound_outbound_descriptions, origins_and_destinations

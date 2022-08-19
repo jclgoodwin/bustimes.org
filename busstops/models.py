@@ -1029,16 +1029,20 @@ class Service(models.Model):
         return stop_usages
 
     def update_description(self):
-        (
-            inbound_outbound_descriptions,
-            origins_and_destinations,
-        ) = get_descriptions(self.route_set.all())
+        routes = self.route_set.all()
 
-        if (
-            len(inbound_outbound_descriptions) > 1
-            and len(origins_and_destinations) == 1
+        inbound_outbound_descriptions, origins_and_destinations = get_descriptions(
+            routes
+        )
+
+        descriptions = {route.description for route in routes if route.description}
+
+        if origins_and_destinations and (
+            not inbound_outbound_descriptions
+            and len(descriptions) > len(origins_and_destinations)
+            or len(inbound_outbound_descriptions) > len(origins_and_destinations)
         ):
-            description = " - ".join(origins_and_destinations[0])
+            description = " - ".join(max(origins_and_destinations, key=len))
             if description != self.description:
                 self.description = description
                 self.save(update_fields=["description"])
