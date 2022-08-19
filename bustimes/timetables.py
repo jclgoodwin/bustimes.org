@@ -271,19 +271,15 @@ class Timetable:
                 row.times = [row.times[i] for i in indices]
 
             if not detailed:
+                # merge split registration trips
                 previous_trip = None
-                previous_origin = None
-                previous_destination = None
+                zero = datetime.timedelta()
+                fifteen = datetime.timedelta(minutes=15)
                 for i, trip in enumerate(grouping.trips):
-                    stops = list(trip.stoptime_set.all())
-                    origin = stops[0].stop_id or stops[0].stop_code
-                    destination = stops[-1].stop_id or stops[-1].stop_code
                     if (
                         previous_trip
-                        and previous_trip.end <= trip.start
-                        and previous_origin != previous_destination
-                        and origin != destination
-                        and previous_destination == origin
+                        and zero <= (trip.start - previous_trip.end) <= fifteen
+                        and previous_trip.bottom is trip.top
                     ):
                         for row in grouping.rows:
                             if row.times[i]:
@@ -295,8 +291,6 @@ class Timetable:
                                     row.times[i - 1] = row.times[i]
                                 row.times[i] = ""
                     previous_trip = trip
-                    previous_origin = origin
-                    previous_destination = destination
 
             grouping.do_heads_and_feet(detailed)
 
@@ -586,6 +580,7 @@ class Grouping:
             cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
             if first:
                 cell.first = True
+                trip.top = row
                 first = False
             row.times.append(cell)
 
@@ -593,6 +588,7 @@ class Grouping:
 
         if not first:  # (there was at least 1 stoptime in the trip)
             cell.last = True
+            trip.bottom = row
 
         if x:
             for row in rows:
