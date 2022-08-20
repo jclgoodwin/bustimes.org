@@ -16,7 +16,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, Prefetch, F, OuterRef, Count, Min
-from django.db.models.functions import Coalesce, Now
+from django.db.models.functions import Now
 from django.http import HttpResponse, HttpResponseBadRequest, Http404, JsonResponse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
@@ -457,7 +457,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context["stops"] = (
             stops.annotate(
                 line_names=ArrayAgg(
-                    Coalesce("service__route__line_name", "service__line_name"),
+                    "service__route__line_name",
                     distinct=True,
                 )
             )
@@ -617,7 +617,7 @@ class StopPointDetailView(DetailView):
                 nearby.exclude(pk=self.object.pk)
                 .annotate(
                     line_names=ArrayAgg(
-                        Coalesce("service__route__line_name", "service__line_name"),
+                        "service__route__line_name",
                         distinct=True,
                     )
                 )
