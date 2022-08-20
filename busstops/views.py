@@ -238,7 +238,9 @@ def stops(request):
         StopPoint.objects.filter(latlong__bboverlaps=bounding_box, active=True)
         .annotate(
             line_names=ArrayAgg(
-                "service__line_name", filter=Q(service__current=True), distinct=True
+                "service__route__line_name",
+                filter=Q(service__current=True),
+                distinct=True,
             )
         )
         .filter(line_names__isnull=False)
@@ -451,7 +453,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context["stops"] = (
             stops.annotate(
                 line_names=ArrayAgg(
-                    "service__line_name", filter=Q(service__current=True), distinct=True
+                    "service__route__line_name",
+                    filter=Q(service__current=True),
+                    distinct=True,
                 )
             )
             .filter(line_names__isnull=False)
@@ -464,11 +468,12 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             )
         elif context["stops"]:
             context["services"] = sorted(
-                Service.objects.filter(
+                Service.objects.with_line_names()
+                .filter(
                     Exists(self.object.stoppoint_set.filter(service=OuterRef("pk"))),
                     current=True,
                 )
-                .annotate(operators=ArrayAgg("operator__name"))
+                .annotate(operators=ArrayAgg("operator__name", distinct=True))
                 .defer("geometry"),
                 key=Service.get_order,
             )
@@ -591,7 +596,7 @@ class StopPointDetailView(DetailView):
                 nearby.exclude(pk=self.object.pk)
                 .annotate(
                     line_names=ArrayAgg(
-                        "service__line_name",
+                        "service__route__line_name",
                         filter=Q(service__current=True),
                         distinct=True,
                     )
@@ -1201,6 +1206,9 @@ def search(request):
                     context["vehicles"] = vehicles.filter(fleet_code__iexact=query_text)
                 elif not query_text.isalpha():
                     context["vehicles"] = vehicles.filter(reg__iexact=query_text)
+
+            if context["services"]:
+                context["colours"] = get_colours(context["services"])
 
     return render(request, "search.html", context)
 

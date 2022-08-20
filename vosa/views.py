@@ -3,6 +3,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.syndication.views import Feed
 from django.db.models import Max, Exists, OuterRef
 from busstops.models import Service
+from busstops.views import get_colours
 from bustimes.models import Route
 from .models import Licence, Registration, Variation
 
@@ -49,12 +50,14 @@ class RegistrationView(DetailView):
                 operators[0],
             ] + context["breadcrumb"]
 
-        context["services"] = Service.objects.filter(
+        context["services"] = Service.objects.with_line_names().filter(
             Exists(
                 Route.objects.filter(service=OuterRef("id"), registration=self.object)
             ),
             current=True,
         )
+        if context["services"]:
+            context["colours"] = get_colours(context["services"])
 
         return context
 
