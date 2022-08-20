@@ -1,9 +1,13 @@
 import csv
+import logging
 from datetime import datetime
 from django.conf import settings
 from django.core.management import BaseCommand
 from bustimes.download_utils import download_if_changed
 from ...models import Licence, Registration, Variation
+
+
+logger = logging.getLogger(__name__)
 
 
 def parse_date(date_string):
@@ -34,7 +38,7 @@ class Command(BaseCommand):
                 f"Bus_Variation_{region}.csv"
             )
             if modified_1 or modified_2:
-                print(region, last_modified_1, last_modified_2)
+                logger.info(f"{region=} {last_modified_1=} {last_modified_2=}")
                 self.handle_region(region)
 
     def get_existing_variations(self, region):

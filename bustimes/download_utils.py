@@ -5,9 +5,6 @@ import logging
 from django.utils.http import http_date, parse_http_date
 
 
-logger = logging.getLogger(__name__)
-
-
 def write_file(path, response):
     with open(path, "wb") as open_file:
         for chunk in response.iter_content(chunk_size=102400):
@@ -20,6 +17,8 @@ def download(path, url):
 
 
 def download_if_changed(path, url, params=None):
+    logger = logging.getLogger(__name__)
+
     headers = {"User-Agent": "bustimes.org"}
     modified = True
     if path.exists():

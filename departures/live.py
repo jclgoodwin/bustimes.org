@@ -17,7 +17,6 @@ from vehicles.tasks import log_vehicle_journey
 from . import gtfsr
 
 
-logger = logging.getLogger(__name__)
 LOCAL_TIMEZONE = pytz.timezone("Europe/London")
 
 
@@ -135,6 +134,7 @@ class Departures:
             return
         except requests.exceptions.RequestException as e:
             self.set_poorly(60)  # back off for 1 minute
+            logger = logging.getLogger(__name__)
             logger.error(e, exc_info=True)
             return
         if response.ok:

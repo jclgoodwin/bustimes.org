@@ -1,4 +1,5 @@
 import yaml
+import logging
 import requests
 import xml.etree.ElementTree as ET
 from django.contrib.gis.geos import GEOSGeometry
@@ -7,6 +8,9 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
 from busstops.models import StopArea, DataSource, StopPoint, AdminArea
+
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -91,7 +95,7 @@ class Command(BaseCommand):
         )
         if atco_code.startswith(stop.admin_area_id):
             stop.admin_area = self.admin_areas[stop.admin_area_id]
-            print(atco_code, stop.admin_area)
+            logger.info(f"{atco_code} {stop.admin_area}")
 
         for xml_path, key in self.mapping:
             value = element.findtext(xml_path, "")
@@ -223,7 +227,7 @@ class Command(BaseCommand):
                         self.update_and_create()
 
                     atco_code_prefix = atco_code[:3]
-                    print(atco_code_prefix)
+                    logger.info(atco_code_prefix)
 
                     self.existing_stops = (
                         StopPoint.objects.only("atco_code", "modified_at")

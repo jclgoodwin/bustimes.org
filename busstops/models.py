@@ -28,9 +28,6 @@ from bustimes.utils import get_descriptions
 from buses.utils import varnish_ban
 
 
-logger = logging.getLogger(__name__)
-
-
 TIMING_STATUS_CHOICES = (
     ("PPT", "Principal point"),
     ("TIP", "Time info point"),
@@ -968,6 +965,8 @@ class Service(models.Model):
                     detailed=detailed,
                 )
             except (IndexError, UnboundLocalError) as e:
+                logger = logging.getLogger(__name__)
+
                 logger.error(e, exc_info=True)
                 return
 
