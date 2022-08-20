@@ -186,7 +186,9 @@ class Command(ImportLiveVehiclesCommand):
             if item.get("fr"):
                 services = services.filter(has_stop(item["fr"]))
 
-            journey.service = services.filter(line_name__iexact=service).first()
+            journey.service = services.filter(
+                Q(route__line_name__iexact=service) | Q(line_name__iexact=service)
+            ).first()
             if not journey.service:
                 try:
                     journey.service = services.get(
