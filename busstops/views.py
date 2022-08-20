@@ -235,19 +235,18 @@ def stops(request):
         return HttpResponseBadRequest()
 
     results = (
-        StopPoint.objects.filter(latlong__bboverlaps=bounding_box, active=True)
-        .annotate(
-            line_names=ArrayAgg(
-                Coalesce("service__route__line_name", "service__line_name"),
-                distinct=True,
-            )
+        StopPoint.objects.filter(
+            latlong__bboverlaps=bounding_box,
         )
+        .annotate(line_names=ArrayAgg("service__route__line_name", distinct=True))
         .filter(
             Exists(
                 StopTime.objects.filter(
                     trip__route=OuterRef("service__route"), stop=OuterRef("pk")
-                ).only("id")
-            )
+                )
+                .only("id")
+                .order_by()
+            ),
         )
         .select_related("locality")
         .defer("locality__latlong")

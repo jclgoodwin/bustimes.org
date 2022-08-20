@@ -324,7 +324,7 @@ def vehicles_json(request) -> JsonResponse:
             feature_names=StringAgg("features__name", ", "),
             service_line_name=Coalesce(
                 "latest_journey__trip__route__line_name",
-                "latest_journey__service__line_name",
+                "latest_journey__route_name",
             ),
             service_slug=F("latest_journey__service__slug"),
         )
@@ -634,9 +634,7 @@ class VehicleDetailView(DetailView):
 
         journeys = self.object.vehiclejourney_set.select_related("service")
         journeys = journeys.annotate(
-            line_name=Coalesce(
-                "trip__route__line_name", "service__line_name", "route_name"
-            )
+            line_name=Coalesce("trip__route__line_name", "route_name")
         )
 
         context = {
