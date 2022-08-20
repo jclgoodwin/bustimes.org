@@ -472,6 +472,8 @@ def abbreviate(grouping, i, in_a_row, difference):
 
 
 def journey_patterns_match(trip_a, trip_b):
+    if trip_a.route_id != trip_b.route_id:
+        return False
     if trip_a.journey_pattern:
         if trip_a.journey_pattern == trip_b.journey_pattern:
             if trip_a.destination_id == trip_b.destination_id:
