@@ -37,16 +37,6 @@ class LiveDeparturesTest(TestCase):
             locality_centre=False,
             active=True,
         )
-        cls.london_service = Service.objects.create(
-            service_code="tfl_60-8-_-y05",
-            line_name="8",
-            region_id="W",
-            date="2017-01-01",
-        )
-        StopUsage.objects.create(
-            stop=cls.london_stop, service=cls.london_service, order=1
-        )
-
         cls.cardiff_stop = StopPoint.objects.create(
             pk="5710WDB48471", common_name="Wood Street", active=True
         )
@@ -83,20 +73,6 @@ class LiveDeparturesTest(TestCase):
         )
         StopUsage.objects.create(stop=cls.worcester_stop, service=worcester_44, order=0)
 
-        translink_metro_operator = Operator.objects.create(
-            noc="MET", name="Translink Metro", region_id="W"
-        )
-        cls.translink_metro_stop = StopPoint.objects.create(
-            atco_code="700000001415", active=True, locality_centre=False
-        )
-        translink_metro_service = Service.objects.create(
-            service_code="2D_MET", line_name="2D", region_id="W", date="2017-01-01"
-        )
-        translink_metro_service.operator.add(translink_metro_operator)
-        StopUsage.objects.create(
-            stop=cls.translink_metro_stop, service=translink_metro_service, order=0
-        )
-
         calendar = Calendar.objects.create(
             mon=True,
             tue=True,
@@ -123,7 +99,7 @@ class LiveDeparturesTest(TestCase):
             sequence=0,
             arrival="10:54:00",
             departure="10:54:00",
-            stop_id=cls.worcester_stop.pk,
+            stop=cls.worcester_stop,
         )
         StopUsage.objects.create(
             stop_id=cls.worcester_stop.pk, service=worcester_44, order=1
@@ -138,12 +114,22 @@ class LiveDeparturesTest(TestCase):
 
     def test_tfl(self):
         """Test the Transport for London live departures source"""
+
+        service = Service.objects.create(
+            service_code="tfl_60-8-_-y05",
+            line_name="8",
+            region_id="W",
+            date="2017-01-01",
+        )
+        StopUsage.objects.create(stop=self.london_stop, service=service, order=1)
+        route = Route.objects.create(source=self.source, service=service)
+        trip = Trip.objects.create(route=route, start="0", end="1")
+        StopTime.objects.create(trip=trip, stop=self.london_stop)
+
         with vcr.use_cassette("fixtures/vcr/tfl_arrivals.yaml"):
-            row = live.TflDepartures(
-                self.london_stop, [self.london_service]
-            ).get_departures()[0]
+            row = live.TflDepartures(self.london_stop, [service]).get_departures()[0]
         self.assertEqual("Bow Church", row["destination"])
-        self.assertEqual(self.london_service, row["service"])
+        self.assertEqual(service, row["service"])
         self.assertEqual(2016, row["live"].date().year)
         self.assertEqual(7, row["live"].date().month)
         self.assertEqual(26, row["live"].date().day)
@@ -186,8 +172,23 @@ class LiveDeparturesTest(TestCase):
 
     @time_machine.travel(date(2018, 10, 27))
     def test_translink_metro(self):
+        operator = Operator.objects.create(
+            noc="MET", name="Translink Metro", region_id="W"
+        )
+        stop = StopPoint.objects.create(
+            atco_code="700000001415", active=True, locality_centre=False
+        )
+        service = Service.objects.create(
+            service_code="2D_MET", line_name="2D", region_id="W", date="2017-01-01"
+        )
+        service.operator.add(operator)
+        StopUsage.objects.create(stop=stop, service=service, order=0)
+        route = Route.objects.create(source=self.source, service=service)
+        trip = Trip.objects.create(route=route, start="0", end="1")
+        StopTime.objects.create(trip=trip, stop=stop)
+
         with vcr.use_cassette("fixtures/vcr/translink_metro.yaml"):
-            res = self.client.get(self.translink_metro_stop.get_absolute_url())
+            res = self.client.get(stop.get_absolute_url())
         self.assertNotContains(res, "<h3>")
         self.assertContains(
             res, "<tr><td>14B</td><td>City Express</td><td>08:22</td></tr>", html=True
