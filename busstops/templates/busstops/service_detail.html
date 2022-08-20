@@ -17,10 +17,12 @@
 <h1>{{ object }}</h1>
 
 <p>
-    {{ object.get_a_mode }}
-    service
     {% if operators %}
-        operated by
+        {% if object.mode %}
+            {{ object.get_a_mode }} service operated by
+        {% else %}
+            Operated by
+        {% endif %}
         {% for operator in operators %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
     {% endif %}
 </p>
