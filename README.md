@@ -25,9 +25,7 @@ I will try to document some things for my own reference.
 
 ## Installing
 
-### Using Docker
-
-Docker Compose is probably the easiest way to install all the required components at once.
+### Using Docker Compose (recommended)
 
 ```
 docker compose up
@@ -52,17 +50,8 @@ Many of them control settings in [buses/settings.py](buses/settings.py).
 
 ```
 DEBUG=1
-SECRET_KEY=f
-ALLOWED_HOSTS=localhost macbook-pro-16.local
-#PYTHONWARNINGS=all
-PGHOST=localhost
-PGUSER=postgres
-PGPASSWORD=password
-#PGPORT=
-#DB_NAME=
-CELERY_BROKER_URL=redis://localhost:6379
-#AWS_ACCESS_KEY_ID=
-#AWS_SECRET_ACCESS_KEY=
+SECRET_KEY=blablabla
+DATABASE_URL=postgis://user:password@host/database-name
 ```
 
 Then run these commands:
