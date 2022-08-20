@@ -639,10 +639,10 @@ class ServiceManager(models.Manager):
         )
         return self.get_queryset().annotate(document=vector)
 
-    def with_line_names(self):
+    def with_line_names(self, filter=None):
         return self.get_queryset().annotate(
             line_names=ArrayAgg(
-                Coalesce("route__line_name", "line_name"), distinct=True
+                Coalesce("route__line_name", "line_name"), distinct=True, filter=filter
             )
         )
 
@@ -866,8 +866,7 @@ class Service(models.Model):
         return f"{self.id}similar_services{self.date}"
 
     def get_linked_services(self):
-        key = self.get_linked_services_cache_key()
-        services = cache.get(key)
+        services = cache.get(key := self.get_linked_services_cache_key())
         if services is None:
             services = list(
                 Service.objects.filter(
@@ -886,8 +885,7 @@ class Service(models.Model):
         return services
 
     def get_similar_services(self):
-        key = self.get_similar_services_cache_key()
-        services = cache.get(key)
+        services = cache.get(key := self.get_similar_services_cache_key())
         if services is None:
             q = Exists(
                 ServiceLink.objects.filter(

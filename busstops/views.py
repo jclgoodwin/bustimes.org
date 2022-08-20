@@ -16,7 +16,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import Q, Prefetch, F, OuterRef, Count, Min
-from django.db.models.functions import Now
+from django.db.models.functions import Coalesce, Now
 from django.http import HttpResponse, HttpResponseBadRequest, Http404, JsonResponse
 from django.utils import timezone
 from django.views.decorators.cache import cache_control
@@ -238,8 +238,14 @@ def stops(request):
         StopPoint.objects.filter(latlong__bboverlaps=bounding_box, active=True)
         .annotate(
             line_names=ArrayAgg(
-                "service__route__line_name",
-                filter=Q(service__current=True),
+                Coalesce("service__route__line_name", "service__line_name"),
+                filter=Q(
+                    Exists(
+                        StopTime.objects.filter(
+                            trip__route=OuterRef("service__route"), stop=OuterRef("pk")
+                        )
+                    )
+                ),
                 distinct=True,
             )
         )
@@ -453,8 +459,15 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         context["stops"] = (
             stops.annotate(
                 line_names=ArrayAgg(
-                    "service__route__line_name",
-                    filter=Q(service__current=True),
+                    Coalesce("service__route__line_name", "service__line_name"),
+                    filter=Q(
+                        Exists(
+                            StopTime.objects.filter(
+                                trip__route=OuterRef("service__route"),
+                                stop=OuterRef("pk"),
+                            )
+                        )
+                    ),
                     distinct=True,
                 )
             )
@@ -468,13 +481,22 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             )
         elif context["stops"]:
             context["services"] = sorted(
-                Service.objects.with_line_names()
+                Service.objects.with_line_names(
+                    Q(
+                        Exists(
+                            StopTime.objects.filter(
+                                trip__route=OuterRef("route"),
+                                stop__locality=self.object,
+                            )
+                        )
+                    )
+                )
                 .filter(
                     Exists(self.object.stoppoint_set.filter(service=OuterRef("pk"))),
                     current=True,
                 )
                 .annotate(operators=ArrayAgg("operator__name", distinct=True))
-                .defer("geometry"),
+                .defer("geometry", "search_vector"),
                 key=Service.get_order,
             )
             context["modes"] = {
@@ -517,11 +539,18 @@ class StopPointDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         services = (
-            self.object.service_set.with_line_names()
+            self.object.service_set.with_line_names(
+                Q(
+                    Exists(
+                        StopTime.objects.filter(
+                            trip__route=OuterRef("route"), stop=self.object
+                        )
+                    )
+                )
+            )
             .filter(current=True)
             .defer("geometry")
         )
-        # services = services.annotate(direction=F('stopusage__direction'))
         services = services.annotate(
             operators=ArrayAgg("operator__name", distinct=True)
         )
@@ -596,8 +625,15 @@ class StopPointDetailView(DetailView):
                 nearby.exclude(pk=self.object.pk)
                 .annotate(
                     line_names=ArrayAgg(
-                        "service__route__line_name",
-                        filter=Q(service__current=True),
+                        Coalesce("service__route__line_name", "service__line_name"),
+                        filter=Q(
+                            Exists(
+                                StopTime.objects.filter(
+                                    trip__route=OuterRef("service__route"),
+                                    stop=OuterRef("pk"),
+                                )
+                            )
+                        ),
                         distinct=True,
                     )
                 )

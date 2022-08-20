@@ -7,6 +7,7 @@ from django.contrib.gis.geos import Point
 from django.shortcuts import render
 from accounts.models import User
 from .models import (
+    DataSource,
     Region,
     AdminArea,
     District,
@@ -16,6 +17,7 @@ from .models import (
     Operator,
     Service,
 )
+from bustimes.models import Route, Trip, StopTime
 
 
 class ContactTests(TestCase):
@@ -122,6 +124,12 @@ class ViewsTests(TestCase):
             description="Holt - Norwich",
             region=cls.north,
         )
+        source = DataSource.objects.create()
+        route = Route.objects.create(
+            service=cls.service, source=source, line_name="45C"
+        )
+        trip = Trip.objects.create(route=route, start="0", end="1")
+        StopTime.objects.create(trip=trip, stop=cls.stop, arrival="2")
 
         Service.objects.bulk_create(
             [
