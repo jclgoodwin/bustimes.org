@@ -182,12 +182,40 @@ class ToServiceLinkInline(FromServiceLinkInline):
     autocomplete_fields = ["from_service"]
 
 
+class SplitServiceFilter(admin.SimpleListFilter):
+    title = "split"
+    parameter_name = "split"
+
+    def lookups(self, request, model_admin):
+        return ((1, "Yes"),)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            exists = Exists(
+                Route.objects.filter(
+                    Exists(
+                        Route.objects.filter(
+                            ~Q(service=OuterRef("service")),
+                            source=OuterRef("source"),
+                            service_code=OuterRef("service_code"),
+                        )
+                    ),
+                    ~Q(service_code=""),
+                    service=OuterRef("id"),
+                )
+            )
+            queryset = queryset.filter(exists)
+
+        return queryset
+
+
 @admin.register(models.Service)
-class ServiceAdmin(admin.ModelAdmin):
+class ServiceAdmin(GISModelAdmin):
     list_display = (
         "id",
-        "__str__",
-        "service_code",
+        "line_name",
+        "description",
+        "service_codes",
         "mode",
         "region_id",
         "routes",
@@ -197,6 +225,7 @@ class ServiceAdmin(admin.ModelAdmin):
         "line_brand",
     )
     list_filter = (
+        SplitServiceFilter,
         "current",
         "timetable_wrong",
         "mode",
@@ -222,10 +251,20 @@ class ServiceAdmin(admin.ModelAdmin):
 
     routes.admin_order_field = "routes"
 
+    def service_codes(self, obj):
+        return obj.service_codes
+
+    service_codes.admin_order_field = "service_codes"
+
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
             queryset = queryset.annotate(routes=SubqueryCount("route"))
+
+            queryset = queryset.annotate(
+                service_codes=StringAgg("route__service_code", " ")
+            )
+
         return queryset
 
     def get_search_results(self, request, queryset, search_term):
@@ -359,7 +398,7 @@ class ServiceColourAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Place)
-class PlaceAdmin(admin.ModelAdmin):
+class PlaceAdmin(GISModelAdmin):
     list_filter = ("source",)
     search_fields = ("name",)
     raw_id_fields = ("parent",)
