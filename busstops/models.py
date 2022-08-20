@@ -636,10 +636,10 @@ class ServiceManager(models.Manager):
         )
         return self.get_queryset().annotate(document=vector)
 
-    def with_line_names(self, filter=None):
+    def with_line_names(self):
         return self.get_queryset().annotate(
             line_names=ArrayAgg(
-                Coalesce("route__line_name", "line_name"), distinct=True, filter=filter
+                Coalesce("route__line_name", "line_name"), distinct=True
             )
         )
 
