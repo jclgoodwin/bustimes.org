@@ -364,7 +364,7 @@ class LiveDeparturesTest(TestCase):
             html=True,
         )
 
-    @patch("vehicles.tasks.log_vehicle_journey.delay")
+    @patch("departures.live.log_vehicle_journey")
     def test_worcestershire(self, mocked_log_vehicle_journey):
         with time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"):
             with vcr.use_cassette("fixtures/vcr/worcester.yaml"):

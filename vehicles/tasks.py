@@ -1,5 +1,5 @@
 from ciso8601 import parse_datetime
-from celery import shared_task
+from huey.contrib.djhuey import task
 
 from django.db.models import Q
 from django.db import IntegrityError
@@ -8,7 +8,7 @@ from busstops.models import DataSource, Operator
 from .models import Vehicle, VehicleJourney
 
 
-@shared_task
+@task()
 def log_vehicle_journey(service, data, time, destination, source_name, url, trip_id):
     operator_ref = data.get("OperatorRef")
     if operator_ref and operator_ref == "McG":

@@ -660,7 +660,7 @@ def get_departures(stop, services, when):
                     # because the source doesn't support vehicle locations
                     for row in departures:
                         if "data" in row and "VehicleRef" in row["data"]:
-                            log_vehicle_journey.delay(
+                            log_vehicle_journey(
                                 row["service"].pk
                                 if type(row["service"]) is Service
                                 else None,

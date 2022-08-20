@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "simple_history",
+    "huey.contrib.djhuey",
 ]
 
 MIDDLEWARE = [
@@ -124,6 +125,13 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 REDIS_URL = os.environ.get("REDIS_URL")
+
+HUEY = {
+    "immediate": DEBUG or TEST,
+    "connection": {
+        "url": REDIS_URL,
+    },
+}
 
 CHANNEL_LAYERS = {
     "default": {
