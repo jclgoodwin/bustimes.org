@@ -124,13 +124,11 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = None
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 
 REDIS_URL = os.environ.get("REDIS_URL")
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", REDIS_URL)
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [CELERY_BROKER_URL], "expiry": 20},
+        "CONFIG": {"hosts": [REDIS_URL], "expiry": 20},
     }
 }
 
@@ -209,12 +207,11 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
     from sentry_sdk.integrations.redis import RedisIntegration
-    from sentry_sdk.integrations.celery import CeleryIntegration
     from sentry_sdk.integrations.logging import ignore_logger
 
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],
-        integrations=[DjangoIntegration(), RedisIntegration(), CeleryIntegration()],
+        integrations=[DjangoIntegration(), RedisIntegration()],
         ignore_errors=[KeyboardInterrupt],
     )
     ignore_logger("django.security.DisallowedHost")
