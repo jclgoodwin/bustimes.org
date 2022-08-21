@@ -1,10 +1,10 @@
+from django.db import transaction
 from django import forms
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.cache import cache
-from django.db import IntegrityError
 from django.db.models import Q, F, Exists, OuterRef, CharField
 from django.db.models.functions import Cast
 from django.urls import reverse
@@ -244,7 +244,7 @@ class ServiceAdmin(GISModelAdmin):
     readonly_fields = ["search_vector"]
     list_editable = ["colour", "line_brand"]
     list_select_related = ["colour"]
-    actions = ["merge"]
+    actions = ["merge", "unmerge"]
 
     def routes(self, obj):
         return obj.routes
@@ -282,6 +282,7 @@ class ServiceAdmin(GISModelAdmin):
 
         return super().get_search_results(request, queryset, search_term)
 
+    @transaction.atomic
     def merge(self, request, queryset):
         first = queryset[0]
         others = queryset[1:]
@@ -292,32 +293,74 @@ class ServiceAdmin(GISModelAdmin):
             other.route_set.update(service=first)
             other.vehiclejourney_set.update(service=first)
             other.servicecode_set.update(service=first)
-            try:
+            other.routelink_set.update(service=first)
+            models.ServiceCode.objects.create(
+                code=other.slug, service=first, scheme="slug"
+            )
+            if other.service_code and other.service_code != first.service_code:
                 models.ServiceCode.objects.create(
-                    code=other.slug, service=first, scheme="slug"
+                    code=other.service_code, service=first, scheme="ServiceCode"
                 )
-                if other.service_code and other.service_code != first.service_code:
-                    models.ServiceCode.objects.create(
-                        code=other.service_code, service=first, scheme="ServiceCode"
-                    )
-            except IntegrityError:
-                pass
             other.delete()
 
         first.do_stop_usages()
-        first.update_search_vector()
         first.update_geometry()
         first.save()
         cache.delete(first.get_linked_services_cache_key())
         cache.delete(first.get_similar_services_cache_key())
 
-        first.varnish_ban()
+        transaction.on_commit(first.varnish_ban)
         for operator in first.operator.all():
             models.varnish_ban(operator.get_absolute_url())
 
         first.update_description()
+        first.update_search_vector()
 
         self.message_user(request, f"merged {others} into {first}")
+
+    def unmerge(self, request, queryset):
+        for service in queryset:
+            with transaction.atomic():
+                services_by_line_name = {service.line_name: service.id}
+                service_id = service.id  # for use later
+                operators = service.operator.all()
+                routes = service.route_set.all()
+                journeys = service.vehiclejourney_set.all()
+                bool(journeys)  # force evaluation
+                service_codes = service.servicecode_set.all()
+                bool(service_codes)  # force evaluation
+                for route in routes:
+                    if route.line_name not in services_by_line_name:
+                        service.id = None
+                        service.line_name = route.line_name
+                        service.description = route.description
+                        service.search_vector = None
+                        service.slug = ""
+                        service.save()
+                        service.operator.set(operators)
+                        services_by_line_name[route.line_name] = service.id
+                    route.service_id = services_by_line_name[route.line_name]
+                    route.save(update_fields=["service_id"])
+
+                for service in models.Service.objects.filter(
+                    id__in=services_by_line_name.values()
+                ):
+                    service.do_stop_usages()
+                    service.update_geometry()
+                    service.update_search_vector()
+                    if service.id == service_id:
+                        transaction.on_commit(service.varnish_ban)
+                    else:
+                        journeys.filter(
+                            Q(trip__route__service=service)
+                            | Q(route_name__iexact=service.line_name)
+                        ).update(service=service)
+                        service_codes.filter(
+                            code__istartswith=f"{service.line_name}-"
+                        ).update(service=service)
+
+            for operator in operators:
+                models.varnish_ban(operator.get_absolute_url())
 
 
 @admin.register(models.ServiceLink)

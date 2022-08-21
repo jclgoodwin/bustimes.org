@@ -883,16 +883,19 @@ class Service(models.Model):
     def get_similar_services(self):
         services = cache.get(key := self.get_similar_services_cache_key())
         if services is None:
-            q = Exists(
-                ServiceLink.objects.filter(
-                    Q(from_service=self, to_service=OuterRef("pk"))
-                    | Q(from_service=OuterRef("pk"), to_service=self),
+            q = Q(
+                id__in=self.link_from.values("to_service").union(
+                    self.link_to.values("from_service")
                 )
-            ) | Exists(
-                Route.objects.filter(
-                    registration__in=self.route_set.values("registration"),
-                    service=OuterRef("id"),
-                )
+            )
+            q |= Q(
+                id__in=Route.objects.filter(
+                    Q(registration__in=self.route_set.values("registration"))
+                    | Q(
+                        service_code__in=self.route_set.values("service_code"),
+                        source=self.source_id,
+                    ),
+                ).values("service")
             )
             services = (
                 Service.objects.with_line_names()
@@ -901,7 +904,7 @@ class Service(models.Model):
                 .defer("geometry")
             )
             services = sorted(
-                services.annotate(operators=ArrayAgg("operator__name")),
+                services.annotate(operators=ArrayAgg("operator__name", distinct=True)),
                 key=Service.get_order,
             )
             cache.set(key, services, 86400)
