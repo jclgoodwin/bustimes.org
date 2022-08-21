@@ -438,7 +438,7 @@ def vehicles_json(request) -> JsonResponse:
                         journey["service"] = {
                             "url": f"/services/{vehicle.service_slug}",
                             "line_name": vehicle.service_line_name
-                            or item["service"]["line_name"],
+                            or item.get("service") and item["service"]["line_name"],
                         }
                     journeys_to_cache_later[journey_cache_key] = journey
                     item.update(journey)
