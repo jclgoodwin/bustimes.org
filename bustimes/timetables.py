@@ -76,52 +76,35 @@ def get_stop_usages(trips):
 
 
 def compare_trips(rows, trip_ids, a, b):
-    a_time = None
-    b_time = None
-    a_top = None
-    a_bottom = None
-    b_top = None
-    b_bottom = None
-    a_index = trip_ids.index(a.id)
-    b_index = trip_ids.index(b.id)
+    if a.top is b.top:
+        a_time = a.start
+        b_time = b.start
+    elif a.bottom is b.bottom:
+        a_time = a.bottom
+        b_time = b.bottom
+    elif a.top is b.bottom:
+        a_time = a.start
+        b_time = b.end
+    elif a.bottom is b.top:
+        a_time = a.end
+        b_time = b.start
+    else:
+        a_top = rows.index(a.top)
+        a_bottom = rows.index(a.bottom)
+        b_top = rows.index(b.top)
+        b_bottom = rows.index(b.bottom)
 
-    for i, row in enumerate(rows):
-        if row.times[a_index]:
-            if a_top is None:
-                a_top = i
-            a_bottom = i
-        if row.times[b_index]:
-            if b_top is None:
-                b_top = i
-            b_bottom = i
-            if row.times[a_index]:
-                a_time = row.times[a_index].arrival
-                b_time = row.times[b_index].arrival
-                break
-
-    if a_top is None and b_top is None:
-        return 0
-
-    if a_time is None:
-        if a_top >= b_bottom:  # b is above a
+        if a_top > b_bottom:  # b is above a
             a_time = a.start
             b_time = b.end
-        elif b_top >= a_bottom:  # a is above b
+        elif b_top > a_bottom:  # a is above b
             a_time = a.end
             b_time = b.start
         else:
             a_time = a.start
             b_time = b.start
 
-    if a_time > b_time:
-        return 1  # a is later
-    elif a_time < b_time:
-        return -1  # b is later
-    elif a_top >= b_bottom:  # b is above a
-        return 1
-    elif b_top >= a_bottom:  # a is above a
-        return -1
-    return 0
+    return (a_time - b_time).total_seconds()
 
 
 class Timetable:

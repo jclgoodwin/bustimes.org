@@ -894,12 +894,9 @@ class Service(models.Model):
                     service=OuterRef("id"),
                 )
             )
-            if self.line_name:
-                q |= Q(
-                    line_name__iexact=self.line_name, operator__in=self.operator.all()
-                )
             services = (
-                Service.objects.filter(~Q(pk=self.pk), q, current=True)
+                Service.objects.with_line_names()
+                .filter(q, ~Q(pk=self.pk), current=True)
                 .order_by()
                 .defer("geometry")
             )
