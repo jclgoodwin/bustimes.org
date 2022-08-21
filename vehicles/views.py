@@ -322,10 +322,7 @@ def vehicles_json(request) -> JsonResponse:
         Vehicle.objects.select_related("vehicle_type")
         .annotate(
             feature_names=StringAgg("features__name", ", "),
-            service_line_name=Coalesce(
-                "latest_journey__trip__route__line_name",
-                "latest_journey__route_name",
-            ),
+            service_line_name=F("latest_journey__trip__route__line_name"),
             service_slug=F("latest_journey__service__slug"),
         )
         .defer("data", "latest_journey_data")
@@ -437,10 +434,11 @@ def vehicles_json(request) -> JsonResponse:
                     continue  # vehicle was deleted?
                 else:
                     journey = {"vehicle": vehicle.get_json(item["heading"])}
-                    if vehicle.service_line_name:
+                    if vehicle.service_slug:
                         journey["service"] = {
-                            "line_name": vehicle.service_line_name,
                             "url": f"/services/{vehicle.service_slug}",
+                            "line_name": vehicle.service_line_name
+                            or item["service"]["line_name"],
                         }
                     journeys_to_cache_later[journey_cache_key] = journey
                     item.update(journey)

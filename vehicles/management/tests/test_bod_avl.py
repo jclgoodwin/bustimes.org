@@ -273,7 +273,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "datetime": "2020-10-15T07:46:08Z",
                     "destination": "",
                     "service_id": self.service_c.id,
-                    "service": {"line_name": "c", "url": "/services/c"},
+                    "service": {"line_name": "C", "url": "/services/c"},
                 }
             ],
         )

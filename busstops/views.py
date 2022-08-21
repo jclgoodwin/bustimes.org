@@ -240,13 +240,7 @@ def stops(request):
         )
         .annotate(line_names=ArrayAgg("service__route__line_name", distinct=True))
         .filter(
-            Exists(
-                StopTime.objects.filter(
-                    trip__route=OuterRef("service__route"), stop=OuterRef("pk")
-                )
-                .only("id")
-                .order_by()
-            ),
+            Exists("service", filter=Q(service__current=True)),
         )
         .select_related("locality")
         .defer("locality__latlong")

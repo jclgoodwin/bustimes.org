@@ -491,8 +491,7 @@ class StopPoint(models.Model):
                         return b
 
     def get_line_names(self):
-        if self.line_names:
-            return sorted(self.line_names, key=Service.get_line_name_order)
+        return sorted(filter(None, self.line_names), key=Service.get_line_name_order)
 
 
 class OperatorManager(models.Manager):
