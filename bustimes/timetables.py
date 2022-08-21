@@ -1,4 +1,5 @@
 import datetime
+import logging
 from django.utils.timezone import localdate
 from difflib import Differ
 from functools import cmp_to_key, partial, cached_property
@@ -9,6 +10,8 @@ from .formatting import format_timedelta
 from .utils import get_calendars, get_routes, get_descriptions
 from .models import Calendar, Trip, StopTime
 
+
+logger = logging.getLogger(__name__)
 differ = Differ(charjunk=lambda _: True)
 
 
@@ -80,8 +83,8 @@ def compare_trips(rows, trip_ids, a, b):
         a_time = a.start
         b_time = b.start
     elif a.bottom is b.bottom:
-        a_time = a.bottom
-        b_time = b.bottom
+        a_time = a.start
+        b_time = b.end
     elif a.top is b.bottom:
         a_time = a.start
         b_time = b.end
@@ -93,6 +96,15 @@ def compare_trips(rows, trip_ids, a, b):
         a_bottom = rows.index(a.bottom)
         b_top = rows.index(b.top)
         b_bottom = rows.index(b.bottom)
+
+        a_index = trip_ids.index(a.id)
+        b_index = trip_ids.index(b.id)
+
+        for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom)]:
+            a_time = row.times[a_index]
+            b_time = row.times[b_index]
+            if a_time and b_time:
+                return (a_time.arrival - b_time.arrival).total_seconds()
 
         if a_top > b_bottom:  # b is above a
             a_time = a.start
@@ -243,8 +255,8 @@ class Timetable:
                 grouping.trips.sort(
                     key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids))
                 )
-            except TypeError:
-                pass
+            except TypeError as e:
+                logger.error(e)
 
             new_trip_ids = [trip.id for trip in grouping.trips]
             indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
