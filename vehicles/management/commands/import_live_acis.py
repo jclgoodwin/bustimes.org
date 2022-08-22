@@ -103,8 +103,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         for latitute, longitude in self.get_points():
             self.source.datetime = timezone.now()
-            for item in items_from_response(self.get_response(latitute, longitude)):
-                yield item
+            yield from items_from_response(self.get_response(latitute, longitude))
             self.save()
             sleep(1)
 

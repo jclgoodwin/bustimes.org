@@ -231,53 +231,13 @@ class Timetable:
         del trips
 
         for grouping in self.groupings:
-
-            sorter = graphlib.TopologicalSorter()
-
-            stops = {}
-            for trip in grouping.trips:
-                prev = None
-                for stop_time in trip.stoptime_set.all():
-                    key = stop_time.get_key()
-                    if prev:
-                        sorter.add(key, prev)
-                    prev = key
-                    stops[key] = stop_time
-
-            try:
-                grouping.rows = [
-                    Row(Stop(stops[key].stop_id, stops[key].stop_code))
-                    for key in sorter.static_order()
-                ]
-            except graphlib.CycleError:
-                # longest trips first, to minimise duplicate rows
-                grouping.trips.sort(key=lambda t: -len(t.stoptime_set.all()))
-            else:
-                for row in grouping.rows:
-                    row.timing_status = stops[row.stop.stop_code].timing_status
-
-            del sorter
+            grouping.sort_rows()
 
             # build the table
             for trip in grouping.trips:
                 grouping.handle_trip(trip)
 
-            trip_ids = [trip.id for trip in grouping.trips]
-
-            # sort columns properly, now we have the rows
-            try:
-                grouping.trips.sort(
-                    key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids))
-                )
-            except TypeError as e:
-                logger.error(e)
-
-            new_trip_ids = [trip.id for trip in grouping.trips]
-            indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
-
-            for row in grouping.rows:
-                # reassemble in order
-                row.times = [row.times[i] for i in indices]
+            grouping.sort_columns()
 
             if not detailed:
                 # merge split registration trips
@@ -542,6 +502,71 @@ class Grouping:
         return sum(
             2 if row.has_waittimes else 1 for row in self.rows if not row.is_minor()
         )
+
+    def sort_rows(self):
+        sorter = graphlib.TopologicalSorter()
+
+        stop_times = {}
+        for trip in self.trips:
+            prev = None
+            for stop_time in trip.stoptime_set.all():
+                key = stop_time.get_key()
+                if prev:
+                    sorter.add(key, prev)
+                prev = key
+                stop_times[key] = stop_time
+
+        try:
+            self.rows = [
+                Row(Stop(stop_times[key].stop_id, stop_times[key].stop_code))
+                for key in sorter.static_order()
+            ]
+        except graphlib.CycleError:
+            # cycle detected, so we will use difflib later
+            # longest trips first, to minimise duplicate rows
+            self.trips.sort(key=lambda t: -len(t.stoptime_set.all()))
+        else:
+            for row in self.rows:
+                row.timing_status = stop_times[row.stop.stop_code].timing_status
+
+    def sort_columns(self):
+        rows = self.rows
+
+        sorter = graphlib.TopologicalSorter()
+        for a_index, a in enumerate(self.trips):
+
+            a_top = rows.index(a.top)
+            a_bottom = rows.index(a.bottom)
+
+            for b_index, b in enumerate(self.trips):
+
+                if a_index == b_index:
+                    continue
+
+                b_top = rows.index(b.top)
+                b_bottom = rows.index(b.bottom)
+
+                # for row in rows:
+                for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
+                    if row.times[a_index] and row.times[b_index]:
+                        a_time = row.times[a_index].arrival
+                        b_time = row.times[b_index].arrival
+                        if a_time > b_time:  # a after b
+                            sorter.add(a.id, b.id)
+                        elif a_time < b_time:  # a before b
+                            sorter.add(b.id, a.id)
+                        elif b.top is a.bottom:
+                            sorter.add(b.id, a.id)
+                        break
+
+        trip_ids = [trip.id for trip in self.trips]
+        indices = [trip_ids.index(trip_id) for trip_id in sorter.static_order()]
+        if indices:
+            self.trips = [self.trips[i] for i in indices]
+
+            for row in rows:
+                # reassemble in order
+                row.times = [row.times[i] for i in indices]
 
     def handle_trip(self, trip):
         rows = self.rows
