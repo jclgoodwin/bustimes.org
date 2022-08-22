@@ -35,9 +35,11 @@
                     <div class="wrap">{{ revision.message|urlize }}</div>
                 {% endif %}
             </td>
-            <td>
-                <button class="action" data-url="{{ revision.id }}/revert">revert</button>
-            </td>
+            {% if request.user.is_superuser %}
+                <td>
+                    <button class="action" data-url="{{ revision.id }}/revert">revert</button>
+                </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
