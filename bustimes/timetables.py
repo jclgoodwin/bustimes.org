@@ -1,5 +1,6 @@
 import datetime
 import logging
+import graphlib
 from django.utils.timezone import localdate
 from difflib import Differ
 from functools import cmp_to_key, partial, cached_property
@@ -79,44 +80,37 @@ def get_stop_usages(trips):
 
 
 def compare_trips(rows, trip_ids, a, b):
-    if a.top is b.top:
-        a_time = a.start
-        b_time = b.start
-    elif a.bottom is b.bottom:
+    a_time = None
+    b_time = None
+
+    a_top = rows.index(a.top)
+    a_bottom = rows.index(a.bottom)
+    b_top = rows.index(b.top)
+    b_bottom = rows.index(b.bottom)
+
+    a_index = trip_ids.index(a.id)
+    b_index = trip_ids.index(b.id)
+
+    for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
+        if row.times[a_index] and row.times[b_index]:
+            a_time = row.times[a_index].arrival
+            b_time = row.times[b_index].arrival
+            return (a_time - b_time).total_seconds()
+
+    if a_top > b_bottom:  # b is above a
         a_time = a.start
         b_time = b.end
-    elif a.top is b.bottom:
-        a_time = a.start
-        b_time = b.end
-    elif a.bottom is b.top:
+    elif b_top > a_bottom:  # a is above b
         a_time = a.end
         b_time = b.start
     else:
-        a_top = rows.index(a.top)
-        a_bottom = rows.index(a.bottom)
-        b_top = rows.index(b.top)
-        b_bottom = rows.index(b.bottom)
+        a_time = a.start
+        b_time = b.start
 
-        a_index = trip_ids.index(a.id)
-        b_index = trip_ids.index(b.id)
+    if a_time and b_time:
+        return (a_time - b_time).total_seconds()
 
-        for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom)]:
-            a_time = row.times[a_index]
-            b_time = row.times[b_index]
-            if a_time and b_time:
-                return (a_time.arrival - b_time.arrival).total_seconds()
-
-        if a_top > b_bottom:  # b is above a
-            a_time = a.start
-            b_time = b.end
-        elif b_top > a_bottom:  # a is above b
-            a_time = a.end
-            b_time = b.start
-        else:
-            a_time = a.start
-            b_time = b.start
-
-    return (a_time - b_time).total_seconds()
+    return 0
 
 
 class Timetable:
@@ -238,11 +232,31 @@ class Timetable:
 
         for grouping in self.groupings:
 
-            # longest trips first, to minimise duplicate rows
+            sorter = graphlib.TopologicalSorter()
+
+            stops = {}
+            for trip in grouping.trips:
+                prev = None
+                for stop_time in trip.stoptime_set.all():
+                    key = stop_time.get_key()
+                    if prev:
+                        sorter.add(key, prev)
+                    prev = key
+                    stops[key] = stop_time
+
             try:
+                grouping.rows = [
+                    Row(Stop(stops[key].stop_id, stops[key].stop_code))
+                    for key in sorter.static_order()
+                ]
+            except graphlib.CycleError:
+                # longest trips first, to minimise duplicate rows
                 grouping.trips.sort(key=lambda t: -len(t.stoptime_set.all()))
-            except TypeError:
-                pass
+            else:
+                for row in grouping.rows:
+                    row.timing_status = stops[row.stop.stop_code].timing_status
+
+            del sorter
 
             # build the table
             for trip in grouping.trips:
@@ -587,10 +601,9 @@ class Grouping:
             cell.last = True
             trip.bottom = row
 
-        if x:
-            for row in rows:
-                if len(row.times) == x:
-                    row.times.append("")
+        for row in rows:
+            if len(row.times) == x:
+                row.times.append("")
 
     def do_heads_and_feet(self, detailed=False):
         if not self.trips:
@@ -721,9 +734,9 @@ class ColumnFoot:
 
 
 class Row:
-    def __init__(self, stop, times=[]):
+    def __init__(self, stop, times=None):
         self.stop = stop
-        self.times = times
+        self.times = times or []
 
     @cached_property
     def has_waittimes(self):
@@ -744,7 +757,7 @@ class Row:
 
 
 class Stop:
-    def __init__(self, stop_id, stop_code):
+    def __init__(self, stop_id, stop_code=None):
         self.timing_status = None
         self.atco_code = stop_id
         self.stop_code = stop_code or stop_id
