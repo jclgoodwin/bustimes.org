@@ -6,9 +6,9 @@
     </thead>
     <tbody>
 {% for stop in stops %}
-    {% if stop.arrival %}
+    {% if stop.arrival is not None %}
         <tr{% if stop.is_minor %} class="minor"{% endif %} id="stop-time-{{ stop.id }}">
-            <td {% if stop.departure and stop.departure != stop.arrival %} rowspan="2"{% endif %} class="stop-name">
+            <td {% if stop.departure is not None and stop.departure != stop.arrival %} rowspan="2"{% endif %} class="stop-name">
                 {% if stop.stop %}
                     <a href="{{ stop.stop.get_absolute_url }}">{{ stop.stop.get_name_for_timetable }}</a>
                 {% else %}
@@ -23,9 +23,9 @@
             {% endif %}
         </tr>
     {% endif %}
-    {% if stop.departure and stop.departure != stop.arrival %}
-        <tr{% if stop.is_minor %} class="minor"{% endif %}{% if not stop.arrival %} id="stop-time-{{ stop.id }}"{% endif %}>
-            {% if not stop.arrival %}
+    {% if stop.departure is not None and stop.departure != stop.arrival %}
+        <tr{% if stop.is_minor %} class="minor"{% endif %}{% if stop.arrival is None %} id="stop-time-{{ stop.id }}"{% endif %}>
+            {% if stop.arrival is None %}
                 <td class="stop-name">
                     {% if stop.stop %}
                         <a href="{{ stop.stop.get_absolute_url }}">{{ stop.stop.get_name_for_timetable }}</a>
