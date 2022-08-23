@@ -512,7 +512,9 @@ def vehicles_json(request) -> JsonResponse:
 
                 locations.append(item)
 
-    return JsonResponse(locations, safe=False)
+    return JsonResponse(locations, safe=False, headers={
+       "Access-Control-Allow-Origin": "*"
+    })
 
 
 def get_dates(vehicle=None, service=None):
