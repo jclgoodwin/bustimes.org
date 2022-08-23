@@ -826,7 +826,8 @@ class Service(models.Model):
 
             try:
                 routes = self.route_set.filter(
-                    Q(end_date__gte=Now()) | Q(end_date=None)
+                    Q(end_date__gte=Now()) | Q(end_date=None),
+                    code__contains="swe_",
                 ).order_by("start_date")
                 for i, route in enumerate(routes):
 
@@ -892,7 +893,9 @@ class Service(models.Model):
                 id__in=Route.objects.filter(
                     Q(registration__in=self.route_set.values("registration"))
                     | Q(
+                        ~Q(service_code=""),
                         service_code__in=self.route_set.values("service_code"),
+                        registration=None,
                         source=self.source_id,
                     ),
                 ).values("service")

@@ -54,7 +54,10 @@ class Route(models.Model):
 
     class Meta:
         unique_together = ("source", "code")
-        index_together = (("start_date", "end_date"),)
+        index_together = (
+            ("start_date", "end_date"),
+            ("source", "service_code"),
+        )
         indexes = [
             models.Index(Upper("line_name"), name="route_line_name"),
         ]

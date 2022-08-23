@@ -24,7 +24,6 @@ from busstops.models import (
     StopPoint,
     StopUsage,
     ServiceCode,
-    ServiceLink,
 )
 from ...models import (
     Route,
@@ -952,8 +951,6 @@ class Command(BaseCommand):
                 logger.info(f"skipping {txc_service.service_code} ({operators[0].noc})")
                 return
 
-        linked_services = []
-
         description = self.get_description(txc_service)
 
         if description == "Origin - Destination":
@@ -978,7 +975,8 @@ class Command(BaseCommand):
                 self.source.name.startswith("Stagecoach")
                 and self.preferred_source
                 and Service.objects.filter(
-                    line_name__iexact=line.line_name,
+                    Q(line_name__iexact=line.line_name)
+                    | Q(route__line_name__iexact=line.line_name),
                     current=True,
                     route__source=self.preferred_source,
                 ).exists()
@@ -1181,7 +1179,6 @@ class Command(BaseCommand):
                     else:
                         service.operator.set(operators)
             self.service_ids.add(service.id)
-            linked_services.append(service.id)
 
             journey = journeys[0]
 
@@ -1289,16 +1286,6 @@ class Command(BaseCommand):
             self.handle_journeys(
                 route_code, route_defaults, stops, journeys, txc_service
             )
-
-        if len(linked_services) > 1:
-            for i, from_service in enumerate(linked_services):
-                for i, to_service in enumerate(linked_services[i + 1 :]):
-                    kwargs = {
-                        "from_service_id": from_service,
-                        "to_service_id": to_service,
-                    }
-                    if not ServiceLink.objects.filter(**kwargs).exists():
-                        ServiceLink.objects.create(**kwargs, how="also")
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:

@@ -194,13 +194,16 @@ class ImportTransXChangeTest(TestCase):
         self.assertTrue(service.current)
         self.assertEqual(service.operator.first(), self.fecs)
 
+        route.code = route.code.replace("ea_", "swe_")  # to test get_traveline_links
+        route.save(update_fields=["code"])
+
         with patch("busstops.models.Now", return_value="2016-10-10"):
             self.assertEqual(
                 list(service.get_traveline_links()),
                 [
                     (
                         "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST"
-                        "?line=2113B&lineVer=1&net=ea&project=y08&sup=B&command=direct&outputFormat=0",
+                        "?line=2113B&lineVer=1&net=swe&project=y08&sup=B&command=direct&outputFormat=0",
                         "Timetable on the Traveline South West website",
                     )
                 ],
@@ -665,7 +668,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual("2017-01-27", str(timetable.date))
         self.assertEqual(
             str(timetable.groupings[0].rows[0].times),
-            "['', '', 09:48, 10:28, 11:08, 11:48, 12:28, 13:08, 13:48, 14:28, 15:08, '', '']",
+            "['', '', 09:48, 10:28, 11:08, 11:48, 12:28, 13:08, 13:48, 14:28, '', 15:08, '']",
+        )
+        self.assertEqual(
+            str(timetable.groupings[0].rows[9].times),
+            "[08:57, 09:37, 10:17, 10:57, 11:37, 12:17, 12:57, 13:37, 14:17, 14:57, 15:45, '', '']",
         )
 
         timetable.today = date(2016, 2, 21)  # Sunday
