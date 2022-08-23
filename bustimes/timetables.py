@@ -213,6 +213,7 @@ class Timetable:
                 queryset=StopTime.objects.filter(
                     Q(pick_up=True) | Q(set_down=True)
                 ).order_by("trip_id", "id"),
+                to_attr="times",
             ),
             "notes",
         )
@@ -232,6 +233,11 @@ class Timetable:
         del trips
 
         for grouping in self.groupings:
+
+            if not detailed:
+                grouping.trips.sort(key=lambda t: t.start)
+                grouping.merge_split_trips()
+
             grouping.sort_rows()
 
             # build the table
@@ -239,9 +245,6 @@ class Timetable:
                 grouping.handle_trip(trip)
 
             grouping.sort_columns()
-
-            if not detailed:
-                grouping.merge_split_trips()
 
             grouping.do_heads_and_feet(detailed)
 
@@ -491,7 +494,7 @@ class Grouping:
         stop_times = {}
         for trip in self.trips:
             prev = None
-            for stop_time in trip.stoptime_set.all():
+            for stop_time in trip.times:
                 key = stop_time.get_key()
                 if prev:
                     sorter.add(key, prev)
@@ -506,7 +509,7 @@ class Grouping:
         except graphlib.CycleError:
             # cycle detected, so we will use difflib later
             # longest trips first, to minimise duplicate rows
-            self.trips.sort(key=lambda t: -len(t.stoptime_set.all()))
+            self.trips.sort(key=lambda t: -len(t.times))
         else:
             for row in self.rows:
                 row.timing_status = stop_times[row.stop.stop_code].timing_status
@@ -557,32 +560,24 @@ class Grouping:
             row.times = [row.times[i] for i in indices]
 
     def merge_split_trips(self):
-        for i, trip in enumerate(self.trips):
-            trip.x = i
-
-        # merge split registration trips
         zero = datetime.timedelta()
         fifteen = datetime.timedelta(minutes=15)
+
         for i, trip_a in enumerate(self.trips):
+            if not trip_a.times:
+                continue
+            destination = trip_a.times[-1].get_key()
             for j, trip_b in enumerate(self.trips[i + 1 :]):
-                if trip_a.bottom is trip_b.top:  # trip a continues as trip b
+                if trip_b.times and destination == trip_b.times[0].get_key():
                     if zero <= (trip_b.start - trip_a.end) <= fifteen:
-                        for row in self.rows:
-                            if cell_b := row.times[trip_b.x]:
-                                if cell_a := row.times[i]:
-                                    assert row is trip_a.bottom
-                                    assert row is trip_b.top
-                                    cell_a.departure = cell_b.departure
-                                    cell_a.wait_time = trip_a.start - trip_b.end
-                                else:
-                                    row.times[i] = cell_b
-                                row.times[i + j + 1] = ""
-                        trip_a.bottom = trip_b.bottom
-                        trip_b.top = trip_a.top
-                        trip_b.x = trip_a.x
+                        # merge trip_a and trip_b
+                        destination = trip_b.times[-1].get_key()
+                        trip_a.times[-1].departure = trip_b.times[0].departure
+                        trip_a.times += trip_b.times[1:]
                         trip_a.end = trip_b.end
-                    else:
-                        break
+                        trip_b.times = None
+
+        self.trips = [trip for trip in self.trips if trip.times]
 
     def handle_trip(self, trip):
         rows = self.rows
@@ -591,13 +586,13 @@ class Grouping:
         else:
             x = 0
         previous_list = [row.stop.stop_code for row in rows]
-        current_list = [stoptime.get_key() for stoptime in trip.stoptime_set.all()]
+        current_list = [stoptime.get_key() for stoptime in trip.times]
         diff = differ.compare(previous_list, current_list)
 
         y = 0  # how many rows along we are
         first = True
 
-        for stoptime in trip.stoptime_set.all():
+        for stoptime in trip.times:
             key = stoptime.get_key()
 
             if y < len(rows):
