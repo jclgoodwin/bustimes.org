@@ -1,13 +1,15 @@
 from django.test import TestCase
-from bustimes.models import Route
+
 from accounts.models import User
+from bustimes.models import Route
+
 from .models import (
-    Region,
     AdminArea,
     DataSource,
     District,
     Locality,
     Operator,
+    Region,
     Service,
     StopPoint,
 )
@@ -117,13 +119,13 @@ class ServiceTests(TestCase):
             service_code="ea_21-1A-_-y08", source=source
         )
         Route.objects.create(
-            code="ea_21-1A-_-y08-2.xml",
+            code="swe_21-1A-_-y08-2.xml",
             service=cls.service,
             start_date="2012-05-01",
             source=source,
         )
         Route.objects.create(
-            code="ea_21-1A-_-y08-1.xml",
+            code="swe_21-1A-_-y08-1.xml",
             service=cls.service,
             start_date="2012-01-01",
             source=source,
@@ -173,12 +175,12 @@ class ServiceTests(TestCase):
             [
                 (
                     "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=1"
-                    "&net=ea&project=y08&command=direct&outputFormat=0",
+                    "&net=swe&project=y08&command=direct&outputFormat=0",
                     "Timetable on the Traveline South West website",
                 ),
                 (
                     "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?line=2101A&lineVer=2"
-                    "&net=ea&project=y08&command=direct&outputFormat=0",
+                    "&net=swe&project=y08&command=direct&outputFormat=0",
                     "Timetable from 1 May on the Traveline South West website",
                 ),
             ],
