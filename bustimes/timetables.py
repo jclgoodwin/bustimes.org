@@ -241,26 +241,7 @@ class Timetable:
             grouping.sort_columns()
 
             if not detailed:
-                # merge split registration trips
-                previous_trip = None
-                zero = datetime.timedelta()
-                fifteen = datetime.timedelta(minutes=15)
-                for i, trip in enumerate(grouping.trips):
-                    if (
-                        previous_trip
-                        and zero <= (trip.start - previous_trip.end) <= fifteen
-                        and previous_trip.bottom is trip.top
-                    ):
-                        for row in grouping.rows:
-                            if row.times[i]:
-                                if row.times[i - 1]:
-                                    cell = row.times[i - 1]
-                                    cell.departure = row.times[i].departure
-                                    cell.wait_time = trip.start - previous_trip.end
-                                else:
-                                    row.times[i - 1] = row.times[i]
-                                row.times[i] = ""
-                    previous_trip = trip
+                grouping.merge_split_trips()
 
             grouping.do_heads_and_feet(detailed)
 
@@ -574,6 +555,34 @@ class Grouping:
         for row in rows:
             # reassemble in order
             row.times = [row.times[i] for i in indices]
+
+    def merge_split_trips(self):
+        for i, trip in enumerate(self.trips):
+            trip.x = i
+
+        # merge split registration trips
+        zero = datetime.timedelta()
+        fifteen = datetime.timedelta(minutes=15)
+        for i, trip_a in enumerate(self.trips):
+            for j, trip_b in enumerate(self.trips[i + 1 :]):
+                if trip_a.bottom is trip_b.top:  # trip a continues as trip b
+                    if zero <= (trip_b.start - trip_a.end) <= fifteen:
+                        for row in self.rows:
+                            if cell_b := row.times[trip_b.x]:
+                                if cell_a := row.times[i]:
+                                    assert row is trip_a.bottom
+                                    assert row is trip_b.top
+                                    cell_a.departure = cell_b.departure
+                                    cell_a.wait_time = trip_a.start - trip_b.end
+                                else:
+                                    row.times[i] = cell_b
+                                row.times[i + j + 1] = ""
+                        trip_a.bottom = trip_b.bottom
+                        trip_b.top = trip_a.top
+                        trip_b.x = trip_a.x
+                        trip_a.end = trip_b.end
+                    else:
+                        break
 
     def handle_trip(self, trip):
         rows = self.rows
