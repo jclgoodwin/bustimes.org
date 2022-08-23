@@ -1,16 +1,17 @@
 import datetime
-import logging
 import graphlib
-from django.utils.timezone import localdate
+import logging
 from difflib import Differ
-from functools import cmp_to_key, partial, cached_property
-from django.db.models import Prefetch, Q
-from django.contrib.postgres.aggregates import ArrayAgg
-from sql_util.utils import Exists
-from .formatting import format_timedelta
-from .utils import get_calendars, get_routes, get_descriptions
-from .models import Calendar, Trip, StopTime
+from functools import cached_property, cmp_to_key, partial
 
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Prefetch, Q
+from django.utils.timezone import localdate
+from sql_util.utils import Exists
+
+from .formatting import format_timedelta
+from .models import Calendar, StopTime, Trip
+from .utils import get_calendars, get_descriptions, get_routes
 
 logger = logging.getLogger(__name__)
 differ = Differ(charjunk=lambda _: True)
@@ -566,10 +567,8 @@ class Grouping:
                 return
             self.trips = [self.trips[i] for i in indices]
         except graphlib.CycleError:
-            grouping.trips.sort(
-                key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids))
-            )
-            new_trip_ids = [trip.id for trip in grouping.trips]
+            self.trips.sort(key=cmp_to_key(partial(compare_trips, self.rows, trip_ids)))
+            new_trip_ids = [trip.id for trip in self.trips]
             indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
 
         for row in rows:

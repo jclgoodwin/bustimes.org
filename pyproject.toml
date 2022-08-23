@@ -59,6 +59,9 @@ django-rich = "^1.4.0"
 [tool.black]
 target-version = ['py310']
 
+[tool.isort]
+profile = "black"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
