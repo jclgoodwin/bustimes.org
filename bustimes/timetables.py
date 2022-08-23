@@ -560,13 +560,21 @@ class Grouping:
                         break
 
         trip_ids = [trip.id for trip in self.trips]
-        indices = [trip_ids.index(trip_id) for trip_id in sorter.static_order()]
-        if indices:
+        try:
+            indices = [trip_ids.index(trip_id) for trip_id in sorter.static_order()]
+            if not indices:
+                return
             self.trips = [self.trips[i] for i in indices]
+        except graphlib.CycleError:
+            grouping.trips.sort(
+                key=cmp_to_key(partial(compare_trips, grouping.rows, trip_ids))
+            )
+            new_trip_ids = [trip.id for trip in grouping.trips]
+            indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
 
-            for row in rows:
-                # reassemble in order
-                row.times = [row.times[i] for i in indices]
+        for row in rows:
+            # reassemble in order
+            row.times = [row.times[i] for i in indices]
 
     def handle_trip(self, trip):
         rows = self.rows
