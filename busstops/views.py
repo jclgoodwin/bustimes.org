@@ -1,57 +1,54 @@
 # coding=utf-8
 """View definitions."""
 import datetime
+import json
 import sys
 import traceback
-import requests
-import json
 from urllib.parse import urlencode
 
-from ukpostcodeutils import validation
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.gis.geos import Point
+import requests
+from django.conf import settings
 from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db.models import Q, Prefetch, F, OuterRef, Count, Min
-from django.db.models.functions import Now
-from django.http import HttpResponse, HttpResponseBadRequest, Http404, JsonResponse
-from django.utils import timezone
-from django.views.decorators.cache import cache_control
-from django.views.generic.detail import DetailView
-from django.core.paginator import Paginator
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
-from django.conf import settings
-
+from django.core.paginator import Paginator
+from django.db.models import Count, F, Min, OuterRef, Prefetch, Q
+from django.db.models.functions import Now
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views.decorators.cache import cache_control
+from django.views.generic.detail import DetailView
 from sql_util.utils import Exists
+from ukpostcodeutils import validation
 
-from departures import live
-from disruptions.models import Situation, Consequence
-from fares.models import FareTable
 from bustimes.models import StopTime
 from bustimes.utils import get_routes
+from departures import live
+from disruptions.models import Consequence, Situation
+from fares.models import FareTable
 from vehicles.models import Vehicle
-from vehicles.utils import redis_client, liveries_css_version
+from vehicles.utils import liveries_css_version, redis_client
 from vosa.models import Registration
-from .utils import get_bounding_box
-from .models import (
-    Region,
-    StopPoint,
-    AdminArea,
-    Locality,
-    District,
-    Operator,
-    Service,
-    Place,
-    ServiceColour,
-    DataSource,
-)
-from . import forms
 
+from . import forms
+from .models import (
+    AdminArea,
+    DataSource,
+    District,
+    Locality,
+    Operator,
+    Place,
+    Region,
+    Service,
+    ServiceColour,
+    StopPoint,
+)
+from .utils import get_bounding_box
 
 operator_has_current_services = Exists("service", filter=Q(service__current=True))
 operator_has_current_services_or_vehicles = operator_has_current_services | Exists(
@@ -447,9 +444,8 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             has_stops, adjacent=self.object
         ).defer("latlong")
 
-        stops = self.object.stoppoint_set
         context["stops"] = (
-            stops.annotate(
+            self.object.stoppoint_set.annotate(
                 line_names=ArrayAgg(
                     "service__route__line_name",
                     distinct=True,
@@ -460,7 +456,9 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                     StopTime.objects.filter(
                         trip__route=OuterRef("service__route"),
                         stop=OuterRef("pk"),
-                    ).only("id")
+                    )
+                    .only("id")
+                    .order_by()
                 )
             )
             .defer("latlong")
@@ -470,15 +468,19 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             raise Http404(
                 f"Sorry, it looks like no services currently stop at {self.object}"
             )
-        elif context["stops"]:
+
+        if context["stops"]:
+            stops = [stop.pk for stop in context["stops"]]
             context["services"] = sorted(
                 Service.objects.with_line_names()
                 .filter(
                     Exists(
                         StopTime.objects.filter(
                             trip__route=OuterRef("route"),
-                            stop__locality=self.object,
-                        ).only("id")
+                            stop__in=stops,
+                        )
+                        .only("id")
+                        .order_by()
                     ),
                     current=True,
                 )
@@ -531,7 +533,9 @@ class StopPointDetailView(DetailView):
                 Exists(
                     StopTime.objects.filter(
                         trip__route=OuterRef("route"), stop=self.object
-                    ).only("id")
+                    )
+                    .only("id")
+                    .order_by()
                 ),
                 current=True,
             )
@@ -620,7 +624,9 @@ class StopPointDetailView(DetailView):
                         StopTime.objects.filter(
                             trip__route=OuterRef("service__route"),
                             stop=OuterRef("pk"),
-                        ).only("id")
+                        )
+                        .only("id")
+                        .order_by()
                     )
                 )
                 .defer("latlong")
