@@ -2,6 +2,7 @@ import datetime
 import json
 import re
 import struct
+import uuid
 from math import ceil
 from urllib.parse import quote
 
@@ -874,6 +875,7 @@ class VehicleJourney(models.Model):
     direction = models.CharField(max_length=8, blank=True)
     trip = models.ForeignKey("bustimes.Trip", models.SET_NULL, null=True, blank=True)
     block = models.ForeignKey("bustimes.Block", models.SET_NULL, null=True, blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
     def get_absolute_url(self):
         return f"/vehicles/{self.vehicle_id}?date={self.datetime.date()}#journeys/{self.id}"
