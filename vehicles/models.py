@@ -1,23 +1,21 @@
 import re
-import json
-
+import struct
 from math import ceil
 from urllib.parse import quote
-from webcolors import html5_parse_simple_color
 
+from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.core.serializers.json import DjangoJSONEncoder
 from django.core.exceptions import ValidationError
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
-from django.utils.html import escape, format_html
 from django.utils import timezone
-
-from autoslug import AutoSlugField
+from django.utils.html import escape, format_html
 from simple_history.models import HistoricalRecords
+from webcolors import html5_parse_simple_color
 
-from busstops.models import Operator, Service, DataSource
+from busstops.models import DataSource, Operator, Service
+
 from . import rtpi
 
 
@@ -937,10 +935,28 @@ class VehicleLocation:
         early = self.early
         if early is not None:
             early = round(early.total_seconds() / 60)
-        appendage = [self.datetime, self.latlong.coords, self.heading, early]
-        return (
-            f"journey{self.journey.id}",
-            json.dumps(appendage, cls=DjangoJSONEncoder),
+
+        if self.heading is None or type(self.heading) is int:
+            heading = self.heading
+        elif type(self.heading) is str:
+            if self.heading.isdigit():
+                heading = int(self.heading)
+            elif self.heading:
+                heading = round(float(self.heading))
+            else:
+                heading = None
+        else:
+            heading = round(self.heading)
+
+        return f"journey{self.journey.id}", struct.pack(
+            "I 2f ?h ?h",
+            round(self.datetime.timestamp()),
+            self.latlong.x,
+            self.latlong.y,
+            heading is not None,
+            heading or 0,
+            early is not None,
+            early or 0,
         )
 
     def get_redis_json(self):

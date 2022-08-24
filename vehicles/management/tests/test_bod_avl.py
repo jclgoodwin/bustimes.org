@@ -1,22 +1,25 @@
-import time_machine
 from pathlib import Path
+
+import time_machine
 from django.core.cache import cache
-from vcr import use_cassette
 from django.test import TestCase, override_settings
+from vcr import use_cassette
+
 from busstops.models import (
-    Region,
+    AdminArea,
     DataSource,
+    Locality,
     Operator,
     OperatorCode,
-    StopPoint,
-    Locality,
-    AdminArea,
+    Region,
     Service,
+    StopPoint,
 )
-from bustimes.models import Route, Trip, Garage, Calendar, StopTime
-from ...models import VehicleJourney, Vehicle, Livery
-from ...workers import SiriConsumer
+from bustimes.models import Calendar, Garage, Route, StopTime, Trip
+
+from ...models import Livery, Vehicle, VehicleJourney
 from ...utils import flush_redis
+from ...workers import SiriConsumer
 from ..commands import import_bod_avl, import_bod_avl_channels
 
 
@@ -417,13 +420,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             {
                 "locations": [
                     {
-                        "coordinates": [1.296443, 52.62269],
+                        "coordinates": [1.296442985534668, 52.62268829345703],
                         "datetime": "2020-11-28T12:58:25Z",
                         "delta": None,
                         "direction": None,
                     },
                     {
-                        "coordinates": [1.675893, 52.328398],
+                        "coordinates": [1.675892949104309, 52.328399658203125],
                         "datetime": "2020-11-28T15:07:06Z",
                         "delta": None,
                         "direction": 142,

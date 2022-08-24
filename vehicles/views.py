@@ -1,55 +1,55 @@
-import json
 import datetime
+import json
+import struct
 from urllib.parse import urlencode
-from ciso8601 import parse_datetime
-from haversine import haversine, haversine_vector, Unit
 
-from django.db import IntegrityError, OperationalError, transaction, connection
-from django.db.models import F, Case, When, Q, OuterRef, Max
-from django.db.models.functions import Coalesce
-from django.core.cache import cache
-from django.core.paginator import Paginator
+from ciso8601 import parse_datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.aggregates import StringAgg
+from django.core.cache import cache
+from django.core.paginator import Paginator
+from django.db import IntegrityError, OperationalError, connection, transaction
+from django.db.models import Case, F, Max, OuterRef, Q, When
+from django.db.models.functions import Coalesce
 from django.http import (
-    HttpResponse,
-    JsonResponse,
     Http404,
+    HttpResponse,
     HttpResponseBadRequest,
+    JsonResponse,
     QueryDict,
 )
-from django.views.generic.detail import DetailView
-from django.views.decorators.http import require_GET, require_POST
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-
-from sql_util.utils import Exists, SubqueryCount, SubqueryMin, SubqueryMax
+from django.views.decorators.http import require_GET, require_POST
+from django.views.generic.detail import DetailView
+from haversine import Unit, haversine, haversine_vector
+from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
 from buses.utils import varnish_ban
-from busstops.utils import get_bounding_box
 from busstops.models import Operator, Service
+from busstops.utils import get_bounding_box
 from bustimes.models import Garage
+
+from . import filters, forms
+from .management.commands import import_bod_avl
 from .models import (
+    Livery,
     Vehicle,
-    VehicleJourney,
     VehicleEdit,
     VehicleEditFeature,
+    VehicleEditVote,
+    VehicleJourney,
     VehicleRevision,
     VehicleRevisionFeature,
-    Livery,
-    VehicleEditVote,
 )
-from . import filters
-from . import forms
 from .utils import (
-    redis_client,
-    get_vehicle_edit,
     do_revision,
     do_revisions,
+    get_vehicle_edit,
     liveries_css_version,
+    redis_client,
 )
-from .management.commands import import_bod_avl
 
 
 class Vehicles:
@@ -438,7 +438,8 @@ def vehicles_json(request) -> JsonResponse:
                         journey["service"] = {
                             "url": f"/services/{vehicle.service_slug}",
                             "line_name": vehicle.service_line_name
-                            or item.get("service") and item["service"]["line_name"],
+                            or item.get("service")
+                            and item["service"]["line_name"],
                         }
                     journeys_to_cache_later[journey_cache_key] = journey
                     item.update(journey)
@@ -512,9 +513,9 @@ def vehicles_json(request) -> JsonResponse:
 
                 locations.append(item)
 
-    return JsonResponse(locations, safe=False, headers={
-       "Access-Control-Allow-Origin": "*"
-    })
+    return JsonResponse(
+        locations, safe=False, headers={"Access-Control-Allow-Origin": "*"}
+    )
 
 
 def get_dates(vehicle=None, service=None):
@@ -1017,17 +1018,34 @@ def journey_json(request, pk):
     locations = redis_client.lrange(f"journey{pk}", 0, -1)
 
     if locations:
-        locations = (json.loads(location) for location in locations)
-        data["locations"] = [
-            {
-                "coordinates": location[1],
-                "delta": location[3],
-                "direction": location[2],
-                "datetime": parse_datetime(location[0]),
-            }
-            for location in locations
-            if location[1][0] and location[1][1]
-        ]
+        data["locations"] = []
+
+        for location in locations:
+
+            try:
+                location = json.loads(location)
+                if location[1][0] and location[1][1]:
+                    data["locations"].append(
+                        {
+                            "coordinates": location[1],
+                            "delta": location[3],
+                            "direction": location[2],
+                            "datetime": parse_datetime(location[0]),
+                        }
+                    )
+            except UnicodeDecodeError:
+                location = struct.unpack("I 2f ?h ?h", location)
+                data["locations"].append(
+                    {
+                        "coordinates": location[1:3],
+                        "delta": (location[5] or None) and location[6],
+                        "direction": (location[3] or None) and location[4],
+                        "datetime": datetime.datetime.fromtimestamp(
+                            location[0], datetime.timezone.utc
+                        ),
+                    }
+                )
+
         data["locations"].sort(key=lambda location: location["datetime"])
 
     if journey.trip and locations:
