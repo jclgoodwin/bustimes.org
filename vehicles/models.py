@@ -1,9 +1,12 @@
+import datetime
+import json
 import re
 import struct
 from math import ceil
 from urllib.parse import quote
 
 from autoslug import AutoSlugField
+from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
@@ -958,6 +961,27 @@ class VehicleLocation:
             early is not None,
             early or 0,
         )
+
+    @staticmethod
+    def decode_appendage(location):
+        if len(location) == 20:
+            location = struct.unpack("I 2f ?h ?h", location)
+            return {
+                "coordinates": location[1:3],
+                "delta": (location[5] or None) and location[6],
+                "direction": (location[3] or None) and location[4],
+                "datetime": datetime.datetime.fromtimestamp(
+                    location[0], datetime.timezone.utc
+                ),
+            }
+        location = json.loads(location)
+        if location[1][0] and location[1][1]:
+            return {
+                "coordinates": location[1],
+                "delta": location[3],
+                "direction": location[2],
+                "datetime": parse_datetime(location[0]),
+            }
 
     def get_redis_json(self):
         journey = self.journey

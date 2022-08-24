@@ -1,6 +1,5 @@
 import datetime
 import json
-import struct
 from urllib.parse import urlencode
 
 from ciso8601 import parse_datetime
@@ -40,6 +39,7 @@ from .models import (
     VehicleEditFeature,
     VehicleEditVote,
     VehicleJourney,
+    VehicleLocation,
     VehicleRevision,
     VehicleRevisionFeature,
 )
@@ -1018,33 +1018,9 @@ def journey_json(request, pk):
     locations = redis_client.lrange(f"journey{pk}", 0, -1)
 
     if locations:
-        data["locations"] = []
-
-        for location in locations:
-
-            try:
-                location = json.loads(location)
-                if location[1][0] and location[1][1]:
-                    data["locations"].append(
-                        {
-                            "coordinates": location[1],
-                            "delta": location[3],
-                            "direction": location[2],
-                            "datetime": parse_datetime(location[0]),
-                        }
-                    )
-            except UnicodeDecodeError:
-                location = struct.unpack("I 2f ?h ?h", location)
-                data["locations"].append(
-                    {
-                        "coordinates": location[1:3],
-                        "delta": (location[5] or None) and location[6],
-                        "direction": (location[3] or None) and location[4],
-                        "datetime": datetime.datetime.fromtimestamp(
-                            location[0], datetime.timezone.utc
-                        ),
-                    }
-                )
+        data["locations"] = [
+            VehicleLocation.decode_appendage(location) for location in locations
+        ]
 
         data["locations"].sort(key=lambda location: location["datetime"])
 
