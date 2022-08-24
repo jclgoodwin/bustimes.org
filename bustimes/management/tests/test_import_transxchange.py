@@ -1,41 +1,40 @@
 import os
-import zipfile
 import xml.etree.cElementTree as ET
-import time_machine
-
+import zipfile
+from datetime import date
 from functools import partial
 from pathlib import Path
-from unittest.mock import patch
 from tempfile import TemporaryDirectory
-from datetime import date
+from unittest.mock import patch
 
+import time_machine
+from django.contrib.gis.geos import Point
+from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.utils import timezone
-from django.core.management import call_command
-from django.contrib.gis.geos import Point
 
 from busstops.models import (
-    Region,
-    StopPoint,
-    Service,
+    DataSource,
     Operator,
     OperatorCode,
-    DataSource,
+    Region,
+    Service,
     ServiceColour,
+    StopPoint,
 )
 from vosa.models import Licence, Registration
+
 from ...models import (
-    Route,
-    Trip,
-    Calendar,
-    CalendarDate,
     BankHoliday,
     BankHolidayDate,
+    Calendar,
+    CalendarDate,
     Garage,
+    Route,
     RouteLink,
+    Trip,
 )
 from ..commands import import_transxchange
-
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -660,19 +659,21 @@ class ImportTransXChangeTest(TestCase):
         # self.assertEqual('2012-06-30', str(timetable.date))
         self.assertIsNone(timetable.date)
         self.assertEqual(1, len(timetable.groupings))
-        # self.assertEqual(str(timetable.groupings[0].rows[0].times),
-        #                  "['', 09:08, 09:48, 10:28, 11:08, 11:48, 12:28, 13:08, 13:48, 14:28, 15:08, '', '']")
 
         response = self.client.get(service.get_absolute_url() + "?date=2017-01-27")
         timetable = response.context_data["timetable"]
         self.assertEqual("2017-01-27", str(timetable.date))
+
+        lines = timetable.groupings[0].txt().split("\n")
         self.assertEqual(
-            str(timetable.groupings[0].rows[0].times),
-            "['', '', 09:48, 10:28, 11:08, 11:48, 12:28, 13:08, 13:48, 14:28, '', 15:08, '']",
+            lines[0],
+            "Goole Interchange                        "
+            "09:48  10:28  11:08  11:48  12:28  13:08  13:48  14:28         15:08",
         )
         self.assertEqual(
-            str(timetable.groupings[0].rows[9].times),
-            "[08:57, 09:37, 10:17, 10:57, 11:37, 12:17, 12:57, 13:37, 14:17, 14:57, 15:45, '', '']",
+            lines[9],
+            "Goole North Street         "
+            "08:57  09:37  10:17  10:57  11:37  12:17  12:57  13:37  14:17  14:57  15:45       ",
         )
 
         timetable.today = date(2016, 2, 21)  # Sunday
@@ -832,22 +833,17 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(Service.objects.get().get_absolute_url())
         timetable = response.context_data["timetable"]
 
-        self.assertEqual(25, len(timetable.groupings[0].trips))
-        self.assertEqual(27, len(timetable.groupings[1].trips))
+        self.assertEqual(15, len(timetable.groupings[0].trips))
+        self.assertEqual(16, len(timetable.groupings[1].trips))
         self.assertEqual(179, len(timetable.groupings[0].rows))
         self.assertEqual(179, len(timetable.groupings[1].rows))
 
-        # self.assertEqual(
-        #     str(timetable.groupings[0].rows[0].times),
-        #     "['', '', 07:16, '', 08:20, '', 09:38, '', 10:38, '', 11:38, '', 12:38, '', 13:38, '', '', 14:38, '',"
-        #     " 15:38, '', '', '', 16:45, '', 17:45, '']"
-        # )
-
-        # self.assertEqual(
-        #     str(timetable.groupings[1].rows[0].times),
-        #     "['', '', 06:41, '', '', 07:41, '', '', 09:11, '', 10:11, '', 11:11, '', 12:11, '', 13:11, '', 14:26, '',"
-        #     " 15:26, '', 16:26, 17:26, 18:06]"
-        # )
+        lines = timetable.groupings[0].txt().split("\n")
+        self.assertEqual(
+            lines[0],
+            "Church Road (Stop A)                     06:41         07:41         09:11  "
+            "then hourly until  13:11  14:26  15:26  16:26  17:26  18:06",
+        )
 
     @time_machine.travel("2021-06-28")
     def test_different_notes_in_same_row(self):

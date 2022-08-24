@@ -467,6 +467,13 @@ class Grouping:
             return "Inbound"
         return "Outbound"
 
+    def txt(self):
+        width = max(len(str(row.stop)) for row in self.rows)
+        return "\n".join(
+            f'{str(row.stop):<{width}}  {"  ".join(str(time) or "     " for time in row.times)}'
+            for row in self.rows
+        )
+
     def has_minor_stops(self):
         return any(row.is_minor() for row in self.rows)
 
