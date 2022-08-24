@@ -838,6 +838,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(179, len(timetable.groupings[0].rows))
         self.assertEqual(179, len(timetable.groupings[1].rows))
 
+        self.assertNotContains(response, "set down only")
+
         lines = timetable.groupings[0].txt().split("\n")
         self.assertEqual(
             lines[0],

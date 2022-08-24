@@ -590,6 +590,7 @@ class Grouping:
                     # merge trip_a and trip_b
                     destination = trip_b.times[-1].get_key()
                     trip_a.times[-1].departure = trip_b.times[0].departure
+                    trip_a.times[-1].pick_up = trip_b.times[0].pick_up
                     trip_a.times += trip_b.times[1:]
                     trip_a.end = trip_b.end
                     trip_b.times = None
