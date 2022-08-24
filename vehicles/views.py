@@ -495,12 +495,8 @@ def vehicles_json(request) -> JsonResponse:
         for vehicle_id, vehicle in vehicles.items():
             location = redis_client.lindex(f"journey{vehicle.latest_journey_id}", -1)
             if location:
-                location = json.loads(location)
-                item = {
-                    "coordinates": location[1],
-                    "heading": location[2],
-                    "datetime": location[0],
-                }
+                item = VehicleLocation.decode_appendage(location)
+                item["heading"] = item["direction"]
                 if vehicle.service_slug:
                     item["service"] = {
                         "line_name": vehicle.service_line_name,
