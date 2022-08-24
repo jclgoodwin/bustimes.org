@@ -1,8 +1,10 @@
 from datetime import timedelta
+
 from django.contrib.gis.db import models
 from django.db.models.functions import Upper
 from django.urls import reverse
 from django.utils.timezone import localdate
+
 from .fields import SecondsField
 from .formatting import format_timedelta, time_datetime
 
@@ -304,6 +306,7 @@ class Trip(models.Model):
     operator = models.ForeignKey(
         "busstops.Operator", models.SET_NULL, null=True, blank=True
     )
+    next_trip = models.OneToOneField("Trip", models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return format_timedelta(self.start)

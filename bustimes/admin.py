@@ -1,23 +1,24 @@
 from django.contrib import admin
+from django.contrib.gis.admin import GISModelAdmin
+from django.contrib.gis.db.models import CharField
+from django.contrib.postgres.aggregates import StringAgg
 from django.db.models import Exists, OuterRef
 from django.db.models.functions import Cast
-from django.contrib.gis.db.models import CharField
-from django.contrib.gis.admin import GISModelAdmin
-from django.contrib.postgres.aggregates import StringAgg
-from django.utils.safestring import mark_safe
 from django.urls import reverse
+from django.utils.safestring import mark_safe
+
 from .models import (
-    Route,
-    Trip,
-    Calendar,
-    CalendarDate,
-    CalendarBankHoliday,
     BankHoliday,
     BankHolidayDate,
-    Note,
-    StopTime,
+    Calendar,
+    CalendarBankHoliday,
+    CalendarDate,
     Garage,
+    Note,
+    Route,
+    StopTime,
     TimetableDataSource,
+    Trip,
 )
 
 
@@ -32,6 +33,7 @@ class TripInline(admin.TabularInline):
         "garage",
         "vehicle_type",
         "operator",
+        "next_trip",
     ]
     fields = ["start", "end", "destination", "inbound", "calendar"]
 
