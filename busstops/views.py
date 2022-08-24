@@ -452,14 +452,15 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                 )
             )
             .filter(
-                Exists(
-                    StopTime.objects.filter(
-                        trip__route=OuterRef("service__route"),
-                        stop=OuterRef("pk"),
-                    )
-                    .only("id")
-                    .order_by()
-                )
+                # Exists(
+                #     StopTime.objects.filter(
+                #         trip__route=OuterRef("service__route"),
+                #         stop=OuterRef("pk"),
+                #     )
+                #     .only("id")
+                #     .order_by()
+                # ),
+                service__current=True,
             )
             .defer("latlong")
         )
@@ -474,14 +475,15 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
             context["services"] = sorted(
                 Service.objects.with_line_names()
                 .filter(
-                    Exists(
-                        StopTime.objects.filter(
-                            trip__route=OuterRef("route"),
-                            stop__in=stops,
-                        )
-                        .only("id")
-                        .order_by()
-                    ),
+                    # Exists(
+                    #     StopTime.objects.filter(
+                    #         trip__route=OuterRef("route"),
+                    #         stop__in=stops,
+                    #     )
+                    #     .only("id")
+                    #     .order_by()
+                    # ),
+                    stops__in=stops,
                     current=True,
                 )
                 .annotate(operators=ArrayAgg("operator__name", distinct=True))
@@ -530,13 +532,13 @@ class StopPointDetailView(DetailView):
         services = (
             self.object.service_set.with_line_names()
             .filter(
-                Exists(
-                    StopTime.objects.filter(
-                        trip__route=OuterRef("route"), stop=self.object
-                    )
-                    .only("id")
-                    .order_by()
-                ),
+                # Exists(
+                #     StopTime.objects.filter(
+                #         trip__route=OuterRef("route"), stop=self.object
+                #     )
+                #     .only("id")
+                #     .order_by()
+                # ),
                 current=True,
             )
             .defer("geometry", "search_vector")
@@ -620,14 +622,14 @@ class StopPointDetailView(DetailView):
                     )
                 )
                 .filter(
-                    Exists(
-                        StopTime.objects.filter(
-                            trip__route=OuterRef("service__route"),
-                            stop=OuterRef("pk"),
-                        )
-                        .only("id")
-                        .order_by()
-                    )
+                    # Exists(
+                    #     StopTime.objects.filter(
+                    #         trip__route=OuterRef("service__route"),
+                    #         stop=OuterRef("pk"),
+                    #     )
+                    #     .only("id")
+                    #     .order_by()
+                    # )
                 )
                 .defer("latlong")
             )
