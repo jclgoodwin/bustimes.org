@@ -74,10 +74,17 @@ def get_routes(routes, when=None, from_date=None):
 
     # use latest passenger zipfile filename
     if any(".zip" in route.code for route in routes):
-        prefixes = set(route.code.split(".zip")[0] for route in routes)
-        if len(prefixes) > 1:
-            latest_prefix = f"{max(prefixes)}.zip"
-            return [route for route in routes if route.code.startswith(latest_prefix)]
+        if all(
+            route.start_date == routes[0].start_date
+            and route.end_date == routes[0].end_date
+            for route in routes[1:]
+        ):
+            prefixes = set(route.code.split(".zip")[0] for route in routes)
+            if len(prefixes) > 1:
+                latest_prefix = f"{max(prefixes)}.zip"
+                return [
+                    route for route in routes if route.code.startswith(latest_prefix)
+                ]
 
     elif when and len(sources) == 1:
         override_routes = [
