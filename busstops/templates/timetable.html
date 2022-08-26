@@ -92,6 +92,14 @@
                                     </tr>
                                 {% endif %}
                             {% endif %}
+                            <tr>
+                                <th scope="row">Operator</th>
+                                {% for trip in grouping.trips %}
+                                    <td>
+                                        {{ trip.operator_id }}
+                                    </td>
+                                {% endfor %}
+                            </tr>
                         </thead>
                     {% endif %}
                     <tbody>

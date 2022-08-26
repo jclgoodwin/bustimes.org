@@ -4,45 +4,47 @@ Usage:
     ./manage.py import_transxchange EA.zip [EM.zip etc]
 """
 
+import csv
+import datetime
 import logging
 import os
 import re
-import csv
 import zipfile
-import datetime
 from functools import cache
-from titlecase import titlecase
+
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Upper
 from django.utils import timezone
+from titlecase import titlecase
+
 from busstops.models import (
+    DataSource,
     Operator,
     Service,
-    DataSource,
+    ServiceCode,
     StopPoint,
     StopUsage,
-    ServiceCode,
-)
-from ...models import (
-    Route,
-    Trip,
-    StopTime,
-    Note,
-    Garage,
-    VehicleType,
-    Block,
-    RouteLink,
-    Calendar,
-    CalendarDate,
-    CalendarBankHoliday,
-    BankHoliday,
-    TimetableDataSource,
 )
 from transxchange.txc import TransXChange
 from vosa.models import Registration
 
+from ...models import (
+    BankHoliday,
+    Block,
+    Calendar,
+    CalendarBankHoliday,
+    CalendarDate,
+    Garage,
+    Note,
+    Route,
+    RouteLink,
+    StopTime,
+    TimetableDataSource,
+    Trip,
+    VehicleType,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -298,6 +300,7 @@ class Command(BaseCommand):
 
     def get_operators(self, transxchange, service):
         operators = transxchange.operators
+
         if len(operators) > 1:
             journey_operators = {
                 journey.operator
@@ -310,8 +313,12 @@ class Command(BaseCommand):
                 for operator in operators
                 if operator.get("id") in journey_operators
             ]
-        operators = (self.get_operator(operator) for operator in operators)
-        return [operator for operator in operators if operator]
+
+        operators = {
+            element.get("id"): self.get_operator(element) for element in operators
+        }
+
+        return {key: value for key, value in operators.items() if value}
 
     def set_service_descriptions(self, archive):
         """
@@ -654,7 +661,13 @@ class Command(BaseCommand):
         return stop_time
 
     def handle_journeys(
-        self, route_code: str, route_defaults: dict, stops: dict, journeys, txc_service
+        self,
+        route_code: str,
+        route_defaults: dict,
+        stops: dict,
+        journeys,
+        txc_service,
+        operators: dict,
     ):
         default_calendar = None
 
@@ -698,6 +711,7 @@ class Command(BaseCommand):
                 journey_pattern=journey.journey_pattern.id,
                 ticket_machine_code=journey.ticket_machine_journey_code or "",
                 sequence=journey.sequencenumber,
+                operator=operators.get(journey.operator or txc_service.operator),
             )
 
             if journey.block and journey.block.code:
@@ -803,6 +817,7 @@ class Command(BaseCommand):
                     "end",
                     "garage",
                     "vehicle_type",
+                    "operator",
                 ],
             )
             Trip.notes.through.objects.filter(trip__route=route).delete()
@@ -856,7 +871,7 @@ class Command(BaseCommand):
         if self.source.name == "L":
             return False
         if operators and all(
-            operator.noc in self.incomplete_operators for operator in operators
+            operator.noc in self.incomplete_operators for operator in operators.values()
         ):
             if (
                 Service.objects.filter(
@@ -934,7 +949,8 @@ class Command(BaseCommand):
         if self.is_tnds():
             if self.source.name != "L":
                 if operators and all(
-                    operator.noc in self.open_data_operators for operator in operators
+                    operator.noc in self.open_data_operators
+                    for operator in operators.values()
                 ):
                     return
         elif self.source.name.startswith("Arriva") and "tfl_" in filename:
@@ -942,14 +958,14 @@ class Command(BaseCommand):
                 f"skipping {filename} {txc_service.service_code} (Arriva London)"
             )
             return
-        elif self.source.name.startswith("Stagecoach"):
-            if (
-                operators
-                and operators[0].parent != "Stagecoach"
-                and not operators[0].name.startswith("Stagecoach ")
-            ):
-                logger.info(f"skipping {txc_service.service_code} ({operators[0].noc})")
-                return
+        # elif self.source.name.startswith("Stagecoach"):
+        #     for operator in operators.values():
+        #         if (
+        #             operator.parent != "Stagecoach"
+        #             and not operator.name.startswith("Stagecoach ")
+        #         ):
+        #             logger.info(f"skipping {txc_service.service_code} ({operator.noc})")
+        #             return
 
         description = self.get_description(txc_service)
 
@@ -1172,12 +1188,12 @@ class Command(BaseCommand):
 
             if operators:
                 if service_created:
-                    service.operator.set(operators)
+                    service.operator.set(operators.values())
                 else:
                     if service.id in self.service_ids:
-                        service.operator.add(*operators)
+                        service.operator.add(*operators.values())
                     else:
-                        service.operator.set(operators)
+                        service.operator.set(operators.values())
             self.service_ids.add(service.id)
 
             journey = journeys[0]
@@ -1284,7 +1300,7 @@ class Command(BaseCommand):
                 route_code += f"#{line.id}"
 
             self.handle_journeys(
-                route_code, route_defaults, stops, journeys, txc_service
+                route_code, route_defaults, stops, journeys, txc_service, operators
             )
 
     @staticmethod
