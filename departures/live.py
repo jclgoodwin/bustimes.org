@@ -1,21 +1,23 @@
 """Various ways of getting live departures from some web service"""
-import ciso8601
 import datetime
-import requests
-import pytz
 import logging
-import xmltodict
 import xml.etree.cElementTree as ET
+
+import ciso8601
+import pytz
+import requests
+import xmltodict
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
+
 from busstops.models import Service, SIRISource
 from bustimes.models import Route, StopTime
 from bustimes.utils import get_calendars, get_routes
 from vehicles.models import Vehicle
 from vehicles.tasks import log_vehicle_journey
-from . import gtfsr
 
+from . import gtfsr
 
 LOCAL_TIMEZONE = pytz.timezone("Europe/London")
 
@@ -545,6 +547,8 @@ def get_stop_times(
     times = StopTime.objects.filter(pick_up=True, stop_id=stop)
     if time:
         times = times.filter(departure__gte=time)
+    else:
+        times = times.filter(departure__isnull=False)
     routes = []
     for service_routes in services_routes.values():
         routes += get_routes(service_routes, date)
