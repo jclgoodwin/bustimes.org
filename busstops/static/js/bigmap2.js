@@ -39,6 +39,7 @@
 
     if (document.referrer && document.referrer.indexOf('/stops/') > -1) {
         var clickedStopMarker = '/stops/' + document.referrer.split('/stops/')[1];
+        clickedStopMarker = clickedStopMarker.split('?')[0];
     } else {
         try {
             if (localStorage.hideStops) {

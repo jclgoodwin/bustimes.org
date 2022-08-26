@@ -10,19 +10,15 @@
 (function() {
     var timetableWrapper = document.getElementById('timetable');
 
-    // highlight the row of the referring stop
-    function maybeHighlight(tr) {
-        var as = tr.getElementsByTagName('a');
-        if (as.length && as[0].href === document.referrer) {
-            tr.className += ' referrer';
-        }
-    }
-
     function doStuff() {
-        if (document.referrer.indexOf('/stops/') > -1) {
-            var ths = document.getElementsByTagName('th');
-            for (var i = ths.length - 1; i >= 0; i -= 1) {
-                maybeHighlight(ths[i].parentNode);
+        if (document.querySelectorAll && document.referrer.indexOf('/stops/') > -1) {
+            var referrer = document.referrer.split('/stops/')[1];
+            referrer = referrer.split('?')[0];
+            if (referrer) {
+                // highlight the row of the referring stop
+                document.querySelectorAll('tr th a[href="/stops/' + referrer + '"]').forEach(function(a) {
+                    a.parentNode.parentNode.className += ' referrer';
+                });
             }
         }
 
