@@ -569,13 +569,27 @@ class Grouping:
     def merge_split_trips(self):
         zero = datetime.timedelta()
         fifteen = datetime.timedelta(minutes=15)
+        prev_trip = None
 
         for i, trip_a in enumerate(self.trips):
             if not trip_a.times:
                 continue
+
+            # remove duplicates
+            if (
+                prev_trip
+                and prev_trip.start == trip_a.start
+                and prev_trip.end == trip_a.end
+                and prev_trip.destination_id == trip_a.destination_id
+                and len(prev_trip.times) == len(trip_a.times)
+            ):
+                trip_a.times = None
+                continue
+            prev_trip = trip_a
+
+            # don't merge circular trips (start and finish at same stop))
             destination = trip_a.times[-1].get_key()
             if trip_a.times[0].get_key() == destination:
-                # circular (trip starts and finishes at same stop)
                 continue
 
             for j, trip_b in enumerate(self.trips[i + 1 :]):

@@ -1,7 +1,9 @@
 from difflib import Differ
-from django.db.models import Q, OuterRef
+
+from django.db.models import OuterRef, Q
 from sql_util.utils import Exists
-from .models import Calendar, CalendarDate, CalendarBankHoliday, BankHolidayDate
+
+from .models import BankHolidayDate, Calendar, CalendarBankHoliday, CalendarDate
 
 differ = Differ(charjunk=lambda _: True)
 
@@ -71,7 +73,7 @@ def get_routes(routes, when=None, from_date=None):
         ]
 
     # use latest passenger zipfile filename
-    if when and any(".zip" in route.code for route in routes):
+    if any(".zip" in route.code for route in routes):
         prefixes = set(route.code.split(".zip")[0] for route in routes)
         if len(prefixes) > 1:
             latest_prefix = f"{max(prefixes)}.zip"
