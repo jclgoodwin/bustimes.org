@@ -1014,7 +1014,7 @@ class Command(BaseCommand):
                 services = Service.objects.order_by("-current", "id").filter(q)
 
                 if operators:
-                    q = Q(operator__in=operators)
+                    q = Q(operator__in=operators.values())
                     if (
                         description
                         and self.source.name.startswith("Stagecoach")
