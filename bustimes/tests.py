@@ -1,10 +1,13 @@
 import os
-from datetime import date, timedelta, datetime, timezone
-from vcr import use_cassette
+from datetime import date, datetime, timedelta, timezone
+
 from django.test import TestCase
+from vcr import use_cassette
+
 from busstops.models import DataSource, Service
 from vehicles.models import Livery, Vehicle
-from .models import Route, Calendar, CalendarDate, Trip, StopTime, Garage
+
+from .models import Calendar, CalendarDate, Garage, Route, StopTime, Trip
 from .utils import get_routes
 
 
@@ -88,6 +91,11 @@ class BusTimesTest(TestCase):
             "Wednesday 5 February 2020 only", calendar.describe_for_timetable()
         )
         calendar.end_date = None
+        self.assertEqual(
+            "Tuesdays and Wednesdays",
+            calendar.describe_for_timetable(),
+        )
+        calendar.bank_holiday_exclusions = [date(2021, 1, 5)]
         self.assertEqual(
             "Tuesdays and Wednesdays (not bank holidays)",
             calendar.describe_for_timetable(),

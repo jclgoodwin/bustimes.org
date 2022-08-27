@@ -222,7 +222,10 @@ class Calendar(models.Model):
         if self.bank_holiday_inclusions and not self.bank_holiday_exclusions:
             description = f"{description} and bank holidays"
         elif self.bank_holiday_exclusions and not self.bank_holiday_inclusions:
-            description = f"{description} (not bank holidays)"
+            for date in self.bank_holiday_exclusions:
+                if getattr(self, f"{date:%a}".lower()):
+                    description = f"{description} (not bank holidays)"
+                    break
 
         if not today:
             today = localdate()
