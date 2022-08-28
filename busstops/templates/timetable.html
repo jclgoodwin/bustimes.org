@@ -43,7 +43,7 @@
             {% endif %}
             <div class="timetable-wrapper{% if grouping.width > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
-                    {% if grouping.heads or timetable.detailed %}
+                    {% if grouping.heads or timetable.detailed or timetable.has_operators %}
                         <thead>
                             {% if grouping.heads %}<tr>
                                 <th></th>
@@ -114,7 +114,7 @@
                                 </th>
                             {% for cell in row.times %}
                                 {% if cell.colspan %}
-                                    <td{% if grouping.heads or grouping.column_feet %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>
+                                    <td{% if grouping.heads or grouping.column_feet or timetable.has_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>
                                 {% else %}
                                     <td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% endif %}{% endif %}</td>
                                 {% endif %}

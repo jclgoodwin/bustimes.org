@@ -290,6 +290,16 @@ class Timetable:
         return self.any_trip_has("vehicle_type_id")
 
     @cached_property
+    def has_operators(self) -> bool:
+        prev = None
+        for grouping in self.groupings:
+            for trip in grouping.trips:
+                if prev and prev.operator_id != trip.operator_id:
+                    return True
+                prev = trip
+        return False
+
+    @cached_property
     def has_ticket_machine_codes(self) -> bool:
         return self.any_trip_has("ticket_machine_code")
 
@@ -595,6 +605,8 @@ class Grouping:
             for j, trip_b in enumerate(self.trips[i + 1 :]):
                 if (
                     trip_b.times
+                    and trip_a.route.line_name == trip_b.route.line_name
+                    and trip_a.operator_id == trip_b.operator_id
                     and destination == trip_b.times[0].get_key()
                     and destination != trip_b.times[-1].get_key()  # not circular
                     and zero
