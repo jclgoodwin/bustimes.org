@@ -1,32 +1,33 @@
-import zipfile
-import requests
 import json
-from pathlib import Path
+import zipfile
 from datetime import datetime, timedelta
-from ciso8601 import parse_datetime
+from pathlib import Path
 
+import requests
+from ciso8601 import parse_datetime
 from django.conf import settings
-from django.db.models import Prefetch, Exists, OuterRef
-from django.utils import timezone
-from django.utils.safestring import mark_safe
-from django.shortcuts import get_object_or_404, render
-from django.views.decorators.http import require_GET
-from django.views.generic.detail import DetailView
+from django.db.models import Exists, OuterRef, Prefetch
 from django.http import (
     FileResponse,
     Http404,
     HttpResponse,
-    JsonResponse,
     HttpResponseBadRequest,
+    JsonResponse,
 )
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+from django.utils.safestring import mark_safe
+from django.views.decorators.http import require_GET
+from django.views.generic.detail import DetailView
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
-from busstops.models import Service, DataSource, StopPoint, StopUsage, Operator
-from departures import live, gtfsr
+from busstops.models import DataSource, Operator, Service, StopPoint, StopUsage
+from departures import gtfsr, live
 from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
-from .models import Route, Trip, Block
+
+from .models import Block, Route, StopTime, Trip
 
 
 class ServiceDebugView(DetailView):
@@ -240,7 +241,9 @@ def trip_json(request, id):
 class TripDetailView(DetailView):
     model = Trip
     queryset = model.objects.select_related("route__service").prefetch_related(
-        "stoptime_set__stop__locality"
+        Prefetch(
+            "stoptime_set", queryset=StopTime.objects.select_related("stop__locality")
+        )
     )
 
     def get_context_data(self, **kwargs):

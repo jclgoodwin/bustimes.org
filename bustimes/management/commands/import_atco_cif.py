@@ -1,10 +1,13 @@
 import os
 import zipfile
-from datetime import date, timedelta, datetime, timezone
-from django.core.management.base import BaseCommand
+from datetime import date, datetime, timedelta, timezone
+
 from django.contrib.gis.geos import Point
-from busstops.models import Service, DataSource, StopPoint
-from ...models import Route, Calendar, CalendarDate, Trip, StopTime, Note
+from django.core.management.base import BaseCommand
+
+from busstops.models import DataSource, Service, StopPoint
+
+from ...models import Calendar, CalendarDate, Note, Route, StopTime, Trip
 
 
 def parse_date(string):
@@ -85,34 +88,34 @@ class Command(BaseCommand):
 
         encoding = "cp1252"
 
-        # stops
-        stops = {}
+        # first, create/update StopPoints
+        self.stops = {}
         for line in open_file:
             identity = line[:2]
             if identity == b"QL" or identity == b"QB":
                 stop_code = line[3:15].decode().strip()
                 if identity == b"QL":
                     name = line[15:63]
-                    if name and stop_code not in stops:
+                    if name and stop_code not in self.stops:
                         name = name.decode(encoding).strip()
-                        stops[stop_code] = StopPoint(
+                        self.stops[stop_code] = StopPoint(
                             atco_code=stop_code, common_name=name, active=True
                         )
-                elif stop_code in stops:
+                elif stop_code in self.stops:
                     easting = line[15:23].strip()
                     northing = line[23:31].strip()
                     if easting:
-                        stops[stop_code].latlong = Point(
+                        self.stops[stop_code].latlong = Point(
                             int(easting), int(northing), srid=29902  # Irish Grid
                         )
-        existing_stops = StopPoint.objects.in_bulk(stops.keys())
+        existing_stops = StopPoint.objects.in_bulk(self.stops.keys())
         stops_to_update = []
         new_stops = []
-        for stop_code in stops:
+        for stop_code in self.stops:
             if stop_code in existing_stops:
-                stops_to_update.append(stops[stop_code])
+                stops_to_update.append(self.stops[stop_code])
             else:
-                new_stops.append(stops[stop_code])
+                new_stops.append(self.stops[stop_code])
         StopPoint.objects.bulk_update(
             stops_to_update, fields=["common_name", "latlong"]
         )
@@ -158,158 +161,156 @@ class Command(BaseCommand):
     def handle_line(self, line, previous_line, encoding):
         identity = line[:2]
 
-        if identity == b"QD":
-            operator = line[3:7].decode().strip()
-            line_name = line[7:11].decode().strip()
-            key = f"{line_name}_{operator}".upper()
-            direction = line[11:12]
-            description = line[12:].decode().strip()
-            if key in self.routes:
-                self.route = self.routes[key]
-                if direction == b"O":
-                    self.route.service.description = description
-                    self.route.outbound_description = description
+        match identity:
+            case b"QD":
+                operator = line[3:7].decode().strip()
+                line_name = line[7:11].decode().strip()
+                key = f"{line_name}_{operator}".upper()
+                direction = line[11:12]
+                description = line[12:].decode().strip()
+                if key in self.routes:
+                    self.route = self.routes[key]
+                    if direction == b"O":
+                        self.route.service.description = description
+                        self.route.description = description
+                        self.route.outbound_description = description
+                    else:
+                        if description != self.route.inbound_description:
+                            self.route.inbound_description = description
+                            self.route.save()
                 else:
-                    self.route.inbound_description = description
-            else:
-                defaults = {
-                    "line_name": line_name,
-                    "date": self.source.datetime.date(),
-                    "current": True,
-                    "source": self.source,
-                    "region_id": "NI",
-                }
-                route_defaults = {
-                    "line_name": line_name,
-                    "description": "description",
-                }
-                if direction == b"O":
-                    defaults["description"] = description
-                    route_defaults["description"] = description
-                    route_defaults["outbound_description"] = description
-                else:
-                    route_defaults["inbound_description"] = description
-                service, _ = Service.objects.update_or_create(
-                    defaults, service_code=key
-                )
-                route_defaults["service"] = service
-                if operator:
-                    service.operator.add(operator)
-                self.route, created = Route.objects.update_or_create(
-                    route_defaults,
-                    code=key,
-                    source=self.source,
-                )
-                if not created:
-                    self.route.trip_set.all().delete()
-                self.routes[key] = self.route
-
-        elif identity == b"QS":
-            self.sequence = 0
-            self.trip_header = line
-            self.exceptions = []
-
-        elif identity == b"QE":
-            self.exceptions.append(line)
-
-        elif identity == b"QO":  # origin stop
-            if self.route:
-                calendar = self.get_calendar()
-                self.trip = Trip(
-                    route=self.route,
-                    calendar=calendar,
-                    inbound=self.trip_header[64:65] == b"I",
-                )
-
-                departure = parse_time(line[14:18])
-                self.stop_times.append(
-                    StopTime(
-                        arrival=departure,
-                        departure=departure,
-                        stop_id=line[2:14].decode().strip(),
-                        sequence=0,
-                        trip=self.trip,
+                    defaults = {
+                        "line_name": line_name,
+                        "date": self.source.datetime.date(),
+                        "current": True,
+                        "source": self.source,
+                        "region_id": "NI",
+                    }
+                    route_defaults = {
+                        "line_name": line_name,
+                        "description": "description",
+                    }
+                    if direction == b"O":
+                        defaults["description"] = description
+                        route_defaults["description"] = description
+                        route_defaults["outbound_description"] = description
+                    else:
+                        route_defaults["inbound_description"] = description
+                    service, _ = Service.objects.update_or_create(
+                        defaults, service_code=key
                     )
-                )
-                self.trip.start = departure
+                    route_defaults["service"] = service
+                    if operator:
+                        if operator == "BE":
+                            operator = "ie-01"
+                        service.operator.add(operator)
+                    self.route, created = Route.objects.update_or_create(
+                        route_defaults,
+                        code=key,
+                        source=self.source,
+                    )
+                    if not created:
+                        self.route.trip_set.all().delete()
+                    self.routes[key] = self.route
 
-        elif identity == b"QI":  # intermediate stop
-            if self.trip:
+            case b"QS":
+                self.sequence = 0
+                self.trip_header = line
+                self.exceptions = []
+
+            case b"QE":
+                self.exceptions.append(line)
+
+            case b"QO" | b"QI" | b"QT":  # stop time
+
+                stop_time = StopTime(sequence=self.sequence, trip=self.trip)
                 self.sequence += 1
-                timing_status = line[26:28]
-                if timing_status == b"T1":
-                    timing_status = "PTP"
-                elif timing_status == b"T0":
-                    timing_status = "OTH"
+
+                stop_id = line[2:14].decode().strip()
+                if stop_id in self.stops:
+                    stop_time.stop_id = stop_id
+                elif StopPoint.objects.filter(atco_code=stop_id).exists():
+                    stop_time.stop_id = stop_id
+                    self.stops[stop_id] = True
                 else:
-                    print(line)
-                    return
-                self.stop_times.append(
-                    StopTime(
-                        arrival=parse_time(line[14:18]),
-                        departure=parse_time(line[18:22]),
-                        stop_id=line[2:14].decode().strip(),
-                        sequence=self.sequence,
-                        trip=self.trip,
-                        timing_status=timing_status,
+                    stop_time.stop_code = stop_id
+                self.stop_times.append(stop_time)
+
+                if identity == b"QO":  # origin stop
+
+                    departure = parse_time(line[14:18])
+
+                    calendar = self.get_calendar()
+                    self.trip = Trip(
+                        start=departure,
+                        route=self.route,
+                        calendar=calendar,
+                        inbound=self.trip_header[64:65] == b"I",
                     )
-                )
+                    stop_time.trip = self.trip
+                    stop_time.departure = departure
+                    stop_time.sequence = 0
 
-        elif identity == b"QT":  # destination stop
-            if self.trip:
-                arrival = parse_time(line[14:18])
-                self.sequence += 1
-                stop_code = line[2:14].decode().strip()
-                self.stop_times.append(
-                    StopTime(
-                        arrival=arrival,
-                        departure=arrival,
-                        stop_id=stop_code,
-                        sequence=self.sequence,
-                        trip=self.trip,
-                    )
-                )
-                self.trip.destination_id = stop_code
-                self.trip.end = arrival
+                elif identity == b"QI":  # intermediate stop
 
-                self.trip.save()
+                    timing_status = line[26:28]
+                    if timing_status == b"T1":
+                        timing_status = "PTP"
+                    elif timing_status == b"T0":
+                        timing_status = "OTH"
+                    else:
+                        print(line)
+                        return
 
-                self.trip.notes.set(self.notes)
-                self.notes = []
+                    stop_time.arrival = parse_time(line[14:18])
+                    stop_time.departure = parse_time(line[18:22])
+                    stop_time.timing_status = timing_status
 
-                for stop_time in self.stop_times:
-                    stop_time.trip = stop_time.trip  # set trip_id
-                StopTime.objects.bulk_create(self.stop_times)
-                self.stop_times = []
+                elif identity == b"QT":  # destination stop
+                    stop_time.arrival = parse_time(line[14:18])
 
-        elif identity == b"QN":  # note
-            previous_identity = previous_line[:2]
-            note = line[7:].decode(encoding).strip()
-            if (
-                previous_identity == b"QO"
-                or previous_identity == b"QI"
-                or previous_identity == b"QT"
-            ):
-                note = note.lower()
-                if note == "pick up only" or note == "pick up  only":
-                    if previous_identity != b"QT":
-                        self.stop_times[-1].set_down = False
-                elif (
-                    note == "set down only"
-                    or note == ".set down only"
-                    or note == "drop off only"
+                    self.trip.destination_id = stop_time.stop_id
+                    self.trip.end = stop_time.arrival
+
+                    self.trip.save()
+
+                    if self.notes:
+                        self.trip.notes.set(self.notes)
+                        self.notes = []
+
+                    for stop_time in self.stop_times:
+                        stop_time.trip = stop_time.trip  # set trip_id
+                    StopTime.objects.bulk_create(self.stop_times)
+                    self.stop_times = []
+
+            case b"QN":  # note
+                previous_identity = previous_line[:2]
+                note = line[7:].decode(encoding).strip()
+                if (
+                    previous_identity == b"QO"
+                    or previous_identity == b"QI"
+                    or previous_identity == b"QT"
                 ):
-                    if previous_identity != b"QT":
-                        self.stop_times[-1].pick_up = False
+                    note = note.lower()
+                    if note == "pick up only" or note == "pick up  only":
+                        if previous_identity != b"QT":
+                            self.stop_times[-1].set_down = False
+                    elif (
+                        note == "set down only"
+                        or note == ".set down only"
+                        or note == "drop off only"
+                    ):
+                        if previous_identity != b"QT":
+                            self.stop_times[-1].pick_up = False
+                    else:
+                        print(note)
+                elif (
+                    previous_identity == b"QS"
+                    or previous_identity == b"QE"
+                    or previous_identity == b"QN"
+                ):
+                    code = line[2:7].decode(encoding).strip()
+                    note, _ = Note.objects.get_or_create(code=code, text=note)
+                    self.notes.append(note)
                 else:
-                    print(note)
-            elif (
-                previous_identity == b"QS"
-                or previous_identity == b"QE"
-                or previous_identity == b"QN"
-            ):
-                code = line[2:7].decode(encoding).strip()
-                note, _ = Note.objects.get_or_create(code=code, text=note)
-                self.notes.append(note)
-            else:
-                print(previous_identity[:2], line)
+                    print(previous_identity[:2], line)
