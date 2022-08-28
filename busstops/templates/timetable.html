@@ -58,6 +58,16 @@
                                 {% endfor %}
                             </tr>
                             {% endif %}
+                            {% if timetable.has_operators %}
+                                <tr>
+                                    <th scope="row">Operator</th>
+                                    {% for trip in grouping.trips %}
+                                        <td>
+                                            {{ trip.operator_id }}
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
                             {% if timetable.detailed %}
                                 {% if timetable.has_blocks %}
                                     <tr class="link">
@@ -92,14 +102,6 @@
                                     </tr>
                                 {% endif %}
                             {% endif %}
-                            <tr>
-                                <th scope="row">Operator</th>
-                                {% for trip in grouping.trips %}
-                                    <td>
-                                        {{ trip.operator_id }}
-                                    </td>
-                                {% endfor %}
-                            </tr>
                         </thead>
                     {% endif %}
                     <tbody>
