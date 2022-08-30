@@ -3,9 +3,9 @@
 
 import os
 import sys
-import dj_database_url
 from pathlib import Path
 
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
@@ -90,6 +90,8 @@ DATABASES["default"]["options"] = {
     "application_name": os.environ.get("APPLICATION_NAME") or " ".join(sys.argv)[-63:],
     "connect_timeout": 9,
 }
+
+DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 DATABASES["default"]["TEST"] = {"SERIALIZE": False}
 DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 if DEBUG and "runserver" in sys.argv:
@@ -214,8 +216,8 @@ if TEST:
 elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.environ:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.redis import RedisIntegration
     from sentry_sdk.integrations.logging import ignore_logger
+    from sentry_sdk.integrations.redis import RedisIntegration
 
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],

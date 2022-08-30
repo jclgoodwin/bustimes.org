@@ -1,11 +1,12 @@
-import requests
-
 import json
-from django.http import Http404
-from django.shortcuts import render, get_object_or_404
-from django.utils.safestring import mark_safe
 
-from busstops.models import Operator, DataSource, OperatorCode
+import requests
+from django.http import Http404
+from django.shortcuts import get_object_or_404, render
+from django.utils.safestring import mark_safe
+from django.views.decorators.cache import cache_page
+
+from busstops.models import DataSource, Operator, OperatorCode
 
 
 class Tickets:
@@ -35,6 +36,7 @@ def get_response(source, code):
         raise Http404
 
 
+@cache_page(3600)
 def operator_tickets(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
     source = get_source()
@@ -53,6 +55,7 @@ def operator_tickets(request, slug):
     return render(request, "operator_tickets.html", context)
 
 
+@cache_page(3600)
 def operator_ticket(request, slug, id):
     operator = get_object_or_404(Operator, slug=slug)
     source = get_source()

@@ -1,13 +1,17 @@
 from django.conf import settings
+from django.contrib.sitemaps.views import index, sitemap
 from django.urls import include, path, re_path
+from django.views.decorators.cache import cache_page
 from django.views.generic.base import TemplateView
-from django.contrib.sitemaps.views import sitemap, index
+
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
+from fares import mytrip
+from fares import views as fares_views
+from fares.urls import urlpatterns as fares_urls
 from vehicles.urls import urlpatterns as vehicles_urls
 from vosa.urls import urlpatterns as vosa_urls
-from fares.urls import urlpatterns as fares_urls
-from fares import views as fares_views, mytrip
+
 from . import views
 
 sitemaps = {
@@ -54,7 +58,7 @@ urlpatterns = [
     ),
     path(
         "stops/<pk>",
-        views.StopPointDetailView.as_view(),
+        cache_page(60)(views.StopPointDetailView.as_view()),
         name="stoppoint_detail",
     ),
     re_path(r"^operators/(?P<pk>[A-Z]+)$", views.OperatorDetailView.as_view()),
@@ -66,17 +70,19 @@ urlpatterns = [
     path("operators/<slug>/tickets", mytrip.operator_tickets),
     path("operators/<slug>/tickets/<id>", mytrip.operator_ticket),
     path("services/<int:service_id>.json", views.service_map_data),
-    path("services/<int:service_id>/timetable", views.service_timetable),
+    path(
+        "services/<int:service_id>/timetable", cache_page(1800)(views.service_timetable)
+    ),
     path(
         "services/<slug>",
-        views.ServiceDetailView.as_view(),
+        cache_page(1800)(views.ServiceDetailView.as_view()),
         name="service_detail",
     ),
     path("services/<slug>/fares", fares_views.service_fares),
-    path("sitemap.xml", index, {"sitemaps": sitemaps}),
+    path("sitemap.xml", cache_page(3600)(index), {"sitemaps": sitemaps}),
     path(
         "sitemap-<section>.xml",
-        sitemap,
+        cache_page(3600)(sitemap),
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),

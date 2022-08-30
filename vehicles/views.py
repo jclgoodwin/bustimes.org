@@ -20,12 +20,12 @@ from django.http import (
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
-from buses.utils import varnish_ban
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage
@@ -105,11 +105,13 @@ def vehicles(request):
 
 
 @require_GET
+@cache_page(3600)
 def map(request):
     return render(request, "map.html", {"liveries_css_version": liveries_css_version()})
 
 
 @require_GET
+@cache_page(3600)
 def liveries_css(request, version=None):
     styles = []
     liveries = Livery.objects.filter(published=True).order_by("id")
@@ -204,7 +206,6 @@ def operator_vehicles(request, slug=None, parent=None):
                         revision.datetime = now
                     VehicleRevision.objects.bulk_create(revisions)
                     VehicleRevisionFeature.objects.bulk_create(features)
-                    varnish_ban("/vehicles/history")
                     context["revisions"] = len(revisions)
 
                 if data:
@@ -296,6 +297,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
 
 @require_GET
+@cache_page(3600)
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)
 
@@ -312,6 +314,7 @@ def operator_map(request, slug):
 
 
 @require_GET
+@cache_page(30)
 def vehicles_json(request) -> JsonResponse:
     try:
         bounds = get_bounding_box(request)
@@ -757,7 +760,6 @@ def edit_vehicle(request, vehicle_id):
                     if features:
                         VehicleRevisionFeature.objects.bulk_create(features)
                     context["revision"] = revision
-                    varnish_ban("/vehicles/history")
 
                 if data:
                     edit, features, changed = get_vehicle_edit(
