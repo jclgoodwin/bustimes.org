@@ -1,24 +1,26 @@
-import math
-import requests
-import logging
-import redis
 import json
-from ciso8601 import parse_datetime
+import logging
+import math
 from datetime import timedelta
 from time import sleep
-from django.core.management.base import BaseCommand
-from django.core.serializers.json import DjangoJSONEncoder
+
+import redis
+import requests
+from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
 from django.core.cache import cache
+from django.core.management.base import BaseCommand
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
 from django.utils import timezone
-from bustimes.models import Route
-from busstops.models import DataSource
-from ..utils import redis_client
-from ..models import Vehicle, VehicleJourney
 
+from busstops.models import DataSource
+from bustimes.models import Route
+
+from ..models import Vehicle, VehicleJourney
+from ..utils import redis_client
 
 logger = logging.getLogger(__name__)
 fifteen_minutes = timedelta(minutes=15)
@@ -244,7 +246,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if location.heading is None:
                     location.heading = latest["heading"]
         else:
-            existing_id = journey.id
             journey.source = self.source
             if not journey.datetime:
                 journey.datetime = location.datetime
@@ -257,11 +258,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     )
                 except VehicleJourney.DoesNotExist:
                     return
-            else:
-                if not existing_id:
-                    # just in case the id has been reused
-                    # (after a database backup restore)
-                    redis_client.delete(f"journey{journey.id}")
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
@@ -302,20 +298,31 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         pipeline = redis_client.pipeline(transaction=False)
 
+        geoadd = []
+        sadd = {}
+
         for location, vehicle in self.to_save:
             if not location.latlong:
                 continue
-            pipeline.geoadd(
-                "vehicle_location_locations",
-                [location.latlong.x, location.latlong.y, vehicle.id],
-            )
+
+            geoadd += [location.latlong.x, location.latlong.y, vehicle.id]
+
             if location.journey.service_id:
-                pipeline.sadd(
-                    f"service{location.journey.service_id}vehicles", vehicle.id
-                )
+                key = f"service{location.journey.service_id}vehicles"
+                if key in sadd:
+                    sadd[key].append(vehicle.id)
+                else:
+                    sadd[key] = [vehicle.id]
+
             redis_json = location.get_redis_json()
             redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
             pipeline.set(f"vehicle{vehicle.id}", redis_json, ex=900)
+            # can't use 'mset' cos it doesn't let us specify an expiry (900 secs = 15 min)
+
+        if geoadd:
+            pipeline.geoadd("vehicle_location_locations", geoadd)
+        for key in sadd:
+            pipeline.sadd(key, *sadd[key])
 
         try:
             pipeline.execute()
