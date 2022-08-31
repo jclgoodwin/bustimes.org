@@ -1,32 +1,31 @@
 "Model definitions"
 
+import logging
 import re
 import time
-import logging
-import yaml
 from datetime import datetime
 from urllib.parse import urlencode
-from autoslug import AutoSlugField
 
+import yaml
+from autoslug import AutoSlugField
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Polygon
-from django.contrib.postgres.search import SearchVector, SearchVectorField
-from django.contrib.postgres.aggregates import StringAgg, ArrayAgg
+from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.contrib.postgres.indexes import GinIndex
+from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
-from django.db.models import Q, OuterRef, Exists
-from django.db.models.functions import Upper, Coalesce, Now
+from django.db.models import Exists, OuterRef, Q
+from django.db.models.functions import Coalesce, Now, Upper
 from django.urls import reverse
-from django.utils.text import slugify
-from django.utils.html import format_html, escape
+from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
 
+from buses.utils import varnish_ban
 from bustimes.models import Route, Trip
 from bustimes.timetables import Timetable, get_stop_usages
 from bustimes.utils import get_descriptions
-from buses.utils import varnish_ban
-
 
 TIMING_STATUS_CHOICES = (
     ("PPT", "Principal point"),
@@ -436,7 +435,7 @@ class StopPoint(models.Model):
 
     def get_arrow(self):
         if self.bearing:
-            return self.get_bearing_display()[-2:]
+            return self.get_bearing_display().split()[-1]
         return ""
 
     def get_qualified_name(self, short=True):

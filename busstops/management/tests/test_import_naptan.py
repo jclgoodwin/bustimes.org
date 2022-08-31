@@ -1,12 +1,13 @@
 """Tests for importing NaPTAN data
 """
-import vcr
 from pathlib import Path
 from tempfile import TemporaryDirectory
+
+import vcr
 from django.core.management import call_command
 from django.test import TestCase, override_settings
-from ...models import Region, AdminArea, Locality, StopPoint, DataSource
 
+from ...models import AdminArea, Locality, Region, StopPoint
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -45,30 +46,24 @@ class NaptanTest(TestCase):
 
                     self.assertFalse((temp_dir_path / "naptan.xml").exists())
 
-                    call_command("naptan_new")
+                    with self.assertNumQueries(23):
+                        call_command("naptan_new")
 
                     self.assertTrue((temp_dir_path / "naptan.xml").exists())
 
-                    source = DataSource.objects.get(name="NaPTAN")
-                    self.assertEqual(source.settings[0]["LastUpload"], "03/09/2020")
+                    cassette.rewind()
+
+                    with self.assertNumQueries(9):
+                        call_command("naptan_new")
 
                     cassette.rewind()
 
-                    call_command("naptan_new")
-
-                    source.settings[0]["LastUpload"] = "01/09/2020"
-                    source.save(update_fields=["settings"])
-
-                    cassette.rewind()
-
-                    call_command("naptan_new")
-
-        source.refresh_from_db()
-        self.assertEqual(source.settings[0]["LastUpload"], "03/09/2020")
+                    with self.assertNumQueries(9):
+                        call_command("naptan_new")
 
         # inactive stop in Wroxham
         stop = StopPoint.objects.get(atco_code="2900FLEX1")
-        self.assertEqual(str(stop), "Wroxham  ↑")
+        self.assertEqual(str(stop), "Wroxham ↑")
         self.assertEqual(stop.get_qualified_name(), "Wroxham")
 
         response = self.client.get("/stops/2900flEx1")  # case insensitivity

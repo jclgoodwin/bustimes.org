@@ -1,14 +1,15 @@
-import yaml
 import logging
-import requests
 import xml.etree.ElementTree as ET
-from django.contrib.gis.geos import GEOSGeometry
+
+import requests
+import yaml
 from ciso8601 import parse_datetime
 from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
-from busstops.models import StopArea, DataSource, StopPoint, AdminArea
 
+from busstops.models import AdminArea, DataSource, StopArea, StopPoint
 
 logger = logging.getLogger(__name__)
 
@@ -137,36 +138,20 @@ class Command(BaseCommand):
     ]
 
     def download(self, source):
-        response = requests.get(
-            "https://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx",
-            timeout=10,
-        )
-        new_rows = response.json()
-        old_rows = source.settings
-
         url = "https://naptan.api.dft.gov.uk/v1/access-nodes"
         params = {"dataFormat": "xml"}
-
-        if old_rows:
-            changes = [
-                new_row["DataBaseID"]
-                for i, new_row in enumerate(new_rows)
-                if old_rows[i]["LastUpload"] != new_row["LastUpload"]
-            ]
-
-            if not changes:
-                return
-
-            params["atcoAreaCodes"] = ",".join(changes)
-
-        source.settings = new_rows
 
         return requests.get(url, params, timeout=60, stream=True)
 
     def update_and_create(self):
+        if self.stops_to_create or self.stops_to_update:
+            logger.info(self.stops_to_create)
+            logger.info(self.stops_to_update)
+
         # create any new stop areas
         stops = [stop for stop in self.stops_to_create if stop.stop_area_id]
         stops += [stop for stop in self.stops_to_update if stop.stop_area_id]
+
         stop_areas = StopArea.objects.in_bulk([stop.stop_area_id for stop in stops])
         stop_areas_to_create = set(
             StopArea(
@@ -227,7 +212,6 @@ class Command(BaseCommand):
                         self.update_and_create()
 
                     atco_code_prefix = atco_code[:3]
-                    logger.info(atco_code_prefix)
 
                     self.existing_stops = (
                         StopPoint.objects.only("atco_code", "modified_at")
