@@ -21,7 +21,7 @@ from django.db.models.functions import Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.cache import cache_control
+from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from sql_util.utils import Exists
 from ukpostcodeutils import validation
@@ -119,6 +119,7 @@ def error(request):
     return response
 
 
+@cache_page(3600)
 def robots_txt(request):
     if request.get_host() == "bustimes.org":  # live site
         content = """User-agent: *
@@ -221,6 +222,7 @@ def timetable_source_stats(request):
     return JsonResponse(cache.get("timetable-source-stats", []), safe=False)
 
 
+@cache_page(3600)
 def stops(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
@@ -1050,7 +1052,7 @@ def service_timetable(request, service_id):
     )
 
 
-@cache_control(max_age=86400)  # cache for a day
+@cache_page(7200)
 def service_map_data(request, service_id):
     service = get_object_or_404(
         Service.objects.only("geometry", "line_name", "service_code"),
@@ -1168,6 +1170,7 @@ class ServiceSitemap(Sitemap):
         return Service.objects.filter(current=True).defer("geometry", "search_vector")
 
 
+@cache_page(3600)
 def search(request):
     form = forms.SearchForm(request.GET)
 

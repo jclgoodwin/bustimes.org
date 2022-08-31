@@ -17,6 +17,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.safestring import mark_safe
+from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_GET
 from django.views.generic.detail import DetailView
 from rest_framework.renderers import JSONRenderer
@@ -285,6 +286,7 @@ class BlockDetailView(DetailView):
 
 
 @require_GET
+@cache_page(60)
 def tfl_vehicle(request, reg):
     reg = reg.upper()
 
