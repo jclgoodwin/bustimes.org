@@ -7,7 +7,7 @@ import vcr
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
-from ...models import AdminArea, Locality, Region, StopPoint
+from ...models import AdminArea, DataSource, Locality, Region, StopPoint
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -49,17 +49,23 @@ class NaptanTest(TestCase):
                     with self.assertNumQueries(23):
                         call_command("naptan_new")
 
+                    source = DataSource.objects.get(name="NaPTAN")
+                    self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
+
                     self.assertTrue((temp_dir_path / "naptan.xml").exists())
 
                     cassette.rewind()
 
-                    with self.assertNumQueries(9):
+                    with self.assertNumQueries(2):
                         call_command("naptan_new")
 
                     cassette.rewind()
 
-                    with self.assertNumQueries(9):
+                    with self.assertNumQueries(2):
                         call_command("naptan_new")
+
+                    source = DataSource.objects.get(name="NaPTAN")
+                    self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
 
         # inactive stop in Wroxham
         stop = StopPoint.objects.get(atco_code="2900FLEX1")

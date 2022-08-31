@@ -187,8 +187,6 @@ class Command(BaseCommand):
                 for chunk in response.iter_content(chunk_size=102400):
                     open_file.write(chunk)
 
-        source.save(update_fields=["settings"])
-
         # set up overrides/corrections
         overrides_path = settings.BASE_DIR / "fixtures" / "stops.yaml"
         with overrides_path.open() as open_file:
