@@ -22,4 +22,4 @@ ENV SECRET_KEY=f
 ENV STATIC_ROOT=/app/staticfiles
 RUN poetry run ./manage.py collectstatic --noinput
 
-CMD ["poetry", "run", "gunicorn", "buses.wsgi", "--worker-tmp-dir", "/dev/shm"]
+CMD ["poetry", "run", "gunicorn", "buses.wsgi"]
