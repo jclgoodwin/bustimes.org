@@ -1,7 +1,9 @@
 from django.contrib.gis.geos import Point
 from django.db.models import Q
+
 from busstops.models import Service
-from ...models import VehicleLocation, VehicleJourney
+
+from ...models import VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -16,7 +18,10 @@ class Command(ImportLiveVehiclesCommand):
 
     def do_source(self):
         super().do_source()
-        self.operators = self.source.settings["operators"]
+        if self.source.settings and "operators" in self.source.settings:
+            self.operators = self.source.settings["operators"]
+        else:
+            self.operators = {}
 
     def get_items(self):
         return super().get_items()["features"]
@@ -58,25 +63,7 @@ class Command(ImportLiveVehiclesCommand):
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)
 
-        vehicle = None
-        created = False
-
-        if "reg" in defaults and operator != "MCGL":
-            vehicle = vehicles.filter(reg=defaults["reg"]).first()
-
-        if not vehicle:
-            vehicle, created = vehicles.get_or_create(defaults, code=code)
-
-        if vehicle.code != code:
-            vehicle.code = code
-            if "fleet_code" in defaults:
-                vehicle.fleet_code = defaults["fleet_code"]
-            elif "fleet_number" in defaults:
-                vehicle.fleet_number = defaults["fleet_number"]
-                vehicle.fleet_code = vehicle.fleet_number
-            vehicle.save(update_fields=["code", "fleet_code", "fleet_number"])
-
-        return vehicle, created
+        return vehicles.get_or_create(defaults, code=code)
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
