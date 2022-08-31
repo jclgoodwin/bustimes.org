@@ -124,14 +124,14 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.24.62"
+version = "1.24.63"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.27.62,<1.28.0"
+botocore = ">=1.27.63,<1.28.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -140,7 +140,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.27.62"
+version = "1.27.63"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -1450,7 +1450,7 @@ yarl = "*"
 
 [[package]]
 name = "virtualenv"
-version = "20.16.3"
+version = "20.16.4"
 description = "Virtual Python Environment builder"
 category = "dev"
 optional = false
@@ -1607,12 +1607,12 @@ beautifulsoup4 = [
     {file = "beautifulsoup4-4.11.1.tar.gz", hash = "sha256:ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693"},
 ]
 boto3 = [
-    {file = "boto3-1.24.62-py3-none-any.whl", hash = "sha256:84b962f18506ad495dc973aeb5168697ee882497c01430dddeba5e8339db7932"},
-    {file = "boto3-1.24.62.tar.gz", hash = "sha256:818a40b82e4f66b4bdd4fa38fcc3ed0fb26542f7d8c4d15279d4ba1d4762cd95"},
+    {file = "boto3-1.24.63-py3-none-any.whl", hash = "sha256:719bfafbe4e076055aa1a51269ffdbe9c61446679b67f31d61c237976661154c"},
+    {file = "boto3-1.24.63.tar.gz", hash = "sha256:0e6ef4b5e47b6073887961028201ecfc2024198125f20fbe5f5c00234f124543"},
 ]
 botocore = [
-    {file = "botocore-1.27.62-py3-none-any.whl", hash = "sha256:69682c874dc8ed1856bffd203786c9591fb76a1946d3dcc516bda1ee6a6989f3"},
-    {file = "botocore-1.27.62.tar.gz", hash = "sha256:8563c7d8b80e8041667cf35b397f1c399537f6c887e1c501f0064bfd7ae541ba"},
+    {file = "botocore-1.27.63-py3-none-any.whl", hash = "sha256:8567dee549430a53210c6b898dea3a8fc8ee9d7934ec1df7545c547cacbb2b8f"},
+    {file = "botocore-1.27.63.tar.gz", hash = "sha256:b97e17c930a7f45b50f94956a4474c1cd7b828e3dcd8a84dd0e3306ca6189335"},
 ]
 bs4 = [
     {file = "bs4-0.0.1.tar.gz", hash = "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"},
@@ -2637,8 +2637,8 @@ vcrpy = [
     {file = "vcrpy-4.2.0.tar.gz", hash = "sha256:94520b86fb765925adc8c77ff934e89a5e156c28e74a314320217ef1b454afe0"},
 ]
 virtualenv = [
-    {file = "virtualenv-20.16.3-py2.py3-none-any.whl", hash = "sha256:4193b7bc8a6cd23e4eb251ac64f29b4398ab2c233531e66e40b19a6b7b0d30c1"},
-    {file = "virtualenv-20.16.3.tar.gz", hash = "sha256:d86ea0bb50e06252d79e6c241507cb904fcd66090c3271381372d6221a3970f9"},
+    {file = "virtualenv-20.16.4-py3-none-any.whl", hash = "sha256:035ed57acce4ac35c82c9d8802202b0e71adac011a511ff650cbcf9635006a22"},
+    {file = "virtualenv-20.16.4.tar.gz", hash = "sha256:014f766e4134d0008dcaa1f95bafa0fb0f575795d07cae50b1bee514185d6782"},
 ]
 w3lib = [
     {file = "w3lib-2.0.1-py3-none-any.whl", hash = "sha256:c5d966f86ae3fb546854478c769250c3ccb7581515b3221bcd2f864440000188"},
