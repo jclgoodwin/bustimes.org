@@ -14,6 +14,13 @@ from busstops.models import AdminArea, DataSource, StopArea, StopPoint
 logger = logging.getLogger(__name__)
 
 
+def get_datetime(string):
+    datetime = parse_datetime(string)
+    if not datetime.tzinfo:
+        return make_aware(datetime)
+    return datetime
+
+
 class Command(BaseCommand):
     mapping = (
         ("Descriptor/CommonName", "common_name"),
@@ -44,9 +51,7 @@ class Command(BaseCommand):
 
         modified_at = element.attrib.get("ModificationDateTime")
         if modified_at:
-            modified_at = parse_datetime(modified_at)
-            if not modified_at.tzinfo:
-                modified_at = make_aware(modified_at)
+            modified_at = get_datetime(modified_at)
 
         if (
             atco_code in self.existing_stops
@@ -55,9 +60,7 @@ class Command(BaseCommand):
         ):
             return
 
-        created_at = parse_datetime(element.attrib["CreationDateTime"])
-        if not created_at.tzinfo:
-            created_at = make_aware(created_at)
+        created_at = get_datetime(element.attrib["CreationDateTime"])
 
         easting = element.findtext("Place/Location/Easting")
         northing = element.findtext("Place/Location/Northing")
@@ -183,8 +186,6 @@ class Command(BaseCommand):
             with path.open("wb") as open_file:
                 for chunk in response.iter_content(chunk_size=102400):
                     open_file.write(chunk)
-        else:
-            return
 
         source.save(update_fields=["settings"])
 
@@ -200,8 +201,20 @@ class Command(BaseCommand):
         }
         atco_code_prefix = None
 
-        iterator = ET.iterparse(path)
-        for _, element in iterator:
+        iterator = ET.iterparse(path, events=["start", "end", "comment"])
+        for event, element in iterator:
+            if event == "start":
+                if element.tag == "{http://www.naptan.org.uk/}NaPTAN":
+                    modified_at = get_datetime(element.attrib["ModificationDateTime"])
+                    if modified_at == source.datetime:
+                        return
+
+                    source.datetime = modified_at
+
+                continue
+            elif event == "comment":
+                print(element)
+                continue
 
             element.tag = element.tag.removeprefix("{http://www.naptan.org.uk/}")
             if element.tag == "StopPoint":
@@ -224,3 +237,5 @@ class Command(BaseCommand):
                 element.clear()  # save memory
 
         self.update_and_create()
+
+        source.save(update_fields=["datetime"])
