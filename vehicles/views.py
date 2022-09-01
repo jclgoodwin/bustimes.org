@@ -500,16 +500,11 @@ def vehicles_json(request) -> JsonResponse:
             if location:
                 item = VehicleLocation.decode_appendage(location)
                 item["heading"] = item["direction"]
+                item["service"] = {
+                    "line_name": vehicle.latest_journey.route_name
+                }
                 if vehicle.service_slug:
-                    item["service"] = {
-                        "line_name": vehicle.service_line_name,
-                        "url": f"/services/{vehicle.service_slug}",
-                    }
-                else:
-                    item["service"] = {
-                        "line_name": vehicle.latest_journey.route_name,
-                    }
-
+                    item["service"]["url"] = f"/services/{vehicle.service_slug}"
                 locations.append(item)
 
     return JsonResponse(
