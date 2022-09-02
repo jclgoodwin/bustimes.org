@@ -298,7 +298,7 @@ class Command(BaseCommand):
         if missing_operator not in self.missing_operators:
             self.missing_operators.append(missing_operator)
 
-    def get_operators(self, transxchange, service):
+    def get_operators(self, transxchange, service) -> dict:
         operators = transxchange.operators
 
         if len(operators) > 1:
@@ -938,15 +938,10 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
-        if not operators:
-            basename = os.path.basename(filename)  # e.g. 'KCTB_'
-            if basename[4:5] == "_":
-                maybe_operator_code = basename[:4]
-                if maybe_operator_code.isupper() and maybe_operator_code.isalpha():
-                    try:
-                        operators = [Operator.objects.get(noc=maybe_operator_code)]
-                    except Operator.DoesNotExist:
-                        pass
+        if txc_service.marketing_name == "Go Cornwall Bus":
+            for operator in operators.values():
+                operator.noc = "TFCN"
+            txc_service.marketing_name = ""
 
         if self.is_tnds():
             if self.source.name != "L":
@@ -960,14 +955,6 @@ class Command(BaseCommand):
                 f"skipping {filename} {txc_service.service_code} (Arriva London)"
             )
             return
-        # elif self.source.name.startswith("Stagecoach"):
-        #     for operator in operators.values():
-        #         if (
-        #             operator.parent != "Stagecoach"
-        #             and not operator.name.startswith("Stagecoach ")
-        #         ):
-        #             logger.info(f"skipping {txc_service.service_code} ({operator.noc})")
-        #             return
 
         description = self.get_description(txc_service)
 
