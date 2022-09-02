@@ -867,7 +867,7 @@ class Command(BaseCommand):
     def is_tnds(self):
         return self.source.url.startswith("ftp://ftp.tnds.basemap.co.uk/")
 
-    def should_defer_to_other_source(self, operators: list, line_name: str):
+    def should_defer_to_other_source(self, operators: dict, line_name: str):
         if self.source.name == "L":
             return False
         if operators and all(
@@ -877,7 +877,7 @@ class Command(BaseCommand):
                 Service.objects.filter(
                     route__line_name__iexact=line_name,
                     current=True,
-                    operator__in=operators,
+                    operator__in=operators.values(),
                 )
                 .exclude(source=self.source)
                 .exists()
