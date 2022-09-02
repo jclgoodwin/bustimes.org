@@ -1,109 +1,45 @@
-# coding=utf-8
-import os
-from django.test import TestCase
-from .. import import_from_csv
-from ..commands import (
-    import_regions,
-    import_areas,
-    import_districts,
-    import_localities,
-    import_locality_hierarchy,
-    import_adjacent_localities,
-)
-from ...models import Region, AdminArea, District, Locality, StopPoint
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
+import vcr
+from django.core.management import call_command
+from django.test import TestCase, override_settings
 
-DIR = os.path.dirname(os.path.abspath(__file__))
+from ...models import DataSource  # , AdminArea, Locality, Region, StopPoint
 
 
 class ImportNPTGTest(TestCase):
-    """
-    Test the import_regions, import_areas, import_districts and
-    import_localities commands
-    """
+    def test_nptg(self):
+        fixtures_dir = Path(__file__).resolve().parent / "fixtures"
 
-    @staticmethod
-    def do_import(command, filename):
-        filename = os.path.join(DIR, "fixtures/%s.csv" % filename)
-        command.input = filename
-        command.handle()
+        with TemporaryDirectory() as temp_dir:
+            with vcr.use_cassette(
+                str(fixtures_dir / "nptg.yml"), decode_compressed_response=True
+            ) as cassette:
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.do_import(import_regions.Command(), "Regions")
-        cls.do_import(import_areas.Command(), "AdminAreas")
-        cls.do_import(import_districts.Command(), "Districts")
-        cls.do_import(import_localities.Command(), "Localities")
-        cls.do_import(import_locality_hierarchy.Command(), "LocalityHierarchy")
-        cls.do_import(import_adjacent_localities.Command(), "AdjacentLocality")
+                temp_dir_path = Path(temp_dir)
 
-        cls.east_anglia = Region.objects.get(id="EA")
-        cls.east_midlands = Region.objects.get(id="EM")
-        cls.london = Region.objects.get(id="L")
+                with override_settings(DATA_DIR=temp_dir_path):
 
-        cls.cambs = AdminArea.objects.get(pk=71)
-        cls.derby = AdminArea.objects.get(pk=17)
+                    self.assertFalse((temp_dir_path / "nptg.xml").exists())
 
-        cls.district = District.objects.get(pk=29)
+                    with self.assertNumQueries(621):
+                        call_command("nptg_new")
 
-        cls.cambridge = Locality.objects.get(name="Cambridge")
-        cls.addenbrookes = Locality.objects.get(name__startswith="Addenbrook")
+                    source = DataSource.objects.get(name="NPTG")
+                    self.assertEqual(str(source.datetime), "2022-08-29 18:57:00+00:00")
 
-    def test_regions(self):
-        self.assertEqual(self.east_anglia.id, "EA")
-        self.assertEqual(self.east_anglia.the(), "East Anglia")
+                    self.assertTrue((temp_dir_path / "nptg.xml").exists())
 
-        self.assertEqual(self.east_midlands.id, "EM")
-        self.assertEqual(self.east_midlands.the(), "the East Midlands")
+                    cassette.rewind()
 
-        self.assertEqual(self.london.id, "L")
-        self.assertEqual(self.london.the(), "London")
+                    with self.assertNumQueries(4):
+                        call_command("nptg_new")
 
-    def test_areas(self):
-        self.assertEqual(self.cambs.pk, 71)
-        self.assertEqual(str(self.cambs), "Cambridgeshire")
-        self.assertEqual(str(self.cambs.region), "East Anglia")
+                    cassette.rewind()
 
-        self.assertEqual(self.derby.pk, 17)
-        self.assertEqual(str(self.derby), "Derby")
-        self.assertEqual(self.derby.region.the(), "the East Midlands")
+                    with self.assertNumQueries(4):
+                        call_command("nptg_new")
 
-    def test_districts(self):
-        self.assertEqual(self.district.pk, 29)
-        self.assertEqual(str(self.district), "Cambridge")
-        self.assertEqual(str(self.district.admin_area), "Cambridgeshire")
-
-    def test_localities(self):
-        self.assertEqual(str(self.cambridge), "Cambridge")
-        self.assertEqual(str(self.cambridge.district), "Cambridge")
-        self.assertEqual(str(self.cambridge.district.admin_area), "Cambridgeshire")
-
-        stop = StopPoint.objects.create(
-            atco_code="1",
-            common_name="Captain Birdseye Road",
-            locality=self.addenbrookes,
-            locality_centre=True,
-            active=False,
-        )
-
-        # localities with no active stop points should return a 404
-        self.assertEqual(
-            404, self.client.get(self.cambridge.get_absolute_url()).status_code
-        )
-        self.assertEqual(
-            404, self.client.get(self.addenbrookes.get_absolute_url()).status_code
-        )
-        self.assertEqual(404, self.client.get(stop.get_absolute_url()).status_code)
-
-        stop.active = True
-        stop.save()
-
-        res = self.client.get(self.cambridge.get_absolute_url())
-        self.assertContains(res, "Near Cambridge")
-        self.assertContains(res, "Places in Cambridge")
-        self.assertContains(res, "Addenbrooke")
-
-    def test_super(self):
-        command = import_from_csv.ImportFromCSVCommand()
-        with self.assertRaises(NotImplementedError):
-            command.handle_row(None)
+                    source = DataSource.objects.get(name="NPTG")
+                    self.assertEqual(str(source.datetime), "2022-08-29 18:57:00+00:00")

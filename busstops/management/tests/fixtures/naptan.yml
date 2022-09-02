@@ -5,22 +5,6 @@ interactions:
       Accept: ['*/*']
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.4]
-    method: GET
-    uri: https://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
-  response:
-    body: {string: '[{"Region":"S","LocalityName":"Shetland Islands","DataBaseID":"603","LastUpload":"03/09/2020",
-        "ActiveStops":918,"PendingStops":0,"DeletedStops":45,"ArchivedStops":0,"ArchivedStopAreas":0,"ActiveStopAreas":378,
-        "PendingStopAreas":0,"DeletedStopAreas":0,"PK":59}]'}
-    headers:
-      Content-Type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
       User-Agent: [python-requests/2.21.0]
     method: GET
     uri: https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=xml
@@ -320,41 +304,6 @@ interactions:
       </StopAreas>
       <AdministrativeAreaRef>092</AdministrativeAreaRef>
     </StopPoint>
-  </StopPoints>
-</NaPTAN>'}
-    headers:
-      Content-Type: [application/zip]
-      content-disposition: [attachment; filename=NaPTANcsv.zip]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.18.4]
-    method: GET
-    uri: https://naptan.app.dft.gov.uk/GridMethods/NPTGLastSubs_Load.ashx
-  response:
-    body: {string: '[{"Region":"S","LocalityName":"Shetland Islands","DataBaseID":"603","LastUpload":"03/09/2020",
-        "ActiveStops":918,"PendingStops":0,"DeletedStops":45,"ArchivedStops":0,"ArchivedStopAreas":0,"ActiveStopAreas":378,
-        "PendingStopAreas":0,"DeletedStopAreas":0,"PK":59}]'}
-    headers:
-      Content-Type: [application/json; charset=utf-8]
-    status: {code: 200, message: OK}
-- request:
-    body: null
-    headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [python-requests/2.21.0]
-    method: GET
-    uri: https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=xml&atcoAreaCodes=603
-  response:
-    body: {string: '<?xml version="1.0" encoding="utf-8"?>
-<NaPTAN xml:lang="en" CreationDateTime="2022-01-19T12:56:29" ModificationDateTime="2022-01-19T12:56:29" Modification="revise" RevisionNumber="359" xmlns="http://www.naptan.org.uk/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.naptan.org.uk/ http://www.naptan.org.uk/schema/2.1/NaPTAN.xsd" FileName="NaPTAN290.xml" SchemaVersion="2.1">
-  <StopPoints>
   </StopPoints>
 </NaPTAN>'}
     headers:

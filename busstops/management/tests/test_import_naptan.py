@@ -9,8 +9,6 @@ from django.test import TestCase, override_settings
 
 from ...models import AdminArea, DataSource, Locality, Region, StopPoint
 
-FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
-
 
 class NaptanTest(TestCase):
     @classmethod
@@ -37,8 +35,10 @@ class NaptanTest(TestCase):
         StopPoint.objects.create(atco_code="07605395", active=True)
 
     def test_download(self):
+        fixtures_dir = Path(__file__).resolve().parent / "fixtures"
+
         with TemporaryDirectory() as temp_dir:
-            with vcr.use_cassette(str(FIXTURES_DIR / "naptan.yml")) as cassette:
+            with vcr.use_cassette(str(fixtures_dir / "naptan.yml")) as cassette:
 
                 temp_dir_path = Path(temp_dir)
 

@@ -207,8 +207,9 @@ def status(request):
         request,
         "status.html",
         {
+            "nptg": DataSource.objects.filter(name="NPTG").first(),
+            "naptan": DataSource.objects.filter(name="NaPTAN").first(),
             "bod_avl_status": cache.get("bod_avl_status", []),
-            "tfn_disruption_heartbeat": cache.get("Heartbeat:TransportAPI"),
             "tnds": sources.filter(url__contains="tnds.basemap"),
         },
     )

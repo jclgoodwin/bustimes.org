@@ -6,6 +6,20 @@
 
 <h1>Site stat(u)s</h1>
 
+<table>
+    <tbody>
+        <tr>
+            <th scope="row">NPTG</th>
+            <td>{{ nptg.datetime }}</td>
+        </tr>
+        <tr>
+            <th scope="row">NaPTAN</th>
+            <td>{{ naptan.datetime }}</td>
+        </tr>
+    </tbody>
+</table>
+
+
 <h2>Vehicle journeys</h2>
 
 <svg id="journeys" width="792" height="400"></svg>
@@ -71,10 +85,6 @@
 
     });
 </script>
-
-<h2>TfN disruption subscription heartbeat</h2>
-
-<p>{{ tfn_disruption_heartbeat }}</p>
 
 <h2>Bus Open Data AVL</h2>
 
