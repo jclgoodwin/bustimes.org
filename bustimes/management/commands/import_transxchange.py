@@ -938,11 +938,6 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
-        if txc_service.marketing_name == "Go Cornwall Bus":
-            for operator in operators.values():
-                operator.noc = "TFCN"
-            txc_service.marketing_name = ""
-
         if self.is_tnds():
             if self.source.name != "L":
                 if operators and all(
