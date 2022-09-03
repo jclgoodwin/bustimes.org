@@ -53,7 +53,7 @@ def get_fare_product(element):
 def get_service(operator, line_name):
     try:
         return Service.objects.get(
-            Exists("route", Q(line_name__iexact=line_name)),
+            Exists("route", filter=Q(line_name__iexact=line_name)),
             operator=operator,
             current=True,
         )

@@ -1,10 +1,14 @@
 from pathlib import Path
-from vcr import use_cassette
-from django.test import TestCase
+
 from django.core.management import call_command
-from busstops.models import Operator, Service
+from django.test import TestCase
+from vcr import use_cassette
+
+from busstops.models import DataSource, Operator, Service
+from bustimes.models import Route
+
 from .management.commands.import_netex_fares import Command
-from .models import Tariff, TimeInterval, DataSet, FareZone
+from .models import DataSet, FareZone, Tariff, TimeInterval
 
 
 class FaresTest(TestCase):
@@ -12,6 +16,8 @@ class FaresTest(TestCase):
     def setUpTestData(cls):
         cls.a_c_williams = Operator.objects.create(noc="WMSA")
         cls.wm06 = Service.objects.create(line_name="wm06", current=True)
+        source = DataSource.objects.create()
+        Route.objects.create(line_name="wm06", service=cls.wm06, source=source)
         cls.wm06.operator.add(cls.a_c_williams)
 
     def test_bod_netex(self):
