@@ -1,18 +1,22 @@
 import io
 import logging
 import xml.etree.cElementTree as ET
-import requests
 import zipfile
-from functools import cache
-from ciso8601 import parse_datetime
 from datetime import datetime, timezone
+from functools import cache
+
+import requests
+from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
-from django.db import IntegrityError, DataError
+from django.db import DataError, IntegrityError
+from django.db.models import Q
 from django.utils.http import http_date, parse_http_date
 from psycopg2.extras import DateTimeTZRange
-from busstops.models import Operator, Service
-from ... import models
+from sql_util.utils import Exists
 
+from busstops.models import Operator, Service
+
+from ... import models
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +53,9 @@ def get_fare_product(element):
 def get_service(operator, line_name):
     try:
         return Service.objects.get(
-            operator=operator, line_name__iexact=line_name, current=True
+            Exists("route", Q(line_name__iexact=line_name)),
+            operator=operator,
+            current=True,
         )
     except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
         logger.warning(f"{e} {operator} {line_name}")
