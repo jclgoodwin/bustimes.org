@@ -1,19 +1,19 @@
-from django.db import transaction
 from django import forms
 from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.core.cache import cache
-from django.db.models import Q, F, Exists, OuterRef, CharField
+from django.db import transaction
+from django.db.models import CharField, Exists, F, OuterRef, Q
 from django.db.models.functions import Cast
 from django.urls import reverse
 from django.utils.html import format_html
-
 from sql_util.utils import SubqueryCount
 
 from bustimes.models import Route
 from vehicles.models import VehicleJourney
+
 from . import models
 
 
@@ -127,14 +127,14 @@ class OperatorAdmin(admin.ModelAdmin):
     def services(self, obj):
         url = reverse("admin:busstops_service_changelist")
         return format_html(
-            '<a href="{}?operator__id__exact={}">{}</a>', url, obj.noc, obj.services
+            '<a href="{}?operator__noc__exact={}">{}</a>', url, obj.noc, obj.services
         )
 
     @admin.display(ordering="vehicles")
     def vehicles(self, obj):
         url = reverse("admin:vehicles_vehicle_changelist")
         return format_html(
-            '<a href="{}?operator__id__exact={}">{}</a>', url, obj.noc, obj.vehicles
+            '<a href="{}?operator__noc__exact={}">{}</a>', url, obj.noc, obj.vehicles
         )
 
     def get_search_results(self, request, queryset, search_term):
