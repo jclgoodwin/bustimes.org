@@ -5,10 +5,18 @@ import vcr
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
-from ...models import DataSource  # , AdminArea, Locality, Region, StopPoint
+from ...models import AdminArea, DataSource, Region
 
 
 class ImportNPTGTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        Region.objects.create(id="EA", name="East Anglia")
+        AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
+        AdminArea.objects.create(
+            id=110, atco_code="910", name="National - National Rail", region_id="EA"
+        )
+
     def test_nptg(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
 
@@ -23,7 +31,7 @@ class ImportNPTGTest(TestCase):
 
                     self.assertFalse((temp_dir_path / "nptg.xml").exists())
 
-                    with self.assertNumQueries(619):
+                    with self.assertNumQueries(565):
                         call_command("nptg_new")
 
                     source = DataSource.objects.get(name="NPTG")

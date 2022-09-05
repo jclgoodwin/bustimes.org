@@ -3,11 +3,13 @@
 import os
 import warnings
 import zipfile
-from unittest.mock import patch, call
 from tempfile import TemporaryDirectory
-from django.test import TestCase
+from unittest.mock import call, patch
+
 from django.core.management import call_command
-from ...models import Region, AdminArea, Locality, StopPoint
+from django.test import TestCase
+
+from ...models import AdminArea, Locality, Region, StopPoint
 
 
 class ImportIrelandTest(TestCase):
@@ -19,18 +21,18 @@ class ImportIrelandTest(TestCase):
 
         # NPTG (places):
 
-        call_command("import_ie_nptg", os.path.join(fixtures_dir, "ie_nptg.xml"))
+        call_command("nptg_new", os.path.join(fixtures_dir, "ie_nptg.xml"))
 
         regions = Region.objects.all().order_by("name")
         self.assertEqual(len(regions), 5)
-        self.assertEqual(regions[0].name, "Connacht")
+        self.assertEqual(regions[0].name, "Connaught")
         self.assertEqual(regions[2].name, "Munster")
 
         areas = AdminArea.objects.all().order_by("name")
         self.assertEqual(len(areas), 40)
 
         self.assertEqual(areas[0].name, "Antrim")
-        self.assertEqual(areas[0].region.name, "Northern Ireland")
+        self.assertEqual(areas[0].region.name, "Ulster_NI")
 
         self.assertEqual(areas[2].name, "Carlow")
         self.assertEqual(areas[2].region.name, "Leinster")

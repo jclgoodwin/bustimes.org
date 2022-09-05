@@ -1015,39 +1015,9 @@ interactions:
         xml:lang=\"EN\">Amesbury</LocalityName><Qualify><QualifierName xml:lang=\"en\">Bath
         &amp; North East Somerset</QualifierName></Qualify></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>365491</Easting><Northing>158651</Northing><Longitude>-2.496644</Longitude><Latitude>51.3259</Latitude></Translation></Location></NptgLocality>
         <NptgLocality
-        CreationDateTime=\"2005-10-05T11:18:23\" ModificationDateTime=\"2005-10-05T11:18:23\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0034965</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Ashgrove</LocalityName><Qualify><QualifierName xml:lang=\"en\">Peasedown
-        St John</QualifierName></Qualify></Descriptor><ParentNptgLocalityRef CreationDateTime=\"2005-10-05T10:50:38\"
-        ModificationDateTime=\"2012-05-29T11:14:12\" Modification=\"revise\" RevisionNumber=\"1\">E0052932</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>370798</Easting><Northing>157864</Northing><Longitude>-2.420418</Longitude><Latitude>51.31913</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T10:45:03\" ModificationDateTime=\"2005-10-05T10:45:03\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0034968</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Bailbrook</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>376748</Easting><Northing>167119</Northing><Longitude>-2.335649</Longitude><Latitude>51.40262</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
         CreationDateTime=\"2005-10-05T10:45:09\" ModificationDateTime=\"2005-10-05T10:45:09\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0034970</NptgLocalityCode><Descriptor><LocalityName
         xml:lang=\"EN\">Barrow Vale</LocalityName></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>364747</Easting><Northing>160235</Northing><Longitude>-2.507479</Longitude><Latitude>51.3401</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T10:45:11\" ModificationDateTime=\"2005-10-05T10:45:11\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0034971</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Bathwick</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>375615</Easting><Northing>165218</Northing><Longitude>-2.351805</Longitude><Latitude>51.38548</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T11:20:33\" ModificationDateTime=\"2018-03-19T15:19:58.680\"
-        Modification=\"revise\" RevisionNumber=\"1\"><NptgLocalityCode>E0034972</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Beacon Hill</LocalityName><Qualify><QualifierName xml:lang=\"en\">Bath</QualifierName></Qualify></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>375140</Easting><Northing>166178</Northing><Longitude>-2.358698</Longitude><Latitude>51.39409</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T10:45:14\" ModificationDateTime=\"2005-10-05T10:45:14\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0034973</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Beechen Cliff</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>374896</Easting><Northing>164108</Northing><Longitude>-2.362058</Longitude><Latitude>51.37547</Latitude></Translation></Location></NptgLocality>
         <NptgLocality
         CreationDateTime=\"2005-10-05T10:45:15\" ModificationDateTime=\"2005-10-05T10:45:15\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0034974</NptgLocalityCode><Descriptor><LocalityName
@@ -1056,12 +1026,6 @@ interactions:
         CreationDateTime=\"2005-10-05T10:45:22\" ModificationDateTime=\"2005-10-05T10:45:22\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0034975</NptgLocalityCode><Descriptor><LocalityName
         xml:lang=\"EN\">Bishop Sutton</LocalityName></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>358644</Easting><Northing>159607</Northing><Longitude>-2.595016</Longitude><Latitude>51.33405</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T11:23:31\" ModificationDateTime=\"2005-10-05T11:23:31\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0034978</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Bloomfield</LocalityName><Qualify><QualifierName xml:lang=\"en\">Timsbury</QualifierName></Qualify></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T12:03:37\" ModificationDateTime=\"2005-10-05T12:03:37\"
-        RevisionNumber=\"0\">E0052942</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>366816</Easting><Northing>159234</Northing><Longitude>-2.477684</Longitude><Latitude>51.33123</Latitude></Translation></Location></NptgLocality>
         <NptgLocality
         CreationDateTime=\"2005-10-05T10:45:38\" ModificationDateTime=\"2005-10-05T10:45:38\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0034981</NptgLocalityCode><Descriptor><LocalityName
@@ -1096,12 +1060,6 @@ interactions:
         RevisionNumber=\"0\"><NptgLocalityCode>E0034991</NptgLocalityCode><Descriptor><LocalityName
         xml:lang=\"EN\">Clandown</LocalityName></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>368397</Easting><Northing>155865</Northing><Longitude>-2.454692</Longitude><Latitude>51.30103</Latitude></Translation></Location></NptgLocality>
         <NptgLocality
-        CreationDateTime=\"2005-10-05T10:46:22\" ModificationDateTime=\"2005-10-05T10:46:22\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0034992</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Claverton Down</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>377513</Easting><Northing>163377</Northing><Longitude>-2.324414</Longitude><Latitude>51.36901</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
         CreationDateTime=\"2005-10-05T11:32:32\" ModificationDateTime=\"2005-10-05T11:32:32\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0034993</NptgLocalityCode><Descriptor><LocalityName
         xml:lang=\"EN\">Cleeve Hill</LocalityName><Qualify><QualifierName xml:lang=\"en\">NE
@@ -1116,12 +1074,6 @@ interactions:
         xml:lang=\"EN\">Coley</LocalityName><Qualify><QualifierName xml:lang=\"en\">NE
         Somerset</QualifierName></Qualify></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>358270</Easting><Northing>155597</Northing><Longitude>-2.599913</Longitude><Latitude>51.29796</Latitude></Translation></Location></NptgLocality>
         <NptgLocality
-        CreationDateTime=\"2005-10-05T10:46:30\" ModificationDateTime=\"2005-10-05T10:46:30\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0034996</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Combe Down</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>375946</Easting><Northing>162305</Northing><Longitude>-2.34685</Longitude><Latitude>51.3593</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
         CreationDateTime=\"2005-10-05T10:46:31\" ModificationDateTime=\"2005-10-05T10:46:31\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0034997</NptgLocalityCode><Descriptor><LocalityName
         xml:lang=\"EN\">Compton Common</LocalityName></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>363981</Easting><Northing>163962</Northing><Longitude>-2.518854</Longitude><Latitude>51.37357</Latitude></Translation></Location></NptgLocality>
@@ -1130,39 +1082,9 @@ interactions:
         RevisionNumber=\"0\"><NptgLocalityCode>E0035002</NptgLocalityCode><Descriptor><LocalityName
         xml:lang=\"EN\">Double Hill</LocalityName></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>371888</Easting><Northing>157227</Northing><Longitude>-2.404727</Longitude><Latitude>51.31346</Latitude></Translation></Location></NptgLocality>
         <NptgLocality
-        CreationDateTime=\"2005-10-05T10:47:10\" ModificationDateTime=\"2005-10-05T10:47:10\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0035004</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">East Twerton</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>373830</Easting><Northing>164796</Northing><Longitude>-2.377424</Longitude><Latitude>51.38161</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T10:47:21\" ModificationDateTime=\"2005-10-05T10:47:21\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0035007</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Fairfield Park</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>375373</Easting><Northing>166558</Northing><Longitude>-2.355376</Longitude><Latitude>51.39752</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T10:47:57\" ModificationDateTime=\"2005-10-05T10:47:57\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0035012</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Greyfield</LocalityName></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:48:22\" ModificationDateTime=\"2005-10-05T10:48:22\"
-        RevisionNumber=\"0\">E0052919</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>364021</Easting><Northing>158742</Northing><Longitude>-2.51775</Longitude><Latitude>51.32663</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
         CreationDateTime=\"2005-10-05T10:48:03\" ModificationDateTime=\"2005-10-05T10:48:03\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0035013</NptgLocalityCode><Descriptor><LocalityName
         xml:lang=\"EN\">Hallatrow</LocalityName></Descriptor><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>363827</Easting><Northing>157183</Northing><Longitude>-2.520375</Longitude><Latitude>51.3126</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T12:05:06\" ModificationDateTime=\"2018-03-16T12:53:10.010\"
-        Modification=\"revise\" RevisionNumber=\"1\"><NptgLocalityCode>E0035014</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Walcot</LocalityName><Qualify><QualifierName xml:lang=\"en\">Bath</QualifierName></Qualify></Descriptor><ParentNptgLocalityRef
-        CreationDateTime=\"2005-10-05T10:45:10\" ModificationDateTime=\"2013-10-07T10:42:30\"
-        Modification=\"revise\" RevisionNumber=\"3\">E0054812</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>375156</Easting><Northing>165688</Northing><Longitude>-2.358434</Longitude><Latitude>51.38969</Latitude></Translation></Location></NptgLocality>
-        <NptgLocality
-        CreationDateTime=\"2005-10-05T11:41:23\" ModificationDateTime=\"2005-10-05T11:41:23\"
-        RevisionNumber=\"0\"><NptgLocalityCode>E0035017</NptgLocalityCode><Descriptor><LocalityName
-        xml:lang=\"EN\">Haydon</LocalityName><Qualify><QualifierName xml:lang=\"en\">NE
-        Somerset</QualifierName></Qualify></Descriptor><ParentNptgLocalityRef CreationDateTime=\"2005-10-05T10:51:01\"
-        ModificationDateTime=\"2014-12-18T14:40:44\" Modification=\"revise\" RevisionNumber=\"1\">E0035085</ParentNptgLocalityRef><AdministrativeAreaRef>001</AdministrativeAreaRef><NptgDistrictRef>310</NptgDistrictRef><SourceLocalityType>Lo</SourceLocalityType><Location><Translation><Easting>368656</Easting><Northing>153906</Northing><Longitude>-2.450805</Longitude><Latitude>51.28342</Latitude></Translation></Location></NptgLocality>
         <NptgLocality
         CreationDateTime=\"2005-10-05T10:48:19\" ModificationDateTime=\"2005-10-05T10:48:19\"
         RevisionNumber=\"0\"><NptgLocalityCode>E0035018</NptgLocalityCode><Descriptor><LocalityName
