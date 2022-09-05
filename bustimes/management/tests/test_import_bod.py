@@ -1,37 +1,39 @@
-import zipfile
 import datetime
-from ciso8601 import parse_datetime
-from tempfile import TemporaryDirectory
+import zipfile
 from pathlib import Path
-from vcr import use_cassette
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
+
 import time_machine
-from django.test import TestCase, override_settings
+from ciso8601 import parse_datetime
 from django.core.management import call_command
+from django.test import TestCase, override_settings
+from vcr import use_cassette
+
 from busstops.models import (
-    Region,
-    Operator,
+    AdminArea,
     DataSource,
+    Operator,
     OperatorCode,
+    Region,
     Service,
     ServiceCode,
-    StopPoint,
     StopArea,
-    AdminArea,
+    StopPoint,
 )
 from vehicles.models import VehicleJourney
+
 from ...models import (
-    Route,
     BankHoliday,
-    CalendarBankHoliday,
     BankHolidayDate,
-    VehicleType,
     Block,
+    CalendarBankHoliday,
     Garage,
+    Route,
     RouteLink,
     TimetableDataSource,
+    VehicleType,
 )
-
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -426,7 +428,7 @@ class ImportBusOpenDataTest(TestCase):
                     "bustimes.management.commands.import_bod.download_if_changed",
                     return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
-                    with self.assertNumQueries(163):
+                    with self.assertNumQueries(125):
                         call_command("import_bod", "stagecoach")
                     download_if_changed.assert_called_with(
                         path, "https://opendata.stagecoachbus.com/" + archive_name
@@ -446,7 +448,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command("import_bod", "stagecoach", "SCOX")
 
-                    with self.assertNumQueries(102):
+                    with self.assertNumQueries(90):
                         call_command("import_bod", "stagecoach", "SCCM")
 
                     route_link.refresh_from_db()

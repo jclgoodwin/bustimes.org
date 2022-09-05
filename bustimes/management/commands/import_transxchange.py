@@ -183,6 +183,8 @@ def get_registration(service_code):
 
 
 class Command(BaseCommand):
+    bank_holidays = None
+
     @staticmethod
     def add_arguments(parser):
         parser.add_argument("archives", nargs=1, type=str)
@@ -434,9 +436,14 @@ class Command(BaseCommand):
 
             service.update_description()
 
-    @cache
     def get_bank_holiday(self, bank_holiday_name: str):
-        return BankHoliday.objects.get_or_create(name=bank_holiday_name)[0]
+        if self.bank_holidays is None:
+            self.bank_holidays = BankHoliday.objects.in_bulk(field_name="name")
+        if bank_holiday_name not in self.bank_holidays:
+            self.bank_holidays[bank_holiday_name] = BankHoliday.objects.create(
+                name=bank_holiday_name
+            )
+        return self.bank_holidays[bank_holiday_name]
 
     def do_bank_holidays(self, holiday_elements, operation: bool, calendar_dates: list):
         if not holiday_elements:
