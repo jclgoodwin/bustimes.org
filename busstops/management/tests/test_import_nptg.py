@@ -23,7 +23,7 @@ class ImportNPTGTest(TestCase):
 
                     self.assertFalse((temp_dir_path / "nptg.xml").exists())
 
-                    with self.assertNumQueries(621):
+                    with self.assertNumQueries(619):
                         call_command("nptg_new")
 
                     source = DataSource.objects.get(name="NPTG")

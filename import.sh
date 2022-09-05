@@ -25,7 +25,7 @@ USERNAME=$1
 PASSWORD=$2
 
 
-./manage.py nptg
+./manage.py nptg_new
 ./manage.py naptan_new
 
 
