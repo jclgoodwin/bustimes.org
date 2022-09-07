@@ -234,9 +234,9 @@ class Command(BaseCommand):
                     self.region_id = None
 
         if self.region_id:
+            url = f"ftp://ftp.tnds.basemap.co.uk/{archive_name}"
             self.source, _ = DataSource.objects.get_or_create(
-                {"url": "ftp://ftp.tnds.basemap.co.uk/" + archive_name},
-                name=self.region_id,
+                {"name": self.region_id}, url=url
             )
         else:
             self.source, _ = DataSource.objects.get_or_create(name=archive_name)
@@ -410,8 +410,6 @@ class Command(BaseCommand):
             ).update(geometry=None)
 
         self.finish_services()
-
-        self.source.save(update_fields=["datetime"])
 
         StopPoint.objects.filter(
             ~Exists(

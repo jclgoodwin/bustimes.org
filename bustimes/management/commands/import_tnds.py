@@ -1,13 +1,19 @@
-import boto3
 import logging
 from ftplib import FTP
-from django.core.management.base import BaseCommand
-from django.core.management import call_command
+
+import boto3
+from botocore.errorfactory import ClientError
 from django.conf import settings
+from django.core.management import call_command
+from django.core.management.base import BaseCommand
 from django.utils import timezone
+
+from busstops.models import DataSource
 
 
 class Command(BaseCommand):
+    bucket_name = "bustimes-data"
+
     @staticmethod
     def add_arguments(parser):
         parser.add_argument("username", type=str)
@@ -28,26 +34,48 @@ class Command(BaseCommand):
         return {name: details for name, details in files}
 
     def do_files(self, files):
-        for name in files:
-            details = files[name]
-            version = details["modify"]
-            versioned_name = f"{version}_{name}"
+        for name, details in files.items():
+            self.do_file(name, details)
 
-            s3_key = f"TNDS/{versioned_name}"
-            existing = self.get_existing_file(s3_key)
+    def do_file(self, name, details):
+        version = details["modify"]  # 20201102164248
+        versioned_name = f"{version}_{name}"
 
-            if existing and existing["Size"] == int(details["size"]):
-                continue
+        source, _ = DataSource.objects.get_or_create(
+            url=f"ftp://{self.ftp.host}/{name}"
+        )
 
-            path = settings.TNDS_DIR / name
-            if path.exists() and path.stat().st_size == int(details["size"]):
-                continue
+        s3_key = f"TNDS/{name}"
+        versioned_s3_key = f"TNDS/{versioned_name}"
+        try:
+            existing = self.client.head_object(Bucket=self.bucket_name, Key=s3_key)
+            etag = existing["ETag"]
+        except ClientError:
+            existing = None
+            etag = None
 
+        path = settings.TNDS_DIR / name
+
+        if not path.exists() or path.stat().st_size != int(details["size"]):
             with open(path, "wb") as open_file:
                 self.ftp.retrbinary(f"RETR {name}", open_file.write)
-            self.client.upload_file(str(path), "bustimes-data", s3_key)
 
-            self.changed_files.append(path)
+        if not existing or existing["ContentLength"] != details["size"]:
+            self.client.upload_file(str(path), self.bucket_name, s3_key)
+            self.client.copy(
+                {
+                    "Bucket": self.bucket_name,
+                    "Key": s3_key,
+                },
+                Bucket=self.bucket_name,
+                Key=versioned_s3_key,
+            )
+            etag = self.client.head_object(Bucket=self.bucket_name, Key=s3_key)["ETag"]
+
+        if not etag or etag != source.sha1:
+            source.sha1 = etag
+
+            self.changed_files.append((path, source))
 
     def handle(self, username, password, *args, **options):
         logger = logging.getLogger(__name__)
@@ -56,11 +84,7 @@ class Command(BaseCommand):
             "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
         )
 
-        self.existing_files = self.client.list_objects_v2(Bucket="bustimes-data")
-
-        host = "ftp.tnds.basemap.co.uk"
-
-        self.ftp = FTP(host=host, user=username, passwd=password)
+        self.ftp = FTP(host="ftp.tnds.basemap.co.uk", user=username, passwd=password)
 
         self.changed_files = []
 
@@ -77,8 +101,10 @@ class Command(BaseCommand):
 
         self.ftp.quit()
 
-        for file in self.changed_files:
+        for file, source in self.changed_files:
             logger.info(file.name)
             before = timezone.now()
             call_command("import_transxchange", file)
             logger.info(timezone.now() - before)
+
+            source.save(update_fields=["sha1"])
