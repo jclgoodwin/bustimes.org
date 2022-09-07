@@ -32,6 +32,8 @@ def get_routes(routes, when=None, from_date=None):
 
             if route.source.name.startswith(
                 "First Bus_"
+            ) or route.souce.name.startswith(
+                "National Express West Midlands"
             ):  # journeys may be split between sources (First Bristol)
                 route.key = f"{route.key}:{route.source_id}"
 

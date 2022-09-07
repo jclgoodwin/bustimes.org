@@ -19,11 +19,6 @@ class Command(BaseCommand):
         parser.add_argument("username", type=str)
         parser.add_argument("password", type=str)
 
-    def get_existing_file(self, key):
-        for file in self.existing_files["Contents"]:
-            if file["Key"] == key:
-                return file
-
     def list_files(self):
         files = [
             (name, details)
