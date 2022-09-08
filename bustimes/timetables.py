@@ -606,6 +606,10 @@ class Grouping:
                 if (
                     trip_b.times
                     and trip_a.route.line_name == trip_b.route.line_name
+                    and (
+                        trip_a.route_id != trip_b.route_id
+                        or trip_a.ticket_machine_code == trip_b.ticket_machine_code
+                    )
                     and trip_a.operator_id == trip_b.operator_id
                     and destination == trip_b.times[0].get_key()
                     and destination != trip_b.times[-1].get_key()  # not circular

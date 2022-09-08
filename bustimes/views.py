@@ -103,8 +103,10 @@ def route_xml(request, source, code=""):
         if source.url.startswith("https://opendata.ticketer.com/uk/"):
             path = source.url.split("/")[4]
             path = Path("ticketer") / f"{path}.zip"
-        else:
+        elif "bus-data.dft.gov.uk" in source.url:
             path = Path("bod") / str(source.id)
+        else:
+            raise Http404
     elif "/" in code:
         path = code.split("/")[0]  # archive name
         code = code[len(path) + 1 :]
