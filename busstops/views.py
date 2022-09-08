@@ -27,8 +27,7 @@ from django.views.generic.detail import DetailView
 from sql_util.utils import Exists
 from ukpostcodeutils import validation
 
-from bustimes.models import StopTime
-from bustimes.utils import get_routes
+from bustimes.models import Trip
 from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
@@ -1108,16 +1107,13 @@ def service_map_data(request, service_id):
 
             return JsonResponse(data)
 
-    routes = get_routes(
-        service.route_set.select_related("source"), when=timezone.localdate()
+    trips = (
+        Trip.objects.only("id")
+        .annotate(
+            stop_ids=ArrayAgg("stoptime__stop_id"),
+        )
+        .filter(route__service=service)
     )
-
-    stop_times = StopTime.objects.filter(stop__isnull=False)
-    stop_times = stop_times.only("trip_id", "stop_id").order_by("trip_id", "id")
-    if routes:
-        stop_times = stop_times.filter(trip__route__in=routes)
-    else:
-        stop_times = stop_times.filter(trip__route__service=service)
 
     route_links = {
         (route_link.from_stop_id, route_link.to_stop_id): route_link
@@ -1128,28 +1124,29 @@ def service_map_data(request, service_id):
     line_string = []
     multi_line_string = [line_string]
 
-    previous_stop_time = None
-    previous_stop = None
-    for stop_time in stop_times:
-        stop = stops.get(stop_time.stop_id)
-        if previous_stop_time and previous_stop_time.trip_id == stop_time.trip_id:
-            pair = (previous_stop_time.stop_id, stop_time.stop_id)
-            if pair not in pairs:
-                pairs.add(pair)
-                if pair in route_links:
-                    line_string += route_links[pair].geometry.coords
-                elif previous_stop and stop and stop.latlong:
-                    line_string.append(previous_stop.latlong.coords)
-                    line_string.append(stop.latlong.coords)
+    for trip in trips:
+        previous_stop_id = None
+        previous_stop = None
+        for stop_id in trip.stop_ids:
+            stop = stops.get(stop_id)
+            if previous_stop_id:
+                pair = (previous_stop_id, stop_id)
+                if pair not in pairs:
+                    pairs.add(pair)
+                    if pair in route_links:
+                        line_string += route_links[pair].geometry.coords
+                    elif previous_stop and stop and stop.latlong:
+                        line_string.append(previous_stop.latlong.coords)
+                        line_string.append(stop.latlong.coords)
+                elif line_string:
+                    line_string = []
+                    multi_line_string.append(line_string)
             elif line_string:
                 line_string = []
                 multi_line_string.append(line_string)
-        elif line_string:
-            line_string = []
-            multi_line_string.append(line_string)
-        previous_stop_time = stop_time
-        if stop and stop.latlong:
-            previous_stop = stop
+            previous_stop_id = stop_id
+            if stop and stop.latlong:
+                previous_stop = stop
 
     data["geometry"]["coordinates"] = multi_line_string
 
