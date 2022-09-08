@@ -1,20 +1,22 @@
 import time_machine
 from ciso8601 import parse_datetime
-from django.test import TestCase, override_settings
 from django.contrib.gis.geos import Point
 from django.db.transaction import TransactionManagementError
+from django.test import TestCase, override_settings
+
 from accounts.models import User
-from busstops.models import DataSource, Region, Operator, Service
+from busstops.models import DataSource, Operator, Region, Service
+
 from .models import (
-    Vehicle,
-    VehicleType,
-    VehicleFeature,
     Livery,
+    Vehicle,
+    VehicleEdit,
+    VehicleEditFeature,
+    VehicleFeature,
     VehicleJourney,
     VehicleLocation,
-    VehicleEdit,
     VehicleRevision,
-    VehicleEditFeature,
+    VehicleType,
 )
 
 
@@ -58,7 +60,6 @@ class VehiclesTests(TestCase):
         service = Service.objects.create(
             service_code="49",
             region=ea,
-            date="2018-12-25",
             tracking=True,
             description="Spixworth - Hunworth - Happisburgh",
         )

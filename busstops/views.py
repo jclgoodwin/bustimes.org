@@ -64,7 +64,7 @@ def get_colours(services):
 
 
 def version(request):
-    return HttpResponse(os.environ.get("COMMIT_HASH"))
+    return HttpResponse(os.environ.get("COMMIT_HASH"), content_type="text/plain")
 
 
 def not_found(request, exception):

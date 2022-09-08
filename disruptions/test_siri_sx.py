@@ -1,10 +1,11 @@
-from vcr import use_cassette
-from django.test import TestCase
-from django.core.management import call_command
 from django.conf import settings
-from busstops.models import Region, Operator, Service, DataSource, StopPoint, StopUsage
-from .models import Situation
+from django.core.management import call_command
+from django.test import TestCase
+from vcr import use_cassette
 
+from busstops.models import DataSource, Operator, Region, Service, StopPoint, StopUsage
+
+from .models import Situation
 
 VCR_DIR = settings.BASE_DIR / "fixtures" / "vcr"
 
@@ -19,7 +20,6 @@ class SiriSXTest(TestCase):
         service = Service.objects.create(
             line_name="156",
             service_code="156",
-            date="2020-01-01",
             current=True,
             timetable_wrong=True,
         )

@@ -1,10 +1,13 @@
-import vcr
 import os
-import time_machine
 from unittest.mock import patch
+
+import time_machine
+import vcr
 from django.test import TestCase
 from django.utils import timezone
-from busstops.models import DataSource, Region, Operator, Service
+
+from busstops.models import DataSource, Operator, Region, Service
+
 from ...models import VehicleJourney
 from ..commands.import_stagecoach import Command
 
@@ -30,7 +33,6 @@ class StagecoachTest(TestCase):
         )
         s = Service.objects.create(
             line_name="Oxford Tube",
-            date="2019-01-01",
             geometry="MULTILINESTRING((-0.1475818977 51.4928233539,-0.1460401487 51.496737716))",
         )
         s.operator.add(o)

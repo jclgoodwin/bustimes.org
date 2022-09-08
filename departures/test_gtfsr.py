@@ -1,8 +1,8 @@
 import vcr
 from django.test import TestCase, override_settings
 
-from busstops.models import StopPoint, Service, Operator, DataSource, StopUsage
-from bustimes.models import Route, Trip, StopTime, Calendar
+from busstops.models import DataSource, Operator, Service, StopPoint, StopUsage
+from bustimes.models import Calendar, Route, StopTime, Trip
 
 
 class GTFSRTTest(TestCase):
@@ -27,9 +27,7 @@ class GTFSRTTest(TestCase):
         )
 
         operator = Operator.objects.create(noc="dub", name="Dublin Bus")
-        service = Service.objects.create(
-            service_code="7", line_name="7", date="2022-06-01"
-        )
+        service = Service.objects.create(service_code="7", line_name="7")
         service.operator.add(operator)
 
         route = Route.objects.create(service=service, source=source, code="7")

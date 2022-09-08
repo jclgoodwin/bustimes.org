@@ -506,6 +506,7 @@ class Operator(SearchMixin, models.Model):
 
     noc = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
+    qualifier_name = models.CharField(max_length=100, blank=True)
     aka = models.CharField(max_length=100, blank=True)
     slug = AutoSlugField(populate_from=str, unique=True, editable=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
@@ -524,6 +525,7 @@ class Operator(SearchMixin, models.Model):
     licences = models.ManyToManyField("vosa.Licence", blank=True)
     payment_methods = models.ManyToManyField("PaymentMethod", blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     objects = OperatorManager()
 
@@ -654,7 +656,6 @@ class Service(models.Model):
     operator = models.ManyToManyField(Operator, blank=True)
     region = models.ForeignKey(Region, models.CASCADE, null=True, blank=True)
     stops = models.ManyToManyField(StopPoint, through=StopUsage)
-    date = models.DateField(null=True, blank=True)
     current = models.BooleanField(default=True, db_index=True)
     timetable_wrong = models.BooleanField(default=False)
     geometry = models.GeometryField(null=True, blank=True)
@@ -663,6 +664,7 @@ class Service(models.Model):
     tracking = models.BooleanField(default=False)
     payment_methods = models.ManyToManyField("PaymentMethod", blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
+    modified_at = models.DateTimeField(auto_now=True)
 
     public_use = models.BooleanField(null=True)
 
@@ -856,10 +858,10 @@ class Service(models.Model):
                 pass
 
     def get_linked_services_cache_key(self):
-        return f"{self.id}linked_services{self.date}"
+        return f"{self.id}linked_services{self.modified_at.timestamp()}"
 
     def get_similar_services_cache_key(self):
-        return f"{self.id}similar_services{self.date}"
+        return f"{self.id}similar_services{self.modified_at.timestamp()}"
 
     def get_linked_services(self):
         services = cache.get(key := self.get_linked_services_cache_key())

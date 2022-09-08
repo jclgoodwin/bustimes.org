@@ -1,26 +1,28 @@
 # coding=utf-8
 """Tests for live departures
 """
-import vcr
-import time_machine
-from datetime import datetime, date
+from datetime import date, datetime
 from unittest.mock import patch
-from django.test import TestCase, override_settings
+
+import time_machine
+import vcr
 from django.shortcuts import render
+from django.test import TestCase, override_settings
 
 from busstops.models import (
-    StopPoint,
-    Service,
-    Region,
-    Operator,
-    StopUsage,
     AdminArea,
     DataSource,
+    Operator,
+    Region,
+    Service,
     SIRISource,
+    StopPoint,
+    StopUsage,
 )
-from bustimes.models import Route, Trip, Calendar, StopTime
+from bustimes.models import Calendar, Route, StopTime, Trip
 from vehicles.models import Vehicle, VehicleJourney
 from vehicles.tasks import log_vehicle_journey
+
 from . import live
 
 
@@ -66,7 +68,7 @@ class LiveDeparturesTest(TestCase):
             admin_area=admin_area,
         )
         worcester_44 = Service.objects.create(
-            service_code="44", line_name="44", region_id="W", date="2017-01-01"
+            service_code="44", line_name="44", region_id="W"
         )
         worcester_44.operator.add(
             Operator.objects.create(noc="FMR", name="First Midland Red", region_id="W")
@@ -119,7 +121,6 @@ class LiveDeparturesTest(TestCase):
             service_code="tfl_60-8-_-y05",
             line_name="8",
             region_id="W",
-            date="2017-01-01",
         )
         StopUsage.objects.create(stop=self.london_stop, service=service, order=1)
         route = Route.objects.create(source=self.source, service=service)
@@ -179,7 +180,9 @@ class LiveDeparturesTest(TestCase):
             atco_code="700000001415", active=True, locality_centre=False
         )
         service = Service.objects.create(
-            service_code="2D_MET", line_name="2D", region_id="W", date="2017-01-01"
+            service_code="2D_MET",
+            line_name="2D",
+            region_id="W",
         )
         service.operator.add(operator)
         StopUsage.objects.create(stop=stop, service=service, order=0)

@@ -1061,7 +1061,6 @@ class Command(BaseCommand):
                 service = Service()
 
             service.line_name = line.line_name
-            service.date = today
             service.source = self.source
 
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)

@@ -1,7 +1,10 @@
 from unittest.mock import patch
+
 from django.test import TestCase
-from busstops.models import Region, Operator, Service, DataSource
-from ...models import VehicleJourney, Vehicle
+
+from busstops.models import DataSource, Operator, Region, Service
+
+from ...models import Vehicle, VehicleJourney
 from ..commands import import_bushub
 
 
@@ -17,15 +20,15 @@ class BusHubTest(TestCase):
             noc="WNGS", name="Paul McCartney & Wings", region_id="WM", parent="Rotala"
         )
         service_a = Service.objects.create(
-            service_code="44a", line_name="44", date="2018-08-06", tracking=True
+            service_code="44a", line_name="44", tracking=True
         )
         service_b = Service.objects.create(
-            service_code="44b", line_name="44", date="2018-08-06", tracking=True
+            service_code="44b", line_name="44", tracking=True
         )
         service_a.operator.add("DIAM")
         service_b.operator.add("DIAM")
         cls.service_c = Service.objects.create(
-            service_code="44", line_name="44", date="2018-08-06", tracking=True
+            service_code="44", line_name="44", tracking=True
         )
         cls.service_c.operator.add("WNGS")
         cls.vehicle = Vehicle.objects.create(code="20052", operator_id="WNGS")

@@ -1,18 +1,20 @@
-import io
 import csv
+import io
 import logging
 import zipfile
-from requests_html import HTMLSession
 from datetime import datetime
-from django.utils.dateparse import parse_duration
-from django.conf import settings
-from django.core.management.base import BaseCommand
-from django.db.models import Count, Q, Exists, OuterRef
-from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
-from busstops.models import Region, DataSource, StopPoint, Service, Operator, AdminArea
-from ...models import Route, Calendar, CalendarDate, Trip, StopTime
-from ...download_utils import download_if_changed
 
+from django.conf import settings
+from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
+from django.core.management.base import BaseCommand
+from django.db.models import Count, Exists, OuterRef, Q
+from django.utils.dateparse import parse_duration
+from requests_html import HTMLSession
+
+from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
+
+from ...download_utils import download_if_changed
+from ...models import Calendar, CalendarDate, Route, StopTime, Trip
 
 logger = logging.getLogger(__name__)
 
@@ -168,7 +170,6 @@ class Command(BaseCommand):
         service.service_code = line["route_id"]
         service.line_name = line_name
         service.description = description
-        service.date = self.source.datetime.date()
         service.mode = MODES.get(int(line["route_type"]), "")
         service.current = True
         service.service_code = line["route_id"]

@@ -181,7 +181,6 @@ class Command(BaseCommand):
                 else:
                     defaults = {
                         "line_name": line_name,
-                        "date": self.source.datetime.date(),
                         "current": True,
                         "source": self.source,
                         "region_id": "NI",
