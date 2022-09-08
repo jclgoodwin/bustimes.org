@@ -73,7 +73,7 @@ urlpatterns = [
     re_path(r"^operators/(?P<pk>[A-Z]+)$", views.OperatorDetailView.as_view()),
     path(
         "operators/<slug>",
-        cache_page(1800)(views.OperatorDetailView.as_view()),
+        views.OperatorDetailView.as_view(),
         name="operator_detail",
     ),
     path("operators/<slug>/tickets", mytrip.operator_tickets),

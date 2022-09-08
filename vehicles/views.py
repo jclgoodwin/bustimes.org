@@ -368,9 +368,9 @@ def vehicles_json(request) -> JsonResponse:
             )
         )
     elif "operator" in request.GET:
-        vehicles = vehicles.filter(
-            operator__in=request.GET["operator"].split(",")
-        ).in_bulk()
+        vehicle_ids = list(
+            redis_client.smembers(f"operator{request.GET['operator']}vehicles")
+        )
     elif "id" in request.GET:
         # specified vehicle ids
         vehicle_ids = request.GET["id"].split(",")
@@ -500,9 +500,7 @@ def vehicles_json(request) -> JsonResponse:
             if location:
                 item = VehicleLocation.decode_appendage(location)
                 item["heading"] = item["direction"]
-                item["service"] = {
-                    "line_name": vehicle.latest_journey.route_name
-                }
+                item["service"] = {"line_name": vehicle.latest_journey.route_name}
                 if vehicle.service_slug:
                     item["service"]["url"] = f"/services/{vehicle.service_slug}"
                 locations.append(item)

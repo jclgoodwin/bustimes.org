@@ -722,13 +722,9 @@ class OperatorDetailView(DetailView):
 
         # vehicles tab:
 
-        vehicles = self.object.vehicle_set.filter(withdrawn=False)
-        vehicles = vehicles.values_list("id", flat=True)
-        context["vehicles"] = bool(vehicles)
-        if vehicles and redis_client:
-            context["map"] = redis_client.exists(
-                *[f"vehicle{vehicle_id}" for vehicle_id in vehicles]
-            )
+        context["vehicles"] = self.object.vehicle_set.filter(withdrawn=False).exists()
+        if redis_client and context["vehicles"]:
+            context["map"] = redis_client.exists(f"operator{self.object.noc}vehicles")
 
         return context
 
