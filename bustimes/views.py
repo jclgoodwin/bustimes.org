@@ -252,7 +252,9 @@ def trip_json(request, id):
 
 class TripDetailView(DetailView):
     model = Trip
-    queryset = model.objects.select_related("route__service").prefetch_related(
+    queryset = model.objects.select_related(
+        "route__service", "operator", "calendar"
+    ).prefetch_related(
         Prefetch(
             "stoptime_set", queryset=StopTime.objects.select_related("stop__locality")
         )
@@ -261,7 +263,10 @@ class TripDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        operators = list(self.object.route.service.operator.all())
+        if self.object.operator:
+            operators = [self.object.operator]
+        else:
+            operators = list(self.object.route.service.operator.all())
         context["breadcrumb"] = operators + [self.object.route.service]
 
         stops = list(self.object.stoptime_set.all())

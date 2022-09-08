@@ -1,11 +1,14 @@
-import requests
 import xml.etree.cElementTree as ET
-from ciso8601 import parse_datetime
 from base64 import b64encode
+
+import requests
+from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from psycopg2.extras import DateTimeTZRange
+
 from busstops.models import DataSource, Service, StopPoint
-from ...models import Situation, Consequence, ValidityPeriod, Link
+
+from ...models import Consequence, Link, Situation, ValidityPeriod
 
 
 def get_period(element):
@@ -103,7 +106,6 @@ def handle_item(item, source):
                     line_name__iexact=line_name, operator=operator_ref
                 ):
                     consequence.services.add(service)
-                    service.varnish_ban()
 
     return situation.id
 

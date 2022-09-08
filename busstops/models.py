@@ -22,7 +22,6 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
-from buses.utils import varnish_ban
 from bustimes.models import Route, Trip
 from bustimes.timetables import Timetable, get_stop_usages
 from bustimes.utils import get_descriptions
@@ -953,6 +952,12 @@ class Service(models.Model):
     def get_timetable(self, day=None, calendar_id=None, related=(), detailed=False):
         """Given a Service, return a Timetable"""
 
+        cache_key = (
+            f"{self.id}:{self.modified_at.timestamp()}:{day or calendar_id}:{detailed}"
+        )
+        if timetable := cache.get(cache_key):
+            return timetable
+
         if self.region_id == "NI" or self.source and self.source.name.endswith(" GTFS"):
             timetable = Timetable(self.route_set.all(), day, calendar_id=calendar_id)
         else:
@@ -960,12 +965,14 @@ class Service(models.Model):
                 routes = Route.objects.filter(service__in=[self] + related)
             else:
                 routes = self.route_set
+            operators = self.operator.all()
             try:
                 timetable = Timetable(
                     routes.order_by("start_date"),
                     day,
                     calendar_id=calendar_id,
                     detailed=detailed,
+                    operators=operators,
                 )
             except (IndexError, UnboundLocalError) as e:
                 logger = logging.getLogger(__name__)
@@ -983,11 +990,9 @@ class Service(models.Model):
             for grouping in timetable.groupings:
                 del grouping.heads
 
-        return timetable
+        cache.set(cache_key, timetable)
 
-    def varnish_ban(self):
-        varnish_ban(self.get_absolute_url())
-        varnish_ban(reverse("service_detail", args=(self.id,)))
+        return timetable
 
     def do_stop_usages(self):
         outbound, inbound = get_stop_usages(Trip.objects.filter(route__service=self))

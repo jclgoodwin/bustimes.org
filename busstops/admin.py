@@ -3,7 +3,6 @@ from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.core.cache import cache
 from django.db import transaction
 from django.db.models import CharField, Exists, F, OuterRef, Q
 from django.db.models.functions import Cast
@@ -306,12 +305,6 @@ class ServiceAdmin(GISModelAdmin):
         first.do_stop_usages()
         first.update_geometry()
         first.save()
-        cache.delete(first.get_linked_services_cache_key())
-        cache.delete(first.get_similar_services_cache_key())
-
-        transaction.on_commit(first.varnish_ban)
-        for operator in first.operator.all():
-            models.varnish_ban(operator.get_absolute_url())
 
         first.update_description()
         first.update_search_vector()
@@ -348,9 +341,7 @@ class ServiceAdmin(GISModelAdmin):
                     service.do_stop_usages()
                     service.update_geometry()
                     service.update_search_vector()
-                    if service.id == service_id:
-                        transaction.on_commit(service.varnish_ban)
-                    else:
+                    if service.id != service_id:
                         journeys.filter(
                             Q(trip__route__service=service)
                             | Q(route_name__iexact=service.line_name)
@@ -358,9 +349,6 @@ class ServiceAdmin(GISModelAdmin):
                         service_codes.filter(
                             code__istartswith=f"{service.line_name}-"
                         ).update(service=service)
-
-            for operator in operators:
-                models.varnish_ban(operator.get_absolute_url())
 
 
 @admin.register(models.ServiceLink)

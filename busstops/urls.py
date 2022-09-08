@@ -79,12 +79,10 @@ urlpatterns = [
     path("operators/<slug>/tickets", mytrip.operator_tickets),
     path("operators/<slug>/tickets/<id>", mytrip.operator_ticket),
     path("services/<int:service_id>.json", views.service_map_data),
-    path(
-        "services/<int:service_id>/timetable", cache_page(1800)(views.service_timetable)
-    ),
+    path("services/<int:service_id>/timetable", views.service_timetable),
     path(
         "services/<slug>",
-        cache_page(1800)(views.ServiceDetailView.as_view()),
+        views.ServiceDetailView.as_view(),
         name="service_detail",
     ),
     path("services/<slug>/fares", fares_views.service_fares),

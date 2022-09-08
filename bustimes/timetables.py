@@ -115,8 +115,10 @@ def compare_trips(rows, trip_ids, a, b):
 
 
 class Timetable:
-    def __init__(self, routes, date, calendar_id=None, detailed=False):
+    def __init__(self, routes, date, calendar_id=None, detailed=False, operators=None):
         self.today = localdate()
+
+        self.operators = operators
 
         routes = list(routes.select_related("source"))
         self.routes = routes
@@ -140,7 +142,7 @@ class Timetable:
 
         four_weeks_time = self.today + datetime.timedelta(days=28)
 
-        self.calendars = (
+        self.calendars = list(
             Calendar.objects.filter(Exists("trip", filter=Q(route__in=routes)))
             .annotate(
                 bank_holiday_inclusions=ArrayAgg(
@@ -291,6 +293,8 @@ class Timetable:
 
     @cached_property
     def has_operators(self) -> bool:
+        if self.operators:
+            return len(self.operators) > 1
         prev = None
         for grouping in self.groupings:
             for trip in grouping.trips:
