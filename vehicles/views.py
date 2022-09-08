@@ -331,9 +331,10 @@ def vehicles_json(request) -> JsonResponse:
         .defer("data", "latest_journey_data")
     )
 
-    vehicles = all_vehicles
     vehicle_ids = None
+    set_names = None
     service_ids = None
+    operator_ids = None
 
     if bounds is not None:
         # ids of vehicles within box
@@ -362,15 +363,10 @@ def vehicles_json(request) -> JsonResponse:
             ]
         except ValueError:
             return HttpResponseBadRequest()
-        vehicle_ids = list(
-            redis_client.sunion(
-                [f"service{service_id}vehicles" for service_id in service_ids]
-            )
-        )
+        set_names = [f"service{service_id}vehicles" for service_id in service_ids]
     elif "operator" in request.GET:
-        vehicle_ids = list(
-            redis_client.smembers(f"operator{request.GET['operator']}vehicles")
-        )
+        operator_ids = request.GET["operator"].split(",")
+        set_names = [f"operator{operator_id}vehicles" for operator_id in operator_ids]
     elif "id" in request.GET:
         # specified vehicle ids
         vehicle_ids = request.GET["id"].split(",")
@@ -378,8 +374,8 @@ def vehicles_json(request) -> JsonResponse:
         # ids of all vehicles
         vehicle_ids = redis_client.zrange("vehicle_location_locations", 0, -1)
 
-    if vehicle_ids is None:
-        vehicle_ids = list(vehicles.keys())
+    if set_names:
+        vehicle_ids = list(redis_client.sunion(set_names))
 
     vehicle_locations = redis_client.mget(
         [f"vehicle{int(vehicle_id)}" for vehicle_id in vehicle_ids]
@@ -388,32 +384,27 @@ def vehicles_json(request) -> JsonResponse:
         json.loads(item) if item else item for item in vehicle_locations
     ]
 
-    if type(vehicles) is not dict:
-        # remove expired items from 'vehicle_location_locations'
-        to_remove = [
-            vehicle_ids[i] for i, item in enumerate(vehicle_locations) if not item
-        ]
+    # remove expired items from 'vehicle_location_locations'
+    to_remove = [vehicle_ids[i] for i, item in enumerate(vehicle_locations) if not item]
 
-        if to_remove:
-            redis_client.zrem("vehicle_location_locations", *to_remove)
+    if to_remove:
+        redis_client.zrem("vehicle_location_locations", *to_remove)
 
-        journeys = cache.get_many(
-            [f"journey{item['journey_id']}" for item in vehicle_locations if item]
+    journeys = cache.get_many(
+        [f"journey{item['journey_id']}" for item in vehicle_locations if item]
+    )
+
+    # only get vehicles with unexpired locations
+    try:
+        vehicles = all_vehicles.in_bulk(
+            [
+                vehicle_ids[i]
+                for i, item in enumerate(vehicle_locations)
+                if item and f"journey{item['journey_id']}" not in journeys
+            ]
         )
-
-        # only get vehicles with unexpired locations
-        try:
-            vehicles = vehicles.in_bulk(
-                [
-                    vehicle_ids[i]
-                    for i, item in enumerate(vehicle_locations)
-                    if item and f"journey{item['journey_id']}" not in journeys
-                ]
-            )
-        except OperationalError:
-            vehicles = {}
-    else:
-        journeys = {}
+    except OperationalError:
+        vehicles = {}
 
     locations = []
 
@@ -484,9 +475,14 @@ def vehicles_json(request) -> JsonResponse:
                         delay = (when - prev_time).total_seconds()  # early
                     item["delay"] = delay
 
-        if service_ids and (not item or item.get("service_id") not in service_ids):
-            for service_id in service_ids:
-                redis_client.srem(f"service{service_id}vehicles", vehicle_id)
+        if (
+            service_ids
+            and (not item or item.get("service_id") not in service_ids)
+            or operator_ids
+            and not item
+        ):
+            for set_name in set_names:
+                redis_client.srem(set_name, vehicle_id)
         elif item:
             locations.append(item)
 
