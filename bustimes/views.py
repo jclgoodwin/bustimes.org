@@ -3,6 +3,7 @@ import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
+import boto3
 import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
@@ -70,23 +71,31 @@ class ServiceDebugView(DetailView):
         return context
 
 
+def maybe_download_file(local_path, s3_key):
+    if not local_path.exists():
+        client = boto3.client("s3", endpoint_url="https://ams3.digitaloceanspaces.com")
+        client.download_file(
+            Bucket="bustimes-data", Key=s3_key, Filename=str(local_path)
+        )
+
+
 @require_GET
 def route_xml(request, source, code=""):
     source = get_object_or_404(DataSource, id=source)
 
-    if "tnds" in source.url:
-        path = settings.TNDS_DIR / f"{source}.zip"
+    if code and not Route.objects.filter(source=source, code__startswith=code).exists():
+        raise Http404
+
+    if "ftp.tnds.basemap" in source.url:
+        filename = Path(source.url).name
+        path = settings.DATA_DIR / "TNDS" / filename
+        maybe_download_file(path, f"TNDS/{filename}")
         with zipfile.ZipFile(path) as archive:
             if code:
                 return FileResponse(archive.open(code), content_type="text/plain")
             return HttpResponse(
                 "\n".join(archive.namelist()), content_type="text/plain"
             )
-
-    if code:
-        route = Route.objects.filter(source=source, code__startswith=code).first()
-        if not route:
-            raise Http404
 
     if "stagecoach" in source.url:
         path = str(Path(source.url.split("/")[-1]))

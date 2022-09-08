@@ -724,8 +724,9 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(service.get_absolute_url() + "/debug")
         self.assertContains(response, route.get_absolute_url())
 
-        with self.assertRaises(FileNotFoundError):
-            self.client.get(route.get_absolute_url())
+        with patch("boto3.client"):
+            with self.assertRaises(FileNotFoundError):
+                self.client.get(route.get_absolute_url())
 
     def test_multiple_operators(self):
         """
