@@ -1,15 +1,19 @@
 import functools
 import json
-import ciso8601
 from datetime import timedelta
 from time import sleep
-from requests import RequestException
+
+import ciso8601
 from django.contrib.gis.geos import Point
 from django.core.serializers.json import DjangoJSONEncoder
+from requests import RequestException
+
 from busstops.models import Service
-from .import_nx import Command as NatExpCommand, parse_datetime
+
 from ...models import VehicleJourney, VehicleLocation
 from ...utils import redis_client
+from .import_nx import Command as NatExpCommand
+from .import_nx import parse_datetime
 
 
 class Command(NatExpCommand):
@@ -56,7 +60,6 @@ class Command(NatExpCommand):
         try:
             service = services.get()
         except Service.MultipleObjectsReturned:
-            service = self.operators
             if class_code == "ST":
                 service = services.get(operator="MEGA")
             elif class_code == "C":
@@ -132,7 +135,9 @@ class Command(NatExpCommand):
             "vehicle_location_locations",
             [location.latlong.x, location.latlong.y, journey.id],
         )
-        pipeline.sadd(f"service{journey.service_id}vehicles", journey.id)
+        if journey.service_id:
+            pipeline.sadd(f"service{journey.service_id}vehicles", journey.id)
+        pipeline.sadd(f"operator{self.operators[0]}vehicles", journey.id)
         redis_json = location.get_redis_json()
 
         redis_json["vehicle"] = {

@@ -313,6 +313,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     sadd[key].append(vehicle.id)
                 else:
                     sadd[key] = [vehicle.id]
+            if vehicle.operator_id:
+                sadd[f"operator{vehicle.operator_id}vehicles"]
 
             redis_json = location.get_redis_json()
             redis_json = json.dumps(redis_json, cls=DjangoJSONEncoder)
