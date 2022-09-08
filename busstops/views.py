@@ -2,6 +2,7 @@
 """View definitions."""
 import datetime
 import json
+import os
 import sys
 import traceback
 from urllib.parse import urlencode
@@ -60,6 +61,10 @@ def get_colours(services):
     colours = set(service.colour_id for service in services if service.colour_id)
     if colours:
         return ServiceColour.objects.filter(id__in=colours)
+
+
+def version(request):
+    return HttpResponse(os.environ.get("COMMIT_HASH"))
 
 
 def not_found(request, exception):

@@ -22,6 +22,7 @@ sitemaps = {
 urlpatterns = [
     path("", cache_page(3600)(TemplateView.as_view(template_name="index.html"))),
     path("offline", TemplateView.as_view(template_name="offline.html")),
+    path("version", views.version),
     path("contact", views.contact),
     path("cookies", TemplateView.as_view(template_name="cookies.html")),
     path("503", TemplateView.as_view(template_name="503.html")),

@@ -1,23 +1,25 @@
 # coding=utf-8
 import vcr
-from django.test import TestCase, override_settings
-from django.core import mail
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.core import mail
 from django.shortcuts import render
+from django.test import TestCase, override_settings
+
 from accounts.models import User
+from bustimes.models import Route, StopTime, Trip
+
 from .models import (
-    DataSource,
-    Region,
     AdminArea,
+    DataSource,
     District,
     Locality,
+    Operator,
+    Region,
+    Service,
     StopPoint,
     StopUsage,
-    Operator,
-    Service,
 )
-from bustimes.models import Route, Trip, StopTime
 
 
 class ContactTests(TestCase):
@@ -473,3 +475,7 @@ class ViewsTests(TestCase):
 
         with self.assertNumQueries(2):
             response = self.client.get("/journey?from_q=melton&to_q=constable")
+
+    def test_version(self):
+        response = self.client.get("/version")
+        self.assertTrue(response.content)
