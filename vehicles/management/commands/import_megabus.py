@@ -131,28 +131,33 @@ class Command(NatExpCommand):
 
         pipeline.rpush(*location.get_appendage())
 
+        match item["trip"]["class_code"]:
+            case "DE":  # Dublin Express
+                livery = 2455
+                operator_id = "ie-1178"
+            case "C" | "SCUL":  # Citylink
+                livery = 896
+                operator_id = "SCLK"
+            case "FALC":  # South West Falcon
+                livery = 583
+                operator_id = "SDVN"
+            case _:
+                livery = self.livery
+                operator_id = self.operators[0]
+
         pipeline.geoadd(
             "vehicle_location_locations",
             [location.latlong.x, location.latlong.y, journey.id],
         )
         if journey.service_id:
             pipeline.sadd(f"service{journey.service_id}vehicles", journey.id)
-        pipeline.sadd(f"operator{self.operators[0]}vehicles", journey.id)
+        pipeline.sadd(f"operator{operator_id}vehicles", journey.id)
         redis_json = location.get_redis_json()
 
         redis_json["vehicle"] = {
             "name": item["trip"]["operator_name"],
         }
 
-        match item["trip"]["class_code"]:
-            case "DE":  # Dublin Express
-                livery = 2455
-            case "C" | "SCUL":  # Citylink
-                livery = 896
-            case "FALC":  # South West Falcon
-                livery = 583
-            case _:
-                livery = self.livery
         redis_json["vehicle"]["livery"] = livery
 
         if service:
