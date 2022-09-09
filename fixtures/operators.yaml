@@ -386,3 +386,7 @@ FLIX:
     name: FlixBus
 ALCG:
     url: https://www.alinenortheast.co.uk/
+NADT:
+    url: https://www.adventuretravel.cymru/
+    twitter: AdvTravelBus
+    email: info@AdventureTravel.Cymru
