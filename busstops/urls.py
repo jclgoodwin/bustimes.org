@@ -31,10 +31,6 @@ urlpatterns = [
     path("timetable-source-stats.json", views.timetable_source_stats),
     path("stats.json", views.stats),
     path("robots.txt", views.robots_txt),
-    path(
-        "ads.txt",
-        TemplateView.as_view(template_name="ads.txt", content_type="text/plain"),
-    ),
     path("stops.json", views.stops),
     path(
         "regions/<pk>",
