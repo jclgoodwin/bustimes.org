@@ -74,7 +74,7 @@ class ServiceDebugView(DetailView):
 def maybe_download_file(local_path, s3_key):
     if not local_path.exists():
         if not local_path.parent.exists():
-            local_path.parent.mkdir()
+            local_path.parent.mkdir(parents=True)
         client = boto3.client("s3", endpoint_url="https://ams3.digitaloceanspaces.com")
         client.download_file(
             Bucket="bustimes-data", Key=s3_key, Filename=str(local_path)
