@@ -552,7 +552,6 @@ class Grouping:
                 b_top = rows.index(b.top)
                 b_bottom = rows.index(b.bottom)
 
-                # for row in rows:
                 for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
                     if row.times[a_index] and row.times[b_index]:
                         a_time = row.times[a_index].arrival
@@ -568,10 +567,12 @@ class Grouping:
         trip_ids = [trip.id for trip in self.trips]
         try:
             indices = [trip_ids.index(trip_id) for trip_id in sorter.static_order()]
+            assert len(trip_ids) == len(indices)
             if not indices:
                 return
             self.trips = [self.trips[i] for i in indices]
-        except graphlib.CycleError:
+        except (graphlib.CycleError, AssertionError) as e:
+            logger.error(e)
             self.trips.sort(key=cmp_to_key(partial(compare_trips, self.rows, trip_ids)))
             new_trip_ids = [trip.id for trip in self.trips]
             indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
