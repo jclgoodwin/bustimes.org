@@ -1,11 +1,14 @@
-import requests
 import pprint
 from datetime import timezone
-from ciso8601 import parse_datetime
 from pathlib import Path
-from django.core.management.base import BaseCommand
+
+import requests
+from ciso8601 import parse_datetime
 from django.conf import settings
+from django.core.management.base import BaseCommand
+
 from busstops.models import DataSource
+
 from ...download_utils import download
 from .import_atco_cif import Command as ImportAtcoCif
 
@@ -18,7 +21,7 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        base_url = "https://www.opendatani.gov.uk/api/3/action/package_show"
+        base_url = "https://admin.opendatani.gov.uk/api/3/action/package_show"
         ids = [
             "ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016",
             "metro-timetable-data-valid-from-18-june-until-31-august-2016",

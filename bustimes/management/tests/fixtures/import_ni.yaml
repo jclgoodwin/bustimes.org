@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python-requests/2.25.1
     method: GET
-    uri: https://www.opendatani.gov.uk/api/3/action/package_show?id=ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016
+    uri: https://admin.opendatani.gov.uk/api/3/action/package_show?id=ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016
   response:
     body:
       string: '{"help": "https://www.opendatani.gov.uk/api/3/action/help_show?name=package_show",
@@ -123,7 +123,7 @@ interactions:
       User-Agent:
       - python-requests/2.25.1
     method: GET
-    uri: https://www.opendatani.gov.uk/api/3/action/package_show?id=metro-timetable-data-valid-from-18-june-until-31-august-2016
+    uri: https://admin.opendatani.gov.uk/api/3/action/package_show?id=metro-timetable-data-valid-from-18-june-until-31-august-2016
   response:
     body:
       string: '{"help": "https://www.opendatani.gov.uk/api/3/action/help_show?name=package_show",
