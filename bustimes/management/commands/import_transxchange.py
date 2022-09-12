@@ -1173,13 +1173,10 @@ class Command(BaseCommand):
                     service.save(update_fields=["slug"])
 
             if operators:
-                if service_created:
+                if existing and not existing.current:
                     service.operator.set(operators.values())
                 else:
-                    if service.id in self.service_ids:
-                        service.operator.add(*operators.values())
-                    else:
-                        service.operator.set(operators.values())
+                    service.operator.add(*operators.values())
             self.service_ids.add(service.id)
 
             journey = journeys[0]

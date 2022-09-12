@@ -180,7 +180,7 @@ elif TEST:
     ]
 
 
-if TEST:
+if TEST or DEBUG:
     CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 elif REDIS_URL:
     CACHES = {

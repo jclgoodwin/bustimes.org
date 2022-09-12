@@ -431,7 +431,7 @@ class ImportBusOpenDataTest(TestCase):
                     "bustimes.management.commands.import_bod.download_if_changed",
                     return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
-                    with self.assertNumQueries(125):
+                    with self.assertNumQueries(123):
                         call_command("import_bod", "stagecoach")
                     download_if_changed.assert_called_with(
                         path, "https://opendata.stagecoachbus.com/" + archive_name
