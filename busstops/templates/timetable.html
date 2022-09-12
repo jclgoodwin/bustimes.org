@@ -30,6 +30,10 @@
         </form>
     {% endif %}
 
+    {% if timetable.message %}
+        <p class="message">{{ timetable.message }}</p>
+    {% endif %}
+
     {% for grouping in timetable.groupings %}
 
         {% if forloop.first != forloop.last %}

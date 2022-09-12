@@ -1,23 +1,25 @@
 """Import timetable data "fresh from the cow"
 """
-import logging
-import requests
 import hashlib
-import zipfile
+import logging
 import xml.etree.cElementTree as ET
-from pathlib import Path
-from django.db.models import Q, OuterRef, Exists
+import zipfile
 from io import StringIO
+from pathlib import Path
+
+import requests
 from ciso8601 import parse_datetime
-from django.core.management.base import BaseCommand
 from django.conf import settings
+from django.core.management.base import BaseCommand
 from django.db import DataError, IntegrityError
+from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
+
 from busstops.models import DataSource, Operator, Service
-from .import_transxchange import Command as TransXChangeCommand
+
 from ...download_utils import download, download_if_changed
 from ...models import Route, TimetableDataSource
-
+from .import_transxchange import Command as TransXChangeCommand
 
 logger = logging.getLogger(__name__)
 session = requests.Session()
@@ -412,7 +414,7 @@ def stagecoach(operator=None):
             if modified or operator:
                 do_stagecoach_source(command, last_modified, filename, nocs)
 
-            if nocs[0] in ("SCEK", "SYRK", "SCCM", "SDVN", "SCMN", "SSWL"):
+            if nocs[0] in ("SCEK", "SYRK", "SCCM", "SDVN", "SCMN"):
                 command.preferred_source = command.source  # just *prefer* 2.1 source
             else:
                 break  # don't use 2.4 source at all

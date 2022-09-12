@@ -1,9 +1,9 @@
 "Model definitions"
 
+import datetime
 import logging
 import re
 import time
-from datetime import datetime
 from urllib.parse import urlencode
 
 import yaml
@@ -255,7 +255,7 @@ class DataSource(models.Model):
             if timestamp.isdigit():
                 timestamp = int(timestamp)
                 if timestamp > 1600000000:
-                    date = datetime.fromtimestamp(int(timestamp))
+                    date = datetime.datetime.fromtimestamp(int(timestamp))
 
         if text:
             if url:
@@ -979,6 +979,20 @@ class Service(models.Model):
 
                 logger.error(e, exc_info=True)
                 return
+
+            if (
+                day == datetime.date(2022, 9, 19)
+                or timetable.calendar
+                and timetable.calendar.mon
+            ):
+                timetable.message = mark_safe(
+                    """
+                    <strong>Queen Elizabeth II funeral bank holiday on Monday 19 September</strong>
+                    – most operators will be operating a Sunday/bank holiday timetable,
+                    but please check with them.<br>
+                    The online timetable information here is likely to be wrong.
+                """
+                )
 
         # self.timetable_change = self.get_next_timetable_change(timetable)
 
