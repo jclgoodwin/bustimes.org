@@ -768,8 +768,8 @@ class Service(models.Model):
     def is_megabus(self):
         return (
             self.line_name in {"FALC", "FAL", "FLCN", "TUBE"}
-            or self.service_code.startswith("460-X5_STB_PF_X5")
-            or any(o.pk in {"MEGA", "SCMG"} for o in self.operator.all())
+            or self.service_code == "PF0000459:197"  # X5
+            or any(o.pk in {"MEGA", "SCMG", "SCLK"} for o in self.operator.all())
         )
 
     def get_megabus_url(self):
@@ -980,7 +980,7 @@ class Service(models.Model):
                 logger.error(e, exc_info=True)
                 return
 
-        self.timetable_change = self.get_next_timetable_change(timetable)
+        # self.timetable_change = self.get_next_timetable_change(timetable)
 
         timetable.groupings = [
             grouping for grouping in timetable.groupings if grouping.rows
