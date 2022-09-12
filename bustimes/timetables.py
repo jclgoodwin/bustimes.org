@@ -1,6 +1,5 @@
 import datetime
 import graphlib
-import logging
 from difflib import Differ
 from functools import cached_property, cmp_to_key, partial
 
@@ -13,7 +12,6 @@ from .formatting import format_timedelta
 from .models import Calendar, StopTime, Trip
 from .utils import get_calendars, get_descriptions, get_routes
 
-logger = logging.getLogger(__name__)
 differ = Differ(charjunk=lambda _: True)
 
 
@@ -568,11 +566,8 @@ class Grouping:
         try:
             indices = [trip_ids.index(trip_id) for trip_id in sorter.static_order()]
             assert len(trip_ids) == len(indices)
-            if not indices:
-                return
             self.trips = [self.trips[i] for i in indices]
-        except (graphlib.CycleError, AssertionError) as e:
-            logger.error(e)
+        except (graphlib.CycleError, AssertionError):
             self.trips.sort(key=cmp_to_key(partial(compare_trips, self.rows, trip_ids)))
             new_trip_ids = [trip.id for trip in self.trips]
             indices = [trip_ids.index(trip_id) for trip_id in new_trip_ids]
