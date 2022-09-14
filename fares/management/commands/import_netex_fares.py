@@ -493,19 +493,25 @@ class Command(BaseCommand):
 
     def handle_bods_dataset(self, item):
         download_url = item["url"]
+        name = item["name"]
+        description = item["description"]
         dataset_url = download_url.removesuffix("download/")
         modified = parse_datetime(item["modified"])
         try:
             dataset = models.DataSet.objects.get(url=dataset_url)
-            if dataset.datetime == modified:
-                return dataset
-            # has changed
-            dataset.tariff_set.all().delete()
         except models.DataSet.DoesNotExist:
-            dataset = models.DataSet(
-                name=item["name"], description=item["description"], url=dataset_url
-            )
+            dataset = models.DataSet(url=dataset_url)
+
+        if dataset.name != name or dataset.description != description:
+            dataset.name = name
+            dataset.description = description
             dataset.save()
+
+        if dataset.id:
+            if dataset.datetime == modified:
+                return dataset  # data hasn't changed
+
+            dataset.tariff_set.all().delete()
 
         logger.info(dataset)
 
