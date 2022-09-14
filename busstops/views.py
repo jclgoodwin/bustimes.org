@@ -1110,7 +1110,7 @@ def service_map_data(request, service_id):
     trips = (
         Trip.objects.only("id")
         .annotate(
-            stop_ids=ArrayAgg("stoptime__stop_id"),
+            stop_ids=ArrayAgg("stoptime__stop_id", ordering="stoptime"),
         )
         .filter(route__service=service)
     )
@@ -1120,33 +1120,45 @@ def service_map_data(request, service_id):
         for route_link in service.routelink_set.all()
     }
 
+    # build pairs of consecutive stops
+
     pairs = set()
-    line_string = []
-    multi_line_string = [line_string]
 
     for trip in trips:
         previous_stop_id = None
-        previous_stop = None
         for stop_id in trip.stop_ids:
-            stop = stops.get(stop_id)
             if previous_stop_id:
                 pair = (previous_stop_id, stop_id)
                 if pair not in pairs:
                     pairs.add(pair)
-                    if pair in route_links:
-                        line_string += route_links[pair].geometry.coords
-                    elif previous_stop and stop and stop.latlong:
-                        line_string.append(previous_stop.latlong.coords)
-                        line_string.append(stop.latlong.coords)
-                elif line_string:
-                    line_string = []
-                    multi_line_string.append(line_string)
-            elif line_string:
-                line_string = []
-                multi_line_string.append(line_string)
+
             previous_stop_id = stop_id
-            if stop and stop.latlong:
-                previous_stop = stop
+
+    line_string = []
+    multi_line_string = [line_string]
+
+    previous_pair = None
+
+    for pair in pairs:
+        line_string = []
+        multi_line_string.append(line_string)
+
+        origin, destination = pair
+        if previous_pair and line_string and previous_pair[1] != origin:
+            line_string = []
+            multi_line_string.append(line_string)
+        if pair in route_links:
+            line_string += route_links[pair].geometry.coords
+        elif origin in stops and destination in stops:
+            origin = stops[origin]
+            destination = stops[destination]
+            if origin.latlong and destination.latlong:
+                line_string += [
+                    origin.latlong.coords,
+                    destination.latlong.coords,
+                ]
+
+        previous_pair = pair
 
     data["geometry"]["coordinates"] = multi_line_string
 
