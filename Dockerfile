@@ -1,6 +1,5 @@
-FROM python:3.11.0rc1
+FROM python:3.11.0rc2
 
-ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y gdal-bin npm && rm -rf /var/lib/apt/lists/*

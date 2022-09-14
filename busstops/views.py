@@ -747,6 +747,7 @@ class ServiceDetailView(DetailView):
         model.objects.with_line_names()
         .select_related("region", "source")
         .prefetch_related("operator")
+        .defer("search_vector")
     )
 
     def get_object(self, **kwargs):

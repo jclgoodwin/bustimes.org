@@ -876,7 +876,7 @@ class Service(models.Model):
                     )
                 )
                 .order_by()
-                .defer("geometry")
+                .defer("search_vector", "geometry")
             )
             cache.set(key, services, 86400)
         return services
@@ -904,7 +904,7 @@ class Service(models.Model):
                 Service.objects.with_line_names()
                 .filter(q, ~Q(pk=self.pk), current=True)
                 .order_by()
-                .defer("geometry")
+                .defer("search_vector", "geometry")
             )
             services = sorted(
                 services.annotate(operators=ArrayAgg("operator__name", distinct=True)),
