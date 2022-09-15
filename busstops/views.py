@@ -146,6 +146,9 @@ Disallow: /
 
 User-agent: AhrefsBot
 Disallow: /
+
+User-agent: grapeshot
+Disallow: /
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
