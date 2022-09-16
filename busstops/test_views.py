@@ -302,7 +302,7 @@ class ViewsTests(TestCase):
         response = self.client.get("/stops/2900M115")
         self.assertContains(
             response,
-            "Sorry, it looks like no services currently stop at",
+            "<h1>Melton Constable, adjacent to Bus Shelter</h1>",
             status_code=404,
         )
 

@@ -22,6 +22,7 @@ from django.db.models.functions import Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.cache import patch_response_headers
 from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from sql_util.utils import Exists
@@ -109,6 +110,7 @@ def not_found(request, exception):
         context = None
     response = render(request, "404.html", context)
     response.status_code = 404
+    patch_response_headers(response)
     return response
 
 
@@ -558,10 +560,20 @@ class StopPointDetailView(DetailView):
         )
         context["services"] = sorted(services, key=Service.get_order)
 
-        if not (self.object.active or context["services"]):
-            raise Http404(
-                f"Sorry, it looks like no services currently stop at {self.object}"
+        context["breadcrumb"] = [
+            crumb
+            for crumb in (
+                self.object.get_region(),
+                self.object.admin_area,
+                self.object.locality and self.object.locality.district,
+                self.object.locality and self.object.locality.parent,
+                self.object.locality,
             )
+            if crumb is not None
+        ]
+
+        if not (self.object.active or context["services"]):
+            return context
 
         when = None
         form = forms.DeparturesForm(self.request.GET)
@@ -604,8 +616,6 @@ class StopPointDetailView(DetailView):
             service.mode for service in context["services"] if service.mode
         }
         context["colours"] = get_colours(context["services"])
-
-        region = self.object.get_region()
 
         nearby = StopPoint.objects.filter(active=True)
 
@@ -661,18 +671,14 @@ class StopPointDetailView(DetailView):
             )
         )
 
-        context["breadcrumb"] = [
-            crumb
-            for crumb in (
-                region,
-                self.object.admin_area,
-                self.object.locality and self.object.locality.district,
-                self.object.locality and self.object.locality.parent,
-                self.object.locality,
-            )
-            if crumb is not None
-        ]
         return context
+
+    def render_to_response(self, context):
+        response = super().render_to_response(context)
+        if not (self.object.active or context["services"]):
+            response.status_code = 404
+            patch_response_headers(response)
+        return response
 
 
 class OperatorDetailView(DetailView):
