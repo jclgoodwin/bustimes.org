@@ -196,8 +196,8 @@ class StopArea(models.Model):
 
 
 class DataSource(models.Model):
-    name = models.CharField(max_length=255)
-    url = models.URLField(blank=True)
+    name = models.CharField(max_length=255, db_index=True)
+    url = models.URLField(blank=True, db_index=True)
     datetime = models.DateTimeField(null=True, blank=True)
     sha1 = models.CharField(max_length=40, null=True, blank=True)
     settings = models.JSONField(null=True, blank=True)
