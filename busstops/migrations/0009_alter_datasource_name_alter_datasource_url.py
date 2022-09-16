@@ -20,4 +20,9 @@ class Migration(migrations.Migration):
             name="url",
             field=models.URLField(blank=True, db_index=True),
         ),
+        migrations.AlterField(
+            model_name="datasource",
+            name="sha1",
+            field=models.CharField(blank=True, db_index=True, max_length=40, null=True),
+        ),
     ]
