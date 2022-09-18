@@ -4,11 +4,12 @@ Usage:
     ./manage.py import_operator_contacts < nocrecords.xml
 """
 from io import open
+
 from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
-from ...models import Operator
 
+from ...models import Operator
 
 FIRST_OPERATORS = {
     "FABD": "aberdeen",
@@ -27,7 +28,6 @@ FIRST_OPERATORS = {
     "FPOT": "potteries",
     "FBOS": "somerset",
     "FCYM": "south-west-wales",
-    "FSCE": "south-east-and-central-scotland",
     "FSYO": "south-yorkshire",
     "FSOT": "southampton",
     "FDOR": "wessex-dorset-south-somerset",

@@ -257,8 +257,6 @@ DWYN:
 RBTS:
     name: Roberts Travel
     url: https://www.robertstravelgroup.co.uk/bus-timetables
-YELL:
-    url: https://www.yellowbuses.co.uk/
 EOSB:
     name: Swallow Coaches
     url: https://www.swallowcoach.co.uk/bus-services
@@ -291,8 +289,6 @@ ENSB:
     name: Ensignbus
 NOTB:
     twitter: NottsCC
-MCGL:
-    name: McGill’s
 BHBC:
     name: Brighton & Hove
 EDWC:
@@ -357,14 +353,10 @@ DDIS:
     url: https://procterscoaches.com/dales-district-timetable/
 TANV:
     email: contact@tanat.co.uk
-    url: https://tanat.co.uk/
+    url: https://www.tanat.co.uk/
     twitter: ""
 LNGS:
     url: http://www.lylescoaches.co.uk/home
-POWB:
-    twitter: powellsbus
-CTPL:
-    twitter: CTPlusYorkshire
 YSTN:
     url: https://www.stationcoaches.co.uk/
 SPMW:
@@ -390,3 +382,14 @@ NADT:
     url: https://www.adventuretravel.cymru/
     twitter: AdvTravelBus
     email: info@AdventureTravel.Cymru
+FCYM:
+    name: First Cymru
+MCGL:
+    name: McGill’s
+    twitter: McGillsWest
+FSCE:
+    name: McGill’s Scotland East
+    twitter: McGillsEast
+    # url: https://www.mcgillsscotlandeast.co.uk/
+    phone: ""
+    email: ""
