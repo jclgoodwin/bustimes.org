@@ -67,7 +67,9 @@ class TNDSTest(TestCase):
             "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
         )
 
-        ftp.assert_called_with(host="ftp.tnds.basemap.co.uk", user="u", passwd="p")
+        ftp.assert_called_with(
+            host="ftp.tnds.basemap.co.uk", user="u", passwd="p", timeout=120
+        )
 
         mock_call_command.assert_called()
 

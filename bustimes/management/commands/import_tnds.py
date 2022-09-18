@@ -79,7 +79,9 @@ class Command(BaseCommand):
             "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
         )
 
-        self.ftp = FTP(host="ftp.tnds.basemap.co.uk", user=username, passwd=password)
+        self.ftp = FTP(
+            host="ftp.tnds.basemap.co.uk", user=username, passwd=password, timeout=120
+        )
 
         self.changed_files = []
 
