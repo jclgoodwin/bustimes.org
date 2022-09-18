@@ -142,6 +142,13 @@ class BusTimesTest(TestCase):
         )
 
         calendar.save()
+        CalendarDate.objects.create(
+            start_date=date(2022, 7, 22),
+            end_date=date(2022, 7, 22),
+            operation=False,
+            calendar=calendar,
+        )
+
         # calendar date outside calendar date range – should have no effect
         CalendarDate.objects.create(
             start_date=date(2022, 8, 28),
@@ -150,7 +157,7 @@ class BusTimesTest(TestCase):
             calendar=calendar,
         )
         self.assertEqual(
-            "Monday to Saturday until Friday 29 July 2022",
+            "Monday to Saturday (not Friday 22 July 2022) until Friday 29 July 2022",
             calendar.describe_for_timetable(date(2022, 7, 20)),
         )
 

@@ -230,6 +230,15 @@ class Calendar(models.Model):
         if not today:
             today = localdate()
 
+        for cd in self.calendardate_set.all():
+            if (
+                not cd.operation
+                and cd.start_date == cd.end_date
+                and cd.start_date >= today
+                and cd.start_date - today < timedelta(days=21)
+            ):
+                description = f"{description} (not {cd.start_date:%A %-d %B %Y})"
+
         if self.start_date > today:
             description = f"{description} from {start_date:%A %-d %B %Y}"
         if end_date and end_date - today < timedelta(days=21):

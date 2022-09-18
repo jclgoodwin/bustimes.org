@@ -981,7 +981,7 @@ class Service(models.Model):
                 return
 
             if (
-                day == datetime.date(2022, 9, 19)
+                timetable.date == datetime.date(2022, 9, 19)
                 or timetable.calendar
                 and timetable.calendar.mon
             ):
