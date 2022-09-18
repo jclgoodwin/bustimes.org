@@ -73,7 +73,7 @@ class NaptanTest(TestCase):
         self.assertEqual(stop.get_qualified_name(), "Wroxham")
 
         response = self.client.get("/stops/2900flEx1")  # case insensitivity
-        self.assertContains(response, " no services currently stop ", status_code=404)
+        self.assertContains(response, "Wroxham", status_code=404)
 
         # active stop
         response = self.client.get("/stops/2900C1323")
