@@ -68,6 +68,17 @@ class Command(ImportLiveVehiclesCommand):
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)
 
+        vehicle = vehicles.filter(code=code).first()
+
+        if not vehicle and "reg" in defaults:
+            vehicle = vehicles.filter(reg__iexact=defaults["reg"]).first()
+            if vehicle:
+                vehicle.code = code
+                vehicle.save(update_fields=["code"])
+
+        if vehicle:
+            return vehicle, False
+
         return vehicles.get_or_create(defaults, code=code)
 
     def get_journey(self, item, vehicle):
