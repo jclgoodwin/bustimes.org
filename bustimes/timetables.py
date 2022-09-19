@@ -607,7 +607,7 @@ class Grouping:
                     trip_b.times
                     and trip_a.route.line_name == trip_b.route.line_name
                     and (
-                        trip_a.route_id != trip_b.route_id
+                        trip_a.route.service_code != trip_b.route.service_code
                         or trip_a.ticket_machine_code == trip_b.ticket_machine_code
                     )
                     and trip_a.operator_id == trip_b.operator_id
@@ -635,7 +635,10 @@ class Grouping:
             x = 0
         previous_list = [row.stop.stop_code for row in rows]
         current_list = [stoptime.get_key() for stoptime in trip.times]
-        diff = differ.compare(previous_list, current_list)
+        if current_list == previous_list:
+            diff = None
+        else:
+            diff = differ.compare(previous_list, current_list)
 
         y = 0  # how many rows along we are
         first = True
@@ -648,29 +651,32 @@ class Grouping:
             else:
                 existing_row = None
 
-            instruction = next(diff)
-
-            while instruction[0] in "-?":
-                if instruction[0] == "-":
-                    y += 1
-                    if y < len(rows):
-                        existing_row = rows[y]
-                    else:
-                        existing_row = None
+            if diff:
                 instruction = next(diff)
 
-            assert instruction[2:] == key
+                while instruction[0] in "-?":
+                    if instruction[0] == "-":
+                        y += 1
+                        if y < len(rows):
+                            existing_row = rows[y]
+                        else:
+                            existing_row = None
+                    instruction = next(diff)
 
-            if instruction[0] == "+":
-                row = Row(Stop(stoptime.stop_id, stoptime.stop_code), [""] * x)
-                row.timing_status = stoptime.timing_status
-                if not existing_row:
-                    rows.append(row)
+                assert instruction[2:] == key
+
+                if instruction[0] == "+":
+                    row = Row(Stop(stoptime.stop_id, stoptime.stop_code), [""] * x)
+                    row.timing_status = stoptime.timing_status
+                    if not existing_row:
+                        rows.append(row)
+                    else:
+                        rows = self.rows = rows[:y] + [row] + rows[y:]
                 else:
-                    rows = self.rows = rows[:y] + [row] + rows[y:]
+                    row = existing_row
+                    assert instruction[2:] == existing_row.stop.stop_code
             else:
                 row = existing_row
-                assert instruction[2:] == existing_row.stop.stop_code
 
             cell = Cell(stoptime, stoptime.arrival, stoptime.departure)
             if first:
