@@ -1,10 +1,10 @@
-import xml.etree.cElementTree as ET
 import calendar
 import datetime
 import logging
+import xml.etree.cElementTree as ET
+
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.utils.dateparse import parse_duration
-
 
 logger = logging.getLogger(__name__)
 
@@ -356,21 +356,11 @@ class ServicedOrganisation:
         self.code = element.find("OrganisationCode").text
         self.name = element.findtext("Name")
 
-        working_days_element = element.find("WorkingDays")
-        if working_days_element is not None:
-            self.working_days = [
-                DateRange(e) for e in working_days_element.findall("DateRange")
-            ]
-        else:
-            self.working_days = []
+        working_days = element.findall("WorkingDays/DateRange")
+        self.working_days = [DateRange(e) for e in working_days if e]
 
-        holidays_element = element.find("Holidays")
-        if holidays_element is not None:
-            self.holidays = [
-                DateRange(e) for e in holidays_element.findall("DateRange")
-            ]
-        else:
-            self.holidays = []
+        holidays = element.findall("Holidays/DateRange")
+        self.holidays = [DateRange(e) for e in holidays if e]
 
         self.hash = ET.tostring(element)
 
@@ -490,16 +480,20 @@ class OperatingProfile:
             nonoperation_days_element = special_days_element.find("DaysOfNonOperation")
 
             if nonoperation_days_element is not None:
-                self.nonoperation_days = list(
-                    map(DateRange, nonoperation_days_element.findall("DateRange"))
-                )
+                self.nonoperation_days = [
+                    DateRange(e)
+                    for e in nonoperation_days_element.findall("DateRange")
+                    if e
+                ]
 
             operation_days_element = special_days_element.find("DaysOfOperation")
 
             if operation_days_element is not None:
-                self.operation_days = list(
-                    map(DateRange, operation_days_element.findall("DateRange"))
-                )
+                self.operation_days = [
+                    DateRange(e)
+                    for e in operation_days_element.findall("DateRange")
+                    if e
+                ]
 
         # Serviced Organisation:
 

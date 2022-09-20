@@ -455,6 +455,9 @@
           </DaysOfWeek>
         </RegularDayType>
         <SpecialDaysOperation>
+          <DaysOfOperation>
+            <DateRange/>
+          </DaysOfOperation>
           <DaysOfNonOperation>
             <DateRange>
               <StartDate>2016-12-27</StartDate>
