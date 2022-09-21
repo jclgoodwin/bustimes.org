@@ -85,6 +85,9 @@ class RouteLink(models.Model):
     geometry = models.LineStringField()
     override = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ("service", "from_stop", "to_stop")
+
 
 class BankHoliday(models.Model):
     id = models.SmallAutoField(primary_key=True)
