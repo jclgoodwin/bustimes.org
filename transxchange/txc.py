@@ -448,8 +448,6 @@ class DayOfWeek:
 
 class OperatingProfile:
     serviced_organisation_day_type = None
-    nonoperation_days = ()
-    operation_days = ()
 
     def __init__(self, element, serviced_organisations: dict):
         element = element
@@ -474,26 +472,15 @@ class OperatingProfile:
 
         # Special Days:
 
-        special_days_element = element.find("SpecialDaysOperation")
+        nonoperation_days = element.findall(
+            "SpecialDaysOperation/DaysOfNonOperation/DateRange"
+        )
+        self.nonoperation_days = [DateRange(e) for e in nonoperation_days if e]
 
-        if special_days_element is not None:
-            nonoperation_days_element = special_days_element.find("DaysOfNonOperation")
-
-            if nonoperation_days_element is not None:
-                self.nonoperation_days = [
-                    DateRange(e)
-                    for e in nonoperation_days_element.findall("DateRange")
-                    if e
-                ]
-
-            operation_days_element = special_days_element.find("DaysOfOperation")
-
-            if operation_days_element is not None:
-                self.operation_days = [
-                    DateRange(e)
-                    for e in operation_days_element.findall("DateRange")
-                    if e
-                ]
+        operation_days = element.findall(
+            "SpecialDaysOperation/DaysOfOperation/DateRange"
+        )
+        self.operation_days = [DateRange(e) for e in operation_days if e]
 
         # Serviced Organisation:
 
