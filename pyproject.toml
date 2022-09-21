@@ -44,6 +44,7 @@ django-simple-history = "^3.0.0"
 protobuf = "3.20"
 dj-database-url = "^1.0.0"
 huey = "^2.4.3"
+requests-cache = "^0.9.6"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"
