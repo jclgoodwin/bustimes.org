@@ -1,6 +1,7 @@
 from time import sleep
 
 import requests_cache
+from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
@@ -28,12 +29,19 @@ class Command(BaseCommand):
     def do_line(self, line_id):
 
         response = self.session.get(
-            f"https://api.tfl.gov.uk/Line/{line_id}/Route/Sequence/all"
+            f"https://api.tfl.gov.uk/Line/{line_id}/Route/Sequence/all",
+            params=settings.TFL
         )
+        if not response.ok:
+            print(line_id, response)
         from_cache = response.from_cache
         response = response.json()
 
-        service = Service.objects.get(line_name__iexact=line_id, region="L", current=1)
+        try:
+            service = Service.objects.get(line_name__iexact=line_id, region="L", current=1)
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            print("⚠️", line_id, e)
+            return
         print(service.slug)
 
         if (
@@ -100,7 +108,7 @@ class Command(BaseCommand):
             sleep(1)
 
     def handle(self, *args, **kwargs):
-        self.session = requests_cache.CachedSession()
+        self.session = requests_cache.CachedSession(ignored_parameters=["app_key", "app_id"])
 
         for route in self.session.get(
             "https://api.tfl.gov.uk/Line/Mode/bus/Route"
