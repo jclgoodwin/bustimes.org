@@ -390,6 +390,6 @@ MCGL:
 FSCE:
     name: McGill’s Scotland East
     twitter: McGillsEast
-    # url: https://www.mcgillsscotlandeast.co.uk/
-    phone: ""
-    email: ""
+    url: https://www.mcgillsscotlandeast.co.uk/
+    phone: tel:03330 16 61 62
+    email: enquiries@mcgillsscotlandeast.co.uk
