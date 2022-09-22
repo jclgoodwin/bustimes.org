@@ -1,14 +1,12 @@
 # coding=utf-8
 """View definitions."""
 import datetime
-import json
 import os
 import sys
 import traceback
 from urllib.parse import urlencode
 
 import requests
-from django.conf import settings
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -1102,20 +1100,6 @@ def service_map_data(request, service_id):
         },
         "geometry": {"type": "MultiLineString", "coordinates": []},
     }
-
-    if service.service_code.startswith("tfl_"):
-        response = requests.get(
-            f"https://api.tfl.gov.uk/Line/{service.line_name}/Route/Sequence/all",
-            params=settings.TFL,
-            timeout=4,
-        )
-        if response.ok:
-            response = response.json()
-
-            for line_string in response["lineStrings"]:
-                data["geometry"]["coordinates"] += json.loads(line_string)
-
-            return JsonResponse(data)
 
     trips = (
         Trip.objects.only("id")

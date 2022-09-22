@@ -10,7 +10,7 @@ from shapely.ops import substring
 
 from bustimes.models import RouteLink
 
-from ...models import Service
+from ...models import Service, ServiceCode
 
 
 class Command(BaseCommand):
@@ -27,22 +27,28 @@ class Command(BaseCommand):
             prev_stop = stop
 
     def do_line(self, line_id):
-
-        response = self.session.get(
-            f"https://api.tfl.gov.uk/Line/{line_id}/Route/Sequence/all",
-            params=settings.TFL
-        )
-        if not response.ok:
-            print(line_id, response)
-        from_cache = response.from_cache
-        response = response.json()
-
         try:
-            service = Service.objects.get(line_name__iexact=line_id, region="L", current=1)
+            service = Service.objects.get(
+                line_name__iexact=line_id, region="L", current=1
+            )
         except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
             print("⚠️", line_id, e)
             return
         print(service.slug)
+
+        response = self.session.get(
+            f"https://api.tfl.gov.uk/Line/{line_id}/Route/Sequence/all",
+            params=settings.TFL,
+        )
+        if not response.ok:
+            print(line_id, response)
+            return
+
+        if not service.servicecode_set.filter(scheme="TfL").exists():
+            ServiceCode.objects.create(scheme="TfL", service=service, code=line_id)
+
+        from_cache = response.from_cache
+        response = response.json()
 
         if (
             not len(response["orderedLineRoutes"])
@@ -108,7 +114,9 @@ class Command(BaseCommand):
             sleep(1)
 
     def handle(self, *args, **kwargs):
-        self.session = requests_cache.CachedSession(ignored_parameters=["app_key", "app_id"])
+        self.session = requests_cache.CachedSession(
+            ignored_parameters=["app_key", "app_id"]
+        )
 
         for route in self.session.get(
             "https://api.tfl.gov.uk/Line/Mode/bus/Route"

@@ -402,15 +402,6 @@ class ViewsTests(TestCase):
         self.assertEqual(response["Content-Type"], "application/json")
         self.assertEqual(response.status_code, 200)
 
-        # tfl service
-        service = Service.objects.create(line_name="69", service_code="tfl_69")
-        with self.assertNumQueries(2):
-            with vcr.use_cassette(
-                str(settings.BASE_DIR / "fixtures" / "vcr" / "tfl_sequence.yaml")
-            ):
-                response = self.client.get(f"/services/{service.id}.json")
-        self.assertEqual(len(response.json()["geometry"]["coordinates"]), 2)
-
     def test_modes(self):
         """A list of transport modes is turned into English"""
         self.assertContains(
