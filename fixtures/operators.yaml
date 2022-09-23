@@ -390,6 +390,11 @@ MCGL:
 FSCE:
     name: McGill’s Scotland East
     twitter: McGillsEast
-    # url: https://www.mcgillsscotlandeast.co.uk/
+    url: https://www.mcgillsscotlandeast.co.uk/
     phone: ""
     email: ""
+EMIR:
+    name: London Cable Car
+    aka: Dangleway
+    url: https://tfl.gov.uk/modes/emirates-air-line/
+    twitter: ""
