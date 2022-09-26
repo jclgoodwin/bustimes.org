@@ -87,6 +87,7 @@ class BusTimesTest(TestCase):
         self.assertEqual("Tuesdays and Wednesdays", str(calendar))
         calendar.bank_holiday_exclusions = [date(2021, 1, 2)]
         calendar.bank_holiday_inclusions = []
+        calendar.save()
         self.assertEqual(
             "Wednesday 5 February 2020 only", calendar.describe_for_timetable()
         )

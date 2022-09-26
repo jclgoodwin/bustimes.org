@@ -1,8 +1,9 @@
 import os
-from django.test import TestCase
-from ...models import Region, Operator, DataSource, OperatorCode
-from ..commands import import_operator_contacts
 
+from django.test import TestCase
+
+from ...models import DataSource, Operator, OperatorCode, Region
+from ..commands import import_operator_contacts
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -10,8 +11,8 @@ DIR = os.path.dirname(os.path.abspath(__file__))
 class ImportOperatorContactTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.command = import_operator_contacts.Command()
-        cls.command.input = os.path.join(DIR, "fixtures", "nocrecords.xml")
+        command = import_operator_contacts.Command()
+        command.input = os.path.join(DIR, "fixtures", "nocrecords.xml")
 
         east_anglia = Region.objects.create(id="EA", name="East Anglia")
 
@@ -39,14 +40,15 @@ class ImportOperatorContactTest(TestCase):
             ]
         )
 
-        cls.command.handle()
+        command.handle()
 
     def test_format_address(self):
+        format_address = import_operator_contacts.Command.format_address
         self.assertEqual(
-            self.command.format_address("8 Market Place, Hartlepool TS24 7SB"),
+            format_address("8 Market Place, Hartlepool TS24 7SB"),
             "8 Market Place\nHartlepool\nTS24 7SB",
         )
-        self.assertEqual(self.command.format_address("TS24 7SB"), "TS24 7SB")
+        self.assertEqual(format_address("TS24 7SB"), "TS24 7SB")
 
     def test_imported_data(self):
         self.sanders.refresh_from_db()

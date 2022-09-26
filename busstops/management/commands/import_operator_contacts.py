@@ -39,8 +39,8 @@ FIRST_OPERATORS = {
 class Command(BaseCommand):
     input = 0
 
-    @classmethod
-    def format_address(cls, address):
+    @staticmethod
+    def format_address(address):
         address_parts = address.split(", ")
         address_last_line_parts = address_parts[-1].split(" ")
         if len(address_last_line_parts) > 2:

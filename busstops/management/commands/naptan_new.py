@@ -147,10 +147,6 @@ class Command(BaseCommand):
         return requests.get(url, params, timeout=60, stream=True)
 
     def update_and_create(self):
-        if self.stops_to_create or self.stops_to_update:
-            logger.info(self.stops_to_create)
-            logger.info(self.stops_to_update)
-
         # create any new stop areas
         stops = [stop for stop in self.stops_to_create if stop.stop_area_id]
         stops += [stop for stop in self.stops_to_update if stop.stop_area_id]

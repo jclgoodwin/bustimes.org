@@ -20,10 +20,12 @@ class EdinburghImportTest(TestCase):
         )
         cls.service = Service.objects.create(line_name="11", current=True)
         cls.service.operator.add(cls.operator_2)
-        cls.command = Command()
-        cls.command.source = source
+        cls.source = source
 
     def test_get_journey(self):
+        command = Command()
+        command.source = self.source
+
         item = {
             "journey_id": "1135",
             "vehicle_id": "3032",
@@ -36,12 +38,12 @@ class EdinburghImportTest(TestCase):
             "ineo_gps_fix": 1554038242,
         }
         with self.assertNumQueries(11):
-            self.command.handle_item(item)
-            self.command.save()
+            command.handle_item(item)
+            command.save()
         with self.assertNumQueries(1):
-            self.command.handle_item(item)
-            self.command.save()
-        journey = self.command.source.vehiclejourney_set.get()
+            command.handle_item(item)
+            command.save()
+        journey = command.source.vehiclejourney_set.get()
 
         self.assertEqual("1135", journey.code)
         self.assertEqual("Yoker", journey.destination)
@@ -49,17 +51,20 @@ class EdinburghImportTest(TestCase):
         self.assertTrue(journey.service.tracking)
 
         with self.assertNumQueries(1):
-            vehicle, created = self.command.get_vehicle(item)
+            vehicle, created = command.get_vehicle(item)
         self.assertEqual(self.operator_2, vehicle.operator)
         self.assertEqual(3032, vehicle.fleet_number)
         self.assertFalse(created)
 
         item["last_gps_fix"] += 200
         with self.assertNumQueries(1):
-            self.command.handle_item(item)
-            self.command.save()
+            command.handle_item(item)
+            command.save()
 
     def test_vehicle_location(self):
+        command = Command()
+        command.source = self.source
+
         item = {
             "vehicle_id": "3030",
             "heading": 76,
@@ -68,10 +73,8 @@ class EdinburghImportTest(TestCase):
             "last_gps_fix": 1554034642,
             "ineo_gps_fix": 1554038242,
         }
-        location = self.command.create_vehicle_location(item)
+        location = command.create_vehicle_location(item)
         self.assertEqual(76, location.heading)
         self.assertTrue(location.latlong)
 
-        self.assertEqual(
-            "2019-03-31 12:17:22+00:00", str(self.command.get_datetime(item))
-        )
+        self.assertEqual("2019-03-31 12:17:22+00:00", str(command.get_datetime(item)))
