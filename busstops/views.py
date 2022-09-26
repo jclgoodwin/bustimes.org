@@ -19,6 +19,7 @@ from django.db.models import Count, F, Min, OuterRef, Prefetch, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import resolve
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.views.decorators.cache import cache_page
@@ -68,6 +69,8 @@ def version(request):
 def not_found(request, exception):
     """Custom 404 handler view"""
 
+    context = {}
+
     if request.resolver_match:
         if request.resolver_match.url_name == "service_detail" and exception.args:
             code = request.resolver_match.kwargs["slug"]
@@ -103,9 +106,14 @@ def not_found(request, exception):
             except StopPoint.DoesNotExist:
                 pass
 
-        context = {"exception": exception}
-    else:
-        context = None
+        context["exception"] = exception
+    elif len(request.path) > 1 and request.path.endswith("/"):
+        try:
+            resolver_match = resolve(request.path[:-1])
+            return resolver_match.func(request, **resolver_match.kwargs)
+        except Http404:
+            pass
+
     response = render(request, "404.html", context)
     response.status_code = 404
     patch_response_headers(response)
@@ -1175,7 +1183,6 @@ class ServiceSitemap(Sitemap):
         return Service.objects.filter(current=True).defer("geometry", "search_vector")
 
 
-@cache_page(3600)
 def search(request):
     form = forms.SearchForm(request.GET)
 

@@ -39,7 +39,7 @@ cd ..
 
 if [[ "$ie_nptg_old" != "$ie_nptg_new" ]]; then
     echo "Irish NPTG"
-    ./manage.py import_ie_nptg data/NPTG_final.xml
+    ./manage.py nptg_new data/NPTG_final.xml
 fi
 
 
@@ -52,9 +52,9 @@ noc_new=$(ls -l NOC_DB.csv)
 cd ..
 
 if [[ $noc_old != $noc_new ]]; then
-    wget -O nocrecords.xml www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml
+    wget -qO nocrecords.xml www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml
     ./manage.py import_operators < data/NOC_DB.csv
-    ./manage.py import_operator_contacts < data/nocrecords.xml
+    ./manage.py import_operator_contacts < nocrecords.xml
     ./manage.py correct_operators
 fi
 
