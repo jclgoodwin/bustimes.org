@@ -32,7 +32,7 @@ gtag('js', new Date());
 gtag('config', 'UA-65987478-1');
 </script>
 
-{% block fuse %}<script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>{% endblock %}
+{% block fuse %}{% if not user.is_authenticated %}<script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>{% endif %}{% endblock %}
 
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}">
@@ -80,6 +80,10 @@ gtag('config', 'UA-65987478-1');
 {% endblock %}
 
 {% block foot %}{% endblock %}
+
+<script>
+var fusetag=window.fusetag||(window.fusetag={que:[]});fusetag.que.push(function (){fusetag.disableRefresh()});
+</script>
 
 </body>
 </html>

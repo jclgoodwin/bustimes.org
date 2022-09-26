@@ -4,7 +4,7 @@
     browser: true
 */
 /*global
-    reqwest, SERVICE_ID, fusetag
+    reqwest, SERVICE_ID
 */
 
 (function() {
@@ -34,9 +34,6 @@
                     doStuff();
                     search = newSearch;
                     history.pushState(null, null, newSearch);
-                    if (typeof fusetag !== 'undefined') {
-                        fusetag.registerZone('services-incontent');
-                    }
                 });
             };
         }
@@ -59,9 +56,6 @@
                 timetableWrapper.className = '';
                 timetableWrapper.innerHTML = response;
                 doStuff();
-                if (typeof fusetag !== 'undefined') {
-                    fusetag.registerZone('services-incontent');
-                }
             });
         }
     });
