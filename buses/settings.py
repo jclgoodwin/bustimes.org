@@ -12,7 +12,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split()
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
-DEBUG = False  # bool(os.environ.get("DEBUG", False))
+DEBUG = bool(os.environ.get("DEBUG", False))
 
 SERVER_EMAIL = "contact@bustimes.org"
 DEFAULT_FROM_EMAIL = "bustimes.org <contact@bustimes.org>"
