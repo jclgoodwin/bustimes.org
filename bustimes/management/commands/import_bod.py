@@ -385,10 +385,7 @@ def stagecoach(operator=None):
 
         command.preferred_source = None
 
-        for url in (
-            source.url,
-            source.url.replace(".zip", "_2_4.zip"),
-        ):
+        for url in source.url.split():
             filename = Path(url).name
             path = settings.DATA_DIR / filename
 
@@ -414,10 +411,7 @@ def stagecoach(operator=None):
             if modified or operator:
                 do_stagecoach_source(command, last_modified, filename, nocs)
 
-            if nocs[0] in ("SCEK", "SYRK", "SCCM", "SDVN", "SCMN"):
-                command.preferred_source = command.source  # just *prefer* 2.1 source
-            else:
-                break  # don't use 2.4 source at all
+            command.preferred_source = command.source
 
         clean_up(nocs, sources)
         command.finish_services()

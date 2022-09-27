@@ -373,7 +373,8 @@ class ImportBusOpenDataTest(TestCase):
         source = TimetableDataSource.objects.create(
             name="Stagecoach East",
             region_id="EA",
-            url="https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange.zip",
+            url="https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange.zip "
+            "https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange_2_4.zip",
         )
         source.operators.add("SCCM")
 
