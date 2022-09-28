@@ -399,12 +399,11 @@ def stagecoach(operator=None):
             sha1 = get_sha1(path)
 
             if modified:
-                if not command.source.older_than(last_modified):
+                logger.info(f"{sha1=} {command.source.sha1=}")
+                if sha1 == command.source.sha1 or not command.source.older_than(
+                    last_modified
+                ):
                     modified = False
-                elif sha1 == command.source.sha1:
-                    modified = False
-            elif command.source.older_than(last_modified):
-                modified = True
 
             command.source.sha1 = sha1
 

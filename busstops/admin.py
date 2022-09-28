@@ -496,7 +496,7 @@ class DataSourceAdmin(admin.ModelAdmin):
         self.message_user(request, result)
 
     def remove_datetimes(self, request, queryset):
-        result = queryset.order_by().update(datetime=None)
+        result = queryset.order_by().update(datetime=None, sha1="")
         self.message_user(request, result)
 
 
