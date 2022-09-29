@@ -399,7 +399,9 @@ def stagecoach(operator=None):
             sha1 = get_sha1(path)
 
             if modified:
-                logger.info(f"{sha1=} {command.source.sha1=}")
+                # use sha1 checksum to check if file has really changed -
+                # last_modified seems to change every night
+                # even when contents stay the same
                 if sha1 == command.source.sha1 or not command.source.older_than(
                     last_modified
                 ):
