@@ -2,19 +2,22 @@
 """
 
 import os
-import requests
-from urllib.parse import urljoin, urlparse
 from time import sleep
-from requests_html import HTMLSession
+from urllib.parse import urljoin, urlparse
+
+import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 from django.db.models import Q
+from django.utils import timezone
+from requests_html import HTMLSession
+
 from busstops.models import DataSource
-from .import_bod import handle_file, get_operator_ids, clean_up, logger
-from .import_transxchange import Command as TransXChangeCommand
-from ...models import TimetableDataSource
+
 from ...download_utils import write_file
+from ...models import TimetableDataSource
+from .import_bod import clean_up, get_operator_ids, handle_file, logger
+from .import_transxchange import Command as TransXChangeCommand
 
 
 def get_version(url):
@@ -134,7 +137,7 @@ class Command(BaseCommand):
             for version in versions:
                 old_routes = old_routes.filter(~Q(code__startswith=version["filename"]))
             old_routes = old_routes.delete()
-            if not new_versions:
+            if not (new_versions or operator_name):
                 if old_routes[0]:
                     logger.info(source.name)
                 else:
