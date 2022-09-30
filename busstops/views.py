@@ -22,6 +22,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import resolve
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
+from django.utils.functional import SimpleLazyObject
 from django.views.decorators.cache import cache_page
 from django.views.generic.detail import DetailView
 from sql_util.utils import Exists
@@ -1058,15 +1059,19 @@ def service_timetable(request, service_id):
         date = None
         calendar = None
     parallel = service.get_linked_services()
-    timetable = service.get_timetable(day=date, calendar_id=calendar, related=parallel)
     stops = StopPoint.objects.select_related("locality").defer(
         "latlong", "locality__latlong"
     )
-    timetable.apply_stops(stops)
+    context = {
+        "object": service,
+        "timetable": SimpleLazyObject(
+            lambda: service.get_timetable(
+                day=date, calendar_id=calendar, related=parallel, stops=stops
+            )
+        ),
+    }
 
-    return render(
-        request, "timetable.html", {"object": service, "timetable": timetable}
-    )
+    return render(request, "timetable.html", context)
 
 
 @cache_page(7200)

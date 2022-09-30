@@ -1,7 +1,7 @@
 {% load urlise %}
 {% load cache %}
 
-{% cache 3600 timetable object.id timetable.calendar.id timetable.date timetable.detailed %}
+{% cache 3600 timetable object.id object.modified_at request.GET %}
 
 {% if timetable %}
     {% if timetable.calendar_options %}

@@ -949,7 +949,9 @@ class Service(models.Model):
                 return timetable_change
             previous_route = route
 
-    def get_timetable(self, day=None, calendar_id=None, related=(), detailed=False):
+    def get_timetable(
+        self, day=None, calendar_id=None, related=(), detailed=False, stops=None
+    ):
         """Given a Service, return a Timetable"""
 
         cache_key = (
@@ -991,6 +993,9 @@ class Service(models.Model):
                 del grouping.heads
 
         cache.set(cache_key, timetable)
+
+        if stops is not None:
+            timetable.apply_stops(stops)
 
         return timetable
 
