@@ -608,7 +608,8 @@ class Grouping:
                     and trip_a.route.line_name == trip_b.route.line_name
                     and (
                         trip_a.route.service_code != trip_b.route.service_code
-                        or trip_a.ticket_machine_code == trip_b.ticket_machine_code
+                        or trip_a.ticket_machine_code
+                        and trip_a.ticket_machine_code == trip_b.ticket_machine_code
                     )
                     and trip_a.operator_id == trip_b.operator_id
                     and destination == trip_b.times[0].get_key()
