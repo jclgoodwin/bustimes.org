@@ -85,16 +85,16 @@ def maybe_download_file(local_path, s3_key):
 def route_xml(request, source, code=""):
     source = get_object_or_404(DataSource, id=source)
 
-    if code and not Route.objects.filter(source=source, code__startswith=code).exists():
-        raise Http404
-
     if "ftp.tnds.basemap" in source.url:
         filename = Path(source.url).name
         path = settings.DATA_DIR / "TNDS" / filename
         maybe_download_file(path, f"TNDS/{filename}")
         with zipfile.ZipFile(path) as archive:
             if code:
-                return FileResponse(archive.open(code), content_type="text/plain")
+                try:
+                    return FileResponse(archive.open(code), content_type="text/plain")
+                except KeyError as e:
+                    raise Http404(e)
             return HttpResponse(
                 "\n".join(archive.namelist()), content_type="text/plain"
             )
