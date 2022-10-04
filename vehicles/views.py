@@ -507,33 +507,37 @@ def vehicles_json(request) -> JsonResponse:
 
 
 def get_dates(vehicle=None, service=None):
-    if vehicle:
-        key = f"vehicle:{vehicle.id}:dates"
-        journeys = vehicle.vehiclejourney_set
-    else:
-        key = f"service:{service.id}:dates"
-        journeys = service.vehiclejourney_set
+    if not vehicle:
+        # the database query for a service is too slow
+        return
+
+    key = f"vehicle:{vehicle.id}:dates"
+    journeys = vehicle.vehiclejourney_set
 
     dates = cache.get(key)
 
-    if not dates and vehicle:
-        # return
+    if dates and vehicle.latest_journey:
+        latest_date = timezone.localdate(vehicle.latest_journey.datetime)
+        if dates[-1] < latest_date:
+            dates.append(latest_date)
+            # we'll update the cache below
+        else:
+            return dates
+
+    if not dates:
         try:
             dates = list(journeys.dates("datetime", "day"))
         except OperationalError:
             return
 
-        if dates:
-            now = timezone.localtime()
-            if dates[-1] == now.date():
-                time_to_midnight = (
-                    datetime.timedelta(days=1)
-                    - datetime.timedelta(
-                        hours=now.hour, minutes=now.minute, seconds=now.second
-                    )
-                ).total_seconds()
-                if time_to_midnight > 0:
-                    cache.set(key, dates, time_to_midnight)
+    if dates:
+        now = timezone.localtime()
+        time_to_midnight = datetime.timedelta(days=1) - datetime.timedelta(
+            hours=now.hour, minutes=now.minute, seconds=now.second
+        )
+        if dates[-1] == now.date():  # today
+            time_to_midnight += datetime.timedelta(days=1)
+        cache.set(key, dates, time_to_midnight.total_seconds())
 
     return dates
 
