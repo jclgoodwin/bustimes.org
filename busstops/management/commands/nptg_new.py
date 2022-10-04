@@ -168,6 +168,10 @@ class Command(BaseCommand):
                 element.clear()  # save memory
 
                 for locality in localities_with_parents:
-                    locality.save()
+                    if locality.parent_id in localities:
+                        locality.save()
+                for locality in localities_with_parents:
+                    if locality.parent_id not in localities:
+                        locality.save()
 
         source.save(update_fields=["datetime"])

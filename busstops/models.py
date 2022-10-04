@@ -194,6 +194,9 @@ class StopArea(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("stoparea_detail", args=(self.id,))
+
 
 class DataSource(models.Model):
     name = models.CharField(max_length=255, db_index=True)
