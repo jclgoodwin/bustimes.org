@@ -976,7 +976,7 @@ class Service(models.Model):
                     detailed=detailed,
                     operators=operators,
                 )
-            except (IndexError, UnboundLocalError) as e:
+            except (IndexError, UnboundLocalError, AssertionError) as e:
                 logger = logging.getLogger(__name__)
 
                 logger.error(e, exc_info=True)

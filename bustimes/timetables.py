@@ -221,6 +221,8 @@ class Timetable:
         if detailed:
             trips = trips.select_related("block", "garage", "vehicle_type")
 
+        assert len(trips) < 1000, "too many trips"
+
         routes = {route.id: route for route in routes}
 
         for trip in trips:
