@@ -66,6 +66,7 @@ urlpatterns = [
         cache_page(60)(views.StopPointDetailView.as_view()),
         name="stoppoint_detail",
     ),
+    path("stations/<pk>", views.StopAreaDetailView.as_view()),
     re_path(r"^operators/(?P<pk>[A-Z]+)$", views.OperatorDetailView.as_view()),
     path(
         "operators/<slug>",

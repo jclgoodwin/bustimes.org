@@ -1,0 +1,32 @@
+{% extends 'page.html' %}
+
+{% block bodyclass %}wide{% endblock %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+{% if object.latlong %}
+    <ul class="horizontal">
+        <li><a href="/map#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}">Map</a></li>
+        <li>
+            <a href="https://www.google.com/maps?layer=c&cbll={{ object.latlong.y|floatformat:7 }},{{ object.latlong.x|floatformat:7 }}{% if object.heading or object.bearing %}&cbp=0,{{ object.get_heading|add:'-90' }},,,{% endif %}">Street View</a>
+        </li>
+        {% if object.naptan_code and object.naptan_code != object.atco_code %}
+            <li title="NaPTAN code">{{ object.naptan_code }}</li>
+        {% endif %}
+        <li title="ATCO code">{{ object.pk }}</li>
+    </ul>
+{% endif %}
+
+
+<div class="asides">
+
+    <div class="aside">
+        <h2>Stops</h2>
+        {% include 'stops.html' with stops=children %}
+    </div>
+
+</div>
+
+{% endblock %}

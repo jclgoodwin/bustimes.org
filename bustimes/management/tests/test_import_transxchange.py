@@ -664,7 +664,7 @@ class ImportTransXChangeTest(TestCase):
         timetable = response.context_data["timetable"]
         self.assertEqual("2017-01-27", str(timetable.date))
 
-        lines = timetable.groupings[0].txt().split("\n")
+        lines = timetable.groupings[0].txt().splitlines()
         self.assertEqual(
             lines[0],
             "Goole Interchange                        "
@@ -841,7 +841,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertNotContains(response, "set down only")
 
-        lines = timetable.groupings[0].txt().split("\n")
+        lines = timetable.groupings[0].txt().splitlines()
         self.assertEqual(
             lines[0],
             "Church Road (Stop A)                     06:41         07:41         09:11  "

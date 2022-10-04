@@ -47,6 +47,7 @@ from .models import (
     Region,
     Service,
     ServiceColour,
+    StopArea,
     StopPoint,
 )
 from .utils import get_bounding_box
@@ -688,6 +689,22 @@ class StopPointDetailView(DetailView):
         return response
 
 
+class StopAreaDetailView(DetailView):
+    model = StopArea
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["children"] = self.object.stoppoint_set.annotate(
+            line_names=ArrayAgg(
+                "service__route__line_name",
+                distinct=True,
+            )
+        )
+
+        return context
+
+
 class OperatorDetailView(DetailView):
     "An operator and the services it operates"
 
@@ -1058,7 +1075,6 @@ def service_timetable(request, service_id):
     else:
         date = None
         calendar = None
-    parallel = service.get_linked_services()
     stops = StopPoint.objects.select_related("locality").defer(
         "latlong", "locality__latlong"
     )
@@ -1066,7 +1082,10 @@ def service_timetable(request, service_id):
         "object": service,
         "timetable": SimpleLazyObject(
             lambda: service.get_timetable(
-                day=date, calendar_id=calendar, related=parallel, stops=stops
+                day=date,
+                calendar_id=calendar,
+                related=service.get_linked_services(),
+                stops=stops,
             )
         ),
     }
