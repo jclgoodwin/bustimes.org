@@ -40,13 +40,14 @@
     {% endif %}
 
     <p>This is an <strong>unofficial</strong> and probably incomplete list of {% firstof parent object %}
-    {% if parent and operators|length < 10 %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %} vehicles (well, ticket machines) that have ever appeared in the live bus tracking system.</p>
+    {% if parent and operators and operators|length < 10 %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %} vehicles (or their ticket machines), created purely as a by-product of the live bus tracking system.</p>
 
-    <p>Thanks to the marvels of modern technology,
-    you can see where a particular vehicle has been recently,
-    and which vehicles have operated a particular service.
-    <strong>This is sometimes inaccurate</strong>,
-    e.g. when ticket machines/tracking equipment are moved between vehicles.</p>
+    <p>Remember:</p>
+
+    <ul class="bulleted">
+        <li>Ticket machines IDs don’t always correspond with the actual vehicles they’re attached to. Equipment is often swapped between vehicles.</li>
+        <li>Vehicles don’t always track all the time. If a journey isn’t listed, it doesn’t necessarily mean it didn’t operate.</li>
+    </ul>
 
     {% if not parent and object.parent %}
         <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>

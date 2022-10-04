@@ -537,7 +537,9 @@ def get_dates(vehicle=None, service=None):
         )
         if dates[-1] == now.date():  # today
             time_to_midnight += datetime.timedelta(days=1)
-        cache.set(key, dates, time_to_midnight.total_seconds())
+        time_to_midnight = time_to_midnight.total_seconds()
+        if time_to_midnight > 0:
+            cache.set(key, dates, time_to_midnight)
 
     return dates
 
