@@ -254,7 +254,7 @@ class VehicleJourney:
         else:
             # Journey has no direct reference to a JourneyPattern.
             # Instead, it has a reference to another journey...
-            self.journey_ref = element.find("VehicleJourneyRef").text
+            self.journey_ref = element.findtext("VehicleJourneyRef")
             self.journey_pattern = None
 
         self.operating_profile = element.find("OperatingProfile")
