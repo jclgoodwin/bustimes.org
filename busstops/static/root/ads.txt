@@ -1,5 +1,5 @@
 # Publift Fuse ads.txt #
-# Updated: June 2022 #
+# Updated: Oct 2022 #
 # Contact: support@publift.com #
 
 
@@ -7,7 +7,6 @@
 # Publift
 
 publift.com, 01FY5CSKC4V899HXHAVYC2V9Y8, DIRECT
-
 
 # Google
 
@@ -77,19 +76,20 @@ pubmatic.com, 137711, RESELLER, 5d62403b186f2ace
 pubmatic.com, 156212, RESELLER, 5d62403b186f2ace
 pubmatic.com, 156700, RESELLER, 5d62403b186f2ace
 rubiconproject.com, 17960, RESELLER, 0bfd66d529a55807
+appnexus.com, 1019, RESELLER, f5ab79cb980f11d1
 
 # GumGum
 
 gumgum.com,13654,RESELLER,ffdef49475d318a9
 appnexus.com,2758,RESELLER,f5ab79cb980f11d1
 rubiconproject.com,23434,RESELLER,0bfd66d529a55807
-contextweb.com,558355,RESELLER
 pubmatic.com,157897,RESELLER,5d62403b186f2ace
+contextweb.com,558355,RESELLER,89ff185a4c4e857c
 EMXDGT.com,1284,RESELLER,1e1d41537f7cad7f
 openx.com,537149485,RESELLER,6a698e2ec38604c6
-admanmedia.com,799,RESELLER
 improvedigital.com,1884,RESELLER
 smartadserver.com,4005,RESELLER
+admanmedia.com,799,RESELLER
 
 
 # TripleLift
@@ -144,6 +144,13 @@ improvedigital.com,2050,RESELLER
 mintegral.com,10043,RESELLER,0aeed750c80d6423
 sonobi.com,7f5fa520f8,RESELLER,d1a215d9eb5aee9e
 onetag.com,770a440e65869c2,RESELLER
+appnexus.com,9623,DIRECT,f5ab79cb980f11d1
+xandr.com, 9623, RESELLER, f5ab79cb980f11d1
+pubmatic.com, 162256, RESELLER, 5d62403b186f2ace
+indexexchange.com, 200570, RESELLER, 50b1c356f2c5c8fc
+indexexchange.com,200570,DIRECT,50b1c356f2c5c8fc
+media.net,8CUZ1MK22,RESELLER
+openx.com, 557939709, RESELLER, 6a698e2ec38604c6
 
 
 
@@ -173,8 +180,9 @@ advertising.com, 28246, RESELLER
 
 # Playground XYZ
 
-appnexus.com, 7290, RESELLER
-playground.xyz, 390c49af, DIRECT
+
+appnexus.com, 7290, RESELLER, f5ab79cb980f11d1
+playground.xyz, ca2a160f, DIRECT # publift.com
 
 
 # InSkin
@@ -268,6 +276,9 @@ yahoo.com, 55029, RESELLER, e1a5b5b6e3255540 #33Across #tag
 
 # 33Across - Pulsepoint
 contextweb.com, 561516, RESELLER, 89ff185a4c4e857c #33Across #hb #tag
+
+# 33Across - TripleLift
+triplelift.com, 12503, RESELLER, 6c33edb13117fd86
 
 # Inmobi
 
@@ -482,6 +493,10 @@ smartadserver.com, 4111, RESELLER
 google.com, pub-3769010358500643, RESELLER, f08c47fec0942fa0
 freewheel.tv, 20393, RESELLER
 freewheel.tv, 24377, RESELLER
+onetag.com, 77253abd802c05e, DIRECT
+onetag.com, 77253abd802c05e-OB, DIRECT
+
+
 
 # Gourmet Ads
 
@@ -569,6 +584,21 @@ sovrn.com, 270524, RESELLER, fafdf38b16bf6b2b
 lijit.com, 270524, RESELLER, fafdf38b16bf6b2b
 nobid.io, 22100091147, RESELLER
 onetag.com, 75753f1ebcc343c, RESELLER
+criteo.com, B-067384, RESELLER
+themediagrid.com, IRK975, RESELLER
+rhythmone.com, 6694405583287859332, RESELLER
+video.unrulymedia.com, 6694405583287859332, RESELLER
+conversantmedia.com, 41996, RESELLER
+adform.com, 2708, DIRECT
+indexexchange.com, 197494, RESELLER
+imds.tv, 82095, RESELLER
+rhythmone.com, 6694405583287859332,RESELLER,a670c89d4a324e132
+sharethrough.com, lTiXlNiO, RESELLER, d53b998a7bd4ecd2
+sonobi.com, 42a06dc622, RESELLER, d1a215d9eb5aee9e
+synacor.com, 82095, RESELLER
+yieldlab.net, 14298972, RESELLER
+yieldlab.net, 227224, RESELLER
+yieldmo.com, 3091564759074414941, RESELLER
 
 # Sonobi
 
@@ -576,12 +606,11 @@ sonobi.com, 54feb57a02, DIRECT, d1a215d9eb5aee9e
 contextweb.com, 560606, RESELLER, 89ff185a4c4e857c
 
 
-
 # Video player update AB test 19/5/22
 
 primis.tech, 30278, DIRECT, b6b21d256ef43532
 spotxchange.com, 84294, RESELLER, 7842df1d2fe2db34
-spotx.tv, 84294, RESELLER, 7FF842df1d2fe2db34
+spotx.tv, 84294, RESELLER, 7842df1d2fe2db34
 yahoo.com, 59260, RESELLER, e1a5b5b6e3255540
 pubmatic.com, 156595, RESELLER, 5d62403b186f2ace
 google.com, pub-1320774679920841, RESELLER, f08c47fec0942fa0
@@ -598,8 +627,12 @@ supply.colossusssp.com, 290, RESELLER, 6c5b49d96ec1b458
 emxdgt.com, 1349, RESELLER, 1e1d41537f7cad7f
 Media.net, 8CU695QH7, RESELLER
 video.unrulymedia.com, 2338962694, RESELLER
+sharethrough.com, flUyJowI, RESELLER, d53b998a7bd4ecd2
+triplelift.com, 8210, RESELLER, 6c33edb13117fd86
 
-#legacy
+
+#Legacy or Unique
+
 #Add any previous ads.txt lines below, for example your personal AdSense#
 
 google.com, pub-4420219114164200, DIRECT, f08c47fec0942fa0
