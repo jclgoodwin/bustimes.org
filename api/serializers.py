@@ -1,7 +1,8 @@
 from rest_framework import serializers
+
 from busstops.models import Operator, Service, StopPoint
-from bustimes.models import Trip, RouteLink
-from vehicles.models import Vehicle, VehicleType, Livery, VehicleJourney
+from bustimes.models import Trip
+from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
 
 class VehicleSerializer(serializers.ModelSerializer):
@@ -122,7 +123,7 @@ class TripSerializer(serializers.ModelSerializer):
         }
 
     def get_times(self, obj):
-        route_links = RouteLink.objects.filter(service=obj.route.service_id)
+        route_links = obj.route.service.routelink_set.all()
         route_links = {
             (link.from_stop_id, link.to_stop_id): link for link in route_links
         }
