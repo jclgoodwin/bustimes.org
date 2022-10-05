@@ -104,4 +104,4 @@ class Command(BaseCommand):
             call_command("import_transxchange", file)
             logger.info(timezone.now() - before)
 
-            source.save()
+            source.save(update_fields=["sha1"])
