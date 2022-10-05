@@ -1,13 +1,15 @@
 import os
 import zipfile
 from tempfile import TemporaryDirectory
-import time_machine
-from django.test import TestCase
-from django.core.management import call_command
-from django.contrib.gis.geos import Point
-from busstops.models import Region, Operator, Service, StopPoint, StopUsage
-from ...models import Route
 
+import time_machine
+from django.contrib.gis.geos import Point
+from django.core.management import call_command
+from django.test import TestCase
+
+from busstops.models import Operator, Region, Service, StopPoint, StopUsage
+
+from ...models import Route
 
 FIXTURES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fixtures")
 
@@ -117,7 +119,7 @@ class ImportAtcoCifTest(TestCase):
 
         # no journeys on this date - CalendarDate with operation = False - so should skip to next date of operation
         with time_machine.travel("2019-07-20"):
-            with self.assertNumQueries(16):
+            with self.assertNumQueries(17):
                 response = self.client.get(
                     "/services/219-belfast-europa-buscentre-ballymena-buscentre"
                 )
@@ -129,7 +131,7 @@ class ImportAtcoCifTest(TestCase):
 
         service = Service.objects.get(service_code="218_GLE")
         with time_machine.travel("2019-10-01"):
-            with self.assertNumQueries(16):
+            with self.assertNumQueries(17):
                 response = self.client.get(
                     service.get_absolute_url() + "?date=2019-10-01"
                 )

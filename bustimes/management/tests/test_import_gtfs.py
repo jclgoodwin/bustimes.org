@@ -1,16 +1,18 @@
-import zipfile
-import vcr
-import time_machine
 import datetime
+import zipfile
 from pathlib import Path
-from unittest.mock import patch
 from tempfile import TemporaryDirectory
-from django.test import TestCase, override_settings
+from unittest.mock import patch
+
+import time_machine
+import vcr
 from django.core.management import call_command
-from busstops.models import Region, AdminArea, StopPoint, Service, Operator
+from django.test import TestCase, override_settings
+
+from busstops.models import AdminArea, Operator, Region, Service, StopPoint
+
 from ...models import Route
 from ..commands import import_gtfs
-
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -127,7 +129,7 @@ class GTFSTest(TestCase):
             datetime.date(2020, 12, 3),
         ):
             with time_machine.travel(day):
-                with self.assertNumQueries(14):
+                with self.assertNumQueries(15):
                     response = self.client.get(f"/services/165?date={day}")
                 timetable = response.context_data["timetable"]
                 self.assertEqual(day, timetable.date)

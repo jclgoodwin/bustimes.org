@@ -10,7 +10,7 @@
     {% endif %}
 {% endblock %}
 
-{% block bodyclass %}{% if not timetable %}wide{% endif %}{% endblock %}
+{% block bodyclass %}{% endblock %}
 
 {% block content %}
 
@@ -117,6 +117,7 @@
 {% block foot %}
     {% load static %}
 
+    <script src="{% static 'js/reqwest.min.js' %}"></script>
     <script>
         SERVICE_ID = {{ object.id }};
         {% if object.geometry %}
@@ -127,17 +128,13 @@
             LEAFLET_JS_URL = "{% static 'js/leaflet/dist/leaflet.js' %}";
             LOCATE_JS_URL = "{% static 'js/leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}";
             LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version }}.css";
-        </script>
-        <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
-        <script src="{% static 'js/reqwest.min.js' %}"></script>
-        <script async src="{% static 'js/servicemap2.js' %}">
-    {% elif timetable or fare_tables %}
-        </script>
-        <script src="{% static 'js/reqwest.min.js' %}">
-    {% endif %}</script>
-    {% if timetable %}
-        <script async src="{% static 'js/timetable.js' %}"></script>
-    {% endif %}
+            </script>
+            <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script>
+            <script async src="{% static 'js/servicemap2.js' %}"></script>
+        {% else %}
+            </script>
+        {% endif %}
+    <script async src="{% static 'js/timetable.js' %}"></script>
     {% if fare_tables %}
         <script async src="{% static 'js/fares.js' %}"></script>
     {% endif %}

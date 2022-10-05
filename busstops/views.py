@@ -876,23 +876,19 @@ class ServiceDetailView(DetailView):
                 context["linked_services"] = parallel
             else:
                 parallel = []
-            detailed = "detailed" in self.request.GET
-            timetable = self.object.get_timetable(
-                day=date, calendar_id=calendar, related=parallel, detailed=detailed
-            )
-            if timetable and timetable.routes:
 
-                if timetable.date or timetable.groupings:
-                    context["timetable"] = timetable
-
-                registrations = {
-                    route.registration_id
-                    for route in timetable.routes
-                    if route.registration_id
-                }
-                context["registrations"] = Registration.objects.filter(
-                    id__in=registrations
+            context["timetable"] = SimpleLazyObject(
+                lambda: self.object.get_timetable(
+                    day=date,
+                    calendar_id=calendar,
+                    related=parallel,
+                    detailed="detailed" in self.request.GET,
                 )
+            )
+
+            context["registrations"] = Registration.objects.filter(
+                Exists(self.object.route_set.filter(registration=OuterRef("id")))
+            )
 
         if self.object.tracking and self.object.vehiclejourney_set.exists():
             context["vehicles"] = True
@@ -920,37 +916,31 @@ class ServiceDetailView(DetailView):
                 "validityperiod_set",
             )
         )
-        stop_situations = {}
-        for situation in context["situations"]:
-            for consequence in situation.consequences:
-                for stop in consequence.stops.all():
-                    stop_situations[stop.atco_code] = situation
+        # stop_situations = {}
+        # for situation in context["situations"]:
+        #     for consequence in situation.consequences:
+        #         for stop in consequence.stops.all():
+        #             stop_situations[stop.atco_code] = situation
 
-        if "timetable" not in context or not timetable.groupings:
-            context["stopusages"] = (
-                self.object.stopusage_set.all()
-                .select_related("stop__locality")
-                .defer("stop__latlong", "stop__locality__latlong")
-            )
-            context["has_minor_stops"] = any(
-                stop_usage.is_minor() for stop_usage in context["stopusages"]
-            )
-            if len(stop_situations) < len(context["stopusages"]):
-                for stop_usage in context["stopusages"]:
-                    if stop_usage.stop_id in stop_situations:
-                        if (
-                            stop_situations[stop_usage.stop_id].summary
-                            == "Does not stop here"
-                        ):
-                            stop_usage.suspended = True
-                        else:
-                            stop_usage.situation = True
+        context["stopusages"] = (
+            self.object.stopusage_set.all()
+            .select_related("stop__locality")
+            .defer("stop__latlong", "stop__locality__latlong")
+        )
+        context["has_minor_stops"] = SimpleLazyObject(
+            lambda: any(stop_usage.is_minor() for stop_usage in context["stopusages"])
+        )
 
-        else:
-            stops = StopPoint.objects.select_related("locality").defer(
-                "latlong", "locality__latlong"
-            )
-            timetable.apply_stops(stops, stop_situations)
+        #     if len(stop_situations) < len(context["stopusages"]):
+        #         for stop_usage in context["stopusages"]:
+        #             if stop_usage.stop_id in stop_situations:
+        #                 if (
+        #                     stop_situations[stop_usage.stop_id].summary
+        #                     == "Does not stop here"
+        #                 ):
+        #                     stop_usage.suspended = True
+        #                 else:
+        #                     stop_usage.situation = True
 
         try:
             context["breadcrumb"] = [
@@ -1077,9 +1067,6 @@ def service_timetable(request, service_id):
     else:
         date = None
         calendar = None
-    stops = StopPoint.objects.select_related("locality").defer(
-        "latlong", "locality__latlong"
-    )
     context = {
         "object": service,
         "timetable": SimpleLazyObject(
@@ -1087,7 +1074,6 @@ def service_timetable(request, service_id):
                 day=date,
                 calendar_id=calendar,
                 related=service.get_linked_services(),
-                stops=stops,
             )
         ),
     }

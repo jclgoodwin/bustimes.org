@@ -943,14 +943,14 @@ class ImportTransXChangeTest(TestCase):
         service.geometry = "SRID=4326;MULTILINESTRING((1.31326925542 51.1278853356,1.08276947772 51.2766792559))"
         service.save(update_fields=["geometry"])
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             res = self.client.get(service.get_absolute_url() + "?date=2017-09-01")
         self.assertEqual(str(res.context_data["timetable"].date), "2017-09-01")
         # self.assertContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         # self.assertContains(res, f'data-service="{service.id},{duplicate.id}"></div')
 
         with time_machine.travel("1 October 2017"):
-            with self.assertNumQueries(14):
+            with self.assertNumQueries(15):
                 res = self.client.get(service.get_absolute_url())
         # self.assertContains(res, """
         #         <thead>
@@ -971,7 +971,7 @@ class ImportTransXChangeTest(TestCase):
         # self.assertContains(res, 'Glossop - Piccadilly Gardens, Manchester City Centre')
 
         with time_machine.travel("1 October 2017"):
-            with self.assertNumQueries(7):
+            with self.assertNumQueries(8):
                 timetable = service.get_timetable(date(2017, 10, 3))
         self.assertEqual(str(timetable.date), "2017-10-03")
         self.assertEqual(27, len(timetable.groupings[1].trips))
