@@ -2,12 +2,14 @@
 
 {% load urlise %}
 
-{% block title %}{{ object }} – {% if operators %}{{ operators.0 }} – {% endif %}bustimes.org{% endblock %}
+{% block title %}{{ object }} – {% if operators %}{{ operators|join:', ' }} – {% endif %}bustimes.org{% endblock %}
 
 {% block head %}
     {% if object.service_code %}
         <link rel="shortlink" href="https://bustimes.org/services/{{ object.service_code }}">
     {% endif %}
+    <meta property="og:title" content="{{ object }}">
+    <meta property="og:description" content="{{ operators|join:', ' }}">
 {% endblock %}
 
 {% block bodyclass %}{% endblock %}
