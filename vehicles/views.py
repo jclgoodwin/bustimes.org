@@ -664,12 +664,12 @@ class VehicleDetailView(DetailView):
 
 
 @login_required
-def edit_vehicle(request, vehicle_id):
+def edit_vehicle(request, **kwargs):
     vehicle = get_object_or_404(
         Vehicle.objects.select_related(
             "vehicle_type", "livery", "operator", "latest_journey"
         ),
-        id=vehicle_id,
+        **kwargs,
     )
 
     ip_address = request.headers.get("CF-Connecting-IP")
@@ -936,8 +936,8 @@ def vehicle_edit_action(request, edit_id, action):
 
 
 @require_GET
-def vehicle_history(request, vehicle_id):
-    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+def vehicle_history(request, **kwargs):
+    vehicle = get_object_or_404(Vehicle, **kwargs)
     revisions = vehicle.vehiclerevision_set.select_related(
         "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
     ).order_by("-id")
@@ -1036,8 +1036,8 @@ def journey_json(request, pk):
 
 
 @require_GET
-def latest_journey_debug(request, vehicle_id):
-    vehicle = get_object_or_404(Vehicle, pk=vehicle_id)
+def latest_journey_debug(request, **kwargs):
+    vehicle = get_object_or_404(Vehicle, **kwargs)
     if not vehicle.latest_journey_data:
         raise Http404
     return JsonResponse(vehicle.latest_journey_data)

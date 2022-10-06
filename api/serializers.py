@@ -31,6 +31,7 @@ class VehicleSerializer(serializers.ModelSerializer):
         depth = 1
         fields = [
             "id",
+            "slug",
             "fleet_number",
             "fleet_code",
             "reg",

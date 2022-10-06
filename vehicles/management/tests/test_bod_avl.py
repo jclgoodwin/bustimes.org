@@ -269,7 +269,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "block": "503",
                     "coordinates": [0.285348, 51.2135],
                     "vehicle": {
-                        "url": f"/vehicles/{journey.vehicle_id}",
+                        "url": "/vehicles/hams-dw18-ham",
                         "name": "T2-1 - DW18 HAM",
                     },
                     "heading": 92.0,
@@ -469,7 +469,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "block": "2",
                     "coordinates": [1.675893, 52.328398],
                     "vehicle": {
-                        "url": f"/vehicles/{vehicle.id}",
+                        "url": "/vehicles/none-bb62-bus",
                         "name": "104 - BB62 BUS",
                     },
                     "heading": 142,
@@ -490,7 +490,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "block": "2",
                     "coordinates": [1.675893, 52.328398],
                     "vehicle": {
-                        "url": f"/vehicles/{vehicle.id}",
+                        "url": "/vehicles/none-bb62-bus",
                         "name": "104 - BB62 BUS",
                     },
                     "heading": 142,
@@ -616,7 +616,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "block": "52",
                     "coordinates": [-1.586568, 55.084628],
                     "vehicle": {
-                        "url": f"/vehicles/{vehicle.id}",
+                        "url": "/vehicles/none-626",
                         "name": "626",
                     },
                     "heading": 189.0,

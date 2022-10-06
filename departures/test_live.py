@@ -238,7 +238,7 @@ class LiveDeparturesTest(TestCase):
         StopTime.objects.create(
             trip=trip, sequence=0, arrival="13:18:00", departure="13:18:00", stop=stop
         )
-        vehicle = Vehicle.objects.create(source=vehicle_source, code="686")
+        Vehicle.objects.create(source=vehicle_source, code="686")
 
         with time_machine.travel(datetime(2022, 6, 14, 13, 17)):
             with vcr.use_cassette(
@@ -246,7 +246,7 @@ class LiveDeparturesTest(TestCase):
             ):
                 with self.assertNumQueries(12):
                     response = self.client.get(stop.get_absolute_url())
-        self.assertContains(response, f'<a href="/vehicles/{vehicle.id}#map">')
+        self.assertContains(response, '<a href="/vehicles/686#map">')
 
     def test_west_midlands(self):
         stop = StopPoint.objects.create(

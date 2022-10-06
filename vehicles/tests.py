@@ -935,6 +935,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                 "results": [
                     {
                         "id": self.vehicle_1.id,
+                        "slug": "lynx-2",
                         "fleet_number": 1,
                         "fleet_code": "1",
                         "reg": "FD54JYA",
@@ -964,6 +965,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     },
                     {
                         "id": self.vehicle_2.id,
+                        "slug": "lynx-50",
                         "fleet_number": 50,
                         "fleet_code": "50",
                         "reg": "UWW2X",

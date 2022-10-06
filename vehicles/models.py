@@ -239,7 +239,7 @@ class VehicleFeature(models.Model):
 
 
 def vehicle_slug(vehicle):
-    return f"{vehicle.operator_id or ''} {vehicle.code}"
+    return f"{vehicle.operator_id} {vehicle.code.replace('_', ' ')}"
 
 
 class Vehicle(models.Model):
@@ -371,13 +371,13 @@ class Vehicle(models.Model):
             return get_css(colours, direction, self.livery and self.livery.horizontal)
 
     def get_absolute_url(self):
-        return reverse("vehicle_detail", args=(self.id,))
+        return reverse("vehicle_detail", args=(self.slug or self.id,))
 
     def get_edit_url(self):
-        return reverse("vehicle_edit", args=(self.id,))
+        return reverse("vehicle_edit", args=(self.slug or self.id,))
 
     def get_history_url(self):
-        return reverse("vehicle_history", args=(self.id,))
+        return reverse("vehicle_history", args=(self.slug or self.id,))
 
     def fleet_number_mismatch(self):
         if self.code.isdigit():
