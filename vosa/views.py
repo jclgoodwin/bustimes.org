@@ -1,14 +1,23 @@
 from datetime import datetime
-from django.views.generic.detail import DetailView
+
 from django.contrib.syndication.views import Feed
-from django.db.models import Max, Exists, OuterRef
+from django.db.models import Exists, Max, OuterRef
+from django.views.generic.detail import DetailView
+
 from busstops.models import Service
 from busstops.views import get_colours
 from bustimes.models import Route
+
 from .models import Licence, Registration, Variation
 
 
-class LicenceView(DetailView):
+class UpperCaseSlugMixin:
+    def get_object(self):
+        self.kwargs["slug"] = self.kwargs["slug"].upper()
+        return super().get_object()
+
+
+class LicenceView(UpperCaseSlugMixin, DetailView):
     model = Licence
     slug_field = "licence_number"
 
@@ -31,7 +40,7 @@ class LicenceView(DetailView):
         return context
 
 
-class RegistrationView(DetailView):
+class RegistrationView(UpperCaseSlugMixin, DetailView):
     model = Registration
     slug_field = "registration_number"
     queryset = model.objects.select_related("licence")
