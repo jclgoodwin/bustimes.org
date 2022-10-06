@@ -20,7 +20,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
@@ -105,13 +105,11 @@ def vehicles(request):
 
 
 @require_GET
-@cache_page(3600)
 def map(request):
     return render(request, "map.html", {"liveries_css_version": liveries_css_version()})
 
 
-@require_GET
-@cache_page(3600)
+@cache_control(max_age=3600)
 def liveries_css(request, version=None):
     styles = []
     liveries = Livery.objects.filter(published=True).order_by("id")
@@ -297,7 +295,6 @@ def operator_vehicles(request, slug=None, parent=None):
 
 
 @require_GET
-@cache_page(3600)
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)
 
@@ -314,7 +311,6 @@ def operator_map(request, slug):
 
 
 @require_GET
-@cache_page(30)
 def vehicles_json(request) -> JsonResponse:
     try:
         bounds = get_bounding_box(request)

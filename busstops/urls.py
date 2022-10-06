@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.sitemaps.views import index, sitemap
 from django.urls import include, path, re_path
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_control, cache_page
 from django.views.generic.base import TemplateView
 
 from bustimes.urls import urlpatterns as bustimes_views
@@ -34,7 +34,7 @@ urlpatterns = [
     path("stops.json", views.stops),
     path(
         "regions/<pk>",
-        cache_page(3600)(views.RegionDetailView.as_view()),
+        views.RegionDetailView.as_view(),
         name="region_detail",
     ),
     path(
@@ -54,11 +54,11 @@ urlpatterns = [
     ),
     re_path(
         r"^localities/(?P<pk>[ENen][Ss]?[0-9]+)",
-        cache_page(3600)(views.LocalityDetailView.as_view()),
+        views.LocalityDetailView.as_view(),
     ),
     path(
         "localities/<slug>",
-        cache_page(3600)(views.LocalityDetailView.as_view()),
+        views.LocalityDetailView.as_view(),
         name="locality_detail",
     ),
     path(
@@ -83,10 +83,10 @@ urlpatterns = [
         name="service_detail",
     ),
     path("services/<slug>/fares", fares_views.service_fares),
-    path("sitemap.xml", cache_page(3600)(index), {"sitemaps": sitemaps}),
+    path("sitemap.xml", cache_control(max_age=3600)(index), {"sitemaps": sitemaps}),
     path(
         "sitemap-<section>.xml",
-        cache_page(3600)(sitemap),
+        cache_control(max_age=3600)(sitemap),
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),

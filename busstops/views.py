@@ -856,11 +856,7 @@ class ServiceDetailView(DetailView):
 
         # timetable
 
-        if self.object.timetable_wrong or self.object.mode in (
-            "metro",
-            "underground",
-            "tram",
-        ):
+        if self.object.timetable_wrong:
             date = None
         else:
             form = forms.TimetableForm(self.request.GET)
