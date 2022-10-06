@@ -230,13 +230,11 @@ class EdinburghDepartures(Departures):
                             "vehicleId": departure["vehicleId"],
                         }
                     )
-            vehicles = {
-                vehicle.code: vehicle
-                for vehicle in Vehicle.objects.filter(
-                    source__name="TfE",
-                    code__in=[item["vehicleId"] for item in departures],
-                ).only("id", "code")
-            }
+            vehicles = Vehicle.objects.filter(
+                source__name="TfE",
+                code__in=[item["vehicleId"] for item in departures],
+            ).only("id", "code", "slug")
+            vehicles = {vehicle.code: vehicle for vehicle in vehicles}
             for item in departures:
                 vehicle = vehicles.get(item["vehicleId"])
                 if vehicle:
