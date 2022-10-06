@@ -10,6 +10,16 @@
     {% endif %}
 {% endblock %}
 
+{% block head %}
+    {% if vehicle %}
+        <meta property="og:title" content="{{ object }}">
+        <meta property="og:description" content="{{ object.vehicle_type }}{% if object.name %}
+
+{{ object.name }}{% endif %}">
+
+    {% endif %}
+{% endblock %}
+
 {% block fuse %}{% endblock %}
 
 {% block bodyclass %}narrow{% endblock %}
