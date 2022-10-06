@@ -246,7 +246,7 @@ class LiveDeparturesTest(TestCase):
             ):
                 with self.assertNumQueries(12):
                     response = self.client.get(stop.get_absolute_url())
-        self.assertContains(response, '<a href="/vehicles/686#map">')
+        self.assertContains(response, '<a href="/vehicles/none-686#map">')
 
     def test_west_midlands(self):
         stop = StopPoint.objects.create(
