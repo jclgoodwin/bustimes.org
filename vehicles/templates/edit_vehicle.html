@@ -44,6 +44,12 @@
     {% endif %}
 
     <form action="{{ vehicle.get_edit_url }}" method="POST">
+        <p>ID:<br>
+        <code>{{ vehicle.id }}</code></p>
+
+        <p>Slug:<br>
+        <code>{{ vehicle.slug }}</code></p>
+
         <p>Ticket machine code:<br>
         <code>{{ vehicle.code }}</code></p>
 
