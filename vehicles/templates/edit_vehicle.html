@@ -43,16 +43,13 @@
         </div>
     {% endif %}
 
+    <p>ID:<br>
+    <code>{{ vehicle.id }}</code> <button class="button" onclick="javascript:navigator.clipboard.writeText('{{ vehicle.id }}');this.blur()">Copy</button></p>
+
+    <p>Ticket machine code:<br>
+    <code>{{ vehicle.code }}</code></p>
+
     <form action="{{ vehicle.get_edit_url }}" method="POST">
-        <p>ID:<br>
-        <code>{{ vehicle.id }}</code></p>
-
-        <p>Slug:<br>
-        <code>{{ vehicle.slug }}</code></p>
-
-        <p>Ticket machine code:<br>
-        <code>{{ vehicle.code }}</code></p>
-
         <div class="edit-vehicle">
             {{ form.as_p }}
         </div>
