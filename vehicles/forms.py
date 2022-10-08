@@ -1,19 +1,19 @@
 import re
 from datetime import timedelta
+from urllib.parse import quote_plus
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils import timezone
-from django.db.models import Count, Q, OuterRef
-from django.utils.html import format_html
+from django.db.models import Count, OuterRef, Q
 from django.urls import reverse
-from urllib.parse import quote_plus
+from django.utils import timezone
+from django.utils.html import format_html
+from sql_util.utils import Exists
 
 from busstops.models import Operator, Service
-from .models import VehicleType, VehicleFeature, Livery, get_text_colour
-from . import fields
 
-from sql_util.utils import Exists
+from . import fields
+from .models import Livery, VehicleFeature, VehicleType, get_text_colour
 
 
 def get_livery_choices(operator, vehicle, user):
@@ -274,6 +274,16 @@ can’t be contradicted"""
                     "withdrawn"
                 ].help_text = """Can’t be ticked yet,
  as this vehicle (or ticket machine) has tracked in the last 3 days"""
+
+        try:
+            operator_ref = vehicle.latest_journey_data["MonitoredVehicleJourney"][
+                "OperatorRef"
+            ]
+        except (TypeError, KeyError):
+            pass
+        else:
+            if vehicle.operator_id == operator_ref:
+                del self.fields["operator"]
 
         if user.is_staff:
             pass
