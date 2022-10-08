@@ -924,13 +924,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertNotContains(response, "1 - FD54 JYA")
 
     def test_api(self):
-        with self.assertNumQueries(2):
-            response = self.client.get("/api/vehicles/?limit=2")
+        with self.assertNumQueries(1):
+            response = self.client.get("/api/vehicles/")
         self.assertEqual(
             response.json(),
             {
-                "count": 3,
-                "next": "http://testserver/api/vehicles/?limit=2&offset=2",
+                "next": None,
                 "previous": None,
                 "results": [
                     {
