@@ -933,33 +933,23 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                 "previous": None,
                 "results": [
                     {
-                        "id": self.vehicle_1.id,
-                        "slug": "lynx-2",
-                        "fleet_number": 1,
-                        "fleet_code": "1",
-                        "reg": "FD54JYA",
-                        "vehicle_type": {
-                            "id": self.vehicle_1.vehicle_type_id,
-                            "name": "Optare Tempo",
-                            "double_decker": False,
-                            "coach": False,
-                            "electric": None,
-                        },
+                        "branding": "Coastliner",
+                        "fleet_code": "",
+                        "fleet_number": None,
+                        "garage": None,
+                        "id": self.vehicle_3.id,
                         "livery": {
                             "id": None,
+                            "left": "#c0c0c0",
                             "name": None,
-                            "left": "#FF0000",
-                            "right": "#FF0000",
+                            "right": "#c0c0c0",
                         },
-                        "branding": "",
-                        "operator": {
-                            "id": "LYNX",
-                            "name": "Lynx",
-                            "parent": "Madrigal Electromotive",
-                        },
-                        "garage": None,
                         "name": "",
-                        "notes": "Trent Barton",
+                        "notes": "",
+                        "operator": None,
+                        "reg": "",
+                        "slug": "none-10",
+                        "vehicle_type": None,
                         "withdrawn": False,
                     },
                     {
@@ -992,14 +982,44 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "notes": "",
                         "withdrawn": False,
                     },
+                    {
+                        "id": self.vehicle_1.id,
+                        "slug": "lynx-2",
+                        "fleet_number": 1,
+                        "fleet_code": "1",
+                        "reg": "FD54JYA",
+                        "vehicle_type": {
+                            "id": self.vehicle_1.vehicle_type_id,
+                            "name": "Optare Tempo",
+                            "double_decker": False,
+                            "coach": False,
+                            "electric": None,
+                        },
+                        "livery": {
+                            "id": None,
+                            "name": None,
+                            "left": "#FF0000",
+                            "right": "#FF0000",
+                        },
+                        "branding": "",
+                        "operator": {
+                            "id": "LYNX",
+                            "name": "Lynx",
+                            "parent": "Madrigal Electromotive",
+                        },
+                        "garage": None,
+                        "name": "",
+                        "notes": "Trent Barton",
+                        "withdrawn": False,
+                    },
                 ],
             },
         )
 
         with self.assertNumQueries(1):
             response = self.client.get("/api/vehicles/?reg=sa60twp")
-        self.assertEqual(0, response.json()["count"])
+        self.assertEqual(0, len(response.json()["results"]))
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(1):
             response = self.client.get("/api/vehicles/?search=fd54jya")
-        self.assertEqual(1, response.json()["count"])
+        self.assertEqual(1, len(response.json()["results"]))
