@@ -924,32 +924,43 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertNotContains(response, "1 - FD54 JYA")
 
     def test_api(self):
-        with self.assertNumQueries(1):
-            response = self.client.get("/api/vehicles/")
+        with self.assertNumQueries(2):
+            response = self.client.get("/api/vehicles/?limit=2")
         self.assertEqual(
             response.json(),
             {
-                "next": None,
+                "count": 3,
+                "next": "http://testserver/api/vehicles/?limit=2&offset=2",
                 "previous": None,
                 "results": [
                     {
-                        "branding": "Coastliner",
-                        "fleet_code": "",
-                        "fleet_number": None,
-                        "garage": None,
-                        "id": self.vehicle_3.id,
+                        "id": self.vehicle_1.id,
+                        "slug": "lynx-2",
+                        "fleet_number": 1,
+                        "fleet_code": "1",
+                        "reg": "FD54JYA",
+                        "vehicle_type": {
+                            "id": self.vehicle_1.vehicle_type_id,
+                            "name": "Optare Tempo",
+                            "double_decker": False,
+                            "coach": False,
+                            "electric": None,
+                        },
                         "livery": {
                             "id": None,
-                            "left": "#c0c0c0",
                             "name": None,
-                            "right": "#c0c0c0",
+                            "left": "#FF0000",
+                            "right": "#FF0000",
                         },
+                        "branding": "",
+                        "operator": {
+                            "id": "LYNX",
+                            "name": "Lynx",
+                            "parent": "Madrigal Electromotive",
+                        },
+                        "garage": None,
                         "name": "",
-                        "notes": "",
-                        "operator": None,
-                        "reg": "",
-                        "slug": "none-10",
-                        "vehicle_type": None,
+                        "notes": "Trent Barton",
                         "withdrawn": False,
                     },
                     {
@@ -982,44 +993,14 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "notes": "",
                         "withdrawn": False,
                     },
-                    {
-                        "id": self.vehicle_1.id,
-                        "slug": "lynx-2",
-                        "fleet_number": 1,
-                        "fleet_code": "1",
-                        "reg": "FD54JYA",
-                        "vehicle_type": {
-                            "id": self.vehicle_1.vehicle_type_id,
-                            "name": "Optare Tempo",
-                            "double_decker": False,
-                            "coach": False,
-                            "electric": None,
-                        },
-                        "livery": {
-                            "id": None,
-                            "name": None,
-                            "left": "#FF0000",
-                            "right": "#FF0000",
-                        },
-                        "branding": "",
-                        "operator": {
-                            "id": "LYNX",
-                            "name": "Lynx",
-                            "parent": "Madrigal Electromotive",
-                        },
-                        "garage": None,
-                        "name": "",
-                        "notes": "Trent Barton",
-                        "withdrawn": False,
-                    },
                 ],
             },
         )
 
         with self.assertNumQueries(1):
             response = self.client.get("/api/vehicles/?reg=sa60twp")
-        self.assertEqual(0, len(response.json()["results"]))
+        self.assertEqual(0, response.json()["count"])
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?search=fd54jya")
-        self.assertEqual(1, len(response.json()["results"]))
+        self.assertEqual(1, response.json()["count"])

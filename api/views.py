@@ -28,7 +28,6 @@ class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
         "vehicle_type", "livery", "operator", "garage"
     ).order_by("id")
     serializer_class = serializers.VehicleSerializer
-    pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleFilter
 
