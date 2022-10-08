@@ -20,13 +20,15 @@ class LimitedPagination(pagination.LimitOffsetPagination):
 
 class CursorPagination(pagination.CursorPagination):
     ordering = "-id"
+    page_size = 20
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Vehicle.objects.select_related(
-        "operator", "vehicle_type", "livery"
+        "vehicle_type", "livery", "operator", "garage"
     ).order_by("id")
     serializer_class = serializers.VehicleSerializer
+    pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleFilter
 
