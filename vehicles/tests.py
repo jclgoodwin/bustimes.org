@@ -924,7 +924,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertNotContains(response, "1 - FD54 JYA")
 
     def test_api(self):
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?limit=2")
         self.assertEqual(
             response.json(),
@@ -1001,6 +1001,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.get("/api/vehicles/?reg=sa60twp")
         self.assertEqual(0, response.json()["count"])
 
-        with self.assertNumQueries(1):
+        with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?search=fd54jya")
         self.assertEqual(1, response.json()["count"])
