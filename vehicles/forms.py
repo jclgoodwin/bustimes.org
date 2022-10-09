@@ -284,6 +284,7 @@ can’t be contradicted"""
         else:
             if vehicle.operator_id == operator_ref:
                 del self.fields["operator"]
+                return
 
         if user.is_staff:
             pass
