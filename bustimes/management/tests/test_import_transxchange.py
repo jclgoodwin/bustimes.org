@@ -328,7 +328,7 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(service.get_absolute_url() + "/debug")
         self.assertContains(response, "2017-04-12–2017-05-30")
 
-        timetable = service.get_timetable(date(2017, 4, 20))
+        timetable = service.get_timetable(date(2017, 4, 20)).render()
         self.assertEqual("2017-04-20", str(timetable.date))
         self.assertEqual(1, len(timetable.groupings))
         self.assertEqual(3, len(timetable.groupings[0].rows[0].times))
@@ -397,7 +397,7 @@ class ImportTransXChangeTest(TestCase):
         )
 
         service = Service.objects.get()
-        timetable = service.get_timetable()
+        timetable = service.get_timetable().render()
 
         self.assertEqual(14, len(timetable.date_options))
         self.assertEqual(
@@ -504,7 +504,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.handle_files("EA.zip", ["em_11-1-J-y08-1.xml"])
         service = Service.objects.get()
-        timetable = service.get_timetable()
+        timetable = service.get_timetable().render()
         self.assertEqual("2017-12-10", str(timetable.date))
 
         self.assertEqual(
@@ -557,7 +557,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(outbound.rows[-2].stop), "Gladstone Terrace")
         self.assertEqual(str(outbound.rows[-1].stop), "Hare and Hounds")
 
-        timetable = service.get_timetable(date(2017, 4, 16))
+        timetable = service.get_timetable(date(2017, 4, 16)).render()
         outbound = timetable.groupings[0]
         self.assertEqual("2017-04-16", str(timetable.date))
         self.assertEqual(
@@ -581,7 +581,7 @@ class ImportTransXChangeTest(TestCase):
             bank_holiday=BankHoliday.objects.get(name="AllBankHolidays"),
             date="2017-04-14",
         )
-        timetable = service.get_timetable(date(2017, 4, 14))
+        timetable = service.get_timetable(date(2017, 4, 14)).render()
         self.assertEqual(7, len(timetable.groupings[0].rows[0].times))
 
     @time_machine.travel("2017-08-30")
@@ -943,14 +943,14 @@ class ImportTransXChangeTest(TestCase):
         service.geometry = "SRID=4326;MULTILINESTRING((1.31326925542 51.1278853356,1.08276947772 51.2766792559))"
         service.save(update_fields=["geometry"])
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             res = self.client.get(service.get_absolute_url() + "?date=2017-09-01")
         self.assertEqual(str(res.context_data["timetable"].date), "2017-09-01")
         # self.assertContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         # self.assertContains(res, f'data-service="{service.id},{duplicate.id}"></div')
 
         with time_machine.travel("1 October 2017"):
-            with self.assertNumQueries(15):
+            with self.assertNumQueries(16):
                 res = self.client.get(service.get_absolute_url())
         # self.assertContains(res, """
         #         <thead>
@@ -971,8 +971,8 @@ class ImportTransXChangeTest(TestCase):
         # self.assertContains(res, 'Glossop - Piccadilly Gardens, Manchester City Centre')
 
         with time_machine.travel("1 October 2017"):
-            with self.assertNumQueries(8):
-                timetable = service.get_timetable(date(2017, 10, 3))
+            with self.assertNumQueries(9):
+                timetable = service.get_timetable(date(2017, 10, 3)).render()
         self.assertEqual(str(timetable.date), "2017-10-03")
         self.assertEqual(27, len(timetable.groupings[1].trips))
         self.assertEqual(30, len(timetable.groupings[0].trips))

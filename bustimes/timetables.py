@@ -131,6 +131,7 @@ class Timetable:
         self.calendar = None
         self.start_date = None
         if not routes:
+            self.calendars = None
             return
 
         if not date and len(routes) > 1:
@@ -163,7 +164,7 @@ class Timetable:
             .prefetch_related("calendardate_set")
         )
 
-        if not date and self.calendars:
+        if not self.date and self.calendars:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
                 # calendar has a summary like 'school days only', or no exceptions within 28 days
@@ -194,13 +195,19 @@ class Timetable:
                 if routes:
                     self.current_routes = routes
 
-        trips = Trip.objects.filter(route__in=routes)
         if not self.calendar:
             if self.calendars:
                 calendar_ids = [calendar.id for calendar in self.calendars]
+                self.calendar_ids = list(
+                    get_calendars(self.date, calendar_ids).values_list("id", flat=True)
+                )
+
+    def render(self):
+        trips = Trip.objects.filter(route__in=self.current_routes)
+        if not self.calendar:
+            if self.calendars:
                 trips = trips.filter(
-                    Q(calendar__in=get_calendars(self.date, calendar_ids))
-                    | Q(calendar=None)
+                    Q(calendar__in=self.calendar_ids) | Q(calendar=None)
                 )
             else:
                 trips = trips.filter(calendar=None)
@@ -218,12 +225,12 @@ class Timetable:
             "notes",
         )
 
-        if detailed:
+        if self.detailed:
             trips = trips.select_related("block", "garage", "vehicle_type")
 
         assert len(trips) < 1000, "too many trips"
 
-        routes = {route.id: route for route in routes}
+        routes = {route.id: route for route in self.current_routes}
 
         for trip in trips:
             trip.route = routes[trip.route_id]
@@ -236,7 +243,7 @@ class Timetable:
 
         for grouping in self.groupings:
 
-            if not detailed:
+            if not self.detailed:
                 grouping.trips.sort(key=lambda t: t.start)
                 grouping.merge_split_trips()
 
@@ -248,12 +255,24 @@ class Timetable:
 
             grouping.sort_columns()
 
-            grouping.do_heads_and_feet(detailed)
+            grouping.do_heads_and_feet(self.detailed)
 
         (
             self.inbound_outbound_descriptions,
             self.origins_and_destinations,
         ) = get_descriptions(self.current_routes)
+
+        self.groupings = [grouping for grouping in self.groupings if grouping.rows]
+
+        if all(
+            route.line_name == self.routes[0].line_name for route in self.routes[1:]
+        ):
+            for grouping in self.groupings:
+                del grouping.heads
+
+        self.apply_stops()
+
+        return self
 
     def any_trip_has(self, attr: str) -> bool:
         for grouping in self.groupings:
@@ -262,11 +281,15 @@ class Timetable:
                     return True
         return False
 
-    def apply_stops(self, stops, stop_situations=None):
+    def apply_stops(self, stop_situations=None):
         stop_codes = (
             row.stop.atco_code for grouping in self.groupings for row in grouping.rows
         )
-        stops = stops.in_bulk(stop_codes)
+        stops = (
+            StopTime.stop.field.related_model.objects.select_related("locality")
+            .defer("latlong", "locality__latlong")
+            .in_bulk(stop_codes)
+        )
 
         if stop_situations and len(stop_situations) < len(stops):
             for atco_code in stops:

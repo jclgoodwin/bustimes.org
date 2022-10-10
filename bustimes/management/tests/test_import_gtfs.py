@@ -129,7 +129,7 @@ class GTFSTest(TestCase):
             datetime.date(2020, 12, 3),
         ):
             with time_machine.travel(day):
-                with self.assertNumQueries(15):
+                with self.assertNumQueries(16):
                     response = self.client.get(f"/services/165?date={day}")
                 timetable = response.context_data["timetable"]
                 self.assertEqual(day, timetable.date)
@@ -137,7 +137,7 @@ class GTFSTest(TestCase):
 
         # big timetable
         service = Service.objects.get(route__code="21-963-1-y11-1")
-        timetable = service.get_timetable(datetime.date(2017, 6, 7))
+        timetable = service.get_timetable(datetime.date(2017, 6, 7)).render()
         self.assertEqual(str(timetable.groupings[0]), "Outbound")
         self.assertEqual(
             str(timetable.groupings[0].rows[0].times), "['', 10:15, '', 14:15, 17:45]"

@@ -873,13 +873,12 @@ class ServiceDetailView(DetailView):
             else:
                 parallel = []
 
-            context["timetable"] = SimpleLazyObject(
-                lambda: self.object.get_timetable(
-                    day=date,
-                    calendar_id=calendar,
-                    related=parallel,
-                    detailed="detailed" in self.request.GET,
-                )
+            context["form"] = form
+            context["timetable"] = self.object.get_timetable(
+                day=date,
+                calendar_id=calendar,
+                # related=parallel,
+                detailed="detailed" in self.request.GET,
             )
 
             context["registrations"] = Registration.objects.filter(
@@ -1065,12 +1064,10 @@ def service_timetable(request, service_id):
         calendar = None
     context = {
         "object": service,
-        "timetable": SimpleLazyObject(
-            lambda: service.get_timetable(
-                day=date,
-                calendar_id=calendar,
-                related=service.get_linked_services(),
-            )
+        "timetable": service.get_timetable(
+            day=date,
+            calendar_id=calendar,
+            # related=service.get_linked_services(),
         ),
     }
 

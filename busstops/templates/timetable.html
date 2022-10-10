@@ -1,8 +1,6 @@
 {% load urlise %}
 {% load cache %}
 
-{% cache 3600 timetable object.id object.modified_at request.GET %}
-
 {% if timetable %}
     {% if timetable.calendar_options %}
         <form class="timetable-date">
@@ -33,11 +31,9 @@
         </form>
     {% endif %}
 
-    {% if timetable.message %}
-        <p class="message">{{ timetable.message }}</p>
-    {% endif %}
+    {% cache 3600 timetable object.id object.modified_at timetable.detailed timetable.calendar_ids timetable.calendar.id %}
 
-    {% for grouping in timetable.groupings %}
+    {% for grouping in timetable.render.groupings %}
 
         {% if forloop.first != forloop.last %}
             <h2>{{ grouping|linebreaksbr }}</h2>
@@ -165,8 +161,8 @@
         We’re not endorsed by, affiliated with or supported by them, and they don’t warrant the accuracy or quality of the information.{% endif %}
     </p>{% endif %}{% endfor %}
 
+    {% endcache %}
+
 {% else %}
     {% include 'route.html' %}
 {% endif %}
-
-{% endcache %}

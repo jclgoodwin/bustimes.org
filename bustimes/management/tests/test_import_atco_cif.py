@@ -119,7 +119,7 @@ class ImportAtcoCifTest(TestCase):
 
         # no journeys on this date - CalendarDate with operation = False - so should skip to next date of operation
         with time_machine.travel("2019-07-20"):
-            with self.assertNumQueries(17):
+            with self.assertNumQueries(18):
                 response = self.client.get(
                     "/services/219-belfast-europa-buscentre-ballymena-buscentre"
                 )
@@ -131,7 +131,7 @@ class ImportAtcoCifTest(TestCase):
 
         service = Service.objects.get(service_code="218_GLE")
         with time_machine.travel("2019-10-01"):
-            with self.assertNumQueries(17):
+            with self.assertNumQueries(18):
                 response = self.client.get(
                     service.get_absolute_url() + "?date=2019-10-01"
                 )
