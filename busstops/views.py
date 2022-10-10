@@ -873,7 +873,6 @@ class ServiceDetailView(DetailView):
             else:
                 parallel = []
 
-            context["form"] = form
             context["timetable"] = self.object.get_timetable(
                 day=date,
                 calendar_id=calendar,
