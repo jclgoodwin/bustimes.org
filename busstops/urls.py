@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.sitemaps.views import index, sitemap
 from django.urls import include, path, re_path
-from django.views.decorators.cache import cache_control, cache_page
+from django.views.decorators.cache import cache_control
 from django.views.generic.base import TemplateView
 
 from bustimes.urls import urlpatterns as bustimes_views
@@ -20,7 +20,10 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="index.html")),
+    path(
+        "",
+        cache_control(s_maxage=3600)(TemplateView.as_view(template_name="index.html")),
+    ),
     path("offline", TemplateView.as_view(template_name="offline.html")),
     path("version", views.version),
     path("contact", views.contact),
@@ -63,7 +66,7 @@ urlpatterns = [
     ),
     path(
         "stops/<pk>",
-        cache_page(60)(views.StopPointDetailView.as_view()),
+        cache_control(s_maxage=60)(views.StopPointDetailView.as_view()),
         name="stoppoint_detail",
     ),
     path("stations/<pk>", views.StopAreaDetailView.as_view(), name="stoparea_detail"),

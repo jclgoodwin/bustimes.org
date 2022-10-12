@@ -23,7 +23,7 @@ from django.urls import resolve
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
 from sql_util.utils import Exists
 from ukpostcodeutils import validation
@@ -133,7 +133,7 @@ def error(request):
     return response
 
 
-@cache_page(3600)
+@cache_control(s_maxage=3600)
 def robots_txt(request):
     if request.get_host() == "bustimes.org":  # live site
         content = """User-agent: *
@@ -234,7 +234,7 @@ def timetable_source_stats(request):
     return JsonResponse(cache.get("timetable-source-stats", []), safe=False)
 
 
-@cache_page(3600)
+@cache_control(s_maxage=3600)
 def stops(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
@@ -1067,7 +1067,7 @@ def service_timetable(request, service_id):
     return render(request, "timetable.html", context)
 
 
-@cache_page(7200)
+@cache_control(s_maxage=7200)
 def service_map_data(request, service_id):
     service = get_object_or_404(
         Service.objects.only("geometry", "line_name", "service_code"),
