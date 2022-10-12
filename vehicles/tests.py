@@ -635,7 +635,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.get("/vehicles/edits?change=livery")
         self.assertEqual(len(response.context["edits"]), 0)
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(11):
             response = self.client.get("/vehicles/edits?change=reg")
         self.assertEqual(len(response.context["edits"]), 1)
         self.assertContains(response, '<option value="LYNX">Lynx (1)</option>')
