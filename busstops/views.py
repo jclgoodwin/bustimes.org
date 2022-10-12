@@ -142,6 +142,9 @@ Disallow: /trips/
 Disallow: /accounts/
 Disallow: /fares/
 
+User-agent: AhrefsBot
+Disallow: /
+
 User-agent: BLEXBot
 Disallow: /
 
@@ -149,15 +152,6 @@ User-agent: MJ12bot
 Disallow: /
 
 User-agent: dotbot
-Disallow: /
-
-User-agent: Baiduspider
-Disallow: /
-
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: grapeshot
 Disallow: /
 """
     else:  # staging site/other
