@@ -42,11 +42,11 @@ class MergeTests(TestCase):
             "/admin/busstops/service/",
             {
                 "action": "merge",
-                "_selected_action": [self.service_a.id, self.service_a.id],
+                "_selected_action": [self.service_a.id, self.service_b.id],
             },
         )
-
         response = self.client.get("/admin/busstops/service/")
-        self.assertContains(
-            response, "Merged &lt;QuerySet []&gt; into 129 - Frankby Cemetery - Liscard"
+        self.assertEqual(
+            list(response.context["messages"])[0].message,
+            "merged <QuerySet [<Service: 129 - Frankby - Moreton - Liscard>]> into 129 - Frankby Cemetery - Liscard",
         )

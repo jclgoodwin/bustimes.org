@@ -10,7 +10,7 @@ from django.urls import reverse
 from django.utils.html import format_html
 from sql_util.utils import SubqueryCount
 
-from bustimes.models import Route
+from bustimes.models import Route, RouteLink
 from vehicles.models import VehicleJourney
 
 from . import models
@@ -291,8 +291,22 @@ class ServiceAdmin(GISModelAdmin):
         for other in others:
             other.route_set.update(service=first)
             other.vehiclejourney_set.update(service=first)
-            other.servicecode_set.update(service=first)
-            other.routelink_set.update(service=first)
+            other.servicecode_set.filter(
+                ~Exists(
+                    models.ServiceCode.objects.filter(
+                        scheme=OuterRef("scheme"), code=OuterRef("code"), service=first
+                    )
+                )
+            ).update(service=first)
+            other.routelink_set.filter(
+                ~Exists(
+                    RouteLink.objects.filter(
+                        from_stop=OuterRef("from_stop"),
+                        to_stop=OuterRef("to_stop"),
+                        service=first,
+                    )
+                )
+            ).update(service=first)
             models.ServiceCode.objects.create(
                 code=other.slug, service=first, scheme="slug"
             )
