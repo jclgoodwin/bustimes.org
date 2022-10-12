@@ -813,13 +813,13 @@ def vehicle_edits(request):
             VehicleEdit.objects.bulk_update(edits, fields=["approved", "arbiter"])
 
     edits = VehicleEdit.objects.order_by("-id")
-
     edits = edits.select_related(
         "livery",
         "vehicle__livery",
         "user",
+        "vehicle__vehicle_type",
         "vehicle__operator",
-        "vehicle__latest_journey",
+        "vehicle__latest_journey",  # for determining whether a "withdraw" edit is newer than last journey
     )
     edits = edits.prefetch_related(
         "vehicleeditfeature_set__feature", "vehicle__features"
