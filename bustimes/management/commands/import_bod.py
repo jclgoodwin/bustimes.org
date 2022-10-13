@@ -205,6 +205,7 @@ def bus_open_data(api_key, specific_operator):
                 )
             command.source.name = dataset["name"]
             command.source.url = dataset["url"]
+            command.source.source = source
 
             sources.append(command.source)
 
@@ -290,6 +291,7 @@ def ticketer(specific_operator=None):
         command.source, created = DataSource.objects.get_or_create(
             {"name": source.name}, url=source.url
         )
+        command.source.source = source
         command.garages = {}
 
         modified, last_modified = download_if_changed(path, source.url)
