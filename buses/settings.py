@@ -226,7 +226,7 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
         integrations=[DjangoIntegration(), RedisIntegration()],
         ignore_errors=[KeyboardInterrupt],
         release=os.environ.get("COMMIT_HASH"),
-        traces_sample_rate=0.001,
+        traces_sample_rate=0.007,
     )
     ignore_logger("django.security.DisallowedHost")
 
