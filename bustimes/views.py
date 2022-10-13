@@ -258,7 +258,12 @@ class TripDetailView(DetailView):
         "route__service", "operator", "calendar"
     ).prefetch_related(
         Prefetch(
-            "stoptime_set", queryset=StopTime.objects.select_related("stop__locality")
+            "stoptime_set",
+            queryset=StopTime.objects.select_related("stop__locality").defer(
+                "stop__search_vector",
+                "stop__locality__search_vector",
+                "stop__locality__latlong",
+            ),
         )
     )
 

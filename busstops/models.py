@@ -22,7 +22,7 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
-from bustimes.models import Route, Trip
+from bustimes.models import Route, TimetableDataSource, Trip
 from bustimes.timetables import Timetable, get_stop_usages
 from bustimes.utils import get_descriptions
 
@@ -204,6 +204,9 @@ class DataSource(models.Model):
     datetime = models.DateTimeField(null=True, blank=True)
     sha1 = models.CharField(max_length=40, null=True, blank=True, db_index=True)
     settings = models.JSONField(null=True, blank=True)
+    source = models.ForeignKey(
+        TimetableDataSource, models.CASCADE, null=True, blank=True
+    )
 
     def __str__(self):
         return self.name
