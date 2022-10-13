@@ -62,18 +62,12 @@ def has_stop(stop):
 
 
 class Command(ImportLiveVehiclesCommand):
-    url = "https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles"
     source_name = "Stagecoach"
     operator_ids = {"SCEM": "SCGH", "SCSO": "SCCO"}
 
     def get_items(self):
-        params = {
-            # 'clip': 1,
-            # 'descriptive_fields': 1,
-            "services": ":*:::"
-        }
         try:
-            response = self.session.get(self.url, params=params, timeout=20)
+            response = self.session.get(self.source.url, timeout=20)
             items = response.json()["services"]
             vehicle_fleet_numbers = [item["fn"] for item in items]
             self.vehicles_cache = {
@@ -148,7 +142,7 @@ class Command(ImportLiveVehiclesCommand):
                     return vehicle.vehiclejourney_set.get(datetime=departure_time)
                 except VehicleJourney.DoesNotExist:
                     pass
-        elif item["eo"]:  # expectedOriginStopDepartureTime
+        elif item.get("eo"):  # expectedOriginStopDepartureTime
             departure_time = parse_timestamp(item["eo"])
 
         journey = VehicleJourney(

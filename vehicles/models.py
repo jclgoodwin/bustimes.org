@@ -244,7 +244,7 @@ def vehicle_slug(vehicle):
 
 class Vehicle(models.Model):
     slug = AutoSlugField(
-        populate_from=vehicle_slug, editable=True, unique=True, null=True
+        populate_from=vehicle_slug, editable=True, unique=True
     )
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
