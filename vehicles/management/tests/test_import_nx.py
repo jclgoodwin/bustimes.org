@@ -1,14 +1,18 @@
-import vcr
-import time_machine
 from unittest.mock import patch
+
+import time_machine
+import vcr
 from django.conf import settings
 from django.test import TestCase
-from busstops.models import DataSource, Region, Operator, Service
-from bustimes.models import Route, Trip, Calendar
+
+from busstops.models import DataSource, Operator, Region, Service
+from bustimes.models import Calendar, Route, Trip
+
 from ...models import Vehicle, VehicleJourney
-from ..commands.import_nx import parse_datetime, Command as NatExpCommand
 from ..commands.import_aircoach import Command as AircoachCommand
 from ..commands.import_natexp import Command as NewNatExpCommand
+from ..commands.import_nx import Command as NatExpCommand
+from ..commands.import_nx import parse_datetime
 
 
 class NatExpTest(TestCase):
@@ -110,4 +114,4 @@ class NatExpTest(TestCase):
         command.source = source
 
         line_names = list(command.get_line_names())
-        self.assertEqual(line_names, ["491"])
+        self.assertEqual(line_names, [])
