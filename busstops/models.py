@@ -142,7 +142,7 @@ class Locality(SearchMixin, models.Model):
     )
     admin_area = models.ForeignKey(AdminArea, models.CASCADE)
     district = models.ForeignKey(District, models.SET_NULL, null=True, blank=True)
-    parent = models.ForeignKey("Locality", models.SET_NULL, null=True, blank=True)
+    parent = models.ForeignKey("self", models.SET_NULL, null=True, blank=True)
     latlong = models.PointField(null=True, blank=True)
     adjacent = models.ManyToManyField("self", blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
@@ -187,7 +187,7 @@ class StopArea(models.Model):
     )
     stop_area_type = models.CharField(max_length=4, choices=TYPE_CHOICES)
 
-    parent = models.ForeignKey("StopArea", models.SET_NULL, null=True, blank=True)
+    parent = models.ForeignKey("self", models.SET_NULL, null=True, blank=True)
     latlong = models.PointField(null=True)
     active = models.BooleanField()
 
@@ -286,7 +286,7 @@ class Place(models.Model):
     name = models.CharField(max_length=255)
     latlong = models.PointField(null=True, blank=True)
     polygon = models.PolygonField(null=True, blank=True)
-    parent = models.ForeignKey("Place", models.SET_NULL, null=True, blank=True)
+    parent = models.ForeignKey("self", models.SET_NULL, null=True, blank=True)
     search_vector = SearchVectorField(null=True, blank=True)
 
     class Meta:
@@ -498,6 +498,13 @@ class StopPoint(models.Model):
         return sorted(filter(None, self.line_names), key=Service.get_line_name_order)
 
 
+class OperatorGroup(models.Model):
+    slug = models.SlugField(max_length=48)
+    name = models.CharField(max_length=100)
+    group_fleet_numbering = models.BooleanField(default=True)
+    allow_transfers = models.BooleanField(default=True)
+
+
 class OperatorManager(models.Manager):
     def with_documents(self):
         vector = SearchVector("name", weight="A", config="english")
@@ -516,6 +523,7 @@ class Operator(SearchMixin, models.Model):
     slug = AutoSlugField(populate_from=str, unique=True, editable=True)
     vehicle_mode = models.CharField(max_length=48, blank=True)
     parent = models.CharField(max_length=48, blank=True, db_index=True)
+    group = models.ForeignKey(OperatorGroup, models.SET_NULL, null=True, blank=True)
     siblings = models.ManyToManyField("self", blank=True)
     region = models.ForeignKey(Region, models.SET_NULL, null=True, blank=True)
     regions = models.ManyToManyField(Region, blank=True, related_name="operators")
