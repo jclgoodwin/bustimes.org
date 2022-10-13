@@ -3,7 +3,7 @@
     "autoprefixer": "^10.2.5",
     "eslint": "^8.10.0",
     "postcss": "^8.2.15",
-    "postcss-cli": "^9.1.0",
+    "postcss-cli": "^10.0.0",
     "sass": "^1.32.5",
     "sass-lint": "^1.13.1"
   },
