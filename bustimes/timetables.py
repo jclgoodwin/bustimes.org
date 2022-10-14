@@ -274,22 +274,21 @@ class Timetable:
 
         # correct origin and destination/inbound and outbound descriptions being the wrong way round
         if self.groupings and len(self.origins_and_destinations) == 1:
-            actual_origin = self.groupings[0].rows[0].stop
-            actual_destination = self.groupings[0].rows[-1].stop
-            if type(actual_origin) is Stop or type(actual_destination) is Stop:
+            rows = self.groupings[0].rows
+            if type(rows[0].stop) is Stop or type(rows[-1].stop) is Stop:
                 pass
             else:
                 origin = self.origins_and_destinations[0][0]
                 destination = self.origins_and_destinations[0][-1]
-                actual_origin = actual_origin.get_qualified_name()
-                actual_destination = actual_destination.get_qualified_name()
+                actual_origin = rows[0].stop.get_qualified_name()
+                actual_destination = rows[-1].stop.get_qualified_name()
                 if origin in actual_destination and origin not in actual_origin:
                     if (
                         destination in actual_origin
                         and destination not in actual_destination
                     ):
                         self.origins_and_destinations = [
-                            tuple(reversed(self.origins_and_destinations))
+                            tuple(reversed(pair))
                             for pair in self.origins_and_destinations
                         ]
                         self.inbound_outbound_descriptions = [
