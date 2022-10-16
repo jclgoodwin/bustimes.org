@@ -105,13 +105,26 @@ class NatExpTest(TestCase):
         response = self.client.get("/operators/national-express/vehicles")
         self.assertContains(response, "BX65 WAJ")
 
-    @patch("vehicles.management.commands.import_nx.sleep")
+    @patch("vehicles.management.commands.import_megabus.sleep")
     def test_new(self, sleep):
         source = DataSource.objects.get()
         source.datetime = parse_datetime("2022-06-25 15:00:00")
 
         command = NewNatExpCommand()
         command.source = source
+        command.source.url = "https://nx.origin-dev.utrack.com/api/public-origin-departures-by-route-v1/{}?"
+        command.operators = ["NATX"]
 
-        line_names = list(command.get_line_names())
-        self.assertEqual(line_names, [])
+        with time_machine.travel(source.datetime):
+            line_names = list(command.get_line_names())
+            self.assertEqual(line_names, ["491"])
+
+            with vcr.use_cassette(
+                str(settings.BASE_DIR / "fixtures" / "vcr" / "natexp.yaml"),
+                decode_compressed_response=True,
+            ):
+                command.update()
+
+        self.assertTrue(sleep.called)
+
+        self.assertEqual(1, VehicleJourney.objects.all().count())
