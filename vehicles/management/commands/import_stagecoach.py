@@ -1,12 +1,13 @@
-from time import sleep
 from datetime import datetime, timezone
-from requests.exceptions import RequestException
-from django.db.models import Exists, OuterRef, Q
-from django.contrib.gis.geos import Point
-from busstops.models import Operator, Service, StopPoint
-from ...models import VehicleLocation, VehicleJourney
-from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
+from time import sleep
 
+from django.contrib.gis.geos import Point
+from django.db.models import Exists, OuterRef, Q
+
+from busstops.models import Operator, Service, StopPoint
+
+from ...models import VehicleJourney, VehicleLocation
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 # "fn" "fleetNumber": "10452",
 # "ut" "updateTime": "1599550016135",
@@ -66,27 +67,25 @@ class Command(ImportLiveVehiclesCommand):
     operator_ids = {"SCEM": "SCGH", "SCSO": "SCCO"}
 
     def get_items(self):
-        try:
-            response = self.session.get(self.source.url, timeout=20)
-            items = response.json()["services"]
-            vehicle_fleet_numbers = [item["fn"] for item in items]
-            self.vehicles_cache = {
-                vehicle.code: vehicle
-                for vehicle in self.vehicles.filter(
-                    operator__in=self.operators, code__in=vehicle_fleet_numbers
-                )
-            }
-            i = 0
-            for item in items:
-                yield item
-                i += 1
-                if i == 100:
-                    self.save()
-                    i = 0
-            self.save()
-            sleep(1)
-        except (RequestException, KeyError) as e:
-            print(e)
+        assert self.source.url
+        response = self.session.get(self.source.url, timeout=20)
+        items = response.json()["services"]
+        vehicle_fleet_numbers = [item["fn"] for item in items]
+        self.vehicles_cache = {
+            vehicle.code: vehicle
+            for vehicle in self.vehicles.filter(
+                operator__in=self.operators, code__in=vehicle_fleet_numbers
+            )
+        }
+        i = 0
+        for item in items:
+            yield item
+            i += 1
+            if i == 100:
+                self.save()
+                i = 0
+        self.save()
+        sleep(1)
 
     @staticmethod
     def get_datetime(item):

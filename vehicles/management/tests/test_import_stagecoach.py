@@ -24,7 +24,9 @@ class StagecoachTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.source = DataSource.objects.create(
-            name="Stagecoach", datetime=timezone.now()
+            name="Stagecoach",
+            datetime=timezone.now(),
+            url="https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles?services=:*:::",
         )
 
         r = Region.objects.create(pk="SE")
@@ -50,9 +52,8 @@ class StagecoachTest(TestCase):
         with vcr.use_cassette(os.path.join(DIR, "vcr", "stagecoach_vehicles.yaml")):
             with self.assertLogs(level="ERROR"):
                 with self.assertNumQueries(18):
-                    with patch("builtins.print"):
-                        with self.assertRaises(MockException):
-                            command.handle()
+                    with self.assertRaises(MockException):
+                        command.handle()
 
         self.assertTrue(sleep_1.called)
         self.assertTrue(sleep_2.called)
