@@ -29,73 +29,44 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: "3.10"
+    - uses: actions/checkout@v3
 
-    - name: Cache virtualenv
-      # this possibly maybe makes the next step a bit faster
+    - name: Cache Docker
       uses: actions/cache@v3
       with:
-        path: |
-          ~/.cache/pip
-          ~/.cache/pypoetry
-        key: ${{ runner.os }}-${{ hashFiles('poetry.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-
+        path: /tmp/docker-save
+        key: docker-save-${{ github.sha }}
+        restore-keys: docker-save-
 
-    - name: Install Python dependencies
-      run: |
-        python -m pip install poetry
-        poetry install --no-root --no-dev --remove-untracked
+    - run: docker load -i /tmp/docker-save/snapshot.tar || true
+      if: steps.cache-docker.outputs.cache-hit == 'true'
 
-    - name: Install Geospatial libraries
-      # required by GeoDjango
-      # see https://docs.djangoproject.com/en/3.2/ref/contrib/gis/install/geolibs/
-      run: |
-        sudo apt-get update
-        sudo apt-get install binutils libproj-dev gdal-bin
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag bustimes:latest
 
-    - name: Cache npm
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-
-
-    - name: JavaScript
-      # install dependencies from package(-lock).json,
-      # run ESLint, and compile the Sass to CSS
-      # (some of the Python tests expect this step to have happened first)
-      run: |
-        npm install
-        make lint
-        make build-static
+    - run: |
+        docker tag bustimes thing-cache \
+          && mkdir -p /tmp/docker-save \
+          && docker save thing-cache -o /tmp/docker-save/snapshot.tar \
+          && ls -lh /tmp/docker-save \
+          || true
+      if: always() && steps.cache-docker.outputs.cache-hit != 'true'
 
     - name: Test
       # run the Python tests
-      env:
-        SECRET_KEY: wormprovision
-        PGHOST: localhost
-        PGUSER: postgres
-        PGPASSWORD: postgres
-        DB_NAME: postgres
-        REDIS_URL: redis://localhost:6379
       run: |
-       poetry run coverage run ./manage.py collectstatic --noinput
-       poetry run coverage run --append ./manage.py test
-       poetry run coverage html
+        docker run --env SECRET_KEY=trtdre3 \
+                  --env DATABASE_URL=postgis://postgres:postgres@172.17.0.1/postgres \
+                  --env REDIS_URL=redis://172.17.0.1:6379 \
+                  bustimes bash -c "
+                    poetry run coverage run ./manage.py test -v3;
+                    poetry run coverage html;
+                  "
 
-    - name: Upload coverage
-      # upload the Python coverage.py report to https://bustimes-coverage.ams3.digitaloceanspaces.com/index.html
-      continue-on-error: true
-      env:
-        AWS_EC2_METADATA_DISABLED: true
-        AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
-      run: |
-        poetry run aws s3 sync htmlcov s3://bustimes-coverage --delete --endpoint-url=https://ams3.digitaloceanspaces.com --acl=public-read
+    # - name: Upload coverage
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
+    #     AWS_EC2_METADATA_DISABLED: true
+    #   run: aws s3 sync htmlcov s3://bustimes-coverage --delete --endpoint-url=https://ams3.digitaloceanspaces.com --acl=public-read

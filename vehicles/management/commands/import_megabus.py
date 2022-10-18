@@ -41,9 +41,13 @@ class Command(NatExpCommand):
             if not res.ok:
                 print(res.url, res)
                 continue
-            for item in res.json()["routes"][0]["chronological_departures"]:
-                if item["active_vehicle"] and not item["tracking"]["is_future_trip"]:
-                    yield (item)
+            for route in res.json()["routes"]:
+                for item in route["chronological_departures"]:
+                    if (
+                        item["active_vehicle"]
+                        and not item["tracking"]["is_future_trip"]
+                    ):
+                        yield (item)
             self.save()
             sleep(self.sleep)
 
