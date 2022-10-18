@@ -71,8 +71,6 @@ jobs:
       # install dependencies from package(-lock).json,
       # run ESLint, and compile the Sass to CSS
       # (some of the Python tests expect this step to have happened first)
-      runs:
-        using: 'node16'
       run: |
         npm install
         make lint
