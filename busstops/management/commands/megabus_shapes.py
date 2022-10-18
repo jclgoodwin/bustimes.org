@@ -63,13 +63,18 @@ class Command(BaseCommand):
                 print(f"{service.line_name} has all route links already")
                 continue
 
+            url = source.url.format(f"{service.line_name}/1665964800/1666137600")
+
             response = self.session.get(
-                source.url.format(service.line_name), timeout=10
+                url, timeout=10
             )
             if not response.from_cache:
                 sleep(2)
-
-            for route in response.json()["routes"]:
+            data = response.json()
+            if "routes" not in data:
+                print(data)
+                continue
+            for route in data["routes"]:
                 for item in route["chronological_departures"]:
                     trip = self.get_trip(service, item)
                     if not trip:
@@ -95,7 +100,7 @@ class Command(BaseCommand):
                     print(response.url)
                     yield trip, response.json()
                     if not response.from_cache:
-                        sleep()
+                        sleep(2)
 
     def handle_thing(self, trip, data):
         route_link = None
@@ -106,7 +111,7 @@ class Command(BaseCommand):
                 f"POINT({stop['wgs84_longitude_degrees']} {stop['wgs84_latitude_degrees']})"
             )
             distance = stop_time.stop.latlong.distance(latlong)
-            if distance > 0.005:
+            if distance > 0.01:
                 print(stop_time.stop.latlong, latlong, distance)
                 break
 
