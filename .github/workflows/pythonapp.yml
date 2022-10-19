@@ -44,7 +44,7 @@ jobs:
       # if: steps.cache-docker.outputs.cache-hit != 'false'
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag bustimes:latest
+      run: docker build . --file Dockerfile --tag bustimes:latest --cache-from=thing-cache
 
     - run: |
         docker tag bustimes thing-cache \
