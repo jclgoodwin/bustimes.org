@@ -37,8 +37,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: /tmp/docker-save
-        key: docker-save-${{ github.sha }}
-        restore-keys: docker-save-
+        key: docker-save-${{ hashFiles('Dockerfile') }}
 
     - run: docker load -i /tmp/docker-save/snapshot.tar || true
       if: steps.cache-docker.outputs.cache-hit == 'true'
@@ -52,6 +51,7 @@ jobs:
           && docker save thing-cache -o /tmp/docker-save/snapshot.tar \
           && ls -lh /tmp/docker-save \
           || true
+      if: steps.cache-docker.outputs.cache-hit != 'true'
 
     - name: Test
       # run the Python tests
