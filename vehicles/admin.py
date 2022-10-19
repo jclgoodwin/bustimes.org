@@ -1,13 +1,11 @@
 from django import forms
 from django.contrib import admin, messages
+from django.contrib.auth import get_user_model
+from django.db import IntegrityError
+from django.db.models import Exists, OuterRef, Q
 from django.urls import reverse
 from django.utils.html import format_html
-from django.db import IntegrityError
-from django.db.models import Q, Exists, OuterRef
-from django.contrib.auth import get_user_model
-
 from simple_history.admin import SimpleHistoryAdmin
-
 from sql_util.utils import SubqueryCount
 
 from . import models
@@ -250,29 +248,38 @@ class UserFilter(admin.SimpleListFilter):
     parameter_name = "user"
 
     def lookups(self, request, model_admin):
-        lookups = [("Trusted", "Trusted")]
-        if self.value() and self.value() != "Trusted":
-            lookups.append((self.value(), self.value()))
-        return lookups
+        lookups = {
+            "Trusted": "Trusted",
+            "Banned": "Banned",
+            "None": "None",
+        }
+        if self.value() and self.value() not in lookups:
+            lookups[self.value()] = self.value()
+        return lookups.items()
 
     def queryset(self, request, queryset):
-        if self.value():
-            if self.value() == "Trusted":
+        match self.value():
+            case "Trusted":
                 return queryset.filter(user__trusted=True)
-            return queryset.filter(user=self.value())
-        return queryset
+            case "Banned":
+                return queryset.filter(user__trusted=False)
+            case "None":
+                return queryset.filter(user=None)
+            case None:
+                return queryset
+        return queryset.filter(user=self.value())
 
 
 @admin.register(models.VehicleEdit)
 class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ["datetime", "vehicle", "user"]
+    list_display = ["datetime", "vehicle", "user", "changes", "notes", "url"]
     list_select_related = ["vehicle", "user"]
     list_filter = [
         "approved",
         "vehicle__withdrawn",
         UserFilter,
     ]
-    raw_id_fields = ["vehicle", "livery", "user"]
+    raw_id_fields = ["vehicle", "livery", "user", "arbiter"]
 
 
 @admin.register(models.VehicleJourney)
@@ -433,7 +440,7 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         "vehicle",
         "user",
     ]
-    list_display = ["datetime", "vehicle", "__str__", user]
+    list_display = ["datetime", "vehicle", "__str__", user, "message"]
     actions = ["revert"]
     list_filter = [
         RevisionChangeFilter,
