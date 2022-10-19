@@ -43,9 +43,12 @@ def clean_up(operators, sources, incomplete=False):
         routes.delete()
     except IntegrityError:
         routes.delete()
-    Service.objects.filter(operator__in=operators, current=True, route=None).update(
-        current=False
-    )
+    Service.objects.filter(
+        ~Q(source__name="bustimes.org"),
+        operator__in=operators,
+        current=True,
+        route=None,
+    ).update(current=False)
 
 
 def get_operator_ids(source):
