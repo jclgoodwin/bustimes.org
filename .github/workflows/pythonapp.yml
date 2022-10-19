@@ -41,10 +41,10 @@ jobs:
         restore-keys: docker-save-
 
     - run: docker load -i /tmp/docker-save/snapshot.tar || true
-      # if: steps.cache-docker.outputs.cache-hit != 'false'
+      if: steps.cache-docker.outputs.cache-hit == 'true'
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag bustimes:latest --cache-from=thing-cache
+      run: docker build . --tag bustimes:latest --cache-from=thing-cache
 
     - run: |
         docker tag bustimes thing-cache \
@@ -52,7 +52,6 @@ jobs:
           && docker save thing-cache -o /tmp/docker-save/snapshot.tar \
           && ls -lh /tmp/docker-save \
           || true
-      if: always() && steps.cache-docker.outputs.cache-hit != 'true'
 
     - name: Test
       # run the Python tests
@@ -62,7 +61,7 @@ jobs:
                   --env REDIS_URL=redis://172.17.0.1:6379 \
                   bustimes bash -c "
                     poetry run coverage run ./manage.py test -v3;
-                    poetry run coverage html;
+                    poetry run coverage report;
                   "
 
     # - name: Upload coverage
