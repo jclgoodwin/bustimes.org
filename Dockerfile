@@ -16,7 +16,10 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apt-get update && apt-get install -y gdal-bin && rm -rf /var/lib/apt/lists/*
 
-RUN pip install poetry
+ENV POETRY_HOME=/opt/poetry
+RUN python -m venv $POETRY_HOME
+RUN $POETRY_HOME/bin/pip install poetry==1.2.2
+ENV PATH=$POETRY_HOME/bin:$PATH
 
 WORKDIR /app/
 
