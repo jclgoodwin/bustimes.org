@@ -813,6 +813,10 @@ def vehicle_edits(request):
             VehicleEdit.objects.bulk_update(edits, fields=["approved", "arbiter"])
 
     edits = VehicleEdit.objects.order_by("-id")
+
+    if not request.user.is_superuser:
+        edits = edits.filter(approved=None)
+
     edits = edits.select_related(
         "livery",
         "vehicle__livery",

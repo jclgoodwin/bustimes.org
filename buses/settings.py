@@ -205,7 +205,7 @@ else:
 
 TIME_FORMAT = "H:i"
 DATE_FORMAT = "l j F Y"
-DATETIME_FORMAT = "j M H:i"
+# DATETIME_FORMAT = "j M H:i"
 TIME_ZONE = "Europe/London"
 USE_TZ = True
 USE_I18N = False
