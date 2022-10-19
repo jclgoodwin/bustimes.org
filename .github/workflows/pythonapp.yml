@@ -41,7 +41,7 @@ jobs:
         restore-keys: docker-save-
 
     - run: docker load -i /tmp/docker-save/snapshot.tar || true
-      if: steps.cache-docker.outputs.cache-hit == 'true'
+      # if: steps.cache-docker.outputs.cache-hit != 'false'
 
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag bustimes:latest
