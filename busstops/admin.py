@@ -558,3 +558,4 @@ class PaymentMethodAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Region)
 admin.site.register(models.District)
+admin.site.register(models.OperatorGroup)

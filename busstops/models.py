@@ -504,6 +504,9 @@ class OperatorGroup(models.Model):
     group_fleet_numbering = models.BooleanField(default=True)
     allow_transfers = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.sname
+
 
 class OperatorManager(models.Manager):
     def with_documents(self):
