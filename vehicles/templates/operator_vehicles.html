@@ -110,7 +110,7 @@
                     {% if vehicle.last_seen.today %}
                         {{ vehicle.last_seen.when|time }}
                     {% else %}
-                        {{ vehicle.last_seen.when }}
+                        {{ vehicle.last_seen.when|date:"j M H:i" }}
                     {% endif %}
                 </td>{% endif %}
                 <td>{% if vehicle.notes == 'Spare ticket machine' %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
