@@ -170,9 +170,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 if not location or location.latlong.equals_exact(latest_latlong, 0.001):
                     # position hasn't changed
                     return
-        elif now and datetime and (now - datetime).total_seconds() > 600:
-            # more than 10 minutes old
-            return
+        # elif now and datetime and (now - datetime).total_seconds() > 600:
+        #     # more than 10 minutes old
+        #     return
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
@@ -197,9 +197,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     if latest_journey.service_id or not journey.service_id:
                         return  # defer to other source
 
-        if not latest and now and datetime:
-            if (now - datetime).total_seconds() > 900:
-                return  # more than 15 minutes old
+        # if not latest and now and datetime:
+        #     if (now - datetime).total_seconds() > 900:
+        #         return  # more than 15 minutes old
 
         if not location:
             location = self.create_vehicle_location(item)
@@ -302,8 +302,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
         sadd = {}
 
         for location, vehicle in self.to_save:
-            if not location.latlong:
+            if not location.latlong or (
+                self.source.datetime
+                and (self.source.datetime - location.datetime).total_seconds() > 600
+            ):
                 continue
+
+            # update live map
 
             geoadd += [location.latlong.x, location.latlong.y, vehicle.id]
 

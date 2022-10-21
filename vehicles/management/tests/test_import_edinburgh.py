@@ -11,6 +11,8 @@ class EdinburghImportTest(TestCase):
         source = DataSource.objects.create(
             name="TfE", url="", datetime="1066-01-01 12:18Z"
         )
+        source.save()
+        source.refresh_from_db()
         Region.objects.create(name="Scotland", id="S")
         cls.operator_1 = Operator.objects.create(
             name="Lothian Buses", noc="LOTH", region_id="S"

@@ -94,7 +94,7 @@ class NatExpTest(TestCase):
             ):
                 nat_exp_command.update()
 
-        self.assertEqual(4, VehicleJourney.objects.all().count())
+        self.assertEqual(6, VehicleJourney.objects.all().count())
 
         response = self.client.get("/vehicles.json").json()
         self.assertEqual(response[0]["destination"], "Great Yarmouth")
