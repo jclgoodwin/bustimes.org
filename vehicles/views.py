@@ -962,8 +962,12 @@ def vehicle_history(request, **kwargs):
 
 @require_GET
 def vehicles_history(request):
-    revisions = VehicleRevision.objects.all().select_related(
-        "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
+    revisions = (
+        VehicleRevision.objects.all()
+        .select_related(
+            "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
+        )
+        .prefetch_related("vehiclerevisionfeature_set__feature")
     )
     revisions = revisions.order_by("-id")
 
