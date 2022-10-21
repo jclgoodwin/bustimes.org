@@ -60,8 +60,7 @@ jobs:
                   --env DATABASE_URL=postgis://postgres:postgres@172.17.0.1/postgres \
                   --env REDIS_URL=redis://172.17.0.1:6379 \
                   bustimes bash -c "
-                    poetry run coverage run ./manage.py test -v3;
-                    poetry run coverage report;
+                    poetry run coverage run ./manage.py test -v3 && poetry run coverage report
                   "
 
     # - name: Upload coverage
