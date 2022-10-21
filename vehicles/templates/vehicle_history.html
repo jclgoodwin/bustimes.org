@@ -22,11 +22,13 @@
 
     <h1>Recent changes</h1>
 
-    <form>
-        {{ filter.form.as_p }}
+    <div class="sidebar">
+        <form>
+            {{ filter.form.as_p }}
 
-        <p><input type="submit" value="Search"></p>
-    </form>
+            <p><input type="submit" value="Search"></p>
+        </form>
+    </div>
 {% endif %}
 
 {% include 'vehicle_revisions.html' with revisions=revisions %}
@@ -36,4 +38,3 @@
 {% endif %}
 
 {% endblock %}
-
