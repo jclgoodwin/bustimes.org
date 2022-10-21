@@ -156,6 +156,7 @@ class Command(ImportLiveVehiclesCommand):
             not departure_time
             and latest_journey
             and journey.route_name == latest_journey.route_name
+            and latest_journey.datetime.date() == self.source.datetime.date()
         ):
             journey = latest_journey
 
