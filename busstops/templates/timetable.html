@@ -2,31 +2,30 @@
 {% load cache %}
 
 {% if timetable %}
-    {% if timetable.calendar_options %}
-        <form class="timetable-date">
-            <select onchange="this.form.submit()" name="calendar" id="id_date" aria-label="Date">
-                {% for id, description in timetable.calendar_options %}
-                    <option{% if id == timetable.calendar.id %} selected{% endif %} value="{{ id }}">
-                        {{ description }}
-                    </option>
-                {% endfor %}
-            </select>
-            <noscript><input type="submit"></noscript>
-        </form>
-    {% elif timetable.calendar %}
+    {% if timetable.calendar and not timetable.calendar_options %}
         <p>{{ timetable.calendar.describe_for_timetable }}</p>
-    {% elif timetable.date_options %}
+    {% else %}
         <form class="timetable-date" autocomplete="off">
-            <select onchange="this.form.submit()" name="date" id="id_date" aria-label="Date">
-                {% for option in timetable.date_options %}
-                    <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
-                {% endfor %}
-            </select>
-            <noscript><input type="submit"></noscript>
-        </form>
-    {% elif timetable.date %}
-        <form class="timetable-date" autocomplete="off">
-            <input type="date" onchange="this.form.submit()" name="date" id="id_date" aria-label="Date" value="{{ timetable.date.isoformat }}">
+            {% if timetable.calendar_options %}
+                <select onchange="this.form.submit()" name="calendar" id="id_date" aria-label="Date">
+                    {% for id, description in timetable.calendar_options %}
+                        <option{% if id == timetable.calendar.id %} selected{% endif %} value="{{ id }}">
+                            {{ description }}
+                        </option>
+                    {% endfor %}
+                </select>
+            {% elif timetable.date_options %}
+                <select onchange="this.form.submit()" name="date" id="id_date" aria-label="Date">
+                    {% for option in timetable.date_options %}
+                        <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                    {% endfor %}
+                </select>
+            {% elif timetable.date %}
+                <input type="date" onchange="this.form.submit()" name="date" id="id_date" aria-label="Date" value="{{ timetable.date.isoformat }}">
+            {% endif %}
+            {% if timetable.detailed %}
+                <input type="hidden" name="detailed">
+            {% endif %}
             <noscript><input type="submit"></noscript>
         </form>
     {% endif %}
