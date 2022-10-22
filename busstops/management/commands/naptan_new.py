@@ -1,5 +1,6 @@
 import logging
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import requests
 import yaml
@@ -64,15 +65,25 @@ class Command(BaseCommand):
 
         easting = element.findtext("Place/Location/Easting")
         northing = element.findtext("Place/Location/Northing")
+        grid_type = element.findtext("Place/Location/GridType")
+
         if not easting:
             easting = element.findtext("Place/Location/Translation/Easting")
             northing = element.findtext("Place/Location/Translation/Northing")
+            grid_type = element.findtext("Place/Location/Translation/GridType")
         if easting:
-            point = GEOSGeometry(f"SRID=27700;POINT({easting} {northing})")
+            if grid_type == "UKOS":
+                srid = 27700
+            else:
+                srid = 2157
+            point = GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
         else:
             lon = element.findtext("Place/Location/Translation/Longitude")
             lat = element.findtext("Place/Location/Translation/Latitude")
-            point = GEOSGeometry(f"POINT({lon} {lat})")
+            if lat is not None and lon is not None:
+                point = GEOSGeometry(f"POINT({lon} {lat})")
+            else:
+                point = None
 
         bearing = element.findtext(
             "StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint"
@@ -98,7 +109,7 @@ class Command(BaseCommand):
             or element.attrib["Status"] == "active",
         )
         if atco_code.startswith(stop.admin_area_id):
-            stop.admin_area = self.admin_areas[stop.admin_area_id]
+            stop.admin_area = self.admin_areas.get(stop.admin_area_id)
             logger.info(f"{atco_code} {stop.admin_area}")
 
         for xml_path, key in self.mapping:
@@ -171,17 +182,24 @@ class Command(BaseCommand):
         )
         self.stops_to_update = []
 
+    @staticmethod
+    def add_arguments(parser):
+        parser.add_argument("filename", nargs="?", type=str)
+
     def handle(self, *args, **options):
         source, created = DataSource.objects.get_or_create(name="NaPTAN")
 
-        path = settings.DATA_DIR / "naptan.xml"
+        if options["filename"]:
+            path = Path(options["filename"])
+        else:
+            path = settings.DATA_DIR / "naptan.xml"
 
-        # download new data if there is any
-        response = self.download(source)
-        if response:
-            with path.open("wb") as open_file:
-                for chunk in response.iter_content(chunk_size=102400):
-                    open_file.write(chunk)
+            # download new data if there is any
+            response = self.download(source)
+            if response:
+                with path.open("wb") as open_file:
+                    for chunk in response.iter_content(chunk_size=102400):
+                        open_file.write(chunk)
 
         # set up overrides/corrections
         overrides_path = settings.BASE_DIR / "fixtures" / "stops.yaml"
@@ -195,7 +213,7 @@ class Command(BaseCommand):
         }
         atco_code_prefix = None
 
-        iterator = ET.iterparse(path, events=["start", "end", "comment"])
+        iterator = ET.iterparse(path, events=["start", "end"])
         for event, element in iterator:
             if event == "start":
                 if element.tag == "{http://www.naptan.org.uk/}NaPTAN":
@@ -205,9 +223,6 @@ class Command(BaseCommand):
 
                     source.datetime = modified_at
 
-                continue
-            elif event == "comment":
-                print(element)
                 continue
 
             element.tag = element.tag.removeprefix("{http://www.naptan.org.uk/}")
@@ -232,4 +247,5 @@ class Command(BaseCommand):
 
         self.update_and_create()
 
-        source.save(update_fields=["datetime"])
+        if not options["filename"]:
+            source.save(update_fields=["datetime"])

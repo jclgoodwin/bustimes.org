@@ -344,5 +344,45 @@
 				</Translation>
 			</Location>
 		</NptgLocality>
+		<NptgLocality CreationDateTime="2021-06-15T10:00:00" ModificationDateTime="2021-09-09T10:00:00" Modification="new" RevisionNumber="0" Status="active">
+			<NptgLocalityCode>E0853142</NptgLocalityCode>
+			<Descriptor>
+				<LocalityName xml:lang="EN">County Donegal</LocalityName>
+				<Qualify>
+					<QualifierName>Donegal</QualifierName>
+				</Qualify>
+			</Descriptor>
+			<AdministrativeAreaRef>853</AdministrativeAreaRef>
+			<SourceLocalityType>Lo</SourceLocalityType>
+			<Location>
+				<Translation>
+					<GridType>ITM</GridType>
+					<Easting>605894</Easting>
+					<Northing>908271</Northing>
+					<Longitude>-7.90805918</Longitude>
+					<Latitude>54.9221289</Latitude>
+				</Translation>
+			</Location>
+		</NptgLocality>
+		<NptgLocality CreationDateTime="2021-06-15T10:00:00" ModificationDateTime="2021-09-09T10:00:00" Modification="new" RevisionNumber="0" Status="active">
+			<NptgLocalityCode>E0824005</NptgLocalityCode>
+			<Descriptor>
+				<LocalityName xml:lang="EN">Balbriggan</LocalityName>
+				<Qualify>
+					<QualifierName>Fingal</QualifierName>
+				</Qualify>
+			</Descriptor>
+			<AdministrativeAreaRef>824</AdministrativeAreaRef>
+			<SourceLocalityType>Lo</SourceLocalityType>
+			<Location>
+				<Translation>
+					<GridType>ITM</GridType>
+					<Easting>720300</Easting>
+					<Northing>763590</Northing>
+					<Longitude>-6.18208</Longitude>
+					<Latitude>53.608319</Latitude>
+				</Translation>
+			</Location>
+		</NptgLocality>
 	</NptgLocalities>
 </NationalPublicTransportGazetteer>

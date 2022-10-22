@@ -28,21 +28,6 @@ PASSWORD=$2
 ./manage.py nptg_new
 ./manage.py naptan_new
 
-
-cd data
-
-ie_nptg_old=$(shasum NPTG_final.xml)
-wget -qN https://www.transportforireland.ie/transitData/NPTG_final.xml
-ie_nptg_new=$(shasum NPTG_final.xml)
-
-cd ..
-
-if [[ "$ie_nptg_old" != "$ie_nptg_new" ]]; then
-    echo "Irish NPTG"
-    ./manage.py nptg_new data/NPTG_final.xml
-fi
-
-
 cd data
 
 noc_old=$(ls -l NOC_DB.csv)
