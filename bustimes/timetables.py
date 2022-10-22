@@ -228,7 +228,9 @@ class Timetable:
         if self.detailed:
             trips = trips.select_related("block", "garage", "vehicle_type")
 
-        # assert len(trips) < 1000, "too many trips"
+        if len(trips) > 1500:
+            self.date = None
+            return
 
         routes = {route.id: route for route in self.current_routes}
 
