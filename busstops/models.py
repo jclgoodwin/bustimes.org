@@ -505,7 +505,7 @@ class OperatorGroup(models.Model):
     allow_transfers = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.sname
+        return self.name
 
 
 class OperatorManager(models.Manager):
