@@ -67,7 +67,7 @@ class ImportIrelandTest(TestCase):
         self.assertEqual(stop.crossing, "")
         self.assertEqual(stop.indicator, "In")
         self.assertEqual(stop.bearing, "")
-        # self.assertEqual(stop.timing_status, "OTH")
+        self.assertEqual(stop.timing_status, "OTH")
         self.assertAlmostEqual(stop.latlong.x, -5.93626793184173)
         self.assertAlmostEqual(stop.latlong.y, 54.5950542848164)
 
@@ -78,7 +78,7 @@ class ImportIrelandTest(TestCase):
         self.assertEqual(stop.indicator, "Opp")
         self.assertEqual(stop.bearing, "")
         self.assertEqual(stop.timing_status, "")
-        # self.assertEqual(stop.stop_type, "TXR")
+        self.assertEqual(stop.stop_type, "TXR")
         self.assertAlmostEqual(stop.latlong.x, -9.05469898181141)
         self.assertAlmostEqual(stop.latlong.y, 53.2719763661735)
         self.assertEqual(stop.admin_area_id, 846)

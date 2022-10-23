@@ -31,10 +31,13 @@ class Command(BaseCommand):
         ("Descriptor/Crossing", "crossing"),
         ("Place/Suburb", "suburb"),
         ("Place/Town", "town"),
+        ("StopClassification/StopType", "stop_type"),
+        ("StopClassification/OnStreet/Bus/BusStopType", "bus_stop_type"),
+        ("StopClassification/OnStreet/Bus/TimingStatus", "timing_status"),
     )
 
     # dumb placeholders in the data that should be blank
-    nothings = (
+    nothings = {
         "-",
         "---",
         "Crossing not known",
@@ -45,7 +48,9 @@ class Command(BaseCommand):
         "Data Unavailable",
         "N/A",
         "Tba",
-    )
+        "type_undefined",
+        "class_undefined",
+    }
 
     def get_stop(self, element):
         atco_code = element.findtext("AtcoCode")
@@ -97,7 +102,7 @@ class Command(BaseCommand):
 
         stop = StopPoint(
             atco_code=atco_code,
-            naptan_code=element.findtext("NaptanCode"),
+            naptan_code=element.findtext("NaptanCode") or element.findtext("PlateCode"),
             created_at=created_at,
             modified_at=modified_at,
             latlong=point,
