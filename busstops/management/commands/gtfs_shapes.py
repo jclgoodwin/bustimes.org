@@ -13,115 +13,118 @@ from ...models import Service
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument("path", type=str)
+        parser.add_argument("paths", nargs="+", type=str)
 
-    def handle(self, path, *args, **kwargs):
-        with zipfile.ZipFile(path) as archive:
-            self.agencies = {
-                line["agency_id"]: line for line in read_file(archive, "agency.txt")
-            }
+    def handle(self, paths, **kwargs):
+        for path in paths:
+            with zipfile.ZipFile(path) as archive:
+                self.handle_archive(archive)
 
-            self.stops = {
-                line["stop_id"]: Point(float(line["stop_lon"]), float(line["stop_lat"]))
-                for line in read_file(archive, "stops.txt")
-            }
+    def handle_archive(self, archive):
+        self.agencies = {
+            line["agency_id"]: line for line in read_file(archive, "agency.txt")
+        }
 
-            self.routes = {
-                line["route_id"]: line for line in read_file(archive, "routes.txt")
-            }
+        self.stops = {
+            line["stop_id"]: Point(float(line["stop_lon"]), float(line["stop_lat"]))
+            for line in read_file(archive, "stops.txt")
+        }
 
-            self.trips = {
-                line["trip_id"]: line for line in read_file(archive, "trips.txt")
-            }
+        self.routes = {
+            line["route_id"]: line for line in read_file(archive, "routes.txt")
+        }
 
-            shapes = {}
-            for line in read_file(archive, "shapes.txt"):
-                shape = (line["shape_pt_lat"], line["shape_pt_lon"])
-                if line["shape_id"] in shapes:
-                    shapes[line["shape_id"]].append(line)
-                else:
-                    shapes[line["shape_id"]] = [line]
+        self.trips = {line["trip_id"]: line for line in read_file(archive, "trips.txt")}
 
-            trip_id = None
-            route_id = None
+        shapes = {}
+        for line in read_file(archive, "shapes.txt"):
+            shape = (line["shape_pt_lat"], line["shape_pt_lon"])
+            if line["shape_id"] in shapes:
+                shapes[line["shape_id"]].append(line)
+            else:
+                shapes[line["shape_id"]] = [line]
 
-            for line in read_file(archive, "stop_times.txt"):
-                if line["trip_id"] != trip_id:
+        trip_id = None
+        route_id = None
 
-                    from_stop_id = None
+        for line in read_file(archive, "stop_times.txt"):
+            if line["trip_id"] != trip_id:
 
-                    trip_id = line["trip_id"]
-                    # print(line)
-                    trip = self.trips[trip_id]
+                from_stop_id = None
 
-                    shape_id = trip["shape_id"]
-                    if shape_id := trip["shape_id"]:
-                        shape = shapes[shape_id]
-                        line_string = LineString(
-                            [
-                                (
-                                    float(point["shape_pt_lon"]),
-                                    float(point["shape_pt_lat"]),
-                                )
-                                for point in shape
-                            ]
-                        )
-                    else:
-                        shape = None
-                        line_string = None
+                trip_id = line["trip_id"]
+                # print(line)
+                trip = self.trips[trip_id]
 
-                    if shape and trip["route_id"] != route_id:
-                        route_id = trip["route_id"]
-                        route = self.routes[route_id]
-
-                        try:
-                            service = (
-                                Service.objects.filter(
-                                    line_name__iexact=route["route_short_name"],
-                                    stops=line["stop_id"],
-                                    current=1,
-                                )
-                                .distinct()
-                                .get()
+                shape_id = trip["shape_id"]
+                if shape_id := trip["shape_id"]:
+                    shape = shapes[shape_id]
+                    line_string = LineString(
+                        [
+                            (
+                                float(point["shape_pt_lon"]),
+                                float(point["shape_pt_lat"]),
                             )
-                        except (
-                            Service.DoesNotExist,
-                            Service.MultipleObjectsReturned,
-                        ) as e:
-                            print(e, route["route_short_name"], line["stop_id"])
-                            service = None
-                        else:
-                            route_links = {
-                                (rl.from_stop_id, rl.to_stop_id): rl
-                                for rl in service.routelink_set.all()
-                            }
-                            print(service)
+                            for point in shape
+                        ]
+                    )
+                else:
+                    shape = None
+                    line_string = None
 
-                if service and shape:
+                if shape and trip["route_id"] != route_id:
+                    route_id = trip["route_id"]
+                    route = self.routes[route_id]
 
-                    to_stop_id = line["stop_id"]
-
-                    if from_stop_id and (from_stop_id, to_stop_id) not in route_links:
-
-                        from_point = self.stops[from_stop_id]
-                        from_point = line_string.project(from_point)
-                        to_point = self.stops[to_stop_id]
-                        to_point = line_string.project(to_point)
-
-                        line_substring = substring(line_string, from_point, to_point)
-
-                        rl = RouteLink(
-                            service=service,
-                            from_stop_id=from_stop_id,
-                            to_stop_id=to_stop_id,
-                            geometry=line_substring.wkt,
+                    try:
+                        service = (
+                            Service.objects.filter(
+                                line_name__iexact=route["route_short_name"]
+                                or route["route_long_name"],
+                                stops=line["stop_id"],
+                                current=1,
+                            )
+                            .distinct()
+                            .get()
                         )
-                        if line_substring.length and from_point <= to_point:
-                            try:
-                                rl.save()
-                            except IntegrityError as e:
-                                print(e)
-                                pass
-                        route_links[(from_stop_id, to_stop_id)] = rl
+                    except (
+                        Service.DoesNotExist,
+                        Service.MultipleObjectsReturned,
+                    ) as e:
+                        print(e, route["route_short_name"], line["stop_id"])
+                        service = None
+                    else:
+                        route_links = {
+                            (rl.from_stop_id, rl.to_stop_id): rl
+                            for rl in service.routelink_set.all()
+                        }
+                        print(service)
 
-                    from_stop_id = to_stop_id
+            if service and shape:
+
+                to_stop_id = line["stop_id"]
+
+                if from_stop_id and (from_stop_id, to_stop_id) not in route_links:
+
+                    from_point = self.stops[from_stop_id]
+                    from_point = line_string.project(from_point)
+                    to_point = self.stops[to_stop_id]
+                    to_point = line_string.project(to_point)
+
+                    line_substring = substring(line_string, from_point, to_point)
+
+                    rl = RouteLink(
+                        service=service,
+                        from_stop_id=from_stop_id,
+                        to_stop_id=to_stop_id,
+                        geometry=line_substring.wkt,
+                    )
+                    if line_substring.length and from_point <= to_point:
+                        try:
+                            rl.save()
+                        except IntegrityError as e:
+                            print(e)
+                            pass
+                    route_links[(from_stop_id, to_stop_id)] = rl
+
+                from_stop_id = to_stop_id
