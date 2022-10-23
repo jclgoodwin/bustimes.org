@@ -77,12 +77,11 @@ class Command(BaseCommand):
             northing = element.findtext("Place/Location/Translation/Northing")
             grid_type = element.findtext("Place/Location/Translation/GridType")
         if easting:
-            if grid_type == "ITM":
-                srid = 2157
-            elif grid_type == "UKOS":
-                srid = 27700
-            else:
-                srid = 27700
+            match grid_type:
+                case "ITM":
+                    srid = 2157
+                case "UKOS" | None:
+                    srid = 27700
             point = GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
         else:
             lon = element.findtext("Place/Location/Translation/Longitude")
