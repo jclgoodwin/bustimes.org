@@ -275,16 +275,16 @@ can’t be contradicted"""
                 ].help_text = """Can’t be ticked yet,
  as this vehicle (or ticket machine) has tracked in the last 3 days"""
 
-        try:
-            operator_ref = vehicle.latest_journey_data["MonitoredVehicleJourney"][
-                "OperatorRef"
-            ]
-        except (TypeError, KeyError):
-            pass
-        else:
-            if vehicle.operator_id == operator_ref:
-                del self.fields["operator"]
-                return
+            try:
+                operator_ref = vehicle.latest_journey_data["MonitoredVehicleJourney"][
+                    "OperatorRef"
+                ]
+            except (TypeError, KeyError):
+                pass
+            else:
+                if vehicle.operator_id == operator_ref:
+                    del self.fields["operator"]
+                    return
 
         if user.is_staff:
             pass
