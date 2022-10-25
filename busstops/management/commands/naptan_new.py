@@ -39,6 +39,7 @@ class Command(BaseCommand):
     # dumb placeholders in the data that should be blank
     nothings = {
         "-",
+        "--",
         "---",
         "Crossing not known",
         "Street not known",
