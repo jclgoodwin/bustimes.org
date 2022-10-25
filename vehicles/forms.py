@@ -267,8 +267,11 @@ can’t be contradicted"""
                 del self.fields["colours"]
                 del self.fields["other_colour"]
 
-        if timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3):
-            if not vehicle.withdrawn and vehicle.latest_journey:
+        if (
+            vehicle.latest_journey
+            and timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3)
+        ):
+            if not vehicle.withdrawn:
                 self.fields["withdrawn"].disabled = True
                 self.fields[
                     "withdrawn"
