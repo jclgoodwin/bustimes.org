@@ -10,7 +10,7 @@ COPY Makefile /app/
 RUN make build-static
 
 
-FROM python:3.11.0rc2
+FROM python:3.11
 
 ENV PYTHONUNBUFFERED=1
 
