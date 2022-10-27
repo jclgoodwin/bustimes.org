@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 
 from ciso8601 import parse_datetime
 from django.contrib.auth.decorators import login_required
+from django.contrib.gis.geos import GEOSException
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.paginator import Paginator
@@ -316,6 +317,8 @@ def vehicles_json(request) -> JsonResponse:
         bounds = get_bounding_box(request)
     except KeyError:
         bounds = None
+    except GEOSException:
+        return HttpResponseBadRequest()
 
     all_vehicles = (
         Vehicle.objects.select_related("vehicle_type")
