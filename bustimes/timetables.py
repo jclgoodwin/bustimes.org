@@ -656,6 +656,7 @@ class Grouping:
             for j, trip_b in enumerate(self.trips[i + 1 :]):
                 if (
                     trip_b.times
+                    and trip_a.route.source_id == trip_b.route.source_id
                     and trip_a.route.line_name == trip_b.route.line_name
                     and (
                         trip_a.route.service_code != trip_b.route.service_code
