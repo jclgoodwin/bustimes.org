@@ -44,6 +44,7 @@ class Command(NatExpCommand):
             data = res.json()
             if "routes" not in data:
                 print(res.url, data)
+                continue
             for route in data["routes"]:
                 for item in route["chronological_departures"]:
                     if (
