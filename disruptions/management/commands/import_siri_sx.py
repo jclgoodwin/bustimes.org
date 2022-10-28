@@ -27,16 +27,19 @@ def handle_item(item, source):
         situation = Situation.objects.get(
             source=source, situation_number=situation_number
         )
-        if situation.data == xml:
+        if situation.data == xml or not situation.current:
             return situation.id
         created = False
     except Situation.DoesNotExist:
-        situation = Situation(source=source, situation_number=situation_number)
+        situation = Situation(
+            source=source, situation_number=situation_number, current=True
+        )
         created = True
     situation.data = xml
     situation.created = created_time
     situation.publication_window = get_period(item.find("PublicationWindow"))
-    situation.current = item.find("Progress").text == "open"
+
+    assert item.findtext("Progress") == "open"
 
     reason = item.findtext("MiscellaneousReason")
     if reason:
