@@ -129,7 +129,7 @@ class Command(BaseCommand):
         ):
             fare_zone, created = models.FareZone.objects.get_or_create(
                 code=fare_zone_element.attrib["id"],
-                name=fare_zone_element.findtext("Name"),
+                name=fare_zone_element.findtext("Name", ""),
             )
             fare_zones[fare_zone.code] = fare_zone
             # stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
@@ -178,6 +178,15 @@ class Command(BaseCommand):
             if type_of_tariff is not None:
                 type_of_tariff = type_of_tariff.attrib["ref"].removeprefix("fxc:")
 
+            valid_between = DateTimeTZRange(
+                tariff_element.findtext("validityConditions/ValidBetween/FromDate"),
+                tariff_element.findtext("validityConditions/ValidBetween/ToDate"),
+                "[]",
+            )
+            if valid_between.upper < valid_between.lower:
+                logger.error(f"{filename} {valid_between}")
+                valid_between = None
+
             tariff = models.Tariff.objects.create(
                 code=tariff_code,
                 name=tariff_element.findtext("Name"),
@@ -186,11 +195,7 @@ class Command(BaseCommand):
                 trip_type=trip_type,
                 user_profile=user_profile,
                 type_of_tariff=type_of_tariff or "",
-                valid_between=DateTimeTZRange(
-                    tariff_element.findtext("validityConditions/ValidBetween/FromDate"),
-                    tariff_element.findtext("validityConditions/ValidBetween/ToDate"),
-                    "[]",
-                ),
+                valid_between=valid_between,
             )
             tariffs[tariff.code] = tariff
 
