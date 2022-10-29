@@ -18,7 +18,10 @@ def get_period(element):
 
 
 def handle_item(item, source):
-    situation_number = item.find("SituationNumber").text
+    situation_number = item.findtext("SituationNumber")
+
+    item.find("Source/TimeOfCommunication").text = None
+
     xml = ET.tostring(item, encoding="unicode")
 
     created_time = parse_datetime(item.find("CreationTime").text)
