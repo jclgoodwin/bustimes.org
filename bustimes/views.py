@@ -7,6 +7,8 @@ import boto3
 import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
+from django.contrib.gis.db.models import Extent
+from django.contrib.gis.db.models.functions import AsSVG
 from django.db.models import Exists, OuterRef, Prefetch
 from django.http import (
     FileResponse,
@@ -48,6 +50,25 @@ class ServiceDebugView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        context["route_links"] = self.object.routelink_set.annotate(
+            svg=AsSVG("geometry", relative=True)
+        )
+
+        extent = context["route_links"].aggregate(extent=Extent("geometry"))["extent"]
+        if not extent and self.object.geometry:
+            extent = self.object.geometry.extent
+
+        if extent:
+            x = extent[0]
+            y = -extent[3]
+            width = extent[2] - extent[0]
+            height = extent[3] - extent[1]
+
+            context["view_box"] = f"{x} {y} {width} {height}"
+
+            context["width"] = width * 5000
+            context["height"] = height * 5000
 
         for route in self.object.route_set.all():
             previous_trip = None
