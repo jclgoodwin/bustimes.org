@@ -21,14 +21,18 @@ from ... import models
 logger = logging.getLogger(__name__)
 
 
-def get_user_profile(element):
+def get_user_profile(element, user_profiles):
+    code = element.attrib["id"]
+    if code in user_profiles:
+        return user_profiles[code]
+
     return models.UserProfile.objects.get_or_create(
         {
             "name": element.findtext("Name"),
             "min_age": element.findtext("MinimumAge"),
             "max_age": element.findtext("MaximumAge"),
         },
-        code=element.attrib["id"],
+        code=code,
     )
 
 
@@ -93,7 +97,7 @@ class Command(BaseCommand):
         for usage_parameter in element.findall(
             "dataObjects/CompositeFrame/frames/FareFrame/usageParameters/UserProfile"
         ):
-            user_profile, created = get_user_profile(usage_parameter)
+            user_profile, created = get_user_profile(usage_parameter, user_profiles)
             user_profiles[user_profile.code] = user_profile
 
         sales_offer_packages = {**self.sales_offer_packages}
@@ -166,7 +170,9 @@ class Command(BaseCommand):
                     "FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
                 )
                 if user_profile is not None:
-                    user_profile, created = get_user_profile(user_profile)
+                    user_profile, created = get_user_profile(
+                        user_profile, user_profiles
+                    )
                     user_profiles[user_profile.code] = user_profile
 
                 trip_type = fare_structure_elements.findtext(
@@ -183,7 +189,7 @@ class Command(BaseCommand):
                 tariff_element.findtext("validityConditions/ValidBetween/ToDate"),
                 "[]",
             )
-            if valid_between.upper < valid_between.lower:
+            if valid_between.upper and valid_between.upper < valid_between.lower:
                 logger.error(f"{filename} {valid_between}")
                 valid_between = None
 
