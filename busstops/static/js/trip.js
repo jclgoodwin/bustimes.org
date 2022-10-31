@@ -44,16 +44,19 @@
                 }
 
                 if (poppedUp) {
-                    var progress = window.bustimes.vehicleMarkers[poppedUp].options.item.progress;
-                    if (progress) {
-                        // highlight last visited stop in timetable
-                        var nowAtStop = window.bustimes.vehicleMarkers[poppedUp].options.item.progress.prev_stop;
-                        var wasAtStop = document.querySelector('.referrer');
-                        if (wasAtStop) {
-                            wasAtStop.classList.remove('referrer');
+                    var item = window.bustimes.vehicleMarkers[poppedUp].options.item;
+                    if (item.progress) {
+                        var nowAtStop = item.progress.prev_stop;
+                        var row = document.querySelector('[href="/stops/' + nowAtStop + '"]').parentNode.parentNode;
+                        var cell = row.querySelector('.actual');
+                        if (!cell) {
+                            cell = document.createElement('td');
+                            cell.className = 'actual';
+                            cell.rowSpan = '2';
+                            row.appendChild(cell);
                         }
-                        nowAtStop = document.querySelector('[href="/stops/' + nowAtStop + '"]').parentNode.parentNode;
-                        nowAtStop.classList.add('referrer');
+                        var when = new Date(item.datetime);
+                        cell.innerHTML = when.toTimeString().slice(0, 8);
                     }
                 }
 
