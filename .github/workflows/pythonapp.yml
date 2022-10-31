@@ -51,7 +51,6 @@ jobs:
           && docker save thing-cache -o /tmp/docker-save/snapshot.tar \
           && ls -lh /tmp/docker-save \
           || true
-      if: steps.cache-docker.outputs.cache-hit != 'true'
 
     - name: Test
       # run the Python tests
