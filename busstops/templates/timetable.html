@@ -26,6 +26,12 @@
             {% if timetable.detailed %}
                 <input type="hidden" name="detailed">
             {% endif %}
+            {% if related %}
+                <label><input type="checkbox" name="service" value="{{ service.id }}" checked disabled>{{ service.line_name }}</label>
+            {% endif %}
+            {% for option in related %}
+                <label><input type="checkbox" name="service" value="{{ option.id }}">{{ option.line_name }}</label>
+            {% endfor %}
             <noscript><input type="submit"></noscript>
         </form>
     {% endif %}

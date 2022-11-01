@@ -25,18 +25,33 @@
         // load timetable for a particular date without loading the rest of the page
         var select = document.getElementById('id_date');
         if (select) {
-            select.onchange = function(event) {
-                timetableWrapper.className = 'loading';
-                var newSearch = '?' + event.target.name + '=' + event.target.value;
-                reqwest('/services/' + SERVICE_ID + '/timetable' + newSearch, function(response) {
+            select.onchange = null;
+
+            // select.form.onchange = function() {
+            //     timetableWrapper.className = 'loading';
+            //     var newSearch = '?' + select.name + '=' + select.value;
+            //     reqwest('/services/' + SERVICE_ID + '/timetable' + newSearch, function(response) {
+            //         timetableWrapper.className = '';
+            //         timetableWrapper.innerHTML = response;
+            //         doStuff();
+            //         search = newSearch;
+            //         history.pushState(null, null, newSearch);
+            //     });
+            // };
+
+            select.form.onchange = function(event) {
+                console.dir(event.target);
+                var formData = new FormData(select.form);
+                var params = new URLSearchParams(formData).toString();
+                reqwest('/services/' + SERVICE_ID + '/timetable?' + params, function(response) {
                     timetableWrapper.className = '';
                     timetableWrapper.innerHTML = response;
                     doStuff();
-                    search = newSearch;
-                    history.pushState(null, null, newSearch);
+                    history.pushState(null, null, '?' + params);
                 });
-            };
+            }
         }
+
     }
 
     doStuff();
