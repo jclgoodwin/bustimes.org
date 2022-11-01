@@ -1,8 +1,7 @@
-from django import forms
-from django.core.exceptions import ValidationError
-
 # from antispam.honeypot.forms import HoneypotField
 from antispam import akismet
+from django import forms
+from django.core.exceptions import ValidationError
 
 
 class ContactForm(forms.Form):
@@ -19,21 +18,22 @@ class ContactForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean(self):
-        if (
-            self.request
-            and self.is_valid()
-            and akismet.check(
-                request=akismet.Request.from_django_request(self.request),
-                comment=akismet.Comment(
-                    content=self.cleaned_data["message"],
-                    type="comment",
-                    author=akismet.Author(
-                        name=self.cleaned_data["name"], email=self.cleaned_data["email"]
+        if self.request and self.is_valid():
+            message = self.cleaned_data["message"]
+            if "https://" in message or "http://" in message:
+                spam_status = akismet.check(
+                    request=akismet.Request.from_django_request(self.request),
+                    comment=akismet.Comment(
+                        content=message,
+                        type="comment",
+                        author=akismet.Author(
+                            name=self.cleaned_data["name"],
+                            email=self.cleaned_data["email"],
+                        ),
                     ),
-                ),
-            )
-        ):
-            raise ValidationError("Spam detected", code="spam-protection")
+                )
+                if spam_status >= akismet.SpamStatus.ProbableSpam:
+                    raise ValidationError("Spam detected", code="spam-protection")
 
 
 class SearchForm(forms.Form):
