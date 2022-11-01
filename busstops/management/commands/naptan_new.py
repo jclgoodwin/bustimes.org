@@ -79,8 +79,13 @@ class Command(BaseCommand):
             grid_type = element.findtext("Place/Location/Translation/GridType")
         if easting:
             match grid_type:
-                case "IrishOS" | "ITM":
+                case "ITM":
                     srid = 2157
+                case "IrishOS":
+                    assert (
+                        atco_code[0] != "8"
+                    )  # not actually in Ireland, must be a mistake
+                    srid = 27700
                 case "UKOS" | None:
                     srid = 27700
             point = GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
