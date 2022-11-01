@@ -79,7 +79,7 @@ class Command(BaseCommand):
             grid_type = element.findtext("Place/Location/Translation/GridType")
         if easting:
             match grid_type:
-                case "ITM":
+                case "IrishOS" | "ITM":
                     srid = 2157
                 case "UKOS" | None:
                     srid = 27700
