@@ -23,11 +23,15 @@
         }
 
         // load timetable for a particular date without loading the rest of the page
-        var select = document.getElementById('id_date');
-        if (select) {
-            select.onchange = function(event) {
+        if (timetableWrapper) {
+            var timetableForm = timetableWrapper.querySelector('form');
+        }
+        if (timetableForm) {
+            timetableForm.onchange = function() {
                 timetableWrapper.className = 'loading';
-                var newSearch = '?' + event.target.name + '=' + event.target.value;
+
+                var formData = new FormData(timetableForm);
+                var newSearch = '?' + new URLSearchParams(formData).toString();
                 reqwest('/services/' + SERVICE_ID + '/timetable' + newSearch, function(response) {
                     timetableWrapper.className = '';
                     timetableWrapper.innerHTML = response;
@@ -35,8 +39,9 @@
                     search = newSearch;
                     history.pushState(null, null, newSearch);
                 });
-            };
+            }
         }
+
     }
 
     doStuff();

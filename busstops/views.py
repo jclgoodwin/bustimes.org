@@ -853,26 +853,14 @@ class ServiceDetailView(DetailView):
         if self.object.timetable_wrong:
             date = None
         else:
-            form = forms.TimetableForm(self.request.GET)
-            if form.is_valid():
-                date = form.cleaned_data["date"]
-                calendar = form.cleaned_data["calendar"]
-            else:
-                date = None
-                calendar = None
+            form = forms.TimetableForm(self.request.GET, related=context["related"])
 
             if context["related"]:
-                parallel = self.object.get_linked_services()
-                context["linked_services"] = parallel
-            else:
-                parallel = []
+                context["linked_services"] = self.object.get_linked_services()
 
-            context["timetable"] = self.object.get_timetable(
-                day=date,
-                calendar_id=calendar,
-                # related=parallel,
-                detailed="detailed" in self.request.GET,
-            )
+            context["timetable"] = form.get_timetable(self.object)
+            context["form"] = form
+            date = form.cleaned_data.get("date")
 
             context["registrations"] = Registration.objects.filter(
                 Exists(self.object.route_set.filter(registration=OuterRef("id")))
@@ -1048,20 +1036,14 @@ class ServiceDetailView(DetailView):
 
 def service_timetable(request, service_id):
     service = get_object_or_404(Service.objects.defer("geometry"), id=service_id)
-    form = forms.TimetableForm(request.GET)
-    if form.is_valid():
-        date = form.cleaned_data["date"]
-        calendar = form.cleaned_data["calendar"]
-    else:
-        date = None
-        calendar = None
+    related_options = service.get_similar_services()
+    form = forms.TimetableForm(request.GET, related=related_options)
+
     context = {
         "object": service,
-        "timetable": service.get_timetable(
-            day=date,
-            calendar_id=calendar,
-            # related=service.get_linked_services(),
-        ),
+        "timetable": form.get_timetable(service),
+        "related": related_options,
+        "form": form,
     }
 
     return render(request, "timetable.html", context)

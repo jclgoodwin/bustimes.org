@@ -412,8 +412,18 @@ form p select {
         padding: .5em 1.5em .5em .5em;
     }
 
+    div {
+        display: inline-block;
+    }
+
     + .table-wrapper {
         margin-top: 1em;
+    }
+}
+
+#id_service {
+    label {
+        margin-left: 1em;
     }
 }
 

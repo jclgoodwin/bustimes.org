@@ -43,6 +43,31 @@ class SearchForm(forms.Form):
 class TimetableForm(forms.Form):
     date = forms.DateField(required=False)
     calendar = forms.IntegerField(required=False)
+    detailed = forms.BooleanField(required=False)
+    service = forms.MultipleChoiceField(
+        required=False, widget=forms.CheckboxSelectMultiple
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.related = kwargs.pop("related")
+        super().__init__(*args, **kwargs)
+        self.fields["service"].choices = [(s.id, s.line_name) for s in self.related]
+
+    def get_timetable(self, service):
+        if self.is_valid():
+            date = self.cleaned_data["date"]
+            calendar_id = self.cleaned_data["calendar"]
+            also_services = [
+                s for s in self.related if str(s.id) in self.cleaned_data["service"]
+            ]
+        else:
+            date = None
+            calendar_id = None
+            also_services = ()
+
+        return service.get_timetable(
+            day=date, calendar_id=calendar_id, also_services=also_services
+        )
 
 
 class DeparturesForm(forms.Form):
