@@ -966,12 +966,14 @@ class Service(models.Model):
                 return timetable_change
             previous_route = route
 
-    def get_timetable(self, day=None, calendar_id=None, related=(), detailed=False):
+    def get_timetable(
+        self, day=None, calendar_id=None, also_services=(), detailed=False
+    ):
         """Given a Service, return a Timetable"""
 
-        cache_key = (
-            f"s{self.id}:{self.modified_at.timestamp()}:{day or calendar_id}:{detailed}"
-        )
+        cache_key = f"s{self.id}:{int(self.modified_at.timestamp())}:{day or calendar_id}:{detailed}"
+        for s in also_services:
+            cache_key += f":{s.id}:{int(s.modified_at.timestamp())}"
 
         if timetable := cache.get(cache_key):
             return timetable
@@ -979,8 +981,8 @@ class Service(models.Model):
         if self.region_id == "NI" or self.source and self.source.name.endswith(" GTFS"):
             timetable = Timetable(self.route_set.all(), day, calendar_id=calendar_id)
         else:
-            if related:
-                routes = Route.objects.filter(service__in=[self] + related)
+            if also_services:
+                routes = Route.objects.filter(service__in=[self] + also_services)
             else:
                 routes = self.route_set
             operators = self.operator.all()

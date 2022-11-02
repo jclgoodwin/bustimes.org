@@ -5,9 +5,9 @@
     {% if timetable.calendar and not timetable.calendar_options %}
         <p>{{ timetable.calendar.describe_for_timetable }}</p>
     {% else %}
-        <form class="timetable-date" autocomplete="off">
+        <form class="timetable-date" autocomplete="off" onchange="this.submit()">
             {% if timetable.calendar_options %}
-                <select onchange="this.form.submit()" name="calendar" id="id_date" aria-label="Date">
+                <select name="calendar" aria-label="Date">
                     {% for id, description in timetable.calendar_options %}
                         <option{% if id == timetable.calendar.id %} selected{% endif %} value="{{ id }}">
                             {{ description }}
@@ -15,28 +15,23 @@
                     {% endfor %}
                 </select>
             {% elif timetable.date_options %}
-                <select onchange="this.form.submit()" name="date" id="id_date" aria-label="Date">
+                <select name="date" aria-label="Date">
                     {% for option in timetable.date_options %}
                         <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
                     {% endfor %}
                 </select>
             {% elif timetable.date %}
-                <input type="date" onchange="this.form.submit()" name="date" id="id_date" aria-label="Date" value="{{ timetable.date.isoformat }}">
+                <input type="date" name="date" aria-label="Date" value="{{ timetable.date.isoformat }}">
             {% endif %}
             {% if timetable.detailed %}
                 <input type="hidden" name="detailed">
             {% endif %}
-            {% if related %}
-                <label><input type="checkbox" name="service" value="{{ service.id }}" checked disabled>{{ service.line_name }}</label>
-            {% endif %}
-            {% for option in related %}
-                <label><input type="checkbox" name="service" value="{{ option.id }}">{{ option.line_name }}</label>
-            {% endfor %}
+            {{ form.service }}
             <noscript><input type="submit"></noscript>
         </form>
     {% endif %}
 
-    {% cache 3600 timetable object.id object.modified_at timetable.detailed timetable.calendar_ids timetable.calendar.id %}
+    {% cache 3600 timetable object.id object.modified_at timetable.detailed timetable.calendar_ids timetable.calendar.id form.cleaned_data.service %}
 
     {% for grouping in timetable.render.groupings %}
 
