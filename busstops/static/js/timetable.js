@@ -39,7 +39,7 @@
                     search = newSearch;
                     history.pushState(null, null, newSearch);
                 });
-            }
+            };
         }
 
     }

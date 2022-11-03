@@ -410,10 +410,16 @@ form p select {
 .timetable-date {
     select {
         padding: .5em 1.5em .5em .5em;
+        margin-right: 1em;
     }
 
     div {
         display: inline-block;
+    }
+
+    label {
+        display: inline-block;
+        margin: 1em 1em 0 0;
     }
 
     + .table-wrapper {
@@ -421,11 +427,6 @@ form p select {
     }
 }
 
-#id_service {
-    label {
-        margin-left: 1em;
-    }
-}
 
 input[type='search']::-webkit-search-decoration {
     -webkit-appearance: none;

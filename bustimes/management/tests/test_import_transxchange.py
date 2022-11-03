@@ -894,7 +894,7 @@ class ImportTransXChangeTest(TestCase):
 
         service = route_2.service
         # detailed version
-        response = self.client.get(f"{service.get_absolute_url()}?detailed")
+        response = self.client.get(f"{service.get_absolute_url()}?detailed=true")
         self.assertContains(response, '">9032</a>')  # block number
         self.assertContains(response, '">1554</a>')  # block number
         self.assertContains(response, "<td>Barnstaple</td>")  # garage

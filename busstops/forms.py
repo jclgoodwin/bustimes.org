@@ -51,7 +51,10 @@ class TimetableForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.related = kwargs.pop("related")
         super().__init__(*args, **kwargs)
-        self.fields["service"].choices = [(s.id, s.line_name) for s in self.related]
+        if self.related:
+            self.fields["service"].choices = [(s.id, s.line_name) for s in self.related]
+        else:
+            del self.fields["service"]
 
     def get_timetable(self, service):
         if self.is_valid():
@@ -66,7 +69,10 @@ class TimetableForm(forms.Form):
             also_services = ()
 
         return service.get_timetable(
-            day=date, calendar_id=calendar_id, also_services=also_services
+            day=date,
+            calendar_id=calendar_id,
+            also_services=also_services,
+            detailed=self.cleaned_data.get("detailed"),
         )
 
 

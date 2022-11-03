@@ -71,7 +71,7 @@ class ImportAtcoCifTest(TestCase):
         )
 
         with time_machine.travel("2019-10-01"):
-            with self.assertNumQueries(9):
+            with self.assertNumQueries(10):
                 response = self.client.get(
                     f"/services/{service.id}/timetable?date=2019-10-01"
                 )
@@ -82,7 +82,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertNotContains(response, "Sunday")
 
         with time_machine.travel("2019-08-12"):
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(7):
                 response = self.client.get(
                     f"/services/{service.id}/timetable?date=2019-08-12"
                 )
@@ -96,7 +96,7 @@ class ImportAtcoCifTest(TestCase):
         )
 
         with time_machine.travel("2019-08-12"):
-            with self.assertNumQueries(9):
+            with self.assertNumQueries(10):
                 response = self.client.get(
                     f"/services/{service.id}/timetable?date=2019-12-25"
                 )
@@ -107,7 +107,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertNotContains(response, "Sunday")
 
         with time_machine.travel("2019-08-12"):
-            with self.assertNumQueries(9):
+            with self.assertNumQueries(10):
                 response = self.client.get(
                     f"/services/{service.id}/timetable?date=2019-12-25"
                 )
