@@ -224,7 +224,7 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],
         integrations=[DjangoIntegration(), RedisIntegration()],
-        ignore_errors=[KeyboardInterrupt],
+        ignore_errors=[KeyboardInterrupt, RuntimeError],
         release=os.environ.get("COMMIT_HASH"),
         traces_sample_rate=0.001,
     )
