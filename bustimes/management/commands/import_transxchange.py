@@ -1073,10 +1073,11 @@ class Command(BaseCommand):
 
             match txc_service.public_use:
                 case "0" | "false":
-                    if len(journeys) < 5:
-                        service.public_use = False
+                    service.public_use = False
                 case "1" | "true":
                     service.public_use = True
+                case _:
+                    service.public_use = None
 
             if service_code:
                 service.service_code = service_code
