@@ -50,6 +50,8 @@ class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.filter(current=True)
     serializer_class = serializers.ServiceSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = filters.ServiceFilter
 
 
 class StopViewSet(viewsets.ReadOnlyModelViewSet):

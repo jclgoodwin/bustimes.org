@@ -29,6 +29,10 @@
     {% endif %}
 </p>
 
+{% if object.public_use is False and "Stagecoach" not in object.source.name %}
+    <p>🧑‍🎓 Closed-door service, not available to the public</p>
+{% endif %}
+
 <!-- 71161633/services_header/services_header -->
 <div class="wide-ad" data-fuse="22699655428"></div>
 

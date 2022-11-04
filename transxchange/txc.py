@@ -581,6 +581,14 @@ class Service:
 
         self.lines = [Line(line_element) for line_element in element.find("Lines")]
 
+        self.to_be_marketed_with = [
+            d.text
+            for d in element.findall("ToBeMarketedWith/RelatedService/Description")
+        ]
+        self.associated_operators = [
+            d.text for d in element.findall("AssociatedOperators/OperatorRef")
+        ]
+
 
 class Line:
     def __init__(self, element):

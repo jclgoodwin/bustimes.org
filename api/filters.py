@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django_filters.rest_framework import CharFilter, FilterSet, NumberFilter
 
-from busstops.models import StopPoint
+from busstops.models import Service, StopPoint
 from vehicles.models import Vehicle
 
 
@@ -31,3 +31,9 @@ class StopFilter(FilterSet):
     class Meta:
         model = StopPoint
         fields = ["atco_code", "naptan_code", "stop_type"]
+
+
+class ServiceFilter(FilterSet):
+    class Meta:
+        model = Service
+        fields = ["public_use", "operator"]
