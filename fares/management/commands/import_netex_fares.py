@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 def get_user_profile(element, user_profiles):
     code = element.attrib["id"]
     if code in user_profiles:
-        return user_profiles[code]
+        return user_profiles[code], False
 
     return models.UserProfile.objects.get_or_create(
         {
