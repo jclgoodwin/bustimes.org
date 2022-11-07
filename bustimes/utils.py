@@ -46,7 +46,7 @@ def get_routes(routes, when=None, from_date=None):
                 7 >= len(parts) >= 6
                 and parts[2].startswith(parts[0])
                 and parts[3].isdigit()
-                and parts[4] == "-"
+                and (parts[4].isdigit() or parts[4] == "-")
                 and len(parts[-1]) == 40
             )
 
