@@ -44,8 +44,17 @@ def get_routes(routes, when=None, from_date=None):
             parts = route.code.split("_")
             if ".ticketer." in route.source.url:
                 assert 7 >= len(parts) >= 6
+                assert parts[3].isdigit()
+                assert parts[4] == "-"
+                assert len(parts[-1]) == 40
                 route.key = f"{route.key}:{parts[1]}"
-            elif 7 >= len(parts) >= 6 and parts[2].startswith(parts[0]):
+            elif (
+                7 >= len(parts) >= 6
+                and parts[2].startswith(parts[0])
+                and parts[3].isdigit()
+                and parts[4] == "-"
+                and len(parts[-1]) == 40
+            ):
                 route.key = f"{route.key}:{parts[1]}"
 
             if (
