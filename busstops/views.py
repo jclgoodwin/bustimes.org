@@ -65,7 +65,10 @@ def get_colours(services):
 
 
 def version(request):
-    return HttpResponse(os.environ.get("COMMIT_HASH"), content_type="text/plain")
+    commit_hash = os.environ.get("COMMIT_HASH")
+    return HttpResponse(
+        f"""<a href="https://github.com/jclgoodwin/bustimes.org/commit/{commit_hash}">{commit_hash}</a>""",
+    )
 
 
 def not_found(request, exception):
