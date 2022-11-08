@@ -1,6 +1,6 @@
-# from antispam.honeypot.forms import HoneypotField
-from antispam import akismet
+from akismet import Akismet
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ValidationError
 
 
@@ -8,7 +8,6 @@ class ContactForm(forms.Form):
     name = forms.CharField(label="Name")
     email = forms.EmailField(label="Email address")
     message = forms.CharField(label="Message", widget=forms.Textarea)
-    # spam_honeypot_field = HoneypotField()
     referrer = forms.CharField(
         label="Referrer", required=False, widget=forms.HiddenInput
     )
@@ -20,20 +19,23 @@ class ContactForm(forms.Form):
     def clean(self):
         if self.request and self.is_valid():
             message = self.cleaned_data["message"]
-            if "https://" in message or "http://" in message:
-                spam_status = akismet.check(
-                    request=akismet.Request.from_django_request(self.request),
-                    comment=akismet.Comment(
-                        content=message,
-                        type="comment",
-                        author=akismet.Author(
-                            name=self.cleaned_data["name"],
-                            email=self.cleaned_data["email"],
-                        ),
-                    ),
-                )
-                if spam_status >= akismet.SpamStatus.ProbableSpam:
-                    raise ValidationError("Spam detected", code="spam-protection")
+
+            akismet = Akismet(
+                api_key=settings.AKISMET_API_KEY,
+                blog=settings.AKISMET_SITE_URL,
+            )
+
+            is_spam = akismet.check(
+                user_ip=self.request.headers.get("do-connecting-ip"),
+                user_agent=self.request.headers.get("User-Agent"),
+                comment_type="contact-form",
+                comment_author=self.cleaned_data["name"],
+                comment_author_email=self.cleaned_data["email"],
+                comment_content=message,
+            )
+
+            if is_spam:
+                raise ValidationError("Spam detected", code="spam-protection")
 
 
 class SearchForm(forms.Form):

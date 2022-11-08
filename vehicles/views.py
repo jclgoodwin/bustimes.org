@@ -675,7 +675,7 @@ def edit_vehicle(request, **kwargs):
         **kwargs,
     )
 
-    ip_address = request.headers.get("CF-Connecting-IP")
+    ip_address = request.headers.get("do-connecting-ip")
     if request.user.ip_address != ip_address:
         request.user.ip_address = ip_address
         request.user.save(update_fields=["ip_address"])
@@ -793,7 +793,7 @@ def edit_vehicle(request, **kwargs):
 
 @login_required
 def vehicle_edits(request):
-    ip_address = request.headers.get("CF-Connecting-IP")
+    ip_address = request.headers.get("do-connecting-ip")
     if request.user.ip_address != ip_address:
         request.user.ip_address = ip_address
         request.user.save(update_fields=["ip_address"])

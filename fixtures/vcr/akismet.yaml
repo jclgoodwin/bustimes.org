@@ -9,7 +9,7 @@ interactions:
       Content-Type: [application/x-www-form-urlencoded]
       User-Agent: [Unknown Application/0.0.0 | Python-Akismet/0.3.0]
     method: POST
-    uri: https://none.rest.akismet.com/1.1/comment-check
+    uri: https://poop.rest.akismet.com/1.1/comment-check
   response:
     body: {string: 'false'}
     headers:

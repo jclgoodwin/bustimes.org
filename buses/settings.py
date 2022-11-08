@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     "fares",
     "vehicles",
     "vosa",
-    "antispam",
     "email_obfuscator",
     "channels",
     "api",

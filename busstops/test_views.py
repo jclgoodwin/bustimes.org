@@ -42,6 +42,7 @@ class ContactTests(TestCase):
         response = self.client.post("/contact")
         self.assertFalse(response.context["form"].is_valid())
 
+    @override_settings(AKISMET_API_KEY="poop")
     def test_contact_post(self):
         self.client.force_login(self.user)
 
