@@ -75,7 +75,7 @@ class Command(BaseCommand):
         # vars_to_update = set()
         vars_to_create = []
 
-        previous_line = None
+        # previous_line = None
         # cardinals = set()
 
         for line in self.get_rows(f"Bus_Variation_{region}.csv"):
@@ -141,30 +141,19 @@ class Command(BaseCommand):
             registration.licence = licence
 
             status = line["Registration Status"]
-            if (
-                not previous_line
-                or previous_line["Reg_No"] != line["Reg_No"]
-                or int(previous_line["Variation Number"]) < var_no
-            ):
-                registration.registration_status = status
+            registration.registration_status = status
+            registration.registered = (
+                False  # will be set True later if present in Bus_RegisteredOnly_
+            )
 
-                match status:
-                    case "New":
-                        if var_no == 0:
-                            registration.registered = True
-                    case "Registered":
-                        registration.registered = True
-                    case "Cancelled" | "Admin Cancelled" | "Cancellation":
-                        registration.registered = False
-
-                registration.start_point = line["start_point"]
-                registration.finish_point = line["finish_point"]
-                registration.via = line["via"]
-                registration.subsidies_description = line["Subsidies_Description"]
-                registration.subsidies_details = line["Subsidies_Details"]
-                registration.traffic_area_office_covered_by_area = line[
-                    "TAO Covered BY Area"
-                ]
+            registration.start_point = line["start_point"]
+            registration.finish_point = line["finish_point"]
+            registration.via = line["via"]
+            registration.subsidies_description = line["Subsidies_Description"]
+            registration.subsidies_details = line["Subsidies_Details"]
+            registration.traffic_area_office_covered_by_area = line[
+                "TAO Covered BY Area"
+            ]
 
             # a registration can have multiple numbers
             if registration.service_number:
@@ -240,7 +229,7 @@ class Command(BaseCommand):
             if not variation.id:
                 vars_to_create.append(variation)
 
-            previous_line = line
+            # previous_line = line
 
         # previous_line = None
         # cardinals = set()
@@ -249,8 +238,7 @@ class Command(BaseCommand):
         for line in self.get_rows(f"Bus_RegisteredOnly_{region}.csv"):
             reg_no = line["Reg_No"]
             reg = regs[reg_no]
-            if reg.registration_status != line["Registration Status"]:
-                reg.registration_status = line["Registration Status"]
+            reg.registration_status = line["Registration Status"]
             reg.registered = True
 
             # if previous_line and previous_line["Reg_No"] == reg_no:
