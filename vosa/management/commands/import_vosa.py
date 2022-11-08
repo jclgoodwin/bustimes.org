@@ -142,7 +142,8 @@ class Command(BaseCommand):
 
             status = line["Registration Status"]
             if (
-                previous_line["Reg_No"] != line["Reg_No"]
+                not previous_line
+                or previous_line["Reg_No"] != line["Reg_No"]
                 or int(previous_line["Variation Number"]) < var_no
             ):
                 registration.registration_status = status
