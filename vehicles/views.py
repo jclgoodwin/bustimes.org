@@ -1066,6 +1066,7 @@ def debug(request):
         else:
             vehicle = None
             journey = None
+            connection.force_debug_cursor = True
             try:
                 with transaction.atomic():
                     command = import_bod_avl.Command()
@@ -1077,6 +1078,7 @@ def debug(request):
                     raise Exception
             except Exception:
                 pass
+            connection.force_debug_cursor = False
 
             result = {
                 "vehicle": vehicle,
