@@ -12,12 +12,12 @@ from ...models import Licence, Registration, Variation
 logger = logging.getLogger(__name__)
 
 
-def parse_date(date_string):
+def parse_date(date_string: str):
     if date_string:
         return datetime.strptime(date_string, "%d/%m/%y").date()
 
 
-def download_if_modified(path):
+def download_if_modified(path: str):
     url = f"https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/{path}"
     return download_if_changed(settings.DATA_DIR / path, url)
 
@@ -27,11 +27,13 @@ class Command(BaseCommand):
     def add_arguments(parser):
         parser.add_argument("regions", nargs="?", type=str, default="FBCMKGDH")
 
-    def get_rows(self, path):
+    def get_rows(self, path: str):
         with open(settings.DATA_DIR / path) as open_file:
             yield from csv.DictReader(open_file)
 
-    def handle(self, regions, **kwargs):
+    def handle(self, regions: str, **kwargs) -> None:
+        """call handle_region for each region if that region's data has changed"""
+
         for region in regions:
             modified_1, last_modified_1 = download_if_modified(
                 f"Bus_RegisteredOnly_{region}.csv"
@@ -43,7 +45,7 @@ class Command(BaseCommand):
                 logger.info(f"{region} {last_modified_1} {last_modified_2}")
                 self.handle_region(region)
 
-    def get_existing_variations(self, region):
+    def get_existing_variations(self, region) -> dict:
         variations = Variation.objects.filter(
             registration__licence__traffic_area=region
         )
@@ -57,7 +59,7 @@ class Command(BaseCommand):
                 variations_dict[reg_no] = {variation.variation_number: variation}
         return variations_dict
 
-    def handle_region(self, region):
+    def handle_region(self, region: str) -> None:
         lics = Licence.objects.filter(traffic_area=region)
         lics = lics.in_bulk(field_name="licence_number")
         lics_to_update = set()
@@ -73,7 +75,7 @@ class Command(BaseCommand):
         # vars_to_update = set()
         vars_to_create = []
 
-        # previous_line = None
+        previous_line = None
         # cardinals = set()
 
         for line in self.get_rows(f"Bus_Variation_{region}.csv"):
@@ -122,6 +124,7 @@ class Command(BaseCommand):
             if len(reg_no) > 20:
                 # PK0000098/PK0000098/364
                 parts = reg_no.split("/")
+                assert len(parts) == 3
                 assert parts[0] == parts[1]
                 reg_no = f"{parts[1]}/{parts[2]}"
 
@@ -138,25 +141,29 @@ class Command(BaseCommand):
             registration.licence = licence
 
             status = line["Registration Status"]
-            registration.registration_status = status
+            if (
+                previous_line["Reg_No"] != line["Reg_No"]
+                or int(previous_line["Variation Number"]) < var_no
+            ):
+                registration.registration_status = status
 
-            match status:
-                case "New":
-                    if var_no == 0:
+                match status:
+                    case "New":
+                        if var_no == 0:
+                            registration.registered = True
+                    case "Registered":
                         registration.registered = True
-                case "Registered":
-                    registration.registered = True
-                case "Cancelled" | "Admin Cancelled" | "Cancellation":
-                    registration.registered = False
+                    case "Cancelled" | "Admin Cancelled" | "Cancellation":
+                        registration.registered = False
 
-            registration.start_point = line["start_point"]
-            registration.finish_point = line["finish_point"]
-            registration.via = line["via"]
-            registration.subsidies_description = line["Subsidies_Description"]
-            registration.subsidies_details = line["Subsidies_Details"]
-            registration.traffic_area_office_covered_by_area = line[
-                "TAO Covered BY Area"
-            ]
+                registration.start_point = line["start_point"]
+                registration.finish_point = line["finish_point"]
+                registration.via = line["via"]
+                registration.subsidies_description = line["Subsidies_Description"]
+                registration.subsidies_details = line["Subsidies_Details"]
+                registration.traffic_area_office_covered_by_area = line[
+                    "TAO Covered BY Area"
+                ]
 
             # a registration can have multiple numbers
             if registration.service_number:
@@ -185,8 +192,8 @@ class Command(BaseCommand):
                         f"\n{line['Auth_Description']}"
                     )
                     if len(registration.authority_description) > 255:
-                        # some National Express coach services cover many authorities
-                        # print(reg_no)
+                        # some National Express coach services cover maaany authorities
+                        print(reg_no, registration.authority_description)
                         registration.authority_description = (
                             registration.authority_description[:255]
                         )
@@ -232,7 +239,7 @@ class Command(BaseCommand):
             if not variation.id:
                 vars_to_create.append(variation)
 
-            # previous_line = line
+            previous_line = line
 
         # previous_line = None
         # cardinals = set()
