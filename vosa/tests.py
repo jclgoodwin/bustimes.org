@@ -1,8 +1,11 @@
-from unittest import mock
 from pathlib import Path
-from django.test import TestCase, override_settings
+from unittest import mock
+
 from django.core.management import call_command
-from busstops.models import Region, Operator, Service
+from django.test import TestCase, override_settings
+
+from busstops.models import Operator, Region, Service
+
 from .models import Licence
 
 
@@ -37,8 +40,8 @@ class VosaTest(TestCase):
 
         # licence
         response = self.client.get("/licences/PF1018256")
-        self.assertEqual(2, len(response.context_data["registrations"]))
-        self.assertEqual(1, len(response.context_data["cancelled"]))
+        self.assertEqual(1, len(response.context_data["registrations"]))
+        self.assertEqual(2, len(response.context_data["cancelled"]))
         self.assertContains(response, "SANDERS COACHES LIMITED")
         self.assertContains(
             response, "LETHERINGSETT, GLANDFORD, WIVETON, CLEY, BLAKENEY"
