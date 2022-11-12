@@ -1,24 +1,29 @@
-import xmltodict
 import functools
-from django.core.cache import cache
-from django.conf import settings
-from django.db import IntegrityError
-from datetime import timedelta, date
+import io
+import zipfile
+from datetime import date, timedelta
+
+import xmltodict
 from ciso8601 import parse_datetime
+from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import Q, Exists, OuterRef
+from django.core.cache import cache
+from django.db import IntegrityError
+from django.db.models import Exists, OuterRef, Q
 from django.utils.timezone import localtime
+
 from busstops.models import (
+    Locality,
     Operator,
     OperatorCode,
     Service,
-    Locality,
-    StopPoint,
     ServiceCode,
+    StopPoint,
 )
-from bustimes.models import Trip, Route
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from bustimes.models import Route, Trip
+
 from ...models import Vehicle, VehicleJourney, VehicleLocation
+from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 def get_vehicle_cache_key(item):
@@ -646,8 +651,16 @@ class Command(ImportLiveVehiclesCommand):
         response = self.session.get(self.source.url, params=self.source.settings)
         assert response.ok
 
+        if "datafeed" in self.source.url:
+            data = response.content
+        else:
+            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+                assert archive.namelist() == ["siri.xml"]
+                with archive.open("siri.xml") as open_file:
+                    data = open_file.read()
+
         data = xmltodict.parse(
-            response.content,
+            data,
             dict_constructor=dict,  # override OrderedDict, cos dict is ordered in modern versions of Python
             force_list=["VehicleActivity"],
         )
