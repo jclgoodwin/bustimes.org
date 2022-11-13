@@ -37,7 +37,10 @@ jobs:
       uses: actions/cache@v3
       with:
         path: /tmp/docker-save
-        key: docker-save-${{ hashFiles('Dockerfile') }}
+        key: docker-save-${{ hashFiles('Dockerfile') }}-${{ hashFiles('poetry.lock') }}
+        restore-keys: |
+          docker-save-${{ hashFiles('Dockerfile') }}
+
 
     - run: docker load -i /tmp/docker-save/snapshot.tar || true
       if: steps.cache-docker.outputs.cache-hit == 'true'
