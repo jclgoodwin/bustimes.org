@@ -86,14 +86,14 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.26.4"
+version = "1.26.8"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.29.4,<1.30.0"
+botocore = ">=1.29.8,<1.30.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -102,7 +102,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.29.4"
+version = "1.29.8"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -777,7 +777,7 @@ python-versions = "*"
 
 [[package]]
 name = "platformdirs"
-version = "2.5.3"
+version = "2.5.4"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 category = "dev"
 optional = false
@@ -1160,7 +1160,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "stack-data"
-version = "0.6.0"
+version = "0.6.1"
 description = "Extract data from python stack frames and tracebacks for informative displays"
 category = "dev"
 optional = false
@@ -1297,7 +1297,7 @@ yarl = "*"
 
 [[package]]
 name = "virtualenv"
-version = "20.16.6"
+version = "20.16.7"
 description = "Virtual Python Environment builder"
 category = "dev"
 optional = false
@@ -1434,12 +1434,12 @@ beautifulsoup4 = [
     {file = "beautifulsoup4-4.11.1.tar.gz", hash = "sha256:ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693"},
 ]
 boto3 = [
-    {file = "boto3-1.26.4-py3-none-any.whl", hash = "sha256:9bfe15f394a7cd8ca2520e42722269d9aa2bbc222e348283c527d3aa88484314"},
-    {file = "boto3-1.26.4.tar.gz", hash = "sha256:244fd0776fc1f69c3ed34f359db7a90a6108372486abc999ce8515a79bbfc86e"},
+    {file = "boto3-1.26.8-py3-none-any.whl", hash = "sha256:c02fc93a926944b4b426a170d2dae274b4c8c09ec5259450b94269a8ce990dd7"},
+    {file = "boto3-1.26.8.tar.gz", hash = "sha256:b39303fdda9b5d77a152e3ec9f264ae318ccdaa853eaf694626dc335464ded98"},
 ]
 botocore = [
-    {file = "botocore-1.29.4-py3-none-any.whl", hash = "sha256:4c7dedc1096417ac8a120a3f42b81bddaec5451cdd6add7af98680903fd73b18"},
-    {file = "botocore-1.29.4.tar.gz", hash = "sha256:fa86747f5092723c0dc7f201a48cdfac3ad8d03dd6cb7abc189abc708be43269"},
+    {file = "botocore-1.29.8-py3-none-any.whl", hash = "sha256:9c6adcf4e080be63b92f50d01e176ef2d1d2a3da7d8387a964abb9eb65fc8aad"},
+    {file = "botocore-1.29.8.tar.gz", hash = "sha256:48cf33d7c513320711321c3b303b0c9810b23e15fa03424f7323883e4ce6cef8"},
 ]
 bs4 = [
     {file = "bs4-0.0.1.tar.gz", hash = "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"},
@@ -1913,8 +1913,8 @@ pickleshare = [
     {file = "pickleshare-0.7.5.tar.gz", hash = "sha256:87683d47965c1da65cdacaf31c8441d12b8044cdec9aca500cd78fc2c683afca"},
 ]
 platformdirs = [
-    {file = "platformdirs-2.5.3-py3-none-any.whl", hash = "sha256:0cb405749187a194f444c25c82ef7225232f11564721eabffc6ec70df83b11cb"},
-    {file = "platformdirs-2.5.3.tar.gz", hash = "sha256:6e52c21afff35cb659c6e52d8b4d61b9bd544557180440538f255d9382c8cbe0"},
+    {file = "platformdirs-2.5.4-py3-none-any.whl", hash = "sha256:af0276409f9a02373d540bf8480021a048711d572745aef4b7842dad245eba10"},
+    {file = "platformdirs-2.5.4.tar.gz", hash = "sha256:1006647646d80f16130f052404c6b901e80ee4ed6bef6792e1f238a8969106f7"},
 ]
 polyline = [
     {file = "polyline-1.4.0-py2.py3-none-any.whl", hash = "sha256:6559a0d5d37f4d14255744b3c6a648d5ff480d3d5c5f30186effc72a4142fd6c"},
@@ -1929,6 +1929,7 @@ prompt-toolkit = [
     {file = "prompt_toolkit-3.0.32.tar.gz", hash = "sha256:e7f2129cba4ff3b3656bbdda0e74ee00d2f874a8bcdb9dd16f5fec7b3e173cae"},
 ]
 protobuf = [
+    {file = "protobuf-3.20.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:e67f9af1b607eb3a89aafc9bc68a9d1172aae788b2445cb9fd781bd97531f1f1"},
     {file = "protobuf-3.20.3-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:f4bd856d702e5b0d96a00ec6b307b0f51c1982c2bf9c0052cf9019e9a544ba99"},
     {file = "protobuf-3.20.3-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:9aae4406ea63d825636cc11ffb34ad3379335803216ee3a856787bcf5ccc751e"},
     {file = "protobuf-3.20.3-cp310-cp310-win32.whl", hash = "sha256:28545383d61f55b57cf4df63eebd9827754fd2dc25f80c5253f9184235db242c"},
@@ -2137,8 +2138,8 @@ sqlparse = [
     {file = "sqlparse-0.4.3.tar.gz", hash = "sha256:69ca804846bb114d2ec380e4360a8a340db83f0ccf3afceeb1404df028f57268"},
 ]
 stack-data = [
-    {file = "stack_data-0.6.0-py3-none-any.whl", hash = "sha256:b92d206ef355a367d14316b786ab41cb99eb453a21f2cb216a4204625ff7bc07"},
-    {file = "stack_data-0.6.0.tar.gz", hash = "sha256:8e515439f818efaa251036af72d89e4026e2b03993f3453c000b200fb4f2d6aa"},
+    {file = "stack_data-0.6.1-py3-none-any.whl", hash = "sha256:960cb054d6a1b2fdd9cbd529e365b3c163e8dabf1272e02cfe36b58403cff5c6"},
+    {file = "stack_data-0.6.1.tar.gz", hash = "sha256:6c9a10eb5f342415fe085db551d673955611afb821551f554d91772415464315"},
 ]
 time-machine = [
     {file = "time-machine-2.8.2.tar.gz", hash = "sha256:2ff3cd145c381ac87b1c35400475a8f019b15dc2267861aad0466f55b49e7813"},
@@ -2232,8 +2233,8 @@ vcrpy = [
     {file = "vcrpy-4.2.1.tar.gz", hash = "sha256:7cd3e81a2c492e01c281f180bcc2a86b520b173d2b656cb5d89d99475423e013"},
 ]
 virtualenv = [
-    {file = "virtualenv-20.16.6-py3-none-any.whl", hash = "sha256:186ca84254abcbde98180fd17092f9628c5fe742273c02724972a1d8a2035108"},
-    {file = "virtualenv-20.16.6.tar.gz", hash = "sha256:530b850b523c6449406dfba859d6345e48ef19b8439606c5d74d7d3c9e14d76e"},
+    {file = "virtualenv-20.16.7-py3-none-any.whl", hash = "sha256:efd66b00386fdb7dbe4822d172303f40cd05e50e01740b19ea42425cbe653e29"},
+    {file = "virtualenv-20.16.7.tar.gz", hash = "sha256:8691e3ff9387f743e00f6bb20f70121f5e4f596cae754531f2b3b3a1b1ac696e"},
 ]
 w3lib = [
     {file = "w3lib-2.0.1-py3-none-any.whl", hash = "sha256:c5d966f86ae3fb546854478c769250c3ccb7581515b3221bcd2f864440000188"},
