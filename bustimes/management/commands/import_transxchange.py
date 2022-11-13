@@ -16,7 +16,6 @@ from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Upper
-from django.utils import timezone
 from titlecase import titlecase
 
 from busstops.models import (
@@ -375,7 +374,7 @@ class Command(BaseCommand):
         self.set_region(archive_name)
 
         self.source.datetime = datetime.datetime.fromtimestamp(
-            os.path.getmtime(archive_name), timezone.utc
+            os.path.getmtime(archive_name), datetime.timezone.utc
         )
 
         try:

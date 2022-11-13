@@ -1,0 +1,40 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - bustimes.org
+      if-modified-since:
+      - Sun, 13 Nov 2022 12:21:45 GMT
+    method: HEAD
+    uri: https://mytraveline.info/NOC/NOC_DB.csv
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Connection:
+      - Upgrade, Keep-Alive
+      Date:
+      - Sun, 13 Nov 2022 12:24:49 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Last-Modified:
+      - Thu, 03 Nov 2022 17:23:58 GMT
+      Server:
+      - Apache
+      Upgrade:
+      - h2,h2c
+      Vary:
+      - User-Agent
+    status:
+      code: 304
+      message: Not Modified
+version: 1
