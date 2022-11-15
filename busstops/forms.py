@@ -20,22 +20,23 @@ class ContactForm(forms.Form):
         if self.request and self.is_valid():
             message = self.cleaned_data["message"]
 
-            akismet = Akismet(
-                api_key=settings.AKISMET_API_KEY,
-                blog=settings.AKISMET_SITE_URL,
-            )
+            if settings.AKISMET_API_KEY:
+                akismet = Akismet(
+                    api_key=settings.AKISMET_API_KEY,
+                    blog=settings.AKISMET_SITE_URL,
+                )
 
-            is_spam = akismet.check(
-                user_ip=self.request.headers.get("do-connecting-ip"),
-                user_agent=self.request.headers.get("User-Agent"),
-                comment_type="contact-form",
-                comment_author=self.cleaned_data["name"],
-                comment_author_email=self.cleaned_data["email"],
-                comment_content=message,
-            )
+                is_spam = akismet.check(
+                    user_ip=self.request.headers.get("do-connecting-ip"),
+                    user_agent=self.request.headers.get("User-Agent"),
+                    comment_type="contact-form",
+                    comment_author=self.cleaned_data["name"],
+                    comment_author_email=self.cleaned_data["email"],
+                    comment_content=message,
+                )
 
-            if is_spam:
-                raise ValidationError("Spam detected", code="spam-protection")
+                if is_spam:
+                    raise ValidationError("Spam detected", code="spam-protection")
 
 
 class SearchForm(forms.Form):

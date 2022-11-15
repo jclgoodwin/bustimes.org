@@ -197,6 +197,18 @@ def contact(request):
                 reply_to=[form.cleaned_data["email"]],
             )
             message.send()
+            message = EmailMessage(
+                subject,
+                body,
+                "contactform@bustimes.org",
+                ["contact@bustimes.org"],
+                headers={
+                    "From": "{} <{}>".format(
+                        form.cleaned_data["name"], form.cleaned_data["email"]
+                    )
+                },
+            )
+            message.send()
             submitted = True
     else:
         referrer = request.META.get("HTTP_REFERER")
