@@ -119,8 +119,8 @@ class Command(BaseCommand):
                     == "{http://www.naptan.org.uk/}NationalPublicTransportGazetteer"
                 ):
                     modified_at = get_datetime(element.attrib["ModificationDateTime"])
-                    if modified_at == source.datetime:
-                        return
+                    # if modified_at == source.datetime:
+                    #     return
 
                     # print(modified_at, source.datetime)
 

@@ -41,12 +41,12 @@ class ImportNPTGTest(TestCase):
 
                     cassette.rewind()
 
-                    with self.assertNumQueries(4):
+                    with self.assertNumQueries(6):
                         call_command("nptg_new")
 
                     cassette.rewind()
 
-                    with self.assertNumQueries(4):
+                    with self.assertNumQueries(6):
                         call_command("nptg_new")
 
                     source = DataSource.objects.get(name="NPTG")
