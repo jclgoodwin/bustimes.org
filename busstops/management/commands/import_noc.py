@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 import requests
 from django.core.management import BaseCommand
 
-from ...models import Operator
+from ...models import DataSource, Operator, OperatorCode
 
 
 def get_region_id(region_id):
@@ -35,11 +35,30 @@ class Command(BaseCommand):
 
         response = requests.get(url)
 
+        code_sources = [
+            (col, DataSource.objects.get_or_create(name=name)[0])
+            for col, name in (
+                ("NOCCODE", "National Operator Codes"),
+                ("LO", "L"),
+                ("SW", "SW"),
+                ("WM", "WM"),
+                ("WA", "W"),
+                ("YO", "Y"),
+                ("NW", "NW"),
+                ("NE", "NE"),
+                ("SC", "S"),
+                ("SE", "SE"),
+                ("EA", "EA"),
+                ("EM", "EM"),
+            )
+        ]
+
         operators = Operator.objects.prefetch_related(
             "operatorcode_set", "licences"
         ).in_bulk()
 
         to_update = []
+        operator_codes = []
         modes = set()
 
         for row in csv.DictReader(io.StringIO(response.text)):
@@ -69,7 +88,23 @@ class Command(BaseCommand):
                 operator.noc = noc
                 operator.save(force_insert=True)
 
-        # Operator.objects.bulk_update(to_update, ["name"])
+                operator_codes.append(
+                    OperatorCode(source=code_sources[0][1], code=noc, operator=operator)
+                )
+
+                for col, source in code_sources[1:]:
+                    if row[col] and row[col] != noc:
+                        operator_codes.append(
+                            OperatorCode(
+                                source=source,
+                                code=row[col],
+                                operator=operator,
+                            )
+                        )
+
+            # Operator.objects.bulk_update(to_update, ["name"])
+
+        OperatorCode.objects.bulk_create(operator_codes)
 
         return
 

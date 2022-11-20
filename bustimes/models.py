@@ -350,7 +350,7 @@ class Trip(models.Model):
         new_trip.id = None
         new_trip.start += difference
         new_trip.end += difference
-        new_trip.save()
+        new_trip.save(force_insert=True)
         for stop_time in times:
             stop_time.id = None
             if stop_time.arrival is not None:
@@ -358,7 +358,7 @@ class Trip(models.Model):
             if stop_time.departure is not None:
                 stop_time.departure += difference
             stop_time.trip = new_trip
-            stop_time.save()
+            stop_time.save(force_insert=True)
 
     def __repr__(self):
         return str(self.start)

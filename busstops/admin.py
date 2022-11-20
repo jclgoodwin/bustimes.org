@@ -318,7 +318,7 @@ class ServiceAdmin(GISModelAdmin):
 
         first.do_stop_usages()
         first.update_geometry()
-        first.save()
+        first.save(force_update=True)
 
         first.update_description()
         first.update_search_vector()
@@ -343,7 +343,7 @@ class ServiceAdmin(GISModelAdmin):
                         service.description = route.description
                         service.search_vector = None
                         service.slug = ""
-                        service.save()
+                        service.save(force_insert=True)
                         service.operator.set(operators)
                         services_by_line_name[route.line_name] = service.id
                     route.service_id = services_by_line_name[route.line_name]
