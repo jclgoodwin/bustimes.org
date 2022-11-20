@@ -65,9 +65,7 @@ class Command(BaseCommand):
 
             url = source.url.format(f"{service.line_name}/1665964800/1666137600")
 
-            response = self.session.get(
-                url, timeout=10
-            )
+            response = self.session.get(url, timeout=10)
             if not response.from_cache:
                 sleep(2)
             data = response.json()
@@ -118,7 +116,7 @@ class Command(BaseCommand):
             if route_link:
                 route_link.to_stop = stop_time.stop
                 try:
-                    route_link.save()
+                    route_link.save(force_insert=True)
                 except IntegrityError:
                     pass
                 else:

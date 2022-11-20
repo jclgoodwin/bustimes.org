@@ -33,7 +33,7 @@ class ImportOperatorsTest(TestCase):
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
         ):
-            with self.assertNumQueries(501):
+            with self.assertNumQueries(550):
                 call_command("import_noc")
 
         c2c = Operator.objects.get(noc="CC")
