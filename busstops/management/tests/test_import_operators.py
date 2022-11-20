@@ -2,9 +2,9 @@ from pathlib import Path
 
 import vcr
 from django.core.management import call_command
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
-from ...models import Region
+from ...models import Operator, Region
 
 
 class ImportOperatorsTest(TestCase):
@@ -21,64 +21,29 @@ class ImportOperatorsTest(TestCase):
         Region.objects.create(id="NW", name="North West")
         Region.objects.create(id="EA", name="East Anglia")
         Region.objects.create(id="Y", name="Yorkshire")
+        Region.objects.create(id="L", name="London")
+
+        Operator.objects.create(noc="A1CS", name="A1 Coaches")
 
     def test_import_noc(self):
 
         FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
-        with override_settings(DATA_DIR=FIXTURES_DIR):
-            with vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")):
+        with vcr.use_cassette(
+            str(FIXTURES_DIR / "noc.yaml"),
+            decode_compressed_response=True,
+        ):
+            with self.assertNumQueries(501):
                 call_command("import_noc")
 
-    # def test_operator_id(self):
-    #     """Is a strange NOC code (with an equals sign) correctly handled?"""
-    #     self.assertEqual(self.c2c.noc, "CC")
-    #     self.assertEqual(self.c2c.name, "c2c")
+        c2c = Operator.objects.get(noc="CC")
+        self.assertEqual(c2c.name, "c2c")
+        self.assertEqual(c2c.region_id, "GB")
+        self.assertEqual(c2c.vehicle_mode, "rail")
 
-    # def test_operator_region(self):
-    #     # Is the 'SC' region correctly identified as 'S' (Scotland)?
-    #     self.assertEqual(self.first_aberdeen.region, self.scotland)
+        aact = Operator.objects.get(noc="AACT")
+        self.assertEqual(aact.region_id, "Y")
+        self.assertEqual(aact.vehicle_mode, "bus")
 
-    #     # Is the 'Admin' region correctly identified as 'GB'?
-    #     self.assertEqual(self.c2c.region, self.great_britain)
-
-    # def test_operator_name(self):
-    #     """Is an uninformative OperatorPublicName like 'First' ignored in
-    #     favour of the OperatorReferenceName?
-    #     """
-    #     self.assertEqual(self.first_aberdeen.name, "First in Aberdeen")
-    #     self.assertEqual(self.c2c.name, "c2c")
-    #     self.assertEqual(self.weardale.name, "Weardale Community Transport")
-    #     self.assertEqual(self.catch22bus.name, "Catch22Bus Ltd")
-
-    #     command = import_operators.Command()
-
-    #     self.assertEqual(
-    #         command.get_name(
-    #             {
-    #                 "OperatorPublicName": "Oakwood Travel",
-    #                 "RefNm": "",
-    #                 "OpNm": "Catch22Bus Ltd",
-    #             }
-    #         ),
-    #         "Catch22Bus Ltd",
-    #     )
-    #     self.assertEqual(
-    #         command.get_name(
-    #             {"OperatorPublicName": "", "RefNm": "", "OpNm": "Loaches Coaches"}
-    #         ),
-    #         "Loaches Coaches",
-    #     )
-
-    # def test_operator_mode(self):
-    #     """Is an operator mode like 'DRT' expanded correctly to 'demand responsive transport'?"""
-    #     self.assertEqual(self.ace_travel.vehicle_mode, "demand responsive transport")
-    #     self.assertEqual(self.ace_travel.get_a_mode(), "A demand responsive transport")
-    #     self.assertEqual(self.c2c.get_a_mode(), "A rail")
-    #     self.assertEqual(self.first_aberdeen.get_a_mode(), "A bus")
-    #     self.assertEqual(self.weardale.get_a_mode(), "A community transport")
-
-    # @skip
-    # def test_operator_ignore(self):
-    #     """Were some rows correctly ignored?"""
-    #     self.assertFalse(len(Operator.objects.filter(noc="TVSR")))
+        actr = Operator.objects.get(noc="ACTR")
+        self.assertEqual(actr.vehicle_mode, "demand responsive transport")
