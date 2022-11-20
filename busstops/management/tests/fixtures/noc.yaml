@@ -10,31 +10,554 @@ interactions:
       - keep-alive
       User-Agent:
       - bustimes.org
-      if-modified-since:
-      - Sun, 13 Nov 2022 12:21:45 GMT
-    method: HEAD
+    method: GET
     uri: https://mytraveline.info/NOC/NOC_DB.csv
   response:
     body:
-      string: ''
+      string: 'NOCCODE,OperatorPublicName,RefNm,OpNm,Licence,TLRegOwn,Mode,ManDivNm,GpNme,EBSRAgent,LO,SW,WM,WA,YO,NW,NE,SC,SE,EA,EM,NI,NX,Megabus,"New
+        Bharat",Terravision,NCSD,Easybus,Yorks_RT,"Travel Enq",Comment,AuditDate,AuditEditor,AuditComment,Duplicate,"Date
+        Ceased","Cessation Comment"
+
+        1CTL,"1st Choice Transport Ltd","1st Choice Transport Ltd","1st Choice Transport
+        Ltd",PG1043352,WA,Bus,"1st Choice Transport Ltd",NoGroup_BusMode,,,,,1CTL,,,,,,,,,,,,,,,,,,,,,,,
+
+        2WTR,"2 Way Transport","2 Way Transport","2 Way Transport",,EM,Bus,"2 Way
+        Transport,",NoGroup_BusMode,,,,,,,,,,,,2WTR,,,,,,,,,,,,,,,,
+
+        3DCO,"3D Coaches","3D Coaches","Peter Kermeen & Elaine Fletcher",PC1020124,NE,Bus,"Peter
+        Kermeen & Elaine Fletcher,",NoGroup_BusMode,,,,,,,,3DC,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        5STR,"Five Star International Travel","Five Star","Philip Riley",PC0004237,NW,Bus,"Philip
+        Riley,",NoGroup_BusMode,,,,,,,2417,,,,,,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,,
+
+        =AW,"Transport for Wales","Transport for Wales (ATOC)","Transport for Wales",,Admin,Rail,"Transport
+        for Wales","Keolis Amey Wales Cymru",,,,=AW,=AW,,,AW,,=AW,=AW,=AW,,,,,,,,,,,"2018-11-06
+        00:00:00","Amy Brown","Updated public name",OK,,
+
+        =CC,c2c,"c2c (ATOC)",c2c,,Admin,Rail,Trenitalia,Trenitalia,,,,=CC,=CC,,,CC,,=CC,=CC,=CC,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =CH,"Chiltern Railways","Chiltern Railways (ATOC)","Arriva Uk Trains Limited",,Admin,Rail,"Arriva
+        Uk Trains Limited,","Arriva UK Trains",,,,=CH,=CH,,,CH,,=CH,=CH,=CH,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =CS,"Caledonian Sleeper","Caledonian Sleeper (ATOC)","Caledonian Sleeper",,Admin,Rail,"Caledonian
+        Sleeper,","Serco Caledonian Sleepers Ltd",,,,=CS,=CS,,,CS,,=CS,=CS,=CS,,,,,,,,,,,"2015-02-03
+        00:00:00","John Prince","Added for Roger Slevin",OK,,
+
+        =EM,"East Midlands Railway","East Midlands Railway (ATOC)","East Midlands
+        Railway",,Admin,Rail,"East Midlands Railway,",Abellio,Stagecoach,,,=EM,=EM,,,EM,,=EM,=EM,=EM,,,,,,,,,,,"2019-08-21
+        00:00:00","Amy Brown","Updated name and group info",OK,,
+
+        =ES,Eurostar,"Eurostar (ATOC)","Eurostar International Ltd",,Admin,Rail,"Eurostar
+        International Ltd,",NoGroup_RailMode,,,,=EP,=ES,,,ES,,=ES,=ES,=ES,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =FC,"First Capital Connect",,First,,Admin,Rail,"First,",First,,,,=FC,=FC,,,FC,,=FC,=FC,=FC,,,,,,,,,,,"2015-06-09
+        00:00:00","John Prince","Strikethrough SE code",OK,"2014-09-13 00:00:00",
+
+        =GC,"Grand Central","Grand Central Trains (ATOC)","Arriva Uk Trains Limited",,Admin,Rail,"Arriva
+        Uk Trains Limited,","Arriva UK Trains",,,,=GC,=GC,,,GC,,=GC,=GC,=GC,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =GN,"Great Northern",,"Great Northern",,Admin,Rail,"Govia Thameslink Railway,",GOVIA,,,,,,,,,,=GN,=GN,=GN,,,,,,,,,,,"2015-06-09
+        00:00:00","John Prince","Add local codes for EA, EM",OK,,
+
+        =GR,"London North Eastern Railway","formerly Great North Eastern Railway (ATOC)","LNER
+        Ltd",,Admin,Rail,"LNER Ltd",NoGroup_RailMode,,,,=GR,=GR,,,GR,,=GR,=GR,=GR,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =GW,"Great Western Railway","First Great Western Railway (ATOC)",FirstGroup,,Admin,Rail,"FirstGroup,",First,,,FGR,=GW,=GW,,,,,=GW,=GW,=GW,,,,,,,,,,,"2015-12-21
+        00:00:00","Steven Penn","Updating rebranding of FGW to GWR",OK,,
+
+        =GX,"Gatwick Express","Part of South Central franchise (ATOC)",Govia,,Admin,Rail,"Govia
+        Thameslink Railway,",GOVIA,,,,=GX,=GX,,,GX,,=GX,=GX,=GX,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =HC,"Heathrow Connect","Heathrow Connect (ATOC)","Heathrow Airport Holdings/FirstGroup",,Admin,Rail,"Heathrow
+        Airport Holdings/FirstGroup,","FGP Topco Limited",,,,=HC,=HC,,,HC,,=HC,=HC,=HC,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,"2018-06-29 00:00:00","Heathrow
+        Connect services replaced by TfL rail (XR)"
+
+        =HT,"Hull Trains","First Hull Trains (ATOC)",FirstGroup,,Admin,Rail,"FirstGroup,",First,,,,=HT,=HT,,,HT,,=HT,=HT,=HT,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =HX,"Heathrow Express","Heathrow Express (ATOC)","Heathrow Airport Holdings/FirstGroup",,Admin,Rail,"Heathrow
+        Airport Holdings/FirstGroup,","FGP Topco Limited",,,,=HX,=HX,,,HX,,=HX,=HX,=HX,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =IL,"Island Line","Island Line (South West Trains - Isle of Wight) (ATOC)","Island
+        Line",,Admin,Rail,"South Western Railway","First Group / MTR",,,,=IL,=IL,,,IL,,=IL,=IL,=IL,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =LE,"Greater Anglia","formerly ONE (ATOC)",Abellio,,Admin,Rail,"Abellio,","Nederlandse
+        Spoorwegen",,,,=LE,=LE,,,LE,,=LE,=LE,=LE,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,,
+
+        =LM,"West Midlands Trains","West Midlands Trains",Abellio,,Admin,Rail,"Abellio,","Nederlandse
+        Spoorwegen",,,,=LM,=LM,,,LM,,=LM,=LM,=LM,,,,,,,,,,,"2018-06-29 00:00:00","Amy
+        Brown","Changed public name from London Midland",OK,,
+
+        =LO,"London Overground","London Overground (TfL) - (ATOC)","Transport for
+        London",,Admin,Rail,"Transport for London,","Transport for London",,,,=LO,=LO,,,LO,,=LO,=LO,=LO,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =ME,Merseyrail,"Merseyrail (ATOC)",Serco-Abellio,,Admin,Rail,"Serco-Abellio,","Serco
+        / Abellio",,,,=ME,=ME,,,ME,,=ME,=ME,=ME,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,,
+
+        =NT,Northern,Northern,"Arriva Uk Trains Limited",,Admin,Rail,"Arriva Uk Trains
+        Limited,","Arriva UK Trains",,,,=NT,=NT,,2046,NT,,=NT,=NT,=NT,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =NY,"North Yorkshire Moors Railway","North Yorkshire Moors Railway","North
+        York Moors Historical Railway Trust Ltd",,Admin,Rail,"North York Moors Historical
+        Railway Trust Ltd,","North York Moors Historical Railway Trust Ltd",,,,,,,,NY,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =SE,Southeastern,"Southeastern (ATOC)",Govia,,Admin,Rail,"Govia Thameslink
+        Railway,",GOVIA,,,,=SE,=SE,,,SE,,=SE,=SE,=SE,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,,
+
+        =SN,Southern,"South Central franchise (ATOC)",Govia,,Admin,Rail,"Govia Thameslink
+        Railway,",GOVIA,,,,=SN,=SN,,,SN,,=SN,=SN,=SN,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,,
+
+        =SR,ScotRail,"ScotRail (ATOC)",Abellio,,Admin,Rail,"Abellio,","Nederlandse
+        Spoorwegen",,,,=SR,=SR,,,SR,,=SR,=SR,=SR,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,,
+
+        =SW,"South Western Railway","South West Trains (ATOC)","South West Trains",,Admin,Rail,"South
+        West Trains,","Stagecoach (UK Rail)",,,,=SW,=SW,,,SW,,=SW,=SW,=SW,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =SX,"Stansted Express","Stansted Express (ATOC)",Abellio,,Admin,Rail,"Abellio,","Nederlandse
+        Spoorwegen",,,,,,,,,,=SX,=SX,=SX,,,,,,,,,,,"2010-03-31 00:00:00","Mark Fell","Intial
+        NOC Build",OK,,
+
+        =TL,Thameslink,,Thameslink,,Admin,Rail,"Govia Thameslink Railway,",GOVIA,,,,,,,,,,=TL,=TL,=TL,,,,,,,,,,,"2015-06-09
+        00:00:00","John Prince","Add local codes for EA, EM",OK,,
+
+        =TP,"TransPennine Express","First TransPennine Express (ATOC)",FirstGroup,,Admin,Rail,"FirstGroup,",First,,,,=TP,=TP,,2143,TPX,,=TP,=TP,=TP,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =VT,"Avanti West Coast","Avanti West Coast (ATOC)","First Trentalia West Coast
+        Rail Limited",,Admin,Rail,"First Trentalia West Coast Rail Limited","First
+        Group / Trentalia",,,,=VT,=VT,,2165,VT,,=VT,=VT,=VT,,,,,,,,,,,"2021-11-11
+        00:00:00","Amy Brown",,OK,,
+
+        =WM,"West Midlands Railway","West Midlands Railway",Abellio,,Admin,Rail,"Abellio,","Nederlandse
+        Spoorwegen",,,,,,,,,,,,,,,,,,,,,,,"2018-06-29 00:00:00","Amy Brown",,,,
+
+        =WR,"West Coast Railways","West Coast Railway Co","West Coast Railway Company
+        Limited",,Admin,Rail,"West Coast Railway Company Limited,","West Coast Railway
+        Company Limited",,,,,,,,WR,,,,,,,,,,,,,,"Not the West Coast Line franchise,
+        this is the chartered route steam train company that operates on the national
+        rail network","2010-03-31 00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =XC,CrossCountry,"Crosscountry (ATOC)","Arriva Uk Trains Limited",,Admin,Rail,"Arriva
+        Uk Trains Limited,","Arriva UK Trains",,,,=XC,=XC,,,XC,,=XC,=XC,=XC,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        =XR,"TfL Rail","Crossrail (TfL)",Crossrail,,Admin,Rail,"Crossrail,","MTR Corporation
+        (Crossrail) Limited",,,,=XR,=XR,,,XR,,=XR,=XR,=XR,,,,,,,,,,,"2015-04-22 00:00:00","John
+        Prince","Public and Reference Names changed for Roger Slevin",OK,,
+
+        A1AT,A.1.A.Travel,"A 1 A Travel","A1A Ltd",PC0003982,NW,Bus,"A1A Ltd,",NoGroup_BusMode,,,,,,,2488,,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        A1CM,"A1 Cars & Minibuses","A1 Cars & Minibuses","Mohammed Khan",PC1090058,NW,Bus,"Mohammed
+        Khan,",NoGroup_BusMode,,,,,,,1124,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        A1CO,"A1 Coaches","A1 Coaches","A1 Coaches",,NE,Bus,"A1 Coaches,",NoGroup_BusMode,,,,,,,2286,ACO,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        A1CS,"A1 Coaches","A1 Minibus & Coach Services Ltd","A1 Minibus & Coach Services
+        Ltd",PM0002341,SC,Bus,"A1 Minibus & Coach Services Ltd,",NoGroup_BusMode,,,,,,,,,ACS,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        A1MC,"A1 MiniCoaches of Brierfield","A1 Mini Coaches","Rubina Bano Khan",PC1050703,NW,Bus,"Rubina
+        Bano Khan,",NoGroup_BusMode,,,,,,,AOM,,,,,,,,,,,,,,,,"2016-09-09 00:00:00","Amy
+        Brown","Replaced Trapeze code with new local code",OK,,
+
+        A1MC,"A1 MiniCoaches of Brierfield","A1 Mini Coaches","Rubina Bano Khan",PC1050703,NW,Bus,"Rubina
+        Bano Khan,",NoGroup_BusMode,,,,,,,A1MC,,,,,,,,,,,,,,,,"2016-09-09 00:00:00","Amy
+        Brown","Replaced Trapeze code with new local code",Dup,,
+
+        A2BC,"A2B Cars (Maesteg)","A2B Cars","Robert Bayford Williams",PG1056391,WA,Bus,"Robert
+        Bayford Williams,",NoGroup_BusMode,,,,,A2BC,,,,,,,,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,"2015-07-17 00:00:00","Ceased for Debra Glaves"
+
+        A2BR,"A2B Bus and Coach","A2B Bus and Coach","A2B Travel Group",PF2020005,EA,Bus,"A2B
+        Travel Group",NoGroup_BusMode,,,A2BR,,,,,,,A2BR,A2BR,,,,,,,,,,,,"2019-09-13
+        00:00:00","Amy Brown","Updated licence for Stuart Reynolds",,,
+
+        A2BS,"A2B Taxis",,"A2B Newquay Travel Ltd",PH1088109,SW,Bus,"A2B Newquay Travel
+        Ltd,",NoGroup_BusMode,,,A2B,,,,,,,,,,,,,,,,,,,,"2014-10-24 00:00:00","John
+        Prince","Added for Andy Hole",OK,,
+
+        A2BT,"A2B Express Travel","A2B Express Travel","Donald William Beresford",PH0007036,SW,Bus,"Donald
+        William Beresford,",NoGroup_BusMode,,,ET,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        A2BV,"A2B Travel","A2B Travel","A2B Travel (Uk) Ltd",PC1047147,NW,Bus,"A2B
+        Travel (Uk) Ltd,",NoGroup_BusMode,,,,,,,A2B,,,,,,,,,,,,,,,,"2016-09-08 00:00:00","Amy
+        Brown","Replaced Trapeze code with new local code",OK,,
+
+        A2BV,"A2B Travel","A2B Travel","A2B Travel (Uk) Ltd",PC1047147,NW,Bus,"A2B
+        Travel (Uk) Ltd,",NoGroup_BusMode,,,,,,,A2BV,,,,,,,,,,,,,,,,"2016-09-09 00:00:00","Amy
+        Brown","Replaced Trapeze code with new local code",Dup,,
+
+        A2BV,"A2B Travel","A2B Travel","A2B Travel (Uk) Ltd",PC1047147,NW,Bus,"A2B
+        Travel (Uk) Ltd,",NoGroup_BusMode,,,,,,,2527,,,,,,,,,,,,,,,,"2016-09-19 00:00:00","Amy
+        Brown","Added old local code back in",,,
+
+        A8TX,"Alton 8s",,"Alton 8s",,SW,Taxi,"Alton 8s",NoGroup_TaxiMode,,,A8,,,,,,,,,,,,,,,,,,,"Created
+        for Andy Hole","2016-07-28 00:00:00","Amy Brown",,,,
+
+        AABT,"B&B Taxis","B&B Taxis","B&B Taxis",,SE,Taxi,"B&B Taxis,",NoGroup_TaxiMode,,,,,,,,,,AABT,,,,,,,,,,,,,"2013-09-20
+        00:00:00","John Prince","Swap Public Name and Reference Name",OK,"2015-06-25
+        00:00:00","Data cleanse for David Dyson"
+
+        AACT,"A&A Coach Travel","A&A Coach Travel","A&A Coach Travel Ltd",PB2024186,Yo,Bus,"A&A
+        Coach Travel Ltd",NoGroup_BusMode,,,,,,ACT,,,,,,,,,,,,,,,,,,,,,,
+
+        AAMG,"The A & M Group (AAMG)","The A & M Group","Spangap Ltd",PD0001892,WM,Bus,"Spangap
+        Ltd,",NoGroup_BusMode,,,,AAM,,,,,,,,,,,,,,,,,,"Appears to be duplicated by
+        NOC code AMGR (main match)and AMMG - with WMTIS for review","2015-05-08 00:00:00","John
+        Prince","Ceased in favour of AMGR for Gary Leek",OK,"2015-05-08 00:00:00","Ceased
+        in favour of AMGR for Gary Leek"
+
+        AAPT,"A & P Travel","A & P Travel","A & P Travel Ltd",PF1041026,EA,Bus,"A
+        & P Travel Ltd,",NoGroup_BusMode,,,,,,,,,,,AAPT,,,,,,,,,,,,"2013-09-20 00:00:00","John
+        Prince","Swap Public Name and Reference Name",OK,,
+
+        AASC,"A & S Coaches",,"A & S Coaches",,EM,Bus,"A & S Coaches,",NoGroup_BusMode,,,,,,,,,,,,AASC,,,,,,,,,,,"2014-01-20
+        00:00:00","John Prince","Added for Stuart Reynolds",OK,,
+
+        AATR,"A A Travel (Cumbria) Limited","A A Travel","A A Travel (Cumbria) Limited",PC1054541,NE,Bus,"A
+        A Travel (Cumbria) Limited,",NoGroup_BusMode,,,,,,,,AAT,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        AB,"Air Berlin","Air Berlin","Etihad Airways",,Admin,Airline,"Etihad Airways,","Etihad
+        Airways",,,,,,,,,AB,,,,,,,,,,,,,,"2013-08-30 00:00:00","John Prince","Replace
+        blank PublicName with ReferenceName",OK,,
+
+        ABAC,"Abacab Coaches","Abacab Coaches","Christopher David Jones & Denise Jones",PG0007300,WA,Bus,"Christopher
+        David Jones & Denise Jones,",NoGroup_BusMode,,,,,ABAC,,,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,"2015-07-17
+        00:00:00","Not currently operating - Debra Glaves"
+
+        ABAS,"Abacus Coaches","Abacus Coaches","David Thomas Cooke",PF0001975,EM,Bus,"David
+        Thomas Cooke,",NoGroup_BusMode,,,,,,,,,,,,ABAS,,,,,,,,,,,"2013-09-20 00:00:00","John
+        Prince","Swap Public Name and Reference Name",OK,,
+
+        ABBL,"Abbotts of Leeming","Abbotts Of Leeming","Clifford George Abbott & James
+        Matthew Abbott",PB1078688,YO,Bus,"Clifford George Abbott & James Matthew Abbott,",NoGroup_BusMode,,,,,,ABB,,ABS,,,,,,,,,,,,ABB,,,"2014-08-13
+        00:00:00","John Prince","Add ABS as locl code for NE for Stuart Reynolds",OK,,
+
+        ABBS,"Abbey Cars (Hereford)","Abbey Cars","Edward Clive Gillanders",PD0001541,WM,Bus,"Edward
+        Clive Gillanders,",NoGroup_BusMode,,,ABB,ACA,ABBS,,,,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        ABBY,"Abbey Luxury Travel","Abbey Luxury Travel","Abbey Luxury Travel",,NW,Bus,"Abbey
+        Luxury Travel     ,",NoGroup_BusMode,,,,,,,1114,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABCC,"A B C Coach",,"A B C Coach Limited",PC1039614,NW,Bus,"A B C Coach Limited,",NoGroup_BusMode,,,,,,,ABCC,,,,,,,,,,,,,,,,"2015-09-08
+        00:00:00","John Prince","Added for John McCabe",OK,,
+
+        ABCF,"Argyll & Bute Council Ferries","Argyll & Bute Council Ferries","Argyll
+        & Bute Council Ferries",,SC,Ferry,"Argyll & Bute Council Ferries,","Local
+        Authority",,,,,,,,ABF,ABF,,,,,,,,,,,,,,"2013-08-30 00:00:00","John Prince","Replace
+        blank PublicName with ReferenceName",OK,,
+
+        ABCM,"Abbey Coaches (Midlands)","Abbey Coaches (Midlands)","Abbey Coaches
+        (Midlands) Ltd",PD1049480,WM,Bus,"Abbey Coaches (Midlands) Ltd,",NoGroup_BusMode,,,,ABC,,,,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABCT,"ABC Travel","ABC Travel","A B C Travel (Castle Douglas) Ltd",PM1058933,SC,Bus,"A
+        B C Travel (Castle Douglas) Ltd,",NoGroup_BusMode,,,,,,,,ABC,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,"2015-10-01
+        00:00:00","Licence ceased for Stuart McNeil"
+
+        ABCW,"Abbey Coachways Ltd","Abbey Coachways Ltd","Abbey Coachways Ltd",PB0000211,YO,Bus,"Abbey
+        Coachways Ltd,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABLL,"A & J Ballantyne","A & J Ballantyne","John Ballantyne & Audrey Ballantyne",PM0001835,SC,Bus,"John
+        Ballantyne & Audrey Ballantyne,",NoGroup_BusMode,,,,,,,,,BLL,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABLO,"Abellio London","Abellio London (West) (formerly Travel London)","Abellio
+        London Ltd",PK0003436,LO,Bus,"Abellio London Ltd,",Abellio,,TE,,,,,,,,ABLO,,,,,,,,,,,,,"2014-02-04
+        00:00:00","John Prince","Specify Lic Name",OK,,
+
+        ABLO,"Abellio London","Abellio London (West) (formerly Travel London)","Abellio
+        London Ltd",PK0003436,LO,Bus,"Abellio London Ltd,",Abellio,,CX,,,,,,,,,,,,,,,,,,,,,"2017-05-23
+        00:00:00","Amy Brown","Added local code CX",,,
+
+        ABNW,"Avon Buses",,"Avon Buses Ltd",PC1097846,NW,Bus,"Avon Buses Ltd,",NoGroup_BusMode,,,,,,,AVO,,,,,,,,,,,,,,,,"2016-09-08
+        00:00:00","Amy Brown","Replaced Trapeze code with new local code",OK,,
+
+        ABNW,"Avon Buses",,"Avon Buses Ltd",PC1097846,NW,Bus,"Avon Buses Ltd,",NoGroup_BusMode,,,,,,,AVON,,,,,,,,,,,,,,,,"2016-09-09
+        00:00:00","Amy Brown","Replaced Trapeze code with new local code",Dup,,
+
+        ABNW,"Avon Buses",,"Avon Buses Ltd",PC1097846,NW,Bus,"Avon Buses Ltd,",NoGroup_BusMode,,,,,,,2367,,,,,,,,,,,,,,,,"2016-09-19
+        00:00:00","Amy Brown","Added old local code back in",,,
+
+        ABPH,"A B Phillips","A B Phillips (Haverfordwest)","Alun Bowen Phillips",PG0006187,WA,Bus,"Alun
+        Bowen Phillips,",NoGroup_BusMode,,,,,ABPH,,,,,,,,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,,
+
+        ABPV,"Abacus Private Hire","Abacus Private Hire","Abacus Private Hire",,NW,Bus,"Abacus
+        Private Hire     ,",NoGroup_BusMode,,,,,,,1115,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABSU,"Abellio Surrey","Abellio Surrey (formerly Travel Surrey)","Abellio West
+        London Ltd",PK0001815,SE,Bus,"Abellio West London Ltd,",Abellio,,TS,,,,,,,,ABSU,,,,,,,,,,,,,"2015-06-15
+        00:00:00","John Prince","Data cleanse for David Dyson",OK,,
+
+        ABTA,"Abbey Taxis","Abbey Taxis","Abbey Taxis",,SW,Bus,"Abbey Taxis,",NoGroup_BusMode,,,ABT,,,,,,,,,,,,,,,,,,,"Schools
+        service","2013-08-30 00:00:00","John Prince","Replace blank PublicName with
+        ReferenceName",OK,"2015-07-03 00:00:00","Seasonal? for Andy Hole"
+
+        ABTB,"ABC Buses","ABC Buses","ABC Buses",,NW,Bus,"ABC Buses               ,",NoGroup_BusMode,,,,,,,1117,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABUS,ABUS,ABUS,"Alan James Peters",PH0005662,SW,Bus,"Alan James Peters,",NoGroup_BusMode,,,AB,,,,,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABXT,"A-B Taxis","A-B Taxis","A-B Taxis",,NW,Bus,"A-B Taxis               ,",NoGroup_BusMode,,,,,,,1118,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ABYD,"Abbey Coaches","Abbey Coaches","Abbey Coaches (Darwen) Ltd",PC1025063,NW,Bus,"Abbey
+        Coaches (Darwen) Ltd,",NoGroup_BusMode,,,,ABY,,,ABYD,,,,,,,,,,,,,,,,"2018-06-05
+        00:00:00","Amy Brown","Added local WM code",OK,,
+
+        ACAC,"A C Aldis and Company","A C Aldis and Company","A C Aldis & Co Ltd",PF1072644,SW,Bus,"A
+        C Aldis & Co Ltd,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ACAH,AirCoach,AirCoach,"Aircoach Limited",PM1106814,SC,Coach,"Aircoach Limited,",NoGroup_CoachMode,,,,,,,,ACA,ACH,,,,,,,,,,,,,,"2013-11-05
+        00:00:00","John Prince","Assumed to be PM1106814, owner changed from EA and
+        local code added, all for Scotland",OK,,
+
+        ACAS,"Ace Cars","Ace Cars","Ace Cars",,NW,Bus,"Ace Cars                ,",NoGroup_BusMode,,,,,,,1119,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ACCO,"A & C Coaches","A & C Coaches","William Craig Cowie",PH0006945,SW,Bus,"William
+        Craig Cowie,",NoGroup_BusMode,,,AE,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ACCS,"Access Anyone","Access Anyone","Access Anyone Ltd",PF1086657,SE,Bus,"Access
+        Anyone Ltd,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-09-20 00:00:00","John
+        Prince","Swap Public Name and Reference Name",OK,,
+
+        ACCT,"Arun Community Bus",,"Arun Community Bus",,SE,"CT Operator","Arun Community
+        Bus,","NoGroup_CT OperatorMode",,,,,,,,,,ACCT,,,,,,,,,,,,,"2015-06-30 00:00:00","John
+        Prince","Added for Stuart Reynolds",OK,,
+
+        ACCX,"Accrington & Hyndburn Taxis","Accrington & Hyndburn Taxis","Accrington
+        & Hyndburn Taxis",,NW,Bus,"Accrington & Hyndburn Taxis,",NoGroup_BusMode,,,,,,,1121,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ACEP,"ACE PRIVATE HIRE & MINIBUSES","Ace Private Hire","ACE PRIVATE HIRE &
+        MINIBusES",,NW,Bus,"ACE PRIVATE HIRE & MINIBusES                    ,",NoGroup_BusMode,,,,,,,1827,,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        ACER,"Ace Mini Coaches",,"Ace Travel",,SW,DRT,"Ace Travel,",NoGroup_DRTMode,,,ACE,,,,,,,,,,,,,,,,,,,,"2015-06-04
+        00:00:00","John Prince","Added for Andy Hole",OK,,
+
+        ACET,"Ace Mini Coaches","Ace Mini Coaches","Andrew John Mclean",PM2014327,SC,Bus,"Andrew
+        John Mclean,",NoGroup_BusMode,,,,,,,,,AJM,,,,,,,,,,,,,,"2019-09-10 00:00:00","Amy
+        Brown","Updated to new licence",OK,,
+
+        ACHR,"Atcost Hire","Atcost Hire","Atcost Hire",,NW,Bus,"Atcost Hire             ,",NoGroup_BusMode,,,,,,,1123,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ACHS,"Arleen Coaches","Arleen Coaches","Arleen Coach Hire & Services LTD",PH0003631,SW,Bus,"Arleen
+        Coach Hire & Services LTD",NoGroup_BusMode,,,ACH,,,,,,,,,,,,,,,,,,,,"2018-01-18
+        00:00:00","Amy Brown","Added for Andy Hole",,,
+
+        ACKC,"Acklams Coaches","Acklams Coaches Ltd","Acklams Coaches Ltd",PB1075166,YO,Bus,"Acklams
+        Coaches Ltd,",NoGroup_BusMode,,,,,,ACK,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ACLT,"ABC Coaches Ltd (Stoke on Trent)","ABC Coaches Ltd","Abc Coaches (2002)
+        Ltd",PD1020733,WM,Bus,"Abc Coaches (2002) Ltd,",NoGroup_BusMode,,,,ACL,,,,,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        ACLV,"ACL Travel (Weston super Mare)","ACL Travel","Matthew Bowden & Wayne
+        Jones",PH1050461,SW,Bus,"Matthew Bowden & Wayne Jones,",NoGroup_BusMode,,,ACL,,,,,,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,"2015-07-03 00:00:00","Seasonal?
+        for Andy Hole"
+
+        ACME,"Acme Transport Services","Acme Transport Services","Acme Bus Co Ltd",PF1102351,SE,Bus,"Acme
+        Bus Co Ltd,",NoGroup_BusMode,,,,,,,,,,ACME,,,,,,,,,,,,,"2015-06-15 00:00:00","John
+        Prince","Data cleanse for David Dyson",OK,,
+
+        ACMH,"Acorn of Tamworth",,"Acorn Coach And Minibus Hire Limited",PD1055648,WM,Bus,"Acorn
+        Coach And Minibus Hire Limited,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-07-29
+        00:00:00","John Prince","Added for Roger Slevin",OK,,
+
+        ACML,"Morse Coaches","Morse Coaches","A C Morse Ltd",PB1021397,YO,Bus,"A C
+        Morse Ltd,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,MCA,,,"2014-06-05 00:00:00","John
+        Prince","Operator Ceased",OK,"2014-06-05 00:00:00",
+
+        ACON,"Airport Connect","Airport Connect","Airport Connect",,NW,Bus,"Airport
+        Connect         ,",NoGroup_BusMode,,,,,,,1125,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ACOR,"Acorn Taxis (Bristol)","Acorn Taxis (Bristol)","Acorn Taxis (Bristol)",PH1127501,SW,Taxi,"Acorn
+        Taxis (Bristol)",NoGroup_TaxiMode,,,ACO,,,,,,,,,,,,,,,,,,,"Created for Andy
+        Hole","2016-08-08 00:00:00","Steven Penn","Created for Andy Hole",,,
+
+        ACRN,"Acorn Travel (Nottingham)","Acorn Travel (Nottingham)","Desmond Herbert
+        King & Madeline J King",PB0002653,EM,Bus,"Desmond Herbert King & Madeline
+        J King,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-09-20 00:00:00","John
+        Prince","Swap Public Name and Reference Name",OK,,
+
+        ACTL,"Astra Coach Travel",,"Astra Coach Travel Ltd",PH0006713,SW,Bus,"Astra
+        Coach Travel Ltd,",NoGroup_BusMode,,,ACTL,,,,,,,,,,,,,,,,,,,,"2015-09-21 00:00:00","John
+        Prince","Added for Andy Hole",OK,,
+
+        ACTR,"Accessible Caring Transport","Accessible Caring Tranpsort","Accessible
+        Caring Tranpsort",,WA,DRT,"Accessible Caring Tranpsort,",NoGroup_DRTMode,,,,,ACTR,,,,,,,,,,,,,,,,,"S19
+        Permint","2012-03-19 00:00:00","John Prince","Added for Wales",OK,,
+
+        ACTS,"Acacia Taxis",,"Acacia Taxis",,SW,DRT,"Acacia Taxis,",NoGroup_DRTMode,,,ACT,,,,,,,,,,,,,,,,,,,,"2015-06-15
+        00:00:00","John Prince","added for andy Hole",OK,,
+
+        ACYM,"Arriva Wales","Arriva Cymru","Arriva Cymru Ltd",PG0007245,WA,Bus,"Arriva
+        North West & Wales,",Arriva,,,,ACY,ACYM,,ACY,CR,,,,,,,,,,,,,,,"2016-09-08
+        00:00:00","Amy Brown","Replaced Trapeze code with new local code",OK,,
+
+        ACYM,"Arriva Wales","Arriva Cymru","Arriva Cymru Ltd",PG0007245,WA,Bus,"Arriva
+        North West & Wales,",Arriva,,,,,,,,,,,,,,,,,,,,,,,"2016-09-08 00:00:00","Amy
+        Brown","Replaced Trapeze code with new local code",Dup,,
+
+        ACYM,"Arriva Wales","Arriva Cymru","Arriva Cymru Ltd",PG0007245,WA,Bus,"Arriva
+        North West & Wales,",Arriva,,,,,ACYM,,,,,,,,,,,,,,,,,,"2014-03-24 00:00:00","John
+        Prince","Add four char version of local code",OK,,
+
+        ADAM,"Adams Travel (Manchester)","Adams Travel Manchester","Jonathan Peter
+        Monk",PC0005254,NW,Bus,"Jonathan Peter Monk,",NoGroup_BusMode,,,,,,,2204,,,,,,,,,,,,,,,,"2010-03-31
+        00:00:00","Mark Fell","Intial NOC Build",OK,,
+
+        ADAP,"ADAPT North East",ADAPT,"ADAPT North East",S22,NE,"CT Operator","ADAPT
+        North East,","NoGroup_CT OperatorMode",,,,,,,,ADA,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ADCB,"Aldborough Community Bus","Aldborough Community Bus","Aldborough Community
+        Bus",,EA,Permit,"Aldborough Community Bus,",NoGroup_PermitMode,,,,,,,,,,,ADCB,,,,,,,,,,,,"2013-09-20
+        00:00:00","John Prince","Swap Public Name and Reference Name",OK,,
+
+        ADDI,"Addison of Callendar","Addison News","Gordon Prentice Addison",PM0001718,SC,Bus,"Gordon
+        Prentice Addison,",NoGroup_BusMode,,,,,,,,,ADD,,,,,,,,,,,,,,"2015-12-11 00:00:00","Steven
+        Penn","Scotland code added",OK,,
+
+        ADDL,"Addlethorpe Mini Buses","Addlethorpe Mini Buses","Darryl Joseph Richardson",PF0001956,EM,Bus,"Darryl
+        Joseph Richardson,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-09-20 00:00:00","John
+        Prince","Swap Public Name and Reference Name",OK,,
+
+        ADDT,"Addison Travel",,"Anthony Martin Foye",PF1061496,EM,Bus,"Anthony Martin
+        Foye,",NoGroup_BusMode,,,,,,,,,,,,ADDT,,,,,,,,,,,"2015-08-24 00:00:00","John
+        Prince","Added for Stuart Reynolds",OK,,
+
+        ADER,"Arriva Derby",Arriva,"Arriva Midlands North Ltd",PC1116467,EM,Bus,"Arriva
+        in the Midlands,",Arriva,,,,DCT,,,,,,,,ADER,,,,,,,,,,,"2013-09-20 00:00:00","John
+        Prince","Swap Public Name and Reference Name",OK,,
+
+        ADEY,"Adeys Taxis","Adeys Taxis","Neil Francis Holder & Nigel Mark Holder",PG0007551,WA,Bus,"Neil
+        Francis Holder & Nigel Mark Holder,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ADPS,"AD''RAINS PSV","AD''RAINS PSV","Adrian Karl Griffiths",PH0006583,SW,Bus,"Adrian
+        Karl Griffiths,",NoGroup_BusMode,,,AD,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        ADST,"Bubble Travel","Bubble Travel","Bubble Travel Ltd",PC1057697,NW,Bus,"Bubble
+        Travel Ltd,",NoGroup_BusMode,,,,,,,ADST,,,,,,,,,,,,,,,,"2016-09-08 00:00:00","Amy
+        Brown","Replaced Trapeze code with new local code",OK,,
+
+        ADVN,"Advent Travel","Advent Travel","James Kirk Cumming",PC0002445,NW,Bus,"James
+        Kirk Cumming,",NoGroup_BusMode,,,,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        AETR,"Ace Mini Coaches","Ace Travel (Pontypool)","Susan Margaret Freer",PG0007149,WA,Bus,"Susan
+        Margaret Freer,",NoGroup_BusMode,,,,,AETR,,,,,,,,,,,,,,,,,,"2010-03-31 00:00:00","Mark
+        Fell","Intial NOC Build",OK,"2015-07-17 00:00:00","Ceased for Debra Glaves"
+
+        SCAA,SCA,,SCA,,SW,DRT,"SCA,",NoGroup_DRTMode,,,SCA,,,,,,,,,,,,,,,,,,,,"2015-06-04
+        00:00:00","John Prince","Added for Andy Hole",OK,,
+
+        SCAR,"SP Cars","SP Cars","SP Cars",,WA,Bus,"SP Cars,",NoGroup_BusMode,,,,,SCAR,,,,,,,,,,,,,,,,,,"2010-07-28
+        00:00:00","Martyn Dunn","added 28/07/2010",OK,,
+
+        SCBD,"Stagecoach East","Stagecoach East","Cambus Ltd",PF0000459,SW,Bus,"Stagecoach
+        East,",Stagecoach,Stagecoach,,SCBD,,,,,SIB,,SCBD,SCBD,,,,,,,,,,,,"2015-05-12
+        00:00:00","John Prince","Unceased for Roger Slevin",OK,,"Unceased for Roger
+        Slevin"
+
+        SCBL,"Stagecoach East Midlands",Stagecoach,"Lincolnshire Road Car Co Ltd",PB0001484,EM,Bus,"Stagecoach
+        East Midlands,",Stagecoach,Stagecoach,,,SEM,,,1936,,,,,SCBL,,,,,,,,,,,"2013-09-20
+        00:00:00","John Prince","Swap Public Name and Reference Name",OK,,
+
+        SCBT,"Scotland & Bates","Scotland & Bates","Richard Malcolm Bates & Georgina
+        Ann Bates",PK0000297,SE,Bus,"Richard Malcolm Bates & Georgina Ann Bates,",NoGroup_BusMode,,,,,,,,,,SCBT,,,,,,,,,,,,,"2013-09-20
+        00:00:00","John Prince","Swap Public Name and Reference Name",OK,,
+
+        SCBU,Scotbus,Scotbus,"Scotbus Ltd",PM1043672,SC,Bus,"Scotbus Ltd,",NoGroup_BusMode,,,,,,,,,SCO,,,,,,,,,,,,,,"2013-08-30
+        00:00:00","John Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        SCCD,"Stagecoach West","Stagecoach Cheltenham and District","Cheltenham District
+        Traction Co Ltd",PH0006239,WM,Bus,"Stagecoach West,",Stagecoach,Stagecoach,,,SCD,,,,,,,,,,,,,,,,,,,"2014-01-29
+        00:00:00","John Prince","Deleted for Chas Allen",OK,"2014-01-29 00:00:00",
+
+        SCCH,"Stagecoach West","Stagecoach in Cheltenham","Cheltenham & Gloucester
+        Omnibus Co Ltd",PH0005031,SW,Bus,"Stagecoach West,",Stagecoach,Stagecoach,,SCCH,,,,,,,,,,,,,,,,,,,,"2021-09-15
+        00:00:00","Amy Brown",,OK,,
+
+        SCCL,"Shropshire County Council","Shropshire County Council","Shropshire Council",PD1045301,WM,Bus,"Shropshire
+        Council,","Local Authority",,,,,,,,,,,,,,,,,,,,,,,"2013-08-30 00:00:00","John
+        Prince","Replace blank PublicName with ReferenceName",OK,,
+
+        SCCM,"Stagecoach East","Stagecoach East","Cambus Ltd",PF0000459,EA,Bus,"Stagecoach
+        East,",Stagecoach,Stagecoach,,SCCM,,,,,,,SCCM,SCCM,,,,,,,,,,,,"2015-05-12
+        00:00:00","John Prince","Public and Ref Name revised for Roger Slevin",OK,,
+
+        SCCM,"Stagecoach East","Stagecoach East","Cambus Ltd",PF0000459,EA,Bus,"Stagecoach
+        East,",Stagecoach,,,,,,,,,,,CA,,,,,,,,,,,,,,,,,
+
+        '
     headers:
       Accept-Ranges:
       - bytes
       Connection:
       - Upgrade, Keep-Alive
+      Content-Type:
+      - text/csv
       Date:
-      - Sun, 13 Nov 2022 12:24:49 GMT
+      - Sun, 20 Nov 2022 10:52:55 GMT
       Keep-Alive:
       - timeout=5, max=100
       Last-Modified:
-      - Thu, 03 Nov 2022 17:23:58 GMT
+      - Mon, 14 Nov 2022 18:13:34 GMT
       Server:
       - Apache
+      Transfer-Encoding:
+      - chunked
       Upgrade:
       - h2,h2c
       Vary:
-      - User-Agent
+      - Accept-Encoding,User-Agent
+      content-length:
+      - '788326'
     status:
-      code: 304
-      message: Not Modified
+      code: 200
+      message: OK
 version: 1
