@@ -62,6 +62,9 @@ class Command(BaseCommand):
         modes = set()
 
         for row in csv.DictReader(io.StringIO(response.text)):
+            if row["Date Ceased"]:
+                pass
+
             noc = row["NOCCODE"]
             if noc[:1] == "=":
                 noc = noc[1:]
