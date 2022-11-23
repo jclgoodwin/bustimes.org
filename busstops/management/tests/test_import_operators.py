@@ -23,7 +23,12 @@ class ImportOperatorsTest(TestCase):
         Region.objects.create(id="Y", name="Yorkshire")
         Region.objects.create(id="L", name="London")
 
-        Operator.objects.create(noc="A1CS", name="A1 Coaches")
+        # Operator.objects.create(noc="A1CS", name="A1 Coaches")
+        # Operator.objects.create(noc="AMSY", name="Arriva North West")
+        # Operator.objects.create(noc="ANWE", name="Arriva North West")
+        # Operator.objects.create(noc="AMAN", name="Arriva North West")
+        # Operator.objects.create(noc="AMID", name="Arriva Midlands")
+        # Operator.objects.create(noc="AFCL", name="Arriva Midlands")
 
     def test_import_noc(self):
 
@@ -33,7 +38,7 @@ class ImportOperatorsTest(TestCase):
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
         ):
-            with self.assertNumQueries(550):
+            with self.assertNumQueries(3861):
                 call_command("import_noc")
 
         c2c = Operator.objects.get(noc="CC")

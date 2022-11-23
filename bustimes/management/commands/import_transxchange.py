@@ -849,6 +849,9 @@ class Command(BaseCommand):
         destination = txc_service.destination
 
         if origin and destination:
+            if origin[:4].isdigit() and destination[:4].isdigit():
+                print(origin, destination)
+
             if origin.isupper() and destination.isupper():
                 txc_service.origin = origin = titlecase(origin, callback=initialisms)
                 txc_service.destination = destination = titlecase(
