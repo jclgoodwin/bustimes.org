@@ -68,6 +68,7 @@ class Vehicles:
 
 
 @require_GET
+@cache_control_s_maxage(60)
 def vehicles(request):
     """index of recently AVL-enabled operators, etc"""
 
@@ -107,12 +108,13 @@ def vehicles(request):
 
 
 @require_GET
+@cache_control_s_maxage(3600)
 def map(request):
     return render(request, "map.html", {"liveries_css_version": liveries_css_version()})
 
 
 @cache_control(max_age=3600)
-def liveries_css(request, version=None):
+def liveries_css(request, version=0):
     styles = []
     liveries = Livery.objects.filter(published=True).order_by("id")
     for livery in liveries:
