@@ -24,7 +24,7 @@ ENV PATH=$POETRY_HOME/bin:$PATH
 WORKDIR /app/
 
 COPY poetry.lock pyproject.toml /app/
-RUN poetry install --no-dev
+RUN poetry install --only main
 
 COPY . /app/
 COPY --from=0 /app/busstops/static /app/busstops/static
