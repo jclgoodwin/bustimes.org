@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 
 import requests
 from django.core.management import BaseCommand
+from django.utils.text import slugify
 
 from ...models import DataSource, Operator, OperatorCode
 
@@ -29,12 +30,71 @@ def get_mode(mode):
     return mode
 
 
+def noc_csv(code_sources: list, operators: dict):
+    operator_codes = []
+    names = {}
+
+    url = "https://mytraveline.info/NOC/NOC_DB.csv"
+
+    response = requests.get(url)
+
+    for row in csv.DictReader(io.StringIO(response.text)):
+        if row["Date Ceased"]:
+            pass
+
+        noc = row["NOCCODE"]
+        if noc[:1] == "=":
+            noc = noc[1:]
+        assert "=" not in noc
+
+        mode = get_mode(row["Mode"])
+
+        if noc in operators:
+            operator = operators[noc]
+        else:
+            operator = Operator(
+                region_id=get_region_id(row["TLRegOwn"]), vehicle_mode=mode
+            )
+            operators[noc] = operator
+
+        if noc == "AMSY":
+            operator.name = row["RefNm"]
+        else:
+            operator.name = row["OperatorPublicName"]
+
+        slug = operator.slug or slugify(operator.name)
+
+        if not operator.noc:
+            operator.noc = noc
+
+            if slug in names:  # cope with duplicate slug
+                if not names[slug].slug:
+                    names[slug].save(force_insert=True)
+                    operator.save(force_insert=True)
+
+            operator_codes.append(
+                OperatorCode(source=code_sources[0][1], code=noc, operator=operator)
+            )
+
+            for col, source in code_sources[1:]:
+                if row[col] and row[col] != noc:
+                    operator_codes.append(
+                        OperatorCode(
+                            source=source,
+                            code=row[col],
+                            operator=operator,
+                        )
+                    )
+
+        names[slug] = operator
+
+    to_create = [o for o in operators.values() if not o.slug]
+    Operator.objects.bulk_create(to_create)
+    OperatorCode.objects.bulk_create(operator_codes)
+
+
 class Command(BaseCommand):
     def handle(self, **kwargs):
-        url = "https://mytraveline.info/NOC/NOC_DB.csv"
-
-        response = requests.get(url)
-
         code_sources = [
             (col, DataSource.objects.get_or_create(name=name)[0])
             for col, name in (
@@ -57,64 +117,12 @@ class Command(BaseCommand):
             "operatorcode_set", "licences"
         ).in_bulk()
 
-        to_update = []
-        operator_codes = []
-        modes = set()
+        noc_csv(code_sources, operators)
 
-        for row in csv.DictReader(io.StringIO(response.text)):
-            if row["Date Ceased"]:
-                pass
+        # names = set()
 
-            noc = row["NOCCODE"]
-            if noc[:1] == "=":
-                noc = noc[1:]
-            assert "=" not in noc
-
-            mode = get_mode(row["Mode"])
-            modes.add(mode)
-
-            if noc in operators:
-                operator = operators[noc]
-                to_update.append(operator)
-            else:
-                operator = Operator(
-                    region_id=get_region_id(row["TLRegOwn"]), vehicle_mode=mode
-                )
-                operators[noc] = operator
-
-            if noc == "AMSY":
-                operator.name = row["RefNm"]
-            else:
-                operator.name = row["OperatorPublicName"]
-
-            if not operator.noc:
-                operator.noc = noc
-                operator.save(force_insert=True)
-
-                operator_codes.append(
-                    OperatorCode(source=code_sources[0][1], code=noc, operator=operator)
-                )
-
-                for col, source in code_sources[1:]:
-                    if row[col] and row[col] != noc:
-                        operator_codes.append(
-                            OperatorCode(
-                                source=source,
-                                code=row[col],
-                                operator=operator,
-                            )
-                        )
-
-            # Operator.objects.bulk_update(to_update, ["name"])
-
-        OperatorCode.objects.bulk_create(operator_codes)
-
-        return
-
-        session = requests.Session()
-        # session = requests_cache.CachedSession()
         url = "https://www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml"
-        response = session.get(url)
+        response = requests.get(url)
         element = ET.fromstring(response.text)
 
         public_names = {}
@@ -162,6 +170,9 @@ class Command(BaseCommand):
                     noc=noc, name=e.findtext("OperatorPublicName")
                 )
 
+                # if operator.name in names:
+                #     operator.save(force_insert=True)
+                # else:
                 to_create.append(operators[noc])
 
             else:
@@ -178,7 +189,9 @@ class Command(BaseCommand):
 
                 operators[noc].url = public_name.findtext("Website")
 
-        Operator.objects.bulk_create(to_create)
+            # names.add(operators[noc].name)
+
+        # Operator.objects.bulk_create(to_create)
 
         # licences = {}
         # for e in element.find("Licence"):
