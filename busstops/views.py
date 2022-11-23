@@ -28,6 +28,7 @@ from django.views.generic.detail import DetailView
 from sql_util.utils import Exists
 from ukpostcodeutils import validation
 
+from buses.utils import cache_control_s_maxage
 from bustimes.models import Trip
 from departures import live
 from disruptions.models import Consequence, Situation
@@ -136,7 +137,7 @@ def error(request):
     return response
 
 
-@cache_control(s_maxage=3600)
+@cache_control(max_age=3600)
 def robots_txt(request):
     if request.get_host() == "bustimes.org":  # live site
         content = """User-agent: *
@@ -237,7 +238,7 @@ def timetable_source_stats(request):
     return JsonResponse(cache.get("timetable-source-stats", []), safe=False)
 
 
-@cache_control(s_maxage=3600)
+@cache_control_s_maxage(3600)
 def stops(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
@@ -1052,7 +1053,7 @@ def service_timetable(request, service_id):
     return render(request, "timetable.html", context)
 
 
-@cache_control(s_maxage=7200)
+@cache_control(max_age=7200)
 def service_map_data(request, service_id):
     service = get_object_or_404(
         Service.objects.only("geometry", "line_name", "service_code"),

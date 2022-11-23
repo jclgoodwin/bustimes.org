@@ -27,6 +27,7 @@ from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
+from buses.utils import cache_control_s_maxage
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage
@@ -296,6 +297,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
 
 @require_GET
+@cache_control_s_maxage(3600)
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)
 
