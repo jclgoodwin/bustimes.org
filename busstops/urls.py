@@ -4,6 +4,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
 from django.views.generic.base import TemplateView
 
+from buses.utils import cache_control_s_maxage
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
 from fares import mytrip
@@ -22,7 +23,7 @@ sitemaps = {
 urlpatterns = [
     path(
         "",
-        cache_control(s_maxage=3600)(TemplateView.as_view(template_name="index.html")),
+        cache_control_s_maxage(3600)(TemplateView.as_view(template_name="index.html")),
     ),
     path("offline", TemplateView.as_view(template_name="offline.html")),
     path("version", views.version),
@@ -66,7 +67,7 @@ urlpatterns = [
     ),
     path(
         "stops/<pk>",
-        cache_control(s_maxage=60)(views.StopPointDetailView.as_view()),
+        cache_control_s_maxage(60)(views.StopPointDetailView.as_view()),
         name="stoppoint_detail",
     ),
     path("stations/<pk>", views.StopAreaDetailView.as_view(), name="stoparea_detail"),
