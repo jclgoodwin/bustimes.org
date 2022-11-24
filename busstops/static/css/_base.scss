@@ -399,6 +399,18 @@ form p select {
     opacity: .5;
 }
 
+.groupings {
+    display: flex;
+    gap: 2em;
+    flex-wrap: wrap;
+    align-items: middle;
+}
+
+.grouping {
+    flex-grow: 1;
+    max-width: 100%;
+}
+
 .timetable-date {
     select {
         padding: .5em 1.5em .5em .5em;
