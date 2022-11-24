@@ -360,14 +360,6 @@ textarea {
     }
 }
 
-input[type='date'] {
-    max-width: 9em;
-}
-
-input[type='time'] {
-    max-width: 6em;
-}
-
 ::-webkit-datetime-edit {
     padding: 0;
 }
@@ -1320,10 +1312,6 @@ input:not(:checked) + label {
     word-wrap: break-word;
 }
 
-.asides {
-    overflow: hidden;
-}
-
 .aside {
     clear: right; // clear departures 'Later ↓'
     margin-top: 1em;
@@ -1375,8 +1363,15 @@ input:not(:checked) + label {
         text-align: right;
     }
 
-    input {  // datetime picker
-        margin: 0 .5em .5em 0;
+     // datetime picker
+    form {
+        display: flex;
+        gap: .5em;
+        margin-bottom: .5em;
+    }
+
+    input {
+        flex-grow: 1;
     }
 }
 
