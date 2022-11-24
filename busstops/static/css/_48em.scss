@@ -47,7 +47,8 @@ h1 {
 }
 
 .aside {
-    flex-basis: 300px;
+    flex-basis: 0;
+    min-width: 300px;
     flex-grow: 1;
     margin-top: 0;
 }
