@@ -31,9 +31,8 @@
 
     {% cache 3600 timetable object.id object.modified_at timetable.detailed timetable.calendar_ids timetable.calendar.id form.cleaned_data.service %}
 
-    <div class="groupings">
-
     {% for grouping in timetable.render.groupings %}
+        {% if forloop.first %}<div class="groupings">{% endif %}
 
         <div class="grouping">
 
@@ -144,6 +143,7 @@
 
         </div>
 
+        {% if forloop.last %}</div>{% endif %}
     {% empty %}
         {% if timetable.date %}
             <p>Sorry, no journeys found for {{ timetable.date }}</p>
@@ -155,8 +155,6 @@
 
         {% include 'route.html' %}
     {% endfor %}
-
-    </div>
 
     {% if timetable.has_set_down_only %}
         <p>Times marked <strong>s</strong> – “set down only” – the {{ object.mode }} will only stop to drop passengers off</p>

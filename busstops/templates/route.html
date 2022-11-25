@@ -1,6 +1,8 @@
+<div class="groupings">
 {% for stopusage in stopusages %}
     {% ifchanged stopusage.direction %}
-        {% if not forloop.first %}</ul>{% endif %}
+        {% if not forloop.first %}</ul></div>{% endif %}
+        <div class="grouping">
         <h2>
             {{ stopusage.direction.capitalize }}
         </h2>
@@ -16,6 +18,7 @@
         </li>
     {% endif %}{% endifchanged %}
     {% if forloop.last %}
-        </ul>
+        </ul></div>
     {% endif %}
 {% endfor %}
+</div>
