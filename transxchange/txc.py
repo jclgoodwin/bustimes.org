@@ -517,9 +517,9 @@ class DateRange:
     def __init__(self, element):
         self.start = element.findtext("StartDate")
         self.end = element.findtext("EndDate")
-        self.start = datetime.date.fromisoformat(self.start)
+        self.start = datetime.date.fromisoformat(self.start.strip())
         if self.end:
-            self.end = datetime.date.fromisoformat(self.end)
+            self.end = datetime.date.fromisoformat(self.end.strip())
         self.note = element.findtext("Note", "")
         self.description = element.findtext("Description", "")
 
