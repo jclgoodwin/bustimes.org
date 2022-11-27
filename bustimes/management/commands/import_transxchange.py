@@ -1254,7 +1254,7 @@ class Command(BaseCommand):
                     existing_route_links = {}
                 else:
                     existing_route_links = {
-                        (link.from_stop_id, link.to_stop_id): link
+                        (link.from_stop_id.upper(), link.to_stop_id.upper()): link
                         for link in service.routelink_set.all()
                     }
                 route_links_to_update = {}
