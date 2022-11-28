@@ -1,7 +1,10 @@
 from datetime import datetime, timezone
+
 from django.contrib.gis.geos import Point
+
 from busstops.models import Service
-from ...models import VehicleLocation, VehicleJourney
+
+from ...models import VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -14,7 +17,11 @@ class Command(ImportLiveVehiclesCommand):
     previous_locations = {}
 
     def get_datetime(self, item):
-        return datetime.fromtimestamp(item["last_gps_fix"], timezone.utc)
+        timestamp = item["last_gps_fix"]
+        if item["source"] == "MyBusTracker":
+            assert item["last_gps_fix_secs"] > 3600
+            timestamp += 3600
+        return datetime.fromtimestamp(timestamp, timezone.utc)
 
     def get_items(self):
         items = super().get_items()
