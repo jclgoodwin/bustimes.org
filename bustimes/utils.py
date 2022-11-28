@@ -44,7 +44,6 @@ def get_routes(routes, when=None, from_date=None):
             parts = route.code.split("_")
             looks_like_ticketer_route = (
                 7 >= len(parts) >= 6
-                and parts[2].startswith(parts[0])
                 and parts[3].isdigit()
                 and (parts[4].isdigit() or parts[4] == "-")
                 and len(parts[-1]) == 40
