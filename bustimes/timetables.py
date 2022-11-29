@@ -119,9 +119,8 @@ class Timetable:
         self.operators = operators
 
         routes = list(routes.select_related("source"))
-        self.routes = (
-            self.current_routes
-        ) = routes  # self.current_routes is a subset of self.routes
+        self.routes = self.current_routes = routes
+        # self.current_routes is a subset of self.routes
 
         self.date = date
         self.detailed = detailed
