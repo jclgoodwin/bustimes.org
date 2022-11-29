@@ -119,8 +119,9 @@ class Timetable:
         self.operators = operators
 
         routes = list(routes.select_related("source"))
-        self.routes = routes
-        self.current_routes = routes
+        self.routes = (
+            self.current_routes
+        ) = routes  # self.current_routes is a subset of self.routes
 
         self.date = date
         self.detailed = detailed
@@ -130,19 +131,20 @@ class Timetable:
 
         self.calendar = None
         self.start_date = None
-        if not routes:
+        if not self.routes:
             self.calendars = None
             return
 
         if not date and len(routes) > 1:
             current_routes = get_routes(routes, from_date=self.today)
             if len(current_routes) == 1:
-                routes = current_routes
+                # completely ignore expired routes
+                self.routes = self.current_routes = current_routes
 
         four_weeks_time = self.today + datetime.timedelta(days=28)
 
         self.calendars = list(
-            Calendar.objects.filter(Exists("trip", filter=Q(route__in=routes)))
+            Calendar.objects.filter(Exists("trip", filter=Q(route__in=self.routes)))
             .annotate(
                 bank_holiday_inclusions=ArrayAgg(
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
@@ -163,6 +165,8 @@ class Timetable:
             )
             .prefetch_related("calendardate_set")
         )
+
+        print(self.calendars)
 
         if not self.date and self.calendars:
             if len(self.calendars) == 1:
