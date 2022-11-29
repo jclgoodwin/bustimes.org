@@ -29,6 +29,8 @@ class EdinburghImportTest(TestCase):
         command.source = self.source
 
         item = {
+            "last_gps_fix_secs": 19,
+            "source": "Icomera Wi-Fi",
             "journey_id": "1135",
             "vehicle_id": "3032",
             "destination": "Yoker",
