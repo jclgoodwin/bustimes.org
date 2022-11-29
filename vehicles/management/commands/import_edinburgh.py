@@ -18,8 +18,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def get_datetime(self, item):
         timestamp = item["last_gps_fix"]
-        if item["source"] == "MyBusTracker":
-            assert item["last_gps_fix_secs"] > 3600
+        if item["source"] == "MyBusTracker" and item["last_gps_fix_secs"] > 3600:
             timestamp += 3600
         return datetime.fromtimestamp(timestamp, timezone.utc)
 
