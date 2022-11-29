@@ -210,7 +210,7 @@ class Command(ImportLiveVehiclesCommand):
                 and len(defaults["fleet_number"]) == 5
             ):
                 # 20 may 2022 - some First vehicle refs changed :(
-                condition |= Q(code=defaults["fleet_number"])
+                condition |= Q(fleet_code=defaults["fleet_number"])
             else:
                 if "_-_" in vehicle_ref:
                     fleet_number, reg = vehicle_ref.split("_-_", 2)
