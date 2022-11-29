@@ -210,7 +210,7 @@ class Command(ImportLiveVehiclesCommand):
                 and len(defaults["fleet_number"]) == 5
             ):
                 # 20 may 2022 - some First vehicle refs changed :(
-                condition |= Q(fleet_code=defaults["fleet_number"])
+                condition |= Q(fleet_code__iexact=defaults["fleet_number"])
             else:
                 if "_-_" in vehicle_ref:
                     fleet_number, reg = vehicle_ref.split("_-_", 2)
@@ -225,7 +225,7 @@ class Command(ImportLiveVehiclesCommand):
                     condition |= Q(reg=reg)
                 elif operator_ref == "WHIP":
                     code = vehicle_ref.replace("_", "")
-                    condition |= Q(fleet_code=code)
+                    condition |= Q(fleet_code__iexact=code)
         vehicles = vehicles.filter(condition)
 
         try:
