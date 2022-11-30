@@ -143,6 +143,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             <tr>
                 <td>00:00:00.000000</td>
                 <td>15:14:46.261274</td>
+                <td>-85 days, 8:45:13.738726</td>
                 <td>841</td>
                 <td>841</td>
             </tr>""",
@@ -153,6 +154,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             <tr>
                 <td>00:00:00.000000</td>
                 <td>15:14:46.261274</td>
+                <td>-85 days, 8:45:13.738726</td>
                 <td>841</td>
                 <td>0</td>
             </tr>""",
