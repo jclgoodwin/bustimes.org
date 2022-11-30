@@ -93,6 +93,7 @@
         <tr>
             <th scope="col">Fetched</th>
             <th scope="col">Timestamp</th>
+            <th scope="col">Age</th>
             <th scope="col">Items</th>
             <th scope="col">Changed items</th>
         </tr>
@@ -100,10 +101,11 @@
     <tbody>
         {% for item in bod_avl_status %}
             <tr>
-                <td>{{ item.0|date:'H:i:s.u' }}</td>
-                <td>{{ item.1|date:'H:i:s.u' }}</td>
-                <td>{{ item.2 }}</td>
-                <td>{{ item.3 }}</td>
+                <td>{{ item.fetched|date:'H:i:s.u' }}</td>
+                <td>{{ item.timestamp|date:'H:i:s.u' }}</td>
+                <td>{{ item.age }}</td>
+                <td>{{ item.items }}</td>
+                <td>{{ item.changed }}</td>
             </tr>
         {% endfor %}
     </tbody>

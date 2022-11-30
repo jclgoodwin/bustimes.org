@@ -218,13 +218,25 @@ def status(request):
         ),
     ).order_by("url")
 
+    status = cache.get("bod_avl_status", [])
+    status = [
+        {
+            "fetched": item[0],
+            "timestamp": item[1],
+            "age": item[0] - item[1],
+            "items": item[2],
+            "changed": item[3],
+        }
+        for item in status
+    ]
+
     return render(
         request,
         "status.html",
         {
             "nptg": DataSource.objects.filter(name="NPTG").first(),
             "naptan": DataSource.objects.filter(name="NaPTAN").first(),
-            "bod_avl_status": cache.get("bod_avl_status", []),
+            "bod_avl_status": status,
             "tnds": sources.filter(url__contains="tnds.basemap"),
         },
     )
