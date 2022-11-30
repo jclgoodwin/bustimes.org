@@ -165,8 +165,6 @@ class Timetable:
             .prefetch_related("calendardate_set")
         )
 
-        print(self.calendars)
-
         if not self.date and self.calendars:
             if len(self.calendars) == 1:
                 calendar = self.calendars[0]
