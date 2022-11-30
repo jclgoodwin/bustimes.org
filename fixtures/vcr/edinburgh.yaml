@@ -11,46 +11,6 @@ interactions:
       User-Agent:
       - python-requests/2.27.1
     method: GET
-    uri: http://tfe-opendata.com/api/v1/live_bus_times/36238258
-  response:
-    body:
-      string: ''
-    headers:
-      CF-RAY:
-      - 71b304bb7a22e67c-LHR
-      Cache-Control:
-      - max-age=3600
-      Date:
-      - Tue, 14 Jun 2022 12:20:10 GMT
-      Expires:
-      - Tue, 14 Jun 2022 13:20:10 GMT
-      Location:
-      - https://tfe-opendata.com/api/v1/live_bus_times/36238258
-      NEL:
-      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
-      Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=wv9FCy72W4vr7Y4oR4nkCkI%2FwaLailBexMdMi07C9wxkdiP92JniRyKo8vBAD8yWDkgjRsh1N8AnKUus4ePbB6oqhdcXEqyqAeQdG7PIn2IUhf95gIUVCY2h7uFZCDQewa4x"}],"group":"cf-nel","max_age":604800}'
-      Server:
-      - cloudflare
-      Transfer-Encoding:
-      - chunked
-      alt-svc:
-      - h3=":443"; ma=86400, h3-29=":443"; ma=86400
-    status:
-      code: 301
-      message: Moved Permanently
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.27.1
-    method: GET
     uri: https://tfe-opendata.com/api/v1/live_bus_times/36238258
   response:
     body:

@@ -9,7 +9,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    url = "http://tfe-opendata.com/api/v1/vehicle_locations"
+    url = "https://tfe-opendata.com/api/v1/vehicle_locations"
     source_name = "TfE"
     services = Service.objects.filter(
         operator__in=("LOTH", "EDTR", "ECBU", "NELB"), current=True

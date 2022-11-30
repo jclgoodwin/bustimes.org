@@ -211,7 +211,7 @@ class WestMidlandsDepartures(Departures):
 
 class EdinburghDepartures(Departures):
     def get_request_url(self):
-        return "http://tfe-opendata.com/api/v1/live_bus_times/" + self.stop.naptan_code
+        return "https://tfe-opendata.com/api/v1/live_bus_times/" + self.stop.naptan_code
 
     def departures_from_response(self, res):
         routes = res.json()
