@@ -154,15 +154,7 @@ class Command(BaseCommand):
             registration.traffic_area_office_covered_by_area = line[
                 "TAO Covered BY Area"
             ]
-
-            # a registration can have multiple numbers
-            if registration.service_number:
-                if line["Service Number"] not in registration.service_number:
-                    registration.service_number = (
-                        f"{registration.service_number}\n{line['Service Number']}"
-                    )
-            else:
-                registration.service_number = line["Service Number"]
+            registration.service_number = line["Service Number"]
 
             # a registration can have multiple types
             if registration.service_type_description:
