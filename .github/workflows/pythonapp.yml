@@ -5,66 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    services:
-      postgres:
-        image: postgis/postgis
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --mount type=tmpfs,destination=/var/lib/postgresql/data
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-      redis:
-        image: redis
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 6379:6379
-
     steps:
 
     - uses: actions/checkout@v3
 
-    - name: Cache Docker
-      id: cache-docker
-      uses: actions/cache@v3
-      with:
-        path: /tmp/docker-save
-        key: docker-save-${{ hashFiles('Dockerfile') }}-${{ hashFiles('poetry.lock') }}
-        restore-keys: |
-          docker-save-${{ hashFiles('Dockerfile') }}
+    - run: docker compose up -d
 
+    - run: docker compose exec web poetry run ./manage.py collectstatic
 
-    - run: docker load -i /tmp/docker-save/snapshot.tar || true
-      if: steps.cache-docker.outputs.cache-hit == 'true'
-
-    - name: Build the Docker image
-      run: docker build . --tag bustimes:latest --cache-from=thing-cache
-
-    - run: |
-        docker tag bustimes thing-cache \
-          && mkdir -p /tmp/docker-save \
-          && docker save thing-cache -o /tmp/docker-save/snapshot.tar \
-          && ls -lh /tmp/docker-save \
-          || true
-
-    - name: Test
-      # run the Python tests
-      run: |
-        docker run --env SECRET_KEY=trtdre3 \
-                  --env DATABASE_URL=postgis://postgres:postgres@172.17.0.1/postgres \
-                  --env REDIS_URL=redis://172.17.0.1:6379 \
-                  bustimes bash -c "
-                    poetry run coverage run ./manage.py test -v3 && poetry run coverage report
-                  "
-        docker cp bustimes:/app/.coverage .
+    - name: Run tests
+      run: docker compose exec web poetry run coverage run ./manage.py test -v3
 
     - uses: codecov/codecov-action@v3
       with:
