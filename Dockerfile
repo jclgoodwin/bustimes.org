@@ -31,7 +31,7 @@ COPY --from=0 /app/busstops/static /app/busstops/static
 COPY --from=0 /app/node_modules /app/node_modules
 
 ENV SECRET_KEY=f
-ENV STATIC_ROOT=/app/staticfiles
+ENV STATIC_ROOT=/staticfiles
 RUN poetry run ./manage.py collectstatic --noinput
 
 CMD ["poetry", "run", "gunicorn", "buses.wsgi"]
