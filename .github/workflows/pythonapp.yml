@@ -12,7 +12,9 @@ jobs:
     - run: docker compose up -d
 
     - name: Run tests
-      run: docker compose exec web poetry run coverage run ./manage.py test -v3
+      run: |
+        docker compose exec web poetry run coverage run ./manage.py test -v3
+        docker compose exec web poetry run coverage json
 
     - uses: codecov/codecov-action@v3
       with:
