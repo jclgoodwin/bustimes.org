@@ -805,7 +805,7 @@ class ServiceDetailView(DetailView):
 
             service = services.filter(service_code=slug).first()
 
-            if not service and slug.islower():
+            if not service:
                 service = services.filter(
                     servicecode__scheme="slug", servicecode__code=slug
                 ).first()
