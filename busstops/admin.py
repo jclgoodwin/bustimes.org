@@ -243,7 +243,7 @@ class ServiceAdmin(GISModelAdmin):
     readonly_fields = ["search_vector"]
     list_editable = ["colour", "line_brand"]
     list_select_related = ["colour"]
-    actions = ["merge", "unmerge"]
+    actions = ["current_false", "merge", "unmerge"]
 
     def routes(self, obj):
         return obj.routes
@@ -280,6 +280,10 @@ class ServiceAdmin(GISModelAdmin):
             return queryset, False
 
         return super().get_search_results(request, queryset, search_term)
+
+    def current_false(self, request, queryset):
+        result = queryset.update(current=False)
+        self.message_user(request, f"{result}")
 
     @transaction.atomic
     def merge(self, request, queryset):
