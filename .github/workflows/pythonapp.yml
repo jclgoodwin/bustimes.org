@@ -16,6 +16,7 @@ jobs:
         key: docker-save-${{ hashFiles('Dockerfile') }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
           docker-save-${{ hashFiles('Dockerfile') }}
+          docker-save-
 
     - run: docker load -i /tmp/docker-save/snapshot.tar || true
 
