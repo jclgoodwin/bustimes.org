@@ -1,9 +1,12 @@
 import requests
 from django.contrib.gis.geos import Point
+
 from busstops.models import Service
-from ...models import VehicleLocation, VehicleJourney
-from .import_nx import parse_datetime
+
+from ...models import VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
+from .import_bod_avl import get_line_name_query
+from .import_nx import parse_datetime
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -60,33 +63,27 @@ class Command(ImportLiveVehiclesCommand):
         line_name = item["PublishedLineName"]
         if not line_name:
             return
-        services = Service.objects.filter(current=True, line_name__iexact=line_name)
-        services = services.filter(operator__in=item["OperatorRef"])
+        services = Service.objects.filter(
+            get_line_name_query(line_name),
+            current=True,
+            operator__in=item["OperatorRef"],
+        )
         try:
-            return services.get()
-        except Service.DoesNotExist as e:
-            if line_name[-1].isalpha():
-                item["PublishedLineName"] = line_name[:-1]
-            elif line_name[0].isalpha():
-                item["PublishedLineName"] = line_name[1:]
-            else:
-                print(e, item["OperatorRef"], line_name)
-                return
-            return cls.get_service(item)
-        except Service.MultipleObjectsReturned:
             try:
+                return services.get()
+            except Service.MultipleObjectsReturned:
                 return (
                     services.filter(stops__locality__stoppoint=item["DestinationRef"])
                     .distinct()
                     .get()
                 )
-            except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
-                print(
-                    e,
-                    item["OperatorRef"],
-                    item["PublishedLineName"],
-                    item["DestinationRef"],
-                )
+        except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
+            print(
+                e,
+                item["OperatorRef"],
+                item["PublishedLineName"],
+                item["DestinationRef"],
+            )
 
     def get_journey(self, item, vehicle):
         code = item["JourneyCode"]

@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from busstops.models import DataSource, Operator, Region, Service
+from busstops.models import DataSource, Operator, Region, Service, ServiceCode
 
 from ...models import Vehicle, VehicleJourney
 from ..commands import import_bushub
@@ -32,6 +32,7 @@ class BusHubTest(TestCase):
         )
         cls.service_c.operator.add("WNGS")
         cls.vehicle = Vehicle.objects.create(code="20052", operator_id="WNGS")
+        ServiceCode.objects.create(code="44a", scheme="SIRI", service=cls.service_c)
 
     def test_handle(self):
         command = import_bushub.Command()
@@ -73,7 +74,7 @@ class BusHubTest(TestCase):
             "Destination": None,
         }
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(9):
             with patch("builtins.print") as mocked_print:
                 command.handle_item(item)
                 command.save()

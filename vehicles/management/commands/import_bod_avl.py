@@ -55,6 +55,20 @@ def get_destination_ref(destination_ref):
     return destination_ref
 
 
+def get_line_name_query(line_ref):
+    return (
+        Exists(
+            ServiceCode.objects.filter(
+                service=OuterRef("id"), scheme__endswith="SIRI", code=line_ref
+            )
+        )
+        | Q(line_name__iexact=line_ref)
+        | Exists(
+            Route.objects.filter(service=OuterRef("id"), line_name__iexact=line_ref)
+        )
+    )
+
+
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
     wait = 20
@@ -97,20 +111,6 @@ class Command(ImportLiveVehiclesCommand):
         return Operator.objects.filter(
             Exists(operator_codes.filter(operator=OuterRef("pk")))
             | Q(noc=operator_ref) & ~Exists(operator_codes)
-        )
-
-    @staticmethod
-    def get_line_name_query(line_ref):
-        return (
-            Exists(
-                ServiceCode.objects.filter(
-                    service=OuterRef("id"), scheme__endswith="SIRI", code=line_ref
-                )
-            )
-            | Q(line_name__iexact=line_ref)
-            | Exists(
-                Route.objects.filter(service=OuterRef("id"), line_name__iexact=line_ref)
-            )
         )
 
     def get_vehicle(self, item):
@@ -267,7 +267,7 @@ class Command(ImportLiveVehiclesCommand):
             destination_ref = get_destination_ref(destination_ref)
 
         # filter by LineRef or (if present and different) TicketMachineServiceCode
-        line_name_query = self.get_line_name_query(line_ref)
+        line_name_query = get_line_name_query(line_ref)
         try:
             ticket_machine_service_code = item["Extensions"]["VehicleJourney"][
                 "Operational"
@@ -276,7 +276,7 @@ class Command(ImportLiveVehiclesCommand):
             pass
         else:
             if ticket_machine_service_code.lower() != line_ref.lower():
-                line_name_query |= self.get_line_name_query(ticket_machine_service_code)
+                line_name_query |= get_line_name_query(ticket_machine_service_code)
 
         services = self.services.filter(line_name_query).defer("geometry")
 
