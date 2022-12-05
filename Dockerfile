@@ -11,14 +11,15 @@ RUN make build-static
 
 
 FROM python:3.11-bullseye
+# the non-slim image has GCC which is needed for installing some stuff
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-ENV POETRY_HOME=/opt/poetry
-RUN python -m venv $POETRY_HOME
-RUN $POETRY_HOME/bin/pip install poetry==1.2.2
-ENV PATH=$POETRY_HOME/bin:$PATH
+ENV VIRTUAL_ENV=/opt/poetry
+RUN python -m venv $VIRTUAL_ENV
+ENV PATH=$VIRTUAL_ENV/bin:$PATH
+RUN $VIRTUAL_ENV/bin/pip install poetry==1.2.2
 
 WORKDIR /app/
 
@@ -28,6 +29,7 @@ RUN poetry install --only main
 
 FROM python:3.11-slim-bullseye
 
+# install GDAL (https://docs.djangoproject.com/en/4.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends gdal-bin && \
     apt clean && \
@@ -36,19 +38,19 @@ RUN apt-get update && \
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV POETRY_HOME=/opt/poetry
-ENV PATH=$POETRY_HOME/bin:$PATH
+
+ENV VIRTUAL_ENV=/opt/poetry
+ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
 WORKDIR /app/
 
 COPY . /app/
 COPY --from=0 /app/busstops/static /app/busstops/static
 COPY --from=0 /app/node_modules /app/node_modules
-COPY --from=1 $POETRY_HOME $POETRY_HOME
+COPY --from=1 $VIRTUAL_ENV $VIRTUAL_ENV
 
-ENV SECRET_KEY=f
-ENV STATIC_ROOT=/staticfiles
-RUN . /opt/poetry/bin/activate
-#RUN ./manage.py collectstatic --noinput
+ENV SECRET_KEY=f \
+    STATIC_ROOT=/staticfiles
+RUN poetry run ./manage.py collectstatic --noinput
 
-#CMD ["gunicorn", "buses.wsgi"]
+CMD ["gunicorn", "buses.wsgi"]
