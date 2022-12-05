@@ -9,19 +9,29 @@ jobs:
 
     - uses: actions/checkout@v3
 
-    - uses: actions/cache@v3
+    - id: cache-docker
+      uses: actions/cache@v3
       with:
-        path: .docker
-        key: docker-${{ hashFiles('Dockerfile') }}-${{ hashFiles('poetry.lock') }}
+        path: /tmp/docker-save
+        key: docker-save-${{ hashFiles('Dockerfile') }}-${{ hashFiles('poetry.lock') }}
         restore-keys: |
-          docker-${{ hashFiles('Dockerfile') }}
+          docker-save-${{ hashFiles('Dockerfile') }}
+
+    - run: docker load -i /tmp/docker-save/snapshot.tar
+      # if: steps.cache-docker.outputs.cache-hit == 'true'
 
     - run: docker compose up -d
 
     - name: Run tests
       run: |
         docker compose exec web poetry run coverage run ./manage.py test -v3
-        docker compose exec web poetry run coverage json
+        docker compose exec web poetry run coverage xml
+
+    - run: |
+        mkdir -p /tmp/docker-save \
+          && docker save bustimesorg-web -o /tmp/docker-save/snapshot.tar \
+          && ls -lh /tmp/docker-save
+      if: steps.cache-docker.outputs.cache-hit != 'true'  # not an full exact match
 
     - uses: codecov/codecov-action@v3
       with:
