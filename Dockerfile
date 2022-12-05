@@ -10,11 +10,16 @@ COPY Makefile /app/
 RUN make build-static
 
 
-FROM python:3.11
+FROM python:3.11-bullseye
 
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y gdal-bin && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gdal-bin && \
+    apt clean && \
+    rm -rf /var/lib/apt && \
+    rm -rf /var/lib/dpkg/info/*
 
 ENV POETRY_HOME=/opt/poetry
 RUN python -m venv $POETRY_HOME
