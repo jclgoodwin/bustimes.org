@@ -236,7 +236,9 @@ def bus_open_data(api_key, specific_operator):
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
-                logger.info(f"  {[o for o in operator_ids if o not in operators]}")
+                logger.info(
+                    f"  unexpected: {[o for o in operator_ids if o not in operators]} (not in {operators})"
+                )
 
                 service_ids |= command.service_ids
 
@@ -308,9 +310,10 @@ def ticketer(specific_operator=None):
 
             sha1 = get_sha1(path)
 
-            if DataSource.objects.filter(url__contains=".gov.uk", sha1=sha1).exists():
+            existing = DataSource.objects.filter(url__contains=".gov.uk", sha1=sha1)
+            if existing:
                 # hash matches that hash of some BODS data
-                logger.info(sha1)
+                logger.info("  skipping, {sha1=} matches {existing=}")
             else:
                 command.region_id = source.region_id
                 command.service_ids = set()
@@ -364,8 +367,8 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
         f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}"
     )
     operators = get_operator_ids(command.source)
-    logger.info(f"  {operators}")
-    logger.info(f"  {[o for o in operators if o not in nocs]}")
+    logger.info(f"  {operators=}")
+    logger.info(f"  {[o for o in operators if o not in nocs]} not in {nocs}")
 
 
 def stagecoach(operator=None):
