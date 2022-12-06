@@ -313,7 +313,7 @@ def ticketer(specific_operator=None):
             existing = DataSource.objects.filter(url__contains=".gov.uk", sha1=sha1)
             if existing:
                 # hash matches that hash of some BODS data
-                logger.info("  skipping, {sha1=} matches {existing=}")
+                logger.info(f"  skipping, {sha1=} matches {existing=}")
             else:
                 command.region_id = source.region_id
                 command.service_ids = set()

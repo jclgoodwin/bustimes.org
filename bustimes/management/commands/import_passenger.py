@@ -143,7 +143,7 @@ class Command(BaseCommand):
                 else:
                     sleep(2)
                     continue
-            logger.info(f" {old_routes=}")
+            logger.info(f"  {old_routes=}")
 
             # mark old services as not current
             old_services = command.source.service_set.filter(current=True, route=None)
