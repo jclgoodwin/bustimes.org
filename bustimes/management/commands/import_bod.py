@@ -236,9 +236,9 @@ def bus_open_data(api_key, specific_operator):
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
-                logger.info(
-                    f"  unexpected: {[o for o in operator_ids if o not in operators]} (not in {operators})"
-                )
+                unexpected = [o for o in operator_ids if o not in operators]
+                if unexpected:
+                    logger.info(f"  {unexpected=} (not in {operators})")
 
                 service_ids |= command.service_ids
 
@@ -368,7 +368,9 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
     )
     operators = get_operator_ids(command.source)
     logger.info(f"  {operators=}")
-    logger.info(f"  {[o for o in operators if o not in nocs]} not in {nocs}")
+    unexpected = [o for o in operators if o not in nocs]
+    if unexpected:
+        logger.info(f"  {unexpected=} (not in {nocs})")
 
 
 def stagecoach(operator=None):
