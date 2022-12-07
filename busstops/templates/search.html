@@ -65,9 +65,9 @@
             {% include 'pagination.html' with page=operators hash='#operators' %}
         {% endif %}
 
-        <h2 id="services">{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
-
         {% if services %}
+            <h2 id="services">{{ services.paginator.count }} service{{ services.paginator.count|pluralize }}</h2>
+
             {% include 'service_list.html' with services=services class="has-smalls" %}
 
             {% include 'pagination.html' with page=services hash='#services' %}

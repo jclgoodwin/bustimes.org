@@ -1185,6 +1185,7 @@ class ServiceSitemap(Sitemap):
         return Service.objects.filter(current=True).defer("geometry", "search_vector")
 
 
+@cache_control_s_maxage(300)
 def search(request):
     form = forms.SearchForm(request.GET)
 
@@ -1238,6 +1239,8 @@ def search(request):
                 ("operators", operators),
                 ("services", services),
             ):
+                if key == "services" and context["operators"]:
+                    continue
                 queryset = (
                     queryset.filter(search_vector=query)
                     .annotate(rank=rank)
@@ -1253,7 +1256,7 @@ def search(request):
                 elif not query_text.isalpha():
                     context["vehicles"] = vehicles.filter(reg__iexact=query_text)
 
-            if context["services"]:
+            if context.get("services"):
                 context["colours"] = get_colours(context["services"])
 
     return render(request, "search.html", context)
