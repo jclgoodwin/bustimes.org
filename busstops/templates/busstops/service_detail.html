@@ -29,7 +29,7 @@
     {% endif %}
 </p>
 
-{% if object.public_use is False and "Stagecoach" not in object.source.name %}
+{% if object.public_use is False %}
     <p>🧑‍🎓 Closed-door service, not available to the public</p>
 {% endif %}
 

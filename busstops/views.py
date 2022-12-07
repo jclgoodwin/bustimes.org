@@ -859,6 +859,12 @@ class ServiceDetailView(DetailView):
         operators = self.object.operator.all()
         context["operators"] = operators
 
+        if self.object.public_use is False and (
+            self.object.source.name.startswith("First Bus_")
+            or self.object.source.name.startswith("Stagecoach")
+        ):
+            self.object.public_use = None
+
         context["related"] = self.object.get_similar_services()
 
         if context["related"]:
