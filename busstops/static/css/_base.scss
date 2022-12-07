@@ -486,9 +486,11 @@ main li {
         margin-right: .5em;
     }
 
-    a small:last-child {
+    small:last-child {
         margin: 0;
         padding-bottom: .33em;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 }
 
