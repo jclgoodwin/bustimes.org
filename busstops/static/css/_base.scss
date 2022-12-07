@@ -489,6 +489,7 @@ main li {
     small:last-child {
         margin: 0;
         padding-bottom: .33em;
+        float: none;
         overflow: hidden;
         text-overflow: ellipsis;
     }
