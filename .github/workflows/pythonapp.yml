@@ -20,12 +20,9 @@ jobs:
 
     - run: docker load -i /tmp/docker-save/snapshot.tar || true
 
-    - run: docker compose up -d
-
     - name: Run tests
       run: |
-        docker compose exec web coverage run ./manage.py test -v3
-        docker compose exec web coverage xml
+        docker compose run web bash -c "coverage run ./manage.py test && coverage xml"
 
     - run: |
         mkdir -p /tmp/docker-save \
