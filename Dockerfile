@@ -51,6 +51,6 @@ COPY --from=1 $VIRTUAL_ENV $VIRTUAL_ENV
 
 ENV SECRET_KEY=f \
     STATIC_ROOT=/staticfiles
-RUN poetry run ./manage.py collectstatic --noinput
+RUN ./manage.py collectstatic --noinput
 
 CMD ["gunicorn", "buses.wsgi"]
