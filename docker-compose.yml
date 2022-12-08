@@ -2,11 +2,7 @@ services:
 
   web:
     build: .
-    command: >
-      sh -c "
-      poetry install;
-      DEBUG=1 exec ./manage.py runserver 0.0.0.0:8000
-      "
+    command: sh -c "exec ./manage.py runserver 0.0.0.0:8000"
     container_name: django_web
     environment:
       - SECRET_KEY=${SECRET_KEY-d}
@@ -36,10 +32,10 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
 
   redis:
     image: redis
-    ports:
-      - "6379:6379"
+    # ports:
+    #   - "6379:6379"

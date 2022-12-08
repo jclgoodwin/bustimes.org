@@ -5,7 +5,7 @@ description = ""
 authors = ["Josh Goodwin <j@joshuagoodw.in>"]
 
 [tool.poetry.dependencies]
-python = ">=3.10,<=3.11"
+python = "^3.10"
 asgiref = "^3.4.1"
 beautifulsoup4 = "^4.10.0"
 boto3 = "^1.18.42"
