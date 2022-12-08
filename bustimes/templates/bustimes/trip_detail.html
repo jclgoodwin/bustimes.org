@@ -20,9 +20,9 @@
         {% if origin and destination %}
             {{ origin }} to {{ destination }}
         {% elif object.outbound %}
-            {{ object.route.service.outbound_description }}
+            {{ object.route.outbound_description }}
         {% else %}
-            {{ object.route.service.inbound_description }}
+            {{ object.route.inbound_description }}
         {% endif %}
     </h2>
 

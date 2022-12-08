@@ -1123,8 +1123,6 @@ class Command(BaseCommand):
 
             # inbound and outbound descriptions
 
-            service.outbound_description = ""
-            service.inbound_description = ""
             if (
                 line.outbound_description != line.inbound_description
                 or txc_service.origin == "Origin"
@@ -1137,11 +1135,9 @@ class Command(BaseCommand):
                     in_desc = titlecase(in_desc, callback=initialisms)
 
                 if out_desc:
-                    service.outbound_description = out_desc
                     if not service.description or len(txc_service.lines) > 1:
                         service.description = out_desc
                 if in_desc:
-                    service.inbound_description = in_desc
                     if not service.description:
                         service.description = in_desc
 
@@ -1150,14 +1146,8 @@ class Command(BaseCommand):
                     outbound_description,
                     inbound_description,
                 ) = self.get_service_descriptions(filename)
-                if inbound_description:
-                    service.description = (
-                        service.inbound_description
-                    ) = inbound_description
-                if outbound_description:
-                    service.description = (
-                        service.outbound_description
-                    ) = outbound_description
+                if outbound_description or inbound_description:
+                    service.description = outbound_description or inbound_description
 
             # does is the service already exist in the database?
 
