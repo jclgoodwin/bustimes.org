@@ -38,7 +38,7 @@ ncsd_new=$(ls -l NCSD.zip)
 cd ../..
 
 if [[ $ncsd_old != $ncsd_new ]]; then
-    ./manage.py import_transxhange < data/TNDS/NCSD.zip
+    ./manage.py import_transxchange data/TNDS/NCSD.zip
 fi
 
 
