@@ -90,11 +90,11 @@ class Command(BaseCommand):
         v2_files = self.list_files()
         self.do_files(v2_files)
 
-        # add any missing regions (NCSD)
-        self.ftp.cwd("..")
-        files = self.list_files()
-        files = {name: files[name] for name in files if name not in v2_files}
-        self.do_files(files)
+        # # add any missing regions (NCSD)
+        # self.ftp.cwd("..")
+        # files = self.list_files()
+        # files = {name: files[name] for name in files if name not in v2_files}
+        # self.do_files(files)
 
         self.ftp.quit()
 

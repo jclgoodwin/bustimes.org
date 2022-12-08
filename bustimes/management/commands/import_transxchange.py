@@ -1212,6 +1212,11 @@ class Command(BaseCommand):
                 "service_code": txc_service.service_code,
             }
 
+            for key in ("outbound_description", "inbound_description"):
+                if len(route_defaults[key]) > 255:
+                    logger.warning(f"{key} too long in {filename}")
+                    route_defaults[key] = route_defaults[key][:255]
+
             if txc_service.origin and txc_service.origin != "Origin":
                 route_defaults["origin"] = txc_service.origin
             else:

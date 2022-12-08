@@ -28,6 +28,20 @@ PASSWORD=$2
 ./manage.py nptg_new
 ./manage.py naptan_new
 
+
+cd data/TNDS
+
+ncsd_old=$(ls -l NCSD.zip)
+wget -qN http://www.basemap.co.uk/data/NCSD/NCSD.zip
+ncsd_new=$(ls -l NCSD.zip)
+
+cd ../..
+
+if [[ $ncsd_old != $ncsd_new ]]; then
+    ./manage.py import_transxhange < data/TNDS/NCSD.zip
+fi
+
+
 cd data
 
 noc_old=$(ls -l NOC_DB.csv)
