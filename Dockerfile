@@ -24,15 +24,14 @@ RUN $VIRTUAL_ENV/bin/pip install poetry==1.2.2
 WORKDIR /app/
 
 COPY poetry.lock pyproject.toml /app/
-RUN poetry install --only main
+RUN poetry install --only main --no-root
 
 
 FROM python:3.11-slim-bullseye
 
 # install GDAL (https://docs.djangoproject.com/en/4.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends gdal-bin && \
-    apt clean && \
+    apt-get install -y --no-install-recommends gdal-bin libxslt1.1 && \
     rm -rf /var/lib/apt && \
     rm -rf /var/lib/dpkg/info/*
 
