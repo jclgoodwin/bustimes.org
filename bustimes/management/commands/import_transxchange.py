@@ -1087,6 +1087,11 @@ class Command(BaseCommand):
             if description:
                 service.description = description
 
+            for operator in operators.values():
+                if operator.colour_id:
+                    service.colour_id = operator.colour_id
+                    break
+
             line_brand = line.line_brand
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
@@ -1172,6 +1177,7 @@ class Command(BaseCommand):
                     service.operator.set(operators.values())
                 else:
                     service.operator.add(*operators.values())
+
             self.service_ids.add(service.id)
 
             journey = journeys[0]
