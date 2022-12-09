@@ -899,11 +899,10 @@ class ServiceDetailView(DetailView):
         context["situations"] = (
             Situation.objects.filter(
                 Exists(consequences.filter(situation=OuterRef("id")))
-                | Q(situation_number=""),
+                | Q(situation_number="", source=236),
                 publication_window__contains=Now(),
                 current=True,
             )
-            .distinct()
             .prefetch_related(
                 Prefetch(
                     "consequence_set",
@@ -913,6 +912,7 @@ class ServiceDetailView(DetailView):
                 "link_set",
                 "validityperiod_set",
             )
+            .defer("data")
         )
         # stop_situations = {}
         # for situation in context["situations"]:

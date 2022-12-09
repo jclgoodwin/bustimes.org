@@ -1,7 +1,8 @@
-from django.db import models
-from django.utils.text import camel_case_to_spaces
 from django.contrib.postgres.fields import DateTimeRangeField
+from django.db import models
 from django.urls import reverse
+from django.utils.text import camel_case_to_spaces
+
 from busstops.templatetags.date_range import date_range
 
 
@@ -12,6 +13,8 @@ class Situation(models.Model):
         limit_choices_to={
             "name__in": (
                 "Ito World",
+                "TfE",
+                "TfL",
                 "Transport for the North",
                 "Transport for West Midlands",
                 "bustimes.org",
@@ -38,6 +41,7 @@ class Situation(models.Model):
 
     class Meta:
         unique_together = ("source", "situation_number")
+        index_together = (("current", "publication_window"),)
 
 
 class Link(models.Model):
