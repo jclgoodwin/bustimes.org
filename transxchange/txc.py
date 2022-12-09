@@ -470,6 +470,11 @@ class OperatingProfile:
                 else:
                     self.regular_days.append(DayOfWeek(day))
 
+        self.week_of_month = None
+        periodic_day_type = element.find("PeriodicDayType")
+        if periodic_day_type is not None:
+            print(ET.tostring(periodic_day_type).decode())
+            self.week_of_month = periodic_day_type.findtext("WeekOfMonth/WeekNumber")
         # Special Days:
 
         nonoperation_days = element.findall(

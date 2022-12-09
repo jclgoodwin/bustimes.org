@@ -509,9 +509,12 @@ class Command(BaseCommand):
             bank_holidays[bank_holiday] = CalendarBankHoliday(
                 operation=False, bank_holiday=bank_holiday
             )
+        summary = []
+
+        if operating_profile.week_of_month:
+            summary.append(f"{operating_profile.week_of_month} week of the month")
 
         sodt = operating_profile.serviced_organisation_day_type
-        summary = []
         non_operation_days = []
         operation_days = []
         if sodt:
