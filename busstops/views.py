@@ -335,8 +335,8 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context["operators"] = Operator.objects.filter(
             operator_has_current_services_or_vehicles,
-            Q(region=self.object) | Q(regions=self.object),
-        ).distinct()
+            Q(region=self.object.pk) | Exists("regions", region=self.object.pk),
+        ).only("slug", "name")
 
         if len(context["operators"]) == 1:
             context["services"] = sorted(

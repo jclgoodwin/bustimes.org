@@ -96,11 +96,11 @@ class DuplicateVehicleFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             vehicles = models.Vehicle.objects.filter(
-                ~Q(id=OuterRef("id")), reg=OuterRef("reg")
+                ~Q(id=OuterRef("id")), reg__iexact=OuterRef("reg")
             )
             if self.value() == "operator":
                 vehicles = vehicles.filter(operator=OuterRef("operator"))
-            queryset = queryset.filter(~Q(reg=""), Exists(vehicles))
+            queryset = queryset.filter(~Q(reg__iexact=""), Exists(vehicles))
 
         return queryset
 
@@ -187,7 +187,7 @@ class VehicleAdmin(admin.ModelAdmin):
                 continue
             try:
                 duplicate = models.Vehicle.objects.get(
-                    id__lt=vehicle.id, reg=vehicle.reg
+                    id__lt=vehicle.id, reg__iexact=vehicle.reg
                 )  # vehicle with lower id number we will keep
             except (
                 models.Vehicle.DoesNotExist,

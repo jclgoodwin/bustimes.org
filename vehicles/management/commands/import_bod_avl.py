@@ -219,10 +219,10 @@ class Command(ImportLiveVehiclesCommand):
                         reg = reg.replace("_", "")
                         defaults["reg"] = reg
                         if operator_ref in self.reg_operators:
-                            condition |= Q(reg=reg)
+                            condition |= Q(reg__iexact=reg)
                 elif operator_ref in self.reg_operators:
                     reg = vehicle_ref.replace("_", "")
-                    condition |= Q(reg=reg)
+                    condition |= Q(reg__iexact=reg)
                 elif operator_ref == "WHIP":
                     code = vehicle_ref.replace("_", "")
                     condition |= Q(fleet_code__iexact=code)

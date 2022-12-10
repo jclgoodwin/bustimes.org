@@ -243,9 +243,7 @@ def vehicle_slug(vehicle):
 
 
 class Vehicle(models.Model):
-    slug = AutoSlugField(
-        populate_from=vehicle_slug, editable=True, unique=True
-    )
+    slug = AutoSlugField(populate_from=vehicle_slug, editable=True, unique=True)
     code = models.CharField(max_length=255)
     fleet_number = models.PositiveIntegerField(null=True, blank=True)
     fleet_code = models.CharField(max_length=24, blank=True)
@@ -305,10 +303,11 @@ class Vehicle(models.Model):
         indexes = [
             models.Index(Upper("fleet_code"), name="fleet_code"),
             models.Index(Upper("reg"), name="reg"),
+            models.Index(fields=["operator", "withdrawn"], name="operator_withdrawn"),
         ]
         constraints = [
             models.UniqueConstraint(
-                Upper("code"), Upper("operator"), name="vehicle_operator_and_code"
+                Upper("code"), "operator", name="vehicle_operator_and_code"
             ),
         ]
 
