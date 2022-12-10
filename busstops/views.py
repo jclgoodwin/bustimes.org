@@ -335,7 +335,12 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
 
         context["operators"] = Operator.objects.filter(
             operator_has_current_services_or_vehicles,
-            Q(region=self.object.pk) | Exists("regions", region=self.object.pk),
+            Q(region=self.object)
+            | Q(
+                noc__in=Operator.regions.through.objects.filter(
+                    region=self.object
+                ).values("operator")
+            ),
         ).only("slug", "name")
 
         if len(context["operators"]) == 1:
