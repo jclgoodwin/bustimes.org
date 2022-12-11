@@ -507,6 +507,4 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get(
                 "/services/904-huntingdon-peterborough?date=2020-12-25"
             )
-            self.assertContains(
-                response, "Sorry, no journeys found for Friday 25 December 2020"
-            )
+            self.assertContains(response, "Sorry, no journeys found")

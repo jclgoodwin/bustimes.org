@@ -273,9 +273,7 @@ class ImportTransXChangeTest(TestCase):
         # self.assertContains(res, 'Attleborough - Wymondham - Norwich')
 
         res = self.client.get(f"/services/{service.id}/timetable?date=2020-01-01")
-        self.assertContains(
-            res, "Sorry, no journeys found for Wednesday 1 January 2020"
-        )
+        self.assertContains(res, "Sorry, no journeys found")
 
     @time_machine.travel("30 October 2017")
     def test_service_with_empty_pattern(self):
@@ -1055,7 +1053,7 @@ class ImportTransXChangeTest(TestCase):
 
         # Within operating period, but with no journeys
         res = self.client.get(service.get_absolute_url() + "?date=2026-04-18")
-        self.assertContains(res, "Sorry, no journeys found for Saturday 18 April 2026")
+        self.assertContains(res, "Sorry, no journeys found")
 
         # Test the fallback version without a timetable (just a list of stops)
         service.timetable_wrong = True

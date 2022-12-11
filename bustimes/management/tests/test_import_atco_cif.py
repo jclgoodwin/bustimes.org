@@ -91,9 +91,7 @@ class ImportAtcoCifTest(TestCase):
             '<option selected value="2019-08-12">Monday 12 August 2019</option>',
         )
         self.assertNotContains(response, "Sunday")
-        self.assertContains(
-            response, "Sorry, no journeys found for Monday 12 August 2019"
-        )
+        self.assertContains(response, "Sorry, no journeys found")
 
         with time_machine.travel("2019-08-12"):
             with self.assertNumQueries(10):
