@@ -31,6 +31,7 @@ from departures import gtfsr, live
 from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
 
+from .download_utils import download
 from .models import Block, Route, StopTime, Trip
 
 
@@ -121,23 +122,27 @@ def route_xml(request, source, code=""):
             )
 
     if "stagecoach" in source.url:
-        path = str(Path(source.url.split("/")[-1]))
+        path = settings.DATA_DIR / source.url.split("/")[-1]
+        if not path.exists():
+            download(path, source.url)
     elif ".zip" not in code and code != source.name:
         if source.url.startswith("https://opendata.ticketer.com/uk/"):
             path = source.url.split("/")[4]
-            path = Path("ticketer") / f"{path}.zip"
+            path = settings.DATA_DIR / "ticketer" / f"{path}.zip"
         elif "bus-data.dft.gov.uk" in source.url:
-            path = Path("bod") / str(source.id)
+            path = settings.DATA_DIR / "bod" / str(source.id)
         else:
             raise Http404
+        if not path.exists():
+            download(path, source.url)
     elif "/" in code:
         path = code.split("/")[0]  # archive name
         code = code[len(path) + 1 :]
+        path = settings.DATA_DIR / path
     else:
         path = None
 
     if path:
-        path = settings.DATA_DIR / path
         if code:
             with zipfile.ZipFile(path) as archive:
                 return FileResponse(archive.open(code), content_type="text/xml")
