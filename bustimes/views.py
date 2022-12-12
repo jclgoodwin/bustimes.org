@@ -134,6 +134,8 @@ def route_xml(request, source, code=""):
         else:
             raise Http404
         if not path.exists():
+            if not path.parent.exists():
+                path.parent.mkdir(parents=True)
             download(path, source.url)
     elif "/" in code:
         path = code.split("/")[0]  # archive name
