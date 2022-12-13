@@ -640,8 +640,10 @@ class StopPointDetailView(DetailView):
         }
         context["colours"] = get_colours(context["services"])
 
-        nearby = StopPoint.objects.filter(active=True).order_by(
-            "common_name", "indicator"
+        nearby = (
+            StopPoint.objects.filter(active=True)
+            .order_by("common_name", "indicator")
+            .filter(service__current=True)
         )
 
         if self.object.stop_area_id is not None:
