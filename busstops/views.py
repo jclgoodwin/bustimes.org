@@ -802,7 +802,7 @@ def operator_debug(request, slug):
             "breadcrumb": [operator],
             "services": (
                 operator.service_set.filter(current=True).annotate(
-                    last_tracked=Max("vehiclejourney__datetime")
+                    last_tracked=Max("vehiclejourney__datetime__date")
                 )
             ),
         },

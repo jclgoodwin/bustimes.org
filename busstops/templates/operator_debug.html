@@ -25,7 +25,7 @@
                 </td>
                 <td>
                     {% if service.last_tracked %}
-                        <a href="{{ service.get_absolute_url }}/vehicles">{{ service.last_tracked|naturaltime }}</a>
+                        <a href="{{ service.get_absolute_url }}/vehicles">{{ service.last_tracked|timesince }}</a>
                     {% endif %}
                 </td>
             </tr>
