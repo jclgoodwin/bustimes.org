@@ -1,0 +1,36 @@
+{% extends 'page.html' %}
+
+{% block title %}Debug – {{ object }} – bustimes.org{% endblock %}
+
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+
+{% load humanize %}
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">service</th>
+            <th scope="col">last tracked</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for service in services %}
+            <tr>
+                <td>
+                    <a href="{{ service.get_absolute_url }}">{{ service.get_line_name_and_brand }}</a>
+                </td>
+                <td>
+                    {% if service.last_tracked %}
+                        <a href="{{ service.get_absolute_url }}/vehicles">{{ service.last_tracked|naturaltime }}</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

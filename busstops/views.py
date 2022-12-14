@@ -15,7 +15,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.db.models import Count, F, Min, OuterRef, Prefetch, Q
+from django.db.models import Count, F, Max, Min, OuterRef, Prefetch, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -789,6 +789,24 @@ class OperatorDetailView(DetailView):
                 return redirect(alternative)
             raise Http404
         return super().render_to_response(context)
+
+
+def operator_debug(request, slug):
+    operator = get_object_or_404(Operator, slug=slug)
+
+    return render(
+        request,
+        "operator_debug.html",
+        {
+            "object": operator,
+            "breadcrumb": [operator],
+            "services": (
+                operator.service_set.filter(current=True).annotate(
+                    last_tracked=Max("vehiclejourney__datetime")
+                )
+            ),
+        },
+    )
 
 
 class ServiceDetailView(DetailView):
