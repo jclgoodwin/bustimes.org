@@ -15,7 +15,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.db.models import Count, F, Max, Min, OuterRef, Prefetch, Q
+from django.db.models import Count, F, Min, OuterRef, Prefetch, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -25,7 +25,7 @@ from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
-from sql_util.utils import Exists
+from sql_util.utils import Exists, SubqueryMax
 from ukpostcodeutils import validation
 
 from buses.utils import cache_control_s_maxage
@@ -802,7 +802,7 @@ def operator_debug(request, slug):
             "breadcrumb": [operator],
             "services": (
                 operator.service_set.filter(current=True).annotate(
-                    last_tracked=Max("vehiclejourney__datetime__date")
+                    last_tracked=SubqueryMax("vehiclejourney__datetime")
                 )
             ),
         },
