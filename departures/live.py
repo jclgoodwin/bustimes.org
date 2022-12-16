@@ -94,6 +94,10 @@ class Departures:
                 return self.services_by_name[line_name_lower]
             if line_name_lower in self.services_by_alternative_name:
                 return self.services_by_alternative_name[line_name_lower]
+
+            if f"g{line_name_lower}" in self.services_by_name:
+                return self.services_by_name[f"g{line_name_lower}"]
+
             alternatives = {
                 "Puls": "pulse",
                 # 'FLCN': 'falcon',

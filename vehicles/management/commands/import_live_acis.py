@@ -1,15 +1,16 @@
 import xml.etree.cElementTree as ET
-from time import sleep
-from django.utils import timezone
-
 from datetime import timedelta
 from random import shuffle
-from django.contrib.gis.geos import Point, Polygon
-from django.contrib.gis.db.models import Extent
-from bustimes.models import Trip
-from ..import_live_vehicles import ImportLiveVehiclesCommand
-from ...models import VehicleLocation, VehicleJourney, Service
+from time import sleep
 
+from django.contrib.gis.db.models import Extent, Q
+from django.contrib.gis.geos import Point, Polygon
+from django.utils import timezone
+
+from bustimes.models import Trip
+
+from ...models import Service, VehicleJourney, VehicleLocation
+from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 NS = {
     "a": "http://www.acishorizon.com/",
@@ -157,7 +158,8 @@ class Command(ImportLiveVehiclesCommand):
         try:
             try:
                 journey.service = Service.objects.get(
-                    line_name__iexact=journey.route_name,
+                    Q(line_name__iexact=journey.route_name)
+                    | Q(line_name__iexact=f"G{journey.route_name}"),
                     operator=operator,
                     current=True,
                 )
