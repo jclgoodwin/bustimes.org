@@ -10,6 +10,7 @@ import requests
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.expressions import ArraySubquery
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
@@ -25,11 +26,11 @@ from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
-from sql_util.utils import Exists, SubqueryMax
+from sql_util.utils import Exists
 from ukpostcodeutils import validation
 
 from buses.utils import cache_control_s_maxage
-from bustimes.models import Trip
+from bustimes.models import StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
@@ -791,24 +792,6 @@ class OperatorDetailView(DetailView):
         return super().render_to_response(context)
 
 
-def operator_debug(request, slug):
-    operator = get_object_or_404(Operator, slug=slug)
-
-    return render(
-        request,
-        "operator_debug.html",
-        {
-            "object": operator,
-            "breadcrumb": [operator],
-            "services": (
-                operator.service_set.filter(current=True).annotate(
-                    last_tracked=SubqueryMax("vehiclejourney__datetime")
-                )
-            ),
-        },
-    )
-
-
 class ServiceDetailView(DetailView):
     "A service and the stops it stops at"
 
@@ -1019,10 +1002,11 @@ class ServiceDetailView(DetailView):
                     )
                     break
 
-        tariffs = self.object.tariff_set
-        tariffs = tariffs.filter(source__published=True)
         fare_tables = (
-            FareTable.objects.filter(tariff__in=tariffs)
+            FareTable.objects.filter(
+                tariff__services=self.object,
+                tariff__source__published=True,
+            )
             .select_related("tariff", "user_profile", "sales_offer_package")
             .order_by("tariff")
         )
@@ -1139,7 +1123,9 @@ def service_map_data(request, service_id):
     trips = (
         Trip.objects.only("id")
         .annotate(
-            stop_ids=ArrayAgg("stoptime__stop_id", ordering="stoptime"),
+            stop_ids=ArraySubquery(
+                StopTime.objects.filter(trip=OuterRef("id")).values("stop")
+            ),
         )
         .filter(route__service=service)
     )

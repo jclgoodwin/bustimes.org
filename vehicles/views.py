@@ -315,6 +315,30 @@ def operator_map(request, slug):
     )
 
 
+def operator_debug(request, slug):
+    operator = get_object_or_404(Operator, slug=slug)
+
+    services = operator.service_set.filter(current=True)
+
+    pipe = redis_client.pipeline(transaction=False)
+    for service in services:
+        pipe.exists(f"service{service.id}vehicles")
+    tracking = pipe.execute()
+
+    for i, service in enumerate(services):
+        service.last_tracked = tracking[i]
+
+    return render(
+        request,
+        "operator_debug.html",
+        {
+            "object": operator,
+            "breadcrumb": [operator],
+            "services": services,
+        },
+    )
+
+
 @require_GET
 def vehicles_json(request) -> JsonResponse:
     try:

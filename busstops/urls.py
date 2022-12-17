@@ -77,7 +77,6 @@ urlpatterns = [
         views.OperatorDetailView.as_view(),
         name="operator_detail",
     ),
-    path("operators/<slug>/debug", views.operator_debug),
     path("operators/<slug>/tickets", mytrip.operator_tickets),
     path("operators/<slug>/tickets/<id>", mytrip.operator_ticket),
     path("services/<int:service_id>.json", views.service_map_data),
