@@ -1,12 +1,12 @@
 from datetime import timedelta
 
-from django.db.models import Q, F
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, Polygon
+from django.db.models import F, Q
 from django.utils import timezone
 
+from bustimes.models import RouteLink, StopTime, Trip
 from bustimes.utils import get_calendars, get_routes
-from bustimes.models import Trip, StopTime, RouteLink
 
 
 def get_trip(
@@ -88,10 +88,7 @@ def get_trip(
         return trips.get(ticket_machine_code=journey_ref)
     except Trip.MultipleObjectsReturned:
         trips = trips.filter(calendar__in=get_calendars(date))
-        try:
-            return trips.get(ticket_machine_code=journey_ref)
-        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-            pass
+        return trips.filter(ticket_machine_code=journey_ref).first()
     except Trip.DoesNotExist:
         pass
 
