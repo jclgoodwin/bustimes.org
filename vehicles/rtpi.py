@@ -83,6 +83,8 @@ def get_trip(
 
     if not journey_ref:
         journey_ref = journey.code
+        if not journey_ref:
+            return
 
     try:
         return trips.get(ticket_machine_code=journey_ref)
