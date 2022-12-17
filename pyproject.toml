@@ -44,7 +44,7 @@ titlecase = "^2.3"
 uk-postcode-utils = "^1.1"
 vcrpy = "^4.1.1"
 webcolors = "^1.11.1"
-whitenoise = "^6.0.0"
+whitenoise = {extras = ["brotli"], version = "^6.2.0"}
 xmltodict = "^0.13.0"
 
 [tool.poetry.dev-dependencies]
