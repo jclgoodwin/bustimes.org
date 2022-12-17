@@ -364,7 +364,12 @@ class Timetable:
             if calendar_days and all_days.isdisjoint(calendar_days):
                 all_days = all_days.union(calendar_days)
             else:
-                return
+                return  # some overlap between calendar days, too complicated
+
+            for calendar_date in calendar.calendardate_set.all():
+                if calendar.end_date and calendar_date.end_date >= calendar.end_date:
+                    continue
+                return  # exceptions or extra days, too complicated
 
         for calendar in self.calendars:
             if calendar.id == calendar_id:
