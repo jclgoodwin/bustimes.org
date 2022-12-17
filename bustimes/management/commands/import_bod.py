@@ -14,6 +14,7 @@ from django.core.management.base import BaseCommand
 from django.db import DataError, IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
+from sentry_sdk import start_transaction
 
 from busstops.models import DataSource, Operator, Service
 
@@ -437,9 +438,10 @@ class Command(BaseCommand):
         parser.add_argument("operator", type=str, nargs="?")
 
     def handle(self, api_key, operator, **options):
-        if api_key == "stagecoach":
-            stagecoach(operator)
-        elif api_key == "ticketer":
-            ticketer(operator)
-        else:
-            bus_open_data(api_key, operator)
+        with start_transaction(op="task", name="import_bod"):
+            if api_key == "stagecoach":
+                stagecoach(operator)
+            elif api_key == "ticketer":
+                ticketer(operator)
+            else:
+                bus_open_data(api_key, operator)
