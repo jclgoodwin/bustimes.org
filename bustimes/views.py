@@ -124,6 +124,8 @@ def route_xml(request, source, code=""):
     if "stagecoach" in source.url:
         path = settings.DATA_DIR / source.url.split("/")[-1]
         if not path.exists():
+            if not path.parent.exists():
+                path.parent.mkdir()
             download(path, source.url)
     elif ".zip" not in code and code != source.name:
         if source.url.startswith("https://opendata.ticketer.com/uk/"):
