@@ -2,7 +2,7 @@ services:
 
   web:
     build: .
-    command: sh -c "exec ./manage.py runserver 0.0.0.0:8000"
+    command: sh -c "poetry install; DEBUG=1 ./manage.py runserver 0.0.0.0:8000"
     container_name: django_web
     environment:
       - SECRET_KEY=${SECRET_KEY-d}
