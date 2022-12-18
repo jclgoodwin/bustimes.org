@@ -134,13 +134,17 @@ class Command(ImportLiveVehiclesCommand):
         latest_journey = vehicle.latest_journey
 
         if departure_time:
-            if latest_journey and latest_journey.datetime == departure_time:
+            if (
+                latest_journey
+                and -60
+                < (latest_journey.datetime - departure_time).total_seconds()
+                < 60
+            ):
                 return latest_journey
-            else:
-                try:
-                    return vehicle.vehiclejourney_set.get(datetime=departure_time)
-                except VehicleJourney.DoesNotExist:
-                    pass
+            try:
+                return vehicle.vehiclejourney_set.get(datetime=departure_time)
+            except VehicleJourney.DoesNotExist:
+                pass
         elif item.get("eo"):  # expectedOriginStopDepartureTime
             departure_time = parse_timestamp(item["eo"])
 
