@@ -6,6 +6,7 @@ import xml.etree.cElementTree as ET
 import zipfile
 from io import StringIO
 from pathlib import Path
+from time import sleep
 
 import requests
 from ciso8601 import parse_datetime
@@ -52,7 +53,11 @@ def clean_up(operators, sources, incomplete=False):
     ).update(current=False)
 
 
-def get_operator_ids(source):
+def is_noc(search_term: str) -> bool:
+    return len(search_term) <= 4 and search_term.isupper()
+
+
+def get_operator_ids(source) -> list:
     operators = (
         Operator.objects.filter(service__route__source=source).distinct().values("noc")
     )
@@ -115,11 +120,9 @@ def handle_file(command, path, qualify_filename=False):
 
 def get_bus_open_data_paramses(sources, api_key):
     searches = [
-        source.search for source in sources if " " in source.search
+        source.search for source in sources if not is_noc(source.search)
     ]  # e.g. 'TM Travel'
-    nocs = [
-        source.search for source in sources if " " not in source.search
-    ]  # e.g. 'TMTL'
+    nocs = [source.search for source in sources if is_noc(source.search)]  # e.g. 'TMTL'
 
     # chunk – we will search for nocs 20 at a time
     nocses = [nocs[i : i + 20] for i in range(0, len(nocs), 20)]
@@ -173,7 +176,7 @@ def bus_open_data(api_key, specific_operator):
     all_source_ids = []
 
     for source in timetable_data_sources:
-        if " " in source.search:
+        if not is_noc(source.search):
             operator_datasets = [
                 item
                 for item in datasets
@@ -195,7 +198,7 @@ def bus_open_data(api_key, specific_operator):
             command.source = DataSource.objects.filter(url=dataset["url"]).first()
             if (
                 not command.source
-                and " " not in source.search
+                and is_noc(source.search)
                 and len(operator_datasets) == 1
             ):
                 name_prefix = dataset["name"].split("_", 1)[0]
@@ -289,6 +292,8 @@ def ticketer(specific_operator=None):
             operators=specific_operator
         )
 
+    need_to_sleep = False
+
     for source in timetable_data_sources:
         path = Path(source.url)
 
@@ -299,6 +304,10 @@ def ticketer(specific_operator=None):
         )
         command.source.source = source
         command.garages = {}
+
+        if need_to_sleep:
+            sleep(2)
+            need_to_sleep = False
 
         modified, last_modified = download_if_changed(path, source.url)
 
@@ -345,6 +354,8 @@ def ticketer(specific_operator=None):
                 f"  {command.source.route_set.order_by('end_date').distinct('end_date').values('end_date')}"
             )
             logger.info(f"  {get_operator_ids(command.source)}")
+        else:
+            need_to_sleep = True
 
     command.debrief()
 

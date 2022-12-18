@@ -345,7 +345,7 @@ class Command(BaseCommand):
     def mark_old_services_as_not_current(self):
         old_routes = self.source.route_set.exclude(id__in=self.route_ids)
         try:
-            old_routes.delete()
+            old_routes.update(service=None)
         except IntegrityError:
             old_routes.delete()
 
