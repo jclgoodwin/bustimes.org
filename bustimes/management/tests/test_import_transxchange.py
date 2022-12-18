@@ -654,8 +654,8 @@ class ImportTransXChangeTest(TestCase):
         # next day of operation
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data["timetable"]
-        # self.assertEqual('2012-06-30', str(timetable.date))
-        self.assertIsNone(timetable.date)
+        self.assertEqual("2012-06-30", str(timetable.date))
+        # self.assertIsNone(timetable.date)
         self.assertEqual(1, len(timetable.groupings))
 
         response = self.client.get(service.get_absolute_url() + "?date=2017-01-27")
