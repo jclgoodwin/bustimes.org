@@ -77,7 +77,7 @@
 
     var railIcon = L.divIcon({
         iconSize: [18, 18],
-        html: '<div class="rail"><svg xmlns="http://www.w3.org/2000/svg" width="15.5" height="9.75" viewBox="0 0 62 39"><g stroke="#fff" fill="none"><path d="M1,-8.9 46,12.4 16,26.6 61,47.9" stroke-width="6"/><path d="M0,12.4H62m0,14.2H0" stroke-width="6.4"/></g></svg></div>',
+        html: '<div class="rail"><svg xmlns="http://www.w3.org/2000/svg" width="12.4" height="7.8" viewBox="0 0 62 39"><g stroke="#fff" fill="none"><path d="M1,-8.9 46,12.4 16,26.6 61,47.9" stroke-width="6"/><path d="M0,12.4H62m0,14.2H0" stroke-width="6.4"/></g></svg></div>',
         popupAnchor: [0, -4],
         className: 'stop'
     });
@@ -87,7 +87,7 @@
             return railIcon;
         }
 
-        html = properties.icon || '';
+        var html = properties.icon || '';
         var className = 'stop stop-' + html.length;
         if (properties.bearing !== null) {
             html += '<div class="stop-arrow" style="' + bustimes.getTransform(properties.bearing + 45) + '"></div>';
