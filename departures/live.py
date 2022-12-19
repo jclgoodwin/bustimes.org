@@ -121,18 +121,18 @@ class Departures:
         """
         raise NotImplementedError
 
-    def get_poorly_key(self):
-        return "{}:poorly".format(self.request_url)
-
-    def get_poorly(self):
-        return cache.get(self.get_poorly_key())
+    # def get_poorly_key(self):
+    #     return "{}:poorly".format(self.request_url)
 
     def set_poorly(self, age):
-        key = self.get_poorly_key()
+        if self.request_url:
+            key = self.get_poorly_key()
         if key:
             return cache.set(key, True, age)
 
     def get_departures(self):
+        response = cache.get(f"{self.stop.pk}")
+
         try:
             response = self.get_response()
         except requests.exceptions.ReadTimeout:
@@ -447,7 +447,7 @@ class SiriSmDepartures(Departures):
 
     def departures_from_response(self, response):
         if not response.text or "Client.AUTHENTICATION_FAILED" in response.text:
-            cache.set(self.get_poorly_key(), True, 1800)  # back off for 30 minutes
+            self.set_poorly(1800)  # back off for 30 minutes
             return
         data = xmltodict.parse(response.text)
         try:
@@ -648,7 +648,7 @@ def get_departures(stop, services, when):
                 for possible_source in SIRISource.objects.filter(
                     admin_areas=stop.admin_area_id
                 ):
-                    if not possible_source.get_poorly():
+                    if not possible_source.is_poorly():
                         source = possible_source
                         break
 

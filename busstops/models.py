@@ -1127,7 +1127,5 @@ class SIRISource(models.Model):
     def get_poorly_key(self):
         return f"{self.url}:{self.requestor_ref}:poorly"
 
-    def get_poorly(self):
+    def is_poorly(self):
         return cache.get(self.get_poorly_key())
-
-    get_poorly.short_description = "Poorly"

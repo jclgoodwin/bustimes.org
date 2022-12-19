@@ -520,7 +520,7 @@ class DataSourceAdmin(admin.ModelAdmin):
 
 @admin.register(models.SIRISource)
 class SIRISourceAdmin(admin.ModelAdmin):
-    list_display = ("name", "url", "requestor_ref", "areas", "get_poorly")
+    list_display = ("name", "url", "requestor_ref", "areas", "is_poorly")
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
