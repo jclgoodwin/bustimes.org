@@ -80,6 +80,11 @@ def get_routes(routes, when=None, from_date=None):
             if not route.source.sha1
             or route.source_id == sources_by_sha1[route.source.sha1]
         ]
+    elif len(routes) == 2 and all(
+        route.code.startswith("NCSD_TXC") for route in routes
+    ):
+        # favour the TxC 2.1 version of NCSD data, if both versions' dates are current
+        routes = [route for route in routes if route.code.startswith("NCSD_TXC/")]
 
     # use latest passenger zipfile filename
     if any(".zip" in route.code for route in routes) and len(routes) > 1:

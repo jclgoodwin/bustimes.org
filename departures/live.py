@@ -381,6 +381,7 @@ class TimetableDepartures(Departures):
         times = [
             self.get_row(stop_time, yesterday_date) for stop_time in yesterday_times
         ] + [self.get_row(stop_time, date) for stop_time in today_times]
+
         i = 0
         while len(times) < 10 and i < 3:
             i += 1
@@ -389,6 +390,10 @@ class TimetableDepartures(Departures):
                 self.get_row(stop_time, date)
                 for stop_time in self.get_times(date)[: 10 - len(times)]
             ]
+
+        if i or yesterday_times:
+            times.sort(key=get_departure_order)
+
         return times
 
     def __init__(self, stop, services, now, routes):
