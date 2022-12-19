@@ -302,10 +302,16 @@ class TripDetailView(DetailView):
 
         if self.object.operator:
             operators = [self.object.operator]
-        else:
+        elif self.object.route.service:
             operators = list(self.object.route.service.operator.all())
-        self.object.route.service.line_name = self.object.route.line_name
-        context["breadcrumb"] = operators + [self.object.route.service]
+        else:
+            operators = []
+
+        context["breadcrumb"] = operators
+
+        if self.object.route.service:
+            self.object.route.service.line_name = self.object.route.line_name
+            context["breadcrumb"] += [self.object.route.service]
 
         stops = list(self.object.stoptime_set.all())
         context["stops"] = stops
