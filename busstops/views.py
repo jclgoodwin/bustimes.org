@@ -252,7 +252,7 @@ def timetable_source_stats(request):
 
 
 @cache_control_s_maxage(3600)
-def stops(request):
+def stops_json(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
     in standard GeoJSON format
@@ -267,9 +267,7 @@ def stops(request):
             latlong__bboverlaps=bounding_box,
         )
         .annotate(line_names=ArrayAgg("service__route__line_name", distinct=True))
-        .filter(
-            Exists("service", filter=Q(service__current=True)),
-        )
+        .filter(Exists("service", filter=Q(service__current=True)) | Q(stop_type="RLY"))
         .select_related("locality")
         .defer("locality__latlong")
     )
@@ -291,6 +289,8 @@ def stops(request):
                         "bearing": stop.get_heading(),
                         "url": stop.get_absolute_url(),
                         "services": stop.get_line_names(),
+                        "stop_type": stop.stop_type,
+                        "bus_stop_type": stop.bus_stop_type,
                     },
                 }
                 for stop in results

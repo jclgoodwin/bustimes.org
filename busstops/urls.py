@@ -35,7 +35,7 @@ urlpatterns = [
     path("timetable-source-stats.json", views.timetable_source_stats),
     path("stats.json", views.stats),
     path("robots.txt", views.robots_txt),
-    path("stops.json", views.stops),
+    path("stops.json", views.stops_json),
     path(
         "regions/<pk>",
         views.RegionDetailView.as_view(),
