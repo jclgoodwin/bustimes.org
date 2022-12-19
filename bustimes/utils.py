@@ -102,13 +102,12 @@ def get_routes(routes, when=None, from_date=None):
 
 
 def get_calendars(when, calendar_ids=None):
-    calendars = Calendar.objects.filter(
-        Q(end_date__gte=when) | Q(end_date=None), start_date__lte=when
-    )
+    between_dates = Q(start_date__lte=when) & (Q(end_date__gte=when) | Q(end_date=None))
+
+    calendars = Calendar.objects.filter(between_dates)
     calendar_calendar_dates = CalendarDate.objects.filter(calendar=OuterRef("id"))
-    calendar_dates = calendar_calendar_dates.filter(
-        Q(end_date__gte=when) | Q(end_date=None), start_date__lte=when
-    )
+    calendar_dates = calendar_calendar_dates.filter(between_dates)
+
     if calendar_ids is not None:
         # cunningly make the query faster
         calendars = calendars.filter(id__in=calendar_ids)
