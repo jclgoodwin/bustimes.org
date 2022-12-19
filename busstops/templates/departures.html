@@ -1,5 +1,5 @@
 {% if when or departures %}
-<div class="aside">
+<div class="aside" id="departures">
     {% if when %}
     <form autocomplete="off">
         <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required
@@ -37,6 +37,9 @@
                     {% firstof item.time.time item.time %}
                 {% endif %}{% if item.link %}</a>{% endif %}
             </td>
+            {% if object is stoparea %}
+                <td>{{ item.stop_time.stop.get_icon }}</td>
+            {% endif %}
         </tr>
         {% if forloop.last %}
             </tbody>

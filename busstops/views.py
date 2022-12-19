@@ -544,6 +544,34 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
         return context
 
 
+def get_departures_context(stop, services, form_data) -> dict:
+    context = {}
+    when = None
+    form = forms.DeparturesForm(form_data)
+    if form.is_valid():
+        date = form.cleaned_data["date"]
+        time = form.cleaned_data["time"]
+        if time is None:
+            time = datetime.time()  # 00:00
+        when = datetime.datetime.combine(date, time)
+    context["when"] = when
+
+    departures, _ = live.get_departures(stop, services, when)
+    context.update(departures)
+    if context["departures"]:
+        context["live"] = any(item.get("live") for item in context["departures"])
+        if len(context["departures"]) > 1 and context["departures"][-1].get("time"):
+            next_page = urlencode(
+                {
+                    "date": context["departures"][-1]["time"].date(),
+                    "time": context["departures"][-1]["time"].time().strftime("%H:%M"),
+                }
+            )
+            context["next_page"] = f"?{next_page}"
+
+    return context
+
+
 class StopPointDetailView(DetailView):
     """A stop, other stops in the same area, and the services servicing it"""
 
@@ -554,6 +582,7 @@ class StopPointDetailView(DetailView):
         "locality",
         "locality__parent",
         "locality__district",
+        # "stop_area"
     )
     queryset = queryset.defer("locality__latlong", "locality__parent__latlong")
 
@@ -585,44 +614,18 @@ class StopPointDetailView(DetailView):
         context["services"] = sorted(services, key=Service.get_order)
 
         context["breadcrumb"] = [
-            crumb
-            for crumb in (
-                self.object.get_region(),
-                self.object.admin_area,
-                self.object.locality and self.object.locality.district,
-                self.object.locality and self.object.locality.parent,
-                self.object.locality,
-            )
-            if crumb is not None
+            self.object.get_region(),
+            self.object.admin_area,
+            self.object.locality and self.object.locality.district,
+            self.object.locality and self.object.locality.parent,
+            self.object.locality,
+            # self.object.stop_area
         ]
 
         if not (self.object.active or context["services"]):
             return context
 
-        when = None
-        form = forms.DeparturesForm(self.request.GET)
-        if form.is_valid():
-            date = form.cleaned_data["date"]
-            time = form.cleaned_data["time"]
-            if time is None:
-                time = datetime.time()  # 00:00
-            when = datetime.datetime.combine(date, time)
-            context["when"] = when
-
-        departures, _ = live.get_departures(self.object, context["services"], when)
-        context.update(departures)
-        if context["departures"]:
-            context["live"] = any(item.get("live") for item in context["departures"])
-            if len(context["departures"]) > 1 and context["departures"][-1].get("time"):
-                next_page = urlencode(
-                    {
-                        "date": context["departures"][-1]["time"].date(),
-                        "time": context["departures"][-1]["time"]
-                        .time()
-                        .strftime("%H:%M"),
-                    }
-                )
-                context["next_page"] = f"?{next_page}"
+        context.update(get_departures_context(self.object, services, self.request.GET))
 
         text = ", ".join(
             part
@@ -711,9 +714,18 @@ class StopPointDetailView(DetailView):
 
 class StopAreaDetailView(DetailView):
     model = StopArea
+    queryset = model.objects.select_related(
+        "admin_area",
+        "admin_area__region",
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        services = Service.objects.filter(
+            current=True, stops__stop_area=self.object
+        ).annotate(operators=ArrayAgg("operator__name", distinct=True))
+        context.update(get_departures_context(self.object, services, self.request.GET))
 
         context["children"] = self.object.stoppoint_set.annotate(
             line_names=ArrayAgg(
@@ -722,7 +734,31 @@ class StopAreaDetailView(DetailView):
             )
         ).order_by("common_name", "indicator")
 
+        stops_dict = {stop.pk: stop for stop in context["children"]}
+        for item in context["departures"]:
+            item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
+
+        context["breadcrumb"] = [
+            self.object.admin_area.region,
+            self.object.admin_area,
+            self.object.parent,
+        ]
+
         return context
+
+
+def stop_departures(request, atco_code):
+    stop = get_object_or_404(StopPoint, atco_code=atco_code)
+
+    services = stop.service_set.annotate(
+        operators=ArrayAgg("operator__name", distinct=True)
+    )
+
+    context = get_departures_context(stop, services, request.GET)
+
+    context["object"] = stop
+
+    return render(request, "departures.html", context)
 
 
 class OperatorDetailView(DetailView):

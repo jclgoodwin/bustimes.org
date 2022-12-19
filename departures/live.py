@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
 
-from busstops.models import Service, SIRISource
+from busstops.models import Service, SIRISource, StopPoint
 from bustimes.models import Route, StopTime
 from bustimes.utils import get_calendars, get_routes
 from vehicles.models import Vehicle
@@ -347,7 +347,7 @@ class TimetableDepartures(Departures):
         }
 
     def get_times(self, date, time=None):
-        times = get_stop_times(date, time, self.stop.atco_code, self.routes)
+        times = get_stop_times(date, time, self.stop, self.routes)
         times = times.select_related(
             "trip__route__service", "trip__destination__locality"
         )
@@ -551,7 +551,13 @@ def blend(departures, live_rows, stop=None):
 def get_stop_times(
     date: datetime.datetime, time: datetime.timedelta, stop, services_routes: dict
 ):
-    times = StopTime.objects.filter(pick_up=True, stop_id=stop)
+    times = StopTime.objects.filter(pick_up=True)
+
+    if type(stop) is StopPoint:
+        times = times.filter(stop=stop)
+    else:
+        times = times.filter(stop__stop_area=stop)
+
     if time:
         times = times.filter(departure__gte=time)
     else:
@@ -570,6 +576,7 @@ def get_departures(stop, services, when):
     # Transport for London
     if (
         not when
+        and type(stop) is StopPoint
         and stop.atco_code[:3] == "490"
         and any(s.service_code[:4] == "tfl_" for s in services)
     ):
@@ -609,14 +616,14 @@ def get_departures(stop, services, when):
     if departures and not operators.isdisjoint(settings.NTA_OPERATORS):
         gtfsr.update_stop_departures(departures)
 
-    if when:
+    if when or type(stop) is not StopPoint:
         pass
     elif not departures or (
         (departures[0]["time"] - now) < one_hour
         or get_stop_times(
             one_hour_ago.date(),
             datetime.timedelta(hours=one_hour_ago.hour, minutes=one_hour_ago.minute),
-            stop.atco_code,
+            stop,
             routes,
         ).exists()
     ):

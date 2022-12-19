@@ -76,6 +76,7 @@ class StopCodeAdmin(admin.ModelAdmin):
 @admin.register(models.StopArea)
 class StopAreaAdmin(GISModelAdmin):
     raw_id_fields = ["admin_area", "parent"]
+    list_filter = ["stop_area_type"]
 
 
 class OperatorCodeInline(admin.TabularInline):
