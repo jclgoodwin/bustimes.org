@@ -796,16 +796,25 @@ table .livery {
         }
     }
 
-    .stop-arrow {
+    .stop-arrow,
+    .rail {
         background: rgba(0, 0, 0, .6);
         border: 1px solid $white;
         border-radius: 0 8px 8px;
         height: 9px;
         width: 9px;
+    }
 
-        &.no-direction {
-            border-radius: 8px;
-        }
+    .no-direction,
+    .rail {
+        border-radius: 8px;
+    }
+
+    .rail {
+        border-radius: 9px;
+        height: 16px;
+        line-height: 19px;
+        width: 16px;
     }
 }
 

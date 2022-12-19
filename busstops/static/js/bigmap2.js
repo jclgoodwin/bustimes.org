@@ -75,18 +75,29 @@
 
     vehiclesGroup.addTo(map);
 
-    function getStopIcon(html, bearing) {
-        html = html || '';
+    var railIcon = L.divIcon({
+        iconSize: [18, 18],
+        html: '<div class="rail"><svg xmlns="http://www.w3.org/2000/svg" width="15.5" height="9.75" viewBox="0 0 62 39"><g stroke="#fff" fill="none"><path d="M1,-8.9 46,12.4 16,26.6 61,47.9" stroke-width="6"/><path d="M0,12.4H62m0,14.2H0" stroke-width="6.4"/></g></svg></div>',
+        popupAnchor: [0, -4],
+        className: 'stop'
+    });
+
+    function getStopIcon(properties) {
+        if (properties.stop_type == "RLY") {
+            return railIcon;
+        }
+
+        html = properties.icon || '';
         var className = 'stop stop-' + html.length;
-        if (bearing !== null) {
-            html += '<div class="stop-arrow" style="' + bustimes.getTransform(bearing + 45) + '"></div>';
+        if (properties.bearing !== null) {
+            html += '<div class="stop-arrow" style="' + bustimes.getTransform(properties.bearing + 45) + '"></div>';
         } else {
             html += '<div class="stop-arrow no-direction"></div>';
         }
         return L.divIcon({
             iconSize: [16, 16],
             html: html,
-            popupAnchor: [0, -4],
+            popupAnchor: [0, -8],
             className: className
         });
     }
@@ -95,9 +106,9 @@
 
     function handleStop(data) {
         var latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
-        if (bigStopMarkers) {
+        if (bigStopMarkers || data.properties.stop_type === "RLY") {
             var marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
-                icon: getStopIcon(data.properties.icon, data.properties.bearing),
+                icon: getStopIcon(data.properties),
                 url: data.properties.url
             });
         } else {
