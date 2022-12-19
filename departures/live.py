@@ -121,12 +121,11 @@ class Departures:
         """
         raise NotImplementedError
 
-    # def get_poorly_key(self):
-    #     return "{}:poorly".format(self.request_url)
+    def get_poorly_key(self):
+        pass
 
     def set_poorly(self, age):
-        if self.request_url:
-            key = self.get_poorly_key()
+        key = self.get_poorly_key()
         if key:
             return cache.set(key, True, age)
 
