@@ -120,14 +120,14 @@ class TripSerializer(serializers.ModelSerializer):
     def get_service(self, obj):
         return {
             "id": obj.route.service_id,
-            "line_name": obj.route.service.line_name,
+            "line_name": obj.route.line_name,
         }
 
     def get_times(self, obj):
-        route_links = obj.route.service.routelink_set.all()
-        route_links = {
-            (link.from_stop_id, link.to_stop_id): link for link in route_links
-        }
+        route_links = {}
+        if obj.route.service:
+            for link in obj.route.service.routelink_set.all():
+                route_links[(link.from_stop_id, link.to_stop_id)] = link
         previous_stop_id = None
         for stop_time in obj.stoptime_set.all():
             route_link = route_links.get((previous_stop_id, stop_time.stop_id))
