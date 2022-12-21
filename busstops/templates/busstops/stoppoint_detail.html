@@ -22,13 +22,10 @@
         </li>
         {% if stoppoint.naptan_code and stoppoint.naptan_code != stoppoint.atco_code %}
             <li title="NaPTAN code">{{ stoppoint.naptan_code }}</li>
-        {% endif %} 
+        {% endif %}
         <li title="ATCO code">{{ stoppoint.atco_code }}</li>
     </ul>
 {% endif %}
-
-<!-- 71161633/stop_header/stop_header -->
-<div class="wide-ad" data-fuse="22699655443"></div>
 
 {% include 'situations.html' %}
 

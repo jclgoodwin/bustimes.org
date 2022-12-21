@@ -1,10 +1,5 @@
 {% extends 'page.html' %}
 
-{% block topad %}
-    <!-- 71161633/home_header/home_header -->
-    <div class="wide-ad" data-fuse="22699960949"></div>
-{% endblock %}
-
 {% block content %}
 
 <h1>{{ locality.get_qualified_name }}</h1>
@@ -22,13 +17,6 @@
 {% endif %}
 
 {% if services %}
-    {% if services|length > 6 %}
-        {% if localities or stops %}
-            <!-- 71161633/home_incontent_1/home_incontent_1 -->
-            <div class="wide-ad" data-fuse="22699655431"></div>
-        {% endif %}
-    {% endif %}
-
     <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
 
     {% include 'service_list.html' with services=services class="long wide has-smalls" %}
