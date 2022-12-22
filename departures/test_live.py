@@ -358,11 +358,11 @@ class LiveDeparturesTest(TestCase):
                 <h2>Next departures</h2>
                 <h3>Wednesday 4 May</h3>
                 <table><tbody>
-                    <tr><td>X98</td><td>Bratislava</td><td>11:53</td></tr>
+                    <tr><td>X98</td><td>Bratislava</td><td>11:53</td><td></td></tr>
                 </tbody></table>
                 <h3>Saturday 7 May</h3>
                 <table><tbody>
-                    <tr><td>9</td><td>Shilbottle</td><td>11:53</td></tr>
+                    <tr><td>9</td><td>Shilbottle</td><td>11:53</td><td></td></tr>
                 </tbody></table>
         """,
             html=True,
