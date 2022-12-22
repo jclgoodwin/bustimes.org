@@ -192,6 +192,19 @@ class EditVehicleForm(EditVehiclesForm):
         "notes",
     ]
 
+    def clean_operator(self):
+        old = self.initial["operator"]
+        new = self.cleaned_data["operator"]
+        if old and new:
+            if (
+                old.noc == "PLYC"
+                and new.noc == "TFCN"
+                or old.noc == "TFCN"
+                and new.noc == "PLYC"
+            ):
+                raise ValidationError("No")
+        return new
+
     def clean_reg(self):
         reg = self.cleaned_data["reg"]
         if self.cleaned_data["spare_ticket_machine"] and reg:

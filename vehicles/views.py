@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
@@ -172,6 +173,9 @@ def operator_vehicles(request, slug=None, parent=None):
         if not request.user.is_authenticated:
             return redirect(f"/accounts/login/?next={request.path}")
 
+        if request.user.trusted is False:
+            raise PermissionDenied
+
         context["breadcrumb"].append(Vehicles(operator))
         initial = {
             "operator": operator,
@@ -186,7 +190,7 @@ def operator_vehicles(request, slug=None, parent=None):
                 form.add_error(None, "Select some vehicles to change")
             if not form.has_really_changed():
                 form.add_error(None, "You haven't changed anything")
-            elif form.is_valid() and request.user.trusted is not False:
+            elif form.is_valid():
                 data = {key: form.cleaned_data[key] for key in form.changed_data}
 
                 ticked_vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
@@ -696,6 +700,9 @@ class VehicleDetailView(DetailView):
 
 @login_required
 def edit_vehicle(request, **kwargs):
+    if request.user.trusted is False:
+        raise PermissionDenied
+
     vehicle = get_object_or_404(
         Vehicle.objects.select_related(
             "vehicle_type", "livery", "operator", "latest_journey"
@@ -760,10 +767,7 @@ def edit_vehicle(request, **kwargs):
                         "vehicle_type", "There's already a pending edit for that"
                     )
 
-        if request.user.trusted is False:
-            context["edit"] = True
-            form = None
-        elif form.is_valid():
+        if form.is_valid():
             now = timezone.now()
             try:
                 revision, features = do_revision(vehicle, data, request.user)
