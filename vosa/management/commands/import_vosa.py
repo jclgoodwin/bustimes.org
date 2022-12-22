@@ -168,17 +168,17 @@ class Command(BaseCommand):
             else:
                 registration.service_type_description = line["Service_Type_Description"]
 
-            if registration.authority_description:
-                if line["Auth_Description"] not in registration.authority_description:
-                    registration.authority_description += (
-                        f"\n{line['Auth_Description']}"
+            if (
+                registration.authority_description
+                and line["Auth_Description"] not in registration.authority_description
+                and len(registration.authority_description) < 255
+            ):
+                registration.authority_description += f"\n{line['Auth_Description']}"
+                if len(registration.authority_description) > 255:  # too long
+                    # some National Express coach services cover maaany authorities
+                    registration.authority_description = (
+                        f"{registration.authority_description[:254]}…"
                     )
-                    if len(registration.authority_description) > 255:
-                        # some National Express coach services cover maaany authorities
-                        print(reg_no, registration.authority_description)
-                        registration.authority_description = (
-                            registration.authority_description[:255]
-                        )
             else:
                 registration.authority_description = line["Auth_Description"]
 
