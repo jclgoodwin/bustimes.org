@@ -1236,7 +1236,8 @@ class ImportTransXChangeTest(TestCase):
             active=True,
         )
 
-        call_command("import_transxchange", FIXTURES_DIR / "nrc_90-72-_-r08-1.xml")
+        with patch("os.path.getmtime", return_value=1582385679):
+            call_command("import_transxchange", FIXTURES_DIR / "nrc_90-72-_-r08-1.xml")
 
         service = Service.objects.get()
         self.assertEqual("Stourbridge Shuttle", service.line_brand)
