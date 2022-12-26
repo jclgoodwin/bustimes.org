@@ -93,6 +93,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             end="10:50:00",
             destination_id="0500CCITY544",
             garage=garage,
+            operator_id="TCVW",
         )
         # calendar = Calendar.objects.create(mon=True, tue=True, wed=True, thu=True,
         #                                    fri=True, sat=True, sun=True, start_date='2020-10-20')
