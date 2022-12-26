@@ -624,7 +624,7 @@ class StopPointDetailView(DetailView):
         "locality",
         "locality__parent",
         "locality__district",
-        # "stop_area"
+        "stop_area",
     )
     queryset = queryset.defer("locality__latlong", "locality__parent__latlong")
 
@@ -661,7 +661,7 @@ class StopPointDetailView(DetailView):
             self.object.locality and self.object.locality.district,
             self.object.locality and self.object.locality.parent,
             self.object.locality,
-            # self.object.stop_area
+            self.object.stop_area,
         ]
 
         if not (self.object.active or context["services"]):
@@ -776,7 +776,15 @@ class StopAreaDetailView(DetailView):
             )
         ).order_by("common_name", "indicator")
 
+        for stop in context["children"]:
+            if " " in stop.indicator:
+                context["indicator_prefix"] = stop.indicator.split(" ")[
+                    0
+                ]  # Stand, Stance, Stop
+            break
+
         stops_dict = {stop.pk: stop for stop in context["children"]}
+
         for item in context["departures"]:
             item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
 

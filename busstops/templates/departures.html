@@ -19,6 +19,9 @@
                 {% endif %}
                 <table>
                 <tbody>
+                    {% if indicator_prefix %}
+                        <tr><td colspan="3"></td><th scope="col">{{ indicator_prefix }}</th></tr>
+                    {% endif %}
             {% endif %}
         {% endifchanged %}
         <tr>

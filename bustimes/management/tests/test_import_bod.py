@@ -65,7 +65,9 @@ class ImportBusOpenDataTest(TestCase):
         admin_area = AdminArea.objects.create(
             id=91, atco_code="290", name="Norfolk", region_id="EA"
         )
-        stop_area = StopArea.objects.create(id="", active=True, admin_area=admin_area)
+        stop_area = StopArea.objects.create(
+            id="2900A", active=True, admin_area=admin_area
+        )
         StopPoint.objects.bulk_create(
             [
                 StopPoint(
