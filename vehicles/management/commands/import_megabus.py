@@ -47,9 +47,9 @@ class Command(NatExpCommand):
                 continue
             for route in data["routes"]:
                 for item in route["chronological_departures"]:
-                    if (
-                        item["active_vehicle"]
-                        and not item["tracking"]["is_future_trip"]
+                    if item["active_vehicle"] and not (
+                        item["coachtracker"]["is_earlier_departure"]
+                        or item["coachtracker"]["is_later_departure"]
                     ):
                         yield (item)
             self.save()
