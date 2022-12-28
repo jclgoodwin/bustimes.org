@@ -1,0 +1,1219 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.1
+    method: GET
+    uri: https://api.tfl.gov.uk/StopPoint/mode/bus/Disruption
+  response:
+    body:
+      string: '[{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint, Tfl.Api.Presentation.Entities","atcoCode":"490010717E","fromDate":"2022-12-08T08:00:00Z","toDate":"2023-01-31T17:00:00Z","description":"Bus
+        Stop Closed\\n  Please use next or previous\\n    stop to catch your bus \\n","commonName":"Padfield
+        Road","type":"Closure","mode":"bus","stationAtcoCode":"490G000695","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490001097D","fromDate":"2022-12-14T14:23:00Z","toDate":"2023-01-13T19:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Eltham Station  / Sherard Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00018661","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490001097C","fromDate":"2022-12-14T14:23:00Z","toDate":"2023-01-13T19:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Eltham Station  / Sherard Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00018661","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490000023K","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Apothecary Street","type":"Closure","mode":"bus","stationAtcoCode":"490G00020083","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490013323SA","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Southwark Station","type":"Closure","mode":"bus","stationAtcoCode":"490G13323SA","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490013323SB","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Southwark Station","type":"Closure","mode":"bus","stationAtcoCode":"490G13323SA","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011082S","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Pocock Street","type":"Closure","mode":"bus","stationAtcoCode":"490G00011082","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011082N","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Pocock Street","type":"Closure","mode":"bus","stationAtcoCode":"490G00011082","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015140N","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"St George''s Circus","type":"Closure","mode":"bus","stationAtcoCode":"490G00012693","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015140S","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"St George''s Circus","type":"Closure","mode":"bus","stationAtcoCode":"490G00012693","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490012526SD","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Stamford Street","type":"Closure","mode":"bus","stationAtcoCode":"490G00012526","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490012526SC","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Stamford Street","type":"Closure","mode":"bus","stationAtcoCode":"490G00012526","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490013934N","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Blackfriars Station / South Entrance","type":"Closure","mode":"bus","stationAtcoCode":"490G00013934","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490013934S","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Blackfriars Station / South Entrance","type":"Closure","mode":"bus","stationAtcoCode":"490G00013934","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490000023J","fromDate":"2022-12-23T00:00:00Z","toDate":"2022-12-31T14:00:00Z","description":"Bus
+        Stop Closed\\n Buses are on diversion due to\\nroadworks at Blackfriars Bridge.\\n  Visit
+        tfl.gov.uk/bus/status","commonName":"Blackfriars Station / North Entrance","type":"Closure","mode":"bus","stationAtcoCode":"490G00020084","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011708S","fromDate":"2022-12-20T09:01:00Z","toDate":"2023-01-14T20:00:00Z","description":"Bus
+        Stop Closed\\n\\n\\n","commonName":"Roslin Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00011708","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015590S","fromDate":"2022-12-20T09:01:00Z","toDate":"2023-01-14T20:00:00Z","description":"Bus
+        Stop Closed\\n\\n\\n","commonName":"Colville Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00015590","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490020107S","fromDate":"2022-12-20T09:01:00Z","toDate":"2023-01-14T20:00:00Z","description":"Bus
+        Stop Closed\\n\\n\\n","commonName":"Chiswick Business Park","type":"Closure","mode":"bus","stationAtcoCode":"490G00020107","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490005558W","fromDate":"2022-12-22T11:33:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        481 is on diversion via\\nWhitton High Street & Percy Road\\ndue to water
+        works. For details,\\n  visit tfl.gov.uk/bus/status","commonName":"Constance
+        Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00005558","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490018715S","fromDate":"2022-12-22T11:33:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        481 is on diversion via\\nWhitton High Street & Percy Road\\ndue to water
+        works. For details,\\n  visit tfl.gov.uk/bus/status","commonName":"Montrose
+        Avenue","type":"Closure","mode":"bus","stationAtcoCode":"490G00018715","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490018717S","fromDate":"2022-12-22T11:33:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        481 is on diversion via\\nWhitton High Street & Percy Road\\ndue to water
+        works. For details,\\n  visit tfl.gov.uk/bus/status","commonName":"Ashley
+        Drive","type":"Closure","mode":"bus","stationAtcoCode":"490G00018717","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490018718S","fromDate":"2022-12-22T11:33:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        481 is on diversion via\\nWhitton High Street & Percy Road\\ndue to water
+        works. For details,\\n  visit tfl.gov.uk/bus/status","commonName":"Longford
+        Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00009310","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490014637W","fromDate":"2022-12-22T11:33:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        481 is on diversion via\\nWhitton High Street & Percy Road\\ndue to water
+        works. For details,\\n  visit tfl.gov.uk/bus/status","commonName":"Whitton
+        Library","type":"Closure","mode":"bus","stationAtcoCode":"490G00014637","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015026M","fromDate":"2022-12-22T12:38:00Z","toDate":"2022-12-28T18:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Talbot Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00015026","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015026N","fromDate":"2022-12-22T12:38:00Z","toDate":"2022-12-28T18:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Talbot Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00015026","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490000988Z","fromDate":"2022-12-22T20:53:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        223 is on diversion via\\n  Woodcock Hill and The Avenue\\n   due to emergency
+        roadworks.\\n  Visit tfl.gov.uk/bus/status","commonName":"Fernleigh Court","type":"Closure","mode":"bus","stationAtcoCode":"490G000268","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490001986Z","fromDate":"2022-12-22T20:53:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        223 is on diversion via\\n  Woodcock Hill and The Avenue\\n   due to emergency
+        roadworks.\\n  Visit tfl.gov.uk/bus/status","commonName":"Montpelier Rise","type":"Closure","mode":"bus","stationAtcoCode":"490G000310","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490000988Y","fromDate":"2022-12-22T20:53:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        223 is on diversion via\\n  Woodcock Hill and The Avenue\\n   due to emergency
+        roadworks.\\n  Visit tfl.gov.uk/bus/status","commonName":"Fernleigh Court","type":"Closure","mode":"bus","stationAtcoCode":"490G000268","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490002105Z","fromDate":"2022-12-22T20:53:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        223 is on diversion via\\n  Woodcock Hill and The Avenue\\n   due to emergency
+        roadworks.\\n  Visit tfl.gov.uk/bus/status","commonName":"Preston Park","type":"Closure","mode":"bus","stationAtcoCode":"490G000322","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490000213B","fromDate":"2022-12-22T20:53:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        223 is on diversion via\\n  Woodcock Hill and The Avenue\\n   due to emergency
+        roadworks.\\n  Visit tfl.gov.uk/bus/status","commonName":"South Kenton Station","type":"Closure","mode":"bus","stationAtcoCode":"490G00213A","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490000213A","fromDate":"2022-12-22T20:53:00Z","toDate":"2023-01-01T10:30:00Z","description":"Route
+        223 is on diversion via\\n  Woodcock Hill and The Avenue\\n   due to emergency
+        roadworks.\\n  Visit tfl.gov.uk/bus/status","commonName":"South Kenton Station","type":"Closure","mode":"bus","stationAtcoCode":"490G00213A","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"4900020146E","fromDate":"2022-12-23T09:19:00Z","toDate":"2022-12-31T01:29:00Z","description":"Bus
+        Stop Closed\\n\\nPlease see tfl.gov.uk/bus/status\\n        for more details","commonName":"Lea
+        Interchange Bus Garage","type":"Closure","mode":"bus","stationAtcoCode":"490G00020146","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490020128S","fromDate":"2022-12-23T09:19:00Z","toDate":"2022-12-31T01:29:00Z","description":"Bus
+        Stop Closed\\n\\nPlease see tfl.gov.uk/bus/status\\n        for more details","commonName":"Velopark","type":"Closure","mode":"bus","stationAtcoCode":"490G00020128","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490020128N","fromDate":"2022-12-23T09:19:00Z","toDate":"2022-12-31T01:29:00Z","description":"Bus
+        Stop Closed\\n\\nPlease see tfl.gov.uk/bus/status\\n        for more details","commonName":"Velopark","type":"Closure","mode":"bus","stationAtcoCode":"490G00020128","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490009478N","fromDate":"2022-12-21T21:00:00Z","toDate":"2022-12-29T18:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Parklands Close","type":"Closure","mode":"bus","stationAtcoCode":"490G00009478","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490004090S","fromDate":"2022-12-25T13:15:00Z","toDate":"2023-01-23T20:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Blake Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00004090","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490004090N","fromDate":"2022-12-25T13:15:00Z","toDate":"2023-01-23T20:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Blake Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00004090","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490013781N","fromDate":"2022-12-24T09:11:00Z","toDate":"2023-01-01T10:30:00Z","description":"Routes
+        147 300 304 473 & N551\\n   are on diversion due to an\\n unsafe road surface.
+        For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Tree Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00013781","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490013781S","fromDate":"2022-12-24T09:11:00Z","toDate":"2023-01-01T10:30:00Z","description":"Routes
+        147 300 304 473 & N551\\n   are on diversion due to an\\n unsafe road surface.
+        For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Tree Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00013781","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490010220S","fromDate":"2022-12-24T09:11:00Z","toDate":"2023-01-01T10:30:00Z","description":"Routes
+        147 300 304 473 & N551\\n   are on diversion due to an\\n unsafe road surface.
+        For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Newham Way","type":"Closure","mode":"bus","stationAtcoCode":"490G00010220","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490010050S","fromDate":"2022-12-24T09:11:00Z","toDate":"2023-01-01T10:30:00Z","description":"Routes
+        147 300 304 473 & N551\\n   are on diversion due to an\\n unsafe road surface.
+        For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Mortlake Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00010050","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011201M","fromDate":"2022-12-24T09:11:00Z","toDate":"2023-01-01T10:30:00Z","description":"Routes
+        147 300 304 473 & N551\\n   are on diversion due to an\\n unsafe road surface.
+        For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Victoria Dock Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00011201","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011201L","fromDate":"2022-12-24T09:11:00Z","toDate":"2023-01-01T10:30:00Z","description":"Routes
+        147 300 304 473 & N551\\n   are on diversion due to an\\n unsafe road surface.
+        For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Victoria Dock Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00011201","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490016785N","fromDate":"2022-12-24T09:11:00Z","toDate":"2023-01-01T10:30:00Z","description":"Routes
+        147 300 304 473 & N551\\n   are on diversion due to an\\n unsafe road surface.
+        For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Newham Way","type":"Closure","mode":"bus","stationAtcoCode":"490G00010220","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490014603U","fromDate":"2022-12-24T18:09:00Z","toDate":"2023-01-03T17:00:00Z","description":"Bus
+        Stop Closed\\n due to water connection works.\\n Please use the next available\\n
+        stop to continue your journey.","commonName":"White Lion Street","type":"Closure","mode":"bus","stationAtcoCode":"490G00014603","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490007617N","fromDate":"2022-12-24T18:37:00Z","toDate":"2022-12-29T23:59:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Hackington Crescent","type":"Closure","mode":"bus","stationAtcoCode":"490G00007617","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GCROUCHH","fromDate":"2022-12-27T04:30:00Z","toDate":"2022-12-31T14:30:00Z","description":"LONDON
+        OVERGROUND: Tuesday 27, Wednesday 28, Thursday 29 and Friday 30 December,
+        no service between Gospel Oak and Barking Riverside. Use Victoria line connections
+        between Seven Sisters (for South Tottenham), Blackhorse Road and Walthamstow
+        Central, and London Buses Routes EL1 EL2 and EL3 for Barking Riverside. Replacement
+        bus service J operates between Gospel Oak (Highgate Road) and Seven Sisters
+        calling at Upper Holloway, Crouch Hill (Hornsey Road), Finsbury Park and Harringay
+        Green Lanes. Replacement bus service T operates between Walthamstow Central
+        (for Walthamstow Queens Road) and Barking calling at Leyton Midland Road,
+        Leytonstone High Road (Harrow Green), Wanstead Park, Woodgrange Park and East
+        Ham (set down towards Barking, pick up towards Walthamstow)","commonName":"Crouch
+        Hill Rail Station","type":"Part Closure","mode":"bus","stationAtcoCode":"910GCROUCHH","appearance":"PlannedWork"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490006048E","fromDate":"2022-05-16T07:00:00Z","toDate":"2023-10-13T17:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Deodar Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00006048","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015461S","fromDate":"2022-08-22T07:11:00Z","toDate":"2023-03-31T17:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Studley Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00007330","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490007330N","fromDate":"2022-08-22T07:15:00Z","toDate":"2023-03-31T17:00:00Z","description":"Bus
+        Stop Closed\\n    Please use the next stop\\n      or the previous stop \\n       to
+        catch your bus","commonName":"Studley Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00007330","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490007630E","fromDate":"2022-12-25T08:12:00Z","toDate":"2023-01-01T23:59:00Z","description":"Route
+        336 is on diversion via\\nBromley Road and Downham Way due\\nto a burst water
+        main. For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Haddington
+        Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00007630","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490014583E","fromDate":"2022-12-25T08:12:00Z","toDate":"2023-01-01T23:59:00Z","description":"Route
+        336 is on diversion via\\nBromley Road and Downham Way due\\nto a burst water
+        main. For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Whitefoot Lane
+        / Forster House","type":"Closure","mode":"bus","stationAtcoCode":"490G00014583","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490014582E","fromDate":"2022-12-25T08:12:00Z","toDate":"2023-01-01T23:59:00Z","description":"Route
+        336 is on diversion via\\nBromley Road and Downham Way due\\nto a burst water
+        main. For info,\\n  visit tfl.gov.uk/bus/status","commonName":"Whitefoot Lane
+        / Bromley Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00014582","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GCHDWLHT","fromDate":"2022-12-28T04:30:00Z","toDate":"2023-01-03T01:29:00Z","description":"ELIZABETH
+        LINE: Wednesday 28 December until Monday 2 January,  no service between Whitechapel
+        and Shenfield. The limited Elizabeth line services between Liverpool Street
+        National Rail station and Shenfield will also not operate. Replacement buses
+        operate between Stratford and Romford and between Newbury Park (for Central
+        line) and Shenfield. Greater Anglia services will not operate between Liverpool
+        Street and Ingatestone / Billericay.","commonName":"Chadwell Heath Rail Station","type":"Part
+        Closure","mode":"bus","stationAtcoCode":"910GCHDWLHT","appearance":"PlannedWork","additionalInformation":"Replacement
+        buses operateService C: Stratford City (for Stratford and Maryland) - Forest
+        Gate (Romford Road) - Manor Park (Romford Road) - Ilford - Seven Kings - Goodmayes
+        - Chadwell Heath (Wangey Road) - RomfordService D: Newbury Park (for Central
+        line) - Chadwell Heath (Wangey Road) - Romford - Gidea Park - Harold Wood
+        - Brentwood - Shenfield"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"940GZZLUECT","fromDate":"2022-12-26T04:30:00Z","toDate":"2023-01-03T01:29:00Z","description":"DISTRICT
+        LINE: Boxing Day, 26 December, until Monday 2 January, no service between
+        Earls Court and Kensington Olympia","commonName":"Earl''s Court Underground
+        Station","type":"Part Closure","mode":"bus","stationAtcoCode":"940GZZLUECT","appearance":"PlannedWork"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GRTHERHI","fromDate":"2021-04-08T08:32:00Z","toDate":"2024-11-30T01:29:00Z","description":"ROTHERHITHE
+        STATION: This station has short platforms. Customers are advised to travel
+        in the front 4 coaches and listen to on-board announcements.","commonName":"Rotherhithe
+        Rail Station","type":"Information","mode":"bus","stationAtcoCode":"910GRTHERHI","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GMRYLAND","fromDate":"2021-04-08T08:32:00Z","toDate":"2024-11-30T01:29:00Z","description":"MARYLAND
+        STATION: This station has short platforms for Elizabeth line services. Customers
+        are advised to travel in the front 7 coaches and listen to on-board announcements.
+        Customers with buggies should travel in the front 4 coaches.","commonName":"Maryland
+        Rail Station","type":"Information","mode":"bus","stationAtcoCode":"910GMRYLAND","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GFRSTGT","fromDate":"2021-04-08T08:32:00Z","toDate":"2024-11-30T01:29:00Z","description":"FOREST
+        GATE STATION: This station has short platforms for Elizabeth line services.
+        Customers are advised to travel in the front 7 coaches and listen to on-board
+        announcements. Customers with buggies should travel in the front 4 coaches.","commonName":"Forest
+        Gate Rail Station","type":"Information","mode":"bus","stationAtcoCode":"910GFRSTGT","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GMANRPK","fromDate":"2021-04-08T08:32:00Z","toDate":"2024-11-30T01:29:00Z","description":"MANOR
+        PARK STATION: This station has short platforms for Elizabeth line services.
+        Customers are advised to travel in the front 7 coaches and listen to on-board
+        announcements. Customers with buggies should travel in the front 4 coaches.","commonName":"Manor
+        Park Rail Station","type":"Information","mode":"bus","stationAtcoCode":"910GMANRPK","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GHAYESAH","fromDate":"2022-10-14T14:12:00Z","toDate":"2024-03-31T00:29:00Z","description":"HAYES
+        & HARLINGTON STATION: The rear doors of the ninth carriage will not open at
+        Hayes & Harlington station. Customers with buggies should travel in the front
+        four carriages.","commonName":"Hayes & Harlington Rail Station","type":"Information","mode":"bus","stationAtcoCode":"910GHAYESAH","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GHANWELL","fromDate":"2022-10-14T14:12:00Z","toDate":"2024-03-31T00:29:00Z","description":"HANWELL
+        STATION: The doors of the eighth and ninth carriages, and middle and rear
+        doors of the seventh carriage, will not open at Hanwell station. Please travel
+        in the front six carriages. Customers with buggies should travel in the front
+        four carriages.","commonName":"Hanwell Rail Station","type":"Information","mode":"bus","stationAtcoCode":"910GHANWELL","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"940GZZLUGPK","fromDate":"2022-11-10T17:25:00Z","toDate":"2023-01-10T01:29:00Z","description":"GREEN
+        PARK STATION: There is a reduced escalator service to the Jubilee line. Please
+        take care as you walk down to the platform. To avoid the stairs, please follow
+        signs for the lifts to platform level. At busy times we may ask you to follow
+        an alternative route between the ticket hall and\r\nthe Jubilee line. Please
+        follow advice from staff and allow extra time for your journey.","commonName":"Green
+        Park Underground Station","type":"Information","mode":"bus","stationAtcoCode":"940GZZLUGPK","appearance":"RealTime"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"940GZZLUGPK","fromDate":"2022-11-16T04:30:00Z","toDate":"2023-03-01T01:29:00Z","description":"We
+        are trialling bridging devices on the Jubilee line platforms at Green Park
+        station to help customers get on and off the train more easily. Please speak
+        to a member of staff if you would like to use it","commonName":"Green Park
+        Underground Station","type":"Information","mode":"bus","stationAtcoCode":"940GZZLUGPK","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"940GZZLUBMY","fromDate":"2022-11-16T04:30:00Z","toDate":"2023-03-01T01:29:00Z","description":"We
+        are trialling bridging devices on the platforms at Bermondsey station to help
+        customers get on and off the train more easily. Please speak to a member of
+        staff if you would like to use one.","commonName":"Bermondsey Underground
+        Station","type":"Information","mode":"bus","stationAtcoCode":"940GZZLUBMY","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"940GZZLUNBP","fromDate":"2022-12-27T05:00:00Z","toDate":"2023-01-02T23:00:00Z","description":"From
+        05:00 Tuesday 27 December until 23:00 Monday 2 January, the Upper station
+        car park at Newbury Park will be closed. During this time the Lower Station
+        Car Park will remain open","commonName":"Newbury Park Underground Station","type":"Information","mode":"bus","stationAtcoCode":"940GZZLUNBP","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015197AA","fromDate":"2022-09-12T05:00:00Z","toDate":"2023-03-31T17:00:00Z","description":"Bus
+        Stop Closed\\n  Until 31 March 2023 as road\\n    layout works take place.\\n","commonName":"Northwick
+        Park Hospital","type":"Closure","mode":"bus","stationAtcoCode":"490G00010425","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490010158N","fromDate":"2022-10-31T15:07:00Z","toDate":"2023-02-24T20:00:00Z","description":"Bus
+        Stop Closed\\n  Please use next or previous\\n    stop to catch your bus \\n","commonName":"Robert
+        Street","type":"Closure","mode":"bus","stationAtcoCode":"490G00010158","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"40004402113A","fromDate":"2022-11-27T13:22:00Z","toDate":"2023-01-27T18:00:00Z","description":"Bus
+        Stop Closed\\n Route 117 is on diversion via\\n Stanwell Road and Church Road\\ndue
+        to works at Woodthorpe Road.","commonName":"Stanwell Road","type":"Closure","mode":"bus","stationAtcoCode":"400G4402113A","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490015250F","fromDate":"2022-12-03T01:36:00Z","toDate":"2023-01-31T08:00:00Z","description":"Bus
+        Stop Closed\\n  Please use next or previous\\n    stop to catch your bus \\n","commonName":"The
+        Wealdstone Centre","type":"Closure","mode":"bus","stationAtcoCode":"490G00015250","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011075W2","fromDate":"2022-12-26T09:57:00Z","toDate":"2022-12-31T17:00:00Z","description":"Bus
+        Stop Closed\\n due to electrical fault repair\\nworks. Please use the next
+        bus\\n stop to continue your journey.","commonName":"Plumstead Corner / Rockmount
+        Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00011075","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490002190ZZ","fromDate":"2022-12-27T01:38:00Z","toDate":"2023-01-03T23:38:00Z","description":"Route
+        255 is on diversion due to\\n a burst water main. tfl.gov.uk\\n\\n","commonName":"Old
+        Devonshire Road","type":"Closure","mode":"bus","stationAtcoCode":"490G000724","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490000091G","fromDate":"2022-12-27T08:40:00Z","toDate":"2022-12-31T17:00:00Z","description":"Bus
+        stop closed\\n       Thames Water works\\nPlease use the previous or next\\nstops
+        to continue your journey.","commonName":"Great Portland Street Station","type":"Closure","mode":"bus","stationAtcoCode":"490G00091G","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490013930E","fromDate":"2022-12-27T08:52:00Z","toDate":"2023-01-02T22:00:00Z","description":"Routes
+        174, 347, 498 and N86 are\\non diversion via Pettits Lane &\\n  Eastern Avenue
+        East due to a\\n burst water main at Main Road.","commonName":"Upper Brentwood
+        Road","type":"Closure","mode":"bus","stationAtcoCode":"490G00013930","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011426E","fromDate":"2022-12-27T08:52:00Z","toDate":"2023-01-02T22:00:00Z","description":"Routes
+        174, 347, 498 and N86 are\\non diversion via Pettits Lane &\\n  Eastern Avenue
+        East due to a\\n burst water main at Main Road.","commonName":"Raphael Park","type":"Closure","mode":"bus","stationAtcoCode":"490G00011426","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490010974E","fromDate":"2022-12-27T08:52:00Z","toDate":"2023-01-02T22:00:00Z","description":"Routes
+        174, 347, 498 and N86 are\\non diversion via Pettits Lane &\\n  Eastern Avenue
+        East due to a\\n burst water main at Main Road.","commonName":"Pettits Lane","type":"Closure","mode":"bus","stationAtcoCode":"490G00010974","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490003558E","fromDate":"2022-12-27T08:52:00Z","toDate":"2023-01-02T22:00:00Z","description":"Routes
+        174, 347, 498 and N86 are\\non diversion via Pettits Lane &\\n  Eastern Avenue
+        East due to a\\n burst water main at Main Road.","commonName":"Links Avenue","type":"Closure","mode":"bus","stationAtcoCode":"490G00018999","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490011529E","fromDate":"2022-12-27T08:52:00Z","toDate":"2023-01-02T22:00:00Z","description":"Routes
+        174, 347, 498 and N86 are\\non diversion via Pettits Lane &\\n  Eastern Avenue
+        East due to a\\n burst water main at Main Road.","commonName":"Repton Avenue","type":"Closure","mode":"bus","stationAtcoCode":"490G00011529","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"490004837E","fromDate":"2022-12-27T08:52:00Z","toDate":"2023-01-02T22:00:00Z","description":"Routes
+        174, 347, 498 and N86 are\\non diversion via Pettits Lane &\\n  Eastern Avenue
+        East due to a\\n burst water main at Main Road.","commonName":"Castellan Avenue","type":"Closure","mode":"bus","stationAtcoCode":"490G00004837","appearance":"Information"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"940GZZDLDEV","fromDate":"2022-12-25T01:49:00Z","toDate":"2022-12-29T01:29:00Z","description":"Devons
+        Road Step free access is not available for trains towards Stratford due to
+        a faulty lift. Call us on 0343 222 1234 if you need help planning your journey.","commonName":"Devons
+        Road DLR Station","type":"Interchange Message","mode":"bus","stationAtcoCode":"940GZZDLDEV","appearance":"RealTime"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GEDMNGRN","fromDate":"2022-12-25T01:52:00Z","toDate":"2022-12-29T01:29:00Z","description":"Edmonton
+        Green Step free access is not available due to a faulty lifts. Call us on
+        0343 222 1234 if you need help planning your journey.","commonName":"Edmonton
+        Green Rail Station","type":"Interchange Message","mode":"bus","stationAtcoCode":"910GEDMNGRN","appearance":"RealTime"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GGOSPLOK","fromDate":"2022-12-25T01:54:00Z","toDate":"2022-12-29T01:29:00Z","description":"Gospel
+        Oak Step free access is not available to the Gospel Oak - Barking line and
+        for trains towards Stratford due to a faulty lift. Call us on 0343 222 1234
+        if you need help planning your journey.","commonName":"Gospel Oak Rail Station","type":"Interchange
+        Message","mode":"bus","stationAtcoCode":"910GGOSPLOK","appearance":"RealTime"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GPCKHMQD","fromDate":"2022-12-25T02:05:00Z","toDate":"2022-12-29T01:29:00Z","description":"Queens
+        Road (Peckham) Step free access is not available due to a faulty lift. Call
+        us on 0343 222 1234 if you need help planning your journey.","commonName":"Queens
+        Road Peckham Rail Station","type":"Interchange Message","mode":"bus","stationAtcoCode":"910GPCKHMQD","appearance":"RealTime"},{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint,
+        Tfl.Api.Presentation.Entities","atcoCode":"910GCNNB","fromDate":"2022-12-28T04:12:16Z","toDate":"2022-12-29T01:29:00Z","description":"Canonbury:
+        No Step Free Access - Step free access is not available to the eastbound platform
+        (towards Stratford) due to a faulty lift. Take a train from platform 1 to
+        Highbury & Islington and change there.\r\n","commonName":"Canonbury Rail Station","type":"Information","mode":"bus","stationAtcoCode":"910GCNNB","appearance":"RealTime"}]'
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - GET,POST,PUT,DELETE,OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Age:
+      - '0'
+      Api-Entity-Payload:
+      - Disruption
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 780a43ed3e5a71e0-LHR
+      Cache-Control:
+      - public, must-revalidate, max-age=30, s-maxage=60
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 28 Dec 2022 12:23:07 GMT
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=2592000
+      Via:
+      - 1.1 varnish
+      X-API:
+      - StopPoint
+      X-AspNet-Version:
+      - 4.0.30319
+      X-Backend:
+      - api
+      X-Cache:
+      - MISS
+      X-Cacheable:
+      - Yes. Cacheable
+      X-Frame-Options:
+      - deny
+      X-Operation:
+      - StopPoint_DisruptionByModeByPathModesQueryIncludeRouteBlockedStops
+      X-Proxy-Connection:
+      - unset
+      X-TTL:
+      - '60.000'
+      X-TTL-RULE:
+      - '0'
+      X-Varnish:
+      - '368915627'
+      content-length:
+      - '48667'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.1
+    method: GET
+    uri: https://api.tfl.gov.uk/line/mode/bus/status
+  response:
+    body:
+      string: "[{\"$type\":\"Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities\",\"id\":\"1\",\"name\":\"1\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=1&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"100\",\"name\":\"100\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=100&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"101\",\"name\":\"101\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=101&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"102\",\"name\":\"102\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=102&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"103\",\"name\":\"103\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=103&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"104\",\"name\":\"104\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=104&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"105\",\"name\":\"105\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=105&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"106\",\"name\":\"106\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=106&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"107\",\"name\":\"107\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=107&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"108\",\"name\":\"108\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"108\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"New Bus Routes via the Silvertown Tunnel: We are proposing
+        to introduce a new cross-river bus network as part of the opening of the Silvertown
+        Tunnel in 2025. The new network will reduce the barrier to movement created
+        by the Thames by connecting people north and south of the river and providing
+        access to job, education, and leisure opportunities, supporting regeneration
+        in south and east London and encouraging more trips to be made by public transport.
+        We are proposing: A new high frequency, limited stop service between Grove
+        Park and Canary Wharf referred to in this consultation as route X239, to extend
+        route 129 (presently Lewisham to North Greenwich) north across the river to
+        Great Eastern Quay via the Royal Docks development zone and a minor change
+        to route 108 so that it uses the new Millennium Way slip road to exit the
+        Blackwall Tunnel southbound. We are also seeking your views on route options
+        for three sections of routes 129 and X239.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-11-16T13:24:00Z\",\"toDate\":\"2023-01-12T01:29:00Z\",\"isNow\":false}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"Information\",\"categoryDescription\":\"Information\",\"description\":\"New
+        Bus Routes via the Silvertown Tunnel: We are proposing to introduce a new
+        cross-river bus network as part of the opening of the Silvertown Tunnel in
+        2025. The new network will reduce the barrier to movement created by the Thames
+        by connecting people north and south of the river and providing access to
+        job, education, and leisure opportunities, supporting regeneration in south
+        and east London and encouraging more trips to be made by public transport.
+        We are proposing: A new high frequency, limited stop service between Grove
+        Park and Canary Wharf referred to in this consultation as route X239, to extend
+        route 129 (presently Lewisham to North Greenwich) north across the river to
+        Great Eastern Quay via the Royal Docks development zone and a minor change
+        to route 108 so that it uses the new Millennium Way slip road to exit the
+        Blackwall Tunnel southbound. We are also seeking your views on route options
+        for three sections of routes 129 and X239.\",\"additionalInfo\":\"Find out
+        more and\_<a href=\\\"https://haveyoursay.tfl.gov.uk/silvertown-tunnel-bus-network\\\">let
+        us have your views</a> by 11 January 2023\",\"created\":\"2022-11-16T13:24:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=108&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"109\",\"name\":\"109\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=109&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"11\",\"name\":\"11\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"11\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"VICTORIA BUS STATION: ROUTES 11 211 C1 N11 westbound
+        are now departing from Victoria Station stop (R) on Buckingham Palace Road.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-08-13T16:20:00Z\",\"toDate\":\"2022-12-31T23:59:00Z\",\"isNow\":true}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"RealTime\",\"categoryDescription\":\"RealTime\",\"description\":\"VICTORIA
+        BUS STATION: ROUTES 11 211 C1 N11 westbound are now departing from Victoria
+        Station stop (R) on Buckingham Palace Road.\",\"created\":\"2022-08-13T17:20:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=11&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"110\",\"name\":\"110\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=110&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"111\",\"name\":\"111\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=111&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"112\",\"name\":\"112\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=112&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"113\",\"name\":\"113\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=113&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"114\",\"name\":\"114\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=114&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"115\",\"name\":\"115\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=115&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"116\",\"name\":\"116\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=116&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"117\",\"name\":\"117\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"117\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"WOODTHORPE ROAD. ASHFORD: Until 18:00 Friday 27th January
+        2023, route 117 is on diversion via Stanwell Road and Church Road due to pipeline
+        replacement works. Buses towards Hounslow are missing the stop Ashford Station.
+        Buses towards Staines are missing the stops Ashford Station and Stanwell Road.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-11-27T13:09:00Z\",\"toDate\":\"2023-01-27T18:00:00Z\",\"isNow\":true}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"RealTime\",\"categoryDescription\":\"RealTime\",\"description\":\"WOODTHORPE
+        ROAD. ASHFORD: Until 18:00 Friday 27th January 2023, route 117 is on diversion
+        via Stanwell Road and Church Road due to pipeline replacement works. Buses
+        towards Hounslow are missing the stop Ashford Station. Buses towards Staines
+        are missing the stops Ashford Station and Stanwell Road.\",\"created\":\"2022-11-27T13:09:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=117&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"118\",\"name\":\"118\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=118&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"119\",\"name\":\"119\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=119&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"12\",\"name\":\"12\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=12&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"120\",\"name\":\"120\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=120&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"121\",\"name\":\"121\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=121&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"122\",\"name\":\"122\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=122&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"123\",\"name\":\"123\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=123&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"124\",\"name\":\"124\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=124&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"125\",\"name\":\"125\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=125&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"126\",\"name\":\"126\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=126&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"127\",\"name\":\"127\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=127&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"128\",\"name\":\"128\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=128&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"129\",\"name\":\"129\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"129\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"New Bus Routes via the Silvertown Tunnel: We are proposing
+        to introduce a new cross-river bus network as part of the opening of the Silvertown
+        Tunnel in 2025. The new network will reduce the barrier to movement created
+        by the Thames by connecting people north and south of the river and providing
+        access to job, education, and leisure opportunities, supporting regeneration
+        in south and east London and encouraging more trips to be made by public transport.
+        We are proposing: A new high frequency, limited stop service between Grove
+        Park and Canary Wharf referred to in this consultation as route X239, to extend
+        route 129 (presently Lewisham to North Greenwich) north across the river to
+        Great Eastern Quay via the Royal Docks development zone and a minor change
+        to route 108 so that it uses the new Millennium Way slip road to exit the
+        Blackwall Tunnel southbound. We are also seeking your views on route options
+        for three sections of routes 129 and X239.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-11-16T13:24:00Z\",\"toDate\":\"2023-01-12T01:29:00Z\",\"isNow\":false}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"Information\",\"categoryDescription\":\"Information\",\"description\":\"New
+        Bus Routes via the Silvertown Tunnel: We are proposing to introduce a new
+        cross-river bus network as part of the opening of the Silvertown Tunnel in
+        2025. The new network will reduce the barrier to movement created by the Thames
+        by connecting people north and south of the river and providing access to
+        job, education, and leisure opportunities, supporting regeneration in south
+        and east London and encouraging more trips to be made by public transport.
+        We are proposing: A new high frequency, limited stop service between Grove
+        Park and Canary Wharf referred to in this consultation as route X239, to extend
+        route 129 (presently Lewisham to North Greenwich) north across the river to
+        Great Eastern Quay via the Royal Docks development zone and a minor change
+        to route 108 so that it uses the new Millennium Way slip road to exit the
+        Blackwall Tunnel southbound. We are also seeking your views on route options
+        for three sections of routes 129 and X239.\",\"additionalInfo\":\"Find out
+        more and\_<a href=\\\"https://haveyoursay.tfl.gov.uk/silvertown-tunnel-bus-network\\\">let
+        us have your views</a> by 11 January 2023\",\"created\":\"2022-11-16T13:24:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=129&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"13\",\"name\":\"13\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=13&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"130\",\"name\":\"130\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=130&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"131\",\"name\":\"131\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=131&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"132\",\"name\":\"132\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=132&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"133\",\"name\":\"133\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=133&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"134\",\"name\":\"134\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=134&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"135\",\"name\":\"135\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=135&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"136\",\"name\":\"136\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=136&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"137\",\"name\":\"137\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=137&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"138\",\"name\":\"138\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=138&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"139\",\"name\":\"139\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=139&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"14\",\"name\":\"14\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=14&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"140\",\"name\":\"140\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"140\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"HIGH STREET, HA3: Due to Harrow Council works, until
+        08:00 on Tuesday 31 January, ROUTES 140 182 186 258 340 640 H9 N18 N140 are
+        on diversion southbound via Palmerston Road, and are unable to serve the stop
+        'The Wealdstone Centre' (F).\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-12-03T01:27:00Z\",\"toDate\":\"2023-01-31T08:00:00Z\",\"isNow\":false}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"PlannedWork\",\"categoryDescription\":\"PlannedWork\",\"description\":\"HIGH
+        STREET, HA3: Due to Harrow Council works, until 08:00 on Tuesday 31 January,
+        ROUTES 140 182 186 258 340 640 H9 N18 N140 are on diversion southbound via
+        Palmerston Road, and are unable to serve the stop 'The Wealdstone Centre'
+        (F).\",\"created\":\"2022-12-03T01:27:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=140&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"141\",\"name\":\"141\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=141&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"142\",\"name\":\"142\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=142&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"143\",\"name\":\"143\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=143&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"144\",\"name\":\"144\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=144&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"145\",\"name\":\"145\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=145&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"146\",\"name\":\"146\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=146&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"147\",\"name\":\"147\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"147\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"PRINCE REGENT LANE: Routes 147 and 304 are on diversion
+        between Custom House Station DLR and Newham Leisure Centre/Bennett Road via
+        Victoria Dock Road, Royal Albert Way, Stansfeld Road and Tollgate Road due
+        to an unsafe road surface. Buses are not serving the stops Victoria Dock Road,
+        Tree Road, Mortlake Road and Newham Way.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-12-24T08:52:00Z\",\"toDate\":\"2023-01-01T10:29:00Z\",\"isNow\":true}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"RealTime\",\"categoryDescription\":\"RealTime\",\"description\":\"PRINCE
+        REGENT LANE: Routes 147 and 304 are on diversion between Custom House Station
+        DLR and Newham Leisure Centre/Bennett Road via Victoria Dock Road, Royal Albert
+        Way, Stansfeld Road and Tollgate Road due to an unsafe road surface. Buses
+        are not serving the stops Victoria Dock Road, Tree Road, Mortlake Road and
+        Newham Way.\",\"created\":\"2022-12-24T08:52:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=147&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"148\",\"name\":\"148\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=148&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"149\",\"name\":\"149\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=149&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"15\",\"name\":\"15\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=15&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"150\",\"name\":\"150\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=150&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"151\",\"name\":\"151\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=151&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"152\",\"name\":\"152\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=152&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"153\",\"name\":\"153\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=153&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"154\",\"name\":\"154\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=154&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"155\",\"name\":\"155\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=155&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"156\",\"name\":\"156\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=156&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"157\",\"name\":\"157\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=157&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"158\",\"name\":\"158\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=158&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"159\",\"name\":\"159\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=159&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"16\",\"name\":\"16\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=16&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"160\",\"name\":\"160\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=160&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"161\",\"name\":\"161\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=161&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"162\",\"name\":\"162\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=162&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"163\",\"name\":\"163\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=163&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"164\",\"name\":\"164\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=164&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"165\",\"name\":\"165\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=165&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"166\",\"name\":\"166\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=166&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"167\",\"name\":\"167\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=167&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"168\",\"name\":\"168\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=168&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"169\",\"name\":\"169\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=169&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"17\",\"name\":\"17\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=17&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"170\",\"name\":\"170\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=170&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"171\",\"name\":\"171\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=171&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"172\",\"name\":\"172\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=172&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"173\",\"name\":\"173\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=173&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"174\",\"name\":\"174\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"175\",\"name\":\"175\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=175&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"176\",\"name\":\"176\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=176&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"177\",\"name\":\"177\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=177&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"178\",\"name\":\"178\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=178&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"179\",\"name\":\"179\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=179&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"18\",\"name\":\"18\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=18&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"180\",\"name\":\"180\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=180&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"181\",\"name\":\"181\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=181&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"182\",\"name\":\"182\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"182\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"HIGH STREET, HA3: Due to Harrow Council works, until
+        08:00 on Tuesday 31 January, ROUTES 140 182 186 258 340 640 H9 N18 N140 are
+        on diversion southbound via Palmerston Road, and are unable to serve the stop
+        'The Wealdstone Centre' (F).\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-12-03T01:27:00Z\",\"toDate\":\"2023-01-31T08:00:00Z\",\"isNow\":false}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"PlannedWork\",\"categoryDescription\":\"PlannedWork\",\"description\":\"HIGH
+        STREET, HA3: Due to Harrow Council works, until 08:00 on Tuesday 31 January,
+        ROUTES 140 182 186 258 340 640 H9 N18 N140 are on diversion southbound via
+        Palmerston Road, and are unable to serve the stop 'The Wealdstone Centre'
+        (F).\",\"created\":\"2022-12-03T01:27:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=182&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"183\",\"name\":\"183\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=183&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"184\",\"name\":\"184\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=184&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"185\",\"name\":\"185\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=185&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"186\",\"name\":\"186\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"186\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"HIGH STREET, HA3: Due to Harrow Council works, until
+        08:00 on Tuesday 31 January, ROUTES 140 182 186 258 340 640 H9 N18 N140 are
+        on diversion southbound via Palmerston Road, and are unable to serve the stop
+        'The Wealdstone Centre' (F).\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-12-03T01:27:00Z\",\"toDate\":\"2023-01-31T08:00:00Z\",\"isNow\":false}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"PlannedWork\",\"categoryDescription\":\"PlannedWork\",\"description\":\"HIGH
+        STREET, HA3: Due to Harrow Council works, until 08:00 on Tuesday 31 January,
+        ROUTES 140 182 186 258 340 640 H9 N18 N140 are on diversion southbound via
+        Palmerston Road, and are unable to serve the stop 'The Wealdstone Centre'
+        (F).\",\"created\":\"2022-12-03T01:27:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=186&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"187\",\"name\":\"187\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=187&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"188\",\"name\":\"188\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=188&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"189\",\"name\":\"189\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=189&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"19\",\"name\":\"19\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=19&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"190\",\"name\":\"190\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=190&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"191\",\"name\":\"191\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=191&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"192\",\"name\":\"192\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=192&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"193\",\"name\":\"193\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=193&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"194\",\"name\":\"194\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=194&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"195\",\"name\":\"195\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=195&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"196\",\"name\":\"196\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=196&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"197\",\"name\":\"197\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=197&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"198\",\"name\":\"198\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=198&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"199\",\"name\":\"199\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=199&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"2\",\"name\":\"2\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=2&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"20\",\"name\":\"20\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=20&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"200\",\"name\":\"200\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=200&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"201\",\"name\":\"201\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=201&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"202\",\"name\":\"202\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"202\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"New Bus Routes via the Silvertown Tunnel: We are proposing
+        to introduce a new cross-river bus network as part of the opening of the Silvertown
+        Tunnel in 2025. The new network will reduce the barrier to movement created
+        by the Thames by connecting people north and south of the river and providing
+        access to job, education, and leisure opportunities, supporting regeneration
+        in south and east London and encouraging more trips to be made by public transport.
+        We are proposing: A new high frequency, limited stop service between Grove
+        Park and Canary Wharf referred to in this consultation as route X239, to extend
+        route 129 (presently Lewisham to North Greenwich) north across the river to
+        Great Eastern Quay via the Royal Docks development zone and a minor change
+        to route 108 so that it uses the new Millennium Way slip road to exit the
+        Blackwall Tunnel southbound. We are also seeking your views on route options
+        for three sections of routes 129 and X239.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-11-16T13:24:00Z\",\"toDate\":\"2023-01-12T01:29:00Z\",\"isNow\":false}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"Information\",\"categoryDescription\":\"Information\",\"description\":\"New
+        Bus Routes via the Silvertown Tunnel: We are proposing to introduce a new
+        cross-river bus network as part of the opening of the Silvertown Tunnel in
+        2025. The new network will reduce the barrier to movement created by the Thames
+        by connecting people north and south of the river and providing access to
+        job, education, and leisure opportunities, supporting regeneration in south
+        and east London and encouraging more trips to be made by public transport.
+        We are proposing: A new high frequency, limited stop service between Grove
+        Park and Canary Wharf referred to in this consultation as route X239, to extend
+        route 129 (presently Lewisham to North Greenwich) north across the river to
+        Great Eastern Quay via the Royal Docks development zone and a minor change
+        to route 108 so that it uses the new Millennium Way slip road to exit the
+        Blackwall Tunnel southbound. We are also seeking your views on route options
+        for three sections of routes 129 and X239.\",\"additionalInfo\":\"Find out
+        more and\_<a href=\\\"https://haveyoursay.tfl.gov.uk/silvertown-tunnel-bus-network\\\">let
+        us have your views</a> by 11 January 2023\",\"created\":\"2022-11-16T13:24:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=202&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"203\",\"name\":\"203\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=203&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"204\",\"name\":\"204\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=204&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"205\",\"name\":\"205\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=205&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"206\",\"name\":\"206\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.793Z\",\"modified\":\"2022-11-29T14:31:06.793Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=206&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"207\",\"name\":\"207\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.76Z\",\"modified\":\"2022-11-29T14:31:06.76Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=207&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"208\",\"name\":\"208\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=208&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"209\",\"name\":\"209\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=209&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"21\",\"name\":\"21\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"statusSeverity\":10,\"statusSeverityDescription\":\"Good
+        Service\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[]}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=21&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"210\",\"name\":\"210\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"210\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"HAMPSTEAD LANE, N6: Route 210 is on diversion in both
+        directions between North Road and The Bishops Avenue due to roadworks. Buses
+        will not be serving stops from/to 'Compton Avenue/Kenwood House (Q/E)' and
+        'Highgate Close (H/M)'.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-12-22T21:43:00Z\",\"toDate\":\"2023-01-08T10:29:00Z\",\"isNow\":true}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"RealTime\",\"categoryDescription\":\"RealTime\",\"description\":\"HAMPSTEAD
+        LANE, N6: Route 210 is on diversion in both directions between North Road
+        and The Bishops Avenue due to roadworks. Buses will not be serving stops from/to
+        'Compton Avenue/Kenwood House (Q/E)' and 'Highgate Close (H/M)'.\",\"created\":\"2022-12-22T22:13:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=210&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}},{\"$type\":\"Tfl.Api.Presentation.Entities.Line,
+        Tfl.Api.Presentation.Entities\",\"id\":\"211\",\"name\":\"211\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
+        Tfl.Api.Presentation.Entities\",\"id\":0,\"lineId\":\"211\",\"statusSeverity\":0,\"statusSeverityDescription\":\"Special
+        Service\",\"reason\":\"VICTORIA BUS STATION: ROUTES 11 211 C1 N11 westbound
+        are now departing from Victoria Station stop (R) on Buckingham Palace Road.\",\"created\":\"0001-01-01T00:00:00\",\"validityPeriods\":[{\"$type\":\"Tfl.Api.Presentation.Entities.ValidityPeriod,
+        Tfl.Api.Presentation.Entities\",\"fromDate\":\"2022-08-13T16:20:00Z\",\"toDate\":\"2022-12-31T23:59:00Z\",\"isNow\":true}],\"disruption\":{\"$type\":\"Tfl.Api.Presentation.Entities.Disruption,
+        Tfl.Api.Presentation.Entities\",\"category\":\"RealTime\",\"categoryDescription\":\"RealTime\",\"description\":\"VICTORIA
+        BUS STATION: ROUTES 11 211 C1 N11 westbound are now departing from Victoria
+        Station stop (R) on Buckingham Palace Road.\",\"created\":\"2022-08-13T17:20:00Z\",\"affectedRoutes\":[],\"affectedStops\":[]}}],\"routeSections\":[],\"serviceTypes\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineServiceTypeInfo,
+        Tfl.Api.Presentation.Entities\",\"name\":\"Regular\",\"uri\":\"/Line/Route?ids=211&serviceTypes=Regular\"}],\"crowding\":{\"$type\":\"Tfl.Api.Presentation.Entities.Crowding,
+        Tfl.Api.Presentation.Entities\"}}]"
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - GET,POST,PUT,DELETE,OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Age:
+      - '0'
+      Api-Entity-Payload:
+      - Line,LineStatus
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 780a43ef68a071e0-LHR
+      Cache-Control:
+      - public, must-revalidate, max-age=30, s-maxage=60
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 28 Dec 2022 12:23:09 GMT
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=2592000
+      Via:
+      - 1.1 varnish
+      X-API:
+      - Line
+      X-AspNet-Version:
+      - 4.0.30319
+      X-Backend:
+      - api
+      X-Cache:
+      - MISS
+      X-Cacheable:
+      - Yes. Cacheable
+      X-Frame-Options:
+      - deny
+      X-Operation:
+      - Line_StatusByModeByPathModesQueryDetailQuerySeverityLevel
+      X-Proxy-Connection:
+      - unset
+      X-TTL:
+      - '60.000'
+      X-TTL-RULE:
+      - '0'
+      X-Varnish:
+      - '320993987'
+      content-length:
+      - '577312'
+    status:
+      code: 200
+      message: OK
+version: 1
