@@ -1286,8 +1286,8 @@ def search(request):
                 ("operators", operators),
                 ("services", services),
             ):
-                if key == "services" and context["operators"]:
-                    continue
+                # if key == "services" and context["operators"]:
+                #     continue
                 queryset = (
                     queryset.filter(search_vector=query)
                     .annotate(rank=rank)

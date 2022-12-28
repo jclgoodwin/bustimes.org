@@ -78,7 +78,7 @@ class EditVehiclesForm(forms.Form):
         queryset=VehicleType.objects, label="Type", required=False, empty_label=""
     )
     colours = forms.ChoiceField(
-        label="Livery",
+        label="Current livery",
         widget=forms.RadioSelect,
         required=False,
         help_text="Wait until the bus has definitely been repainted before updating it here",

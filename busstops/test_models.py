@@ -186,21 +186,6 @@ class ServiceTests(TestCase):
             ],
         )
 
-    def test_get_operator_number(self):
-        self.assertIsNone(self.london_service.get_operator_number("MGBD"))
-
-        self.assertEqual("11", self.london_service.get_operator_number("MEGA"))
-        self.assertEqual("11", self.london_service.get_operator_number("MBGD"))
-
-        self.assertEqual("12", self.london_service.get_operator_number("NATX"))
-        self.assertEqual("12", self.london_service.get_operator_number("NXSH"))
-        self.assertEqual("12", self.london_service.get_operator_number("NXAP"))
-
-        self.assertEqual("41", self.london_service.get_operator_number("BHAT"))
-        self.assertEqual("53", self.london_service.get_operator_number("ESYB"))
-        self.assertEqual("20", self.london_service.get_operator_number("WAIR"))
-        self.assertEqual("18", self.london_service.get_operator_number("TVSN"))
-
     def test_admin(self):
         self.client.force_login(self.user)
 

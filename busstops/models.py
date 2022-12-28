@@ -756,14 +756,6 @@ class Service(models.Model):
         groups = SERVICE_ORDER_REGEX.match(line_name).groups()
         return (groups[0], int(groups[1]) if groups[1] else 0, groups[2])
 
-    @staticmethod
-    def get_operator_number(code):
-        if code in {"MEGA", "MBGD"}:
-            return "11"
-        if code in {"NATX", "NXSH", "NXAP"}:
-            return "12"
-        return {"BHAT": "41", "ESYB": "53", "WAIR": "20", "TVSN": "18"}.get(code)
-
     def get_tfl_url(self):
         return f"https://tfl.gov.uk/bus/timetable/{self.line_name}/"
 
@@ -784,8 +776,9 @@ class Service(models.Model):
 
     def is_megabus(self):
         return (
-            self.line_name in {"FALC", "FAL", "FLCN", "TUBE"}
+            self.line_name in {"FAL", "TUBE", "OXF", "LGW", "LHR"}
             or self.service_code == "PF0000459:197"  # X5
+            or self.service_code == "PF0000508:488"  # Green Line 757
             or any(o.pk in {"MEGA", "SCMG", "SCLK"} for o in self.operator.all())
         )
 
