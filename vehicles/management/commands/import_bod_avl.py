@@ -513,7 +513,9 @@ class Command(ImportLiveVehiclesCommand):
         if destination_ref:
             destination_ref = get_destination_ref(destination_ref)
 
-        if not journey.destination:
+        operator_ref = monitored_vehicle_journey["OperatorRef"]
+
+        if not journey.destination and operator_ref != "TFLO":
             # use stop locality
             if destination_ref:
                 journey.destination = self.get_destination_name(destination_ref)
@@ -532,7 +534,6 @@ class Command(ImportLiveVehiclesCommand):
                 ]
 
         if not journey.service_id and route_name:
-            operator_ref = monitored_vehicle_journey["OperatorRef"]
             operators = self.get_operator(operator_ref)
             journey.service = self.get_service(
                 operators, item, route_name, vehicle.operator_id
