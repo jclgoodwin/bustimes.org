@@ -5,8 +5,6 @@ from vcr import use_cassette
 
 from busstops.models import DataSource, Region, Service
 
-from .models import Situation
-
 
 class TfLDisruptionsTest(TestCase):
     @classmethod
@@ -33,19 +31,20 @@ class TfLDisruptionsTest(TestCase):
 
             cassette.rewind()
 
-            with self.assertNumQueries(101):
+            with self.assertNumQueries(100):
                 call_command("tfl_disruptions")
 
-        situation = Situation.objects.first()
+        response = self.client.get("/situations")
+
+        situation = response.context["situations"][0]
 
         self.assertEqual(
-            situation.situation_number, "7df5fb8a20c132f4c90bf215e079e39e1b8f"
+            situation.situation_number, "70c2d01c46664fb70c7b1ad11ff7fc8ace2a"
         )
         self.assertEqual(situation.reason, "")
-        self.assertEqual(situation.summary, "")
+        self.assertEqual(situation.summary, "VICTORIA BUS STATION")
         self.assertEqual(
             situation.text,
-            "VICTORIA BUS STATION: "
             "ROUTES 11 211 C1 N11 westbound are now departing from "
             "Victoria Station stop (R) on Buckingham Palace Road.",
         )

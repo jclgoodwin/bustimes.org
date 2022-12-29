@@ -3,7 +3,7 @@
 {% for situation in situations %}
     {% if situation.summary != 'Does not stop here' %}
     <div class="situation">
-        {% if situation.summary %}
+        {% if situation.summary or situation.reason %}
             <div class="summary">
                 {% if situation.reason %}
                     <div class="reason">

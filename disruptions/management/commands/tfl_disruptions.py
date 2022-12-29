@@ -31,16 +31,20 @@ class Command(BaseCommand):
 
         for item in response.json():
 
-            stops = StopPoint.objects.filter(
-                Q(atco_code=item["atcoCode"]) | Q(stop_area=item["atcoCode"])
+            stops = (
+                StopPoint.objects.filter(
+                    Q(atco_code=item["atcoCode"]) | Q(stop_area=item["atcoCode"])
+                )
+                .only("atco_code")
+                .order_by()
             )
 
             if not stops:
                 continue
 
-            situation_number = get_hash(item["description"])
-
             window = DateTimeTZRange(item["fromDate"], item["toDate"], "[]")
+
+            situation_number = get_hash(f"{item['description']} {window}")
 
             situation = Situation.objects.filter(
                 source=source, situation_number=situation_number
@@ -54,8 +58,10 @@ class Command(BaseCommand):
                 )
             situation.current = True
             situation.text = item["description"].replace("\\n", "\n")
+            if ": " in situation.text:
+                situation.summary, situation.text = situation.text.split(": ", 1)
             situation.publication_window = window
-            situation.summary = item["type"]
+            situation.reason = item["type"]
             situation.save()
 
             try:
@@ -85,7 +91,7 @@ class Command(BaseCommand):
                 continue
 
             try:
-                service = Service.objects.get(
+                service = Service.objects.only("id").get(
                     line_name__iexact=item["name"], region="L", current=True
                 )
             except Service.DoesNotExist as e:
@@ -104,7 +110,7 @@ class Command(BaseCommand):
                 )
                 assert len(status["validityPeriods"]) == 1
 
-                situation_number = get_hash(status["reason"])
+                situation_number = get_hash(f"{status['reason']} {window}")
 
                 situation = Situation.objects.filter(
                     source=source, situation_number=situation_number
@@ -117,16 +123,26 @@ class Command(BaseCommand):
                         publication_window=window,
                         source=source,
                     )
+                    created = True
+                else:
+                    created = False
+
+                if ": " in situation.text and situation.text.index(": ") < 255:
+                    situation.summary, situation.text = situation.text.split(": ", 1)
+
                 situation.current = True
                 situation.save()
 
-                for period in status["validityPeriods"]:
-                    window = DateTimeTZRange(period["fromDate"], period["toDate"], "[]")
-                    vp = ValidityPeriod(
-                        situation=situation,
-                        period=window,
-                    )
-                    vp.save()
+                if created:
+                    for period in status["validityPeriods"]:
+                        window = DateTimeTZRange(
+                            period["fromDate"], period["toDate"], "[]"
+                        )
+                        vp = ValidityPeriod(
+                            situation=situation,
+                            period=window,
+                        )
+                        vp.save()
 
                 consequence = situation.consequence_set.first()
                 if not consequence:
