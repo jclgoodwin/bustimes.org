@@ -90,13 +90,13 @@ class Command(BaseCommand):
                 assert len(item["lineStatuses"]) == 1
                 continue
 
-            try:
-                service = Service.objects.only("id").get(
-                    line_name__iexact=item["name"], region="L", current=True
-                )
-            except Service.DoesNotExist as e:
-                logger.error(e)
+            services = Service.objects.only("id").filter(
+                line_name__iexact=item["name"], region="L", current=True
+            )
+            if not services:
                 continue
+            elif len(services) > 1:
+                print(f"multiple {item['name']}s: {services}")
 
             for status in item["lineStatuses"]:
                 assert status["reason"] == status["disruption"]["description"]
@@ -149,7 +149,7 @@ class Command(BaseCommand):
                     consequence = Consequence(situation=situation)
                     consequence.save()
 
-                consequence.services.add(service)
+                consequence.services.add(*services)
 
                 situations.add(situation.id)
 
