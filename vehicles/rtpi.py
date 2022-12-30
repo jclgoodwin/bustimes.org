@@ -4,6 +4,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import Point, Polygon
 from django.db.models import F, Q
 from django.utils import timezone
+from sql_util.utils import Exists
 
 from bustimes.models import RouteLink, StopTime, Trip
 from bustimes.utils import get_calendars, get_routes
@@ -13,6 +14,8 @@ def get_trip(
     journey,
     datetime=None,
     date=None,
+    operator_ref=None,
+    origin_ref=None,
     destination_ref=None,
     departure_time=None,
     journey_ref=None,
@@ -56,10 +59,15 @@ def get_trip(
         start = None
 
     if start is not None:
-        start = Q(start=start)
-        trips_at_start = trips.filter(start)
+        trips_at_start = trips.filter(start=start)
 
-        if destination:
+        # special strategy for TfL data
+        if operator_ref == "TFLO" and departure_time and origin_ref and destination_ref:
+            trips_at_start = trips_at_start.filter(
+                Exists("stoptime", filter=Q(stop=origin_ref)),
+                Exists("stoptime", filter=Q(stop=destination_ref)),
+            )
+        elif destination:
             if direction:
                 destination |= direction
             trips_at_start = trips_at_start.filter(destination)
@@ -77,7 +85,7 @@ def get_trip(
         except Trip.DoesNotExist:
             if destination and departure_time:
                 try:
-                    return trips.get(start, calendar__in=get_calendars(date))
+                    return trips.get(start=start, calendar__in=get_calendars(date))
                 except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                     pass
 

@@ -572,6 +572,8 @@ class Command(ImportLiveVehiclesCommand):
                 journey.trip = journey.get_trip(
                     datetime=datetime,
                     date=journey_date,
+                    operator_ref=operator_ref,
+                    origin_ref=monitored_vehicle_journey.get("OriginRef"),
                     destination_ref=destination_ref,
                     departure_time=origin_aimed_departure_time,
                     journey_ref=journey_ref,
