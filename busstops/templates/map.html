@@ -49,8 +49,20 @@
 
 {% block foot %}
     {% load static %}
+    <script
+      src="https://browser.sentry-cdn.com/7.28.1/bundle.min.js"
+      integrity="sha384-AJ+5L2JR76RFL3vSbZEM+KVELzQwqK5tEqWwarOHANgNdBKX2kg80Bw5A2aQiDrn"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+        Sentry.init({
+          dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
+          {% if sentry_release %}release: {{ sentry_release }},{% endif %}
+        });
+    </script>
     {% include "maps_js.html" %}
     <script src="{% static 'js/reqwest.min.js' %}"></script>
     <script src="{% static 'js/bigmap2.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
+
 {% endblock %}

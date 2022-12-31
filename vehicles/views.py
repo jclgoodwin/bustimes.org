@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 from urllib.parse import urlencode
 
 from ciso8601 import parse_datetime
@@ -111,7 +112,14 @@ def vehicles(request):
 @require_GET
 @cache_control_s_maxage(3600)
 def map(request):
-    return render(request, "map.html", {"liveries_css_version": liveries_css_version()})
+    return render(
+        request,
+        "map.html",
+        {
+            "liveries_css_version": liveries_css_version(),
+            "sentry_release": os.environ.get("COMMIT_HASH"),
+        },
+    )
 
 
 @cache_control(max_age=3600)
