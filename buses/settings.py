@@ -63,7 +63,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-# SECURE_REFERRER_POLICY = None
+# Stadia Maps tiles require we send the origin in cross-origin requests.
+# For same-origin requests, the full referrer is useful (e.g. for the contact form)
+SECURE_REFERRER_POLICY = "origin-when-cross-origin"
+
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
 
 if DEBUG and "runserver" in sys.argv:
