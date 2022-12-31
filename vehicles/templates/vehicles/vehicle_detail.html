@@ -119,8 +119,11 @@
                     <div class="details">
                         <a class="button" href="#">Close</a>
                         <p>{% if not vehicle %}
-                                {{ journey.vehicle }}{% else %}{% firstof journey.service.get_line_name_and_brand journey.route_name %}
-                            {% endif %} – {{ journey.datetime|time }}
+                                {{ journey.vehicle }}
+                            {% else %}
+                                {{ journey.line_name }}
+                            {% endif %}
+                            – {{ journey.datetime|time }}
                             {% if journey.destination %} to {{ journey.destination }}{% endif %}
                         </p>
                         {% if journey.previous %}
