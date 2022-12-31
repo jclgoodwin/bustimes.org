@@ -2,6 +2,7 @@ import logging
 from hashlib import sha256
 
 import requests
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from psycopg2.extras import DateTimeTZRange
@@ -26,7 +27,9 @@ class Command(BaseCommand):
         situations = set()
 
         response = session.get(
-            "https://api.tfl.gov.uk/StopPoint/mode/bus/Disruption", timeout=10
+            "https://api.tfl.gov.uk/StopPoint/mode/bus/Disruption",
+            params=settings.TFL,
+            timeout=10,
         )
 
         for item in response.json():
@@ -81,7 +84,9 @@ class Command(BaseCommand):
             situations.add(situation.id)
 
         response = session.get(
-            "https://api.tfl.gov.uk/line/mode/bus/status", timeout=10
+            "https://api.tfl.gov.uk/line/mode/bus/status",
+            params=settings.TFL,
+            timeout=10,
         )
 
         for item in response.json():
