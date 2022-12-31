@@ -549,6 +549,9 @@ class Operator(SearchMixin, models.Model):
         ordering = ("name",)
         indexes = [GinIndex(fields=["search_vector"])]
 
+    def __repr__(self):
+        return f"{self.noc}: {self.name}"
+
     def __str__(self):
         return str(self.name or self.noc)
 
@@ -736,9 +739,10 @@ class Service(models.Model):
         return [self.line_name]
 
     def get_line_name_and_brand(self):
+        line_name = ", ".join(self.get_line_names())
         if self.line_brand:
-            return f"{self.line_name} - {self.line_brand}"
-        return self.line_name
+            return f"{line_name} - {self.line_brand}"
+        return line_name
 
     def get_a_mode(self):
         if self.mode and self.mode[0].lower() in "aeiou":
@@ -749,7 +753,7 @@ class Service(models.Model):
         return reverse("service_detail", args=(self.slug,))
 
     def get_order(self):
-        return self.get_line_name_order(self.line_name)
+        return self.get_line_name_order(self.get_line_names()[0])
 
     @staticmethod
     def get_line_name_order(line_name):
