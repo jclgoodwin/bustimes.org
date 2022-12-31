@@ -54,6 +54,8 @@
             {{ form.as_p }}
         </div>
 
+        {% csrf_token %}
+
         <input type="submit" value="Save changes">
     </form>
 

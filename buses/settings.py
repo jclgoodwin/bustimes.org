@@ -58,11 +58,12 @@ MIDDLEWARE = [
     "busstops.middleware.WhiteNoiseWithFallbackMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-SECURE_REFERRER_POLICY = None
+# SECURE_REFERRER_POLICY = None
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
 
 if DEBUG and "runserver" in sys.argv:

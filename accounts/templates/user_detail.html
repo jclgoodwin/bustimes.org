@@ -21,6 +21,7 @@
     {% if form %}
         <form method="POST">
             {{ form.as_p }}
+            {% csrf_token %}
             <input type="submit" value="Save changes">
         </form>
     {% endif %}
