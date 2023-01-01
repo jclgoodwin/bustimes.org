@@ -40,8 +40,8 @@
                 {% endifchanged %}
             </td>
             {% if request.user.is_superuser %}
-                <td>
-                    <button class="action" data-url="{{ revision.id }}/revert">revert</button>
+                <td class="link">
+                    <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</button>
                 </td>
             {% endif %}
         </tr>
@@ -49,29 +49,3 @@
     </tbody>
 </table>
 </div>
-
-<script>
-(function () {
-    'use strict';
-
-    for (const button of document.querySelectorAll('button.action')) {
-        let row = button.parentElement.parentElement;
-        button.onclick = function(event) {
-            let url = '/vehicles/history/' + this.dataset.url;
-            fetch(url, {
-                method: 'POST',
-                redirect: 'error',
-            }).then(function(response) {
-                if (response.ok) {
-                    response.text().then(text => {
-                        if (text) {
-                            window.alert(text);
-                        }
-                    });
-                }
-            });
-            return false;
-        };
-    }
-})();
-</script>

@@ -82,9 +82,13 @@
         let row = button.parentElement.parentElement;
         button.onclick = function(event) {
             let url = '/vehicles/edits/' + this.dataset.url;
+            let params = new URLSearchParams();
+            params.append('csrfmiddlewaretoken', document.querySelector("[name='csrfmiddlewaretoken']").value);
             fetch(url, {
                 method: 'POST',
+                body: params,
                 redirect: 'error',
+                credentials: 'same-origin',
             }).then(function(response) {
                 if (response.ok) {
                     button.style.opacity = '.5';
