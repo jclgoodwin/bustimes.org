@@ -55,10 +55,13 @@
       crossorigin="anonymous"
     ></script>
     <script>
-        Sentry.init({
-          dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
-          {% if sentry_release %}release: "{{ sentry_release }}",{% endif %}
-        });
+        if (typeof Sentry !== 'undefined') {
+            Sentry.init({
+                dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
+                whitelistUrls: [/bustimes\.org\/static\//],
+              {% if sentry_release %}release: "{{ sentry_release }}",{% endif %}
+            });
+        }
     </script>
     {% include "maps_js.html" %}
     <script src="{% static 'js/reqwest.min.js' %}"></script>
