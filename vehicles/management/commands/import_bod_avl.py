@@ -10,7 +10,6 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
-from django.utils.timezone import localtime
 
 from busstops.models import (
     Locality,
@@ -24,6 +23,8 @@ from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
+
+# from django.utils.timezone import localtime
 
 
 def get_vehicle_cache_key(item):
@@ -431,23 +432,23 @@ class Command(ImportLiveVehiclesCommand):
         if origin_aimed_departure_time:
             origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
 
-            # detect and correct Ticketer timezone bug during British Summer Time
-            if (
-                journey_code
-                and len(journey_code) == 4
-                and journey_code.isdigit()
-                and int(journey_code) < 2400
-            ):
-                hours = int(journey_code[:-2])
-                minutes = int(journey_code[-2:])
-                if (
-                    minutes == origin_aimed_departure_time.minute
-                    and hours == origin_aimed_departure_time.hour
-                ):
-                    origin_aimed_departure_time = localtime(origin_aimed_departure_time)
-                    HOUR = timedelta(hours=1)
-                    if (origin_aimed_departure_time - HOUR).hour == hours:
-                        origin_aimed_departure_time -= HOUR
+            # # detect and correct Ticketer timezone bug during British Summer Time
+            # if (
+            #     journey_code
+            #     and len(journey_code) == 4
+            #     and journey_code.isdigit()
+            #     and int(journey_code) < 2400
+            # ):
+            #     hours = int(journey_code[:-2])
+            #     minutes = int(journey_code[-2:])
+            #     if (
+            #         minutes == origin_aimed_departure_time.minute
+            #         and hours == origin_aimed_departure_time.hour
+            #     ):
+            #         origin_aimed_departure_time = localtime(origin_aimed_departure_time)
+            #         HOUR = timedelta(hours=1)
+            #         if (origin_aimed_departure_time - HOUR).hour == hours:
+            #             origin_aimed_departure_time -= HOUR
 
         journey = None
 
@@ -579,32 +580,32 @@ class Command(ImportLiveVehiclesCommand):
                     journey_ref=journey_ref,
                 )
 
-                try:
-                    if (
-                        latest_journey
-                        and latest_journey.trip_id
-                        and (
-                            not journey.trip
-                            or origin_aimed_departure_time
-                            and origin_aimed_departure_time - latest_journey.datetime
-                            == timedelta(hours=1)
-                        )
-                    ):
-                        # if driver change caused bogus journey code change (Ticketer), continue previous journey
-                        if (
-                            latest_journey.route_name == journey.route_name
-                            and latest_journey.destination == journey.destination
-                        ):
-                            start = localtime(datetime)
-                            start = timedelta(hours=start.hour, minutes=start.minute)
-                            if (
-                                latest_journey.trip.start
-                                < start
-                                < latest_journey.trip.end
-                            ):
-                                journey.trip = latest_journey.trip
-                except Trip.DoesNotExist:
-                    pass
+                # try:
+                #     if (
+                #         latest_journey
+                #         and latest_journey.trip_id
+                #         and (
+                #             not journey.trip
+                #             or origin_aimed_departure_time
+                #             and origin_aimed_departure_time - latest_journey.datetime
+                #             == timedelta(hours=1)
+                #         )
+                #     ):
+                #         # if driver change caused bogus journey code change (Ticketer), continue previous journey
+                #         if (
+                #             latest_journey.route_name == journey.route_name
+                #             and latest_journey.destination == journey.destination
+                #         ):
+                #             start = localtime(datetime)
+                #             start = timedelta(hours=start.hour, minutes=start.minute)
+                #             if (
+                #                 latest_journey.trip.start
+                #                 < start
+                #                 < latest_journey.trip.end
+                #             ):
+                #                 journey.trip = latest_journey.trip
+                # except Trip.DoesNotExist:
+                #     pass
 
                 if journey.trip:
                     if not destination_ref and journey.trip.destination_id:

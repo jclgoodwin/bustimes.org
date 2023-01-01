@@ -63,7 +63,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-# Stadia Maps tiles require we send the origin in cross-origin requests.
+# Stadia Maps tiles require we send at least the origin in cross-origin requests.
 # For same-origin requests, the full referrer is useful (e.g. for the contact form)
 SECURE_REFERRER_POLICY = "origin-when-cross-origin"
 
