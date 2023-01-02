@@ -43,14 +43,14 @@
     {% include 'vehicle_edits_table.html' %}
 </div>
 
+{% csrf_token %}
+
 {% if perms.vehicles_change_vehicle %}
     <p>
         <input type="submit" name="action" value="apply">
         <input type="submit" name="action" value="approve">
         <input type="submit" name="action" value="disapprove">
     </p>
-
-    {% csrf_token %}
 
     </form>
 {% endif %}
