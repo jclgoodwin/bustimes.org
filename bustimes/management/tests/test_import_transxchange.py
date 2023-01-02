@@ -870,7 +870,10 @@ class ImportTransXChangeTest(TestCase):
         with self.assertLogs(
             "bustimes.management.commands.import_transxchange", "WARNING"
         ) as cm:
-            call_command("import_transxchange", FIXTURES_DIR / "twm_3-74-_-y11-1.xml")
+            with patch("os.path.getmtime", return_value=0):
+                call_command(
+                    "import_transxchange", FIXTURES_DIR / "twm_3-74-_-y11-1.xml"
+                )
 
         self.assertEqual(
             cm.output,
