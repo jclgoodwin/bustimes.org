@@ -54,7 +54,7 @@ class RegistrationView(UpperCaseSlugMixin, DetailView):
 
         operators = self.object.licence.get_operators()
         if operators:
-            context["breadcrumb"] = context["breadcrumb"] = [
+            context["breadcrumb"] = [
                 operators[0].region,
                 operators[0],
             ] + context["breadcrumb"]

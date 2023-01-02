@@ -10,6 +10,15 @@ from .models import Licence
 
 
 class VosaTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        Region.objects.create(id="SW", name="South West")
+        cls.operator = Operator.objects.create(
+            region_id="SW", noc="AINS", name="Ainsley's Chariots"
+        )
+        service = Service.objects.create(current=True, line_name="33B")
+        service.operator.add(cls.operator)
+
     @override_settings(DATA_DIR=Path(__file__).resolve().parent / "fixtures")
     def test(self):
         with mock.patch(
@@ -19,6 +28,9 @@ class VosaTest(TestCase):
             with self.assertNumQueries(6):
                 call_command("import_vosa", "F")
 
+            with self.assertNumQueries(5):
+                call_command("import_vosa", "F")
+
         # multiple trading names
         licence = Licence.objects.get(licence_number="PF0000705")
         self.assertEqual(
@@ -26,17 +38,15 @@ class VosaTest(TestCase):
             "R O SIMONDS\nSimonds Coach& Travel\nSimonds Countrylink",
         )
 
-        Region.objects.create(id="SW", name="South West")
-        operator = Operator.objects.create(
-            region_id="SW", noc="AINS", name="Ainsley's Chariots"
-        )
-        service = Service.objects.create(current=True, line_name="33B")
-        service.operator.add(operator)
-        operator.licences.add(licence)
+        # linked operator
+        self.operator.licences.add(licence)
 
         response = self.client.get("/licences/PF0000705")
         self.assertContains(response, "Ainsley&#x27;s Chariots")
         self.assertContains(response, "<th>Trading name</th>")
+
+        response = self.client.get("/registrations/PF0000705/8")
+        self.assertContains(response, "Ainsley&#x27;s Chariots")
 
         # licence
         response = self.client.get("/licences/PF1018256")
