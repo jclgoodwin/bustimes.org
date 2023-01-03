@@ -1,80 +1,71 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ object.registration_number }} – {{ object }} – bustimes.org{% endblock %}
+{% block title %}{{ object.registration_number }} – bustimes.org{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
 
 {% block content %}
 
-<h1>{{ object.registration_number }}</h1>
+<h1>{{ object }}</h1>
 
-<table>
-    <tbody>
-        <tr>
-            <th scope="row"></th>
-            <td>{{ object.service_number|linebreaksbr }}</td>
-        </tr>
-        <tr>
-            <th scope="row">From</th>
-            <td>{{ object.start_point }}</td>
-        </tr>
-        <tr>
-            <th scope="row">To</th>
-            <td>{{ object.finish_point }}</td>
-        </tr>
-        <tr>
-            <th scope="row">Via</th>
-            <td>{{ object.via }}</td>
-        </tr>
-        <tr>
-            <th scope="row">Type</th>
-            <td>{{ object.service_type_description|linebreaksbr }} </td>
-        </tr>
-        <tr>
-            <th scope="row">Supported by subsidy?</th>
-            <td>{{ object.subsidies_description }}
-                {% if object.subsidies_details %}<br>{{ object.subsidies_details }}{% endif %}</td>
-        </tr>
-        <tr>
-            <th scope="row">Authorities</th>
-            <td>{{ object.authority_description|linebreaksbr }}</td>
-        </tr>
-        <!-- <tr>
-            <th scope="row">Status</th>
-            <td>{{ object.registration_status }}</td>
-        </tr> -->
-    </tbody>
-</table>
+<div class="asides">
+    <div class="aside">
+        <dl>
+            <dt>Registration number</dt>
+            <dd>{{ object.registration_number }}</dd>
+
+            <dt>Type</dt>
+            <dd>{{ object.service_type_description|linebreaksbr }}</dd>
+
+            <dt>Supported by subsidy?</dt>
+            <dd>{{ object.subsidies_description }}{% if object.subsidies_details %},
+                {{ object.subsidies_details }}
+                {% endif %}
+            </dd>
+
+            <dt>Authorities</dt>
+            <dd>{{ object.authority_description|linebreaksbr }}</dd>
+        </dl>
+    </div>
+
+    {% if services %}
+        <div class="aside">
+            <h2>Timetables</h2>
+
+            {% include 'service_list.html' with services=services class="has-smalls" %}
+        </div>
+    {% endif %}
+</div>
+
+<h2>Variation history</h2>
+
+<ol class="history">
+    {% for variation in variations %}
+        <li value="{{ variation.variation_number }}">
+            <ul>
+                <li>
+                    <strong>Received</strong>
+                    {{ variation.date_received|date:"j M y" }}
+                </li>
+
+                <li>
+                    <strong>Effective</strong>
+                    {{ variation.effective_date|date:"j M y" }}
+                </li>
+
+                <li>
+                    <strong>Status</strong>
+                    {{ variation.registration_status }}
+                </li>
+            </ul>
+
+            {{ variation.service_type_other_details|linebreaks }}
+
+            {{ variation.publication_text|linebreaks }}
+        </li>
+    {% endfor %}
+</ol>
 
 <p class="credit">Powered by <a href="https://data.gov.uk/dataset/9ea90ed8-de54-4274-92c6-272edd518bfb/traffic-commissioners-local-bus-service-registration">Traffic Commissioners’ local bus service registration data</a></p>
-
-{% if services %}
-    <h2>Timetables</h2>
-
-    {% include 'service_list.html' with services=services class="has-smalls" %}
-{% endif %}
-
-<h2>History</h2>
-
-<table>
-    <thead>
-        <th scope="col">#</th>
-        <th scope="col">Received</th>
-        <th scope="col">Effective date</th>
-        <th scope="col">Status</th>
-        <th scope="col">Details</th>
-        <th scope="col">Publication text</th>
-    </thead>
-    <tbody>
-        {% for variation in variations %}
-            <tr>
-                <td>{{ variation.variation_number }}</td>
-                <td>{% firstof variation.date_received|date:"j M y" '' %}</td>
-                <td>{% firstof variation.effective_date|date:"j M y" '' %}</td>
-                <td>{{ variation.registration_status }}</td>
-                <td>{{ variation.service_type_other_details|linebreaksbr }}</td>
-                <td>{{ variation.publication_text|linebreaksbr }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
 
 {% endblock %}

@@ -447,6 +447,38 @@ ol {
     margin: 1em 0;
 }
 
+dt {
+    font-weight: bold;
+}
+
+dd {
+    margin: 0 0 1em;
+}
+
+.history {
+    > li {
+        list-style: auto;
+        margin-left: 1em;
+        padding-left: .25em;
+    }
+
+    ul {
+        display: flex;
+
+        li {
+            margin-right: 2em;
+        }
+
+        strong {
+            display: block;
+        }
+    }
+
+    dl {
+        clear: left;
+    }
+}
+
 main li {
     break-inside: avoid;
 
