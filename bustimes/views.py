@@ -286,16 +286,7 @@ class TripDetailView(DetailView):
     model = Trip
     queryset = model.objects.select_related(
         "route__service", "operator", "calendar"
-    ).prefetch_related(
-        Prefetch(
-            "stoptime_set",
-            queryset=StopTime.objects.select_related("stop__locality").defer(
-                "stop__search_vector",
-                "stop__locality__search_vector",
-                "stop__locality__latlong",
-            ),
-        )
-    )
+    ).defer("route__service__search_vector")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -312,8 +303,28 @@ class TripDetailView(DetailView):
 
         context["breadcrumb"] = operators + [self.object.route.service]
 
-        stops = list(self.object.stoptime_set.all())
-        context["stops"] = stops
+        if self.object.ticket_machine_code and self.object.block_id:
+            trips = Trip.objects.filter(
+                calendar=self.object.calendar_id,
+                inbound=self.object.inbound,
+                ticket_machine_code=self.object.ticket_machine_code,
+                block_id=self.object.block_id,
+                route__service=self.object.route.service_id,
+            )
+        else:
+            trips = [self.object]
+
+        stops = (
+            StopTime.objects.filter(trip__in=trips)
+            .select_related("stop__locality")
+            .defer(
+                "stop__search_vector",
+                "stop__locality__search_vector",
+                "stop__locality__latlong",
+            )
+            .order_by("trip__start", "id")
+        )
+        stops = list(stops)
 
         if stops:
             if stops[0].stop:
@@ -325,8 +336,10 @@ class TripDetailView(DetailView):
                 trip_update = gtfsr.get_trip_update(self.object)
                 if trip_update:
                     context["trip_update"] = trip_update
-                    gtfsr.apply_trip_update(context["stops"], trip_update)
+                    gtfsr.apply_trip_update(stops, trip_update)
 
+        context["stops"] = stops
+        self.object.stops = stops
         trip_serializer = TripSerializer(self.object)
         stops_json = JSONRenderer().render(trip_serializer.data)
 

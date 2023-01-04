@@ -129,7 +129,10 @@ class TripSerializer(serializers.ModelSerializer):
             for link in obj.route.service.routelink_set.all():
                 route_links[(link.from_stop_id, link.to_stop_id)] = link
         previous_stop_id = None
-        for stop_time in obj.stoptime_set.all():
+
+        stop_times = getattr(obj, "stops", obj.stoptime_set.all())
+
+        for stop_time in stop_times:
             route_link = route_links.get((previous_stop_id, stop_time.stop_id))
             if stop_time.stop:
                 stop = stop_time.stop
@@ -155,7 +158,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ["id", "service", "times"]
+        fields = ["id", "ticket_machine_code", "service", "times"]
 
 
 class VehicleJourneySerializer(serializers.ModelSerializer):

@@ -15,14 +15,14 @@
     {% endif %}
 
     <h2>
-        {{ object.route.line_name }}
+        {{ trip.route.line_name }}
         -
         {% if origin and destination %}
             {{ origin }} to {{ destination }}
-        {% elif object.outbound %}
-            {{ object.route.outbound_description }}
+        {% elif trip.outbound %}
+            {{ trip.route.outbound_description }}
         {% else %}
-            {{ object.route.inbound_description }}
+            {{ trip.route.inbound_description }}
         {% endif %}
     </h2>
 

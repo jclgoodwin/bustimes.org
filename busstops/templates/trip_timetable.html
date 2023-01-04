@@ -6,6 +6,12 @@
     </thead>
     <tbody>
 {% for stop in stops %}
+    {% ifchanged stop.trip_id %}
+        {% if not forloop.first %}
+            <tr><th><th>⋮</td></tr>
+        {% endif %}
+    {% endifchanged %}
+
     {% if stop.arrival is not None %}
         <tr{% if stop.is_minor %} class="minor"{% endif %} id="stop-time-{{ stop.id }}">
             <td {% if stop.departure is not None and stop.departure != stop.arrival %} rowspan="2"{% endif %} class="stop-name">
