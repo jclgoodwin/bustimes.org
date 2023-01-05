@@ -1060,7 +1060,7 @@ def journey_json(request, pk):
                     "aimed_arrival_time": stoptime.arrival_time(),
                     "aimed_departure_time": stoptime.departure_time(),
                     "minor": stoptime.is_minor(),
-                    "heading": stop.get_heading(),
+                    "heading": stop and stop.get_heading(),
                     "coordinates": stop and stop.latlong and stop.latlong.coords,
                 }
             )
