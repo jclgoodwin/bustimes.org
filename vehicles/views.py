@@ -1051,7 +1051,6 @@ def journey_json(request, pk):
             #         else:
             #             heading = None
             #         previous_latlong = stop.latlong
-            print(stop.heading)
             data["stops"].append(
                 {
                     "atco_code": stoptime.stop_id,
