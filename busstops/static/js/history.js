@@ -176,10 +176,15 @@
             L.control.locate().addTo(map);
 
             if (response.stops) {
-                var html = '<div class="stop-arrow no-direction"></div>';
                 var openTooltip;
                 response.stops.forEach(function(stop) {
                     if (stop.coordinates) {
+                        if (stop.heading !== null) {
+                            var html = '<div class="stop-arrow" style="' + window.bustimes.getTransform(stop.heading + 45) + '"></div>';
+                        } else {
+                            html = '<div class="stop-arrow no-direction"></div>';
+                        }
+
                         var marker = L.marker(stop.coordinates, {
                             icon: L.divIcon({
                                 iconSize: [9, 9],

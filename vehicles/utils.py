@@ -1,17 +1,19 @@
+import math
 import re
-from redis import from_url
+
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Max
+from redis import from_url
+
 from .models import (
+    Livery,
     VehicleEdit,
     VehicleEditFeature,
     VehicleRevision,
     VehicleRevisionFeature,
     VehicleType,
-    Livery,
 )
-
 
 if settings.REDIS_URL:
     redis_client = from_url(settings.REDIS_URL)
@@ -22,6 +24,26 @@ else:
 def flush_redis():
     """For use in tests"""
     redis_client.flushall()
+
+
+def calculate_bearing(a, b):
+    a_lat = math.radians(a.y)
+    a_lon = math.radians(a.x)
+    b_lat = math.radians(b.y)
+    b_lon = math.radians(b.x)
+
+    y = math.sin(b_lon - a_lon) * math.cos(b_lat)
+    x = math.cos(a_lat) * math.sin(b_lat) - math.sin(a_lat) * math.cos(
+        b_lat
+    ) * math.cos(b_lon - b_lon)
+
+    bearing_radians = math.atan2(y, x)
+    bearing_degrees = math.degrees(bearing_radians)
+
+    if bearing_degrees < 0:
+        bearing_degrees += 360
+
+    return int(round(bearing_degrees))
 
 
 def match_reg(string):

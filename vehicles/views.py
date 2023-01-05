@@ -47,7 +47,7 @@ from .models import (
     VehicleRevision,
     VehicleRevisionFeature,
 )
-from .utils import (
+from .utils import (  # calculate_bearing,
     do_revision,
     do_revisions,
     get_vehicle_edit,
@@ -1040,20 +1040,31 @@ def journey_json(request, pk):
     data = {}
 
     if journey.trip:
-        data["stops"] = [
-            {
-                "name": stop_time.stop.get_name_for_timetable()
-                if stop_time.stop
-                else stop_time.stop_code,
-                "aimed_arrival_time": stop_time.arrival_time(),
-                "aimed_departure_time": stop_time.departure_time(),
-                "minor": stop_time.is_minor(),
-                "coordinates": stop_time.stop
-                and stop_time.stop.latlong
-                and stop_time.stop.latlong.coords,
-            }
-            for stop_time in journey.trip.stoptime_set.select_related("stop__locality")
-        ]
+        data["stops"] = []
+        # previous_latlong = None
+        for stoptime in journey.trip.stoptime_set.select_related("stop__locality"):
+            stop = stoptime.stop
+            # if stop := stoptime.stop:
+            #     if stop.latlong:
+            #         if previous_latlong:
+            #             heading = calculate_bearing(previous_latlong, stop.latlong)
+            #         else:
+            #             heading = None
+            #         previous_latlong = stop.latlong
+            print(stop.heading)
+            data["stops"].append(
+                {
+                    "atco_code": stoptime.stop_id,
+                    "name": stop.get_name_for_timetable()
+                    if stop
+                    else stoptime.stop_code,
+                    "aimed_arrival_time": stoptime.arrival_time(),
+                    "aimed_departure_time": stoptime.departure_time(),
+                    "minor": stoptime.is_minor(),
+                    "heading": stop.get_heading(),
+                    "coordinates": stop and stop.latlong and stop.latlong.coords,
+                }
+            )
 
     locations = redis_client.lrange(f"journey{pk}", 0, -1)
 

@@ -1,6 +1,5 @@
 import json
 import logging
-import math
 from datetime import timedelta
 from time import sleep
 
@@ -20,34 +19,11 @@ from busstops.models import DataSource
 from bustimes.models import Route
 
 from ..models import Vehicle, VehicleJourney
-from ..utils import redis_client
+from ..utils import calculate_bearing, redis_client
 
 logger = logging.getLogger(__name__)
 fifteen_minutes = timedelta(minutes=15)
 twelve_hours = timedelta(hours=12)
-
-
-def calculate_bearing(a, b):
-    if a.equals_exact(b, 0.001):
-        return
-
-    a_lat = math.radians(a.y)
-    a_lon = math.radians(a.x)
-    b_lat = math.radians(b.y)
-    b_lon = math.radians(b.x)
-
-    y = math.sin(b_lon - a_lon) * math.cos(b_lat)
-    x = math.cos(a_lat) * math.sin(b_lat) - math.sin(a_lat) * math.cos(
-        b_lat
-    ) * math.cos(b_lon - b_lon)
-
-    bearing_radians = math.atan2(y, x)
-    bearing_degrees = math.degrees(bearing_radians)
-
-    if bearing_degrees < 0:
-        bearing_degrees += 360
-
-    return int(round(bearing_degrees))
 
 
 def same_journey(latest_journey, journey, latest_datetime, when):
@@ -242,9 +218,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
             journey = latest_journey
 
             if latest and location.latlong and location.heading is None:
-                location.heading = calculate_bearing(latest_latlong, location.latlong)
-                if location.heading is None:
-                    location.heading = latest["heading"]
+                if latest_latlong.equals_exact(location.latlong, 0.001):
+                    location.heading == latest["heading"]
+                else:
+                    location.heading = calculate_bearing(
+                        latest_latlong, location.latlong
+                    )
+
         else:
             journey.source = self.source
             if not journey.datetime:
