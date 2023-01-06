@@ -10,7 +10,7 @@ class WhiteNoiseWithFallbackMiddleware(WhiteNoiseMiddleware):
         if response.status_code == 404 and request.path.startswith(self.static_prefix):
             fallback_path = self.get_name_without_hash(request.path)
             request.path = request.path_info = fallback_path
-            fallback_response = self.process_request(request)
+            fallback_response = super().__call__(request)
             if fallback_response:
                 response = fallback_response
             add_never_cache_headers(response)
