@@ -22,7 +22,8 @@ jobs:
 
     - name: Run tests
       run: |
-        docker compose run web bash -c "coverage run ./manage.py test && coverage xml"
+        docker compose build \
+        && docker compose run web bash -c "coverage run ./manage.py test && coverage xml"
 
     - run: |
         mkdir -p /tmp/docker-save \
