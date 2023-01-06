@@ -20,10 +20,12 @@ jobs:
 
     - run: docker load -i /tmp/docker-save/snapshot.tar || true
 
+    - run: docker compose build
+      if: steps.cache-docker.outputs.cache-hit != 'true'  # not an full exact match
+
     - name: Run tests
       run: |
-        docker compose build \
-        && docker compose run web bash -c "coverage run ./manage.py test && coverage xml"
+        docker compose run web bash -c "coverage run ./manage.py test && coverage xml"
 
     - run: |
         mkdir -p /tmp/docker-save \
