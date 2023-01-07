@@ -76,8 +76,7 @@
             <thead>
                 <tr>
                     <th scope="col">{% if not vehicle %}Vehicle{% else %}Route{% endif %}</th>
-                    {% if block_column %}<th scope="col">Block</th>{% endif %}
-                    <th scope="col" colspan="2">Trip</th>
+                    <th scope="col">Trip</th>
                     <th scope="col">To</th>
                 </tr>
             </thead>
@@ -95,18 +94,20 @@
                         {% endif %}
                     </td>
                     {% if journey.trip %}
-                        <td colspan="2" class="link">
+                        <td class="link">
                             <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
                         </td>
-                    {% elif journey.code and journey.code|length < 40 and '_' not in journey.code %}
-                        <td>{{ journey.datetime|time }}</td>
-                        <td>{{ journey.code }}</td>
                     {% else %}
-                        <td colspan="2">{{ journey.datetime|time }}</td>
+                        <td>{{ journey.datetime|time }}</td>
                     {% endif %}
                     <td>{% firstof journey.destination journey.direction %}</td>
                     {% if journey.locations %}
                         <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
+                    {% endif %}
+                    {% if request.user.is_superuser %}
+                        <td class="link">
+                            <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</button>
+                        </td>
                     {% endif %}
                 </tr>{% endfor %}
             </tbody>
@@ -142,6 +143,12 @@
 
 {% if garage %}
     <p>{{ garage }}</p>
+{% endif %}
+
+{% if vehicle and request.user.is_superuser %}
+    <td class="link">
+        <a href="{% url 'latest_journey_debug' vehicle.pk %}">Debug</button>
+    </td>
 {% endif %}
 
 {% if next or previous %}

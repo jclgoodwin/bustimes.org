@@ -378,17 +378,6 @@ class Vehicle(models.Model):
     def get_history_url(self):
         return reverse("vehicle_history", args=(self.slug or self.id,))
 
-    def fleet_number_mismatch(self):
-        if self.code.isdigit():
-            if self.fleet_number and self.fleet_number != int(self.code):
-                return True
-        elif self.reg:
-            code = self.code.replace("-", "").replace("_", "").replace(" ", "").upper()
-            if self.reg not in code:
-                fleet_code = self.fleet_code.replace(" ", "") or self.fleet_number
-                if not fleet_code or str(fleet_code) not in code:
-                    return True
-
     def get_flickr_url(self):
         if self.reg:
             reg = self.get_reg()

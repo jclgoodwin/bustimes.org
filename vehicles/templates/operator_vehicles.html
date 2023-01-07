@@ -69,7 +69,7 @@
     <thead>
         <tr>
             {% if form %}<th></th>{% endif %}
-            <th scope="col" colspan="{% if code_column %}3{% else %}2{% endif %}"></th>
+            <th scope="col" colspan="2"></th>
             {% if not parent %}<th scope="col" colspan="2">Last tracked</th>{% endif %}
             <th scope="col">Type</th>
             <th scope="col">Livery</th>
@@ -87,9 +87,6 @@
             <tr>
                 {% if form %}
                     <td>{% if vehicle.notes != 'Spare ticket machine' %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
-                {% endif %}
-                {% if code_column %}
-                    <td class="number">{% if vehicle.fleet_number_mismatch %}{{ vehicle.code }}{% endif %}</td>
                 {% endif %}
                 {% if not vehicle.fleet_code and not vehicle.fleet_number and not vehicle.reg %}
                     <td colspan="2">

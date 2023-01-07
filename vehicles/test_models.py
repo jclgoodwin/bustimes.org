@@ -1,6 +1,7 @@
-from django.test import TestCase
 from django.core.exceptions import ValidationError
-from .models import Vehicle, Operator, Livery
+from django.test import TestCase
+
+from .models import Livery, Operator, Vehicle
 
 
 class VehicleModelTests(TestCase):
@@ -34,11 +35,6 @@ class VehicleModelTests(TestCase):
             "search/?text=YN69GHA%20or%20%22YN69%20GHA%22%20or%20Stagecoach%2011111&sort",
             vehicle.get_flickr_url(),
         )
-
-        vehicle.code = "YN_69_GHA"
-        self.assertFalse(vehicle.fleet_number_mismatch())
-        vehicle.code = "YN19GHA"
-        self.assertTrue(vehicle.fleet_number_mismatch())
 
     def test_vehicle_validation(self):
         vehicle = Vehicle(colours="ploop")

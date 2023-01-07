@@ -608,7 +608,10 @@ class Command(ImportLiveVehiclesCommand):
                 #     pass
 
                 if journey.trip:
-                    if not journey.destination and journey.trip.destination_id:
+                    if (
+                        not (destination_ref and journey.destination)
+                        and journey.trip.destination_id
+                    ):
                         journey.destination = self.get_destination_name(
                             journey.trip.destination_id
                         )

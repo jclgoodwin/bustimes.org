@@ -293,7 +293,6 @@ def operator_vehicles(request, slug=None, parent=None):
         "parent": parent,
         "object": operator,
         "vehicles": vehicles,
-        "code_column": any(vehicle.fleet_number_mismatch() for vehicle in vehicles),
         "branding_column": any(
             vehicle.branding and vehicle.branding != "None" for vehicle in vehicles
         ),

@@ -175,7 +175,6 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "20 Oct 00:47")
         self.assertNotContains(response, "/operators/lynx/map")
 
-        self.assertTrue(response.context["code_column"])
         self.assertContains(response, '<td class="number">2</td>')
 
     def test_vehicle_views(self):
