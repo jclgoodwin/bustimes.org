@@ -5,21 +5,25 @@
 {% block head %}
     <meta property="og:title" content="Map – bustimes.org">
     <style>
-    .wide main {
-        bottom: 50px;
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-        position: absolute;
-        top: 3.5em;
-        width: 100%;
-    }
-
-    @media (min-width: 600px) {
-        .wide main {
-            bottom: 90px;
+        body {
+            overflow: hidden;
         }
-    }
+
+        .wide main {
+            bottom: 50px;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            top: 3.5em;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            .wide main {
+                bottom: 90px;
+            }
+        }
     </style>
 {% endblock %}
 
