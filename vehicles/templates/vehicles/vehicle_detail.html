@@ -106,7 +106,7 @@
                     {% endif %}
                     {% if request.user.is_superuser %}
                         <td class="link">
-                            <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</button>
+                            <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</a>
                         </td>
                     {% endif %}
                 </tr>{% endfor %}
@@ -146,9 +146,7 @@
 {% endif %}
 
 {% if vehicle and request.user.is_superuser %}
-    <td class="link">
-        <a href="{% url 'latest_journey_debug' vehicle.pk %}">Debug</button>
-    </td>
+    <p><a href="{% url 'latest_journey_debug' vehicle.pk %}">Debug</a></p>
 {% endif %}
 
 {% if next or previous %}

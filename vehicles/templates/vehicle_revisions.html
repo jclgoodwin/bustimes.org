@@ -41,7 +41,7 @@
             </td>
             {% if request.user.is_superuser %}
                 <td class="link">
-                    <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</button>
+                    <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
                 </td>
             {% endif %}
         </tr>
