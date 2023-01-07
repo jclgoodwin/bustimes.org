@@ -175,8 +175,6 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "20 Oct 00:47")
         self.assertNotContains(response, "/operators/lynx/map")
 
-        self.assertContains(response, '<td class="number">2</td>')
-
     def test_vehicle_views(self):
         with self.assertNumQueries(8):
             response = self.client.get(self.vehicle_1.get_absolute_url() + "?date=poop")

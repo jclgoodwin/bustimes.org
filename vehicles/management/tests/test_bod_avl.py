@@ -349,7 +349,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
         self.assertContains(
             response,
-            f"""<td colspan="2" class="link">
+            f"""<td class="link">
                     <a href="#journeys/{whippet_journey.id}">09:23</a>
                 </td>
             """,
