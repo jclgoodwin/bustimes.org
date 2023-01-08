@@ -83,7 +83,7 @@
     });
 
     function getStopIcon(properties) {
-        if (properties.stop_type == "RLY") {
+        if (properties.stop_type == 'RLY') {
             return railIcon;
         }
 
@@ -106,7 +106,7 @@
 
     function handleStop(data) {
         var latLng = L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
-        if (bigStopMarkers || data.properties.stop_type === "RLY") {
+        if (bigStopMarkers || data.properties.stop_type === 'RLY') {
             var marker = L.marker(L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]), {
                 icon: getStopIcon(data.properties),
                 url: data.properties.url
