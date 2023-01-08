@@ -6,7 +6,8 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY busstops/static /app/busstops/static
-COPY Makefile /app/
+COPY Makefile .eslintignore .eslintrc.js .sass-lint.yml /app/
+RUN make lint
 RUN make build-static
 
 
