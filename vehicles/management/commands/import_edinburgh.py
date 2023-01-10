@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from django.contrib.gis.geos import Point
 
 from busstops.models import Service
+from bustimes.models import Trip
 
 from ...models import VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -68,6 +69,15 @@ class Command(ImportLiveVehiclesCommand):
                     if not vehicle.operator_id or vehicle.operator_id != operator.noc:
                         vehicle.operator = operator
                         vehicle.save(update_fields=["operator"])
+
+                    try:
+                        journey.trip = Trip.objects.get(
+                            route__service=journey.service,
+                            ticket_machine_code=item["tripId"],
+                        )
+                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                        pass
+
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item["service_name"])
 

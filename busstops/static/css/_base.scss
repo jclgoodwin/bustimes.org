@@ -608,10 +608,10 @@ table {
     margin-right: 1em;
     padding: .125em .5em;
     text-align: center;
+    font-variant-numeric: tabular-nums;
 
     &.is-short {
         font-size: 2em;
-        font-variant-numeric: tabular-nums;
         line-height: 1em;
         margin-right: .5em;
         padding: .3125em .25em;

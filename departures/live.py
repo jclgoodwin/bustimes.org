@@ -231,6 +231,7 @@ class EdinburghDepartures(Departures):
                             "service": service,
                             "destination": departure["destination"],
                             "vehicleId": departure["vehicleId"],
+                            "tripId": departure["tripId"],
                         }
                     )
             vehicles = Vehicle.objects.filter(
@@ -645,6 +646,16 @@ def get_departures(stop, services, when):
             ):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
                 if live_rows:
+                    for live_row in live_rows:
+                        if live_row["time"]:
+                            for row in departures:
+                                if row["time"] == live_row["time"]:
+                                    live_row["link"] = row["link"]
+                                    trip = row["stop_time"].trip
+                                    if trip.ticket_machine_code != live_row["tripId"]:
+                                        trip.ticket_machine_code = live_row["tripId"]
+                                        trip.save(update_fields=["ticket_machine_code"])
+
                     departures = live_rows
                     live_rows = None
 
