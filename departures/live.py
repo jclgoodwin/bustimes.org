@@ -82,7 +82,15 @@ class Departures:
         }
 
     def get_response(self):
-        return requests.get(self.get_request_url(), **self.get_request_kwargs())
+        key = f"{self.__class__.__name__}:{self.stop.pk}"
+
+        response = cache.get(key)
+
+        if not response:
+            response = requests.get(self.get_request_url(), **self.get_request_kwargs())
+            cache.set(key, response, 60)
+
+        return response
 
     def get_service(self, line_name):
         """Given a line name string, returns the Service matching a line name
@@ -130,8 +138,6 @@ class Departures:
             return cache.set(key, True, age)
 
     def get_departures(self):
-        response = cache.get(f"{self.stop.pk}")
-
         try:
             response = self.get_response()
         except requests.exceptions.ReadTimeout:
