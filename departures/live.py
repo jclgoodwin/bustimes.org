@@ -649,7 +649,10 @@ def get_departures(stop, services, when):
                     for live_row in live_rows:
                         if live_row["time"]:
                             for row in departures:
-                                if row["time"] == live_row["time"]:
+                                if (
+                                    row["time"] == live_row["time"]
+                                    and row["service"] == live_row["service"]
+                                ):
                                     live_row["link"] = row["link"]
                                     trip = row["stop_time"].trip
                                     if trip.ticket_machine_code != live_row["tripId"]:

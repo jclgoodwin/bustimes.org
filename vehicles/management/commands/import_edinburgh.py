@@ -70,16 +70,16 @@ class Command(ImportLiveVehiclesCommand):
                         vehicle.operator = operator
                         vehicle.save(update_fields=["operator"])
 
-                    try:
-                        journey.trip = Trip.objects.get(
-                            route__service=journey.service,
-                            ticket_machine_code=item["tripId"],
-                        )
-                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                        pass
-
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item["service_name"])
+
+        if journey.service and journey.code:
+            try:
+                journey.trip = Trip.objects.get(
+                    route__service=journey.service, ticket_machine_code=journey.code
+                )
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                pass
 
         return journey
 
