@@ -5,6 +5,7 @@ from busstops.models import Service
 
 from ...models import VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
+from .import_bod_avl import get_line_name_query
 
 
 class Command(ImportLiveVehiclesCommand):
@@ -98,9 +99,8 @@ class Command(ImportLiveVehiclesCommand):
             journey.service_id = latest_journey.service_id
         else:
             services = Service.objects.filter(
-                current=True, line_name__iexact=journey.route_name
+                get_line_name_query(journey.route_name), current=True, operator=operator
             )
-            services = services.filter(operator=operator)
 
             try:
                 journey.service = self.get_service(
