@@ -2,7 +2,7 @@ services:
 
   web:
     build: .
-    command: sh -c "poetry install; DEBUG=1 ./manage.py runserver 0.0.0.0:8000"
+    command: sh -c "poetry install; DEBUG=1 exec ./manage.py runserver 0.0.0.0:8000"
     container_name: django_web
     environment:
       - SECRET_KEY=${SECRET_KEY-d}
@@ -18,8 +18,10 @@ services:
       - "8000:8000"
     restart: on-failure
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   postgres:
     image: ghcr.io/baosystems/postgis:latest  # unofficial image that properly supports arm64 instead of 'postgis/postgis'
@@ -29,12 +31,12 @@ services:
     # not to be used in production!
     command: --autovacuum=off --fsync=off --synchronous_commit=off --full_page_writes=off --work_mem=12MB --max-connections=10 --max_wal_senders=0
     environment:
-      - POSTGRES_USER=postgres
+      - PGUSER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
 
