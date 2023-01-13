@@ -12,7 +12,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
-from django.db.models.functions import Coalesce
+from django.db.models.functions import Coalesce, Now
 from django.http import (
     Http404,
     HttpResponse,
@@ -32,7 +32,7 @@ from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 from buses.utils import cache_control_s_maxage
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
-from bustimes.models import Garage
+from bustimes.models import Garage, Route
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -330,6 +330,14 @@ def operator_debug(request, slug):
     operator = get_object_or_404(Operator, slug=slug)
 
     services = operator.service_set.filter(current=True)
+
+    services = services.annotate(
+        current_routes=Exists(
+            Route.objects.filter(
+                Q(end_date=None) | Q(end_date__gte=Now()), service=OuterRef("id")
+            )
+        )
+    )
 
     pipe = redis_client.pipeline(transaction=False)
     for service in services:

@@ -12,6 +12,7 @@
     <thead>
         <tr>
             <th scope="col">Service</th>
+            <th scope="col">Current routes?</th>
             <th scope="col">Tracking?</th>
         </tr>
     </thead>
@@ -20,6 +21,9 @@
             <tr>
                 <td class="link">
                     <a href="{{ service.get_absolute_url }}">{{ service.get_line_name_and_brand }}</a>
+                </td>
+                <td>
+                    {{ service.current_routes|yesno }}
                 </td>
                 <td class="link">
                     {% if service.last_tracked %}
