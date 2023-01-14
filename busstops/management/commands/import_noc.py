@@ -143,8 +143,8 @@ class Command(BaseCommand):
             assert e_id not in public_names
             public_names[e_id] = e
 
-        for e in element:
-            print(e)
+        # for e in element:
+        #     print(e)
 
         operators_by_id = {}
         for e in element.find("Operators"):
@@ -201,7 +201,8 @@ class Command(BaseCommand):
                     # duplicate name – save now to avoid slug collision
                     operator.save(force_insert=True)
                 else:
-                    to_create.append(operators[noc])
+                    # operator.slug = slugify(operator.name)
+                    to_create.append(operator)
 
             else:
                 operator = operators[noc]
@@ -221,6 +222,15 @@ class Command(BaseCommand):
                     operator.url = url
                     operator.twitter = twitter
                     to_update.append(operator)
+
+            try:
+                operator.clean_fields(exclude=["noc", "slug", "region"])
+            except Exception as e:
+                if "url" in e:
+                    print(e, operator.url)
+                    operator.url = ""
+                else:
+                    print(e)
 
             names.add(operator.name)
 
