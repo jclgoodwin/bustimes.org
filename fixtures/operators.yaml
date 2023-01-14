@@ -11,6 +11,7 @@ IGOB:
     twitter: ""
 AVMT:
     name: Axe Valley Mini Travel (AVMT)
+    url: https://avmtbustimes.wixsite.com/mysite/timetables
 GRTL:
     name: Rapsons Highland
     phone: ""
@@ -24,13 +25,6 @@ STAR:
         Aylesbury
         Buckinghamshire
         HP20 1BQ
-WWFD:
-    name: Wyre Forest Dial-a-Ride
-    address: |
-        WFDC Depot
-        Green Street
-        Kidderminster
-        DY10 1HA
 BS4U:
     name: Buses 4U
     address: |
@@ -137,8 +131,6 @@ WRAY:
 AMTM:
     name: Arriva Kent Thameside
     url: https://www.arrivabus.co.uk/kent-and-surrey
-GPWS:
-    name: Whites Coaches (Shetland)
 AMNO:
     name: Arriva Midlands North
     url: https://www.arrivabus.co.uk/midlands
@@ -178,6 +170,7 @@ LNUD:
 BPTR:
     url: https://www.transdevbus.co.uk/burnley/
 FECS:
+    aka: First Eastern Counties
     twitter: |
         FirstNorwich
         FirstIpswich

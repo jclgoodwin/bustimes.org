@@ -6,6 +6,7 @@ import requests
 import yaml
 from django.conf import settings
 from django.core.management import BaseCommand
+from django.db import transaction
 from django.utils.text import slugify
 
 from ...models import DataSource, Operator, OperatorCode
@@ -80,6 +81,8 @@ def noc_csv(code_sources: list, operators: dict):
                 if not names[slug].slug:
                     names[slug].save(force_insert=True)
                     operator.save(force_insert=True)
+            # else:
+            #     operator.slug = slug
 
             operator_codes.append(
                 OperatorCode(source=code_sources[0][1], code=noc, operator=operator)
@@ -103,6 +106,7 @@ def noc_csv(code_sources: list, operators: dict):
 
 
 class Command(BaseCommand):
+    @transaction.atomic()
     def handle(self, **kwargs):
         code_sources = [
             (col, DataSource.objects.get_or_create(name=name)[0])
@@ -146,11 +150,11 @@ class Command(BaseCommand):
         # for e in element:
         #     print(e)
 
-        operators_by_id = {}
-        for e in element.find("Operators"):
-            e_id = e.findtext("OpId")
-            assert e_id not in operators_by_id
-            operators_by_id[e_id] = e
+        # operators_by_id = {}
+        # for e in element.find("Operators"):
+        #     e_id = e.findtext("OpId")
+        #     assert e_id not in operators_by_id
+        #     operators_by_id[e_id] = e
 
         to_create = []
         to_update = []
@@ -165,7 +169,7 @@ class Command(BaseCommand):
             # noc_records[e_id] = e
 
             noc = e.findtext("NOCCODE").removeprefix("=")
-            op = operators_by_id[e.findtext("OpId")]
+            # op = operators_by_id[e.findtext("OpId")]
             public_name = public_names[e.findtext("PubNmId")]
 
             assert e.findtext("OperatorPublicName") == public_name.findtext(
@@ -179,19 +183,26 @@ class Command(BaseCommand):
 
             twitter = public_name.findtext("Twitter").removeprefix("@")
 
-            if noc in overrides:
-                if "url" in overrides[noc]:
-                    url = overrides[noc]["url"]
+            name = e.findtext("OperatorPublicName")
 
-                if "twitter" in overrides[noc]:
-                    twitter = overrides[noc]["twitter"]
+            if noc in overrides:
+                override = overrides[noc]
+
+                if "url" in override:
+                    url = override["url"]
+
+                if "twitter" in override:
+                    twitter = override["twitter"]
+
+                if "name" in override:
+                    if override["name"] == name:
+                        print(name)
+                    name = override["name"]
 
             if noc not in operators:
                 # print(noc, e.findtext("OperatorPublicName"), e.findtext("VOSA_PSVLicenseName"), op.findtext("OpNm"))
 
-                operators[noc] = Operator(
-                    noc=noc, name=e.findtext("OperatorPublicName")
-                )
+                operators[noc] = Operator(noc=noc, name=name)
                 operator = operators[noc]
 
                 operator.url = url
@@ -207,13 +218,15 @@ class Command(BaseCommand):
             else:
                 operator = operators[noc]
 
-                if operator.name != e.findtext("OperatorPublicName"):
-                    print(
-                        operator,
-                        ET.tostring(e),
-                        ET.tostring(op),
-                        ET.tostring(public_name),
-                    )
+                operator.name = name
+
+                # if operator.name != name:
+                #     print(
+                #         operator,
+                #         ET.tostring(e),
+                #         ET.tostring(op),
+                #         ET.tostring(public_name),
+                #     )
 
                 # if operators[noc].name != public_name.findtext("OperatorPublicName"):
                 # print(operators[noc], ET.tostring(public_name))

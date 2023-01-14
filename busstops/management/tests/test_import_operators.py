@@ -38,7 +38,7 @@ class ImportOperatorsTest(TestCase):
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
         ):
-            with self.assertNumQueries(3979):
+            with self.assertNumQueries(3982):
                 call_command("import_noc")
 
         c2c = Operator.objects.get(noc="CC")
@@ -60,3 +60,6 @@ class ImportOperatorsTest(TestCase):
         kernow = Operator.objects.get(noc="FCWL")
         self.assertEqual(kernow.url, "https://www.firstbus.co.uk/cornwall")
         self.assertEqual(kernow.twitter, "by_Kernow")
+
+        cymru = Operator.objects.get(noc="FCYM")
+        self.assertEqual(cymru.name, "First Cymru")
