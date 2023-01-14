@@ -26,9 +26,7 @@
                     {{ service.current_routes|yesno }}
                 </td>
                 <td class="link">
-                    {% if service.last_tracked %}
-                        <a href="{{ service.get_absolute_url }}/vehicles">Tracking</a>
-                    {% endif %}
+                    <a href="{{ service.get_absolute_url }}/vehicles">{{ service.last_tracked|yesno }}</a>
                 </td>
             </tr>
         {% endfor %}

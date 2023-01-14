@@ -3,6 +3,8 @@ import io
 import xml.etree.ElementTree as ET
 
 import requests
+import yaml
+from django.conf import settings
 from django.core.management import BaseCommand
 from django.utils.text import slugify
 
@@ -40,7 +42,7 @@ def noc_csv(code_sources: list, operators: dict):
 
     for row in csv.DictReader(io.StringIO(response.text)):
         if row["Date Ceased"]:
-            pass
+            continue
 
         noc = row["NOCCODE"]
         if noc[:1] == "=":
@@ -48,6 +50,9 @@ def noc_csv(code_sources: list, operators: dict):
         assert "=" not in noc
 
         mode = get_mode(row["Mode"])
+
+        if mode == "airline":
+            continue
 
         if noc in operators:
             operator = operators[noc]
@@ -119,7 +124,10 @@ class Command(BaseCommand):
 
         noc_csv(code_sources, operators)
 
-        # names = set()
+        with open(settings.BASE_DIR / "fixtures" / "operators.yaml") as open_file:
+            overrides = yaml.load(open_file, Loader=yaml.BaseLoader)
+
+        names = set()
 
         url = "https://www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml"
         response = requests.get(url)
@@ -141,6 +149,7 @@ class Command(BaseCommand):
             operators_by_id[e_id] = e
 
         to_create = []
+        to_update = []
 
         # noc_records = {}
         for e in element.find("NOCTable"):
@@ -163,22 +172,42 @@ class Command(BaseCommand):
                 "OperatorPublicName"
             )
 
+            url = public_name.findtext("Website")
+            if url:
+                url = url.removesuffix("#")
+                url = url.split("#")[-1]
+
+            twitter = public_name.findtext("Twitter").removeprefix("@")
+
+            if noc in overrides:
+                if "url" in overrides[noc]:
+                    url = overrides[noc]["url"]
+
+                if "twitter" in overrides[noc]:
+                    twitter = overrides[noc]["twitter"]
+
             if noc not in operators:
                 # print(noc, e.findtext("OperatorPublicName"), e.findtext("VOSA_PSVLicenseName"), op.findtext("OpNm"))
 
                 operators[noc] = Operator(
                     noc=noc, name=e.findtext("OperatorPublicName")
                 )
+                operator = operators[noc]
 
-                # if operator.name in names:
-                #     operator.save(force_insert=True)
-                # else:
-                to_create.append(operators[noc])
+                operator.url = url
+                operator.twitter = twitter
+
+                if operator.name in names:
+                    operator.save(force_insert=True)
+                else:
+                    to_create.append(operators[noc])
 
             else:
-                if operators[noc].name != e.findtext("OperatorPublicName"):
+                operator = operators[noc]
+
+                if operator.name != e.findtext("OperatorPublicName"):
                     print(
-                        operators[noc],
+                        operator,
                         ET.tostring(e),
                         ET.tostring(op),
                         ET.tostring(public_name),
@@ -187,11 +216,15 @@ class Command(BaseCommand):
                 # if operators[noc].name != public_name.findtext("OperatorPublicName"):
                 # print(operators[noc], ET.tostring(public_name))
 
-                operators[noc].url = public_name.findtext("Website")
+                if url != operator.url or twitter != operator.twitter:
+                    operator.url = url
+                    operator.twitter = twitter
+                    to_update.append(operator)
 
-            # names.add(operators[noc].name)
+            names.add(operator.name)
 
-        # Operator.objects.bulk_create(to_create)
+        Operator.objects.bulk_create(to_create)
+        Operator.objects.bulk_update(to_update, ["url", "twitter", "name"])
 
         # licences = {}
         # for e in element.find("Licence"):

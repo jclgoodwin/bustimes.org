@@ -42,20 +42,8 @@ if [[ $ncsd_old != $ncsd_new ]]; then
 fi
 
 
-cd data
+./manage.py import_noc
 
-noc_old=$(ls -l NOC_DB.csv)
-wget -qN https://mytraveline.info/NOC/NOC_DB.csv
-noc_new=$(ls -l NOC_DB.csv)
-
-cd ..
-
-if [[ $noc_old != $noc_new ]]; then
-    wget -qO nocrecords.xml www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml
-    ./manage.py import_operators < data/NOC_DB.csv
-    ./manage.py import_operator_contacts < nocrecords.xml
-    ./manage.py correct_operators
-fi
 
 if [[ $USERNAME == '' || $PASSWORD == '' ]]; then
    echo 'TNDS username and/or password not supplied :('
