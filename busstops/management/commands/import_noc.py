@@ -49,6 +49,10 @@ def noc_csv(code_sources: list, operators: dict):
             noc = noc[1:]
         assert "=" not in noc
 
+        if noc == "#NAME?":  # microsoft excel crap
+            continue
+        assert len(noc) <= 4
+
         mode = get_mode(row["Mode"])
 
         if mode == "airline":
