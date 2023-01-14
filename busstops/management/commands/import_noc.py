@@ -218,8 +218,6 @@ class Command(BaseCommand):
             else:
                 operator = operators[noc]
 
-                operator.name = name
-
                 # if operator.name != name:
                 #     print(
                 #         operator,
@@ -231,7 +229,12 @@ class Command(BaseCommand):
                 # if operators[noc].name != public_name.findtext("OperatorPublicName"):
                 # print(operators[noc], ET.tostring(public_name))
 
-                if url != operator.url or twitter != operator.twitter:
+                if (
+                    name != operator.name
+                    or url != operator.url
+                    or twitter != operator.twitter
+                ):
+                    operator.name = name
                     operator.url = url
                     operator.twitter = twitter
                     to_update.append(operator)
@@ -239,7 +242,7 @@ class Command(BaseCommand):
             try:
                 operator.clean_fields(exclude=["noc", "slug", "region"])
             except Exception as e:
-                if "url" in e:
+                if "url" in e.message_dict:
                     print(e, operator.url)
                     operator.url = ""
                 else:
