@@ -154,10 +154,6 @@ class Command(BaseCommand):
         # noc_records = {}
         for e in element.find("NOCTable"):
 
-            if e.findtext("NOCCdQual"):
-                print("\n\n")
-                print(e.findtext("NOCCdQual"))
-                print("\n\n")
             # e_id = e.findtext("PubNmId")
             # if e_id in noc_records:
             #     print(ET.tostring(noc_records[e_id]))
@@ -198,6 +194,7 @@ class Command(BaseCommand):
                 operator.twitter = twitter
 
                 if operator.name in names:
+                    # duplicate name – save now to avoid slug collision
                     operator.save(force_insert=True)
                 else:
                     to_create.append(operators[noc])

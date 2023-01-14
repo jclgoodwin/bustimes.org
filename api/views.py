@@ -45,6 +45,8 @@ class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Operator.objects.order_by("noc")
     serializer_class = serializers.OperatorSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = filters.OperatorFilter
 
 
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):

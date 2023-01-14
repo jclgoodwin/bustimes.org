@@ -55,7 +55,17 @@ class VehicleTypeSerializer(serializers.ModelSerializer):
 class OperatorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Operator
-        fields = ["noc", "slug", "name", "region_id"]
+        fields = [
+            "noc",
+            "slug",
+            "name",
+            "aka",
+            "vehicle_mode",
+            "region_id",
+            "parent",
+            "url",
+            "twitter",
+        ]
 
 
 class ServiceSerializer(serializers.ModelSerializer):
