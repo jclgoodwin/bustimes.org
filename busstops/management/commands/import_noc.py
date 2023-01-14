@@ -199,6 +199,8 @@ class Command(BaseCommand):
                         print(name)
                     name = override["name"]
 
+            create_or_update = False
+
             if noc not in operators:
                 # print(noc, e.findtext("OperatorPublicName"), e.findtext("VOSA_PSVLicenseName"), op.findtext("OpNm"))
 
@@ -214,6 +216,7 @@ class Command(BaseCommand):
                 else:
                     # operator.slug = slugify(operator.name)
                     to_create.append(operator)
+                    create_or_update = True
 
             else:
                 operator = operators[noc]
@@ -238,6 +241,7 @@ class Command(BaseCommand):
                     operator.url = url
                     operator.twitter = twitter
                     to_update.append(operator)
+                    create_or_update = True
 
             try:
                 operator.clean_fields(exclude=["noc", "slug", "region"])
@@ -245,6 +249,8 @@ class Command(BaseCommand):
                 if "url" in e.message_dict:
                     print(e, operator.url)
                     operator.url = ""
+                    if not create_or_update:
+                        to_update.append(operator)
                 else:
                     print(e)
 
