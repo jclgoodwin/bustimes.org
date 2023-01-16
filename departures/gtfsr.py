@@ -47,7 +47,7 @@ def get_trip_update(trip) -> dict:
             return feed["entity"][trip_id]
 
 
-def apply_trip_update(stops, trip_update: dict):
+def apply_trip_update(stops, trip_update: dict) -> None:
     if "stopTimeUpdate" not in trip_update["tripUpdate"]:
         return
 
@@ -86,7 +86,7 @@ def apply_trip_update(stops, trip_update: dict):
                 )
 
 
-def update_stop_departures(departures):
+def update_stop_departures(departures: list) -> None:
     feed = get_feed_entities()
     if not feed:
         return

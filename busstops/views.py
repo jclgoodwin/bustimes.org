@@ -780,7 +780,7 @@ class StopAreaDetailView(DetailView):
             if " " in stop.indicator:
                 context["indicator_prefix"] = stop.indicator.split(" ")[
                     0
-                ]  # Stand, Stance, Stop
+                ].title()  # Stand, Stance, Stop
             break
 
         stops_dict = {stop.pk: stop for stop in context["children"]}
