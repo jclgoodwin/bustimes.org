@@ -1,7 +1,7 @@
 from django import template
 from django.template.defaultfilters import stringfilter
-from django.utils.safestring import mark_safe
 from django.utils.html import urlize
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -30,7 +30,4 @@ def urlise(value, autoescape=None):
         markup = markup.replace('"http://nationalexpress.com"', replacement, 1)
         markup = markup.replace('"http://www.nationalexpress.com"', replacement, 1)
         markup = markup.replace('"https://www.nationalexpress.com"', replacement, 1)
-    elif "flixbus" in markup:
-        replacement = '"https://sovrn.co/1zcqdyq"'
-        markup = markup.replace('"https://www.flixbus.co.uk"', replacement, 1)
     return mark_safe(markup)

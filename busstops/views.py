@@ -1029,14 +1029,6 @@ class ServiceDetailView(DetailView):
                         }
                     )
                     break
-                if operator.slug == "flixbus":
-                    context["links"].append(
-                        {
-                            "url": "https://sovrn.co/1zcqdyq",
-                            "text": "Buy tickets at FlixBus",
-                        }
-                    )
-                    break
 
         fare_tables = (
             FareTable.objects.filter(

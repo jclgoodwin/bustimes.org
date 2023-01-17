@@ -119,6 +119,10 @@ HCMN:
 FALC:
     name: Falcon Buses
     url: https://www.falconbuses.co.uk
+    twitter: FalconBusCoach
+    email: ""
+NVTR:
+    url: https://nu-venture.online/
     email: ""
 CBBH:
     name: Centrebus (South)
