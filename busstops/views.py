@@ -158,6 +158,12 @@ Disallow: /
 
 User-agent: dotbot
 Disallow: /
+
+User-agent: proximic
+Disallow: /stops/
+
+User-agent: grapeshot
+Disallow: /stops/
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
