@@ -62,6 +62,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "beeline.middleware.django.HoneyMiddleware",
 ]
 
 # Stadia Maps tiles require we send at least the origin in cross-origin requests.

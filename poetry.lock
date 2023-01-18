@@ -87,14 +87,14 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.26.50"
+version = "1.26.51"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = ">= 3.7"
 
 [package.dependencies]
-botocore = ">=1.29.50,<1.30.0"
+botocore = ">=1.29.51,<1.30.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -103,7 +103,7 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.29.50"
+version = "1.29.51"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -532,6 +532,18 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "honeycomb-beeline"
+version = "3.5.0"
+description = "Honeycomb library for easy instrumentation"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4"
+
+[package.dependencies]
+libhoney = ">=2.3.0,<3.0.0"
+wrapt = ">=1.12.1,<2.0.0"
+
+[[package]]
 name = "huey"
 version = "2.4.4"
 description = "huey, a little task queue"
@@ -649,6 +661,18 @@ description = "JSON Matching Expressions"
 category = "main"
 optional = false
 python-versions = ">=3.7"
+
+[[package]]
+name = "libhoney"
+version = "2.3.0"
+description = "Python library for sending data to Honeycomb"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4"
+
+[package.dependencies]
+requests = ">=2.24.0,<3.0.0"
+statsd = ">=3.3.0,<4.0.0"
 
 [[package]]
 name = "lxml"
@@ -1149,6 +1173,14 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
+name = "statsd"
+version = "3.3.0"
+description = "A simple statsd client."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "time-machine"
 version = "2.9.0"
 description = "Travel through time in your tests."
@@ -1372,7 +1404,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "799f1e3e8e4e7fe2ac6bd2b8d12b07a7490033d3f9bba7fab0a79350c31d1c3f"
+content-hash = "e6eabcedc358bcde707359e46f5d47a931c4ba38e77e9bc2a2522755e35478ab"
 
 [metadata.files]
 appdirs = [
@@ -1408,12 +1440,12 @@ beautifulsoup4 = [
     {file = "beautifulsoup4-4.11.1.tar.gz", hash = "sha256:ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693"},
 ]
 boto3 = [
-    {file = "boto3-1.26.50-py3-none-any.whl", hash = "sha256:9c434bcd02c527485c89d6efbd38b7c205e06ab06abe80e5dbf9a8be836c77c2"},
-    {file = "boto3-1.26.50.tar.gz", hash = "sha256:3737d8a506f50065bb2366a6b8e7545d88034f4771527790a125e0abd307d8e8"},
+    {file = "boto3-1.26.51-py3-none-any.whl", hash = "sha256:b4aefdc72191c40a0155511b9ce933c94dcbdd1834ffc1204e90a30e7849ef13"},
+    {file = "boto3-1.26.51.tar.gz", hash = "sha256:d599ce626b03e7236b0cda051c3cedc128fd75e0ec2f799fab9b2eabdf32d945"},
 ]
 botocore = [
-    {file = "botocore-1.29.50-py3-none-any.whl", hash = "sha256:0e9ab19787ad7a079c00d3e40b16bc66423e54bc0e8a203b70b543bd8854d5ad"},
-    {file = "botocore-1.29.50.tar.gz", hash = "sha256:5cc68b78a48217550c18b4639420b7c3b48ed9e09e749343143acbfa423ceec5"},
+    {file = "botocore-1.29.51-py3-none-any.whl", hash = "sha256:bbb92420902b4d9e4b854fcfae20d1029f1c3396e0579894f115278bc51d6198"},
+    {file = "botocore-1.29.51.tar.gz", hash = "sha256:f2f521fbd2343879f3c2d42392c88f1e7f15ea147a6dc5a3dab7b8686d90fcb6"},
 ]
 bs4 = [
     {file = "bs4-0.0.1.tar.gz", hash = "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"},
@@ -1739,6 +1771,10 @@ haversine = [
     {file = "haversine-2.7.0-py2.py3-none-any.whl", hash = "sha256:4fdf9aebb4cc59c7de6fcb06f7afa6ab54720c5d9c91dac8c173b9213920434c"},
     {file = "haversine-2.7.0.tar.gz", hash = "sha256:9dd62c95bff9c43eb898604625e80db68b8b9e91a5111338f55ebcf470dd5a3d"},
 ]
+honeycomb-beeline = [
+    {file = "honeycomb-beeline-3.5.0.tar.gz", hash = "sha256:6e6b7be447b4971244b0e9a5a9631e44260a9255e4056a744b65ce5a6be5e0c2"},
+    {file = "honeycomb_beeline-3.5.0-py3-none-any.whl", hash = "sha256:5fbf8c8cc93c60d308ddd0b93fa359ab60daeb339036d8759ec13afde3a006b6"},
+]
 huey = [
     {file = "huey-2.4.4.tar.gz", hash = "sha256:6a27a7862a7a982c0508ad4e548d95765e3b0d97093a51106f07540837a09c86"},
 ]
@@ -1769,6 +1805,10 @@ jedi = [
 jmespath = [
     {file = "jmespath-1.0.1-py3-none-any.whl", hash = "sha256:02e2e4cc71b5bcab88332eebf907519190dd9e6e82107fa7f83b1003a6252980"},
     {file = "jmespath-1.0.1.tar.gz", hash = "sha256:90261b206d6defd58fdd5e85f478bf633a2901798906be2ad389150c5c60edbe"},
+]
+libhoney = [
+    {file = "libhoney-2.3.0-py3-none-any.whl", hash = "sha256:04b7358513ff3eb11c07c6d4dd726de45b93a918ffe42748710c0e53a616c04a"},
+    {file = "libhoney-2.3.0.tar.gz", hash = "sha256:c1ffa35a22061bb6e5c1f9711da39055cf905a9588899626303b73b9cd398772"},
 ]
 lxml = [
     {file = "lxml-4.9.2-cp27-cp27m-macosx_10_15_x86_64.whl", hash = "sha256:76cf573e5a365e790396a5cc2b909812633409306c6531a6877c59061e42c4f2"},
@@ -2053,6 +2093,7 @@ prompt-toolkit = [
     {file = "prompt_toolkit-3.0.36.tar.gz", hash = "sha256:3e163f254bef5a03b146397d7c1963bd3e2812f0964bb9a24e6ec761fd28db63"},
 ]
 protobuf = [
+    {file = "protobuf-3.20.3-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:e67f9af1b607eb3a89aafc9bc68a9d1172aae788b2445cb9fd781bd97531f1f1"},
     {file = "protobuf-3.20.3-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:f4bd856d702e5b0d96a00ec6b307b0f51c1982c2bf9c0052cf9019e9a544ba99"},
     {file = "protobuf-3.20.3-cp310-cp310-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:9aae4406ea63d825636cc11ffb34ad3379335803216ee3a856787bcf5ccc751e"},
     {file = "protobuf-3.20.3-cp310-cp310-win32.whl", hash = "sha256:28545383d61f55b57cf4df63eebd9827754fd2dc25f80c5253f9184235db242c"},
@@ -2079,8 +2120,6 @@ protobuf = [
 psycopg2 = [
     {file = "psycopg2-2.9.5-cp310-cp310-win32.whl", hash = "sha256:d3ef67e630b0de0779c42912fe2cbae3805ebaba30cda27fea2a3de650a9414f"},
     {file = "psycopg2-2.9.5-cp310-cp310-win_amd64.whl", hash = "sha256:4cb9936316d88bfab614666eb9e32995e794ed0f8f6b3b718666c22819c1d7ee"},
-    {file = "psycopg2-2.9.5-cp311-cp311-win32.whl", hash = "sha256:093e3894d2d3c592ab0945d9eba9d139c139664dcf83a1c440b8a7aa9bb21955"},
-    {file = "psycopg2-2.9.5-cp311-cp311-win_amd64.whl", hash = "sha256:920bf418000dd17669d2904472efeab2b20546efd0548139618f8fa305d1d7ad"},
     {file = "psycopg2-2.9.5-cp36-cp36m-win32.whl", hash = "sha256:b9ac1b0d8ecc49e05e4e182694f418d27f3aedcfca854ebd6c05bb1cffa10d6d"},
     {file = "psycopg2-2.9.5-cp36-cp36m-win_amd64.whl", hash = "sha256:fc04dd5189b90d825509caa510f20d1d504761e78b8dfb95a0ede180f71d50e5"},
     {file = "psycopg2-2.9.5-cp37-cp37m-win32.whl", hash = "sha256:922cc5f0b98a5f2b1ff481f5551b95cd04580fd6f0c72d9b22e6c0145a4840e0"},
@@ -2262,6 +2301,10 @@ stack-data = [
     {file = "stack_data-0.6.2-py3-none-any.whl", hash = "sha256:cbb2a53eb64e5785878201a97ed7c7b94883f48b87bfb0bbe8b623c74679e4a8"},
     {file = "stack_data-0.6.2.tar.gz", hash = "sha256:32d2dd0376772d01b6cb9fc996f3c8b57a357089dec328ed4b6553d037eaf815"},
 ]
+statsd = [
+    {file = "statsd-3.3.0-py2.py3-none-any.whl", hash = "sha256:c610fb80347fca0ef62666d241bce64184bd7cc1efe582f9690e045c25535eaa"},
+    {file = "statsd-3.3.0.tar.gz", hash = "sha256:e3e6db4c246f7c59003e51c9720a51a7f39a396541cb9b147ff4b14d15b5dd1f"},
+]
 time-machine = [
     {file = "time-machine-2.9.0.tar.gz", hash = "sha256:60222d43f6e93a926adc36ed37a54bc8e4d0d8d1c4d449096afcfe85086129c2"},
     {file = "time_machine-2.9.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:fd72c0b2e7443fff6e4481991742b72c17f73735e5fdd176406ca48df187a5c9"},
@@ -2365,6 +2408,7 @@ w3lib = [
     {file = "w3lib-2.1.1.tar.gz", hash = "sha256:0e1198f1b745195b6b3dd1a4cd66011fbf82f30a4d9dabaee1f9e5c86f020274"},
 ]
 wcwidth = [
+    {file = "wcwidth-0.2.6-py2.py3-none-any.whl", hash = "sha256:795b138f6875577cd91bba52baf9e445cd5118fd32723b460e30a0af30ea230e"},
     {file = "wcwidth-0.2.6.tar.gz", hash = "sha256:a5220780a404dbe3353789870978e472cfe477761f06ee55077256e509b156d0"},
 ]
 webcolors = [
