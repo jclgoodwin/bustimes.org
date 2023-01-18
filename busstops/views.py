@@ -146,8 +146,12 @@ Disallow: /search
 Disallow: /trips/
 Disallow: /accounts/
 Disallow: /fares/
+Disallow: /vehicles/tfl/
 
 User-agent: AhrefsBot
+Disallow: /
+
+User-agent: AhrefsSiteAudit
 Disallow: /
 
 User-agent: BLEXBot
