@@ -65,12 +65,11 @@ def get_livery_choices(operator, vehicle, user):
 class EditVehiclesForm(forms.Form):
     spare_ticket_machine = forms.BooleanField(
         required=False,
-        help_text="Only tick this box if the ticket machine code is something like SPARE",
+        help_text="Only to be used if the ticket machine code is something like SPARE",
     )
     withdrawn = forms.BooleanField(
         label="Permanently withdrawn",
         required=False,
-        help_text="This removes the vehicle from the fleet list. Wait a few days before ticking",
     )
     operator = forms.ModelChoiceField(queryset=None, label="Operator", empty_label="")
     other_vehicle_type = forms.CharField(required=False)
@@ -81,7 +80,8 @@ class EditVehiclesForm(forms.Form):
         label="Current livery",
         widget=forms.RadioSelect,
         required=False,
-        help_text="Wait until the bus has definitely been repainted before updating it here",
+        help_text="""Wait until the bus has been repainted
+(not "in the paint shop" or "awaiting repaint") before updating it here""",
     )
     other_colour = forms.CharField(
         label="Other colours",
