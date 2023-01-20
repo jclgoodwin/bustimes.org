@@ -566,7 +566,7 @@ def get_departures_context(stop, services, form_data) -> dict:
         when = datetime.datetime.combine(date, time)
     context["when"] = when
 
-    departures, _ = live.get_departures(stop, services, when)
+    departures = live.get_departures(stop, services, when)
     context.update(departures)
     if context["departures"]:
         context["live"] = any(item.get("live") for item in context["departures"])

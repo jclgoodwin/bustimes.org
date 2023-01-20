@@ -82,15 +82,7 @@ class Departures:
         }
 
     def get_response(self):
-        key = f"{self.__class__.__name__}:{self.stop.pk}"
-
-        response = cache.get(key)
-
-        if not response:
-            response = requests.get(self.get_request_url(), **self.get_request_kwargs())
-            cache.set(key, response, 60)
-
-        return response
+        return requests.get(self.get_request_url(), **self.get_request_kwargs())
 
     def get_service(self, line_name):
         """Given a line name string, returns the Service matching a line name
@@ -138,19 +130,29 @@ class Departures:
             return cache.set(key, True, age)
 
     def get_departures(self):
-        try:
-            response = self.get_response()
-        except requests.exceptions.ReadTimeout:
-            self.set_poorly(60)  # back off for 1 minute
-            return
-        except requests.exceptions.RequestException as e:
-            self.set_poorly(60)  # back off for 1 minute
-            logger = logging.getLogger(__name__)
-            logger.error(e, exc_info=True)
-            return
-        if response.ok:
-            return self.departures_from_response(response)
-        self.set_poorly(1800)  # back off for 30 minutes
+        key = f"{self.__class__.__name__}:{self.stop.pk}"
+
+        response = cache.get(key)
+
+        if not response:
+            try:
+                response = self.get_response()
+            except requests.exceptions.ReadTimeout:
+                self.set_poorly(60)  # back off for 1 minute
+                return
+            except requests.exceptions.RequestException as e:
+                self.set_poorly(60)  # back off for 1 minute
+                logger = logging.getLogger(__name__)
+                logger.error(e, exc_info=True)
+                return
+
+            if response.ok:
+                cache.set(key, response, 60)
+            else:
+                self.set_poorly(1800)  # back off for 30 minutes
+                return
+
+        return self.departures_from_response(response)
 
 
 class TflDepartures(Departures):
@@ -588,13 +590,10 @@ def get_departures(stop, services, when):
     ):
         departures = TflDepartures(stop, services).get_departures()
         if departures:
-            return (
-                {
-                    "departures": departures,
-                    "today": timezone.localdate(),
-                },
-                60,
-            )
+            return {
+                "departures": departures,
+                "today": timezone.localdate(),
+            }
 
     now = timezone.localtime()
 
@@ -713,14 +712,9 @@ def get_departures(stop, services, when):
                                 else None,
                             )
 
-    max_age = 60
-
-    return (
-        {
-            "departures": departures,
-            "today": now.date(),
-            "now": now,
-            "when": when or now,
-        },
-        max_age,
-    )
+    return {
+        "departures": departures,
+        "today": now.date(),
+        "now": now,
+        "when": when or now,
+    }
