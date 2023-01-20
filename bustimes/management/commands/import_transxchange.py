@@ -1010,8 +1010,12 @@ class Command(BaseCommand):
                 if (
                     description
                     and self.source.name.startswith("Stagecoach")
-                    and line.line_name == "1"
-                    and "Chester" in description
+                    and (
+                        line.line_name == "1"
+                        and "Chester" in description
+                        or line.line_name == "59"
+                        and self.source.name == "Stagecoach East Scotland"
+                    )
                 ):
                     q = (Q(source=self.source) | q) & Q(description=description)
                 existing = services.filter(q)
