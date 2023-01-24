@@ -62,7 +62,7 @@ class Departures:
         for line_name in duplicate_alternative_names:
             del self.services_by_alternative_name[line_name]
 
-    def get_request_url(self):
+    def get_request_url(self) -> str:
         """Return a URL string to pass to get_response"""
         return self.request_url
 
@@ -84,7 +84,7 @@ class Departures:
     def get_response(self):
         return requests.get(self.get_request_url(), **self.get_request_kwargs())
 
-    def get_service(self, line_name):
+    def get_service(self, line_name: str):
         """Given a line name string, returns the Service matching a line name
         (case-insensitively), or a line name string
         """
@@ -124,10 +124,10 @@ class Departures:
     def get_poorly_key(self):
         pass
 
-    def set_poorly(self, age):
+    def set_poorly(self, timeout: int):
         key = self.get_poorly_key()
         if key:
-            return cache.set(key, True, age)
+            return cache.set(key, True, timeout)
 
     def get_departures(self):
         key = f"{self.__class__.__name__}:{self.stop.pk}"
@@ -159,13 +159,13 @@ class TflDepartures(Departures):
     """Departures from the Transport for London API"""
 
     @staticmethod
-    def get_request_params():
+    def get_request_params() -> dict:
         return settings.TFL
 
-    def get_request_url(self):
+    def get_request_url(self) -> str:
         return f"https://api.tfl.gov.uk/StopPoint/{self.stop.pk}/arrivals"
 
-    def departures_from_response(self, res):
+    def departures_from_response(self, res) -> list:
         rows = res.json()
         if rows:
             name = rows[0]["stationName"]
@@ -181,6 +181,7 @@ class TflDepartures(Departures):
                     "service": self.get_service(item.get("lineName")),
                     "destination": item.get("destinationName"),
                     "link": f"/vehicles/tfl/{item['vehicleId']}#stop-{item['naptanId']}",
+                    "vehicle": item["vehicleId"],
                 }
                 for item in rows
             ],
@@ -189,42 +190,26 @@ class TflDepartures(Departures):
 
 
 class WestMidlandsDepartures(Departures):
-    @staticmethod
-    def get_request_params():
-        return {**settings.TFWM, "formatter": "json"}
-
-    def get_request_url(self):
-        return f"http://api.tfwm.org.uk/stoppoint/{self.stop.pk}/arrivals"
-
-    def get_row(self, item):
-        scheduled = ciso8601.parse_datetime(item["ScheduledArrival"])
-        expected = ciso8601.parse_datetime(item["ExpectedArrival"])
-        return {
-            "time": scheduled,
-            "arrival": scheduled,
-            "live": expected,
-            "service": self.get_service(item["LineName"]),
-            "destination": item["DestinationName"],
-        }
-
-    def departures_from_response(self, res):
-        data = res.json()
-        if "Predictions" in data and "Prediction" in data["Predictions"]:
-            return sorted(
-                [
-                    self.get_row(item)
-                    for item in data["Predictions"]["Prediction"]
-                    if item["ExpectedArrival"]
-                ],
-                key=lambda d: d["live"],
-            )
+    def get_departures(self):
+        items = cache.get(self.stop.atco_code)
+        if items:
+            return [
+                {
+                    "time": item["aimed_departure_time"],
+                    "live": item["expected_departure_time"],
+                    "service": self.get_service(item["line_name"]),
+                    "destination": item["destination"],
+                    "vehicle": item["vehicle"],
+                }
+                for item in items
+            ]
 
 
 class EdinburghDepartures(Departures):
-    def get_request_url(self):
+    def get_request_url(self) -> str:
         return "https://tfe-opendata.com/api/v1/live_bus_times/" + self.stop.naptan_code
 
-    def departures_from_response(self, res):
+    def departures_from_response(self, res) -> list:
         routes = res.json()
         if routes:
             departures = []
@@ -238,19 +223,20 @@ class EdinburghDepartures(Departures):
                             "live": time if departure["isLive"] else None,
                             "service": service,
                             "destination": departure["destination"],
-                            "vehicleId": departure["vehicleId"],
+                            "vehicle": departure["vehicleId"],
                             "tripId": departure["tripId"],
                         }
                     )
             vehicles = Vehicle.objects.filter(
                 source__name="TfE",
-                code__in=[item["vehicleId"] for item in departures],
-            ).only("id", "code", "slug")
+                code__in=[item["vehicle"] for item in departures],
+            ).only("id", "code", "slug", "fleet_code", "fleet_number", "reg")
             vehicles = {vehicle.code: vehicle for vehicle in vehicles}
             for item in departures:
-                vehicle = vehicles.get(item["vehicleId"])
+                vehicle = vehicles.get(item["vehicle"])
                 if vehicle:
                     item["link"] = f"{vehicle.get_absolute_url()}#map"
+                    item["vehicle"] = vehicle
             hour = datetime.timedelta(hours=1)
             if all(
                 ((departure["time"] or departure["live"]) - self.now) >= hour
@@ -391,13 +377,13 @@ class TimetableDepartures(Departures):
         ] + [self.get_row(stop_time, date) for stop_time in today_times]
 
         i = 0
-        while len(times) < 10 and i < 3:
-            i += 1
-            date += one_day
-            times += [
-                self.get_row(stop_time, date)
-                for stop_time in self.get_times(date)[: 10 - len(times)]
-            ]
+        # while len(times) < 10 and i < 3:
+        #     i += 1
+        #     date += one_day
+        #     times += [
+        #         self.get_row(stop_time, date)
+        #         for stop_time in self.get_times(date)[: 10 - len(times)]
+        #     ]
 
         if i or yesterday_times:
             times.sort(key=get_departure_order)
@@ -576,10 +562,22 @@ def get_stop_times(
     return times.filter(trip__route__in=routes, trip__calendar__in=get_calendars(date))
 
 
-def get_departures(stop, services, when):
-    """Given a StopPoint object and an iterable of Service objects,
-    returns a tuple containing a context dictionary and a max_age integer
-    """
+def update_trip_ids(departures: list, live_rows: list) -> None:
+    for live_row in live_rows:
+        if live_row["time"]:
+            for row in departures:
+                if (
+                    row["time"] == live_row["time"]
+                    and row["service"] == live_row["service"]
+                ):
+                    live_row["link"] = row["link"]
+                    trip = row["stop_time"].trip
+                    if trip.ticket_machine_code != live_row["tripId"]:
+                        trip.ticket_machine_code = live_row["tripId"]
+                        trip.save(update_fields=["ticket_machine_code"])
+
+
+def get_departures(stop, services, when) -> dict:
 
     # Transport for London
     if (
@@ -642,7 +640,14 @@ def get_departures(stop, services, when):
             live_rows = AcisHorizonDepartures(stop, services).get_departures()
             if live_rows:
                 blend(departures, live_rows)
+
+        elif not operators.isdisjoint(settings.TFWM_OPERATORS):
+            live_rows = WestMidlandsDepartures(stop, services).get_departures()
+            if live_rows:
+                blend(departures, live_rows)
+
         elif departures:
+
             if stop.naptan_code and (
                 "Lothian Buses" in operators
                 or "Lothian Country Buses" in operators
@@ -651,18 +656,7 @@ def get_departures(stop, services, when):
             ):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
                 if live_rows:
-                    for live_row in live_rows:
-                        if live_row["time"]:
-                            for row in departures:
-                                if (
-                                    row["time"] == live_row["time"]
-                                    and row["service"] == live_row["service"]
-                                ):
-                                    live_row["link"] = row["link"]
-                                    trip = row["stop_time"].trip
-                                    if trip.ticket_machine_code != live_row["tripId"]:
-                                        trip.ticket_machine_code = live_row["tripId"]
-                                        trip.save(update_fields=["ticket_machine_code"])
+                    update_trip_ids(departures, live_rows)
 
                     departures = live_rows
                     live_rows = None
@@ -679,13 +673,6 @@ def get_departures(stop, services, when):
 
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
-            elif (
-                "National Express West Midlands" in operators
-                or "National Express Coventry" in operators
-                or "Diamond Bus" in operators
-                or "Landflight" in operators
-            ):
-                live_rows = WestMidlandsDepartures(stop, services).get_departures()
 
             if live_rows:
                 blend(departures, live_rows)

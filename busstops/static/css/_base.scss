@@ -1429,6 +1429,11 @@ input:not(:checked) + label {
     input {
         flex-grow: 1;
     }
+
+    .vehicle {
+        color: #666;
+        font-size: .75em;
+    }
 }
 
 #fare-table td,

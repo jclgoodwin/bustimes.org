@@ -254,9 +254,13 @@ TFL = {  # London
     "app_id": os.environ.get("TFL_APP_ID"),
     "app_key": os.environ.get("TFL_APP_KEY"),
 }
-TFWM = {  # West Midlands
-    "app_id": os.environ.get("TFWM_APP_ID"),
-    "app_key": os.environ.get("TFWM_APP_KEY"),
+TFWM_OPERATORS = {
+    "National Express West Midlands",
+    "National Express Coventry",
+    "Diamond Bus",
+    "Landflight",
+    "West Midlands Metro",
+    "Stagecoach Midlands",
 }
 NTA_API_KEY = os.environ.get("NTA_API_KEY")  # Ireland
 NTA_OPERATORS = {

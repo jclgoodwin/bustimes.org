@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 import time_machine
 import vcr
+from django.core.management import call_command
 from django.shortcuts import render
 from django.test import TestCase, override_settings
 
@@ -143,27 +144,38 @@ class LiveDeparturesTest(TestCase):
             """
                 <h2>Next departures</h2>
                 <table><tbody>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church
+                        <div class="vehicle">LTZ1414</div></td>
                         <td><a href="/vehicles/tfl/LTZ1414#stop-490014721F">18:22⚡&#xfe0f;</a></td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital
+                        <div class="vehicle">LX59AOM</div></td>
                         <td><a href="/vehicles/tfl/LX59AOM#stop-490014721F">18:23⚡&#xfe0f;</a></td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church
+                        <div class="vehicle">LTZ1243</div></td>
                         <td><a href="/vehicles/tfl/LTZ1243#stop-490014721F">18:26⚡&#xfe0f;</a></td></tr>
-                    <tr><td>388</td><td>Stratford City</td>
+                    <tr><td>388</td><td>Stratford City
+                        <div class="vehicle">YR59NPF</div></td>
                         <td><a href="/vehicles/tfl/YR59NPF#stop-490014721F">18:26⚡&#xfe0f;</a></td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church
+                        <div class="vehicle">LTZ1407</div></td>
                         <td><a href="/vehicles/tfl/LTZ1407#stop-490014721F">18:33⚡&#xfe0f;</a></td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital
+                        <div class="vehicle">LX59AOL</div></td>
                         <td><a href="/vehicles/tfl/LX59AOL#stop-490014721F">18:33⚡&#xfe0f;</a></td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church
+                        <div class="vehicle">LTZ1412</div></td>
                         <td><a href="/vehicles/tfl/LTZ1412#stop-490014721F">18:37⚡&#xfe0f;</a></td></tr>
-                    <tr><td>388</td><td>Stratford City</td>
+                    <tr><td>388</td><td>Stratford City
+                        <div class="vehicle">PF52TFX</div></td>
                         <td><a href="/vehicles/tfl/PF52TFX#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
-                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital</td>
+                    <tr><td>D3</td><td>Bethnal Green, Chest Hospital
+                        <div class="vehicle">LX59AOA</div></td>
                         <td><a href="/vehicles/tfl/LX59AOA#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church
+                        <div class="vehicle">LTZ1269</div></td>
                         <td><a href="/vehicles/tfl/LTZ1269#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
-                    <tr><td><a href="/services/8">8</a></td><td>Bow Church</td>
+                    <tr><td><a href="/services/8">8</a></td><td>Bow Church
+                        <div class="vehicle">LTZ1393</div></td>
                         <td><a href="/vehicles/tfl/LTZ1393#stop-490014721F">18:49⚡&#xfe0f;</a></td></tr>
                 </tbody></table>
             <p class="credit">⚡&#xfe0f; denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
@@ -240,32 +252,43 @@ class LiveDeparturesTest(TestCase):
         )
         Vehicle.objects.create(source=vehicle_source, code="686")
 
-        with time_machine.travel(datetime(2022, 6, 14, 13, 17)):
+        with time_machine.travel(datetime(2022, 6, 14, 12)):
             with vcr.use_cassette(
                 "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
             ):
-                with self.assertNumQueries(12):
+                with self.assertNumQueries(8):
                     response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, '<a href="/vehicles/none-686#map">')
 
+    @override_settings(
+        CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+    )
     def test_west_midlands(self):
+        DataSource.objects.create(
+            name="TfWM",
+            settings={
+                "app_id": "",
+                "app_key": "",
+            },
+        )
+
         stop = StopPoint.objects.create(
-            atco_code="3800C419101",
-            common_name="Farewell Lane",
+            atco_code="43000342101",
+            common_name="Stone Road",
             active=True,
         )
         operator = Operator.objects.create(noc="TCVW", name="National Express Coventry")
-        service = Service.objects.create(line_name="8")
+        service = Service.objects.create(line_name="63")
         service.operator.add(operator)
         StopUsage.objects.create(stop=stop, service=service, order=1)
         route = Route.objects.create(
-            line_name="8", service=service, source=self.source, start_date="2022-06-13"
+            line_name="63", service=service, source=self.source, start_date="2022-06-13"
         )
         calendar = Calendar.objects.create(
-            mon=True,
-            tue=True,
-            wed=True,
-            thu=True,
+            mon=False,
+            tue=False,
+            wed=False,
+            thu=False,
             fri=True,
             sat=True,
             sun=True,
@@ -278,19 +301,44 @@ class LiveDeparturesTest(TestCase):
             trip=trip, sequence=0, arrival="13:19:00", departure="13:19:00", stop=stop
         )
 
-        with override_settings(
-            TFWM={
-                "app_id": "app_id",
-                "app_key": "app_key",
-            }
-        ):
-            with time_machine.travel(datetime(2022, 6, 26, 13, 10)):
+        with time_machine.travel(datetime(2023, 1, 20, 2)):
+            with patch(
+                "bustimes.management.commands.tfwm_gtfs_rt.Command.get_routes_and_trips",
+                return_value=(
+                    {"1": {"route_short_name": "63"}},
+                    {
+                        "VJ591d74605aead85fca695a71e8b0bca8fe84fe8f": {
+                            "trip_headsign": "Shilbottle",
+                            "route_id": "1",
+                        },
+                        "VJ76f23858b8d11620f602f736c9a059e8c8b31ade": {
+                            "trip_headsign": "Shilbottle",
+                            "route_id": "1",
+                        },
+                        "VJ8f51e62e07d2b3cf3ffc3f45c1cb1b63df4e5206": {
+                            "trip_headsign": "Shilbottle",
+                            "route_id": "1",
+                        },
+                        "VJe60b412bf94622ae9e7e3eaad893379e1fa499d7": {
+                            "trip_headsign": "Shilbottle",
+                            "route_id": "1",
+                        },
+                        "VJec663a51d5a011591a75c98da19e9e056c3239f7": {
+                            "trip_headsign": "Shilbottle",
+                            "route_id": "1",
+                        },
+                    },
+                ),
+            ):
                 with vcr.use_cassette(
                     "fixtures/vcr/tfwm.yaml", decode_compressed_response=True
                 ):
-                    with self.assertNumQueries(11):
+                    with self.assertNumQueries(1):
+                        call_command("tfwm_gtfs_rt")
+
+                    with self.assertNumQueries(8):
                         response = self.client.get(stop.get_absolute_url())
-        self.assertContains(response, "13:20⚡")
+        self.assertContains(response, "04:41⚡&#xfe0f;")
 
     def test_blend(self):
         service = Service(line_name="X98")
@@ -372,7 +420,7 @@ class LiveDeparturesTest(TestCase):
     def test_worcestershire(self, mocked_log_vehicle_journey):
         with time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"):
             with vcr.use_cassette("fixtures/vcr/worcester.yaml"):
-                with self.assertNumQueries(11):
+                with self.assertNumQueries(8):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
 
         trip_url = f"{self.trip.get_absolute_url()}#stop-time-{self.worcs_stop_time.id}"

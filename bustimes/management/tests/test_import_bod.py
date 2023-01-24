@@ -237,25 +237,24 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get("/stops/2900W0321/times.json?when=yesterday")
         self.assertEqual(400, response.status_code)
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(7):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
-        self.assertContains(response, "<h3>Monday 4 May</h3>")
-        self.assertContains(response, "<h3>Tuesday 5 May</h3>")
+        self.assertEqual(1, len(response.context_data["departures"]))
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
         self.assertContains(response, "Nearby stops")  # other stop in StopArea
         self.assertContains(response, "<small>54</small>")
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(7):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
-        self.assertContains(response, "<h3>Tuesday 5 May</h3>")
+        self.assertFalse(response.context_data["departures"])
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(9):
             response = self.client.get("/stops/2900W0321?date=poop")
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(7):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 

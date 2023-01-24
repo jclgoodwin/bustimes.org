@@ -247,7 +247,7 @@ class Command(BaseCommand):
                 operator.clean_fields(exclude=["noc", "slug", "region"])
             except Exception as e:
                 if "url" in e.message_dict:
-                    print(e, operator.url)
+                    # print(e, operator.url)
                     operator.url = ""
                     if not create_or_update:
                         to_update.append(operator)

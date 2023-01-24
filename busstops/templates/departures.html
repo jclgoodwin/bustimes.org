@@ -3,7 +3,7 @@
     {% if when %}
     <form autocomplete="off">
         <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required>
-        <input type="time" name="time" value="{{ when.time }}" required>
+        <input type="time" name="time" value="{{ when.time }}">
         <input type="submit" value="Go">
     </form>
     {% else %}<h2>Next departures</h2>{% endif %}
@@ -14,7 +14,7 @@
                     </tbody>
                     </table>
                 {% endif %}
-                {% if item.time.date and item.time.date != when.date %}
+                {% if not forloop.first or item.time.date and item.time.date != today %}
                     <h3>{{ item.time|date:"l j F" }}</h3>
                 {% endif %}
                 <table>
@@ -27,7 +27,10 @@
                 <a href="{{ item.service.get_absolute_url }}">{% firstof item.route.line_name item.service.line_name item.service %}</a>
             {% elif item.service %}{{ item.service }}{% endif %}
             </td>
-            <td>{{ item.destination }}</td>
+            <td>
+                {{ item.destination }}
+                {% if item.vehicle %}<div class="vehicle">{{ item.vehicle }}</div>{% endif %}
+            </td>
             <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
                 {% if item.cancelled %}
                     <del>{{ item.time.time }}</del>
@@ -44,16 +47,18 @@
         {% if forloop.last %}
             </tbody>
             </table>
-            {% if when %}
-                {% if next_page %}
-                    <p class="next"><a href="{{ next_page }}">Later &darr;</a></p>
-                {% endif %}
-                {% if when != now %}
-                    <p><a href="{{ object.get_absolute_url }}">&uarr; Now</a></p>
-                {% endif %}
-            {% endif %}
         {% endif %}
     {% endfor %}
+
+    {% if when %}
+        {% if next_page %}
+            <p class="next"><a href="{{ next_page }}">Later &darr;</a></p>
+        {% endif %}
+        {% if when != now %}
+            <p><a href="{{ object.get_absolute_url }}">&uarr; Now</a></p>
+        {% endif %}
+    {% endif %}
+
     {% if live %}
         <p class="credit">⚡&#xfe0f; denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
     {% endif %}
