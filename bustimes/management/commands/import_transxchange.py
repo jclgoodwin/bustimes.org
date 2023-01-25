@@ -512,43 +512,21 @@ class Command(BaseCommand):
         summary = []
 
         if operating_profile.week_of_month:
+            logger.info(operating_profile.week_of_month)
             summary.append(f"{operating_profile.week_of_month} week of the month")
 
-        sodt = operating_profile.serviced_organisation_day_type
-        non_operation_days = []
-        operation_days = []
-        if sodt:
-            if sodt.non_operation_working_days is sodt.non_operation_holidays:
-                pass
-            elif sodt.non_operation_working_days:
-                if sodt.non_operation_working_days.name:
-                    summary.append(f"not {sodt.non_operation_working_days.name} days")
-                non_operation_days += sodt.non_operation_working_days.working_days
-            elif sodt.non_operation_holidays:
-                if sodt.non_operation_holidays.name:
-                    summary.append(f"not {sodt.non_operation_holidays.name} holidays")
-                non_operation_days += sodt.non_operation_holidays.holidays
+        for sodt in operating_profile.serviced_organisations:
+
+            if sodt.working:
+                dates = sodt.serviced_organisation.working_days
+            else:
+                dates = sodt.serviced_organisation.holidays
 
             calendar_dates += [
-                get_calendar_date(date_range=date_range, operation=False)
-                for date_range in non_operation_days
+                get_calendar_date(date_range=date_range, operation=sodt.operation)
+                for date_range in dates
             ]
-
-            if sodt.operation_working_days is sodt.operation_holidays:
-                pass
-            elif sodt.operation_working_days:
-                if sodt.operation_working_days.name:
-                    summary.append(f"{sodt.operation_working_days.name} days")
-                operation_days += sodt.operation_working_days.working_days
-            elif sodt.operation_holidays:
-                if sodt.operation_holidays.name:
-                    summary.append(f"{sodt.operation_holidays.name} holidays")
-                operation_days += sodt.operation_holidays.holidays
-
-            calendar_dates += [
-                get_calendar_date(date_range=date_range, operation=True)
-                for date_range in operation_days
-            ]
+            summary.append(str(sodt))
 
         summary = ", ".join(summary)
 

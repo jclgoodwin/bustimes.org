@@ -364,70 +364,25 @@ class ServicedOrganisation:
 
         self.hash = ET.tostring(element)
 
+    def __str__(self):
+        return self.name or self.code
+
 
 class ServicedOrganisationDayType:
-    operation_holidays = None
-    operation_working_days = None
-    non_operation_holidays = None
-    non_operation_working_days = None
-
-    def __init__(self, element, serviced_organisations):
-        if not serviced_organisations:
-            return
-
-        operation_holidays = element.findtext(
-            "DaysOfOperation/Holidays/ServicedOrganisationRef"
+    def __init__(
+        self, serviced_organisations: dict, ref: str, operation: bool, working: bool
+    ):
+        self.ref = ref
+        self.operation = (
+            operation  # True (DaysOfOperation) or False (DaysOfNonOperation)
         )
-        operation_working_days = element.findtext(
-            "DaysOfOperation/WorkingDays/ServicedOrganisationRef"
-        )
-        non_operation_holidays = element.findtext(
-            "DaysOfNonOperation/Holidays/ServicedOrganisationRef"
-        )
-        non_operation_working_days = element.findtext(
-            "DaysOfNonOperation/WorkingDays/ServicedOrganisationRef"
-        )
+        self.working = working  # True (WorkingDays) or False (Holidays)
+        self.serviced_organisation = serviced_organisations[ref]
 
-        if operation_holidays != operation_working_days:
-            if operation_holidays:
-                self.operation_holidays = serviced_organisations[operation_holidays]
-                if (
-                    not self.operation_holidays.holidays
-                    and self.operation_holidays.working_days
-                ):
-                    self.non_operation_working_days = self.operation_holidays
-                    self.operation_holidays = None
-
-            if operation_working_days:
-                self.operation_working_days = serviced_organisations[
-                    operation_working_days
-                ]
-                if (
-                    not self.operation_working_days.working_days
-                    and self.operation_working_days.holidays
-                ):
-                    self.non_operation_holidays = self.operation_working_days
-                    self.operation_working_days = None
-
-        if non_operation_holidays:
-            self.non_operation_holidays = serviced_organisations[non_operation_holidays]
-            if (
-                not self.non_operation_holidays.holidays
-                and self.non_operation_holidays.working_days
-            ):
-                self.operation_working_days = self.non_operation_holidays
-                self.non_operation_holidays = None
-
-        if non_operation_working_days:
-            self.non_operation_working_days = serviced_organisations[
-                non_operation_working_days
-            ]
-            if (
-                not self.non_operation_working_days.working_days
-                and self.non_operation_working_days.holidays
-            ):
-                self.operation_holidays = self.non_operation_working_days
-                self.non_operation_working_days = None
+    def __repr__(self):
+        operation = "" if self.operation else "not "
+        holidays = "days" if self.working else "holidays"
+        return f"{operation}{self.serviced_organisation} {holidays}"
 
 
 class DayOfWeek:
@@ -447,7 +402,7 @@ class DayOfWeek:
 
 
 class OperatingProfile:
-    serviced_organisation_day_type = None
+    serviced_organisations = None
 
     def __init__(self, element, serviced_organisations: dict):
         element = element
@@ -473,7 +428,7 @@ class OperatingProfile:
         self.week_of_month = None
         periodic_day_type = element.find("PeriodicDayType")
         if periodic_day_type is not None:
-            print(ET.tostring(periodic_day_type).decode())
+            logger.info(ET.tostring(periodic_day_type).decode())
             self.week_of_month = periodic_day_type.findtext("WeekOfMonth/WeekNumber")
         # Special Days:
 
@@ -489,16 +444,23 @@ class OperatingProfile:
 
         # Serviced Organisation:
 
-        serviced_organisation_day_type_element = element.find(
-            "ServicedOrganisationDayType"
-        )
+        self.serviced_organisations = []
 
-        if serviced_organisation_day_type_element is not None:
-            self.serviced_organisation_day_type = ServicedOrganisationDayType(
-                serviced_organisation_day_type_element, serviced_organisations
-            )
+        if sodt := element.find("ServicedOrganisationDayType"):
+            for path, operation, working in (
+                ("DaysOfOperation/Holidays/ServicedOrganisationRef", True, False),
+                ("DaysOfOperation/WorkingDays/ServicedOrganisationRef", True, True),
+                ("DaysOfNonOperation/Holidays/ServicedOrganisationRef", False, False),
+                ("DaysOfNonOperation/WorkingDays/ServicedOrganisationRef", False, True),
+            ):
+                for e in sodt.findall(path):
+                    self.serviced_organisations.append(
+                        ServicedOrganisationDayType(
+                            serviced_organisations, e.text, operation, working
+                        )
+                    )
 
-        # Bank Holidays
+        # Bank Holidays:
 
         self.operation_bank_holidays = element.find(
             "BankHolidayOperation/DaysOfOperation"
@@ -508,8 +470,7 @@ class OperatingProfile:
         )
 
         if not self.operation_bank_holidays:
-            holidays_only = element.find("RegularDayType/HolidaysOnly")
-            if holidays_only is not None:
+            if element.find("RegularDayType/HolidaysOnly") is not None:
                 self.operation_bank_holidays = element.find("RegularDayType")
 
         self.hash = ET.tostring(element)
