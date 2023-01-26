@@ -14,6 +14,11 @@
 
     var search = window.location.search;
 
+    if (!search) {
+        var formData = new FormData(document.querySelector("#departures form"));
+        var now = '?' + new URLSearchParams(formData).toString();
+    }
+
     function updateDepartures(event) {
         var newSearch;
 
@@ -26,7 +31,9 @@
             newSearch = event.target.search;
         }
 
-        if (search === newSearch) {
+        if (newSearch === now) {
+            newSearch = '';
+        } else if (newSearch === search) {  // form hasn't changed
             return false;
         }
 
