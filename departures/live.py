@@ -190,19 +190,21 @@ class TflDepartures(Departures):
 
 
 class WestMidlandsDepartures(Departures):
+    def get_row(self, item):
+        return {
+            "time": datetime.datetime.fromtimestamp(
+                item["time"] - item["delay"], timezone.utc
+            ),
+            "live": datetime.datetime.fromtimestamp(item["time"], timezone.utc),
+            "service": self.get_service(item["line_name"]),
+            "destination": item["destination"],
+            "vehicle": item["vehicle"],
+        }
+
     def get_departures(self):
-        items = cache.get(self.stop.atco_code)
+        items = cache.get(f"tfwm:{self.stop.atco_code}")
         if items:
-            return [
-                {
-                    "time": item["aimed_departure_time"],
-                    "live": item["expected_departure_time"],
-                    "service": self.get_service(item["line_name"]),
-                    "destination": item["destination"],
-                    "vehicle": item["vehicle"],
-                }
-                for item in items
-            ]
+            return [self.get_row(item) for item in items]
 
 
 class EdinburghDepartures(Departures):
@@ -434,6 +436,7 @@ class SiriSmDepartures(Departures):
             "destination": destination,
             "data": journey,
             "cancelled": departure_status == "cancelled",
+            "vehicle": journey.get("VehicleRef"),
         }
 
     def get_poorly_key(self):
@@ -533,6 +536,8 @@ def blend(departures, live_rows, stop=None):
                     row["data"] = live_row["data"]
                 if "cancelled" in live_row:
                     row["cancelled"] = live_row["cancelled"]
+                if "vehicle" in live_row and "vehicle" not in row:
+                    row["vehicle"] = live_row["vehicle"]
                 replaced = True
                 break
         if not replaced and (live_row.get("live") or live_row["time"]):

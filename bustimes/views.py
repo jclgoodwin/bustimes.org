@@ -9,6 +9,7 @@ from ciso8601 import parse_datetime
 from django.conf import settings
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.db.models.functions import AsSVG
+from django.core.cache import cache
 from django.db.models import Exists, OuterRef, Prefetch
 from django.http import (
     FileResponse,
@@ -257,6 +258,31 @@ def stop_times_json(request, atco_code):
         times.append(stop_time_json(stop_time, when.date()))
 
     return JsonResponse({"times": times})
+
+
+@require_GET
+def stop_debug(request, atco_code):
+    stop = get_object_or_404(
+        StopPoint.objects.select_related("locality"), atco_code=atco_code
+    )
+
+    responses = [
+        cache.get(f"TflDepartures:{stop.pk}"),
+        cache.get(f"SiriSmDepartures:{stop.pk}"),
+        cache.get(f"AcisHorizonDepartures:{stop.pk}"),
+        cache.get(f"EdinburghDepartures:{stop.pk}"),
+        cache.get(f"tfwm:{stop.pk}"),
+    ]
+
+    return render(
+        request,
+        "stoppoint_debug.html",
+        {
+            "object": stop,
+            "breadcrumb": [stop.locality, stop],
+            "responses": responses,
+        },
+    )
 
 
 @require_GET

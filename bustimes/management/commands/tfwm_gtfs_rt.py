@@ -1,6 +1,5 @@
 import io
 import zipfile
-from datetime import datetime, timezone
 
 import requests_cache
 from django.core.cache import cache
@@ -19,6 +18,7 @@ class Command(BaseCommand):
 
         gtfs_url = "http://api.tfwm.org.uk/gtfs/tfwm_gtfs.zip"
         response = session.get(gtfs_url, params=source.settings)
+        print(response.from_cache)
 
         with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
             for line in read_file(archive, "routes.txt"):
@@ -32,13 +32,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         source = DataSource.objects.get(name="TfWM")
 
-        session = requests_cache.CachedSession(cache_control=True)
+        session = requests_cache.CachedSession(cache_control=True, expire_after=60)
 
         routes, trips = self.get_routes_and_trips(session, source)
 
         url = "http://api.tfwm.org.uk/gtfs/trip_updates"
 
         response = session.get(url, params=source.settings)
+        print(response.from_cache)
 
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
@@ -53,14 +54,8 @@ class Command(BaseCommand):
                 if stop_time_update.departure.time:
 
                     departure = {
-                        "expected_departure_time": datetime.fromtimestamp(
-                            stop_time_update.departure.time
-                            - stop_time_update.departure.delay,
-                            timezone.utc,
-                        ),
-                        "aimed_departure_time": datetime.fromtimestamp(
-                            stop_time_update.departure.time, timezone.utc
-                        ),
+                        "time": stop_time_update.departure.time,
+                        "delay": stop_time_update.departure.delay,
                         "destination": trips[item.trip_update.trip.trip_id][
                             "trip_headsign"
                         ],
@@ -70,9 +65,9 @@ class Command(BaseCommand):
                         "vehicle": item.trip_update.vehicle.id,
                     }
 
-                    if (stop_id := stop_time_update.stop_id) not in by_stop:
-                        by_stop[stop_id] = []
-                    by_stop[stop_id].append(departure)
+                    if (key := f"tfwm:{stop_time_update.stop_id}") not in by_stop:
+                        by_stop[key] = []
+                    by_stop[key].append(departure)
                 # else:
                 #     print(stop_time_update.departure)
 
