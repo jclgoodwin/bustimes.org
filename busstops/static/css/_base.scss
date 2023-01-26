@@ -741,7 +741,8 @@ table {
     display: none;
     // make room for ads:
     margin-bottom: 50px;
-    margin-top: 50px;
+    margin-top: 100px;
+    box-shadow: #fff 0 -100px, #fff 0 100px;
 
     &.expanded {
         display: block;
@@ -965,10 +966,6 @@ body {
     .leaflet-container {
         font-family: inherit;
     }
-}
-
-body.has-overlay {
-    overflow: hidden;
 }
 
 .leaflet-popup-content {
@@ -1555,27 +1552,52 @@ nav {
     min-height: 60px;
 }
 
-// [data-fuse="22699655446"], // stop_vrec_1
-// [data-fuse="22699655440"], // stop_vrec_2
-// {
-//     display: none;
-// }
+body.has-overlay {
+    overflow: hidden;
 
-// [data-fuse="22699655449"] { // stop_footer
-//     clear: both;
-//     margin: 1em auto;
-// }
-
-.fuse-slot-scroll-to-stick,
-.publift-widget-22704101655-container {
-    pointer-events: none;
-
-    iframe {
-        background: #fff;
-        box-shadow: inset 0 0 0 1px $brand-color-darker;
+    // service header
+    [data-fuse="22699655428"] .fuse-slot {  // emulate .fuse-slot-scroll-to-stick .fuse-slot
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
         pointer-events: auto;
     }
 }
+
+// service header
+.fuse-slot-scroll-to-stick .fuse-slot iframe {
+    pointer-events: auto;
+}
+
+// footer sticky
+
+.publift-widget-22704101655 {
+    &-container &-container-background {
+        background: #fff;
+        border-top: 1px solid $brand-color-darker;
+        opacity: 1;
+    }
+
+    &-container &-button { // close button
+        display: block;
+        cursor: pointer;
+        right: 0;
+        width: 20px;
+        background: none;
+
+        :first-child {
+            transform: rotate(45deg) translateX(9px);
+        }
+
+        :last-child {
+            transform: rotate(-45deg) translate(2px, 7px);
+        }
+    }
+}
+
+// horizontal lists
 
 .horizontal {
     li {
@@ -1645,7 +1667,7 @@ footer {
         border-top: 1px solid $brand-color-darker;
         clear: both;
         margin: 0;
-        overflow: auto;
+        overflow-x: auto;
         padding: 1em .625em;
         white-space: nowrap;
     }
