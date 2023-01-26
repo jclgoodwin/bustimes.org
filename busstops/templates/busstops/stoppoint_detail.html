@@ -52,8 +52,10 @@
 {% block foot %}
     {% load static %}
 
-    <script>
-        STOP_CODE = "{{ object.atco_code }}";
-    </script>
-    <script async src="{% static 'js/departures.js' %}"></script>
+    {% if when %}
+        <script>
+            STOP_CODE = "{{ object.atco_code }}";
+        </script>
+        <script async src="{% static 'js/departures.js' %}"></script>
+    {% endif %}
 {% endblock %}
