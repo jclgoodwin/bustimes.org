@@ -15,7 +15,7 @@
     var search = window.location.search;
 
     if (!search) {
-        var formData = new FormData(document.querySelector("#departures form"));
+        var formData = new FormData(document.querySelector('#departures form'));
         var now = '?' + new URLSearchParams(formData).toString();
     }
 
