@@ -1326,6 +1326,10 @@ input:not(:checked) + label {
         padding: .25rem .5rem;
     }
 
+    td:last-child {
+       padding-right: 0;
+    }
+
     .stop-name {
         border-left: 0;
         padding-left: 0;
