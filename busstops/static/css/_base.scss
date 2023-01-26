@@ -742,7 +742,7 @@ table {
     // make room for ads:
     margin-bottom: 26px;
     margin-top: 100px;
-    box-shadow: #fff 0 -100px, #fff 0 100px;
+    box-shadow: #fff 0 -200px, #fff 0 200px;
 
     &.expanded {
         display: block;
@@ -1563,6 +1563,7 @@ body.has-overlay {
         width: 100%;
         z-index: 9999;
         pointer-events: auto;
+        max-height: 100px;
     }
 }
 
@@ -1574,9 +1575,16 @@ body.has-overlay {
 // footer sticky
 
 .publift-widget-22704101655 {
+    &-container {
+        box-shadow: 0 -1px $brand-color-darker;
+
+        body.has-overlay & {
+            box-shadow: none;
+        }
+    }
+
     &-container &-container-background {
         background: #fff;
-        border-top: 1px solid $brand-color-darker;
         opacity: 1;
     }
 
@@ -1586,13 +1594,15 @@ body.has-overlay {
         right: 0;
         width: 20px;
         background: none;
+        font-size: 1.5em;
+        line-height: 1em;
 
-        :first-child {
-            transform: rotate(45deg) translateX(9px);
+        &:after {
+            content: "×";
         }
 
-        :last-child {
-            transform: rotate(-45deg) translate(2px, 7px);
+        div {
+            display: none;
         }
     }
 }
