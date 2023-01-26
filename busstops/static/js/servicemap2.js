@@ -33,13 +33,10 @@
     }
 
     function openMap() {
-        container.className += ' expanded';
-        if (document.body.style.paddingTop) {
-            container.style.top = document.body.style.paddingTop;
-        }
+        container.classList.add('expanded');
 
         if (map) {
-            document.body.style.overflow = 'hidden';
+            document.body.classList.add('has-overlay');
             map.invalidateSize();
             loadVehicles();
         } else {
@@ -74,7 +71,7 @@
             return;
         }
 
-        document.body.style.overflow = 'hidden';
+        document.body.classList.add('has-overlay');
 
         map = L.map(container, {
             tap: false
@@ -173,8 +170,8 @@
     }
 
     function closeMap() {
-        container.className = container.className.replace(' expanded', '');
-        document.body.style.overflow = '';
+        container.classList.remove('expanded');
+        document.body.classList.remove('has-overlay');
 
         if (loadVehiclesTimeout) {
             clearTimeout(loadVehiclesTimeout);

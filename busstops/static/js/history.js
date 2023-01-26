@@ -319,7 +319,8 @@
             return;
         }
 
-        mapContainer.className += ' expanded';
+        mapContainer.classList.add('expanded');
+        document.body.classList.add('has-overlay');
 
         if (liveMap) {
             liveMap.invalidateSize();

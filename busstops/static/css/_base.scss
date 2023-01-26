@@ -739,7 +739,9 @@ table {
 
 .service-map {
     display: none;
+    // make room for ads:
     margin-bottom: 50px;
+    margin-top: 50px;
 
     &.expanded {
         display: block;
@@ -963,6 +965,10 @@ body {
     .leaflet-container {
         font-family: inherit;
     }
+}
+
+body.has-overlay {
+    overflow: hidden;
 }
 
 .leaflet-popup-content {
@@ -1639,7 +1645,9 @@ footer {
         border-top: 1px solid $brand-color-darker;
         clear: both;
         margin: 0;
+        overflow: auto;
         padding: 1em .625em;
+        white-space: nowrap;
     }
 
     ul {
