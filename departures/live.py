@@ -9,6 +9,7 @@ import requests
 import xmltodict
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models import F
 from django.utils import timezone
 
 from busstops.models import Service, SIRISource, StopPoint
@@ -340,6 +341,7 @@ class TimetableDepartures(Departures):
             "service": trip.route.service,
             "link": f"{trip.get_absolute_url()}#stop-time-{stop_time.id}",
             "stop_time": stop_time,
+            "vehicle": stop_time.vehicle,
         }
 
     def get_times(self, date, time=None):
@@ -353,6 +355,9 @@ class TimetableDepartures(Departures):
             "trip__destination__locality__latlong",
             "trip__destination__locality__search_vector",
         )
+
+        times = times.annotate(vehicle=F("trip__vehiclejourney__vehicle"))
+
         return times.order_by("departure")
 
     def get_departures(self):
