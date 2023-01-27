@@ -742,7 +742,7 @@ table {
     // make room for ads:
     margin-bottom: 26px;
     margin-top: 100px;
-    box-shadow: #fff 0 -200px, #fff 0 200px;
+    box-shadow: #fff 0 -100px, #fff 0 126px;
 
     &.expanded {
         display: block;
@@ -1559,7 +1559,7 @@ nav {
 body.has-overlay {
     overflow: hidden;
 
-    // service header
+    // services_header
     [data-fuse="22699655428"] .fuse-slot {  // emulate .fuse-slot-scroll-to-stick .fuse-slot
         position: fixed;
         top: 0;
@@ -1568,12 +1568,16 @@ body.has-overlay {
         z-index: 9999;
         pointer-events: auto;
         max-height: 100px;
+        background: #fff;
     }
 }
 
-// service header
-.fuse-slot-scroll-to-stick .fuse-slot iframe {
-    pointer-events: auto;
+// services_header
+.fuse-slot-scroll-to-stick {
+
+    .fuse-slot iframe {
+        pointer-events: auto;
+    }
 }
 
 // footer sticky
