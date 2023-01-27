@@ -12,12 +12,8 @@
         return;
     }
 
-    var search = window.location.search;
-
-    if (!search) {
-        var formData = new FormData(document.querySelector('#departures form'));
-        var now = '?' + new URLSearchParams(formData).toString();
-    }
+    var search = window.location.search,
+        now;
 
     function updateDepartures(event) {
         var newSearch;
@@ -32,9 +28,7 @@
         }
 
         if (newSearch === now) {
-            newSearch = '';
-        } else if (newSearch === search) {  // form hasn't changed
-            return false;
+            newSearch = search;  // search may be ''
         }
 
         var departures = document.getElementById('departures');
@@ -45,9 +39,11 @@
             if (response.ok) {
                 response.text().then(function(text) {
                     departures.outerHTML = text;
-                    setUp();
 
                     search = newSearch;
+
+                    setUp();
+
                     if (window.location.search !== newSearch) {
                         if (newSearch) {
                             history.pushState(null, null, newSearch);
@@ -66,6 +62,10 @@
     function setUp() {
         var departures = document.getElementById('departures');
         var form = departures.querySelector('form');
+
+        var formData = new FormData(form);
+
+        now = '?' + new URLSearchParams(formData).toString();
 
         form.onsubmit = updateDepartures;
 
