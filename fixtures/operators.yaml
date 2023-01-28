@@ -336,6 +336,8 @@ ALSC:
 BLPH:
     url: https://www.blackburnprivatehire.co.uk/
 NUTT:
+    name: Transpora North West
+    aka: Coastliner Buses
     url: https://www.coastlinerbuses.co.uk/
     email: coastlinerbuses@gmail.com
     phone: 01253 761739
@@ -407,3 +409,5 @@ YYTG:
     phone: 0113 210 0196
     email: Office@yorkshiretravelgroup.co.uk
     twitter: YorkshireBuses_
+GWIL:
+    url: https://willettscoaches.co.uk
