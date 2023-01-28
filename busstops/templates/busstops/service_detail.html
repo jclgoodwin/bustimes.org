@@ -103,19 +103,7 @@
 {% endif %}
 
 {% for operator in operators %}
-    {% if operator.url or operator.twitter %}
-        <h2>{{ operator }}</h2>
-
-        <ul>
-            {% if operator.url %}
-                <li>{{ operator.url|urlise }}</li>
-            {% endif %}
-
-            {% for handle in operator.twitter.split %}
-                <li><a href="https://twitter.com/{{ handle }}">@{{ handle }} on Twitter</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    {% include 'operator-contact-details.html' %}
 {% endfor %}
 
 {% endblock %}

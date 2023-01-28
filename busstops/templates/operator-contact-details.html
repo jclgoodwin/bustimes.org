@@ -1,0 +1,41 @@
+{% load urlise %}
+
+{% if operator.url or operator.twitter or licences or nocs %}
+<div itemscope itemtype="http://schema.org/LocalBusiness">
+
+    <h2 itemprop="name">{{ operator }}</h2>
+
+    <dl class="contact-details">
+        {% if operator.url %}
+            <div>
+                <dt>Website</dt>
+                <dd itemprop="url">{{ operator.url|urlise }}</dd>
+            </div>
+        {% endif %}
+
+        {% for handle in operator.twitter.split %}
+            <div>
+                <dt>Twitter</dt>
+                <dd>
+                    <a href="https://twitter.com/{{ handle }}">@{{ handle }}</a>
+                </dd>
+            </div>
+        {% endfor %}
+
+        {% for licence in licences %}
+            <div>
+                <dt>Licence number</dt>
+                <dd><a href="{{ licence.get_absolute_url }}" title="{{ licence.name }}">{{ licence }}</a></dd>
+            </div>
+        {% endfor %}
+
+        {% for noc in nocs %}
+            <div>
+                <dt>National operator code</dt>
+                <dd>{{ noc }}</dd>
+            </div>
+        {% endfor %}
+    </dl>
+
+</div>
+{% endif %}

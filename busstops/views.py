@@ -818,10 +818,23 @@ class OperatorDetailView(DetailView):
             context["breadcrumb"] = [self.object.region]
             context["colours"] = get_colours(context["services"])
 
+            # this is a bit of a faff,
+            # just to avoid doing separate queries
+            # for National Operator Codes and MyTrip
+            operator_codes = self.object.operatorcode_set.annotate(
+                source_name=F("source__name")
+            )
+
+            context["nocs"] = [
+                code.code
+                for code in operator_codes
+                if code.source_name == "National Operator Codes"
+            ]
+
             # tickets tab:
-            context["tickets"] = self.object.operatorcode_set.filter(
-                source__name="MyTrip"
-            ).exists()
+            context["tickets"] = any(
+                code.source_name == "MyTrip" for code in operator_codes
+            )
 
         # vehicles tab:
 

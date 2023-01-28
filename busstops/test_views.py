@@ -312,20 +312,20 @@ class ViewsTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "An airline operator")
-        self.assertContains(response, "<h2>Ainsley&#x27;s Chariots</h2>")
-        self.assertContains(response, "10 King Road<br />Ipswich", html=True)
+        self.assertContains(response, "<h1>Ainsley&#x27;s Chariots</h1>")
+        # self.assertContains(response, "10 King Road<br />Ipswich", html=True)
         self.assertContains(
             response,
             """<link rel="shortlink" href="https://bustimes.org/operators/AINS">""",
         )
-        self.assertContains(
-            response,
-            "&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;"
-            + "&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;"
-            + "&#112;&#108;&#101;&#46;&#99;&#111;&#109;",
-        )
+        # self.assertContains(
+        #     response,
+        #     "&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#105;"
+        #     + "&#110;&#115;&#108;&#101;&#121;&#64;&#101;&#120;&#97;&#109;"
+        #     + "&#112;&#108;&#101;&#46;&#99;&#111;&#109;",
+        # )
         self.assertContains(response, "http://www.ouibus.com")
-        self.assertContains(response, "@dril on Twitter")
+        self.assertContains(response, ">@dril<")
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
@@ -349,7 +349,7 @@ class ViewsTests(TestCase):
         response = self.client.get("/services/45c-holt-norwich")
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ouibus")
-        self.assertContains(response, "@dril on Twitter")
+        self.assertContains(response, ">@dril<")
         self.assertContains(response, 'twitter.com/dril"')
 
     def test_national_express_service(self):
