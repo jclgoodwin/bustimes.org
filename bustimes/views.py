@@ -166,26 +166,32 @@ def route_xml(request, source, code=""):
     return FileResponse(open(path, "rb"), content_type="text/xml")
 
 
-def stop_time_json(stop_time, date):
-    destination = stop_time.trip.destination
-    route = stop_time.trip.route
+def stop_time_json(stop_time, date) -> dict:
+    trip = stop_time.trip
+    destination = trip.destination
+    route = trip.route
+
     arrival = stop_time.arrival
     departure = stop_time.departure
     if arrival is not None:
         arrival = stop_time.arrival_datetime(date)
     if departure is not None:
         departure = stop_time.departure_datetime(date)
+
+    operators = []
+    if trip.operator:
+        operators.append(
+            {
+                "id": trip.operator.noc,
+                "name": trip.operator.name,
+                "parent": trip.operator.parent,
+            }
+        )
+
     return {
         "service": {
             "line_name": route.line_name,
-            "operators": [
-                {
-                    "id": operator.noc,
-                    "name": operator.name,
-                    "parent": operator.parent,
-                }
-                for operator in route.service.operator.all()
-            ],
+            "operators": operators,
         },
         "trip_id": stop_time.trip_id,
         "destination": {
@@ -245,23 +251,23 @@ def stop_times_json(request, atco_code):
     yesterday_time = time_since_midnight + timedelta(1)
     stop_times = departures.get_times(yesterday_date, yesterday_time)
 
-    for stop_time in stop_times.prefetch_related("trip__route__service__operator")[
-        :limit
-    ]:
+    for stop_time in stop_times.select_related(
+        "trip__route__service", "trip__operator"
+    )[:limit]:
         times.append(stop_time_json(stop_time, yesterday_date))
 
     # journeys that started today
     stop_times = departures.get_times(when.date(), time_since_midnight)
-    for stop_time in stop_times.prefetch_related("trip__route__service__operator")[
-        :limit
-    ]:
+    for stop_time in stop_times.select_related(
+        "trip__route__service", "trip__operator"
+    )[:limit]:
         times.append(stop_time_json(stop_time, when.date()))
 
     return JsonResponse({"times": times})
 
 
 @require_GET
-def stop_debug(request, atco_code):
+def stop_debug(request, atco_code: str):
     stop = get_object_or_404(
         StopPoint.objects.select_related("locality"), atco_code=atco_code
     )
@@ -286,7 +292,7 @@ def stop_debug(request, atco_code):
 
 
 @require_GET
-def trip_json(request, id):
+def trip_json(request, id: int):
     trip = get_object_or_404(Trip, id=id)
     times = []
     for stop_time in trip.stoptime_set.select_related("stop__locality"):
@@ -385,7 +391,7 @@ class BlockDetailView(DetailView):
 
 @require_GET
 @cache_page(60)
-def tfl_vehicle(request, reg):
+def tfl_vehicle(request, reg: str):
     reg = reg.upper()
 
     response = requests.get(
