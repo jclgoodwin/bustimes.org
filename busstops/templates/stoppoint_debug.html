@@ -1,0 +1,21 @@
+{% extends 'page.html' %}
+
+{% block content %}
+
+<h1>{{ object.get_long_name }}</h1>
+
+{% for response in responses %}
+
+    {% if response %}
+
+        <p><code>{{ response.url }}</code></p>
+
+        <p><code>{{ response.headers }}</code></p>
+
+        <pre><code>{{ response.text }}</code></pre>
+
+    {% endif %}
+
+{% endfor %}
+
+{% endblock %}
