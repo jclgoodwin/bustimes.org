@@ -105,6 +105,14 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
+                                {% for date, vjs in grouping.vehicles_by_date %}
+                                    <tr>
+                                        <th scope="col" >{{ date }}</th>
+                                        {% for vj in vjs %}
+                                            <td class="nowrap">{% if vj %}<a href="{{ vj.get_absolute_url }}">{{ vj.vehicle }}</a>{% endif %}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endfor %}
                             {% endif %}
                         </thead>
                     {% endif %}

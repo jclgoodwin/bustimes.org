@@ -564,6 +564,24 @@ class Grouping:
             2 if row.has_waittimes else 1 for row in self.rows if not row.is_minor()
         )
 
+    def vehicles_by_date(self):
+        journeys = (
+            Trip.vehiclejourney_set.field.model.objects.filter(trip__in=self.trips)
+            .select_related("vehicle")
+            .order_by("-id")[: len(self.trips) * 7]
+        )
+
+        by_date = {}
+        for journey in journeys:
+            date = journey.datetime.date()
+            if date in by_date:
+                by_date[date][journey.trip_id] = journey
+            else:
+                by_date[date] = {journey.trip_id: journey}
+
+        for date, by_trip in sorted(by_date.items()):
+            yield date, [by_trip.get(trip.id) for trip in self.trips]
+
     def sort_rows(self):
         sorter = graphlib.TopologicalSorter()
 
