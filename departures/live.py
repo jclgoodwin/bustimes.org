@@ -341,7 +341,6 @@ class TimetableDepartures(Departures):
             "service": trip.route.service,
             "link": f"{trip.get_absolute_url()}#stop-time-{stop_time.id}",
             "stop_time": stop_time,
-            "vehicle": stop_time.vehicle,
         }
 
     def get_times(self, date, time=None):
@@ -356,8 +355,6 @@ class TimetableDepartures(Departures):
             "trip__destination__locality__search_vector",
         )
 
-        times = times.annotate(vehicle=F("trip__vehiclejourney__vehicle"))
-
         return times.order_by("departure")
 
     def get_departures(self):
@@ -369,36 +366,40 @@ class TimetableDepartures(Departures):
         yesterday_date = (self.now - one_day).date()
         yesterday_time = time_since_midnight + one_day
 
-        yesterday_times = list(self.get_times(yesterday_date, yesterday_time)[:10])
+        yesterday_times = list(self.get_times(yesterday_date, yesterday_time)[:12])
         all_today_times = self.get_times(date, time_since_midnight)
-        today_times = list(all_today_times[:10])
+        today_times = list(all_today_times[:12])
 
+        # for eg Victoria Coach Station where there are so many departures at the same time:
         if (
-            len(today_times) == 10
-            and today_times[0].departure == today_times[9].departure
+            len(today_times) == 12
+            and today_times[0].departure == today_times[11].departure
         ):
-            today_times += all_today_times[10:20]
+            today_times += all_today_times[12:20]
 
         times = [
             self.get_row(stop_time, yesterday_date) for stop_time in yesterday_times
         ] + [self.get_row(stop_time, date) for stop_time in today_times]
 
-        i = 0
-        # while len(times) < 10 and i < 3:
-        #     i += 1
-        #     date += one_day
-        #     times += [
-        #         self.get_row(stop_time, date)
-        #         for stop_time in self.get_times(date)[: 10 - len(times)]
-        #     ]
+        if self.tracking:
+            trip_ids = [row["stop_time"].trip_id for row in times]
+            vehicles_by_trip = {
+                vehicle.trip_id: vehicle
+                for vehicle in Vehicle.objects.filter(
+                    latest_journey__trip__in=trip_ids
+                ).annotate(trip_id=F("latest_journey__trip"))
+            }
+            for row in times:
+                row["vehicle"] = vehicles_by_trip.get(row["stop_time"].trip_id)
 
-        if i or yesterday_times:
+        if yesterday_times:
             times.sort(key=get_departure_order)
 
         return times
 
     def __init__(self, stop, services, now, routes):
         self.routes = routes
+        self.tracking = any(service.tracking for service in services)
         super().__init__(stop, services, now)
 
 
