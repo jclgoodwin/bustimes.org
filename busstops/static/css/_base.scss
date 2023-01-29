@@ -1534,6 +1534,10 @@ input:not(:checked) + label {
     flex-wrap: wrap;
     column-gap: 2em;
     word-wrap: break-word;
+
+    dd {
+        margin: 0;
+    }
 }
 
 .previous {

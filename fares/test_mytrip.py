@@ -1,16 +1,28 @@
 from pathlib import Path
 from unittest.mock import patch
-from vcr import use_cassette
-from django.test import TestCase
+
 from django.core.management import call_command
-from busstops.models import Operator, DataSource
+from django.test import TestCase
+from vcr import use_cassette
+
+from busstops.models import DataSource, Operator, OperatorCode, Service
 
 
 class MyTripTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.midland_classic = Operator.objects.create(noc="MDCL", name="Midland Classic")
-        Operator.objects.create(noc="NIBS", name="Nibs")
+        cls.midland_classic = Operator.objects.create(
+            noc="MDCL", name="Midland Classic"
+        )
+        service = Service.objects.create(
+            current=True
+        )  # so MyTrip tab will show on operator page
+
+        source = DataSource.objects.create(name="National Operator Codes")
+        operator = Operator.objects.create(noc="NIBS", name="Nibs")
+        OperatorCode.objects.create(code="NIBS", operator=operator, source=source)
+        service.operator.add(operator)
+
         cls.source = DataSource.objects.create(
             name="MyTrip",
             url="https://mytrip-bustimes.api.passengercloud.com/ticketing/topups",
@@ -23,6 +35,7 @@ class MyTripTest(TestCase):
         with use_cassette(str(path / "mytrip.yaml"), decode_compressed_response=True):
 
             with patch("builtins.print") as mocked_print:
+                # fake inputting "NIBS" when asked for a matching operator code:
                 with patch("builtins.input", return_value="NIBS") as mocked_input:
                     call_command("mytrip_ticketing", "")
 
@@ -32,6 +45,14 @@ class MyTripTest(TestCase):
             mocked_input.assert_called_with(
                 "Operator matching query does not exist. York Pullman. Manually enter NOC: "
             )
+
+            response = self.client.get("/operators/nibs")
+            self.assertContains(response, ">Tickets<")
+            self.assertContains(response, ">National operator code<")
+            self.assertContains(response, ">NIBS<")
+
+            response = self.client.get("/services/service")
+            self.assertContains(response, ">the MyTrip app<")
 
             response = self.client.get("/operators/midland-classic/tickets")
             self.assertContains(

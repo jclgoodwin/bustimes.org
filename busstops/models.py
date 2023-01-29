@@ -681,7 +681,9 @@ class Service(models.Model):
 
     source = models.ForeignKey(DataSource, models.SET_NULL, null=True, blank=True)
     tracking = models.BooleanField(default=False)
-    payment_methods = models.ManyToManyField("PaymentMethod", blank=True)
+    payment_methods = models.ManyToManyField(
+        "PaymentMethod", through="ServicePaymentMethod", blank=True
+    )
     search_vector = SearchVectorField(null=True, blank=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -1066,6 +1068,15 @@ class PaymentMethod(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class ServicePaymentMethod(models.Model):
+    service = models.ForeignKey("Service", models.CASCADE)
+    payment_method = models.ForeignKey("PaymentMethod", models.CASCADE)
+    accepted = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ("service", "payment_method")
 
 
 class Contact(models.Model):

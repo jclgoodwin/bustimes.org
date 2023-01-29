@@ -543,10 +543,15 @@ class PaymentMethodOperatorInline(admin.TabularInline):
     autocomplete_fields = ["operator"]
 
 
+class PaymentMethodServiceInline(admin.TabularInline):
+    model = models.PaymentMethod.service_set.through
+    autocomplete_fields = ["service"]
+
+
 @admin.register(models.PaymentMethod)
 class PaymentMethodAdmin(admin.ModelAdmin):
     list_display = ("name", "url", "operators")
-    inlines = [PaymentMethodOperatorInline]
+    inlines = [PaymentMethodOperatorInline, PaymentMethodServiceInline]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

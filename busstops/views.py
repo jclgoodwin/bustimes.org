@@ -45,6 +45,7 @@ from .models import (
     District,
     Locality,
     Operator,
+    PaymentMethod,
     Place,
     Region,
     Service,
@@ -1043,9 +1044,32 @@ class ServiceDetailView(DetailView):
                     "url": f"{operator.get_absolute_url()}/tickets",
                     "name": "MyTrip app",
                 }
-            for method in operator.payment_methods.all():
+            for method in PaymentMethod.objects.filter(
+                Exists(
+                    Service.payment_methods.through.objects.filter(
+                        payment_method=OuterRef("id"),
+                        service=self.object,
+                        accepted=True,
+                    )
+                )
+                | Exists(
+                    Operator.payment_methods.through.objects.filter(
+                        paymentmethod=OuterRef("id"),
+                        operator=operator,
+                    )
+                ),
+                ~Exists(
+                    Service.payment_methods.through.objects.filter(
+                        payment_method=OuterRef("id"),
+                        service=self.object,
+                        accepted=False,
+                    )
+                ),
+            ):
                 if "app" in method.name and method.url:
                     context["app"] = method
+                elif "fare cap" in method.name and method.url:
+                    context["fare_cap"] = method
                 else:
                     context["payment_methods"].append(method)
             for operator in operators:
