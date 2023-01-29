@@ -139,12 +139,15 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get(f"/services/{route.service_id}.json")
         self.assertTrue(response.json()["geometry"])
 
-        self.assertFalse(route.service.public_use)
-
         # a TicketMachineServiceCode should have been created
         service_code = ServiceCode.objects.get()
         self.assertEqual(service_code.code, "1")
         self.assertEqual(service_code.scheme, "SIRI")
+
+        # PublicUse is false
+        self.assertFalse(route.service.public_use)
+        response = self.client.get(route.service.get_absolute_url())
+        self.assertContains(response, "Closed-door service")
 
         response = self.client.get(f"/services/{route.service_id}/timetable")
 

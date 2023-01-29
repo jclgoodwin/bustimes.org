@@ -52,7 +52,14 @@ class EdinburghImportTest(TestCase):
         self.assertEqual("1135", journey.code)
         self.assertEqual("Yoker", journey.destination)
         self.assertEqual(self.service, journey.service)
+
         self.assertTrue(journey.service.tracking)
+        response = self.client.get(journey.service.get_absolute_url())
+        self.assertContains(response, '/vehicles">Vehicles</a>')
+
+        response = self.client.get(self.operator_2.get_absolute_url())
+        self.assertContains(response, '/map">Map</a>')
+        self.assertContains(response, '/vehicles">Vehicles</a>')
 
         with self.assertNumQueries(1):
             vehicle, created = command.get_vehicle(item)
