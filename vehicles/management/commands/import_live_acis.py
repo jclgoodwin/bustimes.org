@@ -67,7 +67,7 @@ class Command(ImportLiveVehiclesCommand):
         points = []
         now = self.source.datetime
         services = Service.objects.filter(
-            current=True, operator__in=["MET", "GDR", "ULB", "GLE"]
+            current=True, operator__in=["MET", "GDR", "ULB", "GLE", "UTS", "FY"]
         )
         extent = services.aggregate(Extent("geometry"))["geometry__extent"]
         if extent:

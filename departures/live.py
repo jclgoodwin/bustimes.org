@@ -645,8 +645,13 @@ def get_departures(stop, services, when) -> dict:
         live_rows = None
 
         # Belfast
-        if stop.atco_code[0] == "7" and (
-            "Translink Metro" in operators or "Translink Glider" in operators
+        if stop.atco_code[0] == "7" and not operators.isdisjoint(
+            {
+                "Ulsterbus",
+                "Ulsterbus Town Services",
+                "Translink Metro",
+                "Translink Glider",
+            }
         ):
             live_rows = AcisHorizonDepartures(stop, services).get_departures()
             if live_rows:
