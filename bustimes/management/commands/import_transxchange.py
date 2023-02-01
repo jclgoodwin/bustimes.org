@@ -806,13 +806,14 @@ class Command(BaseCommand):
                     "vehicle_type",
                     "operator",
                 ],
+                batch_size=1000,
             )
             Trip.notes.through.objects.filter(trip__route=route).delete()
             StopTime.objects.filter(trip__route=route).delete()
         else:
-            Trip.objects.bulk_create(trips)
+            Trip.objects.bulk_create(trips, batch_size=1000)
 
-        Trip.notes.through.objects.bulk_create(trip_notes)
+        Trip.notes.through.objects.bulk_create(trip_notes, batch_size=1000)
 
         for stop_time in stop_times:
             stop_time.trip = stop_time.trip  # set trip_id
