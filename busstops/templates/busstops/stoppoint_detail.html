@@ -25,13 +25,21 @@
     </ul>
 {% endif %}
 
+{% if services %}
+    <!-- 71161633/stop_header/stop_header -->
+    <!-- <div class="wide-ad" data-fuse="22699655443"></div> -->
+
+    <!-- 71161633/stop_footer/stop_footer -->
+    <div class="wide-ad" data-fuse="22699655449"></div>
+{% endif %}
+
 {% include 'situations.html' %}
 
 <div class="asides">
 
-{% include 'departures.html' with departures=departures %}
-
 {% if services %}
+    {% include 'departures.html' with departures=departures %}
+
     <div class="aside">
         <h2>{% include 'modes.html' with modes=modes noun='services' %}</h2>
         {% include 'service_list.html' with services=services class="has-smalls" %}
