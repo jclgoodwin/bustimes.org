@@ -158,6 +158,10 @@ def bus_open_data(api_key, specific_operator):
     timetable_data_sources = TimetableDataSource.objects.filter(url="", active=True)
     if specific_operator:
         timetable_data_sources = timetable_data_sources.filter(name=specific_operator)
+        if not timetable_data_sources:
+            logger.info(f"no timetable data sources named {specific_operator}")
+            return
+        logger.info(timetable_data_sources)
 
     for params in get_bus_open_data_paramses(timetable_data_sources, api_key):
         url = f"{url_prefix}/api/v1/dataset/"
@@ -291,6 +295,10 @@ def ticketer(specific_operator=None):
         timetable_data_sources = timetable_data_sources.filter(
             operators=specific_operator
         )
+        if not timetable_data_sources:
+            logger.info(f"no timetable data sources for noc {specific_operator}")
+            return
+        logger.info(timetable_data_sources)
 
     need_to_sleep = False
 
@@ -385,14 +393,20 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
         logger.info(f"  {unexpected=} (not in {nocs})")
 
 
-def stagecoach(operator=None):
+def stagecoach(specific_operator=None):
     command = get_command()
 
     timetable_data_sources = TimetableDataSource.objects.filter(
         url__startswith="https://opendata.stagecoachbus.com", active=True
     )
-    if operator:
-        timetable_data_sources = timetable_data_sources.filter(operators=operator)
+    if specific_operator:
+        timetable_data_sources = timetable_data_sources.filter(
+            operators=specific_operator
+        )
+        if not timetable_data_sources:
+            logger.info(f"no timetable data sources for noc {specific_operator}")
+            return
+        logger.info(timetable_data_sources)
 
     for source in timetable_data_sources:
 
@@ -431,7 +445,7 @@ def stagecoach(operator=None):
 
             command.source.sha1 = sha1
 
-            if modified or operator:
+            if modified or specific_operator:
                 do_stagecoach_source(command, last_modified, filename, nocs)
 
             command.preferred_source = command.source
