@@ -23,13 +23,14 @@
             <input type="date" name="date" aria-label="Date" value="{{ timetable.date.isoformat }}">
         {% endif %}
         {% if timetable.detailed %}
-            <input type="hidden" name="detailed" value="true">
+            <label>{{ form.detailed }} {{ form.detailed.label }}</label>
+            <label>{{ form.vehicles }} {{ form.vehicles.label }}</label>
         {% endif %}
         {{ form.service }}
         <noscript><input type="submit"></noscript>
     </form>
 
-    {% cache 3600 timetable object.id object.modified_at timetable.detailed timetable.calendar_ids timetable.calendar.id form.cleaned_data.service %}
+    {% cache 3600 timetable object.id object.modified_at timetable.detailed form.vehicles.value timetable.calendar_ids timetable.calendar.id form.cleaned_data.service %}
 
     {% for grouping in timetable.render.groupings %}
         {% if forloop.first %}<div class="groupings">{% endif %}
@@ -105,14 +106,14 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
-                                {% for date, vjs in grouping.vehicles_by_date %}
+                                {% if form.vehicles.value %}{% for date, vjs in grouping.vehicles_by_date %}
                                     <tr>
                                         <th scope="col" >{{ date }}</th>
                                         {% for vj in vjs %}
                                             <td class="link">{% if vj %}<a href="{{ vj.get_absolute_url }}">{{ vj.vehicle }}</a>{% endif %}</td>
                                         {% endfor %}
                                     </tr>
-                                {% endfor %}
+                                {% endfor %}{% endif %}
                             {% endif %}
                         </thead>
                     {% endif %}

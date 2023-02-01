@@ -47,6 +47,7 @@ class TimetableForm(forms.Form):
     date = forms.DateField(required=False)
     calendar = forms.IntegerField(required=False)
     detailed = forms.BooleanField(required=False)
+    vehicles = forms.BooleanField(required=False)
     service = forms.MultipleChoiceField(
         required=False, widget=forms.CheckboxSelectMultiple
     )

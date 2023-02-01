@@ -19,7 +19,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th scope="col" colspan="2"></th>
+                        <th scope="col" colspan="3"></th>
                         <th scope="col">To</th>
                     </tr>
                 </thead>
@@ -31,6 +31,7 @@
             <td class="link">
                 <a href="{{ trip.get_absolute_url }}">{{ trip.start_time }}</a>
             </td>
+            <td>{{ trip.ticket_machine_code }}</td>
             <td>{{ trip.destination.locality }}</td>
             {% if journey.locations %}
                 <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
