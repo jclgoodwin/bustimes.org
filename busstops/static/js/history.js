@@ -90,6 +90,7 @@
                 var mapContainer = document.getElementById('map');
                 if (mapContainer) {
                     mapContainer.classList.remove('expanded');
+                    document.body.classList.remove('has-overlay');
                 }
             }
 

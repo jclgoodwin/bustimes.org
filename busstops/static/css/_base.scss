@@ -740,7 +740,7 @@ table {
 .service-map {
     display: none;
     // make room for ads:
-    margin-bottom: 26px;
+    margin-bottom: 50px;
     margin-top: 100px;
     box-shadow: #fff 0 -100px, #fff 0 126px;
 
@@ -1710,4 +1710,8 @@ footer {
             padding: 1.2em .25em;
         }
     }
+}
+
+body:not(:has(.publift-widget-22871853889)) footer {
+    margin-bottom: 0;
 }
