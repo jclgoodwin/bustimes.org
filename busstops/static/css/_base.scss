@@ -1557,10 +1557,15 @@ nav {
     }
 }
 
-.wide-ad {
+.ad-wrapper {
     text-align: center;
     margin: 1em auto;
     min-height: 100px;
+    display: flex;
+
+    > div {
+        margin: auto;
+    }
 }
 
 body.has-overlay {
@@ -1589,7 +1594,8 @@ body.has-overlay {
 
 // footer sticky
 
-.publift-widget-22704101655 {
+.publift-widget-22704101655,
+.publift-widget-22871853889 {
     &-container {
         box-shadow: 0 -1px $brand-color-darker;
 
