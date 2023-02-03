@@ -98,4 +98,4 @@ class NaptanTest(TestCase):
 
         # overriden stop
         stop = StopPoint.objects.get(atco_code="2900B482")
-        self.assertEqual(str(stop), "green (adj) ↙︎")
+        self.assertEqual(str(stop), "green (adj) \u2199")

@@ -326,13 +326,13 @@ class StopPoint(models.Model):
     heading = models.PositiveIntegerField(null=True, blank=True)
 
     BEARING_CHOICES = (
-        ("N", "north ↑"),
+        ("N", "north \u2191"),
         ("NE", "north-east \u2197"),
-        ("E", "east →"),
+        ("E", "east \u2192"),
         ("SE", "south-east \u2198"),
-        ("S", "south ↓"),
+        ("S", "south \u2193"),
         ("SW", "south-west \u2199"),
-        ("W", "west ←"),
+        ("W", "west \u2190"),
         ("NW", "north-west \u2196"),
     )
     bearing = models.CharField(max_length=2, choices=BEARING_CHOICES, blank=True)
