@@ -595,6 +595,8 @@ class Command(BaseCommand):
         if response.status_code == 304:
             return dataset
 
+        start_time = datetime.now()
+
         last_modified = response.headers["last-modified"]
         last_modified = parse_http_date(last_modified)
         last_modified = datetime.fromtimestamp(last_modified, timezone.utc)
@@ -611,6 +613,8 @@ class Command(BaseCommand):
         self.fare_products = {}
 
         self.handle_archive(dataset, io.BytesIO(response.content))
+
+        logger.info(f"  ⏱️ {datetime.now() - start_time}")
 
         dataset.datetime = last_modified
         dataset.save(update_fields=["datetime"])
@@ -657,9 +661,7 @@ class Command(BaseCommand):
                 "FWYO",
                 "FYOR",
             ):
-                start_time = datetime.now()
                 self.ticketer(noc)
-                logger.info(f"  ⏱️ {datetime.now() - start_time}")
         else:
             assert len(api_key) == 40
             self.bod(api_key)
