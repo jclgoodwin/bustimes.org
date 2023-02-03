@@ -1,11 +1,11 @@
 from functools import cached_property
-from django.db import models
+
 from django.contrib.postgres.fields import DateTimeRangeField
+from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import camel_case_to_spaces
-
 
 # class Currency(models.TextChoices):
 #     GBP = "GBP", "Pound Sterling"
@@ -154,7 +154,7 @@ class FareTable(models.Model):
     preassigned_fare_product = models.ForeignKey(
         PreassignedFareProduct, models.CASCADE, null=True, blank=True
     )
-    tariff = models.ForeignKey(Tariff, models.CASCADE, null=True, blank=True)
+    tariff = models.ForeignKey(Tariff, models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -195,6 +195,7 @@ class FareZone(models.Model):
     code = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     stops = models.ManyToManyField("busstops.StopPoint", blank=True)
+    source = models.ForeignKey(DataSet, models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name

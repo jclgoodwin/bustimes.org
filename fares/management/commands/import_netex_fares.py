@@ -53,6 +53,44 @@ def get_fare_product(element):
     )
 
 
+def get_fare_zones(source, fare_zone_elements):
+    if not fare_zone_elements:
+        return
+    zones = {zone.code: zone for zone in source.farezone_set.all()}
+    for fare_zone_element in fare_zone_elements:
+        zone = models.FareZone(
+            code=fare_zone_element.attrib["id"],
+            name=fare_zone_element.findtext("Name", ""),
+            source=source,
+        )
+        if zone.code in zones:
+            if zone.name != zones[zone.code].name:
+                print(zone.name, zones[zone.code].name)
+        else:
+            zones[zone.code] = zone
+
+        # stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
+        # if stop_refs:
+        #     try:
+        #         if stop_refs[0].startswith('atco'):
+        #             fare_zone.stops.set(StopPoint.objects.filter(
+        #                 atco_code__in=[stop_ref.removeprefix('atco:') for stop_ref in stop_refs]
+        #             ))
+        #         # elif stop_refs[0].startswith('naptStop'):
+        #         #     fare_zone.stops.set(StopPoint.objects.filter(
+        #         #         naptan_code__iexact__in=[stop_ref.removeprefix('naptStop:') for stop_ref in stop_refs]
+        #         #     ))
+        #         else:
+        #             print(stop_refs[0])
+        #     except IntegrityError as e:
+        #         print(e)
+
+    models.FareZone.objects.bulk_create(
+        [zone for zone in zones.values() if not zone.id]
+    )
+    return zones
+
+
 @cache
 def get_service(operator, line_name):
     try:
@@ -79,7 +117,8 @@ class Command(BaseCommand):
                 # remove NeTEx namespace for simplicity's sake:
                 if element.tag[:31] == "{http://www.netex.org.uk/netex}":
                     element.tag = element.tag[31:]
-        except ET.ParseError:
+        except ET.ParseError as e:
+            logger.error(e)
             return
 
         operators = element.findall(
@@ -91,7 +130,6 @@ class Command(BaseCommand):
             "dataObjects/CompositeFrame/frames/ServiceFrame/lines/Line"
         )
         lines = {line.attrib["id"]: line for line in lines}
-        # print(operators, lines)
 
         user_profiles = {**self.user_profiles}
         for usage_parameter in element.findall(
@@ -127,30 +165,12 @@ class Command(BaseCommand):
             price_group_prices[price_element.attrib["id"]] = price
         models.Price.objects.bulk_create(price_groups.values())
 
-        fare_zones = {}
-        for fare_zone_element in element.findall(
-            "dataObjects/CompositeFrame/frames/FareFrame/fareZones/FareZone"
-        ):
-            fare_zone, created = models.FareZone.objects.get_or_create(
-                code=fare_zone_element.attrib["id"],
-                name=fare_zone_element.findtext("Name", ""),
-            )
-            fare_zones[fare_zone.code] = fare_zone
-            # stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
-            # if stop_refs:
-            #     try:
-            #         if stop_refs[0].startswith('atco'):
-            #             fare_zone.stops.set(StopPoint.objects.filter(
-            #                 atco_code__in=[stop_ref.removeprefix('atco:') for stop_ref in stop_refs]
-            #             ))
-            #         # elif stop_refs[0].startswith('naptStop'):
-            #         #     fare_zone.stops.set(StopPoint.objects.filter(
-            #         #         naptan_code__iexact__in=[stop_ref.removeprefix('naptStop:') for stop_ref in stop_refs]
-            #         #     ))
-            #         else:
-            #             print(stop_refs[0])
-            #     except IntegrityError as e:
-            #         print(e)
+        fare_zones = get_fare_zones(
+            source,
+            element.findall(
+                "dataObjects/CompositeFrame/frames/FareFrame/fareZones/FareZone"
+            ),
+        )
 
         prices = {}
 
@@ -525,6 +545,7 @@ class Command(BaseCommand):
             dataset.tariff_set.all().delete()
 
         logger.info(dataset)
+        start_time = datetime.now()
 
         try:
             dataset.operators.set(item["noc"])
@@ -548,9 +569,10 @@ class Command(BaseCommand):
             try:
                 self.handle_archive(dataset, io.BytesIO(response.content))
             except (KeyError, DataError):
-                return (
-                    dataset  # don't update timestamp field, try re-importing next time
-                )
+                # don't update timestamp field, try re-importing next time
+                return dataset
+
+        logger.info(f"  ⏱️ {datetime.now() - start_time}")
 
         dataset.datetime = modified
         dataset.save(update_fields=["datetime"])
@@ -635,7 +657,9 @@ class Command(BaseCommand):
                 "FWYO",
                 "FYOR",
             ):
+                start_time = datetime.now()
                 self.ticketer(noc)
+                logger.info(f"  ⏱️ {datetime.now() - start_time}")
         else:
             assert len(api_key) == 40
             self.bod(api_key)

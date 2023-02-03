@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import time_machine
 from django.core.management import call_command
 from django.test import TestCase
 from vcr import use_cassette
@@ -20,6 +21,7 @@ class FaresTest(TestCase):
         Route.objects.create(line_name="wm06", service=cls.wm06, source=source)
         cls.wm06.operator.add(cls.a_c_williams)
 
+    @time_machine.travel("2020-06-10", tick=False)
     def test_bod_netex(self):
         path = Path(__file__).resolve().parent / "data"
 
@@ -34,7 +36,9 @@ class FaresTest(TestCase):
             [
                 "INFO:fares.management.commands.import_netex_fares:AC Williams_20201119 06:45:17",
                 "WARNING:fares.management.commands.import_netex_fares:Service matching query does not exist. WMSA WM07",
+                "INFO:fares.management.commands.import_netex_fares:  ⏱️ 0:00:00",
                 "INFO:fares.management.commands.import_netex_fares:AC Williams_20201119 06:46:57",
+                "INFO:fares.management.commands.import_netex_fares:  ⏱️ 0:00:00",
             ],
         )
 
@@ -49,8 +53,8 @@ class FaresTest(TestCase):
         self.assertContains(response, "<td>£1.70</td>")
         self.assertContains(response, "RAF Cranwell")
 
-        origin = FareZone.objects.get(name="Welbourn")
-        destination = FareZone.objects.get(name="Cranwell")
+        origin = FareZone.objects.get(name="Welbourn", source=tariff.source)
+        destination = FareZone.objects.get(name="Cranwell", source=tariff.source)
         response = self.client.get(
             f"{tariff.get_absolute_url()}?origin={origin.id}&destination={destination.id}"
         )
@@ -106,25 +110,41 @@ class FaresTest(TestCase):
 
         base_path = Path(__file__).resolve().parent / "data"
 
-        for filename in (
-            "connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml",
-            "FLDSa0eb4e10_1605250801329.xml",
-            "KBUS_FF_ArrivaAdd-on_2Multi_6d7e341a-0680-4397-9b3f-90a290087494_637613495098903655.xml",
-            "FECS_23A_Outbound_YPSingle_6764fa3b-4b05-4331-9bea-c7bb90212531_637829447220443476.xml",
-            "LYNX 39 single.xml",
-            "LYNX Coast.xml",
-            "LYNX Townrider.xml",
-            "NADS_103A_Inbound_AdultReturn_aae41d08-15c5-4fef-bf58-e8188410605e_637503825593765582.xml",
-            "STBC96615325_1597249888210_YFXY9eP.xml",
-            "TGTC238e19ce_1603195065008_yJWka80.xml",
-            "TWGT0b3b32d1_1600857778793_2gKCmVT_2.xml",
-            "FX_PI_01_UK_SCTE_PRODUCTS_COMMON_wef-20220208_20220211-0936.xml",
-            "FX_PI_01_UK_SCTE_LINE_FARE_Line-59t@Outbound_wef-20220208_20220211-0936.xml",
+        for filename, number in (
+            ("connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml", 43),
+            ("FLDSa0eb4e10_1605250801329.xml", 22),
+            (
+                "KBUS_FF_ArrivaAdd-on_2Multi_6d7e341a-0680-4397-9b3f-90a290087494_637613495098903655.xml",
+                13,
+            ),
+            (
+                "FECS_23A_Outbound_YPSingle_6764fa3b-4b05-4331-9bea-c7bb90212531_637829447220443476.xml",
+                31,
+            ),
+            ("LYNX 39 single.xml", 28),
+            ("LYNX Coast.xml", 75),
+            ("LYNX Townrider.xml", None),
+            (
+                "NADS_103A_Inbound_AdultReturn_aae41d08-15c5-4fef-bf58-e8188410605e_637503825593765582.xml",
+                None,
+            ),
+            ("STBC96615325_1597249888210_YFXY9eP.xml", None),
+            ("TGTC238e19ce_1603195065008_yJWka80.xml", None),
+            ("TWGT0b3b32d1_1600857778793_2gKCmVT_2.xml", None),
+            ("FX_PI_01_UK_SCTE_PRODUCTS_COMMON_wef-20220208_20220211-0936.xml", None),
+            (
+                "FX_PI_01_UK_SCTE_LINE_FARE_Line-59t@Outbound_wef-20220208_20220211-0936.xml",
+                None,
+            ),
         ):
             path = base_path / filename
 
             with path.open() as open_file:
-                command.handle_file(source, open_file, filename)
+                if number is None:
+                    command.handle_file(source, open_file, filename)
+                else:
+                    with number and self.assertNumQueries(number):
+                        command.handle_file(source, open_file, filename)
 
         tariff = Tariff.objects.get(
             filename="KBUS_FF_ArrivaAdd-on_2Multi_6d7e341a-0680-4397-9b3f-90a290087494_637613495098903655.xml"
