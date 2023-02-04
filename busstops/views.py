@@ -813,9 +813,9 @@ class OperatorDetailView(DetailView):
         context["services"] = sorted(services, key=Service.get_order)
 
         if context["services"]:
-            context[
-                "today"
-            ] = timezone.localdate()  # for 'from {date}' for future services
+            # for 'from {date}' for future services:
+            context["today"] = timezone.localdate()
+
             context["breadcrumb"] = [self.object.region]
             context["colours"] = get_colours(context["services"])
 

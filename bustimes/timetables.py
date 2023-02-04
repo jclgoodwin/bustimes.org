@@ -1,5 +1,6 @@
 import datetime
 import graphlib
+from dataclasses import dataclass
 from difflib import Differ
 from functools import cached_property, cmp_to_key, partial
 
@@ -271,7 +272,7 @@ class Timetable:
             route.line_name == self.routes[0].line_name for route in self.routes[1:]
         ):
             for grouping in self.groupings:
-                del grouping.heads
+                del grouping.routes
 
         self.apply_stops()
 
@@ -439,14 +440,14 @@ class Timetable:
         return set(credit for credit in credits if credit)
 
 
+@dataclass
 class Repetition:
     """Represents a special cell in a timetable, spanning multiple rows and columns,
     with some text like 'then every 5 minutes until'.
     """
 
-    def __init__(self, colspan, duration):
-        self.colspan = colspan
-        self.duration = duration
+    colspan: int
+    duration: datetime.timedelta
 
     def __str__(self):
         # cleverly add non-breaking spaces if there aren't many rows
@@ -507,7 +508,7 @@ def journey_patterns_match(trip_a, trip_b):
 
 class Grouping:
     def __init__(self, inbound: bool, parent: Timetable):
-        self.heads = []
+        self.routes = []
         self.rows = []
         self.trips = []
         self.inbound = inbound
@@ -563,6 +564,15 @@ class Grouping:
         return sum(
             2 if row.has_waittimes else 1 for row in self.rows if not row.is_minor()
         )
+
+    def get_operators(self):
+        operators = {o.noc: o for o in self.parent.operators}
+        noc = self.trips[0].operator_id
+        if all(trip.operator_id == noc for trip in self.trips[1:]):
+            yield ColumnHead(operators.get(noc, noc), len(self.trips))
+        else:
+            for trip in self.trips:
+                yield ColumnHead(trip.operator_id, 1)
 
     def vehicles_by_date(self):
         journeys = (
@@ -824,10 +834,10 @@ class Grouping:
 
             if previous_trip:
                 if previous_trip.route.line_name != trip.route.line_name:
-                    self.heads.append(
+                    self.routes.append(
                         ColumnHead(
                             previous_trip.route,
-                            i - sum(head.span for head in self.heads),
+                            i - sum(head.span for head in self.routes),
                         )
                     )
 
@@ -855,10 +865,10 @@ class Grouping:
             previous_note_ids = note_ids
 
         if previous_trip:
-            self.heads.append(
+            self.routes.append(
                 ColumnHead(
                     previous_trip.route,
-                    len(self.trips) - sum(head.span for head in self.heads),
+                    len(self.trips) - sum(head.span for head in self.routes),
                 )
             )
 
@@ -888,8 +898,8 @@ class Grouping:
 
 
 class ColumnHead:
-    def __init__(self, route, span):
-        self.route = route
+    def __init__(self, content, span: int):
+        self.content = content
         self.span = span
 
 

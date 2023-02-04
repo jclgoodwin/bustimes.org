@@ -48,16 +48,16 @@
             {% endif %}
             <div class="timetable-wrapper{% if grouping.width > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
-                    {% if grouping.heads or timetable.detailed or timetable.has_operators %}
+                    {% if grouping.routes or timetable.detailed or timetable.has_operators %}
                         <thead>
-                            {% if grouping.heads %}<tr>
+                            {% if grouping.routes %}<tr>
                                 <th></th>
-                                {% for head in grouping.heads %}
+                                {% for head in grouping.routes %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
-                                        {% if object.id != head.route.service_id %}
-                                            <a href="{{ head.route.service.get_absolute_url }}">{{ head.route.line_name }}</a>
+                                        {% if object.id != head.content.service_id %}
+                                            <a href="{{ head.content.service.get_absolute_url }}">{{ head.content.line_name }}</a>
                                         {% else %}
-                                            {{ head.route.line_name }}
+                                            {{ head.content.line_name }}
                                         {% endif %}
                                     </td>
                                 {% endfor %}
@@ -66,9 +66,9 @@
                             {% if timetable.has_operators %}
                                 <tr>
                                     <th scope="row">Operator</th>
-                                    {% for trip in grouping.trips %}
-                                        <td>
-                                            {{ trip.operator_id }}
+                                    {% for head in grouping.get_operators %}
+                                        <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
+                                            {{ head.content }}
                                         </td>
                                     {% endfor %}
                                 </tr>
@@ -123,7 +123,7 @@
                                 <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
                                     {% if row.stop.pk %}<a href="{{ row.stop.get_absolute_url }}">{% if row.stop.situation %}⚠️&#xfe0f; {% endif %}{{ row.stop.get_qualified_name }}</a>{% else %}{{ row.stop }}{% endif %}
                                 </th>
-                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.heads or grouping.column_feet or timetable.has_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
+                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
                                 <tr class="{% if row.is_minor %}minor {% if row.od %}od {% endif %}{% endif %}dep">
