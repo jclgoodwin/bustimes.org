@@ -1559,12 +1559,8 @@ nav {
 
 .ad-wrapper {
     text-align: center;
-    margin: 1em auto;
+    margin: 1em -1em;
     min-height: 100px;
-
-    > div {
-        margin: auto;
-    }
 }
 
 body.has-overlay {
