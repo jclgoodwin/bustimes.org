@@ -231,16 +231,7 @@ class Command(ImportLiveVehiclesCommand):
 
         try:
             vehicle, created = vehicles.get_or_create(defaults)
-            if operator_ref in self.reg_operators and vehicle.code != vehicle_ref:
-                vehicle.code = vehicle_ref
-                if fleet_number != vehicle.fleet_code:
-                    vehicle.fleet_code = fleet_number
-                    if fleet_number.isdigit():
-                        vehicle.fleet_number = fleet_number
-                    vehicle.save(update_fields=["code", "fleet_code", "fleet_number"])
-                else:
-                    vehicle.save(update_fields=["code"])
-            elif "fleet_code" in defaults and not vehicle.fleet_code:
+            if "fleet_code" in defaults and not vehicle.fleet_code:
                 vehicle.fleet_code = defaults["fleet_code"]
                 if "fleet_number" in defaults:
                     vehicle.fleet_number = defaults["fleet_number"]
@@ -417,7 +408,7 @@ class Command(ImportLiveVehiclesCommand):
         else:
             if journey_code == "0000":
                 journey_code = journey_ref
-            elif not journey_ref or "_" in journey_ref:
+            elif not journey_ref:
                 journey_ref = journey_code  # what we will use for finding matching trip
 
         route_name = monitored_vehicle_journey.get(
@@ -553,9 +544,7 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle.save(update_fields=["operator"])
 
             # match trip (timetable) to journey:
-            if journey.service and (
-                origin_aimed_departure_time or journey_ref and "_" not in journey_ref
-            ):
+            if journey.service and (origin_aimed_departure_time or journey_ref):
 
                 journey_date = None
 
