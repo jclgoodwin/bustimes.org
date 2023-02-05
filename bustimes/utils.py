@@ -22,7 +22,11 @@ def get_routes(routes, when=None, from_date=None):
     if len(routes) == 1:
         return routes
 
-    sources = set(route.source_id for route in routes)
+    sources = set(route.source for route in routes)
+    if len(sources) > 1 and any(source.name == "W" for source in sources):
+        routes = [route for route in routes if route.source.name == "W"]
+        if len(routes) == 1:
+            return routes
 
     # use maximum revision number for each service_code
     if when and len(set(route.revision_number for route in routes)) > 1:
