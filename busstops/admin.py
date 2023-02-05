@@ -221,6 +221,7 @@ class ServiceAdmin(GISModelAdmin):
         "routes",
         "current",
         "timetable_wrong",
+        "public_use",
         "colour",
         "line_brand",
     )
@@ -228,6 +229,8 @@ class ServiceAdmin(GISModelAdmin):
         SplitServiceFilter,
         "current",
         "timetable_wrong",
+        "public_use",
+        "tracking",
         "mode",
         "region",
         ("source", admin.RelatedOnlyFieldListFilter),
