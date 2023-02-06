@@ -305,8 +305,12 @@ class Note(models.Model):
 class Trip(models.Model):
     route = models.ForeignKey(Route, models.CASCADE)
     inbound = models.BooleanField(default=False)
-    journey_pattern = models.CharField(max_length=255, blank=True)
-    ticket_machine_code = models.CharField(max_length=255, blank=True, db_index=True)
+    journey_pattern = models.CharField(max_length=100, blank=True)
+    vehicle_journey_code = models.CharField(max_length=100, blank=True, db_index=True)
+    ticket_machine_code = models.CharField(max_length=100, blank=True, db_index=True)
+    _block = models.CharField(
+        max_length=100, blank=True, db_index=True, db_column="block"
+    )
     block = models.ForeignKey("Block", models.SET_NULL, null=True, blank=True)
     destination = models.ForeignKey(
         "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
