@@ -41,6 +41,7 @@ def clean_up(operators, sources, incomplete=False):
     )
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains="bus-data.dft.gov.uk")
+    routes.update(service=None)
     try:
         routes.delete()
     except IntegrityError:
