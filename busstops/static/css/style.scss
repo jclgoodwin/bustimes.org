@@ -8,16 +8,8 @@
     @import '48em';
 }
 
-@media (min-width: 60em) {
-    @import '60em';
-}
-
 @media (min-width: 62.5em) {
     @import '62em';
-}
-
-@media (min-width: 106.5em) {
-    @import '99em';
 }
 
 @media print {
@@ -31,7 +23,7 @@
     }
 }
 
-@media (min-width: 960px) {
+@media (min-width: 960px) { // (60em)
     footer,
     .service-map {
         margin-bottom: 126px;
@@ -39,5 +31,25 @@
 
     .service-map {
         margin-top: 90px;
+    }
+
+    .ad-wrapper {
+        min-height: 90px;
+    }
+}
+
+@media (min-width: 970px) {
+    .narrow .ad-wrapper {
+        margin: 1em -121px; // 970px
+    }
+}
+
+@media (min-width: 1200px) {
+    .narrow .ad-wrapper {
+        margin: 1em -236px; // 1200
+    }
+
+    .wide .ad-wrapper {
+        margin: 1em -116px;  // 1200px
     }
 }
