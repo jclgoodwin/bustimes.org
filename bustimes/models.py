@@ -308,10 +308,7 @@ class Trip(models.Model):
     journey_pattern = models.CharField(max_length=100, blank=True)
     vehicle_journey_code = models.CharField(max_length=100, blank=True, db_index=True)
     ticket_machine_code = models.CharField(max_length=100, blank=True, db_index=True)
-    _block = models.CharField(
-        max_length=100, blank=True, db_index=True, db_column="block"
-    )
-    block = models.ForeignKey("Block", models.SET_NULL, null=True, blank=True)
+    block = models.CharField(max_length=100, blank=True, db_index=True)
     destination = models.ForeignKey(
         "busstops.StopPoint", models.DO_NOTHING, null=True, blank=True
     )
@@ -419,17 +416,6 @@ class StopTime(models.Model):
 
     def is_minor(self):
         return self.timing_status == "OTH"
-
-
-class Block(models.Model):
-    code = models.CharField(max_length=50, db_index=True)
-    description = models.CharField(max_length=50, blank=True)
-
-    def __str__(self):
-        return self.code
-
-    def get_absolute_url(self):
-        return reverse("block_detail", args=(self.id,))
 
 
 class Garage(models.Model):

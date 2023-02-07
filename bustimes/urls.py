@@ -15,7 +15,7 @@ urlpatterns = [
     path("vehicles/tfl/<reg>", views.tfl_vehicle, name="tfl_vehicle"),
     path("trips/<int:pk>", views.TripDetailView.as_view(), name="trip_detail"),
     path("trips/<int:id>.json", views.trip_json),
-    path("blocks/<int:pk>", views.BlockDetailView.as_view(), name="block_detail"),
+    path("trips/<int:pk>/block", views.trip_block),
     path("trip_updates", views.trip_updates),
     path("frequency_map", frequency_map),
 ]

@@ -26,7 +26,6 @@ class TripInline(admin.TabularInline):
     model = Trip
     show_change_link = True
     raw_id_fields = [
-        "block",
         "destination",
         "notes",
         "calendar",

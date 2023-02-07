@@ -228,7 +228,7 @@ class Timetable:
         )
 
         if self.detailed:
-            trips = trips.select_related("block", "garage", "vehicle_type")
+            trips = trips.select_related("garage", "vehicle_type")
 
         if len(trips) > 1500:
             self.date = None
@@ -332,7 +332,7 @@ class Timetable:
 
     @cached_property
     def has_blocks(self) -> bool:
-        return self.any_trip_has("block_id")
+        return self.any_trip_has("block")
 
     @cached_property
     def has_garages(self) -> bool:

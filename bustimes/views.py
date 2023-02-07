@@ -33,13 +33,13 @@ from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
 
 from .download_utils import download
-from .models import Block, Route, StopTime, Trip
+from .models import Route, StopTime, Trip
 
 
 class ServiceDebugView(DetailView):
     model = Service
     trips = (
-        Trip.objects.select_related("garage", "block")
+        Trip.objects.select_related("garage")
         .prefetch_related(
             "calendar__calendardate_set",
             "calendar__calendarbankholiday_set__bank_holiday",
@@ -335,12 +335,12 @@ class TripDetailView(DetailView):
 
         context["breadcrumb"] = operators + [self.object.route.service]
 
-        if self.object.ticket_machine_code and self.object.block_id:
+        if self.object.ticket_machine_code and self.object.block:
             trips = Trip.objects.filter(
                 calendar=self.object.calendar_id,
                 inbound=self.object.inbound,
                 ticket_machine_code=self.object.ticket_machine_code,
-                block_id=self.object.block_id,
+                block=self.object.block,
                 route__service=self.object.route.service_id,
             )
         else:
@@ -382,15 +382,27 @@ class TripDetailView(DetailView):
         return context
 
 
-class BlockDetailView(DetailView):
-    model = Block
-    queryset = model.objects.prefetch_related(
-        Prefetch(
-            "trip_set",
-            queryset=Trip.objects.order_by("start").select_related(
-                "route", "destination__locality"
-            ),
+@require_GET
+def trip_block(request, pk: int):
+    trip = get_object_or_404(Trip, pk=pk)
+
+    if not trip.block:
+        raise Http404
+
+    trips = (
+        Trip.objects.filter(
+            block=trip.block,
+            calendar=trip.calendar_id,
+            route__source=trip.route.source,
         )
+        .order_by("start")
+        .select_related("route", "destination__locality")
+    )
+
+    return render(
+        request,
+        "bustimes/block_detail.html",
+        {"object": trip.block, "trips": trips},
     )
 
 

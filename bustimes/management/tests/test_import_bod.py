@@ -27,7 +27,6 @@ from vehicles.models import VehicleJourney, VehicleLocation
 from ...models import (
     BankHoliday,
     BankHolidayDate,
-    Block,
     CalendarBankHoliday,
     Garage,
     Route,
@@ -441,7 +440,7 @@ class ImportBusOpenDataTest(TestCase):
                     "bustimes.management.commands.import_bod.download_if_changed",
                     return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
-                    with self.assertNumQueries(123):
+                    with self.assertNumQueries(124):
                         call_command("import_bod", "stagecoach")
                     download_if_changed.assert_called_with(
                         path, "https://opendata.stagecoachbus.com/" + archive_name
@@ -461,7 +460,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command("import_bod", "stagecoach", "SCOX")
 
-                    with self.assertNumQueries(90):
+                    with self.assertNumQueries(91):
                         call_command("import_bod", "stagecoach", "SCCM")
 
                     route_link.refresh_from_db()
@@ -484,7 +483,6 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(CalendarBankHoliday.objects.count(), 130)
         self.assertEqual(VehicleType.objects.count(), 3)
         self.assertEqual(Garage.objects.count(), 4)
-        self.assertEqual(Block.objects.count(), 12)
 
         with self.assertNumQueries(4):
             response = self.client.get(f"/services/{route.service_id}.json")

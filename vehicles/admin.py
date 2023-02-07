@@ -293,7 +293,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
         "destination",
     )
     list_select_related = ("vehicle", "service")
-    raw_id_fields = ("vehicle", "service", "source", "trip", "block")
+    raw_id_fields = ("vehicle", "service", "source", "trip")
     list_filter = (
         ("service", admin.EmptyFieldListFilter),
         ("trip", admin.EmptyFieldListFilter),

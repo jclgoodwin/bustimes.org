@@ -12,7 +12,7 @@ import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import DataError, IntegrityError
+from django.db import DataError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from sentry_sdk import start_transaction
@@ -41,11 +41,12 @@ def clean_up(operators, sources, incomplete=False):
     )
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains="bus-data.dft.gov.uk")
+    # force evaluation of QuerySet:
+    route_ids = list(routes.values_list("id", flat=True))
+    routes = Route.objects.filter(id__in=route_ids)
+    # do this first to prevent IntegrityError
     routes.update(service=None)
-    try:
-        routes.delete()
-    except IntegrityError:
-        routes.delete()
+    routes.delete()
     Service.objects.filter(
         ~Q(source__name="bustimes.org"),
         operator__in=operators,

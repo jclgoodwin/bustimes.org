@@ -15,7 +15,7 @@ from functools import cache
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
-from django.db.models.functions import Upper
+from django.db.models.functions import Now, Upper
 from titlecase import titlecase
 
 from busstops.models import (
@@ -31,7 +31,6 @@ from vosa.models import Registration
 
 from ...models import (
     BankHoliday,
-    Block,
     Calendar,
     CalendarBankHoliday,
     CalendarDate,
@@ -192,7 +191,6 @@ class Command(BaseCommand):
     def set_up(self):
         self.service_descriptions = {}
         self.calendar_cache = {}
-        self.blocks = {}
         self.operators = {}
         self.missing_operators = []
         self.notes = {}
@@ -344,11 +342,9 @@ class Command(BaseCommand):
 
     def mark_old_services_as_not_current(self):
         old_routes = self.source.route_set.filter(~Q(id__in=self.route_ids))
+        # do this first to prevent IntegrityError (VehicleJourney trip field)
         old_routes.update(service=None)
-        try:
-            old_routes.delete()
-        except IntegrityError:
-            old_routes.delete()
+        old_routes.delete()
 
         old_services = self.source.service_set.filter(current=True, route=None)
         old_services = old_services.filter(~Q(id__in=self.service_ids))
@@ -435,6 +431,8 @@ class Command(BaseCommand):
             service.update_geometry()
 
             service.update_description()
+
+        services.update(modified_at=Now())
 
     def get_bank_holiday(self, bank_holiday_name: str):
         if self.bank_holidays is None:
@@ -670,8 +668,6 @@ class Command(BaseCommand):
         trips = []
         trip_notes = []
 
-        blocks = []
-
         for journey in journeys:
             calendar = None
             if journey.operating_profile:
@@ -697,20 +693,14 @@ class Command(BaseCommand):
                 calendar=calendar,
                 route=route,
                 journey_pattern=journey.journey_pattern.id,
+                vehicle_journey_code=journey.code or "",
                 ticket_machine_code=journey.ticket_machine_journey_code or "",
                 sequence=journey.sequencenumber,
                 operator=operators.get(journey.operator or txc_service.operator),
             )
 
             if journey.block and journey.block.code:
-                if journey.block.code not in self.blocks:
-                    trip.block = Block(
-                        code=journey.block.code, description=journey.block.description
-                    )
-                    blocks.append(trip.block)
-                    self.blocks[journey.block.code] = trip.block
-                else:
-                    trip.block = self.blocks[journey.block.code]
+                trip.block = journey.block.code
 
             if journey.vehicle_type and journey.vehicle_type.code:
                 if journey.vehicle_type.code not in self.vehicle_types:
@@ -763,10 +753,6 @@ class Command(BaseCommand):
                     self.notes[note_cache_key] = note
                 trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
-        Block.objects.bulk_create(blocks)
-        for trip in trips:
-            trip.block = trip.block
-
         if not route_created:
             # reuse trip ids if the number and start times haven't changed
             existing_trips = route.trip_set.order_by("id")
@@ -797,6 +783,7 @@ class Command(BaseCommand):
                 fields=[
                     "inbound",
                     "journey_pattern",
+                    "vehicle_journey_code",
                     "ticket_machine_code",
                     "block",
                     "destination",
