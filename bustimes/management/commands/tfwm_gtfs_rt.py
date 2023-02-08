@@ -18,7 +18,8 @@ class Command(BaseCommand):
 
         gtfs_url = "http://api.tfwm.org.uk/gtfs/tfwm_gtfs.zip"
         response = session.get(gtfs_url, params=source.settings)
-        print(response.from_cache)
+        if not response.from_cache:  # new data
+            print(response.headers)
 
         with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
             for line in read_file(archive, "routes.txt"):
@@ -39,7 +40,8 @@ class Command(BaseCommand):
         url = "http://api.tfwm.org.uk/gtfs/trip_updates"
 
         response = session.get(url, params=source.settings)
-        print(response.from_cache)
+        if response.from_cache:  # weird, stale data
+            print(response.headers)
 
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
@@ -47,6 +49,12 @@ class Command(BaseCommand):
         by_stop = {}
 
         for item in feed.entity:
+
+            try:
+                trip = trips[item.trip_update.trip.trip_id]
+                route = routes[trip["route_id"]]
+            except KeyError:
+                continue
 
             prev = None
 
@@ -56,12 +64,8 @@ class Command(BaseCommand):
                     departure = {
                         "time": stop_time_update.departure.time,
                         "delay": stop_time_update.departure.delay,
-                        "destination": trips[item.trip_update.trip.trip_id][
-                            "trip_headsign"
-                        ],
-                        "line_name": routes[
-                            trips[item.trip_update.trip.trip_id]["route_id"]
-                        ]["route_short_name"],
+                        "destination": trip["trip_headsign"],
+                        "line_name": route["route_short_name"],
                         "vehicle": item.trip_update.vehicle.id,
                     }
 
