@@ -1,8 +1,11 @@
-import os
-import requests
 import datetime
 import logging
+import os
+
+import requests
 from django.utils.http import http_date, parse_http_date
+
+session = requests.Session()
 
 
 def write_file(path, response):
@@ -12,7 +15,7 @@ def write_file(path, response):
 
 
 def download(path, url):
-    response = requests.get(url, stream=True)
+    response = session.get(url, stream=True)
     write_file(path, response)
 
 
@@ -23,12 +26,12 @@ def download_if_changed(path, url, params=None):
     modified = True
     if path.exists():
         headers["if-modified-since"] = http_date(os.path.getmtime(path))
-        response = requests.head(url, params=params, headers=headers, timeout=10)
+        response = session.head(url, params=params, headers=headers, timeout=10)
         if response.status_code == 304:
             modified = False
 
     if modified:
-        response = requests.get(
+        response = session.get(
             url, params=params, headers=headers, stream=True, timeout=10
         )
 
