@@ -24,44 +24,33 @@ LOCAL_TIMEZONE = pytz.timezone("Europe/London")
 
 
 class Departures:
-    """Abstract class for getting departures from a source"""
-
-    request_url = None
-
     def __init__(self, stop, services, now=None):
         self.stop = stop
         self.now = now
         self.services = services
+
+
+class RemoteDepartures(Departures):
+    """Abstract class for getting departures from a source"""
+
+    def __init__(self, stop, services, now=None):
+        super().__init__(stop, services, now)
+
         self.services_by_name = {}
-        self.services_by_alternative_name = {}
         duplicate_names = set()
-        duplicate_alternative_names = set()
 
         for service in services:
-            line_name = service.line_name.lower()
-            if line_name in self.services_by_name:
-                duplicate_names.add(line_name)
-            else:
-                self.services_by_name[line_name] = service
+            for line_name in service.get_line_names():
+                line_name = line_name.lower()
+                if line_name in self.services_by_name:
+                    duplicate_names.add(line_name)
+                else:
+                    self.services_by_name[line_name] = service
 
-            service_code = service.service_code
-            if (
-                "-" in service_code
-                and "_" in service_code[2:4]
-                and service_code[:3].islower()
-            ):
-                # there's sometimes an alternative abbreviated line name hidden in the service code
-                parts = service_code.split("-")
-                part = parts[1].lower()
-                if part in self.services_by_alternative_name:
-                    duplicate_alternative_names.add(part)
-                elif part not in self.services_by_name:
-                    self.services_by_alternative_name[part] = service
+        print(self.services_by_name)
 
         for line_name in duplicate_names:
             del self.services_by_name[line_name]
-        for line_name in duplicate_alternative_names:
-            del self.services_by_alternative_name[line_name]
 
     def get_request_url(self) -> str:
         """Return a URL string to pass to get_response"""
@@ -93,16 +82,17 @@ class Departures:
             line_name_lower = line_name.lower()
             if line_name_lower in self.services_by_name:
                 return self.services_by_name[line_name_lower]
-            if line_name_lower in self.services_by_alternative_name:
-                return self.services_by_alternative_name[line_name_lower]
+            # if line_name_lower in self.services_by_alternative_name:
+            #     return self.services_by_alternative_name[line_name_lower]
 
+            # Translink Glider
             if f"g{line_name_lower}" in self.services_by_name:
                 return self.services_by_name[f"g{line_name_lower}"]
 
             alternatives = {
                 "Puls": "pulse",
                 # 'FLCN': 'falcon',
-                "TUBE": "oxford tube",
+                # "TUBE": "oxford tube",
                 "SPRI": "spring",
                 "PRO": "pronto",
                 "SA": "the sherwood arrow",
@@ -156,7 +146,7 @@ class Departures:
         return self.departures_from_response(response)
 
 
-class TflDepartures(Departures):
+class TflDepartures(RemoteDepartures):
     """Departures from the Transport for London API"""
 
     @staticmethod
@@ -190,7 +180,7 @@ class TflDepartures(Departures):
         )
 
 
-class WestMidlandsDepartures(Departures):
+class WestMidlandsDepartures(RemoteDepartures):
     def get_row(self, item):
         return {
             "time": datetime.datetime.fromtimestamp(
@@ -208,7 +198,7 @@ class WestMidlandsDepartures(Departures):
             return [self.get_row(item) for item in items]
 
 
-class EdinburghDepartures(Departures):
+class EdinburghDepartures(RemoteDepartures):
     def get_request_url(self) -> str:
         return "https://tfe-opendata.com/api/v1/live_bus_times/" + self.stop.naptan_code
 
@@ -253,7 +243,7 @@ class EdinburghDepartures(Departures):
             return departures
 
 
-class AcisHorizonDepartures(Departures):
+class AcisHorizonDepartures(RemoteDepartures):
     """Departures from a SOAP endpoint (lol)"""
 
     request_url = "http://belfastapp.acishorizon.com/DataService.asmx"
@@ -407,7 +397,7 @@ def parse_datetime(string):
     return ciso8601.parse_datetime(string).astimezone(LOCAL_TIMEZONE)
 
 
-class SiriSmDepartures(Departures):
+class SiriSmDepartures(RemoteDepartures):
     ns = {"s": "http://www.siri.org.uk/siri"}
     data_source = None
 

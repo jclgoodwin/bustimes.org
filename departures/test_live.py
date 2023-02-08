@@ -109,8 +109,7 @@ class LiveDeparturesTest(TestCase):
         )
 
     def test_abstract(self):
-        departures = live.Departures(None, ())
-        self.assertIsNone(departures.get_request_url())
+        departures = live.RemoteDepartures(None, ())
         self.assertRaises(
             NotImplementedError, departures.departures_from_response, None
         )
@@ -124,7 +123,7 @@ class LiveDeparturesTest(TestCase):
             region_id="W",
         )
         StopUsage.objects.create(stop=self.london_stop, service=service, order=1)
-        route = Route.objects.create(source=self.source, service=service)
+        route = Route.objects.create(source=self.source, service=service, line_name="8")
         trip = Trip.objects.create(route=route, start="0", end="1")
         StopTime.objects.create(trip=trip, stop=self.london_stop)
 
