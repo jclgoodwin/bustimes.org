@@ -1021,7 +1021,10 @@ class Command(BaseCommand):
                 if service_code.startswith("nrc_") or not existing:
                     # assume service code is at least unique within a TNDS region
                     existing = self.source.service_set.filter(
-                        service_code=service_code
+                        Q(service_code=service_code)
+                        |
+                        # London (change of operator):
+                        Q(line_name__iexact=line.line_name, description=description)
                     ).first()
             elif unique_service_code:
                 service_code = unique_service_code
