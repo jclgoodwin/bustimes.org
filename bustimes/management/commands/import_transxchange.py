@@ -348,7 +348,9 @@ class Command(BaseCommand):
 
         old_services = self.source.service_set.filter(current=True, route=None)
         old_services = old_services.filter(~Q(id__in=self.service_ids))
-        old_services.update(current=False)
+        deleted = old_services.update(current=False)
+        if deleted:
+            logger.info(f"  old services: {deleted}")
 
     def handle_sub_archive(self, archive, filename):
         with archive.open(filename) as open_file:
