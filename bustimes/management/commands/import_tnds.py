@@ -6,9 +6,10 @@ from botocore.errorfactory import ClientError
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 
 from busstops.models import DataSource
+
+from ...utils import log_time_taken
 
 
 class Command(BaseCommand):
@@ -100,8 +101,7 @@ class Command(BaseCommand):
 
         for file, source in self.changed_files:
             logger.info(file.name)
-            before = timezone.now()
-            call_command("import_transxchange", file)
-            logger.info(timezone.now() - before)
+            with log_time_taken(logger):
+                call_command("import_transxchange", file)
 
             source.save(update_fields=["sha1"])

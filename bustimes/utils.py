@@ -1,3 +1,4 @@
+from datetime import datetime
 from difflib import Differ
 
 from django.db.models import OuterRef, Q
@@ -6,6 +7,17 @@ from sql_util.utils import Exists
 from .models import BankHolidayDate, Calendar, CalendarBankHoliday, CalendarDate
 
 differ = Differ(charjunk=lambda _: True)
+
+
+class log_time_taken:
+    def __init__(self, logger):
+        self.logger = logger
+
+    def __enter__(self):
+        self.start = datetime.now()
+
+    def __exit__(self, _, __, ___):
+        self.logger.info(f"  ⏱️ {datetime.now() - self.start}")
 
 
 def get_routes(routes, when=None, from_date=None):

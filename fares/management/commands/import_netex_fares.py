@@ -15,6 +15,7 @@ from psycopg2.extras import DateTimeTZRange
 from sql_util.utils import Exists
 
 from busstops.models import Operator, Service
+from bustimes.utils import log_time_taken
 
 from ... import models
 
@@ -545,34 +546,33 @@ class Command(BaseCommand):
             dataset.tariff_set.all().delete()
 
         logger.info(dataset)
-        start_time = datetime.now()
 
-        try:
-            dataset.operators.set(item["noc"])
-        except IntegrityError:
-            logger.warning(item["noc"])
+        with log_time_taken(logger):
 
-        response = self.session.get(download_url, stream=True)
-
-        self.user_profiles = {}
-        self.sales_offer_packages = {}
-        self.fare_products = {}
-
-        if response.headers["Content-Type"] == "text/xml":
-            # maybe not fully RFC 6266 compliant
-            filename = response.headers["Content-Disposition"].split("filename", 1)[1][
-                2:-1
-            ]
-            self.handle_file(dataset, response.raw, filename)
-        else:
-            assert response.headers["Content-Type"] == "application/zip"
             try:
-                self.handle_archive(dataset, io.BytesIO(response.content))
-            except (KeyError, DataError):
-                # don't update timestamp field, try re-importing next time
-                return dataset
+                dataset.operators.set(item["noc"])
+            except IntegrityError:
+                logger.warning(item["noc"])
 
-        logger.info(f"  ⏱️ {datetime.now() - start_time}")
+            response = self.session.get(download_url, stream=True)
+
+            self.user_profiles = {}
+            self.sales_offer_packages = {}
+            self.fare_products = {}
+
+            if response.headers["Content-Type"] == "text/xml":
+                # maybe not fully RFC 6266 compliant
+                filename = response.headers["Content-Disposition"].split("filename", 1)[
+                    1
+                ][2:-1]
+                self.handle_file(dataset, response.raw, filename)
+            else:
+                assert response.headers["Content-Type"] == "application/zip"
+                try:
+                    self.handle_archive(dataset, io.BytesIO(response.content))
+                except (KeyError, DataError):
+                    # don't update timestamp field, try re-importing next time
+                    return dataset
 
         dataset.datetime = modified
         dataset.save(update_fields=["datetime"])
@@ -595,8 +595,6 @@ class Command(BaseCommand):
         if response.status_code == 304:
             return dataset
 
-        start_time = datetime.now()
-
         last_modified = response.headers["last-modified"]
         last_modified = parse_http_date(last_modified)
         last_modified = datetime.fromtimestamp(last_modified, timezone.utc)
@@ -604,17 +602,17 @@ class Command(BaseCommand):
         if dataset.datetime == last_modified:
             return dataset
 
-        dataset.tariff_set.all().delete()
-
         logger.info(download_url)
 
-        self.user_profiles = {}
-        self.sales_offer_packages = {}
-        self.fare_products = {}
+        with log_time_taken(logger):
 
-        self.handle_archive(dataset, io.BytesIO(response.content))
+            dataset.tariff_set.all().delete()
 
-        logger.info(f"  ⏱️ {datetime.now() - start_time}")
+            self.user_profiles = {}
+            self.sales_offer_packages = {}
+            self.fare_products = {}
+
+            self.handle_archive(dataset, io.BytesIO(response.content))
 
         dataset.datetime = last_modified
         dataset.save(update_fields=["datetime"])

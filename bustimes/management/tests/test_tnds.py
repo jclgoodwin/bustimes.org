@@ -55,11 +55,11 @@ class TNDSTest(TestCase):
             cm.output,
             [
                 "INFO:bustimes.management.commands.import_tnds:IOM.zip",
-                "INFO:bustimes.management.commands.import_tnds:0:00:00",
+                "INFO:bustimes.management.commands.import_tnds:  ⏱️ 0:00:00",
                 "INFO:bustimes.management.commands.import_tnds:EA.zip",
-                "INFO:bustimes.management.commands.import_tnds:0:00:00",
+                "INFO:bustimes.management.commands.import_tnds:  ⏱️ 0:00:00",
                 "INFO:bustimes.management.commands.import_tnds:EM.zip",
-                "INFO:bustimes.management.commands.import_tnds:0:00:00",
+                "INFO:bustimes.management.commands.import_tnds:  ⏱️ 0:00:00",
             ],
         )
 

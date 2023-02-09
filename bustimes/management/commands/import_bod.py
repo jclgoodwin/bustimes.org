@@ -21,6 +21,7 @@ from busstops.models import DataSource, Operator, Service
 
 from ...download_utils import download, download_if_changed
 from ...models import Route, TimetableDataSource
+from ...utils import log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
 
 logger = logging.getLogger(__name__)
@@ -235,14 +236,16 @@ def bus_open_data(api_key, specific_operator):
 
                 command.source.datetime = dataset["modified"]
 
-                download(path, command.source.url)
+                with log_time_taken(logger):
 
-                handle_file(command, path)
+                    download(path, command.source.url)
 
-                command.mark_old_services_as_not_current()
+                    handle_file(command, path)
 
-                command.source.sha1 = get_sha1(path)
-                command.source.save()
+                    command.mark_old_services_as_not_current()
+
+                    command.source.sha1 = get_sha1(path)
+                    command.source.save()
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
@@ -342,19 +345,17 @@ def ticketer(specific_operator=None):
                 # for "end date is in the past" warnings
                 command.source.datetime = timezone.now()
 
-                handle_file(command, path)
+                with log_time_taken(logger):
 
-                command.mark_old_services_as_not_current()
+                    handle_file(command, path)
 
-                nocs = list(source.operators.values_list("noc", flat=True))
+                    command.mark_old_services_as_not_current()
 
-                clean_up(nocs, [command.source])
+                    nocs = list(source.operators.values_list("noc", flat=True))
 
-                command.finish_services()
+                    clean_up(nocs, [command.source])
 
-                logger.info(
-                    f"  ⏱️ {timezone.now() - command.source.datetime}"
-                )  # log time taken
+                    command.finish_services()
 
             command.source.sha1 = sha1
             command.source.datetime = last_modified
@@ -376,11 +377,11 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
     # avoid importing old data
     command.source.datetime = timezone.now()
 
-    handle_file(command, filename)
+    with log_time_taken(logger):
 
-    command.mark_old_services_as_not_current()
+        handle_file(command, filename)
 
-    logger.info(f"  ⏱️ {timezone.now() - command.source.datetime}")  # log time taken
+        command.mark_old_services_as_not_current()
 
     command.source.datetime = last_modified
     command.source.save()
