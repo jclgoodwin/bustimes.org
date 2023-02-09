@@ -25,3 +25,18 @@ def cache_control_s_maxage(max_age):
         return _cache_controlled
 
     return _cache_controller
+
+
+def stale_if_error(max_age):
+    def _cache_controller(viewfunc):
+        @wraps(viewfunc)
+        def _cache_controlled(request, *args, **kw):
+            response = viewfunc(request, *args, **kw)
+            # if not logged in
+            if request.user.is_anonymous:
+                patch_cache_control(response, stale_if_error=max_age)
+            return response
+
+        return _cache_controlled
+
+    return _cache_controller

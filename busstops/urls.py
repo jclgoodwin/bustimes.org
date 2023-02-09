@@ -4,7 +4,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
 from django.views.generic.base import TemplateView
 
-from buses.utils import cache_control_s_maxage
+from buses.utils import cache_control_s_maxage, stale_if_error
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
 from fares import mytrip
@@ -23,7 +23,9 @@ sitemaps = {
 urlpatterns = [
     path(
         "",
-        cache_control_s_maxage(3600)(TemplateView.as_view(template_name="index.html")),
+        cache_control_s_maxage(3600)(
+            stale_if_error(3600)(TemplateView.as_view(template_name="index.html"))
+        ),
     ),
     path("offline", TemplateView.as_view(template_name="offline.html")),
     path("version", views.version),
@@ -38,7 +40,7 @@ urlpatterns = [
     path("stops.json", views.stops_json),
     path(
         "regions/<pk>",
-        views.RegionDetailView.as_view(),
+        stale_if_error(3600)(views.RegionDetailView.as_view()),
         name="region_detail",
     ),
     path(
@@ -67,7 +69,9 @@ urlpatterns = [
     ),
     path(
         "stops/<pk>",
-        cache_control_s_maxage(60)(views.StopPointDetailView.as_view()),
+        cache_control_s_maxage(60)(
+            stale_if_error(120)(views.StopPointDetailView.as_view())
+        ),
         name="stoppoint_detail",
     ),
     path("stations/<pk>", views.StopAreaDetailView.as_view(), name="stoparea_detail"),
@@ -78,7 +82,7 @@ urlpatterns = [
     re_path(r"^operators/(?P<pk>[A-Z]+)$", views.OperatorDetailView.as_view()),
     path(
         "operators/<slug>",
-        views.OperatorDetailView.as_view(),
+        stale_if_error(3600)(views.OperatorDetailView.as_view()),
         name="operator_detail",
     ),
     path("operators/<slug>/tickets", mytrip.operator_tickets),
@@ -87,7 +91,7 @@ urlpatterns = [
     path("services/<int:service_id>/timetable", views.service_timetable),
     path(
         "services/<slug>",
-        views.ServiceDetailView.as_view(),
+        stale_if_error(3600)(views.ServiceDetailView.as_view()),
         name="service_detail",
     ),
     path("services/<slug>/fares", fares_views.service_fares),
