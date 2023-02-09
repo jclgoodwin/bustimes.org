@@ -595,6 +595,9 @@ class Grouping:
     def get_garages(self):
         return self.get_column_heads("garage")
 
+    def get_vehicle_types(self):
+        return self.get_column_heads("vehicle_type")
+
     def vehicles_by_date(self):
         journeys = (
             Trip.vehiclejourney_set.field.model.objects.filter(trip__in=self.trips)

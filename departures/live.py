@@ -47,8 +47,6 @@ class RemoteDepartures(Departures):
                 else:
                     self.services_by_name[line_name] = service
 
-        print(self.services_by_name)
-
         for line_name in duplicate_names:
             del self.services_by_name[line_name]
 

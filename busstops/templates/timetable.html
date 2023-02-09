@@ -85,8 +85,8 @@
                                 {% if timetable.has_vehicle_types %}
                                     <tr>
                                         <th scope="col">Vehicle type</th>
-                                        {% for trip in grouping.trips %}
-                                            <td>{{ trip.vehicle_type }}</td>
+                                        {% for head in grouping.get_vehicle_types %}
+                                            {{ head.get_html }}
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
@@ -100,9 +100,17 @@
                                 {% endif %}
                                 {% if timetable.has_ticket_machine_codes %}
                                     <tr>
-                                        <th scope="col">Code</th>
+                                        <th scope="col">Ticket machine code</th>
                                         {% for trip in grouping.trips %}
                                             <td>{{ trip.ticket_machine_code }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                {% endif %}
+                                {% if timetable.has_vehicle_journey_codes %}
+                                    <tr>
+                                        <th scope="col">Vehicle journey code</th>
+                                        {% for trip in grouping.trips %}
+                                            <td>{{ trip.vehicle_journey_code }}</td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}

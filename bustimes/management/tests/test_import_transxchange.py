@@ -919,6 +919,15 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, '">1554</a>')  # block number
         self.assertContains(response, "<td>Barnstaple</td>")  # garage
 
+        # combined timetable
+        response = self.client.get(
+            f"{service.get_absolute_url()}?service={route_1.service_id}&detailed=true"
+        )
+        self.assertContains(response, '<td colspan="2">Barnstaple</td>')  # garage
+        self.assertContains(response, '">904<')  # service
+        self.assertContains(response, '<td colspan="2">LFDD</td>')  # vehicle type
+        self.assertContains(response, "<td>LFDD</td>")
+
     @time_machine.travel("2021-07-07")
     def test_confusing_start_date(self):
         with self.assertLogs(
