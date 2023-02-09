@@ -24,7 +24,7 @@ class Command(BaseCommand):
         files = [
             (name, details)
             for name, details in self.ftp.mlsd()
-            if name.endswith(".zip")
+            if name.endswith(".zip") and name != "L.zip"
         ]
         files.sort(key=lambda item: int(item[1]["size"]))  # smallest files first
         return {name: details for name, details in files}

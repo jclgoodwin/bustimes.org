@@ -94,7 +94,7 @@
 {% for trip in route.trip_set.all %}
 <tr style="vertical-align:top">
     <td>{% if trip.sequence %}{{ trip.sequence }}{% endif %}</td>
-    <td>{% if trip.block %}<a href="{{ trip.get_absolute_url }}/block">{{ trip.block }}</a>{% endif %}</td>
+    <td class="link">{% if trip.block %}<a href="{{ trip.get_absolute_url }}/block">{{ trip.block }}</a>{% endif %}</td>
     <td>{{ trip.ticket_machine_code }}</td>
     <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
     <td class="link"><a href="{{ trip.get_absolute_url }}">{{ trip.start_time }}</a></td>
@@ -114,6 +114,9 @@
         </td>
     {% endif %}
     <td>{% if trip.garage %}{{ trip.garage }}{% endif %}</td>
+    <td class="link">
+        <a href="{% url 'admin:bustimes_trip_change' trip.pk %}">✎</a>
+    </td>
 </tr>
 {% endfor %}
 </tbody>
