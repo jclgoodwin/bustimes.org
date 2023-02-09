@@ -1533,6 +1533,7 @@ input:not(:checked) + label {
     display: flex;
     flex-wrap: wrap;
     column-gap: 2em;
+    row-gap: 1em;
     word-wrap: break-word;
 
     dd {
