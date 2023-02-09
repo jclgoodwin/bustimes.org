@@ -298,6 +298,39 @@ class AcisHorizonDepartures(RemoteDepartures):
             return row
 
 
+class NorfolkDepartures(RemoteDepartures):
+    request_url = "https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable"
+
+    def get_request_params(self):
+        return {
+            "format": "",
+            "stopId": "NaPTAN_" + self.stop.atco_code,
+            "stopIdType": "native",
+            "queryAtTime": int(self.now.timestamp()),
+        }
+
+    def departures_from_response(self, res):
+        departures = []
+        res = res.json()["r"]
+        for i in range(0, int(len(res[1]) / 11))[:12]:
+            item = res[1][i * 11 : (i + 1) * 11]
+            time = datetime.datetime.fromtimestamp(int(item[3]), timezone.utc)
+            live = item[4]
+            if live:
+                live = datetime.datetime.fromtimestamp(int(live), timezone.utc)
+            if not live or time < self.now and live < self.now:
+                continue
+            departures.append(
+                {
+                    "time": time,
+                    "live": live,
+                    "service": self.get_service(item[2]),
+                    "destination": item[6],
+                }
+            )
+        return departures
+
+
 class TimetableDepartures(Departures):
     def get_row(self, stop_time, date):
         trip = stop_time.trip
@@ -677,6 +710,9 @@ def get_departures(stop, services, when) -> dict:
 
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
+
+            elif stop.atco_code[:3] == "290":
+                live_rows = NorfolkDepartures(stop, services, now).get_departures()
 
             if live_rows:
                 blend(departures, live_rows)
