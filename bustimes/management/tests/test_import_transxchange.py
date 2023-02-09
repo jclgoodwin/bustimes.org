@@ -345,7 +345,10 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(
             cm.output,
             [
-                "WARNING:bustimes.management.commands.import_transxchange:90079682980 090079682980"
+                "WARNING:bustimes.management.commands.import_transxchange:"
+                "90079682980 090079682980",
+                "WARNING:bustimes.management.commands.import_transxchange:"
+                "{'NationalOperatorCode': 'SCMB', 'OperatorCode': 'SCC', 'OperatorShortName': 'SCC'}",
             ],
         )
 
@@ -386,11 +389,14 @@ class ImportTransXChangeTest(TestCase):
             "bustimes.management.commands.import_transxchange", "WARNING"
         ) as cm:
             self.handle_files("EA.zip", ["lincs_DELA_101_13101_.xml"])
+        prefix = "WARNING:bustimes.management.commands.import_transxchange"
         self.assertEqual(
             cm.output,
             [
-                "WARNING:bustimes.management.commands.import_transxchange:2021-04-19 to 2021-05-28 is 39 days long",
-                "WARNING:bustimes.management.commands.import_transxchange:2021-06-07 to 2021-07-21 is 44 days long",
+                prefix
+                + ":{'NationalOperatorCode': 'DELA', 'OperatorCode': 'DELA', 'OperatorShortName': 'Delaine Buses'}",
+                prefix + ":2021-04-19 to 2021-05-28 is 39 days long",
+                prefix + ":2021-06-07 to 2021-07-21 is 44 days long",
             ],
         )
 

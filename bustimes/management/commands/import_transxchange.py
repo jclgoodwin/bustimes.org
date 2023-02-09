@@ -118,6 +118,7 @@ def get_operator_name(operator_element):
 
 @cache
 def get_operator_by(scheme, code):
+    assert scheme
     if code:
         try:
             return (
@@ -274,7 +275,8 @@ class Command(BaseCommand):
             if operator_code.startswith("Rail"):
                 operator_code = operator_code.removeprefix("Rail")
 
-            operator = get_operator_by(self.region_id, operator_code)
+            if self.region_id:
+                operator = get_operator_by(self.region_id, operator_code)
             if not operator:
                 operator = get_operator_by("National Operator Codes", operator_code)
             if operator:
@@ -790,8 +792,8 @@ class Command(BaseCommand):
                 ],
                 batch_size=1000,
             )
-            Trip.notes.through.objects.filter(trip__route=route).delete()
-            StopTime.objects.filter(trip__route=route).delete()
+            Trip.notes.through.objects.filter(trip__in=existing_trips).delete(),
+            StopTime.objects.filter(trip__in=existing_trips).delete()
         else:
             Trip.objects.bulk_create(trips, batch_size=1000)
 
