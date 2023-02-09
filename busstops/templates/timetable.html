@@ -93,8 +93,8 @@
                                 {% if timetable.has_garages %}
                                     <tr>
                                         <th scope="col">Garage</th>
-                                        {% for trip in grouping.trips %}
-                                            <td>{{ trip.garage }}</td>
+                                        {% for head in grouping.get_garages %}
+                                            {{ head.get_html }}
                                         {% endfor %}
                                     </tr>
                                 {% endif %}

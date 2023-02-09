@@ -6,6 +6,7 @@ from functools import cached_property, cmp_to_key, partial
 
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Prefetch, Q
+from django.utils.html import format_html
 from django.utils.timezone import localdate
 from sql_util.utils import Exists
 
@@ -358,6 +359,10 @@ class Timetable:
     def has_ticket_machine_codes(self) -> bool:
         return self.any_trip_has("ticket_machine_code")
 
+    @cached_property
+    def has_vehicle_journey_codes(self) -> bool:
+        return self.any_trip_has("vehicle_journey_code")
+
     def get_calendar_options(self, calendar_id):
         all_days = set()
         for calendar in self.calendars:
@@ -567,12 +572,28 @@ class Grouping:
 
     def get_operators(self):
         operators = {o.noc: o for o in self.parent.operators}
-        noc = self.trips[0].operator_id
-        if all(trip.operator_id == noc for trip in self.trips[1:]):
-            yield ColumnHead(operators.get(noc, noc), len(self.trips))
-        else:
-            for trip in self.trips:
-                yield ColumnHead(trip.operator_id, 1)
+
+        for head in self.get_column_heads("operator_id"):
+            head.content = operators.get(head.content, "")
+            yield head
+
+    def get_column_heads(self, key):
+        prev_value = getattr(self.trips[0], key)
+        head = ColumnHead(prev_value, 1)
+
+        for trip in self.trips[1:]:
+            value = getattr(trip, key)
+            if value == prev_value:
+                head.span += 1
+            else:
+                yield head
+                head = ColumnHead(value, 1)
+            prev_value = value
+
+        yield head
+
+    def get_garages(self):
+        return self.get_column_heads("garage")
 
     def vehicles_by_date(self):
         journeys = (
@@ -901,6 +922,11 @@ class ColumnHead:
     def __init__(self, content, span: int):
         self.content = content
         self.span = span
+
+    def get_html(self):
+        if self.span > 1:
+            return format_html("""<td colspan="{}">{}</td>""", self.span, self.content)
+        return format_html("""<td>{}</td>""", self.content)
 
 
 class ColumnFoot:
