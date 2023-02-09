@@ -282,8 +282,6 @@ def bus_open_data(api_key, specific_operator):
             logger.info(to_delete)
             logger.info(to_delete.delete())
 
-    command.debrief()
-
 
 def ticketer(specific_operator=None):
     command = get_command()
@@ -367,8 +365,6 @@ def ticketer(specific_operator=None):
             logger.info(f"  {get_operator_ids(command.source)}")
         else:
             need_to_sleep = True
-
-    command.debrief()
 
 
 def do_stagecoach_source(command, last_modified, filename, nocs):
@@ -455,8 +451,6 @@ def stagecoach(specific_operator=None):
 
         clean_up(nocs, sources)
         command.finish_services()
-
-    command.debrief()
 
 
 class Command(BaseCommand):

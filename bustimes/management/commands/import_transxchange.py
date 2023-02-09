@@ -204,15 +204,6 @@ class Command(BaseCommand):
         for archive_name in options["archives"]:
             self.handle_archive(archive_name, options["files"])
 
-        self.debrief()
-
-    def debrief(self):
-        """
-        Log the names of any undefined public holiday names, and operators that couldn't be found
-        """
-        for operator in self.missing_operators:
-            logger.warning(str(operator))
-
     def set_region(self, archive_name):
         """
         Set region_id and source based on the name of the TNDS archive, creating a DataSource if necessary
@@ -295,6 +286,7 @@ class Command(BaseCommand):
             if element.text
         }
         if missing_operator not in self.missing_operators:
+            logger.warning(str(missing_operator))
             self.missing_operators.append(missing_operator)
 
     def get_operators(self, transxchange, service) -> dict:

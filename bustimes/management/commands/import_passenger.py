@@ -153,5 +153,3 @@ class Command(BaseCommand):
                 command.finish_services()
 
                 command.source.save()
-
-        command.debrief()
