@@ -998,12 +998,16 @@ class ImportTransXChangeTest(TestCase):
         # """, html=True)
         self.assertEqual(str(res.context_data["timetable"].date), "2017-10-01")
         # self.assertNotContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
-        self.assertEqual(17, len(res.context_data["timetable"].groupings[0].trips))
+        self.assertEqual(18, len(res.context_data["timetable"].groupings[0].trips))
 
-        self.assertContains(res, "Ashton Under Lyne - Glossop")
-        # self.assertContains(res, 'Piccadilly Gardens, Manchester City Centre - Glossop')
-        self.assertContains(res, "Glossop - Ashton Under Lyne")
-        # self.assertContains(res, 'Glossop - Piccadilly Gardens, Manchester City Centre')
+        self.assertContains(
+            res,
+            "Ashton Under Lyne or Piccadilly Gardens, Manchester City Centre - Glossop",
+        )
+        self.assertContains(
+            res,
+            "Glossop - Ashton Under Lyne or Piccadilly Gardens, Manchester City Centre",
+        )
 
         with time_machine.travel("1 October 2017"):
             with self.assertNumQueries(9):
