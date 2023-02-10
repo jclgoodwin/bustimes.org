@@ -512,7 +512,7 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get("/services/904-huntingdon-peterborough")
         self.assertContains(
             response,
-            "The timetable data for this service was valid until Sunday 10 January 2021. But",
+            'Try a previous date like <a href="?date=2021-01-10">Sunday 10 January 2021</a>?',
         )
 
         BankHolidayDate.objects.create(

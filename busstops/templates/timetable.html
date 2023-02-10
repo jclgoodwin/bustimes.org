@@ -167,7 +167,7 @@
         {% endif %}
 
         {% if timetable.expired %}
-            <p>The timetable data for this service was valid until {{ timetable.expired }}. But it might still be valid – try selecting an earlier date</p>
+            <p>Try a previous date like <a href="?date={{ timetable.expired.isoformat }}">{{ timetable.expired }}</a>?</p>
         {% endif %}
 
         {% include 'route.html' %}
