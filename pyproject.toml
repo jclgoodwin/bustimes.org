@@ -53,7 +53,7 @@ django-debug-toolbar = "^3.2.2"
 django-debug-toolbar-force = "^0.1.8"
 django-rich = "^1.4.0"
 ipdb = "^0.13.9"
-ipython = "^8.5.0"
+ipython = "^8.10.0"
 pre-commit = "^2.19.0"
 uritemplate = "^4.1.1"
 
