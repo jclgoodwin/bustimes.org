@@ -72,7 +72,7 @@ class EditVehiclesForm(forms.Form):
         required=False,
     )
     operator = forms.ModelChoiceField(queryset=None, label="Operator", empty_label="")
-    other_vehicle_type = forms.CharField(required=False)
+    other_vehicle_type = forms.CharField(required=False, max_length=50)
     vehicle_type = forms.ModelChoiceField(
         queryset=VehicleType.objects, label="Type", required=False, empty_label=""
     )
@@ -81,12 +81,13 @@ class EditVehiclesForm(forms.Form):
         widget=forms.RadioSelect,
         required=False,
         help_text="""Wait until the bus has been repainted
-(not "in the paint shop" or "awaiting repaint") before updating it here""",
+(<em>not</em> "in the paint shop" or "awaiting repaint") before updating it here""",
     )
     other_colour = forms.CharField(
         label="Other colours",
         help_text="E.g. '#c0c0c0 #ff0000 #ff0000' (red with a silver front)",
         required=False,
+        max_length=255,
     )
     features = forms.ModelMultipleChoiceField(
         queryset=VehicleFeature.objects,
@@ -161,7 +162,7 @@ class EditVehicleForm(EditVehiclesForm):
     branding = forms.CharField(
         label="Other branding",
         required=False,
-        max_length=255,
+        max_length=70,
         help_text="Leave this blank",
     )
     name = forms.CharField(
