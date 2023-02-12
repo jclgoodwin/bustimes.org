@@ -10,7 +10,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
 
-from busstops.models import AdminArea, DataSource, StopArea, StopPoint
+from busstops.models import AdminArea, DataSource, Locality, StopArea, StopPoint
 
 logger = logging.getLogger(__name__)
 
@@ -120,6 +120,11 @@ class Command(BaseCommand):
             active="Status" not in element.attrib
             or element.attrib["Status"] == "active",
         )
+
+        if stop.locality_id not in self.localities:
+            logger.info(f"{atco_code} locality {stop.locality_id} does not exist")
+            stop.locality_id = None
+
         if atco_code.startswith(stop.admin_area_id):
             stop.admin_area = self.admin_areas.get(stop.admin_area_id)
             logger.info(f"{atco_code} {stop.admin_area}")
@@ -226,6 +231,9 @@ class Command(BaseCommand):
         self.admin_areas = {
             admin_area.atco_code: admin_area for admin_area in AdminArea.objects.all()
         }
+        self.localities = set(
+            locality["pk"] for locality in Locality.objects.values("pk")
+        )
         atco_code_prefix = None
 
         iterator = ET.iterparse(path, events=["start", "end"])
