@@ -169,17 +169,17 @@ def get_calendars(when, calendar_ids=None):
 
 def get_descriptions(routes):
     inbound_outbound_descriptions = {
-        (route.outbound_description, route.inbound_description)
+        (route.outbound_description, route.inbound_description): None
         for route in routes
         if route.outbound_description != route.inbound_description
-    }
+    }.keys()
 
     origins_and_destinations = list(
         {
-            tuple(filter(None, [route.origin, route.via, route.destination]))
+            tuple(filter(None, [route.origin, route.via, route.destination])): None
             for route in routes
             if route.origin and route.destination
-        }
+        }.keys()
     )
 
     if len(origins_and_destinations) > 1:
