@@ -86,7 +86,7 @@
         {% for vehicle in vehicles %}
             <tr>
                 {% if form %}
-                    <td>{% if vehicle.notes != 'Spare ticket machine' %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
+                    <td>{% if not vehicle.is_spare_ticket_machine %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
                 {% endif %}
                 {% if not vehicle.fleet_code and not vehicle.fleet_number and not vehicle.reg %}
                     <td colspan="2">
@@ -110,7 +110,7 @@
                         {{ vehicle.last_seen.when|date:"j M H:i" }}
                     {% endif %}
                 </td>{% endif %}
-                <td>{% if vehicle.notes == 'Spare ticket machine' %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
+                <td>{% if vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
                 <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}{% if branding_column %}{% if not vehicle.branding or vehicle.branding == 'None' %} colspan="2"{% endif %}{% endif %}>
                     {% if vehicle.colours == 'Other' %}
                         {{ vehicle.colours }}
@@ -121,7 +121,7 @@
                 </td>
                 {% if vehicle.branding and vehicle.branding != 'None' %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
-                {% if notes_column %}<td class="trivia">{% if vehicle.notes != 'Spare ticket machine' %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
+                {% if notes_column %}<td class="trivia">{% if not vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
                 {% if garage_column %}<td class="trivia">{% firstof vehicle.garage_name  '' %}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}

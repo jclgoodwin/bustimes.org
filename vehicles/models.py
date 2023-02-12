@@ -273,6 +273,18 @@ class Vehicle(models.Model):
         "bustimes.Garage", models.SET_NULL, null=True, blank=True
     )
 
+    def is_spare_ticket_machine(self) -> bool:
+        return self.notes == "Spare ticket machine"
+
+    def is_editable(self) -> bool:
+        if (
+            self.is_spare_ticket_machine()
+            and not self.livery_id
+            and not self.vehicle_type_id
+        ):
+            return False
+        return True
+
     def save(self, *args, update_fields=None, **kwargs):
         if (
             update_fields is None or "fleet_number" in update_fields
@@ -411,7 +423,7 @@ class Vehicle(models.Model):
         )
 
     def get_flickr_link(self):
-        if self.notes == "Spare ticket machine":
+        if self.is_spare_ticket_machine():
             return ""
         return format_html(
             '<a href="{}" target="_blank" rel="noopener">Flickr</a>',

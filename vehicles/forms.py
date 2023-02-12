@@ -215,6 +215,9 @@ class EditVehicleForm(EditVehiclesForm):
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
 
+        if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
+            self.fields["spare_ticket_machine"].disabled = True
+
         if not user.is_staff and vehicle.fleet_code:
             if vehicle.fleet_code in re.split(r"\W+", vehicle.code):
                 self.fields["fleet_number"].disabled = True
@@ -261,7 +264,7 @@ can’t be contradicted"""
         ):
             del self.fields["branding"]
 
-        if vehicle.notes == "Spare ticket machine":
+        if vehicle.is_spare_ticket_machine():
             del self.fields["notes"]
             if not vehicle.fleet_code:
                 del self.fields["fleet_number"]

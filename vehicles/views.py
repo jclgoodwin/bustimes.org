@@ -297,7 +297,7 @@ def operator_vehicles(request, slug=None, parent=None):
         ),
         "name_column": any(vehicle.name for vehicle in vehicles),
         "notes_column": any(
-            vehicle.notes and vehicle.notes != "Spare ticket machine"
+            vehicle.notes and not vehicle.is_spare_ticket_machine()
             for vehicle in vehicles
         ),
         "garage_column": any(vehicle.garage_name for vehicle in vehicles),
@@ -745,6 +745,9 @@ def edit_vehicle(request, **kwargs):
         **kwargs,
     )
 
+    if vehicle.is_spare_ticket_machine() and not vehicle.vehicle_type:
+        raise Http404
+
     context = {}
     revision = None
     initial = {
@@ -759,7 +762,7 @@ def edit_vehicle(request, **kwargs):
         "previous_reg": vehicle.data and vehicle.data.get("Previous reg") or None,
         "notes": vehicle.notes,
         "withdrawn": vehicle.withdrawn,
-        "spare_ticket_machine": vehicle.notes == "Spare ticket machine",
+        "spare_ticket_machine": vehicle.is_spare_ticket_machine(),
     }
     if vehicle.fleet_code:
         initial["fleet_number"] = vehicle.fleet_code

@@ -110,7 +110,7 @@ class VehiclesTests(TestCase):
             is_staff=True,
             is_superuser=True,
             email="j@example.com",
-            date_joined="2020-01-01",
+            date_joined="2020-10-19 23:47+00:00",
         )
         cls.trusted_user = User.objects.create(
             username="norma", trusted=True, email="n@example.com"
@@ -119,7 +119,7 @@ class VehiclesTests(TestCase):
             username="ken",
             trusted=None,
             email="ken@example.com",
-            date_joined="2020-01-01",
+            date_joined="2020-10-19 23:47+00:00",
         )
         cls.untrusted_user = User.objects.create(
             username="clem", trusted=False, email="c@example.com"
@@ -268,7 +268,8 @@ class VehiclesTests(TestCase):
 
         # spare ticket machine should disable form fields
         response = self.client.get(self.vehicle_1.get_edit_url())
-        self.assertNotContains(response, "previous_reg")
+        self.assertEqual(404, response.status_code)
+        # self.assertNotContains(response, "previous_reg")
 
         response = self.client.get("/operators/lynx/vehicles/edit")
         self.assertContains(response, "<td>Spare ticket machine</td>")
