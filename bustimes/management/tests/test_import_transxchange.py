@@ -1002,11 +1002,11 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertContains(
             res,
-            "Ashton Under Lyne or Piccadilly Gardens, Manchester City Centre - Glossop",
+            "Piccadilly Gardens, Manchester City Centre or Ashton Under Lyne - Glossop",
         )
         self.assertContains(
             res,
-            "Glossop - Ashton Under Lyne or Piccadilly Gardens, Manchester City Centre",
+            "Glossop - Piccadilly Gardens, Manchester City Centre or Ashton Under Lyne",
         )
 
         with time_machine.travel("1 October 2017"):

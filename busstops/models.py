@@ -943,7 +943,7 @@ class Service(models.Model):
             return timetable
 
         if self.region_id == "NI" or self.source and self.source.name.endswith(" GTFS"):
-            timetable = Timetable(self.route_set.all(), day, calendar_id=calendar_id)
+            timetable = Timetable(self.route_set, day, calendar_id=calendar_id)
         else:
             if also_services:
                 routes = Route.objects.filter(service__in=[self] + also_services)
@@ -952,7 +952,7 @@ class Service(models.Model):
             operators = self.operator.all()
             try:
                 timetable = Timetable(
-                    routes.order_by("start_date"),
+                    routes,
                     day,
                     calendar_id=calendar_id,
                     detailed=detailed,

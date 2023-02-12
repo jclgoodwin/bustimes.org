@@ -30,11 +30,6 @@
         <p>{{ ou.operator }} expert</p>
     {% endfor %}
 
-    {% if object.trusted is not False %}
-        <p>{% if object.trusted %}They appear to be trustworthy, so they have the power to edit some bits of information without moderation.
-        If you disagree{% else %}If you notice any vandalism etc{% endif %}, please <a href="/contact?message=User+{{ object.id }}">let us know</a>.</p>
-    {% endif %}
-
     <ul class="tabs">
         <li>Recent changes</li>
         <li><a href="/vehicles/edits?user={{ object.id }}">Pending edits</a></li>
