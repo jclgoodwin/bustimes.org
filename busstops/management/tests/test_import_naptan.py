@@ -28,7 +28,7 @@ class NaptanTest(TestCase):
             id=92, atco_code="320", name="North Yorkshire", region_id="EA"
         )
         Locality.objects.create(id="E0017763", name="Old Catton", admin_area_id=91)
-        Locality.objects.create(id="E0017806", name="Berney Arms", admin_area_id=91)
+        # Locality.objects.create(id="E0017806", name="Berney Arms", admin_area_id=91)
         Locality.objects.create(id="N0078629", name="Neasham Road", admin_area_id=15)
         Locality.objects.create(id="E0048995", name="Great Ayton", admin_area_id=92)
         Locality.objects.create(id="E0048637", name="Briningham", admin_area_id=91)
@@ -46,7 +46,7 @@ class NaptanTest(TestCase):
 
                     self.assertFalse((temp_dir_path / "naptan.xml").exists())
 
-                    with self.assertNumQueries(23):
+                    with self.assertNumQueries(24):
                         call_command("naptan_new")
 
                     source = DataSource.objects.get(name="NaPTAN")
@@ -56,12 +56,12 @@ class NaptanTest(TestCase):
 
                     cassette.rewind()
 
-                    with self.assertNumQueries(2):
+                    with self.assertNumQueries(3):
                         call_command("naptan_new")
 
                     cassette.rewind()
 
-                    with self.assertNumQueries(2):
+                    with self.assertNumQueries(3):
                         call_command("naptan_new")
 
                     source = DataSource.objects.get(name="NaPTAN")

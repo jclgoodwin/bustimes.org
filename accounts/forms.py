@@ -1,7 +1,6 @@
-from django.forms import EmailField, EmailInput, Form, NullBooleanField
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
-
+from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.forms import EmailField, EmailInput, Form, NullBooleanField
 
 UserModel = get_user_model()
 
@@ -20,6 +19,10 @@ class RegistrationForm(PasswordResetForm):
             self.user = UserModel.objects.create_user(
                 self.cleaned_data["email"], self.cleaned_data["email"]
             )
+
+        if request and (ip_address := request.headers.get("do-connecting-ip")):
+            self.user.ip_address = ip_address
+            self.user.save(update_fields=["ip_address"])
 
         super().save(
             request=request,

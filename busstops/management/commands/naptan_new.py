@@ -121,8 +121,8 @@ class Command(BaseCommand):
             or element.attrib["Status"] == "active",
         )
 
-        if stop.locality_id not in self.localities:
-            logger.info(f"{atco_code} locality {stop.locality_id} does not exist")
+        if stop.locality_id and stop.locality_id not in self.localities:
+            logger.warning(f"{atco_code} locality {stop.locality_id} does not exist")
             stop.locality_id = None
 
         if atco_code.startswith(stop.admin_area_id):
@@ -229,10 +229,11 @@ class Command(BaseCommand):
         self.stops_to_create = []
         self.stops_to_update = []
         self.admin_areas = {
-            admin_area.atco_code: admin_area for admin_area in AdminArea.objects.all()
+            admin_area.atco_code: admin_area
+            for admin_area in AdminArea.objects.order_by()
         }
         self.localities = set(
-            locality["pk"] for locality in Locality.objects.values("pk")
+            locality["pk"] for locality in Locality.objects.values("pk").order_by()
         )
         atco_code_prefix = None
 
@@ -261,6 +262,7 @@ class Command(BaseCommand):
                     self.existing_stops = (
                         StopPoint.objects.only("atco_code", "modified_at")
                         .filter(atco_code__startswith=atco_code_prefix)
+                        .order_by()
                         .in_bulk()
                     )
 
