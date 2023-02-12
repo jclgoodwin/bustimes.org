@@ -26,14 +26,15 @@
 
 {% block head %}{% endblock %}
 
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-65987478-1"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X2Z0KM7Z5C"></script>
 <script>
-window['gtag_enable_tcf_support'] = true;
+window.gtag_enable_tcf_support = true;
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'UA-65987478-1');
+
+gtag('config', 'G-X2Z0KM7Z5C');
 </script>
 
 {% block fuse %}{% if not user.is_authenticated %}<script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>{% endif %}{% endblock %}
