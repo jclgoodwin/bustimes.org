@@ -148,6 +148,9 @@ class Command(ImportLiveVehiclesCommand):
         except (KeyError, TypeError):
             vehicle_unique_id = None
 
+        if not vehicle_ref and vehicle_unique_id:
+            vehicle_ref = vehicle_unique_id
+
         if (
             not vehicle_ref.isdigit()
             and vehicle_ref.isupper()

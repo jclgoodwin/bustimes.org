@@ -1062,7 +1062,7 @@ table {
 
 .wrap {
     white-space: normal;
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
 td {
@@ -1372,7 +1372,7 @@ input:not(:checked) + label {
 .credit {
     clear: both;
     font-size: .875em;
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
 }
 
 .aside {
@@ -1534,7 +1534,7 @@ input:not(:checked) + label {
     flex-wrap: wrap;
     column-gap: 2em;
     row-gap: 1em;
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
 
     dd {
         margin: 0;

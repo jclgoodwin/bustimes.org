@@ -55,6 +55,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "csp.middleware.CSPMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "busstops.middleware.WhiteNoiseWithFallbackMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -62,14 +63,27 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "beeline.middleware.django.HoneyMiddleware",
+    # "beeline.middleware.django.HoneyMiddleware",
 ]
 
 # Stadia Maps tiles require we send at least the origin in cross-origin requests.
 # For same-origin requests, the full referrer is useful (e.g. for the contact form)
 SECURE_REFERRER_POLICY = "origin-when-cross-origin"
 
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_HSTS_SECONDS = 3600
+
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
+
+CSP_IMG_SRC = ["'self'", "https:", "data:"]
+CSP_SCRIPT_SRC_ELEM = [
+    "'self'",
+    "'unsafe-inline'",
+    "https:",
+]
+CSP_CONNECT_SRC = ["'self'", "https:"]
+CSP_STYLE_SRC = ["'self'", "'unsafe-inline'"]
+CSP_FRAME_SRC = ["https:"]
 
 if DEBUG and "runserver" in sys.argv:
     INSTALLED_APPS.append("debug_toolbar")
