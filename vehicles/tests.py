@@ -106,13 +106,20 @@ class VehiclesTests(TestCase):
         cls.vehicle_1.features.set([cls.wifi])
 
         cls.staff_user = User.objects.create(
-            username="josh", is_staff=True, is_superuser=True, email="j@example.com"
+            username="josh",
+            is_staff=True,
+            is_superuser=True,
+            email="j@example.com",
+            date_joined="2020-01-01",
         )
         cls.trusted_user = User.objects.create(
             username="norma", trusted=True, email="n@example.com"
         )
         cls.user = User.objects.create(
-            username="ken", trusted=None, email="ken@example.com"
+            username="ken",
+            trusted=None,
+            email="ken@example.com",
+            date_joined="2020-01-01",
         )
         cls.untrusted_user = User.objects.create(
             username="clem", trusted=False, email="c@example.com"

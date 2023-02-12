@@ -10,10 +10,10 @@
 
 <h1>Forbidden</h1>
 
-{% if exception.args %}
+{% if exception %}
     <p>{{ exception }}</p>
 {% else %}
-    <p>Sorry, you don’t have permission to see this page. <a href="/contact">Let us know</a> if you think this is a mistake.</p>
+    <p>Sorry, you don’t have permission to see this page. Don’t worry, you’re not missing much.</p>
 {% endif %}
 
 <form method="get" action="/search" class="search">

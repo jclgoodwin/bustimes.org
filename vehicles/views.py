@@ -181,8 +181,7 @@ def operator_vehicles(request, slug=None, parent=None):
         if not request.user.is_authenticated:
             return redirect(f"/accounts/login/?next={request.path}")
 
-        if request.user.trusted is False:
-            raise PermissionDenied
+        check_user(request)
 
         context["breadcrumb"].append(Vehicles(operator))
         initial = {
@@ -713,10 +712,31 @@ class VehicleDetailView(DetailView):
         return context
 
 
-@login_required
-def edit_vehicle(request, **kwargs):
+def record_ip_address(request):
+    ip_address = request.headers.get("do-connecting-ip")
+    if request.user.ip_address != ip_address:
+        request.user.ip_address = ip_address
+        request.user.save(update_fields=["ip_address"])
+
+
+def check_user(request):
     if request.user.trusted is False:
         raise PermissionDenied
+
+    if (
+        not request.user.trusted
+        and timezone.now() - request.user.date_joined < datetime.timedelta(hours=1)
+        and request.user.vehicleedit_set.filter(~Q(approved=True)).count() > 10
+    ):
+        raise PermissionDenied(
+            "As your account is so new, you must wait a bit before editing any more vehicles "
+        )
+
+
+@login_required
+def edit_vehicle(request, **kwargs):
+    record_ip_address(request)
+    check_user(request)
 
     vehicle = get_object_or_404(
         Vehicle.objects.select_related(
@@ -724,11 +744,6 @@ def edit_vehicle(request, **kwargs):
         ),
         **kwargs,
     )
-
-    ip_address = request.headers.get("do-connecting-ip")
-    if request.user.ip_address != ip_address:
-        request.user.ip_address = ip_address
-        request.user.save(update_fields=["ip_address"])
 
     context = {}
     revision = None
@@ -840,10 +855,7 @@ def edit_vehicle(request, **kwargs):
 
 @login_required
 def vehicle_edits(request):
-    ip_address = request.headers.get("do-connecting-ip")
-    if request.user.ip_address != ip_address:
-        request.user.ip_address = ip_address
-        request.user.save(update_fields=["ip_address"])
+    record_ip_address(request)
 
     if request.method == "POST":
         assert request.user.is_staff
