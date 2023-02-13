@@ -34,7 +34,7 @@ def stale_if_error(max_age):
             response = viewfunc(request, *args, **kw)
             # if not logged in
             if request.user.is_anonymous:
-                patch_cache_control(response, stale_if_error=max_age)
+                patch_cache_control(response, s_maxage=0, stale_if_error=max_age)
             return response
 
         return _cache_controlled
