@@ -58,8 +58,7 @@
 
 {% block foot %}
     {% load static %}
-
-    {% if when %}
+    {% if services and when %}
         <script>
             STOP_CODE = "{{ object.atco_code }}";
         </script>

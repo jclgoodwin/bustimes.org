@@ -76,13 +76,15 @@ SECURE_HSTS_SECONDS = 3600
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
 
 CSP_IMG_SRC = ["'self'", "https:", "data:"]
+CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]
 CSP_SCRIPT_SRC_ELEM = [
     "'self'",
     "'unsafe-inline'",
     "https:",
 ]
 CSP_CONNECT_SRC = ["'self'", "https:"]
-CSP_STYLE_SRC = ["'self'", "'unsafe-inline'"]
+CSP_STYLE_SRC_ATTR = ["'unsafe-inline'"]
+CSP_STYLE_SRC_ELEM = ["'self'", "https:", "'unsafe-inline'"]
 CSP_FRAME_SRC = ["https:"]
 
 if DEBUG and "runserver" in sys.argv:
