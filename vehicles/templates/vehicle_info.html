@@ -29,17 +29,19 @@
     <p>Features: {{ vehicle.features.all|join:", " }}</p>
 {% endif %}
 
-<ul class="horizontal">
-    <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
-    {% if pending_edits %}
-        <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}">Pending edits</a></li>
-    {% endif %}
-    {% if vehicle.vehiclerevision_set.exists %}
-        <li><a href="{{ vehicle.get_history_url }}">History</a></li>
-    {% endif %}
-    {% with vehicle.get_flickr_link as flickr_link %}
-        {% if flickr_link %}
-            <li>{{ flickr_link }}</li>
+{% if vehicle.is_editable %}
+    <ul class="horizontal">
+        <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
+        {% if pending_edits %}
+            <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}">Pending edits</a></li>
         {% endif %}
-    {% endwith %}
-</ul>
+        {% if vehicle.vehiclerevision_set.exists %}
+            <li><a href="{{ vehicle.get_history_url }}">History</a></li>
+        {% endif %}
+        {% with vehicle.get_flickr_link as flickr_link %}
+            {% if flickr_link %}
+                <li>{{ flickr_link }}</li>
+            {% endif %}
+        {% endwith %}
+    </ul>
+{% endif %}

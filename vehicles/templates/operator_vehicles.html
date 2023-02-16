@@ -126,11 +126,13 @@
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
-                <td>{{ vehicle.get_flickr_link }}</td>
-                {% if not form %}
-                    <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>
-                {% elif vehicle.pending_edits %}
-                    <td><abbr title="pending edits">*</abbr></td>
+                {% if vehicle.is_editable %}
+                    <td>{{ vehicle.get_flickr_link }}</td>
+                    {% if not form %}
+                        <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>
+                    {% elif vehicle.pending_edits %}
+                        <td><abbr title="pending edits">*</abbr></td>
+                    {% endif %}
                 {% endif %}
             </tr>
         {% endfor %}
