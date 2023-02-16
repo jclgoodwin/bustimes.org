@@ -275,7 +275,7 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(f"/services/{service.id}/timetable?date=2020-01-01")
         self.assertContains(res, "Sorry, no journeys found")
 
-    @time_machine.travel("30 October 2017")
+    @time_machine.travel("30 October 2016")
     def test_service_with_empty_pattern(self):
         self.handle_files("EA.zip", ["swe_33-9A-A-y10-2.xml"])
 
@@ -651,13 +651,11 @@ class ImportTransXChangeTest(TestCase):
         self.handle_files("W.zip", ["SVRYEAGT00.xml"])
         service = Service.objects.get()
 
-        # try date outside of operating period
+        # try date outside of operating period:
         response = self.client.get(service.get_absolute_url() + "?date=2007-06-27")
-        timetable = response.context_data["timetable"]
-        self.assertEqual([], timetable.groupings)
-        self.assertEqual("2007-06-27", str(timetable.date))
+        self.assertRedirects(response, service.get_absolute_url(), status_code=302)
 
-        # next day of operation
+        # should show next day of operation:
         response = self.client.get(service.get_absolute_url())
         timetable = response.context_data["timetable"]
         self.assertEqual("2012-06-30", str(timetable.date))

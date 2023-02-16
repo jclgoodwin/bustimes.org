@@ -926,8 +926,10 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if not self.object.current or self.object.slug != self.kwargs["slug"]:
-            return context
+        assert self.object.current
+
+        if self.object.slug != self.kwargs["slug"]:
+            return {"redirect_to": self.object}
 
         operators = self.object.operator.all()
         context["operators"] = operators
@@ -956,6 +958,15 @@ class ServiceDetailView(DetailView):
             context["timetable"] = form.get_timetable(self.object)
             context["form"] = form
             date = form.cleaned_data.get("date")
+
+            if (
+                date
+                and not (
+                    context["timetable"].calendars and context["timetable"].calendar_ids
+                )
+                and date < timezone.localdate()
+            ):
+                return {"redirect_to": self.object}
 
             context["registrations"] = Registration.objects.filter(
                 Exists(self.object.route_set.filter(registration=OuterRef("id")))
@@ -1139,8 +1150,8 @@ class ServiceDetailView(DetailView):
         return context
 
     def render_to_response(self, context):
-        if self.object.current and self.object.slug != self.kwargs["slug"]:
-            return redirect(self.object)
+        if "redirect_to" in context:
+            return redirect(context["redirect_to"])
 
         return super().render_to_response(context)
 
