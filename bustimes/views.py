@@ -534,8 +534,16 @@ def garage_trips(request, pk):
     response = HttpResponse(content_type="text/plain")
 
     writer = csv.writer(response)
-    writer.writerow(["id", "block"])
-    for trip in garage.trip_set.all():
-        writer.writerow([trip.id, trip.block])
+    writer.writerow(["id", "calendar", "from_date", "to_date", "block"])
+    for trip in garage.trip_set.all().select_related("calendar"):
+        writer.writerow(
+            [
+                trip.id,
+                trip.calendar,
+                trip.calendar.start_date,
+                trip.calendar.end_date,
+                trip.block,
+            ]
+        )
 
     return response
