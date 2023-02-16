@@ -131,7 +131,7 @@ class Timetable:
         self.calendar_options = None
 
         self.calendar = None
-        self.start_date = None
+        # self.start_date = None
         if not self.routes:
             self.calendars = None
             return
@@ -173,13 +173,13 @@ class Timetable:
                 # calendar has a summary like 'school days only', or no exceptions within 28 days
                 if calendar.is_sufficiently_simple(self.today, four_weeks_time):
                     self.calendar = calendar
-                    if calendar.start_date > self.today:  # starts in the future
-                        self.start_date = calendar.start_date
+                    # if calendar.start_date > self.today:  # starts in the future
+                    #     self.start_date = calendar.start_date
 
-                        # in case a Friday only service has a start_date that's a Sunday, for example:
-                        for date in self.get_date_options():
-                            self.start_date = date
-                            break
+                    #     # in case a Friday only service has a start_date that's a Sunday, for example:
+                    #     for date in self.get_date_options():
+                    #         self.start_date = date
+                    #         break
 
             else:
                 self.get_calendar_options(calendar_id)
