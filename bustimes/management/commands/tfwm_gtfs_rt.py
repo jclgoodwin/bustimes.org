@@ -21,6 +21,9 @@ class Command(BaseCommand):
         if not response.from_cache:  # new data
             print(response.headers)
 
+        if not response.ok:
+            print(response, response.content)
+
         with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
             for line in read_file(archive, "routes.txt"):
                 routes[line["route_id"]] = line
@@ -42,6 +45,9 @@ class Command(BaseCommand):
         response = session.get(url, params=source.settings)
         if response.from_cache:  # weird, stale data
             print(response.headers)
+
+        if not response.ok:
+            print(response, response.content)
 
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
@@ -72,16 +78,8 @@ class Command(BaseCommand):
                     if (key := f"tfwm:{stop_time_update.stop_id}") not in by_stop:
                         by_stop[key] = []
                     by_stop[key].append(departure)
-                # else:
-                #     print(stop_time_update.departure)
 
-                if prev:
-                    if not (prev.stop_sequence == stop_time_update.stop_sequence - 1):
-                        print(item.trip_update.trip.trip_id)
-                        print(prev.stop_sequence, stop_time_update.stop_sequence)
                 prev = stop_time_update
-
-        # print(by_stop)
 
         if by_stop:
             cache.set_many(by_stop, 600)
