@@ -707,8 +707,9 @@ class Grouping:
             prev_trip = trip_a
 
             # don't merge circular trips (start and finish at same stop))
+            origin = trip_a.times[0].get_key()
             destination = trip_a.times[-1].get_key()
-            if trip_a.times[0].get_key() == destination:
+            if origin == destination:
                 continue
 
             for j, trip_b in enumerate(self.trips[i + 1 :]):
@@ -722,12 +723,14 @@ class Grouping:
                     )
                     and trip_a.operator_id == trip_b.operator_id
                     and destination == trip_b.times[0].get_key()
+                    and origin != trip_b.times[-1].get_key()  # not circular
                     and destination != trip_b.times[-1].get_key()  # not circular
                     and zero
                     <= (trip_b.start - trip_a.end)
                     <= fifteen  # short wait time
                 ):
                     # merge trip_a and trip_b
+                    origin = trip_b.times[0].get_key()
                     destination = trip_b.times[-1].get_key()
                     trip_a.times[-1].departure = trip_b.times[0].departure
                     trip_a.times[-1].pick_up = trip_b.times[0].pick_up
