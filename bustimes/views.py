@@ -1,3 +1,4 @@
+import csv
 import json
 import zipfile
 from datetime import datetime, timedelta
@@ -33,7 +34,7 @@ from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
 
 from .download_utils import download
-from .models import Route, StopTime, Trip
+from .models import Garage, Route, StopTime, Trip
 
 
 class ServiceDebugView(DetailView):
@@ -512,3 +513,29 @@ def trip_updates(request):
             "trip_updates": trip_updates,
         },
     )
+
+
+@require_GET
+def garages(request):
+    response = HttpResponse(content_type="text/plain")
+
+    writer = csv.writer(response)
+    writer.writerow(["id", "name"])
+    for garage in Garage.objects.all():
+        writer.writerow([garage.id, garage])
+
+    return response
+
+
+@require_GET
+def garage_trips(request, pk):
+    garage = get_object_or_404(Garage, pk=pk)
+
+    response = HttpResponse(content_type="text/plain")
+
+    writer = csv.writer(response)
+    writer.writerow(["id", "block"])
+    for trip in garage.trip_set.all():
+        writer.writerow([trip.id, trip.block])
+
+    return response

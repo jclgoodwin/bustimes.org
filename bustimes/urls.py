@@ -16,6 +16,8 @@ urlpatterns = [
     path("trips/<int:pk>", views.TripDetailView.as_view(), name="trip_detail"),
     path("trips/<int:id>.json", views.trip_json),
     path("trips/<int:pk>/block", views.trip_block),
+    path("garages.csv", views.garages),
+    path("garages/<int:pk>/trips.csv", views.garage_trips),
     path("trip_updates", views.trip_updates),
     path("frequency_map", frequency_map),
 ]
