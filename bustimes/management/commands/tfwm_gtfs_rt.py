@@ -47,7 +47,7 @@ class Command(BaseCommand):
             print(response.headers)
 
         if not response.ok:
-            print(response, response.content)
+            return
 
         feed = gtfs_realtime_pb2.FeedMessage()
         feed.ParseFromString(response.content)
@@ -61,8 +61,6 @@ class Command(BaseCommand):
                 route = routes[trip["route_id"]]
             except KeyError:
                 continue
-
-            prev = None
 
             for stop_time_update in item.trip_update.stop_time_update:
                 if stop_time_update.departure.time:
@@ -78,8 +76,6 @@ class Command(BaseCommand):
                     if (key := f"tfwm:{stop_time_update.stop_id}") not in by_stop:
                         by_stop[key] = []
                     by_stop[key].append(departure)
-
-                prev = stop_time_update
 
         if by_stop:
             cache.set_many(by_stop, 600)

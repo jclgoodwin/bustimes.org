@@ -366,7 +366,7 @@ class ViewsTests(TestCase):
         # payment methods:
         self.assertContains(response, "euros")
         self.assertContains(response, "Oyster card")
-        self.assertContains(response, ">£2 fare cap<")
+        self.assertContains(response, ">Get around for £2<")
         self.assertContains(response, '"http://example.com"')
 
     def test_national_express_service(self):
