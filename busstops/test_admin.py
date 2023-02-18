@@ -6,10 +6,10 @@ from bustimes.models import Route, RouteLink
 from .models import DataSource, Service, StopPoint
 
 
-class MergeTests(TestCase):
+class BusStopsAdminTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        source = DataSource.objects.create()
+        cls.source = DataSource.objects.create()
 
         cls.service_a = Service.objects.create(
             line_name="129", description="Frankby Cemetery - Liscard"
@@ -33,10 +33,18 @@ class MergeTests(TestCase):
             geometry="LINESTRING(1.3 51.1,1.1 51.3)",
         )
         Route.objects.create(
-            source=source, code="129", line_name="129", service=cls.service_a
+            source=cls.source,
+            service_code="129",
+            code="129",
+            line_name="129",
+            service=cls.service_a,
         )
         Route.objects.create(
-            source=source, code="129A", line_name="129A", service=cls.service_b
+            source=cls.source,
+            service_code="129",
+            code="129A",
+            line_name="129A",
+            service=cls.service_b,
         )
 
         cls.staff_user = User.objects.create(
@@ -71,3 +79,38 @@ class MergeTests(TestCase):
             },
         )
         self.assertEqual(Service.objects.all().count(), 2)
+
+    def test_split_service_filter(self):
+        self.client.force_login(self.staff_user)
+        response = self.client.get(
+            "/admin/busstops/service/?split=1",
+        )
+        self.assertContains(response, "Frankby Cemetery - Liscard")
+
+    def test_data_source_admin(self):
+        url = "/admin/busstops/datasource/"
+
+        self.client.force_login(self.staff_user)
+        response = self.client.get(url)
+        self.assertContains(response, ">0<")  # services
+        self.assertContains(response, ">False<")  # vehicle journeys
+        self.assertContains(response, ">2<")  # routes
+
+        self.client.post(
+            url,
+            {
+                "action": "delete_routes",
+                "_selected_action": [self.source.id],
+            },
+        )
+        response = self.client.get(url)
+        self.assertNotContains(response, ">2<")  # routes
+
+        with self.assertNumQueries(4):
+            self.client.post(
+                url,
+                {
+                    "action": "remove_datetimes",
+                    "_selected_action": [self.source.id],
+                },
+            )
