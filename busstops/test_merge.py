@@ -1,19 +1,21 @@
 from django.test import TestCase
 
 from accounts.models import User
-from bustimes.models import RouteLink
+from bustimes.models import Route, RouteLink
 
-from .models import Service, StopPoint
+from .models import DataSource, Service, StopPoint
 
 
 class MergeTests(TestCase):
     @classmethod
     def setUpTestData(cls):
+        source = DataSource.objects.create()
+
         cls.service_a = Service.objects.create(
             line_name="129", description="Frankby Cemetery - Liscard"
         )
         cls.service_b = Service.objects.create(
-            line_name="129", description="Frankby - Moreton - Liscard"
+            line_name="129A", description="Frankby - Moreton - Liscard"
         )
 
         stop_a = StopPoint.objects.create(atco_code="2902", active=True)
@@ -30,12 +32,18 @@ class MergeTests(TestCase):
             service=cls.service_b,
             geometry="LINESTRING(1.3 51.1,1.1 51.3)",
         )
+        Route.objects.create(
+            source=source, code="129", line_name="129", service=cls.service_a
+        )
+        Route.objects.create(
+            source=source, code="129A", line_name="129A", service=cls.service_b
+        )
 
         cls.staff_user = User.objects.create(
             username="josh", is_staff=True, is_superuser=True, email="j@example.com"
         )
 
-    def test_merge(self):
+    def test_merge_and_unmerge(self):
         self.client.force_login(self.staff_user)
 
         self.client.post(
@@ -48,5 +56,18 @@ class MergeTests(TestCase):
         response = self.client.get("/admin/busstops/service/")
         self.assertEqual(
             list(response.context["messages"])[0].message,
-            "merged <QuerySet [<Service: 129 - Frankby - Moreton - Liscard>]> into 129 - Frankby Cemetery - Liscard",
+            "merged <QuerySet [<Service: 129A - Frankby - Moreton - Liscard>]> into 129 - Frankby Cemetery - Liscard",
         )
+
+        # merged into 1:
+        self.assertEqual(Service.objects.all().count(), 1)
+
+        # unmerge back into 2:
+        self.client.post(
+            "/admin/busstops/service/",
+            {
+                "action": "unmerge",
+                "_selected_action": [self.service_a.id],
+            },
+        )
+        self.assertEqual(Service.objects.all().count(), 2)
