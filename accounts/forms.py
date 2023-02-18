@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.core.exceptions import PermissionDenied
 from django.forms import EmailField, EmailInput, Form, NullBooleanField
 
-UserModel = get_user_model()
+User = get_user_model()
 
 
 class RegistrationForm(PasswordResetForm):
@@ -13,14 +14,20 @@ class RegistrationForm(PasswordResetForm):
         self.fields["email"].help_text = "Will be kept private"
 
     def save(self, request=None):
+        ip_address = request.headers.get("do-connecting-ip")
+
+        if ip_address:
+            if User.objects.filter(trusted=False, ip_address=ip_address).exists():
+                raise PermissionDenied
+
         try:
-            self.user = UserModel.objects.get(email__iexact=self.cleaned_data["email"])
-        except UserModel.DoesNotExist:
-            self.user = UserModel.objects.create_user(
+            self.user = User.objects.get(email__iexact=self.cleaned_data["email"])
+        except User.DoesNotExist:
+            self.user = User.objects.create_user(
                 self.cleaned_data["email"], self.cleaned_data["email"]
             )
 
-        if request and (ip_address := request.headers.get("do-connecting-ip")):
+        if request and ip_address:
             self.user.ip_address = ip_address
             self.user.save(update_fields=["ip_address"])
 
