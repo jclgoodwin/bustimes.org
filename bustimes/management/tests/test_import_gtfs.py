@@ -169,8 +169,7 @@ class GTFSTest(TestCase):
         path = Path("poop.txt")
         url = "https://bustimes.org/static/js/global.js"
 
-        if path.exists():
-            path.unlink()
+        path.unlink(missing_ok=True)
 
         cassette = str(FIXTURES_DIR / "download_if_modified.yaml")
 

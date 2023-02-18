@@ -1,7 +1,6 @@
 from django.urls import path, re_path
 
 from . import views
-from .frequency_map import frequency_map
 
 urlpatterns = [
     path("services/<slug>/debug", views.ServiceDebugView.as_view()),
@@ -19,5 +18,4 @@ urlpatterns = [
     path("garages.csv", views.garages),
     path("garages/<int:pk>/trips.csv", views.garage_trips),
     path("trip_updates", views.trip_updates),
-    path("frequency_map", frequency_map),
 ]

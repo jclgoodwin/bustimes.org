@@ -38,11 +38,6 @@ from ...models import (
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 
-class MockZipFile:
-    def __init__(self):
-        pass
-
-
 class ImportBusOpenDataTest(TestCase):
     @classmethod
     def setUpTestData(cls):
