@@ -21,15 +21,19 @@ class log_time_taken:
 
 
 def get_routes(routes, when=None, from_date=None):
-    if when:
-        routes = [route for route in routes if route.contains(when)]
-    if from_date:
-        # just filter out previous versions
-        routes = [
-            route
-            for route in routes
-            if route.end_date is None or route.end_date >= from_date
-        ]
+    revision_numbers = set(route.revision_number for route in routes)
+
+    if len(revision_numbers) == 1:
+        if when:
+            routes = [route for route in routes if route.contains(when)]
+
+        if from_date:
+            # just filter out previous versions
+            routes = [
+                route
+                for route in routes
+                if route.end_date is None or route.end_date >= from_date
+            ]
 
     if len(routes) == 1:
         return routes
@@ -41,7 +45,7 @@ def get_routes(routes, when=None, from_date=None):
             return routes
 
     # use maximum revision number for each service_code
-    if when and len(set(route.revision_number for route in routes)) > 1:
+    if when and len(revision_numbers) > 1:
         revision_numbers = {}
         for route in routes:
             route.key = f"{route.service_code}:{route.service_id}"
