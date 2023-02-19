@@ -57,7 +57,10 @@ def get_fare_product(element):
 def get_fare_zones(source, fare_zone_elements):
     if not fare_zone_elements:
         return
-    zones = {f"{zone.code} {zone.name}": zone for zone in source.farezone_set.all()}
+    existing_zones = {
+        f"{zone.code} {zone.name}": zone for zone in source.farezone_set.all()
+    }
+    zones = {}
     for fare_zone_element in fare_zone_elements:
         zone = models.FareZone(
             code=fare_zone_element.attrib["id"],
@@ -65,10 +68,11 @@ def get_fare_zones(source, fare_zone_elements):
             source=source,
         )
         key = f"{zone.code} {zone.name}"
-        if key in zones:
-            assert zone.name == zones[key].name
+        if key in existing_zones:
+            assert zone.name == existing_zones[key].name
         else:
-            zones[key] = zone
+            existing_zones[key] = zone
+        zones[zone.code] = zone
 
         # stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
         # if stop_refs:
