@@ -27,6 +27,7 @@ from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
+from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
 from buses.utils import cache_control_s_maxage
@@ -616,22 +617,25 @@ def journeys_list(request, journeys, service=None, vehicle=None):
             journeys.filter(datetime__date=date).select_related("trip").order_by("id")
         )
 
-        pipe = redis_client.pipeline(transaction=False)
-        for journey in journeys:
-            pipe.exists(f"journey{journey.id}")
+        try:
+            pipe = redis_client.pipeline(transaction=False)
+            for journey in journeys:
+                pipe.exists(f"journey{journey.id}")
 
-        locations = pipe.execute()
+            locations = pipe.execute()
+        except (ConnectionError, AttributeError):
+            pass
+        else:
+            previous = None
 
-        previous = None
+            for i, journey in enumerate(journeys):
+                journey.locations = locations[i]
 
-        for i, journey in enumerate(journeys):
-            journey.locations = locations[i]
-
-            if journey.locations:
-                if previous:
-                    previous.next = journey
-                    journey.previous = previous
-                previous = journey
+                if journey.locations:
+                    if previous:
+                        previous.next = journey
+                        journey.previous = previous
+                    previous = journey
 
         context["journeys"] = journeys
     elif service:

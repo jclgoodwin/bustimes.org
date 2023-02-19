@@ -201,19 +201,21 @@ elif TEST:
     ]
 
 
+CACHES = {}
 if TEST:
-    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+    CACHES["default"] = {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
 elif DEBUG:
     CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
-elif REDIS_URL:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": REDIS_URL,
-        }
-    }
 
-    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+if REDIS_URL:
+    CACHES["redis"] = {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
+    }
+    if "default" not in CACHES:
+        CACHES["default"] = CACHES["redis"]
+
+        SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 
 VARNISH_HOST = os.environ.get("VARNISH_HOST")

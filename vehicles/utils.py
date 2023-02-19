@@ -1,10 +1,9 @@
 import math
 import re
 
-from django.conf import settings
-from django.core.cache import cache
+from django.core.cache import cache, caches
+from django.core.cache.backends.base import InvalidCacheBackendError
 from django.db.models import Max
-from redis import from_url
 
 from .models import (
     Livery,
@@ -15,9 +14,9 @@ from .models import (
     VehicleType,
 )
 
-if settings.REDIS_URL:
-    redis_client = from_url(settings.REDIS_URL)
-else:
+try:
+    redis_client = caches["redis"]._cache.get_client()
+except InvalidCacheBackendError:
     redis_client = None
 
 

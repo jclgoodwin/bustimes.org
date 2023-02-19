@@ -16,7 +16,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.db.models import Count, F, Min, OuterRef, Prefetch, Q
+from django.db.models import F, Min, OuterRef, Prefetch, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -26,7 +26,8 @@ from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
-from sql_util.utils import Exists
+from redis.exceptions import ConnectionError
+from sql_util.utils import Exists, SubqueryCount
 from ukpostcodeutils import validation
 
 from buses.utils import cache_control_s_maxage
@@ -225,9 +226,7 @@ def contact(request):
 
 def status(request):
     sources = DataSource.objects.annotate(
-        count=Count(
-            "route__service", filter=Q(route__service__current=True), distinct=True
-        ),
+        count=SubqueryCount("route"),
     ).order_by("url")
 
     status = cache.get("bod_avl_status", [])
@@ -841,7 +840,12 @@ class OperatorDetailView(DetailView):
 
         context["vehicles"] = self.object.vehicle_set.filter(withdrawn=False).exists()
         if redis_client and context["vehicles"]:
-            context["map"] = redis_client.exists(f"operator{self.object.noc}vehicles")
+            try:
+                context["map"] = redis_client.exists(
+                    f"operator{self.object.noc}vehicles"
+                )
+            except ConnectionError:
+                pass
 
         return context
 
