@@ -844,21 +844,25 @@ class Command(BaseCommand):
         return self.source.url.startswith("ftp://ftp.tnds.basemap.co.uk/")
 
     def should_defer_to_other_source(self, operators: dict, line_name: str):
-        if self.source.name == "L":
+        if self.source.name == "L" or not operators:
             return False
-        if operators and all(
-            operator.noc in self.incomplete_operators for operator in operators.values()
-        ):
-            if (
-                Service.objects.filter(
-                    route__line_name__iexact=line_name,
-                    current=True,
-                    operator__in=operators.values(),
-                )
-                .exclude(source=self.source)
-                .exists()
-            ):
-                return True
+
+        nocs = [operator.noc for operator in operators.values()]
+
+        if any(noc not in self.incomplete_operators for noc in nocs):
+            return False  # jointly-operated service?
+
+        if "FHAL" in nocs:
+            nocs.add("FHUD")
+        elif "FHUD" in nocs:
+            nocs.add("FHAL")
+
+        return Service.objects.filter(
+            ~Q(source=self.source),
+            current=True,
+            operator__in=nocs,
+            route__line_name__iexact=line_name,
+        ).exists()
 
     def get_route_links(self, journeys, transxchange):
         patterns = {
