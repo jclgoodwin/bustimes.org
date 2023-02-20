@@ -75,9 +75,9 @@ def get_routes(routes, when=None, from_date=None):
             elif looks_like_ticketer_route:
                 route.key = f"{route.key}:{parts[1]}"
 
-            if (
-                route.key not in revision_numbers
-                or route.revision_number > revision_numbers[route.key]
+            if route.key not in revision_numbers or (
+                route.revision_number > revision_numbers[route.key]
+                and route.start_date <= when
             ):
                 revision_numbers[route.key] = route.revision_number
         routes = [
