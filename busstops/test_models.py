@@ -141,9 +141,15 @@ class ServiceTests(TestCase):
         self.assertEqual(str(self.london_service), "tfl_8-N41-_-y05")
         self.london_service.line_name = "N41"
 
-        service = Service(line_name="C", description="Coasthopper - Filey")
-        self.assertEqual(str(service), "C - Coasthopper - Filey")
+        service = Service(line_name="C", description="Happisburgh - Filey")
+        self.assertEqual(str(service), "C - Happisburgh - Filey")
+        self.assertEqual(service.get_line_name_and_brand(), "C")
 
+        service.line_brand = "Coast Hopper"
+        self.assertEqual(str(service), "Coast Hopper - Happisburgh - Filey")
+        self.assertEqual(service.get_line_name_and_brand(), "C - Coast Hopper")
+
+        service.line_brand = ""
         service.line_name = "Coast Hopper"
         service.description = "Coast Hopper"
         self.assertEqual(str(service), "Coast Hopper")
@@ -153,10 +159,21 @@ class ServiceTests(TestCase):
         self.assertEqual(str(service), "Coast Hopper – Brighton - Filey")
 
     def test_get_a_mode(self):
-        self.assertEqual(self.london_service.get_a_mode(), "A ")
+        service = Service(mode="")
 
-        self.london_service.mode = "Underground"
-        self.assertEqual(self.london_service.get_a_mode(), "An Underground")
+        self.assertEqual(service.get_a_mode(), "A ")
+
+        service.mode = "Underground"
+        self.assertEqual(service.get_a_mode(), "An Underground")
+
+        service.mode = "bus"
+        self.assertEqual(service.get_a_mode(), "A bus")
+
+        operator = Operator(vehicle_mode="airline")
+        self.assertEqual(operator.get_a_mode(), "An airline")
+
+        operator = Operator(vehicle_mode="rail")
+        self.assertEqual(operator.get_a_mode(), "A rail")
 
     def test_traveline_links(self):
         source = DataSource.objects.create(name="Y")
@@ -269,5 +286,7 @@ class StopPointTests(TestCase):
         self.assertEqual(stop.get_icon(), "CR")
 
         stop.common_name = "YMCA"
-
         self.assertIsNone(stop.get_icon())
+
+        stop.common_name = "P"
+        self.assertEqual(stop.get_icon(), "P")
