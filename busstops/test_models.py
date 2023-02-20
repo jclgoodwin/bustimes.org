@@ -257,3 +257,17 @@ class StopPointTests(TestCase):
 
         response = self.client.get("/admin/busstops/stoppoint/?q=holland")
         self.assertEqual(0, response.context_data["cl"].result_count)
+
+    def test_icon(self):
+        stop = StopPoint(common_name="Bus Station", indicator="Stand B")
+
+        self.assertEqual(stop.get_icon(), "B")
+
+        stop.indicator = ""
+        stop.common_name = "Castle Meadow CR"
+
+        self.assertEqual(stop.get_icon(), "CR")
+
+        stop.common_name = "YMCA"
+
+        self.assertIsNone(stop.get_icon())
