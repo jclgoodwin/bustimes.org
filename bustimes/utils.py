@@ -52,8 +52,7 @@ def get_routes(routes, when=None, from_date=None):
         and route.end_date == routes[0].end_date
         for route in routes[1:]
     ):
-        routes.sort(key=lambda r: r.code)
-        return routes[-1:]
+        return [max(routes, key=lambda r: r.code)]
 
     # use maximum revision number for each service_code
     if when and len(revision_numbers) > 1:
