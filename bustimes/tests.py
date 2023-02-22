@@ -297,6 +297,38 @@ class BusTimesTest(TestCase):
             get_routes(routes[2:4], from_date=date(2022, 4, 5)), routes[3:4]
         )
 
+    def test_get_routes_tfl(self):
+        source = DataSource(id=1, name="L")
+
+        routes = [
+            Route(
+                id=1,
+                code="86-683-_-y05-60196",
+                revision_number=3,
+                start_date=date(2023, 2, 11),
+                source=source,
+            ),
+            Route(
+                id=2,
+                code="86-683-_-y05-60197",
+                revision_number=3,
+                start_date=date(2023, 2, 11),
+                source=source,
+            ),
+            Route(
+                id=3,
+                code="86-683-_-y05-59862",
+                revision_number=3,
+                start_date=date(2023, 2, 11),
+                source=source,
+            ),
+        ]
+
+        gotten_routes = get_routes(routes)
+        self.assertEqual(len(gotten_routes), 1)
+        self.assertEqual(gotten_routes[0].code, "86-683-_-y05-60197")
+        self.assertEqual(gotten_routes[0].id, 2)
+
     def test_garage(self):
         garage = Garage(code="LOW", name="LOWESTOFT TOWN")
         self.assertEqual(str(garage), "Lowestoft Town")
