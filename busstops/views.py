@@ -1283,12 +1283,18 @@ class OperatorSitemap(Sitemap):
             "search_vector"
         )
 
+    def lastmod(self, obj):
+        return obj.modified_at
+
 
 class ServiceSitemap(Sitemap):
     protocol = "https"
 
     def items(self):
         return Service.objects.filter(current=True).defer("geometry", "search_vector")
+
+    def lastmod(self, obj):
+        return obj.modified_at
 
 
 @cache_control_s_maxage(300)
