@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 
 from busstops.models import Service
 from bustimes.models import Trip
@@ -85,7 +85,8 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         location = VehicleLocation(
-            latlong=Point(item["longitude"], item["latitude"]), heading=item["heading"]
+            latlong=GEOSGeometry(f"POINT({item['longitude']} {item['latitude']})"),
+            heading=item["heading"],
         )
 
         # stationary bus - ignore (?)

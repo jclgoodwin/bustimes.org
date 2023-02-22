@@ -1,5 +1,5 @@
 import requests
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 
 from busstops.models import Service
 
@@ -129,6 +129,6 @@ class Command(ImportLiveVehiclesCommand):
         if bearing == "-1":
             bearing = None
         return VehicleLocation(
-            latlong=Point(float(item["Longitude"]), float(item["Latitude"])),
+            latlong=GEOSGeometry(f"POINT({item['Longitude']} {item['Latitude']})"),
             heading=bearing,
         )

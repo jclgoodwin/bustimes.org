@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from time import sleep
 
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Exists, OuterRef, Q
 
 from busstops.models import Operator, Service, StopPoint
@@ -45,10 +45,6 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 # "ns" "nextStopOnRoute": "",
 # "jc" "isJourneyCompletedHeuristic": "False",
 # "rg" "rag": "A"
-
-
-def get_latlong(item):
-    return Point(float(item["lo"]), float(item["la"]))
 
 
 def parse_timestamp(timestamp):
@@ -217,7 +213,11 @@ class Command(ImportLiveVehiclesCommand):
         else:
             early = None
 
-        return VehicleLocation(latlong=get_latlong(item), heading=bearing, early=early)
+        return VehicleLocation(
+            latlong=GEOSGeometry(f"POINT({item['lo']} {item['la']})"),
+            heading=bearing,
+            early=early,
+        )
 
     def handle(self, *args, **options):
         self.operators = Operator.objects.filter(
