@@ -241,7 +241,7 @@ def status(request):
         for item in bod_avl_status
     ]
 
-    other_statuses = cache.get_many(["TfE"]).items()
+    other_statuses = cache.get_many(["TfE_status"]).items()
 
     return render(
         request,
