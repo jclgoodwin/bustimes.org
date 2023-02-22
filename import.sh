@@ -35,23 +35,19 @@ ncsd_old=$(ls -l NCSD.zip)
 wget -qN http://www.basemap.co.uk/data/NCSD/NCSD.zip
 ncsd_new=$(ls -l NCSD.zip)
 
-if [[ $ncsd_old != $ncsd_new ]]; then
-    ../../manage.py import_transxchange NCSD.zip
-fi
-
-
 tfl_old=$(ls -l L.zip)
 wget -qN https://tfl.gov.uk/tfl/syndication/feeds/journey-planner-timetables.zip -O L.zip
 tfl_new=$(ls -l L.zip)
 
-if [[ $tfl_old != $tfl_new ]]; then
-    ../../manage.py import_transxchange L.zip
-fi
-
-
-
 cd ../..
 
+if [[ $ncsd_old != $ncsd_new ]]; then
+    ./manage.py import_transxchange data/TNDS/NCSD.zip
+fi
+
+if [[ $tfl_old != $tfl_new ]]; then
+    ./manage.py import_transxchange data/TNDS/L.zip
+fi
 
 
 ./manage.py import_noc
