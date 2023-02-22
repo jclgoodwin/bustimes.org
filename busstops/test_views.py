@@ -1,4 +1,5 @@
 # coding=utf-8
+import time_machine
 import vcr
 from django.conf import settings
 from django.contrib.gis.geos import Point
@@ -76,6 +77,7 @@ class ViewsTests(TestCase):
     """Boring tests for various views"""
 
     @classmethod
+    @time_machine.travel("2023-02-21")
     def setUpTestData(cls):
         cls.north = Region.objects.create(pk="N", name="North")
         cls.norfolk = AdminArea.objects.create(
@@ -451,7 +453,7 @@ class ViewsTests(TestCase):
         )
 
     def test_sitemap_index(self):
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(4):
             response = self.client.get("/sitemap.xml")
         self.assertContains(response, "https://testserver/sitemap-operators.xml")
         self.assertContains(response, "https://testserver/sitemap-services.xml")
@@ -461,7 +463,7 @@ class ViewsTests(TestCase):
             response = self.client.get("/sitemap-operators.xml")
         self.assertContains(
             response,
-            "<url><loc>https://testserver/operators/ainsleys-chariots</loc></url>",
+            "<url><loc>https://testserver/operators/ainsleys-chariots</loc><lastmod>2023-02-21</lastmod></url>",
         )
 
     def test_sitemap_services(self):

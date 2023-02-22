@@ -16,8 +16,8 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.db.models import F, Max, Min, OuterRef, Prefetch, Q
-from django.db.models.functions import Now
+from django.db.models import F, OuterRef, Prefetch, Q
+from django.db.models.functions import Coalesce, Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import resolve
@@ -27,7 +27,7 @@ from django.utils.functional import SimpleLazyObject
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
 from redis.exceptions import ConnectionError
-from sql_util.utils import Exists, SubqueryCount
+from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.utils import cache_control_s_maxage
@@ -808,7 +808,7 @@ class OperatorDetailView(DetailView):
             .filter(current=True)
             .defer("geometry", "search_vector")
         )
-        services = services.annotate(start_date=Min("route__start_date"))
+        services = services.annotate(start_date=SubqueryMin("route__start_date"))
         context["services"] = sorted(services, key=Service.get_order)
 
         if context["services"]:
@@ -1281,8 +1281,14 @@ class OperatorSitemap(Sitemap):
     def items(self):
         return (
             Operator.objects.filter(operator_has_current_services_or_vehicles)
-            .annotate(lastmod=Max("service__modified_at"))
+            .annotate(
+                lastmod=Coalesce(
+                    SubqueryMax("service__modified_at", filter=Q(current=True)),
+                    "modified_at",
+                )
+            )
             .only("slug")
+            .order_by("noc")
         )
 
     def lastmod(self, obj):
