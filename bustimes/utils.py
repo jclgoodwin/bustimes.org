@@ -35,17 +35,17 @@ def get_routes(routes, when=None, from_date=None):
                 if route.end_date is None or route.end_date >= from_date
             ]
 
-    if len(routes) == 1:
+    if len(routes) <= 1:
         return routes
 
     sources = set(route.source for route in routes)
     if len(sources) > 1 and any(source.name == "W" for source in sources):
         routes = [route for route in routes if route.source.name == "W"]
-        if len(routes) == 1:
+        if len(routes) <= 1:
             return routes
 
     # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
-    if all(
+    if routes and all(
         route.source.name == "L"
         and route.code.split("-")[:-1] == routes[0].code.split("-")[:-1]
         and route.start_date == routes[0].start_date
@@ -53,7 +53,7 @@ def get_routes(routes, when=None, from_date=None):
         for route in routes[1:]
     ):
         routes.sort(key=lambda r: r.code)
-        return [routes[-1]]
+        return routes[-1:]
 
     # use maximum revision number for each service_code
     if when and len(revision_numbers) > 1:

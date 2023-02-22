@@ -329,6 +329,8 @@ class BusTimesTest(TestCase):
         self.assertEqual(gotten_routes[0].code, "86-683-_-y05-60197")
         self.assertEqual(gotten_routes[0].id, 2)
 
+        self.assertFalse(get_routes([]), 2)
+
     def test_garage(self):
         garage = Garage(code="LOW", name="LOWESTOFT TOWN")
         self.assertEqual(str(garage), "Lowestoft Town")
