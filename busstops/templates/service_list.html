@@ -13,14 +13,14 @@
         {% for line_name in service.get_line_names %}
             {% if line_name and line_name not in service.line_brand %}
                 {% if ' ' not in line_name or line_name not in service.description %}
-                    <span class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">
+                    <strong class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">
                         {{ line_name }}
-                    </span>
+                    </strong>
                 {% endif %}
             {% endif %}
         {% endfor %}
         {% if service.line_brand %}
-            <span class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">{{ service.line_brand }}</span>
+            <strong class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">{{ service.line_brand }}</strong>
         {% endif %}
         <span class="description">
             {{ service.description }}
