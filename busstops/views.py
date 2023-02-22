@@ -241,7 +241,13 @@ def status(request):
         for item in bod_avl_status
     ]
 
-    other_statuses = cache.get_many(["TfE_status"]).items()
+    other_statuses = cache.get_many(
+        [
+            "Aircoach_status",
+            "TfE_status",
+            "Stagecoach_status",
+        ]
+    ).items()
 
     return render(
         request,
