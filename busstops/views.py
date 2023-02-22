@@ -16,7 +16,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.db.models import F, Min, OuterRef, Prefetch, Q
+from django.db.models import F, Max, Min, OuterRef, Prefetch, Q
 from django.db.models.functions import Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -1279,19 +1279,21 @@ class OperatorSitemap(Sitemap):
     protocol = "https"
 
     def items(self):
-        return Operator.objects.filter(operator_has_current_services_or_vehicles).defer(
-            "search_vector"
+        return (
+            Operator.objects.filter(operator_has_current_services_or_vehicles)
+            .annotate(lastmod=Max("service__modified_at"))
+            .only("slug")
         )
 
     def lastmod(self, obj):
-        return obj.modified_at
+        return obj.lastmod
 
 
 class ServiceSitemap(Sitemap):
     protocol = "https"
 
     def items(self):
-        return Service.objects.filter(current=True).defer("geometry", "search_vector")
+        return Service.objects.filter(current=True).only("slug", "modified_at")
 
     def lastmod(self, obj):
         return obj.modified_at
