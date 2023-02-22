@@ -229,8 +229,8 @@ def status(request):
         count=SubqueryCount("route"),
     ).order_by("url")
 
-    status = cache.get("bod_avl_status", [])
-    status = [
+    bod_avl_status = cache.get("bod_avl_status", [])
+    bod_avl_status = [
         {
             "fetched": item[0],
             "timestamp": item[1],
@@ -238,8 +238,10 @@ def status(request):
             "items": item[2],
             "changed": item[3],
         }
-        for item in status
+        for item in bod_avl_status
     ]
+
+    other_statuses = cache.get_many(["TfE"]).items()
 
     return render(
         request,
@@ -247,7 +249,8 @@ def status(request):
         {
             "nptg": DataSource.objects.filter(name="NPTG").first(),
             "naptan": DataSource.objects.filter(name="NaPTAN").first(),
-            "bod_avl_status": status,
+            "bod_avl_status": bod_avl_status,
+            "statuses": other_statuses,
             "tnds": sources.filter(url__contains="tnds.basemap"),
         },
     )
