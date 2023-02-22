@@ -297,6 +297,32 @@ class BusTimesTest(TestCase):
             get_routes(routes[2:4], from_date=date(2022, 4, 5)), routes[3:4]
         )
 
+        routes = [
+            Route(
+                description="1",
+                source=sources[0],
+                id=1,
+                revision_number=171,
+                start_date=date(2023, 2, 26),
+            ),
+            Route(
+                description="2",
+                source=sources[0],
+                id=2,
+                revision_number=165,
+                start_date=date(2023, 2, 19),
+            ),
+            Route(
+                description="3",
+                source=sources[0],
+                id=3,
+                revision_number=172,
+                start_date=date(2023, 3, 5),
+            ),
+        ]
+        self.assertEqual(get_routes(routes[:], when=date(2023, 2, 22)), routes[1:2])
+        self.assertEqual(get_routes(routes[:], when=date(2023, 3, 22)), routes[2:])
+
     def test_get_routes_tfl(self):
         source = DataSource(id=1, name="L")
 
