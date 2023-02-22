@@ -1,8 +1,9 @@
-from ciso8601 import parse_datetime
 from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from ciso8601 import parse_datetime
 from django.core.cache import cache
 from django.utils import timezone
-from channels.layers import get_channel_layer
+
 from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
@@ -49,13 +50,17 @@ class Command(ImportLiveVehiclesCommand):
 
         count = len(items)
 
-        # stats for last 10 updates
+        # stats for last 10 updates:
         bod_status = cache.get("bod_avl_status", [])
         bod_status.append((timezone.now(), self.source.datetime, count, i))
         bod_status = bod_status[-50:]
-        cache.set("bod_avl_status", bod_status)
-
-        cache.set("bod_avl_identifiers", self.identifiers)  # backup
+        cache.set_many(
+            {
+                "bod_avl_status": bod_status,
+                "bod_avl_identifiers": self.identifiers,  # backup
+            },
+            None,
+        )
 
         # if i == 0:
         #     return 11

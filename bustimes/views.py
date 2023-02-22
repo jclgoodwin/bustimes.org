@@ -273,13 +273,15 @@ def stop_debug(request, atco_code: str):
         StopPoint.objects.select_related("locality"), atco_code=atco_code
     )
 
-    responses = [
-        cache.get(f"TflDepartures:{stop.pk}"),
-        cache.get(f"SiriSmDepartures:{stop.pk}"),
-        cache.get(f"AcisHorizonDepartures:{stop.pk}"),
-        cache.get(f"EdinburghDepartures:{stop.pk}"),
-        cache.get(f"tfwm:{stop.pk}"),
-    ]
+    responses = cache.get_many(
+        [
+            f"TflDepartures:{stop.pk}",
+            f"SiriSmDepartures:{stop.pk}",
+            f"AcisHorizonDepartures:{stop.pk}",
+            f"EdinburghDepartures:{stop.pk}",
+            f"tfwm:{stop.pk}",
+        ]
+    ).values()
 
     return render(
         request,
