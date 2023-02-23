@@ -68,6 +68,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
     vehicles = Vehicle.objects.select_related("latest_journey")
     wait = 60
     history = True
+    status = []
+    status_key = None
 
     @staticmethod
     def add_arguments(parser):
@@ -389,7 +391,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
         time_taken = (timezone.now() - now).total_seconds()
 
         if self.source_name:
-            self.status.append((self.source.datetime, time_taken, len(items)))
+            self.status.append(
+                (
+                    self.source.datetime,
+                    time_taken,
+                    len(items) if type(items) is list else None,
+                )
+            )
             self.status = self.status[-50:]
             cache.set(self.status_key, self.status, None)
 
