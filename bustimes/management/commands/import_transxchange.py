@@ -1022,7 +1022,7 @@ class Command(BaseCommand):
                 if service_code is None:
                     service_code = txc_service.service_code
 
-                if service_code.startswith("nrc_") or not existing:
+                if service_code[:4] in ("nrc_", "tfl_") or not existing:
                     # assume service code is at least unique within a TNDS region
                     existing = self.source.service_set.filter(
                         Q(service_code=service_code)
