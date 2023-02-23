@@ -49,7 +49,7 @@ class MyTripTest(TestCase):
             response = self.client.get("/operators/nibs")
             self.assertContains(response, ">Tickets<")
             self.assertContains(response, ">National operator code<")
-            self.assertContains(response, ">NIBS<")
+            self.assertContains(response, " NIBS\n")
 
             response = self.client.get("/services/service")
             self.assertContains(response, ">the MyTrip app<")

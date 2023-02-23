@@ -13,28 +13,32 @@
             </div>
         {% endif %}
 
-        {% for handle in operator.twitter.split %}
+        {% if operator.twitter %}
             <div>
                 <dt>Twitter</dt>
-                <dd>
+                <dd>{% for handle in operator.twitter.split %}
                     <a href="https://twitter.com/{{ handle }}">@{{ handle }}</a>
-                </dd>
+                {% endfor %}</dd>
             </div>
-        {% endfor %}
+        {% endif %}
 
-        {% for licence in licences %}
+        {% if licences %}
             <div>
-                <dt>Licence number</dt>
-                <dd><a href="{{ licence.get_absolute_url }}" title="{{ licence.name }}">{{ licence }}</a></dd>
+                <dt>Licence number{{ licences|length|pluralize }}</dt>
+                <dd>{% for licence in licences %}
+                    <a href="{{ licence.get_absolute_url }}" title="{{ licence.name }}">{{ licence }}</a>{% if not forloop.last %},{% endif %}
+                {% endfor %}</dd>
             </div>
-        {% endfor %}
+        {% endif %}
 
-        {% for noc in nocs %}
+        {% if nocs %}
             <div>
-                <dt>National operator code</dt>
-                <dd>{{ noc }}</dd>
+                <dt>National operator code{{ nocs|length|pluralize }}</dt>
+                <dd>{% for noc in nocs %}
+                    {{ noc }}{% if not forloop.last %},{% endif %}
+                {% endfor %}</dd>
             </div>
-        {% endfor %}
+        {% endif %}
     </dl>
 
 </div>
