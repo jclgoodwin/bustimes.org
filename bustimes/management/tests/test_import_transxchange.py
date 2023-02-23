@@ -1118,6 +1118,15 @@ class ImportTransXChangeTest(TestCase):
             </tr>""",
         )
 
+        # set current=False and re-import - should reset operator etc:
+        service.operator.add(self.fecs)
+        service.current = False
+        service.save(update_fields=["current"])
+
+        self.handle_files("S.zip", ["SVRABBN017.xml"])
+        service = Service.objects.get(line_name="N17")
+        self.assertEqual(service.operator.count(), 1)
+
     @time_machine.travel("22 January 2017")
     def test_megabus(self):
         # simulate a National Coach Service Database zip file

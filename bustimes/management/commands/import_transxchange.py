@@ -1039,11 +1039,14 @@ class Command(BaseCommand):
 
             if existing:
                 service = existing
+                existing_current_service = existing.current
             else:
                 service = Service()
+                existing_current_service = False
 
             service.line_name = line.line_name
             service.source = self.source
+            service.current = True
 
             journeys = transxchange.get_journeys(txc_service.service_code, line.id)
 
@@ -1058,6 +1061,12 @@ class Command(BaseCommand):
                     service.public_use = True
                 case _:
                     service.public_use = None
+
+            if txc_service.mode:
+                service.mode = txc_service.mode
+
+            if self.region_id:
+                service.region_id = self.region_id
 
             if service_code:
                 service.service_code = service_code
@@ -1088,21 +1097,12 @@ class Command(BaseCommand):
                 and service.colour.name
                 and service.colour.name != service.line_name
             ):
-                line_brand = (
-                    service.colour.name
-                )  # e.g. (First Eastern Counties) 'Yellow Line'
+                # e.g. (First Eastern Counties) 'Yellow Line'
+                line_brand = service.colour.name
             if line_brand:
                 service.line_brand = line_brand
-            elif not service.current:
+            elif not existing_current_service:
                 service.line_brand = ""
-
-            service.current = True
-
-            if txc_service.mode:
-                service.mode = txc_service.mode
-
-            if self.region_id:
-                service.region_id = self.region_id
 
             # inbound and outbound descriptions
 
@@ -1144,14 +1144,13 @@ class Command(BaseCommand):
                 if (
                     "_" in service.slug
                     or "-" not in service.slug
-                    or existing
-                    and not existing.current
+                    or not existing_current_service
                 ):
                     service.slug = ""
                     service.save(update_fields=["slug"])
 
             if operators:
-                if existing and not existing.current:
+                if existing and not existing_current_service:
                     service.operator.set(operators.values())
                 else:
                     service.operator.add(*operators.values())
