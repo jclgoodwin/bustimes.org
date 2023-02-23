@@ -86,7 +86,7 @@ class Command(ImportLiveVehiclesCommand):
     def create_vehicle_location(self, item):
         location = VehicleLocation(
             latlong=GEOSGeometry(f"POINT({item['longitude']} {item['latitude']})"),
-            heading=item["heading"],
+            heading=item["heading"] or None,
         )
 
         # stationary bus - ignore (?)
