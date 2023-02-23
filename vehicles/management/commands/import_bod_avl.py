@@ -310,7 +310,13 @@ class Command(ImportLiveVehiclesCommand):
                     condition |= Q(operator=vehicle_operator_id)
                 services = services.filter(condition)
             else:
-                services = services.filter(operator__in=operators)
+                services = services.filter(
+                    Exists(
+                        Service.operator.through.objects.filter(
+                            operator__in=operators, service=OuterRef("id")
+                        )
+                    )
+                )
 
             if len(operators) == 1 or not destination_ref:
                 try:

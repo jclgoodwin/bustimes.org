@@ -697,8 +697,16 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl.Command()
         command.source = self.source
 
+        also = Operator.objects.create(noc="ALSO", name="Arriva London North")
+        alno = Operator.objects.create(noc="ALNO", name="Arriva London South")
+        OperatorCode.objects.create(operator=also, source=self.source, code="TFLO"),
+        OperatorCode.objects.create(operator=alno, source=self.source, code="TFLO"),
+
+        service = Service.objects.create(line_name="498", current=True)
+        Route.objects.create(line_name="498", service=service, source=self.source)
+        service.operator.set([also, alno])
+
         livery = Livery.objects.create(id=262, name="TfL", published=True)
-        OperatorCode.objects.create(code="TFLO", operator_id="HAMS", source=self.source)
 
         item = {
             "RecordedAtTime": "2022-05-23T12:15:47+00:00",
@@ -709,9 +717,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "DirectionRef": "2",
                 "PublishedLineName": "498",
                 "OperatorRef": "TFLO",
-                "OriginRef": "1500BD1",
+                # "OriginRef": "1500BD1",
                 "OriginName": "Brentwood Sainsbury s",
-                "DestinationRef": "1500IM1041",
+                # "DestinationRef": "1500IM1041",
                 "DestinationName": "Holiday Inn",
                 "OriginAimedDepartureTime": "2022-05-23T12:08:00+00:00",
                 "VehicleLocation": {"Longitude": "0.285472", "Latitude": "51.61536"},
@@ -726,8 +734,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.save()
 
         journey = VehicleJourney.objects.get()
-        vehicle = journey.vehicle
 
+        self.assertEqual(journey.service, service)
+
+        vehicle = journey.vehicle
         self.assertEqual(vehicle.livery, livery)
         self.assertEqual(vehicle.reg, "SN16OLO")
 
