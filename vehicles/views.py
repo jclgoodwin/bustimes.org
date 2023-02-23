@@ -60,14 +60,18 @@ from .utils import (  # calculate_bearing,
 class Vehicles:
     """for linking to an operator's /vehicles page (fleet list) in a breadcrumb list"""
 
-    def __init__(self, operator):
-        self.operator = operator
+    def __init__(self, vehicle=None, operator=None):
+        self.vehicle = vehicle
+        self.operator = operator or vehicle.operator
 
     def __str__(self):
         return "Vehicles"
 
     def get_absolute_url(self):
-        return reverse("operator_vehicles", args=(self.operator.slug,))
+        url = reverse("operator_vehicles", args=(self.operator.slug,))
+        if self.vehicle:
+            url = f"{url}#{self.vehicle.slug}"
+        return url
 
 
 @require_GET
@@ -184,7 +188,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
         check_user(request)
 
-        context["breadcrumb"].append(Vehicles(operator))
+        context["breadcrumb"].append(Vehicles(operator=operator))
         initial = {
             "operator": operator,
         }
@@ -707,7 +711,7 @@ class VehicleDetailView(DetailView):
         if self.object.operator:
             context["breadcrumb"] = [
                 self.object.operator,
-                Vehicles(self.object.operator),
+                Vehicles(vehicle=self.object),
             ]
 
             context["previous"] = self.object.get_previous()
@@ -842,7 +846,7 @@ def edit_vehicle(request, **kwargs):
         context["pending_edits"] = pending_edits
 
     if vehicle.operator:
-        context["breadcrumb"] = [vehicle.operator, Vehicles(vehicle.operator), vehicle]
+        context["breadcrumb"] = [vehicle.operator, Vehicles(vehicle=vehicle), vehicle]
     else:
         context["breadcrumb"] = [vehicle]
 
@@ -1020,7 +1024,7 @@ def vehicle_history(request, **kwargs):
         {
             "breadcrumb": [
                 vehicle.operator,
-                vehicle.operator and Vehicles(vehicle.operator),
+                vehicle.operator and Vehicles(vehicle=vehicle),
                 vehicle,
             ],
             "vehicle": vehicle,

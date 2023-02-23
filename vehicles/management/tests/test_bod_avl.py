@@ -348,12 +348,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
         )
         self.assertContains(
-            response,
-            f"""<td class="link">
-                    <a href="#journeys/{whippet_journey.id}">09:23</a>
-                </td>
-            """,
-            html=True,
+            response, f"""<a href="#journeys/{whippet_journey.id}">09:23</a>"""
         )
         self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
@@ -449,9 +444,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get(journey.get_absolute_url())
         self.assertContains(response, "146")
         self.assertContains(response, "to Southwold")
-        self.assertContains(
-            response, f'<td class="link"><a href="#journeys/{journey.id}">Map</a></td>'
-        )
+        self.assertContains(response, f'<a href="#journeys/{journey.id}">Map</a>')
 
         with self.assertNumQueries(0):
             response = self.client.get(

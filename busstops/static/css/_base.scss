@@ -1059,6 +1059,10 @@ table {
     .last-seen {
         max-width: 5em;
     }
+
+    tr:target {
+        background: $brand-color;
+    }
 }
 
 .wrap {
@@ -1444,6 +1448,7 @@ input:not(:checked) + label {
     }
 }
 
+.tabular,
 #fare-table td,
 .aside td,
 .trip-timetable td {

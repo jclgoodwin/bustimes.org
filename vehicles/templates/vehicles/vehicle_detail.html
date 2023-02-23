@@ -93,13 +93,13 @@
                             {{ journey.line_name }}
                         {% endif %}
                     </td>
-                    <td>{{ journey.code }}</td>
+                    <td class="tabular">{{ journey.code }}</td>
                     {% if journey.trip %}
-                        <td class="link">
+                        <td class="link tabular">
                             <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
                         </td>
                     {% else %}
-                        <td>{{ journey.datetime|time }}</td>
+                        <td class="tabular">{{ journey.datetime|time }}</td>
                     {% endif %}
                     <td>{% firstof journey.destination journey.direction %}</td>
                     {% if journey.locations %}

@@ -35,7 +35,7 @@
             {% if map %}
                 <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
             {% endif %}
-            <li>Vehicles</li>
+            <li>{{ vehicles|length }} vehicle{{ vehicles|length|pluralize }}</li>
         </ul>
     {% endif %}
 
@@ -84,7 +84,7 @@
     </thead>
     <tbody>
         {% for vehicle in vehicles %}
-            <tr>
+            <tr id="{{ vehicle.slug }}">
                 {% if form %}
                     <td>{% if not vehicle.is_spare_ticket_machine %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
                 {% endif %}
@@ -93,7 +93,7 @@
                         <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
                     </td>
                 {% else %}
-                    <td class="number">
+                    <td class="number tabular">
                         {% if vehicle.fleet_code or vehicle.fleet_number %}
                             <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
                         {% endif %}

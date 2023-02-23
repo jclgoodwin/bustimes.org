@@ -27,7 +27,7 @@
 </div>
 
 <ul class="tabs">
-    <li>Routes</li>
+    <li>{{ services|length }} route{{ services|length|pluralize }}</li>
     {% if tickets %}
         <li><a href="{{ object.get_absolute_url }}/tickets">Tickets</a></li>
     {% endif %}
