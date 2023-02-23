@@ -76,7 +76,7 @@
             <thead>
                 <tr>
                     <th scope="col">{% if not vehicle %}Vehicle{% else %}Route{% endif %}</th>
-                    <th scope="col">Trip</th>
+                    <th scope="col" colspan="2">Trip</th>
                     <th scope="col">To</th>
                 </tr>
             </thead>
@@ -93,6 +93,7 @@
                             {{ journey.line_name }}
                         {% endif %}
                     </td>
+                    <td>{{ journey.code }}</td>
                     {% if journey.trip %}
                         <td class="link">
                             <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
@@ -105,6 +106,7 @@
                         <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
                     {% endif %}
                     {% if request.user.is_superuser %}
+                        <td>{{ journey.block }}</td>
                         <td class="link">
                             <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</a>
                         </td>
