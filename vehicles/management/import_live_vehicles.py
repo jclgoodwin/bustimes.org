@@ -65,7 +65,7 @@ def same_journey(latest_journey, journey, latest_datetime, when):
 
 class ImportLiveVehiclesCommand(BaseCommand):
     url = ""
-    vehicles = Vehicle.objects.select_related("latest_journey")
+    vehicles = Vehicle.objects.select_related("latest_journey__trip")
     wait = 60
     history = True
     status = []
