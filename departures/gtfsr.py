@@ -1,16 +1,20 @@
-import requests
 from datetime import timedelta
-from google.transit import gtfs_realtime_pb2
-from django.core.cache import cache
+
+import requests
 from django.conf import settings
+from django.core.cache import cache
 from google.protobuf import json_format
+from google.transit import gtfs_realtime_pb2
+
 from bustimes.formatting import format_timedelta
+from vehicles.utils import redis_client
 
 
 def _get_feed():
     if settings.NTA_API_KEY:
+        if not redis_client.set("ntaie_lock", 1, ex=60, nx=True):
+            return
         url = "https://api.nationaltransport.ie/gtfsr/v1"
-        cache.set("ntaie_response", True, 30)
         response = requests.get(
             url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10
         )
@@ -21,17 +25,16 @@ def _get_feed():
 
 
 def get_feed_entities() -> dict:
-    if not cache.get("ntaie_response"):  # staler than 30 seconds
-        feed = _get_feed()
-        if feed:
-            feed = json_format.MessageToDict(feed)
-            if "entity" in feed:
-                feed["entity"] = {
-                    entity["tripUpdate"]["trip"]["tripId"]: entity
-                    for entity in feed["entity"]
-                }
-                cache.set("ntaie", feed, 300)  # cache for 5 minutes
-                return feed
+    feed = _get_feed()
+    if feed:
+        feed = json_format.MessageToDict(feed)
+        if "entity" in feed:
+            feed["entity"] = {
+                entity["tripUpdate"]["trip"]["tripId"]: entity
+                for entity in feed["entity"]
+            }
+            cache.set("ntaie", feed, 300)  # cache for 5 minutes
+            return feed
     return cache.get("ntaie")
 
 
