@@ -149,6 +149,9 @@ Disallow: /trips/
 Disallow: /accounts/
 Disallow: /fares/
 Disallow: /vehicles/tfl/
+Disallow: /*?date=*
+Disallow: /services/*/*
+Disallow: /*/debug
 
 User-agent: AhrefsBot
 Disallow: /
