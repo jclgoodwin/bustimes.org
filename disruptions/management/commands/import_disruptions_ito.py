@@ -1,20 +1,17 @@
-import requests
 import xml.etree.cElementTree as ET
 from datetime import datetime
-from requests_toolbelt.adapters.source import SourceAddressAdapter
+
+import requests
 from django.core.management.base import BaseCommand
+
 from busstops.models import DataSource
+
 from .import_siri_sx import handle_item
 
 
 class Command(BaseCommand):
     def fetch(self):
         session = requests.Session()
-
-        # Access to the subscription endpoint is restricted to certain IP addresses,
-        # so use a Digital Ocean floating IP address
-        # https://docs.digitalocean.com/products/networking/floating-ips/how-to/outbound-traffic/
-        session.mount("https://", SourceAddressAdapter("10.16.0.8"))
 
         url = "https://siri-sx-tfn.itoworld.com"
         requestor_ref = "BusTimes"
