@@ -59,9 +59,12 @@
                 </li>{% endif %}
 
                 <li>
-                    <strong>Status</strong>
                     {{ variation.registration_status }}
                 </li>
+
+                {% if variation.short_notice == 'Yes' %}<li>
+                    Short notice
+                </li>{% endif %}
             </ul>
 
             {{ variation.service_type_other_details|linebreaks }}

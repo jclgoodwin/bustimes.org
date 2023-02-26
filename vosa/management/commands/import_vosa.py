@@ -120,6 +120,7 @@ class Command(BaseCommand):
             licence.description = line["Description"]
             licence.granted_date = parse_date(line["Granted_Date"])
             licence.expiry_date = parse_date(line["Exp_Date"])
+            licence.licence_status = line["Licence Status"]
 
             if len(reg_no) > 20:
                 # PK0000098/PK0000098/364
@@ -258,6 +259,7 @@ class Command(BaseCommand):
                 "granted_date",
                 "expiry_date",
                 "address",
+                "licence_status",
             ],
         )
         Licence.objects.bulk_create(lics_to_create)
