@@ -31,7 +31,7 @@ class Licence(models.Model):
     granted_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
     address = models.TextField()
-    licence_status = models.CharField(max_length=255)
+    licence_status = models.CharField(max_length=255, blank=True)
 
     def get_operators(self):
         return (

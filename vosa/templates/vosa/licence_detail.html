@@ -42,14 +42,18 @@
             <th>Address</th>
             <td>{{ object.address }}</td>
         </tr>
-        <tr>
-            <th>Granted date</th>
-            <td>{{ object.granted_date }}</td>
-        </tr>
-        <tr>
-            <th>Expiry date</th>
-            <td>{{ object.expiry_date }}</td>
-        </tr>
+        {% if object.granted_date %}
+            <tr>
+                <th>Granted date</th>
+                <td>{{ object.granted_date }}</td>
+            </tr>
+        {% endif %}
+        {% if object.expiry_date %}
+            <tr>
+                <th>Expiry date</th>
+                <td>{{ object.expiry_date }}</td>
+            </tr>
+        {% endif %}
     </tbody>
 </table>
 

@@ -4,10 +4,16 @@ from django.contrib.postgres.aggregates import StringAgg
 from .models import Licence, Registration, Variation
 
 
+class OperatorInline(admin.TabularInline):
+    model = Licence.operator_set.through
+    autocomplete_fields = ["operator"]
+
+
 class LicenceAdmin(admin.ModelAdmin):
     search_fields = ["licence_number", "name", "trading_name"]
     list_display = ["licence_number", "name", "trading_name", "operators"]
     list_filter = ["traffic_area", "description", "licence_status"]
+    inlines = [OperatorInline]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
