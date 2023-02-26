@@ -43,15 +43,20 @@
     {% for variation in variations %}
         <li value="{{ variation.variation_number }}">
             <ul>
-                <li>
+                {% if variation.date_received %}<li>
                     <strong>Received</strong>
                     {{ variation.date_received|date:"j M y" }}
-                </li>
+                </li>{% endif %}
 
-                <li>
+                {% if variation.effective_date %}<li>
                     <strong>Effective</strong>
                     {{ variation.effective_date|date:"j M y" }}
-                </li>
+                </li>{% endif %}
+
+                {% if variation.end_date %}<li>
+                    <strong>End</strong>
+                    {{ variation.end_date|date:"j M y" }}
+                </li>{% endif %}
 
                 <li>
                     <strong>Status</strong>
