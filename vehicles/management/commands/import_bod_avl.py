@@ -538,8 +538,10 @@ class Command(ImportLiveVehiclesCommand):
                     )
                 except IntegrityError:
                     pass
-                vehicle.operator = operator
-                vehicle.save(update_fields=["operator"])
+
+                if not vehicle.operator_id:
+                    vehicle.operator = operator
+                    vehicle.save(update_fields=["operator"])
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
@@ -594,18 +596,28 @@ class Command(ImportLiveVehiclesCommand):
                 # except Trip.DoesNotExist:
                 #     pass
 
-                if journey.trip:
+                if trip := journey.trip:
                     if (
                         not (destination_ref and journey.destination)
-                        and journey.trip.destination_id
+                        and trip.destination_id
                     ):
                         journey.destination = self.get_destination_name(
-                            journey.trip.destination_id
+                            trip.destination_id
                         )
 
-                    if journey.trip.garage_id != vehicle.garage_id:
-                        vehicle.garage_id = journey.trip.garage_id
-                        vehicle.save(update_fields=["garage"])
+                    update_fields = []
+
+                    if trip.garage_id != vehicle.garage_id:
+                        vehicle.garage_id = trip.garage_id
+                        update_fields.append("garage")
+
+                    if not vehicle.operator_id and trip.operator_id:
+                        vehicle.operator_id = trip.operator_id
+                        update_fields.append("operator")
+
+                    update_fields.append("operator")
+                    if update_fields:
+                        vehicle.save(update_fields=update_fields)
 
         return journey
 
