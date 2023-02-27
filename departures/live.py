@@ -615,11 +615,11 @@ def get_departures(stop, services, when) -> dict:
     if (
         not when
         and type(stop) is StopPoint
-        and stop.atco_code[:3] == "490"
+        # and stop.atco_code[:3] == "490"
         and any(s.service_code[:4] == "tfl_" for s in services)
     ):
         departures = TflDepartures(stop, services).get_departures()
-        if departures:
+        if departures or all(s.service_code[:4] == "tfl_" for s in services):
             return {
                 "departures": departures,
                 "today": timezone.localdate(),

@@ -60,23 +60,6 @@
     </ul>
 {% endif %}
 
-{% if object.public_use is not False and payment_methods %}
-    <p>
-        {% for method in payment_methods %}
-            {% if not forloop.first %}{% if forloop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}
-            {% if forloop.first %}{{ method.name.capitalize }}{% else %}{{ method }}{% endif %}{% if method.url %}</a>{% endif %}
-        {% endfor %} accepted
-    </p>
-{% endif %}
-
-{% if app %}
-    <p>Mobile tickets and live bus tracking available on <a href="{{ app.url }}">the {{ app.name }}</a></p>
-{% endif %}
-
-{% if fare_cap %}
-    <p><a href="{{ fare_cap.url }}">Get around for £2</a> – until 30 June 2023, single fares are capped at £2 on this service</p>
-{% endif %}
-
 {% if fare_tables %}
         <h2 id="fares">Fare tables</h2>
 
@@ -111,6 +94,23 @@
 {% for operator in operators %}
     {% include 'operator-contact-details.html' %}
 {% endfor %}
+
+{% if object.public_use is not False and payment_methods %}
+    <p>
+        {% for method in payment_methods %}
+            {% if not forloop.first %}{% if forloop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}
+            {% if forloop.first %}{{ method.name.capitalize }}{% else %}{{ method }}{% endif %}{% if method.url %}</a>{% endif %}
+        {% endfor %} accepted
+    </p>
+{% endif %}
+
+{% if app %}
+    <p>Mobile tickets and live bus tracking available on <a href="{{ app.url }}">the {{ app.name }}</a></p>
+{% endif %}
+
+{% if fare_cap %}
+    <p><a href="{{ fare_cap.url }}">Get around for £2</a> – until 30 June 2023, single fares are capped at £2 on this service</p>
+{% endif %}
 
 {% endblock %}
 

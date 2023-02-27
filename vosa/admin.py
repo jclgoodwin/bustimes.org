@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.contrib.postgres.aggregates import StringAgg
 
@@ -9,7 +10,15 @@ class OperatorInline(admin.TabularInline):
     autocomplete_fields = ["operator"]
 
 
+class LicenceAdminForm(forms.ModelForm):
+    class Meta:
+        widgets = {
+            "trading_name": forms.Textarea,
+        }
+
+
 class LicenceAdmin(admin.ModelAdmin):
+    form = LicenceAdminForm
     search_fields = ["licence_number", "name", "trading_name"]
     list_display = ["licence_number", "name", "trading_name", "operators"]
     list_filter = ["traffic_area", "description", "licence_status"]

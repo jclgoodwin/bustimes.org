@@ -34,9 +34,7 @@
         {% if nocs %}
             <div>
                 <dt>National operator code{{ nocs|length|pluralize }}</dt>
-                <dd>{% for noc in nocs %}
-                    {{ noc }}{% if not forloop.last %},{% endif %}
-                {% endfor %}</dd>
+                <dd>{{ nocs|join:", " }}</dd>
             </div>
         {% endif %}
     </dl>
