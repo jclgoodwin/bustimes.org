@@ -232,7 +232,11 @@ class DataSource(models.Model):
         text = None
         date = None
 
-        if "tnds" in self.url:
+        if self.name == "L":
+            text = "Transport for London"
+        elif self.name == "GB":
+            text = "the National Coach Services Database"
+        elif "tnds" in self.url:
             url = "https://www.travelinedata.org.uk/"
             text = "the Traveline National Dataset"
         elif url:
