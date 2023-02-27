@@ -142,6 +142,7 @@ AFCL:
     name: Arriva Derby
     url: https://www.arrivabus.co.uk/derby
 AMSY:
+    name: Arriva Merseyside
     url: https://www.arrivabus.co.uk/north-west
 ANEA:
     name: Arriva North East
