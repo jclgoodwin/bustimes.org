@@ -14,9 +14,8 @@ class MyTripTest(TestCase):
         cls.midland_classic = Operator.objects.create(
             noc="MDCL", name="Midland Classic"
         )
-        service = Service.objects.create(
-            current=True
-        )  # so MyTrip tab will show on operator page
+        # so MyTrip tab will show on operator page:
+        service = Service.objects.create(current=True)
 
         source = DataSource.objects.create(name="National Operator Codes")
         operator = Operator.objects.create(noc="NIBS", name="Nibs")
@@ -46,14 +45,6 @@ class MyTripTest(TestCase):
                 "Operator matching query does not exist. York Pullman. Manually enter NOC: "
             )
 
-            response = self.client.get("/operators/nibs")
-            self.assertContains(response, ">Tickets<")
-            self.assertContains(response, ">National operator code<")
-            self.assertContains(response, ">NIBS<")
-
-            response = self.client.get("/services/service")
-            self.assertContains(response, ">the MyTrip app<")
-
             response = self.client.get("/operators/midland-classic/tickets")
             self.assertContains(
                 response,
@@ -64,3 +55,11 @@ class MyTripTest(TestCase):
                 "/operators/midland-classic/tickets/34876152-181c-59fc-8276-4cd7a235db69"
             )
             self.assertContains(response, """<p class="price">£2.50</p>""")
+
+        response = self.client.get("/operators/nibs")
+        self.assertContains(response, ">Tickets<")
+        self.assertContains(response, ">National operator code<")
+        self.assertContains(response, ">NIBS<")
+
+        response = self.client.get("/services/service")
+        self.assertContains(response, ">the MyTrip app<")
