@@ -86,9 +86,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
         return
 
     def get_items(self):
-        response = self.session.get(self.url, timeout=40)
-        if response.ok:
-            return response.json()
+        response = self.session.get(self.url, timeout=20)
+        assert response.ok
+        return response.json()
 
     @staticmethod
     def get_service(queryset, latlong):
@@ -365,6 +365,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
         now = timezone.localtime()
         self.source.datetime = now
 
+        wait = self.wait
+
         try:
             items = self.get_items()
             if items:
@@ -383,10 +385,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         i = 0
                 self.save()
             else:
-                return 300  # no items - wait five minutes
+                wait = 300  # no items - wait five minutes
         except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
-            return 120
+            wait = 120
 
         time_taken = (timezone.now() - now).total_seconds()
 
@@ -401,9 +403,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.status = self.status[-50:]
             cache.set(self.status_key, self.status, None)
 
-        if time_taken < self.wait:
-            return self.wait - time_taken
-        return 0  # took longer than self.wait
+        if time_taken < wait:
+            return wait - time_taken
+        return 0  # took longer than minimum wait
 
     def handle(self, immediate=False, *args, **options):
         if self.source_name:
