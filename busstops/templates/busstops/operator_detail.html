@@ -43,4 +43,8 @@
 
 {% include 'operator-contact-details.html' with licences=operator.licences.all %}
 
+{% if request.user.is_superuser %}
+    <p><a href="{% url 'admin:busstops_operator_change' object.noc %}">✎</a></p>
+{% endif %}
+
 {% endblock %}

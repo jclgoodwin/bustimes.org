@@ -136,6 +136,9 @@ def liveries_css(request, version=0):
     return HttpResponse("".join(styles), content_type="text/css")
 
 
+features_string_agg = StringAgg("features__name", ", ", ordering=["features__name"])
+
+
 def operator_vehicles(request, slug=None, parent=None):
     """fleet list"""
 
@@ -162,7 +165,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     vehicles = vehicles.order_by("fleet_number", "fleet_code", "reg", "code")
     if not parent:
-        vehicles = vehicles.annotate(feature_names=StringAgg("features__name", ", "))
+        vehicles = vehicles.annotate(feature_names=features_string_agg)
         vehicles = vehicles.annotate(
             pending_edits=Exists("vehicleedit", filter=Q(approved=None))
         )
@@ -374,7 +377,7 @@ def vehicles_json(request) -> JsonResponse:
     all_vehicles = (
         Vehicle.objects.select_related("vehicle_type")
         .annotate(
-            feature_names=StringAgg("features__name", ", "),
+            feature_names=features_string_agg,
             service_line_name=F("latest_journey__trip__route__line_name"),
             service_slug=F("latest_journey__service__slug"),
         )

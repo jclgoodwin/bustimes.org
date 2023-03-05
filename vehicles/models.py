@@ -237,6 +237,9 @@ class VehicleFeature(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ("name",)
+
 
 def vehicle_slug(vehicle):
     return f"{vehicle.operator_id} {vehicle.code.replace('_', ' ')}"

@@ -29,19 +29,26 @@
     <p>Features: {{ vehicle.features.all|join:", " }}</p>
 {% endif %}
 
-{% if vehicle.is_editable %}
+{% if vehicle.is_editable or request.user.is_superuser %}
     <ul class="horizontal">
         <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
+
         {% if pending_edits %}
             <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}">Pending edits</a></li>
         {% endif %}
+
         {% if vehicle.vehiclerevision_set.exists %}
             <li><a href="{{ vehicle.get_history_url }}">History</a></li>
         {% endif %}
+
         {% with vehicle.get_flickr_link as flickr_link %}
             {% if flickr_link %}
                 <li>{{ flickr_link }}</li>
             {% endif %}
         {% endwith %}
+
+        {% if request.user.is_superuser %}
+            <li><a href="{% url 'admin:vehicles_vehicle_change' vehicle.pk %}">✎</a></li>
+        {% endif %}
     </ul>
 {% endif %}

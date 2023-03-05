@@ -61,6 +61,9 @@
         <li><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></li>
         <li><a href="/vehicles/history?vehicle__operator={{ object.noc }}">Recent changes</a></li>
         <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}">Pending vehicle edits</a></li>
+        {% if request.user.is_superuser %}
+            <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}?operator={{ object.noc }}">✎</a></li>
+        {% endif %}
     </ul>
 {% endif %}
 
@@ -126,7 +129,7 @@
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
-                {% if vehicle.is_editable %}
+                {% if vehicle.is_editable or request.user.is_superuser %}
                     <td>{{ vehicle.get_flickr_link }}</td>
                     {% if not form %}
                         <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>
