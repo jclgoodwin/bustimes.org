@@ -91,6 +91,26 @@ class OperatorAdminForm(forms.ModelForm):
         }
 
 
+class DuplicateOperatorFilter(admin.SimpleListFilter):
+    title = "duplicate"
+    parameter_name = "duplicate"
+
+    def lookups(self, request, model_admin):
+        return ((1, "Yes"),)
+
+    def queryset(self, request, queryset):
+        if self.value():
+            exists = Exists(
+                models.Operator.objects.filter(
+                    ~Q(pk=OuterRef("pk")),
+                    name=OuterRef("name"),
+                )
+            )
+            queryset = queryset.filter(exists)
+
+        return queryset
+
+
 @admin.register(models.Operator)
 class OperatorAdmin(admin.ModelAdmin):
     form = OperatorAdminForm
@@ -106,7 +126,14 @@ class OperatorAdmin(admin.ModelAdmin):
         "vehicles",
         "twitter",
     ]
-    list_filter = ("region", "vehicle_mode", "payment_methods", "parent")
+    list_filter = (
+        DuplicateOperatorFilter,
+        "region",
+        "vehicle_mode",
+        "payment_methods",
+        "parent",
+        "group",
+    )
     search_fields = ("noc", "name")
     raw_id_fields = ("region", "regions", "siblings", "colour")
     inlines = [OperatorCodeInline]
