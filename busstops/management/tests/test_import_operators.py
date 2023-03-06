@@ -37,8 +37,11 @@ class ImportOperatorsTest(TestCase):
         with vcr.use_cassette(
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
-        ):
-            with self.assertNumQueries(3982):
+        ) as cassette:
+            with self.assertNumQueries(4012):
+                call_command("import_noc")
+            cassette.rewind()
+            with self.assertNumQueries(18):
                 call_command("import_noc")
 
         c2c = Operator.objects.get(noc="CC")

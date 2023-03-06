@@ -80,7 +80,7 @@ def noc_csv(code_sources: list, operators: dict):
             if slug in names:  # cope with duplicate slug
                 if not names[slug].slug:
                     names[slug].save(force_insert=True)
-                    operator.save(force_insert=True)
+                operator.save(force_insert=True)
             # else:
             #     operator.slug = slug
 
