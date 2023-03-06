@@ -397,12 +397,13 @@ class Command(ImportLiveVehiclesCommand):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
 
         journey_ref = monitored_vehicle_journey.get("VehicleJourneyRef")
+        journey_date = None
 
         if not journey_ref:
             try:
-                journey_ref = monitored_vehicle_journey["FramedVehicleJourneyRef"][
-                    "DatedVehicleJourneyRef"
-                ]
+                framed = monitored_vehicle_journey["FramedVehicleJourneyRef"]
+                journey_ref = framed["DatedVehicleJourneyRef"]
+                journey_date = date.fromisoformat(framed["DataFrameRef"])
             except KeyError:
                 pass
 
@@ -546,19 +547,6 @@ class Command(ImportLiveVehiclesCommand):
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
 
-                journey_date = None
-
-                if journey_ref and len(journey_ref) > 11 and journey_ref[10] == ":":
-
-                    # code is like "2021-12-13:203" so separate the date from the other bit
-                    try:
-                        journey_date = date.fromisoformat(journey_ref[:10])
-                        journey_ref = journey_ref[11:]
-                        journey.direction = ""
-                        journey.code = journey_ref
-                    except ValueError:
-                        pass
-
                 journey.trip = journey.get_trip(
                     datetime=datetime,
                     date=journey_date,
@@ -568,33 +556,6 @@ class Command(ImportLiveVehiclesCommand):
                     departure_time=origin_aimed_departure_time,
                     journey_ref=journey_ref,
                 )
-
-                # try:
-                #     if (
-                #         latest_journey
-                #         and latest_journey.trip_id
-                #         and (
-                #             not journey.trip
-                #             or origin_aimed_departure_time
-                #             and origin_aimed_departure_time - latest_journey.datetime
-                #             == timedelta(hours=1)
-                #         )
-                #     ):
-                #         # if driver change caused bogus journey code change (Ticketer), continue previous journey
-                #         if (
-                #             latest_journey.route_name == journey.route_name
-                #             and latest_journey.destination == journey.destination
-                #         ):
-                #             start = localtime(datetime)
-                #             start = timedelta(hours=start.hour, minutes=start.minute)
-                #             if (
-                #                 latest_journey.trip.start
-                #                 < start
-                #                 < latest_journey.trip.end
-                #             ):
-                #                 journey.trip = latest_journey.trip
-                # except Trip.DoesNotExist:
-                #     pass
 
                 if trip := journey.trip:
                     if (

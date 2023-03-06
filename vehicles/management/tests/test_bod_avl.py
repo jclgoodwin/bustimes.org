@@ -981,7 +981,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 "Longitude": "0.245008"
 },
 "PublishedLineName": "21C",
-"VehicleJourneyRef": "2021-12-30:1808"
+"VehicleJourneyRef": "1808"
 }
 }"""
             },
