@@ -54,25 +54,28 @@ def get_fare_product(element):
     )
 
 
-def get_fare_zones(source, fare_zone_elements):
-    if not fare_zone_elements:
-        return
-    existing_zones = {
-        f"{zone.code} {zone.name}": zone for zone in source.farezone_set.all()
-    }
+def get_existing_fare_zones(source):
+    return {f"{zone.code} {zone.name}": zone for zone in source.farezone_set.all()}
+
+
+def get_fare_zones(source, existing_zones, fare_zone_elements):
     zones = {}
     for fare_zone_element in fare_zone_elements:
-        zone = models.FareZone(
-            code=fare_zone_element.attrib["id"],
-            name=fare_zone_element.findtext("Name", ""),
-            source=source,
-        )
-        key = f"{zone.code} {zone.name}"
+        code = fare_zone_element.attrib["id"]
+        name = fare_zone_element.findtext("Name", "")
+
+        key = f"{code} {name}"
         if key in existing_zones:
-            assert zone.name == existing_zones[key].name
+            zone = existing_zones[key]
+            assert zone.name == name
         else:
+            zone = models.FareZone(
+                code=code,
+                name=name,
+                source=source,
+            )
             existing_zones[key] = zone
-        zones[zone.code] = zone
+        zones[code] = zone
 
         # stop_refs = [stop.attrib['ref'] for stop in fare_zone_element.findall('members/ScheduledStopPointRef')]
         # if stop_refs:
@@ -172,6 +175,7 @@ class Command(BaseCommand):
 
         fare_zones = get_fare_zones(
             source,
+            self.fare_zones,
             element.findall(
                 "dataObjects/CompositeFrame/frames/FareFrame/fareZones/FareZone"
             ),
@@ -563,6 +567,7 @@ class Command(BaseCommand):
             self.user_profiles = {}
             self.sales_offer_packages = {}
             self.fare_products = {}
+            self.fare_zones = get_existing_fare_zones(dataset)
 
             if response.headers["Content-Type"] == "text/xml":
                 # maybe not fully RFC 6266 compliant
@@ -615,6 +620,7 @@ class Command(BaseCommand):
             self.user_profiles = {}
             self.sales_offer_packages = {}
             self.fare_products = {}
+            self.fare_zones = get_existing_fare_zones(dataset)
 
             self.handle_archive(dataset, io.BytesIO(response.content))
 

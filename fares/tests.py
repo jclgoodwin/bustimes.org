@@ -105,23 +105,24 @@ class FaresTest(TestCase):
         command.user_profiles = {}
         command.sales_offer_packages = {}
         command.fare_products = {}
+        command.fare_zones = {}
 
         source = DataSet.objects.create()
 
         base_path = Path(__file__).resolve().parent / "data"
 
         for filename, number in (
-            ("connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml", 43),
+            ("connexions_Harrogate_Coa_16.286Z_IOpbaMX.xml", 42),
             ("FLDSa0eb4e10_1605250801329.xml", 22),
             (
                 "KBUS_FF_ArrivaAdd-on_2Multi_6d7e341a-0680-4397-9b3f-90a290087494_637613495098903655.xml",
-                13,
+                12,
             ),
             (
                 "FECS_23A_Outbound_YPSingle_6764fa3b-4b05-4331-9bea-c7bb90212531_637829447220443476.xml",
-                31,
+                30,
             ),
-            ("LYNX 39 single.xml", 28),
+            ("LYNX 39 single.xml", 27),
             ("LYNX Coast.xml", 75),
             ("LYNX Townrider.xml", None),
             (
