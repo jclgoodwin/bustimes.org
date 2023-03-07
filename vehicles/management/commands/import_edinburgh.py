@@ -11,6 +11,7 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "TfE"
+    wait = 39
     services = Service.objects.filter(
         operator__in=("LOTH", "EDTR", "ECBU", "NELB"), current=True
     ).defer("geometry", "search_vector")

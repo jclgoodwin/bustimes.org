@@ -14,7 +14,7 @@ class Command(BaseCommand):
         # Access to the subscription endpoint is restricted to certain IP addresses,
         # so use a Digital Ocean floating IP address
         # https://docs.digitalocean.com/products/networking/floating-ips/how-to/outbound-traffic/
-        session.mount("https://", SourceAddressAdapter("10.16.0.8"))
+        session.mount("https://", SourceAddressAdapter("10.16.0.7"))
 
         url = "https://siri-sx-tfn.itoworld.com"
         requestor_ref = "BusTimes"

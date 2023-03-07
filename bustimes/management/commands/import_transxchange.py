@@ -853,9 +853,9 @@ class Command(BaseCommand):
             return False  # jointly-operated service?
 
         if "FHAL" in nocs:
-            nocs.add("FHUD")
+            nocs.append("FHUD")
         elif "FHUD" in nocs:
-            nocs.add("FHAL")
+            nocs.append("FHAL")
 
         return Service.objects.filter(
             ~Q(source=self.source),
