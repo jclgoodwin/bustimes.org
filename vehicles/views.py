@@ -251,7 +251,9 @@ def operator_vehicles(request, slug=None, parent=None):
 
     vehicles = sorted(
         vehicles,
-        key=lambda v: v.fleet_number or Service.get_line_name_order(v.fleet_code),
+        key=lambda v: (0, v.fleet_number)
+        if v.fleet_number
+        else Service.get_line_name_order(v.fleet_code),
     )
     if operator.name == "National Express":
         vehicles = sorted(vehicles, key=lambda v: v.notes)
