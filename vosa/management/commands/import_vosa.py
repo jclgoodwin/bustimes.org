@@ -72,10 +72,10 @@ class Command(BaseCommand):
 
         variations = self.get_existing_variations(region)
 
-        # vars_to_update = set()
+        vars_to_update = []
         vars_to_create = []
 
-        # previous_line = None
+        previous_line = None
         # cardinals = set()
 
         for line in self.get_rows(f"Bus_Variation_{region}.csv"):
@@ -143,9 +143,15 @@ class Command(BaseCommand):
 
             status = line["Registration Status"]
             registration.registration_status = status
-            registration.registered = (
-                False  # will be set True later if present in Bus_RegisteredOnly_
-            )
+
+            if status == "New" or status == "Registered":
+                registration.registered = True
+            elif (
+                status == "Admin Cancelled"
+                or status == "Cancellation"
+                or status == "Cancelled"
+            ):
+                registration.registered = False
 
             registration.start_point = line["start_point"]
             registration.finish_point = line["finish_point"]
@@ -183,46 +189,53 @@ class Command(BaseCommand):
             else:
                 registration.authority_description = line["Auth_Description"]
 
-            # if previous_line:
-            #     if previous_line["Reg_No"] == reg_no:
-            #         if int(previous_line["Variation Number"]) == var_no:
-            #             for key in line:
-            #                 prev = previous_line[key]
-            #                 value = line[key]
-            #                 if prev != value:
-            #                     if key not in (
-            #                         'Auth_Description', 'TAO Covered BY Area',
-            #                         'trading_name', 'Pub_Text', 'Registration Status', 'end_date', 'received_date'
-            #                         'effective_date', 'short_notice', 'Service_Type_Description'
-            #                     ):
-            #                         print(reg_no)
-            #                         print(f"'{key}': '{prev}', '{value}'")
-            #                         cardinals.add(key)
-            #                         # print(line)
+            if (
+                previous_line
+                and previous_line["Reg_No"] == reg_no
+                and int(previous_line["Variation Number"]) == var_no
+            ):
 
-            variation = Variation(registration=registration, variation_number=var_no)
-            if reg_no in variations:
-                if var_no in variations[reg_no]:
-                    continue  # ?
-                else:
-                    variations[reg_no][var_no] = variation
+                # for key in line:
+                #     prev = previous_line[key]
+                #     value = line[key]
+                #     if prev != value:
+                #         if key not in (
+                #             'Auth_Description', 'TAO Covered BY Area',
+                #             'trading_name', 'Pub_Text', 'Registration Status', 'end_date', 'received_date'
+                #             'effective_date', 'short_notice', 'Service_Type_Description'
+                #         ):
+                #             print(reg_no)
+                #             print(f"'{key}': '{prev}', '{value}'")
+                #             cardinals.add(key)
+                #             # print(line)
+                pass
+
             else:
-                variations[reg_no] = {var_no: variation}
+                variation = Variation(
+                    registration=registration, variation_number=var_no
+                )
+                if reg_no in variations:
+                    if var_no in variations[reg_no]:
+                        variation = variations[reg_no][var_no]
+                        vars_to_update.append(variation)
+                    else:
+                        variations[reg_no][var_no] = variation
+                        vars_to_create.append(variation)
+                else:
+                    variations[reg_no] = {var_no: variation}
+                    vars_to_create.append(variation)
 
-            variation.effective_date = parse_date(line["effective_date"])
-            variation.date_received = parse_date(line["received_date"])
-            variation.end_date = parse_date(line["end_date"])
-            variation.service_type_other_details = line["Service_Type_Other_Details"]
-            variation.registration_status = line["Registration Status"]
-            variation.publication_text = line["Pub_Text"]
-            variation.short_notice = line["Short Notice"]
+                variation.effective_date = parse_date(line["effective_date"])
+                variation.date_received = parse_date(line["received_date"])
+                variation.end_date = parse_date(line["end_date"])
+                variation.service_type_other_details = line[
+                    "Service_Type_Other_Details"
+                ]
+                variation.registration_status = line["Registration Status"]
+                variation.publication_text = line["Pub_Text"]
+                variation.short_notice = line["Short Notice"]
 
-            assert not variation.id
-
-            if not variation.id:
-                vars_to_create.append(variation)
-
-            # previous_line = line
+            previous_line = line
 
         # previous_line = None
         # cardinals = set()
@@ -287,8 +300,16 @@ class Command(BaseCommand):
         Registration.objects.bulk_create(regs_to_create)
 
         Variation.objects.bulk_create(vars_to_create)
-        # Variation.objects.bulk_update(
-        #     vars_to_update,
-        #     ['date_received', 'end_date', 'service_type_other_details', 'registration_status', 'publication_text',
-        #      'short_notice']
-        # )
+        Variation.objects.bulk_update(
+            vars_to_update,
+            [
+                "effective_date",
+                "date_received",
+                "end_date",
+                "service_type_other_details",
+                "registration_status",
+                "publication_text",
+                "short_notice",
+            ],
+            batch_size=1000,
+        )
