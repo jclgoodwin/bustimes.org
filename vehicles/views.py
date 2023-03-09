@@ -251,7 +251,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     vehicles = sorted(
         vehicles,
-        key=lambda v: (0, v.fleet_number)
+        key=lambda v: ("", v.fleet_number, "")
         if v.fleet_number
         else Service.get_line_name_order(v.fleet_code),
     )
