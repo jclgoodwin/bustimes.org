@@ -209,12 +209,9 @@ class ToServiceLinkInline(FromServiceLinkInline):
     autocomplete_fields = ["from_service"]
 
 
-class SplitServiceFilter(admin.SimpleListFilter):
+class SplitServiceFilter(DuplicateOperatorFilter):
     title = "split"
     parameter_name = "split"
-
-    def lookups(self, request, model_admin):
-        return ((1, "Yes"),)
 
     def queryset(self, request, queryset):
         if self.value():
@@ -229,6 +226,25 @@ class SplitServiceFilter(admin.SimpleListFilter):
                     ),
                     ~Q(service_code=""),
                     service=OuterRef("id"),
+                )
+            )
+            queryset = queryset.filter(exists)
+
+        return queryset
+
+
+class DuplicateLineNameFilter(DuplicateOperatorFilter):
+    title = "duplicate line name"
+    parameter_name = "duplicate_line_name"
+
+    def queryset(self, request, queryset):
+        if self.value():
+            exists = Exists(
+                models.Service.objects.filter(
+                    ~Q(id=OuterRef("id")),
+                    line_name__iexact=OuterRef("line_name"),
+                    source=OuterRef("source"),
+                    # current=True,
                 )
             )
             queryset = queryset.filter(exists)
@@ -254,6 +270,7 @@ class ServiceAdmin(GISModelAdmin):
     )
     list_filter = (
         SplitServiceFilter,
+        DuplicateLineNameFilter,
         "current",
         "timetable_wrong",
         "public_use",
@@ -510,7 +527,6 @@ class DataSourceAdmin(admin.ModelAdmin):
     )
     actions = ["delete_routes", "remove_datetimes"]
     show_full_result_count = False
-    ordering = ("-id",)
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

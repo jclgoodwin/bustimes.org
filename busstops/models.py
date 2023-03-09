@@ -208,6 +208,9 @@ class DataSource(models.Model):
         TimetableDataSource, models.CASCADE, null=True, blank=True
     )
 
+    class Meta:
+        ordering = ["id"]
+
     def __str__(self):
         return self.name
 
