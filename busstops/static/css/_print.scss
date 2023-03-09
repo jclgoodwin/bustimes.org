@@ -3,7 +3,9 @@ header,
 #buses-online,
 input,
 label,
-.ad,
+.ad-wrapper,
+[data-fuse],
+[class^="publift-widget"],
 footer {
     display: none;
 }
