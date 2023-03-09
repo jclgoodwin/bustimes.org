@@ -51,7 +51,6 @@ django-csp = "^3.7"
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"
 django-debug-toolbar-force = "^0.1.8"
-django-rich = "^1.4.0"
 ipdb = "^0.13.9"
 ipython = "^8.5.0"
 pre-commit = "^2.19.0"
