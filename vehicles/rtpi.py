@@ -95,7 +95,9 @@ def get_trip(
             return
 
     try:
-        return trips.get(ticket_machine_code=journey_ref)
+        return trips.get(
+            Q(ticket_machine_code=journey_ref) | Q(vehicle_journey_code=journey_ref)
+        )
     except Trip.MultipleObjectsReturned:
         trips = trips.filter(calendar__in=get_calendars(date))
         return trips.filter(ticket_machine_code=journey_ref).first()
