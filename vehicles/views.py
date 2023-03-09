@@ -249,7 +249,10 @@ def operator_vehicles(request, slug=None, parent=None):
                     initial=initial, operator=operator, user=request.user
                 )
 
-    vehicles = sorted(vehicles, key=lambda v: Service.get_line_name_order(v.fleet_code))
+    vehicles = sorted(
+        vehicles,
+        key=lambda v: v.fleet_number or Service.get_line_name_order(v.fleet_code),
+    )
     if operator.name == "National Express":
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
