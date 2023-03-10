@@ -144,7 +144,7 @@ def get_vehicle_order(vehicle):
         return ("ZZ", vehicle.fleet_number or 0, vehicle.code)
     if vehicle.fleet_number:
         return ("", vehicle.fleet_number, "")
-    return (Service.get_line_name_order(vehicle.fleet_code),)
+    return Service.get_line_name_order(vehicle.fleet_code)
 
 
 def operator_vehicles(request, slug=None, parent=None):
