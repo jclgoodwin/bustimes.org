@@ -495,7 +495,6 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle=vehicle,
                 source=self.source,
                 datetime=origin_aimed_departure_time,
-                block=monitored_vehicle_journey.get("BlockRef", ""),
             )
 
         if journey_code:
