@@ -474,19 +474,19 @@ class Command(ImportLiveVehiclesCommand):
                     ).first()
             elif journey_code:
                 datetime = self.get_datetime(item)
-                TWELVE_HOURS = timedelta(hours=12)
+                THREE_HOURS = timedelta(hours=3)
                 if (
                     route_name == latest_journey.route_name
                     and journey_code == latest_journey.code
                 ):
-                    if datetime - latest_journey.datetime < TWELVE_HOURS:
+                    if datetime - latest_journey.datetime < THREE_HOURS:
                         journey = latest_journey
                 else:
-                    twelve_hours_ago = datetime - TWELVE_HOURS
+                    three_hours_ago = datetime - THREE_HOURS
                     journey = journeys.filter(
                         route_name=route_name,
                         code=journey_code,
-                        datetime__gt=twelve_hours_ago,
+                        datetime__gt=three_hours_ago,
                     ).last()
 
         if not journey:
@@ -495,6 +495,7 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle=vehicle,
                 source=self.source,
                 datetime=origin_aimed_departure_time,
+                block=monitored_vehicle_journey.get("BlockRef", ""),
             )
 
         if journey_code:
