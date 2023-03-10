@@ -139,6 +139,14 @@ def liveries_css(request, version=0):
 features_string_agg = StringAgg("features__name", ", ", ordering=["features__name"])
 
 
+def get_vehicle_order(vehicle):
+    if vehicle.notes == "Spare ticket machine":
+        return ("ZZ", vehicle.fleet_number or 0, vehicle.code)
+    if vehicle.fleet_number:
+        return ("", vehicle.fleet_number, "")
+    return (Service.get_line_name_order(vehicle.fleet_code),)
+
+
 def operator_vehicles(request, slug=None, parent=None):
     """fleet list"""
 
@@ -249,12 +257,7 @@ def operator_vehicles(request, slug=None, parent=None):
                     initial=initial, operator=operator, user=request.user
                 )
 
-    vehicles = sorted(
-        vehicles,
-        key=lambda v: ("", v.fleet_number, "")
-        if v.fleet_number
-        else Service.get_line_name_order(v.fleet_code),
-    )
+    vehicles = sorted(vehicles, key=get_vehicle_order)
     if operator.name == "National Express":
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
