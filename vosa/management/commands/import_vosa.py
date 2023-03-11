@@ -155,9 +155,6 @@ class Command(BaseCommand):
                 status = line["Registration Status"]
                 registration.registration_status = status
 
-                if reg_no == "PB0001748/119":
-                    print(status)
-
                 if status == "New" or status == "Registered":
                     registration.registered = True
                 elif (
