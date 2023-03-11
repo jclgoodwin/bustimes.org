@@ -75,12 +75,21 @@ class Command(BaseCommand):
         vars_to_update = []
         vars_to_create = []
 
-        previous_line = None
+        reg_no = None
+        var_no = None
         # cardinals = set()
 
         for line in self.get_rows(f"Bus_Variation_{region}.csv"):
+            prev_reg_no = reg_no
+            prev_var_no = var_no
+
             reg_no = line["Reg_No"]
             var_no = int(line["Variation Number"])
+
+            if reg_no != prev_reg_no:
+                max_var_no = 0
+            else:
+                max_var_no = max(var_no, max_var_no)
 
             lic_no = line["Lic_No"]
 
@@ -141,73 +150,65 @@ class Command(BaseCommand):
                 regs[reg_no] = registration
             registration.licence = licence
 
-            status = line["Registration Status"]
-            registration.registration_status = status
+            if prev_reg_no != reg_no or var_no >= max_var_no:
 
-            if status == "New" or status == "Registered":
-                registration.registered = True
-            elif (
-                status == "Admin Cancelled"
-                or status == "Cancellation"
-                or status == "Cancelled"
-            ):
-                registration.registered = False
+                status = line["Registration Status"]
+                registration.registration_status = status
 
-            registration.start_point = line["start_point"]
-            registration.finish_point = line["finish_point"]
-            registration.via = line["via"]
-            registration.subsidies_description = line["Subsidies_Description"]
-            registration.subsidies_details = line["Subsidies_Details"]
-            registration.traffic_area_office_covered_by_area = line[
-                "TAO Covered BY Area"
-            ]
-            registration.service_number = line["Service Number"]
+                if reg_no == "PB0001748/119":
+                    print(status)
 
-            # a registration can have multiple types
-            if registration.service_type_description:
-                if (
-                    line["Service_Type_Description"]
-                    not in registration.service_type_description
+                if status == "New" or status == "Registered":
+                    registration.registered = True
+                elif (
+                    status == "Admin Cancelled"
+                    or status == "Cancellation"
+                    or status == "Cancelled"
                 ):
-                    registration.service_type_description += (
-                        f"\n{line['Service_Type_Description']}"
+                    registration.registered = False
+
+                registration.start_point = line["start_point"]
+                registration.finish_point = line["finish_point"]
+                registration.via = line["via"]
+                registration.subsidies_description = line["Subsidies_Description"]
+                registration.subsidies_details = line["Subsidies_Details"]
+                registration.traffic_area_office_covered_by_area = line[
+                    "TAO Covered BY Area"
+                ]
+                registration.service_number = line["Service Number"]
+
+                # a registration can have multiple types
+                if registration.service_type_description:
+                    if (
+                        line["Service_Type_Description"]
+                        not in registration.service_type_description
+                    ):
+                        registration.service_type_description += (
+                            f"\n{line['Service_Type_Description']}"
+                        )
+                else:
+                    registration.service_type_description = line[
+                        "Service_Type_Description"
+                    ]
+
+                if (
+                    registration.authority_description
+                    and line["Auth_Description"]
+                    not in registration.authority_description
+                    and len(registration.authority_description) < 255
+                ):
+                    registration.authority_description += (
+                        f"\n{line['Auth_Description']}"
                     )
-            else:
-                registration.service_type_description = line["Service_Type_Description"]
+                    if len(registration.authority_description) > 255:  # too long
+                        # some National Express coach services cover maaany authorities
+                        registration.authority_description = (
+                            f"{registration.authority_description[:254]}…"
+                        )
+                else:
+                    registration.authority_description = line["Auth_Description"]
 
-            if (
-                registration.authority_description
-                and line["Auth_Description"] not in registration.authority_description
-                and len(registration.authority_description) < 255
-            ):
-                registration.authority_description += f"\n{line['Auth_Description']}"
-                if len(registration.authority_description) > 255:  # too long
-                    # some National Express coach services cover maaany authorities
-                    registration.authority_description = (
-                        f"{registration.authority_description[:254]}…"
-                    )
-            else:
-                registration.authority_description = line["Auth_Description"]
-
-            if (
-                previous_line
-                and previous_line["Reg_No"] == reg_no
-                and int(previous_line["Variation Number"]) == var_no
-            ):
-
-                # for key in line:
-                #     prev = previous_line[key]
-                #     value = line[key]
-                #     if prev != value:
-                #         if key not in (
-                #             'Auth_Description', 'TAO Covered BY Area',
-                #             'trading_name', 'Pub_Text', 'Registration Status', 'end_date', 'received_date'
-                #             'effective_date', 'short_notice', 'Service_Type_Description'
-                #         ):
-                #             print(reg_no)
-                #             print(f"'{key}': '{prev}', '{value}'")
-                #             cardinals.add(key)
-                #             # print(line)
+            if prev_reg_no == reg_no and prev_var_no == var_no:
                 pass
 
             else:
@@ -235,30 +236,12 @@ class Command(BaseCommand):
                 variation.publication_text = line["Pub_Text"]
                 variation.short_notice = line["Short Notice"]
 
-            previous_line = line
-
-        # previous_line = None
-        # cardinals = set()
-
-        # use this file to work out if a registration has not been cancelled/expired
+        # if a registration is in this file, it is current, not cancelled/expired
         for line in self.get_rows(f"Bus_RegisteredOnly_{region}.csv"):
             reg_no = line["Reg_No"]
             reg = regs[reg_no]
             reg.registration_status = line["Registration Status"]
             reg.registered = True
-
-            # if previous_line and previous_line["Reg_No"] == reg_no:
-            #     for key in line:
-            #         prev = previous_line[key]
-            #         value = line[key]
-            #         if prev != value:
-            #             cardinals.add(key)
-            #             if key == 'TAO Covered BY Area':
-            #                 print(prev, value)
-
-        #     previous_line = line
-
-        # print(cardinals)
 
         Licence.objects.bulk_update(
             lics_to_update,
