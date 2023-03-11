@@ -6,7 +6,7 @@ from django.test import TestCase, override_settings
 
 from busstops.models import Operator, Region, Service
 
-from .models import Licence
+from .models import Licence, Registration
 
 
 class VosaTest(TestCase):
@@ -81,3 +81,7 @@ class VosaTest(TestCase):
         with self.assertNumQueries(1):
             response = self.client.get("/registrations/PH1020951/d")
         self.assertEqual(response.status_code, 404)
+
+        # reg with csv lines in odd order:
+        reg = Registration.objects.get(registration_number="PF0000003/113")
+        self.assertEqual(reg.registration_status, "Cancelled")

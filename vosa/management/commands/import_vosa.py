@@ -87,7 +87,7 @@ class Command(BaseCommand):
             var_no = int(line["Variation Number"])
 
             if reg_no != prev_reg_no:
-                max_var_no = 0
+                max_var_no = var_no
             else:
                 max_var_no = max(var_no, max_var_no)
 
