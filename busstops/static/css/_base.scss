@@ -470,8 +470,8 @@ dd {
     ul {
         display: flex;
 
-        li {
-            margin-right: 2em;
+        li + li {
+            margin-left: 1.5em;
         }
 
         strong {
