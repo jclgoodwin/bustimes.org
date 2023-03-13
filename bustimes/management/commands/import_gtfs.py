@@ -3,6 +3,7 @@ import io
 import logging
 import zipfile
 from datetime import datetime
+from pathlib import Path
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
@@ -74,11 +75,15 @@ class Command(BaseCommand):
     def handle_operator(self, line):
         agency_id = line["agency_id"]
         agency_id = f"ie-{agency_id}"
-        operator, created = Operator.objects.get_or_create(
-            {"name": line["agency_name"]}, noc=agency_id
-        )
-        if operator.name != line["agency_name"]:
-            logger.info(f"{operator} {line}")
+
+        operator = Operator.objects.filter(
+            Q(name__iexact=line["agency_name"]) | Q(noc=agency_id)
+        ).first()
+
+        if not operator:
+            operator = Operator(name=line["agency_name"], noc=agency_id)
+            operator.save()
+
         return operator
 
     def do_stops(self, archive):
@@ -285,8 +290,10 @@ class Command(BaseCommand):
                     # if headsign contains ' - ' assume it's 'origin - destination', not just destination
                     if origin and " - " in origin:
                         route.inbound_description = origin
+                        origin = ""
                     if destination and " - " in destination:
                         route.outbound_description = destination
+                        destination = ""
 
                     route.origin = origin
                     route.destination = destination
@@ -432,40 +439,38 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         prefix = "https://www.transportforireland.ie"
 
-        if options["collections"]:
-            collections = [
-                f"google_transit_{collection}.zip"
-                for collection in options["collections"]
-            ]
-        else:
-            session = HTMLSession()
+        session = HTMLSession()
+        response = session.get(f"{prefix}/transitData/PT_Data.html")
 
-            response = session.get(f"{prefix}/transitData/PT_Data.html")
-            collections = response.html.find('a[href^="google_transit_"]')
+        collections = []
+        for element in response.html.find('a[href^="Data/GTFS_"]'):
+            if element.text in (
+                "Dublin Bus",
+                "Bus Eireann",
+                "GoAhead Ireland",
+                "LUAS",
+                "Irish Rail",
+            ):
+                # data is in the combined "Realtime Transport Operators"
+                continue
+            url = element.absolute_links.pop()
+            source = DataSource.objects.filter(url=url).first()
+            if not source:
+                source = DataSource.objects.create(name=element.text, url=url)
+            collections.append(source)
 
-            collections = set(element.attrs["href"] for element in collections)
-            collections.add("google_transit_combined.zip")
-            collections -= {
-                "google_transit_buseireann.zip",
-                "google_transit_dublinbus.zip",
-                "google_transit_goahead.zip",
-            }
+        print(collections)
 
-        for collection in collections:
-            path = settings.DATA_DIR / collection
-            url = f"{prefix}/transitData/{collection}"
-            modifed, last_modified = download_if_changed(path, url)
-            if modifed or options["force"] and path.exists():
+        # return
 
-                collection = collection.removeprefix("google_transit_").removesuffix(
-                    ".zip"
-                )
+        for source in collections:
+            path = settings.DATA_DIR / Path(source.url).name
 
-                self.source, _ = DataSource.objects.get_or_create(
-                    {"url": url}, name=f"{collection} GTFS"
-                )
-                if options["force"] or self.source.older_than(last_modified):
-                    logger.info(f"{collection} {last_modified}")
-                    if last_modified:
-                        self.source.datetime = last_modified
-                    self.handle_zipfile(path)
+            modified, last_modified = download_if_changed(path, source.url)
+            if modified or last_modified and last_modified != source.datetime:
+
+                logger.info(f"{source=} {last_modified=}")
+                if last_modified:
+                    source.datetime = last_modified
+                self.source = source
+                self.handle_zipfile(path)
