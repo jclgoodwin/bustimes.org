@@ -32,6 +32,7 @@ def get_feed_entities() -> dict:
             feed["entity"] = {
                 entity["tripUpdate"]["trip"]["tripId"]: entity
                 for entity in feed["entity"]
+                if "tripId" in entity["tripUpdate"]["trip"]
             }
             cache.set("ntaie", feed, 300)  # cache for 5 minutes
             return feed

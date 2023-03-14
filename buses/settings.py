@@ -283,10 +283,12 @@ TFWM_OPERATORS = {
 NTA_API_KEY = os.environ.get("NTA_API_KEY")  # Ireland
 NTA_OPERATORS = {
     "Bus Éireann",
-    "Dublin Bus",
-    "Expressway",
-    "Go-Ahead Ireland",
-    "Go-Ahead Commuter",
+    "Bus Éireann Waterford",
+    "Dublin Bus / Bus Átha Cliath",
+    "Go-Ahead Dublin City",
+    "Go-Ahead Kildare Commuter",
+    "Iarnród Éireann / Irish Rail",
+    "Luas",
 }
 
 DATA_DIR = os.environ.get("DATA_DIR")
