@@ -313,6 +313,9 @@ class Command(BaseCommand):
 
             for trip_id in trips:
                 line = trips[trip_id]
+                if "start" not in line:
+                    logger.warning(f"trip {trip_id} has no stop times")
+                    continue
                 route = self.routes[line["route_id"]]
                 trips[trip_id] = Trip(
                     route=route,
@@ -344,7 +347,10 @@ class Command(BaseCommand):
                             }
                         headsigns[line["route_id"]][line["direction_id"]].add(headsign)
 
-            Trip.objects.bulk_create(trips.values(), batch_size=1000)
+            Trip.objects.bulk_create(
+                [trip for trip in trips.values() if isinstance(trip, Trip)],
+                batch_size=1000,
+            )
 
             # headsigns - origins and destinations:
 
