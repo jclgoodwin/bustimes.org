@@ -18,15 +18,14 @@ FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 
 def make_zipfile(directory, collection):
-    dir_path = FIXTURES_DIR / f"google_transit_{collection}"
-    feed_path = Path(directory) / f"google_transit_{collection}.zip"
+    dir_path = FIXTURES_DIR / f"GTFS_{collection}"
+    feed_path = Path(directory) / f"GTFS_{collection}.zip"
     with zipfile.ZipFile(feed_path, "a") as open_zipfile:
         for item in dir_path.iterdir():
             open_zipfile.write(item, item.name)
 
 
 @override_settings(DATA_DIR=FIXTURES_DIR)
-@time_machine.travel(datetime.datetime(2019, 8, 30))
 class GTFSTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -55,47 +54,50 @@ class GTFSTest(TestCase):
     def test_import_gtfs(self):
         with TemporaryDirectory() as directory:
 
-            make_zipfile(directory, "seamusdoherty")
-            make_zipfile(directory, "mortons")
+            make_zipfile(directory, "Seamus_Doherty")
+            make_zipfile(directory, "Mortons")
+            make_zipfile(directory, "Wexford_Bus")
 
-            with override_settings(DATA_DIR=Path(directory)):
-                with vcr.use_cassette(
-                    str(FIXTURES_DIR / "google_transit_ie.yaml")
-                ) as cassette:
-                    with self.assertLogs(
-                        "bustimes.management.commands.import_gtfs", "INFO"
-                    ):
-                        with self.assertLogs("bustimes.download_utils", "ERROR") as cm:
-                            call_command("import_gtfs", "--force", "-v2")
+            with vcr.use_cassette(
+                str(FIXTURES_DIR / "google_transit_ie.yaml"), record_mode="new_episodes"
+            ) as cassette, override_settings(DATA_DIR=Path(directory)), self.assertLogs(
+                "bustimes.download_utils", "ERROR"
+            ) as cm:
 
-                            cassette.rewind()
+                call_command(
+                    "import_gtfs", ["Mortons", "Wexford Bus", "Seamus Doherty"]
+                )
 
-                            # import a second time - test that it's OK if stuff already exists
-                            call_command("import_gtfs", "--force")
+                cassette.rewind()
+
+                # import a second time - test that it's OK if stuff already exists
+                call_command(
+                    "import_gtfs", ["Mortons", "Wexford Bus", "Seamus Doherty"]
+                )
 
         self.assertEqual(
             sorted(cm.output),
             [
                 "ERROR:bustimes.download_utils:<Response [404]> "
-                "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
+                "https://www.transportforireland.ie/transitData/Data/GTFS_Mortons.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
-                "https://www.transportforireland.ie/transitData/google_transit_combined.zip",
+                "https://www.transportforireland.ie/transitData/Data/GTFS_Mortons.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
-                "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
+                "https://www.transportforireland.ie/transitData/Data/GTFS_Seamus_Doherty.zip",
                 "ERROR:bustimes.download_utils:<Response [404]> "
-                "https://www.transportforireland.ie/transitData/google_transit_seamusdoherty.zip",
+                "https://www.transportforireland.ie/transitData/Data/GTFS_Seamus_Doherty.zip",
             ],
         )
 
         # stops
-        self.assertEqual(StopPoint.objects.count(), 75)
+        self.assertEqual(StopPoint.objects.count(), 267)
         stop = StopPoint.objects.get(atco_code="822000153")
         self.assertEqual(stop.common_name, "Terenure Library")
         self.assertEqual(stop.admin_area_id, 822)
 
-        self.assertEqual(Operator.objects.count(), 2)
+        self.assertEqual(Operator.objects.count(), 3)
         self.assertEqual(
-            Operator.objects.filter(service__current=True).distinct().count(), 2
+            Operator.objects.filter(service__current=True).distinct().count(), 3
         )
 
         # small timetable
@@ -151,7 +153,7 @@ class GTFSTest(TestCase):
 
         self.assertTrue(service.geometry)
 
-        self.assertEqual(str(service.source), "seamusdoherty GTFS")
+        self.assertEqual(str(service.source), "Seamus Doherty")
 
         # admin area
         res = self.client.get(self.dublin.get_absolute_url())
@@ -190,23 +192,9 @@ class GTFSTest(TestCase):
     def test_handle(self):
         with patch(
             "bustimes.management.commands.import_gtfs.download_if_changed",
-            return_value=(False, None),
-        ):
-            call_command("import_gtfs", "mortons")
-        self.assertFalse(Route.objects.all())
-
-        with patch(
-            "bustimes.management.commands.import_gtfs.download_if_changed",
             return_value=(True, None),
-        ):
-            with self.assertLogs(
-                "bustimes.management.commands.import_gtfs", "INFO"
-            ) as cm:
-                with self.assertRaises(FileNotFoundError):
-                    call_command("import_gtfs", "mortons")
-
-        self.assertEqual(
-            cm.output, ["INFO:bustimes.management.commands.import_gtfs:mortons None"]
-        )
+        ), self.assertRaises(FileNotFoundError):
+            with vcr.use_cassette(str(FIXTURES_DIR / "google_transit_ie.yaml")):
+                call_command("import_gtfs", "Wexford Bus")
 
         self.assertFalse(Route.objects.all())

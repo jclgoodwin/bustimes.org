@@ -953,7 +953,7 @@ class Service(models.Model):
         if timetable := cache.get(cache_key):
             return timetable
 
-        if self.region_id == "NI" or self.source and self.source.name.endswith(" GTFS"):
+        if self.region_id == "NI" or self.source and "ireland" in self.source.url:
             timetable = Timetable(self.route_set, day, calendar_id=calendar_id)
         else:
             if also_services:

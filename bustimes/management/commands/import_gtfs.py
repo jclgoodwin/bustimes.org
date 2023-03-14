@@ -81,8 +81,13 @@ class Command(BaseCommand):
         ).first()
 
         if not operator:
-            operator = Operator(name=line["agency_name"], noc=agency_id)
+            operator = Operator(
+                name=line["agency_name"], noc=agency_id, url=line["agency_url"]
+            )
             operator.save()
+        elif operator.url != line["agency_url"]:
+            operator.url = line["agency_url"]
+            operator.save(update_fields=["url"])
 
         return operator
 
@@ -216,10 +221,17 @@ class Command(BaseCommand):
                 if shape_id not in self.shapes:
                     self.shapes[shape_id] = []
                 self.shapes[shape_id].append(
-                    GEOSGeometry(
-                        f"POINT({line['shape_pt_lon']} {line['shape_pt_lat']})"
-                    )
+                    (
+                        GEOSGeometry(
+                            f"POINT({line['shape_pt_lon']} {line['shape_pt_lat']})"
+                        ),
+                        int(line["shape_pt_sequence"]),
+                        float(line["shape_dist_traveled"]),
+                    ),
                 )
+            for shape_id in self.shapes:
+                # sort by sequence number
+                self.shapes[shape_id].sort(key=lambda p: p[1])
 
             for line in read_file(archive, "agency.txt"):
                 self.operators[line["agency_id"]] = self.handle_operator(line)
@@ -247,18 +259,74 @@ class Command(BaseCommand):
                     special=operation,  # additional date of operation
                 )
 
+            trip_shapes = {}
             trips = {}
             for line in read_file(archive, "trips.txt"):
-                route = self.routes.get(line["route_id"])
-                if not route:
-                    continue
-                trips[line["trip_id"]] = Trip(
+                trips[line["trip_id"]] = line
+
+            trip = None
+            previous_line = None
+            # use stop_times.txt to calculate trips' start times, end times and destinations:
+            for line in read_file(archive, "stop_times.txt"):
+
+                if not previous_line or previous_line["trip_id"] != line["trip_id"]:
+
+                    # shape = self.shapes[trip_shapes[line["trip_id"]]]
+
+                    if trip:
+                        trip["destination"] = stops.get(previous_line["stop_id"])
+                        trip["end"] = parse_duration(previous_line["arrival_time"])
+
+                    trip = trips[line["trip_id"]]
+                    trip["start"] = parse_duration(line["departure_time"])
+                    if line["stop_headsign"]:
+                        if not trip["trip_headsign"]:
+                            trip["trip_headsign"] = line["stop_headsign"]
+
+                # else:
+                #     from_stop = previous_line["stop_id"]
+                #     to_stop = line["stop_id"]
+                #     key = (from_stop, to_stop)
+                #     if key not in route_links:
+                #         print(line)
+                #         print(previous_line)
+                #         from_stop_dist = float(previous_line["shape_dist_traveled"])
+                #         to_stop_dist = float(line["shape_dist_traveled"])
+                #         points = [
+                #             point for point in shape
+                #             # point for point, seq, dist in shape
+                #             if from_stop_dist <= dist <= to_stop_dist
+                #         ]
+                #         print(points)
+                #         route_links[key] = RouteLink(
+                #             from_stop=from_stop,
+                #             to_stop=to_stop,
+                #             geometry=LineString(points)
+                #         )
+                #         route_links[key].save()
+
+                previous_line = line
+
+            # last trip:
+            trip["destination"] = stops.get(line["stop_id"])
+            trip["end"] = parse_duration(line["arrival_time"])
+
+            for trip_id in trips:
+                line = trips[trip_id]
+                route = self.routes[line["route_id"]]
+                trips[trip_id] = Trip(
                     route=route,
                     calendar=calendars[line["service_id"]],
                     inbound=line["direction_id"] == "1",
-                    ticket_machine_code=line["trip_id"],
+                    ticket_machine_code=trip_id,
+                    start=line["start"],
+                    end=line["end"],
+                    destination=line["destination"],
+                    block=line.get("block_id", ""),
+                    vehicle_journey_code=line.get("trip_short_name", ""),
                 )
                 if line["shape_id"]:
+                    trip_shapes[line["trip_id"]] = line["shape_id"]
                     if route.service_id not in self.service_shapes:
                         self.service_shapes[route.service_id] = set()
                     self.service_shapes[route.service_id].add(line["shape_id"])
@@ -275,6 +343,11 @@ class Command(BaseCommand):
                                 "1": set(),
                             }
                         headsigns[line["route_id"]][line["direction_id"]].add(headsign)
+
+            Trip.objects.bulk_create(trips.values(), batch_size=1000)
+
+            # headsigns - origins and destinations:
+
             for route_id in headsigns:
                 route = self.routes[route_id]
                 origins = headsigns[route_id]["1"]  # inbound destinations
@@ -298,11 +371,6 @@ class Command(BaseCommand):
                     route.origin = origin
                     route.destination = destination
 
-                    if not route.service.description:
-                        route.service.description = (
-                            route.outbound_description or route.inbound_description
-                        )
-
                     route.save(
                         update_fields=[
                             "origin",
@@ -311,29 +379,12 @@ class Command(BaseCommand):
                             "outbound_description",
                         ]
                     )
-                    route.service.save(update_fields=["description"])
 
-            trip = None
-            previous_line = None
-
-            for line in read_file(archive, "stop_times.txt"):
-
-                if not previous_line or previous_line["trip_id"] != line["trip_id"]:
-
-                    if trip:
-                        trip.destination = stops.get(previous_line["stop_id"])
-                        trip.end = parse_duration(previous_line["arrival_time"])
-
-                    trip = trips[line["trip_id"]]
-                    trip.start = parse_duration(line["departure_time"])
-
-                previous_line = line
-
-            # last trip:
-            trip.destination = stops.get(line["stop_id"])
-            trip.end = parse_duration(line["arrival_time"])
-
-            Trip.objects.bulk_create(trips.values(), batch_size=1000)
+                    if not route.service.description:
+                        route.service.description = (
+                            route.outbound_description or route.inbound_description
+                        )
+                        route.service.save(update_fields=["description"])
 
             i = 0
             stop_times = []
@@ -358,7 +409,6 @@ class Command(BaseCommand):
                     ]
                 else:
                     stop_time.stop_code = line["stop_id"]
-                    print(line)
 
                 if stop_time.arrival == stop_time.departure:
                     stop_time.arrival = None
@@ -372,7 +422,7 @@ class Command(BaseCommand):
                 else:
                     i += 1
 
-                previous_line = line
+                # previous_line = line
 
         # last trip
         if not stop_time.arrival:
@@ -384,7 +434,7 @@ class Command(BaseCommand):
         for service in self.services.values():
             if service.id in self.service_shapes:
                 linestrings = [
-                    LineString(*self.shapes[shape])
+                    LineString(*[point[0] for point in self.shapes[shape]])
                     for shape in self.service_shapes[service.id]
                     if shape in self.shapes
                 ]
@@ -437,13 +487,15 @@ class Command(BaseCommand):
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
     def handle(self, *args, **options):
-        prefix = "https://www.transportforireland.ie"
-
         session = HTMLSession()
-        response = session.get(f"{prefix}/transitData/PT_Data.html")
+        url = "https://www.transportforireland.ie/transitData/PT_Data.html"
+        response = session.get(url)
 
         collections = []
+
         for element in response.html.find('a[href^="Data/GTFS_"]'):
+            if options["collections"] and element.text not in options["collections"]:
+                continue
             if element.text in (
                 "Dublin Bus",
                 "Bus Eireann",
@@ -459,17 +511,18 @@ class Command(BaseCommand):
                 source = DataSource.objects.create(name=element.text, url=url)
             collections.append(source)
 
-        print(collections)
-
-        # return
-
         for source in collections:
             path = settings.DATA_DIR / Path(source.url).name
 
             modified, last_modified = download_if_changed(path, source.url)
-            if modified or last_modified and last_modified != source.datetime:
+            if (
+                modified
+                or last_modified
+                and last_modified != source.datetime
+                or options["collections"]
+            ):
 
-                logger.info(f"{source=} {last_modified=}")
+                logger.info(f"{source} {last_modified}")
                 if last_modified:
                     source.datetime = last_modified
                 self.source = source

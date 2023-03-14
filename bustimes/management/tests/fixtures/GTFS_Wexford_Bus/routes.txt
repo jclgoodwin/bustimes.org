@@ -1,0 +1,11 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+2868_40651,7778193,340,"Wexford, Redmond Square - County Waterford, Whitfield Clinic",,3,,,
+2868_40652,7778193,376,"Wexford, Redmond Square - Wexford, Redmond Square",,3,,,
+2868_40653,7778193,390,"Wexford, Redmond Square - Kilmore Quay",,3,,,
+2868_40654,7778193,740A,Gorey (Main St - Whitmore Jewellers) - Dublin Airport,,3,,,
+2868_40655,7778193,740,"Wexford, Redmond Square - Dublin Airport",,3,,,
+2868_40656,7778193,877,"Wexford, Redmond Square - Wexford, Redmond Square",,3,,,
+2868_40657,7778193,878,"Wexford, Redmond Square - Kelly's Resort Hotel",,3,,,
+2868_40658,7778193,WX1,"Wexford, Redmond Square - Wexford, Redmond Square",,3,,,
+2868_40659,7778193,WX2,"Wexford, Redmond Square - Wexford, Redmond Square",,3,,,
+2869_40322,7778193,UM11,"Gorey (Main St - Whitmore Jewellers) - Maynooth, Maynooth University Library",,3,,,
