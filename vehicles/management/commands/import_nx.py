@@ -1,15 +1,18 @@
-import ciso8601
-from time import sleep
 from datetime import timedelta
-from requests import RequestException
+from time import sleep
+
+import ciso8601
 from django.contrib.gis.geos import Point
-from django.utils import timezone
 from django.db.models import OuterRef, Q
+from django.utils import timezone
+from requests import RequestException
 from sql_util.utils import Exists
+
 from busstops.models import Service
-from bustimes.utils import get_calendars
 from bustimes.models import Calendar, Trip
-from ...models import Vehicle, VehicleLocation, VehicleJourney
+from bustimes.utils import get_calendars
+
+from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
@@ -28,7 +31,10 @@ def get_trip_condition(date, time_since_midnight, calendar_ids=None):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "National coach code"
-    operators = ["NATX", "NXSH", "NXAP", "WAIR"]
+    operators = [
+        "NATX",
+        "ie-1178",  # Dublin Express
+    ]
     url = "https://coachtracker.nationalexpress.com/api/eta/routes/{}/{}"
     sleep = 1.5
 

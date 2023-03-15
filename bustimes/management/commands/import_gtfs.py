@@ -76,14 +76,16 @@ class Command(BaseCommand):
         agency_id = line["agency_id"]
         agency_id = f"ie-{agency_id}"
 
+        name = line["agency_name"]
+        if name == "National Express":
+            name = "Dublin Express"
+
         operator = Operator.objects.filter(
-            Q(name__iexact=line["agency_name"]) | Q(noc=agency_id)
+            Q(name__iexact=name) | Q(noc=agency_id)
         ).first()
 
         if not operator:
-            operator = Operator(
-                name=line["agency_name"], noc=agency_id, url=line["agency_url"]
-            )
+            operator = Operator(name=name, noc=agency_id, url=line["agency_url"])
             operator.save()
         elif operator.url != line["agency_url"]:
             operator.url = line["agency_url"]
