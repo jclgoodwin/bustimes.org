@@ -108,7 +108,7 @@ class Command(ImportLiveVehiclesCommand):
                 pass
         return self.vehicles.get_or_create(
             {"source": self.source},
-            operator_id=self.operators[0],
+            operator__in=self.operators,
             code=item["live"]["vehicle"],
         )
 
