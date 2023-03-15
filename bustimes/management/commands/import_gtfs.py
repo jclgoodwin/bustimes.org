@@ -200,12 +200,14 @@ class Command(BaseCommand):
         if not created:
             route.trip_set.all().delete()
         self.routes[line["route_id"]] = route
+        self.route_operators[line["route_id"]] = operator
 
     def handle_zipfile(self, path):
         self.shapes = {}
         self.service_shapes = {}
         self.operators = {}
         self.routes = {}
+        self.route_operators = {}
         self.services = {}
         headsigns = {}
 
@@ -322,6 +324,7 @@ class Command(BaseCommand):
                     destination=line["destination"],
                     block=line.get("block_id", ""),
                     vehicle_journey_code=line.get("trip_short_name", ""),
+                    operator=self.route_operators[line["route_id"]],
                 )
                 if line["shape_id"]:
                     trip_shapes[line["trip_id"]] = line["shape_id"]
