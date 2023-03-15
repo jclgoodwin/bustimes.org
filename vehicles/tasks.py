@@ -11,7 +11,7 @@ from .models import Vehicle, VehicleJourney
 @db_task()
 def log_vehicle_journey(service, data, time, destination, source_name, url, trip_id):
     operator_ref = data.get("OperatorRef")
-    if operator_ref == "McG" or operator_ref == "SWB":
+    if operator_ref in ("McG", "SWB", "MID"):
         return
 
     if not time:
