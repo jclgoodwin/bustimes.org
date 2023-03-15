@@ -248,7 +248,7 @@ class DataSource(models.Model):
             # if self.name == 'flixbus GTFS':
             #     text = 'FlixBus'
         elif "transportforireland" in self.url:
-            url = "https://www.transportforireland.ie/transitData/PT_Data.html"
+            url = f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
             text = "Transport for Ireland"
             date = self.datetime
         elif self.url.startswith("https://opendata.ticketer.com/uk/"):

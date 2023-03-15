@@ -59,7 +59,7 @@ class GTFSTest(TestCase):
             make_zipfile(directory, "Wexford_Bus")
 
             with vcr.use_cassette(
-                str(FIXTURES_DIR / "google_transit_ie.yaml"), record_mode="new_episodes"
+                str(FIXTURES_DIR / "google_transit_ie.yaml"),
             ) as cassette, override_settings(DATA_DIR=Path(directory)), self.assertLogs(
                 "bustimes.download_utils", "ERROR"
             ) as cm:
@@ -121,7 +121,8 @@ class GTFSTest(TestCase):
 
         self.assertContains(
             response,
-            '<a href="https://www.transportforireland.ie/transitData/PT_Data.html">Transport for Ireland</a>',
+            '<a href="https://www.transportforireland.ie/transitData/PT_Data.html#:~:text=Mortons">Transport '
+            "for Ireland</a>",
         )
 
         for day in (

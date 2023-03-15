@@ -107,9 +107,9 @@ class Command(ImportLiveVehiclesCommand):
             except (Vehicle.DoesNotExist, Vehicle.MultipleObjectsReturned):
                 pass
         return self.vehicles.get_or_create(
-            {"source": self.source},
+            {"source": self.source, "code": code, "operator_id": self.operators[0]},
             operator__in=self.operators,
-            code=item["live"]["vehicle"],
+            code=code,
         )
 
     def get_journey(self, item, vehicle):
