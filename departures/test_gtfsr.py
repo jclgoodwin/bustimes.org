@@ -8,7 +8,7 @@ from bustimes.models import Calendar, Route, StopTime, Trip
 class GTFSRTTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        source = DataSource.objects.create()
+        source = DataSource.objects.create(name="Realtime Transport Operators")
 
         StopPoint.objects.bulk_create(
             [
@@ -26,7 +26,9 @@ class GTFSRTTest(TestCase):
             ]
         )
 
-        operator = Operator.objects.create(noc="dub", name="Dublin Bus")
+        operator = Operator.objects.create(
+            noc="dub", name="Dublin Bus / Bus Átha Cliath"
+        )
         service = Service.objects.create(service_code="7", line_name="7")
         service.operator.add(operator)
 
