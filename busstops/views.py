@@ -249,6 +249,7 @@ def status(request):
             "Aircoach_status",
             "TfE_status",
             "Stagecoach_status",
+            "Realtime_Transport_Operators_status",
         ]
     ).items()
 
@@ -1167,7 +1168,7 @@ class ServiceDetailView(DetailView):
 
     def render_to_response(self, context):
         if "redirect_to" in context:
-            return redirect(context["redirect_to"])
+            return redirect(context["redirect_to"], permanent=True)
 
         return super().render_to_response(context)
 

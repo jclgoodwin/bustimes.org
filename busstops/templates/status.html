@@ -88,7 +88,8 @@
 
 <h2>AVL</h2>
 
-<h3>Bus Open Data</h3>
+<details>
+<summary>BODS</summary>
 
 <table>
     <thead>
@@ -112,9 +113,10 @@
         {% endfor %}
     </tbody>
 </table>
+</details>
 
-{% for name, status in statuses %}
-    <h3>{{ name }}</h3>
+{% for name, status in statuses %}<details>
+    <summary>{{ name }}</summary>
 
     <table>
         <thead>
@@ -134,8 +136,7 @@
             {% endfor %}
         </tbody>
     </table>
-
-{% endfor %}
+</details>{% endfor %}
 
 <h2>Timetables</h2>
 
