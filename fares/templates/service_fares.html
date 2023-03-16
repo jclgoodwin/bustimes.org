@@ -1,8 +1,15 @@
 {% extends 'page.html' %}
 
+{% load date_range %}
+
 {% block content %}
 
-    {% for table in tables %}
+{% for tariff in tariffs %}
+    <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
+
+    <p>{{ tariff.valid_between|date_range }}</p>
+
+    {% for table in tariff.faretable_set.all %}
 
         {% ifchanged table.name %}<h2>{{ table }}</h2>{% endifchanged %}
 
@@ -16,12 +23,9 @@
             {{ table.sales_offer_package }}
         {% endif %}</p>
 
-
         {% include "fares/faretable_detail.html" with object=table %}
     {% endfor %}
 
-    {% for tariff in tariffs %}
-        <p><a href="{{ tariff.get_absolute_url }}">{{ tariff }}{% if tariff.user_profile_id %} ({{ tariff.user_profile }} {{ tariff.trip_type }}){% endif %}</a></p>
-    {% endfor %}
+{% endfor %}
 
 {% endblock %}

@@ -1,11 +1,11 @@
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.views.generic.detail import DetailView
 
 from busstops.models import Service
 
 from .forms import FaresForm
-from .models import DataSet, Tariff, FareTable
+from .models import DataSet, FareTable, Tariff
 
 
 def index(request):
@@ -75,15 +75,18 @@ class FareTableDetailView(DetailView):
 
 def service_fares(request, slug):
     service = get_object_or_404(Service, slug=slug)
-    tariffs = Tariff.objects.filter(services=service)
+    tariffs = Tariff.objects.filter(services=service).order_by("name", "valid_between")
+
+    tariffs = tariffs.prefetch_related(
+        "faretable_set__row_set__cell_set__price",
+        "faretable_set__column_set",
+        "faretable_set__user_profile",
+        "faretable_set__sales_offer_package",
+        "faretable_set__preassigned_fare_product",
+    )
 
     if not tariffs:
         raise Http404
-
-    tables = FareTable.objects.filter(tariff__in=tariffs).prefetch_related(
-        "row_set__cell_set__price",
-        "column_set",
-    )
 
     return render(
         request,
@@ -91,6 +94,5 @@ def service_fares(request, slug):
         {
             "breadcrumb": [service],
             "tariffs": tariffs,
-            "tables": tables,
         },
     )
