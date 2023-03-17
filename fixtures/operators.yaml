@@ -102,15 +102,6 @@ HOGG:
     url: http://roadhoggs.net/timetables.html
 JTMT:
     url: ""
-JOHN:
-    url: http://www.johns-taxis.co.uk
-    address: |
-        81 Manod Road
-        Blaenau Ffestiniog
-        Gwynedd
-        LL41 4AF
-    phone: 01766 831 781
-    email: info@johns-taxis.co.uk
 EBLY:
     url: http://www.ebleyexcursions.co.uk/school-timetables
 HCMN:
@@ -340,14 +331,14 @@ NUTT:
     name: Transpora North West
     aka: Coastliner Buses
     url: https://www.coastlinerbuses.co.uk/
-    email: coastlinerbuses@gmail.com
+    email: blackpool@transporagroup.co.uk
     phone: 01253 761739
     address: |
         Brinwell Road Bus Garage
         Mereside
         Blackpool
         FY4 4QU
-LNNE:
+MDBC:
     url: ""
 DDIS:
     url: https://procterscoaches.com/dales-district-timetable/
@@ -386,13 +377,12 @@ FCYM:
     name: First Cymru
 MCGL:
     name: McGill’s
-    twitter: McGillsWest
 FSCE:
     name: McGill’s Scotland East
     twitter: McGillsEast
     url: https://www.mcgillsscotlandeast.co.uk/
-    phone: ""
-    email: ""
+    phone: 03330 16 61 62
+    email: enquiries@mcgillsscotlandeast.co.uk
 EMIR:
     name: London Cable Car
     aka: Dangleway
@@ -412,3 +402,7 @@ YYTG:
     twitter: YorkshireBuses_
 GWIL:
     url: https://willettscoaches.co.uk
+WNGS:
+    url: https://www.diamondbuses.com/
+MINS:
+    twitter: ""
