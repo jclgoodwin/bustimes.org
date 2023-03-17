@@ -185,7 +185,7 @@
     };
 
     window.onhashchange = function() {
-        if (window.location.hash === '#map') {
+        if (window.location.hash.indexOf('#map') === 0) {
             openMap();
         } else {
             closeMap();
@@ -206,7 +206,7 @@
         document.addEventListener('visibilitychange', handleVisibilityChange);
     }
 
-    if (window.location.hash === '#map') {
+    if (window.location.hash.indexOf('#map') === 0) {
         openMap();
     } else {
         loadVehicles();  // just populate '_ vehicles online'
