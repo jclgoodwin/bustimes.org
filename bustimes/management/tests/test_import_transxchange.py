@@ -653,7 +653,7 @@ class ImportTransXChangeTest(TestCase):
 
         # try date outside of operating period:
         response = self.client.get(service.get_absolute_url() + "?date=2007-06-27")
-        self.assertRedirects(response, service.get_absolute_url(), status_code=302)
+        self.assertRedirects(response, service.get_absolute_url(), status_code=301)
 
         # should show next day of operation:
         response = self.client.get(service.get_absolute_url())

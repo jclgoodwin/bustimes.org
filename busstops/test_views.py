@@ -394,7 +394,7 @@ class ViewsTests(TestCase):
         """An inactive service should redirect to a current service with the same description"""
         with self.assertNumQueries(6):
             response = self.client.get("/services/45B")
-        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, "/services/45c-holt-norwich", status_code=301)
 
         response = self.client.get("/services/1-45-A-y08-9")
         self.assertEqual(response.status_code, 404)

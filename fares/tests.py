@@ -95,7 +95,9 @@ class FaresTest(TestCase):
         self.assertContains(response, '<th colspan="1">Ancaster</th')
 
         # fare table
-        response = self.client.get(response.context["tables"][0].get_absolute_url())
+        response = self.client.get(
+            response.context["tariffs"][0].faretable_set.all()[0].get_absolute_url()
+        )
         self.assertContains(response, '<th colspan="8">Welbourn</th>')
         self.assertContains(response, '<th colspan="2">Greylees</th>')
         self.assertContains(response, '<th colspan="1">Ancaster</th')
