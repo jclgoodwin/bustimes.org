@@ -327,7 +327,7 @@ class Trip(models.Model):
     next_trip = models.OneToOneField("Trip", models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return format_timedelta(self.start)
+        return format_timedelta(self.start) or ""
 
     def start_time(self):
         return format_timedelta(self.start)

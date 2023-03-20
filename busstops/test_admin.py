@@ -1,4 +1,6 @@
+from django.contrib.admin import site
 from django.test import TestCase
+from django.urls import reverse
 
 from accounts.models import User
 from bustimes.models import Route, RouteLink
@@ -50,6 +52,23 @@ class BusStopsAdminTests(TestCase):
         cls.staff_user = User.objects.create(
             username="josh", is_staff=True, is_superuser=True, email="j@example.com"
         )
+
+    def make_url(self, site, model, page: str) -> str:
+        return reverse(
+            f"{site.name}:{model._meta.app_label}_{model._meta.model_name}_{page}"
+        )
+
+    def test_everything(self):
+        self.client.force_login(self.staff_user)
+
+        for model, model_admin in site._registry.items():
+            url = self.make_url(site, model, "changelist")
+            response = self.client.get(url, {"q": "blah"})
+            self.assertEqual(response.status_code, 200)
+
+            url = self.make_url(site, model, "add")
+            response = self.client.get(url, {"q": "blah"})
+            self.assertEqual(response.status_code, 200)
 
     def test_merge_and_unmerge(self):
         self.client.force_login(self.staff_user)
