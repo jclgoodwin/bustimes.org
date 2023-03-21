@@ -163,7 +163,7 @@ class Command(BaseCommand):
             Route.objects.filter(code=line["route_id"], service=OuterRef("id"))
         ) | Q(service_code=line["route_id"])
 
-        if line_name:
+        if line_name and line_name not in ("rail", "InterCity"):
             q |= Q(line_name__iexact=line_name)
         elif description:
             q |= Q(description=description)
