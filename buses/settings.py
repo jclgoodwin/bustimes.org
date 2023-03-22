@@ -246,12 +246,18 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
     from sentry_sdk.integrations.logging import ignore_logger
     from sentry_sdk.integrations.redis import RedisIntegration
 
+    def traces_sampler(context):
+        url = context["wsgi_environ"]["RAW_URI"]
+        if url.startswith("/vehicles.json") or url.startswith("/stops.json"):
+            return 0
+        return 0.01
+
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],
         integrations=[DjangoIntegration(), RedisIntegration()],
         ignore_errors=[KeyboardInterrupt, RuntimeError],
         release=os.environ.get("COMMIT_HASH"),
-        traces_sample_rate=0.001,
+        traces_sampler=traces_sampler,
     )
     ignore_logger("django.security.DisallowedHost")
 
