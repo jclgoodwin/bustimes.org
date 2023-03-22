@@ -69,3 +69,6 @@ class ImportOperatorsTest(TestCase):
 
         notb = Operator.objects.get(noc="NOTB")
         self.assertEqual(notb.url, "")
+
+        amsy = Operator.objects.get(noc="AMSY")
+        self.assertEqual(amsy.name, "Arriva Merseyside")

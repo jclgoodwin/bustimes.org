@@ -67,10 +67,7 @@ def noc_csv(code_sources: list, operators: dict):
             )
             operators[noc] = operator
 
-        if noc == "AMSY":
-            operator.name = row["RefNm"]
-        else:
-            operator.name = row["OperatorPublicName"]
+        operator.name = row["OperatorPublicName"]
 
         slug = operator.slug or slugify(operator.name)
 
