@@ -1,3 +1,6 @@
+from pathlib import Path
+
+import vcr
 from django.test import TestCase
 
 from busstops.models import DataSource, Operator, Region, Service
@@ -9,7 +12,7 @@ class EdinburghImportTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         source = DataSource.objects.create(
-            name="TfE", url="", datetime="1066-01-01 12:18Z"
+            name="TfE", url="https://tfe-opendata.com/api/v1/vehicle_locations"
         )
         source.save()
         source.refresh_from_db()
@@ -25,32 +28,33 @@ class EdinburghImportTest(TestCase):
         cls.source = source
 
     def test_get_journey(self):
-        command = Command()
-        command.source = self.source
+        with vcr.use_cassette(
+            str(
+                Path(__file__).resolve().parent
+                / "vcr"
+                / "edinburgh_vehicle_locations.yaml"
+            )
+        ) as cassette:
 
-        item = {
-            "last_gps_fix_secs": 19,
-            "source": "Icomera Wi-Fi",
-            "journey_id": "1135",
-            "vehicle_id": "3032",
-            "destination": "Yoker",
-            "service_name": "11",
-            "heading": 76,
-            "latitude": 55.95376,
-            "longitude": -3.18718,
-            "last_gps_fix": 1554038242,
-            "ineo_gps_fix": 1554038242,
-        }
-        with self.assertNumQueries(12):
-            command.handle_item(item)
-            command.save()
-        with self.assertNumQueries(1):
-            command.handle_item(item)
-            command.save()
-        journey = command.source.vehiclejourney_set.get()
+            command = Command()
+            command.do_source()
 
-        self.assertEqual("1135", journey.code)
-        self.assertEqual("Yoker", journey.destination)
+            with self.assertNumQueries(28):
+                command.update()
+
+            self.assertEqual({}, command.vehicle_cache)
+
+            cassette.rewind()
+
+            with self.assertNumQueries(0):
+                command.update()
+
+            self.assertEqual({}, command.vehicle_cache)
+
+        journey = command.source.vehiclejourney_set.first()
+
+        self.assertEqual("6212", journey.code)
+        self.assertEqual("Hyvots Bank", journey.destination)
         self.assertEqual(self.service, journey.service)
 
         self.assertTrue(journey.service.tracking)
@@ -60,17 +64,6 @@ class EdinburghImportTest(TestCase):
         response = self.client.get(self.operator_2.get_absolute_url())
         self.assertContains(response, '/map">Map</a>')
         self.assertContains(response, '/vehicles">Vehicles</a>')
-
-        with self.assertNumQueries(1):
-            vehicle, created = command.get_vehicle(item)
-        self.assertEqual(self.operator_2, vehicle.operator)
-        self.assertEqual(3032, vehicle.fleet_number)
-        self.assertFalse(created)
-
-        item["last_gps_fix"] += 200
-        with self.assertNumQueries(1):
-            command.handle_item(item)
-            command.save()
 
     def test_vehicle_location(self):
         command = Command()

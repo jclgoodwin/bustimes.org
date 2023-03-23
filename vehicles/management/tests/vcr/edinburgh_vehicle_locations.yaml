@@ -1,0 +1,101 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.28.2
+    method: GET
+    uri: https://tfe-opendata.com/api/v1/vehicle_locations
+  response:
+    body:
+      string: '{"last_updated":1679587755,"vehicles":[
+
+        {"vehicle_id":"454","last_gps_fix":1679587641,"last_gps_fix_secs":114,"source":"Icomera
+        Wi-Fi","latitude":55.952787,"longitude":-3.191993,"speed":12,"heading":251,"service_name":"11","destination":"Hyvots
+        Bank","journey_id":"6212","next_stop_id":"36232525","vehicle_type":"bus","ineo_gps_fix":1679587734,"icomera_gps_fix":1679591241},
+
+        {"vehicle_id":"692","last_gps_fix":1679587733,"last_gps_fix_secs":22,"source":"Icomera
+        Wi-Fi","latitude":55.974697,"longitude":-3.183474,"speed":18,"heading":77,"service_name":"11","destination":"Ocean
+        Terminal","journey_id":"6093","next_stop_id":"36242938","vehicle_type":"bus","ineo_gps_fix":1679587734,"icomera_gps_fix":1679591333},
+
+        {"vehicle_id":"873","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"874","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"877","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"883","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"884","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"885","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"889","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"890","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"891","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"893","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"894","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"896","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"898","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"899","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"904","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+
+        {"vehicle_id":"1064","last_gps_fix":1679587623,"last_gps_fix_secs":132,"source":"Icomera
+        Wi-Fi","latitude":55.904908,"longitude":-3.207605,"speed":23,"heading":158,"service_name":"11","destination":"Hyvots
+        Bank","journey_id":"5251","next_stop_id":"36237234","vehicle_type":"bus","ineo_gps_fix":1679587734,"icomera_gps_fix":1679591223},
+
+        {"vehicle_id":"1151","last_gps_fix":1679587684,"last_gps_fix_secs":71,"source":"Icomera Wi-Fi","latitude":55.943708,"longitude":-3.183491,"speed":0,"heading":0,"service_name":"33","destination":"Wester Hailes","journey_id":"4009","next_stop_id":"36236563","vehicle_type":"bus","ineo_gps_fix":1679587734,"icomera_gps_fix":1679591284},
+        {"vehicle_id":"1152","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":1679080825},
+        {"vehicle_id":"1153","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":1679569860},
+        {"vehicle_id":"1193","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"1194","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"1195","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"1196","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"1197","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"1198","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"1199","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"3101","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"3102","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"3103","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"3104","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"3105","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"3106","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"3107","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null},
+        {"vehicle_id":"5005","last_gps_fix":1679580149,"last_gps_fix_secs":7606,"source":"MyBusTracker","latitude":49.7668,"longitude":-7.557172,"speed":null,"heading":null,"service_name":null,"destination":null,"journey_id":null,"next_stop_id":null,"vehicle_type":"bus","ineo_gps_fix":1679583749,"icomera_gps_fix":null}]}'
+    headers:
+      Access-Control-Allow-Headers:
+      - Authorization
+      Access-Control-Allow-Origin:
+      - '*'
+      CF-Cache-Status:
+      - DYNAMIC
+      CF-RAY:
+      - 7ac7f00daba923c3-LHR
+      Cache-Control:
+      - no-cache, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 23 Mar 2023 16:09:15 GMT
+      Expires:
+      - Mon, 26 Jul 1997 05:00:00 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=zzkb1G0g0bQe43H3%2F8jZZkMm%2Fc8Eb8pBgsWi1QM%2FcSr4v97itBbU8Sn5m7t1FhyxpE2SeDEEohcKegl%2F48yBddKX32ESv9CW3oh5727eJQYUGxI3gfWzVh2NzPrnEZqu%2FUJj"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      alt-svc:
+      - h3=":443"; ma=86400, h3-29=":443"; ma=86400
+      content-length:
+      - '242640'
+    status:
+      code: 200
+      message: OK
+version: 1

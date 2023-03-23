@@ -5,16 +5,17 @@ from django.contrib.gis.geos import GEOSGeometry
 from busstops.models import Service
 from bustimes.models import Trip
 
-from ...models import VehicleJourney, VehicleLocation
+from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
+    operators = ("LOTH", "EDTR", "ECBU", "NELB")
     source_name = "TfE"
     wait = 39
-    services = Service.objects.filter(
-        operator__in=("LOTH", "EDTR", "ECBU", "NELB"), current=True
-    ).defer("geometry", "search_vector")
+    services = Service.objects.filter(operator__in=operators, current=True).defer(
+        "geometry", "search_vector"
+    )
     previous_locations = {}
 
     def get_datetime(self, item):
@@ -23,22 +24,53 @@ class Command(ImportLiveVehiclesCommand):
             timestamp += 3600
         return datetime.fromtimestamp(timestamp, timezone.utc)
 
+    def prefetch_vehicles(self, vehicle_codes):
+        vehicles = self.vehicles.filter(source=self.source, code__in=vehicle_codes)
+        self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
+
     def get_items(self):
-        items = super().get_items()
-        return items["vehicles"]
+        items = []
+        vehicle_codes = []
+
+        # build list of vehicles that have moved
+        for item in super().get_items()["vehicles"]:
+            key = item["vehicle_id"]
+            value = (
+                item["service_name"],
+                item["journey_id"],
+                item["destination"],
+                item["longitude"],
+                item["latitude"],
+                item["heading"],
+            )
+            if self.previous_locations.get(key) != value:
+                items.append(item)
+                vehicle_codes.append(key)
+                self.previous_locations[key] = value
+
+        self.prefetch_vehicles(vehicle_codes)
+
+        return items
 
     def get_vehicle(self, item):
         if item["longitude"] == -7.557172 and item["latitude"] == 49.7668:
             return None, None
 
-        vehicle_defaults = {"operator_id": "LOTH"}
         vehicle_code = item["vehicle_id"]
-        if vehicle_code.isdigit():
-            vehicle_defaults["fleet_number"] = vehicle_code
 
-        return self.vehicles.get_or_create(
-            vehicle_defaults, source=self.source, code=vehicle_code
+        if vehicle_code in self.vehicle_cache:
+            return self.vehicle_cache[vehicle_code], False
+
+        vehicle = Vehicle(
+            operator_id="LOTH",
+            code=vehicle_code,
+            source=self.source,
         )
+        if vehicle_code.isdigit():
+            vehicle.fleet_number = vehicle_code
+        vehicle.save()
+
+        return vehicle, True
 
     def get_journey(self, item, vehicle):
         journey = VehicleJourney(
@@ -74,10 +106,10 @@ class Command(ImportLiveVehiclesCommand):
             except (Service.DoesNotExist, Service.MultipleObjectsReturned) as e:
                 print(e, item["service_name"])
 
-        if journey.service and journey.code:
+        if journey.service_id and journey.code:
             try:
                 journey.trip = Trip.objects.get(
-                    route__service=journey.service, ticket_machine_code=journey.code
+                    route__service=journey.service_id, ticket_machine_code=journey.code
                 )
             except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                 pass
@@ -85,17 +117,7 @@ class Command(ImportLiveVehiclesCommand):
         return journey
 
     def create_vehicle_location(self, item):
-        location = VehicleLocation(
+        return VehicleLocation(
             latlong=GEOSGeometry(f"POINT({item['longitude']} {item['latitude']})"),
             heading=item["heading"] or None,
         )
-
-        # stationary bus - ignore (?)
-        key = item["vehicle_id"]
-        if key in self.previous_locations:
-            prev = self.previous_locations[key]
-            if prev.latlong == location.latlong and prev.heading == location.heading:
-                return
-        self.previous_locations[key] = location
-
-        return location
