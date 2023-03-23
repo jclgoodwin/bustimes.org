@@ -332,6 +332,8 @@ class NorfolkDepartures(RemoteDepartures):
 
 
 class TimetableDepartures(Departures):
+    per_page = 12
+
     def get_row(self, stop_time, date):
         trip = stop_time.trip
         destination = trip.destination
@@ -387,20 +389,32 @@ class TimetableDepartures(Departures):
         yesterday_date = (self.now - one_day).date()
         yesterday_time = time_since_midnight + one_day
 
-        yesterday_times = list(self.get_times(yesterday_date, yesterday_time)[:12])
+        yesterday_times = list(
+            self.get_times(yesterday_date, yesterday_time)[: self.per_page]
+        )
         all_today_times = self.get_times(date, time_since_midnight)
-        today_times = list(all_today_times[:12])
+        today_times = list(all_today_times[: self.per_page])
 
         # for eg Victoria Coach Station where there are so many departures at the same time:
         if (
-            len(today_times) == 12
-            and today_times[0].departure == today_times[11].departure
+            len(today_times) == self.per_page
+            and today_times[0].departure == today_times[-1].departure
         ):
-            today_times += all_today_times[12:20]
+            today_times += all_today_times[self.per_page : self.per_page + 8]
 
         times = [
             self.get_row(stop_time, yesterday_date) for stop_time in yesterday_times
         ] + [self.get_row(stop_time, date) for stop_time in today_times]
+
+        # add tomorrow's times until there are 10, or the next day until there more than 0
+        i = 0
+        while not times and i < 3 or len(times) < 10 and i == 0:
+            i += 1
+            date += one_day
+            times += [
+                self.get_row(stop_time, date)
+                for stop_time in self.get_times(date)[: 10 - len(times)]
+            ]
 
         if self.tracking:
             trip_ids = [row["stop_time"].trip_id for row in times]
