@@ -180,6 +180,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "buses.context_processors.ad",
             ],
             "loaders": [
                 (
@@ -308,3 +309,5 @@ TNDS_DIR = DATA_DIR / "TNDS"
 
 AKISMET_API_KEY = os.environ.get("AKISMET_API_KEY")
 AKISMET_SITE_URL = "https://bustimes.org"
+
+ADS = bool(os.environ.get("ADS"))

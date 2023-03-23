@@ -1715,6 +1715,16 @@ footer {
     }
 }
 
+.no-ads {
+    footer {
+        margin-bottom: 0;
+    }
+
+    .ad-wrapper {
+        display: none;
+    }
+}
+
 /*
 body:not(:has(.publift-widget-22871853889)) footer {
     margin-bottom: 0;

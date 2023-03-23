@@ -37,10 +37,10 @@ gtag('js', new Date());
 gtag('config', 'G-X2Z0KM7Z5C');
 </script>
 
-{% block fuse %}{% endblock %}
+{% block fuse %}{% if ad %}<script async src="https://cdn.fuseplatform.net/publift/tags/2/2755/fuse.js"></script>{% endif %}{% endblock %}
 
 </head>
-<body class="{% block bodyclass %}wide{% endblock %}">
+<body class="{% block bodyclass %}wide{% endblock %}{% if ad is False %} no-ads{% endif %}">
 <a href="#content" class="skip">Skip to main content</a>
 {% block header %}
 <header>
