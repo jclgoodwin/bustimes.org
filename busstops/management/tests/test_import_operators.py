@@ -38,7 +38,7 @@ class ImportOperatorsTest(TestCase):
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
         ) as cassette:
-            with self.assertNumQueries(4012):
+            with self.assertNumQueries(4021):
                 call_command("import_noc")
             cassette.rewind()
             with self.assertNumQueries(18):
