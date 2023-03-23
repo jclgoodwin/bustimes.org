@@ -93,6 +93,7 @@ def service_fares(request, slug):
         "service_fares.html",
         {
             "breadcrumb": [service],
+            "service": service,
             "tariffs": tariffs,
         },
     )
