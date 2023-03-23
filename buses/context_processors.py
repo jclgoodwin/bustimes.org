@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 def ad(request):
     if (
         not request.user.is_anonymous
@@ -6,4 +9,4 @@ def ad(request):
         or request.path.startswith("/fares/")
     ):
         return {"ad": False}
-    return {"ad": True}
+    return {"ad": settings.ADS}
