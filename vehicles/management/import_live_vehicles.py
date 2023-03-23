@@ -385,7 +385,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         i = 0
                 self.save()
             else:
-                wait = 300  # no items - wait five minutes
+                wait = 120  # no items - wait 2 minutes
         except requests.exceptions.RequestException as e:
             logger.error(e, exc_info=True)
             wait = 120
