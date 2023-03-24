@@ -1567,7 +1567,7 @@ nav {
 .ad-wrapper {
     text-align: center;
     margin: 1em -1em;
-    min-height: 100px;
+    height: 100px;
 }
 
 body.has-overlay {
@@ -1581,7 +1581,7 @@ body.has-overlay {
         width: 100%;
         z-index: 9999;
         pointer-events: auto;
-        max-height: 100px;
+        height: 100px;
         background: #fff;
     }
 }
