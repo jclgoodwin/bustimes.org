@@ -10,6 +10,7 @@ from django.contrib.gis.geos import GEOSGeometry
 from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
+from django.utils.timezone import localtime
 
 from busstops.models import (
     Locality,
@@ -23,8 +24,6 @@ from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
-
-# from django.utils.timezone import localtime
 
 
 def get_vehicle_cache_key(item):
@@ -433,23 +432,23 @@ class Command(ImportLiveVehiclesCommand):
         if origin_aimed_departure_time:
             origin_aimed_departure_time = parse_datetime(origin_aimed_departure_time)
 
-            # # detect and correct Ticketer timezone bug during British Summer Time
-            # if (
-            #     journey_code
-            #     and len(journey_code) == 4
-            #     and journey_code.isdigit()
-            #     and int(journey_code) < 2400
-            # ):
-            #     hours = int(journey_code[:-2])
-            #     minutes = int(journey_code[-2:])
-            #     if (
-            #         minutes == origin_aimed_departure_time.minute
-            #         and hours == origin_aimed_departure_time.hour
-            #     ):
-            #         origin_aimed_departure_time = localtime(origin_aimed_departure_time)
-            #         HOUR = timedelta(hours=1)
-            #         if (origin_aimed_departure_time - HOUR).hour == hours:
-            #             origin_aimed_departure_time -= HOUR
+            # detect and correct Ticketer timezone bug during British Summer Time
+            if (
+                journey_code
+                and len(journey_code) == 4
+                and journey_code.isdigit()
+                and int(journey_code) < 2400
+            ):
+                hours = int(journey_code[:-2])
+                minutes = int(journey_code[-2:])
+                if (
+                    minutes == origin_aimed_departure_time.minute
+                    and hours == origin_aimed_departure_time.hour
+                ):
+                    origin_aimed_departure_time = localtime(origin_aimed_departure_time)
+                    HOUR = timedelta(hours=1)
+                    if (origin_aimed_departure_time - HOUR).hour == hours:
+                        origin_aimed_departure_time -= HOUR
 
         journey = None
 
