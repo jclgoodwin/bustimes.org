@@ -1,13 +1,12 @@
 from datetime import datetime, timezone
-from time import sleep
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.db.models import Exists, OuterRef, Q
 
 from busstops.models import Operator, Service, StopPoint
 
-from ...models import VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
+from ...models import Vehicle, VehicleJourney, VehicleLocation
+from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 # "fn" "fleetNumber": "10452",
 # "ut" "updateTime": "1599550016135",
@@ -61,63 +60,65 @@ def has_stop(stop):
 class Command(ImportLiveVehiclesCommand):
     source_name = "Stagecoach"
     operator_ids = {"SCEM": "SCGH", "SCSO": "SCCO"}
+    previous_locations = {}
 
-    def get_items(self):
-        assert self.source.url
-        response = self.session.get(self.source.url, timeout=20)
-        items = response.json()["services"]
-        vehicle_fleet_numbers = [item["fn"] for item in items]
-        self.vehicles_cache = {
-            vehicle.code: vehicle
-            for vehicle in self.vehicles.filter(
-                operator__in=self.operators, code__in=vehicle_fleet_numbers
-            )
-        }
-        i = 0
-        for item in items:
-            yield item
-            i += 1
-            if i == 100:
-                self.save()
-                i = 0
-        self.save()
-        sleep(1)
+    def do_source(self):
+        self.operators = Operator.objects.filter(
+            Q(parent="Stagecoach") | Q(noc__in=["SCLK", "MEGA"])
+        ).in_bulk()
+
+        return super().do_source()
 
     @staticmethod
     def get_datetime(item):
         return parse_timestamp(item["ut"])
 
+    def prefetch_vehicles(self, vehicle_codes):
+        vehicles = self.vehicles.filter(
+            operator__in=self.operators, code__in=vehicle_codes
+        )
+        self.vehicle_cache = {vehicle.code: vehicle for vehicle in vehicles}
+
+    def get_items(self):
+        items = []
+        vehicle_codes = []
+
+        # build list of vehicles that have moved
+        for item in super().get_items()["services"]:
+            key = item["fn"]
+            value = (item["ut"],)
+            if self.previous_locations.get(key) != value:
+                items.append(item)
+                vehicle_codes.append(key)
+                self.previous_locations[key] = value
+
+        self.prefetch_vehicles(vehicle_codes)
+
+        return items
+
     def get_vehicle(self, item):
         vehicle_code = item["fn"]
 
-        if "lo" not in item or len(vehicle_code) != 5:
-            return None, None
+        if vehicle_code in self.vehicle_cache:
+            return self.vehicle_cache[vehicle_code], False
 
-        if vehicle_code in self.vehicles_cache:
-            vehicle = self.vehicles_cache[vehicle_code]
+        operator_id = self.operator_ids.get(item["oc"], item["oc"])
+        if operator_id in self.operators:
+            operator = self.operators[operator_id]
         else:
-            operator_id = self.operator_ids.get(item["oc"], item["oc"])
-            if operator_id in self.operators:
-                operator = self.operators[operator_id]
-            else:
-                try:
-                    operator = Operator.objects.get(noc=operator_id)
-                except Operator.DoesNotExist as e:
-                    logger.error(e, exc_info=True, extra={"operator": operator_id})
-                    operator = None
-                self.operators[operator_id] = operator
+            operator = None
 
-            defaults = {"source": self.source}
-            if vehicle_code.isdigit():
-                defaults["fleet_number"] = vehicle_code
-            if operator:
-                defaults["operator"] = operator
-                vehicles = self.vehicles.filter(operator__in=self.operators)
-                vehicle, created = vehicles.get_or_create(defaults, code=vehicle_code)
-            else:
-                return None, None
+        vehicle = Vehicle.objects.filter(operator=None, code=vehicle_code).first()
+        if vehicle:
+            return vehicle, False
 
-        return vehicle, False
+        vehicle = Vehicle.objects.create(
+            operator=operator,
+            source=self.source,
+            code=vehicle_code,
+            fleet_code=vehicle_code,
+        )
+        return vehicle, True
 
     def get_journey(self, item, vehicle):
         if item["ao"]:  # aimedOriginStopDepartureTime
@@ -218,10 +219,3 @@ class Command(ImportLiveVehiclesCommand):
             heading=bearing,
             early=early,
         )
-
-    def handle(self, *args, **options):
-        self.operators = Operator.objects.filter(
-            Q(parent="Stagecoach") | Q(noc__in=["SCLK", "MEGA"])
-        ).in_bulk()
-
-        return super().handle(*args, **options)

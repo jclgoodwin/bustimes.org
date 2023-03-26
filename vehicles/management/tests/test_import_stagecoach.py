@@ -1,22 +1,13 @@
-import os
-from unittest.mock import patch
+from pathlib import Path
 
 import time_machine
 import vcr
 from django.test import TestCase
-from django.utils import timezone
 
 from busstops.models import DataSource, Operator, Region, Service
 
 from ...models import VehicleJourney
 from ..commands.import_stagecoach import Command
-
-
-class MockException(Exception):
-    pass
-
-
-DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @time_machine.travel("2019-11-17T04:32:00.000Z")
@@ -25,7 +16,6 @@ class StagecoachTest(TestCase):
     def setUpTestData(cls):
         cls.source = DataSource.objects.create(
             name="Stagecoach",
-            datetime=timezone.now(),
             url="https://api.stagecoach-technology.net/vehicle-tracking/v1/vehicles?services=:*:::",
         )
 
@@ -39,30 +29,28 @@ class StagecoachTest(TestCase):
         )
         s.operator.add(o)
 
-    @patch("vehicles.management.import_live_vehicles.sleep")
-    @patch(
-        "vehicles.management.commands.import_stagecoach.sleep",
-        side_effect=MockException,
-    )
-    def test_handle(self, sleep_1, sleep_2):
+    def test_handle(self):
         command = Command()
-        command.source = self.source
+        command.do_source()
         command.operator_codes = ["SDVN"]
 
-        with vcr.use_cassette(os.path.join(DIR, "vcr", "stagecoach_vehicles.yaml")):
-            with self.assertLogs(level="ERROR"):
-                with self.assertNumQueries(15):
-                    with self.assertRaises(MockException):
-                        command.handle()
+        with vcr.use_cassette(
+            str(Path(__file__).resolve().parent / "vcr" / "stagecoach_vehicles.yaml")
+        ) as cassette:
+            with self.assertNumQueries(86):
+                command.update()
 
-        self.assertTrue(sleep_1.called)
-        self.assertTrue(sleep_2.called)
+            cassette.rewind()
+            del command.previous_locations["19617"]
+            del command.previous_locations["50275"]
+
+            with self.assertNumQueries(2):
+                command.update()
+
         self.assertEqual(
             command.operators,
             {
                 "SCOX": Operator(noc="SCOX"),
-                "SCCM": None,
-                "SCEK": None,
             },
         )
-        self.assertEqual(VehicleJourney.objects.count(), 1)
+        self.assertEqual(VehicleJourney.objects.count(), 12)

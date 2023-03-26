@@ -368,8 +368,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
         wait = self.wait
 
         try:
-            items = self.get_items()
-            if items:
+            if items := self.get_items():
                 i = 0
                 for item in items:
                     try:
@@ -387,6 +386,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             else:
                 wait = 120  # no items - wait 2 minutes
         except requests.exceptions.RequestException as e:
+            items = None
             logger.error(e, exc_info=True)
             wait = 120
 

@@ -45,11 +45,12 @@ class EdinburghImportTest(TestCase):
             self.assertEqual({}, command.vehicle_cache)
 
             cassette.rewind()
+            del command.previous_locations["454"]
 
-            with self.assertNumQueries(0):
+            with self.assertNumQueries(1):
                 command.update()
 
-            self.assertEqual({}, command.vehicle_cache)
+            self.assertEqual(1, len(command.vehicle_cache))
 
         journey = command.source.vehiclejourney_set.first()
 
