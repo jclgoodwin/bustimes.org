@@ -1570,6 +1570,10 @@ nav {
     min-height: 100px;
 }
 
+div[data-fuse="22699655428"] {
+    height: 100px;
+}
+
 body.has-overlay {
     overflow: hidden;
 
@@ -1716,6 +1720,11 @@ footer {
 }
 
 .no-ads {
+    .service-map {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
     footer {
         margin-bottom: 0;
     }
