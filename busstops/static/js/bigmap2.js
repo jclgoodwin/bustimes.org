@@ -83,7 +83,7 @@
     });
 
     function getStopIcon(properties) {
-        if (properties.stop_type == 'RLY') {
+        if (properties.stop_type == 'RLY' && properties.url.indexOf('/stops/910') === 0) {
             return railIcon;
         }
 
