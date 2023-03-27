@@ -2,6 +2,7 @@
 import datetime
 import logging
 import xml.etree.cElementTree as ET
+from zoneinfo import ZoneInfo
 
 import ciso8601
 import pytz
@@ -179,12 +180,14 @@ class TflDepartures(RemoteDepartures):
 
 
 class WestMidlandsDepartures(RemoteDepartures):
+    timezone = ZoneInfo("Europe/London")
+
     def get_row(self, item):
         return {
             "time": datetime.datetime.fromtimestamp(
-                item["time"] - item["delay"], timezone.utc
+                item["time"] - item["delay"], self.timezone
             ),
-            "live": datetime.datetime.fromtimestamp(item["time"], timezone.utc),
+            "live": datetime.datetime.fromtimestamp(item["time"], self.timezone),
             "service": self.get_service(item["line_name"]),
             "destination": item["destination"],
             "vehicle": item["vehicle"],
@@ -300,6 +303,7 @@ class AcisHorizonDepartures(RemoteDepartures):
 
 class NorfolkDepartures(RemoteDepartures):
     request_url = "https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable"
+    timezone = ZoneInfo("Europe/London")
 
     def get_request_params(self):
         return {
@@ -314,10 +318,10 @@ class NorfolkDepartures(RemoteDepartures):
         res = res.json()["r"]
         for i in range(0, int(len(res[1]) / 11))[:12]:
             item = res[1][i * 11 : (i + 1) * 11]
-            time = datetime.datetime.fromtimestamp(int(item[3]), timezone.utc)
+            time = datetime.datetime.fromtimestamp(int(item[3]), self.timezone)
             live = item[4]
             if live:
-                live = datetime.datetime.fromtimestamp(int(live), timezone.utc)
+                live = datetime.datetime.fromtimestamp(int(live), self.timezone)
             if not live or time < self.now and live < self.now:
                 continue
             departures.append(
