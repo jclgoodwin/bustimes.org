@@ -214,19 +214,12 @@ if REDIS_URL:
     CACHES["redis"] = {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": REDIS_URL,
+        "KEY_PREFIX": os.environ.get("CACHE_KEY_PREFIX", ""),
     }
     if "default" not in CACHES:
         CACHES["default"] = CACHES["redis"]
 
         SESSION_ENGINE = "django.contrib.sessions.backends.cache"
-
-
-VARNISH_HOST = os.environ.get("VARNISH_HOST")
-VARNISH_PORT = os.environ.get("VARNISH_PORT")
-if VARNISH_HOST and VARNISH_PORT:
-    VARNISH = (VARNISH_HOST, int(VARNISH_PORT))
-else:
-    VARNISH = None
 
 
 TIME_FORMAT = "H:i"
