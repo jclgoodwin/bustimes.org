@@ -594,7 +594,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                 response.context["form"].errors,
                 {
                     "other_colour": [
-                        "An HTML5 simple color must be a Unicode string exactly seven characters long."
+                        "An HTML5 simple color must be a Unicode string seven characters long."
                     ]
                 },
             )

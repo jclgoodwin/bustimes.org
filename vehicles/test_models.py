@@ -137,7 +137,7 @@ class VehicleModelTests(TestCase):
             (
                 {
                     "stroke_colour": "An HTML5 simple color must be a Unicode string "
-                    "exactly seven characters long."
+                    "seven characters long."
                 },
                 None,
                 None,
