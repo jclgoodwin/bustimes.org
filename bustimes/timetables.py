@@ -347,13 +347,6 @@ class Timetable:
     def has_operators(self) -> bool:
         if self.operators:
             return len(self.operators) > 1
-        prev = None
-        for grouping in self.groupings:
-            for trip in grouping.trips:
-                if prev and prev.operator_id != trip.operator_id:
-                    return True
-                prev = trip
-        return False
 
     @cached_property
     def has_ticket_machine_codes(self) -> bool:
