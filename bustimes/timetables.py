@@ -476,7 +476,9 @@ def abbreviate(grouping, i, in_a_row, difference):
                 row.times[j] = None
         return
     if (
-        3600 % seconds
+        in_a_row < 4
+        and not settings.ABBREVIATE_HOURLY
+        or 3600 % seconds
         or seconds > 1800
         and not (settings.ABBREVIATE_HOURLY and seconds == 3600)
     ):
