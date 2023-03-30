@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Exists, OuterRef, Q
+from django.db.models.functions import Now
 from django.utils.dateparse import parse_duration
 from requests_html import HTMLSession
 
@@ -435,7 +436,9 @@ class Command(BaseCommand):
 
         StopTime.objects.bulk_create(stop_times)
 
-        for service in self.services.values():
+        services = Service.objects.filter(id__in=self.services.keys())
+
+        for service in services:
             if service.id in self.service_shapes:
                 linestrings = [
                     LineString(*[point[0] for point in self.shapes[shape]])
@@ -449,15 +452,18 @@ class Command(BaseCommand):
 
             service.do_stop_usages()
 
-            service.region = (
+            region = (
                 Region.objects.filter(adminarea__stoppoint__service=service)
                 .annotate(Count("adminarea__stoppoint__service"))
                 .order_by("-adminarea__stoppoint__service__count")
                 .first()
             )
-            if service.region:
+            if region and region != service.region:
                 service.save(update_fields=["region"])
+
             service.update_search_vector()
+
+        services.update(modified_at=Now())
 
         self.source.save(update_fields=["datetime"])
 
