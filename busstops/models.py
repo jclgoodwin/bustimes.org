@@ -501,9 +501,10 @@ class StopPoint(models.Model):
                     case "stop" | "bay" | "stand" | "stance" | "gate" | "platform":
                         return b
 
-        parts = self.common_name.split()
-        if parts[-1].isupper() and len(parts[-1]) < 3:
-            return parts[-1]
+        if self.common_name:
+            parts = self.common_name.split()
+            if parts[-1].isupper() and len(parts[-1]) < 3:
+                return parts[-1]
 
     def get_line_names(self):
         return sorted(filter(None, self.line_names), key=Service.get_line_name_order)
