@@ -47,6 +47,7 @@ webcolors = "^1.11.1"
 whitenoise = "^6.2.0"
 xmltodict = "^0.13.0"
 django-csp = "^3.7"
+django-cors-headers = "^3.14.0"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^3.2.2"

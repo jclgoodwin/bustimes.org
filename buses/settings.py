@@ -53,11 +53,13 @@ INSTALLED_APPS = [
     "django_filters",
     "simple_history",
     "huey.contrib.djhuey",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     # "csp.middleware.CSPMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.gzip.GZipMiddleware",
     "busstops.middleware.WhiteNoiseWithFallbackMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -76,6 +78,11 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_SECONDS = 3600
 
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_URLS_REGEX = r"^/api/.*$"
 
 CSP_IMG_SRC = ["'self'", "https:", "data:"]
 CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]

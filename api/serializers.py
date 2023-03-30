@@ -144,25 +144,31 @@ class TripSerializer(serializers.ModelSerializer):
 
         for stop_time in stop_times:
             route_link = route_links.get((previous_stop_id, stop_time.stop_id))
-            if stop_time.stop:
-                stop = stop_time.stop
+            if stop := stop_time.stop:
                 name = stop.get_name_for_timetable()
                 bearing = stop.get_heading()
                 location = stop.latlong and stop.latlong.coords
+                icon = stop.get_icon()
             else:
                 name = stop_time.stop_code
                 bearing = None
                 location = None
+                icon = None
             yield {
+                "id": stop_time.id,
                 "stop": {
                     "atco_code": stop_time.stop_id,
                     "name": name,
                     "location": location,
                     "bearing": bearing,
+                    "icon": icon,
                 },
                 "aimed_arrival_time": stop_time.arrival_time(),
                 "aimed_departure_time": stop_time.departure_time(),
                 "track": route_link and route_link.geometry.coords,
+                "timing_status": stop_time.timing_status,
+                "pick_up": stop_time.pick_up,
+                "set_down": stop_time.set_down,
             }
             previous_stop_id = stop_time.stop_id
 
