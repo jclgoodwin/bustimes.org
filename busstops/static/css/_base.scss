@@ -1182,6 +1182,10 @@ input:not(:checked) + label {
         padding-left: 0;
     }
 
+    .then-every {
+        width: 0;
+    }
+
     tbody td {
         border-left: 0;
         font-variant-numeric: tabular-nums;

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from difflib import Differ
 from functools import cached_property, cmp_to_key, partial
 
+from django.conf import settings
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Prefetch, Q
 from django.utils.html import format_html
@@ -475,8 +476,11 @@ def abbreviate(grouping, i, in_a_row, difference):
                 row.times[j] = None
         return
     if (
-        seconds != 3600 and seconds > 1800
-    ):  # neither hourly nor more than every 30 minutes
+        3600 % seconds
+        or seconds > 1800
+        and not (settings.ABBREVIATE_HOURLY and seconds == 3600)
+    ):
+        # interval more than 30 minutes
         return
     repetition = Repetition(in_a_row + 1, difference)
     grouping.rows[0].times[

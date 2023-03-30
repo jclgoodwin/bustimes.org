@@ -304,3 +304,5 @@ AKISMET_API_KEY = os.environ.get("AKISMET_API_KEY")
 AKISMET_SITE_URL = "https://bustimes.org"
 
 ADS = bool(os.environ.get("ADS"))
+
+ABBREVIATE_HOURLY = False

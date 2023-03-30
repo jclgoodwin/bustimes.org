@@ -39,9 +39,7 @@ from ..commands import import_transxchange
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
 
-@override_settings(
-    TNDS_DIR=FIXTURES_DIR,
-)
+@override_settings(TNDS_DIR=FIXTURES_DIR, ABBREVIATE_HOURLY=True)
 class ImportTransXChangeTest(TestCase):
     @classmethod
     def setUpTestData(cls):
