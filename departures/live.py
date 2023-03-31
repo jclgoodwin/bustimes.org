@@ -466,6 +466,7 @@ class SiriSmDepartures(RemoteDepartures):
             expected_time = parse_datetime(expected_time)
 
         departure_status = call.get("DepartureStatus")
+        arrival_status = call.get("ArrivalStatus")
 
         line_name = journey.get("LineName") or journey.get("LineRef")
         destination = journey.get("DestinationName") or journey.get(
@@ -480,7 +481,8 @@ class SiriSmDepartures(RemoteDepartures):
             "service": service,
             "destination": destination,
             "data": journey,
-            "cancelled": departure_status == "cancelled",
+            "cancelled": departure_status == "cancelled"
+            or arrival_status == "cancelled",
             "vehicle": journey.get("VehicleRef"),
         }
 
