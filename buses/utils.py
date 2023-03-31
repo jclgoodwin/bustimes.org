@@ -19,7 +19,7 @@ def cache_control_s_maxage(max_age):
             # anonymise request. Cloudflare ignores the Vary header
             request.user = AnonymousUser
             response = viewfunc(request, *args, **kw)
-            patch_cache_control(response, s_maxage=max_age)
+            patch_cache_control(response, public=True, s_maxage=max_age)
             return response
 
         return _cache_controlled
@@ -34,7 +34,9 @@ def stale_if_error(max_age):
             response = viewfunc(request, *args, **kw)
             # if not logged in
             if request.user.is_anonymous:
-                patch_cache_control(response, s_maxage=0, stale_if_error=max_age)
+                patch_cache_control(
+                    response, public=True, s_maxage=0, stale_if_error=max_age
+                )
             return response
 
         return _cache_controlled
