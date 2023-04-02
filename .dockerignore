@@ -1,5 +1,6 @@
-staticfiles/
 node_modules/
+staticfiles/
+data/
 .git/
 *.sql
 fly.toml

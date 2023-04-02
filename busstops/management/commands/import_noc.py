@@ -48,7 +48,7 @@ def noc_csv(code_sources: list, operators: dict):
         noc = row["NOCCODE"]
         if noc[:1] == "=":
             noc = noc[1:]
-        assert "=" not in noc
+        assert "=" not in noc and noc.isupper(), noc
 
         if noc == "#NAME?":  # microsoft excel crap
             continue
@@ -169,9 +169,7 @@ class Command(BaseCommand):
             # op = operators_by_id[e.findtext("OpId")]
             public_name = public_names[e.findtext("PubNmId")]
 
-            assert e.findtext("OperatorPublicName") == public_name.findtext(
-                "OperatorPublicName"
-            )
+            name = public_name.findtext("OperatorPublicName")
 
             url = public_name.findtext("Website")
             if url:
@@ -179,8 +177,6 @@ class Command(BaseCommand):
                 url = url.split("#")[-1]
 
             twitter = public_name.findtext("Twitter").removeprefix("@")
-
-            name = e.findtext("OperatorPublicName")
 
             if noc in overrides:
                 override = overrides[noc]
@@ -219,12 +215,7 @@ class Command(BaseCommand):
                 operator = operators[noc]
 
                 # if operator.name != name:
-                #     print(
-                #         operator,
-                #         ET.tostring(e),
-                #         ET.tostring(op),
-                #         ET.tostring(public_name),
-                #     )
+                #     print(operator.name, name)
 
                 # if operators[noc].name != public_name.findtext("OperatorPublicName"):
                 # print(operators[noc], ET.tostring(public_name))
@@ -249,7 +240,7 @@ class Command(BaseCommand):
                     if not create_or_update:
                         to_update.append(operator)
                 else:
-                    print(e)
+                    print(noc, e)
 
             names.add(operator.name)
 
