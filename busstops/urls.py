@@ -37,10 +37,12 @@ urlpatterns = [
     path("timetable-source-stats.json", views.timetable_source_stats),
     path("stats.json", views.stats),
     path("robots.txt", views.robots_txt),
-    path("stops.json", views.stops_json),
+    path("stops.json", cache_control_s_maxage(1800)(views.stops_json)),
     path(
         "regions/<pk>",
-        stale_if_error(3600)(views.RegionDetailView.as_view()),
+        cache_control_s_maxage(1800)(
+            stale_if_error(3600)(views.RegionDetailView.as_view())
+        ),
         name="region_detail",
     ),
     path(
@@ -60,11 +62,11 @@ urlpatterns = [
     ),
     re_path(
         r"^localities/(?P<pk>[ENen][Ss]?[0-9]+)",
-        views.LocalityDetailView.as_view(),
+        cache_control_s_maxage(1800)(views.LocalityDetailView.as_view()),
     ),
     path(
         "localities/<slug>",
-        views.LocalityDetailView.as_view(),
+        cache_control_s_maxage(1800)(views.LocalityDetailView.as_view()),
         name="locality_detail",
     ),
     path(
