@@ -1,6 +1,7 @@
 node_modules/
 staticfiles/
 data/
+config/deploy.yml
 .git/
 *.sql
 fly.toml

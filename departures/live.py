@@ -731,8 +731,8 @@ def get_departures(stop, services, when) -> dict:
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
 
-            elif stop.atco_code[:3] == "290":
-                live_rows = NorfolkDepartures(stop, services, now).get_departures()
+            # elif stop.atco_code[:3] == "290":
+            #     live_rows = NorfolkDepartures(stop, services, now).get_departures()
 
             if live_rows:
                 blend(departures, live_rows)
