@@ -1,4 +1,4 @@
-from django.conf import settings
+from django.apps import apps
 from django.contrib.sitemaps.views import index, sitemap
 from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
@@ -113,7 +113,7 @@ urlpatterns = [
 urlpatterns += bustimes_views + disruptions_urls + vehicles_urls + vosa_urls
 
 
-if settings.DEBUG:
+if apps.is_installed("debug_toolbar"):
     import debug_toolbar
 
     urlpatterns += [
