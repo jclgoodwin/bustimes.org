@@ -235,7 +235,7 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(400, response.status_code)
 
         with patch(
-            "departures.live.RemoteDepartures.get_departures", return_value=[]
+            "departures.live.NorfolkDepartures.get_departures", return_value=[]
         ) as mocked:
 
             with self.assertNumQueries(8):

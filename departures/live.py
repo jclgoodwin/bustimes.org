@@ -305,6 +305,9 @@ class NorfolkDepartures(RemoteDepartures):
     request_url = "https://ldb.norfolkbus.info/public/displays/ncc1/transitdb/querylegacytable/timetable"
     timezone = ZoneInfo("Europe/London")
 
+    def get_departures(self):
+        return
+
     def get_request_params(self):
         return {
             "format": "",
@@ -731,8 +734,8 @@ def get_departures(stop, services, when) -> dict:
             if source:
                 live_rows = SiriSmDepartures(source, stop, services).get_departures()
 
-            # elif stop.atco_code[:3] == "290":
-            #     live_rows = NorfolkDepartures(stop, services, now).get_departures()
+            elif stop.atco_code[:3] == "290":
+                live_rows = NorfolkDepartures(stop, services, now).get_departures()
 
             if live_rows:
                 blend(departures, live_rows)
