@@ -175,18 +175,21 @@
             }
         }
         var params = '?ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
-        lastStopsReq = reqwest('/stops.json' + params, function(data) {
-            if (data && data.features) {
-                stopsHighWater = bounds;
-                stopsGroup.clearLayers();
-                stops = {};
-                for (var i = data.features.length - 1; i >= 0; i -= 1) {
-                    handleStop(data.features[i]);
-                }
-                if (clickedStopMarker) {
-                    var stop = stops[clickedStopMarker];
-                    if (stop) {
-                        stop.openPopup();
+        lastStopsReq = reqwest({
+            url: '/stops.json' + params,
+            success: function(data) {
+                if (data && data.features) {
+                    stopsHighWater = bounds;
+                    stopsGroup.clearLayers();
+                    stops = {};
+                    for (var i = data.features.length - 1; i >= 0; i -= 1) {
+                        handleStop(data.features[i]);
+                    }
+                    if (clickedStopMarker) {
+                        var stop = stops[clickedStopMarker];
+                        if (stop) {
+                            stop.openPopup();
+                        }
                     }
                 }
             }
@@ -195,12 +198,12 @@
 
     var lastVehiclesReq, loadVehiclesTimeout, vehiclesHighWater;
 
-    function loadVehicles(onMoveEnd) {
+    function loadVehicles() {
         if (lastVehiclesReq) {
             lastVehiclesReq.abort();
         }
         var bounds = map.getBounds();
-        if (onMoveEnd && vehiclesHighWater && vehiclesHighWater.contains(bounds) && bigVehicleMarkers) {
+        if (vehiclesHighWater && vehiclesHighWater.contains(bounds) && bigVehicleMarkers) {
             return;
         }
         if (loadVehiclesTimeout) {
@@ -213,16 +216,19 @@
             params = '?';
         }
         params += 'ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
-        lastVehiclesReq = reqwest(
-            '/vehicles.json' + params,
-            function(data) {
+        lastVehiclesReq = reqwest({
+            url: 'https://bustimes.org/vehicles.json' + params,
+            crossOrigin: true,
+            success: function(data) {
                 if (data) {
                     vehiclesHighWater = bounds;
                     processVehiclesData(data);
                 }
                 loadVehiclesTimeout = setTimeout(loadVehicles, 15000);
+            }, error: function() {
+                loadVehiclesTimeout = setTimeout(loadVehicles, 15000);
             }
-        );
+        });
     }
 
     function processVehiclesData(data) {
@@ -339,13 +345,10 @@
         }
     }
 
-    var first = true;
     var mapContainer = map.getContainer();
 
     map.on('moveend', Cowboy.debounce(500, function() {
-        if (!first) {
-            loadVehicles(true);
-        }
+        loadVehicles(true);
 
         if (map.getZoom() < 13) { // zoomed out
             mapContainer.classList.add('zoomed-out');
@@ -365,8 +368,6 @@
         }
 
         updateLocation();
-
-        first = false;
     }));
 
     var parts;
@@ -399,8 +400,6 @@
     if (!map._loaded) {
         map.setView([51.9, 0.9], 9);
     }
-
-    loadVehicles();
 
     function handleVisibilityChange(event) {
         if (event.target.hidden) {

@@ -3,10 +3,8 @@
 @import 'variables';
 
 body {
-    // http://blog.55minutes.com/2012/04/iphone-text-resizing/
-    -webkit-text-size-adjust: 100%;
     color: $text-color;
-    font-family: 'system-ui', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable","Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 16px;
     line-height: 1.5;
     margin: 0;
