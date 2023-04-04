@@ -17,6 +17,7 @@ class LicenceAdminForm(forms.ModelForm):
         }
 
 
+@admin.register(Licence)
 class LicenceAdmin(admin.ModelAdmin):
     form = LicenceAdminForm
     search_fields = ["licence_number", "name", "trading_name"]
@@ -30,12 +31,12 @@ class LicenceAdmin(admin.ModelAdmin):
             queryset = queryset.annotate(operators=StringAgg("operator", " "))
         return queryset
 
+    @admin.display(ordering="operators")
     def operators(self, obj):
         return obj.operators
 
-    operators.admin_order_field = "operators"
 
-
+@admin.register(Registration)
 class RegistrationAdmin(admin.ModelAdmin):
     search_fields = ["registration_number"]
     list_display = ["registration_number"]
@@ -43,6 +44,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     raw_id_fields = ["licence", "latest_variation"]
 
 
+@admin.register(Variation)
 class VariationAdmin(admin.ModelAdmin):
     list_display = [
         "variation_number",
@@ -53,8 +55,3 @@ class VariationAdmin(admin.ModelAdmin):
     ]
     list_filter = ["registration_status"]
     raw_id_fields = ["registration"]
-
-
-admin.site.register(Licence, LicenceAdmin)
-admin.site.register(Registration, RegistrationAdmin)
-admin.site.register(Variation, VariationAdmin)

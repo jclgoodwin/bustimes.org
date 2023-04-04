@@ -20,10 +20,9 @@ class VehicleTypeAdmin(admin.ModelAdmin):
     list_editable = ("name", "double_decker", "coach")
     actions = ["merge"]
 
+    @admin.display(ordering="vehicles")
     def vehicles(self, obj):
         return obj.vehicles
-
-    vehicles.admin_order_field = "vehicles"
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -232,11 +231,10 @@ class VehicleAdmin(admin.ModelAdmin):
             notes="Spare ticket machine",
         )
 
+    @admin.display(ordering="latest_journey__datetime")
     def last_seen(self, obj):
         if obj.latest_journey:
             return obj.latest_journey.datetime
-
-    last_seen.admin_order_field = "latest_journey__datetime"
 
     def get_changelist_form(self, request, **kwargs):
         kwargs.setdefault("form", VehicleAdminForm)
@@ -359,6 +357,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
                 livery.vehicleedit_set.update(livery=queryset[0])
             self.message_user(request, "Merged")
 
+    @admin.display(ordering="right_css")
     def right(self, obj):
         if obj.text_colour:
             text_colour = obj.text_colour
@@ -379,8 +378,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
             stroke,
         )
 
-    right.admin_order_field = "right_css"
-
+    @admin.display(ordering="left_css")
     def left(self, obj):
         if obj.text_colour:
             text_colour = obj.text_colour
@@ -400,8 +398,6 @@ class LiveryAdmin(SimpleHistoryAdmin):
             text_colour,
             stroke,
         )
-
-    left.admin_order_field = "left_css"
 
     vehicles = VehicleTypeAdmin.vehicles
 

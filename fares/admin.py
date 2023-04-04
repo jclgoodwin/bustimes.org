@@ -1,16 +1,18 @@
 from django.contrib import admin
 from django.contrib.postgres.aggregates import StringAgg
+
 from .models import (
     DataSet,
-    Tariff,
-    Price,
-    FareZone,
-    UserProfile,
     DistanceMatrixElement,
     FareTable,
+    FareZone,
+    Price,
+    Tariff,
+    UserProfile,
 )
 
 
+@admin.register(DataSet)
 class DataSetAdmin(admin.ModelAdmin):
     list_display = ["__str__", "description", "noc", "datetime"]
     list_filter = ["published"]
@@ -27,35 +29,34 @@ class DataSetAdmin(admin.ModelAdmin):
         return obj.noc
 
 
+@admin.register(Tariff)
 class TariffAdmin(admin.ModelAdmin):
     autocomplete_fields = ["operators", "services"]
     list_filter = [("operators", admin.RelatedOnlyFieldListFilter)]
     raw_id_fields = ["source", "user_profile", "access_zones"]
 
 
+@admin.register(Price)
 class PriceAdmin(admin.ModelAdmin):
     raw_id_fields = ["time_interval", "user_profile", "sales_offer_package", "tariff"]
     list_display = ["amount"]
 
 
+@admin.register(FareTable)
 class FareTableAdmin(admin.ModelAdmin):
     list_display = ["__str__", "description"]
     list_filter = ["tariff__source"]
     raw_id_fields = ["user_profile", "sales_offer_package", "tariff"]
 
 
+@admin.register(DistanceMatrixElement)
 class DistanceMatrixElementAdmin(admin.ModelAdmin):
     raw_id_fields = ["price", "start_zone", "end_zone", "tariff"]
 
 
+@admin.register(FareZone)
 class FareZoneAdmin(admin.ModelAdmin):
     autocomplete_fields = ["stops"]
 
 
-admin.site.register(DataSet, DataSetAdmin)
-admin.site.register(Tariff, TariffAdmin)
-admin.site.register(Price, PriceAdmin)
 admin.site.register(UserProfile)
-admin.site.register(FareTable, FareTableAdmin)
-admin.site.register(DistanceMatrixElement, DistanceMatrixElementAdmin)
-admin.site.register(FareZone, FareZoneAdmin)

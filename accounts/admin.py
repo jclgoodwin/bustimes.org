@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.db.models import Q
-from django.utils.html import format_html
 from django.urls import reverse
-
+from django.utils.html import format_html
 from sql_util.utils import SubqueryCount
 
 from .models import OperatorUser, User
@@ -23,6 +22,7 @@ class OperatorUserInline(admin.TabularInline):
     raw_id_fields = ["operator"]
 
 
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     raw_id_fields = ["user_permissions"]
     actions = ["trust", "distrust"]
@@ -40,6 +40,7 @@ class UserAdmin(admin.ModelAdmin):
     inlines = [OperatorUserInline]
     list_filter = ["is_staff", "groups"]
 
+    @admin.display(ordering="revisions")
     def revisions(self, obj):
         return format_html(
             '<a href="{}?user={}">{}</a>',
@@ -48,22 +49,17 @@ class UserAdmin(admin.ModelAdmin):
             obj.revisions,
         )
 
-    revisions.admin_order_field = "revisions"
-
+    @admin.display(ordering="approved")
     def approved(self, obj):
         return get_count(obj, "approved", "exact=1")
 
-    approved.admin_order_field = "approved"
-
+    @admin.display(ordering="disapproved")
     def disapproved(self, obj):
         return get_count(obj, "disapproved", "exact=0")
 
-    disapproved.admin_order_field = "disapproved"
-
+    @admin.display(ordering="pending")
     def pending(self, obj):
         return get_count(obj, "pending", "isnull=True")
-
-    pending.admin_order_field = "pending"
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -86,6 +82,3 @@ class UserAdmin(admin.ModelAdmin):
     def distrust(self, request, queryset):
         count = queryset.order_by().update(trusted=False)
         self.message_user(request, f"Disusted {count} users")
-
-
-admin.site.register(User, UserAdmin)

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from sql_util.utils import SubqueryCount
-from .models import Situation, Consequence, Link, ValidityPeriod
+
+from .models import Consequence, Link, Situation, ValidityPeriod
 
 
 class ConsequenceInline(admin.StackedInline):
@@ -18,22 +19,19 @@ class LinkInline(admin.TabularInline):
     model = Link
 
 
+@admin.register(Situation)
 class SituationAdmin(admin.ModelAdmin):
     inlines = [ValidityPeriodInline, LinkInline, ConsequenceInline]
     list_display = ["__str__", "reason", "source", "current", "stops"]
     list_filter = ["reason", "source", "current"]
     readonly_fields = ["data"]
 
+    @admin.display(ordering="stops")
     def stops(self, obj):
         return obj.stops
-
-    stops.admin_order_field = "stops"
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if "changelist" in request.resolver_match.view_name:
             return queryset.annotate(stops=SubqueryCount("consequence__stops"))
         return queryset
-
-
-admin.site.register(Situation, SituationAdmin)

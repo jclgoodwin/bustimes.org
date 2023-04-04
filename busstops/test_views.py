@@ -182,7 +182,7 @@ class ViewsTests(TestCase):
         self.assertContains(response, "\n\nUser-agent: *\nDisallow: /\n")
 
         with override_settings(ALLOWED_HOSTS=["bustimes.org"]):
-            response = self.client.get("/robots.txt", HTTP_HOST="bustimes.org")
+            response = self.client.get("/robots.txt", headers={"host": "bustimes.org"})
         self.assertContains(response, "User-agent: *\nDisallow: /search\n")
 
     def test_not_found(self):

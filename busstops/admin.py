@@ -293,15 +293,13 @@ class ServiceAdmin(GISModelAdmin):
     list_select_related = ["colour"]
     actions = ["current_false", "merge", "unmerge"]
 
+    @admin.display(ordering="routes")
     def routes(self, obj):
         return obj.routes
 
-    routes.admin_order_field = "routes"
-
+    @admin.display(ordering="service_codes")
     def service_codes(self, obj):
         return obj.service_codes
-
-    service_codes.admin_order_field = "service_codes"
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -494,10 +492,9 @@ class ServiceColourAdmin(admin.ModelAdmin):
             )
         return queryset
 
+    @admin.display(ordering="services")
     def services(self, obj):
         return obj.services
-
-    services.admin_order_field = "services"
 
 
 @admin.register(models.Place)
@@ -538,29 +535,26 @@ class DataSourceAdmin(admin.ModelAdmin):
             ).prefetch_related("operatorcode_set")
         return queryset
 
+    @admin.display(ordering="routes")
     def routes(self, obj):
         url = reverse("admin:bustimes_route_changelist")
         return format_html(
             '<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.routes
         )
 
-    routes.admin_order_field = "routes"
-
+    @admin.display(ordering="services")
     def services(self, obj):
         url = reverse("admin:busstops_service_changelist")
         return format_html(
             '<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.services
         )
 
-    services.admin_order_field = "services"
-
+    @admin.display(ordering="journeys")
     def journeys(self, obj):
         url = reverse("admin:vehicles_vehiclejourney_changelist")
         return format_html(
             '<a href="{}?source__id__exact={}">{}</a>', url, obj.id, obj.journeys
         )
-
-    journeys.admin_order_field = "journeys"
 
     def delete_routes(self, request, queryset):
         result = Route.objects.filter(source__in=queryset).delete()

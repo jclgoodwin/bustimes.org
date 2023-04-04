@@ -4,8 +4,8 @@ from hashlib import sha256
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
-from psycopg2.extras import DateTimeTZRange
 
 from busstops.models import DataSource, Service, StopPoint
 

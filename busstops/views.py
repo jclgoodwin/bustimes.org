@@ -216,7 +216,7 @@ def contact(request):
             message.send()
             submitted = True
     else:
-        referrer = request.META.get("HTTP_REFERER")
+        referrer = request.headers.get("referer")
         initial = {
             "referrer": referrer,
             "message": request.GET.get("message"),

@@ -4,7 +4,7 @@ from base64 import b64encode
 import requests
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
-from psycopg2.extras import DateTimeTZRange
+from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 
 from busstops.models import DataSource, Service, StopPoint
 

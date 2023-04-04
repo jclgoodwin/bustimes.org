@@ -9,9 +9,9 @@ import requests
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.db import DataError, IntegrityError
+from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 from django.db.models import Q
 from django.utils.http import http_date, parse_http_date
-from psycopg2.extras import DateTimeTZRange
 from sql_util.utils import Exists
 
 from busstops.models import Operator, Service
