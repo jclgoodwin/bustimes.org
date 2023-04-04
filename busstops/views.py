@@ -123,9 +123,14 @@ def not_found(request, exception):
         except Http404:
             pass
 
+    if request.resolver_match:
+        cache_timeout = 600  # ten minutes
+    else:
+        cache_timeout = 3600  # no matching url pattern, cache for an hour
+
     response = render(request, "404.html", context)
     response.status_code = 404
-    patch_response_headers(response)
+    patch_response_headers(response, cache_timeout=cache_timeout)
     return response
 
 
