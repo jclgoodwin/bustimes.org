@@ -1,6 +1,7 @@
 import json
 
 import requests
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_page
@@ -29,6 +30,8 @@ def get_response(source, code):
         headers={"x-api-key": source.settings["x-api-key"]},
         timeout=3,
     )
+    if response.status_code == 404:
+        raise Http404
     assert response.ok
     return response.json()
 
@@ -40,7 +43,10 @@ def operator_tickets(request, slug):
     code = get_object_or_404(OperatorCode, operator=operator, source=source)
     response = get_response(source, code.code)
 
-    categories = response["_links"]["topup:category"]
+    try:
+        categories = response["_links"]["topup:category"]
+    except KeyError:
+        raise Http404
     groupings = response["_embedded"]["render"]["group_by"]
     for grouping in groupings:
         grouping["categories"] = [
