@@ -36,9 +36,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt && \
     rm -rf /var/lib/dpkg/info/*
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/poetry
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
@@ -49,8 +47,8 @@ COPY --from=0 /app/busstops/static /app/busstops/static
 COPY --from=0 /app/node_modules /app/node_modules
 COPY --from=1 $VIRTUAL_ENV $VIRTUAL_ENV
 
-ENV SECRET_KEY=f \
-    STATIC_ROOT=/staticfiles
+ENV PORT=8000 SECRET_KEY=f STATIC_ROOT=/staticfiles
 RUN ./manage.py collectstatic --noinput
 
+EXPOSE 8000
 CMD ["gunicorn", "buses.wsgi"]
