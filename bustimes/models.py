@@ -248,7 +248,7 @@ class Calendar(models.Model):
             description = f"{description} from {start_date:%A %-d %B %Y}"
         if end_date and (
             end_date - today < timedelta(days=21)
-            or end_date - start_date < timedelta(days=90)
+            or end_date - start_date < timedelta(days=200)
         ):
             description = f"{description} until {end_date:%A %-d %B %Y}"
 
