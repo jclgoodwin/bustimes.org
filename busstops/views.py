@@ -69,9 +69,12 @@ def get_colours(services):
 
 
 def version(request):
-    commit_hash = os.environ.get("COMMIT_HASH")
+    if commit_hash := os.environ.get("COMMIT_HASH"):
+        return HttpResponse(
+            f"""<a href="https://github.com/jclgoodwin/bustimes.org/commit/{commit_hash}">{commit_hash}</a>""",
+        )
     return HttpResponse(
-        f"""<a href="https://github.com/jclgoodwin/bustimes.org/commit/{commit_hash}">{commit_hash}</a>""",
+        os.environ.get("MRSK_CONTAINER_NAME"), content_type="text/plain"
     )
 
 
