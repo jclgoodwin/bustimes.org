@@ -398,8 +398,8 @@ TYSW:
     twitter: ""
 YYTG:
     name: Yorkshire Buses
-    url: https://www.facebook.com/Yorkshirebus
-    phone: 0113 210 0196
+    url: https://www.yorkshirebuses.co.uk/
+    phone: 0113 246 4914
     email: Office@yorkshiretravelgroup.co.uk
     twitter: YorkshireBuses_
 GWIL:
@@ -408,3 +408,9 @@ WNGS:
     url: https://www.diamondbuses.com/
 MINS:
     twitter: ""
+ALTO: 
+    url: http://www.transporabus.co.uk/
+    email: hello@transporabus.co.uk
+NMCO:
+    url: https://www.nickmaddycoaches.co.uk/
+    phone: 01981 240888
