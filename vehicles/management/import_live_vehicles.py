@@ -3,7 +3,6 @@ import logging
 from datetime import timedelta
 from time import sleep
 
-import redis
 import requests
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
@@ -14,6 +13,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
 from django.utils import timezone
+from redis.exceptions import ConnectionError
 
 from busstops.models import DataSource
 from bustimes.models import Route, Trip
@@ -332,7 +332,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
         try:
             pipeline.execute()
-        except redis.exceptions.ConnectionError:
+        except ConnectionError:
             pass
 
         if self.history:
@@ -348,7 +348,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
             try:
                 pipeline.execute()
-            except redis.exceptions.ConnectionError:
+            except ConnectionError:
                 pass
 
     def do_source(self):

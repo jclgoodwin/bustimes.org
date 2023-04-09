@@ -5,7 +5,6 @@ import xml.etree.cElementTree as ET
 from zoneinfo import ZoneInfo
 
 import ciso8601
-import pytz
 import requests
 import xmltodict
 from django.conf import settings
@@ -20,8 +19,6 @@ from vehicles.models import Vehicle
 from vehicles.tasks import log_vehicle_journey
 
 from . import gtfsr
-
-LOCAL_TIMEZONE = pytz.timezone("Europe/London")
 
 
 class Departures:
@@ -446,7 +443,7 @@ class TimetableDepartures(Departures):
 
 
 def parse_datetime(string):
-    return ciso8601.parse_datetime(string).astimezone(LOCAL_TIMEZONE)
+    return ciso8601.parse_datetime(string).astimezone(WestMidlandsDepartures.timezone)
 
 
 class SiriSmDepartures(RemoteDepartures):
@@ -561,7 +558,7 @@ def get_departure_order(departure):
         time = departure["time"]
     if timezone.is_naive(time):
         return time
-    return timezone.make_naive(time, LOCAL_TIMEZONE)
+    return timezone.make_naive(time, WestMidlandsDepartures.timezone)
 
 
 def rows_match(a, b):
