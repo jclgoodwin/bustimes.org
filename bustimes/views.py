@@ -4,7 +4,6 @@ import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
-import boto3
 import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
@@ -97,6 +96,8 @@ class ServiceDebugView(DetailView):
 
 def maybe_download_file(local_path, s3_key):
     if not local_path.exists():
+        import boto3
+
         if not local_path.parent.exists():
             local_path.parent.mkdir(parents=True)
         client = boto3.client("s3", endpoint_url="https://ams3.digitaloceanspaces.com")

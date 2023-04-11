@@ -1,8 +1,3 @@
-import logging
-from ftplib import FTP
-
-import boto3
-from botocore.errorfactory import ClientError
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
@@ -34,6 +29,8 @@ class Command(BaseCommand):
             self.do_file(name, details)
 
     def do_file(self, name, details):
+        from botocore.errorfactory import ClientError
+
         version = details["modify"]  # 20201102164248
         versioned_name = f"{version}_{name}"
 
@@ -74,6 +71,11 @@ class Command(BaseCommand):
             self.changed_files.append((path, source))
 
     def handle(self, username, password, *args, **options):
+        import logging
+        from ftplib import FTP
+
+        import boto3
+
         logger = logging.getLogger(__name__)
 
         self.client = boto3.client(
