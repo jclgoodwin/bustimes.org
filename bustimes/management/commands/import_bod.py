@@ -460,10 +460,9 @@ class Command(BaseCommand):
         parser.add_argument("operator", type=str, nargs="?")
 
     def handle(self, api_key, operator, **options):
-        with start_transaction(op="task", name="import_bod"):
-            if api_key == "stagecoach":
-                stagecoach(operator)
-            elif api_key == "ticketer":
-                ticketer(operator)
-            else:
-                bus_open_data(api_key, operator)
+        if api_key == "stagecoach":
+            stagecoach(operator)
+        elif api_key == "ticketer":
+            ticketer(operator)
+        else:
+            bus_open_data(api_key, operator)

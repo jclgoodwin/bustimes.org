@@ -102,7 +102,9 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle_code in self.vehicle_cache:
             return self.vehicle_cache[vehicle_code], False
 
-        operator_id = self.operator_ids.get(item["oc"], item["oc"])
+        operator_id = item.get("oc")
+        if operator_id and operator_id in self.operator_ids:
+            operator_id = self.operator_ids[operator_id]
         if operator_id in self.operators:
             operator = self.operators[operator_id]
         else:
@@ -121,7 +123,7 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle, True
 
     def get_journey(self, item, vehicle):
-        if item["ao"]:  # aimedOriginStopDepartureTime
+        if item.get("ao"):  # aimedOriginStopDepartureTime
             departure_time = parse_timestamp(item["ao"])
         else:
             departure_time = None
