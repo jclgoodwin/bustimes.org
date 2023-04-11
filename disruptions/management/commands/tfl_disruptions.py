@@ -21,6 +21,7 @@ def get_hash(text):
 class Command(BaseCommand):
     def fetch(self):
         session = requests.Session()
+        session.headers.update({"User-Agent": "bustimes.org"})
 
         source = DataSource.objects.get_or_create(name="TfL")[0]
 

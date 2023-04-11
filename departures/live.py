@@ -152,6 +152,9 @@ class TflDepartures(RemoteDepartures):
     def get_request_url(self) -> str:
         return f"https://api.tfl.gov.uk/StopPoint/{self.stop.pk}/arrivals"
 
+    def get_request_headers(self):
+        return {"User-Agent": "bustimes.org"}
+
     def departures_from_response(self, res) -> list:
         rows = res.json()
         if rows:
