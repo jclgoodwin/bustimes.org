@@ -538,7 +538,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(vehicle.name, "Jeff")
 
         journey = command.get_journey(item, vehicle)
-        self.assertEqual("1215", journey.code)
+        self.assertEqual("m1_20211010_10_58", journey.code)
         self.assertEqual("outbound", journey.direction)
 
         item["MonitoredVehicleJourney"]["VehicleRef"] = "11111"

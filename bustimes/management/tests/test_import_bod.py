@@ -274,17 +274,13 @@ class ImportBusOpenDataTest(TestCase):
         self.assertEqual(journey.trip.ticket_machine_code, "1")
         journey.save()  # for use later
 
-        journey.code = "0915"
-        trip = journey.get_trip()
+        trip = journey.get_trip(journey_code="0915")
         self.assertEqual(trip.ticket_machine_code, "1")
-
-        trip = journey.get_trip(destination_ref="290J34")
-        self.assertIsNone(trip)
 
         trip = journey.get_trip(destination_ref="2900K132")
         self.assertEqual(trip.ticket_machine_code, "1")
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             trip = journey.get_trip(
                 origin_ref="2900K132",
                 destination_ref="2900K132",

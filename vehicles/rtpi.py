@@ -18,13 +18,10 @@ def get_trip(
     origin_ref=None,
     destination_ref=None,
     departure_time=None,
-    journey_ref=None,
+    journey_code="",
 ):
     if not journey.service:
         return
-
-    if journey_ref == journey.code:
-        journey_ref = None
 
     if not datetime:
         datetime = journey.datetime
@@ -51,9 +48,9 @@ def get_trip(
     if departure_time:
         start = timezone.localtime(departure_time)
         start = timedelta(hours=start.hour, minutes=start.minute)
-    elif len(journey.code) == 4 and journey.code.isdigit() and int(journey.code) < 2400:
-        hours = int(journey.code[:-2])
-        minutes = int(journey.code[-2:])
+    elif len(journey_code) == 4 and journey_code.isdigit() and int(journey_code) < 2400:
+        hours = int(journey_code[:-2])
+        minutes = int(journey_code[-2:])
         start = timedelta(hours=hours, minutes=minutes)
     else:
         start = None
@@ -80,8 +77,7 @@ def get_trip(
             try:
                 return trips_at_start.get(calendar__in=get_calendars(date))
             except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                if not journey_ref:
-                    return
+                pass
         except Trip.DoesNotExist:
             if destination and departure_time:
                 try:
@@ -89,20 +85,19 @@ def get_trip(
                 except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
                     pass
 
-    if not journey_ref:
-        journey_ref = journey.code
-        if not journey_ref:
-            return
+    if not journey.code:
+        return
+
+    trips = trips.filter(
+        Q(ticket_machine_code=journey.code) | Q(vehicle_journey_code=journey.code)
+    )
 
     try:
-        return trips.get(
-            Q(ticket_machine_code=journey_ref) | Q(vehicle_journey_code=journey_ref)
-        )
-    except Trip.MultipleObjectsReturned:
-        trips = trips.filter(calendar__in=get_calendars(date))
-        return trips.filter(ticket_machine_code=journey_ref).first()
+        return trips.get()
     except Trip.DoesNotExist:
-        pass
+        return
+    except Trip.MultipleObjectsReturned:
+        return trips.filter(calendar__in=get_calendars(date)).first()
 
 
 def get_progress(journey, x, y):

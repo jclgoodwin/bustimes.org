@@ -76,8 +76,8 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
 
     vehicle, created = vehicles.get_or_create(defaults)
 
-    if journey_ref and journey_ref.startswith("Unknown"):
-        journey_ref = ""
+    # if journey_ref and journey_ref.startswith("Unknown"):
+    #     journey_ref = ""
 
     time = parse_datetime(time)
 
