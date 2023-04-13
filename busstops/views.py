@@ -206,6 +206,10 @@ def error(request):
     return response
 
 
+def ads_txt(request):
+    return redirect("https://cdn.adfirst.media/adstxt/bustimes-ads.txt")
+
+
 @cache_control(max_age=3600)
 def robots_txt(request):
     if request.get_host() == "bustimes.org":  # live site

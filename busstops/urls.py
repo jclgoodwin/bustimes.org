@@ -37,6 +37,7 @@ urlpatterns = [
     path("status", views.status),
     path("timetable-source-stats.json", views.timetable_source_stats),
     path("stats.json", views.stats),
+    path("ads.txt", views.ads_txt),
     path("robots.txt", views.robots_txt),
     path("stops.json", cache_control_s_maxage(1800)(views.stops_json)),
     path("stops.csv", views.stops_csv),
