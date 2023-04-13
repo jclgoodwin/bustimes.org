@@ -95,8 +95,8 @@ def compare_trips(rows, trip_ids, a, b):
 
     for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
         if row.times[a_index] and row.times[b_index]:
-            a_time = row.times[a_index].arrival
-            b_time = row.times[b_index].arrival
+            a_time = row.times[a_index].departure_or_arrival()
+            b_time = row.times[b_index].departure_or_arrival()
             return (a_time - b_time).total_seconds()
 
     if a_top > b_bottom:  # b is above a
@@ -660,8 +660,8 @@ class Grouping:
 
                 for row in rows[max(a_top, b_top) : min(a_bottom, b_bottom) + 1]:
                     if row.times[a_index] and row.times[b_index]:
-                        a_time = row.times[a_index].arrival
-                        b_time = row.times[b_index].arrival
+                        a_time = row.times[a_index].departure_or_arrival()
+                        b_time = row.times[b_index].departure_or_arrival()
                         if a_time > b_time:  # a after b
                             sorter.add(a.id, b.id)
                         elif a_time < b_time:  # a before b
@@ -985,6 +985,9 @@ class Cell:
         elif departure is None:
             self.departure = arrival
         self.wait_time = arrival and departure and departure - arrival
+
+    def departure_or_arrival(self):
+        return self.stoptime.departure_or_arrival()
 
     def __repr__(self):
         return format_timedelta(self.arrival)
