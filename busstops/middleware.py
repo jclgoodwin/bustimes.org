@@ -1,3 +1,4 @@
+from django.middleware.gzip import GZipMiddleware
 from django.utils.cache import add_never_cache_headers
 from multidb.pinning import pin_this_thread, unpin_this_thread
 from whitenoise.middleware import WhiteNoiseMiddleware
@@ -31,3 +32,11 @@ def pin_db_middleware(get_response):
         return get_response(request)
 
     return middleware
+
+
+class GZipIfNotStreamingMiddleware(GZipMiddleware):
+    def process_response(self, request, response):
+        if response.streaming:
+            return response
+
+        return super().process_response(request, response)

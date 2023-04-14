@@ -29,6 +29,7 @@ urlpatterns = [
     ),
     path("offline", TemplateView.as_view(template_name="offline.html")),
     path("version", views.version),
+    path("count", views.count),
     path("contact", views.contact),
     path("cookies", TemplateView.as_view(template_name="cookies.html")),
     path("503", TemplateView.as_view(template_name="503.html")),
