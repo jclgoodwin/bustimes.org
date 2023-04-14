@@ -140,6 +140,10 @@ A livery can be adequately represented with a list of colours and an angle.""",
         help_text="""A livery may be assigned to vehicles from more than one operator.
 You can use this field to make this livery selectable for a new operator – that's its only purpose""",
     )
+    operators = models.ManyToManyField(
+        "busstops.Operator", blank=True, related_name="liveries"
+    )
+    locked = models.BooleanField(default=False)
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
@@ -275,6 +279,7 @@ class Vehicle(models.Model):
     garage = models.ForeignKey(
         "bustimes.Garage", models.SET_NULL, null=True, blank=True
     )
+    locked = models.BooleanField(default=False)
 
     def is_spare_ticket_machine(self) -> bool:
         return self.notes == "Spare ticket machine"
