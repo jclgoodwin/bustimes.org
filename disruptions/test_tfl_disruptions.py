@@ -3,7 +3,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from vcr import use_cassette
 
-from busstops.models import DataSource, Region, Service
+from busstops.models import DataSource, Region, Service, StopPoint
 
 
 class TfLDisruptionsTest(TestCase):
@@ -19,6 +19,7 @@ class TfLDisruptionsTest(TestCase):
             source=source,
         )
         DataSource.objects.create(name="TfL")
+        StopPoint.objects.create(atco_code="490001097D", active=True)
 
     def test_siri_sx_request(self):
         vcr_dir = settings.BASE_DIR / "fixtures" / "vcr"
@@ -26,25 +27,35 @@ class TfLDisruptionsTest(TestCase):
         with use_cassette(
             str(vcr_dir / "tfl_disruptions.yaml"), decode_compressed_response=True
         ) as cassette:
-            with self.assertNumQueries(102):
+            with self.assertNumQueries(109):
                 call_command("tfl_disruptions")
 
             cassette.rewind()
 
-            with self.assertNumQueries(100):
+            with self.assertNumQueries(105):
                 call_command("tfl_disruptions")
 
         response = self.client.get("/situations")
 
         situation = response.context["situations"][0]
 
+        consequence = situation.consequence_set.first()
+        self.assertEqual("", str(consequence))
+        self.assertEqual("", consequence.get_absolute_url())
+
+        situation = response.context["situations"][1]
+
         self.assertEqual(
             situation.situation_number, "70c2d01c46664fb70c7b1ad11ff7fc8ace2a"
         )
         self.assertEqual(situation.reason, "")
-        self.assertEqual(situation.summary, "VICTORIA BUS STATION")
+        self.assertEqual(str(situation), "VICTORIA BUS STATION")
         self.assertEqual(
             situation.text,
             "ROUTES 11 211 C1 N11 westbound are now departing from "
             "Victoria Station stop (R) on Buckingham Palace Road.",
         )
+
+        consequence = situation.consequence_set.first()
+        self.assertEqual("", str(consequence))
+        self.assertEqual("/services/211", consequence.get_absolute_url())
