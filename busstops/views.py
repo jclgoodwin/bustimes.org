@@ -681,7 +681,7 @@ class StopPointDetailView(DetailView):
         "locality",
         "locality__parent",
         "locality__district",
-        "stop_area",
+        # "stop_area",
     )
     queryset = queryset.defer("locality__latlong", "locality__parent__latlong")
 
@@ -718,7 +718,7 @@ class StopPointDetailView(DetailView):
             self.object.locality and self.object.locality.district,
             self.object.locality and self.object.locality.parent,
             self.object.locality,
-            self.object.stop_area,
+            # self.object.stop_area,
         ]
 
         if not (self.object.active or context["services"]):
