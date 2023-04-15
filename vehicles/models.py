@@ -132,14 +132,6 @@ A livery can be adequately represented with a list of colours and an angle.""",
         default=False, help_text="Equivalent to setting the angle to 90"
     )
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
-    operator = models.ForeignKey(
-        "busstops.Operator",
-        models.SET_NULL,
-        null=True,
-        blank=True,
-        help_text="""A livery may be assigned to vehicles from more than one operator.
-You can use this field to make this livery selectable for a new operator – that's its only purpose""",
-    )
     operators = models.ManyToManyField(
         "busstops.Operator", blank=True, related_name="liveries"
     )
