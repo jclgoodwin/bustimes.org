@@ -19,8 +19,9 @@ class LimitedPagination(pagination.LimitOffsetPagination):
 
 
 class CursorPagination(pagination.CursorPagination):
-    ordering = "-id"
-    page_size = 20
+    ordering = "-pk"
+    page_size = 50
+    max_page_size = 1000
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
@@ -45,6 +46,7 @@ class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Operator.objects.order_by("noc")
     serializer_class = serializers.OperatorSerializer
+    pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.OperatorFilter
 
@@ -52,6 +54,7 @@ class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.filter(current=True).prefetch_related("operator")
     serializer_class = serializers.ServiceSerializer
+    pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.ServiceFilter
 
@@ -59,6 +62,7 @@ class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
 class StopViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = StopPoint.objects.order_by("atco_code").select_related("locality")
     serializer_class = serializers.StopSerializer
+    pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.StopFilter
 

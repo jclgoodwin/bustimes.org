@@ -39,6 +39,7 @@ urlpatterns = [
     path("stats.json", views.stats),
     path("robots.txt", views.robots_txt),
     path("stops.json", cache_control_s_maxage(1800)(views.stops_json)),
+    path("stops.csv", views.stops_csv),
     path(
         "regions/<pk>",
         cache_control_s_maxage(1800)(
