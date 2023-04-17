@@ -542,7 +542,7 @@ table {
     border-bottom: 1px solid $brand-color-darker;
     margin: 0 -1em;
     overflow: auto;
-    padding: .5em 0 0 1em;
+    padding: .5em 0 0 .5em;
     white-space: nowrap;
 
     li {
@@ -554,7 +554,7 @@ table {
             color: $border-color-darker;
             content: '\203A';
             vertical-align: middle;
-            padding: 0 .5em;
+            padding: 0;
         }
 
         &:last-child:after {
@@ -565,7 +565,7 @@ table {
 
     a {
         display: inline-block;
-        padding: .75em 0;
+        padding: .75em .5em;
         vertical-align: middle;
     }
 
