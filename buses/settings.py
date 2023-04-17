@@ -80,6 +80,7 @@ CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://staging.bustimes.org",
 ]
 CORS_URLS_REGEX = r"^/api/.*$"
 
