@@ -1573,6 +1573,10 @@ nav {
     > div {
         min-height: 100px;
     }
+
+    iframe {
+        vertical-align: bottom;
+    }
 }
 
 body.has-overlay {
