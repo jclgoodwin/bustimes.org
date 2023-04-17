@@ -424,19 +424,19 @@ def stops_csv(request):
     )
     stops = stops.annotate(locality_name=F("locality__name"))
 
-    for stop in stops.order_by("-modified_at").iterator():
+    for stop in stops.order_by().values():
         writer.writerow(
             [
-                stop.atco_code,
-                stop.naptan_code,
-                stop.common_name,
-                stop.indicator,
-                stop.bearing,
-                stop.locality_name,
-                stop.latlong.x,
-                stop.latlong.y,
-                stop.created_at,
-                stop.modified_at,
+                stop["atco_code"],
+                stop["naptan_code"],
+                stop["common_name"],
+                stop["indicator"],
+                stop["bearing"],
+                stop["locality_name"],
+                stop["latlong"].x,
+                stop["latlong"].y,
+                stop["created_at"],
+                stop["modified_at"],
             ]
         )
 
