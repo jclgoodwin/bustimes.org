@@ -26,9 +26,12 @@
 
 {% block head %}{% endblock %}
 
-{% block fuse %}{% if ad %}
+{% block fuse %}
+{% if ad %}
 <script async src="{% static 'js/consent.js' %}"></script>
-<script>var s=document.getElementsByTagName('script')[0];var sc=document.createElement('script');sc.type='text/javascript';sc.async=true;sc.src='https://cdn.adfirst.media/hb/bustimes.js?v'+new Date().getTime();s.parentNode.insertBefore(sc,s);</script>{% endif %}{% endblock %}
+<script>var s=document.getElementsByTagName('script')[0];var sc=document.createElement('script');sc.type='text/javascript';sc.async=true;sc.src='https://cdn.adfirst.media/hb/bustimes.js?v'+new Date().getTime();s.parentNode.insertBefore(sc,s);</script>
+{% endif %}
+{% endblock %}
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-X2Z0KM7Z5C"></script>
