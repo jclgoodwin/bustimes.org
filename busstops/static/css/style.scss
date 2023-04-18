@@ -19,16 +19,11 @@
 @media (min-width: 600px) {
     footer,
     .service-map {
-        margin-bottom: 90px;
+        margin-bottom: 110px;
     }
 }
 
 @media (min-width: 960px) { // (60em)
-    footer,
-    .service-map {
-        margin-bottom: 126px;
-    }
-
     .service-map {
         margin-top: 90px;
     }
@@ -36,24 +31,20 @@
     .ad-wrapper > div {
         min-height: 90px;
     }
-
-    body.has-overlay [data-fuse="22699655428"] .fuse-slot {
-        height: 90px;
-    }
 }
 
 @media (min-width: 970px) {
     .narrow .ad-wrapper {
-        margin: 1em -121px; // 970px
+        margin: 1em -121px 10px; // 970px
     }
 }
 
 @media (min-width: 1200px) {
     .narrow .ad-wrapper {
-        margin: 1em -236px; // 1200
+        margin: 1em -236px 10px; // 1200
     }
 
     .wide .ad-wrapper {
-        margin: 1em -116px;  // 1200px
+        margin: 1em -116px 10px;  // 1200px
     }
 }

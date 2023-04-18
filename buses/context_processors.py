@@ -2,6 +2,8 @@ from django.conf import settings
 
 
 def ad(request):
+    if request.path == "/cookies":
+        return {"ad": True}
     if (
         not request.user.is_anonymous
         or request.path.startswith("/vehicles/")

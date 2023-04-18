@@ -10,25 +10,61 @@
 
 <p>‘Cookies’ are small text files stored on your computer when you use some websites, including this one.</p>
 
+<p>We use some cookies for the functionality of this website:</p>
+
 <table>
     <thead>
         <tr>
-            <th scope="col">Name</th><th scope="col">Type</th><th scope="col">Purpose</th>
+            <th scope="col">Name</th>
+            <th scope="col">Type</th>
+            <th scope="col">Purpose</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>vehicleMap</td><td>local storage</td><td>Remember the last viewed location on <a href="/map">the map</a></td>
+            <td>vehicleMap</td>
+            <td>local storage</td>
+            <td>Last viewed location on <a href="/map">the map</a></td>
         </tr>
         <tr>
-            <td>hideStops</td><td>local storage</td><td>Remember whether to show bus stops on <a href="/map">the map</a></td>
+            <td>hideStops</td>
+            <td>local storage</td>
+            <td>Whether to show bus stops on <a href="/map">the map</a></td>
         </tr>
         <tr>
-            <td>sessionid</td><td>cookie</td><td>Remember who is logged in</td>
+            <td>sessionid</td>
+            <td>cookie</td>
+            <td>Remember if you have logged in</td>
         </tr>
     </tbody>
 </table>
 
-<p><a href="javascript:window.__tcfapi('displayConsentUi', 2, function() {} );">Privacy settings</a></p>
+<p>We use Google Analytics to measure website usage, which sets these cookies:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Default expiration time</th>
+            <th scope="col">Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>_ga</td>
+            <td>2 years</td>
+            <td>Distinguish users</td>
+        </tr>
+        <tr>
+            <td>_ga_&lt;container-id&gt;</td>
+            <td>2 years</td>
+            <td>Persist session state </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Finally, there&rsquo;s the advertising on this website. You can control how advertisers use cookies and other information:</p>
+
+<p><button onclick="window.__tcfapi('displayConsentUi', 2, function() {} );">Privacy settings</button></p>
 
 {% endblock %}

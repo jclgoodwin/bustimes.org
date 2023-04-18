@@ -4,14 +4,10 @@ header,
 input,
 label,
 .ad-wrapper,
-[data-fuse],
+#stickyAdContainer,
 .qc-cmp2-container,
 footer {
     display: none;
-}
-
-[class^="publift-widget"] {
-    display: none !important;
 }
 
 body,

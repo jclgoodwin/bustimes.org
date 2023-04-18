@@ -1568,7 +1568,8 @@ nav {
 
 .ad-wrapper {
     text-align: center;
-    margin: 1em -1em;
+    margin: 1em -1em 10px;
+    min-height: 100px;
 
     // !!!
     // position: sticky;
@@ -1597,50 +1598,6 @@ body.has-overlay {
         height: 100px;
         overflow: hidden;
         background: #fff;
-    }
-}
-
-// services_header
-.fuse-slot-scroll-to-stick {
-
-    .fuse-slot iframe {
-        pointer-events: auto;
-    }
-}
-
-// footer sticky
-
-.publift-widget-22704101655,
-.publift-widget-22871853889 {
-    &-container {
-        box-shadow: 0 -1px $brand-color-darker;
-
-        body.has-overlay & {
-            box-shadow: none;
-        }
-    }
-
-    &-container &-container-background {
-        background: #fff;
-        opacity: 1;
-    }
-
-    &-container &-button { // close button
-        display: block;
-        cursor: pointer;
-        right: 0;
-        width: 20px;
-        background: none;
-        font-size: 1.5em;
-        line-height: 1em;
-
-        &:after {
-            content: "×";
-        }
-
-        div {
-            display: none;
-        }
     }
 }
 
@@ -1743,9 +1700,3 @@ footer {
         display: none;
     }
 }
-
-/*
-body:not(:has(.publift-widget-22871853889)) footer {
-    margin-bottom: 0;
-}
-*/

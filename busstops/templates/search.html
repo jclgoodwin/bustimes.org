@@ -23,6 +23,13 @@
             {% endfor %}
         </ul>
     {% else %}
+
+        {% if localities or operators or services %}
+            <div class="ad-wrapper">
+                <div id="AFM_inContentTop_ad"></div>
+            </div>
+        {% endif %}
+
         {% if vehicles %}
             <h2>{{ vehicles|length }} vehicle{{ vehicles|length|pluralize }}</h2>
 
@@ -39,7 +46,6 @@
                 {% endfor %}
             </ul>
         {% endif %}
-
 
         <h2 id="places">{{ localities.paginator.count }} place{{ localities.paginator.count|pluralize }}</h2>
 
