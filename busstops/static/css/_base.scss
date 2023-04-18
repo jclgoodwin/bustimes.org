@@ -1570,6 +1570,10 @@ nav {
     text-align: center;
     margin: 1em -1em;
 
+    // !!!
+    position: sticky;
+    z-index: 1;
+
     > div {
         min-height: 100px;
     }
@@ -1583,7 +1587,7 @@ body.has-overlay {
     overflow: hidden;
 
     // services_header
-    [data-fuse="22699655428"] .fuse-slot {  // emulate .fuse-slot-scroll-to-stick .fuse-slot
+    #AFM_inContentTop_ad {
         position: fixed;
         top: 0;
         left: 0;
