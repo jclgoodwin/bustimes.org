@@ -143,7 +143,7 @@ class ImportBusOpenDataTest(TestCase):
         # PublicUse is false
         self.assertFalse(route.service.public_use)
         response = self.client.get(route.service.get_absolute_url())
-        self.assertContains(response, "Closed-door service")
+        self.assertContains(response, "school or works service")
 
         response = self.client.get(f"/services/{route.service_id}/timetable")
 
