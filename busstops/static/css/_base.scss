@@ -739,8 +739,8 @@ table {
 .service-map {
     display: none;
     // make room for ads:
-    margin-bottom: 50px;
-    margin-top: 100px;
+    margin-bottom: 90px;
+    margin-top: 90px;
     box-shadow: #fff 0 -100px, #fff 0 126px;
 
     &.expanded {
@@ -1595,7 +1595,7 @@ body.has-overlay {
         width: 100%;
         z-index: 9999;
         pointer-events: auto;
-        height: 100px;
+        height: 90px;
         overflow: hidden;
         background: #fff;
     }
@@ -1665,7 +1665,7 @@ footer {
     clear: both;
     margin-top: 1.5em;
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 120px;
 
     ul {
         border-top: 1px solid $brand-color-darker;
