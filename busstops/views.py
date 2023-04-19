@@ -388,7 +388,8 @@ def stops_json(request):
                 }
                 for stop in results
             ],
-        }
+        },
+        headers={"Access-Control-Allow-Origin": "*"},
     )
 
 
