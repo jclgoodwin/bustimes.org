@@ -47,6 +47,9 @@
     <ul class="bulleted">
         <li>Ticket machines IDs don’t always correspond with the actual vehicles they’re attached to. Equipment is often swapped between vehicles.</li>
         <li>Vehicles don’t always track all the time. If a journey isn’t listed, it doesn’t necessarily mean it didn’t operate.</li>
+        {% if garage_column %}
+            <li>“Garage” information is worked out automatically, using the Garage field in the operator’s timetable data and the last trip a vehicle worked.</li>
+        {% endif %}
     </ul>
 
     {% if not parent and object.parent %}

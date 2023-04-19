@@ -303,6 +303,10 @@ def operator_vehicles(request, slug=None, parent=None):
             for vehicle in vehicles
         )
 
+    garage_names = set(
+        vehicle.garage_name for vehicle in vehicles if vehicle.garage_name
+    )
+
     context = {
         **context,
         "parent": parent,
@@ -316,7 +320,7 @@ def operator_vehicles(request, slug=None, parent=None):
             vehicle.notes and not vehicle.is_spare_ticket_machine()
             for vehicle in vehicles
         ),
-        "garage_column": any(vehicle.garage_name for vehicle in vehicles),
+        "garage_column": len(garage_names) > 1,
         "form": form,
         "liveries_css_version": liveries_css_version(),
     }
