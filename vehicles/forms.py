@@ -256,14 +256,6 @@ can’t be contradicted"""
             if not vehicle.notes and vehicle.operator_id != "NATX":
                 del self.fields["notes"]
 
-        if not (
-            user.is_staff
-            or vehicle.branding
-            or vehicle.operator_id == "TNXB"
-            or vehicle.operator_id == "TCVW"
-        ):
-            del self.fields["branding"]
-
         if vehicle.is_spare_ticket_machine():
             del self.fields["notes"]
             if not vehicle.fleet_code:
