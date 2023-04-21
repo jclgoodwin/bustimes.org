@@ -198,13 +198,14 @@
 
     var lastVehiclesReq, loadVehiclesTimeout, vehiclesHighWater;
 
-    function loadVehicles() {
+    function loadVehicles(onMoveEnd) {
+        var bounds = map.getBounds();
+        if (onMoveEnd && vehiclesHighWater && vehiclesHighWater.contains(bounds) && bigVehicleMarkers) {
+            // user has simply zoomed in – no need to reload vehicles yet
+            return;
+        }
         if (lastVehiclesReq) {
             lastVehiclesReq.abort();
-        }
-        var bounds = map.getBounds();
-        if (vehiclesHighWater && vehiclesHighWater.contains(bounds) && bigVehicleMarkers) {
-            return;
         }
         if (loadVehiclesTimeout) {
             clearTimeout(loadVehiclesTimeout);
