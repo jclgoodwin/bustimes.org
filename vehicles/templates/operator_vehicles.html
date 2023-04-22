@@ -92,7 +92,7 @@
         {% for vehicle in vehicles %}
             <tr id="{{ vehicle.slug }}">
                 {% if form %}
-                    <td>{% if not vehicle.is_spare_ticket_machine %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
+                    <td>{% if vehicle.is_editable %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
                 {% endif %}
                 {% if not vehicle.fleet_code and not vehicle.fleet_number and not vehicle.reg %}
                     <td colspan="2">
@@ -132,7 +132,7 @@
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
-                {% if vehicle.is_editable or request.user.is_superuser %}
+                {% if vehicle.is_editable %}
                     <td>{{ vehicle.get_flickr_link }}</td>
                     {% if not form %}
                         <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>

@@ -768,7 +768,7 @@ def edit_vehicle(request, **kwargs):
         **kwargs,
     )
 
-    if vehicle.is_spare_ticket_machine() and not vehicle.vehicle_type:
+    if not vehicle.is_editable():
         raise Http404
 
     context = {}

@@ -151,6 +151,8 @@ class VehicleAdmin(admin.ModelAdmin):
         "make_livery",
         "deduplicate",
         "spare_ticket_machine",
+        "lock",
+        "unlock",
     )
     inlines = [VehicleEditInline]
     readonly_fields = ["latest_journey_data"]
@@ -230,6 +232,12 @@ class VehicleAdmin(admin.ModelAdmin):
             vehicle_type=None,
             notes="Spare ticket machine",
         )
+
+    def lock(self, request, queryset):
+        queryset.update(locked=True)
+
+    def unlock(self, request, queryset):
+        queryset.update(locked=False)
 
     @admin.display(ordering="latest_journey__datetime")
     def last_seen(self, obj):

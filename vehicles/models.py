@@ -277,7 +277,7 @@ class Vehicle(models.Model):
         return self.notes == "Spare ticket machine"
 
     def is_editable(self) -> bool:
-        if (
+        if self.locked or (
             self.is_spare_ticket_machine()
             and not self.livery_id
             and not self.vehicle_type_id
