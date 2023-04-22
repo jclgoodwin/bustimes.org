@@ -155,7 +155,7 @@ class Command(BaseCommand):
                 status = line["Registration Status"]
                 registration.registration_status = status
 
-                if status == "New" or status == "Registered":
+                if status == "New" or status == "Registered" or status == "Variation":
                     registration.registered = True
                 elif (
                     status == "Admin Cancelled"
