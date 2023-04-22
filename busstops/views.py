@@ -355,6 +355,9 @@ def stops_json(request):
     except (KeyError, ValueError):
         return HttpResponseBadRequest()
 
+    if bounding_box.area > 0.15:
+        return HttpResponseBadRequest()
+
     results = (
         StopPoint.objects.filter(
             latlong__bboverlaps=bounding_box,
