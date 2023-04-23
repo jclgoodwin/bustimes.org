@@ -20,7 +20,7 @@ ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/poetry
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
-RUN $VIRTUAL_ENV/bin/pip install poetry==1.4.1
+RUN $VIRTUAL_ENV/bin/pip install poetry==1.4.2
 
 WORKDIR /app/
 
