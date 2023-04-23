@@ -25,7 +25,7 @@ jobs:
 
     - name: Run tests
       run: |
-        docker compose run web bash -c "./manage.py collectstatic --noinput --clear && coverage run ./manage.py test && coverage xml"
+        docker compose run web bash -c "coverage run ./manage.py test && coverage xml"
 
     - run: |
         mkdir -p /tmp/docker-save \
