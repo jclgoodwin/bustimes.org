@@ -162,14 +162,14 @@ class EditVehicleForm(EditVehiclesForm):
     branding = forms.CharField(
         label="Other branding",
         required=False,
-        max_length=70,
-        help_text="Leave this blank",
+        max_length=40,
+        help_text="Please leave this blank, it's unnecessary information",
     )
     name = forms.CharField(
         label="Vehicle name",
         required=False,
-        max_length=70,
-        help_text="Leave this blank",
+        max_length=40,
+        help_text="Please leave this blank, it's unnecessary information",
     )
     previous_reg = fields.RegField(
         required=False,
