@@ -13,7 +13,7 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import MultiLineString, Point
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.expressions import ArraySubquery
-from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchHeadline, SearchQuery, SearchRank
 from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
@@ -66,7 +66,7 @@ from .utils import get_bounding_box
 
 operator_has_current_services = Exists("service", filter=Q(service__current=True))
 operator_has_current_services_or_vehicles = operator_has_current_services | Exists(
-    "vehicle", filter=Q(withdrawn=False)
+    "vehicle", filter=Q(withdrawn=False, latest_journey__isnull=False)
 )
 
 
@@ -990,7 +990,9 @@ class OperatorDetailView(DetailView):
 
         # vehicles tab:
 
-        context["vehicles"] = self.object.vehicle_set.filter(withdrawn=False).exists()
+        context["vehicles"] = self.object.vehicle_set.filter(
+            withdrawn=False, latest_journey__isnull=False
+        ).exists()
         if redis_client and context["vehicles"]:
             try:
                 context["map"] = redis_client.exists(
@@ -1494,7 +1496,6 @@ def search(request):
 
         if "postcode" not in context:
             query = SearchQuery(query_text, search_type="websearch", config="english")
-
             rank = SearchRank(F("search_vector"), query)
 
             localities = Locality.objects.filter()
@@ -1521,6 +1522,8 @@ def search(request):
                     .annotate(rank=rank)
                     .order_by("-rank")
                 )
+                if key == "operators":
+                    queryset = queryset.annotate(headline=SearchHeadline("name", query))
                 context[key] = Paginator(queryset, 20).get_page(request.GET.get("page"))
 
             vehicles = Vehicle.objects.select_related("operator")

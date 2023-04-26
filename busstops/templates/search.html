@@ -64,7 +64,7 @@
         {% if operators %}
             <ul>
                 {% for result in operators %}
-                    <li><a href="{{ result.get_absolute_url }}">{{ result }}</a></li>
+                    <li><a href="{{ result.get_absolute_url }}">{{ result.headline|safe }}</a></li>
                 {% endfor %}
             </ul>
 
