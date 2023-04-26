@@ -248,6 +248,7 @@ if TEST:
 elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.environ:
     import sentry_sdk
     from sentry_sdk.integrations.django import DjangoIntegration
+    from sentry_sdk.integrations.huey import HueyIntegration
     from sentry_sdk.integrations.logging import ignore_logger
     from sentry_sdk.integrations.redis import RedisIntegration
 
@@ -259,7 +260,7 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
 
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],
-        integrations=[DjangoIntegration(), RedisIntegration()],
+        integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
         ignore_errors=[KeyboardInterrupt, RuntimeError],
         release=os.environ.get("COMMIT_HASH"),
         traces_sampler=traces_sampler,
