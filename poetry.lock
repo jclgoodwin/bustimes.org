@@ -1576,7 +1576,7 @@ files = [
 name = "pygments"
 version = "2.15.1"
 description = "Pygments is a syntax highlighting package written in Python."
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -2608,4 +2608,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "b44c64a007d39bbdbb1fece93870e8c0bcbbfcc9594ab13f7fc806cccb69d627"
+content-hash = "3729253b567311672938b9c89e73f9d0a74a99042db11279f90e548763a9efb2"
