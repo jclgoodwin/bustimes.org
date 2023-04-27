@@ -1,5 +1,6 @@
 import csv
 import json
+import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -24,6 +25,9 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_GET
 from django.views.generic.detail import DetailView
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import XmlLexer
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
@@ -274,7 +278,12 @@ def stop_debug(request, atco_code: str):
         StopPoint.objects.select_related("locality"), atco_code=atco_code
     )
 
-    responses = cache.get_many(
+    responses = []
+
+    formatter = HtmlFormatter()
+    css = formatter.get_style_defs()
+
+    for key, response in cache.get_many(
         [
             f"TflDepartures:{stop.pk}",
             f"SiriSmDepartures:{stop.pk}",
@@ -282,7 +291,17 @@ def stop_debug(request, atco_code: str):
             f"EdinburghDepartures:{stop.pk}",
             f"tfwm:{stop.pk}",
         ]
-    ).values()
+    ).items():
+        response_text = response.text
+        if response.headers["content-type"] == "text/xml":
+            ET.register_namespace("", "http://www.siri.org.uk/siri")
+            xml = ET.XML(response.text)
+            ET.indent(xml)
+            response_text = ET.tostring(xml).decode()
+            response_text = mark_safe(highlight(response_text, XmlLexer(), formatter))
+        responses.append(
+            {"url": response.url, "text": response_text, "headers": response.headers}
+        )
 
     return render(
         request,
@@ -291,6 +310,7 @@ def stop_debug(request, atco_code: str):
             "object": stop,
             "breadcrumb": [stop.locality, stop],
             "responses": responses,
+            "css": css,
         },
     )
 

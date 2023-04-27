@@ -1,8 +1,14 @@
 {% extends 'page.html' %}
 
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
 {% block content %}
 
 <h1>{{ object.get_long_name }}</h1>
+
+<style>{{ css }}</style>
 
 {% for response in responses %}
 
@@ -12,7 +18,7 @@
 
         <p><code>{{ response.headers }}</code></p>
 
-        <pre><code>{{ response.text }}</code></pre>
+        {{ response.text }}
 
     {% endif %}
 
