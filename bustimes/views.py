@@ -191,6 +191,7 @@ def stop_time_json(stop_time, date) -> dict:
                 "id": trip.operator.noc,
                 "name": trip.operator.name,
                 "parent": trip.operator.parent,
+                "vehicle_mode": trip.operator.vehicle_mode,                
             }
         )
 
@@ -200,6 +201,7 @@ def stop_time_json(stop_time, date) -> dict:
             "operators": operators,
         },
         "trip_id": stop_time.trip_id,
+        "trip_stop_id": stop_time.id,
         "destination": {
             "atco_code": destination.atco_code,
             "name": destination.get_qualified_name(),
