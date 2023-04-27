@@ -131,7 +131,12 @@ class TripSerializer(serializers.ModelSerializer):
         return {
             "id": obj.route.service_id,
             "line_name": obj.route.line_name,
-        }
+            "operator": {
+                "noc": obj.operator.noc,
+                "name": obj.operator.name,
+                "vehicle_mode": obj.operator.vehicle_mode,
+            }
+      }
 
     def get_times(self, obj):
         route_links = {}
