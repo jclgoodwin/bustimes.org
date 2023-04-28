@@ -131,11 +131,7 @@ class TripSerializer(serializers.ModelSerializer):
         return {
             "id": obj.route.service_id,
             "line_name": obj.route.line_name,
-            "operator": {
-                "noc": obj.operator.noc,
-                "name": obj.operator.name,
-                "vehicle_mode": obj.operator.vehicle_mode,
-            },
+            "mode": obj.route.service.mode,
         }
 
     def get_times(self, obj):
@@ -179,7 +175,7 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ["id", "ticket_machine_code", "service", "times"]
+        fields = ["id", "ticket_machine_code", "service", "operator_id", "times"]
 
 
 class VehicleJourneySerializer(serializers.ModelSerializer):
