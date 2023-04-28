@@ -2,6 +2,7 @@ from django.db.models import Q
 from django_filters.rest_framework import CharFilter, FilterSet, NumberFilter
 
 from busstops.models import Operator, Service, StopPoint
+from bustimes.models import Trip
 from vehicles.models import Vehicle
 
 
@@ -34,12 +35,23 @@ class StopFilter(FilterSet):
 
 
 class ServiceFilter(FilterSet):
+    operator = CharFilter()
+
     class Meta:
         model = Service
-        fields = ["public_use", "operator"]
+        fields = ["public_use", "mode"]
 
 
 class OperatorFilter(FilterSet):
     class Meta:
         model = Operator
-        fields = ["name", "slug", "vehicle_mode", "parent", "region_id"]
+        fields = ["name", "slug", "vehicle_mode", "parent", "region"]
+
+
+class TripFilter(FilterSet):
+    route = NumberFilter()
+    operator = CharFilter()
+
+    class Meta:
+        model = Trip
+        fields = ["ticket_machine_code", "vehicle_journey_code", "block"]

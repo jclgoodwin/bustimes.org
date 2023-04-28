@@ -125,14 +125,23 @@ class LiverySerializer(serializers.ModelSerializer):
 
 class TripSerializer(serializers.ModelSerializer):
     service = serializers.SerializerMethodField()
+    operator = serializers.SerializerMethodField()
     times = serializers.SerializerMethodField()
 
     def get_service(self, obj):
         return {
             "id": obj.route.service_id,
             "line_name": obj.route.line_name,
-            "mode": obj.route.service.mode,
+            "mode": obj.route.service.mode if obj.route.service else "",
         }
+
+    def get_operator(self, obj):
+        if obj.operator:
+            return {
+                "noc": obj.operator_id,
+                "name": obj.operator.name,
+                # "vehicle_mode": obj.operator.vehicle_mode
+            }
 
     def get_times(self, obj):
         route_links = {}
@@ -175,7 +184,15 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ["id", "ticket_machine_code", "service", "operator_id", "times"]
+        fields = [
+            "id",
+            "vehicle_journey_code",
+            "ticket_machine_code",
+            "block",
+            "service",
+            "operator",
+            "times",
+        ]
 
 
 class VehicleJourneySerializer(serializers.ModelSerializer):
