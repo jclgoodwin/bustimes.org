@@ -1,9 +1,10 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone  # , timedelta
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
-from django.utils.dateparse import parse_duration
+
+# from django.utils.dateparse import parse_duration
 from google.transit import gtfs_realtime_pb2
 
 from busstops.models import DataSource, Service
@@ -76,43 +77,43 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle, True
 
     def get_journey(self, item, vehicle):
-        #start_time = datetime.strptime(
+        # start_time = datetime.strptime(
         #    f"{item.vehicle.trip.start_date} 12:00:00",
         #    "%Y%m%d %H:%M:%S",
-        #) - timedelta(hours=12) + parse_duration(item.vehicle.trip.start_time)
+        # ) - timedelta(hours=12) + parse_duration(item.vehicle.trip.start_time)
         journey = VehicleJourney(
             code=item.vehicle.trip.trip_id,
-            #datetime=start_time.replace(tzinfo=self.tzinfo)
+            # datetime=start_time.replace(tzinfo=self.tzinfo)
         )
 
         if (
             (latest_journey := vehicle.latest_journey)
-            #and latest_journey.datetime == journey.datetime
+            # and latest_journey.datetime == journey.datetime
             and latest_journey.code == journey.code
         ):
             return latest_journey
 
         service = Service.objects.filter(
-            source=self.source, route__code=item.vehicle.trip.route_id
+            route__source=self.source, route__code=item.vehicle.trip.route_id
         ).first()
-        trip = (
-            service
-            and Trip.objects.filter(
-                route__source=self.source,
+        if service:
+            trip = Trip.objects.filter(
+                # route__source__in=self.source,
                 route__service=service,
                 ticket_machine_code=journey.code,
             ).first()
-        )
 
-        journey.service = service
-        journey.trip = trip
-        if service:
+            journey.service = service
+            journey.trip = trip
+
             journey.route_name = service.line_name
-        if trip and trip.destination and trip.destination.locality:
-            journey.destination = str(trip.destination.locality)
-        if trip and trip.operator_id and not vehicle.operator_id:
-            vehicle.operator_id = trip.operator_id
-            vehicle.save(update_fields=["operator"])
+
+            if trip and trip.destination and trip.destination.locality:
+                journey.destination = str(trip.destination.locality)
+            if trip and trip.operator_id and not vehicle.operator_id:
+                vehicle.operator_id = trip.operator_id
+                vehicle.save(update_fields=["operator"])
+
         return journey
 
     def create_vehicle_location(self, item):
