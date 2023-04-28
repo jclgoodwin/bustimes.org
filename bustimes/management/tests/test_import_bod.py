@@ -192,11 +192,19 @@ class ImportBusOpenDataTest(TestCase):
         expected_json = {
             "times": [
                 {
+                    "id": response.context_data["stops"][0].id,
+                    "trip_id": trip.id,
                     "service": {
                         "line_name": "54",
-                        "operators": [{"id": "LYNX", "name": "Lynx", "parent": ""}],
+                        "operators": [
+                            {
+                                "id": "LYNX",
+                                "name": "Lynx",
+                                "parent": "",
+                                "vehicle_mode": "",
+                            }
+                        ],
                     },
-                    "trip_id": trip.id,
                     "destination": {
                         "atco_code": "2900K132",
                         "name": "Kings Lynn Transport Interchange",

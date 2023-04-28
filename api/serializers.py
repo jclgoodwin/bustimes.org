@@ -135,8 +135,8 @@ class TripSerializer(serializers.ModelSerializer):
                 "noc": obj.operator.noc,
                 "name": obj.operator.name,
                 "vehicle_mode": obj.operator.vehicle_mode,
-            }
-      }
+            },
+        }
 
     def get_times(self, obj):
         route_links = {}
