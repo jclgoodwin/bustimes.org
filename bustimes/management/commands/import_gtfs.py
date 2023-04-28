@@ -11,7 +11,6 @@ from django.core.management.base import BaseCommand
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now
 from django.utils.dateparse import parse_duration
-from requests_html import HTMLSession
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
@@ -497,29 +496,12 @@ class Command(BaseCommand):
         StopPoint.objects.filter(active=True, service__isnull=True).update(active=False)
 
     def handle(self, *args, **options):
-        session = HTMLSession()
-        url = "https://www.transportforireland.ie/transitData/PT_Data.html"
-        response = session.get(url)
+        collections = DataSource.objects.filter(
+            url__startswith="https://www.transportforireland.ie/transitData/Data/GTFS_"
+        )
 
-        collections = []
-
-        for element in response.html.find('a[href^="Data/GTFS_"]'):
-            if options["collections"] and element.text not in options["collections"]:
-                continue
-            if element.text in (
-                "Dublin Bus",
-                "Bus Eireann",
-                "GoAhead Ireland",
-                "LUAS",
-                "Irish Rail",
-            ):
-                # data is in the combined "Realtime Transport Operators"
-                continue
-            url = element.absolute_links.pop()
-            source = DataSource.objects.filter(url=url).first()
-            if not source:
-                source = DataSource.objects.create(name=element.text, url=url)
-            collections.append(source)
+        if options["collections"]:
+            collections = collections.filter(name__in=options["collections"])
 
         for source in collections:
             path = settings.DATA_DIR / Path(source.url).name

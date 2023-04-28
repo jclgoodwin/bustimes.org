@@ -9,7 +9,7 @@ import vcr
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
-from busstops.models import AdminArea, Operator, Region, Service, StopPoint
+from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...models import Route
 from ..commands import import_gtfs
@@ -49,6 +49,23 @@ class GTFSTest(TestCase):
         # this should get updated later
         StopPoint.objects.create(
             atco_code="8220DB000759", common_name="Estadio Donnybrook", active=True
+        )
+
+        DataSource.objects.bulk_create(
+            [
+                DataSource(
+                    name="Seamus Doherty",
+                    url="https://www.transportforireland.ie/transitData/Data/GTFS_Seamus_Doherty.zip",
+                ),
+                DataSource(
+                    name="Mortons",
+                    url="https://www.transportforireland.ie/transitData/Data/GTFS_Mortons.zip",
+                ),
+                DataSource(
+                    name="Wexford Bus",
+                    url="https://www.transportforireland.ie/transitData/Data/GTFS_Wexford_Bus.zip",
+                ),
+            ]
         )
 
     def test_import_gtfs(self):
