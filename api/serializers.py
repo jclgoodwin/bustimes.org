@@ -140,7 +140,7 @@ class TripSerializer(serializers.ModelSerializer):
             return {
                 "noc": obj.operator_id,
                 "name": obj.operator.name,
-                # "vehicle_mode": obj.operator.vehicle_mode
+                "vehicle_mode": obj.operator.vehicle_mode
             }
 
     def get_times(self, obj):
