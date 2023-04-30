@@ -683,7 +683,7 @@ class Service(models.Model):
     line_brand = models.CharField(max_length=64, blank=True)
     description = models.CharField(max_length=255, blank=True, db_index=True)
     slug = AutoSlugField(populate_from=str, editable=True, unique=True)
-    mode = models.CharField(max_length=11, blank=True)
+    mode = models.CharField(max_length=11, blank=True, default="bus")
     operator = models.ManyToManyField(Operator, blank=True)
     region = models.ForeignKey(Region, models.CASCADE, null=True, blank=True)
     stops = models.ManyToManyField(StopPoint, through=StopUsage)
