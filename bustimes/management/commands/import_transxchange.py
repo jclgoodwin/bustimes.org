@@ -1238,6 +1238,8 @@ class Command(BaseCommand):
                 route_links_to_update = {}
                 route_links_to_create = {}
                 for route_link in self.get_route_links(journeys, transxchange):
+                    if len(route_link.track) <= 2:
+                        continue
                     from_stop = stops.get(route_link.from_stop)
                     to_stop = stops.get(route_link.to_stop)
                     if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
