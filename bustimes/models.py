@@ -241,7 +241,7 @@ class Calendar(models.Model):
             ):
                 if cd.operation and not getattr(self, f"{cd.start_date:%a}".lower()):
                     description = f"{description} (and {cd.start_date:%A %-d %B})"
-                elif getattr(self, f"{cd.start_date:%a}".lower()):
+                elif not cd.operation and getattr(self, f"{cd.start_date:%a}".lower()):
                     description = f"{description} (not {cd.start_date:%A %-d %B})"
 
         if self.start_date > today:
