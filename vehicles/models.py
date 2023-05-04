@@ -85,11 +85,30 @@ def get_text_colour(colours):
         return "#fff"
 
 
+class VehicleTypeType(models.TextChoices):
+    DOUBLE_DECKER = "double decker", "double decker"
+    MINIBUS = "minibus", "minibus"
+    COACH = "coach", "coach"
+    ARTICULATED = "articulated", "articulated"
+    TRAIN = "train", "train"
+    TRAM = "tram", "tram"
+
+
+class FuelType(models.TextChoices):
+    DIESEL = "diesel", "diesel"
+    ELECTRIC = "electric", "electric"
+    HYBRID = "hybrid", "hybrid"
+    HYDROGEN = "hydrogen", "hydrogen"
+    GAS = "gas", "gas"  # (compressed natural)
+
+
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
     double_decker = models.BooleanField(null=True)
     coach = models.BooleanField(null=True)
     electric = models.BooleanField(null=True)
+    style = models.CharField(choices=VehicleTypeType.choices, max_length=13, blank=True)
+    fuel = models.CharField(choices=FuelType.choices, max_length=8, blank=True)
 
     class Meta:
         ordering = ("name",)
@@ -471,7 +490,7 @@ class Vehicle(models.Model):
 
 
 class VehicleCode(models.Model):
-    code = models.CharField(max_length=24)
+    code = models.CharField(max_length=100)
     scheme = models.CharField(max_length=24)
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
 
@@ -723,7 +742,10 @@ class VehicleEdit(models.Model):
 
 class VehicleEditVote(models.Model):
     by_user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
-    for_edit = models.ForeignKey(VehicleEdit, models.CASCADE)
+    for_edit = models.ForeignKey(VehicleEdit, models.CASCADE, null=True, blank=True)
+    for_revision = models.ForeignKey(
+        "VehicleRevision", models.CASCADE, null=True, blank=True
+    )
     positive = models.BooleanField()
 
     class Meta:
