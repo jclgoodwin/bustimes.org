@@ -461,7 +461,8 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
 @admin.register(models.VehicleCode)
 class VehicleCodeAdmin(admin.ModelAdmin):
     raw_id_fields = ["vehicle"]
-    list_display = ["code", "vehicle"]
+    list_display = ["id", "scheme", "code", "vehicle"]
+    list_filter = ["scheme"]
 
 
 admin.site.register(models.VehicleFeature)

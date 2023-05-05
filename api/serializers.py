@@ -72,7 +72,15 @@ class OperatorSerializer(serializers.ModelSerializer):
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
-        fields = ["id", "slug", "line_name", "region_id", "mode", "operator"]
+        fields = [
+            "id",
+            "slug",
+            "line_name",
+            "description",
+            "region_id",
+            "mode",
+            "operator",
+        ]
 
 
 class StopSerializer(serializers.ModelSerializer):

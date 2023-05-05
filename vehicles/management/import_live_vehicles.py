@@ -112,7 +112,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except queryset.model.MultipleObjectsReturned:
                 continue
 
-    def handle_item(self, item, now=None):
+    def handle_item(self, item, now=None, vehicle=None):
         datetime = self.get_datetime(item)
         if now and datetime and now < datetime:
             difference = datetime - now
@@ -122,13 +122,14 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 datetime -= timedelta(hours=1)  # Watersons timezone
 
         location = None
-        try:
-            vehicle, vehicle_created = self.get_vehicle(item)
-        except Vehicle.MultipleObjectsReturned as e:
-            logger.error(e, exc_info=True)
-            return
-        if not vehicle:
-            return
+        if vehicle is None:
+            try:
+                vehicle, vehicle_created = self.get_vehicle(item)
+            except Vehicle.MultipleObjectsReturned as e:
+                logger.error(e, exc_info=True)
+                return
+            if not vehicle:
+                return
 
         latest = None
         latest_datetime = None

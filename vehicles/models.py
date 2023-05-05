@@ -494,6 +494,9 @@ class VehicleCode(models.Model):
     scheme = models.CharField(max_length=24)
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
 
+    def __str__(self):
+        return f"{self.scheme} {self.code}"
+
     class Meta:
         index_together = ("code", "scheme")
 
