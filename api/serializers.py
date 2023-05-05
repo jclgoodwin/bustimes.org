@@ -5,9 +5,16 @@ from bustimes.models import Trip
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
 
+class VehicleTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VehicleType
+        fields = ["id", "name", "double_decker", "coach", "electric"]
+
+
 class VehicleSerializer(serializers.ModelSerializer):
     operator = serializers.SerializerMethodField()
     livery = serializers.SerializerMethodField()
+    vehicle_type = VehicleTypeSerializer()
 
     def get_operator(self, obj):
         if obj.operator_id:
@@ -44,12 +51,6 @@ class VehicleSerializer(serializers.ModelSerializer):
             "notes",
             "withdrawn",
         ]
-
-
-class VehicleTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = VehicleType
-        fields = ["id", "name", "double_decker", "coach", "electric"]
 
 
 class OperatorSerializer(serializers.ModelSerializer):
@@ -140,7 +141,7 @@ class TripSerializer(serializers.ModelSerializer):
             return {
                 "noc": obj.operator_id,
                 "name": obj.operator.name,
-                "vehicle_mode": obj.operator.vehicle_mode
+                "vehicle_mode": obj.operator.vehicle_mode,
             }
 
     def get_times(self, obj):
