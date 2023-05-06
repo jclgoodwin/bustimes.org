@@ -38,10 +38,6 @@ class Command(BaseCommand):
         parser.add_argument("filenames", nargs="+", type=str)
 
     def handle(self, *args, **options):
-        self.bank_holiday, _ = BankHoliday.objects.get_or_create(
-            name="Northern Ireland bank holidays"
-        )
-
         for archive_name in options["filenames"]:
 
             if "ulb" in archive_name.lower() or "ulsterbus" in archive_name.lower():
@@ -60,6 +56,10 @@ class Command(BaseCommand):
     def handle_archive(self, archive_name):
         self.routes = {}
         self.calendars = {}
+
+        self.bank_holiday, _ = BankHoliday.objects.get_or_create(
+            name="Northern Ireland bank holidays"
+        )
 
         with zipfile.ZipFile(archive_name) as archive:
             for filename in archive.namelist():
