@@ -7,7 +7,16 @@ from django.core.management.base import BaseCommand
 
 from busstops.models import DataSource, Service, StopPoint
 
-from ...models import Calendar, CalendarDate, Note, Route, StopTime, Trip
+from ...models import (
+    BankHoliday,
+    Calendar,
+    CalendarBankHoliday,
+    CalendarDate,
+    Note,
+    Route,
+    StopTime,
+    Trip,
+)
 
 
 def parse_date(string):
@@ -29,12 +38,17 @@ class Command(BaseCommand):
         parser.add_argument("filenames", nargs="+", type=str)
 
     def handle(self, *args, **options):
+        self.bank_holiday, _ = BankHoliday.objects.get_or_create(
+            name="Northern Ireland bank holidays"
+        )
+
         for archive_name in options["filenames"]:
 
             if "ulb" in archive_name.lower() or "ulsterbus" in archive_name.lower():
                 source_name = "ULB"
             else:
                 source_name = "MET"
+
             self.source, _ = DataSource.objects.get_or_create(name=source_name)
 
             self.source.datetime = datetime.fromtimestamp(
@@ -74,7 +88,11 @@ class Command(BaseCommand):
         for service in services:
             service.update_search_vector()
 
-        print(self.source.route_set.exclude(code__in=self.routes.keys()).delete())
+        print(
+            self.source.route_set.exclude(
+                code__in=self.routes.keys(), trip__isnull=False
+            ).delete()
+        )
         print(
             self.source.service_set.filter(current=True, route__isnull=True).update(
                 current=False
@@ -136,7 +154,7 @@ class Command(BaseCommand):
         key = line[13:38].decode() + str(self.exceptions)
         if key in self.calendars:
             return self.calendars[key]
-        calendar = Calendar.objects.create(
+        calendar = Calendar(
             mon=line[29:30] == b"1",
             tue=line[30:31] == b"1",
             wed=line[31:32] == b"1",
@@ -161,6 +179,26 @@ class Command(BaseCommand):
             summary.append("not bank holidays")
 
         calendar.summary = ",".join(summary)
+        calendar.save()
+
+        if line[37:38] == b"A":
+            CalendarBankHoliday.objects.create(
+                operation=True,
+                bank_holiday=self.bank_holiday,
+                calendar=calendar,
+            )
+        elif line[37:38] == b"B":
+            CalendarBankHoliday.objects.create(
+                operation=True,
+                bank_holiday=self.bank_holiday,
+                calendar=calendar,
+            )
+        elif line[37:38] == b"X":
+            CalendarBankHoliday.objects.create(
+                operation=False,
+                bank_holiday=self.bank_holiday,
+                calendar=calendar,
+            )
 
         CalendarDate.objects.bulk_create(
             CalendarDate(
@@ -259,7 +297,7 @@ class Command(BaseCommand):
                     calendar = self.get_calendar()
                     self.trip = Trip(
                         operator_id=self.trip_header[3:7].decode().strip(),
-                        vehicle_journey_code=self.trip_header[7:13].decode().strip(),
+                        ticket_machine_code=self.trip_header[7:13].decode().strip(),
                         block=self.trip_header[42:48].decode().strip(),
                         start=departure,
                         route=self.route,
