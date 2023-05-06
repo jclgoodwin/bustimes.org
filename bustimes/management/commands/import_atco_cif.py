@@ -154,7 +154,7 @@ class Command(BaseCommand):
             summary.append("school holidays only")
 
         if line[37:38] == b"A":
-            summary.append("not bank holidays")
+            summary.append("and bank holidays")
         elif line[37:38] == b"B":
             summary.append("bank holidays only")
         elif line[37:38] == b"X":
