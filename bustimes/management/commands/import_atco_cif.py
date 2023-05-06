@@ -147,6 +147,21 @@ class Command(BaseCommand):
             start_date=parse_date(line[13:21]),
             end_date=parse_date(line[21:29]),
         )
+        summary = []
+        if line[36:37] == b"S":
+            summary.append("school term time only")
+        elif line[36:37] == b"H":
+            summary.append("school holidays only")
+
+        if line[37:38] == b"A":
+            summary.append("not bank holidays")
+        elif line[37:38] == b"B":
+            summary.append("bank holidays only")
+        elif line[37:38] == b"X":
+            summary.append("not bank holidays")
+
+        calendar.summary = ",".join(summary)
+
         CalendarDate.objects.bulk_create(
             CalendarDate(
                 calendar=calendar,
