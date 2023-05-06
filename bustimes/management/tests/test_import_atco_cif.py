@@ -70,6 +70,11 @@ class ImportAtcoCifTest(TestCase):
             "Antrim, Buscentre - Belfast, Europa Buscentre", route.inbound_description
         )
 
+        trip = route.trip_set.first()
+        self.assertEqual("", trip.block)
+        self.assertEqual("Goldline Express", trip.operator.name)
+        self.assertEqual("1700", trip.vehicle_journey_code)
+
         with time_machine.travel("2019-10-01"):
             with self.assertNumQueries(10):
                 response = self.client.get(

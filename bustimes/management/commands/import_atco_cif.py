@@ -74,10 +74,12 @@ class Command(BaseCommand):
         for service in services:
             service.update_search_vector()
 
-        self.source.route_set.exclude(code__in=self.routes.keys()).delete()
-        self.source.service_set.filter(current=True).exclude(
-            service_code__in=self.routes.keys()
-        ).update(current=False)
+        print(self.source.route_set.exclude(code__in=self.routes.keys()).delete())
+        print(
+            self.source.service_set.filter(current=True, route__isnull=True).update(
+                current=False
+            )
+        )
         self.source.save(update_fields=["datetime"])
 
     def handle_file(self, open_file):
@@ -241,6 +243,9 @@ class Command(BaseCommand):
 
                     calendar = self.get_calendar()
                     self.trip = Trip(
+                        operator_id=self.trip_header[3:7].decode().strip(),
+                        vehicle_journey_code=self.trip_header[7:13].decode().strip(),
+                        block=self.trip_header[42:48].decode().strip(),
                         start=departure,
                         route=self.route,
                         calendar=calendar,
