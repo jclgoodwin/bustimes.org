@@ -996,5 +996,6 @@ class Cell:
         return format_timedelta(self.departure)
 
     def set_down_only(self):
-        if not self.stoptime.pick_up:
-            return True
+        if not self.last:
+            if not self.stoptime.pick_up:
+                return True
