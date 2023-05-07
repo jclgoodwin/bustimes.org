@@ -206,6 +206,12 @@ class ImportLiveVehiclesCommand(BaseCommand):
         if not location.datetime:
             location.datetime = now
 
+        if latest and location.latlong and location.heading is None:
+            if latest_latlong.equals_exact(location.latlong, 0.001):
+                location.heading = latest["heading"]
+            else:
+                location.heading = calculate_bearing(latest_latlong, location.latlong)
+
         if same_journey(latest_journey, journey, latest_datetime, location.datetime):
             changed = []
             if latest_journey.source_id != self.source.id:
@@ -223,14 +229,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     cache.delete(f"journey{latest_journey.id}")
 
             journey = latest_journey
-
-            if latest and location.latlong and location.heading is None:
-                if latest_latlong.equals_exact(location.latlong, 0.001):
-                    location.heading == latest["heading"]
-                else:
-                    location.heading = calculate_bearing(
-                        latest_latlong, location.latlong
-                    )
 
         else:
             journey.source = self.source
