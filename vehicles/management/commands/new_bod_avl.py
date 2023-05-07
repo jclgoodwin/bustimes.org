@@ -64,7 +64,8 @@ class Command(ImportLiveVehiclesCommand):
             #     continue
 
             if self.identifiers.get(vehicle_identity) == item["RecordedAtTime"]:
-                assert journey_identity == self.journeys_ids[vehicle_identity]
+                if journey_identity != self.journeys_ids[vehicle_identity]:
+                    print(journey_identity, self.journeys_ids[vehicle_identity])
                 continue
             else:
                 changed_items.append(item)
@@ -170,7 +171,7 @@ class Command(ImportLiveVehiclesCommand):
             else:
                 self.increasing = False
         self.last_age = age
-
+        print(self.wait)
         time_taken = (timezone.now() - now).total_seconds()
 
         if ev + nv == 0:
