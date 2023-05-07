@@ -15,7 +15,6 @@ from django.core.management.base import BaseCommand
 from django.db import DataError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
-from sentry_sdk import start_transaction
 
 from busstops.models import DataSource, Operator, Service
 

@@ -12,6 +12,7 @@ from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 class Command(ImportLiveVehiclesCommand):
     wait = 28
+    last_age = 0
     identifiers = {}
     journeys_ids = {}
     journeys_ids_ids = {}
@@ -144,7 +145,7 @@ class Command(ImportLiveVehiclesCommand):
 
         # stats for last 10 updates:
         bod_status = cache.get("bod_avl_status", [])
-        bod_status.append((timezone.now(), self.source.datetime, len(items), ev + nv))
+        bod_status.append((now, self.source.datetime, len(items), ev + nv))
         bod_status = bod_status[-50:]
         cache.set_many(
             {
@@ -153,6 +154,17 @@ class Command(ImportLiveVehiclesCommand):
             },
             None,
         )
+
+        # wibbly wobbly try to optimise wait time to get fresher data without fetching too often
+        age = (self.source.datetime - now).total_seconds()
+        age_gap = age - self.last_age
+        if age_gap > 0:
+            if self.wait > 20:
+                self.wait -= 1
+        else:
+            if self.wait < 30:
+                self.wait += 1
+        self.last_age = age
 
         time_taken = (timezone.now() - now).total_seconds()
 
