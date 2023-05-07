@@ -11,8 +11,9 @@ from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    wait = 28
+    wait = 25
     last_age = 0
+    increasing = False
     identifiers = {}
     journeys_ids = {}
     journeys_ids_ids = {}
@@ -159,11 +160,15 @@ class Command(ImportLiveVehiclesCommand):
         age = (self.source.datetime - now).total_seconds()
         age_gap = age - self.last_age
         if age_gap > 0:
-            if self.wait > 20:
+            if self.wait > 20 and not self.increasing:
                 self.wait -= 1
+            else:
+                self.increasing = True
         else:
-            if self.wait < 30:
+            if self.wait < 30 and self.increasing:
                 self.wait += 1
+            else:
+                self.increasing = False
         self.last_age = age
 
         time_taken = (timezone.now() - now).total_seconds()
