@@ -1,15 +1,19 @@
+import json
+
 import tqdm
 from django.core.cache import cache
 from django.utils import timezone
 
 from vehicles.models import VehicleCode
 
+from ...utils import redis_client
 from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
     wait = 28
     identifiers = {}
+    journeys = {}
 
     @staticmethod
     def get_vehicle_identity(item):
@@ -29,13 +33,12 @@ class Command(ImportLiveVehiclesCommand):
     @staticmethod
     def get_journey_identity(item):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-
         try:
             journey_ref = monitored_vehicle_journey["FramedVehicleJourneyRef"]
         except (KeyError, ValueError):
-            journey_ref = monitored_vehicle_journey["VehicleJourneyRef"]
+            journey_ref = monitored_vehicle_journey.get("VehicleJourneyRef")
 
-        return journey_ref
+        return f"{journey_ref}"
 
     def update(self):
         now = timezone.localtime()
@@ -45,15 +48,34 @@ class Command(ImportLiveVehiclesCommand):
 
         changed_items = []
         changed_item_identities = []
+
+        changed_journeys = 0
+
         for i, item in enumerate(items):
             vehicle_identity = self.get_vehicle_identity(item)
-            datetime = item["RecordedAtTime"]
-            if self.identifiers.get(vehicle_identity) == datetime:
+
+            journey_identity = self.get_journey_identity(item)
+
+            # datetime = self.get_datetime(item)
+            # if (now - datetime).total_seconds() > 900:
+            #     continue
+
+            if self.identifiers.get(vehicle_identity) == item["RecordedAtTime"]:
+                assert journey_identity == self.journeys[vehicle_identity]
                 continue
             else:
-                self.identifiers[vehicle_identity] = datetime
                 changed_items.append(item)
                 changed_item_identities.append(vehicle_identity)
+
+                if (
+                    journey_identity not in self.journeys
+                    or journey_identity != self.journeys[vehicle_identity]
+                ):
+                    changed_journeys += 0
+
+            self.journeys[vehicle_identity] = journey_identity
+
+        print(f"{changed_journeys=}")
 
         vehicle_codes = VehicleCode.objects.filter(
             code__in=changed_item_identities, scheme="BODS"
@@ -62,6 +84,15 @@ class Command(ImportLiveVehiclesCommand):
 
         print(f"{len(items)=}")
         print(f"{len(changed_items)=}")
+
+        vehicle_locations = redis_client.mget(
+            [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
+        )
+        vehicle_locations = {
+            vehicle_codes[i].vehicle_id: json.loads(item)
+            for i, item in enumerate(vehicle_locations)
+            if item
+        }
 
         ev = 0
         nv = 0
@@ -74,15 +105,19 @@ class Command(ImportLiveVehiclesCommand):
                 ev += 1
             else:
                 vehicle, created = self.get_vehicle(item)
-                print(vehicle_identity, vehicle, created)
+                # print(vehicle_identity, vehicle, created)
                 VehicleCode.objects.create(
                     code=vehicle_identity, scheme="BODS", vehicle=vehicle
                 )
                 nv += 1
 
-            self.handle_item(item, vehicle=vehicle)
+            self.handle_item(
+                item, vehicle=vehicle, latest=vehicle_locations.get(vehicle.id, False)
+            )
 
-            if i and not i % 100:
+            self.identifiers[vehicle_identity] = item["RecordedAtTime"]
+
+            if i and not i % 500:
                 self.save()
 
         self.save()

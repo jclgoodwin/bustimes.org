@@ -112,7 +112,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except queryset.model.MultipleObjectsReturned:
                 continue
 
-    def handle_item(self, item, now=None, vehicle=None):
+    def handle_item(self, item, now=None, vehicle=None, latest=None):
         datetime = self.get_datetime(item)
         if now and datetime and now < datetime:
             difference = datetime - now
@@ -131,12 +131,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if not vehicle:
                 return
 
-        latest = None
         latest_datetime = None
 
-        latest = redis_client.get(f"vehicle{vehicle.id}")
+        if latest is None:
+            latest = redis_client.get(f"vehicle{vehicle.id}")
+            if latest:
+                latest = json.loads(latest)
         if latest:
-            latest = json.loads(latest)
             latest_datetime = parse_datetime(latest["datetime"])
             latest_latlong = Point(*latest["coordinates"])
 
