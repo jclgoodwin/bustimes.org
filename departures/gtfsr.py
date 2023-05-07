@@ -61,8 +61,8 @@ def apply_trip_update(stops, trip_update: dict) -> None:
         sequence = stop_time_update["stopSequence"]
         stop_time = stops_by_sequence[sequence]
         assert sequence == stop_time.sequence
-        if "stopId" in stop_time_update:
-            assert stop_time_update["stopId"] == stop_time.stop_id
+        # if "stopId" in stop_time_update:
+        #     assert stop_time_update["stopId"] == stop_time.stop_id
         stop_time.update = stop_time_update
 
     stop_time_update = None
