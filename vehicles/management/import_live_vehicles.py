@@ -112,7 +112,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             except queryset.model.MultipleObjectsReturned:
                 continue
 
-    def handle_item(self, item, now=None, vehicle=None, latest=None):
+    def handle_item(self, item, now=None, vehicle=None, latest=None, keep_journey=None):
         datetime = self.get_datetime(item)
         if now and datetime and now < datetime:
             difference = datetime - now
@@ -161,7 +161,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             original_service_id = latest_journey.service_id
             original_destination = latest_journey.destination
 
-        journey = self.get_journey(item, vehicle)
+        if keep_journey:
+            journey = latest_journey
+        else:
+            journey = self.get_journey(item, vehicle)
         if not journey:
             return
         journey.vehicle = vehicle
@@ -208,10 +211,10 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if latest_journey.source_id != self.source.id:
                 latest_journey.source = self.source
                 changed.append("source")
-            if journey.service_id and not original_service_id:
+            if journey.service_id != original_service_id:
                 latest_journey.service_id = journey.service_id
                 changed.append("service")
-            if journey.destination and not original_destination:
+            if journey.destination != original_destination:
                 latest_journey.destination = journey.destination
                 changed.append("destination")
             if changed:
@@ -258,6 +261,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             self.vehicles_to_update.append(vehicle)
 
         self.to_save.append((location, vehicle))
+
+        return location, vehicle
 
     def save(self):
         if not self.to_save:

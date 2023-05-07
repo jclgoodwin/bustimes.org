@@ -13,7 +13,8 @@ from .import_bod_avl import Command as ImportLiveVehiclesCommand
 class Command(ImportLiveVehiclesCommand):
     wait = 28
     identifiers = {}
-    journeys = {}
+    journeys_ids = {}
+    journeys_ids_ids = {}
 
     @staticmethod
     def get_vehicle_identity(item):
@@ -61,19 +62,19 @@ class Command(ImportLiveVehiclesCommand):
             #     continue
 
             if self.identifiers.get(vehicle_identity) == item["RecordedAtTime"]:
-                assert journey_identity == self.journeys[vehicle_identity]
+                assert journey_identity == self.journeys_ids[vehicle_identity]
                 continue
             else:
                 changed_items.append(item)
                 changed_item_identities.append(vehicle_identity)
 
                 if (
-                    journey_identity not in self.journeys
-                    or journey_identity != self.journeys[vehicle_identity]
+                    vehicle_identity not in self.journeys_ids
+                    or journey_identity != self.journeys_ids[vehicle_identity]
                 ):
-                    changed_journeys += 0
+                    changed_journeys += 1
 
-            self.journeys[vehicle_identity] = journey_identity
+            self.journeys_ids[vehicle_identity] = journey_identity
 
         print(f"{changed_journeys=}")
 
@@ -100,6 +101,8 @@ class Command(ImportLiveVehiclesCommand):
         for i, item in enumerate(tqdm.tqdm(changed_items)):
             vehicle_identity = changed_item_identities[i]
 
+            journey_identity = self.journeys_ids[vehicle_identity]
+
             if vehicle_identity in vehicles_by_identity:
                 vehicle = vehicles_by_identity[vehicle_identity].vehicle
                 ev += 1
@@ -111,9 +114,26 @@ class Command(ImportLiveVehiclesCommand):
                 )
                 nv += 1
 
-            self.handle_item(
-                item, vehicle=vehicle, latest=vehicle_locations.get(vehicle.id, False)
+            keep_journey = False
+            if vehicle_identity in self.journeys_ids_ids:
+                journey_identity_id = self.journeys_ids_ids[vehicle_identity]
+                if journey_identity_id == (journey_identity, vehicle.latest_journey_id):
+                    keep_journey = True  # can dumbly keep same latest_journey
+
+            result = self.handle_item(
+                item,
+                vehicle=vehicle,
+                latest=vehicle_locations.get(vehicle.id, False),
+                keep_journey=keep_journey,
             )
+
+            if result:
+                location, vehicle = result
+
+                self.journeys_ids_ids[vehicle_identity] = (
+                    journey_identity,
+                    vehicle.latest_journey_id,
+                )
 
             self.identifiers[vehicle_identity] = item["RecordedAtTime"]
 
