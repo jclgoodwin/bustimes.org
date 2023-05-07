@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from django.contrib.gis.geos import GEOSGeometry
 
@@ -84,7 +84,9 @@ class Command(ImportLiveVehiclesCommand):
 
         latest = vehicle.latest_journey
         if not journey.route_name:
-            pass
+            datetime = self.get_datetime(item)
+            if latest and datetime - latest.datetime < timedelta(hours=1):
+                return latest
         elif latest and latest.route_name == journey.route_name:
             if (
                 latest.code == journey.code
