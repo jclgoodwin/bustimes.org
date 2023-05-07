@@ -955,7 +955,9 @@ class Service(models.Model):
             return timetable
 
         if self.region_id == "NI" or self.source and "ireland" in self.source.url:
-            timetable = Timetable(self.route_set, day, calendar_id=calendar_id)
+            timetable = Timetable(
+                self.route_set, day, calendar_id=calendar_id, detailed=detailed
+            )
         else:
             if also_services:
                 routes = Route.objects.filter(service__in=[self] + also_services)
