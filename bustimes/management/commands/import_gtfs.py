@@ -304,9 +304,13 @@ class Command(BaseCommand):
 
                 previous_line = line
 
-            # last trip:
-            trip["destination"] = stops.get(line["stop_id"])
-            trip["end"] = parse_duration(line["arrival_time"])
+            if not previous_line:
+                pass
+                # stop_times.txt was empty
+            else:
+                # last trip:
+                trip["destination"] = stops.get(line["stop_id"])
+                trip["end"] = parse_duration(line["arrival_time"])
 
             for trip_id in trips:
                 line = trips[trip_id]
@@ -428,10 +432,10 @@ class Command(BaseCommand):
 
                 # previous_line = line
 
-        # last trip
-        if not stop_time.arrival:
-            stop_time.arrival = stop_time.departure
-            stop_time.departure = None
+        # # last trip
+        # if not stop_time.arrival:
+        #     stop_time.arrival = stop_time.departure
+        #     stop_time.departure = None
 
         StopTime.objects.bulk_create(stop_times)
 
