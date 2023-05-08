@@ -47,21 +47,18 @@ class Command(ImportLiveVehiclesCommand):
         now = timezone.localtime()
         self.source.datetime = now
 
-        items = self.get_items()
-
         changed_items = []
         changed_item_identities = []
 
         changed_journeys = 0
+        total_items = 0
 
-        for i, item in enumerate(items):
+        for i, item in enumerate(self.get_items()):
             vehicle_identity = self.get_vehicle_identity(item)
 
             journey_identity = self.get_journey_identity(item)
 
-            # datetime = self.get_datetime(item)
-            # if (now - datetime).total_seconds() > 900:
-            #     continue
+            total_items += 1
 
             if self.identifiers.get(vehicle_identity) == item["RecordedAtTime"]:
                 if journey_identity != self.journeys_ids[vehicle_identity]:
@@ -79,15 +76,12 @@ class Command(ImportLiveVehiclesCommand):
 
             self.journeys_ids[vehicle_identity] = journey_identity
 
-        print(f"{changed_journeys=}")
+        print(f"{total_items=}, {len(changed_items)=}, {changed_journeys=}")
 
         vehicle_codes = VehicleCode.objects.filter(
             code__in=changed_item_identities, scheme="BODS"
         ).select_related("vehicle__latest_journey__trip")
         vehicles_by_identity = {code.code: code for code in vehicle_codes}
-
-        print(f"{len(items)=}")
-        print(f"{len(changed_items)=}")
 
         vehicle_locations = redis_client.mget(
             [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
@@ -147,7 +141,7 @@ class Command(ImportLiveVehiclesCommand):
 
         # stats for last 10 updates:
         bod_status = cache.get("bod_avl_status", [])
-        bod_status.append((now, self.source.datetime, len(items), ev + nv))
+        bod_status.append((now, self.source.datetime, total_items, ev + nv))
         bod_status = bod_status[-50:]
         cache.set_many(
             {
@@ -158,20 +152,20 @@ class Command(ImportLiveVehiclesCommand):
         )
 
         # wibbly wobbly try to optimise wait time to get fresher data without fetching too often
-        age = (self.source.datetime - now).total_seconds()
+        age = (now - self.source.datetime).total_seconds()
         age_gap = age - self.last_age
-        if age_gap > 0:
-            if self.wait > 20 and not self.increasing:
+        if age_gap > 0:  # age gap increased
+            if self.wait > 15:
                 self.wait -= 1
-            else:
-                self.increasing = True
-        else:
-            if self.wait < 30 and self.increasing:
-                self.wait += 1
-            else:
+            if self.increasing:
                 self.increasing = False
+        else:  # age gap decreased
+            if not self.increasing and self.wait < 25:
+                self.wait += 1
+                self.increasing = True
         self.last_age = age
-        print(self.wait)
+        print(age, self.wait)
+
         time_taken = (timezone.now() - now).total_seconds()
 
         if ev + nv == 0:
