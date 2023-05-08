@@ -74,6 +74,7 @@ MIDDLEWARE = [
 SECURE_REFERRER_POLICY = "origin-when-cross-origin"
 
 SECURE_BROWSER_XSS_FILTER = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_CF_VISITOR", '{"scheme":"https"}')
 SECURE_HSTS_SECONDS = 3600
 
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]

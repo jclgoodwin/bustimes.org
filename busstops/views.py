@@ -270,11 +270,9 @@ def contact(request):
         if form.is_valid():
             subject = form.cleaned_data["message"][:50].splitlines()[0]
 
-            body = (
-                f"""{form.cleaned_data['message']}\n\n{form.cleaned_data['referrer']}"""
-            )
+            body = f"""{form.cleaned_data['message']}\n\n{form.cleaned_data['referrer']}\n\n{request.headers}"""
             if request.user.is_authenticated:
-                body = f"""{body}\n\n{request.user.get_absolute_url()}"""
+                body = f"""{body}\n\nhttps://bustimes.org{request.user.get_absolute_url()}"""
 
             message = EmailMessage(
                 subject,

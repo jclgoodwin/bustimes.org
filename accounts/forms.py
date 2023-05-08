@@ -14,7 +14,7 @@ class RegistrationForm(PasswordResetForm):
         self.fields["email"].help_text = "Will be kept private"
 
     def save(self, request=None):
-        ip_address = request.headers.get("do-connecting-ip")
+        ip_address = request.headers.get("cf-connecting-ip")
 
         if ip_address:
             if User.objects.filter(trusted=False, ip_address=ip_address).exists():

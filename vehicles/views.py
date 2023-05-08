@@ -736,7 +736,7 @@ class VehicleDetailView(DetailView):
 
 
 def record_ip_address(request):
-    ip_address = request.headers.get("do-connecting-ip")
+    ip_address = request.headers.get("cf-connecting-ip")
     if request.user.ip_address != ip_address:
         request.user.ip_address = ip_address
         request.user.save(update_fields=["ip_address"])

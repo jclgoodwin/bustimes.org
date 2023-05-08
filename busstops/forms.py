@@ -27,7 +27,7 @@ class ContactForm(forms.Form):
                 )
 
                 is_spam = akismet.check(
-                    user_ip=self.request.headers.get("do-connecting-ip"),
+                    user_ip=self.request.headers.get("cf-connecting-ip"),
                     user_agent=self.request.headers.get("User-Agent"),
                     comment_type="contact-form",
                     comment_author=self.cleaned_data["name"],
