@@ -11,9 +11,7 @@ from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    wait = 25
-    last_age = 0
-    increasing = False
+    wait = 21
     identifiers = {}
     journeys_ids = {}
     journeys_ids_ids = {}
@@ -151,24 +149,17 @@ class Command(ImportLiveVehiclesCommand):
             None,
         )
 
-        # wibbly wobbly try to optimise wait time to get fresher data without fetching too often
+        # wibbly wobbly
+        # try to optimise wait time
+        # to get fresher data
+        # without fetching too often
         age = (now - self.source.datetime).total_seconds()
-        age_gap = age - self.last_age
-        if age_gap > 0:  # age gap increased
-            if self.wait > 15:
-                self.wait -= 1
-            if self.increasing:
-                self.increasing = False
-        else:  # age gap decreased
-            if not self.increasing and self.wait < 25:
-                self.wait += 1
-                self.increasing = True
-        self.last_age = age
-        print(age, self.wait)
+        # (apparently BODS updates "every 10 seconds")
+        if age > 11:
+            self.wait = 21
+        else:
+            self.wait = 19
 
         time_taken = (timezone.now() - now).total_seconds()
-
-        if ev + nv == 0:
-            return 11
 
         return max(self.wait - time_taken, 0)
