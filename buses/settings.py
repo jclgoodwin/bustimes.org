@@ -75,7 +75,11 @@ SECURE_REFERRER_POLICY = "origin-when-cross-origin"
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_CF_VISITOR", '{"scheme":"https"}')
-SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_SSL_REDIRECT = True
+SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
 
@@ -255,7 +259,11 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
 
     def traces_sampler(context):
         url = context["wsgi_environ"]["RAW_URI"]
-        if url.startswith("/vehicles.json") or url.startswith("/stops.json"):
+        if (
+            url.startswith("/vehicles.json")
+            or url.startswith("/stops.json")
+            or url == "/version"
+        ):
             return 0
         return 0.01
 
