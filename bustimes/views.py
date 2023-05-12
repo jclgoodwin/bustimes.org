@@ -295,7 +295,7 @@ def stop_debug(request, atco_code: str):
         ]
     ).items():
         response_text = response.text
-        if response.headers["content-type"] == "text/xml":
+        if "xml" in response.headers["content-type"]:
             ET.register_namespace("", "http://www.siri.org.uk/siri")
             xml = ET.XML(response.text)
             ET.indent(xml)
