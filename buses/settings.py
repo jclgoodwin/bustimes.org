@@ -259,7 +259,10 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
     from sentry_sdk.integrations.redis import RedisIntegration
 
     def traces_sampler(context):
-        url = context["wsgi_environ"]["RAW_URI"]
+        try:
+            url = context["wsgi_environ"]["RAW_URI"]
+        except KeyError:
+            return 1
         if (
             url.startswith("/vehicles.json")
             or url.startswith("/stops.json")
