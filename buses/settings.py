@@ -165,6 +165,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000
 REDIS_URL = os.environ.get("REDIS_URL")
 
 HUEY = {
+    "name": "bustimes",
     "immediate": DEBUG or TEST,
     "connection": {
         "url": REDIS_URL,
