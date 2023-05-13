@@ -72,8 +72,6 @@ def get_line_name_query(line_ref):
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
     wait = 20
-    vehicle_id_cache = {}
-    vehicle_cache = {}
     reg_operators = {"BDRB", "COMT", "TDY", "ROST", "CT4N", "TBTN", "OTSS"}
     services = (
         Service.objects.using(settings.READ_DATABASE)
@@ -114,31 +112,10 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     def get_vehicle(self, item):
-        """cached wrapper for actually_get_vehicle"""
-
-        cache_key = get_vehicle_cache_key(item)
-
-        if cache_key in self.vehicle_cache:
-            return self.vehicle_cache[cache_key], False
-
-        try:
-            return self.vehicles.get(id=self.vehicle_id_cache[cache_key]), False
-        except (KeyError, Vehicle.DoesNotExist):
-            pass
-
-        # not in cache
-
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
         operator_ref = monitored_vehicle_journey["OperatorRef"]
         vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
 
-        vehicle, created = self.actually_get_vehicle(vehicle_ref, operator_ref, item)
-
-        self.vehicle_id_cache[cache_key] = vehicle.id
-
-        return vehicle, created
-
-    def actually_get_vehicle(self, vehicle_ref, operator_ref, item):
         vehicle_ref = vehicle_ref.removeprefix(f"{operator_ref}-")
         vehicle_ref = vehicle_ref.removeprefix("nibs_").removeprefix("stephensons_")
 

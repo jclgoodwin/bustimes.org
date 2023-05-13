@@ -276,7 +276,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 )
             except IntegrityError as e:
                 logger.error(e)
-                self.vehicle_cache = {}  # for import_bod_avl
             self.vehicles_to_update = []
 
         # update locations in Redis
