@@ -100,17 +100,18 @@ class NatExpTest(TestCase):
                 ):
                     nat_exp_command.update()
 
-        self.assertEqual(6, VehicleJourney.objects.all().count())
+            self.assertEqual(6, VehicleJourney.objects.all().count())
 
-        with patch("vehicles.utils.redis_client", redis_client):
-            response = self.client.get("/vehicles.json").json()
-            self.assertEqual(response[0]["destination"], "Great Yarmouth")
-            self.assertEqual(response[0]["delay"], 4140.0)
+            with patch("vehicles.views.redis_client", redis_client):
+                response = self.client.get("/vehicles.json").json()
+        self.assertEqual(response[0]["destination"], "Great Yarmouth")
+        self.assertEqual(response[0]["delay"], 4140.0)
+        self.assertEqual(len(response), 4)
 
-            self.assertEqual(5, Vehicle.objects.all().count())
+        self.assertEqual(5, Vehicle.objects.all().count())
 
-            response = self.client.get("/operators/national-express/vehicles")
-            self.assertContains(response, "BX65 WAJ")
+        response = self.client.get("/operators/national-express/vehicles")
+        self.assertContains(response, "BX65 WAJ")
 
     @patch("vehicles.management.commands.import_megabus.sleep")
     @patch(
