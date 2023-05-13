@@ -11,7 +11,7 @@ from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    wait = 21
+    wait = 17
     identifiers = {}
     journeys_ids = {}
     journeys_ids_ids = {}
@@ -64,7 +64,7 @@ class Command(ImportLiveVehiclesCommand):
 
             if self.identifiers.get(vehicle_identity) == item["RecordedAtTime"]:
                 if journey_identity != self.journeys_ids[vehicle_identity]:
-                    print(journey_identity, self.journeys_ids[vehicle_identity])
+                    print(self.journeys_ids[vehicle_identity], item)
                 continue
             else:
                 if (
@@ -82,6 +82,8 @@ class Command(ImportLiveVehiclesCommand):
         print(timezone.now())
 
         print(f"{total_items=}, {len(changed_items)=}, {len(changed_journey_items)=}")
+
+        changed_item_identities += changed_journey_identities
 
         vehicle_codes = VehicleCode.objects.filter(
             code__in=changed_item_identities, scheme="BODS"
@@ -101,8 +103,6 @@ class Command(ImportLiveVehiclesCommand):
         nv = 0
 
         print(timezone.now())
-
-        changed_item_identities += changed_journey_identities
 
         for i, item in enumerate(tqdm.tqdm(changed_items + changed_journey_items)):
             vehicle_identity = changed_item_identities[i]
@@ -166,12 +166,9 @@ class Command(ImportLiveVehiclesCommand):
         # to get fresher data
         # without fetching too often
         age = (now - self.source.datetime).total_seconds()
-        # (apparently BODS updates "every 10 seconds")
-        if age > 11:
-            self.wait = 21
-        else:
-            self.wait = 19
 
         time_taken = (timezone.now() - now).total_seconds()
+
+        print(f"{age=} {time_taken=}")
 
         return max(self.wait - time_taken, 0)
