@@ -1,5 +1,7 @@
 from pathlib import Path
+from unittest.mock import patch
 
+import fakeredis
 import time_machine
 import vcr
 from django.test import TestCase
@@ -29,6 +31,10 @@ class StagecoachTest(TestCase):
         )
         s.operator.add(o)
 
+    @patch(
+        "vehicles.management.import_live_vehicles.redis_client",
+        fakeredis.FakeStrictRedis(version=7),
+    )
     def test_handle(self):
         command = Command()
         command.do_source()

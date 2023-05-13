@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import fakeredis
 import time_machine
 import vcr
 from django.conf import settings
@@ -66,6 +67,8 @@ class NatExpTest(TestCase):
         source = DataSource.objects.get()
         source.datetime = parse_datetime("2020-01-31 00:00:00")
 
+        redis_client = fakeredis.FakeStrictRedis(version=7)
+
         aircoach_command = AircoachCommand()
         aircoach_command.source = source
 
@@ -86,26 +89,34 @@ class NatExpTest(TestCase):
             self.assertFalse(sleep.called)
 
         # and now:
-
         with time_machine.travel("2022-06-25T14:00:00.000Z"):
             with vcr.use_cassette(
                 str(settings.BASE_DIR / "fixtures" / "vcr" / "nx.yaml"),
                 decode_compressed_response=True,
             ):
-                nat_exp_command.update()
+                with patch(
+                    "vehicles.management.import_live_vehicles.redis_client",
+                    redis_client,
+                ):
+                    nat_exp_command.update()
 
         self.assertEqual(6, VehicleJourney.objects.all().count())
 
-        response = self.client.get("/vehicles.json").json()
-        self.assertEqual(response[0]["destination"], "Great Yarmouth")
-        self.assertEqual(response[0]["delay"], 4140.0)
+        with patch("vehicles.utils.redis_client", redis_client):
+            response = self.client.get("/vehicles.json").json()
+            self.assertEqual(response[0]["destination"], "Great Yarmouth")
+            self.assertEqual(response[0]["delay"], 4140.0)
 
-        self.assertEqual(5, Vehicle.objects.all().count())
+            self.assertEqual(5, Vehicle.objects.all().count())
 
-        response = self.client.get("/operators/national-express/vehicles")
-        self.assertContains(response, "BX65 WAJ")
+            response = self.client.get("/operators/national-express/vehicles")
+            self.assertContains(response, "BX65 WAJ")
 
     @patch("vehicles.management.commands.import_megabus.sleep")
+    @patch(
+        "vehicles.management.import_live_vehicles.redis_client",
+        fakeredis.FakeStrictRedis(version=7),
+    )
     def test_new(self, sleep):
         source = DataSource.objects.get()
         source.datetime = parse_datetime("2022-06-25 15:00:00")
