@@ -47,6 +47,9 @@ class Command(ImportLiveVehiclesCommand):
         changed_items = []
         changed_journey_items = []
         changed_item_identities = []
+        changed_journey_identities = []
+        # (changed items and changed journey items are separate
+        # so we can do the quick ones first)
 
         total_items = 0
 
@@ -64,15 +67,15 @@ class Command(ImportLiveVehiclesCommand):
                     print(journey_identity, self.journeys_ids[vehicle_identity])
                 continue
             else:
-                changed_item_identities.append(vehicle_identity)
-
                 if (
                     vehicle_identity not in self.journeys_ids
                     or journey_identity != self.journeys_ids[vehicle_identity]
                 ):
                     changed_journey_items.append(item)
+                    changed_journey_identities.append(vehicle_identity)
                 else:
                     changed_items.append(item)
+                    changed_item_identities.append(vehicle_identity)
 
             self.journeys_ids[vehicle_identity] = journey_identity
 
@@ -98,6 +101,8 @@ class Command(ImportLiveVehiclesCommand):
         nv = 0
 
         print(timezone.now())
+
+        changed_item_identities += changed_journey_identities
 
         for i, item in enumerate(tqdm.tqdm(changed_items + changed_journey_items)):
             vehicle_identity = changed_item_identities[i]
