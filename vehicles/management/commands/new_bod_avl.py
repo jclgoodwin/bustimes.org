@@ -42,14 +42,15 @@ class Command(ImportLiveVehiclesCommand):
         return f"{journey_ref}"
 
     def update(self):
-        now = timezone.localtime()
-        self.source.datetime = now
+        now = timezone.now()
 
         changed_items = []
+        changed_journey_items = []
         changed_item_identities = []
 
-        changed_journeys = 0
         total_items = 0
+
+        print(timezone.now())
 
         for i, item in enumerate(self.get_items()):
             vehicle_identity = self.get_vehicle_identity(item)
@@ -63,18 +64,21 @@ class Command(ImportLiveVehiclesCommand):
                     print(journey_identity, self.journeys_ids[vehicle_identity])
                 continue
             else:
-                changed_items.append(item)
                 changed_item_identities.append(vehicle_identity)
 
                 if (
                     vehicle_identity not in self.journeys_ids
                     or journey_identity != self.journeys_ids[vehicle_identity]
                 ):
-                    changed_journeys += 1
+                    changed_journey_items.append(item)
+                else:
+                    changed_items.append(item)
 
             self.journeys_ids[vehicle_identity] = journey_identity
 
-        print(f"{total_items=}, {len(changed_items)=}, {changed_journeys=}")
+        print(timezone.now())
+
+        print(f"{total_items=}, {len(changed_items)=}, {len(changed_journey_items)=}")
 
         vehicle_codes = VehicleCode.objects.filter(
             code__in=changed_item_identities, scheme="BODS"
@@ -93,7 +97,9 @@ class Command(ImportLiveVehiclesCommand):
         ev = 0
         nv = 0
 
-        for i, item in enumerate(tqdm.tqdm(changed_items)):
+        print(timezone.now())
+
+        for i, item in enumerate(tqdm.tqdm(changed_items + changed_journey_items)):
             vehicle_identity = changed_item_identities[i]
 
             journey_identity = self.journeys_ids[vehicle_identity]
@@ -117,6 +123,7 @@ class Command(ImportLiveVehiclesCommand):
 
             result = self.handle_item(
                 item,
+                self.source.datetime,
                 vehicle=vehicle,
                 latest=vehicle_locations.get(vehicle.id, False),
                 keep_journey=keep_journey,

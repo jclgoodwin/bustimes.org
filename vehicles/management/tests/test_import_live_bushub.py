@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import fakeredis
 from django.test import TestCase
 
 from busstops.models import DataSource, Operator, Region, Service, ServiceCode
@@ -34,6 +35,10 @@ class BusHubTest(TestCase):
         cls.vehicle = Vehicle.objects.create(code="20052", operator_id="WNGS")
         ServiceCode.objects.create(code="44a", scheme="SIRI", service=cls.service_c)
 
+    @patch(
+        "vehicles.management.import_live_vehicles.redis_client",
+        fakeredis.FakeStrictRedis(version=7),
+    )
     def test_handle(self):
         command = import_bushub.Command()
         command.source_name = ""

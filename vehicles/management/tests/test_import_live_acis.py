@@ -1,11 +1,14 @@
 import os
 from unittest.mock import patch
-from vcr import use_cassette
+
+import fakeredis
 from django.test import TestCase
-from busstops.models import Region, Operator, DataSource
+from vcr import use_cassette
+
+from busstops.models import DataSource, Operator, Region
+
 from ...models import VehicleJourney
 from ..commands import import_live_acis
-
 
 DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,6 +27,10 @@ class ACISImportTest(TestCase):
 
     @patch("vehicles.management.commands.import_live_acis.sleep")
     @patch("vehicles.management.commands.import_live_acis.Command.get_points")
+    @patch(
+        "vehicles.management.import_live_vehicles.redis_client",
+        fakeredis.FakeStrictRedis(version=7),
+    )
     def test_handle(self, get_points, sleep):
         get_points.return_value = ((None, None), (54.5957, -5.9169))
 

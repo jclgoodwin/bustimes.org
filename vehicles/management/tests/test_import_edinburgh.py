@@ -1,5 +1,7 @@
 from pathlib import Path
+from unittest import mock
 
+import fakeredis
 import vcr
 from django.test import TestCase
 
@@ -28,6 +30,8 @@ class EdinburghImportTest(TestCase):
         cls.source = source
 
     def test_get_journey(self):
+        redis_client = fakeredis.FakeStrictRedis(version=7)
+
         with vcr.use_cassette(
             str(
                 Path(__file__).resolve().parent
@@ -39,16 +43,20 @@ class EdinburghImportTest(TestCase):
             command = Command()
             command.do_source()
 
-            with self.assertNumQueries(28):
-                command.update()
+            with mock.patch(
+                "vehicles.management.import_live_vehicles.redis_client", redis_client
+            ):
 
-            self.assertEqual({}, command.vehicle_cache)
+                with self.assertNumQueries(28):
+                    command.update()
 
-            cassette.rewind()
-            del command.previous_locations["454"]
+                self.assertEqual({}, command.vehicle_cache)
 
-            with self.assertNumQueries(1):
-                command.update()
+                cassette.rewind()
+                del command.previous_locations["454"]
+
+                with self.assertNumQueries(1):
+                    command.update()
 
             self.assertEqual(1, len(command.vehicle_cache))
 

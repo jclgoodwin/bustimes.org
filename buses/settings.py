@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "vehicles",
     "vosa",
     "email_obfuscator",
-    "channels",
     "api",
     "rest_framework",
     "django_filters",
@@ -171,14 +170,6 @@ HUEY = {
         "url": REDIS_URL,
     },
 }
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [REDIS_URL], "expiry": 20},
-    }
-}
-
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR.parent / "bustimes-static")
