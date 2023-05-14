@@ -1,5 +1,5 @@
 from django.db.models import Q
-from django_filters.rest_framework import CharFilter, FilterSet, NumberFilter
+from django_filters.rest_framework import CharFilter, FilterSet, NumberFilter, DateTimeFilter
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip
@@ -26,6 +26,7 @@ class VehicleJourneyFilter(FilterSet):
     service = NumberFilter()
     trip = NumberFilter()
     source = NumberFilter()
+    datetime = DateTimeFilter()
 
 
 class StopFilter(FilterSet):
