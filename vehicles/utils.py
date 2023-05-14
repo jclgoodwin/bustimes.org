@@ -81,7 +81,7 @@ def get_vehicle_edit(vehicle, fields, now, request):
             edit.fleet_number = f"-{vehicle.fleet_code or vehicle.fleet_number}"
         changed = True
 
-    for field in ("fleet_number", "reg", "vehicle_type", "branding", "name", "notes"):
+    for field in ("reg", "vehicle_type", "branding", "name", "notes"):
         if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
             if fields[field]:
                 setattr(edit, field, fields[field])
@@ -255,6 +255,11 @@ def do_revision(vehicle, data, user):
             ] = f"-{vehicle.fleet_code}\n+{data['fleet_number']}"
             vehicle.fleet_code = data["fleet_number"]
             changed_fields.append("fleet_code")
+            if vehicle.fleet_code.isdigit():
+                vehicle.fleet_number = vehicle.fleet_code
+            else:
+                vehicle.fleet_number = None
+            changed_fields.append("fleet_number")
             del data["fleet_number"]
 
     if "reg" in data:
