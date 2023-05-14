@@ -287,7 +287,7 @@ EDWC:
         Pontyclun
         CF72 8QZ
 WNCT:
-    url: https://www.gtt-online.co.uk/timetables/
+    twitter: GoToTown2016
     address: |
         Unit 7 & 8
         Merchants Close
@@ -408,7 +408,7 @@ WNGS:
     url: https://www.diamondbuses.com/
 MINS:
     twitter: ""
-ALTO: 
+ALTO:
     url: http://www.transporabus.co.uk/
     email: hello@transporabus.co.uk
 NMCO:
