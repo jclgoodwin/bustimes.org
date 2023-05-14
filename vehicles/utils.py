@@ -252,7 +252,7 @@ def do_revision(vehicle, data, user):
         ):
             revision.changes[
                 "fleet number"
-            ] = f"-{vehicle.fleet_code}\n+{data['fleet_number']}"
+            ] = f"-{vehicle.fleet_code or vehicle.fleet_number}\n+{data['fleet_number']}"
             vehicle.fleet_code = data["fleet_number"]
             changed_fields.append("fleet_code")
             if vehicle.fleet_code.isdigit():
