@@ -254,14 +254,14 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
         try:
             url = context["wsgi_environ"]["RAW_URI"]
         except KeyError:
-            return 1
+            return 0
         if (
             url.startswith("/vehicles.json")
             or url.startswith("/stops.json")
             or url == "/version"
         ):
             return 0
-        return 0.01
+        return 0.005
 
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],

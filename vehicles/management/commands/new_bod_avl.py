@@ -15,6 +15,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.hist = {}
         self.identifiers = {}
         self.journeys_ids = {}
         self.journeys_ids_ids = {}
@@ -56,8 +57,6 @@ class Command(ImportLiveVehiclesCommand):
 
         total_items = 0
 
-        print(timezone.now())
-
         for i, item in enumerate(self.get_items()):
             vehicle_identity = self.get_vehicle_identity(item)
 
@@ -82,9 +81,10 @@ class Command(ImportLiveVehiclesCommand):
 
             self.journeys_ids[vehicle_identity] = journey_identity
 
-        print(timezone.now())
-
-        print(f"{total_items=}, {len(changed_items)=}, {len(changed_journey_items)=}")
+        age = (now - self.source.datetime).total_seconds()
+        self.hist[now.second % 10] = age
+        print(self.hist)
+        print(f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}")
 
         changed_item_identities += changed_journey_identities
 
@@ -104,8 +104,6 @@ class Command(ImportLiveVehiclesCommand):
 
         ev = 0
         nv = 0
-
-        print(timezone.now())
 
         for i, item in enumerate(tqdm.tqdm(changed_items + changed_journey_items)):
             vehicle_identity = changed_item_identities[i]
@@ -164,14 +162,25 @@ class Command(ImportLiveVehiclesCommand):
             None,
         )
 
-        # wibbly wobbly
-        # try to optimise wait time
-        # to get fresher data
-        # without fetching too often
-        age = (now - self.source.datetime).total_seconds()
-
         time_taken = (timezone.now() - now).total_seconds()
+        print(f"{time_taken=}")
 
-        print(f"{age=} {time_taken=}")
+        # bods updates "every 10 seconds",
+        # it's usually worth waiting 0-9 seconds
+        # before the next fetch
+        # for maximum freshness:
+
+        witching_hour = min(self.hist, key=self.hist.get)
+        worst_hour = max(self.hist, key=self.hist.get)
+        now = timezone.now().second % 10
+        wait = witching_hour - now
+        if wait < 0:
+            wait += 10
+        if time_taken < 10:
+            wait += 10
+        diff = worst_hour - witching_hour
+        print(f"{witching_hour=} {worst_hour=} {diff=} {now=} {wait=}\n")
+        if diff % 10 == 9:
+            return wait
 
         return max(self.wait - time_taken, 0)
