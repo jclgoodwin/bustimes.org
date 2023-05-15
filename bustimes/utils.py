@@ -57,7 +57,7 @@ def get_routes(routes, when=None, from_date=None):
     # use maximum revision number for each service_code
     if when and len(revision_numbers) > 1:
         routes = list(routes)
-        routes.sort(key=lambda r: r.revision_number)
+        routes.sort(key=lambda r: r.revision_number or 0)
         revision_numbers = {}
         for route in routes:
             route.key = f"{route.service_code}:{route.service_id}"
