@@ -103,6 +103,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl.Command()
         command.source = self.source
 
+        command.get_operator.cache_clear()
+
         self.assertEqual(command.get_operator("HAMS").get().noc, "HAMS")
         self.assertEqual(command.get_operator("HAMSTRA").get().noc, "HAMS")
         self.assertEqual(command.get_operator("UNOE").get().noc, "UNOE")
@@ -135,11 +137,14 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 with use_cassette(
                     str(Path(__file__).resolve().parent / "vcr" / "bod_avl.yaml")
                 ) as cassette:
-                    command.update()
+
+                    with self.assertNumQueries(6765):
+                        command.update()
 
                     cassette.rewind()
 
-                    command.update()
+                    with self.assertNumQueries(0):
+                        command.update()
 
         self.assertEqual(841, len(command.identifiers))
 
@@ -266,7 +271,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "vehicles.management.commands.new_bod_avl.Command.get_items",
                     return_value=items,
                 ):
-                    with self.assertNumQueries(41):
+                    with self.assertNumQueries(42):
                         command.update()
 
                     with self.assertNumQueries(0):

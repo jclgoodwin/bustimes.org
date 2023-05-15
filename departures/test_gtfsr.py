@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+import fakeredis
 import vcr
 from django.test import TestCase, override_settings
 
@@ -138,6 +141,10 @@ class GTFSRTTest(TestCase):
 
         StopUsage.objects.create(service=service, stop_id="8250DB000429", order=0)
 
+    @patch(
+        "departures.gtfsr.redis_client",
+        fakeredis.FakeStrictRedis(),
+    )
     def test_nta_ie(self):
         with override_settings(
             NTA_API_KEY="letsturn",

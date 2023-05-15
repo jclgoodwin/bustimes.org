@@ -12,9 +12,12 @@ from .import_bod_avl import Command as ImportLiveVehiclesCommand
 
 class Command(ImportLiveVehiclesCommand):
     wait = 17
-    identifiers = {}
-    journeys_ids = {}
-    journeys_ids_ids = {}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.identifiers = {}
+        self.journeys_ids = {}
+        self.journeys_ids_ids = {}
 
     @staticmethod
     def get_vehicle_identity(item):

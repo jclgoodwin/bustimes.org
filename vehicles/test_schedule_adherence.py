@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+import fakeredis
 from django.test import TestCase
 
 from busstops.models import DataSource, StopPoint
@@ -6,6 +9,10 @@ from bustimes.models import Route, StopTime, Trip
 from .models import VehicleJourney
 
 
+@patch(
+    "vehicles.views.redis_client",
+    fakeredis.FakeStrictRedis(),
+)
 class ScheduleAdherenceTest(TestCase):
     @classmethod
     def setUpTestData(cls):

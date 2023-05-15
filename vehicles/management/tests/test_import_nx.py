@@ -115,7 +115,7 @@ class NatExpTest(TestCase):
 
     @patch("vehicles.management.commands.import_megabus.sleep")
     @patch(
-        "vehicles.management.import_live_vehicles.redis_client",
+        "vehicles.management.commands.import_megabus.redis_client",
         fakeredis.FakeStrictRedis(version=7),
     )
     def test_new(self, sleep):

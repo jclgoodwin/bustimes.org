@@ -1,3 +1,6 @@
+from unittest.mock import patch
+
+import fakeredis
 import time_machine
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
@@ -20,6 +23,10 @@ from .models import (
 )
 
 
+@patch(
+    "vehicles.views.redis_client",
+    fakeredis.FakeStrictRedis(),
+)
 class VehiclesTests(TestCase):
     @classmethod
     def setUpTestData(cls):

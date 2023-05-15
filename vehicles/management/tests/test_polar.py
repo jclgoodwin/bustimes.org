@@ -1,11 +1,19 @@
+from unittest.mock import patch
+
+import fakeredis
 from ciso8601 import parse_datetime
 from django.test import TestCase
-from unittest.mock import patch
-from busstops.models import Region, Operator, DataSource
+
+from busstops.models import DataSource, Operator, Region
+
 from ...models import Vehicle
 from ..commands.import_polar import Command
 
 
+@patch(
+    "vehicles.management.import_live_vehicles.redis_client",
+    fakeredis.FakeStrictRedis(),
+)
 class PolarTest(TestCase):
     @classmethod
     def setUpTestData(cls):
