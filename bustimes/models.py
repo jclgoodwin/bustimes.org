@@ -35,7 +35,7 @@ class Route(models.Model):
     )
     line_brand = models.CharField(max_length=255, blank=True)
     line_name = models.CharField(max_length=255, blank=True)
-    revision_number = models.PositiveIntegerField(null=True, blank=True)
+    revision_number = models.PositiveIntegerField(default=0)
     description = models.CharField(max_length=255, blank=True)
     outbound_description = models.CharField(max_length=255, blank=True)
     inbound_description = models.CharField(max_length=255, blank=True)
