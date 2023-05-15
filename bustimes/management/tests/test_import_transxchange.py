@@ -786,6 +786,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(1, Trip.objects.filter(route__service=services[1]).count())
         self.assertEqual(2, Trip.objects.filter(route__service=services[2]).count())
 
+    @time_machine.travel("2021-03-08")
     def test_start_dead_run(self):
         """Turns out WaitTimes and RunTimes should be ignored during a StartDeadRun"""
 
@@ -796,7 +797,7 @@ class ImportTransXChangeTest(TestCase):
         Route.objects.create(
             service_code="SER22A", service=service_22a, source=self.nocs
         )
-        service_22a.operator.add(self.fabd)
+        service_22a.operator.add(self.fabd, self.fecs)
         RouteLink.objects.create(
             from_stop_id="260006514a",
             to_stop_id="260006515",
@@ -832,6 +833,21 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(Service.objects.all().count(), 3)
         self.assertEqual(RouteLink.objects.all().count(), 6)
+
+        # had 2 operators before running import_transxchange,
+        # should now have just 1
+        self.assertEqual(list(service_22a.operator.all()), [self.fabd])
+
+        # test timetable with multiple operators
+        service_22a.operator.add(self.fecs)
+        response = self.client.get(f"/services/{service_22a.id}/timetable")
+        self.assertContains(response, '<th scope="row">Operator</th>')
+        self.assertContains(
+            response,
+            """<td colspan="19">
+                                            First Aberdeen
+                                        </td>""",
+        )
 
     @time_machine.travel("2021-06-28")
     def test_difficult_layout(self):

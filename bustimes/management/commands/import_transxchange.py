@@ -14,7 +14,7 @@ from functools import cache
 
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now, Upper
 from titlecase import titlecase
 
@@ -416,6 +416,7 @@ class Command(BaseCommand):
         """update/create StopUsages, search_vector and geometry fields"""
 
         services = Service.objects.filter(id__in=self.service_ids)
+        services = services.annotate(operator_count=Count("operator"))
 
         for service in services:
             service.do_stop_usages()
@@ -427,6 +428,13 @@ class Command(BaseCommand):
             service.update_geometry()
 
             service.update_description()
+
+            if service.operator_count > 1:
+                operators = Operator.objects.filter(
+                    trip__route__service=service
+                ).distinct()
+                if operators and list(operators) != list(service.operator.all()):
+                    service.operator.set(operators)
 
         services.update(modified_at=Now())
 

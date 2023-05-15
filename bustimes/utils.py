@@ -21,7 +21,7 @@ class log_time_taken:
 
 
 def get_routes(routes, when=None, from_date=None):
-    revision_numbers = set(route.revision_number for route in routes)
+    revision_numbers = set(route.revision_number or 0 for route in routes)
 
     if len(revision_numbers) == 1:
         if when:
