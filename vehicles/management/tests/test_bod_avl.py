@@ -102,8 +102,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_get_operator(self):
         command = import_bod_avl.Command()
         command.source = self.source
-
-        command.get_operator.cache_clear()
+        # command.get_operator.cache_clear()
 
         self.assertEqual(command.get_operator("HAMS").get().noc, "HAMS")
         self.assertEqual(command.get_operator("HAMSTRA").get().noc, "HAMS")
@@ -124,6 +123,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_new_bod_avl_a(self):
         command = new_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
@@ -258,6 +258,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.source.datetime = command.get_datetime(
             {"RecordedAtTime": "2020-10-15T07:46:08+00:00"}
         )
+        # command.get_operator.cache_clear()
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
@@ -396,6 +397,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_handle_item(self):
         command = import_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
@@ -550,6 +552,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_units(self):
         command = import_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
         item = {
             "Extensions": {
                 "VehicleJourney": {
@@ -605,6 +608,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_handle_extensions(self):
         command = import_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
 
         item = {
             "Extensions": {
@@ -687,6 +691,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_invalid_location(self):
         command = import_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
 
         item = {
             "RecordedAtTime": "2021-05-08T12:54:36+00:00",
@@ -742,6 +747,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_tfl(self):
         command = import_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
 
         also = Operator.objects.create(noc="ALSO", name="Arriva London North")
         alno = Operator.objects.create(noc="ALNO", name="Arriva London South")
@@ -798,6 +804,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_ambiguous_operator(self):
         command = import_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
 
         vehicle = Vehicle.objects.create(
             operator_id="TNXB", code="4407", fleet_code="4407", fleet_number=4407
@@ -865,6 +872,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_timezone_correction(self):
         command = import_bod_avl.Command()
         command.source = self.source
+        # command.get_operator.cache_clear()
 
         command.handle_item(
             {

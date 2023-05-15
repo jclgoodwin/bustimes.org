@@ -20,8 +20,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
+      # redis:
+      #   condition: service_started
 
   postgres:
     image: ghcr.io/baosystems/postgis:latest  # unofficial image that properly supports arm64 instead of 'postgis/postgis'
@@ -40,5 +40,5 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis
+  # redis:
+  #   image: redis

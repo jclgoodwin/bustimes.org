@@ -4,6 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
+import fakeredis
 import time_machine
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
@@ -309,8 +310,10 @@ class ImportBusOpenDataTest(TestCase):
         trip.copy(datetime.timedelta(hours=1))
 
         # test journey with trip json
-        with patch("vehicles.views.redis_client.lrange") as mock_lrange:
-            mock_lrange.return_value = []
+        with patch(
+            "vehicles.views.redis_client", fakeredis.FakeStrictRedis()
+        ) as fake_redis:
+
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertIn("stops", json)
@@ -318,9 +321,10 @@ class ImportBusOpenDataTest(TestCase):
 
             # journey locations but no stop locations
             location = VehicleLocation(Point(0.23, 52.729))
-            location.journey = VehicleJourney()
+            location.journey = journey
             location.datetime = parse_datetime("2019-05-29T13:03:34+01:00")
-            mock_lrange.return_value = [location.get_appendage()[1]]
+
+            fake_redis.rpush(*location.get_appendage())
 
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
