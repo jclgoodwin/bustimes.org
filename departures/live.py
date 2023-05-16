@@ -345,9 +345,13 @@ class TimetableDepartures(Departures):
         trip = stop_time.trip
         destination = trip.destination
         if destination:
-            destination = (
-                destination.locality or destination.town or destination.common_name
-            )
+            if destination.locality_id:
+                if destination.locality_id != self.stop.locality_id:
+                    destination = destination.locality
+                else:
+                    destination = destination.common_name
+            else:
+                destination = destination.town or destination.common_name
 
         if stop_time.arrival is not None:
             arrival = stop_time.arrival_datetime(date)
@@ -364,6 +368,7 @@ class TimetableDepartures(Departures):
         return {
             "origin_departure_time": trip.start_datetime(date),
             "time": time,
+            "date": date,
             "arrival": arrival,
             "departure": departure,
             "destination": destination or "",
