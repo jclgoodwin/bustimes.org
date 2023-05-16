@@ -22,7 +22,7 @@
                 {% endif %}
             </td>
             <td>
-                {{ stop.arrival_time }}{% if not stop.pick_up %}<abbr title="set down only">s</abbr>{% endif %}
+                {{ stop.arrival_time }}{% if not stop.pick_up and not forloop.last %}<abbr title="set down only">s</abbr>{% endif %}
             </td>
             {% if stop.update %}
                 <td>{{ stop.expected_arrival }}</td>
@@ -41,7 +41,7 @@
                 </td>
                 {% endif %}
             <td>
-                {{ stop.departure_time }}{% if not stop.pick_up %}<abbr title="set down only">s</abbr>{% endif %}
+                {{ stop.departure_time }}{% if not stop.pick_up and not forloop.last %}<abbr title="set down only">s</abbr>{% endif %}
             </td>
             {% if stop.update %}
                 <td>{{ stop.expected_departure }}</td>
