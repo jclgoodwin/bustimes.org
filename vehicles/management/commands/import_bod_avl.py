@@ -84,22 +84,18 @@ class Command(ImportLiveVehiclesCommand):
         return parse_datetime(item["RecordedAtTime"])
 
     @staticmethod
+    @functools.cache
     def get_destination_name(destination_ref):
-        cache_key = f"stop{destination_ref}locality"
-        destination = cache.get(cache_key)
-        if destination is None:
-            try:
-                destination = Locality.objects.get(stoppoint=destination_ref).name
-            except Locality.DoesNotExist:
-                if (
-                    destination_ref.isdigit()
-                    and destination_ref[0:1] != "0"
-                    and destination_ref[2:3] == "0"
-                ):
-                    destination = Command.get_destination_name(f"0{destination_ref}")
-                destination = ""
-            cache.set(cache_key, destination)
-        return destination
+        try:
+            return Locality.objects.get(stoppoint=destination_ref).name
+        except Locality.DoesNotExist:
+            if (
+                destination_ref.isdigit()
+                and destination_ref[0:1] != "0"
+                and destination_ref[2:3] == "0"
+            ):
+                return Command.get_destination_name(f"0{destination_ref}")
+        return ""
 
     @functools.cache
     def get_operator(self, operator_ref):
