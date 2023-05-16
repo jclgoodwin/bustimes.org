@@ -178,8 +178,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     @override_settings(
         CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
     )
+    @time_machine.travel("2020-10-17T08:34:09", tick=False)
     def test_new_bod_avl_b(self):
-
         items = [
             {
                 "RecordedAtTime": "2020-10-17T08:34:00+00:00",
@@ -273,10 +273,21 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     return_value=items,
                 ):
                     with self.assertNumQueries(41):
-                        command.update()
+                        wait = command.update()
+                    self.assertEqual(17, wait)
 
                     with self.assertNumQueries(0):
+                        wait = command.update()
+                    self.assertEqual(17, wait)
+
+                    items[0]["RecordedAtTime"] = "2020-10-30T05:09:00+00:00"
+                    with self.assertNumQueries(1):
                         command.update()
+
+                    items[0]["RecordedAtTime"] = "2020-10-30T05:10:00+00:00"
+                    items[0]["OriginAimedDepartureTime"] = "2020-10-30T09:00:00+00:00"
+                    with self.assertNumQueries(1):
+                        wait = command.update()
 
         journeys = VehicleJourney.objects.all()
 
