@@ -149,7 +149,11 @@ class GTFSRTTest(TestCase):
         with override_settings(
             NTA_API_KEY="letsturn",
             CACHES={
-                "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
+                "default": {
+                    "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                    "LOCATION": "redis://",
+                    "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                }
             },
         ):
             with vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):

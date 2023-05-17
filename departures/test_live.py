@@ -4,6 +4,7 @@
 from datetime import date, datetime
 from unittest.mock import patch
 
+import fakeredis
 import time_machine
 import vcr
 from django.core.management import call_command
@@ -260,7 +261,13 @@ class LiveDeparturesTest(TestCase):
         self.assertContains(response, '<a href="/vehicles/none-686#map">')
 
     @override_settings(
-        CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+        CACHES={
+            "default": {
+                "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                "LOCATION": "redis://",
+                "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+            }
+        }
     )
     def test_west_midlands(self):
         DataSource.objects.create(

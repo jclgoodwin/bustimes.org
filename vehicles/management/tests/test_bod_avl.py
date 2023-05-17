@@ -117,40 +117,48 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
 
     @time_machine.travel("2020-05-01", tick=False)
-    @override_settings(
-        CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
-    )
     def test_new_bod_avl_a(self):
         command = new_bod_avl.Command()
         command.source = self.source
         # command.get_operator.cache_clear()
 
-        redis_client = fakeredis.FakeStrictRedis(version=7)
-
-        with mock.patch(
-            "vehicles.management.import_live_vehicles.redis_client", redis_client
+        with override_settings(
+            CACHES={
+                "default": {
+                    "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                    "LOCATION": "redis://",
+                    "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+                }
+            }
         ):
+
+            redis_client = fakeredis.FakeStrictRedis(version=7)
+
             with mock.patch(
-                "vehicles.management.commands.new_bod_avl.redis_client", redis_client
+                "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
+                with mock.patch(
+                    "vehicles.management.commands.new_bod_avl.redis_client",
+                    redis_client,
+                ):
 
-                with use_cassette(
-                    str(Path(__file__).resolve().parent / "vcr" / "bod_avl.yaml")
-                ) as cassette:
+                    with use_cassette(
+                        str(Path(__file__).resolve().parent / "vcr" / "bod_avl.yaml")
+                    ) as cassette:
 
-                    with self.assertNumQueries(6765):
-                        command.update()
+                        with self.assertNumQueries(6554):
+                            command.update()
 
-                    cassette.rewind()
+                        cassette.rewind()
 
-                    with self.assertNumQueries(0):
-                        command.update()
+                        with self.assertNumQueries(0):
+                            command.update()
 
-        self.assertEqual(841, len(command.identifiers))
+            self.assertEqual(841, len(command.identifiers))
 
-        # status page
+            # status page
 
-        response = self.client.get("/status")
+            response = self.client.get("/status")
 
         self.assertContains(
             response,
@@ -176,7 +184,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
 
     @override_settings(
-        CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+        CACHES={
+            "default": {
+                "BACKEND": "django.core.cache.backends.redis.RedisCache",
+                "LOCATION": "redis://",
+                "OPTIONS": {"connection_class": fakeredis.FakeConnection},
+            }
+        }
     )
     @time_machine.travel("2020-10-17T08:34:09", tick=False)
     def test_new_bod_avl_b(self):
