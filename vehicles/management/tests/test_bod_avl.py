@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest import mock, skip
+from unittest import mock
 
 import fakeredis
 import time_machine
@@ -893,7 +893,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey_2.vehicle.reg, "")
         self.assertEqual(journey_2.vehicle.operator.name, "National Express Coventry")
 
-    @skip
+    @mock.patch(
+        "vehicles.management.import_live_vehicles.redis_client",
+        fakeredis.FakeStrictRedis(version=7),
+    )
     def test_timezone_correction(self):
         command = import_bod_avl.Command()
         command.source = self.source
@@ -984,7 +987,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         )
         journey = VehicleJourney.objects.get(route_name="91")
-        self.assertEqual(journey.code, "1000")
+        self.assertEqual(journey.code, "9")
         self.assertEqual(str(journey.datetime), "2022-06-08 09:00:00+00:00")
 
         command.handle_item(

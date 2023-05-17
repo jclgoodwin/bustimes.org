@@ -26,19 +26,6 @@ from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
-def get_vehicle_cache_key(item):
-    monitored_vehicle_journey = item["MonitoredVehicleJourney"]
-    operator_ref = monitored_vehicle_journey["OperatorRef"]
-    vehicle_ref = monitored_vehicle_journey["VehicleRef"] or ""
-
-    try:
-        vehicle_unique_id = item["Extensions"]["VehicleJourney"]["VehicleUniqueId"]
-    except (KeyError, TypeError):
-        vehicle_unique_id = ""
-
-    return f"{operator_ref}-{vehicle_ref}-{vehicle_unique_id}".replace(" ", "_")
-
-
 def get_destination_ref(destination_ref):
     if (
         " " in destination_ref
