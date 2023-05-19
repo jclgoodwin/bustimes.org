@@ -287,25 +287,6 @@ class DataSource(models.Model):
         return False
 
 
-class Place(models.Model):
-    source = models.ForeignKey(DataSource, models.CASCADE)
-    code = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    latlong = models.PointField(null=True, blank=True)
-    polygon = models.PolygonField(null=True, blank=True)
-    parent = models.ForeignKey("self", models.SET_NULL, null=True, blank=True)
-    search_vector = SearchVectorField(null=True, blank=True)
-
-    class Meta:
-        unique_together = ("source", "code")
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse("place_detail", args=(self.pk,))
-
-
 class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
@@ -327,8 +308,6 @@ class StopPoint(models.Model):
     suburb = models.CharField(max_length=48, blank=True)
     town = models.CharField(max_length=48, blank=True)
     locality_centre = models.BooleanField(null=True)
-
-    places = models.ManyToManyField(Place, blank=True)
 
     heading = models.PositiveIntegerField(null=True, blank=True)
 

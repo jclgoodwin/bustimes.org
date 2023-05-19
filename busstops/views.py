@@ -55,7 +55,6 @@ from .models import (
     Locality,
     Operator,
     PaymentMethod,
-    Place,
     Region,
     Service,
     ServiceColour,
@@ -496,25 +495,6 @@ class RegionDetailView(UppercasePrimaryKeyMixin, DetailView):
                 .service_set.filter(current=True)
                 .defer("geometry"),
                 key=Service.get_order,
-            )
-
-        return context
-
-
-class PlaceDetailView(DetailView):
-    model = Place
-    queryset = model.objects.select_related("source")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["places"] = self.model.objects.filter(
-            polygon__coveredby=self.object.polygon
-        ).exclude(id=self.object.id)
-
-        if not context["places"]:
-            context["stops"] = StopPoint.objects.filter(
-                latlong__coveredby=self.object.polygon
             )
 
         return context

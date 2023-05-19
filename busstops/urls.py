@@ -48,11 +48,6 @@ urlpatterns = [
         ),
         name="region_detail",
     ),
-    path(
-        "places/<int:pk>",
-        views.PlaceDetailView.as_view(),
-        name="place_detail",
-    ),
     re_path(
         r"^(admin-)?areas/(?P<pk>\d+)",
         views.AdminAreaDetailView.as_view(),

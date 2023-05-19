@@ -48,7 +48,7 @@ class StopPointAdmin(GISModelAdmin):
         "service__region",
         "admin_area",
     ]
-    raw_id_fields = ["stop_area", "locality", "places", "admin_area"]
+    raw_id_fields = ["stop_area", "locality", "admin_area"]
     search_fields = ["atco_code"]
     ordering = ["atco_code"]
     inlines = [StopCodeInline]
@@ -495,13 +495,6 @@ class ServiceColourAdmin(admin.ModelAdmin):
     @admin.display(ordering="services")
     def services(self, obj):
         return obj.services
-
-
-@admin.register(models.Place)
-class PlaceAdmin(GISModelAdmin):
-    list_filter = ("source",)
-    search_fields = ("name",)
-    raw_id_fields = ("parent",)
 
 
 @admin.register(models.DataSource)
