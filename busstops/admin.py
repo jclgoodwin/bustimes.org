@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.gis.admin import GISModelAdmin
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery, SearchRank
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import CharField, Exists, F, OuterRef, Q
 from django.db.models.functions import Cast
 from django.urls import reverse
@@ -348,6 +348,7 @@ class ServiceAdmin(GISModelAdmin):
                     )
                 )
             ).update(service=first)
+
             other.routelink_set.filter(
                 ~Exists(
                     RouteLink.objects.filter(
@@ -357,19 +358,25 @@ class ServiceAdmin(GISModelAdmin):
                     )
                 )
             ).update(service=first)
-            try:
+
+            if not first.servicecode_set.filter(
+                code=other.slug, scheme="slug"
+            ).exists():
                 models.ServiceCode.objects.create(
                     code=other.slug, service=first, scheme="slug"
                 )
-            except IntegrityError:
-                pass
-            if other.service_code and other.service_code != first.service_code:
-                try:
-                    models.ServiceCode.objects.create(
-                        code=other.service_code, service=first, scheme="ServiceCode"
-                    )
-                except IntegrityError:
-                    pass
+
+            if (
+                other.service_code
+                and other.service_code != first.service_code
+                and not first.servicecode_set.filter(
+                    code=other.service_code, scheme="ServiceCode"
+                ).exists()
+            ):
+                models.ServiceCode.objects.create(
+                    code=other.service_code, service=first, scheme="ServiceCode"
+                )
+
             other.delete()
 
         first.do_stop_usages()
