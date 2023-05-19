@@ -16,7 +16,9 @@
             {% if page.has_next %}
                 {% if page.next_page_number < page.paginator.num_pages %}
                     <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ page.next_page_number }}{{ hash }}">{{ page.next_page_number }}</a></li>
-                    <li>&hellip;</li>
+                    {% if page.next_page_number < page.paginator.num_pages|add:-1 %}
+                        <li>&hellip;</li>
+                    {% endif %}
                 {% endif %}
                 <li><a href="?{% if parameters %}{{ parameters }}&amp;{% endif %}page={{ page.paginator.num_pages }}{{ hash }}">{{ page.paginator.num_pages }}</a></li>
             {% endif %}
