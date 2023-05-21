@@ -46,8 +46,13 @@
     <p>ID:<br>
     <code>{{ vehicle.id }}</code> <button class="button" onclick="javascript:navigator.clipboard.writeText('{{ vehicle.id }}');this.blur()">Copy</button></p>
 
-    <p>Ticket machine code:<br>
-    <code>{{ vehicle.code }}</code></p>
+    <p>
+        Ticket machine code:<br>
+        {% if vehicle_unique_id and vehicle_unique_id != vehicle.code %}
+            <code>{{ vehicle_unique_id }}</code> /
+        {% endif %}
+        <code>{{ vehicle.code }}</code>
+    </p>
 
     <form action="{{ vehicle.get_edit_url }}" method="POST">
         <div class="edit-vehicle">

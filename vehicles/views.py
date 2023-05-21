@@ -787,6 +787,14 @@ def edit_vehicle(request, **kwargs):
         "withdrawn": vehicle.withdrawn,
         "spare_ticket_machine": vehicle.is_spare_ticket_machine(),
     }
+
+    try:
+        context["vehicle_unique_id"] = vehicle.latest_journey_data["Extensions"][
+            "VehicleJourney"
+        ]["VehicleUniqueId"]
+    except (KeyError, TypeError):
+        pass
+
     if vehicle.fleet_code:
         initial["fleet_number"] = vehicle.fleet_code
     elif vehicle.fleet_number is not None:
@@ -1009,7 +1017,7 @@ def vehicle_edit_action(request, edit_id, action):
         assert (
             (action == "disapprove" and request.user.id == edit.user_id)
             or request.user.trusted
-            and edit.is_simple()
+            # and edit.is_simple()
         )
 
     if action == "apply":
