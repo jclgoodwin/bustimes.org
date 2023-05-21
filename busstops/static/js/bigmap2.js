@@ -218,7 +218,7 @@
         }
         params += 'ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
         lastVehiclesReq = reqwest({
-            url: 'https://bustimes.org/vehicles.json' + params,
+            url: '/vehicles.json' + params,
             crossOrigin: true,
             success: function(data) {
                 if (data) {

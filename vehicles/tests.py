@@ -463,7 +463,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
 https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         )
-        self.assertEqual(edit.get_changes(), {"Previous reg": "BEAN"})
+        self.assertEqual(edit.get_changes(), {"previous reg": "BEAN"})
 
         # should not create an edit
         with self.assertNumQueries(16):
@@ -491,7 +491,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         with self.assertNumQueries(8):
             response = self.client.get("/vehicles/edits")
-        self.assertContains(response, "Previous reg: BEAN")
+        self.assertContains(response, "previous reg: BEAN")
 
         del initial["colours"]
 
@@ -560,7 +560,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             edit.get_changes(),
             {
                 "reg": "<del>UWW2X</del>",
-                "Previous reg": "K292JVF",
+                "previous reg": "K292JVF",
             },
         )
 
@@ -836,22 +836,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.assertFalse(VehicleEdit.objects.all())
 
-        # withdraw
-        with self.assertNumQueries(16):
-            response = self.client.post(
-                "/operators/lynx/vehicles/edit",
-                {
-                    "vehicle": self.vehicle_1.id,
-                    "withdrawn": "on",
-                },
-            )
-        revision = VehicleRevision.objects.last()
-        self.assertEqual(revision.changes, {"withdrawn": "-No\n+Yes"})
-        self.assertContains(response, "1 vehicle updated")
-        self.assertNotContains(response, "FD54 JYA")
-
-        self.assertFalse(VehicleEdit.objects.all())
-
         # add feature as a trusted user
         with self.assertNumQueries(20):
             response = self.client.post(
@@ -886,7 +870,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             {"action": "revert", "_selected_action": revision.id},
         )
         response = self.client.get("/admin/vehicles/vehiclerevision/")
-        self.assertContains(response, "reverted [&#x27;withdrawn&#x27;]")
+        self.assertContains(response, "reverted [&#x27;vehicle_type&#x27;, ")
+        self.assertContains(response, "colours not reverted")
 
     def test_vehicle_code_uniqueness(self):
         vehicle_1 = Vehicle.objects.create(code="11111", operator_id="BOVA")

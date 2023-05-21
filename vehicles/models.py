@@ -569,6 +569,9 @@ class VehicleEdit(models.Model):
                 else:
                     vehicle = str(getattr(self.vehicle, field) or "")
 
+                if field == "vehicle_type":
+                    field = "type"
+
                 if edit.startswith("-"):
                     if edit == f"-{vehicle}":
                         edit = format_html("<del>{}</del>", vehicle)
@@ -587,26 +590,15 @@ class VehicleEdit(models.Model):
                     features.append(feature)
             if features:
                 changes["features"] = features
-        if self.withdrawn is not None and self.withdrawn != self.vehicle.withdrawn:
-            if (
-                not self.withdrawn
-                or not self.vehicle.latest_journey
-                or self.datetime > self.vehicle.latest_journey.datetime
-            ):
-                changes["withdrawn"] = self.withdrawn
+        if self.withdrawn is not None:
+            changes["withdrawn"] = self.withdrawn
         if self.changes:
             for key in self.changes:
                 if not self.vehicle.data or self.changes[key] != self.vehicle.data.get(
                     key
                 ):
-                    changes[key] = self.changes[key]
+                    changes[key.lower()] = self.changes[key]
         return changes
-
-    def is_simple(self):
-        for key in self.get_changes():
-            if key not in ("name", "branding", "Previous reg"):
-                return True
-        return False
 
     def apply(self, save=True, user=None):
         ok = True  # stays True if we can mark the edit as approved at the end
@@ -657,13 +649,7 @@ class VehicleEdit(models.Model):
                     else:
                         continue
                 else:
-                    if field in ("branding", "name") and not user.has_perm(
-                        "vehicles.change_vehicle"
-                    ):
-                        del revision.changes[field]
-                        ok = False
-                    else:
-                        setattr(vehicle, field, new_value)
+                    setattr(vehicle, field, new_value)
                 update_fields.append(field)
         if self.vehicle_type:
             try:
@@ -848,7 +834,13 @@ class VehicleRevision(models.Model):
                             '<span class="livery" style="background:{}"></span>',
                             get_css(after.split()),
                         )
-                yield (key, before, after)
+                if key == "withdrawn":
+                    if after == "Yes":
+                        yield ("removed from fleet list", "", "")
+                    else:
+                        yield ("added to fleet list", "", "")
+                else:
+                    yield (key, before, after)
 
     def revert(self):
         """Revert various values to how they were before the revision"""

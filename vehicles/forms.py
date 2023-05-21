@@ -67,10 +67,6 @@ class EditVehiclesForm(forms.Form):
         required=False,
         help_text="Only to be used if the ticket machine code is something like SPARE",
     )
-    withdrawn = forms.BooleanField(
-        label="Permanently withdrawn",
-        required=False,
-    )
     operator = forms.ModelChoiceField(queryset=None, label="Operator", empty_label="")
     other_vehicle_type = forms.CharField(required=False, max_length=50)
     vehicle_type = forms.ModelChoiceField(
@@ -175,6 +171,10 @@ class EditVehicleForm(EditVehiclesForm):
         required=False,
         max_length=24,
         help_text="Separate multiple regs with a comma (,)",
+    )
+    withdrawn = forms.BooleanField(
+        label="Remove from fleet list",
+        required=False,
     )
     notes = forms.CharField(required=False, max_length=255)
     field_order = [

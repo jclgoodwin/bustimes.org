@@ -1015,10 +1015,8 @@ def vehicle_edit_action(request, edit_id, action):
 
     if not request.user.has_perm("vehicles.change_vehicle"):
         assert (
-            (action == "disapprove" and request.user.id == edit.user_id)
-            or request.user.trusted
-            # and edit.is_simple()
-        )
+            action == "disapprove" and request.user.id == edit.user_id
+        ) or request.user.trusted
 
     if action == "apply":
         edit.apply(user=request.user)

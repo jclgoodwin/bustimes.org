@@ -48,14 +48,16 @@
                         livery:
                         {% if edit.vehicle.livery %}{{ edit.vehicle.livery.name }} to {% endif %}
                         <div class="livery livery-{{ value }}"></div> {{ edit.livery.name }}
+                    {% elif key == 'withdrawn' %}
+                        {% if value %}removed from{% else %}added to{% endif %} fleet list
                     {% else %}{{ key }}: {{ value }}
                     {% endif %}
                     <br>{% endfor %}
-                    {% if edit.url %}<div class="wrap">{{ edit.url|urlize }}</div>{% endif %}
+                    {% if edit.url %}<div class="wrap">{{ edit.url|urlize|linebreaksbr }}</div>{% endif %}
                 </td>
                 <td class="score">{{ edit.score }}</td>
                 {% if edit.approved is None %}
-                    {% if perms.vehicles_change_vehicle or user.trusted and edit.is_simple %}
+                    {% if perms.vehicles_change_vehicle or user.trusted %}
                         <td><button class="action" data-url="{{ edit.id }}/apply" style="background:#0f0">👍 apply</button></td>
                         {% if perms.vehicles_change_vehicle %}
                             <td><button class="action" data-url="{{ edit.id }}/approve">approve</button></td>

@@ -33,7 +33,7 @@
                 {% endfor %}
                 {% ifchanged revision.message %}
                     {% if revision.message %}
-                        <div class="wrap">{{ revision.message|urlize }}</div>
+                        <div class="wrap">{{ revision.message|urlize|linebreaksbr }}</div>
                     {% endif %}
                 {% else %}
                     {% if revision.message %}"{% endif %}
