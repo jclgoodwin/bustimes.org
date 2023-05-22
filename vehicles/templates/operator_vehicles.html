@@ -104,7 +104,7 @@
                             <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
                         {% endif %}
                     </td>
-                    <td>{% if vehicle.reg %}<a href="{{ vehicle.get_absolute_url }}">{{ vehicle.get_reg }}</a>{% endif %}</td>
+                    <td>{% if vehicle.reg %}<a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>{{ vehicle.get_reg }}</a>{% endif %}</td>
                 {% endif %}
                 {% if not parent %}<td class="last-seen">
                     {{ vehicle.last_seen.service }}

@@ -26,11 +26,14 @@
 
 {% block content %}
 
-<h1>{% if object.withdrawn %}
-    <del>{{ object }}</del>
-{% else %}{{ object }}{% endif %}</h1>
-
 {% if vehicle %}
+    <h1>
+        {% if vehicle.withdrawn %}<del>{% endif %}
+            {% if vehicle.fleet_code or vehicle.fleet_number %}{% firstof vehicle.fleet_code vehicle.fleet_number %}{% endif %}
+            {% if vehicle.has_uk_reg %}<span class="reg">{{ vehicle.get_reg }}</span>{% elif vehicle.reg %} - {{ vehicle.reg }}{% endif %}
+        {% if vehicle.withdrawn %}</del>{% endif %}
+    </h1>
+
     {% include 'vehicle_info.html' %}
 
     {% if tracking %}
@@ -45,6 +48,8 @@
         <div id="map" class="service-map"></div>
     {% endif %}
 {% else %}
+    <h1>{{ object }}</h1>
+
     {% if garages %}
         <p>{% for garage in garages %}{{ garage }}{% if not forloop.last %}/{% endif %}{% endfor %}</p>
     {% endif %}

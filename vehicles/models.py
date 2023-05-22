@@ -295,6 +295,9 @@ class Vehicle(models.Model):
     def is_spare_ticket_machine(self) -> bool:
         return self.notes == "Spare ticket machine"
 
+    def has_uk_reg(self):
+        return " " in self.get_reg()
+
     def is_editable(self) -> bool:
         if self.locked or (
             self.is_spare_ticket_machine()

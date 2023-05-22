@@ -271,6 +271,26 @@ h1 {
     font-size: 1.75em;
 }
 
+@font-face {
+    font-family: "Charles Wright";
+    src: url("../CharlesWright-Bold.ttf");
+}
+
+.reg {
+    font-family: "Charles Wright";
+    text-align: center;
+    color: #222;
+}
+
+h1 .reg {
+    border: 1px solid $border-color;
+    padding: 0 .25em;
+    margin-left: .25em;
+    border-radius: .1em;
+    font-size: .825em;
+    font-weight: normal;
+}
+
 h2 {
     font-size: 1.25em;
     margin-top: 1em;
