@@ -346,7 +346,10 @@ class TimetableDepartures(Departures):
         destination = trip.destination
         if destination:
             if destination.locality_id:
-                if destination.locality_id != self.stop.locality_id:
+                if (
+                    type(self.stop) is not StopPoint
+                    or destination.locality_id != self.stop.locality_id
+                ):
                     destination = destination.locality
                 else:
                     destination = destination.common_name

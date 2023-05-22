@@ -274,13 +274,6 @@ can’t be contradicted"""
             vehicle.latest_journey
             and timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3)
         ):
-            if not vehicle.withdrawn:
-                self.fields["withdrawn"].disabled = True
-                self.fields[
-                    "withdrawn"
-                ].help_text = """Can’t be ticked yet,
- as this vehicle (or ticket machine) has tracked in the last 3 days"""
-
             try:
                 operator_ref = vehicle.latest_journey_data["MonitoredVehicleJourney"][
                     "OperatorRef"
@@ -289,8 +282,7 @@ can’t be contradicted"""
                 pass
             else:
                 if vehicle.operator_id == operator_ref:
-                    del self.fields["operator"]
-                    return
+                    self.fields["operator"].disabled = True
 
         if user.is_staff:
             pass
