@@ -40,6 +40,17 @@
 <h2>Regions</h2>
 
 <ul class="regions">
+    {% if request.headers.cf_ipcountry == "IE" %}
+    <li>Ireland
+        <ul class="long">
+            <li><a href="/regions/CO">Connacht</a></li>
+            <li><a href="/regions/LE">Leinster</a></li>
+            <li><a href="/regions/MU">Munster</a></li>
+            <li><a href="/regions/UL">Ulster</a></li>
+        </ul>
+    </li>
+    <li><a href="/regions/NI">Northern Ireland</a></li>
+    {% endif %}
     <li>England
         <ul class="long">
             <li><a href="/regions/EA">East Anglia</a></li>
@@ -56,6 +67,7 @@
     <li><a href="/regions/W">Wales</a></li>
     <li><a href="/regions/S">Scotland</a></li>
     <li><a href="/regions/GB">Great Britain</a></li>
+    {% if request.headers.cf_ipcountry != "IE" %}
     <li><a href="/regions/NI">Northern Ireland</a></li>
     <li>Ireland
         <ul class="long">
@@ -65,6 +77,7 @@
             <li><a href="/regions/UL">Ulster</a></li>
         </ul>
     </li>
+    {% endif %}
     <!-- <li><a href="/regions/IM">Isle of Man</a></li> -->
     <!-- <li><a href="/regions/GG">Guernsey</a></li> -->
     <!-- <li><a href="/regions/JE">Jersey</a></li> -->
