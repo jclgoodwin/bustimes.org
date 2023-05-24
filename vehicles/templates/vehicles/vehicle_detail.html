@@ -29,8 +29,14 @@
 {% if vehicle %}
     <h1>
         {% if vehicle.withdrawn %}<del>{% endif %}
-            {% if vehicle.fleet_code or vehicle.fleet_number %}{% firstof vehicle.fleet_code vehicle.fleet_number %}{% endif %}
-            {% if vehicle.has_uk_reg %}<span class="reg">{{ vehicle.get_reg }}</span>{% elif vehicle.reg %} - {{ vehicle.reg }}{% endif %}
+            {% if vehicle.has_uk_reg %}
+                {% if vehicle.fleet_code or vehicle.fleet_number %}
+                    {% firstof vehicle.fleet_code vehicle.fleet_number %}&nbsp;
+                {% endif %}
+                <span class="reg">{{ vehicle.get_reg }}</span>
+            {% else %}
+                {{ vehicle }}
+            {% endif %}
         {% if vehicle.withdrawn %}</del>{% endif %}
     </h1>
 
