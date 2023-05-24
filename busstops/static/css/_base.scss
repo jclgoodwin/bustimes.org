@@ -1,9 +1,39 @@
 @charset "UTF-8";
 
-@import 'variables';
+:root {
+    --brand-color: #ffff9e;
+    --brand-color-darker: #de8;
+    --brand-color-darker-darker: #cd7;
+    --border-color: var(--brand-color-darker);
+    --border-color-darker: var(--brand-color-darker-darker);
+
+    --black: #000;
+    --white: #fff;
+    --red: #f00;
+
+    --background-color: var(--white);
+    --text-color: #222;
+
+    --link-color: #54c;
+    --active-link-color: var(--black);
+
+    @media (prefers-color-scheme: dark) {
+        --brand-color: #222;
+        --brand-color-darker: #111;
+        --brand-color-darker-darker: #000;
+
+        --background-color: #333;
+        --text-color: #fff;
+
+        --link-color: #E4BFFF;
+        --active-link-color: #fff;
+    }
+}
+
 
 body {
-    color: $text-color;
+    background: var(--background-color);
+    color: var(--text-color);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI Variable","Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 16px;
     line-height: 1.5;
@@ -40,7 +70,7 @@ main {
 }
 
 a {
-    color: $link-color;
+    color: var(--link-color);
     text-decoration: none;
 
     &:hover {
@@ -50,8 +80,8 @@ a {
 
     &:focus,
     &:active {
-        background-color: $brand-color;
-        color: $active-link-color;
+        background-color: var(--brand-color);
+        color: var(--active-link-color);
     }
 }
 
@@ -77,7 +107,7 @@ summary {
 }
 
 summary::marker {
-    color: $border-color;
+    color: var(--border-color);
 }
 
 details {
@@ -92,12 +122,12 @@ details {
 
 .autocomplete__hint,
 .autocomplete__input {
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     margin: 0;  // for Safari
 }
 
 .autocomplete__menu {
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     border-top: 0;
     width: calc(100% - 2px);
 }
@@ -114,7 +144,7 @@ details {
 }
 
 .autocomplete__option {
-    border-color: $border-color;
+    border-color: var(--border-color);
 }
 
 .autocomplete__option--odd {
@@ -123,9 +153,9 @@ details {
 
 .autocomplete__option--focused,
 .autocomplete__option:hover {
-    background: $brand-color;
-    border-color: $brand-color-darker;
-    color: $text-color;
+    background: var(--brand-color);
+    border-color: var(--brand-color-darker);
+    color: var(--text-color);
 }
 
 .errorlist:not(.nonfield) {
@@ -169,20 +199,20 @@ details {
 }
 
 header {
-    background: $brand-color;
+    background: var(--brand-color);
     overflow: hidden;
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
     position: relative;
 
     a {
-        color: $black;
+        color: var(--header-text-color);
         display: inline-block;
         line-height: 1;
         padding: .66667em;
 
         &:hover {
-            background-color: $brand-color-darker;
+            background-color: var(--brand-color-darker);
             text-decoration: none;
         }
     }
@@ -283,11 +313,17 @@ h1 {
 }
 
 h1 .reg {
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     padding: 0 .25em;
     border-radius: .1em;
     font-size: .825em;
     font-weight: normal;
+}
+
+@media (prefers-color-scheme: dark) {
+    .reg {
+        color: #fff;
+    }
 }
 
 h2 {
@@ -308,9 +344,9 @@ h3 {
 button,
 input[type='submit'] {
     appearance: none;
-    background: $brand-color;
+    background: var(--brand-color);
     border: 0;
-    border-bottom: .0625em solid $brand-color-darker;
+    border-bottom: .0625em solid var(--brand-color-darker);
     border-radius: .5em;
     color: inherit;
     display: inline-block;
@@ -332,7 +368,7 @@ input[type='submit'] {
 
     &:focus,
     &:active {
-        background-color: $brand-color-darker;
+        background-color: var(--brand-color-darker);
         border-bottom: 0;
         margin-bottom: .125em;
         top: .0625em;
@@ -359,8 +395,8 @@ input[type='date'],
 input[type='time'],
 textarea {
     appearance: none;
-    background: #fff;
-    border: 1px solid $border-color;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
     border-radius: .5em;
     box-sizing: border-box;
     color: inherit;
@@ -369,11 +405,11 @@ textarea {
     padding: .25em .5em;
 
     &:focus {
-        border-color: $border-color-darker;
+        border-color: var(--border-color-darker);
     }
 
     .errorlist:not(.nonfield) + p & {
-        border-color: $red;
+        border-color: var(--red);
     }
 }
 
@@ -389,7 +425,7 @@ select {
     appearance: none;
     background: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 4,8 8,0'/%3E%3C/svg%3E") no-repeat;
     background-position: right;
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     border-radius: .5em;
     color: inherit;
     font: inherit;
@@ -528,7 +564,7 @@ main li {
     }
 
     small {
-        color: $text-color;
+        color: var(--text-color);
         display: block;
         float: left;
         font-size: .75em;
@@ -558,7 +594,7 @@ table {
 }
 
 .breadcrumb {
-    border-bottom: 1px solid $brand-color-darker;
+    border-bottom: 1px solid var(--brand-color-darker);
     margin: 0 -1em;
     overflow: auto;
     padding: .5em 0 0 .5em;
@@ -570,7 +606,7 @@ table {
         margin-top: -.5em;
 
         &:after {
-            color: $border-color-darker;
+            color: var(--border-color-darker);
             content: '\203A';
             vertical-align: middle;
             padding: 0;
@@ -598,7 +634,7 @@ table {
         white-space: normal;
 
         small {
-            color: $text-color;
+            color: var(--text-color);
             white-space: nowrap;
             margin-left: 1em;
         }
@@ -614,13 +650,13 @@ table {
 
     a:focus,
     a:active {
-        color: $black;
+        color: var(--black);
     }
 }
 
 .name {
-    border: 1px solid $border-color;
-    color: $text-color;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
     float: left;
     margin-right: 1em;
     padding: .125em .5em;
@@ -792,12 +828,12 @@ table .livery {
 }
 
 .bus {
-    background: $white;
-    border: 1px solid $white;
+    background: var(--white);
+    border: 1px solid var(--white);
     height: 16px;
     line-height: 16px;
     overflow: hidden;
-    fill: $text-color; // SVG text
+    fill: var(--text-color); // SVG text
     paint-order: stroke;
 
     text {
@@ -810,10 +846,10 @@ table .livery {
 .leaflet-marker-icon {
     &.just-arrow { // journey history arrow
         .arrow {
-            border: 1px solid $white;
+            border: 1px solid var(--white);
             border-left-color: transparent;
             border-top-color: transparent;
-            box-shadow: 1px 1px $black;
+            box-shadow: 1px 1px var(--black);
             height: 5px;
             transform-origin: 8px 8px;
             width: 6px;
@@ -823,7 +859,7 @@ table .livery {
     &.leaflet-div-icon {
         background: none;
         border: 0;
-        color: $text-color;
+        color: var(--text-color);
         font-size: 12px;
         text-align: center;
         white-space: nowrap;
@@ -834,14 +870,14 @@ table .livery {
         }
 
         .white-text {
-            color: $white;
-            fill: $white;
+            color: var(--white);
+            fill: var(--white);
         }
 
         // bus arrow
         .arrow {
             border: 4px solid transparent;
-            border-right: 5px solid $black;
+            border-right: 5px solid var(--black);
             border-left: 0;
             left: -6px;
             position: absolute;
@@ -853,7 +889,7 @@ table .livery {
     .stop-arrow,
     .rail {
         background: rgba(0, 0, 0, .6);
-        border: 1px solid $white;
+        border: 1px solid var(--white);
         border-radius: 0 8px 8px;
         height: 9px;
         width: 9px;
@@ -1005,7 +1041,7 @@ body {
         }
 
         small {
-            color: $text-color;
+            color: var(--text-color);
             display: block;
             float: left;
             font-size: .75em;
@@ -1026,7 +1062,7 @@ table {
     border-collapse: collapse;
 
     .is-highlighted {
-        background: $brand-color;
+        background: var(--brand-color);
     }
 }
 
@@ -1078,7 +1114,7 @@ table {
     }
 
     tr:target {
-        background: $brand-color;
+        background: var(--brand-color);
     }
 }
 
@@ -1088,7 +1124,7 @@ table {
 }
 
 td {
-    border-top: 1px solid $border-color;
+    border-top: 1px solid var(--border-color);
 }
 
 th a,
@@ -1101,7 +1137,7 @@ th a,
 
 th,
 td {
-    border-left: 1px solid $border-color;
+    border-left: 1px solid var(--border-color);
     padding: .25em .5em;
     text-align: left;
 
@@ -1225,7 +1261,7 @@ input:not(:checked) + label {
     .referrer + .dep {
         td,
         th {
-            background: $brand-color;
+            background: var(--brand-color);
         }
 
         .then-every {
@@ -1233,20 +1269,20 @@ input:not(:checked) + label {
         }
 
         a {
-            color: $active-link-color;
+            color: var(--active-link-color);
         }
     }
 
     thead {
         th { // 'Block'
             border-top: 0;
-            border-bottom: 1px solid $border-color;
+            border-bottom: 1px solid var(--border-color);
             text-align: right;
             padding-right: .5em;
         }
 
         td {  // block number / line name
-            border: 1px solid $border-color;
+            border: 1px solid var(--border-color);
             border-width: 0 1px 1px 0;
             text-align: center;
 
@@ -1258,7 +1294,7 @@ input:not(:checked) + label {
 
     tfoot {
         td {
-            border: 1px solid $border-color;
+            border: 1px solid var(--border-color);
             border-width: 1px 1px 0 0;
             vertical-align: top;
 
@@ -1296,8 +1332,8 @@ input:not(:checked) + label {
 
     th {
         background: #fff;
-        border-right: 1px solid $border-color;
-        border-top: 1px solid $border-color;
+        border-right: 1px solid var(--border-color);
+        border-top: 1px solid var(--border-color);
         font-weight: normal;
         white-space: nowrap;
     }
@@ -1319,7 +1355,7 @@ input:not(:checked) + label {
     }
 
     li:before {
-        border: 2px solid $border-color;
+        border: 2px solid var(--border-color);
         border-width: 2px 0 0 2px;
         content: " ";
         display: block;
@@ -1348,7 +1384,7 @@ input:not(:checked) + label {
 
 .trip-timetable {
     td {
-        border-left: 1px solid $border-color;
+        border-left: 1px solid var(--border-color);
         padding: .25rem .5rem;
     }
 
@@ -1386,11 +1422,11 @@ input:not(:checked) + label {
 
     tr:target,
     .referrer {
-        background: $brand-color;
+        background: var(--brand-color);
         scroll-margin-top: 50vh;
 
         a {
-            color: $active-link-color;
+            color: var(--active-link-color);
         }
     }
 }
@@ -1481,14 +1517,14 @@ input:not(:checked) + label {
 }
 
 .leaflet-container .leaflet-control.hugemap-status {
-    background: $white;
+    background: var(--white);
     background: rgba(255, 255, 255, .8);
     margin: 0;
     padding: 0 5px;
 }
 
 .message {
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     padding: 1em;
 
     p {
@@ -1497,14 +1533,14 @@ input:not(:checked) + label {
 }
 
 .situation {
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     border-radius: .5em;
     margin: 1em 0;
     padding: 1em;
     padding-top: .5em;
 
     .reason {
-        background: $brand-color;
+        background: var(--brand-color);
         border-radius: .5em 0 .5em 0;
         float: left;
         margin: -.5em 1em 0 -1em;
@@ -1526,7 +1562,7 @@ input:not(:checked) + label {
 }
 
 .ticket {
-    border: 1px solid $border-color;
+    border: 1px solid var(--border-color);
     color: inherit;
     display: block;
     padding: 1em;
@@ -1535,7 +1571,7 @@ input:not(:checked) + label {
 
     &:hover {
         text-decoration: none;
-        border-color: $brand-color-darker-darker;
+        border-color: var(--brand-color-darker-darker);
         z-index: 1;
     }
 
@@ -1631,7 +1667,7 @@ body.has-overlay {
         }
 
         &:before {
-            color: $brand-color-darker;
+            color: var(--brand-color-darker);
             content: '  \2022  ';
             font-weight: bold;
         }
@@ -1643,13 +1679,13 @@ body.has-overlay {
 }
 
 .tabs {
-    box-shadow: inset 0 -1px $brand-color-darker;
+    box-shadow: inset 0 -1px var(--brand-color-darker);
     display: flex;
     overflow: visible;
 
     li {
-        background: #fff;
-        border: 1px solid $brand-color-darker;
+        background: var(--background-color);
+        border: 1px solid var(--brand-color-darker);
         border-bottom: 0;
         border-radius: .5em 0.5em 0 0;
         float: left;
@@ -1658,7 +1694,7 @@ body.has-overlay {
 
         a {
             border-radius: .5em 0.5em 0 0;
-            box-shadow: inset 0 -1px $brand-color-darker;
+            box-shadow: inset 0 -1px var(--brand-color-darker);
             margin: -.75em -1em;
             padding: .75em 1em;
         }
@@ -1687,7 +1723,7 @@ footer {
     margin-bottom: 110px;
 
     ul {
-        border-top: 1px solid $brand-color-darker;
+        border-top: 1px solid var(--brand-color-darker);
         clear: both;
         margin: 0;
         overflow: hidden;
