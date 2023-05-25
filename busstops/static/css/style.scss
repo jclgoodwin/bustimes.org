@@ -44,3 +44,21 @@
         margin: 1em -116px 10px;  // 1200px
     }
 }
+
+@media (prefers-color-scheme: dark) {
+    #closeBox circle {
+        fill: #fff!important;
+    }
+
+    #closeBox path {
+        fill: #000!important;
+    }
+
+    #AFM_stickyFooter_ad.drawBorder {
+        border-color: #000;
+    }
+
+    #AFM_inContentTop_ad iframe {
+        box-shadow-color: var(--background-color);
+    }
+}

@@ -30,7 +30,6 @@
     }
 }
 
-
 body {
     background: var(--background-color);
     color: var(--text-color);
@@ -1331,7 +1330,7 @@ input:not(:checked) + label {
     }
 
     th {
-        background: #fff;
+        background: var(--background-color);
         border-right: 1px solid var(--border-color);
         border-top: 1px solid var(--border-color);
         font-weight: normal;
