@@ -736,7 +736,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         # test previous reg display
         response = self.client.get(self.vehicle_3.get_absolute_url())
-        self.assertContains(response, "Previous reg: K292 JVF, P44 CEX")
+        self.assertContains(response, ">K292 JVF, P44 CEX<")
 
         with self.assertNumQueries(15):
             # trusted user - can edit colour
