@@ -45,9 +45,67 @@ class Command(ImportLiveVehiclesCommand):
 
         return f"{journey_ref}"
 
-    def update(self):
-        now = timezone.now()
+    def handle_items(self, items, identities):
+        vehicle_codes = VehicleCode.objects.filter(
+            code__in=identities, scheme="BODS"
+        ).select_related("vehicle__latest_journey__trip")
 
+        vehicles_by_identity = {code.code: code.vehicle for code in vehicle_codes}
+
+        vehicle_locations = redis_client.mget(
+            [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
+        )
+        vehicle_locations = {
+            vehicle_codes[i].vehicle_id: json.loads(item)
+            for i, item in enumerate(vehicle_locations)
+            if item
+        }
+
+        for i, item in enumerate(tqdm.tqdm(items)):
+
+            vehicle_identity = identities[i]
+
+            journey_identity = self.journeys_ids[vehicle_identity]
+
+            if vehicle_identity in vehicles_by_identity:
+                vehicle = vehicles_by_identity[vehicle_identity]
+            else:
+                vehicle, created = self.get_vehicle(item)
+                # print(vehicle_identity, vehicle, created)
+                VehicleCode.objects.create(
+                    code=vehicle_identity, scheme="BODS", vehicle=vehicle
+                )
+
+            keep_journey = False
+            if vehicle_identity in self.journeys_ids_ids:
+                journey_identity_id = self.journeys_ids_ids[vehicle_identity]
+                if journey_identity_id == (journey_identity, vehicle.latest_journey_id):
+                    keep_journey = True  # can dumbly keep same latest_journey
+
+            result = self.handle_item(
+                item,
+                self.source.datetime,
+                vehicle=vehicle,
+                latest=vehicle_locations.get(vehicle.id, False),
+                keep_journey=keep_journey,
+            )
+
+            if result:
+                location, vehicle = result
+
+                self.journeys_ids_ids[vehicle_identity] = (
+                    journey_identity,
+                    vehicle.latest_journey_id,
+                )
+
+            self.identifiers[vehicle_identity] = item["RecordedAtTime"]
+
+            if i and not i % 500:
+                self.save()
+
+        self.save()
+
+    def get_changed_items(self):
         changed_items = []
         changed_journey_items = []
         changed_item_identities = []
@@ -81,83 +139,49 @@ class Command(ImportLiveVehiclesCommand):
 
             self.journeys_ids[vehicle_identity] = journey_identity
 
+        return (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        )
+
+    def update(self):
+        now = timezone.now()
+
+        (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        ) = self.get_changed_items()
+
         age = (now - self.source.datetime).total_seconds()
         self.hist[now.second % 10] = age
         print(self.hist)
-        print(f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}")
-
-        changed_item_identities += changed_journey_identities
-
-        vehicle_codes = VehicleCode.objects.filter(
-            code__in=changed_item_identities, scheme="BODS"
-        ).select_related("vehicle__latest_journey__trip")
-        vehicles_by_identity = {code.code: code for code in vehicle_codes}
-
-        vehicle_locations = redis_client.mget(
-            [f"vehicle{vc.vehicle_id}" for vc in vehicle_codes]
+        print(
+            f"{now.second=} {age=}  {total_items=}  {len(changed_items)=}  {len(changed_journey_items)=}"
         )
-        vehicle_locations = {
-            vehicle_codes[i].vehicle_id: json.loads(item)
-            for i, item in enumerate(vehicle_locations)
-            if item
-        }
 
-        ev = 0
-        nv = 0
-
-        for i, item in enumerate(tqdm.tqdm(changed_items + changed_journey_items)):
-            vehicle_identity = changed_item_identities[i]
-
-            journey_identity = self.journeys_ids[vehicle_identity]
-
-            if vehicle_identity in vehicles_by_identity:
-                vehicle = vehicles_by_identity[vehicle_identity].vehicle
-                ev += 1
-            else:
-                vehicle, created = self.get_vehicle(item)
-                # print(vehicle_identity, vehicle, created)
-                VehicleCode.objects.create(
-                    code=vehicle_identity, scheme="BODS", vehicle=vehicle
-                )
-                nv += 1
-
-            keep_journey = False
-            if vehicle_identity in self.journeys_ids_ids:
-                journey_identity_id = self.journeys_ids_ids[vehicle_identity]
-                if journey_identity_id == (journey_identity, vehicle.latest_journey_id):
-                    keep_journey = True  # can dumbly keep same latest_journey
-
-            result = self.handle_item(
-                item,
-                self.source.datetime,
-                vehicle=vehicle,
-                latest=vehicle_locations.get(vehicle.id, False),
-                keep_journey=keep_journey,
-            )
-
-            if result:
-                location, vehicle = result
-
-                self.journeys_ids_ids[vehicle_identity] = (
-                    journey_identity,
-                    vehicle.latest_journey_id,
-                )
-
-            self.identifiers[vehicle_identity] = item["RecordedAtTime"]
-
-            if i and not i % 500:
-                self.save()
-
-        self.save()
+        self.handle_items(changed_items, changed_item_identities)
+        self.handle_items(changed_journey_items, changed_journey_identities)
 
         # stats for last 10 updates:
         bod_status = cache.get("bod_avl_status", [])
-        bod_status.append((now, self.source.datetime, total_items, ev + nv))
+        bod_status.append(
+            (
+                now,
+                self.source.datetime,
+                total_items,
+                len(changed_items) + len(changed_journey_items),
+            )
+        )
         bod_status = bod_status[-50:]
         cache.set_many(
             {
                 "bod_avl_status": bod_status,
-                # "bod_avl_identifiers": self.identifiers,  # backup
             },
             None,
         )
