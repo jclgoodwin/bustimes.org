@@ -207,17 +207,7 @@ class Command(ImportLiveVehiclesCommand):
     def create_vehicle_location(self, item):
         bearing = item.get("hg")
 
-        aimed = item.get("an") or item.get("ax")
-        expected = item.get("en") or item.get("ex")
-        if aimed and expected:
-            aimed = parse_timestamp(aimed)
-            expected = parse_timestamp(expected)
-            early = aimed - expected
-        else:
-            early = None
-
         return VehicleLocation(
             latlong=GEOSGeometry(f"POINT({item['lo']} {item['la']})"),
             heading=bearing,
-            early=early,
         )
