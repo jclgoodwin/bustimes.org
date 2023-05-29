@@ -80,7 +80,7 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 #     SECURE_SSL_REDIRECT = True
 SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
-CSRF_TRUSTED_ORIGINS = ["https://bustimes.org"]
+CSRF_TRUSTED_ORIGINS = ["https://bustimes.org", "https://staging.bustimes.org"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
