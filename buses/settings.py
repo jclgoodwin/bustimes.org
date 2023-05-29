@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "simple_history",
     "huey.contrib.djhuey",
     "corsheaders",
+    "turnstile",
 ]
 
 MIDDLEWARE = [
@@ -315,8 +316,8 @@ else:
     DATA_DIR = BASE_DIR / "data"
 TNDS_DIR = DATA_DIR / "TNDS"
 
-AKISMET_API_KEY = os.environ.get("AKISMET_API_KEY")
-AKISMET_SITE_URL = "https://bustimes.org"
+TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5sy")
+TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
 
 ADS = bool(os.environ.get("ADS"))
 

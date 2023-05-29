@@ -1,4 +1,5 @@
-# coding=utf-8
+from unittest.mock import patch
+
 import time_machine
 import vcr
 from django.conf import settings
@@ -44,22 +45,19 @@ class ContactTests(TestCase):
         response = self.client.post("/contact")
         self.assertFalse(response.context["form"].is_valid())
 
-    @override_settings(AKISMET_API_KEY="poop")
-    def test_contact_post(self):
+    @patch("turnstile.fields.TurnstileField.validate", return_value=True)
+    def test_contact_post(self, mock_validate):
         self.client.force_login(self.user)
 
-        with vcr.use_cassette(
-            str(settings.BASE_DIR / "fixtures" / "vcr" / "akismet.yaml")
-        ):
-            response = self.client.post(
-                "/contact",
-                {
-                    "name": 'Rufus "Red" Herring',
-                    "email": "rufus@example.com",
-                    "message": "Dear John,\r\n\r\nHow are you?\r\n\r\nAll the best,\r\nRufus",
-                    "referrer": "https://www.yahoo.com",
-                },
-            )
+        response = self.client.post(
+            "/contact",
+            {
+                "name": 'Rufus "Red" Herring',
+                "email": "rufus@example.com",
+                "message": "Dear John,\r\n\r\nHow are you?\r\n\r\nAll the best,\r\nRufus",
+                "referrer": "https://www.yahoo.com",
+            },
+        )
 
         self.assertContains(response, "<h1>Thank you</h1>", html=True)
 

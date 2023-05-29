@@ -1,7 +1,5 @@
-from akismet import Akismet
 from django import forms
-from django.conf import settings
-from django.core.exceptions import ValidationError
+from turnstile.fields import TurnstileField
 
 
 class ContactForm(forms.Form):
@@ -11,32 +9,11 @@ class ContactForm(forms.Form):
     referrer = forms.CharField(
         label="Referrer", required=False, widget=forms.HiddenInput
     )
+    turnstile = TurnstileField(label=False)
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
         super().__init__(*args, **kwargs)
-
-    def clean(self):
-        if self.request and self.is_valid():
-            message = self.cleaned_data["message"]
-
-            if settings.AKISMET_API_KEY:
-                akismet = Akismet(
-                    api_key=settings.AKISMET_API_KEY,
-                    blog=settings.AKISMET_SITE_URL,
-                )
-
-                is_spam = akismet.check(
-                    user_ip=self.request.headers.get("cf-connecting-ip"),
-                    user_agent=self.request.headers.get("User-Agent"),
-                    comment_type="contact-form",
-                    comment_author=self.cleaned_data["name"],
-                    comment_author_email=self.cleaned_data["email"],
-                    comment_content=message,
-                )
-
-                if is_spam:
-                    raise ValidationError("Spam detected", code="spam-protection")
 
 
 class SearchForm(forms.Form):

@@ -688,6 +688,17 @@ files = [
 ]
 
 [[package]]
+name = "django-turnstile"
+version = "0.1.0"
+description = "Add Cloudflare Turnstile validator widget to the forms of your django project"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-turnstile-0.1.0.tar.gz", hash = "sha256:9b6036a90a39c48020e3c4e34565b7db2f0efd7a2be74bc52116e4ee403d95cb"},
+    {file = "django_turnstile-0.1.0-py3-none-any.whl", hash = "sha256:92009e09d8aff0755ea667f2e4c521a3f1817c0b3f94d63d3b4723d9efefb0b9"},
+]
+
+[[package]]
 name = "djangorestframework"
 version = "3.14.0"
 description = "Web APIs for Django, made easy."
@@ -1457,20 +1468,6 @@ lxml = ">=2.1"
 
 [package.extras]
 test = ["pytest", "pytest-cov", "requests", "webob", "webtest"]
-
-[[package]]
-name = "python-akismet"
-version = "0.4.3"
-description = "Akismet v1.1 module for Python."
-optional = false
-python-versions = "*"
-files = [
-    {file = "python-akismet-0.4.3.tar.gz", hash = "sha256:83e3d73d9835b31ab4a2725860a940739e252ef55144f65c3b66982bf33e2939"},
-    {file = "python_akismet-0.4.3-py2.py3-none-any.whl", hash = "sha256:767572cb82d860c5c74026fafbf9992a02d2cfe140a932ef90f8274bb419befc"},
-]
-
-[package.dependencies]
-requests = "*"
 
 [[package]]
 name = "python-dateutil"
@@ -2412,4 +2409,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "97853ae92c8abe1b6c378532a9d052f9d633d58bd5e4acf8645ba5bec2267f32"
+content-hash = "30d45afaeda07b6481e13f4af7dfd9cd272794095d109d93edf32707aebb5b2e"
