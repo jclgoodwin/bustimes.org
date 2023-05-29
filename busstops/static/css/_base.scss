@@ -273,13 +273,15 @@ h1 {
 
 @font-face {
     font-family: "Charles Wright";
-    src: url("../CharlesWright-Bold.ttf");
+    src:  url("../CharlesWright-Bold.woff2") format("woff2"),
+        url("../CharlesWright-Bold.woff") format("woff");
 }
 
 .reg {
     font-family: "Charles Wright";
     text-align: center;
     color: #222;
+    font-weight: normal;
 }
 
 h1 .reg {
@@ -287,7 +289,6 @@ h1 .reg {
     padding: 0 .25em;
     border-radius: .1em;
     font-size: .825em;
-    font-weight: normal;
 }
 
 h2 {
