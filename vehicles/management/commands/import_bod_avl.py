@@ -11,6 +11,7 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils.timezone import localtime
+from tenacity import retry, wait_exponential
 
 from busstops.models import (
     Locality,
@@ -573,6 +574,7 @@ class Command(ImportLiveVehiclesCommand):
                 location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
         return location
 
+    @retry(wait=wait_exponential(multiplier=1, min=4, max=10))
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
         assert response.ok

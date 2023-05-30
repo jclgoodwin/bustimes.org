@@ -49,6 +49,7 @@ django-cors-headers = "^3.14.0"
 pygments = "^2.15.1"
 fakeredis = "^2.12.1"
 django-turnstile = "^0.1.0"
+tenacity = "^8.2.2"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^4.0.0"
