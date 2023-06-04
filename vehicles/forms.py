@@ -196,7 +196,7 @@ class EditVehicleForm(EditVehiclesForm):
     def clean_operator(self):
         old = self.initial["operator"]
         new = self.cleaned_data["operator"]
-        if old and new and old.parent == new.parent == "Go South West":
+        if old and new and old != new and old.parent == new.parent == "Go South West":
             raise ValidationError("No")
         return new
 
