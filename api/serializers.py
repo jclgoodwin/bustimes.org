@@ -6,9 +6,22 @@ from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
 
 class VehicleTypeSerializer(serializers.ModelSerializer):
+    coach = serializers.SerializerMethodField()
+    electric = serializers.SerializerMethodField()
+    double_decker = serializers.SerializerMethodField()
+
+    def get_coach(self, obj) -> bool:
+        return obj.style == "coach"
+
+    def get_electric(self, obj) -> bool:
+        return obj.fuel == "electric"
+
+    def get_double_decker(self, obj) -> bool:
+        return obj.style == "double decker"
+
     class Meta:
         model = VehicleType
-        fields = ["id", "name", "double_decker", "coach", "electric"]
+        fields = ["id", "name", "style", "fuel", "double_decker", "coach", "electric"]
 
 
 class VehicleSerializer(serializers.ModelSerializer):

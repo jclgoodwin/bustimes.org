@@ -57,11 +57,12 @@ class VehiclesTests(TestCase):
             region=ea, name="Chicken Bus", noc="CLUCK", slug="chicken"
         )
 
-        tempo = VehicleType.objects.create(
-            name="Optare Tempo", coach=False, double_decker=False
-        )
+        tempo = VehicleType.objects.create(name="Optare Tempo", fuel="diesel")
         spectra = VehicleType.objects.create(
-            name="Optare Spectra", coach=False, double_decker=True
+            name="Optare Spectra",
+            double_decker=True,
+            fuel="diesel",
+            style="double decker",
         )
 
         service = Service.objects.create(
@@ -938,7 +939,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                             "name": "Optare Tempo",
                             "double_decker": False,
                             "coach": False,
-                            "electric": None,
+                            "electric": False,
+                            "style": "",
+                            "fuel": "diesel",
                         },
                         "livery": {
                             "id": None,
@@ -968,7 +971,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                             "name": "Optare Spectra",
                             "double_decker": True,
                             "coach": False,
-                            "electric": None,
+                            "electric": False,
+                            "style": "double decker",
+                            "fuel": "diesel",
                         },
                         "livery": {
                             "id": self.vehicle_2.livery_id,
