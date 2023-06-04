@@ -123,19 +123,18 @@ class Command(ImportLiveVehiclesCommand):
             total_items += 1
 
             if self.identifiers.get(vehicle_identity) == item["RecordedAtTime"]:
-                if journey_identity != self.journeys_ids[vehicle_identity]:
-                    print(self.journeys_ids[vehicle_identity], item)
-                continue
+                if journey_identity == self.journeys_ids[vehicle_identity]:
+                    continue
+                print(self.journeys_ids[vehicle_identity], item)
+            if (
+                vehicle_identity not in self.journeys_ids
+                or journey_identity != self.journeys_ids[vehicle_identity]
+            ):
+                changed_journey_items.append(item)
+                changed_journey_identities.append(vehicle_identity)
             else:
-                if (
-                    vehicle_identity not in self.journeys_ids
-                    or journey_identity != self.journeys_ids[vehicle_identity]
-                ):
-                    changed_journey_items.append(item)
-                    changed_journey_identities.append(vehicle_identity)
-                else:
-                    changed_items.append(item)
-                    changed_item_identities.append(vehicle_identity)
+                changed_items.append(item)
+                changed_item_identities.append(vehicle_identity)
 
             self.journeys_ids[vehicle_identity] = journey_identity
 
