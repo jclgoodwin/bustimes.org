@@ -30,7 +30,8 @@
         }),
 
         stopsGroup = L.layerGroup(),
-        vehiclesGroup = L.layerGroup();
+        vehiclesGroup = L.layerGroup(),
+        clickedTrip = null;
 
     bustimes.doTileLayer(map);
     bustimes.popupOptions = {
@@ -217,6 +218,9 @@
             params = '?';
         }
         params += 'ymax=' + round(bounds.getNorth()) + '&xmax=' + round(bounds.getEast()) + '&ymin=' + round(bounds.getSouth()) + '&xmin=' + round(bounds.getWest());
+        if (clickedTrip) {
+            params += '&trip=' + clickedTrip;
+        }
         lastVehiclesReq = reqwest({
             url: '/vehicles.json' + params,
             crossOrigin: true,
@@ -304,6 +308,7 @@
         var item = marker.options.item;
 
         bustimes.clickedMarker = item.id;
+        clickedTrip = item.trip_id;
         bustimes.updatePopupContent();
 
         if (bigVehicleMarkers) {
@@ -315,6 +320,7 @@
     function handlePopupClose(event) {
         if (map.hasLayer(event.target)) {
             bustimes.clickedMarker = null;
+            clickedTrip = null;
             if (bigVehicleMarkers) {
                 // make the icon small again
                 event.target.setIcon(bustimes.getBusIcon(event.target.options.item));
