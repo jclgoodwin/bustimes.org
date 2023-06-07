@@ -215,7 +215,7 @@
     }
 
     function handleVehicle(item) {
-        var isClickedMarker = item.id === window.bustimes.clickedMarker,
+        var isClickedMarker = (item.id === window.bustimes.clickedMarker),
             icon = getBusIcon(item, isClickedMarker),
             latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
 
