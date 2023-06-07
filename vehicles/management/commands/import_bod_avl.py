@@ -11,7 +11,7 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils.timezone import localtime
-from tenacity import retry, wait_exponential
+from tenacity import after_log, retry, wait_exponential
 
 from busstops.models import (
     Locality,
@@ -24,7 +24,7 @@ from busstops.models import (
 from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger, logging
 
 
 def get_destination_ref(destination_ref):
@@ -133,7 +133,9 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref == "TFLO":
             defaults["livery_id"] = 262
-            vehicles = self.vehicles.filter(operator__in=operators)
+            vehicles = self.vehicles.filter(
+                Q(operator__in=operators) | Q(operator=None)
+            )
         elif not operators:
             vehicles = self.vehicles.filter(operator=None)
         elif len(operators) == 1:
@@ -417,11 +419,13 @@ class Command(ImportLiveVehiclesCommand):
 
         datetime = self.get_datetime(item)
 
-        if (
-            origin_aimed_departure_time
-            and origin_aimed_departure_time - datetime > timedelta(hours=20)
-        ):
-            origin_aimed_departure_time -= timedelta(hours=24)
+        operator_ref = monitored_vehicle_journey["OperatorRef"]
+
+        if origin_aimed_departure_time:
+            if operator_ref == "TFLO":
+                origin_aimed_departure_time = None
+            elif origin_aimed_departure_time - datetime > timedelta(hours=20):
+                origin_aimed_departure_time -= timedelta(hours=24)
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
@@ -464,9 +468,7 @@ class Command(ImportLiveVehiclesCommand):
         if destination_ref:
             destination_ref = get_destination_ref(destination_ref)
 
-        operator_ref = monitored_vehicle_journey["OperatorRef"]
-
-        if not journey.destination and operator_ref != "TFLO":
+        if not journey.destination:
             # use stop locality
             if destination_ref:
                 journey.destination = self.get_destination_name(destination_ref)
@@ -574,7 +576,10 @@ class Command(ImportLiveVehiclesCommand):
                 location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
         return location
 
-    @retry(wait=wait_exponential(multiplier=1, min=4, max=10))
+    @retry(
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        after=after_log(logger, logging.ERROR),
+    )
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
         assert response.ok
@@ -583,8 +588,9 @@ class Command(ImportLiveVehiclesCommand):
             data = response.content
         else:
             with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                assert archive.namelist() == ["siri.xml"]
-                with archive.open("siri.xml") as open_file:
+                namelist = archive.namelist()
+                assert len(namelist) == 1
+                with archive.open(namelist[0]) as open_file:
                     data = open_file.read()
 
         data = xmltodict.parse(
