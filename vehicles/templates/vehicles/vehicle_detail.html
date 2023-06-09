@@ -86,6 +86,7 @@
         <table>
             <thead>
                 <tr>
+                    {% if object.line_names|length > 1 %}<th scope="col">{% endif %}
                     <th scope="col">{% if not vehicle %}Vehicle{% else %}Route{% endif %}</th>
                     <th scope="col" colspan="2">Trip</th>
                     <th scope="col">To</th>
@@ -93,6 +94,11 @@
             </thead>
             <tbody>{% for journey in journeys %}
                 <tr>
+                    {% if object.line_names|length > 1 %}
+                        <td>
+                            {{ journey.route_name }}
+                        </td>
+                    {% endif %}
                     <td class="link">
                         {% if not vehicle %}
                             {% if journey.vehicle %}
