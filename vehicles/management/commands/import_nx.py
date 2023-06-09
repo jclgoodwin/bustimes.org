@@ -71,6 +71,9 @@ class Command(ImportLiveVehiclesCommand):
         ).values_list("line_name", flat=True)
 
     def get_items(self):
+        count = 0
+        now = timezone.now()
+
         for line_name in self.get_line_names():
             line_name = line_name.upper()
             for direction in "OI":
@@ -87,10 +90,18 @@ class Command(ImportLiveVehiclesCommand):
                 if direction != res.json()["dir"]:
                     print(res.url)
                 for item in res.json()["services"]:
-                    if item["live"]:
-                        yield (item)
+                    if item["live"] and (
+                        now - self.get_datetime(item) < timedelta(hours=1)
+                    ):
+                        count += 1
+                        yield item
             self.save()
-            sleep(self.sleep)
+
+            if count:
+                sleep(self.sleep)
+            else:
+                # no current data, wait for an hour +
+                sleep(4444)
 
     def get_vehicle(self, item):
         code = item["live"]["vehicle"]
