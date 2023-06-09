@@ -149,10 +149,6 @@ GLOB:
     name: Globe Coaches (Wales)
 GLCS:
     name: Globe Holidays (Barnsley)
-HDGS:
-    name: Hodgsons Buses (County Durham)
-JKHY:
-    name: Hodgsons Buses (North Yorkshire)
 YCST:
     name: Transdev York
 TPEN:
@@ -414,3 +410,7 @@ ALTO:
 NMCO:
     url: https://www.nickmaddycoaches.co.uk/
     phone: 01981 240888
+NYCC:
+    name: North Yorkshire Council
+    url: https://www.northyorks.gov.uk/public-transport
+    twitter: northyorksc
