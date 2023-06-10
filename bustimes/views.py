@@ -31,7 +31,14 @@ from pygments.lexers import XmlLexer
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
-from busstops.models import DataSource, Operator, Service, StopPoint, StopUsage
+from busstops.models import (
+    DataSource,
+    Operator,
+    Service,
+    StopArea,
+    StopPoint,
+    StopUsage,
+)
 from departures import gtfsr, live
 from vehicles.models import Vehicle
 from vehicles.utils import liveries_css_version
@@ -445,8 +452,11 @@ def tfl_vehicle(request, reg: str):
     else:
         data = None
 
-    vehicles = Vehicle.objects.select_related("livery", "operator", "vehicle_type")
-    vehicle = vehicles.filter(code=reg).first()
+    if reg[:1].isalpha() and reg[:3] != "TMP" and len(reg) > 5:
+        vehicles = Vehicle.objects.select_related("livery", "operator", "vehicle_type")
+        vehicle = vehicles.filter(code=reg).first()
+    else:
+        vehicle = None
 
     if not data:
         if not vehicle:
@@ -476,6 +486,8 @@ def tfl_vehicle(request, reg: str):
             vehicle.save(update_fields=["operator"])
 
     stops = StopPoint.objects.in_bulk(atco_codes)
+    if not stops:
+        stops = StopArea.objects.in_bulk(atco_codes)
 
     for item in data:
         item["expectedArrival"] = parse_datetime(item["expectedArrival"])
@@ -489,7 +501,9 @@ def tfl_vehicle(request, reg: str):
                 {
                     "stop": {
                         "location": item["stop"].latlong.coords,
-                        "bearing": item["stop"].get_heading(),
+                        "bearing": item["stop"].get_heading()
+                        if type(item["stop"]) is StopPoint
+                        else None,
                     },
                     "aimed_arrival_time": str(
                         timezone.localtime(item["expectedArrival"]).time()

@@ -158,27 +158,22 @@ class TflDepartures(RemoteDepartures):
     def get_request_headers(self):
         return {"User-Agent": "bustimes.org"}
 
+    def get_row(self, item):
+        vehicle = item["vehicleId"]
+        link = f"/vehicles/tfl/{vehicle}#stop-{item['naptanId']}"
+        if vehicle[:1].isdigit() or vehicle[:3] == "TMP":
+            vehicle = None
+        return {
+            "live": parse_datetime(item.get("expectedArrival")),
+            "service": self.get_service(item.get("lineName")),
+            "destination": item.get("destinationName"),
+            "link": link,
+            "vehicle": vehicle,
+        }
+
     def departures_from_response(self, res) -> list:
-        rows = res.json()
-        if rows and rows[0]["stationName"] and rows[0]["bearing"]:
-            name = rows[0]["stationName"]
-            heading = int(rows[0]["bearing"])
-            if name != self.stop.common_name or heading != self.stop.heading:
-                self.stop.common_name = name
-                self.stop.heading = heading
-                self.stop.save()
         return sorted(
-            [
-                {
-                    "live": parse_datetime(item.get("expectedArrival")),
-                    "service": self.get_service(item.get("lineName")),
-                    "destination": item.get("destinationName"),
-                    "link": f"/vehicles/tfl/{item['vehicleId']}#stop-{item['naptanId']}",
-                    "vehicle": item["vehicleId"],
-                }
-                for item in rows
-            ],
-            key=lambda d: d["live"],
+            [self.get_row(item) for item in res.json()], key=lambda row: row["live"]
         )
 
 
