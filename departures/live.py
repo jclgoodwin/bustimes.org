@@ -150,6 +150,9 @@ class TflDepartures(RemoteDepartures):
         return settings.TFL
 
     def get_request_url(self) -> str:
+        if self.stop.stop_type == "FBT" or self.stop.stop_type == "PLT":
+            assert self.stop.stop_area_id
+            return f"https://api.tfl.gov.uk/StopPoint/{self.stop.stop_area_id}/arrivals"
         return f"https://api.tfl.gov.uk/StopPoint/{self.stop.pk}/arrivals"
 
     def get_request_headers(self):
@@ -157,7 +160,7 @@ class TflDepartures(RemoteDepartures):
 
     def departures_from_response(self, res) -> list:
         rows = res.json()
-        if rows:
+        if rows and rows[0]["stationName"] and rows[0]["bearing"]:
             name = rows[0]["stationName"]
             heading = int(rows[0]["bearing"])
             if name != self.stop.common_name or heading != self.stop.heading:
