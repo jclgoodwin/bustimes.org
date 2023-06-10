@@ -1,9 +1,12 @@
-import requests
 import xml.etree.cElementTree as ET
 from datetime import datetime
-from requests_toolbelt.adapters.source import SourceAddressAdapter
+
+import requests
 from django.core.management.base import BaseCommand
+from requests_toolbelt.adapters.source import SourceAddressAdapter
+
 from busstops.models import DataSource
+
 from .import_siri_sx import handle_item
 
 
@@ -15,6 +18,7 @@ class Command(BaseCommand):
         # so use a Digital Ocean floating IP address
         # https://docs.digitalocean.com/products/networking/floating-ips/how-to/outbound-traffic/
         session.mount("https://", SourceAddressAdapter("10.16.0.7"))
+        # (the "IPv4 address for eth0:" shown on login)
 
         url = "https://siri-sx-tfn.itoworld.com"
         requestor_ref = "BusTimes"

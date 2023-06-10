@@ -25,7 +25,11 @@
     <tbody>
 {% for item in data %}
     <tr id="stop-{{ item.naptanId }}">
-        <td class="stop-name"><a href="/stops/{{ item.naptanId }}">{{ item.stationName }}{% if item.platformName %} ({{ item.platformName }}){% endif %}</a></td>
+        <td class="stop-name">
+            {% if item.stop %}<a href="{{ item.stop.get_absolute_url }}">{% endif %}
+                {{ item.stationName }}{% if item.platformName %} ({{ item.platformName }}){% endif %}
+            {% if item.stop %}</a>{% endif %}
+        </td>
         <td>{{ item.expectedArrival|time }}</td>
     </tr>
 {% endfor %}
