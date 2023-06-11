@@ -609,7 +609,9 @@ def get_dates(vehicle=None, service=None):
     return dates
 
 
-def journeys_list(request, journeys, service=None, vehicle=None):
+def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
+    """list of VehicleJourneys (and dates) for a service or vehicle"""
+
     dates = get_dates(service=service, vehicle=vehicle)
 
     context = {}
@@ -635,6 +637,13 @@ def journeys_list(request, journeys, service=None, vehicle=None):
         journeys = (
             journeys.filter(datetime__date=date).select_related("trip").order_by("id")
         )
+
+        if dates:
+            if date not in dates:
+                dates.append(date)
+                dates.sort()
+            elif not journeys:
+                cache.delete(f"vehicle:{vehicle.id}:dates")
 
         try:
             pipe = redis_client.pipeline(transaction=False)
