@@ -631,7 +631,11 @@ class Command(BaseCommand):
     def bod(self, api_key):
         datasets = []
         url = f"{self.base_url}/api/v1/fares/dataset/"
-        params = {"api_key": api_key, "status": "published"}
+        params = {
+            "api_key": api_key,
+            "status": "published",
+            "limit": 100,
+        }
         while url:
             response = self.session.get(url, params=params)
 

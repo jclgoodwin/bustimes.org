@@ -132,6 +132,7 @@ def get_bus_open_data_paramses(sources, api_key):
     base_params = {
         "api_key": api_key,
         "status": "published",
+        "limit": 100,
     }
 
     # and search phrases one at a time
