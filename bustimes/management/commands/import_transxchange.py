@@ -1211,7 +1211,7 @@ class Command(BaseCommand):
                 "service": service,
                 "revision_number": transxchange.attributes["RevisionNumber"],
                 "service_code": txc_service.service_code,
-                "public_use": txc_service.public_use,
+                "public_use": service.public_use,
             }
 
             for key in ("outbound_description", "inbound_description"):
