@@ -1096,7 +1096,11 @@ class Command(BaseCommand):
             line_brand = line.line_brand
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
-                if txc_service.marketing_name in ("CornwallbyKernow", "Cardiff Bus"):
+                if txc_service.marketing_name in (
+                    "CornwallbyKernow",
+                    "Cardiff Bus",
+                    line.line_name,
+                ):
                     pass
                 elif (
                     "tudents only" in txc_service.marketing_name
