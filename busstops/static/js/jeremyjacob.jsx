@@ -67,7 +67,6 @@ function OperatorMap() {
           Object.assign({}, ...items.map((item) => ({[item.id]: item})))
         );
         setLoading(false);
-
       });
     });
   }, []);
@@ -76,13 +75,14 @@ function OperatorMap() {
   const [clickedVehicleMarkerId, handleVehicleMarkerClick] = React.useState(null);
 
   if (loading) {
-    return "Loading…";
+    return <div className="sorry">Loading…</div>;
   }
 
+  if (!vehicles.length) {
+    return <div className="sorry">Sorry, no buses are tracking at the moment</div>;
+  }
 
   const clickedVehicle = clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
-
-
 
   return (
     <Map

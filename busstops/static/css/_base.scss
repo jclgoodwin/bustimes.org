@@ -18,11 +18,11 @@
     --active-link-color: var(--black);
 
     @media (prefers-color-scheme: dark) {
-        --brand-color: #222;
-        --brand-color-darker: #111;
+        --brand-color: #2a2a2a;
+        --brand-color-darker: #333;
         --brand-color-darker-darker: #000;
 
-        --background-color: #333;
+        --background-color: #222;
         --text-color: #fff;
 
         --link-color: #E4BFFF;
@@ -650,7 +650,7 @@ table {
 
     a:focus,
     a:active {
-        color: var(--black);
+        color: var(--active-link-color);
     }
 }
 
