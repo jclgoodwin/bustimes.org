@@ -53,7 +53,7 @@
 {% block foot %}
     {% load static %}
     <script>OPERATOR_ID="{{ operator.noc }}";</script>
-    <link rel="stylesheet" href="{% static 'js/jeremyjacob.css' %}">
-    <script async src="{% static 'js/jeremyjacob.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'js/operator-map.css' %}">
+    <script src="{% static 'js/dist/operator-map.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}

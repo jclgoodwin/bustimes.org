@@ -12,3 +12,4 @@
 /.coverage
 /slim-bustimes.sql
 /.idea
+dist/
