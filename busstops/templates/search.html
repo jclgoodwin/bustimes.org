@@ -52,7 +52,7 @@
         {% if localities %}
             <ul>
                 {% for result in localities %}
-                    <li><a href="{{ result.get_absolute_url }}">{{ result.get_qualified_name }}</a></li>
+                    <li><a href="{{ result.get_absolute_url }}">{{ result.headline|safe }}{% if result.qualifier_name %}, {{ result.qualifier_name }}{% endif %}</a></li>
                 {% endfor %}
             </ul>
 

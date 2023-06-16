@@ -1505,8 +1505,12 @@ def search(request):
                     .annotate(rank=rank)
                     .order_by("-rank")
                 )
-                if key == "operators":
+                if key == "operators" or key == "localities":
                     queryset = queryset.annotate(headline=SearchHeadline("name", query))
+                elif key == "services":
+                    queryset = queryset.annotate(
+                        headline=SearchHeadline("description", query)
+                    )
                 context[key] = Paginator(queryset, 20).get_page(request.GET.get("page"))
 
             vehicles = Vehicle.objects.select_related("operator")
