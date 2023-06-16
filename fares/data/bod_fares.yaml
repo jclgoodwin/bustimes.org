@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python-requests/2.26.0
     method: GET
-    uri: https://data.bus-data.dft.gov.uk/api/v1/fares/dataset/?api_key=XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8&status=published
+    uri: https://data.bus-data.dft.gov.uk/api/v1/fares/dataset/?api_key=XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8&status=published&limit=100
   response:
     body:
       string: '{"count":2,"next":"https://data.bus-data.dft.gov.uk/api/v1/fares/dataset/?api_key=XCpEBAoqPDfVdYRoUahb3F2nEZTJJCULXZCPo5x8&limit=1&noc=WMSA&offset=1&status=published","previous":null,"results":[{"id":925,"created":"2020-11-19T06:45:17+00:00","modified":"2020-11-19T06:45:49+00:00","operatorName":"AC

@@ -22,6 +22,32 @@ def get_datetime(string):
     return datetime
 
 
+def get_point(element, atco_code):
+    easting = element.findtext("Easting")
+    northing = element.findtext("Northing")
+    grid_type = element.findtext("GridType")
+
+    if not easting:
+        easting = element.findtext("Translation/Easting")
+        northing = element.findtext("Translation/Northing")
+        grid_type = element.findtext("Translation/GridType")
+    if easting:
+        match grid_type:
+            case "ITM":
+                srid = 2157
+            case "IrishOS":
+                assert atco_code[0] != "8"  # not actually in Ireland, must be a mistake
+                srid = 27700
+            case "UKOS" | None:
+                srid = 27700
+        return GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
+
+    lon = element.findtext("Translation/Longitude")
+    lat = element.findtext("Translation/Latitude")
+    if lat is not None and lon is not None:
+        return GEOSGeometry(f"POINT({lon} {lat})")
+
+
 class Command(BaseCommand):
     mapping = (
         ("Descriptor/CommonName", "common_name"),
@@ -69,33 +95,7 @@ class Command(BaseCommand):
 
         created_at = get_datetime(element.attrib["CreationDateTime"])
 
-        easting = element.findtext("Place/Location/Easting")
-        northing = element.findtext("Place/Location/Northing")
-        grid_type = element.findtext("Place/Location/GridType")
-
-        if not easting:
-            easting = element.findtext("Place/Location/Translation/Easting")
-            northing = element.findtext("Place/Location/Translation/Northing")
-            grid_type = element.findtext("Place/Location/Translation/GridType")
-        if easting:
-            match grid_type:
-                case "ITM":
-                    srid = 2157
-                case "IrishOS":
-                    assert (
-                        atco_code[0] != "8"
-                    )  # not actually in Ireland, must be a mistake
-                    srid = 27700
-                case "UKOS" | None:
-                    srid = 27700
-            point = GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
-        else:
-            lon = element.findtext("Place/Location/Translation/Longitude")
-            lat = element.findtext("Place/Location/Translation/Latitude")
-            if lat is not None and lon is not None:
-                point = GEOSGeometry(f"POINT({lon} {lat})")
-            else:
-                point = None
+        point = get_point(element.find("Place/Location"), atco_code)
 
         bearing = element.findtext(
             "StopClassification/OnStreet/Bus/MarkedPoint/Bearing/CompassPoint"
@@ -117,8 +117,7 @@ class Command(BaseCommand):
             locality_id=element.findtext("Place/NptgLocalityRef"),
             admin_area_id=element.findtext("AdministrativeAreaRef"),
             stop_area_id=element.findtext("StopAreas/StopAreaRef"),
-            active="Status" not in element.attrib
-            or element.attrib["Status"] == "active",
+            active=element.attrib.get("Status", "active") == "active",
         )
 
         if stop.locality_id and stop.locality_id not in self.localities:
@@ -148,6 +147,20 @@ class Command(BaseCommand):
             self.stops_to_update.append(stop)
         else:
             self.stops_to_create.append(stop)
+
+    def get_stop_area(self, element):
+        stop_area_code = element.findtext("StopAreaCode")
+
+        point = get_point(element.find("Location"), stop_area_code)
+
+        return StopArea(
+            id=stop_area_code,
+            name=element.findtext("Name"),
+            latlong=point,
+            active=element.attrib.get("Status", "active") == "active",
+            admin_area_id=element.findtext("AdministrativeAreaRef"),
+            stop_area_type=element.findtext("StopAreaType"),
+        )
 
     bulk_update_fields = [
         "created_at",
@@ -182,13 +195,31 @@ class Command(BaseCommand):
         stops = [stop for stop in self.stops_to_create if stop.stop_area_id]
         stops += [stop for stop in self.stops_to_update if stop.stop_area_id]
 
-        stop_areas = StopArea.objects.in_bulk([stop.stop_area_id for stop in stops])
+        existing_stop_areas = StopArea.objects.in_bulk(self.stop_areas.keys())
+        stop_areas_to_update = []
+        stop_areas_to_create = []
+        for stop_area_id, stop_area in self.stop_areas.items():
+            if stop_area_id in existing_stop_areas:
+                stop_areas_to_update.append(stop_area)
+            else:
+                stop_areas_to_create.append(stop_area)
+
+        StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
+        StopArea.objects.bulk_update(
+            stop_areas_to_update,
+            ["name", "latlong", "active", "admin_area", "stop_area_type"],
+            batch_size=100,
+        )
+
+        existing_stop_areas = StopArea.objects.in_bulk(
+            [stop.stop_area_id for stop in stops]
+        )
         stop_areas_to_create = set(
             StopArea(
                 id=stop.stop_area_id, active=True, admin_area_id=stop.admin_area_id
             )
             for stop in stops
-            if stop.stop_area_id not in stop_areas
+            if stop.stop_area_id not in existing_stop_areas
         )
         StopArea.objects.bulk_create(stop_areas_to_create, batch_size=100)
 
@@ -237,6 +268,8 @@ class Command(BaseCommand):
         )
         atco_code_prefix = None
 
+        self.stop_areas = {}
+
         iterator = ET.iterparse(path, events=["start", "end"])
         for event, element in iterator:
             if event == "start":
@@ -269,6 +302,11 @@ class Command(BaseCommand):
                 self.get_stop(element)
 
                 element.clear()  # save memory
+
+            elif element.tag == "StopArea":
+                stop_area = self.get_stop_area(element)
+                self.stop_areas[stop_area.id] = stop_area
+                element.clear()
 
         self.update_and_create()
 

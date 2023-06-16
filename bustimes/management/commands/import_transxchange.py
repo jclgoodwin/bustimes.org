@@ -1096,7 +1096,11 @@ class Command(BaseCommand):
             line_brand = line.line_brand
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
-                if txc_service.marketing_name in ("CornwallbyKernow", "Cardiff Bus"):
+                if txc_service.marketing_name in (
+                    "CornwallbyKernow",
+                    "Cardiff Bus",
+                    line.line_name,
+                ):
                     pass
                 elif (
                     "tudents only" in txc_service.marketing_name
@@ -1207,6 +1211,7 @@ class Command(BaseCommand):
                 "service": service,
                 "revision_number": transxchange.attributes["RevisionNumber"],
                 "service_code": txc_service.service_code,
+                "public_use": service.public_use,
             }
 
             for key in ("outbound_description", "inbound_description"):
