@@ -228,7 +228,7 @@ class ViewsTests(TestCase):
     def test_search(self):
         response = self.client.get("/search?q=melton")
         self.assertContains(response, "1 place")
-        self.assertContains(response, "Melton Constable")
+        self.assertContains(response, "<b>Melton</b> Constable")
         self.assertContains(response, "/localities/melton-constable")
 
         response = self.client.get("/search")
@@ -243,7 +243,7 @@ class ViewsTests(TestCase):
         Service.objects.bulk_update(services, ["search_vector"])
 
         response = self.client.get("/search?q=sandwich+deal")
-        self.assertContains(response, "Sandwich - Deal")
+        self.assertContains(response, "<b>Sandwich</b> - <b>Deal</b>")
         self.assertContains(
             response, '<li><a href="?q=sandwich+deal&amp;page=2#services">2</a></li>'
         )
