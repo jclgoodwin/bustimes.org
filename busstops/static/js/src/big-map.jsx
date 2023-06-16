@@ -25,7 +25,7 @@ const stopsLayerStyle = {
   type: "circle",
   paint: {
     "circle-color": "#333",
-    "circle-opacity": .6,
+    "circle-opacity": 0.6,
     "circle-radius": 4,
   },
 };
@@ -84,8 +84,10 @@ function BigMap() {
 
       if (
         zoom >= 13 &&
-        !(stopsHighWaterMark?.contains(bounds.getNorthWest())
-          && stopsHighWaterMark.contains(bounds.getSouthEast()))
+        !(
+          stopsHighWaterMark?.contains(bounds.getNorthWest()) &&
+          stopsHighWaterMark.contains(bounds.getSouthEast())
+        )
       ) {
         loadStops(bounds);
       }
@@ -127,8 +129,6 @@ function BigMap() {
     };
   }, []);
   */
-
-
 
   /*
   let timeout;
@@ -178,7 +178,7 @@ function BigMap() {
 
   const handleMapClick = React.useCallback((e) => {
     if (e.features.length) {
-      setClickedStopId(e.features[0])
+      setClickedStopId(e.features[0]);
     } else if (!e.originalEvent.defaultPrevented) {
       setClickedVehicleMarker(null);
     }
@@ -221,12 +221,9 @@ function BigMap() {
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-
-
-      <Source type="geojson" data={ stops }>
+      <Source type="geojson" data={stops}>
         <Layer {...stopsLayerStyle} />
       </Source>
-
 
       {/*vehiclesList.map((item) => {
         return (
@@ -252,7 +249,6 @@ function BigMap() {
           onClose={() => setClickedStopId(null)}
         />
       )}
-
     </Map>
   );
 }

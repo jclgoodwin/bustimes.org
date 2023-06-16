@@ -64,33 +64,33 @@ body .maplibregl-popup-content {
 }
 
 body .maplibregl-popup-anchor-top .maplibregl-popup-tip {
-    border-bottom-color: var(--background-color);
+  border-bottom-color: var(--background-color);
 }
 
 body .maplibregl-popup-anchor-top-left .maplibregl-popup-tip {
-    border-bottom-color: var(--background-color);
+  border-bottom-color: var(--background-color);
 }
 
 body .maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
-    border-bottom-color: var(--background-color);
+  border-bottom-color: var(--background-color);
 }
 
 body .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
-    border-top-color: var(--background-color);
+  border-top-color: var(--background-color);
 }
 
 body .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip {
-    border-top-color: var(--background-color);
+  border-top-color: var(--background-color);
 }
 
 body .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
-    border-top-color: var(--background-color);
+  border-top-color: var(--background-color);
 }
 
 body .maplibregl-popup-anchor-left .maplibregl-popup-tip {
-    border-right-color: var(--background-color);
+  border-right-color: var(--background-color);
 }
 
 body .maplibregl-popup-anchor-right .maplibregl-popup-tip {
-    border-left-color: var(--background-color);
+  border-left-color: var(--background-color);
 }
