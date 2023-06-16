@@ -47,24 +47,7 @@
 
 {% block foot %}
     {% load static %}
-
-    <script
-      src="https://browser.sentry-cdn.com/7.44.2/bundle.min.js"
-      integrity="sha384-DKvNAjtV829X/OfXiq539qMBQjm0X+mzgpSoEbPd0CUa6jU62Z7Y23By/A4oLgqB"
-      crossorigin="anonymous"
-    ></script>
-    <script>
-        if (typeof Sentry !== 'undefined') {
-            Sentry.init({
-                dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
-                allowUrls: [/bustimes\.org\/static\//],
-              {% if sentry_release %}release: "{{ sentry_release }}",{% endif %}
-            });
-        }
-    </script>
-    {% include "maps_js.html" %}
-    <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script src="{% static 'js/bigmap2.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'js/bigmap.css' %}">
+    <script src="{% static 'js/bigmap.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
-
 {% endblock %}

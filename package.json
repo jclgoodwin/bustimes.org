@@ -21,7 +21,7 @@
     "maplibre-gl": "^3.0.0"
   },
   "scripts": {
-    "watch": "esbuild busstops/static/js/jeremyjacob.jsx --outdir=busstops/static/js --bundle --watch",
-    "build": "esbuild busstops/static/js/jeremyjacob.jsx --outdir=busstops/static/js --bundle --minify"
+    "watch": "esbuild busstops/static/js/jeremyjacob.jsx busstops/static/js/bigmap.jsx --outdir=busstops/static/js --bundle --watch",
+    "build": "esbuild busstops/static/js/jeremyjacob.jsx busstops/static/js/bigmap.jsx --outdir=busstops/static/js --bundle --minify"
   }
 }

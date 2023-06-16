@@ -59,7 +59,9 @@ function OperatorMap() {
       let url = apiRoot + "vehicles.json?operator=" + window.OPERATOR_ID;
       fetch(url).then((response) => {
         response.json().then((items) => {
-          setBounds(getBounds(items));
+          if (!bounds) {
+            setBounds(getBounds(items));
+          }
 
           setVehicles(
             Object.assign({}, ...items.map((item) => ({ [item.id]: item })))

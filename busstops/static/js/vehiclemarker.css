@@ -49,6 +49,10 @@
 
 /* !!!!!!!  */
 
+.maplibregl-ctrl-group button {
+  border-radius: 0;
+}
+
 body .maplibregl-map {
   font-family: inherit;
 }
