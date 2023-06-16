@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import Map from "react-map-gl/maplibre";
-
-
+import Map, {
+  NavigationControl, GeolocateControl
+} from "react-map-gl/maplibre";
 import { LngLatBounds } from "maplibre-gl";;
 
 import VehicleMarker from "./VehicleMarker";
@@ -36,15 +36,12 @@ function OperatorMap() {
       }
 
       const handleChange = (e) => {
-        console.log("handle");
         setDarkMode(e.matches);
       }
 
-      console.log("add");
       query.addEventListener("change", handleChange);
 
       return () => {
-        console.log("remove");
         query.removeEventListener("change", handleChange)
       };
     }
@@ -115,6 +112,9 @@ function OperatorMap() {
     // mapLib={maplibregl}
 
     >
+      <NavigationControl showCompass={false} />
+      <GeolocateControl />
+
 
       { Object.values(vehicles).map((item) => {
         return (
@@ -126,11 +126,10 @@ function OperatorMap() {
         );
       }) }
 
-
-        {clickedVehicle && (
+      {clickedVehicle && (
           <VehiclePopup
             item={clickedVehicle}
-            onClose={() => setClickedVehicleId(null)}
+            onClose={() => handleVehicleMarkerClick(null)}
           />
         )}
 
