@@ -26,7 +26,8 @@
   color: #fff;
 }
 
-.vehicle-marker:hover {
+.vehicle-marker:hover,
+.vehicle-marker.selected {
   border-color: var(--marker-arrow-color);
 }
 
@@ -54,6 +55,8 @@ body .maplibregl-map {
 
 body .maplibregl-popup-content {
   background: var(--background-color);
+  line-height: 1.5;
+  padding: 10px;
 }
 
 body .maplibregl-popup-anchor-top .maplibregl-popup-tip {

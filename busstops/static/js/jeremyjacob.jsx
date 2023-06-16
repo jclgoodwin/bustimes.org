@@ -56,8 +56,6 @@ function OperatorMap() {
 
   React.useEffect(() => {
     const loadVehicles = () => {
-      console.log("load!");
-
       let url = apiRoot + "vehicles.json?operator=" + window.OPERATOR_ID;
       fetch(url).then((response) => {
         response.json().then((items) => {
@@ -67,7 +65,6 @@ function OperatorMap() {
             Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
           );
           setLoading(false);
-          console.log("set timeout");
           clearTimeout(timeout);
           timeout = setTimeout(loadVehicles, 10000); // 10 seconds
         });
@@ -77,7 +74,6 @@ function OperatorMap() {
     loadVehicles();
 
     const handleVisibilityChange = (event) => {
-      console.log("handle");
       if (event.target.hidden) {
         clearTimeout(timeout);
       } else {
@@ -93,8 +89,25 @@ function OperatorMap() {
     };
   }, []);
 
-  const [clickedVehicleMarkerId, handleVehicleMarkerClick] =
+  const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
+
+  const handleVehicleMarkerClick = React.useCallback((event, id) => {
+    event.originalEvent.preventDefault();
+    setClickedVehicleMarker(id);
+  }, []);
+
+  const handleMapClick = React.useCallback((e) => {
+    if (!e.originalEvent.defaultPrevented) {
+      setClickedVehicleMarker(null);
+    }
+  }, []);
+
+  const handleMapLoad = React.useCallback((event) => {
+    const map = event.target;
+    map.keyboard.disableRotation();
+    map.touchZoomRotate.disableRotation();
+  }, []);
 
   if (loading) {
     return <div className="sorry">Loading…</div>;
@@ -126,6 +139,8 @@ function OperatorMap() {
           : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
       }
       RTLTextPlugin={null}
+      onClick={handleMapClick}
+      onLoad={handleMapLoad}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
@@ -134,6 +149,7 @@ function OperatorMap() {
         return (
           <VehicleMarker
             key={item.id}
+            selected={item.id === clickedVehicleMarkerId}
             vehicle={item}
             onClick={handleVehicleMarkerClick}
           />
@@ -143,7 +159,7 @@ function OperatorMap() {
       {clickedVehicle && (
         <VehiclePopup
           item={clickedVehicle}
-          onClose={() => handleVehicleMarkerClick(null)}
+          onClose={() => setClickedVehicleMarker(null)}
         />
       )}
     </Map>

@@ -21,6 +21,10 @@ export default function VehicleMarker(props) {
     className += " livery-" + props.vehicle.vehicle.livery;
   }
 
+  if (props.selected) {
+    className += " selected";
+  }
+
   let css = props.vehicle.vehicle.css;
   if (css) {
     css = {
@@ -36,7 +40,7 @@ export default function VehicleMarker(props) {
       latitude={props.vehicle.coordinates[1]}
       longitude={props.vehicle.coordinates[0]}
       rotation={rotation}
-      onClick={() => props.onClick(props.vehicle.id)}
+      onClick={(event) => props.onClick(event, props.vehicle.id)}
     >
       <div className={className} style={css}>
         <div className="text">{props.vehicle.service?.line_name}</div>
@@ -45,5 +49,3 @@ export default function VehicleMarker(props) {
     </Marker>
   );
 }
-
-// export default VehicleMarker;
