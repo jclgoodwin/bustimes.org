@@ -9,6 +9,7 @@ COPY busstops/static /app/busstops/static
 COPY Makefile .eslintignore .eslintrc.js .sass-lint.yml /app/
 # RUN make lint
 RUN make build-static
+RUN npm run build
 
 
 FROM python:3.11-bullseye

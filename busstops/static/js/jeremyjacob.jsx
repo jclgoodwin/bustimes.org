@@ -9,7 +9,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 
 
-import LngLatBounds from "maplibre-gl";;
+import { LngLatBounds } from "maplibre-gl";;
 
 // import VehicleMarker from "./VehicleMarker";
 // import VehiclePopup from "./VehiclePopup";
@@ -21,17 +21,14 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 const apiRoot = "https://bustimes.org/";
 
-
-
-
-function getBounds()
-                    if (!bounds) {
-                        bounds = new L.LatLngBounds();
-                        for (var i = data.length - 1; i >= 0; i--) {
-                            bounds.extend([data[i].coordinates[1], data[i].coordinates[0]]);
-                        }
-                        map.fitBounds(bounds);
-                    }
+function getBounds(items) {
+  let bounds = new LngLatBounds();
+  for (let item of items) {
+    bounds.extend([item.coordinates[0], item.coordinates[1]]);
+  }
+  debugger;
+  return bounds;
+}
 
 
 
@@ -82,7 +79,8 @@ function VehicleMarker(props) {
 }
 
 
-
+  const loadVehicles = () => {
+  };
 
 
 function OperatorMap() {
@@ -116,12 +114,18 @@ function OperatorMap() {
 
   const [loading, setLoading] = React.useState(true);
 
-  const [vehicles, setVehicles] = React.useState({});
+  const [vehicles, setVehicles] = React.useState(null);
 
-  const loadVehicles = () => {
+
+  const [bounds, setBounds] = React.useState(null);
+
+
+  React.useEffect(() => {
     let url = apiRoot + "vehicles.json?operator=" + window.OPERATOR_ID;
     fetch(url).then((response) => {
       response.json().then((items) => {
+
+        setBounds(getBounds(items));
 
         setVehicles(
           Object.assign({}, ...items.map((item) => ({[item.id]: item})))
@@ -130,16 +134,13 @@ function OperatorMap() {
 
       });
     });
-  };
+  }, []);
 
 
-  // if (loading) {
-  //   return "Loading…";
-  // }
 
-  // if () {
-  //   let mapStyleUrl =
-  // }
+  if (loading) {
+    return "Loading…";
+  }
 
   return (
     <Map
@@ -149,43 +150,27 @@ function OperatorMap() {
     touchRotate={false}
     pitchWithRotate={false}
 
-    onLoad={loadVehicles}
+    // onLoad={loadVehicles}
 
-    // minZoom={5}
-    // maxZoom={18}
+    minZoom={6}
+    maxZoom={16}
 
-        // initialViewState={{
-        //   latitude: 54.1,
-        //   longitude: -2.9,
-        //   zoom: 5
-        // }}
+    bounds={bounds}
 
-        // maxBounds={[
-        //   [-12, 48],
-        //   [3, 62],
-        // ]}
-
-        // onMoveEnd={handleMoveEnd}
-        // style={{ position: "absolute", top: 56, bottom: 0, height: "auto" }}
     mapStyle={
-      // loading ? "" : (
         darkMode ?
         "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json" :
         "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
       // )
     }
-    // interactiveLayerIds={['stops', 'vehicles']}
-
-    // onMouseEnter={onMouseEnter}
-    // onMouseLeave={onMouseLeave}
-    // cursor={cursor}
 
     // onClick={onClick}
 
-    // hash={true}
-    // mapLib={maplibregl}
+    hash={true}
 
     RTLTextPlugin={null}
+    // mapLib={maplibregl}
+
     >
 
       { Object.values(vehicles).map((item) => {
