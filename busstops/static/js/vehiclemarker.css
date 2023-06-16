@@ -1,0 +1,47 @@
+:root {
+  --pale-grey: #eee;
+  --marker-border-color: #fff;
+  --marker-arrow-color: #000;
+
+  @media (prefers-color-scheme: dark) {
+    --pale-grey: #222;
+    --marker-border-color: #000;
+    --marker-arrow-color: #fff;
+  }
+}
+
+.vehicle-marker {
+  width: 24px;
+  height: 16px;
+  background: #fff;
+  border: 1px solid var(--marker-border-color);
+  cursor: pointer;
+  text-align: center;
+  overflow: hidden;
+  line-height: 16px;
+  color: #000;
+}
+
+.vehicle-marker.white-text {
+  color: #fff;
+}
+
+.vehicle-marker:hover {
+  border-color: var(--marker-arrow-color);
+}
+
+.arrow {
+  border: 4px solid transparent;
+  border-right: 5px solid var(--marker-arrow-color);
+  border-left: 0;
+  left: -6px;
+  position: absolute;
+  top: 5px;
+}
+
+.right .arrow {
+  border-left: 5px solid var(--marker-arrow-color);
+  border-right: 0;
+  left: auto;
+  right: -6px;
+}

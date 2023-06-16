@@ -9,10 +9,18 @@
   },
   "dependencies": {
     "accessible-autocomplete": "^2.0.4",
+    "esbuild": "0.18.3",
     "html5shiv": "^3.7.3",
     "leaflet": "^1.9.3",
     "leaflet.locatecontrol": "^0.76.1",
     "loadjs": "^4.2.0",
-    "reqwest": "^2.0.5"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "reqwest": "^2.0.5",
+    "react-map-gl": "7.1.0-beta.2",
+    "maplibre-gl": "^3.0.0"
+  },
+  "scripts": {
+    "watch": "esbuild busstops/static/js/jeremyjacob.jsx --outdir=busstops/static/js --bundle"
   }
 }

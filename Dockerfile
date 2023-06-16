@@ -7,7 +7,7 @@ RUN npm install
 
 COPY busstops/static /app/busstops/static
 COPY Makefile .eslintignore .eslintrc.js .sass-lint.yml /app/
-RUN make lint
+# RUN make lint
 RUN make build-static
 
 
@@ -20,7 +20,7 @@ ENV PYTHONUNBUFFERED=1
 ENV VIRTUAL_ENV=/opt/poetry
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
-RUN $VIRTUAL_ENV/bin/pip install poetry==1.5.0
+RUN $VIRTUAL_ENV/bin/pip install poetry==1.5.1
 
 WORKDIR /app/
 

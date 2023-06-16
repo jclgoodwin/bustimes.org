@@ -34,6 +34,7 @@
         border: 0;
     }
 
+    /*
     @media (max-width: 600px) {
         #map {
             bottom: 92px; /* ad 50px + footer 42px */
@@ -45,6 +46,7 @@
             bottom: 168px; /* ad 126px + footer 42px */
         }
     }
+    */
     </style>
 {% endblock %}
 
@@ -61,8 +63,7 @@
 {% block foot %}
     {% load static %}
     <script>OPERATOR_ID="{{ operator.noc }}";</script>
-    {% include "maps_js.html" %}
-    <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script async src="{% static 'js/operator-map.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'js/jeremyjacob.css' %}">
+    <script async src="{% static 'js/jeremyjacob.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}
