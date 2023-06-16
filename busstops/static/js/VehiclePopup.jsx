@@ -5,18 +5,14 @@ function VehiclePopup({ item, onClose }) {
   let line_name = item.service?.line_name;
   if (item.destination) {
     if (line_name) {
-      line_name += ' to ';
+      line_name += " to ";
     }
     line_name += item.destination;
   }
 
   let vehicle = item.vehicle.name;
   if (item.vehicle.url) {
-    vehicle = (
-      <a href={`https://bustimes.org${item.vehicle.url}`}>
-        {vehicle}
-      </a>
-    );
+    vehicle = <a href={`https://bustimes.org${item.vehicle.url}`}>{vehicle}</a>;
   }
 
   const date = new Date(item.datetime);
@@ -29,12 +25,10 @@ function VehiclePopup({ item, onClose }) {
       closeOnClick={false}
       onClose={onClose}
     >
-      <div>
-        {line_name}
-      </div>
+      <div>{line_name}</div>
       {vehicle}
-      { item.features && <div>{item.vehicle.features}</div> }
-      <div>{ date.toTimeString().slice(0, 8) }</div>
+      {item.features && <div>{item.vehicle.features}</div>}
+      <div>{date.toTimeString().slice(0, 8)}</div>
     </Popup>
   );
 }
