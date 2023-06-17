@@ -22,13 +22,54 @@ function getBoundsQueryString(bounds) {
 
 const stopsLayerStyle = {
   id: "stops",
-  type: "circle",
-  paint: {
-    "circle-color": "#333",
-    "circle-opacity": 0.6,
-    "circle-radius": 4,
+  type: "symbol",
+  layout: {
+    "text-field": ["get", "icon"],
+    "text-font": ["Stadia Regular"],
+    "text-allow-overlap": true,
+    "text-size": 10,
+    "icon-rotate": ["+", ["get", "bearing"], 45],
+    "icon-image": "rail",
+    "icon-size": .5,
+    "icon-allow-overlap": true,
   },
+  'paint': {
+    'text-color': '#fff',
+    'text-halo-color': '#222',
+    'text-halo-width': 1,
+  },
+
+  // paint: {
+  //   "circle-color": "#333",
+  //   "circle-opacity": 0.6,
+  //   "circle-radius": 4,
+  // },
 };
+
+// const stopsLayerStyle = {
+//   id: "stations",
+//   type: "symbol",
+//   layout: {
+//     "text-field": ["get", "icon"],
+//     "text-font": ["Stadia Regular"],
+//     "text-allow-overlap": true,
+//     "text-size": 12,
+//     "icon-rotate": ["get", "bearing"],
+//     "icon-image": "symbol-music",
+//   },
+//   'paint': {
+//     'text-color': '#202',
+//     // 'text-halo-color': '#fff',
+//     // 'text-halo-width': 2
+//   },
+
+//   // paint: {
+//   //   "circle-color": "#333",
+//   //   "circle-opacity": 0.6,
+//   //   "circle-radius": 4,
+//   // },
+// };
+
 
 function BigMap() {
   // dark mode:
@@ -180,7 +221,7 @@ function BigMap() {
     if (e.features.length) {
       setClickedStopId(e.features[0]);
     } else if (!e.originalEvent.defaultPrevented) {
-      setClickedVehicleMarker(null);
+      setClickedStopId(null);
     }
   }, []);
 
@@ -188,6 +229,28 @@ function BigMap() {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+
+    if (map.getZoom() >= 13) {
+      loadStops(map.getBounds());
+    }
+
+    map.loadImage('/static/pointy.png', function(error, image) {
+      if (error) {
+        throw error;
+      } else {
+        map.addImage("rail", image);
+      }
+    });
+  }, []);
+
+  const [cursor, setCursor] = React.useState(null);
+
+  const onMouseEnter = React.useCallback(() => {
+    setCursor("pointer");
+  }, []);
+
+  const onMouseLeave = React.useCallback(() => {
+    setCursor(null);
   }, []);
 
   const clickedVehicle =
@@ -215,6 +278,9 @@ function BigMap() {
       hash={true}
       RTLTextPlugin={null}
       onClick={handleMapClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      cursor={cursor}
       onLoad={handleMapLoad}
       interactiveLayerIds={["stops"]}
     >
@@ -223,6 +289,7 @@ function BigMap() {
 
       <Source type="geojson" data={stops}>
         <Layer {...stopsLayerStyle} />
+        {/*<Layer {...stationsLayerStyle} />*/}
       </Source>
 
       {/*vehiclesList.map((item) => {
