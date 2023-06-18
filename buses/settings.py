@@ -319,6 +319,4 @@ TNDS_DIR = DATA_DIR / "TNDS"
 TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5sy")
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
 
-ADS = bool(os.environ.get("ADS"))
-
 ABBREVIATE_HOURLY = False

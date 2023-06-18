@@ -5,3 +5,4 @@ config/deploy.yml
 .git/
 *.sql
 fly.toml
+dist
