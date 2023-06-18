@@ -107,6 +107,7 @@ function BigMap() {
 
   const loadStops = React.useCallback((bounds) => {
     const url = apiRoot + "stops.json" + getBoundsQueryString(bounds);
+
     fetch(url).then((response) => {
       response.json().then((items) => {
         setStops(items);
@@ -123,6 +124,8 @@ function BigMap() {
     if (zoom > 8) {
       const bounds = map.getBounds();
 
+      loadVehicles(bounds);
+
       if (
         zoom >= 13 &&
         !(
@@ -135,41 +138,43 @@ function BigMap() {
     }
   };
 
-  /*
-  React.useEffect(() => {
-    const loadVehicles = () => {
-      let url = apiRoot + "vehicles.json";
-      fetch(url).then((response) => {
-        response.json().then((items) => {
+  const loadVehicles = React.useCallback((bounds) => {
+    const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
 
-          setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
-          );
-          setLoading(false);
-          clearTimeout(timeout);
-          timeout = setTimeout(loadVehicles, 10000); // 10 seconds
-        });
+    fetch(url).then((response) => {
+      response.json().then((items) => {
+
+        setVehicles(
+          Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
+        );
+        // setLoading(false);
+        // clearTimeout(timeout);
+        // timeout =
+        setTimeout(loadVehicles, 30000); // 30 seconds
       });
-    };
-
-    loadVehicles();
-
-    const handleVisibilityChange = (event) => {
-      if (event.target.hidden) {
-        clearTimeout(timeout);
-      } else {
-        loadVehicles();
-      }
-    };
-
-    window.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearTimeout(timeout);
-    };
+    });
   }, []);
-  */
+
+  // React.useEffect(() => {
+
+  //   loadVehicles();
+
+  //   const handleVisibilityChange = (event) => {
+  //     if (event.target.hidden) {
+  //       clearTimeout(timeout);
+  //     } else {
+  //       loadVehicles();
+  //     }
+  //   };
+
+  //   window.addEventListener("visibilitychange", handleVisibilityChange);
+
+  //   return () => {
+  //     window.removeEventListener("visibilitychange", handleVisibilityChange);
+  //     clearTimeout(timeout);
+  //   };
+  // }, []);
+
 
   /*
   let timeout;
@@ -231,7 +236,9 @@ function BigMap() {
     map.touchZoomRotate.disableRotation();
 
     if (map.getZoom() >= 13) {
-      loadStops(map.getBounds());
+      let bounds = map.getBounds();
+      loadStops(bounds);
+      loadVehicles(bounds);
     }
 
     map.loadImage('/static/pointy.png', function(error, image) {
@@ -255,6 +262,8 @@ function BigMap() {
 
   const clickedVehicle =
     clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
+
+  const vehiclesList = vehicles ? Object.values(vehicles) : [];
 
   return (
     <Map
@@ -292,7 +301,7 @@ function BigMap() {
         {/*<Layer {...stationsLayerStyle} />*/}
       </Source>
 
-      {/*vehiclesList.map((item) => {
+      {vehiclesList.map((item) => {
         return (
           <VehicleMarker
             key={item.id}
@@ -301,7 +310,9 @@ function BigMap() {
             onClick={handleVehicleMarkerClick}
           />
         );
-      })*/}
+      })}
+
+      <div className="maplibregl-ctrl">Zoom in to see stops</div>
 
       {clickedVehicle && (
         <VehiclePopup

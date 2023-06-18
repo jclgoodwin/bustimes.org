@@ -341,7 +341,6 @@ h3 {
 }
 
 .button,
-button,
 input[type='submit'] {
     appearance: none;
     background: var(--brand-color);
@@ -1073,13 +1072,11 @@ table {
         vertical-align: top;
     }
 
-    button {
+    .action {
+        font: inherit;
         border: 0;
-        border-radius: 0;
-        display: block;
         margin: -.25em -.5em;
         padding: .25em .5em;
-        position: static;
         cursor: pointer;
     }
 }
