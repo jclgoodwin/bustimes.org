@@ -201,7 +201,7 @@ class Command(ImportLiveVehiclesCommand):
                 if "fleet_number" in defaults:
                     vehicle.fleet_number = defaults["fleet_number"]
                 vehicle.save(update_fields=["fleet_code", "fleet_number"])
-        except Vehicle.MultipleObjectsReturned as e:
+        except (Vehicle.MultipleObjectsReturned, IntegrityError) as e:
             print(e, operator_ref, vehicle_ref)
             vehicle = vehicles.first()
             created = False
