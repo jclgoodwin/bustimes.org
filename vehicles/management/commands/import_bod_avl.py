@@ -435,9 +435,11 @@ class Command(ImportLiveVehiclesCommand):
         operator_ref = monitored_vehicle_journey["OperatorRef"]
 
         if origin_aimed_departure_time:
+            difference = origin_aimed_departure_time - datetime
             if operator_ref == "TFLO":
-                origin_aimed_departure_time = None
-            elif origin_aimed_departure_time - datetime > timedelta(hours=20):
+                if difference < -timedelta(hours=1) or difference > timedelta(hours=1):
+                    origin_aimed_departure_time = None
+            elif difference > timedelta(hours=20):
                 origin_aimed_departure_time -= timedelta(hours=24)
 
         latest_journey = vehicle.latest_journey
