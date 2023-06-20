@@ -120,7 +120,7 @@ class Command(ImportLiveVehiclesCommand):
         return self.vehicles.get_or_create(
             {"source": self.source, "code": code, "operator_id": self.operators[0]},
             operator__in=self.operators,
-            code=code,
+            code__iexact=code,
         )
 
     def get_journey(self, item, vehicle):

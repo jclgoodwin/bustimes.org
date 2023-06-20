@@ -110,7 +110,9 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operator = None
 
-        vehicle = Vehicle.objects.filter(operator=None, code=vehicle_code).first()
+        vehicle = Vehicle.objects.filter(
+            operator=None, code__iexact=vehicle_code
+        ).first()
         if vehicle:
             return vehicle, False
 

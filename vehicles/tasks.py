@@ -72,7 +72,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
             | Q(code__startswith=f"{vehicle}_-_")
         )
     else:
-        vehicles = vehicles.filter(code=vehicle)
+        vehicles = vehicles.filter(code__iexact=vehicle)
 
     vehicle, created = vehicles.get_or_create(defaults)
 
