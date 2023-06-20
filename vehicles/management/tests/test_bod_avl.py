@@ -20,7 +20,7 @@ from busstops.models import (
 from bustimes.models import Calendar, Garage, Route, StopTime, Trip
 
 from ...models import Livery, Vehicle, VehicleJourney
-from ..commands import import_bod_avl, new_bod_avl
+from ..commands import import_bod_avl
 
 
 class BusOpenDataVehicleLocationsTest(TestCase):
@@ -118,7 +118,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
     @time_machine.travel("2020-05-01", tick=False)
     def test_new_bod_avl_a(self):
-        command = new_bod_avl.Command()
+        command = import_bod_avl.Command()
         command.source = self.source
         # command.get_operator.cache_clear()
 
@@ -138,7 +138,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
                 with mock.patch(
-                    "vehicles.management.commands.new_bod_avl.redis_client",
+                    "vehicles.management.commands.import_bod_avl.redis_client",
                     redis_client,
                 ):
 
@@ -267,7 +267,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             },
         ]
 
-        command = new_bod_avl.Command()
+        command = import_bod_avl.Command()
         command.source = self.source
         command.source.datetime = command.get_datetime(
             {"RecordedAtTime": "2020-10-15T07:46:08+00:00"}
@@ -280,10 +280,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "vehicles.management.import_live_vehicles.redis_client", redis_client
         ):
             with mock.patch(
-                "vehicles.management.commands.new_bod_avl.redis_client", redis_client
+                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
             ):
                 with mock.patch(
-                    "vehicles.management.commands.new_bod_avl.Command.get_items",
+                    "vehicles.management.commands.import_bod_avl.Command.get_items",
                     return_value=items,
                 ):
                     with self.assertNumQueries(41):
