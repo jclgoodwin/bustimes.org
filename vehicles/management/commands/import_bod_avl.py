@@ -143,6 +143,9 @@ class Command(ImportLiveVehiclesCommand):
 
         if operator_ref == "TFLO":
             defaults["livery_id"] = 262
+            if vehicle_ref.startswith("TMP"):
+                defaults["notes"] = "Spare ticket machine"
+                defaults["locked"] = True
             vehicles = self.vehicles.filter(
                 Q(operator__in=operators) | Q(operator=None)
             )
