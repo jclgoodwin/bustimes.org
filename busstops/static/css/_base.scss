@@ -1589,7 +1589,10 @@ nav {
 .ad-wrapper {
     text-align: center;
     margin: 1em -1em 10px;
-    min-height: 120px;
+
+    body & {
+        min-height: 120px;  // override AdFirst Media <style>
+    }
 
     iframe {
         vertical-align: bottom;
