@@ -611,7 +611,7 @@ class Command(BaseCommand):
         if dataset.datetime == last_modified:
             return dataset
 
-        logger.info(download_url)
+        logger.info(noc)
 
         with log_time_taken(logger):
 

@@ -327,7 +327,7 @@ def ticketer(specific_operator=None):
             or not command.source.datetime
             or last_modified > command.source.datetime
         ):
-            logger.info(f"{source.url} {last_modified}")
+            logger.info(f"{source} {last_modified}")
 
             sha1 = get_sha1(path)
 
