@@ -131,7 +131,7 @@ def get_operator_by(scheme, code):
         except Operator.DoesNotExist:
             pass
         except Operator.MultipleObjectsReturned as e:
-            logger.error(e)
+            logger.error(e, exc_info=True)
 
 
 def get_open_data_operators():
@@ -264,7 +264,7 @@ class Command(BaseCommand):
             except Operator.DoesNotExist:
                 pass
             except Operator.MultipleObjectsReturned as e:
-                logger.error(e)
+                logger.error(e, exc_info=True)
 
         name = get_operator_name(operator_element)
 
@@ -273,7 +273,7 @@ class Command(BaseCommand):
         except Operator.DoesNotExist:
             pass
         except Operator.MultipleObjectsReturned as e:
-            logger.error(e)
+            logger.error(e, exc_info=True)
 
         # Get by regional operator code
         operator_code = operator_element.findtext("OperatorCode")

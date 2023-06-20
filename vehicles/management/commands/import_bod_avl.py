@@ -196,15 +196,16 @@ class Command(ImportLiveVehiclesCommand):
 
         try:
             vehicle, created = vehicles.get_or_create(defaults)
+        except (Vehicle.MultipleObjectsReturned, IntegrityError) as e:
+            print(e, operator_ref, vehicle_ref)
+            vehicle = vehicles.first()
+            created = False
+        else:
             if "fleet_code" in defaults and not vehicle.fleet_code:
                 vehicle.fleet_code = defaults["fleet_code"]
                 if "fleet_number" in defaults:
                     vehicle.fleet_number = defaults["fleet_number"]
                 vehicle.save(update_fields=["fleet_code", "fleet_number"])
-        except (Vehicle.MultipleObjectsReturned, IntegrityError) as e:
-            print(e, operator_ref, vehicle_ref)
-            vehicle = vehicles.first()
-            created = False
 
         return vehicle, created
 
