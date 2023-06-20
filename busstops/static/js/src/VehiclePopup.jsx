@@ -39,14 +39,12 @@ export default function VehiclePopup({ item, onClose }) {
   }
 
   if (item.trip_id) {
-    line_name = (
-      <a href={`https://bustimes.org/trips/${item.trip_id}`}>{line_name}</a>
-    );
+    line_name = <a href={`/trips/${item.trip_id}`}>{line_name}</a>;
   }
 
   let vehicle = item.vehicle.name;
   if (item.vehicle.url) {
-    vehicle = <a href={`https://bustimes.org${item.vehicle.url}`}>{vehicle}</a>;
+    vehicle = <a href={`${item.vehicle.url}`}>{vehicle}</a>;
   }
 
   const date = new Date(item.datetime);

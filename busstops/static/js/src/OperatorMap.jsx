@@ -10,6 +10,8 @@ import { LngLatBounds } from "maplibre-gl";
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
+import { useDarkMode } from "./utils";
+
 import "maplibre-gl/dist/maplibre-gl.css";
 
 const apiRoot = "https://bustimes.org/";
@@ -22,29 +24,10 @@ function getBounds(items) {
   return bounds;
 }
 
-function OperatorMap() {
+export default function OperatorMap() {
   // dark mode:
 
-  const [darkMode, setDarkMode] = React.useState(false);
-
-  React.useEffect(() => {
-    if (window.matchMedia) {
-      let query = window.matchMedia("(prefers-color-scheme: dark)");
-      if (query.matches) {
-        setDarkMode(true);
-      }
-
-      const handleChange = (e) => {
-        setDarkMode(e.matches);
-      };
-
-      query.addEventListener("change", handleChange);
-
-      return () => {
-        query.removeEventListener("change", handleChange);
-      };
-    }
-  }, []);
+  const darkMode = useDarkMode();
 
   const [loading, setLoading] = React.useState(true);
 
@@ -167,10 +150,3 @@ function OperatorMap() {
     </Map>
   );
 }
-
-const root = ReactDOM.createRoot(document.getElementById("map"));
-root.render(
-  <React.StrictMode>
-    <OperatorMap />
-  </React.StrictMode>
-);

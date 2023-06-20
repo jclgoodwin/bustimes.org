@@ -12,6 +12,8 @@ import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup from "./StopPopup";
 
+import { useDarkMode } from "./utils";
+
 import "maplibre-gl/dist/maplibre-gl.css";
 
 const apiRoot = "https://bustimes.org/";
@@ -30,13 +32,13 @@ const stopsLayerStyle = {
     "text-size": 10,
     "icon-rotate": ["+", ["get", "bearing"], 45],
     "icon-image": "rail",
-    "icon-size": .5,
+    "icon-size": 0.5,
     "icon-allow-overlap": true,
   },
-  'paint': {
-    'text-color': '#fff',
-    'text-halo-color': '#222',
-    'text-halo-width': 1,
+  paint: {
+    "text-color": "#fff",
+    "text-halo-color": "#222",
+    "text-halo-width": 1,
   },
 
   // paint: {
@@ -70,30 +72,8 @@ const stopsLayerStyle = {
 //   // },
 // };
 
-
-function BigMap() {
-  // dark mode:
-
-  const [darkMode, setDarkMode] = React.useState(false);
-
-  React.useEffect(() => {
-    if (window.matchMedia) {
-      let query = window.matchMedia("(prefers-color-scheme: dark)");
-      if (query.matches) {
-        setDarkMode(true);
-      }
-
-      const handleChange = (e) => {
-        setDarkMode(e.matches);
-      };
-
-      query.addEventListener("change", handleChange);
-
-      return () => {
-        query.removeEventListener("change", handleChange);
-      };
-    }
-  }, []);
+export default function BigMap() {
+  const darkMode = useDarkMode();
 
   const [loading, setLoading] = React.useState(true);
 
@@ -143,7 +123,6 @@ function BigMap() {
 
     fetch(url).then((response) => {
       response.json().then((items) => {
-
         setVehicles(
           Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
         );
@@ -174,7 +153,6 @@ function BigMap() {
   //     clearTimeout(timeout);
   //   };
   // }, []);
-
 
   /*
   let timeout;
@@ -241,7 +219,7 @@ function BigMap() {
       loadVehicles(bounds);
     }
 
-    map.loadImage('/static/pointy.png', function(error, image) {
+    map.loadImage("/static/pointy.png", function (error, image) {
       if (error) {
         throw error;
       } else {
@@ -330,10 +308,3 @@ function BigMap() {
     </Map>
   );
 }
-
-const root = ReactDOM.createRoot(document.getElementById("hugemap"));
-root.render(
-  <React.StrictMode>
-    <BigMap />
-  </React.StrictMode>
-);

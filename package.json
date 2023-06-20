@@ -21,7 +21,7 @@
     "maplibre-gl": "^3.0.0"
   },
   "scripts": {
-    "watch": "esbuild busstops/static/js/src/operator-map.jsx busstops/static/js/src/big-map.jsx --outdir=busstops/static/js/dist --bundle --watch",
-    "build": "esbuild busstops/static/js/src/operator-map.jsx busstops/static/js/src/big-map.jsx --outdir=busstops/static/js/dist --bundle --minify"
+    "watch": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --watch",
+    "build": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --minify"
   }
 }
