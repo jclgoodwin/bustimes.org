@@ -46,6 +46,7 @@ class Command(ImportLiveVehiclesCommand):
             "fleet_number": fleet_number,
             "source": self.source,
             "operator_id": operators[0],
+            "code": code,
         }
 
         try:
