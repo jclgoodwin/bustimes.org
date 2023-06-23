@@ -86,7 +86,7 @@ class NatExpTest(TestCase):
                 items = list(nat_exp_command.get_items())
                 self.assertEqual(len(items), 0)
 
-            self.assertFalse(sleep.called)
+        sleep.assert_called_with(4444)
 
         # and now:
         with time_machine.travel("2022-06-25T14:00:00.000Z"):
@@ -107,6 +107,8 @@ class NatExpTest(TestCase):
         self.assertEqual(response[0]["destination"], "Great Yarmouth")
         self.assertEqual(response[0]["delay"], 4140.0)
         self.assertEqual(len(response), 4)
+
+        sleep.assert_called_with(1.5)
 
         self.assertEqual(4, Vehicle.objects.all().count())
 
