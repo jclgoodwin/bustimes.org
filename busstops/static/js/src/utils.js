@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
 
+
 export const useDarkMode = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  if (window.matchMedia) {
+    const query = window.matchMedia("(prefers-color-scheme: dark)");
 
-  useEffect(() => {
-    if (window.matchMedia) {
-      let query = window.matchMedia("(prefers-color-scheme: dark)");
-      if (query.matches) {
-        setDarkMode(true);
-      }
+    const [darkMode, setDarkMode] = useState(query.matches);
 
+    useEffect(() => {
       const handleChange = (e) => {
         setDarkMode(e.matches);
       };
@@ -19,8 +17,8 @@ export const useDarkMode = () => {
       return () => {
         query.removeEventListener("change", handleChange);
       };
-    }
-  }, []);
+    }, []);
 
-  return darkMode;
+    return darkMode;
+  }
 };
