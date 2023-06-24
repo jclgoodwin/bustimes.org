@@ -1,9 +1,9 @@
-import React from "react";
+import React, { memo } from "react";
 import { Marker } from "react-map-gl/maplibre";
 
 import "./vehiclemarker.css";
 
-export default function VehicleMarker(props) {
+function VehicleMarker(props) {
   let className = "vehicle-marker";
 
   let rotation = props.vehicle.heading;
@@ -49,3 +49,12 @@ export default function VehicleMarker(props) {
     </Marker>
   );
 }
+
+function propsAreEqual(prev, props) {
+  return (
+    prev.selected === props.selected &&
+    prev.vehicle.datetime === props.vehicle.datetime
+  );
+}
+
+export default memo(VehicleMarker, propsAreEqual);

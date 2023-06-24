@@ -9,6 +9,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 
 import VehicleMarker from "./VehicleMarker";
+import StopMarker from "./StopMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup from "./StopPopup";
 
@@ -22,54 +23,30 @@ function getBoundsQueryString(bounds) {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
 }
 
-const stopsLayerStyle = {
-  id: "stops",
-  type: "symbol",
-  layout: {
-    "text-field": ["get", "icon"],
-    "text-font": ["Stadia Regular"],
-    "text-allow-overlap": true,
-    "text-size": 10,
-    "icon-rotate": ["+", ["get", "bearing"], 45],
-    "icon-image": "rail",
-    "icon-size": 0.5,
-    "icon-allow-overlap": true,
-  },
-  paint: {
-    "text-color": "#fff",
-    "text-halo-color": "#222",
-    "text-halo-width": 1,
-  },
-
-  // paint: {
-  //   "circle-color": "#333",
-  //   "circle-opacity": 0.6,
-  //   "circle-radius": 4,
-  // },
-};
-
 // const stopsLayerStyle = {
-//   id: "stations",
-//   type: "symbol",
-//   layout: {
-//     "text-field": ["get", "icon"],
-//     "text-font": ["Stadia Regular"],
-//     "text-allow-overlap": true,
-//     "text-size": 12,
-//     "icon-rotate": ["get", "bearing"],
-//     "icon-image": "symbol-music",
-//   },
-//   'paint': {
-//     'text-color': '#202',
-//     // 'text-halo-color': '#fff',
-//     // 'text-halo-width': 2
-//   },
+//   id: "stops",
 
+//   minzoom: 12,
+//   maxzoom: 15,
+
+//   // type: "circle",
 //   // paint: {
 //   //   "circle-color": "#333",
-//   //   "circle-opacity": 0.6,
-//   //   "circle-radius": 4,
+//   //   "circle-opacity": 0.5,
+//   //   "circle-radius": 3,
 //   // },
+
+//   type: "symbol",
+//   layout: {
+//     // "text-field": ["get", "icon"],
+//     // "text-font": ["Stadia Regular"],
+//     // "text-allow-overlap": true,
+//     // "text-size": 10,
+//     "icon-rotate": ["get", "bearing"],
+//     "icon-image": "rail",
+//     "icon-size": 0.5,
+//     "icon-allow-overlap": true,
+//   }
 // };
 
 export default function BigMap() {
@@ -82,6 +59,8 @@ export default function BigMap() {
   const [bounds, setBounds] = React.useState(null);
 
   const [stops, setStops] = React.useState(null);
+
+  const [zoom, setZoom] = React.useState(null);
 
   const [clickedStopId, setClickedStopId] = React.useState(null);
 
@@ -101,13 +80,16 @@ export default function BigMap() {
   const handleMoveEnd = (evt) => {
     const map = evt.target;
     const zoom = map.getZoom();
+
+    setZoom(zoom);
+
     if (zoom > 8) {
       const bounds = map.getBounds();
 
       loadVehicles(bounds);
 
       if (
-        zoom >= 13 &&
+        zoom >= 12 &&
         !(
           stopsHighWaterMark?.contains(bounds.getNorthWest()) &&
           stopsHighWaterMark.contains(bounds.getSouthEast())
@@ -129,7 +111,7 @@ export default function BigMap() {
         // setLoading(false);
         // clearTimeout(timeout);
         // timeout =
-        setTimeout(loadVehicles, 30000); // 30 seconds
+        // setTimeout(loadVehicles, 30000); // 30 seconds
       });
     });
   }, []);
@@ -213,19 +195,24 @@ export default function BigMap() {
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-    if (map.getZoom() >= 13) {
+    const zoom = map.getZoom();
+
+    setZoom(zoom);
+
+    if (zoom >= 12) {
       let bounds = map.getBounds();
       loadStops(bounds);
       loadVehicles(bounds);
     }
 
-    map.loadImage("/static/pointy.png", function (error, image) {
-      if (error) {
-        throw error;
-      } else {
-        map.addImage("rail", image);
-      }
-    });
+    // map.loadImage("/static/svg/pointy.png", function (error, image) {
+    //   debugger;
+    //   if (error) {
+    //     throw error;
+    //   } else {
+    //     map.addImage("rail", image);
+    //   }
+    // });
   }, []);
 
   const [cursor, setCursor] = React.useState(null);
@@ -243,6 +230,7 @@ export default function BigMap() {
 
   const vehiclesList = vehicles ? Object.values(vehicles) : [];
 
+  console.log(zoom);
   return (
     <Map
       initialViewState={{
@@ -274,10 +262,15 @@ export default function BigMap() {
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      <Source type="geojson" data={stops}>
-        <Layer {...stopsLayerStyle} />
-        {/*<Layer {...stationsLayerStyle} />*/}
-      </Source>
+      {stops?.features.map((item) => {
+        return (
+          <StopMarker
+            key={item.properties.url}
+            stop={item}
+            // onClick={handleVehicleMarkerClick}
+          />
+        );
+      })}
 
       {vehiclesList.map((item) => {
         return (
@@ -290,7 +283,13 @@ export default function BigMap() {
         );
       })}
 
-      <div className="maplibregl-ctrl">Zoom in to see stops</div>
+      {zoom < 8 ? (
+        <div className="maplibregl-ctrl">Zoom in to see buses</div>
+      ) : null}
+
+      {zoom < 12 ? (
+        <div className="maplibregl-ctrl">Zoom in to see stops</div>
+      ) : null}
 
       {clickedVehicle && (
         <VehiclePopup

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Popup } from "react-map-gl/maplibre";
 
 function getTimeDelta(seconds) {
@@ -29,7 +29,7 @@ function getDelay(item) {
   }
 }
 
-export default function VehiclePopup({ item, onClose }) {
+function VehiclePopup({ item, onClose }) {
   let line_name = item.service?.line_name;
   if (item.destination) {
     if (line_name) {
@@ -84,3 +84,12 @@ export default function VehiclePopup({ item, onClose }) {
     </Popup>
   );
 }
+
+function propsAreEqual(prev, props) {
+  console.log(prev == props);
+  return (
+    prev.item.id == props.item.id && prev.item.datetime === props.item.datetime
+  );
+}
+
+export default memo(VehiclePopup, propsAreEqual);

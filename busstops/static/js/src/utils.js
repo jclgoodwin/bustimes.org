@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-
 export const useDarkMode = () => {
   if (window.matchMedia) {
     const query = window.matchMedia("(prefers-color-scheme: dark)");
