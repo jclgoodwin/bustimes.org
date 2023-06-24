@@ -260,7 +260,7 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
             or url == "/version"
         ):
             return 0
-        return 0.005
+        return 0.001
 
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],
