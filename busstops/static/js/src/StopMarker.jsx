@@ -2,11 +2,13 @@ import React, { memo } from "react";
 import { Marker } from "react-map-gl/maplibre";
 
 function StopMarker(props) {
-  let className = "leaflet-marker-icon stop";
+  let className = "stop";
 
   let rotation = props.stop.properties.bearing;
 
-  if (rotation != null) {
+  if (rotation === null) {
+    className += " no-direction"
+  } else {
     rotation += 45;
   }
 
@@ -22,7 +24,10 @@ function StopMarker(props) {
     <Marker
       latitude={props.stop.geometry.coordinates[1]}
       longitude={props.stop.geometry.coordinates[0]}
-      onClick={(event) => props.onClick(event, props.vehicle.id)}
+      onClick={(event) => {
+        event.originalEvent.preventDefault();
+        props.onClick(props.stop);
+      }}
     >
       <div className={className}>
         {props.stop.properties.icon}

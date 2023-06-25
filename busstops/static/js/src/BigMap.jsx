@@ -267,7 +267,7 @@ export default function BigMap() {
           <StopMarker
             key={item.properties.url}
             stop={item}
-            // onClick={handleVehicleMarkerClick}
+            onClick={setClickedStopId}
           />
         );
       })}
@@ -283,12 +283,13 @@ export default function BigMap() {
         );
       })}
 
-      {zoom < 8 ? (
-        <div className="maplibregl-ctrl">Zoom in to see buses</div>
-      ) : null}
-
       {zoom < 12 ? (
-        <div className="maplibregl-ctrl">Zoom in to see stops</div>
+        <div className="maplibregl-ctrl">
+          <div>Zoom in to see stops</div>
+          {zoom < 8 ? (
+            <div>Zoom in to see buses</div>
+          ) : null}
+        </div>
       ) : null}
 
       {clickedVehicle && (

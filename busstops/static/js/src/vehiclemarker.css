@@ -47,6 +47,31 @@
   right: -6px;
 }
 
+.stop {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.stop-arrow,
+.rail {
+  background: rgba(0, 0, 0, .6);
+  border: 1px solid var(--white);
+  border-radius: 0 8px 8px;
+  height: 9px;
+  width: 9px;
+}
+
+
+.stop:hover .stop-arrow {
+  background: rgba(0, 0, 0, .9);
+}
+
+.no-direction .stop-arrow,
+.rail {
+  border-radius: 8px;
+}
+
 /* !!!!!!!  */
 
 .maplibregl-ctrl-group button {

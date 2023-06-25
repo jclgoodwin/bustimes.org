@@ -77,7 +77,11 @@ a {
         text-decoration-skip-ink: auto;
     }
 
-    &:focus,
+    &:focus {
+        outline: var(--brand-color) solid 2px;
+        text-decoration: underline;
+    }
+
     &:active {
         background-color: var(--brand-color);
         color: var(--active-link-color);
