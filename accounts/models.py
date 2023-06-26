@@ -1,6 +1,5 @@
-from django.db import models
-
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.db import models
 from django.urls import reverse
 
 
@@ -22,7 +21,7 @@ class User(AbstractUser):
         "busstops.Operator", blank=True, through=OperatorUser
     )
     ip_address = models.GenericIPAddressField(blank=True, null=True)
-
+    score = models.IntegerField(blank=True, null=True)
     objects = CustomUserManager()
 
     REQUIRED_FIELDS = []
