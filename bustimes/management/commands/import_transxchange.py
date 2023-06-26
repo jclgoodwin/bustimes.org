@@ -1367,7 +1367,7 @@ class Command(BaseCommand):
         transxchange = TransXChange(open_file)
 
         if not transxchange.journeys:
-            logger.warning(f"{filename} has no journeys")
+            logger.warning(f"{filename or open_file} has no journeys")
             return
 
         self.vehicle_types = {}
