@@ -46,15 +46,16 @@ class Command(ImportLiveVehiclesCommand):
             "fleet_number": fleet_number,
             "source": self.source,
             "operator_id": operators[0],
+            "code": code,
         }
 
         try:
             return self.vehicles.get_or_create(
-                defaults, code=code, operator__in=operators
+                defaults, code__iexact=code, operator__in=operators
             )
         except self.vehicles.model.MultipleObjectsReturned:
             return (
-                self.vehicles.filter(code=code, operator__in=operators).first(),
+                self.vehicles.filter(code__iexact=code, operator__in=operators).first(),
                 False,
             )
 

@@ -1,6 +1,3 @@
-from django.conf import settings
-
-
 def ad(request):
     if (
         request.path.startswith("/vehicles/")
@@ -13,4 +10,4 @@ def ad(request):
     if request.headers.get("cf-connecting-ip", "").startswith("138.38.229."):
         return {"ad": not request.path.startswith("/stops/")}
 
-    return {"ad": settings.ADS}
+    return {"ad": True}

@@ -110,7 +110,9 @@ class Command(ImportLiveVehiclesCommand):
         else:
             operator = None
 
-        vehicle = Vehicle.objects.filter(operator=None, code=vehicle_code).first()
+        vehicle = Vehicle.objects.filter(
+            operator=None, code__iexact=vehicle_code
+        ).first()
         if vehicle:
             return vehicle, False
 
@@ -149,7 +151,8 @@ class Command(ImportLiveVehiclesCommand):
 
         journey = VehicleJourney(
             datetime=departure_time,
-            destination=item.get("dd", ""),  # destinationDisplay
+            destination=item.get("dd", "")
+            or item.get("fs", ""),  # destinationDisplay or finalStopName
             route_name=item.get("sn", ""),  # serviceNumber
         )
 
@@ -201,6 +204,12 @@ class Command(ImportLiveVehiclesCommand):
             journey.trip = journey.get_trip(
                 destination_ref=item.get("fr"), departure_time=departure_time
             )
+
+            # update vehicle garage
+            if trip := journey.trip:
+                if trip.garage_id != vehicle.garage_id:
+                    vehicle.garage_id = trip.garage_id
+                    vehicle.save(update_fields=["garage"])
 
         return journey
 

@@ -69,7 +69,7 @@ class Command(ImportLiveVehiclesCommand):
         condition = Q(operator__in=self.operators.values()) | Q(operator=operator)
         vehicles = self.vehicles.filter(condition)
 
-        vehicle = vehicles.filter(code=code).first()
+        vehicle = vehicles.filter(code__iexact=code).first()
 
         if not vehicle and "reg" in defaults:
             vehicle = vehicles.filter(reg__iexact=defaults["reg"]).first()

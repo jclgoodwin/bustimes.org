@@ -170,6 +170,7 @@ def bus_open_data(api_key, specific_operator):
         url = f"{url_prefix}/api/v1/dataset/"
         while url:
             response = session.get(url, params=params)
+            assert response.ok
             json = response.json()
             results = json["results"]
             if not results:
@@ -327,7 +328,7 @@ def ticketer(specific_operator=None):
             or not command.source.datetime
             or last_modified > command.source.datetime
         ):
-            logger.info(f"{source.url} {last_modified}")
+            logger.info(f"{source} {last_modified}")
 
             sha1 = get_sha1(path)
 

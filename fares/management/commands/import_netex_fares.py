@@ -126,7 +126,7 @@ class Command(BaseCommand):
                 if element.tag[:31] == "{http://www.netex.org.uk/netex}":
                     element.tag = element.tag[31:]
         except ET.ParseError as e:
-            logger.error(e)
+            logger.error(e, exc_info=True)
             return
 
         operators = element.findall(
@@ -611,7 +611,7 @@ class Command(BaseCommand):
         if dataset.datetime == last_modified:
             return dataset
 
-        logger.info(download_url)
+        logger.info(noc)
 
         with log_time_taken(logger):
 

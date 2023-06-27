@@ -13,7 +13,7 @@ from bustimes.models import Calendar, Trip
 from bustimes.utils import get_calendars
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 def parse_datetime(string):
@@ -82,13 +82,11 @@ class Command(ImportLiveVehiclesCommand):
                         self.url.format(line_name, direction), timeout=5
                     )
                 except RequestException as e:
-                    print(e)
+                    logger.error(e, exc_info=True)
                     continue
                 if not res.ok:
                     print(res.url, res)
                     continue
-                if direction != res.json()["dir"]:
-                    print(res.url)
                 for item in res.json()["services"]:
                     if item["live"] and (
                         now - self.get_datetime(item) < timedelta(hours=1)
@@ -97,11 +95,11 @@ class Command(ImportLiveVehiclesCommand):
                         yield item
             self.save()
 
-            if count:
-                sleep(self.sleep)
-            else:
-                # no current data, wait for an hour +
-                sleep(4444)
+            sleep(self.sleep)
+
+        if not count:
+            # no current data, wait for an hour +
+            sleep(4444)
 
     def get_vehicle(self, item):
         code = item["live"]["vehicle"]
@@ -120,7 +118,7 @@ class Command(ImportLiveVehiclesCommand):
         return self.vehicles.get_or_create(
             {"source": self.source, "code": code, "operator_id": self.operators[0]},
             operator__in=self.operators,
-            code=code,
+            code__iexact=code,
         )
 
     def get_journey(self, item, vehicle):

@@ -260,7 +260,7 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
             or url == "/version"
         ):
             return 0
-        return 0.005
+        return 0.001
 
     sentry_sdk.init(
         dsn=os.environ["SENTRY_DSN"],
@@ -318,7 +318,5 @@ TNDS_DIR = DATA_DIR / "TNDS"
 
 TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5sy")
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
-
-ADS = bool(os.environ.get("ADS"))
 
 ABBREVIATE_HOURLY = False
