@@ -594,12 +594,10 @@ class Command(ImportLiveVehiclesCommand):
                 location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
         return location
 
-    @retry(
-        wait=wait_exponential(multiplier=1, min=4, max=10),
-        after=after_log(logger, logging.ERROR),
-    )
     def get_items(self):
-        response = self.session.get(self.source.url, params=self.source.settings)
+        response = self.session.get(
+            self.source.url, params=self.source.settings, timeout=10
+        )
         assert response.ok
 
         if "datafeed" in self.source.url:
@@ -752,15 +750,18 @@ class Command(ImportLiveVehiclesCommand):
         )
 
     def update(self):
-        now = timezone.now()
-
-        (
-            changed_items,
-            changed_journey_items,
-            changed_item_identities,
-            changed_journey_identities,
-            total_items,
-        ) = self.get_changed_items()
+        with retry(
+            wait=wait_exponential(multiplier=1, min=10, max=30),
+            after=after_log(logger, logging.ERROR),
+        ):
+            now = timezone.now()
+            (
+                changed_items,
+                changed_journey_items,
+                changed_item_identities,
+                changed_journey_identities,
+                total_items,
+            ) = self.get_changed_items()
 
         age = (now - self.source.datetime).total_seconds()
         self.hist[now.second % 10] = age
