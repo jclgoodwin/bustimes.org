@@ -594,13 +594,14 @@ class Command(ImportLiveVehiclesCommand):
                 location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
         return location
 
-    @retry(
-        wait=wait_exponential(multiplier=1, min=4, max=10),
-        after=after_log(logger, logging.ERROR),
-    )
+    #@retry(
+    #    wait=wait_exponential(multiplier=1, min=10, max=20),
+    #    after=after_log(logger, logging.ERROR),
+    #)
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
-        assert response.ok
+        if not response.ok:
+            return []
 
         if "datafeed" in self.source.url:
             data = response.content
