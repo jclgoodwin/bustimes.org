@@ -17,7 +17,7 @@ import { useDarkMode } from "./utils";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "/";
+const apiRoot = "https://bustimes.org/";
 
 function getBoundsQueryString(bounds) {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
