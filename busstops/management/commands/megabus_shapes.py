@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 
 import polyline
 import requests_cache
@@ -52,6 +52,10 @@ class Command(BaseCommand):
         )
 
         source = DataSource.objects.get(name="Megabus")
+        start = time()
+        print(start)
+        start = int(start) - 86400
+        end = start + 86400
 
         for service in Service.objects.filter(operator="MEGA", current=1):
             print(service)
@@ -63,11 +67,15 @@ class Command(BaseCommand):
                 print(f"{service.line_name} has all route links already")
                 continue
 
-            url = source.url.format(f"{service.line_name}/1665964800/1666137600")
+            line_name = service.line_name
+            if line_name == "M37":
+                line_name = "M37N"
+            url = source.url.format(f"{line_name}/{start}/{end}")
 
             response = self.session.get(url, timeout=10)
             if not response.from_cache:
                 sleep(2)
+            print(response.url)
             data = response.json()
             if "routes" not in data:
                 print(data)
