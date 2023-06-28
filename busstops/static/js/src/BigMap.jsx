@@ -17,10 +17,14 @@ import { useDarkMode } from "./utils";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
+const apiRoot = "/";
 
 function getBoundsQueryString(bounds) {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
+}
+
+function containsBounds(a, b) {
+  return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
 // const stopsLayerStyle = {
@@ -56,13 +60,15 @@ export default function BigMap() {
 
   const [vehicles, setVehicles] = React.useState(null);
 
-  const [bounds, setBounds] = React.useState(null);
-
   const [stops, setStops] = React.useState(null);
 
   const [zoom, setZoom] = React.useState(null);
 
   const [clickedStopId, setClickedStopId] = React.useState(null);
+
+  const [stopsHighWaterMark, setStopsHighWaterMark] = React.useState(null);
+
+  const [vehiclesHighWaterMark, setVehiclesHighWaterMark] = React.useState(null);
 
   const loadStops = React.useCallback((bounds) => {
     const url = apiRoot + "stops.json" + getBoundsQueryString(bounds);
@@ -75,7 +81,19 @@ export default function BigMap() {
     });
   }, []);
 
-  const [stopsHighWaterMark, setStopsHighWaterMark] = React.useState(null);
+  const loadVehicles = React.useCallback((bounds) => {
+    const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
+
+    fetch(url).then((response) => {
+      response.json().then((items) => {
+        setVehicles(
+          Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
+        );
+        setVehiclesHighWaterMark(bounds);
+      });
+    });
+  }, []);
+
 
   const handleMoveEnd = (evt) => {
     const map = evt.target;
@@ -86,93 +104,15 @@ export default function BigMap() {
     if (zoom > 8) {
       const bounds = map.getBounds();
 
-      loadVehicles(bounds);
+      if (!containsBounds(vehiclesHighWaterMark, bounds)) {
+        loadVehicles(bounds);
+      }
 
-      if (
-        zoom >= 12 &&
-        !(
-          stopsHighWaterMark?.contains(bounds.getNorthWest()) &&
-          stopsHighWaterMark.contains(bounds.getSouthEast())
-        )
-      ) {
+      if (zoom >= 12 && !containsBounds(stopsHighWaterMark, bounds)) {
         loadStops(bounds);
       }
     }
   };
-
-  const loadVehicles = React.useCallback((bounds) => {
-    const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
-
-    fetch(url).then((response) => {
-      response.json().then((items) => {
-        setVehicles(
-          Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
-        );
-        // setLoading(false);
-        // clearTimeout(timeout);
-        // timeout =
-        // setTimeout(loadVehicles, 30000); // 30 seconds
-      });
-    });
-  }, []);
-
-  // React.useEffect(() => {
-
-  //   loadVehicles();
-
-  //   const handleVisibilityChange = (event) => {
-  //     if (event.target.hidden) {
-  //       clearTimeout(timeout);
-  //     } else {
-  //       loadVehicles();
-  //     }
-  //   };
-
-  //   window.addEventListener("visibilitychange", handleVisibilityChange);
-
-  //   return () => {
-  //     window.removeEventListener("visibilitychange", handleVisibilityChange);
-  //     clearTimeout(timeout);
-  //   };
-  // }, []);
-
-  /*
-  let timeout;
-
-  React.useEffect(() => {
-    const loadVehicles = () => {
-      let url = apiRoot + "vehicles.json";
-      fetch(url).then((response) => {
-        response.json().then((items) => {
-
-          setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
-          );
-          setLoading(false);
-          clearTimeout(timeout);
-          timeout = setTimeout(loadVehicles, 10000); // 10 seconds
-        });
-      });
-    };
-
-    loadVehicles();
-
-    const handleVisibilityChange = (event) => {
-      if (event.target.hidden) {
-        clearTimeout(timeout);
-      } else {
-        loadVehicles();
-      }
-    };
-
-    window.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      window.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearTimeout(timeout);
-    };
-  }, []);
-  */
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -183,10 +123,11 @@ export default function BigMap() {
   }, []);
 
   const handleMapClick = React.useCallback((e) => {
-    if (e.features.length) {
+    if (e.features?.length) {
       setClickedStopId(e.features[0]);
     } else if (!e.originalEvent.defaultPrevented) {
       setClickedStopId(null);
+      setClickedVehicleMarker(null);
     }
   }, []);
 
@@ -230,14 +171,13 @@ export default function BigMap() {
 
   const vehiclesList = vehicles ? Object.values(vehicles) : [];
 
-  console.log(zoom);
+
+  const showStops = zoom >= 12;
+
   return (
     <Map
-      initialViewState={{
-        latitude: 53.45, // ireland
-        longitude: -7.5,
-        zoom: 6,
-      }}
+      initialViewState={window.INITIAL_VIEW_STATE}
+
       dragRotate={false}
       touchPitch={false}
       touchRotate={false}
@@ -257,12 +197,12 @@ export default function BigMap() {
       onMouseLeave={onMouseLeave}
       cursor={cursor}
       onLoad={handleMapLoad}
-      interactiveLayerIds={["stops"]}
+      // interactiveLayerIds={["stops"]}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {stops?.features.map((item) => {
+      {showStops && stops?.features.map((item) => {
         return (
           <StopMarker
             key={item.properties.url}
@@ -283,7 +223,7 @@ export default function BigMap() {
         );
       })}
 
-      {zoom < 12 ? (
+      {zoom && !showStops ? (
         <div className="maplibregl-ctrl">
           <div>Zoom in to see stops</div>
           {zoom < 8 ? (

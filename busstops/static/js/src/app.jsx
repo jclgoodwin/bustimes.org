@@ -13,7 +13,16 @@ if (root) {
     </React.StrictMode>
   );
 } else if (window.location.href.indexOf("/operators/") !== -1) {
-  const root = ReactDOM.createRoot(document.getElementById("map"));
+  root = ReactDOM.createRoot(document.getElementById("map"));
+  root.render(
+    <React.StrictMode>
+      <OperatorMap />
+    </React.StrictMode>
+  );
+} else if (window.SERVICE_ID) {
+  root =  document.getElementById("map");
+  root.classList.add('expanded');
+  root = ReactDOM.createRoot(root);
   root.render(
     <React.StrictMode>
       <OperatorMap />

@@ -48,6 +48,18 @@
 {% block foot %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
+    <script>
+        INITIAL_VIEW_STATE = {
+        {% if request.headers.cf_ipcountry == "IE" %}
+            latitude: 53.45,
+            longitude: -7.5,
+        {% else %}
+            latitude: 54,
+            longitude: -2.9,
+        {% endif %}
+            zoom: 6,
+        };
+    </script>
     <script src="{% static 'js/dist/app.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}
