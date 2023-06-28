@@ -104,9 +104,9 @@
     <tbody>
         {% for item in bod_avl_status %}
             <tr>
-                <td>{{ item.fetched|date:'H:i:s.u' }}</td>
-                <td>{{ item.timestamp|date:'H:i:s.u' }}</td>
-                <td>{{ item.age }}</td>
+                <td>{{ item.fetched|date:'H:i:s' }}</td>
+                <td>{{ item.timestamp|date:'H:i:s' }}</td>
+                <td>{{ item.age.total_seconds }}</td>
                 <td>{{ item.items }}</td>
                 <td>{{ item.changed }}</td>
             </tr>
@@ -129,7 +129,7 @@
         <tbody>
             {% for item in status %}
                 <tr>
-                    <td>{{ item.0 }}</td>
+                    <td>{{ item.0|date:'H:i:s' }}</td>
                     <td>{{ item.1 }}</td>
                     <td>{{ item.2 }}</td>
                 </tr>
