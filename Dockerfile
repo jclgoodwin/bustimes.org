@@ -42,10 +42,10 @@ ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
 WORKDIR /app/
 
-COPY . /app/
-COPY --from=0 /app/busstops/static /app/busstops/static
-COPY --from=0 /app/node_modules /app/node_modules
 COPY --from=1 $VIRTUAL_ENV $VIRTUAL_ENV
+COPY --from=0 /app/node_modules /app/node_modules
+COPY --from=0 /app/busstops/static /app/busstops/static
+COPY . /app/
 
 ENV PORT=8000 SECRET_KEY=f STATIC_ROOT=/staticfiles
 RUN ./manage.py collectstatic --noinput
