@@ -87,7 +87,7 @@ class NaptanTest(TestCase):
         self.assertContains(response, "Darlington")
         stop = response.context_data["object"]
         self.assertEqual(stop.admin_area.name, "Darlington")
-        self.assertEqual(stop.stop_area_id, "077G5394")
+        self.assertEqual(stop.stop_area_id, "076G5394")
         self.assertAlmostEqual(stop.latlong.x, -1.538062647801621)
         self.assertAlmostEqual(stop.latlong.y, 54.511514214023784)
 
