@@ -107,12 +107,11 @@ class Command(BaseCommand):
         if bearing is None:
             bearing = ""
 
+        # a stop can be in multiple stop areas
+        # we assume (dubiously) that it has no more than 1 active one
         stop_area = None
         for stop_area_ref in element.findall("StopAreas/StopAreaRef"):
-            modification = stop_area_ref.attrib.get("Modification")
-            if modification == "delete":
-                pass
-            else:
+            if stop_area_ref.attrib.get("Modification") != "delete":
                 stop_area = stop_area_ref.text
 
         stop = StopPoint(
