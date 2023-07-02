@@ -389,10 +389,11 @@ class Timetable:
     def get_date_options(self):
         date = self.today
 
-        for calendar in self.calendars:
-            for calendar_date in calendar.calendardate_set.all():
-                if not calendar_date.operation and calendar_date.contains(date):
-                    calendar.start_date = calendar_date.end_date
+        # I can't remember the point of this
+        # for calendar in self.calendars:
+        #     for calendar_date in calendar.calendardate_set.all():
+        #         if not calendar_date.operation and calendar_date.contains(date) and calendar.end_date:
+        #             calendar.start_date = calendar_date.end_date
 
         start_dates = [calendar.start_date for calendar in self.calendars]
         if start_dates:
