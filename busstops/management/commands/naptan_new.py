@@ -107,6 +107,14 @@ class Command(BaseCommand):
         if bearing is None:
             bearing = ""
 
+        stop_area = None
+        for stop_area_ref in element.findall("StopAreas/StopAreaRef"):
+            modification = stop_area_ref.attrib.get("Modification")
+            if modification == "delete":
+                pass
+            else:
+                stop_area = stop_area_ref.text
+
         stop = StopPoint(
             atco_code=atco_code,
             naptan_code=element.findtext("NaptanCode") or element.findtext("PlateCode"),
@@ -116,7 +124,7 @@ class Command(BaseCommand):
             bearing=bearing,
             locality_id=element.findtext("Place/NptgLocalityRef"),
             admin_area_id=element.findtext("AdministrativeAreaRef"),
-            stop_area_id=element.findtext("StopAreas/StopAreaRef"),
+            stop_area_id=stop_area,
             active=element.attrib.get("Status", "active") == "active",
         )
 
