@@ -71,7 +71,7 @@ export default function BigMap() {
   const [vehiclesHighWaterMark, setVehiclesHighWaterMark] = React.useState(null);
 
   const loadStops = React.useCallback((bounds) => {
-    const url = apiRoot + "stops.json" + getBoundsQueryString(bounds);
+    const url = "/stops.json" + getBoundsQueryString(bounds);
 
     fetch(url).then((response) => {
       response.json().then((items) => {
@@ -143,6 +143,9 @@ export default function BigMap() {
     if (zoom >= 12) {
       let bounds = map.getBounds();
       loadStops(bounds);
+      loadVehicles(bounds);
+    } else if (zoom > 8) {
+      let bounds = map.getBounds();
       loadVehicles(bounds);
     }
 

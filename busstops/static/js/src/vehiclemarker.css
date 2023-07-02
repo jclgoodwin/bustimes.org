@@ -20,6 +20,7 @@
   overflow: hidden;
   line-height: 16px;
   color: #000;
+  z-index: 1;
 }
 
 .vehicle-marker.white-text {
@@ -29,6 +30,10 @@
 .vehicle-marker:hover,
 .vehicle-marker.selected {
   border-color: var(--marker-arrow-color);
+}
+
+.vehicle-marker.selected {
+  z-index: 2;
 }
 
 .arrow {
@@ -70,6 +75,19 @@
 .no-direction .stop-arrow,
 .rail {
   border-radius: 8px;
+}
+
+a.link-with-smalls {
+  text-decoration: none;
+}
+
+a.link-with-smalls:hover .description {
+  text-decoration: underline;
+}
+
+.link-with-smalls .smalls {
+  color: var(--text-color);
+  font-size: .75em;
 }
 
 /* !!!!!!!  */
