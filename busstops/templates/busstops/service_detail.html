@@ -4,9 +4,12 @@
 
 {% block title %}{{ object }} – {% if operators %}{{ operators|join:', ' }} – {% endif %}bustimes.org{% endblock %}
 
+{% load static %}
+
 {% block head %}
     <meta property="og:title" content="{{ object }}">
     <meta property="og:description" content="{{ operators|join:', ' }}">
+    <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
 {% endblock %}
 
 {% block bodyclass %}{% endblock %}
@@ -110,30 +113,17 @@
 {% endblock %}
 
 {% block foot %}
-    {% load static %}
+    <script>
+    SERVICE_ID = {{ object.id }};
+    {% if object.geometry %}
+        {% if object.tracking %}SERVICE_TRACKING = true;{% endif %}
+        EXTENT = [{{ object.geometry.extent|join:"," }}];
+            LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version }}.css";
+    </script>
+    <script async src="{% static 'js/dist/app.js' %}"></script>
+    {% else %}</script>{% endif %}
 
     <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script>
-        SERVICE_ID = {{ object.id }};
-        {% if object.geometry %}
-            {% if object.tracking %}SERVICE_TRACKING = true;{% endif %}
-            EXTENT = [{{ object.geometry.extent|join:"," }}];
-            // MAPS_JS_URL = "{% static 'js/maps.js' %}";
-            // LEAFLET_CSS_URL = "{% static 'js/leaflet/dist/leaflet.css' %}";
-            // LEAFLET_JS_URL = "{% static 'js/leaflet/dist/leaflet.js' %}";
-            // LOCATE_JS_URL = "{% static 'js/leaflet.locatecontrol/dist/L.Control.Locate.min.js' %}";
-            LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version }}.css";
-            </script>
-
-
-            <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
-            <script src="{% static 'js/dist/app.js' %}"></script>
-
-            <!-- <script src="{% static 'js/loadjs/loadjs.min.js' %}"></script> -->
-            <!-- <script async src="{% static 'js/servicemap2.js' %}"></script> -->
-        {% else %}
-            </script>
-        {% endif %}
     <script async src="{% static 'js/timetable.js' %}"></script>
     {% if fare_tables %}
         <script async src="{% static 'js/fares.js' %}"></script>
