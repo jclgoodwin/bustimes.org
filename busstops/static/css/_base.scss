@@ -700,16 +700,20 @@ table {
     }
 }
 
-#map {
+.service-map {
     bottom: 0;
     left: 0;
-    position: relative;
+    position: fixed;
     right: 0;
     top: 0;
 
-    &.service-map.expanded {
-        position: fixed;
-    }
+    // make room for ads:
+    margin-bottom: 90px;
+    margin-top: 90px;
+    box-shadow: #fff 0 -100px, #fff 0 126px;
+
+    // height: auto;
+    z-index: 1;
 }
 
 .journey {
@@ -794,29 +798,26 @@ table {
     }
 }
 
-.service-map {
-    display: none;
-    // make room for ads:
-    margin-bottom: 90px;
-    margin-top: 90px;
-    box-shadow: #fff 0 -100px, #fff 0 126px;
+// .trip-wrapper {
+//     position: absolute;
+//     top: 104px;
+//     left: 1em;
+//     overflow: auto;
+//     width: 200px;
+// }
 
-    &.expanded {
-        display: block;
-        height: auto;
-        z-index: 1;
-    }
-}
+// .trip-map-wrapper {
+//     margin: 1em -1em;
+//     position: sticky;
+//     top: 0;
+// }
 
-.trip-map-wrapper {
-    margin: 1em -1em;
-    position: sticky;
-    top: 0;
-}
-
-.trip-map {
-    height: 50vh;
-}
+// .trip-map {
+//     height: 50vh;
+// }
+// .trip-map {
+//     height: 50vh;
+// }
 
 .livery {
     display: inline-block;

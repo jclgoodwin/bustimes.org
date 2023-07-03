@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}{{ object.route.line_name }} – bustimes.org{% endblock %}
+{% block title %}{{ object.route.line_name }} – {{ trip }}{% if destination %} to {{ destination }}{% endif %}  – bustimes.org{% endblock %}
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
@@ -14,9 +14,12 @@
         </div>
     {% endif %}
 
+<div class="trip-wrapper">
+
     <h2>
         {{ trip.route.line_name }}
         -
+        {{ trip }}
         {% if origin and destination %}
             {{ origin }} to {{ destination }}
         {% elif trip.outbound %}
@@ -38,24 +41,23 @@
         <p>{{ trip.garage }}</p>
     {% endif %}
 
+</div>
+
 {% endblock %}
 
 {% load static %}
 
 {% block foot %}
-    {% if stops_json %}
-        {% include "maps_js.html" %}
+    <script>
+        window.STOPS = {{ stops_json }};
         {% if object.route.service.tracking %}
-            <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
-            <script src="{% static 'js/reqwest.min.js' %}"></script>
+            window.SERVICE = {{ object.route.service_id }};
+            window.TRIP_ID = {{ object.id }};
         {% endif %}
-        <script>
-            window.STOPS = {{ stops_json }};
-            {% if object.route.service.tracking %}
-                window.SERVICE = {{ object.route.service_id }};
-                window.TRIP_ID = {{ object.id }};
-            {% endif %}
-        </script>
+    </script>
+    <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
+    <script src="{% static 'js/dist/app.js' %}"></script>
+    {% if object.route.service.tracking %}
+        <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
     {% endif %}
-    <script src="{% static 'js/trip.js' %}"></script>
 {% endblock %}

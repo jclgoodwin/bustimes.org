@@ -1,8 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import OperatorMap from "./OperatorMap";
 import BigMap from "./BigMap";
+import OperatorMap from "./OperatorMap";
+import ServiceMap from "./ServiceMap";
 
 let root = document.getElementById("hugemap");
 if (root) {
@@ -20,12 +21,10 @@ if (root) {
     </React.StrictMode>
   );
 } else if (window.SERVICE_ID) {
-  root =  document.getElementById("map");
-  root.classList.add('expanded');
-  root = ReactDOM.createRoot(root);
+  root = ReactDOM.createRoot(document.getElementById("map"));
   root.render(
     <React.StrictMode>
-      <OperatorMap />
+      <ServiceMap />
     </React.StrictMode>
   );
 }

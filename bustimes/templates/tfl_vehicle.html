@@ -18,6 +18,8 @@
     </div>
 {% endif %}
 
+<div class="trip-wrapper">
+
 <h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
 
 <table class="trip-timetable">
@@ -43,6 +45,8 @@
     {% include 'vehicle_info.html' with vehicle=object %}
 
 {% endif %}
+
+</div>
 
 {% endblock %}
 
