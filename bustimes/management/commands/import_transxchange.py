@@ -906,7 +906,11 @@ class Command(BaseCommand):
                 if journey.journey_pattern:
                     for section in journey.journey_pattern.sections:
                         for timing_link in section.timinglinks:
-                            route_link = route_links[timing_link.route_link_ref]
+                            try:
+                                route_link = route_links[timing_link.route_link_ref]
+                            except KeyError as e:
+                                print(e)
+                                continue
                             if route_link.track:
                                 yield route_link
 
