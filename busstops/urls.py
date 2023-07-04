@@ -26,11 +26,12 @@ urlpatterns = [
         cache_control_s_maxage(3600)(
             stale_if_error(3600)(TemplateView.as_view(template_name="index.html"))
         ),
+        name="index",
     ),
     path("offline", TemplateView.as_view(template_name="offline.html")),
     path("version", views.version),
     path("count", views.count),
-    path("contact", views.contact),
+    path("contact", views.contact, name="contact"),
     path("cookies", TemplateView.as_view(template_name="cookies.html")),
     path("503", TemplateView.as_view(template_name="503.html")),
     path("data", TemplateView.as_view(template_name="data.html")),
@@ -102,7 +103,7 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
-    path("search", views.search),
+    path("search", views.search, name="search"),
     path("journey", views.journey),
     path(".well-known/change-password", views.change_password),
     path("fares/", include(fares_urls)),

@@ -1,5 +1,11 @@
 import React, { memo } from "react";
 import { Popup } from "react-map-gl/maplibre";
+import ReactTimeAgo from "react-time-ago";
+
+import TimeAgo from "javascript-time-ago";
+
+import en from "javascript-time-ago/locale/en.json";
+TimeAgo.addDefaultLocale(en);
 
 function getTimeDelta(seconds) {
   const minutes = Math.round(seconds / 60);
@@ -9,8 +15,8 @@ function getTimeDelta(seconds) {
   return minutes + " minutes";
 }
 
-function getDelay(item) {
-  if (typeof item.delay !== "undefined") {
+function Delay({ item }) {
+  if (typeof delay !== "undefined") {
     let delay = item.delay;
     if (-60 < delay && delay < 60) {
       delay = "On time";
@@ -49,8 +55,6 @@ function VehiclePopup({ item, onClose }) {
     vehicle = <a href={`${item.vehicle.url}`}>{vehicle}</a>;
   }
 
-  const date = new Date(item.datetime);
-
   return (
     <Popup
       offset={8}
@@ -81,8 +85,8 @@ function VehiclePopup({ item, onClose }) {
           {item.wheelchair}
         </div>
       )}
-      {getDelay(item)}
-      <div>{date.toTimeString().slice(0, 8)}</div>
+      <Delay item={item} />
+      <ReactTimeAgo date={datetime} locale="en-GB" tooltip={true} />
     </Popup>
   );
 }

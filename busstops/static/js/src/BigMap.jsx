@@ -288,8 +288,8 @@ export default function BigMap() {
       ) : null}
 
       {zoom && !showStops ? (
-        <div className="maplibregl-ctrl">
-          <div>Zoom in to see stops</div>
+        <div className="maplibregl-ctrl map-status-bar">
+          Zoom in to see stops
           {!shouldShowVehicles(zoom) ? <div>Zoom in to see buses</div> : null}
         </div>
       ) : null}

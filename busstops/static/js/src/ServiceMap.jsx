@@ -222,6 +222,9 @@ export default function OperatorMap() {
           minZoom={8}
           maxZoom={16}
           bounds={window.EXTENT}
+          fitBoundsOptions={{
+            padding: 50,
+          }}
           cursor={cursor}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}

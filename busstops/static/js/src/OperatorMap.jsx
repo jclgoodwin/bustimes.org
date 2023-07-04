@@ -118,6 +118,9 @@ export default function OperatorMap() {
       minZoom={6}
       maxZoom={16}
       bounds={bounds}
+      fitBoundsOptions={{
+        padding: 50,
+      }}
       mapStyle={
         darkMode
           ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
