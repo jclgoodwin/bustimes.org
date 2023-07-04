@@ -1,9 +1,9 @@
-import React from "react";
+import React, { lazy } from "react";
 import ReactDOM from "react-dom/client";
 
-import BigMap from "./BigMap";
-import OperatorMap from "./OperatorMap";
-import ServiceMap from "./ServiceMap";
+const BigMap = lazy(() => import("./BigMap"));
+const OperatorMap = lazy(() => import("./OperatorMap"));
+const ServiceMap = lazy(() => import("./ServiceMap"));
 
 let root = document.getElementById("hugemap");
 if (root) {

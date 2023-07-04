@@ -22,7 +22,7 @@
     "reqwest": "^2.0.5"
   },
   "scripts": {
-    "watch": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --watch",
-    "build": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --minify"
+    "watch": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --splitting --watch --format=esm",
+    "build": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --splitting --minify --format=esm"
   }
 }

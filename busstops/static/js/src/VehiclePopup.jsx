@@ -86,7 +86,9 @@ function VehiclePopup({ item, onClose }) {
         </div>
       )}
       <Delay item={item} />
-      <ReactTimeAgo date={datetime} locale="en-GB" tooltip={true} />
+      <div>
+        <ReactTimeAgo date={item.datetime} locale="en-GB" tooltip={true} />
+      </div>
     </Popup>
   );
 }

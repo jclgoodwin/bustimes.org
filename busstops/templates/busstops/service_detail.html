@@ -120,7 +120,7 @@
         EXTENT = [{{ object.geometry.extent|join:"," }}];
             LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version }}.css";
     </script>
-    <script async src="{% static 'js/dist/app.js' %}"></script>
+    <script async type="module" src="{% static 'js/dist/app.js' %}"></script>
     {% else %}</script>{% endif %}
 
     <script src="{% static 'js/reqwest.min.js' %}"></script>

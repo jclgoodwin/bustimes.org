@@ -55,6 +55,6 @@
     {% load static %}
     <script>OPERATOR_ID="{{ operator.noc }}";</script>
     <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
-    <script src="{% static 'js/dist/app.js' %}"></script>
+    <script type="module" src="{% static 'js/dist/app.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}
