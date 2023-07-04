@@ -40,7 +40,7 @@ function VehicleMarker(props) {
       latitude={props.vehicle.coordinates[1]}
       longitude={props.vehicle.coordinates[0]}
       rotation={rotation}
-      style={props.selected ? {zIndex: 1} : {zIndex: null}}
+      style={props.selected ? { zIndex: 1 } : { zIndex: null }}
       onClick={(event) => props.onClick(event, props.vehicle.id)}
     >
       <div className={className} style={css}>

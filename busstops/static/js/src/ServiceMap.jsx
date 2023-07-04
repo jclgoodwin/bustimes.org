@@ -23,7 +23,6 @@ const apiRoot = "https://bustimes.org/";
 let hasHistory = false;
 let hasCss = false;
 
-
 const stopsStyle = {
   id: "stops",
   type: "circle",
@@ -31,31 +30,38 @@ const stopsStyle = {
     "circle-color": "#fff",
     "circle-radius": 3,
     "circle-stroke-width": 2,
-    "circle-stroke-color": "#555",
+    "circle-stroke-color": "#666",
+    // "circle-stroke-opacity": 0.,
   },
 };
 
 const routeStyle = {
   type: "line",
-}
-
+  paint: {
+    "line-color": "#000",
+    "line-opacity": 0.5,
+    "line-width": 3,
+  },
+};
 
 export default function OperatorMap() {
   const darkMode = useDarkMode();
 
-  const [isOpen, setOpen] = React.useState(window.location.hash.indexOf('#map') === 0);
+  const [isOpen, setOpen] = React.useState(
+    window.location.hash.indexOf("#map") === 0
+  );
 
   const openMap = React.useCallback((e) => {
     hasHistory = true;
-    window.location.hash = '#map';
+    window.location.hash = "#map";
     e.preventDefault();
   }, []);
 
   const closeMap = React.useCallback(() => {
     if (hasHistory) {
-        history.back();
+      history.back();
     } else {
-        window.location.hash = '';
+      window.location.hash = "";
     }
   }, []);
 
@@ -69,7 +75,7 @@ export default function OperatorMap() {
 
   React.useEffect(() => {
     const handleHashChange = () => {
-      if (window.location.hash.indexOf('#map') === 0) {
+      if (window.location.hash.indexOf("#map") === 0) {
         setOpen(true);
       } else {
         setOpen(false);
@@ -97,19 +103,19 @@ export default function OperatorMap() {
   React.useEffect(() => {
     // (overflow css)
     if (isOpen) {
-      document.body.classList.add('has-overlay');
+      document.body.classList.add("has-overlay");
       if (!hasCss) {
-        loadjs(window.LIVERIES_CSS_URL, function() {
-          hasCss = true
+        loadjs(window.LIVERIES_CSS_URL, function () {
+          hasCss = true;
         });
       }
     } else {
-      document.body.classList.remove('has-overlay');
+      document.body.classList.remove("has-overlay");
     }
 
     // service map data
-    fetch(`/services/${window.SERVICE_ID}.json`).then(response => {
-      response.json().then(data => {
+    fetch(`/services/${window.SERVICE_ID}.json`).then((response) => {
+      response.json().then((data) => {
         setGeometry(data.geometry);
         setStops(data.stops);
       });
@@ -178,7 +184,6 @@ export default function OperatorMap() {
     map.touchZoomRotate.disableRotation();
   }, []);
 
-
   const vehiclesList = vehicles ? Object.values(vehicles) : null;
 
   let count = vehiclesList && vehiclesList.length;
@@ -194,7 +199,7 @@ export default function OperatorMap() {
   const button = (
     <a className="button" href="#map" onClick={openMap}>
       Map
-      {count ? ` (tracking ${count})` : null }
+      {count ? ` (tracking ${count})` : null}
     </a>
   );
 
@@ -207,72 +212,72 @@ export default function OperatorMap() {
 
   return (
     <React.Fragment>
-    {button}
-    <div className="service-map">
-      <Map
-        dragRotate={false}
-        touchPitch={false}
-        touchRotate={false}
-        pitchWithRotate={false}
-        minZoom={6}
-        maxZoom={16}
-        bounds={window.EXTENT}
-        cursor={cursor}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        mapStyle={
-          darkMode
-            ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-            : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-        }
-        RTLTextPlugin={null}
-        onClick={handleMapClick}
-        onLoad={handleMapLoad}
-        interactiveLayerIds={["stops"]}
-      >
-        <NavigationControl showCompass={false} />
-        <GeolocateControl />
+      {button}
+      <div className="service-map">
+        <Map
+          dragRotate={false}
+          touchPitch={false}
+          touchRotate={false}
+          pitchWithRotate={false}
+          minZoom={8}
+          maxZoom={16}
+          bounds={window.EXTENT}
+          cursor={cursor}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          mapStyle={
+            darkMode
+              ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
+              : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
+          }
+          RTLTextPlugin={null}
+          onClick={handleMapClick}
+          onLoad={handleMapLoad}
+          interactiveLayerIds={["stops"]}
+        >
+          <NavigationControl showCompass={false} />
+          <GeolocateControl />
 
-        <div className="maplibregl-ctrl">
-          <button onClick={closeMap}>Close map</button>
-          { count ? ` Tracking ${count}` : null}
-        </div>
+          <div className="maplibregl-ctrl">
+            <button onClick={closeMap}>Close map</button>
+            {count ? ` Tracking ${count}` : null}
+          </div>
 
-        {vehiclesList ? vehiclesList.map((item) => {
-          return (
-            <VehicleMarker
-              key={item.id}
-              selected={item.id === clickedVehicleMarkerId}
-              vehicle={item}
-              onClick={handleVehicleMarkerClick}
+          {vehiclesList ? (
+            vehiclesList.map((item) => {
+              return (
+                <VehicleMarker
+                  key={item.id}
+                  selected={item.id === clickedVehicleMarkerId}
+                  vehicle={item}
+                  onClick={handleVehicleMarkerClick}
+                />
+              );
+            })
+          ) : (
+            <div className="maplibregl-ctrl">Loading</div>
+          )}
+
+          {clickedVehicle && (
+            <VehiclePopup
+              item={clickedVehicle}
+              onClose={() => setClickedVehicleMarker(null)}
             />
-          );
-        }) : <div className="maplibregl-ctrl">Loading</div> }
+          )}
 
-        {clickedVehicle && (
-          <VehiclePopup
-            item={clickedVehicle}
-            onClose={() => setClickedVehicleMarker(null)}
-          />
-        )}
+          {geometry && (
+            <Source type="geojson" data={geometry}>
+              <Layer {...routeStyle} />
+            </Source>
+          )}
 
-
-      {geometry &&
-        <Source type="geojson" data={geometry}>
-          <Layer {...routeStyle} />
-        </Source>
-      }
-
-      {stops &&
-        <Source type="geojson" data={stops}>
-          <Layer {...stopsStyle} />
-        </Source>
-      }
-
-
-
-      </Map>
-    </div>
+          {stops && (
+            <Source type="geojson" data={stops}>
+              <Layer {...stopsStyle} />
+            </Source>
+          )}
+        </Map>
+      </div>
     </React.Fragment>
   );
 }

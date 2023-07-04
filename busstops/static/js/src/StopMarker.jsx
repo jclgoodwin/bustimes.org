@@ -7,7 +7,7 @@ function StopMarker(props) {
   let rotation = props.stop.properties.bearing;
 
   if (rotation === null) {
-    className += " no-direction"
+    className += " no-direction";
   } else {
     rotation += 45;
   }

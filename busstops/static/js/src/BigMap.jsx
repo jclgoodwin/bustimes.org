@@ -53,17 +53,16 @@ function containsBounds(a, b) {
 //   }
 // };
 
-
 const redBusesStyle = {
-  "id": "vehicles",
+  id: "vehicles",
   type: "symbol",
   layout: {
     "icon-rotate": ["to-number", ["get", "heading"]],
     "icon-image": "vehicle",
     "icon-size": 0.5,
     "icon-allow-overlap": true,
-    "icon-offset": [0, -6]
-  }
+    "icon-offset": [0, -6],
+  },
 };
 
 function shouldShowStops(zoom) {
@@ -89,7 +88,8 @@ export default function BigMap() {
 
   const [stopsHighWaterMark, setStopsHighWaterMark] = React.useState(null);
 
-  const [vehiclesHighWaterMark, setVehiclesHighWaterMark] = React.useState(null);
+  const [vehiclesHighWaterMark, setVehiclesHighWaterMark] =
+    React.useState(null);
 
   const loadStops = React.useCallback((bounds) => {
     const url = "/stops.json" + getBoundsQueryString(bounds);
@@ -115,7 +115,6 @@ export default function BigMap() {
     });
   }, []);
 
-
   const handleMoveEnd = (evt) => {
     const map = evt.target;
     const zoom = map.getZoom();
@@ -129,7 +128,10 @@ export default function BigMap() {
         loadVehicles(bounds);
       }
 
-      if (shouldShowStops(zoom) && !containsBounds(stopsHighWaterMark, bounds)) {
+      if (
+        shouldShowStops(zoom) &&
+        !containsBounds(stopsHighWaterMark, bounds)
+      ) {
         loadStops(bounds);
       }
     }
@@ -182,13 +184,11 @@ export default function BigMap() {
         map.addImage("vehicle", image);
       }
     });
-
   }, []);
 
   const [cursor, setCursor] = React.useState(null);
 
   const onMouseEnter = React.useCallback((e) => {
-    console.dir(e);
     setCursor("pointer");
   }, []);
 
@@ -217,7 +217,6 @@ export default function BigMap() {
   return (
     <Map
       initialViewState={window.INITIAL_VIEW_STATE}
-
       dragRotate={false}
       touchPitch={false}
       touchRotate={false}
@@ -242,15 +241,16 @@ export default function BigMap() {
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {showStops && stops?.features.map((item) => {
-        return (
-          <StopMarker
-            key={item.properties.url}
-            stop={item}
-            onClick={setClickedStopId}
-          />
-        );
-      })}
+      {showStops &&
+        stops?.features.map((item) => {
+          return (
+            <StopMarker
+              key={item.properties.url}
+              stop={item}
+              onClick={setClickedStopId}
+            />
+          );
+        })}
 
       {vehiclesList.map((item) => {
         return (
@@ -263,33 +263,34 @@ export default function BigMap() {
         );
       })}
 
-      {otherVehicles ?
-        <Source type="geojson" data={{
-          type: "FeatureCollection",
-          features: otherVehicles.map((item) => {
-            return {
-              type: "Feature",
-              id: item.id,
-              geometry: {
-                type: "Point",
-                coordinates: item.coordinates
-              },
-              properties: {
-                heading: item.heading
-              }
-            }
-          })
-        }}>
+      {otherVehicles ? (
+        <Source
+          type="geojson"
+          data={{
+            type: "FeatureCollection",
+            features: otherVehicles.map((item) => {
+              return {
+                type: "Feature",
+                id: item.id,
+                geometry: {
+                  type: "Point",
+                  coordinates: item.coordinates,
+                },
+                properties: {
+                  heading: item.heading,
+                },
+              };
+            }),
+          }}
+        >
           <Layer {...redBusesStyle} />
-        </Source> : null
-      }
+        </Source>
+      ) : null}
 
       {zoom && !showStops ? (
         <div className="maplibregl-ctrl">
           <div>Zoom in to see stops</div>
-          {!shouldShowVehicles(zoom) ? (
-            <div>Zoom in to see buses</div>
-          ) : null}
+          {!shouldShowVehicles(zoom) ? <div>Zoom in to see buses</div> : null}
         </div>
       ) : null}
 
@@ -309,4 +310,4 @@ export default function BigMap() {
     </Map>
   );
 }
-[]
+[];
