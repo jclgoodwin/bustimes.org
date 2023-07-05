@@ -1,9 +1,15 @@
 import React, { lazy } from "react";
 import ReactDOM from "react-dom/client";
+import * as Sentry from "@sentry/react";
 
 const BigMap = lazy(() => import("./BigMap"));
 const OperatorMap = lazy(() => import("./OperatorMap"));
 const ServiceMap = lazy(() => import("./ServiceMap"));
+
+Sentry.init({
+  dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
+  // allowUrls: [/bustimes\.org\/static\//],
+});
 
 let root = document.getElementById("hugemap");
 if (root) {
