@@ -1,3 +1,5 @@
+from pathlib import PurePath
+
 from django.middleware.gzip import GZipMiddleware
 from django.utils.cache import add_never_cache_headers
 from multidb.pinning import pin_this_thread, unpin_this_thread
@@ -5,6 +7,12 @@ from whitenoise.middleware import WhiteNoiseMiddleware
 
 
 class WhiteNoiseWithFallbackMiddleware(WhiteNoiseMiddleware):
+    def immutable_file_test(self, path, url):
+        # esbuild:
+        if url.startswith("/static/js/dist/") and PurePath(path).stem[-9:-8] == "-":
+            return True
+        return super().immutable_file_test(path, url)
+
     # https://github.com/evansd/whitenoise/issues/245
     def __call__(self, request):
         response = super().__call__(request)
