@@ -900,6 +900,7 @@ class Service(models.Model):
                     Q(registration__in=self.route_set.values("registration"))
                     | Q(
                         ~Q(service_code=""),
+                        ~Q(service_code__endswith=":"),
                         service_code__in=self.route_set.values("service_code"),
                         registration=None,
                         source=self.source_id,
