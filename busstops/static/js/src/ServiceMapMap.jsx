@@ -52,6 +52,16 @@ export default function ServiceMapMap({
 }) {
   const darkMode = useDarkMode();
 
+
+  React.useEffect(() => {
+    // (overflow css)
+    document.body.classList.add("has-overlay");
+
+    return () => {
+      document.body.classList.remove("has-overlay");
+    };
+  }, []);
+
   const [cursor, setCursor] = React.useState();
 
   const onMouseEnter = React.useCallback((e) => {

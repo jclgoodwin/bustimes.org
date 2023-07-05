@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 
 const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
@@ -65,16 +65,10 @@ export default function OperatorMap() {
   let timeout;
 
   React.useEffect(() => {
-    // (overflow css)
-    if (isOpen) {
-      document.body.classList.add("has-overlay");
-      if (!hasCss) {
-        loadjs(window.LIVERIES_CSS_URL, function () {
-          hasCss = true;
-        });
-      }
-    } else {
-      document.body.classList.remove("has-overlay");
+    if (isOpen && !hasCss) {
+      loadjs(window.LIVERIES_CSS_URL, function () {
+        hasCss = true;
+      });
     }
 
     // service map data
@@ -143,13 +137,15 @@ export default function OperatorMap() {
   return (
     <React.Fragment>
       {button}
-      <ServiceMapMap
-        vehicles={vehicles}
-        vehiclesList={vehiclesList}
-        closeMap={closeMap}
-        geometry={geometry}
-        stops={stops}
-      />
+      <Suspense>
+        <ServiceMapMap
+          vehicles={vehicles}
+          vehiclesList={vehiclesList}
+          closeMap={closeMap}
+          geometry={geometry}
+          stops={stops}
+        />
+      </Suspense>
     </React.Fragment>
   );
 }
