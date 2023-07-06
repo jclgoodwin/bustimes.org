@@ -119,6 +119,9 @@ class VehicleType(models.Model):
 
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
+    colour = models.CharField(
+        max_length=7, help_text="For the most simplified version of the livery"
+    )
     colours = models.CharField(
         max_length=512,
         blank=True,
@@ -146,7 +149,9 @@ A livery can be adequately represented with a list of colours and an angle.""",
     )
     white_text = models.BooleanField(default=False)
     text_colour = models.CharField(max_length=7, blank=True)
-    stroke_colour = models.CharField(max_length=7, blank=True)
+    stroke_colour = models.CharField(
+        max_length=7, blank=True, help_text="Use sparingly, often looks shit"
+    )
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
@@ -206,7 +211,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def clean(self):
         Vehicle.clean(self)  # validate colours field
 
-        for attr in ("stroke_colour", "text_colour"):
+        for attr in ("colour", "stroke_colour", "text_colour"):
             value = getattr(self, attr)
             if value:
                 try:
