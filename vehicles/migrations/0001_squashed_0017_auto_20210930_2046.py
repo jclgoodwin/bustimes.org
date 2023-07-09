@@ -11,8 +11,6 @@ import django.db.models.functions.text
 
 class Migration(migrations.Migration):
 
-    replaces = [('vehicles', '0001_initial'), ('vehicles', '0002_auto_20200917_0133'), ('vehicles', '0003_auto_20200930_1131'), ('vehicles', '0004_auto_20201027_1204'), ('vehicles', '0005_delete_call'), ('vehicles', '0006_auto_20201121_1614'), ('vehicles', '0007_auto_20201130_1939'), ('vehicles', '0008_auto_20210104_1742'), ('vehicles', '0009_livery_text_colour'), ('vehicles', '0010_auto_20210202_1951'), ('vehicles', '0011_auto_20210204_1628'), ('vehicles', '0012_auto_20210210_1456'), ('vehicles', '0013_auto_20210218_1332'), ('vehicles', '0014_auto_20210428_1846'), ('vehicles', '0015_auto_20210817_2045'), ('vehicles', '0016_auto_20210914_1551'), ('vehicles', '0017_auto_20210930_2046')]
-
     initial = True
 
     dependencies = [

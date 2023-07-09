@@ -60,7 +60,6 @@ class VehiclesTests(TestCase):
         tempo = VehicleType.objects.create(name="Optare Tempo", fuel="diesel")
         spectra = VehicleType.objects.create(
             name="Optare Spectra",
-            double_decker=True,
             fuel="diesel",
             style="double decker",
         )

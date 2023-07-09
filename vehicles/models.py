@@ -104,9 +104,9 @@ class FuelType(models.TextChoices):
 
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    double_decker = models.BooleanField(null=True)
-    coach = models.BooleanField(null=True)
-    electric = models.BooleanField(null=True)
+    # double_decker = models.BooleanField(null=True)
+    # coach = models.BooleanField(null=True)
+    # electric = models.BooleanField(null=True)
     style = models.CharField(choices=VehicleTypeType.choices, max_length=13, blank=True)
     fuel = models.CharField(choices=FuelType.choices, max_length=8, blank=True)
 
@@ -119,6 +119,9 @@ class VehicleType(models.Model):
 
 class Livery(models.Model):
     name = models.CharField(max_length=255, db_index=True)
+    colour = models.CharField(
+        max_length=7, help_text="For the most simplified version of the livery"
+    )
     colours = models.CharField(
         max_length=512,
         blank=True,
@@ -146,7 +149,9 @@ A livery can be adequately represented with a list of colours and an angle.""",
     )
     white_text = models.BooleanField(default=False)
     text_colour = models.CharField(max_length=7, blank=True)
-    stroke_colour = models.CharField(max_length=7, blank=True)
+    stroke_colour = models.CharField(
+        max_length=7, blank=True, help_text="Use sparingly, often looks shit"
+    )
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
@@ -206,7 +211,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def clean(self):
         Vehicle.clean(self)  # validate colours field
 
-        for attr in ("stroke_colour", "text_colour"):
+        for attr in ("colour", "stroke_colour", "text_colour"):
             value = getattr(self, attr)
             if value:
                 try:
@@ -468,14 +473,7 @@ class Vehicle(models.Model):
 
         features = self.feature_names
         if self.vehicle_type:
-            if self.vehicle_type.double_decker:
-                vehicle_type = "Double decker"
-                if self.vehicle_type.coach:
-                    vehicle_type = f"{vehicle_type} coach"
-            elif self.vehicle_type.coach:
-                vehicle_type = "Coach"
-            else:
-                vehicle_type = None
+            vehicle_type = self.vehicle_type.style.capitalize()
             if vehicle_type:
                 if features:
                     features = f"{vehicle_type}<br>{features}"
