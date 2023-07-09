@@ -16,7 +16,7 @@ UserModel = get_user_model()
 @admin.register(models.VehicleType)
 class VehicleTypeAdmin(admin.ModelAdmin):
     search_fields = ("name",)
-    list_filter = ("style", "fuel", "coach", "electric")
+    list_filter = ("style", "fuel")
     list_display = ("id", "name", "vehicles", "style", "fuel")
     list_editable = ("name", "style", "fuel")
     actions = ["merge"]

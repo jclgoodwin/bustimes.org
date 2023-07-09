@@ -104,9 +104,9 @@ class FuelType(models.TextChoices):
 
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    double_decker = models.BooleanField(null=True)
-    coach = models.BooleanField(null=True)
-    electric = models.BooleanField(null=True)
+    # double_decker = models.BooleanField(null=True)
+    # coach = models.BooleanField(null=True)
+    # electric = models.BooleanField(null=True)
     style = models.CharField(choices=VehicleTypeType.choices, max_length=13, blank=True)
     fuel = models.CharField(choices=FuelType.choices, max_length=8, blank=True)
 
@@ -473,14 +473,7 @@ class Vehicle(models.Model):
 
         features = self.feature_names
         if self.vehicle_type:
-            if self.vehicle_type.double_decker:
-                vehicle_type = "Double decker"
-                if self.vehicle_type.coach:
-                    vehicle_type = f"{vehicle_type} coach"
-            elif self.vehicle_type.coach:
-                vehicle_type = "Coach"
-            else:
-                vehicle_type = None
+            vehicle_type = self.vehicle_type.style.capitalize()
             if vehicle_type:
                 if features:
                     features = f"{vehicle_type}<br>{features}"
