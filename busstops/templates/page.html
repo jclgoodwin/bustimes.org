@@ -43,7 +43,11 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 
-gtag('config', 'G-X2Z0KM7Z5C');
+gtag('config', 'G-X2Z0KM7Z5C', {
+{% if request.resolver_match.url_name %}
+  'view_name': '{{ request.resolver_match.url_name }}',
+{% endif %}
+});
 </script>
 
 </head>

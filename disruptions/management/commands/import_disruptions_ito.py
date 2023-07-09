@@ -47,6 +47,7 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
             stream=True,
             timeout=10,
         )
+        assert response.ok
 
         for _, element in ET.iterparse(response.raw):
             if element.tag[:29] == "{http://www.siri.org.uk/siri}":

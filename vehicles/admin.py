@@ -64,6 +64,10 @@ def user(obj):
     )
 
 
+class VehicleCodeInline(admin.TabularInline):
+    model = models.VehicleCode
+
+
 class VehicleEditInline(admin.TabularInline):
     model = models.VehicleEdit
     fields = [
@@ -155,7 +159,7 @@ class VehicleAdmin(admin.ModelAdmin):
         "lock",
         "unlock",
     )
-    inlines = [VehicleEditInline]
+    inlines = [VehicleCodeInline, VehicleEditInline]
     readonly_fields = ["latest_journey_data"]
 
     def copy_livery(self, request, queryset):
@@ -201,6 +205,9 @@ class VehicleAdmin(admin.ModelAdmin):
                 vehicle.vehiclejourney_set.update(vehicle=duplicate)
             except IntegrityError:
                 pass
+            vehicle.vehiclecode_set.update(vehicle=duplicate)
+            vehicle.vehicleedit_set.update(vehicle=duplicate)
+            vehicle.vehiclerevision_set.update(vehicle=duplicate)
             if (
                 not duplicate.latest_journey_id
                 or vehicle.latest_journey_id

@@ -17,7 +17,12 @@ NS = {
     "s": "http://www.w3.org/2003/05/soap-envelope",
 }
 
-OPERATORS = {"Ulsterbus": "ULB", "Translink Metro": "MET", "Translink Glider": "GDR"}
+OPERATORS = {
+    "Ulsterbus": "ULB",
+    "Foyle Metro": "FY",
+    "Translink Metro": "MET",
+    "Translink Glider": "GDR",
+}
 
 
 def items_from_response(response):
@@ -149,27 +154,21 @@ class Command(ImportLiveVehiclesCommand):
 
         operator = item.find("a:VehicleOperatorName", NS).text
 
-        if operator in OPERATORS:
-            operator = OPERATORS[operator]
+        if operator == "Ulsterbus":
+            operators = ["ULB", "GLE", "FY"]
+        elif operator in OPERATORS:
+            operators = [OPERATORS[operator]]
         else:
-            operator = "MET"
+            operators = ["MET"]
             print(operator, journey.route_name)
 
         try:
-            try:
-                journey.service = Service.objects.get(
-                    Q(line_name__iexact=journey.route_name)
-                    | Q(line_name__iexact=f"G{journey.route_name}"),
-                    operator=operator,
-                    current=True,
-                )
-            except Service.DoesNotExist:
-                operator = "GLE"
-                journey.service = Service.objects.get(
-                    line_name__iexact=journey.route_name,
-                    operator=operator,
-                    current=True,
-                )
+            journey.service = Service.objects.get(
+                Q(line_name__iexact=journey.route_name)
+                | Q(line_name__iexact=f"G{journey.route_name}"),
+                operator__in=operators,
+                current=True,
+            )
         except (Service.MultipleObjectsReturned, Service.DoesNotExist) as e:
             print(e, journey.route_name)
 
