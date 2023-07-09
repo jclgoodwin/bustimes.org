@@ -9,16 +9,14 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('bustimes', '0001_initial'), ('bustimes', '0002_auto_20200930_1131'), ('bustimes', '0003_auto_20201027_1338'), ('bustimes', '0004_auto_20201127_1220'), ('bustimes', '0005_auto_20201224_2350'), ('bustimes', '0006_auto_20210115_1956'), ('bustimes', '0007_auto_20210514_1616'), ('bustimes', '0008_auto_20210722_1606'), ('bustimes', '0009_auto_20210817_2045'), ('bustimes', '0010_alter_stoptime_options'), ('bustimes', '0011_routelink'), ('bustimes', '0012_alter_route_revision_number')]
-
     initial = True
 
     dependencies = [
-        ('busstops', '0006_auto_20201225_0004'),
-        ('busstops', '0001_initial'),
-        ('busstops', '0010_auto_20210930_1810'),
+        # ('busstops', '0006_auto_20201225_0004'),
+        # ('busstops', '0001_initial'),
+        # ('busstops', '0010_auto_20210930_1810'),
         ('vosa', '0002_auto_20201121_0959'),
-        ('busstops', '0007_service_public_use'),
+        # ('busstops', '0007_service_public_use'),
     ]
 
     operations = [

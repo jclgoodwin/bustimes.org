@@ -12,8 +12,6 @@ import django.db.models.functions.text
 
 class Migration(migrations.Migration):
 
-    replaces = [('busstops', '0001_initial'), ('busstops', '0002_auto_20200930_1740'), ('busstops', '0003_auto_20201027_1338'), ('busstops', '0004_auto_20201116_1305'), ('busstops', '0005_auto_20201207_1753'), ('busstops', '0006_auto_20201225_0004'), ('busstops', '0007_service_public_use'), ('busstops', '0008_auto_20210913_1429'), ('busstops', '0009_auto_20210914_1551'), ('busstops', '0010_auto_20210930_1810')]
-
     initial = True
 
     dependencies = [

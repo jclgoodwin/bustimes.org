@@ -9,8 +9,6 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    replaces = [('accounts', '0001_initial'), ('accounts', '0002_auto_20200930_1131'), ('accounts', '0003_user_trusted'), ('accounts', '0004_auto_20201209_1405')]
-
     initial = True
 
     dependencies = [

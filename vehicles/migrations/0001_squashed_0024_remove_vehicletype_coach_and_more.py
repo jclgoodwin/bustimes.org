@@ -14,24 +14,12 @@ import vehicles.models
 
 class Migration(migrations.Migration):
 
-    replaces = [('vehicles', '0001_squashed_0017_auto_20210930_2046'), ('vehicles', '0002_auto_20211002_2100'), ('vehicles', '0003_auto_20211029_1901'), ('vehicles', '0004_vehiclecode'), ('vehicles', '0005_auto_20211220_1221'), ('vehicles', '0006_vehiclerevisionfeature_vehicle_latest_journey_data_and_more'), ('vehicles', '0007_livery_updated_at_alter_livery_colours_and_more'), ('vehicles', '0008_livery_stroke_colour_alter_livery_colours_and_more'), ('vehicles', '0009_livery_published'), ('vehicles', '0010_remove_vehiclejourney_data_alter_livery_colours_and_more'), ('vehicles', '0011_vehicleedit_arbiter'), ('vehicles', '0012_historicallivery'), ('vehicles', '0013_vehiclejourney_block_alter_vehicle_latest_journey_and_more'), ('vehicles', '0014_alter_historicallivery_options_and_more'), ('vehicles', '0015_vehicle_slug'), ('vehicles', '0016_vehiclejourney_uuid'), ('vehicles', '0017_alter_vehicle_slug'), ('vehicles', '0018_remove_vehicle_vehicle_operator_and_code_and_more'), ('vehicles', '0019_remove_vehiclejourney_block'), ('vehicles', '0020_alter_vehiclefeature_options'), ('vehicles', '0021_historicallivery_locked_livery_locked_and_more'), ('vehicles', '0022_remove_historicallivery_operator_and_more'), ('vehicles', '0023_vehicleeditvote_for_revision_vehicletype_fuel_and_more'), ('vehicles', '0024_remove_vehicletype_coach_and_more')]
-
     initial = True
 
     dependencies = [
         ('busstops', '0004_alter_locality_parent_alter_place_parent_and_more'),
-        ('busstops', '0007_service_public_use'),
-        ('bustimes', '0006_auto_20210115_1956'),
-        ('bustimes', '0004_auto_20201127_1220'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('busstops', '0014_alter_datasource_options'),
-        ('bustimes', '0005_route_inbound_description_route_outbound_description_and_more'),
-        ('busstops', '0001_squashed_0010_auto_20210930_1810'),
-        ('bustimes', '0002_auto_20200930_1131'),
-        ('busstops', '0006_auto_20201225_0004'),
-        ('bustimes', '0002_route_route_line_name'),
-        ('busstops', '0001_initial'),
-        ('bustimes', '0011_routelink'),
+        ('bustimes', '0001_squashed_0012_alter_route_revision_number'),
     ]
 
     operations = [

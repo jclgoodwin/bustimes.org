@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("vehicles", "0019_remove_vehiclejourney_block"),
+        # ("vehicles", "0019_remove_vehiclejourney_block"),
         ("bustimes", "0010_trip__block_trip_vehicle_journey_code_and_more"),
     ]
 

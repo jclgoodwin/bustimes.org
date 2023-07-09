@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('busstops', '0006_auto_20201225_0004'),
+        ('busstops', '0001_squashed_0010_auto_20210930_1810'),
     ]
 
     operations = [

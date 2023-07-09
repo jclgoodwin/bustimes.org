@@ -7,7 +7,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('busstops', '0006_auto_20201225_0004'),
         ('disruptions', '0003_delete_stopsuspension'),
     ]
 
