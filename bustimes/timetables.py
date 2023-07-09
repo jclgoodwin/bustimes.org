@@ -389,11 +389,17 @@ class Timetable:
     def get_date_options(self):
         date = self.today
 
-        # I can't remember the point of this
-        # for calendar in self.calendars:
-        #     for calendar_date in calendar.calendardate_set.all():
-        #         if not calendar_date.operation and calendar_date.contains(date) and calendar.end_date:
-        #             calendar.start_date = calendar_date.end_date
+        for calendar in self.calendars:
+            for calendar_date in calendar.calendardate_set.all():
+                if (
+                    calendar_date.operation is False
+                    and calendar_date.contains(date)
+                    and calendar.end_date
+                ):
+                    # fast-forward to end of current period of non-operation
+                    calendar.start_date = calendar_date.end_date + datetime.timedelta(
+                        days=1
+                    )
 
         start_dates = [calendar.start_date for calendar in self.calendars]
         if start_dates:
