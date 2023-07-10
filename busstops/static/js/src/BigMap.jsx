@@ -201,14 +201,14 @@ export default function BigMap() {
 
   let vehiclesList = vehicles ? Object.values(vehicles) : [];
 
-  const otherVehicles = vehiclesList.filter((i) => {
-    return i.vehicle.livery === 262 || i.id === clickedVehicleMarkerId;
-  });
-  if (otherVehicles.length) {
-    vehiclesList = vehiclesList.filter((i) => {
-      return i.vehicle.livery != 262;
-    });
-  }
+  // const otherVehicles = vehiclesList.filter((i) => {
+  //   return i.vehicle.livery === 262 || i.id === clickedVehicleMarkerId;
+  // });
+  // if (otherVehicles.length) {
+  //   vehiclesList = vehiclesList.filter((i) => {
+  //     return i.vehicle.livery != 262;
+  //   });
+  // }
   // const otherVehicles = vehiclesList;
   // vehiclesList = [];
 
@@ -263,7 +263,7 @@ export default function BigMap() {
         );
       })}
 
-      {otherVehicles ? (
+      {/*otherVehicles ? (
         <Source
           type="geojson"
           data={{
@@ -285,7 +285,7 @@ export default function BigMap() {
         >
           <Layer {...redBusesStyle} />
         </Source>
-      ) : null}
+      ) : null*/}
 
       {zoom && !showStops ? (
         <div className="maplibregl-ctrl map-status-bar">
