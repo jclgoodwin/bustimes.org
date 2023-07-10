@@ -91,10 +91,6 @@ a.link-with-smalls:hover .description {
 
 /* !!!!!!!  */
 
-.maplibregl-ctrl-group button {
-  border-radius: 0;
-}
-
 body .maplibregl-map {
   font-family: inherit;
 }
@@ -142,4 +138,20 @@ body .maplibregl-popup-anchor-right .maplibregl-popup-tip {
   color: rgba(0, 0, 0, 0.75);
   display: inline-block;
   padding: 5px 8px;
+}
+
+.map-button {
+  cursor: pointer;
+  margin: 10px;
+  font-size: 14px;
+  padding: 5px 7px;
+  background: #fff;
+  border-radius: 6px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  position: absolute;
+  z-index: 2;
+}
+
+.map-button:hover {
+  background-color: #f2f2f2;
 }

@@ -717,6 +717,14 @@ table {
     z-index: 1;
 }
 
+.sorry {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+}
+
+
 .journey {
     background: #fff;
     bottom: 0;

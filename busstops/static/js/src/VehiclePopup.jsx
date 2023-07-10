@@ -35,7 +35,7 @@ function Delay({ item }) {
   }
 }
 
-function VehiclePopup({ item, onClose }) {
+function VehiclePopup({ item, onClose, closeButton = true }) {
   let line_name = item.service?.line_name;
   if (item.destination) {
     if (line_name) {
@@ -55,6 +55,8 @@ function VehiclePopup({ item, onClose }) {
     vehicle = <a href={`${item.vehicle.url}`}>{vehicle}</a>;
   }
 
+  const date = new Date(item.datetime);
+
   return (
     <Popup
       offset={8}
@@ -62,6 +64,7 @@ function VehiclePopup({ item, onClose }) {
       longitude={item.coordinates[0]}
       closeOnClick={false}
       onClose={onClose}
+      closeButton={closeButton}
     >
       <div>{line_name}</div>
       {vehicle}
@@ -87,7 +90,7 @@ function VehiclePopup({ item, onClose }) {
       )}
       <Delay item={item} />
       <div>
-        <ReactTimeAgo date={item.datetime} locale="en-GB" tooltip={true} />
+        <ReactTimeAgo date={date} locale="en-GB" tooltip={true} />
       </div>
     </Popup>
   );

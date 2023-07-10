@@ -1,8 +1,6 @@
 import React, { memo } from "react";
 import { Marker } from "react-map-gl/maplibre";
 
-import "./vehiclemarker.css";
-
 function VehicleMarker(props) {
   let className = "vehicle-marker";
 

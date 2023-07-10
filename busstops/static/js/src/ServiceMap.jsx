@@ -14,7 +14,7 @@ let hasCss = false;
 
 export default function OperatorMap() {
   const [isOpen, setOpen] = React.useState(
-    window.location.hash.indexOf("#map") === 0
+    window.location.hash.indexOf("#map") === 0,
   );
 
   const openMap = React.useCallback((e) => {
@@ -24,10 +24,12 @@ export default function OperatorMap() {
   }, []);
 
   const closeMap = React.useCallback(() => {
-    if (hasHistory) {
-      history.back();
-    } else {
-      window.location.hash = "";
+    if (isOpen) {
+      if (hasHistory) {
+        history.back();
+      } else {
+        window.location.hash = "";
+      }
     }
   }, []);
 
@@ -48,7 +50,7 @@ export default function OperatorMap() {
 
     const handleKeyDown = () => {
       // ESC
-      if (event.keyCode === 27) {
+      if (isOpen && event.keyCode === 27) {
         closeMap();
       }
     };
@@ -65,10 +67,15 @@ export default function OperatorMap() {
   let timeout;
 
   React.useEffect(() => {
-    if (isOpen && !hasCss) {
-      loadjs(window.LIVERIES_CSS_URL, function () {
-        hasCss = true;
-      });
+    if (isOpen) {
+      document.body.classList.add("has-overlay");
+      if (!hasCss) {
+        loadjs(window.LIVERIES_CSS_URL, function () {
+          hasCss = true;
+        });
+      }
+    } else {
+      document.body.classList.remove("has-overlay");
     }
 
     // service map data
@@ -84,7 +91,7 @@ export default function OperatorMap() {
       fetch(url).then((response) => {
         response.json().then((items) => {
           setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
+            Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
           );
           clearTimeout(timeout);
           timeout = setTimeout(loadVehicles, 10000); // 10 seconds
@@ -134,16 +141,30 @@ export default function OperatorMap() {
     return button;
   }
 
+  const closeButton = (
+    <button onClick={closeMap} className="map-button">
+      Close map
+    </button>
+  );
+
   return (
     <React.Fragment>
       {button}
-      <Suspense>
+      <Suspense
+        fallback={
+          <div className="service-map">
+            {closeButton}
+            <div className="sorry">Loading…</div>
+          </div>
+        }
+      >
         <ServiceMapMap
           vehicles={vehicles}
           vehiclesList={vehiclesList}
-          closeMap={closeMap}
           geometry={geometry}
           stops={stops}
+          closeButton={closeButton}
+          count={count}
         />
       </Suspense>
     </React.Fragment>

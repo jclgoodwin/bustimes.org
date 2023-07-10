@@ -47,7 +47,7 @@ export default function OperatorMap() {
           }
 
           setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
+            Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
           );
           setLoading(false);
           clearTimeout(timeout);

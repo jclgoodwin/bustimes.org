@@ -20,7 +20,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 const apiRoot = "https://bustimes.org/";
 
 let hasHistory = false;
-let hasCss = false;
 
 const stopsStyle = {
   id: "stops",
@@ -49,18 +48,10 @@ export default function ServiceMapMap({
   closeMap,
   geometry,
   stops,
+  closeButton,
+  count,
 }) {
   const darkMode = useDarkMode();
-
-
-  React.useEffect(() => {
-    // (overflow css)
-    document.body.classList.add("has-overlay");
-
-    return () => {
-      document.body.classList.remove("has-overlay");
-    };
-  }, []);
 
   const [cursor, setCursor] = React.useState();
 
@@ -95,14 +86,26 @@ export default function ServiceMapMap({
   const clickedVehicle =
     clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
 
-  let count = vehiclesList && vehiclesList.length;
-
-  if (count) {
-    if (count === 1) {
-      count = `${count} bus`;
-    } else {
-      count = `${count} buses`;
-    }
+  let popup = null;
+  if (vehiclesList && vehiclesList.length === 1) {
+    popup = (
+      <VehiclePopup
+        item={vehiclesList[0]}
+        closeButton={false}
+        onClose={() => {
+          setClickedVehicleMarker(null);
+        }}
+      />
+    );
+  } else if (clickedVehicle) {
+    popup = (
+      <VehiclePopup
+        item={clickedVehicle}
+        onClose={() => {
+          setClickedVehicleMarker(null);
+        }}
+      />
+    );
   }
 
   return (
@@ -134,10 +137,12 @@ export default function ServiceMapMap({
         <NavigationControl showCompass={false} />
         <GeolocateControl />
 
-        <div className="maplibregl-ctrl">
-          <button onClick={closeMap}>Close map</button>
-          {count ? ` Tracking ${count}` : null}
-        </div>
+        {closeButton}
+
+        {/*count ?
+          <div className="maplibregl-ctrl-top-left">
+            <div className="maplibregl-ctrl maplibregl-ctrl-attrib">Tracking {count}</div>
+          </div> : null*/}
 
         {vehiclesList ? (
           vehiclesList.map((item) => {
@@ -154,12 +159,7 @@ export default function ServiceMapMap({
           <div className="maplibregl-ctrl">Loading</div>
         )}
 
-        {clickedVehicle && (
-          <VehiclePopup
-            item={clickedVehicle}
-            onClose={() => setClickedVehicleMarker(null)}
-          />
-        )}
+        {popup}
 
         {geometry && (
           <Source type="geojson" data={geometry}>

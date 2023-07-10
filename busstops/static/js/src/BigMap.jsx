@@ -108,7 +108,7 @@ export default function BigMap() {
     fetch(url).then((response) => {
       response.json().then((items) => {
         setVehicles(
-          Object.assign({}, ...items.map((item) => ({ [item.id]: item })))
+          Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
         );
         setVehiclesHighWaterMark(bounds);
       });
