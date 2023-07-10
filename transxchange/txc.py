@@ -160,6 +160,13 @@ class JourneyPatternStopUsage:
         if self.notes:
             print(self.notes)
 
+            if (
+                self.notes == [("R", "Sets down by request to driver only")]
+                and self.activity != "setDown"
+            ):
+                print(self.activity)
+                self.activity = "setDown"
+
         self.row = None
         self.parent = None
 
