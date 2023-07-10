@@ -109,70 +109,68 @@ export default function ServiceMapMap({
   }
 
   return (
-    <div className="service-map">
-      <Map
-        dragRotate={false}
-        touchPitch={false}
-        touchRotate={false}
-        pitchWithRotate={false}
-        minZoom={8}
-        maxZoom={16}
-        bounds={window.EXTENT}
-        fitBoundsOptions={{
-          padding: 50,
-        }}
-        cursor={cursor}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        mapStyle={
-          darkMode
-            ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-            : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-        }
-        RTLTextPlugin={null}
-        onClick={handleMapClick}
-        onLoad={handleMapLoad}
-        interactiveLayerIds={["stops"]}
-      >
-        <NavigationControl showCompass={false} />
-        <GeolocateControl />
+    <Map
+      dragRotate={false}
+      touchPitch={false}
+      touchRotate={false}
+      pitchWithRotate={false}
+      minZoom={8}
+      maxZoom={16}
+      bounds={window.EXTENT}
+      fitBoundsOptions={{
+        padding: 50,
+      }}
+      cursor={cursor}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      mapStyle={
+        darkMode
+          ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
+          : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
+      }
+      RTLTextPlugin={null}
+      onClick={handleMapClick}
+      onLoad={handleMapLoad}
+      interactiveLayerIds={["stops"]}
+    >
+      <NavigationControl showCompass={false} />
+      <GeolocateControl />
 
-        {closeButton}
+      {closeButton}
 
-        {/*count ?
-          <div className="maplibregl-ctrl-top-left">
-            <div className="maplibregl-ctrl maplibregl-ctrl-attrib">Tracking {count}</div>
-          </div> : null*/}
+      {/*count ?
+        <div className="maplibregl-ctrl-top-left">
+          <div className="maplibregl-ctrl maplibregl-ctrl-attrib">Tracking {count}</div>
+        </div> : null*/}
 
-        {vehiclesList ? (
-          vehiclesList.map((item) => {
-            return (
-              <VehicleMarker
-                key={item.id}
-                selected={item.id === clickedVehicleMarkerId}
-                vehicle={item}
-                onClick={handleVehicleMarkerClick}
-              />
-            );
-          })
-        ) : (
-          <div className="maplibregl-ctrl">Loading</div>
-        )}
+      {vehiclesList ? (
+        vehiclesList.map((item) => {
+          return (
+            <VehicleMarker
+              key={item.id}
+              selected={item.id === clickedVehicleMarkerId}
+              vehicle={item}
+              onClick={handleVehicleMarkerClick}
+            />
+          );
+        })
+      ) : (
+        <div className="maplibregl-ctrl">Loading</div>
+      )}
 
-        {popup}
+      {popup}
 
-        {geometry && (
-          <Source type="geojson" data={geometry}>
-            <Layer {...routeStyle} />
-          </Source>
-        )}
+      {geometry && (
+        <Source type="geojson" data={geometry}>
+          <Layer {...routeStyle} />
+        </Source>
+      )}
 
-        {stops && (
-          <Source type="geojson" data={stops}>
-            <Layer {...stopsStyle} />
-          </Source>
-        )}
-      </Map>
-    </div>
+      {stops && (
+        <Source type="geojson" data={stops}>
+          <Layer {...stopsStyle} />
+        </Source>
+      )}
+    </Map>
   );
 }

@@ -31,7 +31,7 @@ export default function OperatorMap() {
         window.location.hash = "";
       }
     }
-  }, []);
+  }, [isOpen]);
 
   const [vehicles, setVehicles] = React.useState(null);
 
@@ -150,23 +150,18 @@ export default function OperatorMap() {
   return (
     <React.Fragment>
       {button}
-      <Suspense
-        fallback={
-          <div className="service-map">
-            {closeButton}
-            <div className="sorry">Loading…</div>
-          </div>
-        }
-      >
-        <ServiceMapMap
-          vehicles={vehicles}
-          vehiclesList={vehiclesList}
-          geometry={geometry}
-          stops={stops}
-          closeButton={closeButton}
-          count={count}
-        />
-      </Suspense>
+      <div className="service-map">
+        {closeButton}
+        <Suspense fallback={<div className="sorry">Loading…</div>}>
+          <ServiceMapMap
+            vehicles={vehicles}
+            vehiclesList={vehiclesList}
+            geometry={geometry}
+            stops={stops}
+            count={count}
+          />
+        </Suspense>
+      </div>
     </React.Fragment>
   );
 }
