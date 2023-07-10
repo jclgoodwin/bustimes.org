@@ -384,6 +384,7 @@ class StopTime(models.Model):
     timing_status = models.CharField(max_length=3, blank=True)
     pick_up = models.BooleanField(default=True)
     set_down = models.BooleanField(default=True)
+    notes = models.ManyToManyField(Note, blank=True)
 
     def get_key(self):
         return self.stop_id or self.stop_code
