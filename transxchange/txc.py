@@ -132,6 +132,7 @@ class JourneyPatternStopUsage:
 
     def __init__(self, element, stops):
         self.activity = element.findtext("Activity")
+        self.dynamic_destination_display = element.findtext("DynamicDestinationDisplay")
 
         self.sequencenumber = element.get("SequenceNumber")
         if self.sequencenumber is not None:
@@ -151,6 +152,13 @@ class JourneyPatternStopUsage:
             if self.wait_time.total_seconds() > 10000:
                 # bad data detected
                 logger.warning(f"long wait time {self.wait_time} at stop {self.stop}")
+
+        self.notes = [
+            (note_element.find("NoteCode").text, note_element.find("NoteText").text)
+            for note_element in element.findall("Notes/Note")
+        ]
+        if self.notes:
+            print(self.notes)
 
         self.row = None
         self.parent = None
@@ -555,6 +563,18 @@ class Service:
         self.associated_operators = [
             d.text for d in element.findall("AssociatedOperators/OperatorRef")
         ]
+
+        self.ticket_machine_service_code = element.findtext("TicketMachineServiceCode")
+        if self.ticket_machine_service_code:
+            print(self.ticket_machine_service_code)
+        self.commercial_basis = element.findtext("CommercialBasis")
+
+        self.notes = [
+            (note_element.find("NoteCode").text, note_element.find("NoteText").text)
+            for note_element in element.findall("Note")
+        ]
+        if self.notes:
+            print(self.notes)
 
 
 class Line:
