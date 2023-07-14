@@ -158,14 +158,11 @@ class JourneyPatternStopUsage:
             for note_element in element.findall("Notes/Note")
         ]
         if self.notes:
-            print(self.notes)
-
-            if (
-                self.notes == [("R", "Sets down by request to driver only")]
-                and self.activity != "setDown"
-            ):
-                print(self.activity)
-                self.activity = "setDown"
+            if self.notes == [("R", "Sets down by request to driver only")]:
+                if self.activity != "setDown":
+                    self.activity = "setDown"
+            else:
+                print(stop_ref, self.notes)
 
         self.row = None
         self.parent = None
