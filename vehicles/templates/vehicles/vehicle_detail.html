@@ -41,18 +41,6 @@
     </h1>
 
     {% include 'vehicle_info.html' %}
-
-    {% if tracking %}
-        <style>
-            {% for style in vehicle.livery.get_styles %}
-                {{ style }}
-            {% endfor %}
-        </style>
-
-        <p><a class="button" href="#map">Track this bus</a></p>
-
-        <div id="map" class="service-map"></div>
-    {% endif %}
 {% else %}
     <h1>{{ object }}</h1>
 
@@ -66,97 +54,70 @@
     </ul>
 {% endif %}
 
-{% if date %}
+{% if journeys %}
 
-    <form class="timetable-date" autocomplete="off">
-        {% if dates %}
-            <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
-                {% for option in dates %}
-                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
-                {% endfor %}
-            </select>
-        {% else %}
-            <input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
-        {% endif %}
-        <noscript><input type="submit"></noscript>
-    </form>
 
-    {% if journeys %}
-        <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    {% if object.line_names|length > 1 %}<th scope="col"></th>{% endif %}
-                    <th scope="col">{% if not vehicle %}Vehicle{% else %}Route{% endif %}</th>
-                    <th scope="col" colspan="2">Trip</th>
-                    <th scope="col">To</th>
-                </tr>
-            </thead>
-            <tbody>{% for journey in journeys %}
-                <tr>
-                    {% if object.line_names|length > 1 %}
-                        <td>
-                            {{ journey.route_name }}
-                        </td>
-                    {% endif %}
-                    <td class="link">
-                        {% if not vehicle %}
-                            {% if journey.vehicle %}
-                                <a href="{{ journey.vehicle.get_absolute_url }}?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.vehicle }}</a>
-                            {% endif %}
-                        {% elif journey.service %}
-                            <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ journey.datetime|date:'Y-m-d' }}">{{ journey.line_name }}</a>
-                        {% else %}
-                            {{ journey.line_name }}
-                        {% endif %}
-                    </td>
-                    <td class="tabular">{{ journey.code }}</td>
-                    {% if journey.trip %}
-                        <td class="link tabular">
-                            <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
-                        </td>
-                    {% else %}
-                        <td class="tabular">{{ journey.datetime|time }}</td>
-                    {% endif %}
-                    <td>{% firstof journey.destination journey.direction %}</td>
-                    {% if journey.locations %}
-                        <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
-                    {% endif %}
-                    {% if request.user.is_superuser %}
-                        <td>{{ journey.block }}</td>
-                        <td class="link">
-                            <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</a>
-                        </td>
-                    {% endif %}
-                </tr>{% endfor %}
-            </tbody>
-        </table>
-        </div>
+    {% for journey in journeys %}
 
-        {% for journey in journeys %}
-            {% if journey.locations %}
-                <div class="journey" id="journeys/{{ journey.id }}"{% if journey.trip_id %} data-trip="{{ journey.trip_id }}"{% endif %}>
-                    <div class="details">
-                        <a class="button" href="#">Close</a>
-                        <p>{% if not vehicle %}
-                                {{ journey.vehicle }}
-                            {% else %}
-                                {{ journey.line_name }}
-                            {% endif %}
-                            – {{ journey.datetime|time }}
-                            {% if journey.destination %} to {{ journey.destination }}{% endif %}
-                        </p>
-                        {% if journey.previous %}
-                            <p class="previous"><a href="#journeys/{{ journey.previous.id }}">&larr; {{ journey.previous.datetime|time }}</a></p>
-                        {% endif %}
-                        {% if journey.next %}
-                            <p class="next"><a href="#journeys/{{ journey.next.id }}">{{ journey.next.datetime|time }} &rarr;</a></p>
-                        {% endif %}
-                    </div>
-                </div>
+        {% ifchanged journey.datetime.date %}
+            {% if not forloop.first %}
+                </tbody></table>
             {% endif %}
-        {% endfor %}
-    {% endif %}
+            <h4>{{ journey.datetime.date }}</h4>
+            <table>
+                <thead>
+                    <tr>
+                        {% if object.line_names|length > 1 %}<th scope="col"></th>{% endif %}
+                        <th scope="col">{% if not vehicle %}Vehicle{% else %}Route{% endif %}</th>
+                        <th scope="col" colspan="2">Trip</th>
+                        <th scope="col">To</th>
+                    </tr>
+                </thead>
+                <tnody>
+        {% endifchanged %}
+
+        <tr>
+            {% if object.line_names|length > 1 %}
+                <td>
+                    {{ journey.route_name }}
+                </td>
+            {% endif %}
+            <td class="link">
+                {% if not vehicle %}
+                    {% if journey.vehicle %}
+                        <a href="{{ journey.vehicle.get_absolute_url }}">{{ journey.vehicle }}</a>
+                    {% endif %}
+                {% elif journey.service %}
+                    <a href="{{ journey.service.get_absolute_url }}/vehicles">{{ journey.line_name }}</a>
+                {% else %}
+                    {{ journey.line_name }}
+                {% endif %}
+            </td>
+            <td class="tabular">{{ journey.code }}</td>
+            {% if journey.trip %}
+                <td class="link tabular">
+                    <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
+                </td>
+            {% else %}
+                <td class="tabular">{{ journey.datetime|time }}</td>
+            {% endif %}
+            <td>{% firstof journey.destination journey.direction %}</td>
+            {% if journey.locations %}
+                <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
+            {% endif %}
+            {% if request.user.is_superuser %}
+                <td>{{ journey.block }}</td>
+                <td class="link">
+                    <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</a>
+                </td>
+            {% endif %}
+        </tr>
+
+        {% if forloop.last %}
+            </tbody></table>
+        {% endif %}
+
+    {% endfor %}
 
 {% endif %}
 
