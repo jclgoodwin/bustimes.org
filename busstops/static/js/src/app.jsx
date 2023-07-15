@@ -5,6 +5,7 @@ import * as Sentry from "@sentry/react";
 const BigMap = lazy(() => import("./BigMap"));
 const OperatorMap = lazy(() => import("./OperatorMap"));
 const ServiceMap = lazy(() => import("./ServiceMap"));
+const History = lazy(() => import("./History"));
 
 Sentry.init({
   dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
@@ -35,4 +36,14 @@ if (root) {
       <ServiceMap />
     </React.StrictMode>,
   );
+} else {
+  root = document.getElementById("history");
+  if (root) {
+    root = ReactDOM.createRoot(root);
+    root.render(
+      <React.StrictMode>
+        <History />
+      </React.StrictMode>,
+    );
+  }
 }

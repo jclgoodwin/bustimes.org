@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { LngLatBounds } from "maplibre-gl";
 
 export const useDarkMode = () => {
   if (window.matchMedia) {
@@ -21,3 +22,11 @@ export const useDarkMode = () => {
     return darkMode;
   }
 };
+
+export function getBounds(items) {
+  let bounds = new LngLatBounds();
+  for (let item of items) {
+    bounds.extend(item.coordinates);
+  }
+  return bounds;
+}

@@ -5,24 +5,16 @@ import Map, {
   NavigationControl,
   GeolocateControl,
 } from "react-map-gl/maplibre";
-import { LngLatBounds } from "maplibre-gl";
 
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
-import { useDarkMode } from "./utils";
+import { useDarkMode, getBounds } from "./utils";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
 const apiRoot = "https://bustimes.org/";
 
-function getBounds(items) {
-  let bounds = new LngLatBounds();
-  for (let item of items) {
-    bounds.extend(item.coordinates);
-  }
-  return bounds;
-}
 
 export default function OperatorMap() {
   // dark mode:

@@ -73,7 +73,7 @@
                         <th scope="col">To</th>
                     </tr>
                 </thead>
-                <tnody>
+                <tbody>
         {% endifchanged %}
 
         <tr>
@@ -119,6 +119,12 @@
 
     {% endfor %}
 
+    {% if journeys|length == 20 %}
+        <p>Older</p>
+    {% endif %}
+
+    <div id="history"></div>
+
 {% endif %}
 
 {% if garage %}
@@ -151,8 +157,7 @@
             </script>
         {% endif %}
         {% load static %}
-        {% include "maps_js.html" %}
-        <script src="{% static 'js/reqwest.min.js' %}"></script>
-        <script async src="{% static 'js/history.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
+        <script async type="module" src="{% static 'js/dist/app.js' %}"></script>
     {% endif %}
 {% endblock %}

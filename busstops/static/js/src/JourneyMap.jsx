@@ -8,16 +8,13 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl/maplibre";
 
-import VehicleMarker from "./VehicleMarker";
-import VehiclePopup from "./VehiclePopup";
-
-import { useDarkMode } from "./utils";
+import { useDarkMode, getBounds } from "./utils";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
+// const apiRoot = "https://bustimes.org/";
 
-let hasHistory = false;
+// let hasHistory = false;
 
 const stopsStyle = {
   id: "stops",
@@ -28,7 +25,7 @@ const stopsStyle = {
     "circle-stroke-width": 2,
     "circle-stroke-color": "#666",
     // "circle-stroke-opacity": 0.,
-  },
+},
 };
 
 const routeStyle = {
@@ -40,14 +37,8 @@ const routeStyle = {
   },
 };
 
-export default function ServiceMapMap({
-  vehicles,
-  vehiclesList,
-  closeMap,
-  geometry,
-  stops,
-  closeButton,
-  count,
+export default function JourneyMap({
+  journey
 }) {
   const darkMode = useDarkMode();
 
@@ -84,27 +75,10 @@ export default function ServiceMapMap({
   const clickedVehicle =
     clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
 
-  let popup = null;
-  if (vehiclesList && vehiclesList.length === 1) {
-    popup = (
-      <VehiclePopup
-        item={vehiclesList[0]}
-        closeButton={false}
-        onClose={() => {
-          setClickedVehicleMarker(null);
-        }}
-      />
-    );
-  } else if (clickedVehicle) {
-    popup = (
-      <VehiclePopup
-        item={clickedVehicle}
-        onClose={() => {
-          setClickedVehicleMarker(null);
-        }}
-      />
-    );
+  if (!journey) {
+    return;
   }
+
 
   return (
     <Map
@@ -114,7 +88,7 @@ export default function ServiceMapMap({
       pitchWithRotate={false}
       minZoom={8}
       maxZoom={16}
-      bounds={window.EXTENT}
+      bounds={getBounds(journey.locations)}
       fitBoundsOptions={{
         padding: 50,
       }}
@@ -134,41 +108,15 @@ export default function ServiceMapMap({
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {closeButton}
 
-      {/*count ?
-        <div className="maplibregl-ctrl-top-left">
-          <div className="maplibregl-ctrl maplibregl-ctrl-attrib">Tracking {count}</div>
-        </div> : null*/}
+      <Source type="geojson" data={{
+        type: "LineString",
+        coordinates: journey.locations.map(l => l.coordinates)
+      }}>
+        <Layer {...routeStyle} />
+      </Source>
 
-      {vehiclesList ? (
-        vehiclesList.map((item) => {
-          return (
-            <VehicleMarker
-              key={item.id}
-              selected={item.id === clickedVehicleMarkerId}
-              vehicle={item}
-              onClick={handleVehicleMarkerClick}
-            />
-          );
-        })
-      ) : (
-        <div className="maplibregl-ctrl">Loading</div>
-      )}
 
-      {popup}
-
-      {geometry && (
-        <Source type="geojson" data={geometry}>
-          <Layer {...routeStyle} />
-        </Source>
-      )}
-
-      {stops && (
-        <Source type="geojson" data={stops}>
-          <Layer {...stopsStyle} />
-        </Source>
-      )}
     </Map>
   );
 }
