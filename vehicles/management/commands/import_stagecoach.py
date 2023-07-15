@@ -99,10 +99,30 @@ class Command(ImportLiveVehiclesCommand):
     def get_vehicle(self, item):
         vehicle_code = item["fn"]
 
-        if vehicle_code in self.vehicle_cache:
-            return self.vehicle_cache[vehicle_code], False
-
         operator_id = item.get("oc")
+
+        if vehicle_code in self.vehicle_cache:
+
+            vehicle = self.vehicle_cache[vehicle_code]
+
+            if (
+                vehicle.operator_id == "SCLK"
+                and operator_id != "SCLK"
+                or operator_id == "SCLK"
+                and vehicle.operator_id != "SCLK"
+            ):
+                vehicle = (
+                    self.vehicles.filter(operator__in=self.operators)
+                    .exclude(id=vehicle.id)
+                    .first()
+                )
+
+                if vehicle:
+                    self.vehicle_cache[vehicle_code] = vehicle
+
+            if vehicle:
+                return vehicle, False
+
         if operator_id and operator_id in self.operator_ids:
             operator_id = self.operator_ids[operator_id]
         if operator_id in self.operators:
