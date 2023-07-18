@@ -26,16 +26,14 @@ const stopsStyle = {
     "circle-color": "#fff",
     "circle-radius": 3,
     "circle-stroke-width": 2,
-    "circle-stroke-color": "#666",
-    // "circle-stroke-opacity": 0.,
+    "circle-stroke-color": "#777",
   },
 };
 
 const routeStyle = {
   type: "line",
   paint: {
-    "line-color": "#000",
-    "line-opacity": 0.5,
+    "line-color": "#777",
     "line-width": 3,
   },
 };

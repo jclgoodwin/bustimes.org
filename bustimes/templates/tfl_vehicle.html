@@ -54,8 +54,6 @@
 
 {% block foot %}
     {% if stops_json %}
-        {% include "maps_js.html" %}
-        <script src="{% static 'js/reqwest.min.js' %}"></script>
         <script>
             window.STOPS = {{ stops_json }};
             {% if object %}
@@ -63,5 +61,4 @@
             {% endif %}
         </script>
     {% endif %}
-    <script src="{% static 'js/trip.js' %}"></script>
 {% endblock %}
