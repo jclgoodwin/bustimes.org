@@ -3,7 +3,7 @@
     "autoprefixer": "^10.4.13",
     "eslint": "^8.35.0",
     "postcss": "^8.4.21",
-    "postcss-cli": "^9.1.0",
+    "postcss-cli": "^10.1.0",
     "sass": "^1.58.3",
     "sass-lint": "^1.13.1"
   },
@@ -11,7 +11,7 @@
     "accessible-autocomplete": "^2.0.4",
     "html5shiv": "^3.7.3",
     "leaflet": "^1.9.3",
-    "leaflet.locatecontrol": "^0.76.1",
+    "leaflet.locatecontrol": "^0.79.0",
     "loadjs": "^4.2.0",
     "reqwest": "^2.0.5"
   }
