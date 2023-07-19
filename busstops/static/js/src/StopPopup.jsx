@@ -12,7 +12,7 @@ export default function StopPopup({ item, onClose }) {
     >
       <a href={item.properties.url} className="link-with-smalls">
         <div className="description">{item.properties.name}</div>
-        <div className="smalls">{item.properties.services.join(" ")}</div>
+        <div className="smalls">{item.properties.services?.join(" ")}</div>
       </a>
     </Popup>
   );

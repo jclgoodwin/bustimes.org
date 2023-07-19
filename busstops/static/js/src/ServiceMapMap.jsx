@@ -8,6 +8,7 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl/maplibre";
 
+import StopPopup from "./StopPopup";
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
@@ -18,17 +19,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 const apiRoot = "https://bustimes.org/";
 
 let hasHistory = false;
-
-const stopsStyle = {
-  id: "stops",
-  type: "circle",
-  paint: {
-    "circle-color": "#fff",
-    "circle-radius": 3,
-    "circle-stroke-width": 2,
-    "circle-stroke-color": "#777",
-  },
-};
 
 const routeStyle = {
   type: "line",
@@ -64,11 +54,16 @@ export default function ServiceMapMap({
 
   const handleVehicleMarkerClick = React.useCallback((event, id) => {
     event.originalEvent.preventDefault();
+    setClickedStops([]);
     setClickedVehicleMarker(id);
   }, []);
 
+
+  const [clickedStops, setClickedStops] = React.useState([]);
+
   const handleMapClick = React.useCallback((e) => {
     if (!e.originalEvent.defaultPrevented) {
+      setClickedStops(e.features);
       setClickedVehicleMarker(null);
     }
   }, []);
@@ -103,6 +98,17 @@ export default function ServiceMapMap({
       />
     );
   }
+
+  const stopsStyle = {
+    id: "stops",
+    type: "circle",
+    paint: {
+      "circle-color": darkMode ? "#000" : "#fff",
+      "circle-radius": 3,
+      "circle-stroke-width": 2,
+      "circle-stroke-color": "#777",
+    },
+  };
 
   return (
     <Map
@@ -155,6 +161,15 @@ export default function ServiceMapMap({
       )}
 
       {popup}
+
+      {clickedStops.map((stop) => {
+        return (
+          <StopPopup
+            key={stop.properties.url}
+            item={stop}
+          />
+        );
+      })}
 
       {geometry && (
         <Source type="geojson" data={geometry}>
