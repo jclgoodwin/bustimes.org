@@ -404,9 +404,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 #         86400.0
                 #     )
 
-            self.assertContains(
-                response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
-            )
+            self.assertContains(response, '<a href="/services/u/vehicles">UU</a>')
             self.assertContains(
                 response, f"""<a href="#journeys/{whippet_journey.id}">09:23</a>"""
             )
@@ -508,10 +506,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         with mock.patch("vehicles.views.redis_client", redis_client):
 
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(5):
                 response = self.client.get(journey.get_absolute_url())
             self.assertContains(response, "146")
-            self.assertContains(response, "to Southwold")
+            self.assertContains(response, ">Southwold<")
             self.assertContains(response, f'<a href="#journeys/{journey.id}">Map</a>')
 
             with self.assertNumQueries(0):
