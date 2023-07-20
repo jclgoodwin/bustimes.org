@@ -6,6 +6,7 @@ import Map, {
   Layer,
   NavigationControl,
   GeolocateControl,
+  Popup
 } from "react-map-gl/maplibre";
 
 import { useDarkMode, getBounds } from "./utils";
@@ -13,10 +14,6 @@ import { useDarkMode, getBounds } from "./utils";
 import StopPopup from "./StopPopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-
-// const apiRoot = "https://bustimes.org/";
-
-// let hasHistory = false;
 
 const stopsStyle = {
   id: "stops",
@@ -26,7 +23,6 @@ const stopsStyle = {
     "circle-radius": 3,
     "circle-stroke-width": 2,
     "circle-stroke-color": "#666",
-    // "circle-stroke-opacity": 0.,
   },
 };
 
@@ -36,9 +32,6 @@ const locationsStyle = {
   paint: {
     "circle-color": "#666",
     "circle-radius": 5,
-    // "circle-stroke-width": 2,
-    // "circle-stroke-color": "#666",
-    // "circle-stroke-opacity": 0.,
   },
 };
 
@@ -47,7 +40,7 @@ const routeStyle = {
   paint: {
     "line-color": "#000",
     "line-opacity": 0.5,
-    "line-width": 3,
+    "line-width": 2,
     "line-dasharray": [2, 2]
   },
 };
@@ -59,12 +52,20 @@ export default function JourneyMap({
 
   const [cursor, setCursor] = React.useState();
 
+  const [clickedLocation, setClickedLocation] =
+    React.useState(null);
+
   const onMouseEnter = React.useCallback((e) => {
     setCursor("pointer");
+
+    if (e.features.length && e.features[0].layer.id == "locations") {
+      setClickedLocation(e.features[0]);
+    }
   }, []);
 
   const onMouseLeave = React.useCallback(() => {
     setCursor(null);
+    setClickedLocation(null);
   }, []);
 
   const [clickedStop, setClickedStop] =
@@ -145,7 +146,7 @@ export default function JourneyMap({
         <Layer {...locationsStyle} />
       </Source>
 
-      <Source type="geojson" data={{
+      { journey.stops ? <Source type="geojson" data={{
         type: "FeatureCollection",
         features: journey.stops.map(s => {
           return {
@@ -166,7 +167,7 @@ export default function JourneyMap({
         })
       }}>
         <Layer {...stopsStyle} />
-      </Source>
+      </Source> : null }
 
       {clickedStop ? <StopPopup item={{
         properties: {
@@ -175,6 +176,19 @@ export default function JourneyMap({
         },
         geometry: clickedStop.geometry,
       }} onClose={() => setClickedStop(null)} /> : null}
+
+      {clickedLocation ?
+        <Popup
+          latitude={clickedLocation.geometry.coordinates[1]}
+          longitude={clickedLocation.geometry.coordinates[0]}
+          closeButton={false}
+          closeOnClick={false}
+        >
+          {clickedLocation.properties.datetime}
+
+        </Popup>
+        : null
+      }
 
     </Map>
   );

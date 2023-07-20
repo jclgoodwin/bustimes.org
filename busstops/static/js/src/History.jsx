@@ -3,10 +3,7 @@ import ReactDOM from "react-dom/client";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
-const apiRoot = "https://bustimes.org/";
-
 let hasHistory = false;
-let hasCss = false;
 
 export default function History() {
   const [isOpen, setOpen] = React.useState(
@@ -77,8 +74,6 @@ export default function History() {
     } else {
       document.body.classList.remove("has-overlay");
     }
-
-
   }, [isOpen]);
 
   if (!isOpen) {
