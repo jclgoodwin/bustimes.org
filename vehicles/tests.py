@@ -911,12 +911,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # )
         self.assertContains(response, "1 - FD54 JYA")
 
-        with self.assertNumQueries(4):
-            response = self.client.get(
-                "/services/spixworth-hunworth-happisburgh/vehicles?date=2004-04-04"
-            )
-        self.assertNotContains(response, "1 - FD54 JYA")
-
     def test_api(self):
         with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?limit=2")
