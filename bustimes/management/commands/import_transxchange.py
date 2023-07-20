@@ -619,7 +619,7 @@ class Command(BaseCommand):
         ):  # too big for smallint
             stop_time.sequence = None
 
-        match cell.stopusage.activity:
+        match cell.activity or cell.stopusage.activity:
             case "pickUp":
                 stop_time.set_down = False
             case "setDown":

@@ -432,14 +432,8 @@ class Timetable:
 
     def has_set_down_only(self):
         for grouping in self.groupings:
-            for row in grouping.rows:
-                for cell in row.times:
-                    if (
-                        type(cell) is Cell
-                        and cell.stoptime.pick_up is False
-                        and not cell.last
-                    ):
-                        return True
+            if grouping.has_set_down_only():
+                return True
 
     def credits(self):
         credits = (route.source.credit(route) for route in self.current_routes)
@@ -560,6 +554,19 @@ class Grouping:
 
     def has_major_stops(self):
         return any(not row.is_minor() for row in self.rows)
+
+    def has_set_down_only(self):
+        for row in self.rows:
+            for cell in row.times:
+                if type(cell) is Cell and cell.set_down_only():
+                    return True
+
+    def has_pick_up_only(self):
+        for row in self.rows:
+            for cell in row.times:
+                if type(cell) is Cell and cell.pick_up_only():
+                    print(cell)
+                    return True
 
     def get_order(self):
         if self.trips:
@@ -1004,5 +1011,10 @@ class Cell:
 
     def set_down_only(self):
         if not self.last:
-            if not self.stoptime.pick_up:
+            if self.stoptime.set_down and not self.stoptime.pick_up:
+                return True
+
+    def pick_up_only(self):
+        if not self.first:
+            if self.stoptime.pick_up and not self.stoptime.set_down:
                 return True
