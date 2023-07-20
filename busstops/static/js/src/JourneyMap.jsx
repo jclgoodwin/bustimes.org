@@ -10,6 +10,8 @@ import Map, {
 
 import { useDarkMode, getBounds } from "./utils";
 
+import StopPopup from "./StopPopup";
+
 import "maplibre-gl/dist/maplibre-gl.css";
 
 // const apiRoot = "https://bustimes.org/";
@@ -25,7 +27,19 @@ const stopsStyle = {
     "circle-stroke-width": 2,
     "circle-stroke-color": "#666",
     // "circle-stroke-opacity": 0.,
-},
+  },
+};
+
+const locationsStyle = {
+  id: "locations",
+  type: "circle",
+  paint: {
+    "circle-color": "#666",
+    "circle-radius": 5,
+    // "circle-stroke-width": 2,
+    // "circle-stroke-color": "#666",
+    // "circle-stroke-opacity": 0.,
+  },
 };
 
 const routeStyle = {
@@ -34,6 +48,7 @@ const routeStyle = {
     "line-color": "#000",
     "line-opacity": 0.5,
     "line-width": 3,
+    "line-dasharray": [2, 2]
   },
 };
 
@@ -52,17 +67,16 @@ export default function JourneyMap({
     setCursor(null);
   }, []);
 
-  const [clickedVehicleMarkerId, setClickedVehicleMarker] =
+  const [clickedStop, setClickedStop] =
     React.useState(null);
 
-  const handleVehicleMarkerClick = React.useCallback((event, id) => {
-    event.originalEvent.preventDefault();
-    setClickedVehicleMarker(id);
-  }, []);
-
   const handleMapClick = React.useCallback((e) => {
-    if (!e.originalEvent.defaultPrevented) {
-      setClickedVehicleMarker(null);
+    if (e.features.length) {
+      if (e.features[0].layer.id == "stops") {
+        setClickedStop(e.features[0]);
+      }
+    } else {
+      setClickedStop(null);
     }
   }, []);
 
@@ -72,13 +86,9 @@ export default function JourneyMap({
     map.touchZoomRotate.disableRotation();
   }, []);
 
-  const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
-
   if (!journey) {
-    return;
+    return <div className="sorry">Loading…</div>;
   }
-
 
   return (
     <Map
@@ -103,11 +113,10 @@ export default function JourneyMap({
       RTLTextPlugin={null}
       onClick={handleMapClick}
       onLoad={handleMapLoad}
-      interactiveLayerIds={["stops"]}
+      interactiveLayerIds={["stops", "locations"]}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
-
 
       <Source type="geojson" data={{
         type: "LineString",
@@ -116,6 +125,56 @@ export default function JourneyMap({
         <Layer {...routeStyle} />
       </Source>
 
+      <Source type="geojson" data={{
+        type: "FeatureCollection",
+        features: journey.locations.map(l => {
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: l.coordinates,
+            },
+            properties: {
+              delta: l.delta,
+              direction: l.direction,
+              datetime: l.datetime
+            }
+          };
+        })
+      }}>
+        <Layer {...locationsStyle} />
+      </Source>
+
+      <Source type="geojson" data={{
+        type: "FeatureCollection",
+        features: journey.stops.map(s => {
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: s.coordinates,
+            },
+            properties: {
+              atco_code: s.atco_code,
+              name: s.name,
+              minor: s.minor,
+              heading: s.heading,
+              aimed_arrival_time: s.aimed_arrival_time,
+              aimed_departure_time: s.aimed_departure_time,
+            }
+          };
+        })
+      }}>
+        <Layer {...stopsStyle} />
+      </Source>
+
+      {clickedStop ? <StopPopup item={{
+        properties: {
+          url: `/stops/{clickedStop.properties.atco_code}`,
+          name: clickedStop.properties.name,
+        },
+        geometry: clickedStop.geometry,
+      }} onClose={() => setClickedStop(null)} /> : null}
 
     </Map>
   );

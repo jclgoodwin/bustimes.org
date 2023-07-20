@@ -1061,7 +1061,10 @@ def journey_json(request, pk):
                 }
             )
 
-    locations = redis_client.lrange(f"journey{pk}", 0, -1)
+    if redis_client:
+        locations = redis_client and redis_client.lrange(f"journey{pk}", 0, -1)
+    else:
+        locations = None
 
     if locations:
         data["locations"] = [

@@ -56,12 +56,19 @@ export default function History() {
     if (isOpen) {
       document.body.classList.add("has-overlay");
 
-      let journey = window.location.hash.slice(1);
+      const journeyId = window.location.hash.slice(1);
+
+      if (journey) {
+        if (journeyId !== journey.id) {
+          setJourney(null);
+        }
+      }
 
       // fetch(`/static/js/cookies.json`).then((response) => {
-      fetch(`/${journey}.json`).then((response) => {
+      fetch(`/${journeyId}.json`).then((response) => {
         if (response.ok) {
           response.json().then((data) => {
+            data.id = journeyId;
             setJourney(data);
           });
         }
