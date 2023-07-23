@@ -8,40 +8,8 @@
 
 {% block content %}
 
-    {% if stops_json %}
-        <div class="trip-map-wrapper">
-            <div id="map" class="trip-map"></div>
-        </div>
-    {% endif %}
-
-<div class="trip-wrapper">
-
-    <h2>
-        {{ trip.route.line_name }}
-        -
-        {{ trip }}
-        {% if origin and destination %}
-            {{ origin }} to {{ destination }}
-        {% elif trip.outbound %}
-            {{ trip.route.outbound_description }}
-        {% else %}
-            {{ trip.route.inbound_description }}
-        {% endif %}
-    </h2>
-
-    <p>{{ trip.calendar }}</p>
-
-    {% if trip_update.tripUpdate.trip.scheduleRelationship == "CANCELED" %}
-        <p>Cancelled</p>
-    {% endif %}
-
-    {% include 'trip_timetable.html' %}
-
-    {% if trip.garage %}
-        <p>{{ trip.garage }}</p>
-    {% endif %}
-
-</div>
+    <div id="map">
+    </div>
 
 {% endblock %}
 
@@ -56,7 +24,7 @@
         {% endif %}
     </script>
     <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
-    <script src="{% static 'js/dist/app.js' %}"></script>
+    <script async type="module" src="{% static 'js/dist/app.js' %}"></script>
     {% if object.route.service.tracking %}
         <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
     {% endif %}

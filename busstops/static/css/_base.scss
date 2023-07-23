@@ -704,11 +704,14 @@ table {
 
     // make room for ads:
     margin-bottom: 90px;
-    margin-top: 90px;
     box-shadow: var(--background-color) 0 -100px, var(--background-color) 0 126px;
 
     // height: auto;
     z-index: 1;
+}
+
+.ad-wrapper + #map .service-map {
+    margin-top: 90px;
 }
 
 .sorry {
