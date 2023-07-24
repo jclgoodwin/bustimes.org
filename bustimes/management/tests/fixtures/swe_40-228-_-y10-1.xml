@@ -16462,7 +16462,6 @@
 					<TimingStatus>PTP</TimingStatus>
 				</From>
 				<To SequenceNumber="20">
-					<Activity>setDown</Activity>
 					<DynamicDestinationDisplay>Colerne and North Wraxall</DynamicDestinationDisplay>
 					<Notes>
 						<Note>
@@ -16478,7 +16477,6 @@
 			</JourneyPatternTimingLink>
 			<JourneyPatternTimingLink id="JPL_40-228-_-y10-1-10-O-5-20">
 				<From SequenceNumber="20">
-					<Activity>setDown</Activity>
 					<DynamicDestinationDisplay>Colerne and North Wraxall</DynamicDestinationDisplay>
 					<Notes>
 						<Note>
