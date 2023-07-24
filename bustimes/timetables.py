@@ -430,11 +430,6 @@ class Timetable:
         if self.date and self.date >= date:
             yield self.date
 
-    def has_set_down_only(self):
-        for grouping in self.groupings:
-            if grouping.has_set_down_only():
-                return True
-
     def credits(self):
         credits = (route.source.credit(route) for route in self.current_routes)
         return set(credit for credit in credits if credit)
@@ -565,12 +560,11 @@ class Grouping:
         for row in self.rows:
             for cell in row.times:
                 if type(cell) is Cell and cell.pick_up_only():
-                    print(cell)
                     return True
 
-    def get_order(self):
-        if self.trips:
-            return self.trips[0].start
+    # def get_order(self):
+    #     if self.trips:
+    #         return self.trips[0].start
 
     def width(self):
         return len(self.rows[0].times)

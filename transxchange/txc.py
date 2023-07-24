@@ -323,6 +323,14 @@ class VehicleJourney:
         wait_time = None
 
         for timinglink, journey_timinglink in self.get_timinglinks():
+
+            if journey_timinglink and journey_timinglink.from_activity:
+                activity = journey_timinglink.from_activity
+            elif stopusage and not stopusage.activity:
+                activity = stopusage.activity
+            else:
+                activity = timinglink.origin.activity
+
             stopusage = timinglink.origin
 
             if deadrun and self.start_deadrun == timinglink.id:
@@ -334,7 +342,6 @@ class VehicleJourney:
                 elif stopusage.wait_time is not None:
                     wait_time = stopusage.wait_time
 
-                activity = journey_timinglink and journey_timinglink.from_activity
                 notes = journey_timinglink and journey_timinglink.notes
 
                 if wait_time:
