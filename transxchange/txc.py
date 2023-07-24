@@ -326,8 +326,8 @@ class VehicleJourney:
 
             if journey_timinglink and journey_timinglink.from_activity:
                 activity = journey_timinglink.from_activity
-            elif stopusage and not stopusage.activity:
-                activity = stopusage.activity
+            elif stopusage and stopusage.activity != timinglink.origin.activity:
+                activity = None  # equivalent to pickUpAndSetDown
             else:
                 activity = timinglink.origin.activity
 
