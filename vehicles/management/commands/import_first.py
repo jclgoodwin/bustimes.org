@@ -18,26 +18,27 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 class Command(ImportLiveVehiclesCommand):
-    def handle_item(self, item, operator):
-        vehicle_id = item["status"]["vehicle_id"]
-        parts = vehicle_id.split("-")
-
-        vehicle = parts[6]
-
-        try:
-            vehicle = self.vehicles.get(operator__parent="First", code=vehicle)
-            created = False
-        except (Vehicle.MultipleObjectsReturned, Vehicle.DoesNotExist):
-            defaults = {"source": self.source}
-            if vehicle.isdigit():
-                defaults["fleet_number"] = defaults["fleet_code"] = vehicle
-            vehicle, created = self.vehicles.get_or_create(
-                defaults, operator_id=operator, code=vehicle
-            )
+    def handle_item(self, item, vehicle, operator):
+        vehicle_code = item["status"]["vehicle_id"].split("-")[6]
 
         recorded_at_time = parse_datetime(item["status"]["recorded_at_time"])
-        # if not created and vehicle.latest_journey and recorded_at_time <= vehicle.latest_location.datetime:
-        #     return
+
+        if vehicle_code in self.cache and self.cache[vehicle_code] == recorded_at_time:
+            return
+        self.cache[vehicle_code] = recorded_at_time
+
+        if vehicle:
+            created = False
+        else:
+            fleet_number = int(vehicle_code) if vehicle_code.isdigit() else None
+            vehicle = Vehicle.objects.create(
+                source=self.source,
+                operator=operator,
+                code=vehicle_code,
+                fleet_code=fleet_number or "",
+                fleet_number=fleet_number,
+            )
+            created = True
 
         # origin aimed departure time
         departure_time = item["stops"][0]["date"] + " " + item["stops"][0]["time"]
@@ -86,9 +87,11 @@ class Command(ImportLiveVehiclesCommand):
             )
             journey.trip = journey.get_trip()
             journey.save()
-        vehicle.latest_journey = journey
-        vehicle.latest_journey_data = item
-        vehicle.save(update_fields=["latest_journey", "latest_journey_data"])
+
+        if vehicle.latest_journey != journey:
+            vehicle.latest_journey = journey
+            vehicle.latest_journey_data = item
+            vehicle.save(update_fields=["latest_journey", "latest_journey_data"])
 
         heading = item["status"]["bearing"]
         if heading == -1:
@@ -106,8 +109,16 @@ class Command(ImportLiveVehiclesCommand):
 
     @sync_to_async
     def handle_data(self, data, operator):
-        for item in data["params"]["resource"]["member"]:
-            self.handle_item(item, operator)
+        items = data["params"]["resource"]["member"]
+
+        vehicle_codes = [item["status"]["vehicle_id"].split("-")[6] for item in items]
+        print(vehicle_codes)
+        vehicles = operator.vehicle_set.filter(code__in=vehicle_codes).select_related(
+            "latest_journey"
+        )
+        vehicles = {vehicle.code: vehicle for vehicle in vehicles}
+        for i, item in enumerate(items):
+            self.handle_item(item, vehicles.get(vehicle_codes[i]), operator)
         self.save()
 
     @staticmethod
@@ -172,6 +183,8 @@ class Command(ImportLiveVehiclesCommand):
             },
             name="First",
         )[0]
+
+        self.cache = {}
 
         operator = Operator.objects.get(name="Aircoach")
 
