@@ -70,7 +70,6 @@ export default function History() {
           });
         }
       });
-
     } else {
       document.body.classList.remove("has-overlay");
     }
@@ -82,8 +81,8 @@ export default function History() {
 
   const closeButton = (
     <button onClick={closeMap} className="map-button">
-       Close map
-     </button>
+      Close map
+    </button>
   );
 
   return (
@@ -91,9 +90,7 @@ export default function History() {
       <div className="service-map">
         {closeButton}
         <Suspense fallback={<div className="sorry">Loading…</div>}>
-          <JourneyMap
-            journey={journey}
-          />
+          <JourneyMap journey={journey} />
         </Suspense>
       </div>
     </React.Fragment>

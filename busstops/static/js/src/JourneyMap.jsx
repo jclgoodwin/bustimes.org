@@ -6,7 +6,7 @@ import Map, {
   Layer,
   NavigationControl,
   GeolocateControl,
-  Popup
+  Popup,
 } from "react-map-gl/maplibre";
 
 import { useDarkMode, getBounds } from "./utils";
@@ -41,19 +41,16 @@ const routeStyle = {
     "line-color": "#000",
     "line-opacity": 0.5,
     "line-width": 2,
-    "line-dasharray": [2, 2]
+    "line-dasharray": [2, 2],
   },
 };
 
-export default function JourneyMap({
-  journey
-}) {
+export default function JourneyMap({ journey }) {
   const darkMode = useDarkMode();
 
   const [cursor, setCursor] = React.useState();
 
-  const [clickedLocation, setClickedLocation] =
-    React.useState(null);
+  const [clickedLocation, setClickedLocation] = React.useState(null);
 
   const onMouseEnter = React.useCallback((e) => {
     setCursor("pointer");
@@ -68,8 +65,7 @@ export default function JourneyMap({
     setClickedLocation(null);
   }, []);
 
-  const [clickedStop, setClickedStop] =
-    React.useState(null);
+  const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback((e) => {
     if (e.features.length) {
@@ -119,65 +115,81 @@ export default function JourneyMap({
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      <Source type="geojson" data={{
-        type: "LineString",
-        coordinates: journey.locations.map(l => l.coordinates)
-      }}>
+      <Source
+        type="geojson"
+        data={{
+          type: "LineString",
+          coordinates: journey.locations.map((l) => l.coordinates),
+        }}
+      >
         <Layer {...routeStyle} />
       </Source>
 
-      <Source type="geojson" data={{
-        type: "FeatureCollection",
-        features: journey.locations.map(l => {
-          return {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: l.coordinates,
-            },
-            properties: {
-              delta: l.delta,
-              direction: l.direction,
-              datetime: l.datetime
-            }
-          };
-        })
-      }}>
+      <Source
+        type="geojson"
+        data={{
+          type: "FeatureCollection",
+          features: journey.locations.map((l) => {
+            return {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: l.coordinates,
+              },
+              properties: {
+                delta: l.delta,
+                direction: l.direction,
+                datetime: l.datetime,
+              },
+            };
+          }),
+        }}
+      >
         <Layer {...locationsStyle} />
       </Source>
 
-      { journey.stops ? <Source type="geojson" data={{
-        type: "FeatureCollection",
-        features: journey.stops.map(s => {
-          return {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: s.coordinates,
-            },
+      {journey.stops ? (
+        <Source
+          type="geojson"
+          data={{
+            type: "FeatureCollection",
+            features: journey.stops.map((s) => {
+              return {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: s.coordinates,
+                },
+                properties: {
+                  atco_code: s.atco_code,
+                  name: s.name,
+                  minor: s.minor,
+                  heading: s.heading,
+                  aimed_arrival_time: s.aimed_arrival_time,
+                  aimed_departure_time: s.aimed_departure_time,
+                },
+              };
+            }),
+          }}
+        >
+          <Layer {...stopsStyle} />
+        </Source>
+      ) : null}
+
+      {clickedStop ? (
+        <StopPopup
+          item={{
             properties: {
-              atco_code: s.atco_code,
-              name: s.name,
-              minor: s.minor,
-              heading: s.heading,
-              aimed_arrival_time: s.aimed_arrival_time,
-              aimed_departure_time: s.aimed_departure_time,
-            }
-          };
-        })
-      }}>
-        <Layer {...stopsStyle} />
-      </Source> : null }
+              url: `/stops/{clickedStop.properties.atco_code}`,
+              name: clickedStop.properties.name,
+            },
+            geometry: clickedStop.geometry,
+          }}
+          onClose={() => setClickedStop(null)}
+        />
+      ) : null}
 
-      {clickedStop ? <StopPopup item={{
-        properties: {
-          url: `/stops/{clickedStop.properties.atco_code}`,
-          name: clickedStop.properties.name,
-        },
-        geometry: clickedStop.geometry,
-      }} onClose={() => setClickedStop(null)} /> : null}
-
-      {clickedLocation ?
+      {clickedLocation ? (
         <Popup
           latitude={clickedLocation.geometry.coordinates[1]}
           longitude={clickedLocation.geometry.coordinates[0]}
@@ -185,11 +197,8 @@ export default function JourneyMap({
           closeOnClick={false}
         >
           {clickedLocation.properties.datetime}
-
         </Popup>
-        : null
-      }
-
+      ) : null}
     </Map>
   );
 }

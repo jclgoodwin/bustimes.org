@@ -15,7 +15,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 const apiRoot = "https://bustimes.org/";
 
-
 export default function OperatorMap() {
   // dark mode:
 

@@ -58,7 +58,6 @@ export default function ServiceMapMap({
     setClickedVehicleMarker(id);
   }, []);
 
-
   const [clickedStops, setClickedStops] = React.useState([]);
 
   const handleMapClick = React.useCallback((e) => {
@@ -163,12 +162,7 @@ export default function ServiceMapMap({
       {popup}
 
       {clickedStops.map((stop) => {
-        return (
-          <StopPopup
-            key={stop.properties.url}
-            item={stop}
-          />
-        );
+        return <StopPopup key={stop.properties.url} item={stop} />;
       })}
 
       {geometry && (

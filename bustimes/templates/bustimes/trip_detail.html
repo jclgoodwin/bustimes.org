@@ -4,6 +4,33 @@
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
+{% block head %}
+    <style>
+    body {
+        overflow: hidden;
+    }
+
+    #map {
+        top: 104px;
+        left: 0;
+        position: absolute;
+        bottom: 134px; /* ad 92px + footer 42px */
+        width: 100%;
+    }
+
+    footer {
+        bottom: 0;
+        position: absolute;
+        width: 100%;
+    }
+
+    footer ul,
+    .breadcrumb {
+        border: 0;
+    }
+    </style>
+{% endblock %}
+
 {% block bodyclass %}{% endblock %}
 
 {% block content %}
