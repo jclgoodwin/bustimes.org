@@ -1342,6 +1342,30 @@ class ImportTransXChangeTest(TestCase):
             )
         )
 
+    @time_machine.travel("2023-07-24")
+    def test_pick_up_and_set_down(self):
+        with patch("os.path.getmtime", return_value=1690162625):
+            call_command(
+                "import_transxchange", FIXTURES_DIR / "t8_pick_up_set_down.xml"
+            )
+
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(response, '<td>08:00<abbr title="set down only">s</abbr>')
+        self.assertContains(response, '<td>08:26<abbr title="pick up only">p</abbr>')
+
+    @time_machine.travel("2023-07-24")
+    def test_stop_usage_notes(self):
+        with patch("os.path.getmtime", return_value=1690162625):
+            call_command("import_transxchange", FIXTURES_DIR / "swe_40-228-_-y10-1.xml")
+
+        service = Service.objects.get()
+        response = self.client.get(service.get_absolute_url())
+
+        self.assertContains(
+            response, '<td>18:07<abbr title="set down only">s</abbr></td>'
+        )
+
     def test_get_operator_name(self):
         blue_triangle_element = ET.fromstring(
             """

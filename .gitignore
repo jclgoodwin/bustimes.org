@@ -6,6 +6,7 @@
 /node_modules/
 /htmlcov/
 /staticfiles/
+/busstops/static/js/dist
 /busstops/static/css/*.css
 /busstops/static/css/*.css.map
 /.env

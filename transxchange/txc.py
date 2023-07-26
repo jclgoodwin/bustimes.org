@@ -132,6 +132,7 @@ class JourneyPatternStopUsage:
 
     def __init__(self, element, stops):
         self.activity = element.findtext("Activity")
+        self.dynamic_destination_display = element.findtext("DynamicDestinationDisplay")
 
         self.sequencenumber = element.get("SequenceNumber")
         if self.sequencenumber is not None:
@@ -151,6 +152,17 @@ class JourneyPatternStopUsage:
             if self.wait_time.total_seconds() > 10000:
                 # bad data detected
                 logger.warning(f"long wait time {self.wait_time} at stop {self.stop}")
+
+        self.notes = [
+            (note_element.find("NoteCode").text, note_element.find("NoteText").text)
+            for note_element in element.findall("Notes/Note")
+        ]
+        if self.notes:
+            if self.notes == [("R", "Sets down by request to driver only")]:
+                if self.activity != "setDown":
+                    self.activity = "setDown"
+            else:
+                print(stop_ref, self.notes)
 
         self.row = None
         self.parent = None
@@ -202,6 +214,11 @@ class VehicleJourneyTimingLink:
 
         self.from_activity = element.findtext("From/Activity")
         self.to_activity = element.findtext("To/Activity")
+
+        self.notes = [
+            (note_element.find("NoteCode").text, note_element.find("NoteText").text)
+            for note_element in element.findall("Notes/Note")
+        ]
 
 
 class VehicleType:
@@ -306,6 +323,14 @@ class VehicleJourney:
         wait_time = None
 
         for timinglink, journey_timinglink in self.get_timinglinks():
+
+            if journey_timinglink and journey_timinglink.from_activity:
+                activity = journey_timinglink.from_activity
+            elif stopusage and stopusage.activity != timinglink.origin.activity:
+                activity = None  # equivalent to pickUpAndSetDown
+            else:
+                activity = timinglink.origin.activity
+
             stopusage = timinglink.origin
 
             if deadrun and self.start_deadrun == timinglink.id:
@@ -317,12 +342,14 @@ class VehicleJourney:
                 elif stopusage.wait_time is not None:
                     wait_time = stopusage.wait_time
 
+                notes = journey_timinglink and journey_timinglink.notes
+
                 if wait_time:
                     next_time = time + wait_time
-                    yield Cell(stopusage, time, next_time)
+                    yield Cell(stopusage, time, next_time, activity, notes)
                     time = next_time
                 else:
-                    yield Cell(stopusage, time, time)
+                    yield Cell(stopusage, time, time, activity, notes)
 
                 if journey_timinglink and journey_timinglink.run_time is not None:
                     run_time = journey_timinglink.run_time
@@ -346,7 +373,9 @@ class VehicleJourney:
                     wait_time = stopusage.wait_time
 
         if not deadrun:
-            yield Cell(timinglink.destination, time, time)
+            activity = journey_timinglink and journey_timinglink.to_activity
+            notes = journey_timinglink and journey_timinglink.notes
+            yield Cell(timinglink.destination, time, time, activity, notes)
 
 
 class ServicedOrganisation:
@@ -556,6 +585,18 @@ class Service:
             d.text for d in element.findall("AssociatedOperators/OperatorRef")
         ]
 
+        self.ticket_machine_service_code = element.findtext("TicketMachineServiceCode")
+        if self.ticket_machine_service_code:
+            print(self.ticket_machine_service_code)
+        self.commercial_basis = element.findtext("CommercialBasis")
+
+        self.notes = [
+            (note_element.find("NoteCode").text, note_element.find("NoteText").text)
+            for note_element in element.findall("Note")
+        ]
+        if self.notes:
+            print(self.notes)
+
 
 class Line:
     def __init__(self, element):
@@ -681,7 +722,7 @@ class TransXChange:
 class Cell:
     last = False
 
-    def __init__(self, stopusage, arrival_time, departure_time):
+    def __init__(self, stopusage, arrival_time, departure_time, activity, notes):
         self.stopusage = stopusage
         self.arrival_time = arrival_time
         self.departure_time = departure_time
@@ -693,3 +734,8 @@ class Cell:
             self.wait_time = True
         else:
             self.wait_time = None
+
+        self.activity = activity
+        self.notes = notes
+        if self.notes:
+            print(self.notes)

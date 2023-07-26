@@ -219,7 +219,7 @@ if TEST:
 elif DEBUG or not REDIS_URL:
     CACHES["default"] = {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}
 
-if REDIS_URL:
+if REDIS_URL and not TEST:
     CACHES["redis"] = {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": REDIS_URL,

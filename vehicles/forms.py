@@ -76,8 +76,8 @@ class EditVehiclesForm(forms.Form):
         label="Current livery",
         widget=forms.RadioSelect,
         required=False,
-        help_text="""Wait until the bus has been repainted
-(<em>not</em> "in the paint shop" or "awaiting repaint") before updating it here""",
+        help_text="""To avoid arguments, please be patient and wait until the bus has been repainted
+(<em>not</em> "in the paint shop" or "awaiting repaint") before updating it here.""",
     )
     other_colour = forms.CharField(
         label="Other colours",
