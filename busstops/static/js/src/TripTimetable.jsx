@@ -1,9 +1,11 @@
 import React from "react";
 
-function Row({ stop, onMouseEnter }) {
+function Row({ stop, onMouseEnter, vehicle }) {
   const handleMouseEnter = React.useCallback(() => {
-    if (stop.stop.location) {
-      onMouseEnter(stop);
+    if (onMouseEnter) {
+      if (stop.stop.location) {
+        onMouseEnter(stop);
+      }
     }
   }, []);
 
@@ -21,6 +23,11 @@ function Row({ stop, onMouseEnter }) {
       ? 2
       : null;
 
+  const actual =
+    vehicle?.progress?.prev_stop == stop.stop.atco_code
+      ? new Date(vehicle.datetime).toTimeString().slice(0, 8)
+      : null;
+
   return (
     <React.Fragment>
       <tr
@@ -32,19 +39,18 @@ function Row({ stop, onMouseEnter }) {
           {stopName}
         </td>
         <td>{stop.aimed_arrival_time || stop.aimed_departure_time}</td>
-        <td></td>
+        <td>{actual}</td>
       </tr>
       {rowSpan ? (
         <tr className={className}>
           <td>{stop.aimed_departure_time}</td>
-          <td></td>
         </tr>
       ) : null}
     </React.Fragment>
   );
 }
 
-export default function TripTimetable({ trip, onMouseEnter }) {
+export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
   const last = trip.times.length - 1;
 
   return (
@@ -65,6 +71,7 @@ export default function TripTimetable({ trip, onMouseEnter }) {
               first={i === 0}
               last={i === last}
               onMouseEnter={onMouseEnter}
+              vehicle={vehicle}
             />
           ))}
         </tbody>

@@ -5,7 +5,6 @@ import Map, {
   Layer,
   NavigationControl,
   GeolocateControl,
-  Popup,
 } from "react-map-gl/maplibre";
 
 import { useDarkMode } from "./utils";
@@ -90,6 +89,7 @@ export default function TripMap() {
     });
   }, []);
 
+  const [tripVehicle, setTripVehicle] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
 
   let timeout;
@@ -102,8 +102,11 @@ export default function TripMap() {
           Object.assign(
             {},
             ...items.map((item) => {
-              if (!vehicles && item.trip_id === window.TRIP_ID) {
-                setClickedVehicleMarker(item.id);
+              if (item.trip_id === window.TRIP_ID) {
+                if (!vehicles) {
+                  setClickedVehicleMarker(item.id);
+                }
+                setTripVehicle(item);
               }
               return { [item.id]: item };
             }),
@@ -123,13 +126,6 @@ export default function TripMap() {
     setClickedStop(null);
     setClickedVehicleMarker(id);
   }, []);
-
-  // const handleMapClick = React.useCallback((e) => {
-  //   if (!e.originalEvent.defaultPrevented) {
-  //     setClickedStops(e.features);
-  //     setClickedVehicleMarker(null);
-  //   }
-  // }, []);
 
   const handleMapLoad = React.useCallback((event) => {
     const map = event.target;
@@ -250,7 +246,11 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
-      <TripTimetable trip={trip} onMouseEnter={handleMouseEnter} />
+      <TripTimetable
+        trip={trip}
+        vehicle={tripVehicle}
+        onMouseEnter={handleMouseEnter}
+      />
     </React.Fragment>
   );
 }

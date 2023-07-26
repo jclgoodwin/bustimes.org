@@ -16,8 +16,8 @@ function getTimeDelta(seconds) {
 }
 
 function Delay({ item }) {
+  let delay = item.delay;
   if (typeof delay !== "undefined") {
-    let delay = item.delay;
     if (-60 < delay && delay < 60) {
       delay = "On time";
     } else {
@@ -92,7 +92,7 @@ function VehiclePopup({ item, onClose, closeButton = true }) {
       )}
       <Delay item={item} />
       <div>
-        <ReactTimeAgo date={date} locale="en-GB" tooltip={true} />
+        <ReactTimeAgo date={date} locale="en-GB" tooltip={true} timeStyle="round" />
       </div>
     </Popup>
   );
