@@ -47,7 +47,9 @@ function VehiclePopup({ item, onClose, closeButton = true }) {
   if (item.trip_id) {
     line_name = <a href={`/trips/${item.trip_id}`}>{line_name}</a>;
   } else if (item.service?.url) {
-    line_name = <a href={item.service.url}>{line_name}</a>;
+    if (item.service.url != window.location.pathname) {
+      line_name = <a href={item.service.url}>{line_name}</a>;
+    }
   }
 
   let vehicle = item.vehicle.name;

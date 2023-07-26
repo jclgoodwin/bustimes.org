@@ -104,8 +104,8 @@ export default function OperatorMap() {
 
   return (
     <React.Fragment>
-      {clickedTripId ? <TripLayer tripId={clickedTripId} /> : null }
-      <div className={ clickedTripId ? "trip-map" : "operator-map" }>
+      {clickedTripId ? <TripLayer tripId={clickedTripId} /> : null}
+      <div className={clickedTripId ? "trip-map" : "operator-map"}>
         <Map
           dragRotate={false}
           touchPitch={false}

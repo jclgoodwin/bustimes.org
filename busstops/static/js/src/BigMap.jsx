@@ -1,8 +1,8 @@
 import React from "react";
 
 import Map, {
-  Source,
-  Layer,
+  // Source,
+  // Layer,
   NavigationControl,
   GeolocateControl,
 } from "react-map-gl/maplibre";
@@ -52,17 +52,17 @@ function containsBounds(a, b) {
 //   }
 // };
 
-const redBusesStyle = {
-  id: "vehicles",
-  type: "symbol",
-  layout: {
-    "icon-rotate": ["to-number", ["get", "heading"]],
-    "icon-image": "vehicle",
-    "icon-size": 0.5,
-    "icon-allow-overlap": true,
-    "icon-offset": [0, -6],
-  },
-};
+// const redBusesStyle = {
+//   id: "vehicles",
+//   type: "symbol",
+//   layout: {
+//     "icon-rotate": ["to-number", ["get", "heading"]],
+//     "icon-image": "vehicle",
+//     "icon-size": 0.5,
+//     "icon-allow-overlap": true,
+//     "icon-offset": [0, -6],
+//   },
+// };
 
 function shouldShowStops(zoom) {
   return zoom >= 14;
@@ -75,7 +75,7 @@ function shouldShowVehicles(zoom) {
 export default function BigMap() {
   const darkMode = useDarkMode();
 
-  const [loading, setLoading] = React.useState(true);
+  // const [loading, setLoading] = React.useState(true);
 
   const [vehicles, setVehicles] = React.useState(null);
 
@@ -149,7 +149,6 @@ export default function BigMap() {
       if (e.features[0].layer.id === "stops") {
         setClickedStopId(e.features[0]);
       } else {
-        debugger;
         setClickedVehicleMarker(e.features[0].id);
       }
     } else if (!e.originalEvent.defaultPrevented) {

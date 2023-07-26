@@ -375,7 +375,7 @@ class TimetableDepartures(Departures):
             "destination": destination or "",
             "route": trip.route,
             "service": trip.route.service,
-            "link": f"{trip.get_absolute_url()}#stop-time-{stop_time.id}",
+            "link": trip.get_absolute_url(),
             "stop_time": stop_time,
         }
 

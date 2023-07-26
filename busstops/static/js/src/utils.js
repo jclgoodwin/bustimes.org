@@ -24,9 +24,10 @@ export const useDarkMode = () => {
 };
 
 export function getBounds(items) {
-  let bounds = new LngLatBounds();
-  for (let item of items) {
+  const bounds = new LngLatBounds();
+  for (const item of items) {
     bounds.extend(item.coordinates);
   }
+
   return bounds;
 }

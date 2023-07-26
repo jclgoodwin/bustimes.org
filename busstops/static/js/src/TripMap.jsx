@@ -13,6 +13,8 @@ import { LngLatBounds } from "maplibre-gl";
 
 import TripTimetable from "./TripTimetable";
 import StopPopup from "./StopPopup";
+import VehicleMarker from "./VehicleMarker";
+import VehiclePopup from "./VehiclePopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
@@ -58,10 +60,13 @@ export default function TripMap() {
   const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback((e) => {
-    if (e.features.length) {
-      if (e.features[0].layer.id == "stops") {
+    if (!e.originalEvent.defaultPrevented) {
+      if (e.features.length) {
         setClickedStop(e.features[0]);
+      } else {
+        setClickedStop(null);
       }
+      setClickedVehicleMarker(null);
     }
   }, []);
 
@@ -77,6 +82,52 @@ export default function TripMap() {
     });
   }, []);
 
+  const [vehicles, setVehicles] = React.useState(null);
+
+  let timeout;
+
+  const loadVehicles = () => {
+    const url = `${apiRoot}vehicles.json?service=${window.SERVICE}&trip=${window.TRIP_ID}`;
+    fetch(url).then((response) => {
+      response.json().then((items) => {
+        setVehicles(
+          Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
+        );
+        clearTimeout(timeout);
+        timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+      });
+    });
+  };
+
+  const [clickedVehicleMarkerId, setClickedVehicleMarker] =
+    React.useState(null);
+
+  const handleVehicleMarkerClick = React.useCallback((event, id) => {
+    event.originalEvent.preventDefault();
+    setClickedStop(null);
+    setClickedVehicleMarker(id);
+  }, []);
+
+  // const handleMapClick = React.useCallback((e) => {
+  //   if (!e.originalEvent.defaultPrevented) {
+  //     setClickedStops(e.features);
+  //     setClickedVehicleMarker(null);
+  //   }
+  // }, []);
+
+  const handleMapLoad = React.useCallback((event) => {
+    const map = event.target;
+    map.keyboard.disableRotation();
+    map.touchZoomRotate.disableRotation();
+
+    loadVehicles();
+  }, []);
+
+  const clickedVehicle =
+    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
+
+  const vehiclesList = vehicles ? Object.values(vehicles) : [];
+
   return (
     <React.Fragment>
       <div className="trip-map">
@@ -85,7 +136,6 @@ export default function TripMap() {
           touchPitch={false}
           touchRotate={false}
           pitchWithRotate={false}
-          minZoom={8}
           maxZoom={16}
           bounds={bounds}
           style={{
@@ -107,7 +157,7 @@ export default function TripMap() {
           }
           RTLTextPlugin={null}
           onClick={handleMapClick}
-          // onLoad={handleMapLoad}
+          onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
         >
           <NavigationControl showCompass={false} />
@@ -136,6 +186,26 @@ export default function TripMap() {
           >
             <Layer {...stopsStyle} />
           </Source>
+
+          {vehiclesList.map((item) => {
+            return (
+              <VehicleMarker
+                key={item.id}
+                selected={item.id === clickedVehicleMarkerId}
+                vehicle={item}
+                onClick={handleVehicleMarkerClick}
+              />
+            );
+          })}
+
+          {clickedVehicle ? (
+            <VehiclePopup
+              item={clickedVehicle}
+              onClose={() => {
+                setClickedVehicleMarker(null);
+              }}
+            />
+          ) : null}
 
           {clickedStop ? (
             <StopPopup

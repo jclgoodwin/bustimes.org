@@ -429,7 +429,7 @@ class LiveDeparturesTest(TestCase):
                 with self.assertNumQueries(9):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
 
-        trip_url = f"{self.trip.get_absolute_url()}#stop-time-{self.worcs_stop_time.id}"
+        trip_url = f"{self.trip.get_absolute_url()}"
 
         self.assertContains(
             response,

@@ -15,8 +15,12 @@ export default function TripLayer({ tripId }) {
   }, [tripId]);
 
   if (!trip) {
-    return <div className="trip-timetable"><div className="sorry">Loading trip #{tripId}…</div></div>;
+    return (
+      <div className="trip-timetable">
+        <div className="sorry">Loading trip #{tripId}…</div>
+      </div>
+    );
   }
 
-  return <TripTimetable trip={ trip } />;
+  return <TripTimetable trip={trip} />;
 }

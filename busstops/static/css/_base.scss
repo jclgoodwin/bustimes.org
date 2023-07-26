@@ -512,6 +512,7 @@ dd {
     margin: 0 0 1em;
 }
 
+// registration detail history
 .history {
     > li {
         list-style: decimal;
@@ -1195,11 +1196,11 @@ input:not(:checked) + label {
         table-layout: fixed;
         width: 100%;
         white-space: nowrap;
-        overflow: hidden;
     }
 
     th {
         width: 4em;
+        overflow: hidden;
     }
 
     th:first-child {

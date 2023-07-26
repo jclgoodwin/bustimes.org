@@ -15,10 +15,6 @@ import { useDarkMode } from "./utils";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
-
-let hasHistory = false;
-
 const routeStyle = {
   type: "line",
   paint: {
@@ -30,11 +26,9 @@ const routeStyle = {
 export default function ServiceMapMap({
   vehicles,
   vehiclesList,
-  closeMap,
   geometry,
   stops,
   closeButton,
-  count,
 }) {
   const darkMode = useDarkMode();
 
@@ -114,11 +108,10 @@ export default function ServiceMapMap({
       touchPitch={false}
       touchRotate={false}
       pitchWithRotate={false}
-      minZoom={8}
       maxZoom={16}
       bounds={window.EXTENT}
       fitBoundsOptions={{
-        padding: 50,
+        padding: 20,
       }}
       cursor={cursor}
       onMouseEnter={onMouseEnter}
@@ -137,11 +130,6 @@ export default function ServiceMapMap({
       <GeolocateControl />
 
       {closeButton}
-
-      {/*count ?
-        <div className="maplibregl-ctrl-top-left">
-          <div className="maplibregl-ctrl maplibregl-ctrl-attrib">Tracking {count}</div>
-        </div> : null*/}
 
       {vehiclesList ? (
         vehiclesList.map((item) => {
