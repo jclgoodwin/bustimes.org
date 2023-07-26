@@ -74,14 +74,24 @@ h1 {
     }
 }
 
+.trip-map,
+.trip-timetable {
+    position: absolute;
+    margin: 0;
+    top: 104px;
+    bottom: 134px; /* ad 92px + footer 42px */
+    height: auto;
+}
+
 .trip-map {
     left: 400px;
-    bottom: 0;
+    right: 0;
 }
 
 .trip-timetable {
     width: 400px;
     box-sizing: border-box;
     padding: 0 1em;
-    top: 0;
+    margin-left: -1em;
+    overflow: auto;
 }

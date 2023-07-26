@@ -41,6 +41,14 @@ const stopsStyle = {
   },
 };
 
+const routeStyle = {
+  type: "line",
+  paint: {
+    "line-color": "#777",
+    "line-width": 3,
+  },
+};
+
 const trip = window.STOPS;
 const bounds = getBounds(trip.times);
 
@@ -91,7 +99,15 @@ export default function TripMap() {
     fetch(url).then((response) => {
       response.json().then((items) => {
         setVehicles(
-          Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
+          Object.assign(
+            {},
+            ...items.map((item) => {
+              if (!vehicles && item.trip_id === window.TRIP_ID) {
+                setClickedVehicleMarker(item.id);
+              }
+              return { [item.id]: item };
+            }),
+          ),
         );
         clearTimeout(timeout);
         timeout = setTimeout(loadVehicles, 10000); // 10 seconds
@@ -163,6 +179,25 @@ export default function TripMap() {
           <NavigationControl showCompass={false} />
           <GeolocateControl />
 
+          <Source
+            type="geojson"
+            data={{
+              type: "FeatureCollection",
+              features: trip.times
+                .filter((stop) => stop.track)
+                .map((stop) => {
+                  return {
+                    type: "Feature",
+                    geometry: {
+                      type: "LineString",
+                      coordinates: stop.track,
+                    },
+                  };
+                }),
+            }}
+          >
+            <Layer {...routeStyle} />
+          </Source>
           <Source
             type="geojson"
             data={{

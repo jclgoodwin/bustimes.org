@@ -40,7 +40,7 @@ function StopMarker(props) {
   );
 }
 
-function propsAreEqual(prev, props) {
+function propsAreEqual() {
   return true;
 }
 

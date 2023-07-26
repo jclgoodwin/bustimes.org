@@ -34,7 +34,7 @@ export default function ServiceMapMap({
 
   const [cursor, setCursor] = React.useState();
 
-  const onMouseEnter = React.useCallback((e) => {
+  const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
   }, []);
 

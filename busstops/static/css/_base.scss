@@ -1170,8 +1170,7 @@ input:not(:checked) + label {
     }
 }
 
-.operator-map,
-.trip-map {
+.operator-map {
     position: absolute;
     top: 0;
     right: 0;
@@ -1180,18 +1179,13 @@ input:not(:checked) + label {
 }
 
 .trip-map {
-    bottom: 50%;
+    top: 0;
+    position: sticky;
+    margin: 0 -1em;
+    height: 50vh;
 }
 
 .trip-timetable {
-    position: absolute;
-    background: var(--background-color);
-    padding: 1em;
-    top: 50%;
-    bottom: 0;
-    overflow: auto;
-    left: 0;
-
     table {
         table-layout: fixed;
         width: 100%;

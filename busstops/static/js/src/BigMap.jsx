@@ -186,7 +186,7 @@ export default function BigMap() {
 
   const [cursor, setCursor] = React.useState(null);
 
-  const onMouseEnter = React.useCallback((e) => {
+  const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
   }, []);
 

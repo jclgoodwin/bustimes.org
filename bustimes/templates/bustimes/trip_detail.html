@@ -6,29 +6,23 @@
 
 {% block head %}
     <style>
-    body {
-        overflow: hidden;
-    }
-
-    #map {
-        top: 104px;
-        left: 0;
-        position: absolute;
-        bottom: 134px; /* ad 92px + footer 42px */
-        width: 100%;
-    }
-
-    footer {
-        bottom: 0;
-        position: absolute;
-        width: 100%;
-        z-index: -1;
-    }
-
-    footer ul,
     .breadcrumb {
         border: 0;
     }
+
+    @media (min-width: 48em) {
+        footer ul {
+            border: 0;
+        }
+
+        footer {
+            bottom: 0;
+            position: absolute;
+            width: 100%;
+            z-index: -1;
+        }
+    }
+
     </style>
 {% endblock %}
 
@@ -37,6 +31,7 @@
 {% block content %}
 
     <div id="map">
+        <div class="trip-map"></div>
     </div>
 
 {% endblock %}
