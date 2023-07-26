@@ -1,5 +1,4 @@
 import React, { lazy, Suspense } from "react";
-import ReactDOM from "react-dom/client";
 
 const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 

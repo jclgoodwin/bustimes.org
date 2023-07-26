@@ -1,11 +1,11 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
 
 import Map, {
   NavigationControl,
   GeolocateControl,
 } from "react-map-gl/maplibre";
 
+import TripLayer from "./TripLayer";
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
@@ -141,6 +141,8 @@ export default function OperatorMap() {
           onClose={() => setClickedVehicleMarker(null)}
         />
       )}
+
+      {clickedVehicle?.trip_id ? <TripLayer tripId={clickedVehicle.trip_id} /> : null }
     </Map>
   );
 }
