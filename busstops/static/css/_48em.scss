@@ -74,26 +74,14 @@ h1 {
     }
 }
 
-.journey {
-    .trip {
-        top: 96px;
-        height: auto;
-        width: 420px;
-    }
-
-    .trip + .map {
-        bottom: 0;
-        left: 420px + 32px;
-    }
-
+.trip-map {
+    left: 400px;
+    bottom: 0;
 }
 
-// .trip-map-wrapper {
-//     float: right;
-//     margin: 1em 0 0 1em;
-//     width: 50%;
-// }
-
-// .trip-map {
-//     height: 400px;
-// }
+.trip-timetable {
+    width: 400px;
+    box-sizing: border-box;
+    padding: 0 1em;
+    top: 0;
+}

@@ -180,7 +180,7 @@ export default function JourneyMap({ journey }) {
         <StopPopup
           item={{
             properties: {
-              url: `/stops/{clickedStop.properties.atco_code}`,
+              url: `/stops/${clickedStop.properties.atco_code}`,
               name: clickedStop.properties.name,
             },
             geometry: clickedStop.geometry,
