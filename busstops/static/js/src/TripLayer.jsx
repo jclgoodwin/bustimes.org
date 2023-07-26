@@ -11,7 +11,7 @@ export default function TripLayer({ tripId }) {
     fetch(`${apiRoot}/api/trips/${tripId}/`).then((response) => {
       response.json().then(setTrip);
     });
-  }, []);
+  }, [tripId]);
 
   if (!trip) {
     return null;
