@@ -100,49 +100,54 @@ export default function OperatorMap() {
   const clickedVehicle =
     clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
 
+  const clickedTripId = clickedVehicle?.trip_id;
+
   return (
-    <Map
-      dragRotate={false}
-      touchPitch={false}
-      touchRotate={false}
-      pitchWithRotate={false}
-      minZoom={6}
-      maxZoom={16}
-      bounds={bounds}
-      fitBoundsOptions={{
-        padding: 50,
-      }}
-      mapStyle={
-        darkMode
-          ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-          : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-      }
-      RTLTextPlugin={null}
-      onClick={handleMapClick}
-      onLoad={handleMapLoad}
-    >
-      <NavigationControl showCompass={false} />
-      <GeolocateControl />
+    <React.Fragment>
+      {clickedTripId ? <TripLayer tripId={clickedTripId} /> : null }
+      <div className={ clickedTripId ? "trip-map" : "operator-map" }>
+        <Map
+          dragRotate={false}
+          touchPitch={false}
+          touchRotate={false}
+          pitchWithRotate={false}
+          minZoom={6}
+          maxZoom={16}
+          bounds={bounds}
+          fitBoundsOptions={{
+            padding: 50,
+          }}
+          mapStyle={
+            darkMode
+              ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
+              : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
+          }
+          RTLTextPlugin={null}
+          onClick={handleMapClick}
+          onLoad={handleMapLoad}
+        >
+          <NavigationControl showCompass={false} />
+          <GeolocateControl />
 
-      {vehiclesList.map((item) => {
-        return (
-          <VehicleMarker
-            key={item.id}
-            selected={item.id === clickedVehicleMarkerId}
-            vehicle={item}
-            onClick={handleVehicleMarkerClick}
-          />
-        );
-      })}
+          {vehiclesList.map((item) => {
+            return (
+              <VehicleMarker
+                key={item.id}
+                selected={item.id === clickedVehicleMarkerId}
+                vehicle={item}
+                onClick={handleVehicleMarkerClick}
+              />
+            );
+          })}
 
-      {clickedVehicle && (
-        <VehiclePopup
-          item={clickedVehicle}
-          onClose={() => setClickedVehicleMarker(null)}
-        />
-      )}
-
-      {clickedVehicle?.trip_id ? <TripLayer tripId={clickedVehicle.trip_id} /> : null }
-    </Map>
+          {clickedVehicle && (
+            <VehiclePopup
+              item={clickedVehicle}
+              onClose={() => setClickedVehicleMarker(null)}
+            />
+          )}
+        </Map>
+      </div>
+    </React.Fragment>
   );
 }

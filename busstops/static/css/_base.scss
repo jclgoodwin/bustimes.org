@@ -1169,12 +1169,17 @@ input:not(:checked) + label {
     }
 }
 
+.operator-map,
 .trip-map {
     position: absolute;
     top: 0;
-    bottom: 50%;
     right: 0;
     left: 0;
+    bottom: 0;
+}
+
+.trip-map {
+    bottom: 50%;
 }
 
 .trip-timetable {
