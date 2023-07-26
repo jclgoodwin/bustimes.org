@@ -17,17 +17,7 @@ import VehiclePopup from "./VehiclePopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
-
-function getBounds(stops) {
-  let bounds = new LngLatBounds();
-  for (let item of stops) {
-    if (item.stop.location) {
-      bounds.extend(item.stop.location);
-    }
-  }
-  return bounds;
-}
+const apiRoot = "/";
 
 const stopsStyle = {
   id: "stops",
@@ -48,10 +38,27 @@ const routeStyle = {
   },
 };
 
-const trip = window.STOPS;
-const bounds = getBounds(trip.times);
-
 export default function TripMap() {
+  const [trip, setTrip] = React.useState(window.STOPS);
+
+  const bounds = React.useMemo(() => {
+    console.log("getBounds");
+    let bounds = new LngLatBounds();
+    for (let item of trip.times) {
+      if (item.stop.location) {
+        bounds.extend(item.stop.location);
+      }
+    }
+    return bounds;
+  }, [trip])
+
+  const loadTrip = function(tripId) {
+    window.TRIP_ID = tripId;
+    fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+      response.json().then(setTrip);
+    });
+  };
+
   const darkMode = useDarkMode();
 
   const [cursor, setCursor] = React.useState();
@@ -95,7 +102,7 @@ export default function TripMap() {
   let timeout;
 
   const loadVehicles = () => {
-    const url = `${apiRoot}vehicles.json?service=${window.SERVICE}&trip=${window.TRIP_ID}`;
+    const url = `${apiRoot}vehicles.json?service=${window.SERVICE}&trip=${trip.id}`;
     fetch(url).then((response) => {
       response.json().then((items) => {
         setVehicles(
@@ -232,6 +239,7 @@ export default function TripMap() {
           {clickedVehicle ? (
             <VehiclePopup
               item={clickedVehicle}
+              onTripClick={loadTrip}
               onClose={() => {
                 setClickedVehicleMarker(null);
               }}

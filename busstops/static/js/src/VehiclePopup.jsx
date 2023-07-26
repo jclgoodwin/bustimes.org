@@ -35,7 +35,15 @@ function Delay({ item }) {
   }
 }
 
-function VehiclePopup({ item, onClose, closeButton = true }) {
+function VehiclePopup({ item, onClose, closeButton = true, onTripClick = null }) {
+  const handleTripClick = React.useCallback((e) => {
+    if (onTripClick) {
+      e.preventDefault();
+      onTripClick(item.trip_id);
+    }
+  }, []);
+
+
   let line_name = item.service?.line_name;
   if (item.destination) {
     if (line_name) {
@@ -45,7 +53,9 @@ function VehiclePopup({ item, onClose, closeButton = true }) {
   }
 
   if (item.trip_id) {
-    line_name = <a href={`/trips/${item.trip_id}`}>{line_name}</a>;
+    if (item.trip_id != window.TRIP_ID) {
+      line_name = <a href={`/trips/${item.trip_id}`} onClick={handleTripClick}>{line_name}</a>;
+    }
   } else if (item.service?.url) {
     if (item.service.url != window.location.pathname) {
       line_name = <a href={item.service.url}>{line_name}</a>;
