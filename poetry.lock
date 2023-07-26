@@ -116,17 +116,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.28.4"
+version = "1.28.11"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "boto3-1.28.4-py3-none-any.whl", hash = "sha256:1f4b9c23dfcad910b6f8e74aac9fe507c1e75fcdd832e25ed2ff1e6d7a99cddf"},
-    {file = "boto3-1.28.4.tar.gz", hash = "sha256:92c0631ab91b4c5aa0e18a90b4d12df361723c6df1ef7e346db71f2ad0803ab3"},
+    {file = "boto3-1.28.11-py3-none-any.whl", hash = "sha256:e24460d50001b517c6734dcf1c879feb43aa2062d88d9bdbb8703c986cb05941"},
+    {file = "boto3-1.28.11.tar.gz", hash = "sha256:0fe7a35cf0041145c8eefebd3ae2ddf41baed62d7c963e5042b8ed8c297f648f"},
 ]
 
 [package.dependencies]
-botocore = ">=1.31.4,<1.32.0"
+botocore = ">=1.31.11,<1.32.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.6.0,<0.7.0"
 
@@ -135,13 +135,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.31.4"
+version = "1.31.11"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">= 3.7"
 files = [
-    {file = "botocore-1.31.4-py3-none-any.whl", hash = "sha256:1c14ac4521af707a7a407cee0e22695ce3e95c0f1a0c974e21cb25a3ce78a538"},
-    {file = "botocore-1.31.4.tar.gz", hash = "sha256:f9738a23b03c55c2958ebdee65273afeda80deaeefebe595887fc3251e48293a"},
+    {file = "botocore-1.31.11-py3-none-any.whl", hash = "sha256:d3cbffe554c9a1ba2ac6973734c43c21b8e7985a2ac4a4c31a09811b8029445c"},
+    {file = "botocore-1.31.11.tar.gz", hash = "sha256:b17ff973bb70b02b227928c2abe4992f1cfc46d13aee0228516c8f32572b88c6"},
 ]
 
 [package.dependencies]
@@ -150,7 +150,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = ">=1.25.4,<1.27"
 
 [package.extras]
-crt = ["awscrt (==0.16.9)"]
+crt = ["awscrt (==0.16.26)"]
 
 [[package]]
 name = "bs4"
@@ -192,13 +192,13 @@ ujson = ["ujson (>=5.4.0,<6.0.0)"]
 
 [[package]]
 name = "certifi"
-version = "2023.5.7"
+version = "2023.7.22"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "certifi-2023.5.7-py3-none-any.whl", hash = "sha256:c6c2e98f5c7869efca1f8916fed228dd91539f9f1b444c314c06eef02980c716"},
-    {file = "certifi-2023.5.7.tar.gz", hash = "sha256:0f0d56dc5a6ad56fd4ba36484d6cc34451e1c6548c61daad8c320169f91eddc7"},
+    {file = "certifi-2023.7.22-py3-none-any.whl", hash = "sha256:92d6037539857d8206b8f6ae472e8b77db8058fec5937a1ef3f54304089edbb9"},
+    {file = "certifi-2023.7.22.tar.gz", hash = "sha256:539cc1d13202e33ca466e88b2807e29f4c13049d6d87031a3c110744495cb082"},
 ]
 
 [[package]]
@@ -468,13 +468,13 @@ files = [
 
 [[package]]
 name = "dj-database-url"
-version = "1.3.0"
+version = "2.0.0"
 description = "Use Database URLs in your Django Application."
 optional = false
 python-versions = "*"
 files = [
-    {file = "dj-database-url-1.3.0.tar.gz", hash = "sha256:87be5f7c4c83d9b3d8ce94b834f96cea14b3986f3629aac097afdd9318d7b098"},
-    {file = "dj_database_url-1.3.0-py3-none-any.whl", hash = "sha256:80a115bd7675c9fe14a900b2f8b5c8b1822b5a279b333bf9b2804de681656c7c"},
+    {file = "dj-database-url-2.0.0.tar.gz", hash = "sha256:a35a9f0f43775ca6f90d819dc456233ef7bcc76b47377d5d908b75c7eb320624"},
+    {file = "dj_database_url-2.0.0-py3-none-any.whl", hash = "sha256:9c9e5f7224f62635a787e9cc3c6762c9be2b19541a21e3c08fa573bd01609b4b"},
 ]
 
 [package.dependencies]
@@ -518,13 +518,13 @@ translitcodec = ["translitcodec (>=0.3)"]
 
 [[package]]
 name = "django-cors-headers"
-version = "3.14.0"
+version = "4.2.0"
 description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "django_cors_headers-3.14.0-py3-none-any.whl", hash = "sha256:684180013cc7277bdd8702b80a3c5a4b3fcae4abb2bf134dceb9f5dfe300228e"},
-    {file = "django_cors_headers-3.14.0.tar.gz", hash = "sha256:5fbd58a6fb4119d975754b2bc090f35ec160a8373f276612c675b00e8a138739"},
+    {file = "django_cors_headers-4.2.0-py3-none-any.whl", hash = "sha256:9ada212b0e2efd4a5e339360ffc869cb21ac5605e810afe69f7308e577ea5bde"},
+    {file = "django_cors_headers-4.2.0.tar.gz", hash = "sha256:f9749c6410fe738278bc2b6ef17f05195bc7b251693c035752d8257026af024f"},
 ]
 
 [package.dependencies]
@@ -821,17 +821,17 @@ setuptools = "*"
 
 [[package]]
 name = "gunicorn"
-version = "20.1.0"
+version = "21.2.0"
 description = "WSGI HTTP Server for UNIX"
 optional = false
 python-versions = ">=3.5"
 files = [
-    {file = "gunicorn-20.1.0-py3-none-any.whl", hash = "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e"},
-    {file = "gunicorn-20.1.0.tar.gz", hash = "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"},
+    {file = "gunicorn-21.2.0-py3-none-any.whl", hash = "sha256:3213aa5e8c24949e792bcacfc176fef362e7aac80b76c56f6b5122bf350722f0"},
+    {file = "gunicorn-21.2.0.tar.gz", hash = "sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033"},
 ]
 
 [package.dependencies]
-setuptools = ">=3.0"
+packaging = "*"
 
 [package.extras]
 eventlet = ["eventlet (>=0.24.1)"]
@@ -866,13 +866,13 @@ redis = ["redis (>=3.0.0)"]
 
 [[package]]
 name = "identify"
-version = "2.5.24"
+version = "2.5.26"
 description = "File identification library for Python"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "identify-2.5.24-py2.py3-none-any.whl", hash = "sha256:986dbfb38b1140e763e413e6feb44cd731faf72d1909543178aa79b0e258265d"},
-    {file = "identify-2.5.24.tar.gz", hash = "sha256:0aac67d5b4812498056d28a9a512a483f5085cc28640b02b258a59dac34301d4"},
+    {file = "identify-2.5.26-py2.py3-none-any.whl", hash = "sha256:c22a8ead0d4ca11f1edd6c9418c3220669b3b7533ada0a0ffa6cc0ef85cf9b54"},
+    {file = "identify-2.5.26.tar.gz", hash = "sha256:7243800bce2f58404ed41b7c002e53d4d22bcf3ae1b7900c2d7aefd95394bf7f"},
 ]
 
 [package.extras]
@@ -2100,23 +2100,23 @@ yarl = "*"
 
 [[package]]
 name = "virtualenv"
-version = "20.24.0"
+version = "20.24.2"
 description = "Virtual Python Environment builder"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "virtualenv-20.24.0-py3-none-any.whl", hash = "sha256:18d1b37fc75cc2670625702d76849a91ebd383768b4e91382a8d51be3246049e"},
-    {file = "virtualenv-20.24.0.tar.gz", hash = "sha256:e2a7cef9da880d693b933db7654367754f14e20650dc60e8ee7385571f8593a3"},
+    {file = "virtualenv-20.24.2-py3-none-any.whl", hash = "sha256:43a3052be36080548bdee0b42919c88072037d50d56c28bd3f853cbe92b953ff"},
+    {file = "virtualenv-20.24.2.tar.gz", hash = "sha256:fd8a78f46f6b99a67b7ec5cf73f92357891a7b3a40fd97637c27f854aae3b9e0"},
 ]
 
 [package.dependencies]
-distlib = ">=0.3.6,<1"
-filelock = ">=3.12,<4"
-platformdirs = ">=3.5.1,<4"
+distlib = ">=0.3.7,<1"
+filelock = ">=3.12.2,<4"
+platformdirs = ">=3.9.1,<4"
 
 [package.extras]
 docs = ["furo (>=2023.5.20)", "proselint (>=0.13)", "sphinx (>=7.0.1)", "sphinx-argparse (>=0.4)", "sphinxcontrib-towncrier (>=0.2.1a0)", "towncrier (>=23.6)"]
-test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.3.1)", "pytest-env (>=0.8.1)", "pytest-freezer (>=0.4.6)", "pytest-mock (>=3.10)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=67.8)", "time-machine (>=2.9)"]
+test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8)", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10)"]
 
 [[package]]
 name = "w3lib"
@@ -2447,4 +2447,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "138cdb570728fe7a6333963f16231fc47fb3cef46e228403c5962e242beca61e"
+content-hash = "d27278098d3001e803e0e8c90787027a0a4cb7588b01c4be724aac8113723ce3"
