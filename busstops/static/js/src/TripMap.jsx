@@ -50,9 +50,9 @@ export default function TripMap() {
       }
     }
     return bounds;
-  }, [trip])
+  }, [trip]);
 
-  const loadTrip = function(tripId) {
+  const loadTrip = function (tripId) {
     window.TRIP_ID = tripId;
     fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
       response.json().then(setTrip);
@@ -102,7 +102,8 @@ export default function TripMap() {
   let timeout;
 
   const loadVehicles = () => {
-    if (!window.SERVICE) {  // tracking = false
+    if (!window.SERVICE) {
+      // tracking = false
       return;
     }
     const url = `${apiRoot}vehicles.json?service=${window.SERVICE}&trip=${trip.id}`;
@@ -114,7 +115,6 @@ export default function TripMap() {
             ...items.map((item) => {
               if (item.trip_id === window.TRIP_ID) {
                 if (!vehicles) {
-
                   setClickedVehicleMarker(item.id);
                 }
                 setTripVehicle(item);

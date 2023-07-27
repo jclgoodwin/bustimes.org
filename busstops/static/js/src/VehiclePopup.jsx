@@ -35,14 +35,18 @@ function Delay({ item }) {
   }
 }
 
-function VehiclePopup({ item, onClose, closeButton = true, onTripClick = null }) {
+function VehiclePopup({
+  item,
+  onClose,
+  closeButton = true,
+  onTripClick = null,
+}) {
   const handleTripClick = React.useCallback((e) => {
     if (onTripClick) {
       e.preventDefault();
       onTripClick(item.trip_id);
     }
   }, []);
-
 
   let line_name = item.service?.line_name;
   if (item.destination) {
@@ -54,7 +58,11 @@ function VehiclePopup({ item, onClose, closeButton = true, onTripClick = null })
 
   if (item.trip_id) {
     if (item.trip_id != window.TRIP_ID) {
-      line_name = <a href={`/trips/${item.trip_id}`} onClick={handleTripClick}>{line_name}</a>;
+      line_name = (
+        <a href={`/trips/${item.trip_id}`} onClick={handleTripClick}>
+          {line_name}
+        </a>
+      );
     }
   } else if (item.service?.url) {
     if (item.service.url != window.location.pathname) {
@@ -102,7 +110,12 @@ function VehiclePopup({ item, onClose, closeButton = true, onTripClick = null })
       )}
       <Delay item={item} />
       <div>
-        <ReactTimeAgo date={date} locale="en-GB" tooltip={true} timeStyle="round" />
+        <ReactTimeAgo
+          date={date}
+          locale="en-GB"
+          tooltip={true}
+          timeStyle="round"
+        />
       </div>
     </Popup>
   );

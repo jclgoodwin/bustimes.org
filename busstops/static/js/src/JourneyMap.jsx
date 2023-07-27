@@ -10,6 +10,7 @@ import Map, {
 
 import { useDarkMode, getBounds } from "./utils";
 
+import TripTimetable from "./TripTimetable";
 import StopPopup from "./StopPopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -43,6 +44,21 @@ const routeStyle = {
     "line-dasharray": [2, 2],
   },
 };
+
+
+function LocationPopup({ location }) {
+  const when = new Date(location.properties.datetime);
+  return (
+    <Popup
+      latitude={location.geometry.coordinates[1]}
+      longitude={location.geometry.coordinates[0]}
+      closeButton={false}
+      closeOnClick={false}
+    >
+      {when.toTimeString().slice(0, 8)}
+    </Popup>
+  );
+}
 
 export default function JourneyMap({ journey }) {
   const darkMode = useDarkMode();
@@ -87,6 +103,8 @@ export default function JourneyMap({ journey }) {
   }
 
   return (
+    <React.Fragment>
+    <div className="trip-map">
     <Map
       dragRotate={false}
       touchPitch={false}
@@ -188,16 +206,31 @@ export default function JourneyMap({ journey }) {
         />
       ) : null}
 
-      {clickedLocation ? (
-        <Popup
-          latitude={clickedLocation.geometry.coordinates[1]}
-          longitude={clickedLocation.geometry.coordinates[0]}
-          closeButton={false}
-          closeOnClick={false}
-        >
-          {clickedLocation.properties.datetime}
-        </Popup>
-      ) : null}
+      {clickedLocation ? <LocationPopup location={clickedLocation} /> : null }
     </Map>
+    </div>
+
+    { journey.stops ?
+      <TripTimetable
+        trip={{
+          times: journey.stops.map((stop, i) => {
+            return {
+              id: i,
+              stop: {
+                atco_code: stop.atco_code,
+                name: stop.name,
+                location: stop.coordinates,
+              },
+              aimed_arrival_time: stop.aimed_arrival_time,
+              aimed_departure_time: stop.aimed_departure_time,
+              actual_departure_time: stop.actual_departure_time
+            };
+          }),
+          notes: [],
+        }} />
+      : null
+    }
+
+    </React.Fragment>
   );
 }

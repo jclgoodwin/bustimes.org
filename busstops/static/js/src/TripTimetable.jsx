@@ -23,10 +23,15 @@ function Row({ stop, onMouseEnter, vehicle }) {
       ? 2
       : null;
 
-  const actual =
-    vehicle?.progress?.prev_stop == stop.stop.atco_code
-      ? new Date(vehicle.datetime).toTimeString().slice(0, 8)
-      : null;
+  let actual;
+  if (vehicle?.progress?.prev_stop == stop.stop.atco_code) {
+    actual = vehicle.datetime;
+  } else {
+    actual = stop.actual_departure_time
+  }
+  if (actual) {
+    actual = new Date(actual).toTimeString().slice(0, 8);
+  }
 
   return (
     <React.Fragment>
@@ -76,7 +81,9 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
           ))}
         </tbody>
       </table>
-      {trip.notes.map(note => <p key={note.code}>{note.text}</p>)}
+      {trip.notes.map((note) => (
+        <p key={note.code}>{note.text}</p>
+      ))}
     </div>
   );
 }
