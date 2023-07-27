@@ -217,7 +217,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
             else:
                 location.heading = calculate_bearing(latest_latlong, location.latlong)
 
-        if same_journey(latest_journey, journey, latest_datetime, location.datetime):
+        if keep_journey:
+            pass
+        elif keep_journey is None and same_journey(
+            latest_journey, journey, latest_datetime, location.datetime
+        ):
             changed = []
             if latest_journey.source_id != self.source.id:
                 latest_journey.source = self.source
