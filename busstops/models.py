@@ -238,10 +238,10 @@ class DataSource(models.Model):
         if self.name == "L":
             text = "Transport for London"
         elif self.name == "GB":
-            text = "the National Coach Services Database"
+            text = "the National Coach Services Database (NCSD)"
         elif "tnds" in self.url:
             url = "https://www.travelinedata.org.uk/"
-            text = "the Traveline National Dataset"
+            text = "the Traveline National Dataset (TNDS)"
         elif url:
             text = self.get_nice_name()
             date = self.datetime
@@ -260,7 +260,7 @@ class DataSource(models.Model):
             date = self.datetime
 
         if url and "bus-data.dft.gov.uk" in url:
-            text = f"{text}/Bus Open Data Service"
+            text = f"{text}/Bus Open Data Service (BODS)"
 
         if route:
             # get date from 'bluestar_1611829131.zip/Bluestar 31 01 2021_SER2.xml'

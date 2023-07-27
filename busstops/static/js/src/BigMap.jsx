@@ -1,8 +1,8 @@
 import React from "react";
 
 import Map, {
-  // Source,
-  // Layer,
+  Source,
+  Layer,
   NavigationControl,
   GeolocateControl,
 } from "react-map-gl/maplibre";
@@ -162,6 +162,8 @@ export default function BigMap() {
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
+  map.showCollisionBoxes = true;
+
     const zoom = map.getZoom();
 
     setZoom(zoom);
@@ -175,13 +177,22 @@ export default function BigMap() {
       loadVehicles(bounds);
     }
 
-    map.loadImage("/static/svg/bus.png", function (error, image) {
-      if (error) {
-        throw error;
-      } else {
-        map.addImage("vehicle", image);
-      }
+    map.loadImage("/static/root/stop-marker.png", (error, image) => {
+      if (error) throw error;
+      map.addImage("stop", image, {
+        pixelRatio: 2,
+        width: 16,
+        height: 16
+      });
     });
+
+    // map.loadImage("/static/svg/bus.png", function (error, image) {
+    //   if (error) {
+    //     throw error;
+    //   } else {
+    //     map.addImage("vehiclle", image);
+    //   }
+    // });
   }, []);
 
   const [cursor, setCursor] = React.useState(null);
@@ -211,6 +222,7 @@ export default function BigMap() {
   // vehiclesList = [];
 
   const showStops = shouldShowStops(zoom);
+  const showBuses = shouldShowVehicles(zoom)
 
   return (
     <Map
@@ -218,6 +230,7 @@ export default function BigMap() {
       dragRotate={false}
       touchPitch={false}
       touchRotate={false}
+      showCollisionBoxes={true}
       pitchWithRotate={false}
       onMoveEnd={handleMoveEnd}
       minZoom={6}
@@ -234,12 +247,12 @@ export default function BigMap() {
       onMouseLeave={onMouseLeave}
       cursor={cursor}
       onLoad={handleMapLoad}
-      interactiveLayerIds={["vehicles"]}
+      interactiveLayerIds={["stops"]}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {showStops &&
+      {/*showStops &&
         stops?.features.map((item) => {
           return (
             <StopMarker
@@ -248,9 +261,36 @@ export default function BigMap() {
               onClick={setClickedStopId}
             />
           );
-        })}
+        })*/}
 
-      {vehiclesList.map((item) => {
+      {showStops ? (
+        <Source type="geojson" data={stops}>
+          <Layer
+            {...{
+              id: "stops",
+              type: "symbol",
+                minzoom: 12,
+              // maxzoom: 15,
+              layout: {
+                "text-field": ["get", "icon"],
+                "text-font": ["Stadia Regular"],
+                "text-allow-overlap": true,
+                "text-size": 9,
+                "icon-rotate": ["+", 45, ["get", "bearing"]],
+                "icon-image": "stop",
+                "icon-allow-overlap": true,
+                "icon-ignore-placement": true,
+                "text-ignore-placement": true,
+              },
+              paint: {
+                "text-color": "#ffffff",
+              }
+            }}
+          />
+        </Source>
+      ) : null}
+
+      {showBuses ? vehiclesList.map((item) => {
         return (
           <VehicleMarker
             key={item.id}
@@ -259,7 +299,7 @@ export default function BigMap() {
             onClick={handleVehicleMarkerClick}
           />
         );
-      })}
+      }) : null}
 
       {/*otherVehicles ? (
         <Source
@@ -288,7 +328,7 @@ export default function BigMap() {
       {zoom && !showStops ? (
         <div className="maplibregl-ctrl map-status-bar">
           Zoom in to see stops
-          {!shouldShowVehicles(zoom) ? <div>Zoom in to see buses</div> : null}
+          {!showBuses ? <div>Zoom in to see buses</div> : null}
         </div>
       ) : null}
 

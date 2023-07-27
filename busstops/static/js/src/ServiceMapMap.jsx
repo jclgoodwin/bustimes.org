@@ -64,6 +64,13 @@ export default function ServiceMapMap({
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+
+    map.loadImage("/static/root/route-stop-marker.png", (error, image) => {
+      if (error) throw error;
+      map.addImage("stop", image, {
+        pixelRatio: 2,
+      });
+    });
   }, []);
 
   const clickedVehicle =
@@ -93,12 +100,12 @@ export default function ServiceMapMap({
 
   const stopsStyle = {
     id: "stops",
-    type: "circle",
-    paint: {
-      "circle-color": darkMode ? "#000" : "#fff",
-      "circle-radius": 3,
-      "circle-stroke-width": 2,
-      "circle-stroke-color": "#777",
+    type: "symbol",
+    layout: {
+      "icon-rotate": ["+", 45, ["get", "bearing"]],
+      "icon-image": "stop",
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
     },
   };
 
@@ -148,8 +155,8 @@ export default function ServiceMapMap({
 
       {popup}
 
-      {clickedStops.map((stop) => {
-        return <StopPopup key={stop.properties.url} item={stop} />;
+      {clickedStops.map((stop, i) => {
+        return <StopPopup key={stop.properties.url} item={stop} anchor={i ? "top" : null} />;
       })}
 
       {geometry && (

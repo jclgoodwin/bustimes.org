@@ -35,7 +35,7 @@ function Delay({ item }) {
   }
 }
 
-function VehiclePopup({
+export default function VehiclePopup({
   item,
   onClose,
   closeButton = true,
@@ -120,11 +120,3 @@ function VehiclePopup({
     </Popup>
   );
 }
-
-function propsAreEqual(prev, props) {
-  return (
-    prev.item.id == props.item.id && prev.item.datetime === props.item.datetime
-  );
-}
-
-export default memo(VehiclePopup, propsAreEqual);

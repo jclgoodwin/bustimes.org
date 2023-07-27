@@ -17,18 +17,19 @@ import VehiclePopup from "./VehiclePopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
+const apiRoot = "/";
 
 const stopsStyle = {
   id: "stops",
-  type: "circle",
-  paint: {
-    "circle-color": "#fff",
-    "circle-radius": 3,
-    "circle-stroke-width": 2,
-    "circle-stroke-color": "#666",
+  type: "symbol",
+  layout: {
+    "icon-rotate": ["+", 45, ["get", "bearing"]],
+    "icon-image": "stop",
+    "icon-allow-overlap": true,
+    "icon-ignore-placement": true,
   },
 };
+
 
 const routeStyle = {
   type: "line",
@@ -52,12 +53,17 @@ export default function TripMap() {
     return bounds;
   }, [trip]);
 
-  const loadTrip = function (tripId) {
-    window.TRIP_ID = tripId;
-    fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-      response.json().then(setTrip);
-    });
-  };
+  const loadTrip = React.useCallback(
+    (tripId) => {
+      console.log(trip.id, tripId);
+      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+        history.pushState(null, null, `/trips/${tripId}`);
+        window.TRIP_ID = tripId;
+        response.json().then(setTrip);
+      });
+    },
+    [trip],
+  );
 
   const darkMode = useDarkMode();
 
@@ -101,7 +107,7 @@ export default function TripMap() {
 
   let timeout;
 
-  const loadVehicles = () => {
+  const loadVehicles = React.useCallback(() => {
     if (!window.SERVICE) {
       // tracking = false
       return;
@@ -113,8 +119,10 @@ export default function TripMap() {
           Object.assign(
             {},
             ...items.map((item) => {
-              if (item.trip_id === window.TRIP_ID) {
+              if (item.trip_id === trip.id) {
                 if (!vehicles) {
+                  // debugger;
+                  console.dir(vehicles);
                   setClickedVehicleMarker(item.id);
                 }
                 setTripVehicle(item);
@@ -123,11 +131,12 @@ export default function TripMap() {
             }),
           ),
         );
+        // debugger;
         clearTimeout(timeout);
         timeout = setTimeout(loadVehicles, 10000); // 10 seconds
       });
     });
-  };
+  }, [trip, vehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -142,6 +151,15 @@ export default function TripMap() {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+
+    map.loadImage("/static/root/route-stop-marker.png", (error, image) => {
+      if (error) throw error;
+      map.addImage("stop", image, {
+        pixelRatio: 2,
+        // width: 16,
+        // height: 16
+      });
+    });
 
     loadVehicles();
   }, []);
@@ -205,6 +223,7 @@ export default function TripMap() {
           >
             <Layer {...routeStyle} />
           </Source>
+
           <Source
             type="geojson"
             data={{
@@ -221,6 +240,7 @@ export default function TripMap() {
                     properties: {
                       url: `/stops/${stop.stop.atco_code}`,
                       name: stop.stop.name,
+                      bearing: stop.stop.bearing,
                     },
                   };
                 }),
@@ -258,6 +278,17 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
+      trip {trip.id}
+      <br />
+      {clickedVehicleMarkerId}
+      <br />
+      {tripVehicle?.id}
+      <br />
+      {tripVehicle?.trip_id}
+      <br />
+      {clickedVehicle?.trip_id}
+      <br />
+      {window.TRIP_ID}
       <TripTimetable
         trip={trip}
         vehicle={tripVehicle}
