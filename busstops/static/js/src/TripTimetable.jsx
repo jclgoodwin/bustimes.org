@@ -27,7 +27,7 @@ function Row({ stop, onMouseEnter, vehicle }) {
   if (vehicle?.progress?.prev_stop == stop.stop.atco_code) {
     actual = vehicle.datetime;
   } else {
-    actual = stop.actual_departure_time
+    actual = stop.actual_departure_time;
   }
   if (actual) {
     actual = new Date(actual).toTimeString().slice(0, 8);
