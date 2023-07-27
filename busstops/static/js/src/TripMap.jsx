@@ -17,7 +17,7 @@ import VehiclePopup from "./VehiclePopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org";
+const apiRoot = "https://bustimes.org/";
 
 const stopsStyle = {
   id: "stops",
