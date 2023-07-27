@@ -87,7 +87,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "https://staging.bustimes.org",
 ]
-CORS_URLS_REGEX = r"^/api/.*$"
+CORS_URLS_REGEX = r"(^\/api\/|.json).*$"
 
 CSP_IMG_SRC = ["'self'", "https:", "data:"]
 CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]

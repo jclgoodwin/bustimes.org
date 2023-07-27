@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from busstops.models import Operator, Service, StopPoint
-from bustimes.models import Trip
+from bustimes.models import Garage, Note, Trip
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
 
@@ -145,10 +145,29 @@ class LiverySerializer(serializers.ModelSerializer):
         ]
 
 
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Note
+        fields = [
+            "code",
+            "text",
+        ]
+
+
+class GarageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Garage
+        fields = [
+            "code",
+            "name",
+        ]
+
+
 class TripSerializer(serializers.ModelSerializer):
     service = serializers.SerializerMethodField()
     operator = serializers.SerializerMethodField()
     times = serializers.SerializerMethodField()
+    notes = NoteSerializer(many=True)
 
     def get_service(self, obj):
         return {
@@ -213,6 +232,7 @@ class TripSerializer(serializers.ModelSerializer):
             "block",
             "service",
             "operator",
+            "notes",
             "times",
         ]
 

@@ -349,9 +349,9 @@ def trip_json(request, id: int):
 
 class TripDetailView(DetailView):
     model = Trip
-    queryset = model.objects.select_related(
-        "route__service", "operator", "calendar"
-    ).defer("route__service__search_vector")
+    queryset = model.objects.select_related("route__service", "operator").defer(
+        "route__service__search_vector"
+    )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

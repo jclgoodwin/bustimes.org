@@ -837,9 +837,9 @@ class VehicleRevision(models.Model):
                         )
                 if key == "withdrawn":
                     if after == "Yes":
-                        yield ("removed from fleet list", "", "")
+                        yield ("removed from list", "", "")
                     else:
-                        yield ("added to fleet list", "", "")
+                        yield ("added to list", "", "")
                 else:
                     yield (key, before, after)
 
