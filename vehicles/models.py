@@ -942,6 +942,7 @@ class VehicleLocation:
         self.wheelchair_capacity = None
         self.occupancy_thresholds = None
         self.block = block
+        self.tfl_code = None
 
     def get_occupancy_display(self):
         return Occupancy(self.occupancy).label
@@ -1008,6 +1009,8 @@ class VehicleLocation:
         if self.early is not None:
             json["delay"] = -self.early.total_seconds()
 
+        if self.tfl_code:
+            json["tfl_code"] = self.tfl_code
         if journey.trip_id:
             json["trip_id"] = journey.trip_id
         if journey.service_id:

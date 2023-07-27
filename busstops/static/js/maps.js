@@ -96,7 +96,9 @@
             if (item.destination) {
                 content += ' to ' + item.destination;
             }
-            if (item.trip_id) {
+            if (item.tfl_code) {
+                content = '<a href="/vehicles/tfl/' + item.tfl_code + '">' + content + '</a>';
+            } else if (item.trip_id) {
                 if (item.trip_id !== window.TRIP_ID) {
                     content = '<a href="/trips/' + item.trip_id + '">' + content + '</a>';
                 }
