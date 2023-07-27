@@ -13,7 +13,6 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
-from tenacity import after_log, retry, wait_exponential
 
 from busstops.models import (
     Locality,
@@ -27,7 +26,9 @@ from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleCode, VehicleJourney, VehicleLocation
 from ...utils import redis_client
-from ..import_live_vehicles import ImportLiveVehiclesCommand, logger, logging
+from ..import_live_vehicles import ImportLiveVehiclesCommand  # , logger, logging
+
+# from tenacity import after_log, retry, wait_exponential
 
 
 def get_destination_ref(destination_ref):
@@ -577,6 +578,8 @@ class Command(ImportLiveVehiclesCommand):
             occupancy=monitored_vehicle_journey.get("Occupancy"),
             block=monitored_vehicle_journey.get("BlockRef"),
         )
+        if monitored_vehicle_journey["OperatorRef"] == "TFLO":
+            location.tfl_code = monitored_vehicle_journey["VehicleRef"]
         extensions = item.get("Extensions")
         if extensions:
             extensions = extensions.get("VehicleJourney") or extensions.get(
@@ -594,10 +597,10 @@ class Command(ImportLiveVehiclesCommand):
                 location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
         return location
 
-    #@retry(
+    # @retry(
     #    wait=wait_exponential(multiplier=1, min=10, max=20),
     #    after=after_log(logger, logging.ERROR),
-    #)
+    # )
     def get_items(self):
         response = self.session.get(self.source.url, params=self.source.settings)
         if not response.ok:
