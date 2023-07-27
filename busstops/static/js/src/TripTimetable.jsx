@@ -76,6 +76,7 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
           ))}
         </tbody>
       </table>
+      {trip.notes.map(note => <p key={note.code}>{note.text}</p>)}
     </div>
   );
 }

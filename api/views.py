@@ -68,9 +68,9 @@ class StopViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Trip.objects.select_related(
-        "route__service", "operator"
-    ).prefetch_related("stoptime_set__stop__locality", "route__service__routelink_set")
+    queryset = Trip.objects.prefetch_related(
+        "stoptime_set__stop__locality", "route__service__routelink_set", "notes"
+    )
     serializer_class = serializers.TripSerializer
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]

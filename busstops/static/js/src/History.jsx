@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from "react";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
+const apiRoot = "https://bustimes.org/";
 let hasHistory = false;
 
 export default function History() {
@@ -61,7 +62,7 @@ export default function History() {
       }
 
       // fetch(`/static/js/cookies.json`).then((response) => {
-      fetch(`/${journeyId}.json`).then((response) => {
+      fetch(`${apiRoot}${journeyId}.json`).then((response) => {
         if (response.ok) {
           response.json().then((data) => {
             data.id = journeyId;

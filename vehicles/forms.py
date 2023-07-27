@@ -173,7 +173,7 @@ class EditVehicleForm(EditVehiclesForm):
         help_text="Separate multiple regs with a comma (,)",
     )
     withdrawn = forms.BooleanField(
-        label="Remove from fleet list",
+        label="Remove from list",
         required=False,
     )
     notes = forms.CharField(required=False, max_length=255)

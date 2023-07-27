@@ -102,6 +102,9 @@ export default function TripMap() {
   let timeout;
 
   const loadVehicles = () => {
+    if (!window.SERVICE) {  // tracking = false
+      return;
+    }
     const url = `${apiRoot}vehicles.json?service=${window.SERVICE}&trip=${trip.id}`;
     fetch(url).then((response) => {
       response.json().then((items) => {
@@ -111,6 +114,7 @@ export default function TripMap() {
             ...items.map((item) => {
               if (item.trip_id === window.TRIP_ID) {
                 if (!vehicles) {
+
                   setClickedVehicleMarker(item.id);
                 }
                 setTripVehicle(item);
