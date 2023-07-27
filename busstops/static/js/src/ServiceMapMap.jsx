@@ -156,7 +156,13 @@ export default function ServiceMapMap({
       {popup}
 
       {clickedStops.map((stop, i) => {
-        return <StopPopup key={stop.properties.url} item={stop} anchor={i ? "top" : null} />;
+        return (
+          <StopPopup
+            key={stop.properties.url}
+            item={stop}
+            anchor={i ? "top" : null}
+          />
+        );
       })}
 
       {geometry && (

@@ -8,7 +8,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 
 import VehicleMarker from "./VehicleMarker";
-import StopMarker from "./StopMarker";
+// import StopMarker from "./StopMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup from "./StopPopup";
 
@@ -162,8 +162,6 @@ export default function BigMap() {
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-  map.showCollisionBoxes = true;
-
     const zoom = map.getZoom();
 
     setZoom(zoom);
@@ -182,7 +180,7 @@ export default function BigMap() {
       map.addImage("stop", image, {
         pixelRatio: 2,
         width: 16,
-        height: 16
+        height: 16,
       });
     });
 
@@ -222,7 +220,7 @@ export default function BigMap() {
   // vehiclesList = [];
 
   const showStops = shouldShowStops(zoom);
-  const showBuses = shouldShowVehicles(zoom)
+  const showBuses = shouldShowVehicles(zoom);
 
   return (
     <Map
@@ -269,8 +267,7 @@ export default function BigMap() {
             {...{
               id: "stops",
               type: "symbol",
-                minzoom: 12,
-              // maxzoom: 15,
+              minzoom: 14,
               layout: {
                 "text-field": ["get", "icon"],
                 "text-font": ["Stadia Regular"],
@@ -284,22 +281,24 @@ export default function BigMap() {
               },
               paint: {
                 "text-color": "#ffffff",
-              }
+              },
             }}
           />
         </Source>
       ) : null}
 
-      {showBuses ? vehiclesList.map((item) => {
-        return (
-          <VehicleMarker
-            key={item.id}
-            selected={item.id === clickedVehicleMarkerId}
-            vehicle={item}
-            onClick={handleVehicleMarkerClick}
-          />
-        );
-      }) : null}
+      {showBuses
+        ? vehiclesList.map((item) => {
+            return (
+              <VehicleMarker
+                key={item.id}
+                selected={item.id === clickedVehicleMarkerId}
+                vehicle={item}
+                onClick={handleVehicleMarkerClick}
+              />
+            );
+          })
+        : null}
 
       {/*otherVehicles ? (
         <Source

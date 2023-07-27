@@ -104,7 +104,6 @@ export default function JourneyMap({ journey }) {
         // height: 16
       });
     });
-
   }, []);
 
   if (!journey) {

@@ -17,7 +17,7 @@ import VehiclePopup from "./VehiclePopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "/";
+const apiRoot = "https://bustimes.org/";
 
 const stopsStyle = {
   id: "stops",
@@ -29,7 +29,6 @@ const stopsStyle = {
     "icon-ignore-placement": true,
   },
 };
-
 
 const routeStyle = {
   type: "line",
@@ -43,7 +42,6 @@ export default function TripMap() {
   const [trip, setTrip] = React.useState(window.STOPS);
 
   const bounds = React.useMemo(() => {
-    console.log("getBounds");
     let bounds = new LngLatBounds();
     for (let item of trip.times) {
       if (item.stop.location) {
@@ -121,8 +119,6 @@ export default function TripMap() {
             ...items.map((item) => {
               if (item.trip_id === trip.id) {
                 if (!vehicles) {
-                  // debugger;
-                  console.dir(vehicles);
                   setClickedVehicleMarker(item.id);
                 }
                 setTripVehicle(item);
@@ -131,7 +127,6 @@ export default function TripMap() {
             }),
           ),
         );
-        // debugger;
         clearTimeout(timeout);
         timeout = setTimeout(loadVehicles, 10000); // 10 seconds
       });
