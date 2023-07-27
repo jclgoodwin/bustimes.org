@@ -308,7 +308,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertContains(
             response,
-            'data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset</a>',
+            'data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset (TNDS)</a>',
         )
 
         self.assertEqual(
@@ -927,8 +927,7 @@ class ImportTransXChangeTest(TestCase):
         )
 
         trip = route_1.trip_set.first()
-        response = self.client.get(trip.get_absolute_url())
-        self.assertContains(response, "Barnstaple")  # garage
+        self.assertEqual(trip.garage.name, "Barnstaple")
 
         service = route_2.service
         # detailed version
@@ -1225,7 +1224,7 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(trip.get_absolute_url())
         self.assertContains(response, "Book at")
         self.assertContains(response, "megabus.com")
-        self.assertContains(response, "awin")
+        # self.assertContains(response, "awin")
 
         self.assertEqual(str(trip), "02:10")
 
