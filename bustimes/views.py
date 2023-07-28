@@ -349,9 +349,9 @@ def trip_json(request, id: int):
 
 class TripDetailView(DetailView):
     model = Trip
-    queryset = model.objects.select_related("route__service", "operator").defer(
-        "route__service__search_vector"
-    )
+    queryset = model.objects.select_related(
+        "route__service", "operator", "route__source"
+    ).defer("route__service__search_vector")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -397,7 +397,7 @@ class TripDetailView(DetailView):
             if stops[-1].stop:
                 context["destination"] = stops[-1].stop.locality
 
-            if operators and operators[0].name in settings.NTA_OPERATORS:
+            if self.object.route.source.name == "Realtime Transport Operators":
                 trip_update = gtfsr.get_trip_update(self.object)
                 if trip_update:
                     context["trip_update"] = trip_update

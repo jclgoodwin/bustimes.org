@@ -31,20 +31,24 @@ function Row({ stop, onMouseEnter, vehicle }) {
   }
   if (actual) {
     actual = new Date(actual).toTimeString().slice(0, 8);
+  } else {
+    actual = stop.expected_departure_time;
+  }
+  if (actual) {
+    actual = <td>{actual}</td>;
   }
 
   return (
     <React.Fragment>
       <tr
         className={className}
-        id={`stop-time-${stop.id}`}
         onMouseEnter={handleMouseEnter}
       >
         <td className="stop-name" rowSpan={rowSpan}>
           {stopName}
         </td>
         <td>{stop.aimed_arrival_time || stop.aimed_departure_time}</td>
-        <td>{actual}</td>
+        {actual}
       </tr>
       {rowSpan ? (
         <tr className={className}>

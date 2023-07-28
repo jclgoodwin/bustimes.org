@@ -656,28 +656,27 @@ def get_departures(stop, services, when) -> dict:
 
     now = timezone.localtime()
 
-    routes = {}
-    for route in Route.objects.filter(
+    routes_by_service = {}
+    routes = Route.objects.filter(
         service__in=[s for s in services if not s.timetable_wrong]
-    ).select_related("source"):
-        if route.service_id in routes:
-            routes[route.service_id].append(route)
+    ).select_related("source")
+
+    for route in routes:
+        if route.service_id in routes_by_service:
+            routes_by_service[route.service_id].append(route)
         else:
-            routes[route.service_id] = [route]
+            routes_by_service[route.service_id] = [route]
 
     departures = TimetableDepartures(
-        stop, services, when or now, routes
+        stop, services, when or now, routes_by_service
     ).get_departures()
 
     one_hour = datetime.timedelta(hours=1)
     one_hour_ago = now - one_hour
 
-    operators = set()
-    for service in services:
-        if service.operators:
-            operators.update(service.operators)
-
-    if departures and not operators.isdisjoint(settings.NTA_OPERATORS):
+    if departures and any(
+        route.source.name == "Realtime Transport Operators" for route in routes
+    ):
         gtfsr.update_stop_departures(departures)
 
     if when or type(stop) is not StopPoint:
@@ -688,11 +687,16 @@ def get_departures(stop, services, when) -> dict:
             one_hour_ago.date(),
             datetime.timedelta(hours=one_hour_ago.hour, minutes=one_hour_ago.minute),
             stop,
-            routes,
+            routes_by_service,
         ).exists()
     ):
 
         live_rows = None
+
+        operators = set()
+        for service in services:
+            if service.operators:
+                operators.update(service.operators)
 
         # Belfast
         if stop.atco_code[0] == "7" and not operators.isdisjoint(
