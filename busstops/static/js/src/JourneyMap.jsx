@@ -19,7 +19,7 @@ const stopsStyle = {
   id: "stops",
   type: "symbol",
   layout: {
-    "icon-rotate": ["+", 45, ["get", "bearing"]],
+    "icon-rotate": ["+", 45, ["get", "heading"]],
     "icon-image": "stop",
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,
