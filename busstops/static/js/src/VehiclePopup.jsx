@@ -44,9 +44,9 @@ export default function VehiclePopup({
   const handleTripClick = React.useCallback((e) => {
     if (onTripClick) {
       e.preventDefault();
-      onTripClick(item.trip_id);
+      onTripClick(item);
     }
-  }, []);
+  }, [item]);
 
   let line_name = item.service?.line_name;
   if (item.destination) {

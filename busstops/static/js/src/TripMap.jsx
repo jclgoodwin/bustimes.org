@@ -52,15 +52,16 @@ export default function TripMap() {
   }, [trip]);
 
   const loadTrip = React.useCallback(
-    (tripId) => {
-      console.log(trip.id, tripId);
+    (item) => {
+      const tripId = item.trip_id;
       fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
         history.pushState(null, null, `/trips/${tripId}`);
         window.TRIP_ID = tripId;
         response.json().then(setTrip);
+        setTripVehicle(item);
       });
     },
-    [trip],
+    [],
   );
 
   const darkMode = useDarkMode();
@@ -105,9 +106,8 @@ export default function TripMap() {
 
   let timeout;
 
-  const loadVehicles = React.useCallback(() => {
+  const loadVehicles = React.useCallback((first) => {
     if (!window.SERVICE) {
-      // tracking = false
       return;
     }
     const url = `${apiRoot}vehicles.json?service=${window.SERVICE}&trip=${trip.id}`;
@@ -118,7 +118,7 @@ export default function TripMap() {
             {},
             ...items.map((item) => {
               if (item.trip_id === trip.id) {
-                if (!vehicles) {
+                if (first) {
                   setClickedVehicleMarker(item.id);
                 }
                 setTripVehicle(item);
@@ -131,7 +131,7 @@ export default function TripMap() {
         timeout = setTimeout(loadVehicles, 10000); // 10 seconds
       });
     });
-  }, [trip, vehicles]);
+  }, []);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -156,7 +156,7 @@ export default function TripMap() {
       });
     });
 
-    loadVehicles();
+    loadVehicles(true);
   }, []);
 
   const clickedVehicle =
@@ -172,6 +172,7 @@ export default function TripMap() {
           touchPitch={false}
           touchRotate={false}
           pitchWithRotate={false}
+          minZoom={6}
           maxZoom={16}
           bounds={bounds}
           style={{
@@ -273,21 +274,10 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
-      trip {trip.id}
-      <br />
-      {clickedVehicleMarkerId}
-      <br />
-      {tripVehicle?.id}
-      <br />
-      {tripVehicle?.trip_id}
-      <br />
-      {clickedVehicle?.trip_id}
-      <br />
-      {window.TRIP_ID}
       <TripTimetable
         trip={trip}
         vehicle={tripVehicle}
-        onMouseEnter={handleMouseEnter}
+        // onMouseEnter={handleMouseEnter}
       />
     </React.Fragment>
   );
