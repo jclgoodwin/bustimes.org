@@ -68,6 +68,8 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
 
     vehicle, created = vehicles.get_or_create(defaults)
 
+    time = parse_datetime(time)
+
     if vehicle.latest_journey and (
         vehicle.latest_journey.datetime == time
         or vehicle.latest_journey.source_id != data_source.id
@@ -81,11 +83,6 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         journey_ref = data["FramedVehicleJourneyRef"]["DatedVehicleJourneyRef"]
     else:
         journey_ref = None
-
-    # if journey_ref and journey_ref.startswith("Unknown"):
-    #     journey_ref = ""
-
-    time = parse_datetime(time)
 
     destination = destination or ""
     route_name = data.get("LineName") or data.get("LineRef")
