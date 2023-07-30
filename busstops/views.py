@@ -365,7 +365,7 @@ def stops_json(request):
             latlong__bboverlaps=bounding_box,
         )
         .annotate(line_names=ArrayAgg("service__route__line_name", distinct=True))
-        .filter(Exists("service", filter=Q(service__current=True)) | Q(stop_type="RLY"))
+        .filter(Exists("service", filter=Q(service__current=True)))
         .select_related("locality")
         .defer("locality__latlong")
     )
