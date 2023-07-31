@@ -116,8 +116,14 @@
 
     {% endfor %}
 
-    {% if journeys|length == 20 %}
-        <p>Older</p>
+    {% if journeys.has_other_pages %}
+        {% if journeys.has_previous %}
+            <p><a href="?">&uarr; Page 1</a></p>
+        {% endif %}
+
+        {% if journeys.has_next %}
+            <p><a href="?page={{ journeys.next_page_number }}">&darr; Page {{ journeys.next_page_number }}</a></p>
+        {% endif %}
     {% endif %}
 
     <div id="history"></div>

@@ -576,7 +576,9 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
     context = {}
 
-    journeys = journeys.order_by("-datetime")[:20]
+    journeys = journeys.order_by("-datetime")
+    journeys = Paginator(journeys, 20)
+    journeys = journeys.get_page(request.GET.get("page"))
 
     if journeys:
 

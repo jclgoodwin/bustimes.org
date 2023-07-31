@@ -3,7 +3,7 @@ import React, { lazy, Suspense } from "react";
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
 const apiRoot = "https://bustimes.org/";
-let hasHistory = false;
+let hasHistory = 0;
 
 export default function History() {
   const [isOpen, setOpen] = React.useState(
@@ -14,6 +14,7 @@ export default function History() {
     if (isOpen) {
       if (hasHistory) {
         history.back();
+        hasHistory -= 1;
       } else {
         window.location.hash = "";
       }
@@ -26,6 +27,7 @@ export default function History() {
     const handleHashChange = () => {
       if (window.location.hash.indexOf("#journeys/") === 0) {
         setOpen(true);
+        hasHistory += 1;
       } else {
         setOpen(false);
       }
