@@ -56,7 +56,13 @@ export default function VehiclePopup({
     line_name += item.destination;
   }
 
-  if (item.trip_id) {
+  if (item.tfl_code) {
+      line_name = (
+        <a href={`/vehicles/tfl/${item.tfl_code}`}>
+          {line_name}
+        </a>
+      );
+  } else if (item.trip_id) {
     if (item.trip_id != window.TRIP_ID) {
       line_name = (
         <a href={`/trips/${item.trip_id}`} onClick={handleTripClick}>

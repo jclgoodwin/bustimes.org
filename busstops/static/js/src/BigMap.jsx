@@ -141,19 +141,22 @@ export default function BigMap() {
 
   const handleVehicleMarkerClick = React.useCallback((event, id) => {
     event.originalEvent.preventDefault();
+    setClickedStopId(null);
     setClickedVehicleMarker(id);
   }, []);
 
   const handleMapClick = React.useCallback((e) => {
-    if (e.features?.length) {
-      if (e.features[0].layer.id === "stops") {
-        setClickedStopId(e.features[0]);
+    if (!e.originalEvent.defaultPrevented) {
+      if (e.features?.length) {
+        if (e.features[0].layer.id === "stops") {
+          setClickedStopId(e.features[0]);
+        } else {
+          setClickedVehicleMarker(e.features[0].id);
+        }
       } else {
-        setClickedVehicleMarker(e.features[0].id);
+        setClickedStopId(null);
+        setClickedVehicleMarker(null);
       }
-    } else if (!e.originalEvent.defaultPrevented) {
-      setClickedStopId(null);
-      setClickedVehicleMarker(null);
     }
   }, []);
 

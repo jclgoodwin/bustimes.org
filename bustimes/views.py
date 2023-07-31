@@ -452,11 +452,8 @@ def tfl_vehicle(request, reg: str):
     else:
         data = None
 
-    if reg[:1].isalpha() and reg[:3] != "TMP" and len(reg) > 5:
-        vehicles = Vehicle.objects.select_related("livery", "operator", "vehicle_type")
-        vehicle = vehicles.filter(code=reg).first()
-    else:
-        vehicle = None
+    vehicles = Vehicle.objects.select_related("livery", "operator", "vehicle_type")
+    vehicle = vehicles.filter(vehiclecode__code=f"TFLO:{reg}").first()
 
     if not data:
         if not vehicle:
@@ -500,12 +497,15 @@ def tfl_vehicle(request, reg: str):
             "times": [
                 {
                     "stop": {
+                        "name": item["stationName"],
+                        "atco_code": item["stop"].atco_code,
                         "location": item["stop"].latlong.coords,
                         "bearing": item["stop"].get_heading()
                         if type(item["stop"]) is StopPoint
                         else None,
+                        "icon": item["platformName"],
                     },
-                    "aimed_arrival_time": str(
+                    "expected_arrival_time": str(
                         timezone.localtime(item["expectedArrival"]).time()
                     ),
                 }

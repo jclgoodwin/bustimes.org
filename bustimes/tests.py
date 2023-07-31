@@ -5,7 +5,7 @@ from django.test import TestCase
 from vcr import use_cassette
 
 from busstops.models import DataSource, Service
-from vehicles.models import Livery, Vehicle
+from vehicles.models import Livery, Vehicle, VehicleCode
 
 from .models import Calendar, CalendarDate, Garage, Route, StopTime, Trip
 from .utils import get_routes
@@ -15,7 +15,8 @@ class BusTimesTest(TestCase):
     def test_tfl_vehicle_view(self):
         DataSource.objects.create(id=7, name="London")
         Livery.objects.create(id=262, name="London", colours="#dc241f", published=True)
-        Vehicle.objects.create(code="LTZ1243", reg="LTZ1243")
+        v = Vehicle.objects.create(code="LTZ1243", reg="LTZ1243")
+        VehicleCode.objects.create(vehicle=v, code="TFLO:LTZ1243")
 
         with use_cassette(
             os.path.join(

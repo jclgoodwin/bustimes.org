@@ -146,37 +146,37 @@ class LiveDeparturesTest(TestCase):
                 <table><tbody>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1414</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1414#stop-490014721F">18:22⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1414">18:22⚡&#xfe0f;</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital
                         <div class="vehicle">LX59AOM</div></td>
-                        <td><a href="/vehicles/tfl/LX59AOM#stop-490014721F">18:23⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOM">18:23⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1243</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1243#stop-490014721F">18:26⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1243">18:26⚡&#xfe0f;</a></td></tr>
                     <tr><td>388</td><td>Stratford City
                         <div class="vehicle">YR59NPF</div></td>
-                        <td><a href="/vehicles/tfl/YR59NPF#stop-490014721F">18:26⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/YR59NPF">18:26⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1407</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1407#stop-490014721F">18:33⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1407">18:33⚡&#xfe0f;</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital
                         <div class="vehicle">LX59AOL</div></td>
-                        <td><a href="/vehicles/tfl/LX59AOL#stop-490014721F">18:33⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOL">18:33⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1412</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1412#stop-490014721F">18:37⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1412">18:37⚡&#xfe0f;</a></td></tr>
                     <tr><td>388</td><td>Stratford City
                         <div class="vehicle">PF52TFX</div></td>
-                        <td><a href="/vehicles/tfl/PF52TFX#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/PF52TFX">18:44⚡&#xfe0f;</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital
                         <div class="vehicle">LX59AOA</div></td>
-                        <td><a href="/vehicles/tfl/LX59AOA#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOA">18:44⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1269</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1269#stop-490014721F">18:44⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1269">18:44⚡&#xfe0f;</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1393</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1393#stop-490014721F">18:49⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1393">18:49⚡&#xfe0f;</a></td></tr>
                 </tbody></table>
             <p class="credit">⚡&#xfe0f; denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
         """,

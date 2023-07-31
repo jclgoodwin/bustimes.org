@@ -160,7 +160,7 @@ class TflDepartures(RemoteDepartures):
 
     def get_row(self, item):
         vehicle = item["vehicleId"]
-        link = f"/vehicles/tfl/{vehicle}#stop-{item['naptanId']}"
+        link = f"/vehicles/tfl/{vehicle}"
         if vehicle[:1].isdigit() or vehicle[:3] == "TMP":
             vehicle = None
         return {

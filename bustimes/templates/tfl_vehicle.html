@@ -1,64 +1,25 @@
-{% extends 'page.html' %}
+{% extends 'bustimes/trip_detail.html' %}
 
 {% block title %}{{ data.0.lineName }} to {{ data.0.destinationName }} – bustimes.org{% endblock %}
 
-{% block bodyclass %}{% endblock %}
+{% load static %}
 
-{% block content %}
-
-{% if stops_json %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
     <style>
         {% for style in object.livery.get_styles %}
             {{ style }}
         {% endfor %}
     </style>
-
-    <div class="trip-map-wrapper">
-        <div id="map" class="trip-map"></div>
-    </div>
-{% endif %}
-
-<div class="trip-wrapper">
-
-<h2>{{ data.0.lineName }} to {{ data.0.destinationName }}</h2>
-
-<table class="trip-timetable">
-    <th></th><th>Expected</th>
-    <tbody>
-{% for item in data %}
-    <tr id="stop-{{ item.naptanId }}">
-        <td class="stop-name">
-            {% if item.stop %}<a href="{{ item.stop.get_absolute_url }}">{% endif %}
-                {{ item.stationName }}{% if item.platformName %} ({{ item.platformName }}){% endif %}
-            {% if item.stop %}</a>{% endif %}
-        </td>
-        <td>{{ item.expectedArrival|time }}</td>
-    </tr>
-{% endfor %}
-</tbody>
-</table>
-
-{% if object %}
-
-    <h2>{{ object }}</h2>
-
-    {% include 'vehicle_info.html' with vehicle=object %}
-
-{% endif %}
-
-</div>
-
+    {{ block.super }}
 {% endblock %}
 
-{% load static %}
-
 {% block foot %}
-    {% if stops_json %}
-        <script>
-            window.STOPS = {{ stops_json }};
-            {% if object %}
-                window.VEHICLE_ID = {{ object.id }};
-            {% endif %}
-        </script>
-    {% endif %}
+    <script>
+        window.STOPS = {{ stops_json }};
+        {% if object %}
+            window.VEHICLE_ID = {{ object.id }};
+        {% endif %}
+    </script>
+    <script async type="module" src="{% static 'js/dist/app.js' %}"></script>
 {% endblock %}

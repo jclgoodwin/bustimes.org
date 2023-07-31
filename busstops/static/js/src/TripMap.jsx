@@ -27,6 +27,7 @@ const stopsStyle = {
     "icon-image": "stop",
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,
+    "icon-padding": 0,
   },
 };
 
@@ -107,17 +108,21 @@ export default function TripMap() {
   let timeout;
 
   const loadVehicles = React.useCallback((first) => {
-    if (!window.SERVICE) {
+    let url = `${apiRoot}vehicles.json`;
+    if (window.VEHICLE_ID) {
+       url = `${url}?id=${window.VEHICLE_ID}`;
+    } else if (!window.SERVICE) {
       return;
+    } else {
+      url = `${url}?service=${window.SERVICE}&trip=${trip.id}`;
     }
-    const url = `${apiRoot}vehicles.json?service=${window.SERVICE}&trip=${trip.id}`;
     fetch(url).then((response) => {
       response.json().then((items) => {
         setVehicles(
           Object.assign(
             {},
             ...items.map((item) => {
-              if (item.trip_id === trip.id) {
+              if (item.trip_id === trip.id || item.id === window.VEHICLE_ID) {
                 if (first) {
                   setClickedVehicleMarker(item.id);
                 }
@@ -248,7 +253,7 @@ export default function TripMap() {
           {vehiclesList.map((item) => {
             return (
               <VehicleMarker
-                key={item.id}
+                key={item.id || item.stop.atco_code}
                 selected={item.id === clickedVehicleMarkerId}
                 vehicle={item}
                 onClick={handleVehicleMarkerClick}
