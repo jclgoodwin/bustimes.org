@@ -47,7 +47,7 @@ export default function OperatorMap() {
       }
     };
 
-    const handleKeyDown = () => {
+    const handleKeyDown = (event) => {
       // ESC
       if (isOpen && event.keyCode === 27) {
         closeMap();

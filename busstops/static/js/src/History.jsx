@@ -33,7 +33,7 @@ export default function History() {
       }
     };
 
-    const handleKeyDown = () => {
+    const handleKeyDown = (event) => {
       // ESC
       if (isOpen && event.keyCode === 27) {
         closeMap();

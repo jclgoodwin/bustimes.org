@@ -52,24 +52,27 @@ export default function TripMap() {
     return bounds;
   }, [trip]);
 
-  const loadTrip = React.useCallback((item) => {
-    const tripId = item.trip_id;
-    fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-      history.pushState(null, null, `/trips/${tripId}`);
-      window.TRIP_ID = tripId;
-      response.json().then((trip) => {
-        setTrip(trip);
-        setTripVehicle(item);
-        loadVehicles();
+  const loadTrip = React.useCallback(
+    (item) => {
+      const tripId = item.trip_id;
+      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+        history.pushState(null, null, `/trips/${tripId}`);
+        window.TRIP_ID = tripId;
+        response.json().then((trip) => {
+          setTrip(trip);
+          setTripVehicle(item);
+          loadVehicles();
+        });
       });
-    });
-  }, []);
+    },
+    [trip],
+  );
 
   const darkMode = useDarkMode();
 
   const [cursor, setCursor] = React.useState();
 
-  const onMouseEnter = React.useCallback((e) => {
+  const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
   }, []);
 
@@ -90,6 +93,7 @@ export default function TripMap() {
     }
   }, []);
 
+  /*
   const handleMouseEnter = React.useCallback((stop) => {
     setClickedStop({
       geometry: {
@@ -101,45 +105,63 @@ export default function TripMap() {
       },
     });
   }, []);
+  */
 
   const [tripVehicle, setTripVehicle] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
 
   let timeout;
 
-  const loadVehicles = React.useCallback((first) => {
-    let url = `${apiRoot}vehicles.json`;
-    if (window.VEHICLE_ID) {
-      url = `${url}?id=${window.VEHICLE_ID}`;
-    } else if (!window.SERVICE) {
-      return;
-    } else {
-      url = `${url}?service=${window.SERVICE}&trip=${window.TRIP_ID}`;
-    }
-    fetch(url).then((response) => {
-      response.json().then((items) => {
-        setVehicles(
-          Object.assign(
-            {},
-            ...items.map((item) => {
-              if (
-                (window.TRIP_ID && item.trip_id === window.TRIP_ID) ||
-                (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
-              ) {
-                if (first) {
-                  setClickedVehicleMarker(item.id);
+  const loadVehicles = React.useCallback(
+    (first) => {
+      console.log(trip.id);
+      console.log(window.TRIP_ID);
+      let url = `${apiRoot}vehicles.json`;
+      if (window.VEHICLE_ID) {
+        url = `${url}?id=${window.VEHICLE_ID}`;
+      } else if (!window.SERVICE) {
+        return;
+      } else {
+        url = `${url}?service=${window.SERVICE}&trip=${window.TRIP_ID}`;
+      }
+      fetch(url).then((response) => {
+        response.json().then((items) => {
+          setVehicles(
+            Object.assign(
+              {},
+              ...items.map((item) => {
+                if (
+                  (window.TRIP_ID && item.trip_id === window.TRIP_ID) ||
+                  (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
+                ) {
+                  if (first) {
+                    setClickedVehicleMarker(item.id);
+                  }
+                  setTripVehicle(item);
                 }
-                setTripVehicle(item);
-              }
-              return { [item.id]: item };
-            }),
-          ),
-        );
-        clearTimeout(timeout);
-        timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+                return { [item.id]: item };
+              }),
+            ),
+          );
+          clearTimeout(timeout);
+          timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+        });
       });
-    });
-  }, []);
+    },
+    [trip],
+  );
+
+  React.useEffect(() => {
+    const handlePopState = (e) => {
+      debugger;
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  });
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
