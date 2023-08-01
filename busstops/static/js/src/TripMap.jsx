@@ -52,18 +52,18 @@ export default function TripMap() {
     return bounds;
   }, [trip]);
 
-  const loadTrip = React.useCallback(
-    (item) => {
-      const tripId = item.trip_id;
-      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-        history.pushState(null, null, `/trips/${tripId}`);
-        window.TRIP_ID = tripId;
-        response.json().then(setTrip);
+  const loadTrip = React.useCallback((item) => {
+    const tripId = item.trip_id;
+    fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+      history.pushState(null, null, `/trips/${tripId}`);
+      window.TRIP_ID = tripId;
+      response.json().then((trip) => {
+        setTrip(trip);
         setTripVehicle(item);
+        loadVehicles();
       });
-    },
-    [],
-  );
+    });
+  }, []);
 
   const darkMode = useDarkMode();
 
@@ -110,11 +110,11 @@ export default function TripMap() {
   const loadVehicles = React.useCallback((first) => {
     let url = `${apiRoot}vehicles.json`;
     if (window.VEHICLE_ID) {
-       url = `${url}?id=${window.VEHICLE_ID}`;
+      url = `${url}?id=${window.VEHICLE_ID}`;
     } else if (!window.SERVICE) {
       return;
     } else {
-      url = `${url}?service=${window.SERVICE}&trip=${trip.id}`;
+      url = `${url}?service=${window.SERVICE}&trip=${window.TRIP_ID}`;
     }
     fetch(url).then((response) => {
       response.json().then((items) => {
@@ -122,7 +122,10 @@ export default function TripMap() {
           Object.assign(
             {},
             ...items.map((item) => {
-              if (item.trip_id === trip.id || item.id === window.VEHICLE_ID) {
+              if (
+                (window.TRIP_ID && item.trip_id === window.TRIP_ID) ||
+                (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
+              ) {
                 if (first) {
                   setClickedVehicleMarker(item.id);
                 }
@@ -136,7 +139,7 @@ export default function TripMap() {
         timeout = setTimeout(loadVehicles, 10000); // 10 seconds
       });
     });
-  }, [trip]);
+  }, []);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);

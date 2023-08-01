@@ -44,14 +44,13 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
 
   return (
     <React.Fragment>
-      <tr
-        className={className}
-        onMouseEnter={handleMouseEnter}
-      >
+      <tr className={className} onMouseEnter={handleMouseEnter}>
         <td className="stop-name" rowSpan={rowSpan}>
           {stopName}
         </td>
-        { aimedColumn ? <td>{stop.aimed_arrival_time || stop.aimed_departure_time}</td> : null }
+        {aimedColumn ? (
+          <td>{stop.aimed_arrival_time || stop.aimed_departure_time}</td>
+        ) : null}
         {actual}
       </tr>
       {rowSpan ? (
@@ -66,7 +65,9 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
 export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
   const last = trip.times.length - 1;
 
-  const aimedColumn = trip.times.some(item => item.aimed_arrival_time || item.departure_time);
+  const aimedColumn = trip.times.some(
+    (item) => item.aimed_arrival_time || item.aimed_departure_time,
+  );
 
   return (
     <div className="trip-timetable">
@@ -74,7 +75,7 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
         <thead>
           <tr>
             <th></th>
-            { aimedColumn ? <th>Timetable</th> : null }
+            {aimedColumn ? <th>Timetable</th> : null}
             <th>Actual</th>
           </tr>
         </thead>

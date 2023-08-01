@@ -41,12 +41,15 @@ export default function VehiclePopup({
   closeButton = true,
   onTripClick = null,
 }) {
-  const handleTripClick = React.useCallback((e) => {
-    if (onTripClick) {
-      e.preventDefault();
-      onTripClick(item);
-    }
-  }, [item]);
+  const handleTripClick = React.useCallback(
+    (e) => {
+      if (onTripClick) {
+        e.preventDefault();
+        onTripClick(item);
+      }
+    },
+    [item],
+  );
 
   let line_name = item.service?.line_name;
   if (item.destination) {
@@ -57,11 +60,7 @@ export default function VehiclePopup({
   }
 
   if (item.tfl_code) {
-      line_name = (
-        <a href={`/vehicles/tfl/${item.tfl_code}`}>
-          {line_name}
-        </a>
-      );
+    line_name = <a href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</a>;
   } else if (item.trip_id) {
     if (item.trip_id != window.TRIP_ID) {
       line_name = (
