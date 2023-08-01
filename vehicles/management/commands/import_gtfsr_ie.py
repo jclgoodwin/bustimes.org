@@ -123,7 +123,7 @@ class Command(ImportLiveVehiclesCommand):
                 calendar_ids = [trip.calendar_id for trip in trips]
                 calendars = get_calendars(item.vehicle.trip.start_date, calendar_ids)
                 trips = trips.filter(calendar__in=calendars)
-                trip = trips.first()
+            trip = trips.first()
 
         if service:
             journey.service = service
