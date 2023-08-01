@@ -9,6 +9,7 @@ from google.transit import gtfs_realtime_pb2
 
 from busstops.models import DataSource, Service
 from bustimes.models import Trip
+from bustimes.utils import get_calendars
 
 from ...models import Vehicle, VehicleJourney, VehicleLocation
 from ..import_live_vehicles import ImportLiveVehiclesCommand
@@ -93,16 +94,37 @@ class Command(ImportLiveVehiclesCommand):
         ):
             return latest_journey
 
-        service = Service.objects.filter(
-            route__source=self.source, route__code=item.vehicle.trip.route_id
-        ).first()
-        if service:
-            trip = Trip.objects.filter(
-                # route__source__in=self.source,
-                route__service=service,
-                ticket_machine_code=journey.code,
-            ).first()
+        services = Service.objects.filter(
+            current=True,
+            route__source=self.source,
+            route__code=item.vehicle.trip.route_id,
+        ).distinct()
+        if not services:
+            services = Service.objects.filter(
+                current=True,
+                route__source=self.source,
+                route__trip__ticket_machine_code=journey.code,
+            ).distinct()
 
+        if len(services) == 1:
+            service = services[0]
+
+        trips = Trip.objects.filter(ticket_machine_code=journey.code)
+        if service:
+            trips = trips.filter(route__service=service)
+        else:
+            trips = trips.filter(route__source=self.source)
+
+        trip = None
+
+        if trips:
+            if len(trips) > 1:
+                calendar_ids = [trip.calendar_id for trip in trips]
+                calendars = get_calendars(item.vehicle.trip.start_date, calendar_ids)
+                trips = trips.filter(calendar__in=calendars)
+                trip = trips.first()
+
+        if service:
             journey.service = service
             journey.trip = trip
 
