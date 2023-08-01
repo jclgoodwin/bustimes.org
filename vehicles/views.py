@@ -23,6 +23,7 @@ from django.http import (
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.cache import get_conditional_response, set_response_etag
 from django.views.decorators.cache import cache_control
 from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.detail import DetailView
@@ -377,6 +378,18 @@ def operator_debug(request, slug):
     )
 
 
+def respond_conditionally(request, response):
+    if not response.has_header("ETag"):
+        set_response_etag(response)
+
+    etag = response.get("ETag")
+    return get_conditional_response(
+        request,
+        etag=etag,
+        response=response,
+    )
+
+
 @require_GET
 def vehicles_json(request) -> JsonResponse:
     try:
@@ -566,8 +579,15 @@ def vehicles_json(request) -> JsonResponse:
                     item["service"]["url"] = f"/services/{vehicle.service_slug}"
                 locations.append(item)
 
-    return JsonResponse(
-        locations, safe=False, headers={"Access-Control-Allow-Origin": "*"}
+    return respond_conditionally(
+        request,
+        JsonResponse(
+            locations,
+            safe=False,
+            headers={
+                "Access-Control-Allow-Origin": "*",
+            },
+        ),
     )
 
 
