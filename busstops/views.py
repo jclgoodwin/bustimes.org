@@ -220,6 +220,7 @@ Disallow: /fares/
 Disallow: /vehicles/tfl/
 Disallow: /*?date=*
 Disallow: /services/*/*
+Disallow: /vehicles/*?page=*
 Disallow: /*/debug
 
 User-agent: AhrefsBot

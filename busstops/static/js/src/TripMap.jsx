@@ -136,7 +136,7 @@ export default function TripMap() {
         timeout = setTimeout(loadVehicles, 10000); // 10 seconds
       });
     });
-  }, []);
+  }, [trip]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
