@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
+from google.protobuf import json_format
 
 # from django.utils.dateparse import parse_duration
 from google.transit import gtfs_realtime_pb2
@@ -135,6 +136,8 @@ class Command(ImportLiveVehiclesCommand):
             if trip and trip.operator_id and not vehicle.operator_id:
                 vehicle.operator_id = trip.operator_id
                 vehicle.save(update_fields=["operator"])
+
+        vehicle.latest_journey_data = json_format.MessageToDict(item)
 
         return journey
 
