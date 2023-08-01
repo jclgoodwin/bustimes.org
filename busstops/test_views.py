@@ -359,7 +359,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ouibus")
         self.assertContains(response, ">@dril<")
-        self.assertContains(response, 'twitter.com/dril"')
+        self.assertContains(response, '"https://nitter.net/dril"')
 
         # payment methods:
         self.assertContains(response, "euros")

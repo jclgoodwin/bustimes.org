@@ -651,7 +651,11 @@ class Command(ImportLiveVehiclesCommand):
         except (KeyError, ValueError):
             journey_ref = monitored_vehicle_journey.get("VehicleJourneyRef")
 
-        return f"{journey_ref}"
+        departure = monitored_vehicle_journey.get("OriginAimedDepartureTime")
+        direction = monitored_vehicle_journey.get("DirectionRef")
+        destination = monitored_vehicle_journey.get("DestinationName")
+
+        return f"{journey_ref} {departure} {direction} {destination}"
 
     def handle_items(self, items, identities):
         vehicle_codes = VehicleCode.objects.filter(

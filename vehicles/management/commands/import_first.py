@@ -85,7 +85,10 @@ class Command(ImportLiveVehiclesCommand):
                 vehicle=vehicle,
                 service=service,
             )
-            journey.trip = journey.get_trip()
+            journey.trip = journey.get_trip(
+                origin_ref=item["origin_atcocode"],
+                departure_time=departure_time,
+            )
             journey.save()
 
         if vehicle.latest_journey != journey:
