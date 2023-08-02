@@ -74,21 +74,34 @@ h1 {
     }
 }
 
-.trip-map,
-.trip-timetable {
+.has-sidebar,
+.map-sidebar {
     position: absolute;
     margin: 0;
-    top: 104px;
-    bottom: 134px; /* ad 92px + footer 42px */
     height: auto;
 }
 
-.trip-map {
+.trip-map,
+.trip-map + .map-sidebar {
+    top: 104px;
+    bottom: 134px; /* ad 92px + footer 42px */
+}
+
+.has-sidebar {
     left: 40%;
     right: 0;
 }
 
-.trip-timetable {
+.journey-map.has-sidebar {
+    bottom: 0;
+}
+
+.journey-map + .map-sidebar {
+    top: 0;
+    margin: 0;
+}
+
+.map-sidebar {
     width: 40%;
     box-sizing: border-box;
     padding: 0 1em;

@@ -214,17 +214,6 @@ export default function BigMap() {
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {/*showStops &&
-        stops?.features.map((item) => {
-          return (
-            <StopMarker
-              key={item.properties.url}
-              stop={item}
-              onClick={setClickedStopId}
-            />
-          );
-        })*/}
-
       {showStops ? (
         <Source type="geojson" data={stops}>
           <Layer

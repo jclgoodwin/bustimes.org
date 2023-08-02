@@ -48,22 +48,6 @@ const routeStyle = {
   },
 };
 
-function getBounds(journey) {
-  console.dir("getBounds");
-  const bounds = new LngLatBounds();
-  if (journey.locations) {
-    for (const item of journey.locations) {
-      bounds.extend(item.coordinates);
-    }
-  }
-  if (journey.stops) {
-    for (const item of journey.stops) {
-      bounds.extend(item.coordinates);
-    }
-  }
-  return bounds;
-}
-
 function LocationPopup({ location }) {
   const when = new Date(location.properties.datetime);
   return (
@@ -125,14 +109,30 @@ export default function JourneyMap({ journey }) {
     });
   }, []);
 
+  const bounds = React.useMemo(() => {
+    if (journey) {
+      const bounds = new LngLatBounds();
+      if (journey.locations) {
+        for (const item of journey.locations) {
+          bounds.extend(item.coordinates);
+        }
+      }
+      if (journey.stops) {
+        for (const item of journey.stops) {
+          bounds.extend(item.coordinates);
+        }
+      }
+      return bounds;
+    }
+  }, [journey]);
+
   if (!journey) {
     return <div className="sorry">Loading…</div>;
   }
 
   return (
     <React.Fragment>
-      {journey ? (
-        <div className="trip-map">
+      <div className="journey-map has-sidebar">
           <Map
             dragRotate={false}
             touchPitch={false}
@@ -140,7 +140,7 @@ export default function JourneyMap({ journey }) {
             pitchWithRotate={false}
             minZoom={8}
             maxZoom={16}
-            bounds={getBounds(journey)}
+            bounds={bounds}
             fitBoundsOptions={{
               padding: 50,
             }}
@@ -243,7 +243,6 @@ export default function JourneyMap({ journey }) {
             ) : null}
           </Map>
         </div>
-      ) : null}
 
       {journey.stops ? (
         <TripTimetable

@@ -70,7 +70,7 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
   );
 
   return (
-    <div className="trip-timetable">
+    <div className="trip-timetable map-sidebar">
       <table>
         <thead>
           <tr>

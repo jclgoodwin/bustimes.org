@@ -715,92 +715,12 @@ table {
     margin-top: 90px;
 }
 
-.sorry {
+.sorry {  // "Loading..." or "Sorry no buses tracking"
     display: flex;
     align-items: center;
     height: 100%;
     justify-content: center;
 }
-
-/*
-.journey {
-    background: #fff;
-    bottom: 0;
-    display: none;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
-    z-index: 1;
-
-    &:target {
-        display: block;
-    }
-
-    .map {
-        bottom: 0;
-        left: 0;
-        position: absolute;
-        right: 0;
-        top: 96px;
-    }
-
-    .details {
-        padding: 1em;
-
-        p {
-            margin-top: 0;
-        }
-
-        .button {
-            position: absolute;
-            top: 1em;
-            right: 1em;
-        }
-    }
-
-    .trip + .map {
-        bottom: 200px;
-    }
-
-    .trip {
-        background: #fff;
-        bottom: 0;
-        height: 168px;
-        overflow-y: auto;
-        position: absolute;
-        padding: 1em;
-        padding-top: 0;
-
-        table {
-            table-layout: fixed;
-        }
-
-        thead {
-            background: #fff;
-            position: sticky;
-            top: 0;
-        }
-
-        th,
-        td {
-            border-left: 0;
-        }
-
-        td {
-            padding: .25em 0;
-            text-align: right;
-            vertical-align: bottom;
-        }
-
-        th:first-child,
-        td:first-child {
-            text-align: left;
-            width: 100%;
-        }
-    }
-}
-*/
 
 .livery {
     display: inline-block;
@@ -812,36 +732,6 @@ table {
 
 table .livery {
     margin: 0;
-}
-
-#hugemap {
-    .stop-arrow {
-        position: absolute;
-        top: 0;
-        z-index: -1; // reveal indicator
-        width: 14px;
-        height: 14px;
-    }
-
-    .stop {
-        color: #fff;
-        font-size: 9px;
-        line-height: 16px;
-        text-align: center;
-
-        &.stop-0 {
-            .stop-arrow {
-                height: 10px;
-                left: 2px;
-                top: 2px;
-                width: 10px;
-            }
-        }
-
-        &.stop-1 {  // one character - bigger text
-            font-size: 11px;
-        }
-    }
 }
 
 table {
@@ -1170,7 +1060,8 @@ input:not(:checked) + label {
     }
 }
 
-.operator-map {
+.operator-map,
+.journey-map {
     position: absolute;
     top: 0;
     right: 0;
@@ -1183,6 +1074,18 @@ input:not(:checked) + label {
     position: sticky;
     margin: 0 -1em;
     height: 50vh;
+}
+
+.journey-map.has-sidebar {
+    bottom: 50%;
+}
+
+.journey-map + .map-sidebar {
+    position: absolute;
+    top: 50%;
+    overflow: auto;
+    bottom: -90px;
+    padding: 1em 1em 90px;
 }
 
 .trip-timetable {

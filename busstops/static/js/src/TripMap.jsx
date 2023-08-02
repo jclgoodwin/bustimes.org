@@ -180,7 +180,7 @@ export default function TripMap() {
 
   return (
     <React.Fragment>
-      <div className="trip-map">
+      <div className="trip-map has-sidebar">
         <Map
           dragRotate={false}
           touchPitch={false}
