@@ -130,9 +130,14 @@ export default function JourneyMap({ journey }) {
     return <div className="sorry">Loading…</div>;
   }
 
+  let className = "journey-map";
+  if (journey.stops) {
+    className += ' has-sidebar';
+  }
+
   return (
     <React.Fragment>
-      <div className="journey-map has-sidebar">
+      <div className={className}>
           <Map
             dragRotate={false}
             touchPitch={false}
