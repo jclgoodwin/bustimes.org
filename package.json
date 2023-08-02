@@ -20,10 +20,11 @@
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.2",
     "react-time-ago": "^7.2.1",
-    "reqwest": "^2.0.5"
+    "reqwest": "^2.0.5",
+    "wouter": "^2.11.0"
   },
   "scripts": {
-    "watch": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --splitting --watch --format=esm",
-    "build": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --bundle --splitting --minify --format=esm --metafile=meta.json"
+    "watch": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"/\\\" --bundle --splitting --watch --format=esm",
+    "build": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --minify --format=esm --metafile=meta.json"
   }
 }

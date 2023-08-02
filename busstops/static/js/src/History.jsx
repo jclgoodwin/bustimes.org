@@ -2,7 +2,7 @@ import React, { lazy, Suspense } from "react";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
-const apiRoot = "https://bustimes.org/";
+const apiRoot = process.env.API_ROOT;
 let hasHistory = 0;
 
 export default function History() {

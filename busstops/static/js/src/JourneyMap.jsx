@@ -8,7 +8,9 @@ import Map, {
   Popup,
 } from "react-map-gl/maplibre";
 
-import { useDarkMode, getBounds } from "./utils";
+import { LngLatBounds } from "maplibre-gl";
+
+import { useDarkMode } from "./utils";
 
 import TripTimetable from "./TripTimetable";
 import StopPopup from "./StopPopup";
@@ -45,6 +47,22 @@ const routeStyle = {
     "line-dasharray": [2, 2],
   },
 };
+
+function getBounds(journey) {
+  console.dir("getBounds");
+  const bounds = new LngLatBounds();
+  if (journey.locations) {
+    for (const item of journey.locations) {
+      bounds.extend(item.coordinates);
+    }
+  }
+  if (journey.stops) {
+    for (const item of journey.stops) {
+      bounds.extend(item.coordinates);
+    }
+  }
+  return bounds;
+}
 
 function LocationPopup({ location }) {
   const when = new Date(location.properties.datetime);
@@ -113,7 +131,7 @@ export default function JourneyMap({ journey }) {
 
   return (
     <React.Fragment>
-      {journey.locations ? (
+      {journey ? (
         <div className="trip-map">
           <Map
             dragRotate={false}
@@ -122,7 +140,7 @@ export default function JourneyMap({ journey }) {
             pitchWithRotate={false}
             minZoom={8}
             maxZoom={16}
-            bounds={getBounds(journey.locations)}
+            bounds={getBounds(journey)}
             fitBoundsOptions={{
               padding: 50,
             }}
@@ -142,38 +160,42 @@ export default function JourneyMap({ journey }) {
             <NavigationControl showCompass={false} />
             <GeolocateControl />
 
-            <Source
-              type="geojson"
-              data={{
-                type: "LineString",
-                coordinates: journey.locations.map((l) => l.coordinates),
-              }}
-            >
-              <Layer {...routeStyle} />
-            </Source>
+            {journey.locations ? (
+              <React.Fragment>
+                <Source
+                  type="geojson"
+                  data={{
+                    type: "LineString",
+                    coordinates: journey.locations.map((l) => l.coordinates),
+                  }}
+                >
+                  <Layer {...routeStyle} />
+                </Source>
 
-            <Source
-              type="geojson"
-              data={{
-                type: "FeatureCollection",
-                features: journey.locations.map((l) => {
-                  return {
-                    type: "Feature",
-                    geometry: {
-                      type: "Point",
-                      coordinates: l.coordinates,
-                    },
-                    properties: {
-                      delta: l.delta,
-                      direction: l.direction,
-                      datetime: l.datetime,
-                    },
-                  };
-                }),
-              }}
-            >
-              <Layer {...locationsStyle} />
-            </Source>
+                <Source
+                  type="geojson"
+                  data={{
+                    type: "FeatureCollection",
+                    features: journey.locations.map((l) => {
+                      return {
+                        type: "Feature",
+                        geometry: {
+                          type: "Point",
+                          coordinates: l.coordinates,
+                        },
+                        properties: {
+                          delta: l.delta,
+                          direction: l.direction,
+                          datetime: l.datetime,
+                        },
+                      };
+                    }),
+                  }}
+                >
+                  <Layer {...locationsStyle} />
+                </Source>
+              </React.Fragment>
+            ) : null}
 
             {journey.stops ? (
               <Source

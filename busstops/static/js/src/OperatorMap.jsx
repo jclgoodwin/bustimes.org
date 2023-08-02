@@ -13,7 +13,7 @@ import { useDarkMode, getBounds } from "./utils";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
+const apiRoot = process.env.API_ROOT;
 
 export default function OperatorMap() {
   // dark mode:

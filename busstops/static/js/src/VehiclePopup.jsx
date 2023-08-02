@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React from "react";
 import { Popup } from "react-map-gl/maplibre";
 import ReactTimeAgo from "react-time-ago";
 

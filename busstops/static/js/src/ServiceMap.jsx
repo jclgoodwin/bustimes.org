@@ -6,7 +6,7 @@ import loadjs from "loadjs";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
+const apiRoot = process.env.API_ROOT;
 
 let hasHistory = false;
 let hasCss = false;

@@ -8,7 +8,6 @@ import Map, {
 } from "react-map-gl/maplibre";
 
 import VehicleMarker from "./VehicleMarker";
-// import StopMarker from "./StopMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup from "./StopPopup";
 
@@ -16,7 +15,7 @@ import { useDarkMode } from "./utils";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
+const apiRoot = process.env.API_ROOT;
 
 function getBoundsQueryString(bounds) {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
@@ -25,44 +24,6 @@ function getBoundsQueryString(bounds) {
 function containsBounds(a, b) {
   return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
-
-// const stopsLayerStyle = {
-//   id: "stops",
-
-//   minzoom: 12,
-//   maxzoom: 15,
-
-//   // type: "circle",
-//   // paint: {
-//   //   "circle-color": "#333",
-//   //   "circle-opacity": 0.5,
-//   //   "circle-radius": 3,
-//   // },
-
-//   type: "symbol",
-//   layout: {
-//     // "text-field": ["get", "icon"],
-//     // "text-font": ["Stadia Regular"],
-//     // "text-allow-overlap": true,
-//     // "text-size": 10,
-//     "icon-rotate": ["get", "bearing"],
-//     "icon-image": "rail",
-//     "icon-size": 0.5,
-//     "icon-allow-overlap": true,
-//   }
-// };
-
-// const redBusesStyle = {
-//   id: "vehicles",
-//   type: "symbol",
-//   layout: {
-//     "icon-rotate": ["to-number", ["get", "heading"]],
-//     "icon-image": "vehicle",
-//     "icon-size": 0.5,
-//     "icon-allow-overlap": true,
-//     "icon-offset": [0, -6],
-//   },
-// };
 
 function shouldShowStops(zoom) {
   return zoom >= 14;

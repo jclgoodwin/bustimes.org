@@ -7,6 +7,9 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl/maplibre";
 
+import { useRoute } from "wouter";
+import { navigate } from "wouter/use-location";
+
 import { useDarkMode } from "./utils";
 import { LngLatBounds } from "maplibre-gl";
 
@@ -17,7 +20,7 @@ import VehiclePopup from "./VehiclePopup";
 
 import "maplibre-gl/dist/maplibre-gl.css";
 
-const apiRoot = "https://bustimes.org/";
+const apiRoot = process.env.API_ROOT;
 
 const stopsStyle = {
   id: "stops",
@@ -40,6 +43,8 @@ const routeStyle = {
 };
 
 export default function TripMap() {
+  const [, params] = useRoute("/trips/:id");
+
   const [trip, setTrip] = React.useState(window.STOPS);
 
   const bounds = React.useMemo(() => {
@@ -52,21 +57,21 @@ export default function TripMap() {
     return bounds;
   }, [trip]);
 
-  const loadTrip = React.useCallback(
-    (item) => {
-      const tripId = item.trip_id;
-      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-        history.pushState(null, null, `/trips/${tripId}`);
-        window.TRIP_ID = tripId;
+  const navigateToTrip = React.useCallback((item) => {
+    navigate("/trips/" + item.trip_id);
+  });
+
+  const loadTrip = React.useCallback(() => {
+    if (!(trip && params.id == trip.id.toString())) {
+      setTripVehicle(null);
+      fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
         response.json().then((trip) => {
           setTrip(trip);
-          setTripVehicle(item);
           loadVehicles();
         });
       });
-    },
-    [trip],
-  );
+    }
+  });
 
   const darkMode = useDarkMode();
 
@@ -93,20 +98,6 @@ export default function TripMap() {
     }
   }, []);
 
-  /*
-  const handleMouseEnter = React.useCallback((stop) => {
-    setClickedStop({
-      geometry: {
-        coordinates: stop.stop.location,
-      },
-      properties: {
-        name: stop.stop.name,
-        url: `/stops/${stop.stop.atco_code}`,
-      },
-    });
-  }, []);
-  */
-
   const [tripVehicle, setTripVehicle] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
 
@@ -115,6 +106,7 @@ export default function TripMap() {
   const loadVehicles = React.useCallback(
     (first) => {
       console.log(trip.id);
+      console.log(params.id);
       console.log(window.TRIP_ID);
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
@@ -131,7 +123,7 @@ export default function TripMap() {
               {},
               ...items.map((item) => {
                 if (
-                  (window.TRIP_ID && item.trip_id === window.TRIP_ID) ||
+                  (params.id && item.trip_id == params.id) ||
                   (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
                 ) {
                   if (first) {
@@ -152,16 +144,8 @@ export default function TripMap() {
   );
 
   React.useEffect(() => {
-    const handlePopState = (e) => {
-      debugger;
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  });
+    loadTrip();
+  }, [params.id]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -289,7 +273,7 @@ export default function TripMap() {
           {clickedVehicle ? (
             <VehiclePopup
               item={clickedVehicle}
-              onTripClick={loadTrip}
+              onTripClick={navigateToTrip}
               onClose={() => {
                 setClickedVehicleMarker(null);
               }}
@@ -304,6 +288,7 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
+      {params.id}
       <TripTimetable
         trip={trip}
         vehicle={tripVehicle}
