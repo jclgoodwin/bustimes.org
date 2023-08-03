@@ -13,8 +13,6 @@ import VehiclePopup from "./VehiclePopup";
 
 import { useDarkMode } from "./utils";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
 const routeStyle = {
   type: "line",
   paint: {

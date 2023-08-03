@@ -11,8 +11,6 @@ import VehiclePopup from "./VehiclePopup";
 
 import { useDarkMode, getBounds } from "./utils";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
 const apiRoot = process.env.API_ROOT;
 
 export default function OperatorMap() {

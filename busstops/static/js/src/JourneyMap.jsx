@@ -15,8 +15,6 @@ import { useDarkMode } from "./utils";
 import TripTimetable from "./TripTimetable";
 import StopPopup from "./StopPopup";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
 const stopsStyle = {
   id: "stops",
   type: "symbol",

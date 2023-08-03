@@ -13,8 +13,6 @@ import StopPopup from "./StopPopup";
 
 import { useDarkMode } from "./utils";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
 const apiRoot = process.env.API_ROOT;
 
 function getBoundsQueryString(bounds) {

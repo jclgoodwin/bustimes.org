@@ -4,8 +4,6 @@ const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
 import loadjs from "loadjs";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
 const apiRoot = process.env.API_ROOT;
 
 let hasHistory = false;

@@ -18,8 +18,6 @@ import StopPopup from "./StopPopup";
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
-import "maplibre-gl/dist/maplibre-gl.css";
-
 const apiRoot = process.env.API_ROOT;
 
 const stopsStyle = {

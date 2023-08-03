@@ -14,6 +14,7 @@ Sentry.init({
 });
 
 import "./maps.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 let root = document.getElementById("hugemap");
 if (root) {
