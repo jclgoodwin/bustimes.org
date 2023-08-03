@@ -68,10 +68,15 @@ export default function JourneyMap({ journey }) {
   const [clickedLocation, setClickedLocation] = React.useState(null);
 
   const onMouseEnter = React.useCallback((e) => {
-    setCursor("pointer");
+    if (e.features.length) {
+      setCursor("pointer");
+    }
 
-    if (e.features.length && e.features[0].layer.id == "locations") {
-      setClickedLocation(e.features[0]);
+    for (const feature of e.features) {
+      if (feature.layer.id === "locations") {
+        setClickedLocation(feature);
+        break;
+      }
     }
   }, []);
 
@@ -84,8 +89,11 @@ export default function JourneyMap({ journey }) {
 
   const handleMapClick = React.useCallback((e) => {
     if (e.features.length) {
-      if (e.features[0].layer.id == "stops") {
-        setClickedStop(e.features[0]);
+      for (const feature of e.features) {
+        if (feature.layer.id == "stops") {
+          setClickedStop(feature);
+          break;
+        }
       }
     } else {
       setClickedStop(null);
@@ -148,6 +156,7 @@ export default function JourneyMap({ journey }) {
           }}
           cursor={cursor}
           onMouseEnter={onMouseEnter}
+          onMouseMove={onMouseEnter}
           onMouseLeave={onMouseLeave}
           mapStyle={
             darkMode
