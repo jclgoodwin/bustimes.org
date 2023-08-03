@@ -158,6 +158,8 @@ export default function TripMap() {
       }
     };
 
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
@@ -304,6 +306,9 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
+      p: {params.id}
+      <br/>
+      t: {trip.id}
       <TripTimetable
         trip={trip}
         vehicle={tripVehicle}

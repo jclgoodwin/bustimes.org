@@ -17,12 +17,6 @@
 {% if stops %}
     <h2>Stops in {{ locality }}</h2>
 
-    {% if locality.latlong %}
-        <p class="map-link">
-            <a href="/map{% if locality.latlong %}#16/{{ locality.latlong.y|floatformat:4 }}/{{ locality.latlong.x|floatformat:4 }}{% endif %}">Map</a>
-        </p>
-    {% endif %}
-
     {% include 'stops.html' with stops=stops class=' long' %}
 {% endif %}
 

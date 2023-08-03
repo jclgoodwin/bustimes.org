@@ -93,7 +93,7 @@ export default function OperatorMap() {
           );
           clearTimeout(timeout);
           if (isOpen && items.length) {
-            timeout = setTimeout(loadVehicles, isOpen); // 10 seconds
+            timeout = setTimeout(loadVehicles, 10000); // 10 seconds
           }
         });
       });
