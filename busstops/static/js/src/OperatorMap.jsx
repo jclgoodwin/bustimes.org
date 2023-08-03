@@ -5,7 +5,7 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl/maplibre";
 
-import TripLayer from "./TripLayer";
+// import TripLayer from "./TripLayer";
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
@@ -24,9 +24,9 @@ export default function OperatorMap() {
 
   const [bounds, setBounds] = React.useState(null);
 
-  let timeout;
-
   React.useEffect(() => {
+    let timeout;
+
     const loadVehicles = () => {
       let url = apiRoot + "vehicles.json?operator=" + window.OPERATOR_ID;
       fetch(url).then((response) => {
@@ -98,7 +98,7 @@ export default function OperatorMap() {
   const clickedVehicle =
     clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
 
-  const clickedTripId = clickedVehicle?.trip_id;
+  // const clickedTripId = clickedVehicle?.trip_id;
 
   return (
     <React.Fragment>
@@ -108,7 +108,6 @@ export default function OperatorMap() {
           touchPitch={false}
           touchRotate={false}
           pitchWithRotate={false}
-          minZoom={6}
           maxZoom={16}
           bounds={bounds}
           fitBoundsOptions={{
@@ -145,7 +144,7 @@ export default function OperatorMap() {
           )}
         </Map>
       </div>
-      {clickedTripId ? <TripLayer tripId={clickedTripId} /> : null}
+      {/*{clickedTripId ? <TripLayer tripId={clickedTripId} /> : null}*/}
     </React.Fragment>
   );
 }

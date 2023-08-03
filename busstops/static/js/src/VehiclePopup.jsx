@@ -40,6 +40,7 @@ export default function VehiclePopup({
   onClose,
   closeButton = true,
   onTripClick = null,
+  activeLink = false
 }) {
   const handleTripClick = React.useCallback(
     (e) => {
@@ -62,7 +63,7 @@ export default function VehiclePopup({
   if (item.tfl_code) {
     line_name = <a href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</a>;
   } else if (item.trip_id) {
-    if (item.trip_id != window.TRIP_ID) {
+    if (!activeLink) {
       line_name = (
         <a href={`/trips/${item.trip_id}`} onClick={handleTripClick}>
           {line_name}

@@ -61,9 +61,9 @@ export default function OperatorMap() {
     };
   });
 
-  let timeout;
-
   React.useEffect(() => {
+    let timeout;
+
     if (isOpen) {
       document.body.classList.add("has-overlay");
       if (!hasCss) {
@@ -76,6 +76,7 @@ export default function OperatorMap() {
     }
 
     // service map data
+    // TODO: linked services
     fetch(`/services/${window.SERVICE_ID}.json`).then((response) => {
       response.json().then((data) => {
         setGeometry(data.geometry);
@@ -91,7 +92,9 @@ export default function OperatorMap() {
             Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
           );
           clearTimeout(timeout);
-          timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+          if (isOpen && items.length) {
+            timeout = setTimeout(loadVehicles, isOpen); // 10 seconds
+          }
         });
       });
     };

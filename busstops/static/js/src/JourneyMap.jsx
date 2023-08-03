@@ -141,7 +141,6 @@ export default function JourneyMap({ journey }) {
           touchPitch={false}
           touchRotate={false}
           pitchWithRotate={false}
-          minZoom={8}
           maxZoom={16}
           bounds={bounds}
           fitBoundsOptions={{

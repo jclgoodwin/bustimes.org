@@ -59,18 +59,6 @@ export default function TripMap() {
     navigate("/trips/" + item.trip_id);
   });
 
-  const loadTrip = React.useCallback(() => {
-    if (!(trip && params.id == trip.id.toString())) {
-      setTripVehicle(null);
-      fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
-        response.json().then((trip) => {
-          setTrip(trip);
-          loadVehicles();
-        });
-      });
-    }
-  });
-
   const darkMode = useDarkMode();
 
   const [cursor, setCursor] = React.useState();
@@ -106,22 +94,25 @@ export default function TripMap() {
   const [tripVehicle, setTripVehicle] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
 
-  let timeout;
+  React.useEffect(() => {
+    let timeout;
+    let controller = new AbortController();
 
-  const loadVehicles = React.useCallback(
-    (first) => {
-      console.log(trip.id);
-      console.log(params.id);
-      console.log(window.TRIP_ID);
+    const loadVehicles = (first) => {
+      console.log("trip", trip.id);
+      console.log("params", params.id);
+      console.log("window", window.TRIP_ID);
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
         url = `${url}?id=${window.VEHICLE_ID}`;
       } else if (!window.SERVICE) {
         return;
       } else {
-        url = `${url}?service=${window.SERVICE}&trip=${window.TRIP_ID}`;
+        url = `${url}?service=${window.SERVICE}&trip=${params.id}`;
       }
-      fetch(url).then((response) => {
+      fetch(url, {
+        signal: controller.signal
+      }).then((response) => {
         response.json().then((items) => {
           setVehicles(
             Object.assign(
@@ -140,16 +131,38 @@ export default function TripMap() {
               }),
             ),
           );
-          clearTimeout(timeout);
-          timeout = setTimeout(loadVehicles, 10000); // 10 seconds
         });
+        clearTimeout(timeout);
+        timeout = setTimeout(loadVehicles, 12000); // 12 seconds
       });
-    },
-    [trip],
-  );
+    };
 
-  React.useEffect(() => {
+    const loadTrip = () => {
+      if (!(trip && params.id == trip.id.toString())) {
+        setTripVehicle(null);
+        fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
+          response.json().then(setTrip);
+        });
+      }
+    };
+
     loadTrip();
+    loadVehicles(true);
+
+    const handleVisibilityChange = (event) => {
+      if (event.target.hidden) {
+        clearTimeout(timeout);
+        controller.abort();
+      } else {
+        loadVehicles();
+      }
+    };
+
+    return () => {
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, [params.id]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
@@ -174,8 +187,6 @@ export default function TripMap() {
         // height: 16
       });
     });
-
-    loadVehicles(true);
   }, []);
 
   const clickedVehicle =
@@ -191,7 +202,6 @@ export default function TripMap() {
           touchPitch={false}
           touchRotate={false}
           pitchWithRotate={false}
-          minZoom={6}
           maxZoom={16}
           bounds={bounds}
           style={{
@@ -278,6 +288,7 @@ export default function TripMap() {
           {clickedVehicle ? (
             <VehiclePopup
               item={clickedVehicle}
+              activeLink={clickedVehicle?.trip_id == params.id}
               onTripClick={navigateToTrip}
               onClose={() => {
                 setClickedVehicleMarker(null);
@@ -293,7 +304,6 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
-      {params.id}
       <TripTimetable
         trip={trip}
         vehicle={tripVehicle}
