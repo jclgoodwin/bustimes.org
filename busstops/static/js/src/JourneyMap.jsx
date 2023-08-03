@@ -132,122 +132,122 @@ export default function JourneyMap({ journey }) {
 
   let className = "journey-map";
   if (journey.stops) {
-    className += ' has-sidebar';
+    className += " has-sidebar";
   }
 
   return (
     <React.Fragment>
       <div className={className}>
-          <Map
-            dragRotate={false}
-            touchPitch={false}
-            touchRotate={false}
-            pitchWithRotate={false}
-            minZoom={8}
-            maxZoom={16}
-            bounds={bounds}
-            fitBoundsOptions={{
-              padding: 50,
-            }}
-            cursor={cursor}
-            onMouseEnter={onMouseEnter}
-            onMouseLeave={onMouseLeave}
-            mapStyle={
-              darkMode
-                ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-                : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-            }
-            RTLTextPlugin={null}
-            onClick={handleMapClick}
-            onLoad={handleMapLoad}
-            interactiveLayerIds={["stops", "locations"]}
-          >
-            <NavigationControl showCompass={false} />
-            <GeolocateControl />
+        <Map
+          dragRotate={false}
+          touchPitch={false}
+          touchRotate={false}
+          pitchWithRotate={false}
+          minZoom={8}
+          maxZoom={16}
+          bounds={bounds}
+          fitBoundsOptions={{
+            padding: 50,
+          }}
+          cursor={cursor}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          mapStyle={
+            darkMode
+              ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
+              : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
+          }
+          RTLTextPlugin={null}
+          onClick={handleMapClick}
+          onLoad={handleMapLoad}
+          interactiveLayerIds={["stops", "locations"]}
+        >
+          <NavigationControl showCompass={false} />
+          <GeolocateControl />
 
-            {journey.locations ? (
-              <React.Fragment>
-                <Source
-                  type="geojson"
-                  data={{
-                    type: "LineString",
-                    coordinates: journey.locations.map((l) => l.coordinates),
-                  }}
-                >
-                  <Layer {...routeStyle} />
-                </Source>
+          {journey.stops ? (
+            <Source
+              type="geojson"
+              data={{
+                type: "FeatureCollection",
+                features: journey.stops.map((s) => {
+                  return {
+                    type: "Feature",
+                    geometry: {
+                      type: "Point",
+                      coordinates: s.coordinates,
+                    },
+                    properties: {
+                      atco_code: s.atco_code,
+                      name: s.name,
+                      minor: s.minor,
+                      heading: s.heading,
+                      aimed_arrival_time: s.aimed_arrival_time,
+                      aimed_departure_time: s.aimed_departure_time,
+                    },
+                  };
+                }),
+              }}
+            >
+              <Layer {...stopsStyle} />
+            </Source>
+          ) : null}
 
-                <Source
-                  type="geojson"
-                  data={{
-                    type: "FeatureCollection",
-                    features: journey.locations.map((l) => {
-                      return {
-                        type: "Feature",
-                        geometry: {
-                          type: "Point",
-                          coordinates: l.coordinates,
-                        },
-                        properties: {
-                          delta: l.delta,
-                          direction: l.direction,
-                          datetime: l.datetime,
-                        },
-                      };
-                    }),
-                  }}
-                >
-                  <Layer {...locationsStyle} />
-                </Source>
-              </React.Fragment>
-            ) : null}
+          {journey.locations ? (
+            <React.Fragment>
+              <Source
+                type="geojson"
+                data={{
+                  type: "LineString",
+                  coordinates: journey.locations.map((l) => l.coordinates),
+                }}
+              >
+                <Layer {...routeStyle} />
+              </Source>
 
-            {journey.stops ? (
               <Source
                 type="geojson"
                 data={{
                   type: "FeatureCollection",
-                  features: journey.stops.map((s) => {
+                  features: journey.locations.map((l) => {
                     return {
                       type: "Feature",
                       geometry: {
                         type: "Point",
-                        coordinates: s.coordinates,
+                        coordinates: l.coordinates,
                       },
                       properties: {
-                        atco_code: s.atco_code,
-                        name: s.name,
-                        minor: s.minor,
-                        heading: s.heading,
-                        aimed_arrival_time: s.aimed_arrival_time,
-                        aimed_departure_time: s.aimed_departure_time,
+                        delta: l.delta,
+                        direction: l.direction,
+                        datetime: l.datetime,
                       },
                     };
                   }),
                 }}
               >
-                <Layer {...stopsStyle} />
+                <Layer {...locationsStyle} />
               </Source>
-            ) : null}
+            </React.Fragment>
+          ) : null}
 
-            {clickedStop ? (
-              <StopPopup
-                item={{
-                  properties: {
-                    url: `/stops/${clickedStop.properties.atco_code}`,
-                    name: clickedStop.properties.name,
-                  },
-                  geometry: clickedStop.geometry,
-                }}
-                onClose={() => setClickedStop(null)}
-              />
-            ) : null}
+          {clickedStop ? (
+            <StopPopup
+              item={{
+                properties: {
+                  url: `/stops/${clickedStop.properties.atco_code}`,
+                  name: clickedStop.properties.name,
+                },
+                geometry: clickedStop.geometry,
+              }}
+              onClose={() => setClickedStop(null)}
+            />
+          ) : null}
 
-            {clickedLocation ? (
-              <LocationPopup location={clickedLocation} />
-            ) : null}
-          </Map>
-        </div>
+          {clickedLocation ? (
+            <LocationPopup location={clickedLocation} />
+          ) : null}
+        </Map>
+      </div>
 
       {journey.stops ? (
         <TripTimetable

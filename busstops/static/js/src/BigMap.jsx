@@ -33,6 +33,49 @@ function shouldShowVehicles(zoom) {
   return zoom >= 10;
 }
 
+function Stops({ stops, clickedStopUrl, setClickedStop }) {
+  const stopsById = React.useMemo(() => {
+    return Object.assign(
+      {},
+      ...stops.features.map((stop) => ({ [stop.properties.url]: stop })),
+    );
+  }, [stops]);
+
+  const clickedStop = clickedStopUrl && stopsById[clickedStopUrl];
+
+  return (
+    <React.Fragment>
+      <Source type="geojson" data={stops}>
+        <Layer
+          {...{
+            id: "stops",
+            type: "symbol",
+            minzoom: 14,
+            layout: {
+              "text-field": ["get", "icon"],
+              "text-font": ["Stadia Regular"],
+              "text-allow-overlap": true,
+              "text-size": 10,
+              "icon-rotate": ["+", 45, ["get", "bearing"]],
+              "icon-image": "stop",
+              "icon-padding": 0,
+              "icon-allow-overlap": true,
+              "icon-ignore-placement": true,
+              "text-ignore-placement": true,
+            },
+            paint: {
+              "text-color": "#ffffff",
+            },
+          }}
+        />
+      </Source>
+      {clickedStop ? (
+        <StopPopup item={clickedStop} onClose={() => setClickedStop(null)} />
+      ) : null}
+    </React.Fragment>
+  );
+}
+
 export default function BigMap() {
   const darkMode = useDarkMode();
 
@@ -44,7 +87,7 @@ export default function BigMap() {
 
   const [zoom, setZoom] = React.useState(null);
 
-  const [clickedStopId, setClickedStopId] = React.useState(null);
+  const [clickedStop, setClickedStop] = React.useState(null);
 
   const [stopsHighWaterMark, setStopsHighWaterMark] = React.useState(null);
 
@@ -102,24 +145,27 @@ export default function BigMap() {
 
   const handleVehicleMarkerClick = React.useCallback((event, id) => {
     event.originalEvent.preventDefault();
-    setClickedStopId(null);
+    setClickedStop(null);
     setClickedVehicleMarker(id);
   }, []);
 
-  const handleMapClick = React.useCallback((e) => {
-    if (!e.originalEvent.defaultPrevented) {
-      if (e.features?.length) {
-        if (e.features[0].layer.id === "stops") {
-          setClickedStopId(e.features[0]);
+  const handleMapClick = React.useCallback(
+    (e) => {
+      if (!e.originalEvent.defaultPrevented) {
+        if (e.features.length) {
+          for (const stop of e.features) {
+            if (stop.properties.url !== clickedStop) {
+              setClickedStop(stop.properties.url);
+            }
+          }
         } else {
-          setClickedVehicleMarker(e.features[0].id);
+          setClickedStop(null);
         }
-      } else {
-        setClickedStopId(null);
         setClickedVehicleMarker(null);
       }
-    }
-  }, []);
+    },
+    [clickedStop],
+  );
 
   const handleMapLoad = React.useCallback((event) => {
     const map = event.target;
@@ -214,31 +260,12 @@ export default function BigMap() {
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {showStops ? (
-        <Source type="geojson" data={stops}>
-          <Layer
-            {...{
-              id: "stops",
-              type: "symbol",
-              minzoom: 14,
-              layout: {
-                "text-field": ["get", "icon"],
-                "text-font": ["Stadia Regular"],
-                "text-allow-overlap": true,
-                "text-size": 10,
-                "icon-rotate": ["+", 45, ["get", "bearing"]],
-                "icon-image": "stop",
-                "icon-padding": 0,
-                "icon-allow-overlap": true,
-                "icon-ignore-placement": true,
-                "text-ignore-placement": true,
-              },
-              paint: {
-                "text-color": "#ffffff",
-              },
-            }}
-          />
-        </Source>
+      {stops && showStops ? (
+        <Stops
+          stops={stops}
+          setClickedStop={setClickedStop}
+          clickedStopUrl={clickedStop}
+        />
       ) : null}
 
       {showBuses
@@ -289,13 +316,6 @@ export default function BigMap() {
         <VehiclePopup
           item={clickedVehicle}
           onClose={() => setClickedVehicleMarker(null)}
-        />
-      )}
-
-      {clickedStopId && (
-        <StopPopup
-          item={clickedStopId}
-          onClose={() => setClickedStopId(null)}
         />
       )}
     </Map>

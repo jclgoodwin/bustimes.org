@@ -1333,6 +1333,7 @@ nav {
 }
 
 body.has-overlay {
+    position: relative;  // https://stackoverflow.com/questions/3047337/does-overflowhidden-applied-to-body-work-on-iphone-safari
     overflow: hidden;
 
     // services_header

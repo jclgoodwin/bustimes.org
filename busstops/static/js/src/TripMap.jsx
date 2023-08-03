@@ -87,16 +87,23 @@ export default function TripMap() {
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
-  const handleMapClick = React.useCallback((e) => {
-    if (!e.originalEvent.defaultPrevented) {
-      if (e.features.length) {
-        setClickedStop(e.features[0]);
-      } else {
-        setClickedStop(null);
+  const handleMapClick = React.useCallback(
+    (e) => {
+      if (!e.originalEvent.defaultPrevented) {
+        if (e.features.length) {
+          for (const stop of e.features) {
+            if (stop.properties.url !== clickedStop?.properties.url) {
+              setClickedStop(stop);
+            }
+          }
+        } else {
+          setClickedStop(null);
+        }
+        setClickedVehicleMarker(null);
       }
-      setClickedVehicleMarker(null);
-    }
-  }, []);
+    },
+    [clickedStop],
+  );
 
   const [tripVehicle, setTripVehicle] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);

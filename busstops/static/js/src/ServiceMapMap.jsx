@@ -45,20 +45,31 @@ export default function ServiceMapMap({
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
 
+  const [clickedStop, setClickedStop] = React.useState(null);
+
   const handleVehicleMarkerClick = React.useCallback((event, id) => {
     event.originalEvent.preventDefault();
-    setClickedStops([]);
+    setClickedStop(null);
     setClickedVehicleMarker(id);
   }, []);
 
-  const [clickedStops, setClickedStops] = React.useState([]);
-
-  const handleMapClick = React.useCallback((e) => {
-    if (!e.originalEvent.defaultPrevented) {
-      setClickedStops(e.features);
-      setClickedVehicleMarker(null);
-    }
-  }, []);
+  const handleMapClick = React.useCallback(
+    (e) => {
+      if (!e.originalEvent.defaultPrevented) {
+        if (e.features.length) {
+          for (const stop of e.features) {
+            if (stop.properties.url !== clickedStop?.properties.url) {
+              setClickedStop(stop);
+            }
+          }
+        } else {
+          setClickedStop(null);
+        }
+        setClickedVehicleMarker(null);
+      }
+    },
+    [clickedStop],
+  );
 
   const handleMapLoad = React.useCallback((event) => {
     const map = event.target;
@@ -156,15 +167,9 @@ export default function ServiceMapMap({
 
       {popup}
 
-      {clickedStops.map((stop, i) => {
-        return (
-          <StopPopup
-            key={stop.properties.url}
-            item={stop}
-            anchor={i ? "top" : null}
-          />
-        );
-      })}
+      {clickedStop ? (
+        <StopPopup item={clickedStop} onClose={() => setClickedStop(null)} />
+      ) : null}
 
       {geometry && (
         <Source type="geojson" data={geometry}>

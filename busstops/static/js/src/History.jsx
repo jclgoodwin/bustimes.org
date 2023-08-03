@@ -63,7 +63,6 @@ export default function History() {
         }
       }
 
-      // fetch(`/static/js/cookies.json`).then((response) => {
       fetch(`${apiRoot}${journeyId}.json`).then((response) => {
         if (response.ok) {
           response.json().then((data) => {
