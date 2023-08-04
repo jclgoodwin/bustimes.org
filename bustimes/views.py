@@ -500,13 +500,12 @@ def tfl_vehicle(request, reg: str):
         stop = stops.get(item["naptanId"])
 
         if stop:
-            time["stop"]["atco_code"] = stop.atco_code
+            if type(stop) is StopPoint:
+                time["stop"]["atco_code"] = stop.atco_code
+                time["stop"]["bearing"] = stop.get_heading()
 
             if stop.latlong:
                 time["stop"]["location"] = stop.latlong.coords
-
-            if type(stop) is StopPoint:
-                time["stop"]["bearing"] = stop.get_heading()
 
         if item["platformName"] and item["platformName"] != "null":
             time["stop"]["icon"] = item["platformName"]
