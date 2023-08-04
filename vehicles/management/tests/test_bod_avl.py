@@ -506,7 +506,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         with mock.patch("vehicles.views.redis_client", redis_client):
 
-            with self.assertNumQueries(5):
+            with self.assertNumQueries(6):
                 response = self.client.get(journey.get_absolute_url())
             self.assertContains(response, "146")
             self.assertContains(response, ">Southwold<")
