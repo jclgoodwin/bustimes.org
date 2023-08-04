@@ -115,7 +115,6 @@
                 <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
             {% endif %}
             {% if request.user.is_superuser %}
-                <td>{{ journey.block }}</td>
                 <td class="link">
                     <a href="{% url 'admin:vehicles_vehiclejourney_change' journey.pk %}">✎</a>
                 </td>

@@ -78,7 +78,10 @@ export default function TripMap() {
       if (!e.originalEvent.defaultPrevented) {
         if (e.features.length) {
           for (const stop of e.features) {
-            if (!stop.properties.url || stop.properties.url !== clickedStop?.properties.url) {
+            if (
+              !stop.properties.url ||
+              stop.properties.url !== clickedStop?.properties.url
+            ) {
               setClickedStop(stop);
             }
           }
@@ -143,8 +146,8 @@ export default function TripMap() {
         fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
           response.json().then(setTrip);
         });
-      };
-    }
+      }
+    };
 
     loadTrip();
     loadVehicles(true);
@@ -181,7 +184,7 @@ export default function TripMap() {
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-    map.loadImage("/static/root/route-stop-marker.png", (error, image) => {
+    map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
       map.addImage("stop", image, {
         pixelRatio: 2,
@@ -265,7 +268,9 @@ export default function TripMap() {
                       coordinates: stop.stop.location,
                     },
                     properties: {
-                      url: stop.stop.atco_code ? `/stops/${stop.stop.atco_code}` : null,
+                      url: stop.stop.atco_code
+                        ? `/stops/${stop.stop.atco_code}`
+                        : null,
                       name: stop.stop.name,
                       bearing: stop.stop.bearing,
                     },

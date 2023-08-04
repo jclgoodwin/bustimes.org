@@ -29,10 +29,14 @@ const stopsStyle = {
 
 const locationsStyle = {
   id: "locations",
-  type: "circle",
-  paint: {
-    "circle-color": "#666",
-    "circle-radius": 5,
+  type: "symbol",
+  layout: {
+    "icon-rotate": ["+", 45, ["get", "heading"]],
+    "icon-image": "arrow",
+    "icon-allow-overlap": true,
+    "icon-ignore-placement": true,
+    "icon-padding": 0,
+    "icon-anchor": "top-left",
   },
 };
 
@@ -105,12 +109,17 @@ export default function JourneyMap({ journey }) {
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-    map.loadImage("/static/root/route-stop-marker.png", (error, image) => {
+    map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
       map.addImage("stop", image, {
         pixelRatio: 2,
-        // width: 16,
-        // height: 16
+      });
+    });
+
+    map.loadImage("/static/arrow.png", (error, image) => {
+      if (error) throw error;
+      map.addImage("arrow", image, {
+        pixelRatio: 2,
       });
     });
   }, []);
@@ -224,7 +233,7 @@ export default function JourneyMap({ journey }) {
                       },
                       properties: {
                         delta: l.delta,
-                        direction: l.direction,
+                        heading: l.direction,
                         datetime: l.datetime,
                       },
                     };

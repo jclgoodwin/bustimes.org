@@ -74,7 +74,7 @@ export default function ServiceMapMap({
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-    map.loadImage("/static/root/route-stop-marker.png", (error, image) => {
+    map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
       map.addImage("stop", image, {
         pixelRatio: 2,
