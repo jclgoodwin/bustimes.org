@@ -2,6 +2,23 @@ import React from "react";
 import { Popup } from "react-map-gl/maplibre";
 
 export default function StopPopup({ item, onClose, anchor }) {
+  let name = item.properties.name;
+
+  if (item.properties.url) {
+    name = (
+      <a href={item.properties.url} className="link-with-smalls">
+        <div className="description">{name}</div>
+        {item.properties.services ? (
+          <div className="smalls">
+            {item.properties.services.join("\u00A0 ")}
+          </div>
+        ) : null}
+      </a>
+    );
+  } else {
+    name = <div>{name}</div>;
+  }
+
   return (
     <Popup
       offset={2}
@@ -11,14 +28,7 @@ export default function StopPopup({ item, onClose, anchor }) {
       onClose={onClose}
       anchor={anchor}
     >
-      <a href={item.properties.url} className="link-with-smalls">
-        <div className="description">{item.properties.name}</div>
-        {item.properties.services ? (
-          <div className="smalls">
-            {item.properties.services.join("\u00A0 ")}
-          </div>
-        ) : null}
-      </a>
+      {name}
     </Popup>
   );
 }

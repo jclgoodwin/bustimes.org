@@ -78,7 +78,7 @@ export default function TripMap() {
       if (!e.originalEvent.defaultPrevented) {
         if (e.features.length) {
           for (const stop of e.features) {
-            if (stop.properties.url !== clickedStop?.properties.url) {
+            if (!stop.properties.url || stop.properties.url !== clickedStop?.properties.url) {
               setClickedStop(stop);
             }
           }
@@ -265,7 +265,7 @@ export default function TripMap() {
                       coordinates: stop.stop.location,
                     },
                     properties: {
-                      url: `/stops/${stop.stop.atco_code}`,
+                      url: stop.stop.atco_code ? `/stops/${stop.stop.atco_code}` : null,
                       name: stop.stop.name,
                       bearing: stop.stop.bearing,
                     },
