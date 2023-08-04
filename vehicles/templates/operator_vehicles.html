@@ -75,8 +75,8 @@
     <thead>
         <tr>
             {% if form %}<th></th>{% endif %}
-            <th scope="col"></th>
-            {% if not parent %}<th scope="col">Last tracked</th>{% endif %}
+            <th scope="col" colspan="2"></th>
+            {% if not parent %}<th scope="col" colspan="2">Last tracked</th>{% endif %}
             <th scope="col">Type</th>
             <th scope="col">Livery</th>
             {% if branding_column %}<th scope="col">Branding</th>{% endif %}
@@ -94,21 +94,22 @@
                 {% if form %}
                     <td>{% if vehicle.is_editable %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
                 {% endif %}
-                <td>
-                    <a href="{{ vehicle.get_absolute_url }}">
+                {% if not vehicle.fleet_code and not vehicle.fleet_number and not vehicle.reg %}
+                    <td colspan="2">
+                        <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
+                    </td>
+                {% else %}
+                    <td class="number tabular">
                         {% if vehicle.fleet_code or vehicle.fleet_number %}
-                            <div class="tabular">{% firstof vehicle.fleet_code vehicle.fleet_number %}</div>
+                            <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
                         {% endif %}
-                        {% if vehicle.has_uk_reg %}
-                            <span class="reg">{{ vehicle.get_reg }}</span>
-                        {% else %}
-                            {{ vehicle.reg }}
-                        {% endif %}
-                    </a>
-                </td>
+                    </td>
+                    <td>{% if vehicle.reg %}<a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>{{ vehicle.get_reg }}</a>{% endif %}</td>
+                {% endif %}
                 {% if not parent %}<td class="last-seen">
                     {{ vehicle.last_seen.service }}
-                    <br>
+                </td>
+                <td class="last-seen">
                     {% if vehicle.last_seen.today %}
                         {{ vehicle.last_seen.when|time }}
                     {% else %}
@@ -116,7 +117,7 @@
                     {% endif %}
                 </td>{% endif %}
                 <td>{% if vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
-                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}>
+                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}{% if branding_column %}{% if not vehicle.branding or vehicle.branding == 'None' %} colspan="2"{% endif %}{% endif %}>
                     {% if vehicle.colours == 'Other' %}
                         {{ vehicle.colours }}
                     {% elif vehicle.colours or vehicle.livery %}
@@ -124,7 +125,7 @@
                         {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
                     {% endif %}
                 </td>
-                {% if branding_column %}<td>{% if vehicle.branding != 'None' %}{{ vehicle.branding }}{% endif %}</td>{% endif %}
+                {% if vehicle.branding and vehicle.branding != 'None' %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td class="trivia">{% if not vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
                 {% if garage_column %}<td class="trivia">{% firstof vehicle.garage_name  '' %}</td>{% endif %}
