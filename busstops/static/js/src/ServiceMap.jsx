@@ -77,26 +77,43 @@ export default function OperatorMap() {
 
     // service map data
     // TODO: linked services
-    fetch(`/services/${window.SERVICE_ID}.json`).then((response) => {
-      response.json().then((data) => {
-        setGeometry(data.geometry);
-        setStops(data.stops);
-      });
-    });
+    fetch(`/services/${window.SERVICE_ID}.json`).then(
+      (response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            setGeometry(data.geometry);
+            setStops(data.stops);
+          });
+        }
+      },
+      (reason) => {
+        // never mind
+      },
+    );
 
     const loadVehicles = () => {
       let url = apiRoot + "vehicles.json?service=" + window.SERVICE_ID;
-      fetch(url).then((response) => {
-        response.json().then((items) => {
-          setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
-          );
-          clearTimeout(timeout);
-          if (isOpen && items.length) {
-            timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+      fetch(url).then(
+        (response) => {
+          if (response.ok) {
+            response.json().then((items) => {
+              setVehicles(
+                Object.assign(
+                  {},
+                  ...items.map((item) => ({ [item.id]: item })),
+                ),
+              );
+              clearTimeout(timeout);
+              if (isOpen && items.length) {
+                timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+              }
+            });
           }
-        });
-      });
+        },
+        (reason) => {
+          // never mind
+        },
+      );
     };
 
     if (isOpen || !vehicles) {

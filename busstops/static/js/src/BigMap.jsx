@@ -15,6 +15,21 @@ import { useDarkMode } from "./utils";
 
 const apiRoot = process.env.API_ROOT;
 
+try {
+  if (localStorage.vehicleMap) {
+    var parts = localStorage.vehicleMap.split("/");
+    if (parts.length === 3) {
+      window.INITIAL_VIEW_STATE = {
+        zoom: +parts[0],
+        latitude: +parts[1],
+        longitude: +parts[2],
+      };
+    }
+  }
+} catch (e) {
+  // ok
+}
+
 function getBoundsQueryString(bounds) {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
 }
@@ -77,11 +92,16 @@ function Stops({ stops, clickedStopUrl, setClickedStop }) {
 function fetchJson(what, bounds) {
   const url = "/" + what + ".json" + getBoundsQueryString(bounds);
 
-  return fetch(url).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-  });
+  return fetch(url).then(
+    (response) => {
+      if (response.ok) {
+        return response.json();
+      }
+    },
+    (reason) => {
+      // never mind
+    },
+  );
 }
 
 export default function BigMap() {
@@ -148,16 +168,25 @@ export default function BigMap() {
 
       fetch(url, {
         signal: controller.signal,
-      }).then((response) => {
-        response.json().then((items) => {
-          setVehiclesHighWaterMark(bounds);
-          setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
-          );
-        });
-
-        timeout = setTimeout(loadVehicles, 12000);
-      });
+      }).then(
+        (response) => {
+          if (response.ok) {
+            response.json().then((items) => {
+              setVehiclesHighWaterMark(bounds);
+              setVehicles(
+                Object.assign(
+                  {},
+                  ...items.map((item) => ({ [item.id]: item })),
+                ),
+              );
+            });
+          }
+          timeout = setTimeout(loadVehicles, 12000);
+        },
+        (reason) => {
+          // never mind
+        },
+      );
     };
 
     if (shouldShowVehicles(zoom)) {

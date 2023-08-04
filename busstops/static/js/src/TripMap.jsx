@@ -112,29 +112,37 @@ export default function TripMap() {
       }
       fetch(url, {
         signal: controller.signal,
-      }).then((response) => {
-        response.json().then((items) => {
-          setVehicles(
-            Object.assign(
-              {},
-              ...items.map((item) => {
-                if (
-                  (params && item.trip_id == params.id) ||
-                  (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
-                ) {
-                  if (first) {
-                    setClickedVehicleMarker(item.id);
+      }).then(
+        (response) => {
+          if (!response.ok) {
+            return;
+          }
+          response.json().then((items) => {
+            setVehicles(
+              Object.assign(
+                {},
+                ...items.map((item) => {
+                  if (
+                    (params && item.trip_id == params.id) ||
+                    (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
+                  ) {
+                    if (first) {
+                      setClickedVehicleMarker(item.id);
+                    }
+                    setTripVehicle(item);
                   }
-                  setTripVehicle(item);
-                }
-                return { [item.id]: item };
-              }),
-            ),
-          );
-        });
-        clearTimeout(timeout);
-        timeout = setTimeout(loadVehicles, 12000); // 12 seconds
-      });
+                  return { [item.id]: item };
+                }),
+              ),
+            );
+          });
+          clearTimeout(timeout);
+          timeout = setTimeout(loadVehicles, 12000); // 12 seconds
+        },
+        (reason) => {
+          // never mind
+        },
+      );
     };
 
     const loadTrip = () => {
@@ -144,7 +152,9 @@ export default function TripMap() {
         }
         setTripVehicle(null);
         fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
-          response.json().then(setTrip);
+          if (response.ok) {
+            response.json().then(setTrip);
+          }
         });
       }
     };
