@@ -99,9 +99,6 @@ export default function TripMap() {
     let controller = new AbortController();
 
     const loadVehicles = (first) => {
-      console.log("trip", trip.id);
-      console.log("params", params.id);
-      console.log("window", window.TRIP_ID);
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
         url = `${url}?id=${window.VEHICLE_ID}`;
@@ -111,7 +108,7 @@ export default function TripMap() {
         url = `${url}?service=${window.SERVICE}&trip=${params.id}`;
       }
       fetch(url, {
-        signal: controller.signal
+        signal: controller.signal,
       }).then((response) => {
         response.json().then((items) => {
           setVehicles(
@@ -306,9 +303,6 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
-      p: {params.id}
-      <br/>
-      t: {trip.id}
       <TripTimetable
         trip={trip}
         vehicle={tripVehicle}

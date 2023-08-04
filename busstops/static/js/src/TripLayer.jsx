@@ -8,7 +8,6 @@ export default function TripLayer({ tripId }) {
   const [trip, setTrip] = React.useState(null);
 
   React.useEffect(() => {
-    setTrip(null);
     fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
       if (response.ok) {
         response.json().then(setTrip);
@@ -16,7 +15,7 @@ export default function TripLayer({ tripId }) {
     });
   }, [tripId]);
 
-  if (!trip) {
+  if (!trip || trip.id != tripId) {
     return (
       <div className="trip-timetable">
         <div className="sorry">Loading trip #{tripId}…</div>
@@ -24,7 +23,5 @@ export default function TripLayer({ tripId }) {
     );
   }
 
-
-  debugger;
   return <TripTimetable trip={trip} />;
 }

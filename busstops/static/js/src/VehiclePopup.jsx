@@ -40,7 +40,7 @@ export default function VehiclePopup({
   onClose,
   closeButton = true,
   onTripClick = null,
-  activeLink = false
+  activeLink = false,
 }) {
   const handleTripClick = React.useCallback(
     (e) => {

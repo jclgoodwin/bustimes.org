@@ -84,7 +84,6 @@ function fetchJson(what, bounds) {
   });
 }
 
-
 export default function BigMap() {
   const darkMode = useDarkMode();
 
@@ -106,29 +105,31 @@ export default function BigMap() {
     React.useState(null);
 
   const loadStops = React.useCallback((bounds) => {
-    fetchJson("stops", bounds).then(items => {
+    fetchJson("stops", bounds).then((items) => {
       setStopsHighWaterMark(bounds);
       setStops(items);
     });
   }, []);
 
-  const handleMoveEnd = React.useCallback((evt) => {
-    const map = evt.target;
+  const handleMoveEnd = React.useCallback(
+    (evt) => {
+      const map = evt.target;
 
-    const bounds = map.getBounds();
-    const zoom = map.getZoom();
+      const bounds = map.getBounds();
+      const zoom = map.getZoom();
 
-    setZoom(zoom);
-    setBounds(bounds);
+      setZoom(zoom);
+      setBounds(bounds);
 
-    if (
-      shouldShowStops(zoom) &&
-      !containsBounds(stopsHighWaterMark, bounds)
-    ) {
-      loadStops(bounds);
-    }
-
-  }, [stopsHighWaterMark]);
+      if (
+        shouldShowStops(zoom) &&
+        !containsBounds(stopsHighWaterMark, bounds)
+      ) {
+        loadStops(bounds);
+      }
+    },
+    [stopsHighWaterMark],
+  );
 
   React.useEffect(() => {
     if (!(bounds && zoom)) {
@@ -146,7 +147,7 @@ export default function BigMap() {
       const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
 
       fetch(url, {
-        signal: controller.signal
+        signal: controller.signal,
       }).then((response) => {
         response.json().then((items) => {
           setVehiclesHighWaterMark(bounds);
