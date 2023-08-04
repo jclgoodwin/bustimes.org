@@ -29,6 +29,8 @@ from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
+from rest_framework.pagination import CursorPagination
+from rest_framework.request import Request
 from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
 from buses.utils import cache_control_s_maxage
@@ -591,16 +593,38 @@ def vehicles_json(request) -> JsonResponse:
     )
 
 
+class JourneysPagination(CursorPagination):
+    ordering = "-datetime"
+    page_size = 20
+
+
 def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     """list of VehicleJourneys (and dates) for a service or vehicle"""
 
     context = {}
 
-    journeys = journeys.order_by("-datetime")
-    journeys = Paginator(journeys, 20)
-    journeys = journeys.get_page(request.GET.get("page"))
+    journeys = journeys.select_related("trip")
+
+    form = forms.DateForm(request.GET)
+    if form.is_valid():
+        date = form.cleaned_data["date"]
+    else:
+        date = None
+
+    if date:
+        journeys = journeys.order_by("-datetime")
+        journeys = journeys.filter(datetime__date=date)
+        context["previous_page"] = True
+    else:
+        paginator = JourneysPagination()
+        journeys = paginator.paginate_queryset(journeys, Request(request))
+        context["previous_page"] = paginator.get_previous_link()
+        context["next_page"] = paginator.get_next_link()
 
     if journeys:
+
+        if not date:
+            date = journeys[0].datetime.date()
 
         try:
             pipe = redis_client.pipeline(transaction=False)
@@ -625,8 +649,10 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
         context["journeys"] = journeys
 
-    elif service:
+    elif service and not date:
         raise Http404
+
+    context["date"] = date
 
     return context
 

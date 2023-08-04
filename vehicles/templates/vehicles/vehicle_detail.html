@@ -52,19 +52,27 @@
     </ul>
 {% endif %}
 
+{% if date %}
+    <form class="timetable-date" autocomplete="off">
+        <label for="date">Jump to date</label>
+        <input type="date" name="date" id="date" value="{{ date.isoformat }}">
+        <input type="submit" value="Go">
+    </form>
+{% endif %}
+
+{% if previous_page %}
+    <p><a href="{{ request.path }}">&uarr; Now</a></p>
+{% endif %}
+
 {% if journeys %}
-
-    {% if journeys.has_previous %}
-        <p><a href="?">&uarr; Page 1</a></p>
-    {% endif %}
-
     {% for journey in journeys %}
 
         {% ifchanged journey.datetime.date %}
             {% if not forloop.first %}
-                </tbody></table>
+                </tbody></table></div>
             {% endif %}
             <h4>{{ journey.datetime.date }}</h4>
+            <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
@@ -95,7 +103,7 @@
                 {% endif %}
             </td>
             <td class="tabular">{{ journey.code }}</td>
-            {% if journey.trip %}
+            {% if journey.trip_id %}
                 <td class="link tabular">
                     <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip.start_time }}</a>
                 </td>
@@ -115,13 +123,13 @@
         </tr>
 
         {% if forloop.last %}
-            </tbody></table>
+            </tbody></table></div>
         {% endif %}
 
     {% endfor %}
 
-    {% if journeys.has_next %}
-        <p><a href="?page={{ journeys.next_page_number }}">&darr; Page {{ journeys.next_page_number }}</a></p>
+    {% if next_page %}
+        <p><a href="{{ next_page }}">&darr; Older</a></p>
     {% endif %}
 
     <div id="history"></div>

@@ -394,7 +394,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
 
             with time_machine.travel("2020-06-17"):
-                response = self.client.get(whippet_journey.get_absolute_url())
+                with self.assertNumQueries(8):
+                    response = self.client.get(whippet_journey.get_absolute_url())
 
                 # with patch("django.core.cache.cache.set") as mock_cache_set:
                 #     response = self.client.get(whippet_journey.get_absolute_url())
@@ -410,7 +411,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             )
             self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
-            response = self.client.get("/services/u/vehicles?date=2020-06-17")
+            with self.assertNumQueries(4):
+                response = self.client.get("/services/u/vehicles?date=2020-06-17")
             self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
             response = self.client.get("/operators/whip/debug")
@@ -506,7 +508,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         with mock.patch("vehicles.views.redis_client", redis_client):
 
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(5):
                 response = self.client.get(journey.get_absolute_url())
             self.assertContains(response, "146")
             self.assertContains(response, ">Southwold<")
