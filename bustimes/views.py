@@ -486,34 +486,34 @@ def tfl_vehicle(request, reg: str):
     if not stops:
         stops = StopArea.objects.in_bulk(atco_codes)
 
-    for item in data:
-        item["expectedArrival"] = parse_datetime(item["expectedArrival"])
-        if item["platformName"] == "null":
-            item["platformName"] = None
-        item["stop"] = stops.get(item["naptanId"])
-
-    stops_json = json.dumps(
-        {
-            "times": [
-                {
-                    "stop": {
-                        "name": item["stationName"],
-                        "atco_code": item["stop"].atco_code,
-                        "location": item["stop"].latlong.coords,
-                        "bearing": item["stop"].get_heading()
-                        if type(item["stop"]) is StopPoint
-                        else None,
-                        "icon": item["platformName"],
-                    },
-                    "expected_arrival_time": str(
-                        timezone.localtime(item["expectedArrival"]).time()
-                    ),
-                }
-                for item in data
-                if item["stop"] and item["stop"].latlong
-            ]
+    times = []
+    for i, item in enumerate(data):
+        time = {
+            "id": i,
+            "stop": {
+                "name": item["stationName"],
+            },
+            "expected_arrival_time": str(
+                timezone.localtime(parse_datetime(item["expectedArrival"])).time()
+            ),
         }
-    )
+        stop = stops.get(item["naptanId"])
+
+        if stop:
+            time["stop"]["atco_code"] = stop.atco_code
+
+            if stop.latlong:
+                time["stop"]["location"] = stop.latlong.coords
+
+            if type(stop) is StopPoint:
+                time["stop"]["bearing"] = stop.get_heading()
+
+        if item["platformName"] and item["platformName"] != "null":
+            time["stop"]["icon"] = item["platformName"]
+
+        times.append(time)
+
+    stops_json = json.dumps({"times": times})
 
     return render(
         request,

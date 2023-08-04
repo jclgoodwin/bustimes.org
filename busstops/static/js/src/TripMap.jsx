@@ -116,7 +116,7 @@ export default function TripMap() {
               {},
               ...items.map((item) => {
                 if (
-                  (params?.id && item.trip_id == params.id) ||
+                  (params && item.trip_id == params.id) ||
                   (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
                 ) {
                   if (first) {
@@ -290,7 +290,7 @@ export default function TripMap() {
           {clickedVehicle ? (
             <VehiclePopup
               item={clickedVehicle}
-              activeLink={clickedVehicle?.trip_id == params.id}
+              activeLink={clickedVehicle?.trip_id == params?.id}
               onTripClick={navigateToTrip}
               onClose={() => {
                 setClickedVehicleMarker(null);
