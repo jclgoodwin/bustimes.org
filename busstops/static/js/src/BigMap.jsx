@@ -230,7 +230,7 @@ export default function BigMap() {
       loadStops(bounds);
     }
 
-    map.loadImage("/static/root/stop-marker.png", (error, image) => {
+    map.loadImage("/static/stop-marker.png", (error, image) => {
       if (error) throw error;
       map.addImage("stop", image, {
         pixelRatio: 2,
