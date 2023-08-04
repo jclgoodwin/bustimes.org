@@ -116,7 +116,7 @@ export default function TripMap() {
               {},
               ...items.map((item) => {
                 if (
-                  (params.id && item.trip_id == params.id) ||
+                  (params?.id && item.trip_id == params.id) ||
                   (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
                 ) {
                   if (first) {
@@ -135,13 +135,16 @@ export default function TripMap() {
     };
 
     const loadTrip = () => {
-      if (!(trip && params.id == trip.id.toString())) {
+      if (params) {
+        if (trip && trip.id && params.id == trip.id.toString()) {
+          return;
+        }
         setTripVehicle(null);
         fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
           response.json().then(setTrip);
         });
-      }
-    };
+      };
+    }
 
     loadTrip();
     loadVehicles(true);
@@ -162,7 +165,7 @@ export default function TripMap() {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [params.id]);
+  }, [params?.id]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
