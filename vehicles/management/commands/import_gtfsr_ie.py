@@ -95,6 +95,7 @@ class Command(ImportLiveVehiclesCommand):
         ):
             return latest_journey
 
+        service = None
         services = Service.objects.filter(
             current=True,
             route__source=self.source,
