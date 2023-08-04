@@ -99,7 +99,10 @@ export default function OperatorMap() {
       });
     };
 
-    loadVehicles();
+    if (isOpen || !vehicles) {
+      loadVehicles();
+    }
+
     const handleVisibilityChange = (event) => {
       if (event.target.hidden) {
         clearTimeout(timeout);

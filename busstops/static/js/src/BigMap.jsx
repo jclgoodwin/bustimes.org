@@ -74,6 +74,17 @@ function Stops({ stops, clickedStopUrl, setClickedStop }) {
   );
 }
 
+function fetchJson(what, bounds) {
+  const url = "/" + what + ".json" + getBoundsQueryString(bounds);
+
+  return fetch(url).then((response) => {
+    if (response.ok) {
+      return response.json();
+    }
+  });
+}
+
+
 export default function BigMap() {
   const darkMode = useDarkMode();
 
@@ -87,56 +98,94 @@ export default function BigMap() {
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
+  const [bounds, setBounds] = React.useState(null);
+
   const [stopsHighWaterMark, setStopsHighWaterMark] = React.useState(null);
 
   const [vehiclesHighWaterMark, setVehiclesHighWaterMark] =
     React.useState(null);
 
   const loadStops = React.useCallback((bounds) => {
-    const url = "/stops.json" + getBoundsQueryString(bounds);
-
-    fetch(url).then((response) => {
-      response.json().then((items) => {
-        setStops(items);
-        setStopsHighWaterMark(bounds);
-      });
+    fetchJson("stops", bounds).then(items => {
+      setStopsHighWaterMark(bounds);
+      setStops(items);
     });
   }, []);
 
-  const loadVehicles = React.useCallback((bounds) => {
-    const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
-
-    fetch(url).then((response) => {
-      response.json().then((items) => {
-        setVehicles(
-          Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
-        );
-        setVehiclesHighWaterMark(bounds);
-      });
-    });
-  }, []);
-
-  const handleMoveEnd = (evt) => {
+  const handleMoveEnd = React.useCallback((evt) => {
     const map = evt.target;
+
+    const bounds = map.getBounds();
     const zoom = map.getZoom();
 
     setZoom(zoom);
+    setBounds(bounds);
+
+    if (
+      shouldShowStops(zoom) &&
+      !containsBounds(stopsHighWaterMark, bounds)
+    ) {
+      loadStops(bounds);
+    }
+
+  }, [stopsHighWaterMark]);
+
+  React.useEffect(() => {
+    if (!(bounds && zoom)) {
+      return;
+    }
+
+    let timeout;
+    let controller = new AbortController();
+
+    const loadVehicles = () => {
+      if (!shouldShowVehicles(zoom)) {
+        return;
+      }
+
+      const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
+
+      fetch(url, {
+        signal: controller.signal
+      }).then((response) => {
+        response.json().then((items) => {
+          setVehiclesHighWaterMark(bounds);
+          setVehicles(
+            Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
+          );
+        });
+
+        timeout = setTimeout(loadVehicles, 12000);
+      });
+    };
 
     if (shouldShowVehicles(zoom)) {
-      const bounds = map.getBounds();
-
       if (!containsBounds(vehiclesHighWaterMark, bounds)) {
-        loadVehicles(bounds);
-      }
-
-      if (
-        shouldShowStops(zoom) &&
-        !containsBounds(stopsHighWaterMark, bounds)
-      ) {
-        loadStops(bounds);
+        loadVehicles();
+      } else {
+        timeout = setTimeout(loadVehicles, 12000);
       }
     }
-  };
+
+    const handleVisibilityChange = (event) => {
+      if (shouldShowVehicles(zoom)) {
+        if (event.target.hidden) {
+          clearTimeout(timeout);
+          controller.abort();
+        } else {
+          loadVehicles();
+        }
+      }
+    };
+
+    window.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("visibilitychange", handleVisibilityChange);
+      clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [zoom, bounds, vehiclesHighWaterMark]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -171,16 +220,13 @@ export default function BigMap() {
     map.touchZoomRotate.disableRotation();
 
     const zoom = map.getZoom();
+    const bounds = map.getBounds();
 
     setZoom(zoom);
+    setBounds(bounds);
 
     if (shouldShowStops(zoom)) {
-      let bounds = map.getBounds();
       loadStops(bounds);
-      loadVehicles(bounds);
-    } else if (shouldShowVehicles(zoom)) {
-      let bounds = map.getBounds();
-      loadVehicles(bounds);
     }
 
     map.loadImage("/static/root/stop-marker.png", (error, image) => {
@@ -191,14 +237,6 @@ export default function BigMap() {
         height: 16,
       });
     });
-
-    // map.loadImage("/static/svg/bus.png", function (error, image) {
-    //   if (error) {
-    //     throw error;
-    //   } else {
-    //     map.addImage("vehiclle", image);
-    //   }
-    // });
   }, []);
 
   const [cursor, setCursor] = React.useState(null);
