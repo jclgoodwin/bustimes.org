@@ -24,7 +24,7 @@ class BusTimesTest(TestCase):
             ),
             decode_compressed_response=True,
         ) as cassette:
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(4):
                 response = self.client.get("/vehicles/tfl/LTZ1243")
 
             self.assertContains(response, "<h2>8 to Tottenham Court Road</h2>")
