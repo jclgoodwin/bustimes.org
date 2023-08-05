@@ -1141,6 +1141,25 @@ def journey_json(request, pk):
                         "locations"
                     ][i]["datetime"]
 
+    try:
+        next_journey = journey.get_next_by_datetime(vehicle_id=journey.vehicle_id)
+    except VehicleJourney.DoesNotExist:
+        pass
+    else:
+        data["next"] = {"id": next_journey.id, "datetime": next_journey.datetime}
+
+    try:
+        previous_journey = journey.get_previous_by_datetime(
+            vehicle_id=journey.vehicle_id
+        )
+    except VehicleJourney.DoesNotExist:
+        pass
+    else:
+        data["previous"] = {
+            "id": previous_journey.id,
+            "datetime": previous_journey.datetime,
+        }
+
     return JsonResponse(data)
 
 
