@@ -125,7 +125,7 @@ export default function ServiceMapMap({
       touchPitch={false}
       touchRotate={false}
       pitchWithRotate={false}
-      maxZoom={16}
+      maxZoom={20}
       bounds={window.EXTENT}
       fitBoundsOptions={{
         padding: 20,

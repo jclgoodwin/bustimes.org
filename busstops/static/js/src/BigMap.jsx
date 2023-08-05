@@ -311,8 +311,7 @@ export default function BigMap() {
       showCollisionBoxes={true}
       pitchWithRotate={false}
       onMoveEnd={handleMoveEnd}
-      minZoom={6}
-      maxZoom={16}
+      maxZoom={20}
       mapStyle={
         darkMode
           ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
