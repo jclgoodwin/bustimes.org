@@ -56,16 +56,24 @@
     <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
 {% endif %}
 
-{% if date %}
+
+{% if date or dates %}
     <form class="timetable-date" autocomplete="off">
-        <label for="date">Jump to date</label>
-        <input type="date" name="date" id="date" value="{{ date.isoformat }}">
-        <input type="submit" value="Go">
+        {% if dates %}
+            <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
+                {% for option in dates %}
+                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+        {% else %}
+            <input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
+        {% endif %}
+        <noscript><input type="submit" value="Go"></noscript>
     </form>
 {% endif %}
 
-{% if previous_page %}
-    <p><a href="{{ request.path }}">&uarr; Now</a></p>
+{% if previous_date %}
+    <p><a href="?date={{ previous_date.isoformat }}">&uarr; {{ previous_date }}</a></p>
 {% endif %}
 
 {% if journeys %}
@@ -131,8 +139,8 @@
 
     {% endfor %}
 
-    {% if next_page %}
-        <p><a href="{{ next_page }}">&darr; Older</a></p>
+    {% if next_date %}
+        <p><a href="?date={{ next_date.isoformat }}">&darr; {{ next_date }}</a></p>
     {% endif %}
 
     <div id="history"></div>
