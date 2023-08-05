@@ -434,7 +434,9 @@ textarea {
 
 select {
     appearance: none;
-    background: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 4,8 8,0'/%3E%3C/svg%3E") no-repeat;
+    background-color: var(--background-color);
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,0 4,8 8,0'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
     background-position: right;
     border: 1px solid var(--border-color);
     border-radius: .5em;
