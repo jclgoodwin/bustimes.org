@@ -43,15 +43,16 @@
     {% include 'vehicle_info.html' %}
 
     {% if tracking %}
+        {% if tracking == "#map" %}
         <style>
             {% for style in vehicle.livery.get_styles %}
                 {{ style }}
             {% endfor %}
         </style>
-
-        <p><a class="button" href="#map">Track this bus</a></p>
-
         <div id="map" class="service-map"></div>
+        {% endif %}
+
+        <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
     {% endif %}
 {% else %}
     <h1>{{ object }}</h1>
@@ -62,6 +63,7 @@
 
     <ul class="tabs">
         <li><a href="{{ object.get_absolute_url }}">Timetable</a></li>
+        <li><a href="{{ object.get_absolute_url }}#map">Map</a></li>
         <li>Vehicles</li>
     </ul>
 {% endif %}

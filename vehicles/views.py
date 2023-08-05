@@ -684,7 +684,21 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                     previous = journey
 
         context["journeys"] = journeys
-    elif service:
+
+        if vehicle and vehicle.latest_journey_id:
+
+            tracking = redis_client.get(f"vehicle{vehicle.id}")
+            if tracking:
+                tracking = json.loads(tracking)
+
+                if "tfl_code" in tracking:
+                    context["tracking"] = f'/vehicles/tfl/{tracking["tfl_code"]}'
+                elif "trip_id" in tracking:
+                    context["tracking"] = f'/trips/{tracking["trip_id"]}'
+                else:
+                    context["tracking"] = "#map"
+
+    elif service and not date:
         raise Http404
 
     return context
@@ -741,10 +755,6 @@ class VehicleDetailView(DetailView):
             )
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
-
-            context["tracking"] = any(
-                getattr(journey, "locations", False) for journey in context["journeys"]
-            )
 
         context["pending_edits"] = self.object.vehicleedit_set.filter(
             approved=None
