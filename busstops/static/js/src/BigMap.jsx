@@ -166,27 +166,31 @@ export default function BigMap() {
 
       const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
 
-      fetch(url, {
-        signal: controller.signal,
-      }).then(
-        (response) => {
-          if (response.ok) {
-            response.json().then((items) => {
-              setVehiclesHighWaterMark(bounds);
-              setVehicles(
-                Object.assign(
-                  {},
-                  ...items.map((item) => ({ [item.id]: item })),
-                ),
-              );
-            });
-          }
-          timeout = setTimeout(loadVehicles, 12000);
-        },
-        (reason) => {
-          // never mind
-        },
-      );
+      try {
+        fetch(url, {
+          signal: controller.signal,
+        }).then(
+          (response) => {
+            if (response.ok) {
+              response.json().then((items) => {
+                setVehiclesHighWaterMark(bounds);
+                setVehicles(
+                  Object.assign(
+                    {},
+                    ...items.map((item) => ({ [item.id]: item })),
+                  ),
+                );
+              });
+            }
+            timeout = setTimeout(loadVehicles, 12000);
+          },
+          (reason) => {
+            // never mind
+          },
+        );
+      } catch (e) {
+        // ok
+      }
     };
 
     if (shouldShowVehicles(zoom)) {
