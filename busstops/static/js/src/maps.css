@@ -1,12 +1,10 @@
 :root {
-  --pale-grey: #eee;
   --marker-border-color: #fff;
   --marker-arrow-color: #000;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --pale-grey: #222;
     --marker-border-color: #000;
     --marker-arrow-color: #fff;
   }
@@ -64,6 +62,7 @@
   right: -6px;
 }
 
+/*
 .stop {
   width: 16px;
   height: 16px;
@@ -87,6 +86,7 @@
 .rail {
   border-radius: 8px;
 }
+*/
 
 a.link-with-smalls {
   text-decoration: none;

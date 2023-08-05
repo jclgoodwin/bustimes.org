@@ -16,6 +16,7 @@
 
     --link-color: #54c;
     --active-link-color: var(--black);
+    --summary-marker-color: var(--border-color);
 
     supported-color-schemes: dark light;
     color-scheme: dark light;
@@ -25,11 +26,15 @@
         --brand-color-darker: #333;
         --brand-color-darker-darker: #444;
 
+        --border-color-darker: #999;
+
         --background-color: #222;
         --text-color: #fff;
 
         --link-color: #E4BFFF;
         --active-link-color: #fff;
+
+        --summary-marker-color: #eee;
     }
 }
 
@@ -113,7 +118,7 @@ summary {
 }
 
 summary::marker {
-    color: var(--border-color);
+    color: var(--border-color-darker);
 }
 
 details {
@@ -1370,7 +1375,7 @@ body.has-overlay {
         }
 
         &:before {
-            color: var(--brand-color-darker);
+            color: var(--border-color-darker);
             content: '  \2022  ';
             font-weight: bold;
         }
