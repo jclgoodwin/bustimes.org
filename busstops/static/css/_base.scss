@@ -17,6 +17,9 @@
     --link-color: #54c;
     --active-link-color: var(--black);
 
+    supported-color-schemes: dark light;
+    color-scheme: dark light;
+
     @media (prefers-color-scheme: dark) {
         --brand-color: #2a2a2a;
         --brand-color-darker: #333;
