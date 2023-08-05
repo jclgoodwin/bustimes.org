@@ -58,6 +58,7 @@ function LocationPopup({ location }) {
       longitude={location.geometry.coordinates[0]}
       closeButton={false}
       closeOnClick={false}
+      focusAfterOpen={false}
     >
       {when.toTimeString().slice(0, 8)}
     </Popup>

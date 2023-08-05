@@ -91,6 +91,7 @@ export default function VehiclePopup({
       closeOnClick={false}
       onClose={onClose}
       closeButton={closeButton}
+      focusAfterOpen={false}
     >
       <div>{line_name}</div>
       {vehicle}

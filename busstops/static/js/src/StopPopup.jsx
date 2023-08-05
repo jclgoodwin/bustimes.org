@@ -27,6 +27,7 @@ export default function StopPopup({ item, onClose, anchor }) {
       closeOnClick={false}
       onClose={onClose}
       anchor={anchor}
+      focusAfterOpen={false}
     >
       {name}
     </Popup>
