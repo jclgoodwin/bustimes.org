@@ -2,8 +2,10 @@
   --pale-grey: #eee;
   --marker-border-color: #fff;
   --marker-arrow-color: #000;
+}
 
-  @media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
+  :root {
     --pale-grey: #222;
     --marker-border-color: #000;
     --marker-arrow-color: #fff;
@@ -29,6 +31,13 @@
 .vehicle-marker:hover,
 .vehicle-marker.selected {
   box-shadow: rgba(0, 0, 0, 0.5) 0 0 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vehicle-marker:hover,
+  .vehicle-marker.selected {
+    box-shadow: #fff 0 0 5px;
+  }
 }
 
 .maplibregl-popup {
