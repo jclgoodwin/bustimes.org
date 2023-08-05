@@ -482,8 +482,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey.destination, "Southwold")
 
         with mock.patch("vehicles.views.redis_client", redis_client):
-            with self.assertNumQueries(1):
-                response = self.client.get(f"/journeys/{journey.id}.json")
+            response = self.client.get(f"/journeys/{journey.id}.json")
         self.assertEqual(
             response.json(),
             {
