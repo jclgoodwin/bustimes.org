@@ -58,7 +58,7 @@
         border-color: #000;
     }
 
-    #AFM_inContentTop_ad iframe {
-        box-shadow-color: var(--background-color);
+    body #AFM_inContentTop_ad iframe {
+        box-shadow: none;
     }
 }
