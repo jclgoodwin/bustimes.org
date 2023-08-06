@@ -668,7 +668,7 @@ def journeys_list(request, all_journeys, service=None, vehicle=None) -> dict:
 
         context["journeys"] = journeys
 
-        if vehicle and vehicle.latest_journey_id:
+        if redis_client and vehicle and vehicle.latest_journey_id:
 
             tracking = redis_client.get(f"vehicle{vehicle.id}")
             if tracking:
