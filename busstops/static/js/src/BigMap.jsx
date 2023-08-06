@@ -71,7 +71,6 @@ function Stops({ stops, clickedStopUrl, setClickedStop }) {
               "text-size": 10,
               "icon-rotate": ["+", 45, ["get", "bearing"]],
               "icon-image": "stop",
-              "icon-padding": 0,
               "icon-allow-overlap": true,
               "icon-ignore-placement": true,
               "text-ignore-placement": true,

@@ -23,7 +23,6 @@ const stopsStyle = {
     "icon-image": "stop",
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,
-    "icon-padding": 0,
   },
 };
 
@@ -35,7 +34,6 @@ const locationsStyle = {
     "icon-image": "arrow",
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,
-    "icon-padding": 0,
     "icon-anchor": "top-left",
   },
 };

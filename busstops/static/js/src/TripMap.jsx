@@ -28,7 +28,6 @@ const stopsStyle = {
     "icon-image": "stop",
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,
-    "icon-padding": 0,
   },
 };
 
