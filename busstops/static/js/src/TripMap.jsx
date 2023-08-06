@@ -222,7 +222,7 @@ export default function TripMap() {
           touchPitch={false}
           touchRotate={false}
           pitchWithRotate={false}
-          maxZoom={20}
+          maxZoom={18}
           bounds={bounds}
           style={{
             position: "absolute",
