@@ -330,7 +330,8 @@
     }
 
     function round(number) {
-        return Math.round(number * 1000) / 1000;
+        // round to 6 decimal places
+        return Math.round(number * 1000000) / 1000000;
     }
 
     // update window location hash
