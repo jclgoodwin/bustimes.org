@@ -33,10 +33,9 @@
     }
 
     function openMap() {
-        container.classList.add('expanded');
-
         if (map) {
             document.body.classList.add('has-overlay');
+            container.classList.add('expanded');
             map.invalidateSize();
             loadVehicles();
         } else {
@@ -72,6 +71,7 @@
         }
 
         document.body.classList.add('has-overlay');
+        container.classList.add('expanded');
 
         map = L.map(container, {
             tap: false
