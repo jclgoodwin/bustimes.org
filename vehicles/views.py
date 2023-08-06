@@ -1009,6 +1009,7 @@ def vehicle_edit_vote(request, edit_id, direction):
     edit = get_object_or_404(VehicleEdit, id=edit_id)
 
     assert request.user.id != edit.user_id
+    assert request.user.trusted is not False
 
     votes = edit.vehicleeditvote_set
     positive = direction == "up"
