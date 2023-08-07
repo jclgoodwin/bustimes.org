@@ -584,9 +584,6 @@ def vehicles_json(request) -> JsonResponse:
         JsonResponse(
             locations,
             safe=False,
-            headers={
-                "Access-Control-Allow-Origin": "*",
-            },
         ),
     )
 
