@@ -6,36 +6,39 @@ const apiRoot = process.env.API_ROOT;
 let hasHistory = 0;
 
 export default function History() {
-  const [isOpen, setOpen] = React.useState(() => {
-    return window.location.hash.indexOf("#journeys/") === 0
+  const [journeyId, setJourneyId] = React.useState(() => {
+    if (window.location.hash.indexOf("#journeys/") === 0) {
+      return window.location.hash.slice(1);
+    }
   });
 
   const closeMap = React.useCallback(() => {
-    if (isOpen) {
-      if (hasHistory) {
+    if (journeyId) {
+      if (hasHistory === 1) {
         history.back();
         hasHistory -= 1;
       } else {
         window.location.hash = "";
+        hasHistory = 0;
       }
     }
-  }, [isOpen]);
+  }, [journeyId]);
 
   const [journey, setJourney] = React.useState(null);
 
   React.useEffect(() => {
     const handleHashChange = () => {
       if (window.location.hash.indexOf("#journeys/") === 0) {
-        setOpen(true);
+        setJourneyId(window.location.hash.slice(1));
         hasHistory += 1;
       } else {
-        setOpen(false);
+        setJourneyId(null);
       }
     };
 
     const handleKeyDown = (event) => {
       // ESC
-      if (isOpen && event.keyCode === 27) {
+      if (journeyId && event.keyCode === 27) {
         closeMap();
       }
     };
@@ -47,21 +50,13 @@ export default function History() {
       window.removeEventListener("hashchange", handleHashChange);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  });
+  }, [journeyId]);
 
   // let timeout;
 
   React.useEffect(() => {
-    if (isOpen) {
+    if (journeyId) {
       document.body.classList.add("has-overlay");
-
-      const journeyId = window.location.hash.slice(1);
-
-      if (journey) {
-        if (journeyId !== journey.id) {
-          setJourney(null);
-        }
-      }
 
       fetch(`${apiRoot}${journeyId}.json`).then((response) => {
         if (response.ok) {
@@ -74,9 +69,9 @@ export default function History() {
     } else {
       document.body.classList.remove("has-overlay");
     }
-  }, [isOpen]);
+  }, [journeyId]);
 
-  if (!isOpen) {
+  if (!journeyId) {
     return;
   }
 

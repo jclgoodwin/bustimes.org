@@ -42,7 +42,7 @@ function VehicleMarker(props) {
       onClick={(event) => props.onClick(event, props.vehicle.id)}
     >
       <div className={className} style={css}>
-        <div className="text">{props.vehicle.service?.line_name}</div>
+        {props.vehicle.service?.line_name}
         {rotation == null ? null : <div className="arrow" />}
       </div>
     </Marker>

@@ -96,10 +96,10 @@ export default function TripMap() {
   const [tripVehicle, setTripVehicle] = React.useState(null);
   const [vehicles, setVehicles] = React.useState(null);
 
-  React.useEffect(() => {
-    let timeout;
-    let controller = new AbortController();
+  const timeout = React.useRef(null);
+  const vehiclesAbortController = React.useRef(null);
 
+  React.useEffect(() => {
     const loadVehicles = (first) => {
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
@@ -110,11 +110,18 @@ export default function TripMap() {
         url = `${url}?service=${window.SERVICE}&trip=${params.id}`;
       }
 
+      // if (vehiclesAbortController.current) {
+      //   vehiclesAbortController.current.abort();
+      // }
+      // vehiclesAbortController.current
+      // clearTimeout(timeout.current);
+
       try {
         fetch(url, {
-          signal: controller.signal,
+          // signal: vehiclesAbortController.current.signal,
         }).then(
           (response) => {
+            debugger;
             if (!response.ok) {
               return;
             }
@@ -137,8 +144,7 @@ export default function TripMap() {
                 ),
               );
             });
-            clearTimeout(timeout);
-            timeout = setTimeout(loadVehicles, 12000); // 12 seconds
+            timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
           },
           (reason) => {
             // never mind
@@ -168,8 +174,8 @@ export default function TripMap() {
 
     const handleVisibilityChange = (event) => {
       if (event.target.hidden) {
-        clearTimeout(timeout);
-        controller.abort();
+        clearTimeout(timeout.current);
+        // controller.abort();
       } else {
         loadVehicles();
       }
@@ -179,8 +185,7 @@ export default function TripMap() {
 
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearTimeout(timeout);
-      controller.abort();
+      clearTimeout(timeout.current);
     };
   }, [params?.id]);
 

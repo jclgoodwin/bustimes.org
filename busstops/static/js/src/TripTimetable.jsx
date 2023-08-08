@@ -62,7 +62,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
   );
 }
 
-export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
+export default function TripTimetable({ trip, onMouseEnter, vehicle, journey }) {
   const last = trip.times.length - 1;
 
   const aimedColumn = trip.times.some(
@@ -71,6 +71,8 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle }) {
 
   return (
     <div className="trip-timetable map-sidebar">
+      {journey?.previous ? <p className="previous"><a href={`#journeys/${journey.previous.id}`}>&larr; {journey.previous.datetime}</a></p> : null}
+      {journey?.next ? <p className="next"><a href={`#journeys/${journey.next.id}`}>{journey.next.datetime} &rarr;</a></p> : null}
       <table>
         <thead>
           <tr>

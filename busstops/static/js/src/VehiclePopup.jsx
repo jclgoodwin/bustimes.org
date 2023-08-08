@@ -106,16 +106,16 @@ export default function VehiclePopup({
             height="14"
             viewBox="0 0 118 177"
             xmlns="http://www.w3.org/2000/svg"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-miterlimit="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeMiterlimit="1.5"
           >
             <title>Seats</title>
             <path
               d="M108 9l-19 99-80-1 48 1v59"
               fill="none"
               stroke="currentColor"
-              stroke-width="18"
+              strokeWidth="18"
             />
           </svg>{" "}
           {item.seats}
@@ -129,8 +129,8 @@ export default function VehiclePopup({
             height="14"
             viewBox="0 0 506 647"
             xmlns="http://www.w3.org/2000/svg"
-            stroke-linejoin="round"
-            stroke-miterlimit="2"
+            strokeLinejoin="round"
+            strokeMiterlimit="2"
           >
             <title>Wheelchair space</title>
             <path

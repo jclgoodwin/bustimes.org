@@ -265,6 +265,7 @@ export default function JourneyMap({ journey }) {
 
       {journey.stops ? (
         <TripTimetable
+          journey={journey}
           trip={{
             times: journey.stops.map((stop, i) => {
               return {
