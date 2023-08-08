@@ -405,6 +405,7 @@ def vehicles_json(request) -> JsonResponse:
             feature_names=features_string_agg,
             service_line_name=F("latest_journey__trip__route__line_name"),
             service_slug=F("latest_journey__service__slug"),
+            colour=F("livery__colour"),
         )
         .defer("data", "latest_journey_data")
     )
@@ -472,7 +473,7 @@ def vehicles_json(request) -> JsonResponse:
         [f"journey{item['journey_id']}" for item in vehicle_locations if item]
     )
 
-    # only get vehicles with unexpired locations
+    # get vehicles from the database if they have unexpired locations, and weren't in the cache
     try:
         vehicles = all_vehicles.in_bulk(
             [
