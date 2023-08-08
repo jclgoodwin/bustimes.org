@@ -120,7 +120,14 @@ export default function BigMap() {
 
   const [zoom, setZoom] = React.useState(null);
 
-  const [clickedStop, setClickedStop] = React.useState(null);
+  const [clickedStop, setClickedStop] = React.useState(() => {
+    if (document.referrer) {
+      const referrer = new URL(document.referrer).pathname;
+      if (referrer.indexOf("/stops/") === 0) {
+        return referrer;
+      }
+    }
+  });
 
   const timeout = React.useRef(null);
   const bounds = React.useRef(null);
@@ -144,11 +151,9 @@ export default function BigMap() {
     // }
 
     if (vehiclesAbortController.current) {
-      // debugger;
       vehiclesAbortController.current.abort();
-    } else {
-      vehiclesAbortController.current = new AbortController();
     }
+    vehiclesAbortController.current = new AbortController();
 
     let _bounds = bounds.current;
 

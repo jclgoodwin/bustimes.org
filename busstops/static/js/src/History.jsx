@@ -6,9 +6,9 @@ const apiRoot = process.env.API_ROOT;
 let hasHistory = 0;
 
 export default function History() {
-  const [isOpen, setOpen] = React.useState(
-    window.location.hash.indexOf("#journeys/") === 0,
-  );
+  const [isOpen, setOpen] = React.useState(() => {
+    return window.location.hash.indexOf("#journeys/") === 0
+  });
 
   const closeMap = React.useCallback(() => {
     if (isOpen) {

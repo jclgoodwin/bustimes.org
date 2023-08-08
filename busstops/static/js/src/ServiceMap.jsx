@@ -10,9 +10,9 @@ let hasHistory = false;
 let hasCss = false;
 
 export default function OperatorMap() {
-  const [isOpen, setOpen] = React.useState(
-    window.location.hash.indexOf("#map") === 0,
-  );
+  const [isOpen, setOpen] = React.useState(() => {
+    return window.location.hash.indexOf("#map") === 0;
+  });
 
   const openMap = React.useCallback((e) => {
     hasHistory = true;
