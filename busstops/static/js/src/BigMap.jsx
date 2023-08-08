@@ -48,7 +48,7 @@ function shouldShowStops(zoom) {
 }
 
 function shouldShowVehicles(zoom) {
-  return zoom >= 10;
+  return zoom >= 6;
 }
 
 function Stops({ stops, clickedStopUrl, setClickedStop }) {
@@ -106,6 +106,82 @@ function fetchJson(what, bounds) {
     () => {
       // never mind
     },
+  );
+}
+
+function Vehicles({vehicles, clickedVehicleMarkerId, handleVehicleMarkerClick}) {
+  const vehiclesList = React.useMemo(() => {
+    return {
+      type: "FeatureCollection",
+      features: vehicles ? Object.values(vehicles).map(vehicle => {
+        return {
+          type: "Feature",
+          id: vehicle.id,
+          geometry: {
+            type: "Point",
+            coordinates: vehicle.coordinates
+          },
+          properties: {
+            url: vehicle.vehicle.url,
+            colour: vehicle.vehicle.colour || (vehicle.vehicle.colours?.length === 7 ? vehicle.vehicle.colours : "#fff")
+          }
+        };
+      }) : [],
+    };
+  }, [vehicles]);
+
+  if (!vehicles) {
+    return;
+  }
+
+  const clickedVehicle =
+    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
+
+  let markers;
+
+  if (vehiclesList.features.length < 100) {
+    markers = Object.values(vehicles).map((item) => {
+      return (
+        <VehicleMarker
+          key={item.id}
+          selected={item.id === clickedVehicleMarkerId}
+          vehicle={item}
+          onClick={(e) => handleVehicleMarkerClick(e, item.id)}
+        />
+      );
+    });
+  } else {
+    markers = (
+      <Source type="geojson" data={vehiclesList}>
+        <Layer
+          {...{
+            id: "vehicles",
+            type: "circle",
+            paint: {
+              "circle-color": ["get", "colour"],
+            },
+          }}
+        />
+      </Source>
+    );
+  }
+
+  return (
+    <React.Fragment>
+      {markers}
+      {clickedVehicle && (
+        <VehiclePopup
+          item={clickedVehicle}
+          onClose={() => setClickedVehicleMarker(null)}
+        />
+      )}
+      {clickedVehicle && vehiclesList.features.length >= 100 && (
+        <VehicleMarker
+          selected={true}
+          vehicle={clickedVehicle}
+        />
+      )}
+    </React.Fragment>
   );
 }
 
@@ -244,12 +320,19 @@ export default function BigMap() {
 
   const handleMapClick = React.useCallback(
     (e) => {
+      debugger;
       console.dir(e.features);
       if (!e.originalEvent.defaultPrevented) {
         if (e.features.length) {
-          for (const stop of e.features) {
-            if (stop.properties.url !== clickedStop) {
-              setClickedStop(stop.properties.url);
+          for (const feature of e.features) {
+            debugger;
+            if (feature.layer.id === "vehicles") {
+              setClickedVehicleMarker(feature.id);
+              return;
+            }
+            if (feature.properties.url !== clickedStop) {
+              setClickedStop(feature.properties.url);
+              break;
             }
           }
         } else {
@@ -301,10 +384,8 @@ export default function BigMap() {
     setCursor(null);
   }, []);
 
-  const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
 
-  let vehiclesList = vehicles ? Object.values(vehicles) : [];
+  // let vehiclesList = vehicles ? Object.values(vehicles) : [];
 
   // const otherVehicles = vehiclesList.filter((i) => {
   //   return i.vehicle.livery === 262 || i.id === clickedVehicleMarkerId;
@@ -329,6 +410,7 @@ export default function BigMap() {
       touchRotate={false}
       pitchWithRotate={false}
       onMoveEnd={handleMoveEnd}
+      minZoom={5}
       maxZoom={18}
       mapStyle={
         darkMode
@@ -342,7 +424,7 @@ export default function BigMap() {
       onMouseLeave={onMouseLeave}
       cursor={cursor}
       onLoad={handleMapLoad}
-      interactiveLayerIds={["stops"]}
+      interactiveLayerIds={["stops", "vehicles"]}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
@@ -355,42 +437,7 @@ export default function BigMap() {
         />
       ) : null}
 
-      {showBuses
-        ? vehiclesList.map((item) => {
-            return (
-              <VehicleMarker
-                key={item.id}
-                selected={item.id === clickedVehicleMarkerId}
-                vehicle={item}
-                onClick={handleVehicleMarkerClick}
-              />
-            );
-          })
-        : null}
-
-      {/*otherVehicles ? (
-        <Source
-          type="geojson"
-          data={{
-            type: "FeatureCollection",
-            features: otherVehicles.map((item) => {
-              return {
-                type: "Feature",
-                id: item.id,
-                geometry: {
-                  type: "Point",
-                  coordinates: item.coordinates,
-                },
-                properties: {
-                  heading: item.heading,
-                },
-              };
-            }),
-          }}
-        >
-          <Layer {...redBusesStyle} />
-        </Source>
-      ) : null*/}
+      <Vehicles vehicles={vehicles} clickedVehicleMarkerId={clickedVehicleMarkerId} handleVehicleMarkerClick={setClickedVehicleMarker} />
 
       {zoom && !showStops ? (
         <div className="maplibregl-ctrl map-status-bar">
@@ -398,13 +445,6 @@ export default function BigMap() {
           {!showBuses ? <div>Zoom in to see buses</div> : null}
         </div>
       ) : null}
-
-      {clickedVehicle && (
-        <VehiclePopup
-          item={clickedVehicle}
-          onClose={() => setClickedVehicleMarker(null)}
-        />
-      )}
     </Map>
   );
 }
