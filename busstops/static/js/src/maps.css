@@ -46,6 +46,10 @@
   vertical-align: middle;
 }
 
+.maplibregl-popup-content a {
+  display: block;
+}
+
 .arrow {
   border: 4px solid transparent;
   border-right: 5px solid var(--marker-arrow-color);
