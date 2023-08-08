@@ -6,6 +6,7 @@ import Map, {
   NavigationControl,
   GeolocateControl,
 } from "react-map-gl/maplibre";
+import debounce from "lodash/debounce";
 
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
@@ -29,6 +30,10 @@ try {
 } catch (e) {
   // ok
 }
+
+const updateLocalStorage = debounce(function (zoom, latLng) {
+  localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
+}, 2000);
 
 function getBoundsQueryString(bounds) {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
@@ -74,6 +79,7 @@ function Stops({ stops, clickedStopUrl, setClickedStop }) {
               "icon-allow-overlap": true,
               "icon-ignore-placement": true,
               "text-ignore-placement": true,
+              "icon-padding": [3],
             },
             paint: {
               "text-color": "#ffffff",
@@ -97,7 +103,7 @@ function fetchJson(what, bounds) {
         return response.json();
       }
     },
-    (reason) => {
+    () => {
       // never mind
     },
   );
@@ -116,109 +122,116 @@ export default function BigMap() {
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
-  const [bounds, setBounds] = React.useState(null);
+  const timeout = React.useRef(null);
+  const bounds = React.useRef(null);
+  const stopsHighWaterMark = React.useRef(null);
+  const vehiclesHighWaterMark = React.useRef(null);
 
-  const [stopsHighWaterMark, setStopsHighWaterMark] = React.useState(null);
-
-  const [vehiclesHighWaterMark, setVehiclesHighWaterMark] =
-    React.useState(null);
-
-  const loadStops = React.useCallback((bounds) => {
-    fetchJson("stops", bounds).then((items) => {
-      setStopsHighWaterMark(bounds);
+  const loadStops = React.useCallback(() => {
+    const _bounds = bounds.current;
+    fetchJson("stops", _bounds).then((items) => {
+      stopsHighWaterMark.current = _bounds;
       setStops(items);
     });
   }, []);
 
-  const handleMoveEnd = React.useCallback(
-    (evt) => {
-      const map = evt.target;
+  const loadVehicles = React.useCallback(() => {
+    // debugger;
+    // if (!shouldShowVehicles(zoom)) {
+    //   return;
+    // }
 
-      const bounds = map.getBounds();
-      const zoom = map.getZoom();
+    let _bounds = bounds.current;
 
-      setZoom(zoom);
-      setBounds(bounds);
+    const url = apiRoot + "vehicles.json" + getBoundsQueryString(_bounds);
+
+    try {
+      fetch(url, {
+        // signal: controller.signal,
+      }).then(
+        (response) => {
+          if (response.ok) {
+            response.json().then((items) => {
+              vehiclesHighWaterMark.current = _bounds;
+              setVehicles(
+                Object.assign(
+                  {},
+                  ...items.map((item) => ({ [item.id]: item })),
+                ),
+              );
+            });
+          }
+          timeout.current = setTimeout(loadVehicles, 12000);
+        },
+        () => {
+          // never mind
+        },
+      );
+    } catch (e) {
+      // ok
+    }
+  }, []);
+
+  const handleMoveEnd = React.useCallback((evt) => {
+    const map = evt.target;
+    bounds.current = map.getBounds();
+    const zoom = map.getZoom();
+
+    if (shouldShowVehicles(zoom)) {
+      // debugger;
+      if (!containsBounds(vehiclesHighWaterMark.current, bounds.current)) {
+        loadVehicles();
+      }
 
       if (
         shouldShowStops(zoom) &&
-        !containsBounds(stopsHighWaterMark, bounds)
+        !containsBounds(stopsHighWaterMark.current, bounds.current)
       ) {
-        loadStops(bounds);
+        loadStops();
       }
-    },
-    [stopsHighWaterMark],
-  );
+    }
+
+    setZoom(zoom);
+    updateLocalStorage(zoom, map.getCenter());
+  }, []);
 
   React.useEffect(() => {
-    if (!(bounds && zoom)) {
-      return;
-    }
+    // debugger;
+    //   if (!(bounds && zoom)) {
+    //     return;
+    //   }
 
-    let timeout;
-    let controller = new AbortController();
+    //   let timeout;
+    //   let controller = new AbortController();
 
-    const loadVehicles = () => {
-      if (!shouldShowVehicles(zoom)) {
-        return;
-      }
-
-      const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
-
-      try {
-        fetch(url, {
-          signal: controller.signal,
-        }).then(
-          (response) => {
-            if (response.ok) {
-              response.json().then((items) => {
-                setVehiclesHighWaterMark(bounds);
-                setVehicles(
-                  Object.assign(
-                    {},
-                    ...items.map((item) => ({ [item.id]: item })),
-                  ),
-                );
-              });
-            }
-            timeout = setTimeout(loadVehicles, 12000);
-          },
-          (reason) => {
-            // never mind
-          },
-        );
-      } catch (e) {
-        // ok
-      }
-    };
-
-    if (shouldShowVehicles(zoom)) {
-      if (!containsBounds(vehiclesHighWaterMark, bounds)) {
-        loadVehicles();
-      } else {
-        timeout = setTimeout(loadVehicles, 12000);
-      }
-    }
+    // if (shouldShowVehicles(zoom)) {
+    //   if (!containsBounds(vehiclesHighWaterMark, bounds)) {
+    //     loadVehicles();
+    //   } else {
+    //     timeout = setTimeout(loadVehicles, 12000);
+    //   }
+    // }
 
     const handleVisibilityChange = (event) => {
-      if (shouldShowVehicles(zoom)) {
-        if (event.target.hidden) {
-          clearTimeout(timeout);
-          controller.abort();
-        } else {
-          loadVehicles();
-        }
+      // if (shouldShowVehicles(zoom)) {
+      if (event.target.hidden) {
+        clearTimeout(timeout.current);
+        //         controller.abort();
+      } else {
+        loadVehicles();
       }
+      // }
     };
 
     window.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      // debugger;
       window.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearTimeout(timeout);
-      controller.abort();
+      clearTimeout(timeout.current);
+      //     controller.abort();
     };
-  }, [zoom, bounds, vehiclesHighWaterMark]);
+  }, [zoom]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -231,6 +244,7 @@ export default function BigMap() {
 
   const handleMapClick = React.useCallback(
     (e) => {
+      console.dir(e.features);
       if (!e.originalEvent.defaultPrevented) {
         if (e.features.length) {
           for (const stop of e.features) {
@@ -251,16 +265,17 @@ export default function BigMap() {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+    // map.showPadding = true;
+    // map.showCollisionBoxes = true;
+    map.showTileBoundaries = true;
 
+    bounds.current = map.getBounds();
     const zoom = map.getZoom();
-    const bounds = map.getBounds();
-
-    setZoom(zoom);
-    setBounds(bounds);
 
     if (shouldShowStops(zoom)) {
-      loadStops(bounds);
+      loadStops();
     }
+    setZoom(zoom);
 
     map.loadImage("/static/stop-marker.png", (error, image) => {
       if (error) throw error;
@@ -303,11 +318,11 @@ export default function BigMap() {
 
   return (
     <Map
+      padding={0}
       initialViewState={window.INITIAL_VIEW_STATE}
       dragRotate={false}
       touchPitch={false}
       touchRotate={false}
-      showCollisionBoxes={true}
       pitchWithRotate={false}
       onMoveEnd={handleMoveEnd}
       maxZoom={18}

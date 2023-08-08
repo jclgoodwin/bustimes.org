@@ -173,5 +173,5 @@ body .maplibregl-popup-anchor-right .maplibregl-popup-tip {
 
 .maplibregl-popup-close-button {
   color: var(--text-color);
-  padding: 0 .5em;
+  padding: 0 0.5em;
 }
