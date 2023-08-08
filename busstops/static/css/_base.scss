@@ -1150,6 +1150,11 @@ input:not(:checked) + label {
             border-top: 0;
         }
     }
+
+    .previous,
+    .next {
+        margin-top: 0;
+    }
 }
 
 .credit {

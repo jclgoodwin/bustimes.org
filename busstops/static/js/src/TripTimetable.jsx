@@ -69,32 +69,46 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle, journey }) 
     (item) => item.aimed_arrival_time || item.aimed_departure_time,
   );
 
+  if (journey) {
+    if (journey.previous) {
+      var previous = new Date(journey.previous.datetime).toTimeString().slice(0, 5);
+      previous = <p className="previous"><a href={`#journeys/${journey.previous.id}`}>&larr; {previous}</a></p>
+    }
+    if (journey.next) {
+      var next = new Date(journey.next.datetime).toTimeString().slice(0, 5);
+      next = <p className="next"><a href={`#journeys/${journey.next.id}`}>{next} &rarr;</a></p>
+    }
+
+  }
+
   return (
     <div className="trip-timetable map-sidebar">
-      {journey?.previous ? <p className="previous"><a href={`#journeys/${journey.previous.id}`}>&larr; {journey.previous.datetime}</a></p> : null}
-      {journey?.next ? <p className="next"><a href={`#journeys/${journey.next.id}`}>{journey.next.datetime} &rarr;</a></p> : null}
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            {aimedColumn ? <th>Timetable</th> : null}
-            <th>Actual</th>
-          </tr>
-        </thead>
-        <tbody>
-          {trip.times.map((stop, i) => (
-            <Row
-              key={stop.id || i}
-              aimedColumn={aimedColumn}
-              stop={stop}
-              first={i === 0}
-              last={i === last}
-              onMouseEnter={onMouseEnter}
-              vehicle={vehicle}
-            />
-          ))}
-        </tbody>
-      </table>
+      {previous}
+      {next}
+      { trip.times ?
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              {aimedColumn ? <th>Timetable</th> : null}
+              <th>Actual</th>
+            </tr>
+          </thead>
+          <tbody>
+            {trip.times.map((stop, i) => (
+              <Row
+                key={stop.id || i}
+                aimedColumn={aimedColumn}
+                stop={stop}
+                first={i === 0}
+                last={i === last}
+                onMouseEnter={onMouseEnter}
+                vehicle={vehicle}
+              />
+            ))}
+          </tbody>
+        </table>
+        :null}
       {trip.notes?.map((note) => (
         <p key={note.code}>{note.text}</p>
       ))}

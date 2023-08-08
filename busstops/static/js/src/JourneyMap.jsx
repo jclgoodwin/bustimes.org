@@ -103,21 +103,24 @@ export default function JourneyMap({ journey }) {
     }
   }, []);
 
-  const handleMapLoad = React.useCallback((event) => {
-    const map = event.target;
-    map.keyboard.disableRotation();
-    map.touchZoomRotate.disableRotation();
+  const map = React.useRef(null);
 
-    map.loadImage("/static/route-stop-marker.png", (error, image) => {
+  const handleMapLoad = React.useCallback((event) => {
+    const _map = event.target;
+    map.current = _map;
+    _map.keyboard.disableRotation();
+    _map.touchZoomRotate.disableRotation();
+
+    _map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
-      map.addImage("stop", image, {
+      _map.addImage("stop", image, {
         pixelRatio: 2,
       });
     });
 
-    map.loadImage("/static/arrow.png", (error, image) => {
+    _map.loadImage("/static/arrow.png", (error, image) => {
       if (error) throw error;
-      map.addImage("arrow", image, {
+      _map.addImage("arrow", image, {
         pixelRatio: 2,
       });
     });
@@ -139,6 +142,14 @@ export default function JourneyMap({ journey }) {
       return bounds;
     }
   }, [journey]);
+
+  React.useEffect(() => {
+    if (map.current) {
+      map.current.fitBounds(bounds, {
+        padding: 50,
+      });
+    }
+  }, [bounds]);
 
   if (!journey) {
     return <div className="sorry">Loading…</div>;
