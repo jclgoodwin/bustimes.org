@@ -32,6 +32,12 @@ docker compose up
 
 Then head to http://localhost:8000
 
+```
+make build-static
+npm run watch
+docker compose exec web ./manage.py livereload --host=0.0.0.0
+```
+
 ### Using local install
 
 These need to be available:
