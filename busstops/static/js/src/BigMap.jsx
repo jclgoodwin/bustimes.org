@@ -126,6 +126,8 @@ export default function BigMap() {
   const bounds = React.useRef(null);
   const stopsHighWaterMark = React.useRef(null);
   const vehiclesHighWaterMark = React.useRef(null);
+  const vehiclesPromise = React.useRef(null);
+  const vehiclesAbortController = React.useRef(null);
 
   const loadStops = React.useCallback(() => {
     const _bounds = bounds.current;
@@ -141,35 +143,43 @@ export default function BigMap() {
     //   return;
     // }
 
+    if (vehiclesAbortController.current) {
+      // debugger;
+      vehiclesAbortController.current.abort();
+    } else {
+      vehiclesAbortController.current = new AbortController();
+    }
+
     let _bounds = bounds.current;
 
     const url = apiRoot + "vehicles.json" + getBoundsQueryString(_bounds);
 
-    try {
-      fetch(url, {
-        // signal: controller.signal,
-      }).then(
-        (response) => {
-          if (response.ok) {
-            response.json().then((items) => {
-              vehiclesHighWaterMark.current = _bounds;
-              setVehicles(
-                Object.assign(
-                  {},
-                  ...items.map((item) => ({ [item.id]: item })),
-                ),
-              );
-            });
-          }
-          timeout.current = setTimeout(loadVehicles, 12000);
-        },
-        () => {
-          // never mind
-        },
-      );
-    } catch (e) {
-      // ok
-    }
+    vehiclesPromise.current = fetch(url, {
+      signal: vehiclesAbortController.current.signal,
+    }).then(
+      (response) => {
+        if (response.ok) {
+          response.json().then((items) => {
+            vehiclesHighWaterMark.current = _bounds;
+            setVehicles(
+              Object.assign(
+                {},
+                ...items.map((item) => ({ [item.id]: item })),
+              ),
+            );
+          });
+        }
+        timeout.current = setTimeout(loadVehicles, 12000);
+      },
+      (f) => {
+        console.dir(f);
+        // debugger;
+        // never mind
+      },
+    ).catch((e) => {
+      console.dir(e);
+      // debugger;
+    });
   }, []);
 
   const handleMoveEnd = React.useCallback((evt) => {
@@ -196,23 +206,8 @@ export default function BigMap() {
   }, []);
 
   React.useEffect(() => {
-    // debugger;
-    //   if (!(bounds && zoom)) {
-    //     return;
-    //   }
-
-    //   let timeout;
-    //   let controller = new AbortController();
-
-    // if (shouldShowVehicles(zoom)) {
-    //   if (!containsBounds(vehiclesHighWaterMark, bounds)) {
-    //     loadVehicles();
-    //   } else {
-    //     timeout = setTimeout(loadVehicles, 12000);
-    //   }
-    // }
-
     const handleVisibilityChange = (event) => {
+      console.dir(zoom);
       // if (shouldShowVehicles(zoom)) {
       if (event.target.hidden) {
         clearTimeout(timeout.current);
@@ -272,8 +267,12 @@ export default function BigMap() {
     bounds.current = map.getBounds();
     const zoom = map.getZoom();
 
-    if (shouldShowStops(zoom)) {
-      loadStops();
+
+    if (shouldShowVehicles(zoom)) {
+      loadVehicles();
+      if (shouldShowStops(zoom)) {
+        loadStops();
+      }
     }
     setZoom(zoom);
 
