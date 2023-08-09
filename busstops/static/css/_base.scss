@@ -1093,12 +1093,12 @@ input:not(:checked) + label {
 }
 
 .journey-map.has-sidebar {
-    bottom: 50%;
+    bottom: 30%;
 }
 
 .journey-map + .map-sidebar {
     position: absolute;
-    top: 50%;
+    top: 70%;
     overflow: auto;
     bottom: -90px;
     padding: 1em 1em 90px;

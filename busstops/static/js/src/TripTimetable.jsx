@@ -62,7 +62,12 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
   );
 }
 
-export default function TripTimetable({ trip, onMouseEnter, vehicle, journey }) {
+export default function TripTimetable({
+  trip,
+  onMouseEnter,
+  vehicle,
+  journey,
+}) {
   const last = trip.times.length - 1;
 
   const aimedColumn = trip.times.some(
@@ -71,21 +76,30 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle, journey }) 
 
   if (journey) {
     if (journey.previous) {
-      var previous = new Date(journey.previous.datetime).toTimeString().slice(0, 5);
-      previous = <p className="previous"><a href={`#journeys/${journey.previous.id}`}>&larr; {previous}</a></p>
+      var previous = new Date(journey.previous.datetime)
+        .toTimeString()
+        .slice(0, 5);
+      previous = (
+        <p className="previous">
+          <a href={`#journeys/${journey.previous.id}`}>&larr; {previous}</a>
+        </p>
+      );
     }
     if (journey.next) {
       var next = new Date(journey.next.datetime).toTimeString().slice(0, 5);
-      next = <p className="next"><a href={`#journeys/${journey.next.id}`}>{next} &rarr;</a></p>
+      next = (
+        <p className="next">
+          <a href={`#journeys/${journey.next.id}`}>{next} &rarr;</a>
+        </p>
+      );
     }
-
   }
 
   return (
     <div className="trip-timetable map-sidebar">
       {previous}
       {next}
-      { trip.times ?
+      {trip.times ? (
         <table>
           <thead>
             <tr>
@@ -108,7 +122,7 @@ export default function TripTimetable({ trip, onMouseEnter, vehicle, journey }) 
             ))}
           </tbody>
         </table>
-        :null}
+      ) : null}
       {trip.notes?.map((note) => (
         <p key={note.code}>{note.text}</p>
       ))}

@@ -109,24 +109,34 @@ function fetchJson(what, bounds) {
   );
 }
 
-function Vehicles({vehicles, clickedVehicleMarkerId, handleVehicleMarkerClick}) {
+function Vehicles({
+  vehicles,
+  clickedVehicleMarkerId,
+  handleVehicleMarkerClick,
+}) {
   const vehiclesList = React.useMemo(() => {
     return {
       type: "FeatureCollection",
-      features: vehicles ? Object.values(vehicles).map(vehicle => {
-        return {
-          type: "Feature",
-          id: vehicle.id,
-          geometry: {
-            type: "Point",
-            coordinates: vehicle.coordinates
-          },
-          properties: {
-            url: vehicle.vehicle.url,
-            colour: vehicle.vehicle.colour || (vehicle.vehicle.colours?.length === 7 ? vehicle.vehicle.colours : "#fff")
-          }
-        };
-      }) : [],
+      features: vehicles
+        ? Object.values(vehicles).map((vehicle) => {
+            return {
+              type: "Feature",
+              id: vehicle.id,
+              geometry: {
+                type: "Point",
+                coordinates: vehicle.coordinates,
+              },
+              properties: {
+                url: vehicle.vehicle.url,
+                colour:
+                  vehicle.vehicle.colour ||
+                  (vehicle.vehicle.colours?.length === 7
+                    ? vehicle.vehicle.colours
+                    : "#fff"),
+              },
+            };
+          })
+        : [],
     };
   }, [vehicles]);
 
@@ -176,10 +186,7 @@ function Vehicles({vehicles, clickedVehicleMarkerId, handleVehicleMarkerClick}) 
         />
       )}
       {clickedVehicle && vehiclesList.features.length >= 100 && (
-        <VehicleMarker
-          selected={true}
-          vehicle={clickedVehicle}
-        />
+        <VehicleMarker selected={true} vehicle={clickedVehicle} />
       )}
     </React.Fragment>
   );
@@ -237,30 +244,32 @@ export default function BigMap() {
 
     vehiclesPromise.current = fetch(url, {
       signal: vehiclesAbortController.current.signal,
-    }).then(
-      (response) => {
-        if (response.ok) {
-          response.json().then((items) => {
-            vehiclesHighWaterMark.current = _bounds;
-            setVehicles(
-              Object.assign(
-                {},
-                ...items.map((item) => ({ [item.id]: item })),
-              ),
-            );
-          });
-        }
-        timeout.current = setTimeout(loadVehicles, 12000);
-      },
-      (f) => {
-        console.dir(f);
+    })
+      .then(
+        (response) => {
+          if (response.ok) {
+            response.json().then((items) => {
+              vehiclesHighWaterMark.current = _bounds;
+              setVehicles(
+                Object.assign(
+                  {},
+                  ...items.map((item) => ({ [item.id]: item })),
+                ),
+              );
+            });
+          }
+          timeout.current = setTimeout(loadVehicles, 12000);
+        },
+        (f) => {
+          console.dir(f);
+          // debugger;
+          // never mind
+        },
+      )
+      .catch((e) => {
+        console.dir(e);
         // debugger;
-        // never mind
-      },
-    ).catch((e) => {
-      console.dir(e);
-      // debugger;
-    });
+      });
   }, []);
 
   const handleMoveEnd = React.useCallback((evt) => {
@@ -355,7 +364,6 @@ export default function BigMap() {
     bounds.current = map.getBounds();
     const zoom = map.getZoom();
 
-
     if (shouldShowVehicles(zoom)) {
       loadVehicles();
       if (shouldShowStops(zoom)) {
@@ -383,7 +391,6 @@ export default function BigMap() {
   const onMouseLeave = React.useCallback(() => {
     setCursor(null);
   }, []);
-
 
   // let vehiclesList = vehicles ? Object.values(vehicles) : [];
 
@@ -437,7 +444,11 @@ export default function BigMap() {
         />
       ) : null}
 
-      <Vehicles vehicles={vehicles} clickedVehicleMarkerId={clickedVehicleMarkerId} handleVehicleMarkerClick={setClickedVehicleMarker} />
+      <Vehicles
+        vehicles={vehicles}
+        clickedVehicleMarkerId={clickedVehicleMarkerId}
+        handleVehicleMarkerClick={setClickedVehicleMarker}
+      />
 
       {zoom && !showStops ? (
         <div className="maplibregl-ctrl map-status-bar">
