@@ -323,6 +323,7 @@ class LiveryAdminForm(forms.ModelForm):
 
     class Meta:
         widgets = {
+            "colour": forms.TextInput(attrs={"type": "color"}),
             "colours": forms.Textarea,
             "css": forms.Textarea,
             "left_css": forms.Textarea,
