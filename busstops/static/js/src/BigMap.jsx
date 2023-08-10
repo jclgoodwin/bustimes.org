@@ -232,6 +232,7 @@ export default function BigMap() {
   const stopsHighWaterMark = React.useRef(null);
   const vehiclesHighWaterMark = React.useRef(null);
   const vehiclesAbortController = React.useRef(null);
+  const vehiclesLength = React.useRef(null);
 
   const loadStops = React.useCallback(() => {
     const _bounds = bounds.current;
@@ -265,10 +266,13 @@ export default function BigMap() {
           if (response.ok) {
             response.json().then((items) => {
               vehiclesHighWaterMark.current = _bounds;
+              vehiclesLength.current = items.length;
               setVehicles(items);
             });
           }
-          timeout.current = setTimeout(loadVehicles, 12000);
+          if (!document.hidden) {
+            timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
+          }
         },
         (f) => {
           console.dir(f);
@@ -291,7 +295,7 @@ export default function BigMap() {
       if (shouldShowVehicles(zoom)) {
         if (
           !containsBounds(vehiclesHighWaterMark.current, bounds.current) ||
-          vehicles.length >= 1000
+          vehiclesLength.current >= 1000
         ) {
           loadVehicles();
         }
@@ -306,8 +310,10 @@ export default function BigMap() {
 
       setZoom(zoom);
       updateLocalStorage(zoom, map.getCenter());
-    }, 400),
-    [vehicles],
+    }, 400, {
+      leading: true
+    }),
+    [],
   );
 
   React.useEffect(() => {

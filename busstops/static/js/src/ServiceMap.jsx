@@ -61,6 +61,8 @@ export default function OperatorMap() {
     };
   });
 
+  const first = React.useRef(true);
+
   React.useEffect(() => {
     let timeout;
 
@@ -71,27 +73,31 @@ export default function OperatorMap() {
           hasCss = true;
         });
       }
+
+      // service map data
+      // TODO: linked services
+      fetch(`/services/${window.SERVICE_ID}.json`).then(
+        (response) => {
+          if (response.ok) {
+            response.json().then((data) => {
+              setGeometry(data.geometry);
+              setStops(data.stops);
+            });
+          }
+        },
+        (reason) => {
+          // never mind
+        },
+      );
     } else {
       document.body.classList.remove("has-overlay");
     }
 
-    // service map data
-    // TODO: linked services
-    fetch(`/services/${window.SERVICE_ID}.json`).then(
-      (response) => {
-        if (response.ok) {
-          response.json().then((data) => {
-            setGeometry(data.geometry);
-            setStops(data.stops);
-          });
-        }
-      },
-      (reason) => {
-        // never mind
-      },
-    );
-
     const loadVehicles = () => {
+      if (document.hidden) {
+        return;
+      }
+
       let url = apiRoot + "vehicles.json?service=" + window.SERVICE_ID;
       fetch(url).then(
         (response) => {
@@ -104,7 +110,7 @@ export default function OperatorMap() {
                 ),
               );
               clearTimeout(timeout);
-              if (isOpen && items.length) {
+              if (isOpen && items.length && !document.hidden) {
                 timeout = setTimeout(loadVehicles, 10000); // 10 seconds
               }
             });
@@ -116,9 +122,10 @@ export default function OperatorMap() {
       );
     };
 
-    if (isOpen || !vehicles) {
+    if (isOpen || first.current) {
       loadVehicles();
     }
+    first.current = false;
 
     const handleVisibilityChange = (event) => {
       if (event.target.hidden) {

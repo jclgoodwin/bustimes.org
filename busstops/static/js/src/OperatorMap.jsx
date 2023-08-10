@@ -28,6 +28,10 @@ export default function OperatorMap() {
     let timeout;
 
     const loadVehicles = () => {
+      if (document.hidden) {
+        return;
+      }
+
       let url = apiRoot + "vehicles.json?operator=" + window.OPERATOR_ID;
       fetch(url).then((response) => {
         response.json().then((items) => {
@@ -40,7 +44,9 @@ export default function OperatorMap() {
           );
           setLoading(false);
           clearTimeout(timeout);
-          timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+          if (!document.hidden) {
+            timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+          }
         });
       });
     };

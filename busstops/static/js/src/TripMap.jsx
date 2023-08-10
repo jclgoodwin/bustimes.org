@@ -101,6 +101,10 @@ export default function TripMap() {
 
   React.useEffect(() => {
     const loadVehicles = (first) => {
+      if (document.hidden) {
+        return;
+      }
+
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
         url = `${url}?id=${window.VEHICLE_ID}`;
@@ -110,49 +114,47 @@ export default function TripMap() {
         url = `${url}?service=${window.SERVICE}&trip=${params.id}`;
       }
 
-      // if (vehiclesAbortController.current) {
-      //   vehiclesAbortController.current.abort();
-      // }
-      // vehiclesAbortController.current
-      // clearTimeout(timeout.current);
-
-      try {
-        fetch(url, {
-          // signal: vehiclesAbortController.current.signal,
-        }).then(
-          (response) => {
-            debugger;
-            if (!response.ok) {
-              return;
-            }
-            response.json().then((items) => {
-              setVehicles(
-                Object.assign(
-                  {},
-                  ...items.map((item) => {
-                    if (
-                      (params && item.trip_id == params.id) ||
-                      (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
-                    ) {
-                      if (first) {
-                        setClickedVehicleMarker(item.id);
-                      }
-                      setTripVehicle(item);
-                    }
-                    return { [item.id]: item };
-                  }),
-                ),
-              );
-            });
-            timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
-          },
-          (reason) => {
-            // never mind
-          },
-        );
-      } catch (e) {
-        // ok
+      if (vehiclesAbortController.current) {
+        vehiclesAbortController.current.abort();
       }
+      vehiclesAbortController.current = new AbortController();
+
+      clearTimeout(timeout.current);
+
+      fetch(url, {
+        signal: vehiclesAbortController.current.signal,
+      }).then(
+        (response) => {
+          if (!response.ok) {
+            return;
+          }
+          response.json().then((items) => {
+            setVehicles(
+              Object.assign(
+                {},
+                ...items.map((item) => {
+                  if (
+                    (params && item.trip_id == params.id) ||
+                    (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
+                  ) {
+                    if (first) {
+                      setClickedVehicleMarker(item.id);
+                    }
+                    setTripVehicle(item);
+                  }
+                  return { [item.id]: item };
+                }),
+              ),
+            );
+          });
+          if (!document.hidden) {
+            timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
+          }
+        },
+        (reason) => {
+          // never mind
+        }
+      );
     };
 
     const loadTrip = () => {
@@ -173,10 +175,8 @@ export default function TripMap() {
     loadVehicles(true);
 
     const handleVisibilityChange = (event) => {
-      if (event.target.hidden) {
-        clearTimeout(timeout.current);
-        // controller.abort();
-      } else {
+      clearTimeout(timeout.current);
+      if (!event.target.hidden) {
         loadVehicles();
       }
     };
@@ -185,7 +185,6 @@ export default function TripMap() {
 
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearTimeout(timeout.current);
     };
   }, [params?.id]);
 

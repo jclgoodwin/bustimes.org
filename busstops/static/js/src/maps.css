@@ -68,7 +68,7 @@
   top: 5px;
 }
 
-.right .arrow {
+.right + .arrow {
   border-left: 5px solid var(--marker-arrow-color);
   border-right: 0;
   left: auto;
