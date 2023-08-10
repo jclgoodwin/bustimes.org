@@ -1,11 +1,10 @@
-from datetime import datetime, timezone  # , timedelta
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
+from django.utils.dateparse import parse_duration
 from google.protobuf import json_format
-
-# from django.utils.dateparse import parse_duration
 from google.transit import gtfs_realtime_pb2
 
 from busstops.models import DataSource, Service
@@ -79,18 +78,22 @@ class Command(ImportLiveVehiclesCommand):
         return vehicle, True
 
     def get_journey(self, item, vehicle):
-        # start_time = datetime.strptime(
-        #    f"{item.vehicle.trip.start_date} 12:00:00",
-        #    "%Y%m%d %H:%M:%S",
-        # ) - timedelta(hours=12) + parse_duration(item.vehicle.trip.start_time)
-        journey = VehicleJourney(
-            code=item.vehicle.trip.trip_id,
-            # datetime=start_time.replace(tzinfo=self.tzinfo)
+        # GTFS spec for working out datetimes:
+        start_date = datetime.strptime(
+            f"{item.vehicle.trip.start_date} 12:00:00",
+            "%Y%m%d %H:%M:%S",
         )
+        start_time = (
+            start_date
+            - timedelta(hours=12)
+            + parse_duration(item.vehicle.trip.start_time)
+        ).replace(tzinfo=self.tzinfo)
+
+        journey = VehicleJourney(code=item.vehicle.trip.trip_id, datetime=start_time)
 
         if (
             (latest_journey := vehicle.latest_journey)
-            # and latest_journey.datetime == journey.datetime
+            and latest_journey.datetime == journey.datetime
             and latest_journey.code == journey.code
         ):
             return latest_journey
@@ -122,7 +125,7 @@ class Command(ImportLiveVehiclesCommand):
         if trips:
             if len(trips) > 1:
                 calendar_ids = [trip.calendar_id for trip in trips]
-                calendars = get_calendars(item.vehicle.trip.start_date, calendar_ids)
+                calendars = get_calendars(start_date, calendar_ids)
                 trips = trips.filter(calendar__in=calendars)
             trip = trips.first()
 
