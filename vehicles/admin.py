@@ -345,7 +345,7 @@ def preview(obj, css):
 
     return format_html(
         """<svg height="24" width="36" style="line-height:24px;font-size:24px;background:{}">
-                <text x="50%" y="80%" fill="fff" text-anchor="middle" style="{}">42</text>
+                <text x="50%" y="80%" fill="{}" text-anchor="middle" style="{}">42</text>
         </svg>""",
         css,
         text_colour,
