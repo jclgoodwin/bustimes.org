@@ -323,7 +323,6 @@ class LiveryAdminForm(forms.ModelForm):
 
     class Meta:
         widgets = {
-            "colour": forms.TextInput(attrs={"type": "color"}),
             "colours": forms.Textarea,
             "css": forms.Textarea,
             "left_css": forms.Textarea,
@@ -346,7 +345,7 @@ def preview(obj, css):
     return format_html(
         """<svg height="24" width="36" style="line-height:24px;font-size:24px;background:{}">
                 <text x="50%" y="80%" fill="{}" text-anchor="middle" style="{}">42</text>
-        </svg>""",
+            </svg>""",
         css,
         text_colour,
         stroke,
