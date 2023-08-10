@@ -23,11 +23,8 @@
   overflow: hidden;
   line-height: 16px;
   color: #000;
-}
-
-.vehicle-marker text {
   text-anchor: middle;
-  paint-order: stroke;
+  paint-order: stroke fill;
   stroke-width: 2px;
 }
 
