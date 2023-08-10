@@ -112,13 +112,21 @@ function fetchJson(what, bounds) {
 function Vehicles({
   vehicles,
   clickedVehicleMarkerId,
-  handleVehicleMarkerClick,
+  setClickedVehicleMarker,
+  setClickedStop,
 }) {
-  const vehiclesList = React.useMemo(() => {
+  const vehiclesById = React.useMemo(() => {
+    return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
+  }, [vehicles]);
+
+  const vehiclesGeoJson = React.useMemo(() => {
+    if (vehicles.length < 1000) {
+      return;
+    }
     return {
       type: "FeatureCollection",
       features: vehicles
-        ? Object.values(vehicles).map((vehicle) => {
+        ? vehicles.map((vehicle) => {
             return {
               type: "Feature",
               id: vehicle.id,
@@ -140,29 +148,34 @@ function Vehicles({
     };
   }, [vehicles]);
 
-  if (!vehicles) {
-    return;
-  }
+  const handleVehicleMarkerClick = React.useCallback(
+    (event, id) => {
+      event.originalEvent.preventDefault();
+      setClickedStop(null);
+      setClickedVehicleMarker(id);
+    },
+    [setClickedVehicleMarker, setClickedStop],
+  );
 
   const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
+    clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   let markers;
 
-  if (vehiclesList.features.length < 100) {
-    markers = Object.values(vehicles).map((item) => {
+  if (!vehiclesGeoJson) {
+    markers = vehicles.map((item) => {
       return (
         <VehicleMarker
           key={item.id}
           selected={item.id === clickedVehicleMarkerId}
           vehicle={item}
-          onClick={(e) => handleVehicleMarkerClick(e, item.id)}
+          onClick={handleVehicleMarkerClick}
         />
       );
     });
   } else {
     markers = (
-      <Source type="geojson" data={vehiclesList}>
+      <Source type="geojson" data={vehiclesGeoJson}>
         <Layer
           {...{
             id: "vehicles",
@@ -185,8 +198,12 @@ function Vehicles({
           onClose={() => setClickedVehicleMarker(null)}
         />
       )}
-      {clickedVehicle && vehiclesList.features.length >= 100 && (
-        <VehicleMarker selected={true} vehicle={clickedVehicle} />
+      {clickedVehicle && vehiclesGeoJson && (
+        <VehicleMarker
+          selected={true}
+          vehicle={clickedVehicle}
+          onClick={handleVehicleMarkerClick}
+        />
       )}
     </React.Fragment>
   );
@@ -194,8 +211,6 @@ function Vehicles({
 
 export default function BigMap() {
   const darkMode = useDarkMode();
-
-  // const [loading, setLoading] = React.useState(true);
 
   const [vehicles, setVehicles] = React.useState(null);
 
@@ -216,7 +231,6 @@ export default function BigMap() {
   const bounds = React.useRef(null);
   const stopsHighWaterMark = React.useRef(null);
   const vehiclesHighWaterMark = React.useRef(null);
-  const vehiclesPromise = React.useRef(null);
   const vehiclesAbortController = React.useRef(null);
 
   const loadStops = React.useCallback(() => {
@@ -228,21 +242,22 @@ export default function BigMap() {
   }, []);
 
   const loadVehicles = React.useCallback(() => {
-    // debugger;
-    // if (!shouldShowVehicles(zoom)) {
-    //   return;
-    // }
+    if (document.hidden) {
+      return;
+    }
 
     if (vehiclesAbortController.current) {
       vehiclesAbortController.current.abort();
     }
     vehiclesAbortController.current = new AbortController();
 
+    clearTimeout(timeout.current);
+
     let _bounds = bounds.current;
 
     const url = apiRoot + "vehicles.json" + getBoundsQueryString(_bounds);
 
-    vehiclesPromise.current = fetch(url, {
+    fetch(url, {
       signal: vehiclesAbortController.current.signal,
     })
       .then(
@@ -250,12 +265,7 @@ export default function BigMap() {
           if (response.ok) {
             response.json().then((items) => {
               vehiclesHighWaterMark.current = _bounds;
-              setVehicles(
-                Object.assign(
-                  {},
-                  ...items.map((item) => ({ [item.id]: item })),
-                ),
-              );
+              setVehicles(items);
             });
           }
           timeout.current = setTimeout(loadVehicles, 12000);
@@ -272,69 +282,57 @@ export default function BigMap() {
       });
   }, []);
 
-  const handleMoveEnd = React.useCallback((evt) => {
-    const map = evt.target;
-    bounds.current = map.getBounds();
-    const zoom = map.getZoom();
+  const handleMoveEnd = React.useCallback(
+    debounce((evt) => {
+      const map = evt.target;
+      bounds.current = map.getBounds();
+      const zoom = map.getZoom();
 
-    if (shouldShowVehicles(zoom)) {
-      // debugger;
-      if (!containsBounds(vehiclesHighWaterMark.current, bounds.current)) {
-        loadVehicles();
+      if (shouldShowVehicles(zoom)) {
+        if (
+          !containsBounds(vehiclesHighWaterMark.current, bounds.current) ||
+          vehicles.length >= 1000
+        ) {
+          loadVehicles();
+        }
+
+        if (
+          shouldShowStops(zoom) &&
+          !containsBounds(stopsHighWaterMark.current, bounds.current)
+        ) {
+          loadStops();
+        }
       }
 
-      if (
-        shouldShowStops(zoom) &&
-        !containsBounds(stopsHighWaterMark.current, bounds.current)
-      ) {
-        loadStops();
-      }
-    }
-
-    setZoom(zoom);
-    updateLocalStorage(zoom, map.getCenter());
-  }, []);
+      setZoom(zoom);
+      updateLocalStorage(zoom, map.getCenter());
+    }, 400),
+    [vehicles],
+  );
 
   React.useEffect(() => {
     const handleVisibilityChange = (event) => {
-      console.dir(zoom);
-      // if (shouldShowVehicles(zoom)) {
-      if (event.target.hidden) {
-        clearTimeout(timeout.current);
-        //         controller.abort();
-      } else {
+      if (!event.target.hidden && shouldShowVehicles(zoom)) {
         loadVehicles();
       }
-      // }
     };
 
     window.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      // debugger;
       window.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearTimeout(timeout.current);
-      //     controller.abort();
     };
   }, [zoom]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
 
-  const handleVehicleMarkerClick = React.useCallback((event, id) => {
-    event.originalEvent.preventDefault();
-    setClickedStop(null);
-    setClickedVehicleMarker(id);
-  }, []);
-
   const handleMapClick = React.useCallback(
     (e) => {
-      debugger;
-      console.dir(e.features);
       if (!e.originalEvent.defaultPrevented) {
+        console.dir(e.features);
         if (e.features.length) {
           for (const feature of e.features) {
-            debugger;
             if (feature.layer.id === "vehicles") {
               setClickedVehicleMarker(feature.id);
               return;
@@ -359,7 +357,7 @@ export default function BigMap() {
     map.touchZoomRotate.disableRotation();
     // map.showPadding = true;
     // map.showCollisionBoxes = true;
-    map.showTileBoundaries = true;
+    // map.showTileBoundaries = true;
 
     bounds.current = map.getBounds();
     const zoom = map.getZoom();
@@ -391,19 +389,6 @@ export default function BigMap() {
   const onMouseLeave = React.useCallback(() => {
     setCursor(null);
   }, []);
-
-  // let vehiclesList = vehicles ? Object.values(vehicles) : [];
-
-  // const otherVehicles = vehiclesList.filter((i) => {
-  //   return i.vehicle.livery === 262 || i.id === clickedVehicleMarkerId;
-  // });
-  // if (otherVehicles.length) {
-  //   vehiclesList = vehiclesList.filter((i) => {
-  //     return i.vehicle.livery != 262;
-  //   });
-  // }
-  // const otherVehicles = vehiclesList;
-  // vehiclesList = [];
 
   const showStops = shouldShowStops(zoom);
   const showBuses = shouldShowVehicles(zoom);
@@ -444,11 +429,14 @@ export default function BigMap() {
         />
       ) : null}
 
-      <Vehicles
-        vehicles={vehicles}
-        clickedVehicleMarkerId={clickedVehicleMarkerId}
-        handleVehicleMarkerClick={setClickedVehicleMarker}
-      />
+      {vehicles && showBuses ? (
+        <Vehicles
+          vehicles={vehicles}
+          clickedVehicleMarkerId={clickedVehicleMarkerId}
+          setClickedVehicleMarker={setClickedVehicleMarker}
+          setClickedStop={setClickedStop}
+        />
+      ) : null}
 
       {zoom && !showStops ? (
         <div className="maplibregl-ctrl map-status-bar">
