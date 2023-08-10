@@ -155,14 +155,9 @@ export default function JourneyMap({ journey }) {
     return <div className="sorry">Loading…</div>;
   }
 
-  let className = "journey-map";
-  if (journey.stops) {
-    className += " has-sidebar";
-  }
-
   return (
     <React.Fragment>
-      <div className={className}>
+      <div className="journey-map has-sidebar">
         <Map
           dragRotate={false}
           touchPitch={false}
@@ -274,28 +269,26 @@ export default function JourneyMap({ journey }) {
         </Map>
       </div>
 
-      {journey.stops ? (
-        <TripTimetable
-          journey={journey}
-          trip={{
-            times: journey.stops.map((stop, i) => {
-              return {
-                id: i,
-                stop: {
-                  atco_code: stop.atco_code,
-                  name: stop.name,
-                  location: stop.coordinates,
-                },
-                timing_status: stop.minor ? "OTH" : "PTP",
-                aimed_arrival_time: stop.aimed_arrival_time,
-                aimed_departure_time: stop.aimed_departure_time,
-                actual_departure_time: stop.actual_departure_time,
-              };
-            }),
-            notes: [],
-          }}
-        />
-      ) : null}
+      <TripTimetable
+        journey={journey}
+        trip={{
+          times: journey.stops ? journey.stops.map((stop, i) => {
+            return {
+              id: i,
+              stop: {
+                atco_code: stop.atco_code,
+                name: stop.name,
+                location: stop.coordinates,
+              },
+              timing_status: stop.minor ? "OTH" : "PTP",
+              aimed_arrival_time: stop.aimed_arrival_time,
+              aimed_departure_time: stop.aimed_departure_time,
+              actual_departure_time: stop.actual_departure_time,
+            };
+          }) : null,
+          notes: [],
+        }}
+      />
     </React.Fragment>
   );
 }

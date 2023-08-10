@@ -68,9 +68,9 @@ export default function TripTimetable({
   vehicle,
   journey,
 }) {
-  const last = trip.times.length - 1;
+  const last = trip.times?.length - 1;
 
-  const aimedColumn = trip.times.some(
+  const aimedColumn = trip.times?.some(
     (item) => item.aimed_arrival_time || item.aimed_departure_time,
   );
 
