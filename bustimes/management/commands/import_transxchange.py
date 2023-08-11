@@ -1250,7 +1250,9 @@ class Command(BaseCommand):
                 if registration:
                     route_defaults["registration"] = registration
 
+            # route links (geometry between stops):
             if transxchange.route_sections:
+
                 if service_created:
                     existing_route_links = {}
                 else:
@@ -1260,29 +1262,35 @@ class Command(BaseCommand):
                     }
                 route_links_to_update = {}
                 route_links_to_create = {}
-                for route_link in self.get_route_links(journeys, transxchange):
-                    if len(route_link.track) <= 2:
-                        continue
-                    from_stop = stops.get(route_link.from_stop)
-                    to_stop = stops.get(route_link.to_stop)
-                    if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                        key = (route_link.from_stop, route_link.to_stop)
-                        if key in existing_route_links:
-                            if key not in route_links_to_update:
-                                route_links_to_update[key] = existing_route_links[key]
-                                route_links_to_update[key].geometry = route_link.track
-                        else:
-                            route_links_to_create[key] = RouteLink(
-                                from_stop_id=from_stop.atco_code,
-                                to_stop_id=to_stop.atco_code,
-                                geometry=route_link.track,
-                                service=service,
-                            )
+                route_links = list(self.get_route_links(journeys, transxchange))
 
-                RouteLink.objects.bulk_update(
-                    route_links_to_update.values(), ["geometry"]
-                )
-                RouteLink.objects.bulk_create(route_links_to_create.values())
+                # we're not interested in straight lines between stops
+                if any(len(link.track) > 2 for link in route_links):
+                    for route_link in route_links:
+                        from_stop = stops.get(route_link.from_stop)
+                        to_stop = stops.get(route_link.to_stop)
+                        if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
+                            key = (route_link.from_stop, route_link.to_stop)
+                            if key in existing_route_links:
+                                if key not in route_links_to_update:
+                                    route_links_to_update[key] = existing_route_links[
+                                        key
+                                    ]
+                                    route_links_to_update[
+                                        key
+                                    ].geometry = route_link.track
+                            else:
+                                route_links_to_create[key] = RouteLink(
+                                    from_stop_id=from_stop.atco_code,
+                                    to_stop_id=to_stop.atco_code,
+                                    geometry=route_link.track,
+                                    service=service,
+                                )
+
+                    RouteLink.objects.bulk_update(
+                        route_links_to_update.values(), ["geometry"]
+                    )
+                    RouteLink.objects.bulk_create(route_links_to_create.values())
 
             route_code = filename
             if len(transxchange.services) > 1:
