@@ -88,8 +88,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
     "https://staging.bustimes.org",
+    "http://joshuas-mbp:8000",
 ]
-CORS_URLS_REGEX = r"(^\/api\/|.json).*$"
+CORS_URLS_REGEX = r"^\/(api\/|journeys\/|vehicles\.json|stops\.json).*$"
 
 CSP_IMG_SRC = ["'self'", "https:", "data:"]
 CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]

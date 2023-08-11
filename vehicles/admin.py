@@ -330,6 +330,28 @@ class LiveryAdminForm(forms.ModelForm):
         }
 
 
+def preview(obj, css):
+    if obj.text_colour:
+        text_colour = obj.text_colour
+    elif obj.white_text:
+        text_colour = "#fff"
+    else:
+        text_colour = "#222"
+    if obj.stroke_colour:
+        stroke = f"stroke:{obj.stroke_colour};stroke-width:3px;paint-order:stroke"
+    else:
+        stroke = ""
+
+    return format_html(
+        """<svg height="24" width="36" style="line-height:24px;font-size:24px;background:{}">
+                <text x="50%" y="80%" fill="{}" text-anchor="middle" style="{}">42</text>
+            </svg>""",
+        css,
+        text_colour,
+        stroke,
+    )
+
+
 @admin.register(models.Livery)
 class LiveryAdmin(SimpleHistoryAdmin):
     form = LiveryAdminForm
@@ -341,6 +363,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
         "vehicles",
         "left",
         "right",
+        "blob",
         "published",
         "updated_at",
     ]
@@ -350,7 +373,7 @@ class LiveryAdmin(SimpleHistoryAdmin):
         ("operators", admin.RelatedOnlyFieldListFilter),
     ]
     autocomplete_fields = ["operators"]
-    readonly_fields = ["left", "right", "updated_at"]
+    readonly_fields = ["left", "right", "blob", "updated_at"]
     ordering = ["-id"]
 
     def merge(self, request, queryset):
@@ -374,45 +397,21 @@ class LiveryAdmin(SimpleHistoryAdmin):
 
     @admin.display(ordering="right_css")
     def right(self, obj):
-        if obj.text_colour:
-            text_colour = obj.text_colour
-        elif obj.white_text:
-            text_colour = "#fff"
-        else:
-            text_colour = "#222"
-        if obj.stroke_colour:
-            stroke = f"stroke:{obj.stroke_colour};stroke-width:3px;paint-order:stroke"
-        else:
-            stroke = ""
-        return format_html(
-            """<svg style="height:24px;width:36px;line-height:24px;font-size:24px;background:{}">
-                <text x="50%" y="80%" style="fill:{};text-anchor:middle;{}">42</text>
-            </svg>""",
-            obj.right_css,
-            text_colour,
-            stroke,
-        )
+        return preview(obj, obj.right_css)
 
     @admin.display(ordering="left_css")
     def left(self, obj):
-        if obj.text_colour:
-            text_colour = obj.text_colour
-        elif obj.white_text:
-            text_colour = "#fff"
-        else:
-            text_colour = "#222"
-        if obj.stroke_colour:
-            stroke = f"stroke:{obj.stroke_colour};stroke-width:3px;paint-order:stroke"
-        else:
-            stroke = ""
-        return format_html(
-            """<svg style="height:24px;width:36px;line-height:24px;font-size:24px;background:{}">
-                <text x="50%" y="80%" style="fill:{};text-anchor:middle;{}">24</text>
-            </svg>""",
-            obj.left_css,
-            text_colour,
-            stroke,
-        )
+        return preview(obj, obj.left_css)
+
+    @admin.display(ordering="colour")
+    def blob(self, obj):
+        if obj.colour:
+            return format_html(
+                """<svg width="20" height="20">
+                    <circle fill="{}" r="10" cx="10" cy="10"></circle>
+                </svg>""",
+                obj.colour,
+            )
 
     vehicles = VehicleTypeAdmin.vehicles
 

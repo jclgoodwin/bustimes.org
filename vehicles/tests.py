@@ -327,17 +327,19 @@ class VehiclesTests(TestCase):
         self.assertContains(response, '<td class="field-vehicles">1</td>')
         self.assertContains(
             response,
-            """<td class="field-left"><svg style="height:24px;width:36px;line-height:24px;\
-font-size:24px;background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
-                <text x="50%" y="80%" style="fill:#fff;text-anchor:middle;">24</text>
+            """<td class="field-left">\
+<svg height="24" width="36" style="line-height:24px;font-size:24px;\
+background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
+                <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
             </svg></td>""",
         )
         self.assertContains(
             response,
-            """<td class="field-right"><svg style="height:24px;width:36px;line-height:24px;\
-font-size:24px;background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
-                <text x="50%" y="80%" style="fill:#fff;text-anchor:middle;">42</text>
-            </svg></td>""",
+            """<td class="field-right">\
+<svg height="24" width="36" style="line-height:24px;font-size:24px;\
+background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
+                <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
+            </svg>""",
         )
 
     def test_vehicle_type_admin(self):

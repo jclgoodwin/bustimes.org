@@ -487,6 +487,8 @@ class Vehicle(models.Model):
         elif self.colours:
             json["css"] = self.get_livery(heading)
             json["text_colour"] = self.get_text_colour()
+        if colour := getattr(self, "colour", None):
+            json["colour"] = colour
         return json
 
 

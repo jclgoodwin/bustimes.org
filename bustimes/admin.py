@@ -47,7 +47,7 @@ class TimetableDataSourceAdmin(admin.ModelAdmin):
     raw_id_fields = ["operators"]
     list_display = ["id", "name", "url", "nocs", "active", "complete"]
     list_filter = ["active", "complete"]
-    search_fields = ["url", "search"]
+    search_fields = ["url", "name", "search"]
 
     def nocs(self, obj):
         return obj.nocs

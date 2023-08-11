@@ -408,6 +408,7 @@ def vehicles_json(request) -> JsonResponse:
             feature_names=features_string_agg,
             service_line_name=F("latest_journey__trip__route__line_name"),
             service_slug=F("latest_journey__service__slug"),
+            colour=F("livery__colour"),
         )
         .defer("data", "latest_journey_data")
     )
@@ -475,7 +476,7 @@ def vehicles_json(request) -> JsonResponse:
         [f"journey{item['journey_id']}" for item in vehicle_locations if item]
     )
 
-    # only get vehicles with unexpired locations
+    # get vehicles from the database if they have unexpired locations, and weren't in the cache
     try:
         vehicles = all_vehicles.in_bulk(
             [
@@ -587,9 +588,6 @@ def vehicles_json(request) -> JsonResponse:
         JsonResponse(
             locations,
             safe=False,
-            headers={
-                "Access-Control-Allow-Origin": "*",
-            },
         ),
     )
 
@@ -1003,6 +1001,7 @@ def vehicle_edit_vote(request, edit_id, direction):
     edit = get_object_or_404(VehicleEdit, id=edit_id)
 
     assert request.user.id != edit.user_id
+    assert request.user.trusted is not False
 
     votes = edit.vehicleeditvote_set
     positive = direction == "up"
