@@ -24,8 +24,9 @@
   line-height: 16px;
   color: #000;
   text-anchor: middle;
-  paint-order: stroke fill;
+  paint-order: stroke;
   stroke-width: 2px;
+  display: block; /* cos svg is not block-level by default */
 }
 
 .vehicle-marker.white-text {

@@ -15,16 +15,12 @@ function VehicleMarker({ vehicle, selected, onClick }) {
     }
   }
 
+  let css = vehicle.vehicle.css;
+
   if (vehicle.vehicle.livery) {
     className += " livery-" + vehicle.vehicle.livery;
-  }
-
-  if (selected) {
-    className += " selected";
-  }
-
-  let css = vehicle.vehicle.css;
-  if (css) {
+  } else if (css) {
+    css = vehicle.vehicle.css;
     css = {
       background: css,
     };
@@ -33,11 +29,15 @@ function VehicleMarker({ vehicle, selected, onClick }) {
     }
   }
 
+  if (selected) {
+    className += " selected";
+  }
+
   let marker = vehicle.service?.line_name;
 
   if (vehicle.vehicle.livery && vehicle.vehicle.livery != 262) {
     marker = (
-      <svg className={className} style={css}>
+      <svg className={className}>
         <text x="12" y="12">
           {marker}
         </text>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 import Map, {
   Source,
@@ -109,7 +109,7 @@ function fetchJson(what, bounds) {
   );
 }
 
-function Vehicles({
+const Vehicles = memo(function Vehicles({
   vehicles,
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
@@ -148,14 +148,11 @@ function Vehicles({
     };
   }, [vehicles]);
 
-  const handleVehicleMarkerClick = React.useCallback(
-    (event, id) => {
-      event.originalEvent.preventDefault();
-      setClickedStop(null);
-      setClickedVehicleMarker(id);
-    },
-    [setClickedVehicleMarker, setClickedStop],
-  );
+  const handleVehicleMarkerClick = React.useCallback((event, id) => {
+    event.originalEvent.preventDefault();
+    setClickedStop(null);
+    setClickedVehicleMarker(id);
+  }, []);
 
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
@@ -207,7 +204,7 @@ function Vehicles({
       )}
     </React.Fragment>
   );
-}
+});
 
 export default function BigMap() {
   const darkMode = useDarkMode();
@@ -287,32 +284,36 @@ export default function BigMap() {
   }, []);
 
   const handleMoveEnd = React.useCallback(
-    debounce((evt) => {
-      const map = evt.target;
-      bounds.current = map.getBounds();
-      const zoom = map.getZoom();
+    debounce(
+      (evt) => {
+        const map = evt.target;
+        bounds.current = map.getBounds();
+        const zoom = map.getZoom();
 
-      if (shouldShowVehicles(zoom)) {
-        if (
-          !containsBounds(vehiclesHighWaterMark.current, bounds.current) ||
-          vehiclesLength.current >= 1000
-        ) {
-          loadVehicles();
+        if (shouldShowVehicles(zoom)) {
+          if (
+            !containsBounds(vehiclesHighWaterMark.current, bounds.current) ||
+            vehiclesLength.current >= 1000
+          ) {
+            loadVehicles();
+          }
+
+          if (
+            shouldShowStops(zoom) &&
+            !containsBounds(stopsHighWaterMark.current, bounds.current)
+          ) {
+            loadStops();
+          }
         }
 
-        if (
-          shouldShowStops(zoom) &&
-          !containsBounds(stopsHighWaterMark.current, bounds.current)
-        ) {
-          loadStops();
-        }
-      }
-
-      setZoom(zoom);
-      updateLocalStorage(zoom, map.getCenter());
-    }, 400, {
-      leading: true
-    }),
+        setZoom(zoom);
+        updateLocalStorage(zoom, map.getCenter());
+      },
+      400,
+      {
+        leading: true,
+      },
+    ),
     [],
   );
 

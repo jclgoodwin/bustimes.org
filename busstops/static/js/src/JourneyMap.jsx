@@ -272,20 +272,22 @@ export default function JourneyMap({ journey }) {
       <TripTimetable
         journey={journey}
         trip={{
-          times: journey.stops ? journey.stops.map((stop, i) => {
-            return {
-              id: i,
-              stop: {
-                atco_code: stop.atco_code,
-                name: stop.name,
-                location: stop.coordinates,
-              },
-              timing_status: stop.minor ? "OTH" : "PTP",
-              aimed_arrival_time: stop.aimed_arrival_time,
-              aimed_departure_time: stop.aimed_departure_time,
-              actual_departure_time: stop.actual_departure_time,
-            };
-          }) : null,
+          times: journey.stops
+            ? journey.stops.map((stop, i) => {
+                return {
+                  id: i,
+                  stop: {
+                    atco_code: stop.atco_code,
+                    name: stop.name,
+                    location: stop.coordinates,
+                  },
+                  timing_status: stop.minor ? "OTH" : "PTP",
+                  aimed_arrival_time: stop.aimed_arrival_time,
+                  aimed_departure_time: stop.aimed_departure_time,
+                  actual_departure_time: stop.actual_departure_time,
+                };
+              })
+            : null,
           notes: [],
         }}
       />
