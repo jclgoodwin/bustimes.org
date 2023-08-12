@@ -37,11 +37,11 @@
     <div id="AFM_inContentTop_ad"></div>
 </div>
 
-{% include 'situations.html' %}
-
 {% if object.geometry %}
     <div id="map"><a class="button" href="#map">Map</a></div>
 {% endif %}
+
+{% include 'situations.html' %}
 
 <div id="timetable">
     {% include 'timetable.html' %}
