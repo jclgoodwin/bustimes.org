@@ -18,9 +18,10 @@
     --active-link-color: var(--black);
     --summary-marker-color: var(--border-color);
 
-    supported-color-schemes: dark light;
-    color-scheme: dark light;
+    // supported-color-schemes: dark light;
+    // color-scheme: dark light;
 
+    /*
     @media (prefers-color-scheme: dark) {
         --brand-color: #2a2a2a;
         --brand-color-darker: #333;
@@ -36,6 +37,7 @@
 
         --summary-marker-color: #eee;
     }
+    */
 }
 
 body {
@@ -332,11 +334,13 @@ h1 .reg {
     font-size: .825em;
 }
 
+/*
 @media (prefers-color-scheme: dark) {
     .reg {
         color: #fff;
     }
 }
+*/
 
 h2 {
     font-size: 1.25em;
@@ -450,11 +454,13 @@ select {
     }
 }
 
+/*
 @media (prefers-color-scheme: dark) {
     select {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon fill='%23eee' points='0,0 4,8 8,0'/%3E%3C/svg%3E");
     }
 }
+*/
 
 form p select {
     box-sizing: border-box;

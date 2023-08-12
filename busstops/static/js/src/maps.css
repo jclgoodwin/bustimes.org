@@ -3,12 +3,14 @@
   --marker-arrow-color: #000;
 }
 
+/*
 @media (prefers-color-scheme: dark) {
   :root {
     --marker-border-color: #000;
     --marker-arrow-color: #fff;
   }
 }
+*/
 
 .maplibregl-marker {
   cursor: pointer;
@@ -40,12 +42,14 @@
 .vehicle-marker.selected + .arrow {
   }
 
+/*
 @media (prefers-color-scheme: dark) {
   .maplibregl-marker:hover .vehicle-marker,
   .vehicle-marker.selected {
     border-color: #fff;
   }
 }
+*/
 
 .arrow {
   border: 4px solid transparent;

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { LngLatBounds } from "maplibre-gl";
 
 export const useDarkMode = () => {
+  return false;
+
   if (window.matchMedia) {
     const query = window.matchMedia("(prefers-color-scheme: dark)");
 
