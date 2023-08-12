@@ -32,8 +32,8 @@ const locationsStyle = {
   layout: {
     "icon-rotate": ["+", 45, ["get", "heading"]],
     "icon-image": "arrow",
-    "icon-allow-overlap": true,
-    "icon-ignore-placement": true,
+    // "icon-allow-overlap": true,
+    // "icon-ignore-placement": true,
     "icon-anchor": "top-left",
   },
 };
@@ -62,6 +62,76 @@ function LocationPopup({ location }) {
     </Popup>
   );
 }
+
+const Locations = React.memo(function({ locations }) {
+  return (
+    <React.Fragment>
+      <Source
+        type="geojson"
+        data={{
+          type: "LineString",
+          coordinates: locations.map((l) => l.coordinates),
+        }}
+      >
+        <Layer {...routeStyle} />
+      </Source>
+
+      <Source
+        type="geojson"
+        data={{
+          type: "FeatureCollection",
+          features: locations.map((l) => {
+            return {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: l.coordinates,
+              },
+              properties: {
+                delta: l.delta,
+                heading: l.direction,
+                datetime: l.datetime,
+              },
+            };
+          }),
+        }}
+      >
+        <Layer {...locationsStyle} />
+      </Source>
+    </React.Fragment>
+  );
+});
+
+
+const Stops = React.memo(function({ stops }) {
+  return (
+    <Source
+      type="geojson"
+      data={{
+        type: "FeatureCollection",
+        features: stops.map((s) => {
+          return {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: s.coordinates,
+            },
+            properties: {
+              atco_code: s.atco_code,
+              name: s.name,
+              minor: s.minor,
+              heading: s.heading,
+              aimed_arrival_time: s.aimed_arrival_time,
+              aimed_departure_time: s.aimed_departure_time,
+            },
+          };
+        }),
+      }}
+    >
+      <Layer {...stopsStyle} />
+    </Source>
+  );
+});
 
 export default function JourneyMap({ journey }) {
   const darkMode = useDarkMode();
@@ -102,6 +172,18 @@ export default function JourneyMap({ journey }) {
       setClickedStop(null);
     }
   }, []);
+
+  const handleRowHover = React.useCallback((a, b) => {
+    setClickedStop({
+      properties: {
+        atco_code: a.stop.atco_code,
+        name: a.stop.name
+      },
+      geometry: {
+        coordinates: a.stop.location
+      }
+    });
+  })
 
   const map = React.useRef(null);
 
@@ -185,70 +267,9 @@ export default function JourneyMap({ journey }) {
           <NavigationControl showCompass={false} />
           <GeolocateControl />
 
-          {journey.stops ? (
-            <Source
-              type="geojson"
-              data={{
-                type: "FeatureCollection",
-                features: journey.stops.map((s) => {
-                  return {
-                    type: "Feature",
-                    geometry: {
-                      type: "Point",
-                      coordinates: s.coordinates,
-                    },
-                    properties: {
-                      atco_code: s.atco_code,
-                      name: s.name,
-                      minor: s.minor,
-                      heading: s.heading,
-                      aimed_arrival_time: s.aimed_arrival_time,
-                      aimed_departure_time: s.aimed_departure_time,
-                    },
-                  };
-                }),
-              }}
-            >
-              <Layer {...stopsStyle} />
-            </Source>
-          ) : null}
+          {journey.stops ? <Stops stops={ journey.stops } /> : null}
 
-          {journey.locations ? (
-            <React.Fragment>
-              <Source
-                type="geojson"
-                data={{
-                  type: "LineString",
-                  coordinates: journey.locations.map((l) => l.coordinates),
-                }}
-              >
-                <Layer {...routeStyle} />
-              </Source>
-
-              <Source
-                type="geojson"
-                data={{
-                  type: "FeatureCollection",
-                  features: journey.locations.map((l) => {
-                    return {
-                      type: "Feature",
-                      geometry: {
-                        type: "Point",
-                        coordinates: l.coordinates,
-                      },
-                      properties: {
-                        delta: l.delta,
-                        heading: l.direction,
-                        datetime: l.datetime,
-                      },
-                    };
-                  }),
-                }}
-              >
-                <Layer {...locationsStyle} />
-              </Source>
-            </React.Fragment>
-          ) : null}
+          {journey.locations ? <Locations locations={journey.locations} /> : null}
 
           {clickedStop ? (
             <StopPopup
@@ -270,6 +291,7 @@ export default function JourneyMap({ journey }) {
       </div>
 
       <TripTimetable
+        onMouseEnter={handleRowHover}
         journey={journey}
         trip={{
           times: journey.stops

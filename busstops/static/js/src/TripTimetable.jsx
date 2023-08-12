@@ -62,7 +62,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
   );
 }
 
-export default function TripTimetable({
+const TripTimetable = React.memo(function({
   trip,
   onMouseEnter,
   vehicle,
@@ -128,4 +128,6 @@ export default function TripTimetable({
       ))}
     </div>
   );
-}
+});
+
+export default TripTimetable;
