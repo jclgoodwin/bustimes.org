@@ -113,7 +113,9 @@ class Command(ImportLiveVehiclesCommand):
             ):
                 vehicle = (
                     self.vehicles.filter(
-                        code__iexact=vehicle_code, operator__in=self.operators
+                        Q(code__iexact=vehicle_code)
+                        | Q(fleet_code__iexact=vehicle_code),
+                        operator__in=self.operators,
                     )
                     .exclude(id=vehicle.id)
                     .first()
