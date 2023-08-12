@@ -7,7 +7,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
         onMouseEnter(stop);
       }
     }
-  }, []);
+  }, [stop]);
 
   let stopName = stop.stop.name;
   if (stop.stop.icon) {
