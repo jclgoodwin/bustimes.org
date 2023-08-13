@@ -31,7 +31,7 @@ try {
   // ok
 }
 
-const updateLocalStorage = debounce(function (zoom, latLng) {
+const updateLocalStorage = debounce(function (zoom: number, latLng) {
   localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
 }, 2000);
 
@@ -43,7 +43,7 @@ function containsBounds(a, b) {
   return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
-function shouldShowStops(zoom) {
+function shouldShowStops(zoom: number) {
   return zoom >= 14;
 }
 
@@ -112,7 +112,7 @@ function fetchJson(what, bounds) {
 const Vehicles = memo(function Vehicles({
   vehicles,
   clickedVehicleMarkerId,
-  setClickedVehicleMarker,
+  setClickedVehicleMarker
 }) {
   const vehiclesById = React.useMemo(() => {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));

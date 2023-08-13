@@ -22,33 +22,33 @@ Sentry.init({
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-let root = document.getElementById("hugemap");
-if (root) {
-  root = ReactDOM.createRoot(root);
+let rootElement = document.getElementById("hugemap");
+if (rootElement) {
+  let root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
       <BigMap />
     </React.StrictMode>,
   );
 } else {
-  root = document.getElementById("map");
-  if (root) {
+  rootElement = document.getElementById("map");
+  if (rootElement) {
     if (window.location.href.indexOf("/operators/") !== -1) {
-      root = ReactDOM.createRoot(root);
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <OperatorMap />
         </React.StrictMode>,
       );
     } else if (window.SERVICE_ID) {
-      root = ReactDOM.createRoot(root);
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <ServiceMap />
         </React.StrictMode>,
       );
     } else if (window.STOPS) {
-      root = ReactDOM.createRoot(root);
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <TripMap />
@@ -56,9 +56,9 @@ if (root) {
       );
     }
   } else {
-    root = document.getElementById("history");
-    if (root) {
-      root = ReactDOM.createRoot(root);
+    let rootElement = document.getElementById("history");
+    if (rootElement) {
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <History />
