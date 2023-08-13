@@ -79,11 +79,11 @@
 {% if journeys %}
     {% for journey in journeys %}
 
-        {% ifchanged journey.datetime.date %}
+        {% ifchanged journey.datetime|date %}
             {% if not forloop.first %}
                 </tbody></table></div>
             {% endif %}
-            <h4>{{ journey.datetime.date }}</h4>
+            <h4>{{ journey.datetime|date }}</h4>
             <div class="table-wrapper">
             <table>
                 <thead>

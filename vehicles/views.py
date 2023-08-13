@@ -625,7 +625,8 @@ def journeys_list(request, all_journeys, service=None, vehicle=None) -> dict:
                 date = journeys[0].datetime.date()
                 journeys = all_journeys.filter(datetime__date=date)
 
-            context["next_date"] = journeys[19].datetime.date()
+            else:
+                context["next_date"] = journeys[19].datetime.date()
 
     if date and dates:
         try:

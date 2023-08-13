@@ -201,7 +201,7 @@ class EditVehicleForm(EditVehiclesForm):
         return new
 
     def clean_reg(self):
-        reg = self.cleaned_data["reg"]
+        reg = self.cleaned_data["reg"].replace(".", "")
         if self.cleaned_data["spare_ticket_machine"] and reg:
             raise ValidationError("A spare ticket machine can’t have a number plate")
         return reg
