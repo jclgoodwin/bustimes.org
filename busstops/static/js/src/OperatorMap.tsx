@@ -117,6 +117,7 @@ export default function OperatorMap() {
           maxZoom={18}
           bounds={bounds}
           fitBoundsOptions={{
+            maxZoom: 15,
             padding: 50,
           }}
           mapStyle={

@@ -37,7 +37,7 @@ function VehicleMarker({ vehicle, selected }) {
 
   let marker = vehicle.service?.line_name;
 
-  if (vehicle.vehicle.livery && vehicle.vehicle.livery != 262) {
+  if (vehicle.vehicle.livery && vehicle.vehicle.livery !== 262) {
     marker = (
       <svg
         width="24"
