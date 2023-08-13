@@ -56,7 +56,6 @@
     <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
 {% endif %}
 
-
 {% if date or dates %}
     <form class="timetable-date" autocomplete="off">
         {% if dates %}
@@ -72,31 +71,19 @@
     </form>
 {% endif %}
 
-{% if previous_date %}
-    <p><a href="?date={{ previous_date.isoformat }}">&uarr; {{ previous_date }}</a></p>
-{% endif %}
-
 {% if journeys %}
+    <div class="table-wrapper">
+    <table>
+    <thead>
+        <tr>
+            {% if object.line_names|length > 1 %}<th scope="col"></th>{% endif %}
+             <th scope="col">{% if not vehicle %}Vehicle{% else %}Route{% endif %}</th>
+            <th scope="col" colspan="2">Trip</th>
+            <th scope="col">To</th>
+        </tr>
+    </thead>
+    <tbody>
     {% for journey in journeys %}
-
-        {% ifchanged journey.datetime|date %}
-            {% if not forloop.first %}
-                </tbody></table></div>
-            {% endif %}
-            <h4>{{ journey.datetime|date }}</h4>
-            <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        {% if object.line_names|length > 1 %}<th scope="col"></th>{% endif %}
-                        <th scope="col">{% if not vehicle %}Vehicle{% else %}Route{% endif %}</th>
-                        <th scope="col" colspan="2">Trip</th>
-                        <th scope="col">To</th>
-                    </tr>
-                </thead>
-                <tbody>
-        {% endifchanged %}
-
         <tr>
             {% if object.line_names|length > 1 %}
                 <td>
@@ -132,15 +119,19 @@
                 </td>
             {% endif %}
         </tr>
-
-        {% if forloop.last %}
-            </tbody></table></div>
-        {% endif %}
-
     {% endfor %}
+    </tbody></table></div>
 
-    {% if next_date %}
-        <p><a href="?date={{ next_date.isoformat }}">&darr; {{ next_date }}</a></p>
+    {% if next_date or previous_date %}
+        <nav>
+            {% if previous_date %}
+                <p class="previous"><a href="?date={{ previous_date.isoformat }}">&larr; {{ previous_date }}</a></p>
+            {% endif %}
+
+            {% if next_date %}
+                <p class="next"><a href="?date={{ next_date.isoformat }}">{{ next_date }} &rarr;</a></p>
+            {% endif %}
+        </nav>
     {% endif %}
 
     <div id="history"></div>

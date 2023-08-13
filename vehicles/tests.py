@@ -196,7 +196,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "Trent Barton")
         self.assertContains(response, "#FF0000")
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 
@@ -900,7 +900,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             self.client.get("/vehicles")
 
     def test_service_vehicle_history(self):
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get(
                 "/services/spixworth-hunworth-happisburgh/vehicles?date=poop"
             )
@@ -910,12 +910,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             )
         self.assertContains(response, "Vehicles")
         self.assertContains(response, "/vehicles/")
-        # self.assertContains(
-        #     response,
-        #     '<input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" '
-        #     'value="2020-10-20">'
-        #     # '<option selected value="2020-10-20">Tuesday 20 October 2020</option>'
-        # )
+        self.assertContains(
+            response,
+            '<input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" '
+            'value="2020-10-20">'
+            # '<option selected value="2020-10-20">Tuesday 20 October 2020</option>'
+        )
         self.assertContains(response, "1 - FD54 JYA")
 
     def test_api(self):

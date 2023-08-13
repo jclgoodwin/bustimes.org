@@ -11,7 +11,7 @@ from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
-from django.db.models import Case, F, OuterRef, Q, When
+from django.db.models import Case, F, Max, OuterRef, Q, When
 from django.db.models.functions import Coalesce, Now
 from django.http import (
     Http404,
@@ -29,12 +29,8 @@ from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
-
-# from rest_framework.pagination import CursorPagination
-# from rest_framework.request import Request
 from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
-from buses.utils import cache_control_s_maxage
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route
@@ -79,7 +75,6 @@ class Vehicles:
 
 
 @require_GET
-@cache_control_s_maxage(60)
 def vehicles(request):
     """index of recently AVL-enabled operators, etc"""
 
@@ -119,7 +114,6 @@ def vehicles(request):
 
 
 @require_GET
-@cache_control_s_maxage(3600)
 def map(request):
     return render(
         request,
@@ -333,7 +327,6 @@ def operator_vehicles(request, slug=None, parent=None):
 
 
 @require_GET
-@cache_control_s_maxage(3600)
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)
 
@@ -592,22 +585,50 @@ def vehicles_json(request) -> JsonResponse:
     )
 
 
-# class JourneysPagination(CursorPagination):
-#     ordering = "-datetime"
-#     page_size = 20
+def get_dates(vehicle=None, service=None):
+    if not vehicle:
+        # the database query for a service is too slow
+        return
+
+    key = f"vehicle:{vehicle.id}:dates"
+    journeys = vehicle.vehiclejourney_set
+
+    dates = cache.get(key)
+
+    if dates and vehicle.latest_journey:
+        latest_date = timezone.localdate(vehicle.latest_journey.datetime)
+        if dates[-1] < latest_date:
+            dates.append(latest_date)
+            # we'll update the cache below
+        else:
+            return dates
+
+    if not dates:
+        try:
+            dates = list(journeys.dates("datetime", "day"))
+        except OperationalError:
+            return
+
+    if dates:
+        now = timezone.localtime()
+        time_to_midnight = datetime.timedelta(days=1) - datetime.timedelta(
+            hours=now.hour, minutes=now.minute, seconds=now.second
+        )
+        if dates[-1] == now.date():  # today
+            time_to_midnight += datetime.timedelta(days=1)
+        time_to_midnight = time_to_midnight.total_seconds()
+        if time_to_midnight > 0:
+            cache.set(key, dates, time_to_midnight)
+
+    return dates
 
 
-def journeys_list(request, all_journeys, service=None, vehicle=None) -> dict:
+def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     """list of VehicleJourneys (and dates) for a service or vehicle"""
 
+    dates = get_dates(service=service, vehicle=vehicle)
+
     context = {}
-
-    all_journeys = all_journeys.select_related("trip").order_by("-datetime")
-
-    dates = None
-    if vehicle:
-        dates = list(all_journeys.dates("datetime", "day"))
-        context["dates"] = dates
 
     form = forms.DateForm(request.GET)
     if form.is_valid():
@@ -615,34 +636,41 @@ def journeys_list(request, all_journeys, service=None, vehicle=None) -> dict:
     else:
         date = None
 
-    if date:
-        journeys = all_journeys.filter(datetime__date=date)
-    else:
-        journeys = all_journeys[:20]
+    if not date and dates is None:
+        if vehicle and vehicle.latest_journey:
+            date = timezone.localdate(vehicle.latest_journey.datetime)
+        else:
+            date = journeys.aggregate(max_date=Max("datetime__date"))["max_date"]
 
-        if len(journeys) == 20:
-            if journeys[0].datetime.date() == journeys[19].datetime.date():
-                date = journeys[0].datetime.date()
-                journeys = all_journeys.filter(datetime__date=date)
-
-            else:
-                context["next_date"] = journeys[19].datetime.date()
-
-    if date and dates:
-        try:
-            index = dates.index(date)
-        except ValueError:
-            dates.append(date)
-            dates.sort()
-            index = dates.index(date)
-        if index:
-            context["next_date"] = dates[index - 1]
-        if len(dates) > index + 1:
-            context["previous_date"] = dates[index + 1]
-
-    if journeys:
+    if dates:
+        context["dates"] = dates
         if not date:
-            date = journeys[0].datetime.date()
+            date = context["dates"][-1]
+
+    if date:
+        context["date"] = date
+
+        journeys = (
+            journeys.filter(datetime__date=date)
+            .select_related("trip")
+            .order_by("datetime")
+        )
+
+        if dates:
+            try:
+                index = dates.index(date)
+            except ValueError:
+                dates.append(date)
+                dates.sort()
+                index = dates.index(date)
+            else:
+                if not journeys:
+                    cache.delete(f"vehicle:{vehicle.id}:dates")
+
+            if index:
+                context["previous_date"] = dates[index - 1]
+            if len(dates) > index + 1:
+                context["next_date"] = dates[index + 1]
 
         try:
             pipe = redis_client.pipeline(transaction=False)
@@ -654,16 +682,9 @@ def journeys_list(request, all_journeys, service=None, vehicle=None) -> dict:
             for journey in journeys:
                 journey.locations = True
         else:
-            # previous = None
-
+            # whether each journey has some location history in redis
             for i, journey in enumerate(journeys):
                 journey.locations = locations[i]
-
-                # if journey.locations:
-                #     if previous:
-                #         previous.next = journey
-                #         journey.previous = previous
-                #     previous = journey
 
         context["journeys"] = journeys
 
@@ -682,10 +703,8 @@ def journeys_list(request, all_journeys, service=None, vehicle=None) -> dict:
                         "tracking"
                     ] = f'/map#15/{tracking["coordinates"][1]}/{tracking["coordinates"][0]}'
 
-    elif service and not date:
+    elif service:
         raise Http404
-
-    context["date"] = date
 
     return context
 
