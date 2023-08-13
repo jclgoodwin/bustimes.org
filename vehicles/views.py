@@ -509,7 +509,7 @@ def vehicles_json(request) -> JsonResponse:
                 except KeyError:
                     continue  # vehicle was deleted?
                 else:
-                    journey = {"vehicle": vehicle.get_json(item["heading"])}
+                    journey = {"vehicle": vehicle.get_json()}
                     if vehicle.service_slug:
                         journey["service"] = {
                             "url": f"/services/{vehicle.service_slug}",

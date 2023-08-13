@@ -6,21 +6,23 @@ function VehicleMarker({ vehicle, selected, onClick }) {
 
   let rotation = vehicle.heading;
 
+  let css = vehicle.vehicle.css;
+
   if (rotation != null) {
     if (rotation < 180) {
       rotation -= 90;
       className += " right";
+      if (vehicle.vehicle.right_css) {
+        css = vehicle.vehicle.right_css;
+      }
     } else {
       rotation -= 270;
     }
   }
 
-  let css = vehicle.vehicle.css;
-
   if (vehicle.vehicle.livery) {
     className += " livery-" + vehicle.vehicle.livery;
   } else if (css) {
-    css = vehicle.vehicle.css;
     css = {
       background: css,
     };

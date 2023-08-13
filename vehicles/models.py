@@ -2,6 +2,7 @@ import datetime
 import re
 import struct
 import uuid
+from collections import Counter
 from math import ceil
 from urllib.parse import quote
 
@@ -406,6 +407,8 @@ class Vehicle(models.Model):
         colours = self.colours
         if colours and colours != "Other":
             colours = colours.split()
+            if len(colours) > 1:
+                self.colour = Counter(colours).most_common()[0][0]
             return get_css(colours, direction, self.livery and self.livery.horizontal)
 
     def get_absolute_url(self):
@@ -465,7 +468,7 @@ class Vehicle(models.Model):
         except ValueError as e:
             raise ValidationError({"colours": str(e)})
 
-    def get_json(self, heading):
+    def get_json(self):
         json = {
             "url": self.get_absolute_url(),
             "name": str(self),
@@ -485,7 +488,8 @@ class Vehicle(models.Model):
         if self.livery_id:
             json["livery"] = self.livery_id
         elif self.colours:
-            json["css"] = self.get_livery(heading)
+            json["css"] = self.get_livery()
+            json["right_css"] = self.get_livery(90)
             json["text_colour"] = self.get_text_colour()
         if colour := getattr(self, "colour", None):
             json["colour"] = colour

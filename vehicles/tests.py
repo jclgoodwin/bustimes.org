@@ -237,12 +237,17 @@ class VehiclesTests(TestCase):
         vehicle = Vehicle.objects.get(id=self.vehicle_2.id)
         vehicle.feature_names = "foo, bar"
 
-        self.assertEqual(vehicle.get_json(2)["features"], "Double decker<br>foo, bar")
+        self.assertEqual(vehicle.get_json()["features"], "Double decker<br>foo, bar")
 
         vehicle = Vehicle.objects.get(id=self.vehicle_1.id)
         vehicle.feature_names = ""
 
-        self.assertEqual(vehicle.get_json(2)["css"], "#FF0000")
+        self.assertEqual(vehicle.get_json()["css"], "#FF0000")
+
+        vehicle.colours = "#000000 #FFFFFF #FFFFFF"
+        self.assertEqual(
+            vehicle.get_json()["colour"], "#FFFFFF"
+        )  # most frequent colour in list of colours
 
     def test_vehicle_admin(self):
         self.client.force_login(self.staff_user)
