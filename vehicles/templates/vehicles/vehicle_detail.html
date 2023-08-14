@@ -56,7 +56,7 @@
     <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
 {% endif %}
 
-{% if date or dates %}
+{% if dates %}
     <form class="timetable-date" autocomplete="off">
         {% if dates %}
             <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
@@ -93,10 +93,10 @@
             <td class="link">
                 {% if not vehicle %}
                     {% if journey.vehicle %}
-                        <a href="{{ journey.vehicle.get_absolute_url }}">{{ journey.vehicle }}</a>
+                        <a href="{{ journey.vehicle.get_absolute_url }}?date={{ date.isoformat }}">{{ journey.vehicle }}</a>
                     {% endif %}
                 {% elif journey.service %}
-                    <a href="{{ journey.service.get_absolute_url }}/vehicles">{{ journey.line_name }}</a>
+                    <a href="{{ journey.service.get_absolute_url }}/vehicles?date={{ date.isoformat }}">{{ journey.line_name }}</a>
                 {% else %}
                     {{ journey.line_name }}
                 {% endif %}
