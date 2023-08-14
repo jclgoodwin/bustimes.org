@@ -375,6 +375,7 @@ class TripDetailView(DetailView):
                 ticket_machine_code=self.object.ticket_machine_code,
                 block=self.object.block,
                 route__service=self.object.route.service_id,
+                start__gte=self.object.end,
             )
         else:
             trips = [self.object]
