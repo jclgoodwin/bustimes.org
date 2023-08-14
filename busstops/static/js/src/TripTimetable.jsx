@@ -62,7 +62,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
   );
 }
 
-const TripTimetable = React.memo(function({
+const TripTimetable = React.memo(function ({
   trip,
   onMouseEnter,
   vehicle,

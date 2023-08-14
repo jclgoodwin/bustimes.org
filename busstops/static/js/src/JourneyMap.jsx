@@ -43,7 +43,7 @@ const routeStyle = {
   paint: {
     "line-color": "#000",
     "line-opacity": 0.5,
-    "line-width": 2,
+    "line-width": 3,
     "line-dasharray": [2, 2],
   },
 };
@@ -63,7 +63,7 @@ function LocationPopup({ location }) {
   );
 }
 
-const Locations = React.memo(function({ locations }) {
+const Locations = React.memo(function ({ locations }) {
   return (
     <React.Fragment>
       <Source
@@ -102,8 +102,7 @@ const Locations = React.memo(function({ locations }) {
   );
 });
 
-
-const Stops = React.memo(function({ stops }) {
+const Stops = React.memo(function ({ stops }) {
   return (
     <Source
       type="geojson"
@@ -177,13 +176,13 @@ export default function JourneyMap({ journey }) {
     setClickedStop({
       properties: {
         atco_code: a.stop.atco_code,
-        name: a.stop.name
+        name: a.stop.name,
       },
       geometry: {
-        coordinates: a.stop.location
-      }
+        coordinates: a.stop.location,
+      },
     });
-  })
+  });
 
   const map = React.useRef(null);
 
@@ -267,9 +266,11 @@ export default function JourneyMap({ journey }) {
           <NavigationControl showCompass={false} />
           <GeolocateControl />
 
-          {journey.stops ? <Stops stops={ journey.stops } /> : null}
+          {journey.stops ? <Stops stops={journey.stops} /> : null}
 
-          {journey.locations ? <Locations locations={journey.locations} /> : null}
+          {journey.locations ? (
+            <Locations locations={journey.locations} />
+          ) : null}
 
           {clickedStop ? (
             <StopPopup

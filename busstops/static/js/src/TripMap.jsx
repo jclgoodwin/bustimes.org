@@ -34,10 +34,110 @@ const stopsStyle = {
 const routeStyle = {
   type: "line",
   paint: {
-    "line-color": "#777",
+    "line-color": "#666",
     "line-width": 3,
   },
 };
+
+const lineStyle = {
+  type: "line",
+  paint: {
+    "line-color": "#666",
+    "line-width": 3,
+    "line-dasharray": [2, 2],
+  },
+};
+
+const Route = React.memo(function ({ times }) {
+  const lines = [];
+  const lineStrings = [];
+  let prevLocation,
+    prevTime,
+    i = null;
+
+  for (const time of times) {
+    if (time.track) {
+      lineStrings.push(time.track);
+    } else if (prevLocation && time.stop.location) {
+      if (prevTime.track || i === null) {
+        lines.push([prevLocation, time.stop.location]);
+        i = lines.length - 1;
+      } else {
+        lines[i].push(time.stop.location);
+      }
+    }
+
+    prevTime = time;
+    prevLocation = time.stop.location;
+  }
+
+  return (
+    <React.Fragment>
+      <Source
+        type="geojson"
+        data={{
+          type: "FeatureCollection",
+          features: lineStrings.map((lineString) => {
+            return {
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: lineString,
+              },
+            };
+          }),
+        }}
+      >
+        <Layer {...routeStyle} />
+      </Source>
+
+      <Source
+        type="geojson"
+        data={{
+          type: "FeatureCollection",
+          features: lines.map((line) => {
+            return {
+              type: "Feature",
+              geometry: {
+                type: "LineString",
+                coordinates: line,
+              },
+            };
+          }),
+        }}
+      >
+        <Layer {...lineStyle} />
+      </Source>
+
+      <Source
+        type="geojson"
+        data={{
+          type: "FeatureCollection",
+          features: times
+            .filter((stop) => stop.stop.location)
+            .map((stop) => {
+              return {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: stop.stop.location,
+                },
+                properties: {
+                  url: stop.stop.atco_code
+                    ? `/stops/${stop.stop.atco_code}`
+                    : null,
+                  name: stop.stop.name,
+                  bearing: stop.stop.bearing,
+                },
+              };
+            }),
+        }}
+      >
+        <Layer {...stopsStyle} />
+      </Source>
+    </React.Fragment>
+  );
+});
 
 export default function TripMap() {
   const [, params] = useRoute("/trips/:id");
@@ -153,7 +253,7 @@ export default function TripMap() {
         },
         (reason) => {
           // never mind
-        }
+        },
       );
     };
 
@@ -252,52 +352,7 @@ export default function TripMap() {
           <NavigationControl showCompass={false} />
           <GeolocateControl />
 
-          <Source
-            type="geojson"
-            data={{
-              type: "FeatureCollection",
-              features: trip.times
-                .filter((stop) => stop.track)
-                .map((stop) => {
-                  return {
-                    type: "Feature",
-                    geometry: {
-                      type: "LineString",
-                      coordinates: stop.track,
-                    },
-                  };
-                }),
-            }}
-          >
-            <Layer {...routeStyle} />
-          </Source>
-
-          <Source
-            type="geojson"
-            data={{
-              type: "FeatureCollection",
-              features: trip.times
-                .filter((stop) => stop.stop.location)
-                .map((stop) => {
-                  return {
-                    type: "Feature",
-                    geometry: {
-                      type: "Point",
-                      coordinates: stop.stop.location,
-                    },
-                    properties: {
-                      url: stop.stop.atco_code
-                        ? `/stops/${stop.stop.atco_code}`
-                        : null,
-                      name: stop.stop.name,
-                      bearing: stop.stop.bearing,
-                    },
-                  };
-                }),
-            }}
-          >
-            <Layer {...stopsStyle} />
-          </Source>
+          <Route times={trip.times} />
 
           {vehiclesList.map((item) => {
             return (
