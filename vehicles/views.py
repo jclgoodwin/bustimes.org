@@ -33,7 +33,7 @@ from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
-from bustimes.models import Garage, Route
+from bustimes.models import Garage, Route, Trip
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -672,39 +672,70 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
             if len(dates) > index + 1:
                 context["next_date"] = dates[index + 1]
 
-        try:
-            pipe = redis_client.pipeline(transaction=False)
-            for journey in journeys:
-                pipe.exists(f"journey{journey.id}")
-
-            locations = pipe.execute()
-        except (ConnectionError, AttributeError):
-            for journey in journeys:
-                journey.locations = True
-        else:
-            # whether each journey has some location history in redis
-            for i, journey in enumerate(journeys):
-                journey.locations = locations[i]
-
         context["journeys"] = journeys
-
-        if redis_client and vehicle and vehicle.latest_journey_id:
-
-            tracking = redis_client.get(f"vehicle{vehicle.id}")
-            if tracking:
-                tracking = json.loads(tracking)
-
-                if "tfl_code" in tracking:
-                    context["tracking"] = f'/vehicles/tfl/{tracking["tfl_code"]}'
-                elif "trip_id" in tracking:
-                    context["tracking"] = f'/trips/{tracking["trip_id"]}'
-                else:
-                    context[
-                        "tracking"
-                    ] = f'/map#15/{tracking["coordinates"][1]}/{tracking["coordinates"][0]}'
 
     elif service:
         raise Http404
+
+    if not date or not journeys:
+        return context
+
+    context["journeys"] = journeys = list(journeys)
+
+    # annotate journeys with whether each one has some location history in redis
+    # (in order to show the "Map" link or not)
+    try:
+        pipe = redis_client.pipeline(transaction=False)
+        for journey in journeys:
+            pipe.exists(f"journey{journey.id}")
+
+        locations = pipe.execute()
+    except (ConnectionError, AttributeError):
+        for journey in journeys:
+            journey.locations = True
+    else:
+        for i, journey in enumerate(journeys):
+            journey.locations = locations[i]
+
+    # "Track this bus" button
+    if vehicle and vehicle.latest_journey_id:
+        tracking = redis_client and redis_client.get(f"vehicle{vehicle.id}")
+        if tracking:
+            tracking = json.loads(tracking)
+
+            if "tfl_code" in tracking:
+                context["tracking"] = f'/vehicles/tfl/{tracking["tfl_code"]}'
+            elif "trip_id" in tracking:
+                context["tracking"] = f'/trips/{tracking["trip_id"]}'
+            else:
+                context[
+                    "tracking"
+                ] = f'/map#15/{tracking["coordinates"][1]}/{tracking["coordinates"][0]}'
+
+        # predict next workings
+        if vehicle.latest_journey_id == journeys[-1].pk:
+            trips = [
+                journey.trip
+                for journey in journeys
+                if journey.trip and journey.trip.block
+            ]
+            if trips:
+                last_trip = trips[-1]
+                if all(trip.block == last_trip.block for trip in trips[-3:-1]):
+                    context["predictions"] = (
+                        Trip.objects.filter(
+                            calendar=last_trip.calendar_id,
+                            start__gte=last_trip.end,
+                            block=last_trip.block,
+                            operator=last_trip.operator_id,
+                            garage=last_trip.garage_id,
+                        )
+                        .order_by("start")
+                        .annotate(
+                            destination_name=F("destination__locality__name"),
+                            line_name=F("route__line_name"),
+                        )
+                    )
 
     return context
 

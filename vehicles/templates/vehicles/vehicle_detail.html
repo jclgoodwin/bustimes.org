@@ -120,6 +120,14 @@
             {% endif %}
         </tr>
     {% endfor %}
+    {% for trip in predictions %}
+        <tr class="prediction">
+            <td>{{ trip.line_name }}</td>
+            <td></td>
+            <td class="link tabular"><a href="{{ trip.get_absolute_url }}">{{ trip }}</a></td>
+            <td>{{ trip.destination_name }}</td>
+        </tr>
+    {% endfor %}
     </tbody></table></div>
 
     {% if next_date or previous_date %}
