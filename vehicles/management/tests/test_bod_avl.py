@@ -405,7 +405,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 #         86400.0
                 #     )
 
-            self.assertContains(response, '<a href="/services/u/vehicles">UU</a>')
+            self.assertContains(
+                response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
+            )
             self.assertContains(
                 response, f"""<a href="#journeys/{whippet_journey.id}">09:23</a>"""
             )
