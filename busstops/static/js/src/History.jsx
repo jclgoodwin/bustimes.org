@@ -88,10 +88,10 @@ export default function History() {
 
   return (
     <React.Fragment>
-      <div className={ loading ? "service-map loading" : "service-map" }>
+      <div className="service-map">
         {closeButton}
         <Suspense fallback={<div className="sorry">Loading…</div>}>
-          <JourneyMap journey={journey} />
+          <JourneyMap journey={journey} loading={loading} />
         </Suspense>
       </div>
     </React.Fragment>

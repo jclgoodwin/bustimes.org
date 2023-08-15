@@ -67,6 +67,7 @@ const TripTimetable = React.memo(function TripTimetable({
   onMouseEnter,
   vehicle,
   journey,
+  loading = false,
 }) {
   const last = trip.times?.length - 1;
 
@@ -95,8 +96,13 @@ const TripTimetable = React.memo(function TripTimetable({
     }
   }
 
+  let className = "trip-timetable map-sidebar";
+  if (loading) {
+    className += " loading";
+  }
+
   return (
-    <div className="trip-timetable map-sidebar">
+    <div className={className}>
       {previous}
       {next}
       {trip.times ? (

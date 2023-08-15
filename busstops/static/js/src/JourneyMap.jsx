@@ -132,7 +132,7 @@ const Stops = React.memo(function Stops({ stops }) {
   );
 });
 
-export default function JourneyMap({ journey }) {
+export default function JourneyMap({ journey, loading = false }) {
   const darkMode = useDarkMode();
 
   const [cursor, setCursor] = React.useState();
@@ -294,6 +294,7 @@ export default function JourneyMap({ journey }) {
       <TripTimetable
         onMouseEnter={handleRowHover}
         journey={journey}
+        loading={loading}
         trip={{
           times: journey.stops
             ? journey.stops.map((stop, i) => {

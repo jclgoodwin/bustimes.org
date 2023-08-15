@@ -475,7 +475,15 @@ form p select {
 
 .loading {
     opacity: .5;
-    cursor: progress;
+
+    &,
+    & a {
+        cursor: progress;
+    }
+}
+
+.prediction {
+    opacity: .6;
 }
 
 .groupings {
