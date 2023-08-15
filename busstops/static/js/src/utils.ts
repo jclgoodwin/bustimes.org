@@ -23,7 +23,7 @@ export const useDarkMode = () => {
   return false;
 };
 
-export function getBounds(items) {
+export function getBounds(items: Array<Object>) {
   const bounds = new LngLatBounds();
   for (const item of items) {
     bounds.extend(item.coordinates);

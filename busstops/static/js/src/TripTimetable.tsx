@@ -7,7 +7,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
         onMouseEnter(stop);
       }
     }
-  }, [stop]);
+  }, [stop, onMouseEnter]);
 
   let stopName = stop.stop.name;
   if (stop.stop.icon) {
@@ -17,7 +17,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
     stopName = <a href={`/stops/${stop.stop.atco_code}`}>{stopName}</a>;
   }
 
-  const className = stop.timing_status == "OTH" ? "minor" : null;
+  const className = stop.timing_status === "OTH" ? "minor" : null;
 
   const rowSpan =
     aimedColumn &&
@@ -28,7 +28,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
       : null;
 
   let actual;
-  if (vehicle?.progress && vehicle.progress.prev_stop == stop.stop.atco_code) {
+  if (vehicle?.progress && vehicle.progress.prev_stop === stop.stop.atco_code) {
     actual = vehicle.datetime;
   } else {
     actual = stop.actual_departure_time;
@@ -77,20 +77,20 @@ const TripTimetable = React.memo(function TripTimetable({
 
   if (journey) {
     if (journey.previous) {
-      var previous = new Date(journey.previous.datetime)
+      let previous = new Date(journey.previous.datetime)
         .toTimeString()
         .slice(0, 5);
-      previous = (
+      var previousLink = (
         <p className="previous">
           <a href={`#journeys/${journey.previous.id}`}>&larr; {previous}</a>
         </p>
       );
     }
     if (journey.next) {
-      var next = new Date(journey.next.datetime).toTimeString().slice(0, 5);
-      next = (
+      let nextDate = new Date(journey.next.datetime).toTimeString().slice(0, 5);
+      var nextLink = (
         <p className="next">
-          <a href={`#journeys/${journey.next.id}`}>{next} &rarr;</a>
+          <a href={`#journeys/${journey.next.id}`}>{nextDate} &rarr;</a>
         </p>
       );
     }
@@ -103,8 +103,8 @@ const TripTimetable = React.memo(function TripTimetable({
 
   return (
     <div className={className}>
-      {previous}
-      {next}
+      {previousLink}
+      {nextLink}
       {trip.times ? (
         <table>
           <thead>
@@ -129,9 +129,7 @@ const TripTimetable = React.memo(function TripTimetable({
           </tbody>
         </table>
       ) : null}
-      {trip.notes?.map((note) => (
-        <p key={note.code}>{note.text}</p>
-      ))}
+      {trip.notes?.map((note) => <p key={note.code}>{note.text}</p>)}
     </div>
   );
 });

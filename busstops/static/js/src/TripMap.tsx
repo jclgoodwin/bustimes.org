@@ -5,22 +5,33 @@ import Map, {
   Layer,
   NavigationControl,
   GeolocateControl,
+  MapEvent,
+  LayerProps,
 } from "react-map-gl/maplibre";
 
 import { useRoute } from "wouter";
 import { navigate } from "wouter/use-location";
 
 import { useDarkMode } from "./utils";
-import { LngLatBounds } from "maplibre-gl";
+import { LngLatBounds, LngLatBoundsLike } from "maplibre-gl";
 
 import TripTimetable from "./TripTimetable";
 import StopPopup from "./StopPopup";
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
+declare global {
+  interface Window {
+    SERVICE: number;
+    TRIP_ID: number;
+    VEHICLE_ID: number;
+    STOPS: object;
+  }
+}
+
 const apiRoot = process.env.API_ROOT;
 
-const stopsStyle = {
+const stopsStyle: LayerProps = {
   id: "stops",
   type: "symbol",
   layout: {
@@ -31,7 +42,7 @@ const stopsStyle = {
   },
 };
 
-const routeStyle = {
+const routeStyle: LayerProps = {
   type: "line",
   paint: {
     "line-color": "#666",
@@ -39,7 +50,7 @@ const routeStyle = {
   },
 };
 
-const lineStyle = {
+const lineStyle: LayerProps = {
   type: "line",
   paint: {
     "line-color": "#666",
@@ -145,7 +156,7 @@ export default function TripMap() {
   const [trip, setTrip] = React.useState(window.STOPS);
 
   const bounds = React.useMemo(() => {
-    let bounds = new LngLatBounds();
+    let bounds: LngLatBoundsLike = new LngLatBounds();
     for (let item of trip.times) {
       if (item.stop.location) {
         bounds.extend(item.stop.location);
@@ -156,7 +167,7 @@ export default function TripMap() {
 
   const navigateToTrip = React.useCallback((item) => {
     navigate("/trips/" + item.trip_id);
-  });
+  }, []);
 
   const darkMode = useDarkMode();
 
@@ -207,7 +218,7 @@ export default function TripMap() {
   const vehiclesAbortController = React.useRef(null);
 
   React.useEffect(() => {
-    const loadVehicles = (first) => {
+    const loadVehicles = (first = false) => {
       if (document.hidden) {
         return;
       }
@@ -298,7 +309,7 @@ export default function TripMap() {
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
 
-  const handleMapLoad = React.useCallback((event) => {
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
@@ -324,7 +335,6 @@ export default function TripMap() {
         <Map
           dragRotate={false}
           touchPitch={false}
-          touchRotate={false}
           pitchWithRotate={false}
           maxZoom={18}
           bounds={bounds}

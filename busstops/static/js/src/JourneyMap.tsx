@@ -6,6 +6,10 @@ import Map, {
   NavigationControl,
   GeolocateControl,
   Popup,
+  MapEvent,
+  LayerProps,
+  MapMouseEvent,
+  MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
 import { LngLatBounds } from "maplibre-gl";
@@ -15,7 +19,7 @@ import { useDarkMode } from "./utils";
 import TripTimetable from "./TripTimetable";
 import StopPopup from "./StopPopup";
 
-const stopsStyle = {
+const stopsStyle: LayerProps = {
   id: "stops",
   type: "symbol",
   layout: {
@@ -26,7 +30,7 @@ const stopsStyle = {
   },
 };
 
-const locationsStyle = {
+const locationsStyle: LayerProps = {
   id: "locations",
   type: "symbol",
   layout: {
@@ -38,7 +42,7 @@ const locationsStyle = {
   },
 };
 
-const routeStyle = {
+const routeStyle: LayerProps = {
   type: "line",
   paint: {
     "line-color": "#000",
@@ -63,7 +67,32 @@ function LocationPopup({ location }) {
   );
 }
 
-const Locations = React.memo(function Locations({ locations }) {
+type Location = {
+  coordinates: [number, number];
+  delta: number;
+  direction: number;
+  datetime: string;
+};
+
+type LocationsProps = {
+  locations: Location[];
+};
+
+type Stop = {
+  coordinates: [number, number];
+  atco_code: string;
+  name: string;
+  minor: boolean;
+  heading: number;
+  aimed_arrival_time: string;
+  aimed_departure_time: string;
+};
+
+type StopsProps = {
+  stops: Stop[];
+};
+
+const Locations = React.memo(function Locations({ locations }: LocationsProps) {
   return (
     <React.Fragment>
       <Source
@@ -102,7 +131,7 @@ const Locations = React.memo(function Locations({ locations }) {
   );
 });
 
-const Stops = React.memo(function Stops({ stops }) {
+const Stops = React.memo(function Stops({ stops }: StopsProps) {
   return (
     <Source
       type="geojson"
@@ -135,11 +164,11 @@ const Stops = React.memo(function Stops({ stops }) {
 export default function JourneyMap({ journey, loading = false }) {
   const darkMode = useDarkMode();
 
-  const [cursor, setCursor] = React.useState();
+  const [cursor, setCursor] = React.useState(null);
 
   const [clickedLocation, setClickedLocation] = React.useState(null);
 
-  const onMouseEnter = React.useCallback((e) => {
+  const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     if (e.features.length) {
       setCursor("pointer");
     }
@@ -162,7 +191,7 @@ export default function JourneyMap({ journey, loading = false }) {
   const handleMapClick = React.useCallback((e) => {
     if (e.features.length) {
       for (const feature of e.features) {
-        if (feature.layer.id == "stops") {
+        if (feature.layer.id === "stops") {
           setClickedStop(feature);
           break;
         }
@@ -182,11 +211,11 @@ export default function JourneyMap({ journey, loading = false }) {
         coordinates: a.stop.location,
       },
     });
-  });
+  }, []);
 
   const map = React.useRef(null);
 
-  const handleMapLoad = React.useCallback((event) => {
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
     const _map = event.target;
     map.current = _map;
     _map.keyboard.disableRotation();
@@ -242,7 +271,6 @@ export default function JourneyMap({ journey, loading = false }) {
         <Map
           dragRotate={false}
           touchPitch={false}
-          touchRotate={false}
           pitchWithRotate={false}
           maxZoom={18}
           bounds={bounds}
@@ -297,7 +325,7 @@ export default function JourneyMap({ journey, loading = false }) {
         loading={loading}
         trip={{
           times: journey.stops
-            ? journey.stops.map((stop, i) => {
+            ? journey.stops.map((stop, i: number) => {
                 return {
                   id: i,
                   stop: {

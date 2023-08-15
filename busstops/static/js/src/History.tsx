@@ -17,7 +17,7 @@ export default function History() {
   const closeMap = React.useCallback(() => {
     if (journeyId) {
       if (hasHistory === 1) {
-        history.back();
+        window.history.back();
         hasHistory -= 1;
       } else {
         window.location.hash = "";
@@ -52,7 +52,7 @@ export default function History() {
       window.removeEventListener("hashchange", handleHashChange);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [journeyId]);
+  }, [journeyId, closeMap]);
 
   // let timeout;
 

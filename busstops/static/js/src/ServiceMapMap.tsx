@@ -1,10 +1,14 @@
-import React from "react";
+import React, { ReactElement } from "react";
 
 import Map, {
   Source,
   Layer,
   NavigationControl,
   GeolocateControl,
+  LayerProps,
+  MapEvent,
+  MapLayerMouseEvent,
+  GeoJSONSource,
 } from "react-map-gl/maplibre";
 
 import StopPopup from "./StopPopup";
@@ -13,12 +17,20 @@ import VehiclePopup from "./VehiclePopup";
 
 import { useDarkMode } from "./utils";
 
-const routeStyle = {
+const routeStyle: LayerProps = {
   type: "line",
   paint: {
     "line-color": "#777",
     "line-width": 3,
   },
+};
+
+type ServiceMapMapProps = {
+  vehicles: object;
+  vehiclesList: object[];
+  geometry: object;
+  stops: object;
+  closeButton: ReactElement;
 };
 
 export default function ServiceMapMap({
@@ -27,10 +39,10 @@ export default function ServiceMapMap({
   geometry,
   stops,
   closeButton,
-}) {
+}: ServiceMapMapProps) {
   const darkMode = useDarkMode();
 
-  const [cursor, setCursor] = React.useState();
+  const [cursor, setCursor] = React.useState(null);
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
@@ -46,14 +58,16 @@ export default function ServiceMapMap({
   const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback(
-    (e) => {
-      const srcElement = e.originalEvent.srcElement;
-      const vehicleId =
-        srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
-      if (vehicleId) {
-        setClickedStop(null);
-        setClickedVehicleMarker(vehicleId);
-        return;
+    (e: MapLayerMouseEvent) => {
+      const target = e.originalEvent.target;
+      if (target instanceof HTMLElement) {
+        const vehicleId =
+          target.dataset.vehicleId || target.parentElement.dataset.vehicleId;
+        if (vehicleId) {
+          setClickedStop(null);
+          setClickedVehicleMarker(vehicleId);
+          return;
+        }
       }
 
       if (e.features.length) {
@@ -70,7 +84,7 @@ export default function ServiceMapMap({
     [clickedStop],
   );
 
-  const handleMapLoad = React.useCallback((event) => {
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
@@ -108,7 +122,7 @@ export default function ServiceMapMap({
     );
   }
 
-  const stopsStyle = {
+  const stopsStyle: LayerProps = {
     id: "stops",
     type: "symbol",
     layout: {
@@ -123,7 +137,6 @@ export default function ServiceMapMap({
     <Map
       dragRotate={false}
       touchPitch={false}
-      touchRotate={false}
       pitchWithRotate={false}
       maxZoom={18}
       bounds={window.EXTENT}

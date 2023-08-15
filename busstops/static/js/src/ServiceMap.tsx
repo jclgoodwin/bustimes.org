@@ -1,15 +1,25 @@
 import React, { lazy, Suspense } from "react";
 
-const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
-
 import loadjs from "loadjs";
+
+const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
 const apiRoot = process.env.API_ROOT;
 
 let hasHistory = false;
 let hasCss = false;
 
-export default function OperatorMap() {
+declare global {
+  interface Window {
+    LIVERIES_CSS_URL: string;
+  }
+}
+
+type ServiceMapProps = {
+  serviceId: number;
+};
+
+export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const [isOpen, setOpen] = React.useState(() => {
     return window.location.hash.indexOf("#map") === 0;
   });
@@ -23,7 +33,7 @@ export default function OperatorMap() {
   const closeMap = React.useCallback(() => {
     if (isOpen) {
       if (hasHistory) {
-        history.back();
+        window.history.back();
       } else {
         window.location.hash = "";
       }
@@ -76,7 +86,7 @@ export default function OperatorMap() {
 
       // service map data
       // TODO: linked services
-      fetch(`/services/${window.SERVICE_ID}.json`).then(
+      fetch(`/services/${serviceId}.json`).then(
         (response) => {
           if (response.ok) {
             response.json().then((data) => {
@@ -147,13 +157,14 @@ export default function OperatorMap() {
 
   const vehiclesList = vehicles ? Object.values(vehicles) : null;
 
-  let count = vehiclesList && vehiclesList.length;
+  let count = vehiclesList && vehiclesList.length,
+    countString: string;
 
   if (count) {
     if (count === 1) {
-      count = `${count} bus`;
+      countString = `${count} bus`;
     } else {
-      count = `${count} buses`;
+      countString = `${count} buses`;
     }
   }
 
@@ -185,7 +196,7 @@ export default function OperatorMap() {
             vehiclesList={vehiclesList}
             geometry={geometry}
             stops={stops}
-            count={count}
+            count={countString}
           />
         </Suspense>
       </div>

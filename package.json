@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@types/node": "^20.5.0",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.47.0",
     "eslint-config-react-app": "^7.0.1",

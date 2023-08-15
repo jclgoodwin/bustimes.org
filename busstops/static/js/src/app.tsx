@@ -2,6 +2,9 @@ import React, { lazy } from "react";
 import ReactDOM from "react-dom/client";
 import * as Sentry from "@sentry/react";
 
+import "./maps.css";
+import "maplibre-gl/dist/maplibre-gl.css";
+
 const BigMap = lazy(() => import("./BigMap"));
 const TripMap = lazy(() => import("./TripMap"));
 const OperatorMap = lazy(() => import("./OperatorMap"));
@@ -19,8 +22,13 @@ Sentry.init({
   ],
 });
 
-import "./maps.css";
-import "maplibre-gl/dist/maplibre-gl.css";
+declare global {
+  interface Window {
+    SERVICE_ID: number;
+    STOPS: object;
+    OPERATOR_ID: string;
+  }
+}
 
 let rootElement = document.getElementById("hugemap");
 if (rootElement) {
@@ -37,14 +45,14 @@ if (rootElement) {
       let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <OperatorMap />
+          <OperatorMap noc={window.OPERATOR_ID} />
         </React.StrictMode>,
       );
     } else if (window.SERVICE_ID) {
       let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <ServiceMap />
+          <ServiceMap serviceId={window.SERVICE_ID} />
         </React.StrictMode>,
       );
     } else if (window.STOPS) {

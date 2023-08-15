@@ -7,7 +7,7 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 TimeAgo.addDefaultLocale(en);
 
-function getTimeDelta(seconds) {
+function getTimeDelta(seconds: number) {
   const minutes = Math.round(seconds / 60);
   if (minutes === 1) {
     return "1 minute";
@@ -49,7 +49,7 @@ export default function VehiclePopup({
         onTripClick(item);
       }
     },
-    [item],
+    [item, onTripClick],
   );
 
   let line_name = item.service?.line_name;

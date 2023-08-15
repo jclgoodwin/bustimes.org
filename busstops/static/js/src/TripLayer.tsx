@@ -15,7 +15,7 @@ export default function TripLayer({ tripId }) {
     });
   }, [tripId]);
 
-  if (!trip || trip.id != tripId) {
+  if (!trip || trip.id !== tripId) {
     return (
       <div className="trip-timetable">
         <div className="sorry">Loading trip #{tripId}…</div>
