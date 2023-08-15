@@ -63,7 +63,7 @@ function LocationPopup({ location }) {
   );
 }
 
-const Locations = React.memo(function ({ locations }) {
+const Locations = React.memo(function Locations({ locations }) {
   return (
     <React.Fragment>
       <Source
@@ -102,7 +102,7 @@ const Locations = React.memo(function ({ locations }) {
   );
 });
 
-const Stops = React.memo(function ({ stops }) {
+const Stops = React.memo(function Stops({ stops }) {
   return (
     <Source
       type="geojson"
@@ -172,7 +172,7 @@ export default function JourneyMap({ journey }) {
     }
   }, []);
 
-  const handleRowHover = React.useCallback((a, b) => {
+  const handleRowHover = React.useCallback((a) => {
     setClickedStop({
       properties: {
         atco_code: a.stop.atco_code,

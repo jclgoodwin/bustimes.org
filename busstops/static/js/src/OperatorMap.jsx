@@ -72,13 +72,13 @@ export default function OperatorMap() {
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
 
-  const handleVehicleMarkerClick = React.useCallback((event, id) => {
-    event.originalEvent.preventDefault();
-    setClickedVehicleMarker(id);
-  }, []);
-
   const handleMapClick = React.useCallback((e) => {
-    if (!e.originalEvent.defaultPrevented) {
+    const srcElement = e.originalEvent.srcElement;
+    const vehicleId =
+      srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
+    if (vehicleId) {
+      setClickedVehicleMarker(vehicleId);
+    } else {
       setClickedVehicleMarker(null);
     }
   }, []);
@@ -137,7 +137,6 @@ export default function OperatorMap() {
                 key={item.id}
                 selected={item.id === clickedVehicleMarkerId}
                 vehicle={item}
-                onClick={handleVehicleMarkerClick}
               />
             );
           })}

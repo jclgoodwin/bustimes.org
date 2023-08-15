@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Marker } from "react-map-gl/maplibre";
 
-function VehicleMarker({ vehicle, selected, onClick }) {
+function VehicleMarker({ vehicle, selected }) {
   let className = "vehicle-marker";
 
   let rotation = vehicle.heading;
@@ -39,7 +39,12 @@ function VehicleMarker({ vehicle, selected, onClick }) {
 
   if (vehicle.vehicle.livery && vehicle.vehicle.livery != 262) {
     marker = (
-      <svg className={className}>
+      <svg
+        width="24"
+        height="16"
+        data-vehicle-id={vehicle.id}
+        className={className}
+      >
         <text x="12" y="12">
           {marker}
         </text>
@@ -47,7 +52,7 @@ function VehicleMarker({ vehicle, selected, onClick }) {
     );
   } else {
     marker = (
-      <div className={className} style={css}>
+      <div data-vehicle-id={vehicle.id} className={className} style={css}>
         {marker}
       </div>
     );
@@ -55,14 +60,17 @@ function VehicleMarker({ vehicle, selected, onClick }) {
 
   return (
     <Marker
+      id={vehicle.id}
       latitude={vehicle.coordinates[1]}
       longitude={vehicle.coordinates[0]}
       rotation={rotation}
       style={selected ? { zIndex: 1 } : { zIndex: null }}
-      onClick={(event) => onClick(event, vehicle.id)}
+      data-vehicle-id={vehicle.id}
     >
       {marker}
-      {rotation == null ? null : <div className="arrow" />}
+      {rotation == null ? null : (
+        <div className="arrow" data-vehicle-id={vehicle.id} />
+      )}
     </Marker>
   );
 }

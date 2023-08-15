@@ -113,7 +113,6 @@ const Vehicles = memo(function Vehicles({
   vehicles,
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
-  setClickedStop,
 }) {
   const vehiclesById = React.useMemo(() => {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
@@ -148,12 +147,6 @@ const Vehicles = memo(function Vehicles({
     };
   }, [vehicles]);
 
-  const handleVehicleMarkerClick = React.useCallback((event, id) => {
-    event.originalEvent.preventDefault();
-    setClickedStop(null);
-    setClickedVehicleMarker(id);
-  }, []);
-
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
@@ -166,7 +159,6 @@ const Vehicles = memo(function Vehicles({
           key={item.id}
           selected={item.id === clickedVehicleMarkerId}
           vehicle={item}
-          onClick={handleVehicleMarkerClick}
         />
       );
     });
@@ -196,11 +188,7 @@ const Vehicles = memo(function Vehicles({
         />
       )}
       {clickedVehicle && vehiclesGeoJson && (
-        <VehicleMarker
-          selected={true}
-          vehicle={clickedVehicle}
-          onClick={handleVehicleMarkerClick}
-        />
+        <VehicleMarker selected={true} vehicle={clickedVehicle} />
       )}
     </React.Fragment>
   );
@@ -271,15 +259,12 @@ export default function BigMap() {
             timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
           }
         },
-        (f) => {
-          console.dir(f);
-          // debugger;
+        () => {
           // never mind
         },
       )
-      .catch((e) => {
-        console.dir(e);
-        // debugger;
+      .catch(() => {
+        // never mind
       });
   }, []);
 
@@ -336,24 +321,29 @@ export default function BigMap() {
 
   const handleMapClick = React.useCallback(
     (e) => {
-      if (!e.originalEvent.defaultPrevented) {
-        console.dir(e.features);
-        if (e.features.length) {
-          for (const feature of e.features) {
-            if (feature.layer.id === "vehicles") {
-              setClickedVehicleMarker(feature.id);
-              return;
-            }
-            if (feature.properties.url !== clickedStop) {
-              setClickedStop(feature.properties.url);
-              break;
-            }
-          }
-        } else {
-          setClickedStop(null);
-        }
-        setClickedVehicleMarker(null);
+      const srcElement = e.originalEvent.srcElement;
+      const vehicleId =
+        srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
+      if (vehicleId) {
+        setClickedVehicleMarker(vehicleId);
+        return;
       }
+
+      if (e.features.length) {
+        for (const feature of e.features) {
+          if (feature.layer.id === "vehicles") {
+            setClickedVehicleMarker(feature.id);
+            return;
+          }
+          if (feature.properties.url !== clickedStop) {
+            setClickedStop(feature.properties.url);
+            break;
+          }
+        }
+      } else {
+        setClickedStop(null);
+      }
+      setClickedVehicleMarker(null);
     },
     [clickedStop],
   );
@@ -441,7 +431,6 @@ export default function BigMap() {
           vehicles={vehicles}
           clickedVehicleMarkerId={clickedVehicleMarkerId}
           setClickedVehicleMarker={setClickedVehicleMarker}
-          setClickedStop={setClickedStop}
         />
       ) : null}
 

@@ -48,7 +48,7 @@ const lineStyle = {
   },
 };
 
-const Route = React.memo(function ({ times }) {
+const Route = React.memo(function Route({ times }) {
   const lines = [];
   const lineStrings = [];
   let prevLocation,
@@ -174,21 +174,28 @@ export default function TripMap() {
 
   const handleMapClick = React.useCallback(
     (e) => {
-      if (!e.originalEvent.defaultPrevented) {
-        if (e.features.length) {
-          for (const stop of e.features) {
-            if (
-              !stop.properties.url ||
-              stop.properties.url !== clickedStop?.properties.url
-            ) {
-              setClickedStop(stop);
-            }
-          }
-        } else {
-          setClickedStop(null);
-        }
-        setClickedVehicleMarker(null);
+      const srcElement = e.originalEvent.srcElement;
+      const vehicleId =
+        srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
+      if (vehicleId) {
+        setClickedVehicleMarker(vehicleId);
+        setClickedStop(null);
+        return;
       }
+
+      if (e.features.length) {
+        for (const stop of e.features) {
+          if (
+            !stop.properties.url ||
+            stop.properties.url !== clickedStop?.properties.url
+          ) {
+            setClickedStop(stop);
+          }
+        }
+      } else {
+        setClickedStop(null);
+      }
+      setClickedVehicleMarker(null);
     },
     [clickedStop],
   );
@@ -291,12 +298,6 @@ export default function TripMap() {
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
 
-  const handleVehicleMarkerClick = React.useCallback((event, id) => {
-    event.originalEvent.preventDefault();
-    setClickedStop(null);
-    setClickedVehicleMarker(id);
-  }, []);
-
   const handleMapLoad = React.useCallback((event) => {
     const map = event.target;
     map.keyboard.disableRotation();
@@ -360,7 +361,6 @@ export default function TripMap() {
                 key={item.id || item.stop.atco_code}
                 selected={item.id === clickedVehicleMarkerId}
                 vehicle={item}
-                onClick={handleVehicleMarkerClick}
               />
             );
           })}

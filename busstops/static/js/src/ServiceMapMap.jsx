@@ -45,26 +45,27 @@ export default function ServiceMapMap({
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
-  const handleVehicleMarkerClick = React.useCallback((event, id) => {
-    event.originalEvent.preventDefault();
-    setClickedStop(null);
-    setClickedVehicleMarker(id);
-  }, []);
-
   const handleMapClick = React.useCallback(
     (e) => {
-      if (!e.originalEvent.defaultPrevented) {
-        if (e.features.length) {
-          for (const stop of e.features) {
-            if (stop.properties.url !== clickedStop?.properties.url) {
-              setClickedStop(stop);
-            }
-          }
-        } else {
-          setClickedStop(null);
-        }
-        setClickedVehicleMarker(null);
+      const srcElement = e.originalEvent.srcElement;
+      const vehicleId =
+        srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
+      if (vehicleId) {
+        setClickedStop(null);
+        setClickedVehicleMarker(vehicleId);
+        return;
       }
+
+      if (e.features.length) {
+        for (const stop of e.features) {
+          if (stop.properties.url !== clickedStop?.properties.url) {
+            setClickedStop(stop);
+          }
+        }
+      } else {
+        setClickedStop(null);
+      }
+      setClickedVehicleMarker(null);
     },
     [clickedStop],
   );
@@ -154,7 +155,6 @@ export default function ServiceMapMap({
               key={item.id}
               selected={item.id === clickedVehicleMarkerId}
               vehicle={item}
-              onClick={handleVehicleMarkerClick}
             />
           );
         })
