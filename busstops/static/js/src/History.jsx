@@ -12,6 +12,8 @@ export default function History() {
     }
   });
 
+  const [loading, setLoading] = React.useState(true);
+
   const closeMap = React.useCallback(() => {
     if (journeyId) {
       if (hasHistory === 1) {
@@ -58,10 +60,13 @@ export default function History() {
     if (journeyId) {
       document.body.classList.add("has-overlay");
 
+      setLoading(true);
+
       fetch(`${apiRoot}${journeyId}.json`).then((response) => {
         if (response.ok) {
           response.json().then((data) => {
             data.id = journeyId;
+            setLoading(false);
             setJourney(data);
           });
         }
@@ -83,7 +88,7 @@ export default function History() {
 
   return (
     <React.Fragment>
-      <div className="service-map">
+      <div className={ loading ? "service-map loading" : "service-map" }>
         {closeButton}
         <Suspense fallback={<div className="sorry">Loading…</div>}>
           <JourneyMap journey={journey} />
