@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+from itertools import pairwise
 from urllib.parse import urlencode
 
 from ciso8601 import parse_datetime
@@ -714,14 +715,12 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
         # predict next workings
         if vehicle.latest_journey_id == journeys[-1].pk:
-            trips = [
-                journey.trip
-                for journey in journeys
-                if journey.trip and journey.trip.block
-            ]
+            trips = [journey.trip for journey in journeys if journey.trip]
             if trips:
                 last_trip = trips[-1]
-                if all(trip.block == last_trip.block for trip in trips[-3:-1]):
+                if last_trip.block and all(
+                    trip.block == last_trip.block for trip in trips[-3:-1]
+                ):
                     context["predictions"] = (
                         Trip.objects.filter(
                             calendar=last_trip.calendar_id,
@@ -736,6 +735,10 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                             line_name=F("route__line_name"),
                         )
                     )
+                    for a, b in pairwise(context["predictions"]):
+                        if a.end > b.start:
+                            del context["predictions"]
+                            break
 
     return context
 
