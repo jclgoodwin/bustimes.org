@@ -15,7 +15,7 @@ import { navigate } from "wouter/use-location";
 import { useDarkMode } from "./utils";
 import { LngLatBounds, LngLatBoundsLike } from "maplibre-gl";
 
-import TripTimetable from "./TripTimetable";
+import TripTimetable, { Trip, TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
 import VehicleMarker from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
@@ -25,7 +25,7 @@ declare global {
     SERVICE: number;
     TRIP_ID: number;
     VEHICLE_ID: number;
-    STOPS: object;
+    STOPS: Trip;
   }
 }
 
@@ -59,7 +59,11 @@ const lineStyle: LayerProps = {
   },
 };
 
-const Route = React.memo(function Route({ times }) {
+type RouteProps = {
+  times: TripTime[];
+};
+
+const Route = React.memo(function Route({ times }: RouteProps) {
   const lines = [];
   const lineStrings = [];
   let prevLocation,
@@ -153,7 +157,7 @@ const Route = React.memo(function Route({ times }) {
 export default function TripMap() {
   const [, params] = useRoute("/trips/:id");
 
-  const [trip, setTrip] = React.useState(window.STOPS);
+  const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
   const bounds = React.useMemo(() => {
     let bounds: LngLatBoundsLike = new LngLatBounds();
@@ -171,7 +175,7 @@ export default function TripMap() {
 
   const darkMode = useDarkMode();
 
-  const [cursor, setCursor] = React.useState();
+  const [cursor, setCursor] = React.useState(null);
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");

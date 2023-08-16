@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from "react";
+import { VehicleJourney } from "./JourneyMap";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
@@ -26,7 +27,7 @@ export default function History() {
     }
   }, [journeyId]);
 
-  const [journey, setJourney] = React.useState(null);
+  const [journey, setJourney] = React.useState<VehicleJourney>();
 
   React.useEffect(() => {
     const handleHashChange = () => {

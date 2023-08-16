@@ -1,6 +1,7 @@
 import React, { lazy, Suspense } from "react";
 
 import loadjs from "loadjs";
+import { Vehicle } from "./VehicleMarker";
 
 const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
@@ -40,7 +41,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     }
   }, [isOpen]);
 
-  const [vehicles, setVehicles] = React.useState(null);
+  const [vehicles, setVehicles] = React.useState<Vehicle[]>(null);
 
   const [stops, setStops] = React.useState(null);
 
@@ -74,7 +75,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const first = React.useRef(true);
 
   React.useEffect(() => {
-    let timeout;
+    let timeout: number;
 
     if (isOpen) {
       document.body.classList.add("has-overlay");

@@ -1,6 +1,45 @@
 import React from "react";
+import { VehicleJourney } from "./JourneyMap";
+import { LngLatLike } from "react-map-gl";
+import { Vehicle } from "./VehicleMarker";
 
-function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
+export type TripTime = {
+  id: number;
+  stop: {
+    name: string;
+    atco_code?: string;
+    location?: LngLatLike;
+    icon?: string;
+  };
+  track?: LngLatLike[];
+  aimed_arrival_time: string;
+  aimed_departure_time: string;
+  expected_departure_time?: string;
+  expected_arrival_time?: string;
+  actual_departure_time?: string;
+  // actual_arrival_time: string;
+  timing_status: string;
+};
+
+type Note = {
+  code: string;
+  text: string;
+};
+
+export type Trip = {
+  id?: number;
+  times: TripTime[];
+  notes: Note[];
+};
+
+type RowProps = {
+  stop: TripTime;
+  onMouseEnter: (stop: TripTime) => void;
+  vehicle: any;
+  aimedColumn: boolean;
+};
+
+function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
   const handleMouseEnter = React.useCallback(() => {
     if (onMouseEnter) {
       if (stop.stop.location) {
@@ -9,7 +48,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
     }
   }, [stop, onMouseEnter]);
 
-  let stopName = stop.stop.name;
+  let stopName: any = stop.stop.name;
   if (stop.stop.icon) {
     stopName = `${stopName} (${stop.stop.icon})`;
   }
@@ -23,7 +62,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
     aimedColumn &&
     stop.aimed_arrival_time &&
     stop.aimed_departure_time &&
-    stop.aimed_arrival_time !== stop.stop.aimed_departure_time
+    stop.aimed_arrival_time !== stop.aimed_departure_time
       ? 2
       : null;
 
@@ -62,17 +101,25 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }) {
   );
 }
 
+type TripTimetableProps = {
+  trip: Trip;
+  onMouseEnter?: (stop: TripTime) => void;
+  vehicle?: Vehicle;
+  journey?: VehicleJourney;
+  loading?: boolean | null;
+};
+
 const TripTimetable = React.memo(function TripTimetable({
   trip,
   onMouseEnter,
   vehicle,
   journey,
   loading = false,
-}) {
+}: TripTimetableProps) {
   const last = trip.times?.length - 1;
 
   const aimedColumn = trip.times?.some(
-    (item) => item.aimed_arrival_time || item.aimed_departure_time,
+    (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,
   );
 
   if (journey) {
@@ -120,8 +167,8 @@ const TripTimetable = React.memo(function TripTimetable({
                 key={stop.id || i}
                 aimedColumn={aimedColumn}
                 stop={stop}
-                first={i === 0}
-                last={i === last}
+                // first={i === 0}
+                // last={i === last}
                 onMouseEnter={onMouseEnter}
                 vehicle={vehicle}
               />

@@ -8,14 +8,20 @@ import Map, {
   LayerProps,
   MapEvent,
   MapLayerMouseEvent,
-  GeoJSONSource,
+  LngLatBoundsLike,
 } from "react-map-gl/maplibre";
 
 import StopPopup from "./StopPopup";
-import VehicleMarker from "./VehicleMarker";
+import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
 import { useDarkMode } from "./utils";
+
+declare global {
+  interface Window {
+    EXTENT: LngLatBoundsLike;
+  }
+}
 
 const routeStyle: LayerProps = {
   type: "line",
@@ -26,8 +32,8 @@ const routeStyle: LayerProps = {
 };
 
 type ServiceMapMapProps = {
-  vehicles: object;
-  vehiclesList: object[];
+  vehicles: any;
+  vehiclesList: Vehicle;
   geometry: object;
   stops: object;
   closeButton: ReactElement;
