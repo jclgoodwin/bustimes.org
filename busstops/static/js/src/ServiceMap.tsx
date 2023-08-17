@@ -114,15 +114,10 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
         (response) => {
           if (response.ok) {
             response.json().then((items) => {
-              setVehicles(
-                Object.assign(
-                  {},
-                  ...items.map((item) => ({ [item.id]: item })),
-                ),
-              );
+              setVehicles(items);
               clearTimeout(timeout);
               if (isOpen && items.length && !document.hidden) {
-                timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+                timeout = window.setTimeout(loadVehicles, 10000); // 10 seconds
               }
             });
           }
@@ -154,11 +149,9 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
     };
-  }, [isOpen]);
+  }, [isOpen, serviceId]);
 
-  const vehiclesList = vehicles ? Object.values(vehicles) : null;
-
-  let count = vehiclesList && vehiclesList.length,
+  let count = vehicles && vehicles.length,
     countString: string;
 
   if (count) {
@@ -172,7 +165,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const button = (
     <a className="button" href="#map" onClick={openMap}>
       Map
-      {count ? ` (tracking ${count})` : null}
+      {countString ? ` (tracking ${countString})` : null}
     </a>
   );
 
@@ -194,10 +187,8 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
         <Suspense fallback={<div className="sorry">Loading…</div>}>
           <ServiceMapMap
             vehicles={vehicles}
-            vehiclesList={vehiclesList}
             geometry={geometry}
             stops={stops}
-            count={countString}
           />
         </Suspense>
       </div>

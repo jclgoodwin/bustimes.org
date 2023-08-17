@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { LngLatBounds } from "maplibre-gl";
+import { LngLatBoundsLike } from "react-map-gl";
 
 export const useDarkMode = () => {
   // if (window.matchMedia) {
@@ -27,7 +28,7 @@ type Stop = {
   coordinates: [number, number];
 };
 
-export function getBounds(items: Array<Stop>): LngLatBounds {
+export function getBounds(items: Array<Stop>): LngLatBoundsLike {
   const bounds = new LngLatBounds();
   for (const item of items) {
     bounds.extend(item.coordinates);

@@ -8,10 +8,11 @@ export type TripTime = {
   stop: {
     name: string;
     atco_code?: string;
-    location?: LngLatLike;
+    location?: [number, number];
     icon?: string;
+    bearing?: number;
   };
-  track?: LngLatLike[];
+  track?: [number, number][];
   aimed_arrival_time: string;
   aimed_departure_time: string;
   expected_departure_time?: string;
@@ -116,7 +117,7 @@ const TripTimetable = React.memo(function TripTimetable({
   journey,
   loading = false,
 }: TripTimetableProps) {
-  const last = trip.times?.length - 1;
+  // const last = trip.times?.length - 1;
 
   const aimedColumn = trip.times?.some(
     (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,

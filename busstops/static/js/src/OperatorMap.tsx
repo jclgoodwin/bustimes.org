@@ -6,7 +6,7 @@ import Map, {
   MapEvent,
 } from "react-map-gl/maplibre";
 
-import VehicleMarker from "./VehicleMarker";
+import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
 import { useDarkMode, getBounds } from "./utils";
@@ -17,10 +17,19 @@ type OperatorMapProps = {
   noc: string;
 };
 
-export default function OperatorMap({ noc }) {
+export default function OperatorMap({ noc }: OperatorMapProps) {
   const darkMode = useDarkMode();
 
-  const [vehicles, setVehicles] = React.useState(null);
+  const [vehiclesList, setVehicles] = React.useState<Vehicle[]>(null);
+
+  const vehiclesById = React.useMemo(() => {
+    if (vehiclesList) {
+      return Object.assign(
+        {},
+        ...vehiclesList.map((item) => ({ [item.id]: item })),
+      );
+    }
+  }, [vehiclesList]);
 
   const [bounds, setBounds] = React.useState(null);
 
@@ -39,9 +48,7 @@ export default function OperatorMap({ noc }) {
             setBounds(getBounds(items));
           }
 
-          setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
-          );
+          setVehicles(items);
           clearTimeout(timeout);
           if (!document.hidden) {
             timeout = setTimeout(loadVehicles, 10000); // 10 seconds
@@ -88,11 +95,9 @@ export default function OperatorMap({ noc }) {
     map.touchZoomRotate.disableRotation();
   }, []);
 
-  if (!vehicles) {
+  if (!vehiclesList) {
     return <div className="sorry">Loading…</div>;
   }
-
-  const vehiclesList = Object.values(vehicles);
 
   if (!vehiclesList.length) {
     return (
@@ -101,7 +106,7 @@ export default function OperatorMap({ noc }) {
   }
 
   const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
+    clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   // const clickedTripId = clickedVehicle?.trip_id;
 
@@ -113,10 +118,12 @@ export default function OperatorMap({ noc }) {
           touchPitch={false}
           pitchWithRotate={false}
           maxZoom={18}
-          bounds={bounds}
-          fitBoundsOptions={{
-            maxZoom: 15,
-            padding: 50,
+          initialViewState={{
+            bounds: bounds,
+            fitBoundsOptions: {
+              maxZoom: 15,
+              padding: 50,
+            },
           }}
           mapStyle={
             darkMode

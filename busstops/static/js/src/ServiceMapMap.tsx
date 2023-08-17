@@ -19,7 +19,7 @@ import { useDarkMode } from "./utils";
 
 declare global {
   interface Window {
-    EXTENT: LngLatBoundsLike;
+    EXTENT: [number, number, number, number];
   }
 }
 
@@ -32,20 +32,18 @@ const routeStyle: LayerProps = {
 };
 
 type ServiceMapMapProps = {
-  vehicles: any;
-  vehiclesList: Vehicle;
-  geometry: object;
-  stops: object;
-  closeButton: ReactElement;
+  vehicles: Vehicle[];
+  geometry: any;
+  stops: any;
+  // closeButton: ReactElement;
 };
 
 export default function ServiceMapMap({
   vehicles,
-  vehiclesList,
   geometry,
   stops,
-  closeButton,
-}: ServiceMapMapProps) {
+} // closeButton,
+: ServiceMapMapProps) {
   const darkMode = useDarkMode();
 
   const [cursor, setCursor] = React.useState(null);
@@ -57,6 +55,10 @@ export default function ServiceMapMap({
   const onMouseLeave = React.useCallback(() => {
     setCursor(null);
   }, []);
+
+  const vehiclesById = React.useMemo(() => {
+    return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
+  }, [vehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -104,13 +106,13 @@ export default function ServiceMapMap({
   }, []);
 
   const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
+    clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   let popup = null;
-  if (vehiclesList && vehiclesList.length === 1) {
+  if (vehicles && vehicles.length === 1) {
     popup = (
       <VehiclePopup
-        item={vehiclesList[0]}
+        item={vehicles[0]}
         closeButton={false}
         onClose={() => {
           setClickedVehicleMarker(null);
@@ -145,9 +147,11 @@ export default function ServiceMapMap({
       touchPitch={false}
       pitchWithRotate={false}
       maxZoom={18}
-      bounds={window.EXTENT}
-      fitBoundsOptions={{
-        padding: 20,
+      initialViewState={{
+        bounds: window.EXTENT,
+        fitBoundsOptions: {
+          padding: 20,
+        },
       }}
       cursor={cursor}
       onMouseEnter={onMouseEnter}
@@ -165,10 +169,10 @@ export default function ServiceMapMap({
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {closeButton}
+      {/* {closeButton} */}
 
-      {vehiclesList ? (
-        vehiclesList.map((item) => {
+      {vehicles ? (
+        vehicles.map((item) => {
           return (
             <VehicleMarker
               key={item.id}

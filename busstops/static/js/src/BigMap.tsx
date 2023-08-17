@@ -9,7 +9,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
-import VehicleMarker from "./VehicleMarker";
+import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup from "./StopPopup";
 
@@ -120,18 +120,8 @@ function fetchJson(what, bounds) {
   );
 }
 
-type VehiclesItem = {
-  id: number;
-  coordinates: [number, number];
-  vehicle: {
-    colour: string;
-    colours: string;
-    url: string;
-  };
-};
-
 type VehiclesProps = {
-  vehicles: VehiclesItem[];
+  vehicles: Vehicle[];
   clickedVehicleMarkerId: number;
   setClickedVehicleMarker: any;
 };
@@ -283,7 +273,7 @@ export default function BigMap() {
             });
           }
           if (!document.hidden) {
-            timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
+            timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
           }
         },
         () => {

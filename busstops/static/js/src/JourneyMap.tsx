@@ -9,8 +9,8 @@ import Map, {
   MapEvent,
   LayerProps,
   MapLayerMouseEvent,
-  MapGeoJSONFeature,
   LngLatLike,
+  LngLatBounds as LngLatBoundsType,
 } from "react-map-gl/maplibre";
 
 import { LngLatBounds } from "maplibre-gl";
@@ -32,7 +32,7 @@ type Stop = {
   aimed_departure_time: string;
   minor: boolean;
   heading: number;
-  coordinates: LngLatLike;
+  coordinates?: [number, number];
   actual_departure_time: string;
 };
 
@@ -207,7 +207,7 @@ export default function JourneyMap({
     setClickedLocation(null);
   }, []);
 
-  const [clickedStop, setClickedStop] = React.useState<MapGeoJSONFeature>();
+  const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
     if (e.features.length) {
@@ -295,9 +295,11 @@ export default function JourneyMap({
           touchPitch={false}
           pitchWithRotate={false}
           maxZoom={18}
-          bounds={bounds}
-          fitBoundsOptions={{
-            padding: 50,
+          initialViewState={{
+            bounds: bounds,
+            fitBoundsOptions: {
+              padding: 50,
+            },
           }}
           cursor={cursor}
           onMouseEnter={onMouseEnter}

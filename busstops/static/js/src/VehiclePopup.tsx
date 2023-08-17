@@ -35,13 +35,21 @@ function Delay({ item }) {
   }
 }
 
+type VehiclePopupProps = {
+  item: any;
+  onClose: any;
+  closeButton?: boolean;
+  onTripClick?: any;
+  activeLink?: boolean;
+};
+
 export default function VehiclePopup({
   item,
   onClose,
   closeButton = true,
   onTripClick = null,
   activeLink = false,
-}) {
+}: VehiclePopupProps) {
   const handleTripClick = React.useCallback(
     (e) => {
       if (onTripClick) {
@@ -71,7 +79,7 @@ export default function VehiclePopup({
       );
     }
   } else if (item.service?.url) {
-    if (item.service.url != window.location.pathname) {
+    if (item.service.url !== window.location.pathname) {
       line_name = <a href={item.service.url}>{line_name}</a>;
     }
   }

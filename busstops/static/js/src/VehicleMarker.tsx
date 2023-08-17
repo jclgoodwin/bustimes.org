@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { CSSProperties, ReactElement, memo } from "react";
 import { LngLatLike, Marker } from "react-map-gl/maplibre";
 
 export type Vehicle = {
@@ -8,24 +8,24 @@ export type Vehicle = {
   datetime: string;
   destination: string;
   block: string;
-  tfl_code: string;
+  tfl_code?: string;
   trip_id: number;
   service_id: number;
   service: {
-    url: string;
+    url?: string;
     line_name: string;
   };
   vehicle: {
     url: string;
     name: string;
-    features: string;
-    livery: number;
-    colour: string;
-    text_colour: string | undefined;
-    css: string | undefined;
-    right_css: string | undefined;
+    features?: string;
+    livery?: number;
+    colour?: string;
+    colours?: string;
+    text_colour?: string;
+    css?: string;
+    right_css?: string;
   };
-  right_css: string | undefined;
 };
 
 type VehicleMarkerProps = {
@@ -38,14 +38,17 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
 
   let rotation = vehicle.heading;
 
-  let css = vehicle.vehicle.css;
+  let css: CSSProperties;
+  if (vehicle.vehicle.css) {
+    css.background = vehicle.vehicle.css;
+  }
 
   if (rotation != null) {
     if (rotation < 180) {
       rotation -= 90;
       className += " right";
       if (vehicle.vehicle.right_css) {
-        css = vehicle.vehicle.right_css;
+        css.background = vehicle.vehicle.right_css;
       }
     } else {
       rotation -= 270;
@@ -54,20 +57,15 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
 
   if (vehicle.vehicle.livery) {
     className += " livery-" + vehicle.vehicle.livery;
-  } else if (css) {
-    css = {
-      background: css,
-    };
-    if (vehicle.vehicle.text_colour) {
-      className += " white-text";
-    }
+  } else if (css && vehicle.vehicle.text_colour) {
+    className += " white-text";
   }
 
   if (selected) {
     className += " selected";
   }
 
-  let marker = vehicle.service?.line_name;
+  let marker: string | ReactElement = vehicle.service?.line_name;
 
   if (vehicle.vehicle.livery && vehicle.vehicle.livery !== 262) {
     marker = (
@@ -106,7 +104,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
   );
 }
 
-function propsAreEqual(prev, props) {
+function propsAreEqual(prev: VehicleMarkerProps, props: VehicleMarkerProps) {
   return (
     prev.selected === props.selected &&
     prev.vehicle.datetime === props.vehicle.datetime
