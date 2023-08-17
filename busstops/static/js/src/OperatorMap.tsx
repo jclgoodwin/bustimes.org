@@ -51,7 +51,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
           setVehicles(items);
           clearTimeout(timeout);
           if (!document.hidden) {
-            timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+            timeout = window.setTimeout(loadVehicles, 10000); // 10 seconds
           }
         });
       });
@@ -73,7 +73,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
     };
-  }, []);
+  }, [noc]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);

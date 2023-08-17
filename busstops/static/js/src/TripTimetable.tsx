@@ -1,6 +1,5 @@
 import React from "react";
 import { VehicleJourney } from "./JourneyMap";
-import { LngLatLike } from "react-map-gl";
 import { Vehicle } from "./VehicleMarker";
 
 export type TripTime = {

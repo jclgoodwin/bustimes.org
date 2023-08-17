@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
 import { LngLatBounds } from "maplibre-gl";
-import { LngLatBoundsLike } from "react-map-gl";
+import { LngLatBounds as LngLatBoundsType} from "react-map-gl/maplibre";
 
 export const useDarkMode = () => {
   // if (window.matchMedia) {
@@ -28,11 +27,11 @@ type Stop = {
   coordinates: [number, number];
 };
 
-export function getBounds(items: Array<Stop>): LngLatBoundsLike {
-  const bounds = new LngLatBounds();
+export function getBounds(items: Array<Stop>) {
+  let bounds = new LngLatBounds();
   for (const item of items) {
     bounds.extend(item.coordinates);
   }
 
-  return bounds;
+  return bounds as LngLatBoundsType;
 }

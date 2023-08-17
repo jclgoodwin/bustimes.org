@@ -156,7 +156,7 @@ const Route = React.memo(function Route({ times }: RouteProps) {
 });
 
 export default function TripMap() {
-  const [match, params] = useRoute("/trips/:id");
+  const [, {tripId}] = useRoute<{tripId: ""}>("/trips/:tripId");
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
@@ -191,12 +191,18 @@ export default function TripMap() {
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
       const target = e.originalEvent.target;
-      if (target instanceof HTMLElement) {
-        const vehicleId =
-          target.dataset.vehicleId || target.parentElement.dataset.vehicleId;
+      let vehicleId: string;
+      if (target instanceof Element) {
+        if (target instanceof HTMLElement) {
+          vehicleId = target.dataset.vehicleId;
+        }
+        if (!vehicleId) {
+          vehicleId = target.parentElement.dataset.vehicleId;
+        }
         if (vehicleId) {
-          setClickedVehicleMarker(vehicleId);
+          setClickedVehicleMarker(parseInt(vehicleId, 10));
           setClickedStop(null);
+          e.preventDefault();
           return;
         }
       }
@@ -214,14 +220,15 @@ export default function TripMap() {
         setClickedStop(null);
       }
       setClickedVehicleMarker(null);
+      e.preventDefault();
     },
     [clickedStop],
   );
 
-  const [tripVehicle, setTripVehicle] = React.useState(null);
-  const [vehicles, setVehicles] = React.useState<Vehicle[]>(null);
+  const [tripVehicle, setTripVehicle] = React.useState<Vehicle>();
+  const [vehicles, setVehicles] = React.useState<Vehicle[]>([]);
 
-  const vehiclesById = React.useMemo(() => {
+  const vehiclesById = React.useMemo<[number: Vehicle]>(() => {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
   }, [vehicles]);
 
@@ -237,10 +244,10 @@ export default function TripMap() {
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
         url = `${url}?id=${window.VEHICLE_ID}`;
-      } else if (!window.SERVICE || !params) {
+      } else if (!window.SERVICE || !tripId) {
         return;
       } else {
-        url = `${url}?service=${window.SERVICE}&trip=${params.id}`;
+        url = `${url}?service=${window.SERVICE}&trip=${tripId}`;
       }
 
       if (vehiclesAbortController.current) {
@@ -261,7 +268,7 @@ export default function TripMap() {
             setVehicles(items);
             for (const item of items) {
               if (
-                (params && item.trip_id == params.id) ||
+                (tripId && item.trip_id === tripId) ||
                 (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
               ) {
                 if (first) {
@@ -283,12 +290,12 @@ export default function TripMap() {
     };
 
     const loadTrip = () => {
-      if (params) {
-        if (trip && trip.id && params.id == trip.id.toString()) {
+      if (tripId) {
+        if (trip && trip.id && tripId === trip.id.toString()) {
           return;
         }
         setTripVehicle(null);
-        fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
+        fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
           if (response.ok) {
             response.json().then(setTrip);
           }
@@ -311,10 +318,10 @@ export default function TripMap() {
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [params]);
+  }, [tripId]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState(null);
+    React.useState<number>();
 
   const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
@@ -385,7 +392,7 @@ export default function TripMap() {
           {clickedVehicle ? (
             <VehiclePopup
               item={clickedVehicle}
-              activeLink={clickedVehicle?.trip_id == params?.id}
+              activeLink={clickedVehicle?.trip_id.toString() === tripId}
               onTripClick={navigateToTrip}
               onClose={() => {
                 setClickedVehicleMarker(null);

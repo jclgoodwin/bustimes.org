@@ -10,7 +10,7 @@ import Map, {
   LayerProps,
   MapLayerMouseEvent,
   LngLatLike,
-  LngLatBounds as LngLatBoundsType,
+  // LngLatBounds as LngLatBoundsType,
 } from "react-map-gl/maplibre";
 
 import { LngLatBounds } from "maplibre-gl";

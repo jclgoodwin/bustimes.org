@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactElement, memo } from "react";
+import React, { ReactElement, memo } from "react";
 import { LngLatLike, Marker } from "react-map-gl/maplibre";
 
 export type Vehicle = {
@@ -38,9 +38,9 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
 
   let rotation = vehicle.heading;
 
-  let css: CSSProperties;
+  let background;
   if (vehicle.vehicle.css) {
-    css.background = vehicle.vehicle.css;
+    background = vehicle.vehicle.css;
   }
 
   if (rotation != null) {
@@ -48,7 +48,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
       rotation -= 90;
       className += " right";
       if (vehicle.vehicle.right_css) {
-        css.background = vehicle.vehicle.right_css;
+        background = vehicle.vehicle.right_css;
       }
     } else {
       rotation -= 270;
@@ -57,7 +57,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
 
   if (vehicle.vehicle.livery) {
     className += " livery-" + vehicle.vehicle.livery;
-  } else if (css && vehicle.vehicle.text_colour) {
+  } else if (background && vehicle.vehicle.text_colour) {
     className += " white-text";
   }
 
@@ -82,7 +82,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
     );
   } else {
     marker = (
-      <div data-vehicle-id={vehicle.id} className={className} style={css}>
+      <div data-vehicle-id={vehicle.id} className={className} style={background && {background: background}}>
         {marker}
       </div>
     );

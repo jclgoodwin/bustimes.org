@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React from "react";
 
 import Map, {
   Source,
@@ -8,7 +8,6 @@ import Map, {
   LayerProps,
   MapEvent,
   MapLayerMouseEvent,
-  LngLatBoundsLike,
 } from "react-map-gl/maplibre";
 
 import StopPopup from "./StopPopup";
@@ -42,11 +41,10 @@ export default function ServiceMapMap({
   vehicles,
   geometry,
   stops,
-} // closeButton,
-: ServiceMapMapProps) {
+}: ServiceMapMapProps) {
   const darkMode = useDarkMode();
 
-  const [cursor, setCursor] = React.useState(null);
+  const [cursor, setCursor] = React.useState<string | null>(null);
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
@@ -57,23 +55,34 @@ export default function ServiceMapMap({
   }, []);
 
   const vehiclesById = React.useMemo(() => {
-    return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
+    if (vehicles) {
+      return Object.assign(
+        {},
+        ...vehicles.map((item) => ({ [item.id]: item })),
+      );
+    }
   }, [vehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState(null);
+    React.useState<number>();
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
+
       const target = e.originalEvent.target;
-      if (target instanceof HTMLElement) {
-        const vehicleId =
-          target.dataset.vehicleId || target.parentElement.dataset.vehicleId;
+      if (target instanceof Element) {
+        let vehicleId: string;
+        if (target instanceof HTMLElement) {
+          vehicleId = target.dataset.vehicleId;
+        }
+        if (!vehicleId) {
+          vehicleId = target.parentElement.dataset.vehicleId;
+        }
         if (vehicleId) {
+          setClickedVehicleMarker(parseInt(vehicleId, 10));
           setClickedStop(null);
-          setClickedVehicleMarker(vehicleId);
           return;
         }
       }
@@ -168,8 +177,6 @@ export default function ServiceMapMap({
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
-
-      {/* {closeButton} */}
 
       {vehicles ? (
         vehicles.map((item) => {
