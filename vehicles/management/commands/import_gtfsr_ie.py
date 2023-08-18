@@ -83,17 +83,19 @@ class Command(ImportLiveVehiclesCommand):
             f"{item.vehicle.trip.start_date} 12:00:00",
             "%Y%m%d %H:%M:%S",
         )
+        if datetime.fromtimestamp(item.vehicle.timestamp) - start_date > timedelta(hours=12):
+            start_date += timedelta(days=1)
+
         start_time = (
             start_date
             - timedelta(hours=12)
             + parse_duration(item.vehicle.trip.start_time)
         ).replace(tzinfo=self.tzinfo)
 
-        journey = VehicleJourney(code=item.vehicle.trip.trip_id, datetime=start_time)
+        journey = VehicleJourney(code=item.vehicle.trip.trip_id)
 
         if (
             (latest_journey := vehicle.latest_journey)
-            and latest_journey.datetime == journey.datetime
             and latest_journey.code == journey.code
         ):
             return latest_journey

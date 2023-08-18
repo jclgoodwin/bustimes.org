@@ -13,6 +13,7 @@ Sentry.init({
   allowUrls: [/bustimes\.org\/static\//],
   ignoreErrors: [
     "TypeError: Failed to fetch",
+    "TypeError: Load failed",
     "AbortError: The user aborted a request",
     "AbortError: Fetch is aborted",
     "NetworkError when attempting to fetch resource",

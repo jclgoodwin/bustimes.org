@@ -233,9 +233,6 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if journey.destination != original_destination:
                 latest_journey.destination = journey.destination
                 changed.append("destination")
-            if journey.datetime and latest_journey.datetime != journey.datetime:
-                latest_journey.datetime = journey.datetime
-                changed.append("datetime")
             if changed:
                 latest_journey.save(update_fields=changed)
                 if changed != ["source"]:
