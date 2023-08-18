@@ -32,7 +32,7 @@ def same_journey(latest_journey, journey, latest_datetime, when):
         return False
 
     if journey.id:
-        return journey.id == latest_journey.id
+        return latest_journey.id == journey.id
 
     if latest_journey.datetime == journey.datetime:
         return True
@@ -48,7 +48,7 @@ def same_journey(latest_journey, journey, latest_datetime, when):
     if (when - latest_journey.datetime) > twelve_hours:
         return False
 
-    if latest_journey.code and journey.code:
+    if latest_journey.code and journey.code and not journey.datetime:
         return str(latest_journey.code) == str(journey.code)
 
     if latest_journey.direction and journey.direction:
@@ -232,6 +232,9 @@ class ImportLiveVehiclesCommand(BaseCommand):
             if journey.destination != original_destination:
                 latest_journey.destination = journey.destination
                 changed.append("destination")
+            if journey.datetime and latest_journey.datetime != journey.datetime:
+                latest_journey.datetime = journey.datetime
+                changed.append("datetime")
             if changed:
                 latest_journey.save(update_fields=changed)
                 if changed != ["source"]:

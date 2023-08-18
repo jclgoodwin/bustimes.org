@@ -45,4 +45,5 @@ urlpatterns = [
     path("journeys/<int:pk>.json", views.journey_json),
     path("liveries.<int:version>.css", views.liveries_css),
     path("map", views.map, name="map"),
+    path("maps", views.map),
 ]
