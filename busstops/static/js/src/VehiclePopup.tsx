@@ -7,7 +7,7 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en.json";
 TimeAgo.addDefaultLocale(en);
 
-function getTimeDelta(seconds) {
+function getTimeDelta(seconds: number) {
   const minutes = Math.round(seconds / 60);
   if (minutes === 1) {
     return "1 minute";
@@ -35,13 +35,21 @@ function Delay({ item }) {
   }
 }
 
+type VehiclePopupProps = {
+  item: any;
+  onClose: any;
+  closeButton?: boolean;
+  onTripClick?: any;
+  activeLink?: boolean;
+};
+
 export default function VehiclePopup({
   item,
   onClose,
   closeButton = true,
   onTripClick = null,
   activeLink = false,
-}) {
+}: VehiclePopupProps) {
   const handleTripClick = React.useCallback(
     (e) => {
       if (onTripClick) {
@@ -49,7 +57,7 @@ export default function VehiclePopup({
         onTripClick(item);
       }
     },
-    [item],
+    [item, onTripClick],
   );
 
   let line_name = item.service?.line_name;
@@ -71,7 +79,7 @@ export default function VehiclePopup({
       );
     }
   } else if (item.service?.url) {
-    if (item.service.url != window.location.pathname) {
+    if (item.service.url !== window.location.pathname) {
       line_name = <a href={item.service.url}>{line_name}</a>;
     }
   }

@@ -1,10 +1,10 @@
 import React, { memo } from "react";
 import { Marker } from "react-map-gl/maplibre";
 
-function StopMarker(props) {
+function StopMarker({ stop, onClick }) {
   let className = "stop";
 
-  let rotation = props.stop.properties.bearing;
+  let rotation = stop.properties.bearing;
 
   if (rotation === null) {
     className += " no-direction";
@@ -12,8 +12,8 @@ function StopMarker(props) {
     rotation += 45;
   }
 
-  if (props.stop.properties.icon) {
-    if (props.stop.properties.icon.length === 1) {
+  if (stop.properties.icon) {
+    if (stop.properties.icon.length === 1) {
       className += " stop-1";
     }
   } else {
@@ -22,15 +22,15 @@ function StopMarker(props) {
 
   return (
     <Marker
-      latitude={props.stop.geometry.coordinates[1]}
-      longitude={props.stop.geometry.coordinates[0]}
+      latitude={stop.geometry.coordinates[1]}
+      longitude={stop.geometry.coordinates[0]}
       onClick={(event) => {
         event.originalEvent.preventDefault();
-        props.onClick(props.stop);
+        onClick(stop);
       }}
     >
       <div className={className}>
-        {props.stop.properties.icon}
+        {stop.properties.icon}
         <div
           className="stop-arrow"
           style={{ transform: `rotate(${rotation}deg)` }}

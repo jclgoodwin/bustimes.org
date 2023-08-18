@@ -1,4 +1,5 @@
 import React, { lazy, Suspense } from "react";
+import { VehicleJourney } from "./JourneyMap";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
@@ -17,7 +18,7 @@ export default function History() {
   const closeMap = React.useCallback(() => {
     if (journeyId) {
       if (hasHistory === 1) {
-        history.back();
+        window.history.back();
         hasHistory -= 1;
       } else {
         window.location.hash = "";
@@ -26,7 +27,7 @@ export default function History() {
     }
   }, [journeyId]);
 
-  const [journey, setJourney] = React.useState(null);
+  const [journey, setJourney] = React.useState<VehicleJourney>();
 
   React.useEffect(() => {
     const handleHashChange = () => {
@@ -52,7 +53,7 @@ export default function History() {
       window.removeEventListener("hashchange", handleHashChange);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [journeyId]);
+  }, [journeyId, closeMap]);
 
   // let timeout;
 

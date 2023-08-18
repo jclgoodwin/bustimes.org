@@ -1,15 +1,26 @@
 import React, { lazy, Suspense } from "react";
 
-const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
-
 import loadjs from "loadjs";
+import { Vehicle } from "./VehicleMarker";
+
+const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
 const apiRoot = process.env.API_ROOT;
 
 let hasHistory = false;
 let hasCss = false;
 
-export default function OperatorMap() {
+declare global {
+  interface Window {
+    LIVERIES_CSS_URL: string;
+  }
+}
+
+type ServiceMapProps = {
+  serviceId: number;
+};
+
+export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const [isOpen, setOpen] = React.useState(() => {
     return window.location.hash.indexOf("#map") === 0;
   });
@@ -23,14 +34,14 @@ export default function OperatorMap() {
   const closeMap = React.useCallback(() => {
     if (isOpen) {
       if (hasHistory) {
-        history.back();
+        window.history.back();
       } else {
         window.location.hash = "";
       }
     }
   }, [isOpen]);
 
-  const [vehicles, setVehicles] = React.useState(null);
+  const [vehicles, setVehicles] = React.useState<Vehicle[]>(null);
 
   const [stops, setStops] = React.useState(null);
 
@@ -64,7 +75,7 @@ export default function OperatorMap() {
   const first = React.useRef(true);
 
   React.useEffect(() => {
-    let timeout;
+    let timeout: number;
 
     if (isOpen) {
       document.body.classList.add("has-overlay");
@@ -76,7 +87,7 @@ export default function OperatorMap() {
 
       // service map data
       // TODO: linked services
-      fetch(`/services/${window.SERVICE_ID}.json`).then(
+      fetch(`/services/${serviceId}.json`).then(
         (response) => {
           if (response.ok) {
             response.json().then((data) => {
@@ -103,15 +114,10 @@ export default function OperatorMap() {
         (response) => {
           if (response.ok) {
             response.json().then((items) => {
-              setVehicles(
-                Object.assign(
-                  {},
-                  ...items.map((item) => ({ [item.id]: item })),
-                ),
-              );
+              setVehicles(items);
               clearTimeout(timeout);
               if (isOpen && items.length && !document.hidden) {
-                timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+                timeout = window.setTimeout(loadVehicles, 10000); // 10 seconds
               }
             });
           }
@@ -143,24 +149,23 @@ export default function OperatorMap() {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
     };
-  }, [isOpen]);
+  }, [isOpen, serviceId]);
 
-  const vehiclesList = vehicles ? Object.values(vehicles) : null;
-
-  let count = vehiclesList && vehiclesList.length;
+  let count = vehicles && vehicles.length,
+    countString: string;
 
   if (count) {
     if (count === 1) {
-      count = `${count} bus`;
+      countString = `${count} bus`;
     } else {
-      count = `${count} buses`;
+      countString = `${count} buses`;
     }
   }
 
   const button = (
     <a className="button" href="#map" onClick={openMap}>
       Map
-      {count ? ` (tracking ${count})` : null}
+      {countString ? ` (tracking ${countString})` : null}
     </a>
   );
 
@@ -182,10 +187,8 @@ export default function OperatorMap() {
         <Suspense fallback={<div className="sorry">Loading…</div>}>
           <ServiceMapMap
             vehicles={vehicles}
-            vehiclesList={vehiclesList}
             geometry={geometry}
             stops={stops}
-            count={count}
           />
         </Suspense>
       </div>

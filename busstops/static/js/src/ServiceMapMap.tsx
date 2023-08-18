@@ -5,15 +5,24 @@ import Map, {
   Layer,
   NavigationControl,
   GeolocateControl,
+  LayerProps,
+  MapEvent,
+  MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
 import StopPopup from "./StopPopup";
-import VehicleMarker from "./VehicleMarker";
+import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
 import { useDarkMode } from "./utils";
 
-const routeStyle = {
+declare global {
+  interface Window {
+    EXTENT: [number, number, number, number];
+  }
+}
+
+const routeStyle: LayerProps = {
   type: "line",
   paint: {
     "line-color": "#777",
@@ -21,16 +30,21 @@ const routeStyle = {
   },
 };
 
+type ServiceMapMapProps = {
+  vehicles: Vehicle[];
+  geometry: any;
+  stops: any;
+  // closeButton: ReactElement;
+};
+
 export default function ServiceMapMap({
   vehicles,
-  vehiclesList,
   geometry,
   stops,
-  closeButton,
-}) {
+}: ServiceMapMapProps) {
   const darkMode = useDarkMode();
 
-  const [cursor, setCursor] = React.useState();
+  const [cursor, setCursor] = React.useState<string | null>(null);
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
@@ -40,20 +54,37 @@ export default function ServiceMapMap({
     setCursor(null);
   }, []);
 
+  const vehiclesById = React.useMemo(() => {
+    if (vehicles) {
+      return Object.assign(
+        {},
+        ...vehicles.map((item) => ({ [item.id]: item })),
+      );
+    }
+  }, [vehicles]);
+
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState(null);
+    React.useState<number>();
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback(
-    (e) => {
-      const srcElement = e.originalEvent.srcElement;
-      const vehicleId =
-        srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
-      if (vehicleId) {
-        setClickedStop(null);
-        setClickedVehicleMarker(vehicleId);
-        return;
+    (e: MapLayerMouseEvent) => {
+
+      const target = e.originalEvent.target;
+      if (target instanceof Element) {
+        let vehicleId: string;
+        if (target instanceof HTMLElement) {
+          vehicleId = target.dataset.vehicleId;
+        }
+        if (!vehicleId) {
+          vehicleId = target.parentElement.dataset.vehicleId;
+        }
+        if (vehicleId) {
+          setClickedVehicleMarker(parseInt(vehicleId, 10));
+          setClickedStop(null);
+          return;
+        }
       }
 
       if (e.features.length) {
@@ -70,7 +101,7 @@ export default function ServiceMapMap({
     [clickedStop],
   );
 
-  const handleMapLoad = React.useCallback((event) => {
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
@@ -84,13 +115,13 @@ export default function ServiceMapMap({
   }, []);
 
   const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
+    clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   let popup = null;
-  if (vehiclesList && vehiclesList.length === 1) {
+  if (vehicles && vehicles.length === 1) {
     popup = (
       <VehiclePopup
-        item={vehiclesList[0]}
+        item={vehicles[0]}
         closeButton={false}
         onClose={() => {
           setClickedVehicleMarker(null);
@@ -108,7 +139,7 @@ export default function ServiceMapMap({
     );
   }
 
-  const stopsStyle = {
+  const stopsStyle: LayerProps = {
     id: "stops",
     type: "symbol",
     layout: {
@@ -123,12 +154,13 @@ export default function ServiceMapMap({
     <Map
       dragRotate={false}
       touchPitch={false}
-      touchRotate={false}
       pitchWithRotate={false}
       maxZoom={18}
-      bounds={window.EXTENT}
-      fitBoundsOptions={{
-        padding: 20,
+      initialViewState={{
+        bounds: window.EXTENT,
+        fitBoundsOptions: {
+          padding: 20,
+        },
       }}
       cursor={cursor}
       onMouseEnter={onMouseEnter}
@@ -146,10 +178,8 @@ export default function ServiceMapMap({
       <NavigationControl showCompass={false} />
       <GeolocateControl />
 
-      {closeButton}
-
-      {vehiclesList ? (
-        vehiclesList.map((item) => {
+      {vehicles ? (
+        vehicles.map((item) => {
           return (
             <VehicleMarker
               key={item.id}
