@@ -48,9 +48,10 @@ def same_journey(latest_journey, journey, latest_datetime, when):
     if (when - latest_journey.datetime) > twelve_hours:
         return False
 
-    if latest_journey.code and journey.code and not journey.datetime:
-        if latest_journey.destination == journey.destination:
-            return str(latest_journey.code) == str(journey.code)
+    if latest_journey.code and journey.code:
+        return str(latest_journey.code, latest_journey.destination) == str(
+            journey.code, journey.destination
+        )
 
     if latest_journey.direction and journey.direction:
         if latest_journey.direction != journey.direction:
