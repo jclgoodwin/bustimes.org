@@ -117,8 +117,6 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
-  // const clickedTripId = clickedVehicle?.trip_id;
-
   return (
     <React.Fragment>
       <div className="operator-map">
@@ -150,7 +148,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
             return (
               <VehicleMarker
                 key={item.id}
-                selected={item.id === clickedVehicleMarkerId}
+                selected={item === clickedVehicle}
                 vehicle={item}
               />
             );

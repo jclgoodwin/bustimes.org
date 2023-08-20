@@ -62,7 +62,11 @@ export default function ServiceMapMap({
   }, [vehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState<number>();
+    React.useState<number>(function () {
+      if (vehicles && vehicles.length === 1) {
+        return vehicles[0].id;
+      }
+    });
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
@@ -114,28 +118,6 @@ export default function ServiceMapMap({
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
-  let popup = null;
-  if (vehicles && vehicles.length === 1) {
-    popup = (
-      <VehiclePopup
-        item={vehicles[0]}
-        closeButton={false}
-        onClose={() => {
-          setClickedVehicleMarker(null);
-        }}
-      />
-    );
-  } else if (clickedVehicle) {
-    popup = (
-      <VehiclePopup
-        item={clickedVehicle}
-        onClose={() => {
-          setClickedVehicleMarker(null);
-        }}
-      />
-    );
-  }
-
   const stopsStyle: LayerProps = {
     id: "stops",
     type: "symbol",
@@ -180,7 +162,7 @@ export default function ServiceMapMap({
           return (
             <VehicleMarker
               key={item.id}
-              selected={item.id === clickedVehicleMarkerId}
+              selected={item === clickedVehicle}
               vehicle={item}
             />
           );
@@ -189,7 +171,14 @@ export default function ServiceMapMap({
         <div className="maplibregl-ctrl">Loading</div>
       )}
 
-      {popup}
+      {clickedVehicle ? (
+        <VehiclePopup
+          item={clickedVehicle}
+          onClose={() => {
+            setClickedVehicleMarker(null);
+          }}
+        />
+      ) : null}
 
       {clickedStop ? (
         <StopPopup item={clickedStop} onClose={() => setClickedStop(null)} />

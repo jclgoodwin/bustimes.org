@@ -172,7 +172,7 @@ const Vehicles = memo(function Vehicles({
       return (
         <VehicleMarker
           key={item.id}
-          selected={item.id === clickedVehicleMarkerId}
+          selected={item === clickedVehicle}
           vehicle={item}
         />
       );
