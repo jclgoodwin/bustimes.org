@@ -155,7 +155,8 @@ const Route = React.memo(function Route({ times }: RouteProps) {
 });
 
 export default function TripMap() {
-  const [, { tripId }] = useRoute<{ tripId: "" }>("/trips/:tripId");
+  const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
+  const tripId = params?.tripId;
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
@@ -394,7 +395,7 @@ export default function TripMap() {
           {clickedVehicle ? (
             <VehiclePopup
               item={clickedVehicle}
-              activeLink={clickedVehicle?.trip_id.toString() === tripId}
+              activeLink={clickedVehicle.trip_id?.toString() === tripId}
               onTripClick={navigateToTrip}
               onClose={() => {
                 setClickedVehicleMarker(null);

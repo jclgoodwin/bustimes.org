@@ -4,13 +4,13 @@ import { LngLatLike, Marker } from "react-map-gl/maplibre";
 export type Vehicle = {
   id: number;
   coordinates: LngLatLike;
-  heading: number;
+  heading?: number;
   datetime: string;
   destination: string;
-  block: string;
+  block?: string;
   tfl_code?: string;
-  trip_id: number;
-  service_id: number;
+  trip_id?: number;
+  service_id?: number;
   service: {
     url?: string;
     line_name: string;
@@ -38,7 +38,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
 
   let rotation = vehicle.heading;
 
-  let background;
+  let background: string | null;
   if (vehicle.vehicle.css) {
     background = vehicle.vehicle.css;
   }
