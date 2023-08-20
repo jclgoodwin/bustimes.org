@@ -6,10 +6,9 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY busstops/static /app/busstops/static
-COPY Makefile .eslintignore .eslintrc.js .sass-lint.yml /app/
-# RUN make lint
+COPY Makefile .eslintrc.js tsconfig.json /app/
+RUN npm run lint && npm run build
 RUN make build-static
-RUN npm run build
 
 
 FROM python:3.11-bullseye

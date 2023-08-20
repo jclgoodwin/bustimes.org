@@ -1,7 +1,7 @@
 import React from "react";
 import { Popup } from "react-map-gl/maplibre";
 
-export default function StopPopup({ item, onClose, anchor }) {
+export default function StopPopup({ item, onClose }) {
   let name = item.properties.name;
 
   if (item.properties.url) {
@@ -26,7 +26,6 @@ export default function StopPopup({ item, onClose, anchor }) {
       longitude={item.geometry.coordinates[0]}
       closeOnClick={false}
       onClose={onClose}
-      anchor={anchor}
       focusAfterOpen={false}
     >
       {name}

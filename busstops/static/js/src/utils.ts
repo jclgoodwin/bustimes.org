@@ -1,9 +1,5 @@
-import { useState, useEffect } from "react";
-import { LngLatBounds } from "maplibre-gl";
-
 export const useDarkMode = () => {
-  return false;
-
+  /*
   if (window.matchMedia) {
     const query = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -20,16 +16,8 @@ export const useDarkMode = () => {
         query.removeEventListener("change", handleChange);
       };
     }, []);
-
-    return darkMode;
   }
+  */
+
+  return false;
 };
-
-export function getBounds(items) {
-  const bounds = new LngLatBounds();
-  for (const item of items) {
-    bounds.extend(item.coordinates);
-  }
-
-  return bounds;
-}

@@ -3,55 +3,70 @@ import React from "react";
 import Map, {
   NavigationControl,
   GeolocateControl,
+  MapEvent,
 } from "react-map-gl/maplibre";
 
-// import TripLayer from "./TripLayer";
-import VehicleMarker from "./VehicleMarker";
+import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
-import { useDarkMode, getBounds } from "./utils";
+import { LngLatBounds } from "maplibre-gl";
 
 const apiRoot = process.env.API_ROOT;
 
-export default function OperatorMap() {
-  // dark mode:
+type OperatorMapProps = {
+  noc: string;
+};
 
-  const darkMode = useDarkMode();
+function getBounds(items: Vehicle[]) {
+  let bounds = new LngLatBounds();
+  for (const item of items) {
+    bounds.extend(item.coordinates);
+  }
 
-  const [loading, setLoading] = React.useState(true);
+  return bounds;
+}
 
-  const [vehicles, setVehicles] = React.useState(null);
+export default function OperatorMap({ noc }: OperatorMapProps) {
+  const darkMode = false;
+
+  const [vehiclesList, setVehicles] = React.useState<Vehicle[]>(null);
+
+  const vehiclesById = React.useMemo(() => {
+    if (vehiclesList) {
+      return Object.assign(
+        {},
+        ...vehiclesList.map((item) => ({ [item.id]: item })),
+      );
+    }
+  }, [vehiclesList]);
 
   const [bounds, setBounds] = React.useState(null);
 
   React.useEffect(() => {
-    let timeout;
+    let timeout: number;
 
-    const loadVehicles = () => {
-      if (document.hidden) {
+    const loadVehicles = (first = false) => {
+      if (document.hidden && !first) {
         return;
       }
 
-      let url = apiRoot + "vehicles.json?operator=" + window.OPERATOR_ID;
+      let url = apiRoot + "vehicles.json?operator=" + noc;
       fetch(url).then((response) => {
         response.json().then((items) => {
-          if (!bounds) {
+          if (first) {
             setBounds(getBounds(items));
           }
 
-          setVehicles(
-            Object.assign({}, ...items.map((item) => ({ [item.id]: item }))),
-          );
-          setLoading(false);
+          setVehicles(items);
           clearTimeout(timeout);
           if (!document.hidden) {
-            timeout = setTimeout(loadVehicles, 10000); // 10 seconds
+            timeout = window.setTimeout(loadVehicles, 10000); // 10 seconds
           }
         });
       });
     };
 
-    loadVehicles();
+    loadVehicles(true);
 
     const handleVisibilityChange = (event) => {
       if (event.target.hidden) {
@@ -67,7 +82,7 @@ export default function OperatorMap() {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(timeout);
     };
-  }, []);
+  }, [noc]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -83,17 +98,15 @@ export default function OperatorMap() {
     }
   }, []);
 
-  const handleMapLoad = React.useCallback((event) => {
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
   }, []);
 
-  if (loading) {
+  if (!vehiclesList) {
     return <div className="sorry">Loading…</div>;
   }
-
-  const vehiclesList = Object.values(vehicles);
 
   if (!vehiclesList.length) {
     return (
@@ -102,9 +115,7 @@ export default function OperatorMap() {
   }
 
   const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
-
-  // const clickedTripId = clickedVehicle?.trip_id;
+    clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   return (
     <React.Fragment>
@@ -112,12 +123,14 @@ export default function OperatorMap() {
         <Map
           dragRotate={false}
           touchPitch={false}
-          touchRotate={false}
           pitchWithRotate={false}
           maxZoom={18}
-          bounds={bounds}
-          fitBoundsOptions={{
-            padding: 50,
+          initialViewState={{
+            bounds: bounds,
+            fitBoundsOptions: {
+              maxZoom: 15,
+              padding: 50,
+            },
           }}
           mapStyle={
             darkMode
@@ -135,7 +148,7 @@ export default function OperatorMap() {
             return (
               <VehicleMarker
                 key={item.id}
-                selected={item.id === clickedVehicleMarkerId}
+                selected={item === clickedVehicle}
                 vehicle={item}
               />
             );

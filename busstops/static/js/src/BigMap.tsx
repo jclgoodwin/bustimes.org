@@ -1,20 +1,29 @@
-import React, { memo } from "react";
+import React, { ReactElement, memo } from "react";
 
 import Map, {
   Source,
   Layer,
   NavigationControl,
   GeolocateControl,
+  ViewState,
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
-import VehicleMarker from "./VehicleMarker";
+import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup from "./StopPopup";
 
-import { useDarkMode } from "./utils";
-
 const apiRoot = process.env.API_ROOT;
+
+declare global {
+  interface Window {
+    INITIAL_VIEW_STATE: Partial<ViewState> & {
+      zoom: number;
+      latitude: number;
+      longitude: number;
+    };
+  }
+}
 
 try {
   if (localStorage.vehicleMap) {
@@ -31,7 +40,7 @@ try {
   // ok
 }
 
-const updateLocalStorage = debounce(function (zoom, latLng) {
+const updateLocalStorage = debounce(function (zoom: number, latLng) {
   localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
 }, 2000);
 
@@ -43,11 +52,11 @@ function containsBounds(a, b) {
   return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
-function shouldShowStops(zoom) {
+function shouldShowStops(zoom: number) {
   return zoom >= 14;
 }
 
-function shouldShowVehicles(zoom) {
+function shouldShowVehicles(zoom: number) {
   return zoom >= 6;
 }
 
@@ -109,11 +118,17 @@ function fetchJson(what, bounds) {
   );
 }
 
+type VehiclesProps = {
+  vehicles: Vehicle[];
+  clickedVehicleMarkerId: number;
+  setClickedVehicleMarker: any;
+};
+
 const Vehicles = memo(function Vehicles({
   vehicles,
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
-}) {
+}: VehiclesProps) {
   const vehiclesById = React.useMemo(() => {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
   }, [vehicles]);
@@ -150,14 +165,14 @@ const Vehicles = memo(function Vehicles({
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
-  let markers;
+  let markers: ReactElement[] | ReactElement;
 
   if (!vehiclesGeoJson) {
     markers = vehicles.map((item) => {
       return (
         <VehicleMarker
           key={item.id}
-          selected={item.id === clickedVehicleMarkerId}
+          selected={item === clickedVehicle}
           vehicle={item}
         />
       );
@@ -195,7 +210,7 @@ const Vehicles = memo(function Vehicles({
 });
 
 export default function BigMap() {
-  const darkMode = useDarkMode();
+  const darkMode = false;
 
   const [vehicles, setVehicles] = React.useState(null);
 
@@ -256,7 +271,7 @@ export default function BigMap() {
             });
           }
           if (!document.hidden) {
-            timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
+            timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
           }
         },
         () => {
@@ -268,8 +283,8 @@ export default function BigMap() {
       });
   }, []);
 
-  const handleMoveEnd = React.useCallback(
-    debounce(
+  const handleMoveEnd = debounce(
+    React.useCallback(
       (evt) => {
         const map = evt.target;
         bounds.current = map.getBounds();
@@ -294,12 +309,12 @@ export default function BigMap() {
         setZoom(zoom);
         updateLocalStorage(zoom, map.getCenter());
       },
-      400,
-      {
-        leading: true,
-      },
+      [loadStops, loadVehicles],
     ),
-    [],
+    400,
+    {
+      leading: true,
+    },
   );
 
   React.useEffect(() => {
@@ -314,7 +329,7 @@ export default function BigMap() {
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [zoom]);
+  }, [zoom, loadVehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState(null);
@@ -348,7 +363,7 @@ export default function BigMap() {
     [clickedStop],
   );
 
-  const handleMapLoad = React.useCallback((event) => {
+  const handleMapLoad = function (event) {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
@@ -375,7 +390,7 @@ export default function BigMap() {
         height: 16,
       });
     });
-  }, []);
+  };
 
   const [cursor, setCursor] = React.useState(null);
 
@@ -392,11 +407,9 @@ export default function BigMap() {
 
   return (
     <Map
-      padding={0}
       initialViewState={window.INITIAL_VIEW_STATE}
       dragRotate={false}
       touchPitch={false}
-      touchRotate={false}
       pitchWithRotate={false}
       onMoveEnd={handleMoveEnd}
       minZoom={5}
@@ -443,4 +456,3 @@ export default function BigMap() {
     </Map>
   );
 }
-[];

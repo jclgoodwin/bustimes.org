@@ -2,6 +2,10 @@ import React, { lazy } from "react";
 import ReactDOM from "react-dom/client";
 import * as Sentry from "@sentry/react";
 
+import "./maps.css";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { Trip } from "./TripTimetable";
+
 const BigMap = lazy(() => import("./BigMap"));
 const TripMap = lazy(() => import("./TripMap"));
 const OperatorMap = lazy(() => import("./OperatorMap"));
@@ -20,36 +24,41 @@ Sentry.init({
   ],
 });
 
-import "./maps.css";
-import "maplibre-gl/dist/maplibre-gl.css";
+declare global {
+  interface Window {
+    SERVICE_ID: number;
+    STOPS: Trip;
+    OPERATOR_ID: string;
+  }
+}
 
-let root = document.getElementById("hugemap");
-if (root) {
-  root = ReactDOM.createRoot(root);
+let rootElement = document.getElementById("hugemap");
+if (rootElement) {
+  let root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
       <BigMap />
     </React.StrictMode>,
   );
 } else {
-  root = document.getElementById("map");
-  if (root) {
+  rootElement = document.getElementById("map");
+  if (rootElement) {
     if (window.location.href.indexOf("/operators/") !== -1) {
-      root = ReactDOM.createRoot(root);
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <OperatorMap />
+          <OperatorMap noc={window.OPERATOR_ID} />
         </React.StrictMode>,
       );
     } else if (window.SERVICE_ID) {
-      root = ReactDOM.createRoot(root);
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <ServiceMap />
+          <ServiceMap serviceId={window.SERVICE_ID} />
         </React.StrictMode>,
       );
     } else if (window.STOPS) {
-      root = ReactDOM.createRoot(root);
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <TripMap />
@@ -57,9 +66,9 @@ if (root) {
       );
     }
   } else {
-    root = document.getElementById("history");
-    if (root) {
-      root = ReactDOM.createRoot(root);
+    let rootElement = document.getElementById("history");
+    if (rootElement) {
+      let root = ReactDOM.createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <History />

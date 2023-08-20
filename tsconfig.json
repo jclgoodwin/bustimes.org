@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "lib": ["es6", "dom"],
+    "jsx": "react",
+    "esModuleInterop": true
+  },
+  "files": [
+    "busstops/static/js/src/app.tsx"
+  ]
+}

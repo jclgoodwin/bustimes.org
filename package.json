@@ -1,30 +1,34 @@
 {
   "devDependencies": {
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.13",
-    "eslint": "^8.45.0",
-    "eslint-config-xo": "^0.43.1",
-    "eslint-plugin-react": "^7.33.0",
+    "esbuild": "^0.18.3",
+    "eslint": "^8.47.0",
+    "eslint-config-react-app": "^7.0.1",
     "postcss": "^8.4.21",
     "postcss-cli": "^9.1.0",
     "sass": "^1.58.3",
-    "sass-lint": "^1.13.1"
+    "sass-lint": "^1.13.1",
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "@sentry/react": "^7.57.0",
+    "@types/node": "^20.5.0",
     "accessible-autocomplete": "^2.0.4",
-    "esbuild": "^0.18.3",
     "html5shiv": "^3.7.3",
     "loadjs": "^4.2.0",
     "maplibre-gl": "^3.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.2",
-    "react-time-ago": "^7.2.1",
+    "react-timeago": "^7.1.0",
     "reqwest": "^2.0.5",
     "wouter": "^2.11.0"
   },
   "scripts": {
-    "watch": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --watch --format=esm --sourcemap",
-    "build": "esbuild busstops/static/js/src/app.jsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --minify --format=esm --sourcemap"
+    "watch": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --watch --format=esm --sourcemap",
+    "build": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --minify --format=esm --sourcemap",
+    "lint": "tsc -noEmit && eslint busstops/static/js/src"
   }
 }

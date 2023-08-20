@@ -5,22 +5,33 @@ import Map, {
   Layer,
   NavigationControl,
   GeolocateControl,
+  MapEvent,
+  LayerProps,
+  MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
 import { useRoute } from "wouter";
 import { navigate } from "wouter/use-location";
 
-import { useDarkMode } from "./utils";
 import { LngLatBounds } from "maplibre-gl";
 
-import TripTimetable from "./TripTimetable";
+import TripTimetable, { Trip, TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
-import VehicleMarker from "./VehicleMarker";
+import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
+
+declare global {
+  interface Window {
+    SERVICE: number;
+    TRIP_ID: number;
+    VEHICLE_ID: number;
+    STOPS: Trip;
+  }
+}
 
 const apiRoot = process.env.API_ROOT;
 
-const stopsStyle = {
+const stopsStyle: LayerProps = {
   id: "stops",
   type: "symbol",
   layout: {
@@ -31,7 +42,7 @@ const stopsStyle = {
   },
 };
 
-const routeStyle = {
+const routeStyle: LayerProps = {
   type: "line",
   paint: {
     "line-color": "#666",
@@ -39,7 +50,7 @@ const routeStyle = {
   },
 };
 
-const lineStyle = {
+const lineStyle: LayerProps = {
   type: "line",
   paint: {
     "line-color": "#666",
@@ -48,7 +59,11 @@ const lineStyle = {
   },
 };
 
-const Route = React.memo(function Route({ times }) {
+type RouteProps = {
+  times: TripTime[];
+};
+
+const Route = React.memo(function Route({ times }: RouteProps) {
   const lines = [];
   const lineStrings = [];
   let prevLocation,
@@ -140,27 +155,32 @@ const Route = React.memo(function Route({ times }) {
 });
 
 export default function TripMap() {
-  const [, params] = useRoute("/trips/:id");
+  const [, { tripId }] = useRoute<{ tripId: "" }>("/trips/:tripId");
 
-  const [trip, setTrip] = React.useState(window.STOPS);
+  const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
-  const bounds = React.useMemo(() => {
-    let bounds = new LngLatBounds();
+  const bounds = React.useMemo((): [number, number, number, number] => {
+    const _bounds = new LngLatBounds();
     for (let item of trip.times) {
       if (item.stop.location) {
-        bounds.extend(item.stop.location);
+        _bounds.extend(item.stop.location);
       }
     }
-    return bounds;
+    return [
+      _bounds.getWest(),
+      _bounds.getSouth(),
+      _bounds.getEast(),
+      _bounds.getNorth(),
+    ];
   }, [trip]);
 
   const navigateToTrip = React.useCallback((item) => {
     navigate("/trips/" + item.trip_id);
-  });
+  }, []);
 
-  const darkMode = useDarkMode();
+  const darkMode = false;
 
-  const [cursor, setCursor] = React.useState();
+  const [cursor, setCursor] = React.useState(null);
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
@@ -173,14 +193,20 @@ export default function TripMap() {
   const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback(
-    (e) => {
-      const srcElement = e.originalEvent.srcElement;
-      const vehicleId =
-        srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
-      if (vehicleId) {
-        setClickedVehicleMarker(vehicleId);
-        setClickedStop(null);
-        return;
+    (e: MapLayerMouseEvent) => {
+      const target = e.originalEvent.target;
+      if (target instanceof HTMLElement || target instanceof SVGElement) {
+        let vehicleId: string;
+        vehicleId = target.dataset.vehicleId;
+        if (!vehicleId) {
+          vehicleId = target.parentElement.dataset.vehicleId;
+        }
+        if (vehicleId) {
+          setClickedVehicleMarker(parseInt(vehicleId, 10));
+          setClickedStop(null);
+          e.preventDefault();
+          return;
+        }
       }
 
       if (e.features.length) {
@@ -196,18 +222,37 @@ export default function TripMap() {
         setClickedStop(null);
       }
       setClickedVehicleMarker(null);
+      e.preventDefault();
     },
     [clickedStop],
   );
 
-  const [tripVehicle, setTripVehicle] = React.useState(null);
-  const [vehicles, setVehicles] = React.useState(null);
+  const [tripVehicle, setTripVehicle] = React.useState<Vehicle>();
+  const [vehicles, setVehicles] = React.useState<Vehicle[]>([]);
+
+  const vehiclesById = React.useMemo<[number: Vehicle]>(() => {
+    return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
+  }, [vehicles]);
 
   const timeout = React.useRef(null);
   const vehiclesAbortController = React.useRef(null);
 
+  const loadTrip = React.useCallback(() => {
+    if (tripId) {
+      if (trip && trip.id && tripId === trip.id.toString()) {
+        return;
+      }
+      setTripVehicle(null);
+      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+        if (response.ok) {
+          response.json().then(setTrip);
+        }
+      });
+    }
+  }, [trip, tripId]);
+
   React.useEffect(() => {
-    const loadVehicles = (first) => {
+    const loadVehicles = (first = false) => {
       if (document.hidden) {
         return;
       }
@@ -215,10 +260,10 @@ export default function TripMap() {
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
         url = `${url}?id=${window.VEHICLE_ID}`;
-      } else if (!window.SERVICE) {
+      } else if (!window.SERVICE || !tripId) {
         return;
       } else {
-        url = `${url}?service=${window.SERVICE}&trip=${params.id}`;
+        url = `${url}?service=${window.SERVICE}&trip=${tripId}`;
       }
 
       if (vehiclesAbortController.current) {
@@ -235,47 +280,29 @@ export default function TripMap() {
           if (!response.ok) {
             return;
           }
-          response.json().then((items) => {
-            setVehicles(
-              Object.assign(
-                {},
-                ...items.map((item) => {
-                  if (
-                    (params && item.trip_id == params.id) ||
-                    (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
-                  ) {
-                    if (first) {
-                      setClickedVehicleMarker(item.id);
-                    }
-                    setTripVehicle(item);
-                  }
-                  return { [item.id]: item };
-                }),
-              ),
-            );
+          response.json().then(function (items: Vehicle[]): void {
+            setVehicles(items);
+            for (const item of items) {
+              if (
+                (tripId && item.trip_id === tripId) ||
+                (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
+              ) {
+                if (first) {
+                  setClickedVehicleMarker(item.id);
+                }
+                setTripVehicle(item);
+                break;
+              }
+            }
           });
           if (!document.hidden) {
-            timeout.current = setTimeout(loadVehicles, 12000); // 12 seconds
+            timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
           }
         },
         (reason) => {
           // never mind
         },
       );
-    };
-
-    const loadTrip = () => {
-      if (params) {
-        if (trip && trip.id && params.id == trip.id.toString()) {
-          return;
-        }
-        setTripVehicle(null);
-        fetch(`${apiRoot}api/trips/${params.id}/`).then((response) => {
-          if (response.ok) {
-            response.json().then(setTrip);
-          }
-        });
-      }
     };
 
     loadTrip();
@@ -293,12 +320,12 @@ export default function TripMap() {
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [params?.id]);
+  }, [tripId, loadTrip]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState(null);
+    React.useState<number>();
 
-  const handleMapLoad = React.useCallback((event) => {
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
@@ -314,9 +341,7 @@ export default function TripMap() {
   }, []);
 
   const clickedVehicle =
-    clickedVehicleMarkerId && vehicles[clickedVehicleMarkerId];
-
-  const vehiclesList = vehicles ? Object.values(vehicles) : [];
+    clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   return (
     <React.Fragment>
@@ -324,18 +349,19 @@ export default function TripMap() {
         <Map
           dragRotate={false}
           touchPitch={false}
-          touchRotate={false}
           pitchWithRotate={false}
           maxZoom={18}
-          bounds={bounds}
           style={{
             position: "absolute",
             top: 0,
             right: 0,
             left: 0,
           }}
-          fitBoundsOptions={{
-            padding: 50,
+          initialViewState={{
+            bounds: bounds,
+            fitBoundsOptions: {
+              padding: 50,
+            },
           }}
           cursor={cursor}
           onMouseEnter={onMouseEnter}
@@ -355,10 +381,10 @@ export default function TripMap() {
 
           <Route times={trip.times} />
 
-          {vehiclesList.map((item) => {
+          {vehicles.map((item) => {
             return (
               <VehicleMarker
-                key={item.id || item.stop.atco_code}
+                key={item.id}
                 selected={item.id === clickedVehicleMarkerId}
                 vehicle={item}
               />
@@ -368,7 +394,7 @@ export default function TripMap() {
           {clickedVehicle ? (
             <VehiclePopup
               item={clickedVehicle}
-              activeLink={clickedVehicle?.trip_id == params?.id}
+              activeLink={clickedVehicle?.trip_id.toString() === tripId}
               onTripClick={navigateToTrip}
               onClose={() => {
                 setClickedVehicleMarker(null);
