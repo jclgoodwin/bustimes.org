@@ -11,7 +11,7 @@ import Map, {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import { LngLatBounds } from "maplibre-gl";
+import { LngLatBounds, MapGeoJSONFeature } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
 
@@ -172,7 +172,7 @@ const Stops = React.memo(function Stops({ stops }: StopsProps) {
 });
 
 type JourneyMapProps = {
-  journey: VehicleJourney;
+  journey?: VehicleJourney;
   loading: boolean;
 };
 
@@ -182,32 +182,32 @@ export default function JourneyMap({
 }: JourneyMapProps) {
   const darkMode = false;
 
-  const [cursor, setCursor] = React.useState(null);
+  const [cursor, setCursor] = React.useState<string>();
 
-  const [clickedLocation, setClickedLocation] = React.useState(null);
+  const [clickedLocation, setClickedLocation] = React.useState<MapGeoJSONFeature>();
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
-    if (e.features.length) {
+    if (e.features?.length) {
       setCursor("pointer");
-    }
 
-    for (const feature of e.features) {
-      if (feature.layer.id === "locations") {
-        setClickedLocation(feature);
-        break;
+      for (const feature of e.features) {
+        if (feature.layer.id === "locations") {
+          setClickedLocation(feature);
+          break;
+        }
       }
     }
   }, []);
 
   const onMouseLeave = React.useCallback(() => {
-    setCursor(null);
-    setClickedLocation(null);
+    setCursor(undefined);
+    setClickedLocation(undefined);
   }, []);
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
-    if (e.features.length) {
+    if (e.features?.length) {
       for (const feature of e.features) {
         if (feature.layer.id === "stops") {
           setClickedStop(feature);
@@ -232,7 +232,7 @@ export default function JourneyMap({
     });
   }, []);
 
-  const map = React.useRef(null);
+  const map = React.useRef<Map>();
 
   const handleMapLoad = React.useCallback((event: MapEvent) => {
     const _map = event.target;

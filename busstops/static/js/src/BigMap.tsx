@@ -6,6 +6,7 @@ import Map, {
   NavigationControl,
   GeolocateControl,
   ViewState,
+  LngLatBounds
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
@@ -44,11 +45,11 @@ const updateLocalStorage = debounce(function (zoom: number, latLng) {
   localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
 }, 2000);
 
-function getBoundsQueryString(bounds) {
+function getBoundsQueryString(bounds: LngLatBounds): string {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
 }
 
-function containsBounds(a, b) {
+function containsBounds(a: LngLatBounds, b: LngLatBounds): boolean {
   return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
@@ -103,7 +104,7 @@ function Stops({ stops, clickedStopUrl, setClickedStop }) {
   );
 }
 
-function fetchJson(what, bounds) {
+function fetchJson(what: string, bounds: LngLatBounds) {
   const url = "/" + what + ".json" + getBoundsQueryString(bounds);
 
   return fetch(url).then(
@@ -231,7 +232,7 @@ export default function BigMap() {
   const bounds = React.useRef(null);
   const stopsHighWaterMark = React.useRef(null);
   const vehiclesHighWaterMark = React.useRef(null);
-  const vehiclesAbortController = React.useRef(null);
+  const vehiclesAbortController = React.useRef<AbortController>(null);
   const vehiclesLength = React.useRef(null);
 
   const loadStops = React.useCallback(() => {
