@@ -167,10 +167,10 @@ export default function TripMap() {
       }
     }
     return [
-      _bounds.getNorth(),
+      _bounds.getWest(),
       _bounds.getSouth(),
       _bounds.getEast(),
-      _bounds.getWest(),
+      _bounds.getNorth(),
     ];
   }, [trip]);
 
@@ -195,11 +195,9 @@ export default function TripMap() {
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
       const target = e.originalEvent.target;
-      let vehicleId: string;
-      if (target instanceof Element) {
-        if (target instanceof HTMLElement) {
-          vehicleId = target.dataset.vehicleId;
-        }
+      if (target instanceof HTMLElement || target instanceof SVGElement) {
+        let vehicleId: string;
+        vehicleId = target.dataset.vehicleId;
         if (!vehicleId) {
           vehicleId = target.parentElement.dataset.vehicleId;
         }

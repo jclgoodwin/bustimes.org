@@ -269,10 +269,11 @@ export default function JourneyMap({
         }
       }
       return [
-        _bounds.getNorth(),
+        _bounds.getWest(),
         _bounds.getSouth(),
         _bounds.getEast(),
-        _bounds.getWest(),
+        _bounds.getNorth(),
+
       ];
     }
   }, [journey]);

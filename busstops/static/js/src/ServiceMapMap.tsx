@@ -73,11 +73,8 @@ export default function ServiceMapMap({
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
       const target = e.originalEvent.target;
-      if (target instanceof Element) {
-        let vehicleId: string;
-        if (target instanceof HTMLElement) {
-          vehicleId = target.dataset.vehicleId;
-        }
+      if (target instanceof HTMLElement || target instanceof SVGElement) {
+        let vehicleId = target.dataset.vehicleId;
         if (!vehicleId) {
           vehicleId = target.parentElement.dataset.vehicleId;
         }

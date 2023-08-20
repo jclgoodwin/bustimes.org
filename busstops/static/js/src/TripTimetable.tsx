@@ -167,8 +167,6 @@ const TripTimetable = React.memo(function TripTimetable({
                 key={stop.id || i}
                 aimedColumn={aimedColumn}
                 stop={stop}
-                // first={i === 0}
-                // last={i === last}
                 onMouseEnter={onMouseEnter}
                 vehicle={vehicle}
               />
