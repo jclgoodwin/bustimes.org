@@ -1,11 +1,6 @@
 import React from "react";
 import { Popup } from "react-map-gl/maplibre";
-import ReactTimeAgo from "react-time-ago";
-
-import TimeAgo from "javascript-time-ago";
-
-import en from "javascript-time-ago/locale/en.json";
-TimeAgo.addDefaultLocale(en);
+import TimeAgo from "react-timeago";
 
 function getTimeDelta(seconds: number) {
   const minutes = Math.round(seconds / 60);
@@ -151,12 +146,7 @@ export default function VehiclePopup({
       )}
       <Delay item={item} />
       <div>
-        <ReactTimeAgo
-          date={date}
-          locale="en-GB"
-          tooltip={true}
-          timeStyle="round"
-        />
+        <TimeAgo date={date} />
       </div>
     </Popup>
   );

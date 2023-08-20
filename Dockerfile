@@ -7,7 +7,7 @@ RUN npm install
 
 COPY busstops/static /app/busstops/static
 COPY Makefile .eslintrc.js tsconfig.json /app/
-RUN tsc -noEmit && eslint busstops/static/js/src && npm run build
+RUN npx tsc -noEmit && eslint busstops/static/js/src && npm run build
 RUN make build-static
 
 

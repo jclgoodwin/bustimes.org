@@ -9,17 +9,14 @@ import Map, {
   MapEvent,
   LayerProps,
   MapLayerMouseEvent,
-  LngLatLike,
-  // LngLatBounds as LngLatBoundsType,
 } from "react-map-gl/maplibre";
 
 import { LngLatBounds } from "maplibre-gl";
-import { useDarkMode } from "./utils";
 import TripTimetable, { TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
 
 type VehicleJourneyLocation = {
-  coordinates: LngLatLike;
+  coordinates: [number, number];
   delta: number;
   direction: number;
   datetime: string;
@@ -183,7 +180,7 @@ export default function JourneyMap({
   journey,
   loading = false,
 }: JourneyMapProps) {
-  const darkMode = useDarkMode();
+  const darkMode = false;
 
   const [cursor, setCursor] = React.useState(null);
 
@@ -258,20 +255,25 @@ export default function JourneyMap({
     });
   }, []);
 
-  const bounds = React.useMemo(() => {
+  const bounds = React.useMemo((): [number, number, number, number] => {
     if (journey) {
-      const bounds = new LngLatBounds();
+      const _bounds = new LngLatBounds();
       if (journey.locations) {
         for (const item of journey.locations) {
-          bounds.extend(item.coordinates);
+          _bounds.extend(item.coordinates);
         }
       }
       if (journey.stops) {
         for (const item of journey.stops) {
-          bounds.extend(item.coordinates);
+          _bounds.extend(item.coordinates);
         }
       }
-      return bounds;
+      return [
+        _bounds.getNorth(),
+        _bounds.getSouth(),
+        _bounds.getEast(),
+        _bounds.getWest(),
+      ];
     }
   }, [journey]);
 

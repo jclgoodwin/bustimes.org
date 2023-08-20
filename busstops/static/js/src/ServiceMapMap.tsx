@@ -14,8 +14,6 @@ import StopPopup from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
-import { useDarkMode } from "./utils";
-
 declare global {
   interface Window {
     EXTENT: [number, number, number, number];
@@ -42,7 +40,7 @@ export default function ServiceMapMap({
   geometry,
   stops,
 }: ServiceMapMapProps) {
-  const darkMode = useDarkMode();
+  const darkMode = false;
 
   const [cursor, setCursor] = React.useState<string | null>(null);
 
@@ -70,7 +68,6 @@ export default function ServiceMapMap({
 
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
-
       const target = e.originalEvent.target;
       if (target instanceof Element) {
         let vehicleId: string;

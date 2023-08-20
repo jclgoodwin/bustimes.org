@@ -13,8 +13,6 @@ import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup from "./StopPopup";
 
-import { useDarkMode } from "./utils";
-
 const apiRoot = process.env.API_ROOT;
 
 declare global {
@@ -212,7 +210,7 @@ const Vehicles = memo(function Vehicles({
 });
 
 export default function BigMap() {
-  const darkMode = useDarkMode();
+  const darkMode = false;
 
   const [vehicles, setVehicles] = React.useState(null);
 

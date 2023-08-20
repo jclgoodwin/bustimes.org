@@ -9,7 +9,7 @@ import Map, {
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
-import { useDarkMode, getBounds } from "./utils";
+import { LngLatBounds } from "maplibre-gl";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -17,8 +17,17 @@ type OperatorMapProps = {
   noc: string;
 };
 
+function getBounds(items: Vehicle[]) {
+  let bounds = new LngLatBounds();
+  for (const item of items) {
+    bounds.extend(item.coordinates);
+  }
+
+  return bounds;
+}
+
 export default function OperatorMap({ noc }: OperatorMapProps) {
-  const darkMode = useDarkMode();
+  const darkMode = false;
 
   const [vehiclesList, setVehicles] = React.useState<Vehicle[]>(null);
 

@@ -82,7 +82,11 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
     );
   } else {
     marker = (
-      <div data-vehicle-id={vehicle.id} className={className} style={background && {background: background}}>
+      <div
+        data-vehicle-id={vehicle.id}
+        className={className}
+        style={background && { background: background }}
+      >
         {marker}
       </div>
     );

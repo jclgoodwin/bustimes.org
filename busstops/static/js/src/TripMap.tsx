@@ -13,8 +13,7 @@ import Map, {
 import { useRoute } from "wouter";
 import { navigate } from "wouter/use-location";
 
-import { useDarkMode } from "./utils";
-import { LngLatBounds, LngLatBoundsLike } from "maplibre-gl";
+import { LngLatBounds } from "maplibre-gl";
 
 import TripTimetable, { Trip, TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
@@ -156,25 +155,30 @@ const Route = React.memo(function Route({ times }: RouteProps) {
 });
 
 export default function TripMap() {
-  const [, {tripId}] = useRoute<{tripId: ""}>("/trips/:tripId");
+  const [, { tripId }] = useRoute<{ tripId: "" }>("/trips/:tripId");
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
-  const bounds = React.useMemo(() => {
-    let bounds: LngLatBoundsLike = new LngLatBounds();
+  const bounds = React.useMemo((): [number, number, number, number] => {
+    const _bounds = new LngLatBounds();
     for (let item of trip.times) {
       if (item.stop.location) {
-        bounds.extend(item.stop.location);
+        _bounds.extend(item.stop.location);
       }
     }
-    return bounds;
+    return [
+      _bounds.getNorth(),
+      _bounds.getSouth(),
+      _bounds.getEast(),
+      _bounds.getWest(),
+    ];
   }, [trip]);
 
   const navigateToTrip = React.useCallback((item) => {
     navigate("/trips/" + item.trip_id);
   }, []);
 
-  const darkMode = useDarkMode();
+  const darkMode = false;
 
   const [cursor, setCursor] = React.useState(null);
 
@@ -235,6 +239,20 @@ export default function TripMap() {
   const timeout = React.useRef(null);
   const vehiclesAbortController = React.useRef(null);
 
+  const loadTrip = React.useCallback(() => {
+    if (tripId) {
+      if (trip && trip.id && tripId === trip.id.toString()) {
+        return;
+      }
+      setTripVehicle(null);
+      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+        if (response.ok) {
+          response.json().then(setTrip);
+        }
+      });
+    }
+  }, [trip, tripId]);
+
   React.useEffect(() => {
     const loadVehicles = (first = false) => {
       if (document.hidden) {
@@ -289,20 +307,6 @@ export default function TripMap() {
       );
     };
 
-    const loadTrip = () => {
-      if (tripId) {
-        if (trip && trip.id && tripId === trip.id.toString()) {
-          return;
-        }
-        setTripVehicle(null);
-        fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-          if (response.ok) {
-            response.json().then(setTrip);
-          }
-        });
-      }
-    };
-
     loadTrip();
     loadVehicles(true);
 
@@ -318,7 +322,7 @@ export default function TripMap() {
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [tripId]);
+  }, [tripId, loadTrip]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
     React.useState<number>();
