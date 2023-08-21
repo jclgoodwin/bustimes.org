@@ -31,7 +31,7 @@
 
 {% block fuse %}
 {% if ad %}
-<script async src="{% static 'js/consent.js' %}"></script>
+<script src="{% static 'js/consent.js' %}"></script>
 <script>var s=document.getElementsByTagName('script')[0];var sc=document.createElement('script');sc.type='text/javascript';sc.async=true;sc.src='https://cdn.adfirst.media/hb/bustimes.js?v'+Math.floor(new Date().getTime()/600000);s.parentNode.insertBefore(sc,s);</script>
 {% endif %}
 {% endblock %}
@@ -89,14 +89,13 @@ gtag('config', 'G-X2Z0KM7Z5C', {
     <ul>
         <li><a href="/contact">Contact</a></li>
         <li><a href="/data">Data sources</a></li>
-        <li><a href="/cookies">Cookies</a></li>
+        <li><a href="/privacy">Privacy policy</a></li>
+        {% if ad %}<li><a href="javascript:window.__tcfapi('displayConsentUi',2,function(){})">Privacy settings</a></li>{% endif %}
     </ul>
 </footer>
 {% endblock %}
 
 {% block foot %}{% endblock %}
-
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "9ebb5dd4394643d3a23e799cc3c43e12"}'></script><!-- End Cloudflare Web Analytics -->
 
 </body>
 </html>

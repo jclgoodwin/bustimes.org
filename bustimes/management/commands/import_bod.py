@@ -267,7 +267,10 @@ def bus_open_data(api_key, specific_operator):
             elif Service.objects.filter(
                 current=True, operator=o, route__source__url__startswith=url_prefix
             ).exists():
-                logger.warning(f"{o} has no current data")
+                logger.warning(
+                    f"""{o} has no current data
+  https://bustimes.org/admin/busstops/service/?operator__noc__exact={o}"""
+                )
 
         command.service_ids = service_ids
         command.finish_services()
