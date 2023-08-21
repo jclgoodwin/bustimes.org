@@ -32,7 +32,6 @@ type ServiceMapMapProps = {
   vehicles: Vehicle[];
   geometry: any;
   stops: any;
-  // closeButton: ReactElement;
 };
 
 export default function ServiceMapMap({
@@ -42,14 +41,14 @@ export default function ServiceMapMap({
 }: ServiceMapMapProps) {
   const darkMode = false;
 
-  const [cursor, setCursor] = React.useState<string | null>(null);
+  const [cursor, setCursor] = React.useState<string>();
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
   }, []);
 
   const onMouseLeave = React.useCallback(() => {
-    setCursor(null);
+    setCursor("");
   }, []);
 
   const vehiclesById = React.useMemo(() => {
@@ -62,7 +61,7 @@ export default function ServiceMapMap({
   }, [vehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState<number>(function () {
+    React.useState<number|undefined>(function () {
       if (vehicles && vehicles.length === 1) {
         return vehicles[0].id;
       }
@@ -75,7 +74,7 @@ export default function ServiceMapMap({
       const target = e.originalEvent.target;
       if (target instanceof HTMLElement || target instanceof SVGElement) {
         let vehicleId = target.dataset.vehicleId;
-        if (!vehicleId) {
+        if (!vehicleId && target.parentElement) {
           vehicleId = target.parentElement.dataset.vehicleId;
         }
         if (vehicleId) {
@@ -94,7 +93,7 @@ export default function ServiceMapMap({
       } else {
         setClickedStop(null);
       }
-      setClickedVehicleMarker(null);
+      setClickedVehicleMarker(undefined);
     },
     [clickedStop],
   );
@@ -106,9 +105,11 @@ export default function ServiceMapMap({
 
     map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
-      map.addImage("stop", image, {
+      if (image) {
+        map.addImage("stop", image, {
         pixelRatio: 2,
       });
+    }
     });
   }, []);
 
@@ -146,7 +147,7 @@ export default function ServiceMapMap({
           ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
           : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
       }
-      RTLTextPlugin={null}
+      RTLTextPlugin={""}
       onClick={handleMapClick}
       onLoad={handleMapLoad}
       interactiveLayerIds={["stops"]}
@@ -172,7 +173,7 @@ export default function ServiceMapMap({
         <VehiclePopup
           item={clickedVehicle}
           onClose={() => {
-            setClickedVehicleMarker(null);
+            setClickedVehicleMarker(undefined);
           }}
         />
       ) : null}

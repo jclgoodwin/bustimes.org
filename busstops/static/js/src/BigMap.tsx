@@ -1,4 +1,4 @@
-import React, { ReactElement, memo } from "react";
+import React, { EventHandler, ReactElement, memo } from "react";
 
 import Map, {
   Source,
@@ -6,7 +6,9 @@ import Map, {
   NavigationControl,
   GeolocateControl,
   ViewState,
-  LngLatBounds
+  LngLatBounds,
+  LngLatBoundsLike,
+  MapEvent
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
@@ -217,7 +219,7 @@ export default function BigMap() {
 
   const [stops, setStops] = React.useState(null);
 
-  const [zoom, setZoom] = React.useState(null);
+  const [zoom, setZoom] = React.useState<number>();
 
   const [clickedStop, setClickedStop] = React.useState(() => {
     if (document.referrer) {
@@ -228,17 +230,16 @@ export default function BigMap() {
     }
   });
 
-  const timeout = React.useRef(null);
-  const bounds = React.useRef(null);
-  const stopsHighWaterMark = React.useRef(null);
-  const vehiclesHighWaterMark = React.useRef(null);
-  const vehiclesAbortController = React.useRef<AbortController>(null);
-  const vehiclesLength = React.useRef(null);
+  const timeout = React.useRef<number>();
+  const bounds = React.useRef<LngLatBounds>();
+  const stopsHighWaterMark = React.useRef<LngLatBounds>();
+  const vehiclesHighWaterMark = React.useRef<LngLatBounds>();
+  const vehiclesAbortController = React.useRef<AbortController>();
+  const vehiclesLength = React.useRef<number>();
 
   const loadStops = React.useCallback(() => {
-    const _bounds = bounds.current;
-    fetchJson("stops", _bounds).then((items) => {
-      stopsHighWaterMark.current = _bounds;
+    fetchJson("stops", bounds).then((items) => {
+      stopsHighWaterMark.current = bounds;
       setStops(items);
     });
   }, []);
@@ -257,7 +258,7 @@ export default function BigMap() {
 
     let _bounds = bounds.current;
 
-    const url = apiRoot + "vehicles.json" + getBoundsQueryString(_bounds);
+    const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
 
     fetch(url, {
       signal: vehiclesAbortController.current.signal,
@@ -319,8 +320,8 @@ export default function BigMap() {
   );
 
   React.useEffect(() => {
-    const handleVisibilityChange = (event) => {
-      if (!event.target.hidden && shouldShowVehicles(zoom)) {
+    const handleVisibilityChange = () => {
+      if (document.hidden && zoom && shouldShowVehicles(zoom)) {
         loadVehicles();
       }
     };
@@ -364,7 +365,7 @@ export default function BigMap() {
     [clickedStop],
   );
 
-  const handleMapLoad = function (event) {
+  const handleMapLoad = function (event: MapEvent) {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
@@ -385,22 +386,22 @@ export default function BigMap() {
 
     map.loadImage("/static/stop-marker.png", (error, image) => {
       if (error) throw error;
-      map.addImage("stop", image, {
-        pixelRatio: 2,
-        width: 16,
-        height: 16,
-      });
+      if (image) {
+        map.addImage("stop", image, {
+          pixelRatio: 2,
+        });
+      }
     });
   };
 
-  const [cursor, setCursor] = React.useState(null);
+  const [cursor, setCursor] = React.useState("");
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
   }, []);
 
   const onMouseLeave = React.useCallback(() => {
-    setCursor(null);
+    setCursor("");
   }, []);
 
   const showStops = shouldShowStops(zoom);
@@ -421,7 +422,7 @@ export default function BigMap() {
           : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
       }
       hash={true}
-      RTLTextPlugin={null}
+      RTLTextPlugin={""}
       onClick={handleMapClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

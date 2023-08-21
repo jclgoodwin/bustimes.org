@@ -1,6 +1,7 @@
 import React from "react";
 import { Popup } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
+import { Vehicle } from "./VehicleMarker";
 
 function getTimeDelta(seconds: number) {
   const minutes = Math.round(seconds / 60);
@@ -10,23 +11,28 @@ function getTimeDelta(seconds: number) {
   return minutes + " minutes";
 }
 
-function Delay({ item }) {
+type DelayProps = {
+  item: Vehicle
+}
+
+function Delay({ item }: DelayProps) {
   let delay = item.delay;
   if (typeof delay !== "undefined") {
+    let delayString;
     if (-60 < delay && delay < 60) {
-      delay = "On time";
+      delayString = "On time";
     } else {
       if (delay < 0) {
         delay *= -1;
       }
-      delay = getTimeDelta(delay);
-      if (item.delay < 0) {
-        delay += " early";
+      delayString = getTimeDelta(delay);
+      if (delay < 0) {
+        delayString += " early";
       } else {
-        delay += " late";
+        delayString += " late";
       }
     }
-    return <div>{delay}</div>;
+    return <div>{delayString}</div>;
   }
 }
 
@@ -46,12 +52,12 @@ export default function VehiclePopup({
   activeLink = false,
 }: VehiclePopupProps) {
   const handleTripClick = React.useCallback(
-    (e) => {
-      if (onTripClick) {
-        e.preventDefault();
-        onTripClick(item);
-      }
-    },
+    (e: React.MouseEvent) => {
+    if (onTripClick) {
+      e.preventDefault();
+      onTripClick(item);
+    }
+  },
     [item, onTripClick],
   );
 

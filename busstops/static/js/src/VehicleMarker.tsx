@@ -7,6 +7,7 @@ export type Vehicle = {
   heading?: number;
   datetime: string;
   destination: string;
+  delay?: number;
   block?: string;
   tfl_code?: string;
   trip_id?: number;

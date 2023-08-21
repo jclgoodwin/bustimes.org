@@ -204,7 +204,7 @@ export default function JourneyMap({
     setClickedLocation(undefined);
   }, []);
 
-  const [clickedStop, setClickedStop] = React.useState(null);
+  const [clickedStop, setClickedStop] = React.useState<MapGeoJSONFeature>();
 
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
     if (e.features?.length) {
@@ -215,7 +215,7 @@ export default function JourneyMap({
         }
       }
     } else {
-      setClickedStop(null);
+      setClickedStop(undefined);
     }
   }, []);
 
@@ -242,20 +242,24 @@ export default function JourneyMap({
 
     _map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
-      _map.addImage("stop", image, {
-        pixelRatio: 2,
-      });
+      if (image) {
+        _map.addImage("stop", image, {
+          pixelRatio: 2,
+        });
+      }
     });
 
     _map.loadImage("/static/arrow.png", (error, image) => {
       if (error) throw error;
-      _map.addImage("arrow", image, {
-        pixelRatio: 2,
-      });
+      if (image) {
+        _map.addImage("arrow", image, {
+          pixelRatio: 2,
+        });
+      }
     });
   }, []);
 
-  const bounds = React.useMemo((): [number, number, number, number] => {
+  const bounds = React.useMemo((): [number, number, number, number] | undefined => {
     if (journey) {
       const _bounds = new LngLatBounds();
       if (journey.locations) {
@@ -265,7 +269,9 @@ export default function JourneyMap({
       }
       if (journey.stops) {
         for (const item of journey.stops) {
-          _bounds.extend(item.coordinates);
+          if (item.coordinates) {
+            _bounds.extend(item.coordinates);
+          }
         }
       }
       return [
@@ -313,7 +319,7 @@ export default function JourneyMap({
               ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
               : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
           }
-          RTLTextPlugin={null}
+          RTLTextPlugin={undefined}
           onClick={handleMapClick}
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops", "locations"]}
