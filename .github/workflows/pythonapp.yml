@@ -1,4 +1,4 @@
-name: Python application
+name: bustimes.org
 on: [push, pull_request]
 jobs:
   test:
@@ -14,7 +14,9 @@ jobs:
         node-version: latest
         cache: 'npm'
 
-    - run: npm run build
+    - run: |
+        npm install
+        npm run build
 
     - id: cache-docker
       uses: actions/cache@v3
