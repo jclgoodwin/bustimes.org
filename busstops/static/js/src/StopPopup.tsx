@@ -1,13 +1,29 @@
 import React from "react";
 import { Popup } from "react-map-gl/maplibre";
 
-export default function StopPopup({ item, onClose }) {
-  let name = item.properties.name;
+export type Stop = {
+  properties: {
+    name: string;
+    url: string;
+    services?: string[];
+  };
+  geometry: {
+    coordinates: [number, number];
+  };
+};
+
+type StopPopupProps = {
+  item: Stop;
+  onClose: () => void;
+};
+
+export default function StopPopup({ item, onClose }: StopPopupProps) {
+  let name;
 
   if (item.properties.url) {
     name = (
       <a href={item.properties.url} className="link-with-smalls">
-        <div className="description">{name}</div>
+        <div className="description">{item.properties.name}</div>
         {item.properties.services ? (
           <div className="smalls">
             {item.properties.services.join("\u00A0 ")}
@@ -16,7 +32,7 @@ export default function StopPopup({ item, onClose }) {
       </a>
     );
   } else {
-    name = <div>{name}</div>;
+    name = <div>{item.properties.name}</div>;
   }
 
   return (

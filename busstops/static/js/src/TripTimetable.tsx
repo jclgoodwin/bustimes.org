@@ -33,7 +33,7 @@ export type Trip = {
 
 type RowProps = {
   stop: TripTime;
-  onMouseEnter: (stop: TripTime) => void;
+  onMouseEnter?: (stop: TripTime) => void;
   vehicle: any;
   aimedColumn?: boolean;
 };
@@ -47,7 +47,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     }
   }, [stop, onMouseEnter]);
 
-  let stopName: any = stop.stop.name;
+  let stopName: string | ReactElement = stop.stop.name;
   if (stop.stop.icon) {
     stopName = `${stopName} (${stop.stop.icon})`;
   }
@@ -55,15 +55,20 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     stopName = <a href={`/stops/${stop.stop.atco_code}`}>{stopName}</a>;
   }
 
-  const className = stop.timing_status === "OTH" ? "minor" : null;
+  let className;
+  if (stop.timing_status === "OTH") {
+    className = "minor";
+  }
 
-  const rowSpan =
+  let rowSpan;
+  if (
     aimedColumn &&
     stop.aimed_arrival_time &&
     stop.aimed_departure_time &&
     stop.aimed_arrival_time !== stop.aimed_departure_time
-      ? 2
-      : null;
+  ) {
+    rowSpan = 2;
+  }
 
   let actual;
   if (vehicle?.progress && vehicle.progress.prev_stop === stop.stop.atco_code) {
@@ -112,8 +117,6 @@ const TripTimetable = React.memo(function TripTimetable({
   onMouseEnter,
   vehicle,
 }: TripTimetableProps) {
-  // const last = trip.times?.length - 1;
-
   const aimedColumn = trip.times?.some(
     (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,
   );

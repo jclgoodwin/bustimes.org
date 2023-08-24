@@ -16,7 +16,7 @@ import { navigate } from "wouter/use-location";
 import { LngLatBounds } from "maplibre-gl";
 
 import TripTimetable, { Trip, TripTime } from "./TripTimetable";
-import StopPopup from "./StopPopup";
+import StopPopup, { Stop } from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
@@ -73,7 +73,7 @@ const Route = React.memo(function Route({ times }: RouteProps) {
   for (const time of times) {
     if (time.track) {
       lineStrings.push(time.track);
-    } else if (prevLocation && time.stop.location) {
+    } else if (prevTime && prevLocation && time.stop.location) {
       if (prevTime.track || i === null) {
         lines.push([prevLocation, time.stop.location]);
         i = lines.length - 1;
@@ -156,68 +156,73 @@ const Route = React.memo(function Route({ times }: RouteProps) {
 
 export default function TripMap() {
   const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
-  const tripId = params?.tripId;
+  const tripId: string | undefined = params?.tripId;
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
-  const bounds = React.useMemo((): LngLatBounds => {
+  const bounds = React.useMemo((): [number, number, number, number] => {
     const _bounds = new LngLatBounds();
     for (let item of trip.times) {
       if (item.stop.location) {
         _bounds.extend(item.stop.location);
       }
     }
-    return _bounds;
+    return [
+      _bounds.getWest(),
+      _bounds.getSouth(),
+      _bounds.getEast(),
+      _bounds.getNorth(),
+    ];
   }, [trip]);
 
-  const navigateToTrip = React.useCallback((item) => {
+  const navigateToTrip = React.useCallback((item: Vehicle) => {
     navigate("/trips/" + item.trip_id);
   }, []);
 
   const darkMode = false;
 
-  const [cursor, setCursor] = React.useState(null);
+  const [cursor, setCursor] = React.useState("");
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
   }, []);
 
   const onMouseLeave = React.useCallback(() => {
-    setCursor(null);
+    setCursor("");
   }, []);
 
-  const [clickedStop, setClickedStop] = React.useState(null);
+  const [clickedStop, setClickedStop] = React.useState<Stop>();
 
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
       const target = e.originalEvent.target;
       if (target instanceof HTMLElement || target instanceof SVGElement) {
-        let vehicleId: string;
+        let vehicleId;
         vehicleId = target.dataset.vehicleId;
-        if (!vehicleId) {
+        if (!vehicleId && target.parentElement) {
           vehicleId = target.parentElement.dataset.vehicleId;
         }
         if (vehicleId) {
           setClickedVehicleMarker(parseInt(vehicleId, 10));
-          setClickedStop(null);
+          setClickedStop(undefined);
           e.preventDefault();
           return;
         }
       }
 
-      if (e.features.length) {
+      if (e.features?.length) {
         for (const stop of e.features) {
           if (
             !stop.properties.url ||
-            stop.properties.url !== clickedStop?.properties.url
+            stop.properties.url !== clickedStop?.properties?.url
           ) {
-            setClickedStop(stop);
+            setClickedStop(stop as any as Stop);
           }
         }
       } else {
-        setClickedStop(null);
+        setClickedStop(undefined);
       }
-      setClickedVehicleMarker(null);
+      setClickedVehicleMarker(undefined);
       e.preventDefault();
     },
     [clickedStop],
@@ -230,22 +235,21 @@ export default function TripMap() {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
   }, [vehicles]);
 
-  const timeout = React.useRef(null);
-  const vehiclesAbortController = React.useRef(null);
+  const timeout = React.useRef<number>();
+  const vehiclesAbortController = React.useRef<AbortController>();
 
-  const loadTrip = React.useCallback(() => {
-    if (tripId) {
-      if (trip && trip.id && tripId === trip.id.toString()) {
-        return;
-      }
-      setTripVehicle(null);
-      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-        if (response.ok) {
-          response.json().then(setTrip);
-        }
-      });
+  const loadTrip = React.useCallback((tripId: string) => {
+    setTripVehicle(undefined);
+    if (window.STOPS.id && window.STOPS.id.toString() === tripId) {
+      setTrip(window.STOPS);
+      return;
     }
-  }, [trip, tripId]);
+    fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+      if (response.ok) {
+        response.json().then(setTrip);
+      }
+    });
+  }, []);
 
   React.useEffect(() => {
     const loadVehicles = (first = false) => {
@@ -280,9 +284,7 @@ export default function TripMap() {
             setVehicles(items);
             for (const item of items) {
               if (
-                (tripId &&
-                  item.trip_id &&
-                  item.trip_id.toString() === tripId) ||
+                (tripId && item.trip_id && item.trip_id.toString() === tripId) ||
                 (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
               ) {
                 if (first) {
@@ -303,12 +305,14 @@ export default function TripMap() {
       );
     };
 
-    loadTrip();
+    if (tripId) {
+      loadTrip(tripId);
+    }
     loadVehicles(true);
 
-    const handleVisibilityChange = (event) => {
+    const handleVisibilityChange = () => {
       clearTimeout(timeout.current);
-      if (!event.target.hidden) {
+      if (!document.hidden) {
         loadVehicles();
       }
     };
@@ -330,11 +334,11 @@ export default function TripMap() {
 
     map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
-      map.addImage("stop", image, {
-        pixelRatio: 2,
-        // width: 16,
-        // height: 16
-      });
+      if (image) {
+        map.addImage("stop", image, {
+          pixelRatio: 2,
+        });
+      }
     });
   }, []);
 
@@ -369,7 +373,7 @@ export default function TripMap() {
               ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
               : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
           }
-          RTLTextPlugin={null}
+          RTLTextPlugin={""}
           onClick={handleMapClick}
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
@@ -395,7 +399,7 @@ export default function TripMap() {
               activeLink={clickedVehicle.trip_id?.toString() === tripId}
               onTripClick={navigateToTrip}
               onClose={() => {
-                setClickedVehicleMarker(null);
+                setClickedVehicleMarker(undefined);
               }}
             />
           ) : null}
@@ -403,14 +407,16 @@ export default function TripMap() {
           {clickedStop ? (
             <StopPopup
               item={clickedStop}
-              onClose={() => setClickedStop(null)}
+              onClose={() => setClickedStop(undefined)}
             />
           ) : null}
         </Map>
       </div>
-      <div className="trip-timetable map-sidebar">
-        <TripTimetable trip={trip} vehicle={tripVehicle} />
-      </div>
+      <TripTimetable
+        trip={trip}
+        vehicle={tripVehicle}
+        // onMouseEnter={handleMouseEnter}
+      />
     </React.Fragment>
   );
 }

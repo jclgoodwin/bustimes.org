@@ -30,21 +30,21 @@ export default function History() {
   const [journey, setJourney] = React.useState<VehicleJourney>();
 
   React.useEffect(() => {
-    const handleHashChange = () => {
+    function handleHashChange() {
       if (window.location.hash.indexOf("#journeys/") === 0) {
         setJourneyId(window.location.hash.slice(1));
         hasHistory += 1;
       } else {
-        setJourneyId(null);
+        setJourneyId("");
       }
-    };
+    }
 
-    const handleKeyDown = (event) => {
+    function handleKeyDown(event: KeyboardEvent) {
       // ESC
-      if (journeyId && event.keyCode === 27) {
+      if (journeyId && event.key === "Escape") {
         closeMap();
       }
-    };
+    }
 
     window.addEventListener("hashchange", handleHashChange);
     window.addEventListener("keydown", handleKeyDown);
