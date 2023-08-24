@@ -1,5 +1,5 @@
-import React, { lazy } from "react";
-import ReactDOM from "react-dom/client";
+import React from "react";
+import { createRoot } from "react-dom/client";
 import * as Sentry from "@sentry/react";
 
 import "./maps.css";
@@ -32,7 +32,7 @@ declare global {
 
 let rootElement = document.getElementById("hugemap");
 if (rootElement) {
-  let root = ReactDOM.createRoot(rootElement);
+  let root = createRoot(rootElement);
   root.render(
     <React.StrictMode>
       <BigMap />
@@ -42,14 +42,14 @@ if (rootElement) {
   rootElement = document.getElementById("map");
   if (rootElement) {
     if (window.location.href.indexOf("/operators/") !== -1) {
-      let root = ReactDOM.createRoot(rootElement);
+      let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <OperatorMap noc={window.OPERATOR_ID} />
         </React.StrictMode>,
       );
     } else if (window.STOPS) {
-      let root = ReactDOM.createRoot(rootElement);
+      let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <TripMap />
