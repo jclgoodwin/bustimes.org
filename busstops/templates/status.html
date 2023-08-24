@@ -238,7 +238,7 @@
 <table>
     <thead>
         <tr>
-            <th scope="col">Name</th>
+            <th scope="col"></th>
             <th scope="col">Services</th>
             <th scope="col">Updated</th>
         </tr>
@@ -246,9 +246,9 @@
     <tbody>
         {% for source in tnds %}
             <tr>
-                <td>{{ source.name }}</td>
+                <th scope="row">{{ source.name }}</td>
                 <td>{{ source.count }}</td>
-                <td>{{ source.datetime|naturaltime }}</td>
+                <td>{{ source.datetime }}</td>
             </tr>
         {% endfor %}
     </tbody>
