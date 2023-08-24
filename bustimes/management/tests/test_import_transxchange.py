@@ -1125,7 +1125,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(
             response,
             """<tr>
-                <td>S</td>
+                <th scope="row">S</th>
                 <td>1</td>
                 <td>None</td>
             </tr>""",
