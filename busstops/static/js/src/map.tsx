@@ -19,7 +19,7 @@ Sentry.init({
     "AbortError: Fetch is aborted",
     "NetworkError when attempting to fetch resource",
     "Non-Error promise rejection captured with value: undefined",
-    "from accessing a cross-origin frame. Protocols, domains, and ports must"
+    "from accessing a cross-origin frame. Protocols, domains, and ports must",
   ],
 });
 

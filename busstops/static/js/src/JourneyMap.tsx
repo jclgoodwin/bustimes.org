@@ -11,7 +11,7 @@ import Map, {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import { LngLatBounds, MapGeoJSONFeature } from "maplibre-gl";
+import { LngLatBounds } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
 
@@ -89,7 +89,18 @@ const routeStyle: LayerProps = {
   },
 };
 
-function LocationPopup({ location }) {
+type LocationPopupProps = {
+  location: {
+    properties: {
+      datetime: string;
+    };
+    geometry: {
+      coordinates: [number, number];
+    };
+  };
+};
+
+function LocationPopup({ location }: LocationPopupProps) {
   const when = new Date(location.properties.datetime);
   return (
     <Popup
@@ -186,6 +197,69 @@ type JourneyMapProps = {
   loading: boolean;
 };
 
+type SidebarProps = {
+  journey: VehicleJourney;
+  loading: boolean;
+  onMouseEnter: (t: TripTime) => void;
+};
+
+function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
+  let className = "trip-timetable map-sidebar";
+  if (loading) {
+    className += " loading";
+  }
+
+  let previousLink, nextLink;
+  if (journey) {
+    if (journey.previous) {
+      previousLink = new Date(journey.previous.datetime)
+        .toTimeString()
+        .slice(0, 5);
+      previousLink = (
+        <p className="previous">
+          <a href={`#journeys/${journey.previous.id}`}>&larr; {previousLink}</a>
+        </p>
+      );
+    }
+    if (journey.next) {
+      nextLink = new Date(journey.next.datetime).toTimeString().slice(0, 5);
+      nextLink = (
+        <p className="next">
+          <a href={`#journeys/${journey.next.id}`}>{nextLink} &rarr;</a>
+        </p>
+      );
+    }
+  }
+
+  return (
+    <div className={className}>
+      {previousLink}
+      {nextLink}
+      {journey.stops ? (
+        <TripTimetable
+          onMouseEnter={onMouseEnter}
+          trip={{
+            times: journey.stops.map((stop, i: number) => {
+              return {
+                id: i,
+                stop: {
+                  atco_code: stop.atco_code,
+                  name: stop.name,
+                  location: stop.coordinates,
+                },
+                timing_status: stop.minor ? "OTH" : "PTP",
+                aimed_arrival_time: stop.aimed_arrival_time,
+                aimed_departure_time: stop.aimed_departure_time,
+                actual_departure_time: stop.actual_departure_time,
+              };
+            }),
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
 export default function JourneyMap({
   journey,
   loading = false,
@@ -195,7 +269,7 @@ export default function JourneyMap({
   const [cursor, setCursor] = React.useState<string>();
 
   const [clickedLocation, setClickedLocation] =
-    React.useState<MapGeoJSONFeature>();
+    React.useState<LocationPopupProps["location"]>();
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     if (e.features?.length) {
@@ -203,7 +277,7 @@ export default function JourneyMap({
 
       for (const feature of e.features) {
         if (feature.layer.id === "locations") {
-          setClickedLocation(feature);
+          setClickedLocation(feature as any as LocationPopupProps["location"]);
           break;
         }
       }
@@ -231,47 +305,47 @@ export default function JourneyMap({
   }, []);
 
   const handleRowHover = React.useCallback((a: TripTime) => {
-    setClickedStop({
-      properties: {
-        atco_code: a.stop.atco_code,
-        name: a.stop.name,
-      },
-      geometry: {
-        coordinates: a.stop.location,
-      },
-    });
+    if (a.stop.location && a.stop.atco_code) {
+      setClickedStop({
+        properties: {
+          atco_code: a.stop.atco_code,
+          name: a.stop.name,
+        },
+        geometry: {
+          coordinates: a.stop.location,
+        },
+      });
+    }
   }, []);
 
-  const map = React.useRef<Map>();
+  const mapRef = React.useRef<any>();
 
   const handleMapLoad = React.useCallback((event: MapEvent) => {
-    const _map = event.target;
-    map.current = _map;
-    _map.keyboard.disableRotation();
-    _map.touchZoomRotate.disableRotation();
+    const map = event.target;
+    mapRef.current = map;
+    map.keyboard.disableRotation();
+    map.touchZoomRotate.disableRotation();
 
-    _map.loadImage("/static/route-stop-marker.png", (error, image) => {
+    map.loadImage("/static/route-stop-marker.png", (error, image) => {
       if (error) throw error;
       if (image) {
-        _map.addImage("stop", image, {
+        map.addImage("stop", image, {
           pixelRatio: 2,
         });
       }
     });
 
-    _map.loadImage("/static/arrow.png", (error, image) => {
+    map.loadImage("/static/arrow.png", (error, image) => {
       if (error) throw error;
       if (image) {
-        _map.addImage("arrow", image, {
+        map.addImage("arrow", image, {
           pixelRatio: 2,
         });
       }
     });
   }, []);
 
-  const bounds = React.useMemo(():
-    | [number, number, number, number]
-    | undefined => {
+  const bounds = React.useMemo((): LngLatBounds | undefined => {
     if (journey) {
       const _bounds = new LngLatBounds();
       if (journey.locations) {
@@ -286,18 +360,13 @@ export default function JourneyMap({
           }
         }
       }
-      return [
-        _bounds.getWest(),
-        _bounds.getSouth(),
-        _bounds.getEast(),
-        _bounds.getNorth(),
-      ];
+      return _bounds;
     }
   }, [journey]);
 
   React.useEffect(() => {
-    if (map.current) {
-      map.current.fitBounds(bounds, {
+    if (bounds && mapRef.current) {
+      mapRef.current.fitBounds(bounds, {
         padding: 50,
       });
     }
@@ -353,7 +422,7 @@ export default function JourneyMap({
                 },
                 geometry: clickedStop.geometry,
               }}
-              onClose={() => setClickedStop(null)}
+              onClose={() => setClickedStop(undefined)}
             />
           ) : null}
 
@@ -362,30 +431,10 @@ export default function JourneyMap({
           ) : null}
         </Map>
       </div>
-
-      <TripTimetable
-        onMouseEnter={handleRowHover}
-        journey={journey}
+      <Sidebar
         loading={loading}
-        trip={{
-          times: journey.stops
-            ? journey.stops.map((stop, i: number) => {
-                return {
-                  id: i,
-                  stop: {
-                    atco_code: stop.atco_code,
-                    name: stop.name,
-                    location: stop.coordinates,
-                  },
-                  timing_status: stop.minor ? "OTH" : "PTP",
-                  aimed_arrival_time: stop.aimed_arrival_time,
-                  aimed_departure_time: stop.aimed_departure_time,
-                  actual_departure_time: stop.actual_departure_time,
-                };
-              })
-            : null,
-          notes: [],
-        }}
+        journey={journey}
+        onMouseEnter={handleRowHover}
       />
     </React.Fragment>
   );

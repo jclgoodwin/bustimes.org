@@ -8,6 +8,7 @@ import Map, {
   ViewState,
   LngLatBounds,
   MapEvent,
+  MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
@@ -50,23 +51,26 @@ function getBoundsQueryString(bounds: LngLatBounds): string {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
 }
 
-function containsBounds(a: LngLatBounds, b: LngLatBounds): boolean {
+function containsBounds(
+  a: LngLatBounds | undefined,
+  b: LngLatBounds,
+): boolean | undefined {
   return a && a.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
-function shouldShowStops(zoom: number) {
-  return zoom >= 14;
+function shouldShowStops(zoom?: number) {
+  return zoom && zoom >= 14;
 }
 
-function shouldShowVehicles(zoom: number) {
-  return zoom >= 6;
+function shouldShowVehicles(zoom?: number) {
+  return zoom && zoom >= 6;
 }
 
 type StopsProps = {
   stops: {
     features: Stop[];
   };
-  clickedStopUrl: string;
+  clickedStopUrl?: string;
   setClickedStop: (stop?: string) => void;
 };
 
@@ -133,7 +137,7 @@ function fetchJson(what: string, bounds: LngLatBounds) {
 
 type VehiclesProps = {
   vehicles: Vehicle[];
-  clickedVehicleMarkerId: number;
+  clickedVehicleMarkerId?: number;
   setClickedVehicleMarker: any;
 };
 
@@ -245,11 +249,12 @@ export default function BigMap() {
   const stopsHighWaterMark = React.useRef<LngLatBounds>();
   const vehiclesHighWaterMark = React.useRef<LngLatBounds>();
   const vehiclesAbortController = React.useRef<AbortController>();
-  const vehiclesLength = React.useRef<number>();
+  const vehiclesLength = React.useRef<number>(0);
 
   const loadStops = React.useCallback(() => {
-    fetchJson("stops", bounds).then((items) => {
-      stopsHighWaterMark.current = bounds;
+    const _bounds = bounds.current as LngLatBounds;
+    fetchJson("stops", _bounds).then((items) => {
+      stopsHighWaterMark.current = _bounds;
       setStops(items);
     });
   }, []);
@@ -266,7 +271,7 @@ export default function BigMap() {
 
     clearTimeout(timeout.current);
 
-    let _bounds = bounds.current;
+    let _bounds = bounds.current as LngLatBounds;
 
     const url = apiRoot + "vehicles.json" + getBoundsQueryString(_bounds);
 
@@ -297,10 +302,10 @@ export default function BigMap() {
 
   const handleMoveEnd = debounce(
     React.useCallback(
-      (evt) => {
+      (evt: MapEvent) => {
         const map = evt.target;
-        bounds.current = map.getBounds();
-        const zoom = map.getZoom();
+        bounds.current = map.getBounds() as LngLatBounds;
+        const zoom = map.getZoom() as number;
 
         if (shouldShowVehicles(zoom)) {
           if (
@@ -344,22 +349,29 @@ export default function BigMap() {
   }, [zoom, loadVehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState(null);
+    React.useState<number>();
 
   const handleMapClick = React.useCallback(
-    (e) => {
-      const srcElement = e.originalEvent.srcElement;
-      const vehicleId =
-        srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
-      if (vehicleId) {
-        setClickedVehicleMarker(vehicleId);
-        return;
+    (e: MapLayerMouseEvent) => {
+      // handle click on VehicleMarker element
+      const target = e.originalEvent.target;
+      if (target instanceof HTMLElement || target instanceof SVGElement) {
+        let vehicleId = target.dataset.vehicleId;
+        if (!vehicleId && target.parentElement) {
+          vehicleId = target.parentElement.dataset.vehicleId;
+        }
+        if (vehicleId) {
+          setClickedVehicleMarker(parseInt(vehicleId, 10));
+          setClickedStop(undefined);
+          return;
+        }
       }
 
-      if (e.features.length) {
+      // handle click on maplibre rendered feature
+      if (e.features?.length) {
         for (const feature of e.features) {
-          if (feature.layer.id === "vehicles") {
-            setClickedVehicleMarker(feature.id);
+          if (feature.layer.id === "vehicles" && feature.id) {
+            setClickedVehicleMarker(feature.id as number);
             return;
           }
           if (feature.properties.url !== clickedStop) {
