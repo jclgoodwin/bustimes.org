@@ -47,7 +47,7 @@
         {% endif %}
     </script>
     <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
-    <script async type="module" src="{% static 'js/dist/app.js' %}"></script>
+    <script src="{% static 'js/dist/map.js' %}"></script>
     {% if object.route.service.tracking %}
         <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
     {% endif %}

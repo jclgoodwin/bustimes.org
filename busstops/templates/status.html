@@ -233,8 +233,6 @@
 
 <p>Compare to the <a href="https://www.travelinedata.org.uk/traveline-open-data/data-reporting/">Traveline data reporting page</a></p>
 
-{% load humanize %}
-
 <table>
     <thead>
         <tr>
@@ -246,7 +244,7 @@
     <tbody>
         {% for source in tnds %}
             <tr>
-                <td>{{ source.name }}</td>
+                <th scope="row">{{ source.name }}</th>
                 <td>{{ source.count }}</td>
                 <td>{{ source.datetime|naturaltime }}</td>
             </tr>

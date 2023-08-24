@@ -1,16 +1,13 @@
-import React, { lazy } from "react";
+import React from "react";
 import { createRoot } from "react-dom/client";
 import * as Sentry from "@sentry/react";
 
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Trip } from "./TripTimetable";
-
-const BigMap = lazy(() => import("./BigMap"));
-const TripMap = lazy(() => import("./TripMap"));
-const OperatorMap = lazy(() => import("./OperatorMap"));
-const ServiceMap = lazy(() => import("./ServiceMap"));
-const History = lazy(() => import("./History"));
+import BigMap from "./BigMap";
+import TripMap from "./TripMap";
+import OperatorMap from "./OperatorMap";
 
 Sentry.init({
   dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
@@ -28,7 +25,6 @@ Sentry.init({
 
 declare global {
   interface Window {
-    SERVICE_ID: number;
     STOPS: Trip;
     OPERATOR_ID: string;
   }
@@ -52,28 +48,11 @@ if (rootElement) {
           <OperatorMap noc={window.OPERATOR_ID} />
         </React.StrictMode>,
       );
-    } else if (window.SERVICE_ID) {
-      let root = createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <ServiceMap serviceId={window.SERVICE_ID} />
-        </React.StrictMode>,
-      );
     } else if (window.STOPS) {
       let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <TripMap />
-        </React.StrictMode>,
-      );
-    }
-  } else {
-    let rootElement = document.getElementById("history");
-    if (rootElement) {
-      let root = createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <History />
         </React.StrictMode>,
       );
     }

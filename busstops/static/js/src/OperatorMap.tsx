@@ -4,6 +4,7 @@ import Map, {
   NavigationControl,
   GeolocateControl,
   MapEvent,
+  MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
@@ -29,7 +30,7 @@ function getBounds(items: Vehicle[]) {
 export default function OperatorMap({ noc }: OperatorMapProps) {
   const darkMode = false;
 
-  const [vehiclesList, setVehicles] = React.useState<Vehicle[]>(null);
+  const [vehiclesList, setVehicles] = React.useState<Vehicle[]>();
 
   const vehiclesById = React.useMemo(() => {
     if (vehiclesList) {
@@ -40,7 +41,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
     }
   }, [vehiclesList]);
 
-  const [bounds, setBounds] = React.useState(null);
+  const [bounds, setBounds] = React.useState<LngLatBounds>();
 
   React.useEffect(() => {
     let timeout: number;
@@ -68,8 +69,8 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
 
     loadVehicles(true);
 
-    const handleVisibilityChange = (event) => {
-      if (event.target.hidden) {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
         clearTimeout(timeout);
       } else {
         loadVehicles();
@@ -85,16 +86,20 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
   }, [noc]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState(null);
+    React.useState<number>();
 
-  const handleMapClick = React.useCallback((e) => {
-    const srcElement = e.originalEvent.srcElement;
-    const vehicleId =
-      srcElement.dataset.vehicleId || srcElement.parentNode.dataset.vehicleId;
-    if (vehicleId) {
-      setClickedVehicleMarker(vehicleId);
-    } else {
-      setClickedVehicleMarker(null);
+  const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
+    // handle click on VehicleMarker element
+    const target = e.originalEvent.target;
+    if (target instanceof HTMLElement || target instanceof SVGElement) {
+      let vehicleId = target.dataset.vehicleId;
+      if (!vehicleId && target.parentElement) {
+        vehicleId = target.parentElement.dataset.vehicleId;
+      }
+      if (vehicleId) {
+        setClickedVehicleMarker(parseInt(vehicleId, 10));
+        return;
+      }
     }
   }, []);
 
@@ -157,7 +162,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
           {clickedVehicle && (
             <VehiclePopup
               item={clickedVehicle}
-              onClose={() => setClickedVehicleMarker(null)}
+              onClose={() => setClickedVehicleMarker(undefined)}
             />
           )}
         </Map>

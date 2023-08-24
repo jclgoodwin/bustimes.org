@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, MouseEvent, Suspense } from "react";
 
 import loadjs from "loadjs";
 import { Vehicle } from "./VehicleMarker";
@@ -25,7 +25,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     return window.location.hash.indexOf("#map") === 0;
   });
 
-  const openMap = React.useCallback((e) => {
+  const openMap = React.useCallback((e: MouseEvent) => {
     hasHistory = true;
     window.location.hash = "#map";
     e.preventDefault();
@@ -41,7 +41,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     }
   }, [isOpen]);
 
-  const [vehicles, setVehicles] = React.useState<Vehicle[]>(null);
+  const [vehicles, setVehicles] = React.useState<Vehicle[]>();
 
   const [stops, setStops] = React.useState(null);
 
@@ -152,7 +152,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   }, [isOpen, serviceId]);
 
   let count = vehicles && vehicles.length,
-    countString: string;
+    countString: string | undefined;
 
   if (count) {
     if (count === 1) {

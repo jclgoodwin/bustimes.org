@@ -1,4 +1,4 @@
-name: Python application
+name: bustimes.org
 on: [push, pull_request]
 jobs:
   test:
@@ -8,6 +8,16 @@ jobs:
     steps:
 
     - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: latest
+        cache: 'npm'
+
+    - run: |
+        npm install
+        npm run build
+        make build-static
 
     - id: cache-docker
       uses: actions/cache@v3
@@ -25,7 +35,7 @@ jobs:
 
     - name: Run tests
       run: |
-        docker compose run web bash -c "coverage run ./manage.py test && coverage xml"
+        docker compose run web bash -c "./manage.py collectstatic --noinput && coverage run ./manage.py test && coverage xml"
 
     - run: |
         mkdir -p /tmp/docker-save \

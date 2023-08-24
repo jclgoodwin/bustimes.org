@@ -10,7 +10,7 @@ import Map, {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import StopPopup from "./StopPopup";
+import StopPopup, { Stop } from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
@@ -29,7 +29,7 @@ const routeStyle: LayerProps = {
 };
 
 type ServiceMapMapProps = {
-  vehicles: Vehicle[];
+  vehicles?: Vehicle[];
   geometry: any;
   stops: any;
   // closeButton: ReactElement;
@@ -68,7 +68,7 @@ export default function ServiceMapMap({
       }
     });
 
-  const [clickedStop, setClickedStop] = React.useState(null);
+  const [clickedStop, setClickedStop] = React.useState<Stop>();
 
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
@@ -80,7 +80,7 @@ export default function ServiceMapMap({
         }
         if (vehicleId) {
           setClickedVehicleMarker(parseInt(vehicleId, 10));
-          setClickedStop(null);
+          setClickedStop(undefined);
           return;
         }
       }
@@ -88,11 +88,11 @@ export default function ServiceMapMap({
       if (e.features.length) {
         for (const stop of e.features) {
           if (stop.properties.url !== clickedStop?.properties.url) {
-            setClickedStop(stop);
+            setClickedStop(stop as any as Stop);
           }
         }
       } else {
-        setClickedStop(null);
+        setClickedStop(undefined);
       }
       setClickedVehicleMarker(null);
     },
@@ -178,7 +178,10 @@ export default function ServiceMapMap({
       ) : null}
 
       {clickedStop ? (
-        <StopPopup item={clickedStop} onClose={() => setClickedStop(null)} />
+        <StopPopup
+          item={clickedStop}
+          onClose={() => setClickedStop(undefined)}
+        />
       ) : null}
 
       {geometry && (

@@ -1,5 +1,4 @@
-import React from "react";
-import { VehicleJourney } from "./JourneyMap";
+import React, { ReactElement } from "react";
 import { Vehicle } from "./VehicleMarker";
 
 export type TripTime = {
@@ -29,14 +28,14 @@ type Note = {
 export type Trip = {
   id?: number;
   times: TripTime[];
-  notes: Note[];
+  notes?: Note[];
 };
 
 type RowProps = {
   stop: TripTime;
   onMouseEnter: (stop: TripTime) => void;
   vehicle: any;
-  aimedColumn: boolean;
+  aimedColumn?: boolean;
 };
 
 function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
@@ -105,7 +104,6 @@ type TripTimetableProps = {
   trip: Trip;
   onMouseEnter?: (stop: TripTime) => void;
   vehicle?: Vehicle;
-  journey?: VehicleJourney;
   loading?: boolean | null;
 };
 
@@ -113,8 +111,6 @@ const TripTimetable = React.memo(function TripTimetable({
   trip,
   onMouseEnter,
   vehicle,
-  journey,
-  loading = false,
 }: TripTimetableProps) {
   // const last = trip.times?.length - 1;
 
@@ -122,60 +118,30 @@ const TripTimetable = React.memo(function TripTimetable({
     (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,
   );
 
-  if (journey) {
-    if (journey.previous) {
-      let previous = new Date(journey.previous.datetime)
-        .toTimeString()
-        .slice(0, 5);
-      var previousLink = (
-        <p className="previous">
-          <a href={`#journeys/${journey.previous.id}`}>&larr; {previous}</a>
-        </p>
-      );
-    }
-    if (journey.next) {
-      let nextDate = new Date(journey.next.datetime).toTimeString().slice(0, 5);
-      var nextLink = (
-        <p className="next">
-          <a href={`#journeys/${journey.next.id}`}>{nextDate} &rarr;</a>
-        </p>
-      );
-    }
-  }
-
-  let className = "trip-timetable map-sidebar";
-  if (loading) {
-    className += " loading";
-  }
-
   return (
-    <div className={className}>
-      {previousLink}
-      {nextLink}
-      {trip.times ? (
-        <table>
-          <thead>
-            <tr>
-              <th></th>
-              {aimedColumn ? <th>Timetable</th> : null}
-              <th>Actual</th>
-            </tr>
-          </thead>
-          <tbody>
-            {trip.times.map((stop, i) => (
-              <Row
-                key={stop.id || i}
-                aimedColumn={aimedColumn}
-                stop={stop}
-                onMouseEnter={onMouseEnter}
-                vehicle={vehicle}
-              />
-            ))}
-          </tbody>
-        </table>
-      ) : null}
+    <React.Fragment>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            {aimedColumn ? <th>Timetable</th> : null}
+            <th>Actual</th>
+          </tr>
+        </thead>
+        <tbody>
+          {trip.times.map((stop, i) => (
+            <Row
+              key={stop.id || i}
+              aimedColumn={aimedColumn}
+              stop={stop}
+              onMouseEnter={onMouseEnter}
+              vehicle={vehicle}
+            />
+          ))}
+        </tbody>
+      </table>
       {trip.notes?.map((note) => <p key={note.code}>{note.text}</p>)}
-    </div>
+    </React.Fragment>
   );
 });
 
