@@ -137,7 +137,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
               ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
               : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
           }
-          RTLTextPlugin={""}
+          RTLTextPlugin={null}
           onClick={handleMapClick}
           onLoad={handleMapLoad}
         >
