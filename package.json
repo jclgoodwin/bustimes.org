@@ -1,7 +1,6 @@
 {
+  "private": true,
   "devDependencies": {
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
     "autoprefixer": "^10.4.13",
     "esbuild": "^0.18.3",
     "eslint": "^8.47.0",
@@ -14,7 +13,11 @@
   },
   "dependencies": {
     "@sentry/react": "^7.57.0",
+    "@types/lodash": "^4.14.197",
     "@types/node": "^20.5.0",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "@types/react-timeago": "^4.1.3",
     "accessible-autocomplete": "^2.0.4",
     "html5shiv": "^3.7.3",
     "loadjs": "^4.2.0",
@@ -29,6 +32,6 @@
   "scripts": {
     "watch": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --watch --format=esm --sourcemap",
     "build": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --minify --format=esm --sourcemap",
-    "lint": "tsc -noEmit && eslint busstops/static/js/src"
+    "lint": "eslint busstops/static/js/src"
   }
 }

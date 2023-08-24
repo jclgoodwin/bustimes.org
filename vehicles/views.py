@@ -453,6 +453,8 @@ def vehicles_json(request) -> JsonResponse:
     if set_names:
         vehicle_ids = list(redis_client.sunion(set_names))
 
+    vehicle_ids.sort()  # for etag stableness
+
     vehicle_locations = redis_client.mget(
         [f"vehicle{int(vehicle_id)}" for vehicle_id in vehicle_ids]
     )

@@ -6,12 +6,14 @@ import Map, {
   NavigationControl,
   GeolocateControl,
   ViewState,
+  LngLatBounds,
+  MapEvent,
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import StopPopup from "./StopPopup";
+import StopPopup, { Stop } from "./StopPopup";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -44,12 +46,12 @@ const updateLocalStorage = debounce(function (zoom: number, latLng) {
   localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
 }, 2000);
 
-function getBoundsQueryString(bounds) {
+function getBoundsQueryString(bounds: LngLatBounds): string {
   return `?ymax=${bounds.getNorth()}&xmax=${bounds.getEast()}&ymin=${bounds.getSouth()}&xmin=${bounds.getWest()}`;
 }
 
-function containsBounds(a, b) {
-  return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
+function containsBounds(a: LngLatBounds, b: LngLatBounds): boolean {
+  return a && a.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
 function shouldShowStops(zoom: number) {
@@ -60,7 +62,15 @@ function shouldShowVehicles(zoom: number) {
   return zoom >= 6;
 }
 
-function Stops({ stops, clickedStopUrl, setClickedStop }) {
+type StopsProps = {
+  stops: {
+    features: Stop[];
+  };
+  clickedStopUrl: string;
+  setClickedStop: (stop?: string) => void;
+};
+
+function Stops({ stops, clickedStopUrl, setClickedStop }: StopsProps) {
   const stopsById = React.useMemo(() => {
     return Object.assign(
       {},
@@ -97,13 +107,16 @@ function Stops({ stops, clickedStopUrl, setClickedStop }) {
         />
       </Source>
       {clickedStop ? (
-        <StopPopup item={clickedStop} onClose={() => setClickedStop(null)} />
+        <StopPopup
+          item={clickedStop}
+          onClose={() => setClickedStop(undefined)}
+        />
       ) : null}
     </React.Fragment>
   );
 }
 
-function fetchJson(what, bounds) {
+function fetchJson(what: string, bounds: LngLatBounds) {
   const url = "/" + what + ".json" + getBoundsQueryString(bounds);
 
   return fetch(url).then(
@@ -216,7 +229,7 @@ export default function BigMap() {
 
   const [stops, setStops] = React.useState(null);
 
-  const [zoom, setZoom] = React.useState(null);
+  const [zoom, setZoom] = React.useState<number>();
 
   const [clickedStop, setClickedStop] = React.useState(() => {
     if (document.referrer) {
@@ -227,17 +240,16 @@ export default function BigMap() {
     }
   });
 
-  const timeout = React.useRef(null);
-  const bounds = React.useRef(null);
-  const stopsHighWaterMark = React.useRef(null);
-  const vehiclesHighWaterMark = React.useRef(null);
-  const vehiclesAbortController = React.useRef(null);
-  const vehiclesLength = React.useRef(null);
+  const timeout = React.useRef<number>();
+  const bounds = React.useRef<LngLatBounds>();
+  const stopsHighWaterMark = React.useRef<LngLatBounds>();
+  const vehiclesHighWaterMark = React.useRef<LngLatBounds>();
+  const vehiclesAbortController = React.useRef<AbortController>();
+  const vehiclesLength = React.useRef<number>();
 
   const loadStops = React.useCallback(() => {
-    const _bounds = bounds.current;
-    fetchJson("stops", _bounds).then((items) => {
-      stopsHighWaterMark.current = _bounds;
+    fetchJson("stops", bounds).then((items) => {
+      stopsHighWaterMark.current = bounds;
       setStops(items);
     });
   }, []);
@@ -318,8 +330,8 @@ export default function BigMap() {
   );
 
   React.useEffect(() => {
-    const handleVisibilityChange = (event) => {
-      if (!event.target.hidden && shouldShowVehicles(zoom)) {
+    const handleVisibilityChange = () => {
+      if (document.hidden && zoom && shouldShowVehicles(zoom)) {
         loadVehicles();
       }
     };
@@ -356,14 +368,14 @@ export default function BigMap() {
           }
         }
       } else {
-        setClickedStop(null);
+        setClickedStop(undefined);
       }
-      setClickedVehicleMarker(null);
+      setClickedVehicleMarker(undefined);
     },
     [clickedStop],
   );
 
-  const handleMapLoad = function (event) {
+  const handleMapLoad = function (event: MapEvent) {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
@@ -384,22 +396,22 @@ export default function BigMap() {
 
     map.loadImage("/static/stop-marker.png", (error, image) => {
       if (error) throw error;
-      map.addImage("stop", image, {
-        pixelRatio: 2,
-        width: 16,
-        height: 16,
-      });
+      if (image) {
+        map.addImage("stop", image, {
+          pixelRatio: 2,
+        });
+      }
     });
   };
 
-  const [cursor, setCursor] = React.useState(null);
+  const [cursor, setCursor] = React.useState("");
 
   const onMouseEnter = React.useCallback(() => {
     setCursor("pointer");
   }, []);
 
   const onMouseLeave = React.useCallback(() => {
-    setCursor(null);
+    setCursor("");
   }, []);
 
   const showStops = shouldShowStops(zoom);
@@ -420,7 +432,7 @@ export default function BigMap() {
           : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
       }
       hash={true}
-      RTLTextPlugin={null}
+      RTLTextPlugin={""}
       onClick={handleMapClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
