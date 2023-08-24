@@ -156,7 +156,7 @@ const Route = React.memo(function Route({ times }: RouteProps) {
 
 export default function TripMap() {
   const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
-  const tripId = params?.tripId;
+  const tripId: string | undefined = params?.tripId;
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
@@ -285,7 +285,7 @@ export default function TripMap() {
             setVehicles(items);
             for (const item of items) {
               if (
-                (tripId && item.trip_id === tripId) ||
+                (tripId && item.trip_id && item.trip_id.toString() === tripId) ||
                 (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
               ) {
                 if (first) {
