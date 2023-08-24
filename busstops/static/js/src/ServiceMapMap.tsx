@@ -60,12 +60,13 @@ export default function ServiceMapMap({
     }
   }, [vehicles]);
 
-  const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState<number|undefined>(function () {
-      if (vehicles && vehicles.length === 1) {
-        return vehicles[0].id;
-      }
-    });
+  const [clickedVehicleMarkerId, setClickedVehicleMarker] = React.useState<
+    number | undefined
+  >(function () {
+    if (vehicles && vehicles.length === 1) {
+      return vehicles[0].id;
+    }
+  });
 
   const [clickedStop, setClickedStop] = React.useState(null);
 
@@ -84,7 +85,7 @@ export default function ServiceMapMap({
         }
       }
 
-      if (e.features.length) {
+      if (e.features?.length) {
         for (const stop of e.features) {
           if (stop.properties.url !== clickedStop?.properties.url) {
             setClickedStop(stop);
@@ -107,9 +108,9 @@ export default function ServiceMapMap({
       if (error) throw error;
       if (image) {
         map.addImage("stop", image, {
-        pixelRatio: 2,
-      });
-    }
+          pixelRatio: 2,
+        });
+      }
     });
   }, []);
 

@@ -1,4 +1,4 @@
-import React, { EventHandler, ReactElement, memo } from "react";
+import React, { ReactElement, memo } from "react";
 
 import Map, {
   Source,
@@ -7,14 +7,13 @@ import Map, {
   GeolocateControl,
   ViewState,
   LngLatBounds,
-  LngLatBoundsLike,
-  MapEvent
+  MapEvent,
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import StopPopup from "./StopPopup";
+import StopPopup, { Stop } from "./StopPopup";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -52,7 +51,7 @@ function getBoundsQueryString(bounds: LngLatBounds): string {
 }
 
 function containsBounds(a: LngLatBounds, b: LngLatBounds): boolean {
-  return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
+  return a && a.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
 function shouldShowStops(zoom: number) {
@@ -63,7 +62,15 @@ function shouldShowVehicles(zoom: number) {
   return zoom >= 6;
 }
 
-function Stops({ stops, clickedStopUrl, setClickedStop }) {
+type StopsProps = {
+  stops: {
+    features: Stop[];
+  };
+  clickedStopUrl: string;
+  setClickedStop: (stop?: string) => void;
+};
+
+function Stops({ stops, clickedStopUrl, setClickedStop }: StopsProps) {
   const stopsById = React.useMemo(() => {
     return Object.assign(
       {},
@@ -100,7 +107,10 @@ function Stops({ stops, clickedStopUrl, setClickedStop }) {
         />
       </Source>
       {clickedStop ? (
-        <StopPopup item={clickedStop} onClose={() => setClickedStop(null)} />
+        <StopPopup
+          item={clickedStop}
+          onClose={() => setClickedStop(undefined)}
+        />
       ) : null}
     </React.Fragment>
   );
@@ -258,7 +268,7 @@ export default function BigMap() {
 
     let _bounds = bounds.current;
 
-    const url = apiRoot + "vehicles.json" + getBoundsQueryString(bounds);
+    const url = apiRoot + "vehicles.json" + getBoundsQueryString(_bounds);
 
     fetch(url, {
       signal: vehiclesAbortController.current.signal,
@@ -358,9 +368,9 @@ export default function BigMap() {
           }
         }
       } else {
-        setClickedStop(null);
+        setClickedStop(undefined);
       }
-      setClickedVehicleMarker(null);
+      setClickedVehicleMarker(undefined);
     },
     [clickedStop],
   );

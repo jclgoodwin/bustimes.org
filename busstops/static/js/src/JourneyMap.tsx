@@ -23,6 +23,16 @@ type VehicleJourneyLocation = {
 };
 
 type Stop = {
+  properties: {
+    name: string;
+    atco_code: string;
+  };
+  geometry: {
+    coordinates: [number, number];
+  };
+};
+
+type StopTime = {
   atco_code: string;
   name: string;
   aimed_arrival_time: string;
@@ -34,7 +44,7 @@ type Stop = {
 };
 
 export type VehicleJourney = {
-  stops: Stop[];
+  stops: StopTime[];
   locations: VehicleJourneyLocation[];
   next: {
     id: number;
@@ -99,7 +109,7 @@ type LocationsProps = {
 };
 
 type StopsProps = {
-  stops: Stop[];
+  stops: StopTime[];
 };
 
 const Locations = React.memo(function Locations({ locations }: LocationsProps) {
@@ -184,7 +194,8 @@ export default function JourneyMap({
 
   const [cursor, setCursor] = React.useState<string>();
 
-  const [clickedLocation, setClickedLocation] = React.useState<MapGeoJSONFeature>();
+  const [clickedLocation, setClickedLocation] =
+    React.useState<MapGeoJSONFeature>();
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     if (e.features?.length) {
@@ -204,13 +215,13 @@ export default function JourneyMap({
     setClickedLocation(undefined);
   }, []);
 
-  const [clickedStop, setClickedStop] = React.useState<MapGeoJSONFeature>();
+  const [clickedStop, setClickedStop] = React.useState<Stop>();
 
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
     if (e.features?.length) {
       for (const feature of e.features) {
         if (feature.layer.id === "stops") {
-          setClickedStop(feature);
+          setClickedStop(feature as any as Stop);
           break;
         }
       }
@@ -226,7 +237,6 @@ export default function JourneyMap({
         name: a.stop.name,
       },
       geometry: {
-        type: "Point",
         coordinates: a.stop.location,
       },
     });
@@ -259,7 +269,9 @@ export default function JourneyMap({
     });
   }, []);
 
-  const bounds = React.useMemo((): [number, number, number, number] | undefined => {
+  const bounds = React.useMemo(():
+    | [number, number, number, number]
+    | undefined => {
     if (journey) {
       const _bounds = new LngLatBounds();
       if (journey.locations) {
@@ -279,7 +291,6 @@ export default function JourneyMap({
         _bounds.getSouth(),
         _bounds.getEast(),
         _bounds.getNorth(),
-
       ];
     }
   }, [journey]);
@@ -319,7 +330,7 @@ export default function JourneyMap({
               ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
               : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
           }
-          RTLTextPlugin={undefined}
+          RTLTextPlugin={""}
           onClick={handleMapClick}
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops", "locations"]}

@@ -12,8 +12,8 @@ function getTimeDelta(seconds: number) {
 }
 
 type DelayProps = {
-  item: Vehicle
-}
+  item: Vehicle;
+};
 
 function Delay({ item }: DelayProps) {
   let delay = item.delay;
@@ -53,11 +53,11 @@ export default function VehiclePopup({
 }: VehiclePopupProps) {
   const handleTripClick = React.useCallback(
     (e: React.MouseEvent) => {
-    if (onTripClick) {
-      e.preventDefault();
-      onTripClick(item);
-    }
-  },
+      if (onTripClick) {
+        e.preventDefault();
+        onTripClick(item);
+      }
+    },
     [item, onTripClick],
   );
 
@@ -89,8 +89,6 @@ export default function VehiclePopup({
   if (item.vehicle.url) {
     vehicle = <a href={`${item.vehicle.url}`}>{vehicle}</a>;
   }
-
-  const date = new Date(item.datetime);
 
   return (
     <Popup
@@ -152,7 +150,7 @@ export default function VehiclePopup({
       )}
       <Delay item={item} />
       <div>
-        <TimeAgo date={date} />
+        <TimeAgo date={item.datetime} key={item.datetime} />
       </div>
     </Popup>
   );
