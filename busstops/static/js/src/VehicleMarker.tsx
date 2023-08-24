@@ -1,13 +1,12 @@
 import React, { ReactElement, memo } from "react";
-import { Marker } from "react-map-gl/maplibre";
+import { LngLatLike, Marker } from "react-map-gl/maplibre";
 
 export type Vehicle = {
   id: number;
-  coordinates: [number, number];
+  coordinates: LngLatLike;
   heading?: number;
   datetime: string;
   destination: string;
-  delay?: number;
   block?: string;
   tfl_code?: string;
   trip_id?: number;
@@ -39,7 +38,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
 
   let rotation = vehicle.heading;
 
-  let background = "";
+  let background: string | null;
   if (vehicle.vehicle.css) {
     background = vehicle.vehicle.css;
   }
@@ -86,7 +85,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
       <div
         data-vehicle-id={vehicle.id}
         className={className}
-        style={background ? { background: background } : {}}
+        style={background && { background: background }}
       >
         {marker}
       </div>
@@ -98,7 +97,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
       latitude={vehicle.coordinates[1]}
       longitude={vehicle.coordinates[0]}
       rotation={rotation}
-      style={{ zIndex: selected ? 1 : undefined }}
+      style={selected ? { zIndex: 1 } : { zIndex: null }}
       data-vehicle-id={vehicle.id}
     >
       {marker}

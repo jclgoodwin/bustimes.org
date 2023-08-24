@@ -1,7 +1,6 @@
 import React from "react";
 import { Popup } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
-import { Vehicle } from "./VehicleMarker";
 
 function getTimeDelta(seconds: number) {
   const minutes = Math.round(seconds / 60);
@@ -11,28 +10,23 @@ function getTimeDelta(seconds: number) {
   return minutes + " minutes";
 }
 
-type DelayProps = {
-  item: Vehicle;
-};
-
-function Delay({ item }: DelayProps) {
+function Delay({ item }) {
   let delay = item.delay;
   if (typeof delay !== "undefined") {
-    let delayString;
     if (-60 < delay && delay < 60) {
-      delayString = "On time";
+      delay = "On time";
     } else {
       if (delay < 0) {
         delay *= -1;
       }
-      delayString = getTimeDelta(delay);
-      if (delay < 0) {
-        delayString += " early";
+      delay = getTimeDelta(delay);
+      if (item.delay < 0) {
+        delay += " early";
       } else {
-        delayString += " late";
+        delay += " late";
       }
     }
-    return <div>{delayString}</div>;
+    return <div>{delay}</div>;
   }
 }
 
@@ -52,7 +46,7 @@ export default function VehiclePopup({
   activeLink = false,
 }: VehiclePopupProps) {
   const handleTripClick = React.useCallback(
-    (e: React.MouseEvent) => {
+    (e) => {
       if (onTripClick) {
         e.preventDefault();
         onTripClick(item);
@@ -70,9 +64,7 @@ export default function VehiclePopup({
   }
 
   if (item.tfl_code) {
-    if (!activeLink) {
-      line_name = <a href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</a>;
-    }
+    line_name = <a href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</a>;
   } else if (item.trip_id) {
     if (!activeLink) {
       line_name = (
@@ -91,6 +83,8 @@ export default function VehiclePopup({
   if (item.vehicle.url) {
     vehicle = <a href={`${item.vehicle.url}`}>{vehicle}</a>;
   }
+
+  const date = new Date(item.datetime);
 
   return (
     <Popup
@@ -152,7 +146,7 @@ export default function VehiclePopup({
       )}
       <Delay item={item} />
       <div>
-        <TimeAgo date={item.datetime} key={item.datetime} />
+        <TimeAgo date={date} />
       </div>
     </Popup>
   );

@@ -56,9 +56,9 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       }
     };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (event) => {
       // ESC
-      if (isOpen && event.key === "Escape") {
+      if (isOpen && event.keyCode === 27) {
         closeMap();
       }
     };
@@ -133,8 +133,8 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     }
     first.current = false;
 
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
+    const handleVisibilityChange = (event) => {
+      if (event.target.hidden) {
         clearTimeout(timeout);
       } else {
         loadVehicles();
