@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { VehicleJourney } from "./JourneyMap";
 import { Vehicle } from "./VehicleMarker";
 
@@ -34,7 +34,7 @@ export type Trip = {
 
 type RowProps = {
   stop: TripTime;
-  onMouseEnter: (stop: TripTime) => void;
+  onMouseEnter?: (stop: TripTime) => void;
   vehicle: any;
   aimedColumn: boolean;
 };
@@ -48,7 +48,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     }
   }, [stop, onMouseEnter]);
 
-  let stopName: any = stop.stop.name;
+  let stopName: string | ReactElement = stop.stop.name;
   if (stop.stop.icon) {
     stopName = `${stopName} (${stop.stop.icon})`;
   }
@@ -56,15 +56,20 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     stopName = <a href={`/stops/${stop.stop.atco_code}`}>{stopName}</a>;
   }
 
-  const className = stop.timing_status === "OTH" ? "minor" : null;
+  let className;
+  if (stop.timing_status === "OTH") {
+    className = "minor";
+  }
 
-  const rowSpan =
+  let rowSpan;
+  if (
     aimedColumn &&
     stop.aimed_arrival_time &&
     stop.aimed_departure_time &&
     stop.aimed_arrival_time !== stop.aimed_departure_time
-      ? 2
-      : null;
+  ) {
+    rowSpan = 2;
+  }
 
   let actual;
   if (vehicle?.progress && vehicle.progress.prev_stop === stop.stop.atco_code) {
@@ -116,28 +121,27 @@ const TripTimetable = React.memo(function TripTimetable({
   journey,
   loading = false,
 }: TripTimetableProps) {
-  // const last = trip.times?.length - 1;
-
   const aimedColumn = trip.times?.some(
     (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,
   );
 
+  let previousLink, nextLink;
   if (journey) {
     if (journey.previous) {
-      let previous = new Date(journey.previous.datetime)
+      previousLink = new Date(journey.previous.datetime)
         .toTimeString()
         .slice(0, 5);
-      var previousLink = (
+      previousLink = (
         <p className="previous">
-          <a href={`#journeys/${journey.previous.id}`}>&larr; {previous}</a>
+          <a href={`#journeys/${journey.previous.id}`}>&larr; {previousLink}</a>
         </p>
       );
     }
     if (journey.next) {
-      let nextDate = new Date(journey.next.datetime).toTimeString().slice(0, 5);
-      var nextLink = (
+      nextLink = new Date(journey.next.datetime).toTimeString().slice(0, 5);
+      nextLink = (
         <p className="next">
-          <a href={`#journeys/${journey.next.id}`}>{nextDate} &rarr;</a>
+          <a href={`#journeys/${journey.next.id}`}>{nextLink} &rarr;</a>
         </p>
       );
     }
