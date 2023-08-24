@@ -70,7 +70,9 @@ export default function VehiclePopup({
   }
 
   if (item.tfl_code) {
-    line_name = <a href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</a>;
+    if (!activeLink) {
+      line_name = <a href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</a>;
+    }
   } else if (item.trip_id) {
     if (!activeLink) {
       line_name = (

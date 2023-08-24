@@ -238,19 +238,18 @@ export default function TripMap() {
   const timeout = React.useRef<number>();
   const vehiclesAbortController = React.useRef<AbortController>();
 
-  const loadTrip = React.useCallback(() => {
-    if (tripId) {
-      if (trip && trip.id && tripId === trip.id.toString()) {
-        return;
-      }
-      setTripVehicle(undefined);
-      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-        if (response.ok) {
-          response.json().then(setTrip);
-        }
-      });
+  const loadTrip = React.useCallback((tripId: string) => {
+    setTripVehicle(undefined);
+    if (window.STOPS.id && window.STOPS.id.toString() === tripId) {
+      setTrip(window.STOPS);
+      return;
     }
-  }, [trip, tripId]);
+    fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+      if (response.ok) {
+        response.json().then(setTrip);
+      }
+    });
+  }, []);
 
   React.useEffect(() => {
     const loadVehicles = (first = false) => {
@@ -306,7 +305,9 @@ export default function TripMap() {
       );
     };
 
-    loadTrip();
+    if (tripId) {
+      loadTrip(tripId);
+    }
     loadVehicles(true);
 
     const handleVisibilityChange = () => {
