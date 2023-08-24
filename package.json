@@ -31,7 +31,7 @@
   },
   "scripts": {
     "watch": "esbuild busstops/static/js/src/app.tsx busstops/static/js/src/map.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --watch --format=esm --sourcemap",
-    "build": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --minify --format=esm --sourcemap --target=chrome63;esbuild busstops/static/js/src/map.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --minify --sourcemap --target=chrome49",
+    "build": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --splitting --minify --format=esm --sourcemap --target=chrome63;esbuild busstops/static/js/src/map.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --minify --sourcemap --target=chrome51",
     "lint": "eslint busstops/static/js/src"
   }
 }
