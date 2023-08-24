@@ -160,19 +160,14 @@ export default function TripMap() {
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
-  const bounds = React.useMemo((): [number, number, number, number] => {
+  const bounds = React.useMemo((): LngLatBounds => {
     const _bounds = new LngLatBounds();
     for (let item of trip.times) {
       if (item.stop.location) {
         _bounds.extend(item.stop.location);
       }
     }
-    return [
-      _bounds.getWest(),
-      _bounds.getSouth(),
-      _bounds.getEast(),
-      _bounds.getNorth(),
-    ];
+    return _bounds;
   }, [trip]);
 
   const navigateToTrip = React.useCallback((item: Vehicle) => {
@@ -284,7 +279,9 @@ export default function TripMap() {
             setVehicles(items);
             for (const item of items) {
               if (
-                (tripId && item.trip_id && item.trip_id.toString() === tripId) ||
+                (tripId &&
+                  item.trip_id &&
+                  item.trip_id.toString() === tripId) ||
                 (window.VEHICLE_ID && item.id === window.VEHICLE_ID)
               ) {
                 if (first) {
@@ -412,11 +409,9 @@ export default function TripMap() {
           ) : null}
         </Map>
       </div>
-      <TripTimetable
-        trip={trip}
-        vehicle={tripVehicle}
-        // onMouseEnter={handleMouseEnter}
-      />
+      <div className="trip-timetable map-sidebar">
+        <TripTimetable trip={trip} vehicle={tripVehicle} />
+      </div>
     </React.Fragment>
   );
 }
