@@ -4,7 +4,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
 from django.views.generic.base import TemplateView
 
-from buses.utils import cache_control_s_maxage, stale_if_error
+# from buses.utils import cache_control_s_maxage, stale_if_error
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
 from fares import mytrip
@@ -23,9 +23,7 @@ sitemaps = {
 urlpatterns = [
     path(
         "",
-        cache_control_s_maxage(3600)(
-            stale_if_error(3600)(TemplateView.as_view(template_name="index.html"))
-        ),
+        TemplateView.as_view(template_name="index.html"),
         name="index",
     ),
     path("offline", TemplateView.as_view(template_name="offline.html")),
@@ -41,13 +39,11 @@ urlpatterns = [
     path("stats.json", views.stats),
     path("ads.txt", views.ads_txt),
     path("robots.txt", views.robots_txt),
-    path("stops.json", cache_control_s_maxage(1800)(views.stops_json)),
+    path("stops.json", views.stops_json),
     path("stops.csv", views.stops_csv),
     path(
         "regions/<pk>",
-        cache_control_s_maxage(1800)(
-            stale_if_error(3600)(views.RegionDetailView.as_view())
-        ),
+        views.RegionDetailView.as_view(),
         name="region_detail",
     ),
     re_path(
@@ -62,18 +58,16 @@ urlpatterns = [
     ),
     re_path(
         r"^localities/(?P<pk>[ENen][Ss]?[0-9]+)",
-        cache_control_s_maxage(1800)(views.LocalityDetailView.as_view()),
+        views.LocalityDetailView.as_view(),
     ),
     path(
         "localities/<slug>",
-        cache_control_s_maxage(1800)(views.LocalityDetailView.as_view()),
+        views.LocalityDetailView.as_view(),
         name="locality_detail",
     ),
     path(
         "stops/<pk>",
-        cache_control_s_maxage(60)(
-            stale_if_error(120)(views.StopPointDetailView.as_view())
-        ),
+        views.StopPointDetailView.as_view(),
         name="stoppoint_detail",
     ),
     path("stations/<pk>", views.StopAreaDetailView.as_view(), name="stoparea_detail"),
@@ -84,7 +78,7 @@ urlpatterns = [
     re_path(r"^operators/(?P<pk>[A-Z]+)$", views.OperatorDetailView.as_view()),
     path(
         "operators/<slug>",
-        stale_if_error(3600)(views.OperatorDetailView.as_view()),
+        views.OperatorDetailView.as_view(),
         name="operator_detail",
     ),
     path("operators/<slug>/tickets", mytrip.operator_tickets),
@@ -93,7 +87,7 @@ urlpatterns = [
     path("services/<int:service_id>/timetable", views.service_timetable),
     path(
         "services/<slug>",
-        stale_if_error(3600)(views.ServiceDetailView.as_view()),
+        views.ServiceDetailView.as_view(),
         name="service_detail",
     ),
     path("services/<slug>/fares", fares_views.service_fares),

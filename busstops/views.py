@@ -38,7 +38,7 @@ from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
-from buses.utils import cache_control_s_maxage
+# from buses.utils import cache_control_s_maxage
 from bustimes.models import StopTime, Trip
 from departures import live
 from disruptions.models import Consequence, Situation
@@ -347,7 +347,7 @@ def timetable_source_stats(request):
     return JsonResponse(cache.get("timetable-source-stats", []), safe=False)
 
 
-@cache_control_s_maxage(3600)
+# @cache_control_s_maxage(3600)
 def stops_json(request):
     """JSON endpoint accessed by the JavaScript map,
     listing the active StopPoints within a rectangle,
@@ -1445,7 +1445,7 @@ class ServiceSitemap(Sitemap):
         return obj.modified_at
 
 
-@cache_control_s_maxage(300)
+# @cache_control_s_maxage(300)
 def search(request):
     form = forms.SearchForm(request.GET)
 
