@@ -25,7 +25,7 @@ from bustimes.models import Calendar, Route, StopTime, Trip
 from vehicles.models import Vehicle, VehicleJourney
 from vehicles.tasks import log_vehicle_journey
 
-from . import live
+from . import live, sources
 
 
 class LiveDeparturesTest(TestCase):
@@ -110,7 +110,7 @@ class LiveDeparturesTest(TestCase):
         )
 
     def test_abstract(self):
-        departures = live.RemoteDepartures(None, ())
+        departures = sources.RemoteDepartures(None, ())
         self.assertRaises(
             NotImplementedError, departures.departures_from_response, None
         )
@@ -129,7 +129,7 @@ class LiveDeparturesTest(TestCase):
         StopTime.objects.create(trip=trip, stop=self.london_stop)
 
         with vcr.use_cassette("fixtures/vcr/tfl_arrivals.yaml"):
-            row = live.TflDepartures(self.london_stop, [service]).get_departures()[0]
+            row = sources.TflDepartures(self.london_stop, [service]).get_departures()[0]
         self.assertEqual("Bow Church", row["destination"])
         self.assertEqual(service, row["service"])
         self.assertEqual(2016, row["live"].date().year)

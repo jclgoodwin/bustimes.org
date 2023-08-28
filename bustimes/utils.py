@@ -5,7 +5,7 @@ from django.db.models import OuterRef, Q
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import BankHolidayDate, Calendar, CalendarBankHoliday, CalendarDate, Trip
+from .models import BankHolidayDate, Calendar, CalendarBankHoliday, CalendarDate, Trip, StopTime
 
 differ = Differ(charjunk=lambda _: True)
 
@@ -182,6 +182,24 @@ def get_calendars(when, calendar_ids=None):
         | special_inclusions
         | bank_holiday_inclusions & bank_holiday_exclusions,
     )
+
+
+def get_stop_times(date: datetime, time: timedelta, stop, services_routes: dict):
+    times = StopTime.objects.filter(pick_up=True)
+
+    try:
+        times = times.filter(stop__stop_area=stop)
+    except ValueError:
+        times = times.filter(stop=stop)
+
+    if time:
+        times = times.filter(departure__gte=time)
+    else:
+        times = times.filter(departure__isnull=False)
+    routes = []
+    for service_routes in services_routes.values():
+        routes += get_routes(service_routes, date)
+    return times.filter(trip__route__in=routes, trip__calendar__in=get_calendars(date))
 
 
 def get_descriptions(routes):

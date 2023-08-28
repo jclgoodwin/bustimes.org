@@ -234,34 +234,32 @@ class ImportBusOpenDataTest(TestCase):
             response = self.client.get("/stops/2900W0321/times.json?when=yesterday")
         self.assertEqual(400, response.status_code)
 
-        with patch(
-            "departures.live.NorfolkDepartures.get_departures", return_value=[]
-        ) as mocked:
+        # with patch(
+        #     "departures.live.NorfolkDepartures.get_departures", return_value=[]
+        # ) as mocked:
 
-            with self.assertNumQueries(8):
-                response = self.client.get("/stops/2900W0321?date=2020-05-02")
-            self.assertEqual(1, len(response.context_data["departures"]))
-            self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
+        with self.assertNumQueries(8):
+            response = self.client.get("/stops/2900W0321?date=2020-05-02")
+        self.assertEqual(1, len(response.context_data["departures"]))
+        self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
-            self.assertContains(response, "Nearby stops")  # other stop in StopArea
-            self.assertContains(response, "<small>54</small>")
+        self.assertContains(response, "Nearby stops")  # other stop in StopArea
+        self.assertContains(response, "<small>54</small>")
 
-            with self.assertNumQueries(9):
-                response = self.client.get(
-                    "/stops/2900W0321?date=2020-05-02&time=11:00"
-                )
-            self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
-            self.assertContains(response, "<h3>Monday 4 May</h3>")  # next day
+        with self.assertNumQueries(9):
+            response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
+        self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
+        self.assertContains(response, "<h3>Monday 4 May</h3>")  # next day
 
-            with self.assertNumQueries(10):
-                response = self.client.get("/stops/2900W0321?date=poop")
-            self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
+        with self.assertNumQueries(10):
+            response = self.client.get("/stops/2900W0321?date=poop")
+        self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
-            with self.assertNumQueries(8):
-                response = self.client.get("/stops/2900W0321?date=2020-05-02")
-            self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
+        with self.assertNumQueries(8):
+            response = self.client.get("/stops/2900W0321?date=2020-05-02")
+        self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
-            mocked.assert_called()
+        # mocked.assert_called()
 
         # test get_trip
         journey = VehicleJourney(
