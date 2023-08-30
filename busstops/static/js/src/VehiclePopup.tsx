@@ -15,22 +15,21 @@ type DelayProps = {
   item: Vehicle;
 };
 
-function Delay({ item }: DelayProps) {
+export function Delay({ item }: DelayProps) {
   let delay = item.delay;
   if (typeof delay !== "undefined") {
-    let delayString;
-    if (-60 < delay && delay < 60) {
+    let delayString,
+      abs = Math.abs(delay);
+
+    if (abs < 45) {
       delayString = "On time";
     } else {
       if (delay < 0) {
-        delay *= -1;
-      }
-      delayString = getTimeDelta(delay);
-      if (delay < 0) {
-        delayString += " early";
+        delayString = "early";
       } else {
-        delayString += " late";
+        delayString = "late";
       }
+      delayString = getTimeDelta(abs) + " " + delayString;
     }
     return <div>{delayString}</div>;
   }

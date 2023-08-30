@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shows delay 1`] = `
+<div>
+  4 minutes late
+</div>
+`;
+
+exports[`shows delay 2`] = `
+<div>
+  4 minutes early
+</div>
+`;
+
+exports[`shows delay 3`] = `
+<div>
+  On time
+</div>
+`;
+
+exports[`shows delay 4`] = `
+<div>
+  On time
+</div>
+`;
+
+exports[`shows delay 5`] = `null`;
