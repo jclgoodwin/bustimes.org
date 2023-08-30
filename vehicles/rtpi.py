@@ -1,12 +1,12 @@
 from datetime import timedelta
+from itertools import pairwise
 
-from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import Point, Polygon
-from django.db.models import F, Q
+import shapely
+from django.db.models import Q
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from bustimes.models import RouteLink, StopTime, Trip
+from bustimes.models import StopTime, Trip
 from bustimes.utils import get_calendars, get_routes
 
 
@@ -101,41 +101,26 @@ def get_trip(
 
 
 def get_progress(journey, x, y):
-    point = Point(x, y, srid=4326)
+    point = shapely.Point(x, y)
 
-    route_link = (
-        RouteLink.objects.filter(
-            service=journey.service_id,
-            geometry__bboverlaps=point.buffer(0.001),
-            from_stop__stoptime__trip=journey.trip_id,
-            to_stop__stoptime__trip=journey.trip_id,
-            to_stop__stoptime__id__gt=F("from_stop__stoptime__id"),
-        )
-        .annotate(
-            distance=Distance("geometry", point),
-            from_stoptime=F("from_stop__stoptime"),
-            to_stoptime=F("to_stop__stoptime"),
-        )
-        .order_by("distance")
-        .first()
+    stop_times = list(
+        StopTime.objects.filter(trip=journey.trip_id)
+        .filter(stop__latlong__isnull=False)
+        .select_related("stop")
     )
 
-    if route_link:
-        return StopTime.objects.filter(
-            id__in=(route_link.from_stoptime, route_link.to_stoptime)
-        )
+    minimum_distance = None
+    closest_pair = None
+    # closest_linestring = None
 
-    boxes = []
-    previous = None
-    for stop_time in StopTime.objects.filter(trip=journey.trip_id).select_related(
-        "stop"
-    ):
-        if stop_time.stop and stop_time.stop.latlong:
-            if previous:
-                xs = (previous.stop.latlong.x, stop_time.stop.latlong.x)
-                ys = (previous.stop.latlong.y, stop_time.stop.latlong.y)
-                box = Polygon.from_bbox((min(xs), min(ys), max(xs), max(ys)))
-                if not box.distance(point):
-                    return previous, stop_time
-                boxes.append(box)
-            previous = stop_time
+    for a, b in pairwise(stop_times):
+        line_string = shapely.LineString([a.stop.latlong, b.stop.latlong])
+        distance = line_string.distance(point)
+
+        if minimum_distance is None or distance < minimum_distance:
+            minimum_distance = distance
+            closest_pair = a, b
+            # closest_linestring = line_string
+
+    if closest_pair is not None:
+        return closest_pair
