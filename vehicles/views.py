@@ -1147,8 +1147,10 @@ def journey_json(request, pk):
         # previous_latlong = None
 
         trips = journey.trip.get_trips()
-        for stoptime in StopTime.objects.filter(trip__in=trips).select_related(
-            "stop__locality"
+        for stoptime in (
+            StopTime.objects.filter(trip__in=trips)
+            .select_related("stop__locality")
+            .order_by("trip__start", "id")
         ):
             stop = stoptime.stop
             # if stop := stoptime.stop:

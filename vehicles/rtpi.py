@@ -5,17 +5,20 @@ from ciso8601 import parse_datetime
 from django.contrib.gis.geos import LineString, Point
 from django.utils import timezone
 
-from bustimes.models import RouteLink, StopTime
+from bustimes.models import RouteLink, StopTime, Trip
 from vehicles.utils import calculate_bearing
 
 
 def get_progress(item):
     point = Point(*item["coordinates"])
 
+    trips = Trip.objects.get(id=item["trip_id"]).get_trips()
+
     stop_times = (
-        StopTime.objects.filter(trip=item["trip_id"])
+        StopTime.objects.filter(trip__in=trips)
         .filter(stop__latlong__isnull=False)
         .select_related("stop")
+        .order_by("trip__start", "id")
     )
 
     if not stop_times:
