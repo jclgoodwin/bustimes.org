@@ -32,7 +32,7 @@ def get_progress(item):
 
     if len(pairs) >= 2 and item["heading"] is not None:
 
-        vehicle_heading = item["heading"]
+        vehicle_heading = int(item["heading"])
 
         route_bearing = calculate_bearing(
             closest[0].stop.latlong, closest[1].stop.latlong

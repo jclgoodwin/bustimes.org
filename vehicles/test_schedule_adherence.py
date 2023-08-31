@@ -190,7 +190,7 @@ class ScheduleAdherenceTest(TestCase):
             {
                 "coordinates": [-0.307577, 51.75986],
                 "trip_id": self.journey.trip_id,
-                "heading": 90,
+                "heading": "90.0",
             }
         )
         self.assertEqual(progress[0][0].stop_id, "210021509620")
