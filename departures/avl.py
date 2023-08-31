@@ -11,14 +11,17 @@ def get_tracking(stop, services):
     set_names = [
         f"service{service.pk}vehicles" for service in services if service.tracking
     ]
+    if not set_names:
+        return
+
     vehicle_ids = list(redis_client.sunion(set_names))
-    print(vehicle_ids)
+    # print(vehicle_ids)
 
     vehicle_locations = redis_client.mget(
         [f"vehicle{int(vehicle_id)}" for vehicle_id in vehicle_ids]
     )
     vehicle_locations = [json.loads(item) for item in vehicle_locations if item]
 
-    print(vehicle_locations)
+    # print(vehicle_locations)
 
     return vehicle_locations
