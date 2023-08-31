@@ -39,8 +39,9 @@ from busstops.models import (
     StopPoint,
     StopUsage,
 )
-from departures import gtfsr, live
+from departures import avl, gtfsr, live
 from vehicles.models import Vehicle
+from vehicles.rtpi import add_progress_and_delay
 from vehicles.utils import liveries_css_version
 
 from .download_utils import download
@@ -233,9 +234,19 @@ def stop_times_json(request, atco_code):
             )
         current_timezone = timezone.get_current_timezone()
         when = when.astimezone(current_timezone)
+        now = False
     else:
         when = timezone.localtime()
+        now = True
     services = stop.service_set.filter(current=True).defer("geometry", "search_vector")
+
+    by_trip = None
+    if now:
+        vehicle_locations = avl.get_tracking(stop, services)
+        if vehicle_locations:
+            by_trip = {
+                item["trip_id"]: item for item in vehicle_locations if "trip_id" in item
+            }
 
     try:
         limit = int(request.GET["limit"])
@@ -278,6 +289,21 @@ def stop_times_json(request, atco_code):
     )[:limit]:
         times.append(stop_time_json(stop_time, when.date()))
 
+    if by_trip:
+        for time in times:
+            if time["trip_id"] in by_trip:
+                item = by_trip[time["trip_id"]]
+                add_progress_and_delay(item)
+                delay = timedelta(seconds=item["delay"])
+                time["delay"] = delay
+                if time["aimed_departure_time"]:
+                    time["expected_departure_time"] = (
+                        time["aimed_departure_time"] + delay
+                    )
+                if time["aimed_arrival_time"]:
+                    time["expected_arrival_time"] = time["aimed_arrival_time"] + delay
+                else:
+                    time["expected_arrival_time"] = time["expected_departure_time"]
     return JsonResponse({"times": times})
 
 

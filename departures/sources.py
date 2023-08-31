@@ -9,6 +9,7 @@ import requests
 import xmltodict
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models import F
 from django.utils import timezone
 
 from busstops.models import StopPoint
@@ -399,6 +400,17 @@ class TimetableDepartures(Departures):
                 for stop_time in self.get_times(date)[: 10 - len(times)]
             ]
 
+        if self.tracking:
+            trip_ids = [row["stop_time"].trip_id for row in times]
+            vehicles_by_trip = {
+                vehicle.trip_id: vehicle
+                for vehicle in Vehicle.objects.filter(
+                    latest_journey__trip__in=trip_ids
+                ).annotate(trip_id=F("latest_journey__trip"))
+            }
+            for row in times:
+                row["vehicle"] = vehicles_by_trip.get(row["stop_time"].trip_id)
+
         if yesterday_times:
             times.sort(key=get_departure_order)
 
@@ -406,6 +418,7 @@ class TimetableDepartures(Departures):
 
     def __init__(self, stop, services, now, routes):
         self.routes = routes
+        self.tracking = any(service.tracking for service in services)
         super().__init__(stop, services, now)
 
 

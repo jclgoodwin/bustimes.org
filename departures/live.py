@@ -7,6 +7,7 @@ from django.utils import timezone
 from busstops.models import Service, SIRISource, StopPoint
 from bustimes.models import Route
 from bustimes.utils import get_stop_times
+from vehicles import rtpi
 from vehicles.tasks import log_vehicle_journey
 
 from . import avl, gtfsr
@@ -85,8 +86,6 @@ def update_trip_ids(departures: list, live_rows: list) -> None:
 
 
 def get_departures(stop, services, when) -> dict:
-    avl.get_tracking(stop, services)
-
     # Transport for London
     if (
         not when
@@ -117,6 +116,24 @@ def get_departures(stop, services, when) -> dict:
     departures = TimetableDepartures(
         stop, services, when or now, routes_by_service
     ).get_departures()
+
+    if not when:
+        vehicle_locations = avl.get_tracking(stop, services)
+        if vehicle_locations:
+            by_trip = {
+                item["trip_id"]: item for item in vehicle_locations if "trip_id" in item
+            }
+            if by_trip:
+                for departure in departures:
+                    trip_id = departure["stop_time"].trip_id
+                    if "vehicle" in departure and trip_id not in by_trip:
+                        departure["vehicle"] = None
+                    elif trip_id in by_trip and stop.pk == "2900M111":
+                        rtpi.add_progress_and_delay(by_trip[trip_id])
+                        if "delay" in by_trip[trip_id]:
+                            departure["live"] = departure["time"] + datetime.timedelta(
+                                seconds=by_trip[trip_id]["delay"]
+                            )
 
     one_hour = datetime.timedelta(hours=1)
     one_hour_ago = now - one_hour
@@ -158,6 +175,7 @@ def get_departures(stop, services, when) -> dict:
             if live_rows:
                 blend(departures, live_rows)
 
+        # West Midlands
         elif not operators.isdisjoint(settings.TFWM_OPERATORS):
             live_rows = WestMidlandsDepartures(stop, services).get_departures()
             if live_rows:
@@ -165,6 +183,7 @@ def get_departures(stop, services, when) -> dict:
 
         elif departures:
 
+            # Edinburgh
             if stop.naptan_code and (
                 "Lothian Buses" in operators
                 or "Lothian Country Buses" in operators
@@ -180,6 +199,7 @@ def get_departures(stop, services, when) -> dict:
 
             source = None
 
+            # Aberdeen, Glasgow, Bristol?
             if stop.admin_area_id:
                 for possible_source in SIRISource.objects.filter(
                     admin_areas=stop.admin_area_id
