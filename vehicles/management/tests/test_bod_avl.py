@@ -374,7 +374,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response = self.client.get(f"/vehicles.json?trip={self.trip.id}")
             json = response.json()
             self.assertEqual(len(json), 3)
-            self.assertEqual(json[0]["progress"], {"prev_stop": "a", "next_stop": "b"})
+            self.assertEqual(
+                json[0]["progress"],
+                {"prev_stop": "a", "next_stop": "b", "progress": 0.097},
+            )
             self.assertEqual(json[0]["delay"], 27962)
 
             with self.assertNumQueries(1):
