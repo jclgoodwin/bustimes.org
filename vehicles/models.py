@@ -18,8 +18,7 @@ from simple_history.models import HistoricalRecords
 from webcolors import html5_parse_simple_color
 
 from busstops.models import DataSource, Operator, Service
-
-from . import rtpi
+from bustimes.utils import get_trip
 
 
 def format_reg(reg):
@@ -920,8 +919,7 @@ class VehicleJourney(models.Model):
         ]
         unique_together = (("vehicle", "datetime"),)
 
-    get_trip = rtpi.get_trip
-    get_progress = rtpi.get_progress
+    get_trip = get_trip
 
 
 # class VehiclePosition:

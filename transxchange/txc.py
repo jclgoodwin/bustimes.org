@@ -422,7 +422,7 @@ class DayOfWeek:
             self.day = WEEKDAYS[day]
 
     def __eq__(self, other):
-        if type(other) == int:
+        if isinstance(other, int):
             return self.day == other
         return self.day == other.day
 

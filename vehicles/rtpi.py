@@ -2,125 +2,79 @@ from datetime import timedelta
 from itertools import pairwise
 
 import shapely
-from django.db.models import Q
+from ciso8601 import parse_datetime
 from django.utils import timezone
-from sql_util.utils import Exists
 
-from bustimes.models import StopTime, Trip
-from bustimes.utils import get_calendars, get_routes
-
-
-def get_trip(
-    journey,
-    datetime=None,
-    date=None,
-    operator_ref=None,
-    origin_ref=None,
-    destination_ref=None,
-    departure_time=None,
-    journey_code="",
-):
-    if not journey.service:
-        return
-
-    if not datetime:
-        datetime = journey.datetime
-    if not date:
-        date = (departure_time or datetime).date()
-
-    routes = get_routes(journey.service.route_set.select_related("source"), date)
-    if not routes:
-        return
-    trips = Trip.objects.filter(route__in=routes)
-
-    if destination_ref and " " not in destination_ref and destination_ref[:3].isdigit():
-        destination = Q(destination=destination_ref)
-    else:
-        destination = None
-
-    if journey.direction == "outbound":
-        direction = Q(inbound=False)
-    elif journey.direction == "inbound":
-        direction = Q(inbound=True)
-    else:
-        direction = None
-
-    if departure_time:
-        start = timezone.localtime(departure_time)
-        start = timedelta(hours=start.hour, minutes=start.minute)
-    elif len(journey_code) == 4 and journey_code.isdigit() and int(journey_code) < 2400:
-        hours = int(journey_code[:-2])
-        minutes = int(journey_code[-2:])
-        start = timedelta(hours=hours, minutes=minutes)
-    else:
-        start = None
-
-    if start is not None:
-        trips_at_start = trips.filter(start=start)
-
-        # special strategy for TfL data
-        if operator_ref == "TFLO" and departure_time and origin_ref and destination_ref:
-            trips_at_start = trips_at_start.filter(
-                Exists("stoptime", filter=Q(stop=origin_ref)),
-                Exists("stoptime", filter=Q(stop=destination_ref)),
-            )
-        elif destination:
-            if direction:
-                destination |= direction
-            trips_at_start = trips_at_start.filter(destination)
-        elif direction:
-            trips_at_start = trips_at_start.filter(direction)
-
-        try:
-            return trips_at_start.get()
-        except Trip.MultipleObjectsReturned:
-            try:
-                return trips_at_start.get(calendar__in=get_calendars(date))
-            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                pass
-        except Trip.DoesNotExist:
-            if destination and departure_time:
-                try:
-                    return trips.get(start=start, calendar__in=get_calendars(date))
-                except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                    pass
-
-    if not journey.code:
-        return
-
-    trips = trips.filter(
-        Q(ticket_machine_code=journey.code) | Q(vehicle_journey_code=journey.code)
-    )
-
-    try:
-        return trips.get()
-    except Trip.DoesNotExist:
-        return
-    except Trip.MultipleObjectsReturned:
-        return trips.filter(calendar__in=get_calendars(date)).first()
+from bustimes.models import StopTime
+from vehicles.utils import calculate_bearing
 
 
-def get_progress(journey, x, y):
-    point = shapely.Point(x, y)
+def get_progress(item):
+    point = shapely.Point(*item["coordinates"])
 
-    stop_times = list(
-        StopTime.objects.filter(trip=journey.trip_id)
+    stop_times = (
+        StopTime.objects.filter(trip=item["trip_id"])
         .filter(stop__latlong__isnull=False)
         .select_related("stop")
     )
 
-    minimum_distance = None
-    closest_pair = None
-    # closest_linestring = None
+    if not stop_times:
+        return
 
-    for a, b in pairwise(stop_times):
-        line_string = shapely.LineString([a.stop.latlong, b.stop.latlong])
-        distance = line_string.distance(point)
+    pairs = [
+        (a, b, shapely.LineString([a.stop.latlong, b.stop.latlong]))
+        for a, b in pairwise(stop_times)
+    ]
 
-        if minimum_distance is None or distance < minimum_distance:
-            minimum_distance = distance
-            closest_pair = a, b
-            # closest_linestring = line_string
+    pairs.sort(key=lambda pair: pair[2].distance(point))
 
-    if closest_pair is not None:
-        return closest_pair
+    closest = pairs[0]
+
+    if len(pairs) >= 2 and item["heading"] is not None:
+
+        vehicle_heading = item["heading"]
+
+        route_bearing = calculate_bearing(
+            closest[0].stop.latlong, closest[1].stop.latlong
+        )
+
+        difference = (vehicle_heading - route_bearing + 180) % 360 - 180
+        if not (-90 < difference < 90):
+            # bus seems to be heading the wrong way - does the bus go both ways on this road?
+            # try the next closest pair of stops:
+            route_bearing = calculate_bearing(
+                pairs[1][0].stop.latlong, pairs[1][1].stop.latlong
+            )
+
+            difference = (vehicle_heading - route_bearing + 180) % 360 - 180
+            if -90 < difference < 90:
+                closest = pairs[1]
+
+    progress = closest[2].project(point, normalized=True)
+
+    return closest, progress
+
+
+def add_progress_and_delay(item):
+    (prev_stop, next_stop, line_string), progress = get_progress(item)
+
+    item["progress"] = {
+        "prev_stop": prev_stop.stop_id,
+        "next_stop": next_stop.stop_id,
+        "progress": round(progress, 3),
+    }
+    when = parse_datetime(item["datetime"])
+    when = timezone.localtime(when)
+    when = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
+
+    prev_time = prev_stop.departure_or_arrival()
+    next_time = next_stop.arrival_or_departure()
+
+    # correct for timetable times being > 24 hours:
+    if when - prev_time < -timedelta(hours=12):
+        when += timedelta(hours=24)
+
+    expected_time = prev_time + (next_time - prev_time) * progress
+    delay = int((when - expected_time).total_seconds())
+
+    item["delay"] = delay

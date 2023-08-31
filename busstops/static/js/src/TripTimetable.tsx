@@ -70,9 +70,12 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     rowSpan = 2;
   }
 
-  let actual;
+  let actual, actualRowSpan = rowSpan;
   if (vehicle?.progress && vehicle.progress.prev_stop === stop.stop.atco_code) {
     actual = vehicle.datetime;
+    if (vehicle.progress.progress > 0.1) {
+      actualRowSpan = 2;
+    }
   } else {
     actual = stop.actual_departure_time;
   }
@@ -82,7 +85,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     actual = stop.expected_departure_time || stop.expected_arrival_time;
   }
   if (actual) {
-    actual = <td>{actual}</td>;
+    actual = <td rowSpan={actualRowSpan}>{actual}</td>;
   }
 
   return (

@@ -4,7 +4,6 @@ import os
 from itertools import pairwise
 from urllib.parse import urlencode
 
-from ciso8601 import parse_datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException
 from django.contrib.postgres.aggregates import StringAgg
@@ -49,6 +48,7 @@ from .models import (
     VehicleRevision,
     VehicleRevisionFeature,
 )
+from .rtpi import add_progress_and_delay
 from .utils import (  # calculate_bearing,
     do_revision,
     do_revisions,
@@ -524,34 +524,7 @@ def vehicles_json(request) -> JsonResponse:
                 and "trip_id" in item
                 and item["trip_id"] == trip
             ):
-                vj = VehicleJourney(service_id=item["service_id"], trip_id=trip)
-                progress = vj.get_progress(*item["coordinates"])
-                if progress:
-                    prev_stop, next_stop = progress
-                    item["progress"] = {
-                        "prev_stop": prev_stop.stop_id,
-                        "next_stop": next_stop.stop_id,
-                    }
-                    when = parse_datetime(item["datetime"])
-                    when = timezone.localtime(when)
-                    when = datetime.timedelta(
-                        hours=when.hour, minutes=when.minute, seconds=when.second
-                    )
-
-                    prev_time = prev_stop.departure_or_arrival()
-                    next_time = next_stop.arrival_or_departure()
-
-                    # correct for timetable times being > 24 hours:
-                    if when - prev_time < -datetime.timedelta(hours=12):
-                        when += datetime.timedelta(hours=24)
-
-                    if prev_time <= when <= next_time:
-                        delay = 0
-                    elif prev_time < when:
-                        delay = (when - next_time).total_seconds()  # late
-                    else:
-                        delay = (when - prev_time).total_seconds()  # early
-                    item["delay"] = delay
+                add_progress_and_delay(item)
 
         if (
             service_ids

@@ -6,6 +6,7 @@ from django.test import TestCase
 from busstops.models import DataSource, StopPoint
 from bustimes.models import Route, StopTime, Trip
 
+from . import rtpi
 from .models import VehicleJourney
 
 
@@ -159,3 +160,57 @@ class ScheduleAdherenceTest(TestCase):
     def test(self):
         response = self.client.get(f"/journeys/{self.journey.id}.json")
         self.assertTrue(response.content)
+
+    def test_get_progress(self):
+        progress = rtpi.get_progress(
+            {
+                "coordinates": [-0.320573, 51.75536],
+                "trip_id": self.journey.trip_id,
+                "heading": 200,
+            }
+        )
+        self.assertEqual(progress[0][0].stop_id, "210021502200")
+        progress = rtpi.get_progress(
+            {
+                "coordinates": [-0.320573, 51.75536],
+                "trip_id": self.journey.trip_id,
+                "heading": 84,
+            }
+        )
+        self.assertEqual(progress[0][0].stop_id, "210021505160")
+        progress = rtpi.get_progress(
+            {
+                "coordinates": [-0.307577, 51.75986],
+                "trip_id": self.journey.trip_id,
+                "heading": 200,
+            }
+        )
+        self.assertEqual(progress[0][0].stop_id, "210021509645")
+        progress = rtpi.get_progress(
+            {
+                "coordinates": [-0.307577, 51.75986],
+                "trip_id": self.journey.trip_id,
+                "heading": 90,
+            }
+        )
+        self.assertEqual(progress[0][0].stop_id, "210021509620")
+
+        item = {
+            "coordinates": [-0.326838, 51.750598],
+            "trip_id": self.journey.trip_id,
+            "heading": None,
+            "datetime": "2023-08-31T09:50:07Z",
+        }
+        rtpi.add_progress_and_delay(item)
+        self.assertEqual(item["progress"]["progress"], 1)
+        self.assertEqual(item["delay"], 847)
+
+        item = {
+            "coordinates": [-0.332185, 51.750952],
+            "trip_id": self.journey.trip_id,
+            "heading": None,
+            "datetime": "2023-08-31T09:50:07Z",
+        }
+        rtpi.add_progress_and_delay(item)
+        self.assertEqual(item["progress"]["progress"], 1)
+        self.assertEqual(item["delay"], 967)
