@@ -370,6 +370,21 @@ class Trip(models.Model):
     def get_absolute_url(self):
         return reverse("trip_detail", args=(self.id,))
 
+    def get_trips(self):
+        if self.ticket_machine_code and self.block:
+            return (
+                Trip.objects.filter(
+                    calendar=self.calendar_id,
+                    inbound=self.inbound,
+                    ticket_machine_code=self.ticket_machine_code,
+                    block=self.block,
+                    route__service=self.route.service_id,
+                )
+                .order_by("start")
+                .distinct("start")
+            )
+        return [self]
+
 
 class StopTime(models.Model):
     id = models.BigAutoField(primary_key=True)

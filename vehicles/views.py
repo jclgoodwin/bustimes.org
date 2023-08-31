@@ -33,7 +33,7 @@ from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
-from bustimes.models import Garage, Route, Trip
+from bustimes.models import Garage, Route, StopTime, Trip
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -1145,7 +1145,11 @@ def journey_json(request, pk):
     if journey.trip:
         data["stops"] = []
         # previous_latlong = None
-        for stoptime in journey.trip.stoptime_set.select_related("stop__locality"):
+
+        trips = journey.trip.get_trips()
+        for stoptime in StopTime.objects.filter(trip__in=trips).select_related(
+            "stop__locality"
+        ):
             stop = stoptime.stop
             # if stop := stoptime.stop:
             #     if stop.latlong:

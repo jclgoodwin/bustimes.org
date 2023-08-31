@@ -368,20 +368,7 @@ class TripDetailView(DetailView):
 
         context["breadcrumb"] = operators + [self.object.route.service]
 
-        if self.object.ticket_machine_code and self.object.block:
-            trips = (
-                Trip.objects.filter(
-                    calendar=self.object.calendar_id,
-                    inbound=self.object.inbound,
-                    ticket_machine_code=self.object.ticket_machine_code,
-                    block=self.object.block,
-                    route__service=self.object.route.service_id,
-                )
-                .order_by("start")
-                .distinct("start")
-            )
-        else:
-            trips = [self.object]
+        trips = self.object.get_trips()
 
         stops = (
             StopTime.objects.filter(trip__in=trips)

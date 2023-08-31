@@ -1,16 +1,16 @@
 from datetime import timedelta
 from itertools import pairwise
 
-import shapely
 from ciso8601 import parse_datetime
+from django.contrib.gis.geos import LineString, Point
 from django.utils import timezone
 
-from bustimes.models import StopTime
+from bustimes.models import RouteLink, StopTime
 from vehicles.utils import calculate_bearing
 
 
 def get_progress(item):
-    point = shapely.Point(*item["coordinates"])
+    point = Point(*item["coordinates"])
 
     stop_times = (
         StopTime.objects.filter(trip=item["trip_id"])
@@ -22,7 +22,7 @@ def get_progress(item):
         return
 
     pairs = [
-        (a, b, shapely.LineString([a.stop.latlong, b.stop.latlong]))
+        (a, b, LineString([a.stop.latlong, b.stop.latlong]))
         for a, b in pairwise(stop_times)
     ]
 
@@ -50,7 +50,18 @@ def get_progress(item):
             if -90 < difference < 90:
                 closest = pairs[1]
 
-    progress = closest[2].project(point, normalized=True)
+    line_string = closest[2]
+    if "service_id" in item:
+        try:
+            line_string = RouteLink.objects.get(
+                service=item["service_id"],
+                from_stop=closest[0].stop_id,
+                to_stop=closest[1].stop_id,
+            ).geometry
+        except RouteLink.DoesNotExist:
+            pass
+
+    progress = line_string.project_normalized(point)
 
     return closest, progress
 
