@@ -380,10 +380,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             )
             self.assertEqual(json[0]["delay"], 27962)
 
-            with self.assertNumQueries(1):
-                response = self.client.get("/vehicles.json?id=-1")
-            self.assertEqual(len(response.json()), 0)
-
             with self.assertNumQueries(0):
                 response = self.client.get("/vehicles.json?service=ff")
             self.assertEqual(response.status_code, 400)

@@ -540,18 +540,6 @@ def vehicles_json(request) -> JsonResponse:
     if journeys_to_cache_later:
         cache.set_many(journeys_to_cache_later, 3600)  # an hour
 
-    if not locations and "id" in request.GET:
-        vehicles = all_vehicles.in_bulk(vehicle_ids)
-        for vehicle_id, vehicle in vehicles.items():
-            location = redis_client.lindex(f"journey{vehicle.latest_journey_id}", -1)
-            if location:
-                item = VehicleLocation.decode_appendage(location)
-                item["heading"] = item["direction"]
-                item["service"] = {"line_name": vehicle.latest_journey.route_name}
-                if vehicle.service_slug:
-                    item["service"]["url"] = f"/services/{vehicle.service_slug}"
-                locations.append(item)
-
     return respond_conditionally(
         request,
         JsonResponse(

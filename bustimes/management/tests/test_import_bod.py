@@ -313,7 +313,9 @@ class ImportBusOpenDataTest(TestCase):
 
             fake_redis.rpush(*location.get_appendage())
 
-            response = self.client.get(f"/journeys/{journey.id}.json")
+            response = self.client.get(
+                f"/services/{journey.service_id}/journeys/{journey.id}.json"
+            )
             json = response.json()
             self.assertIn("stops", json)
             self.assertIn("locations", json)
@@ -322,7 +324,9 @@ class ImportBusOpenDataTest(TestCase):
             StopPoint.objects.filter(atco_code="2900W0314").update(
                 latlong="POINT(0.23 52.729)"
             )
-            response = self.client.get(f"/journeys/{journey.id}.json")
+            response = self.client.get(
+                f"/vehicles/{journey.vehicle_id}/journeys/{journey.id}.json"
+            )
             json = response.json()
             self.assertEqual(
                 json["stops"][2]["actual_departure_time"], "2019-05-29T12:03:34Z"
