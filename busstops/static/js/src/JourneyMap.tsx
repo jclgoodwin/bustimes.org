@@ -360,7 +360,9 @@ export default function JourneyMap({
           }
         }
       }
-      return _bounds;
+      if (!_bounds.isEmpty()) {
+        return _bounds;
+      }
     }
   }, [journey]);
 
@@ -379,7 +381,7 @@ export default function JourneyMap({
   return (
     <React.Fragment>
       <div className="journey-map has-sidebar">
-        <Map
+        { bounds ? <Map
           dragRotate={false}
           touchPitch={false}
           pitchWithRotate={false}
@@ -429,7 +431,7 @@ export default function JourneyMap({
           {clickedLocation ? (
             <LocationPopup location={clickedLocation} />
           ) : null}
-        </Map>
+        </Map> : null }
       </div>
       <Sidebar
         loading={loading}
