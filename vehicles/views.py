@@ -1137,10 +1137,31 @@ def vehicles_history(request):
 
 
 @require_GET
-def journey_json(request, pk):
+def journey_json(request, pk, vehicle_id=None, service_id=None):
     journey = get_object_or_404(VehicleJourney.objects.select_related("trip"), pk=pk)
 
-    data = {}
+    data = {
+        "datetime": journey.datetime,
+        "code": journey.code,
+        "destination": journey.destination,
+        "direction": journey.direction,
+    }
+
+    if redis_client:
+        locations = redis_client and redis_client.lrange(f"journey{pk}", 0, -1)
+    else:
+        locations = None
+
+    if locations:
+        data["locations"] = [
+            VehicleLocation.decode_appendage(location) for location in locations
+        ]
+
+        data["locations"].sort(key=lambda location: location["datetime"])
+
+    # if not trip - calculate using time and first location?
+    # if not trip:
+    #     Trip
 
     if journey.trip:
         data["stops"] = []
@@ -1174,18 +1195,6 @@ def journey_json(request, pk):
                 }
             )
 
-    if redis_client:
-        locations = redis_client and redis_client.lrange(f"journey{pk}", 0, -1)
-    else:
-        locations = None
-
-    if locations:
-        data["locations"] = [
-            VehicleLocation.decode_appendage(location) for location in locations
-        ]
-
-        data["locations"].sort(key=lambda location: location["datetime"])
-
     if journey.trip and locations:
         # only stops with coordinates
         stops = [stop for stop in data["stops"] if stop["coordinates"]]
@@ -1205,17 +1214,22 @@ def journey_json(request, pk):
                         "locations"
                     ][i]["datetime"]
 
+    if vehicle_id:
+        next_previous_filter = {"vehicle_id": vehicle_id}
+    elif service_id:
+        next_previous_filter = {"service_id": service_id}
+    else:
+        next_previous_filter = {"vehicle_id": journey.vehicle_id}
+
     try:
-        next_journey = journey.get_next_by_datetime(vehicle_id=journey.vehicle_id)
+        next_journey = journey.get_next_by_datetime(**next_previous_filter)
     except VehicleJourney.DoesNotExist:
         pass
     else:
         data["next"] = {"id": next_journey.id, "datetime": next_journey.datetime}
 
     try:
-        previous_journey = journey.get_previous_by_datetime(
-            vehicle_id=journey.vehicle_id
-        )
+        previous_journey = journey.get_previous_by_datetime(**next_previous_filter)
     except VehicleJourney.DoesNotExist:
         pass
     else:

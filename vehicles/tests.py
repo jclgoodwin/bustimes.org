@@ -204,7 +204,15 @@ class VehiclesTests(TestCase):
         with override_settings(REDIS_URL="redis://localhose:69"):
             with self.assertNumQueries(3):
                 response = self.client.get(f"/journeys/{self.journey.id}.json")
-        self.assertEqual({}, response.json())
+        self.assertEqual(
+            {
+                "code": "",
+                "datetime": "2020-10-19T23:47:00Z",
+                "destination": "",
+                "direction": "",
+            },
+            response.json(),
+        )
 
         self.journey.refresh_from_db()
         self.assertEqual(str(self.journey), "19 Oct 20 23:47 2  ")

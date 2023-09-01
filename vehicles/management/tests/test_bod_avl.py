@@ -491,6 +491,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(
             response.json(),
             {
+                "code": "146_20201128_12_58",
+                "datetime": "2020-11-28T12:58:25Z",
+                "destination": "Southwold",
+                "direction": "inbound",
                 "locations": [
                     {
                         "coordinates": [1.296442985534668, 52.62268829345703],
@@ -504,7 +508,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                         "delta": None,
                         "direction": 142,
                     },
-                ]
+                ],
             },
         )
 

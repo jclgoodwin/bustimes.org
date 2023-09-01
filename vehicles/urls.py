@@ -43,6 +43,8 @@ urlpatterns = [
     ),
     path("vehicles/<slug>/debug", views.latest_journey_debug),
     path("journeys/<int:pk>.json", views.journey_json),
+    path("vehicles/<int:vehicle_id>/journeys/<int:pk>.json", views.journey_json),
+    path("services/<int:service_id>/journeys/<int:pk>.json", views.journey_json),
     path("liveries.<int:version>.css", views.liveries_css),
     path("map", views.map, name="map"),
     path("maps", views.map),
