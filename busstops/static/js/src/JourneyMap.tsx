@@ -44,6 +44,11 @@ type StopTime = {
 };
 
 export type VehicleJourney = {
+  datetime: string;
+  route_name?: string;
+  code: string;
+  destination: string;
+  direction: string;
   stops: StopTime[];
   locations: VehicleJourneyLocation[];
   next: {
@@ -192,6 +197,18 @@ const Stops = React.memo(function Stops({ stops }: StopsProps) {
   );
 });
 
+function nextOrPreviousLink(today: string, nextOrPrevious: VehicleJourney["next"]): string {
+  const nextOrPreviousDate = new Date(nextOrPrevious.datetime)
+  const string = nextOrPreviousDate.toLocaleDateString();
+  const timeString = nextOrPreviousDate.toTimeString().slice(0, 5);
+
+  if (string === today) {
+    return timeString;
+  }
+
+  return string + " " + timeString;
+}
+
 type JourneyMapProps = {
   journey?: VehicleJourney;
   loading: boolean;
@@ -209,12 +226,13 @@ function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
     className += " loading";
   }
 
+  const today = new Date(journey.datetime).toLocaleDateString();
+
   let previousLink, nextLink;
   if (journey) {
     if (journey.previous) {
-      previousLink = new Date(journey.previous.datetime)
-        .toTimeString()
-        .slice(0, 5);
+
+      previousLink = nextOrPreviousLink(today, journey.previous);
       previousLink = (
         <p className="previous">
           <a href={`#journeys/${journey.previous.id}`}>&larr; {previousLink}</a>
@@ -222,7 +240,7 @@ function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
       );
     }
     if (journey.next) {
-      nextLink = new Date(journey.next.datetime).toTimeString().slice(0, 5);
+      nextLink = nextOrPreviousLink(today, journey.next);
       nextLink = (
         <p className="next">
           <a href={`#journeys/${journey.next.id}`}>{nextLink} &rarr;</a>
@@ -233,8 +251,13 @@ function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
 
   return (
     <div className={className}>
-      {previousLink}
-      {nextLink}
+      <div className="navigation">
+        {previousLink}
+        {nextLink}
+      </div>
+      <p>
+        {today} {journey.code} {journey.route_name} {journey.destination ? " to " + journey.destination : null }
+      </p>
       {journey.stops ? (
         <TripTimetable
           onMouseEnter={onMouseEnter}

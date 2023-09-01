@@ -3,7 +3,7 @@ import { VehicleJourney } from "./JourneyMap";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
-const apiRoot = process.env.API_ROOT;
+const apiRoot = process.env.API_ROOT as string;
 let hasHistory = 0;
 
 export default function History() {
@@ -63,7 +63,15 @@ export default function History() {
 
       setLoading(true);
 
-      fetch(`${apiRoot}${journeyId}.json`).then((response) => {
+      let url = apiRoot;
+      if (window.SERVICE_ID) {
+        url += "services/" + window.SERVICE_ID + "/";
+      } else if (window.VEHICLE_ID) {
+        url += "vehicles/" + window.VEHICLE_ID + "/";
+      }
+      url += journeyId + '.json';
+
+      fetch(url).then((response) => {
         if (response.ok) {
           response.json().then((data) => {
             data.id = journeyId;

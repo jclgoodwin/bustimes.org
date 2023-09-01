@@ -1120,6 +1120,10 @@ input:not(:checked) + label {
     padding: 1em 1em 90px;
 }
 
+.map-sidebar .navigation {
+    overflow: hidden;
+}
+
 .trip-timetable {
     table {
         table-layout: fixed;
@@ -1169,7 +1173,7 @@ input:not(:checked) + label {
 
     .previous,
     .next {
-        margin-top: 0;
+        margin: 0;
     }
 }
 

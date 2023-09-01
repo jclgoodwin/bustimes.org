@@ -175,11 +175,9 @@
 
 {% block foot %}
     {% if journeys %}
-        {% if vehicle %}
-            <script>
-                VEHICLE_ID = {{ object.id }};
-            </script>
-        {% endif %}
+        <script>
+            {% if vehicle %}VEHICLE_ID{% else %}SERVICE_ID{% endif %} = {{ object.id }};
+        </script>
         {% load static %}
         <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
         <script async type="module" src="{% static 'js/dist/app.js' %}"></script>
