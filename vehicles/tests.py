@@ -210,6 +210,7 @@ class VehiclesTests(TestCase):
                 "datetime": "2020-10-19T23:47:00Z",
                 "destination": "",
                 "direction": "",
+                "route_name": "2",
             },
             response.json(),
         )

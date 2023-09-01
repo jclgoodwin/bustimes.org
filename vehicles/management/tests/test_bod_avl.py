@@ -491,6 +491,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "datetime": "2020-11-28T12:58:25Z",
                 "destination": "Southwold",
                 "direction": "inbound",
+                "route_name": "146",
                 "locations": [
                     {
                         "coordinates": [1.296442985534668, 52.62268829345703],
