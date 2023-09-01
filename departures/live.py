@@ -86,19 +86,19 @@ def update_trip_ids(departures: list, live_rows: list) -> None:
 
 
 def get_departures(stop, services, when) -> dict:
+    live_departures = None
+
     # Transport for London
-    if (
-        not when
-        and type(stop) is StopPoint
-        # and stop.atco_code[:3] == "490"
-        and any(s.service_code[:4] == "tfl_" for s in services)
-    ):
-        departures = TflDepartures(stop, services).get_departures()
-        if departures or all(s.service_code[:4] == "tfl_" for s in services):
-            return {
-                "departures": departures,
-                "today": timezone.localdate(),
-            }
+    if not when and type(stop) is StopPoint:
+        tfl_services = [s for s in services if s.service_code[:4] == "tfl_"]
+        if tfl_services:
+            live_departures = TflDepartures(stop, tfl_services).get_departures()
+            services = [s for s in services if s.service_code[:4] != "tfl_"]
+            if not services:
+                return {
+                    "departures": live_departures,
+                    "today": timezone.localdate(),
+                }
 
     now = timezone.localtime()
 
@@ -117,7 +117,9 @@ def get_departures(stop, services, when) -> dict:
         stop, services, when or now, routes_by_service
     ).get_departures()
 
-    if not when:
+    if live_departures:
+        departures = live_departures + departures
+    elif not when:
         vehicle_locations = avl.get_tracking(stop, services)
         if vehicle_locations:
             by_trip = {
@@ -143,7 +145,7 @@ def get_departures(stop, services, when) -> dict:
     ):
         gtfsr.update_stop_departures(departures)
 
-    if when or type(stop) is not StopPoint:
+    if when or live_departures or type(stop) is not StopPoint:
         pass
     elif not departures or (
         (departures[0]["time"] - now) < one_hour
