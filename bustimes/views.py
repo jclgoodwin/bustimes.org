@@ -481,7 +481,14 @@ def tfl_vehicle(request, reg: str):
             {"vehicle": vehicle, "object": vehicle},
         )
 
-    atco_codes = [item["naptanId"] for item in data]
+    atco_codes = []
+    for item in data:
+        atco_code = item["naptanId"]
+        # try "03700168" as well as "3700168"
+        if atco_code[:3] == "370" and atco_code.isdigit():
+            atco_codes.append(f"0{atco_code}")
+        atco_codes.append(atco_code)
+
     try:
         service = Service.objects.get(
             Exists(
@@ -514,7 +521,8 @@ def tfl_vehicle(request, reg: str):
                 timezone.localtime(parse_datetime(item["expectedArrival"])).time()
             ),
         }
-        stop = stops.get(item["naptanId"])
+        atco_code = item["naptanId"]
+        stop = stops.get(atco_code) or stops.get(f"0{atco_code}")
 
         if stop:
             if type(stop) is StopPoint:
