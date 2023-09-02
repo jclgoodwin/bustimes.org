@@ -22,7 +22,6 @@ from django.http import (
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.safestring import mark_safe
-from django.views.decorators.cache import cache_page
 from django.views.decorators.http import require_GET
 from django.views.generic.detail import DetailView
 from pygments import highlight
@@ -31,6 +30,7 @@ from pygments.lexers import XmlLexer
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
+from buses.utils import cache_page
 from busstops.models import (
     DataSource,
     Operator,

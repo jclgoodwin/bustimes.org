@@ -4,8 +4,8 @@ import requests
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
 from django.utils.safestring import mark_safe
-from django.views.decorators.cache import cache_page
 
+from buses.utils import cache_page
 from busstops.models import DataSource, Operator, OperatorCode
 
 

@@ -4,7 +4,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
 from django.views.generic.base import TemplateView
 
-# from buses.utils import cache_control_s_maxage, stale_if_error
+from buses.utils import cache_page
 from bustimes.urls import urlpatterns as bustimes_views
 from disruptions.urls import urlpatterns as disruptions_urls
 from fares import mytrip
@@ -43,7 +43,7 @@ urlpatterns = [
     path("stops.csv", views.stops_csv),
     path(
         "regions/<pk>",
-        views.RegionDetailView.as_view(),
+        cache_page(1800)(views.RegionDetailView.as_view()),
         name="region_detail",
     ),
     re_path(
@@ -58,16 +58,16 @@ urlpatterns = [
     ),
     re_path(
         r"^localities/(?P<pk>[ENen][Ss]?[0-9]+)",
-        views.LocalityDetailView.as_view(),
+        cache_page(1800)(views.LocalityDetailView.as_view()),
     ),
     path(
         "localities/<slug>",
-        views.LocalityDetailView.as_view(),
+        cache_page(1800)(views.LocalityDetailView.as_view()),
         name="locality_detail",
     ),
     path(
         "stops/<pk>",
-        views.StopPointDetailView.as_view(),
+        cache_page(30)(views.StopPointDetailView.as_view()),
         name="stoppoint_detail",
     ),
     path("stations/<pk>", views.StopAreaDetailView.as_view(), name="stoparea_detail"),
@@ -87,7 +87,7 @@ urlpatterns = [
     path("services/<int:service_id>/timetable", views.service_timetable),
     path(
         "services/<slug>",
-        views.ServiceDetailView.as_view(),
+        cache_page(300)(views.ServiceDetailView.as_view()),
         name="service_detail",
     ),
     path("services/<slug>/fares", fares_views.service_fares),
