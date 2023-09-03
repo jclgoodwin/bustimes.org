@@ -10,13 +10,19 @@
         }
 
         .wide main {
-            bottom: 100px;
+            bottom: 0;
             max-width: 100%;
             margin: 0;
             padding: 0;
             position: absolute;
             top: 3.5em;
             width: 100%;
+        }
+
+        @media (min-height: 480px) {
+            .wide main {
+                bottom: 100px;
+            }
         }
     </style>
 {% endblock %}

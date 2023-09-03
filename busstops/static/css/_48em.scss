@@ -84,7 +84,11 @@ h1 {
 .trip-map,
 .trip-map + .map-sidebar {
     top: 104px;
-    bottom: 134px; /* ad 92px + footer 42px */
+    bottom: 42px;
+
+    @media (min-height: 480px) {
+        bottom: 134px; /* ad 92px + footer 42px */
+    }
 }
 
 .has-sidebar {
