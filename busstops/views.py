@@ -82,7 +82,7 @@ def version(request):
             f"""<a href="https://github.com/jclgoodwin/bustimes.org/commit/{commit_hash}">{commit_hash}</a>""",
         )
     return HttpResponse(
-        os.environ.get("MRSK_CONTAINER_NAME"), content_type="text/plain"
+        os.environ.get("KAMAL_CONTAINER_NAME"), content_type="text/plain"
     )
 
 
