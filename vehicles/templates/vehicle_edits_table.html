@@ -65,7 +65,7 @@
                         <td><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">👎 disapprove</button></td>
                     {% elif edit.user == user %}
                         <td colspan="2"><button class="action" data-url="{{ edit.id }}/disapprove" style="color:#fff;background:#f00">cancel</button></td>
-                    {% else %}
+                    {% elif user.trusted is not False %}
                         <td><button class="action" data-url="{{ edit.id }}/vote/up">👍</button></td>
                         <td><button class="action" data-url="{{ edit.id }}/vote/down">👎</button></td>
                     {% endif %}
