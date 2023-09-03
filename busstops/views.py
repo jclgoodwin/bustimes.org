@@ -9,6 +9,7 @@ from time import sleep
 from urllib.parse import urlencode
 
 import requests
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import MultiLineString, Point
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -182,6 +183,10 @@ def not_found(request, exception):
             return resolver_match.func(request, **resolver_match.kwargs)
         except Http404:
             pass
+
+    assert "#" not in request.path
+
+    request.user = AnonymousUser
 
     if request.resolver_match:
         cache_timeout = 600  # ten minutes
