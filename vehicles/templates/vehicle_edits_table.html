@@ -49,7 +49,7 @@
                         {% if edit.vehicle.livery %}{{ edit.vehicle.livery.name }} to {% endif %}
                         <div class="livery livery-{{ value }}"></div> {{ edit.livery.name }}
                     {% elif key == 'withdrawn' %}
-                        {% if value %}removed from{% else %}added to{% endif %} fleet list
+                        {% if value %}remove from{% else %}add to{% endif %} list
                     {% else %}{{ key }}: {{ value }}
                     {% endif %}
                     <br>{% endfor %}
