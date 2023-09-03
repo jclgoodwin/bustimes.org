@@ -227,27 +227,6 @@ Disallow: /*?date=*
 Disallow: /services/*/*
 Disallow: /vehicles/*?cursor=*
 Disallow: /*/debug
-
-User-agent: AhrefsBot
-Disallow: /
-
-User-agent: AhrefsSiteAudit
-Disallow: /
-
-User-agent: BLEXBot
-Disallow: /
-
-User-agent: MJ12bot
-Disallow: /
-
-User-agent: dotbot
-Disallow: /
-
-User-agent: proximic
-Disallow: /stops/
-
-User-agent: grapeshot
-Disallow: /stops/
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
