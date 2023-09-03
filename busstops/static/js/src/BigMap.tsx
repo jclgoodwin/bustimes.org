@@ -336,7 +336,7 @@ export default function BigMap() {
 
   React.useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden && zoom && shouldShowVehicles(zoom)) {
+      if (!document.hidden && zoom && shouldShowVehicles(zoom)) {
         loadVehicles();
       }
     };

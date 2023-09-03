@@ -120,15 +120,9 @@ function LocationPopup({ location }: LocationPopupProps) {
   );
 }
 
-type LocationsProps = {
+const Locations = React.memo(function Locations({ locations }: {
   locations: VehicleJourneyLocation[];
-};
-
-type StopsProps = {
-  stops: StopTime[];
-};
-
-const Locations = React.memo(function Locations({ locations }: LocationsProps) {
+}) {
   return (
     <React.Fragment>
       <Source
@@ -167,7 +161,9 @@ const Locations = React.memo(function Locations({ locations }: LocationsProps) {
   );
 });
 
-const Stops = React.memo(function Stops({ stops }: StopsProps) {
+const Stops = React.memo(function Stops({ stops }: {
+  stops: StopTime[]
+}) {
   return (
     <Source
       type="geojson"
@@ -209,18 +205,11 @@ function nextOrPreviousLink(today: string, nextOrPrevious: VehicleJourney["next"
   return string + " " + timeString;
 }
 
-type JourneyMapProps = {
-  journey?: VehicleJourney;
-  loading: boolean;
-};
-
-type SidebarProps = {
+function Sidebar({ journey, loading, onMouseEnter }: {
   journey: VehicleJourney;
   loading: boolean;
   onMouseEnter: (t: TripTime) => void;
-};
-
-function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
+}) {
   let className = "trip-timetable map-sidebar";
   if (loading) {
     className += " loading";
@@ -256,7 +245,7 @@ function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
         {nextLink}
       </div>
       <p>
-        {today} {journey.code} {journey.route_name} {journey.destination ? " to " + journey.destination : null }
+        {today} {journey.route_name} {journey.destination ? " to " + journey.destination : null }
       </p>
       {journey.stops ? (
         <TripTimetable
@@ -278,7 +267,7 @@ function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
             }),
           }}
         />
-      ) : null}
+      ) : <p>{journey.code}</p>}
     </div>
   );
 }
@@ -286,7 +275,10 @@ function Sidebar({ journey, loading, onMouseEnter }: SidebarProps) {
 export default function JourneyMap({
   journey,
   loading = false,
-}: JourneyMapProps) {
+}: {
+  journey?: VehicleJourney;
+  loading: boolean;
+}) {
   const darkMode = false;
 
   const [cursor, setCursor] = React.useState<string>();
