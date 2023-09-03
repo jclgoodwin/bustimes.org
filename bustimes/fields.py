@@ -1,6 +1,18 @@
 from datetime import timedelta
-from django.utils.dateparse import parse_duration
+
 from django.db.models.fields import DurationField
+from django.utils.dateparse import parse_duration
+
+
+class TimeDelta(timedelta):
+    def __str__(self):
+        duration = self.total_seconds()
+        hours = int(duration / 3600)
+        while hours >= 24:
+            hours -= 24
+        minutes = int(duration % 3600 / 60)
+        duration = f"{hours:0>2}:{minutes:0>2}"
+        return duration
 
 
 class SecondsField(DurationField):
@@ -32,4 +44,4 @@ class SecondsField(DurationField):
     def convert(value, _expression, _connection, _context=None):
         if value is None:
             return value
-        return timedelta(seconds=value)
+        return TimeDelta(seconds=value)
