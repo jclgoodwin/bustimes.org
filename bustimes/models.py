@@ -88,6 +88,9 @@ class RouteLink(models.Model):
     class Meta:
         unique_together = ("service", "from_stop", "to_stop")
 
+    def __repr__(self):
+        return f"<RouteLink: {self.pk} {self.service} {self.from_stop_id} {self.to_stop_id}>"
+
 
 class BankHoliday(models.Model):
     id = models.SmallAutoField(primary_key=True)
@@ -410,6 +413,9 @@ class StopTime(models.Model):
 
     def __str__(self):
         return format_timedelta(self.arrival_or_departure())
+
+    def __repr__(self):
+        return f"<StopTime: {self.pk} {self.stop_id} {self}>"
 
     def arrival_or_departure(self):
         if self.arrival is not None:
