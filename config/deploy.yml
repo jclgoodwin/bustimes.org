@@ -1,0 +1,53 @@
+# Name of your application. Used to uniquely configure containers.
+service: bustimes
+
+# Name of the container image.
+image: jclgoodwin/bustimes-org
+
+# Deploy to these servers.
+servers:
+  - 10.131.29.248
+  - 10.131.113.91
+  - 10.131.33.248
+
+builder:
+  multiarch: false
+
+# Credentials for your image host.
+registry:
+  # Specify the registry server, if you're not using Docker Hub
+  server: ghcr.io
+  username: jclgoodwin
+  # see https://github.com/settings/tokens
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+# Inject ENV variables into containers (secrets come from .env).
+env:
+  clear:
+    WEB_CONCURRENCY: 8
+    ALLOWED_HOSTS: "*"
+    EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
+  secret:
+    - TURNSTILE_SECRET
+    - DATABASE_URL
+    - REDIS_URL
+    - SENTRY_DSN
+    - EMAIL_HOST_USER
+    - EMAIL_HOST_PASSWORD
+    - TFL_APP_ID
+    - TFL_APP_KEY
+    - NTA_API_KEY
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+
+# Configure a custom healthcheck (default is /up on port 3000)
+healthcheck:
+  path: /version
+  port: 8000
+
+traefik:
+  args:
+    accesslog: true
+    accesslog.fields.headers.names.user-agent: keep
+    accesslog.fields.headers.names.Cf-Connecting-Ip: keep
