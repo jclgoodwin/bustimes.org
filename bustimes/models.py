@@ -89,7 +89,7 @@ class RouteLink(models.Model):
         unique_together = ("service", "from_stop", "to_stop")
 
     def __repr__(self):
-        return f"<RouteLink: {self.pk} {self.service} {self.from_stop_id} {self.to_stop_id}>"
+        return f"<RouteLink: {self.pk} {self.service_id} {self.from_stop_id} {self.to_stop_id}>"
 
 
 class BankHoliday(models.Model):
