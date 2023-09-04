@@ -12,6 +12,8 @@ import Map, {
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
+import stopMarker from '../../stop-marker.png';
+
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup, { Stop } from "./StopPopup";
@@ -264,16 +266,15 @@ export default function BigMap() {
       return;
     }
 
-    if (vehiclesAbortController.current) {
-      vehiclesAbortController.current.abort();
-    }
-    vehiclesAbortController.current = new AbortController();
-
     clearTimeout(timeout.current);
 
     let _bounds = bounds.current as LngLatBounds;
-
     const url = apiRoot + "vehicles.json" + getBoundsQueryString(_bounds);
+
+    if (vehiclesAbortController.current) {
+      vehiclesAbortController.current.abort();
+    }
+    vehiclesAbortController.current = new AbortController() as AbortController;
 
     fetch(url, {
       signal: vehiclesAbortController.current.signal,
@@ -406,7 +407,7 @@ export default function BigMap() {
     }
     setZoom(zoom);
 
-    map.loadImage("/static/stop-marker.png", (error, image) => {
+    map.loadImage(stopMarker, (error, image) => {
       if (error) throw error;
       if (image) {
         map.addImage("stop", image, {

@@ -11,6 +11,9 @@ import Map, {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
+import routeStopMarker from '../../route-stop-marker.png';
+import arrow from '../../arrow.png';
+
 import { LngLatBounds } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
@@ -341,7 +344,7 @@ export default function JourneyMap({
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-    map.loadImage("/static/route-stop-marker.png", (error, image) => {
+    map.loadImage(routeStopMarker, (error, image) => {
       if (error) throw error;
       if (image) {
         map.addImage("stop", image, {
@@ -350,7 +353,7 @@ export default function JourneyMap({
       }
     });
 
-    map.loadImage("/static/arrow.png", (error, image) => {
+    map.loadImage(arrow, (error, image) => {
       if (error) throw error;
       if (image) {
         map.addImage("arrow", image, {

@@ -10,6 +10,8 @@ import Map, {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
+import routeStopMarker from '../../route-stop-marker.png';
+
 import StopPopup, { Stop } from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
@@ -104,7 +106,7 @@ export default function ServiceMapMap({
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-    map.loadImage("/static/route-stop-marker.png", (error, image) => {
+    map.loadImage(routeStopMarker, (error, image) => {
       if (error) throw error;
       if (image) {
         map.addImage("stop", image, {
