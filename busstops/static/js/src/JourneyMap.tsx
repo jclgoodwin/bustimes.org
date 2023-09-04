@@ -78,8 +78,8 @@ const locationsStyle: LayerProps = {
   layout: {
     "icon-rotate": ["+", 45, ["get", "heading"]],
     "icon-image": "arrow",
-    // "icon-allow-overlap": true,
-    // "icon-ignore-placement": true,
+    "icon-allow-overlap": true,
+    "icon-ignore-placement": true,
     "icon-anchor": "top-left",
   },
 };

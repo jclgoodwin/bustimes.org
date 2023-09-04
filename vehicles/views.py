@@ -5,7 +5,7 @@ from itertools import pairwise
 from urllib.parse import urlencode
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.gis.geos import GEOSException
+from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
@@ -1142,11 +1142,35 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         locations = None
 
     if locations:
-        data["locations"] = [
+        locations = [
             VehicleLocation.decode_appendage(location) for location in locations
         ]
+        locations.sort(key=lambda location: location["datetime"])
 
-        data["locations"].sort(key=lambda location: location["datetime"])
+        data["locations"] = []
+
+        stationary = False
+        previous_latlong = None
+        for location in locations[:-1]:
+
+            latlong = Point(location["coordinates"])
+
+            if previous_latlong:
+                distance = latlong.distance(previous_latlong)
+                if distance < 0.001:
+                    if not stationary:
+                        stationary = True
+                        previous_latlong = latlong
+                        data["locations"].append(location)
+                elif stationary:
+                    stationary = False
+
+            if not stationary:
+                data["locations"].append(location)
+
+                previous_latlong = latlong
+
+        data["locations"].append(locations[-1])
 
     # if not trip - calculate using time and first location?
     # if not trip:
