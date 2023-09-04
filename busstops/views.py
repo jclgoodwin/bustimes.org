@@ -227,6 +227,9 @@ Disallow: /*?date=*
 Disallow: /services/*/*
 Disallow: /vehicles/*?cursor=*
 Disallow: /*/debug
+
+User-agent: GPTBot
+Disallow: /
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
