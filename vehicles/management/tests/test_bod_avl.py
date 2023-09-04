@@ -368,7 +368,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 atco_code="b", latlong="POINT (0.15 52.20)", active=True
             )
 
-            StopTime.objects.create(trip=self.trip, stop_id="a", arrival="25:00:00")
+            a = StopTime.objects.create(trip=self.trip, stop_id="a", arrival="25:00:00")
             StopTime.objects.create(trip=self.trip, stop_id="b", arrival="25:01:00")
 
             response = self.client.get(f"/vehicles.json?trip={self.trip.id}")
@@ -376,7 +376,13 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             self.assertEqual(len(json), 3)
             self.assertEqual(
                 json[0]["progress"],
-                {"prev_stop": "a", "next_stop": "b", "progress": 0.097},
+                {
+                    "id": a.id,
+                    "sequence": None,
+                    "prev_stop": a.stop_id,
+                    "next_stop": "b",
+                    "progress": 0.097,
+                },
             )
             self.assertEqual(json[0]["delay"], 27962)
 

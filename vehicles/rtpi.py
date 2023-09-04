@@ -66,13 +66,15 @@ def get_progress(item):
 
     progress = line_string.project_normalized(point)
 
-    return closest, progress
+    return closest[0], closest[1], progress
 
 
 def add_progress_and_delay(item):
-    (prev_stop, next_stop, line_string), progress = get_progress(item)
+    prev_stop, next_stop, progress = get_progress(item)
 
     item["progress"] = {
+        "id": prev_stop.id,
+        "sequence": prev_stop.sequence,
         "prev_stop": prev_stop.stop_id,
         "next_stop": next_stop.stop_id,
         "progress": round(progress, 3),
@@ -88,7 +90,10 @@ def add_progress_and_delay(item):
     if when - prev_time < -timedelta(hours=12):
         when += timedelta(hours=24)
 
-    expected_time = prev_time + (next_time - prev_time) * progress
-    delay = int((when - expected_time).total_seconds())
-
-    item["delay"] = delay
+    try:
+        expected_time = prev_time + (next_time - prev_time) * progress
+    except ValueError:
+        pass
+    else:
+        delay = int((when - expected_time).total_seconds())
+        item["delay"] = delay

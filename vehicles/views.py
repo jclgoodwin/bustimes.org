@@ -1150,19 +1150,19 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         data["locations"] = []
 
         stationary = False
+        previous = None
         previous_latlong = None
-        for location in locations[:-1]:
+        for location in locations:
 
             latlong = Point(location["coordinates"])
 
             if previous_latlong:
                 distance = latlong.distance(previous_latlong)
-                if distance < 0.001:
-                    if not stationary:
-                        stationary = True
-                        previous_latlong = latlong
-                        data["locations"].append(location)
+                if distance < 0.0005:
+                    stationary = True
                 elif stationary:
+                    # mark end of stationary period
+                    data["locations"].append(previous)
                     stationary = False
 
             if not stationary:
@@ -1170,7 +1170,10 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
 
                 previous_latlong = latlong
 
-        data["locations"].append(locations[-1])
+            previous = location
+
+        if stationary:  # add last location
+            data["locations"].append(location)
 
     # if not trip - calculate using time and first location?
     # if not trip:

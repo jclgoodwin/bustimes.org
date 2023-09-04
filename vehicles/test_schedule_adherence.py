@@ -169,7 +169,7 @@ class ScheduleAdherenceTest(TestCase):
                 "heading": 200,
             }
         )
-        self.assertEqual(progress[0][0].stop_id, "210021502200")
+        self.assertEqual(progress[0].stop_id, "210021502200")
         progress = rtpi.get_progress(
             {
                 "coordinates": [-0.320573, 51.75536],
@@ -177,7 +177,7 @@ class ScheduleAdherenceTest(TestCase):
                 "heading": 84,
             }
         )
-        self.assertEqual(progress[0][0].stop_id, "210021505160")
+        self.assertEqual(progress[0].stop_id, "210021505160")
         progress = rtpi.get_progress(
             {
                 "coordinates": [-0.307577, 51.75986],
@@ -185,7 +185,7 @@ class ScheduleAdherenceTest(TestCase):
                 "heading": 200.0,
             }
         )
-        self.assertEqual(progress[0][0].stop_id, "210021509645")
+        self.assertEqual(progress[0].stop_id, "210021509645")
         progress = rtpi.get_progress(
             {
                 "coordinates": [-0.307577, 51.75986],
@@ -193,7 +193,7 @@ class ScheduleAdherenceTest(TestCase):
                 "heading": "90",
             }
         )
-        self.assertEqual(progress[0][0].stop_id, "210021509620")
+        self.assertEqual(progress[0].stop_id, "210021509620")
 
         item = {
             "coordinates": [-0.326838, 51.750598],
