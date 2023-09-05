@@ -353,23 +353,21 @@ export default function JourneyMap({
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
 
-    map.loadImage(routeStopMarker, (error, image) => {
-      if (error) throw error;
-      if (image) {
-        map.addImage("stop", image, {
-          pixelRatio: 2,
-        });
-      }
-    });
+    const image = new Image();
+    image.src = routeStopMarker;
+    image.onload = function () {
+      map.addImage("stop", image, {
+        pixelRatio: 2,
+      });
+    };
 
-    map.loadImage(arrow, (error, image) => {
-      if (error) throw error;
-      if (image) {
-        map.addImage("arrow", image, {
-          pixelRatio: 2,
-        });
-      }
-    });
+    const arrowImage = new Image();
+    arrowImage.src = arrow;
+    arrowImage.onload = function () {
+      map.addImage("arrow", arrowImage, {
+        pixelRatio: 2,
+      });
+    };
   }, []);
 
   const bounds = React.useMemo((): LngLatBounds | undefined => {

@@ -407,14 +407,13 @@ export default function BigMap() {
     }
     setZoom(zoom);
 
-    map.loadImage(stopMarker, (error, image) => {
-      if (error) throw error;
-      if (image) {
-        map.addImage("stop", image, {
-          pixelRatio: 2,
-        });
-      }
-    });
+    const image = new Image();
+    image.src = stopMarker;
+    image.onload = function () {
+      map.addImage("stop", image, {
+        pixelRatio: 2,
+      });
+    };
   };
 
   const [cursor, setCursor] = React.useState("");
