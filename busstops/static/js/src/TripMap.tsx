@@ -10,7 +10,7 @@ import Map, {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import routeStopMarker from '../../route-stop-marker.png';
+import routeStopMarker from "../../route-stop-marker.png";
 
 import { useRoute } from "wouter";
 import { navigate } from "wouter/use-location";
@@ -268,7 +268,8 @@ export default function TripMap() {
       if (vehiclesAbortController.current) {
         vehiclesAbortController.current.abort();
       }
-      vehiclesAbortController.current = new AbortController() as AbortController;
+      vehiclesAbortController.current =
+        new AbortController() as AbortController;
 
       fetch(url, {
         signal: vehiclesAbortController.current.signal,

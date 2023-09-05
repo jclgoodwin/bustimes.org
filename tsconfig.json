@@ -6,6 +6,7 @@
     "strict": true,
   },
   "files": [
-    "busstops/static/js/src/app.tsx"
+    "busstops/static/js/src/app.d.ts",
+    "busstops/static/js/src/app.tsx",
   ]
 }

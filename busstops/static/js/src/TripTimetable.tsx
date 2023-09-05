@@ -70,7 +70,8 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     rowSpan = 2;
   }
 
-  let actual, actualRowSpan = rowSpan;
+  let actual,
+    actualRowSpan = rowSpan;
   if (vehicle?.progress && vehicle.progress.prev_stop === stop.stop.atco_code) {
     actual = vehicle.datetime;
     if (vehicle.progress.progress > 0.1) {

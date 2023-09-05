@@ -12,7 +12,7 @@ import Map, {
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
-import stopMarker from '../../stop-marker.png';
+import stopMarker from "../../stop-marker.png";
 
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";

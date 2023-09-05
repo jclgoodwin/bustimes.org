@@ -11,8 +11,8 @@ import Map, {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import routeStopMarker from '../../route-stop-marker.png';
-import arrow from '../../arrow.png';
+import routeStopMarker from "../../route-stop-marker.png";
+import arrow from "../../arrow.png";
 
 import { LngLatBounds } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
@@ -123,7 +123,9 @@ function LocationPopup({ location }: LocationPopupProps) {
   );
 }
 
-const Locations = React.memo(function Locations({ locations }: {
+const Locations = React.memo(function Locations({
+  locations,
+}: {
   locations: VehicleJourneyLocation[];
 }) {
   return (
@@ -164,9 +166,7 @@ const Locations = React.memo(function Locations({ locations }: {
   );
 });
 
-const Stops = React.memo(function Stops({ stops }: {
-  stops: StopTime[]
-}) {
+const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
   return (
     <Source
       type="geojson"
@@ -196,8 +196,11 @@ const Stops = React.memo(function Stops({ stops }: {
   );
 });
 
-function nextOrPreviousLink(today: string, nextOrPrevious: VehicleJourney["next"]): string {
-  const nextOrPreviousDate = new Date(nextOrPrevious.datetime)
+function nextOrPreviousLink(
+  today: string,
+  nextOrPrevious: VehicleJourney["next"],
+): string {
+  const nextOrPreviousDate = new Date(nextOrPrevious.datetime);
   const string = nextOrPreviousDate.toLocaleDateString();
   const timeString = nextOrPreviousDate.toTimeString().slice(0, 5);
 
@@ -208,7 +211,11 @@ function nextOrPreviousLink(today: string, nextOrPrevious: VehicleJourney["next"
   return string + " " + timeString;
 }
 
-function Sidebar({ journey, loading, onMouseEnter }: {
+function Sidebar({
+  journey,
+  loading,
+  onMouseEnter,
+}: {
   journey: VehicleJourney;
   loading: boolean;
   onMouseEnter: (t: TripTime) => void;
@@ -223,7 +230,6 @@ function Sidebar({ journey, loading, onMouseEnter }: {
   let previousLink, nextLink;
   if (journey) {
     if (journey.previous) {
-
       previousLink = nextOrPreviousLink(today, journey.previous);
       previousLink = (
         <p className="previous">
@@ -248,7 +254,8 @@ function Sidebar({ journey, loading, onMouseEnter }: {
         {nextLink}
       </div>
       <p>
-        {today} {journey.route_name} {journey.destination ? " to " + journey.destination : null }
+        {today} {journey.route_name}{" "}
+        {journey.destination ? " to " + journey.destination : null}
       </p>
       {journey.stops ? (
         <TripTimetable
@@ -270,7 +277,9 @@ function Sidebar({ journey, loading, onMouseEnter }: {
             }),
           }}
         />
-      ) : <p>{journey.code}</p>}
+      ) : (
+        <p>{journey.code}</p>
+      )}
     </div>
   );
 }
@@ -399,57 +408,59 @@ export default function JourneyMap({
   return (
     <React.Fragment>
       <div className="journey-map has-sidebar">
-        { bounds ? <Map
-          dragRotate={false}
-          touchPitch={false}
-          pitchWithRotate={false}
-          maxZoom={18}
-          initialViewState={{
-            bounds: bounds,
-            fitBoundsOptions: {
-              padding: 50,
-            },
-          }}
-          cursor={cursor}
-          onMouseEnter={onMouseEnter}
-          onMouseMove={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          mapStyle={
-            darkMode
-              ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-              : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-          }
-          RTLTextPlugin={""}
-          onClick={handleMapClick}
-          onLoad={handleMapLoad}
-          interactiveLayerIds={["stops", "locations"]}
-        >
-          <NavigationControl showCompass={false} />
-          <GeolocateControl />
+        {bounds ? (
+          <Map
+            dragRotate={false}
+            touchPitch={false}
+            pitchWithRotate={false}
+            maxZoom={18}
+            initialViewState={{
+              bounds: bounds,
+              fitBoundsOptions: {
+                padding: 50,
+              },
+            }}
+            cursor={cursor}
+            onMouseEnter={onMouseEnter}
+            onMouseMove={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            mapStyle={
+              darkMode
+                ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
+                : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
+            }
+            RTLTextPlugin={""}
+            onClick={handleMapClick}
+            onLoad={handleMapLoad}
+            interactiveLayerIds={["stops", "locations"]}
+          >
+            <NavigationControl showCompass={false} />
+            <GeolocateControl />
 
-          {journey.stops ? <Stops stops={journey.stops} /> : null}
+            {journey.stops ? <Stops stops={journey.stops} /> : null}
 
-          {journey.locations ? (
-            <Locations locations={journey.locations} />
-          ) : null}
+            {journey.locations ? (
+              <Locations locations={journey.locations} />
+            ) : null}
 
-          {clickedStop ? (
-            <StopPopup
-              item={{
-                properties: {
-                  url: `/stops/${clickedStop.properties.atco_code}`,
-                  name: clickedStop.properties.name,
-                },
-                geometry: clickedStop.geometry,
-              }}
-              onClose={() => setClickedStop(undefined)}
-            />
-          ) : null}
+            {clickedStop ? (
+              <StopPopup
+                item={{
+                  properties: {
+                    url: `/stops/${clickedStop.properties.atco_code}`,
+                    name: clickedStop.properties.name,
+                  },
+                  geometry: clickedStop.geometry,
+                }}
+                onClose={() => setClickedStop(undefined)}
+              />
+            ) : null}
 
-          {clickedLocation ? (
-            <LocationPopup location={clickedLocation} />
-          ) : null}
-        </Map> : null }
+            {clickedLocation ? (
+              <LocationPopup location={clickedLocation} />
+            ) : null}
+          </Map>
+        ) : null}
       </div>
       <Sidebar
         loading={loading}

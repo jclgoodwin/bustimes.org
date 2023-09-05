@@ -69,7 +69,7 @@ export default function History() {
       } else if (window.VEHICLE_ID) {
         url += "vehicles/" + window.VEHICLE_ID + "/";
       }
-      url += journeyId + '.json';
+      url += journeyId + ".json";
 
       fetch(url).then((response) => {
         if (response.ok) {
