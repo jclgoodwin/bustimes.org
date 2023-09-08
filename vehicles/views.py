@@ -31,6 +31,7 @@ from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
 
+from buses.utils import cache_page
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime, Trip
@@ -327,6 +328,7 @@ def operator_vehicles(request, slug=None, parent=None):
     return render(request, "operator_vehicles.html", context)
 
 
+@cache_page(max_age=300)
 @require_GET
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)

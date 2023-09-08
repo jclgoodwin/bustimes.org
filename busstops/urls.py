@@ -87,7 +87,7 @@ urlpatterns = [
     path("services/<int:service_id>/timetable", views.service_timetable),
     path(
         "services/<slug>",
-        cache_page(300)(views.ServiceDetailView.as_view()),
+        views.ServiceDetailView.as_view(),
         name="service_detail",
     ),
     path("services/<slug>/fares", fares_views.service_fares),
