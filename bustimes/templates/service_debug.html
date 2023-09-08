@@ -64,12 +64,11 @@
 <details{% if forloop.first and forloop.last %} open{% endif %}>
     <summary>
         <a href="{{ route.get_absolute_url }}">{{ route.source }}/{{ route.code }}</a>
-        <br>{{ route.service_code }}
-        <br>{{ route.revision_number }}
-        <br>{{ route.start_date }}–{{ route.end_date }}
+        <br>ServiceCode: {{ route.service_code }}
+        <br>RevisionNumber: {{ route.revision_number }}
+        <br>OperatingPeriod: {{ route.start_date }}–{{ route.end_date }}
         <br>{{ route.description }}
         <br>{{ route.origin }} to {{ route.destination }} via {{ route.via }}
-        <br>dates: {{ route.start_date }}–{{ route.end_date }}
 
         <br><a href="{% url 'admin:bustimes_route_change' route.id %}">Edit</a>
     </summary>
