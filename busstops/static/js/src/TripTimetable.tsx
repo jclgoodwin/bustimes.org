@@ -56,7 +56,7 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
   }
 
   let className;
-  if (stop.timing_status && self.timing_status != "PTP") {
+  if (stop.timing_status && stop.timing_status !== "PTP") {
     className = "minor";
   }
 
