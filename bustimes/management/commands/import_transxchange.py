@@ -1181,7 +1181,10 @@ class Command(BaseCommand):
 
             journey = journeys[0]
 
-            ticket_machine_service_code = journey.ticket_machine_service_code
+            ticket_machine_service_code = (
+                journey.ticket_machine_service_code
+                or txc_service.ticket_machine_service_code
+            )
             if (
                 ticket_machine_service_code
                 and ticket_machine_service_code != line.line_name

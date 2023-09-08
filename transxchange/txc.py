@@ -586,8 +586,6 @@ class Service:
         ]
 
         self.ticket_machine_service_code = element.findtext("TicketMachineServiceCode")
-        if self.ticket_machine_service_code:
-            print(self.ticket_machine_service_code)
         self.commercial_basis = element.findtext("CommercialBasis")
 
         self.notes = [
