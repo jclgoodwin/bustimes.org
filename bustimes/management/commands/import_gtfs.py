@@ -405,6 +405,7 @@ class Command(BaseCommand):
                     departure=parse_duration(line["departure_time"]),
                     sequence=line["stop_sequence"],
                     trip=trips[line["trip_id"]],
+                    timing_status="PTP" if line.get("timepoint", "1") == "1" else "OTH",
                 )
                 if line.get("pickup_type") == "1":  # "No pickup available"
                     stop_time.pick_up = False

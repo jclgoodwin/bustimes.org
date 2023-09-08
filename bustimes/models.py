@@ -440,7 +440,7 @@ class StopTime(models.Model):
         return time_datetime(self.departure, date)
 
     def is_minor(self):
-        return self.timing_status == "OTH"
+        return self.timing_status and self.timing_status != "PTP"
 
 
 class Garage(models.Model):

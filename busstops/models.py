@@ -22,7 +22,7 @@ from django.utils.html import escape, format_html
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 
-from bustimes.models import Route, TimetableDataSource, Trip
+from bustimes.models import Route, StopTime, TimetableDataSource, Trip
 from bustimes.timetables import Timetable, get_stop_usages
 from bustimes.utils import get_descriptions
 
@@ -602,8 +602,7 @@ class StopUsage(models.Model):
     class Meta:
         ordering = ("-direction", "order")  # outbound then inbound
 
-    def is_minor(self):
-        return self.timing_status == "OTH"
+    is_minor = StopTime.is_minor
 
 
 class ServiceColour(models.Model):

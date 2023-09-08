@@ -964,8 +964,7 @@ class Row:
         """is the origin or destination of any trip"""
         return any(cell.first or cell.last for cell in self.times if type(cell) is Cell)
 
-    def is_minor(self):
-        return self.timing_status == "OTH"
+    is_minor = StopTime.is_minor
 
     def permanently_suspended(self):
         return hasattr(self.stop, "suspended") and self.stop.suspended
