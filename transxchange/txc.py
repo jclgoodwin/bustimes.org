@@ -409,9 +409,18 @@ class ServicedOrganisationDayType:
         self.serviced_organisation = serviced_organisations[ref]
 
     def __repr__(self):
-        operation = "" if self.operation else "not "
-        holidays = "days" if self.working else "holidays"
-        return f"{operation}{self.serviced_organisation} {holidays}"
+        """
+        It is recommended, however, that any presentation to the user avoids
+        negative descriptions such as “this trip does not operate on the
+        working days of X” but presents it instead with a positive
+        description such as “this trip operates during holidays of X.”
+        """
+
+        if self.operation == self.working:  # "working days" or "not holidays"
+            return f"{self.serviced_organisation} days"
+
+        # "not working days" or "holidays"
+        return f"{self.serviced_organisation} holidays"
 
 
 class DayOfWeek:

@@ -526,13 +526,24 @@ class Command(BaseCommand):
 
         for sodt in operating_profile.serviced_organisations:
 
-            if sodt.working:
-                dates = sodt.serviced_organisation.working_days
+            working = sodt.working
+            operation = sodt.working
+
+            if working:
+                if sodt.serviced_organisation.working_days:
+                    dates = sodt.serviced_organisation.working_days
+                else:
+                    operation = not operation
+                    dates = sodt.serviced_organisation.holidays
             else:
-                dates = sodt.serviced_organisation.holidays
+                if sodt.serviced_organisation.holidays:
+                    dates = sodt.serviced_organisation.holidays
+                else:
+                    operation = not operation
+                    dates = sodt.serviced_organisation.working_days
 
             calendar_dates += [
-                get_calendar_date(date_range=date_range, operation=sodt.operation)
+                get_calendar_date(date_range=date_range, operation=operation)
                 for date_range in dates
             ]
             summary.append(str(sodt))
