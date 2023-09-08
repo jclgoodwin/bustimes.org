@@ -527,7 +527,7 @@ class Command(BaseCommand):
         for sodt in operating_profile.serviced_organisations:
 
             working = sodt.working
-            operation = sodt.working
+            operation = sodt.operation
 
             if working:
                 if sodt.serviced_organisation.working_days:
