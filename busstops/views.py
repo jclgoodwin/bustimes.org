@@ -1485,13 +1485,15 @@ def search(request):
                 ("operators", operators),
                 ("services", services),
             ):
-                # if key == "services" and context["operators"]:
-                #     continue
-                queryset = (
-                    queryset.filter(search_vector=query)
-                    .annotate(rank=rank)
-                    .order_by("-rank")
-                )
+                if key == "services":
+                    queryset = queryset.filter(
+                        Q(search_vector=query) | Q(route__line_name__iexact=query_text)
+                    )
+                else:
+                    queryset = queryset.filter(search_vector=query)
+
+                queryset = queryset.annotate(rank=rank).order_by("-rank")
+
                 if key == "operators" or key == "localities":
                     queryset = queryset.annotate(headline=SearchHeadline("name", query))
                 elif key == "services":
