@@ -61,8 +61,10 @@ body {
     height: auto;
 }
 
-code {
+code,
+pre {
     font-size: .875em;
+    font-family: ui-monospace, Monaco, Consolas, monospace;
 }
 
 header,
