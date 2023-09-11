@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import os
 from itertools import pairwise
 from urllib.parse import urlencode
@@ -1177,6 +1178,8 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         if stationary:  # add last location
             data["locations"].append(location)
 
+        del locations
+
     # if not trip - calculate using time and first location?
     # if not trip:
     #     Trip
@@ -1213,24 +1216,27 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 }
             )
 
-    if journey.trip and locations:
+    if "stops" in data and "locations" in data:
         # only stops with coordinates
-        stops = [stop for stop in data["stops"] if stop["coordinates"]]
-        if stops:
-            haversine_vector_results = haversine_vector(
-                [stop["coordinates"] for stop in stops],
-                [location["coordinates"] for location in data["locations"]],
-                Unit.METERS,
-                comb=True,
-            )
-            for i, distances in enumerate(haversine_vector_results):
-                minimum, index_of_minimum = min(
-                    ((value, index) for index, value in enumerate(distances))
+        if stops := [stop for stop in data["stops"] if stop["coordinates"]]:
+            try:
+                haversine_vector_results = haversine_vector(
+                    [stop["coordinates"] for stop in stops],
+                    [location["coordinates"] for location in data["locations"]],
+                    Unit.METERS,
+                    comb=True,
                 )
-                if minimum < 100:
-                    stops[index_of_minimum]["actual_departure_time"] = data[
-                        "locations"
-                    ][i]["datetime"]
+            except ValueError as e:
+                logging.exception(e)
+            else:
+                for i, distances in enumerate(haversine_vector_results):
+                    minimum, index_of_minimum = min(
+                        ((value, index) for index, value in enumerate(distances))
+                    )
+                    if minimum < 100:
+                        stops[index_of_minimum]["actual_departure_time"] = data[
+                            "locations"
+                        ][i]["datetime"]
 
     if vehicle_id:
         next_previous_filter = {"vehicle_id": vehicle_id}
