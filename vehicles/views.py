@@ -1189,11 +1189,14 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         # previous_latlong = None
 
         trips = journey.trip.get_trips()
-        for stoptime in (
-            StopTime.objects.filter(trip__in=trips)
-            .select_related("stop__locality")
-            .order_by("trip__start", "id")
-        ):
+        if trips == [journey.trip]:
+            stoptimes = trips[0].stoptime_set
+        else:
+            stoptimes = StopTime.objects.filter(trip__in=trips).order_by(
+                "trip__start", "id"
+            )
+
+        for stoptime in stoptimes.select_related("stop__locality"):
             stop = stoptime.stop
             # if stop := stoptime.stop:
             #     if stop.latlong:
