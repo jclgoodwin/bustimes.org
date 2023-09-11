@@ -66,7 +66,6 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "livereload.middleware.LiveReloadScript",
 ]
 
 # Stadia Maps tiles require we send at least the origin in cross-origin requests.
@@ -102,6 +101,7 @@ CSP_FRAME_SRC = ["https:"]
 if DEBUG and "runserver" in sys.argv:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE += [
+        "livereload.middleware.LiveReloadScript",
         "debug_toolbar.middleware.DebugToolbarMiddleware",
         "debug_toolbar_force.middleware.ForceDebugToolbarMiddleware",
     ]
@@ -265,7 +265,7 @@ elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.enviro
         dsn=os.environ["SENTRY_DSN"],
         integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
         ignore_errors=[KeyboardInterrupt, RuntimeError],
-        release=os.environ.get("COMMIT_HASH"),
+        release=os.environ.get("COMMIT_HASH") or os.environ.get("KAMAL_CONTAINER_NAME"),
         traces_sampler=traces_sampler,
     )
     ignore_logger("django.security.DisallowedHost")
