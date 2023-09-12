@@ -130,7 +130,7 @@ def get_departures(stop, services, when) -> dict:
                     trip_id = departure["stop_time"].trip_id
                     if "vehicle" in departure and trip_id not in by_trip:
                         departure["vehicle"] = None
-                    elif trip_id in by_trip and stop.pk == "2900M111":
+                    elif trip_id in by_trip and stop.pk[:4] == "2900":
                         rtpi.add_progress_and_delay(by_trip[trip_id])
                         if "delay" in by_trip[trip_id]:
                             departure["live"] = departure["time"] + datetime.timedelta(
