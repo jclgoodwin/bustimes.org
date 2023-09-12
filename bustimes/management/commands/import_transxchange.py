@@ -73,7 +73,7 @@ ________________________________________________________________________________
 |_________________|______________|
 """
 
-BODS_SERVICE_CODE_REGEX = re.compile(r"^P[BCDFGHKM]\d+:\d+.*$")
+BODS_SERVICE_CODE_REGEX = re.compile(r"^(P[BCDFGHKM]|UZ)\d+:\d+.*$")
 
 
 def initialisms(word, **kwargs):
