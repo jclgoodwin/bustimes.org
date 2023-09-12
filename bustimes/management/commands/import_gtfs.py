@@ -211,8 +211,14 @@ class Command(BaseCommand):
         self.services = {}
         headsigns = {}
 
-        with zipfile.ZipFile(path) as archive:
+        try:
+            archive = zipfile.ZipFile(path)
+        except zipfile.BadZipFile as e:
+            logger.exception(e)
+            path.delete()
+            return
 
+        with archive:
             for line in read_file(archive, "shapes.txt"):
                 shape_id = line["shape_id"]
                 if shape_id not in self.shapes:
