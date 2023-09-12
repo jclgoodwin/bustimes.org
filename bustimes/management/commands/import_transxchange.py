@@ -73,8 +73,6 @@ ________________________________________________________________________________
 |_________________|______________|
 """
 
-BODS_SERVICE_CODE_REGEX = re.compile(r"^(P[BCDFGHKM]|UZ)\d+:\d+.*$")
-
 
 def initialisms(word, **kwargs):
     if word in ("YMCA", "PH"):
@@ -965,7 +963,9 @@ class Command(BaseCommand):
         if description == "Origin - Destination":
             description = ""
 
-        if re.match(BODS_SERVICE_CODE_REGEX, txc_service.service_code):
+        if re.match(r"^P[BCDFGHKM]\d+:\d+.*$", txc_service.service_code) or re.match(
+            r"^UZ[a-zA-Z0-9]+:.*$", txc_service.service_code
+        ):
             unique_service_code = txc_service.service_code
         else:
             unique_service_code = None

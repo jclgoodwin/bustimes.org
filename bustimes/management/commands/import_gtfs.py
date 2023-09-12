@@ -215,7 +215,7 @@ class Command(BaseCommand):
             archive = zipfile.ZipFile(path)
         except zipfile.BadZipFile as e:
             logger.exception(e)
-            path.delete()
+            path.unlink()
             return
 
         with archive:
