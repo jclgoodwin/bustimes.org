@@ -633,7 +633,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                 url,
                 {
                     "fleet_number": "",
-                    "other_vehicle_type": "Optare Tempo",
+                    "other_vehicle_type": "Scania Fencer",
                     "reg": "",
                     "operator": self.lynx.noc,
                 },
@@ -669,12 +669,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.client.force_login(self.staff_user)
 
         # try to apply the edit
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(16):
             self.client.post(f"/vehicles/edits/{edit.id}/apply")
 
-        # not marked as approved cos there was no matching vehicle type
+        # -not marked as approved- _vehicle type created_ cos there was no vehicle type matching name
         edit.refresh_from_db()
-        self.assertIsNone(edit.approved)
+        self.assertTrue(edit.approved)
 
         vehicle = Vehicle.objects.get(id=self.vehicle_1.id)
         self.assertIsNone(vehicle.fleet_number)

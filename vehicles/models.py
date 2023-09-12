@@ -607,7 +607,6 @@ class VehicleEdit(models.Model):
         return changes
 
     def apply(self, save=True, user=None):
-        ok = True  # stays True if we can mark the edit as approved at the end
         vehicle = self.vehicle
         revision = None
         if save:
@@ -658,13 +657,13 @@ class VehicleEdit(models.Model):
                     setattr(vehicle, field, new_value)
                 update_fields.append(field)
         if self.vehicle_type:
-            try:
+            if self.vehicle_type.startswith("-"):
+                vehicle.vehicle_type = None
+            else:
                 vehicle.vehicle_type = VehicleType.objects.get(
                     name__iexact=self.vehicle_type
                 )
-                update_fields.append("vehicle_type")
-            except VehicleType.DoesNotExist:
-                ok = False
+            update_fields.append("vehicle_type")
         if self.livery_id:
             vehicle.livery_id = self.livery_id
             vehicle.colours = ""
@@ -690,10 +689,9 @@ class VehicleEdit(models.Model):
                     add=feature.add, feature=feature.feature, revision=revision
                 )
 
-            if ok:
-                self.approved = True
-                self.arbiter = user
-                self.save(update_fields=["approved", "arbiter"])
+            self.approved = True
+            self.arbiter = user
+            self.save(update_fields=["approved", "arbiter"])
 
     def make_revision(self):
         revision = VehicleRevision(
@@ -705,14 +703,12 @@ class VehicleEdit(models.Model):
             changes={},
         )
         if self.vehicle_type:
-            try:
-                revision.to_type = VehicleType.objects.get(name=self.vehicle_type)
-            except VehicleType.DoesNotExist:
-                pass
-            else:
-                if revision.to_type.id != self.vehicle.vehicle_type_id:
-                    revision.from_type_id = self.vehicle.vehicle_type_id
-        for field in ("reg", "name", "branding", "notes", "fleet_number"):
+            revision.to_type = VehicleType.objects.get_or_create(
+                {"name": self.vehicle_type}, name__iexact=self.vehicle_type
+            )[0]
+            if revision.to_type.id != self.vehicle.vehicle_type_id:
+                revision.from_type_id = self.vehicle.vehicle_type_id
+        for field in ("reg", "name", "branding", "notes", "fleet_number", "colours"):
             to_value = getattr(self, field)
             if to_value:
                 from_value = getattr(self.vehicle, field)
