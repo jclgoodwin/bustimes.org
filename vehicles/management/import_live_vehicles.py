@@ -14,7 +14,7 @@ from django.db.models import Exists, OuterRef, Q
 from django.db.models.functions import Now
 from django.utils import timezone
 from redis.exceptions import ConnectionError
-from tenacity import after_log, retry, wait_exponential
+from tenacity import before_sleep_log, retry, wait_exponential
 
 from busstops.models import DataSource
 from bustimes.models import Route, Trip
@@ -91,11 +91,11 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     @retry(
         wait=wait_exponential(multiplier=1, min=4, max=10),
-        after=after_log(logger, logging.ERROR),
+        before_sleep=before_sleep_log(logger, logging.DEBUG),
     )
     def get_items(self):
         response = self.session.get(self.url, timeout=20)
-        assert response.ok
+        assert response.ok or response.status == 404
         return response.json()
 
     @staticmethod
