@@ -1267,24 +1267,28 @@ class Command(BaseCommand):
             # route links (geometry between stops):
             if transxchange.route_sections:
 
-                if service_created:
-                    existing_route_links = {}
-                else:
-                    existing_route_links = {
-                        (link.from_stop_id.upper(), link.to_stop_id.upper()): link
-                        for link in service.routelink_set.all()
-                    }
-                route_links_to_update = {}
-                route_links_to_create = {}
                 route_links = list(self.get_route_links(journeys, transxchange))
 
                 # we're not interested in straight lines between stops
                 if any(len(link.track) > 2 for link in route_links):
+
+                    if service_created:
+                        existing_route_links = {}
+                    else:
+                        existing_route_links = {
+                            (link.from_stop_id, link.to_stop_id): link
+                            for link in service.routelink_set.all()
+                        }
+                    route_links_to_update = {}
+                    route_links_to_create = {}
+
                     for route_link in route_links:
+
                         from_stop = stops.get(route_link.from_stop)
                         to_stop = stops.get(route_link.to_stop)
+
                         if type(from_stop) is StopPoint and type(to_stop) is StopPoint:
-                            key = (route_link.from_stop, route_link.to_stop)
+                            key = (from_stop.atco_code, to_stop.atco_code)
                             if key in existing_route_links:
                                 if key not in route_links_to_update:
                                     route_links_to_update[key] = existing_route_links[
@@ -1321,12 +1325,7 @@ class Command(BaseCommand):
         stops = list(transxchange_stops.keys())
         for atco_code in transxchange_stops:
             # deal with leading 0 being removed by Microsoft Excel maybe
-            if (
-                len(atco_code) == 11
-                and atco_code.isdigit()
-                and atco_code[:1] != "0"
-                and atco_code[2:3] == "0"
-            ):
+            if atco_code.isdigit() and atco_code[:1] != "0" and atco_code[2:3] == "0":
                 stops.append(f"0{atco_code}")
 
             # rail services in the London dataset

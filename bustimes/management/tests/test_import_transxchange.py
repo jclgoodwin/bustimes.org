@@ -96,8 +96,9 @@ class ImportTransXChangeTest(TestCase):
                 ("090079682980", "Victoria Road", "", 0, 0),
                 ("090079680705", "Booths", "", 0, 0),
                 ("260006514a", "Sports Ground", "opp", -1.122736635, 52.668973839),
-                ("260006515", "Acorn Close", "adj", -1.121080085, 52.671200066),
-                ("260006516", "Church Hill", "opp", -1.121200186, 52.673322583),
+                # to test handling of leading zero missing in TxC data:
+                ("0260006515", "Acorn Close", "adj", -1.121080085, 52.671200066),
+                ("0260006516", "Church Hill", "opp", -1.121200186, 52.673322583),
             )
         )
 
@@ -800,7 +801,7 @@ class ImportTransXChangeTest(TestCase):
         service_22a.operator.add(self.fabd, self.fecs)
         RouteLink.objects.create(
             from_stop_id="260006514a",
-            to_stop_id="260006515",
+            to_stop_id="0260006515",
             service=service_22a,
             geometry="SRID=4326;LINESTRING (-1.12267861 52.668932971, -1.122161887 52.669204097, "
             "-1.121984987 52.669298697, -1.121571887 52.669561097, -1.121253687 52.669807497, "
