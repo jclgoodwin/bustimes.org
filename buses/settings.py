@@ -84,7 +84,7 @@ SECURE_REDIRECT_EXEMPT = [r"^version$"]
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org", "https://staging.bustimes.org"]
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_URLS_REGEX = r"(^\/api\/|\/(journeys|vehicles|stops)\.json)"
+CORS_URLS_REGEX = r"(^\/(api\/|(vehicles|stops)\.json)|\/journeys\/)"
 
 CSP_IMG_SRC = ["'self'", "https:", "data:"]
 CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]
