@@ -434,8 +434,10 @@ def stagecoach(specific_operator=None):
             sources.append(command.source)
 
             modified, last_modified = download_if_changed(path, url)
-
             sha1 = get_sha1(path)
+
+            if command.source.datetime != last_modified:
+                modified = True
 
             if modified:
                 # use sha1 checksum to check if file has really changed -
