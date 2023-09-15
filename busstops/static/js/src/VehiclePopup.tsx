@@ -1,7 +1,6 @@
 import React from "react";
 import { Popup } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
-import { Vehicle } from "./VehicleMarker";
 
 function getTimeDelta(seconds: number) {
   const minutes = Math.round(seconds / 60);
