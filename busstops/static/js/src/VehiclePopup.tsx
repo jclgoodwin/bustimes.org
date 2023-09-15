@@ -11,11 +11,11 @@ function getTimeDelta(seconds: number) {
   return minutes + " minutes";
 }
 
-type DelayProps = {
-  item: Vehicle;
-};
-
-export function Delay({ item }: DelayProps) {
+export function Delay({ item }: {
+  item: {
+    delay?: number
+  }
+}) {
   let delay = item.delay;
   if (typeof delay !== "undefined") {
     let delayString,

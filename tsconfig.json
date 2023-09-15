@@ -1,12 +1,15 @@
 {
   "compilerOptions": {
     "lib": ["es6", "dom"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
     "strict": true,
   },
   "files": [
     "busstops/static/js/src/app.d.ts",
     "busstops/static/js/src/app.tsx",
+  ],
+  "include": [
+    "busstops/static/js/src/__tests__/",
   ]
 }
