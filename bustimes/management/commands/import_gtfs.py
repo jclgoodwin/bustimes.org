@@ -42,13 +42,6 @@ def read_file(archive, name):
         return
 
 
-def get_stop_id(stop_id):
-    if "_merged_" in stop_id:
-        parts = stop_id.split("_")
-        return parts[parts.index("merged") - 1]
-    return stop_id
-
-
 def get_calendar(line):
     return Calendar(
         mon="1" == line["monday"],
@@ -98,7 +91,7 @@ class Command(BaseCommand):
         admin_areas = {}
         stops_not_created = {}
         for line in read_file(archive, "stops.txt"):
-            stop_id = get_stop_id(line["stop_id"])
+            stop_id = line["stop_id"]
             if stop_id[0] in "78" and len(stop_id) <= 16:
                 stop = StopPoint(
                     atco_code=stop_id,
