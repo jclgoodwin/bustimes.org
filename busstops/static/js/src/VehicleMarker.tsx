@@ -7,7 +7,6 @@ export type Vehicle = {
   heading?: number;
   datetime: string;
   destination: string;
-  delay?: number;
   block?: string;
   tfl_code?: string;
   trip_id?: number;
@@ -26,7 +25,15 @@ export type Vehicle = {
     text_colour?: string;
     css?: string;
     right_css?: string;
-  };
+  },
+  progress?: {
+    "id": number,
+    "sequence": number,
+    "prev_stop": string,
+    "next_stop": string,
+    "progress": number
+  },
+  delay?: number
 };
 
 type VehicleMarkerProps = {

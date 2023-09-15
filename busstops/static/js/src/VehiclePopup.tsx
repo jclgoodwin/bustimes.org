@@ -11,10 +11,12 @@ function getTimeDelta(seconds: number) {
   return minutes + " minutes";
 }
 
-export function Delay({ item }: {
+export function Delay({
+  item,
+}: {
   item: {
-    delay?: number
-  }
+    delay?: number;
+  };
 }) {
   let delay = item.delay;
   if (typeof delay !== "undefined") {

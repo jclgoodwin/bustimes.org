@@ -7,17 +7,19 @@ export type TripTime = {
     name: string;
     atco_code?: string;
     location?: [number, number];
-    icon?: string;
-    bearing?: number;
+    icon?: string | null;
+    bearing?: number | null;
   };
-  track?: [number, number][];
-  aimed_arrival_time: string;
-  aimed_departure_time: string;
-  expected_departure_time?: string;
-  expected_arrival_time?: string;
+  track?: [number, number][] | null;
+  aimed_arrival_time: string | null;
+  aimed_departure_time: string | null;
+  expected_arrival_time?: string | null;
+  expected_departure_time?: string | null;
   actual_departure_time?: string;
   // actual_arrival_time: string;
   timing_status: string;
+  pick_up?: boolean;
+  set_down?: boolean;
 };
 
 type Note = {
@@ -27,6 +29,11 @@ type Note = {
 
 export type Trip = {
   id?: number;
+  vehicle_journey_code?: string;
+  ticket_machine_code?: string;
+  block?: string;
+  service?: { id: number; line_name: string; mode: string };
+  operator?: { noc: string; name: string; vehicle_mode: string };
   times: TripTime[];
   notes?: Note[];
 };
@@ -34,7 +41,7 @@ export type Trip = {
 type RowProps = {
   stop: TripTime;
   onMouseEnter?: (stop: TripTime) => void;
-  vehicle: any;
+  vehicle?: Vehicle;
   aimedColumn?: boolean;
 };
 
@@ -72,18 +79,24 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
 
   let actual,
     actualRowSpan = rowSpan;
-  if (vehicle?.progress && vehicle.progress.prev_stop === stop.stop.atco_code) {
-    actual = vehicle.datetime;
-    if (vehicle.progress.progress > 0.1) {
-      actualRowSpan = 2;
+
+  actual = stop.expected_departure_time || stop.expected_arrival_time; // Irish live departures
+
+  if (!actual) {
+    if (
+      vehicle?.progress &&
+      vehicle.progress.prev_stop === stop.stop.atco_code
+    ) {
+      actual = vehicle.datetime;
+      if (vehicle.progress.progress > 0.1) {
+        actualRowSpan = 2;
+      }
+    } else {
+      actual = stop.actual_departure_time; // vehicle history
     }
-  } else {
-    actual = stop.actual_departure_time;
-  }
-  if (actual) {
-    actual = new Date(actual).toTimeString().slice(0, 8);
-  } else {
-    actual = stop.expected_departure_time || stop.expected_arrival_time;
+    if (actual) {
+      actual = new Date(actual).toTimeString().slice(0, 8);
+    }
   }
   if (actual) {
     actual = <td rowSpan={actualRowSpan}>{actual}</td>;
