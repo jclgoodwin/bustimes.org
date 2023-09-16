@@ -46,7 +46,11 @@ try {
 }
 
 const updateLocalStorage = debounce(function (zoom: number, latLng) {
-  localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
+  try {
+    localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
+  } catch (e) {
+    // never mind
+  }
 }, 2000);
 
 function getBoundsQueryString(bounds: LngLatBounds): string {

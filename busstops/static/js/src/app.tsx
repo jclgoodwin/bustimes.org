@@ -23,6 +23,8 @@ Sentry.init({
     "NetworkError when attempting to fetch resource",
     "Non-Error promise rejection captured with value: undefined",
     "from accessing a cross-origin frame. Protocols, domains, and ports must",
+    "Event `Event` (type=error) captured as promise rejection",
+    "this.kdmw is not a function",
   ],
 });
 
