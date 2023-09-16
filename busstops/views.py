@@ -616,6 +616,7 @@ class LocalityDetailView(UppercasePrimaryKeyMixin, DetailView):
                 # ),
                 service__current=True,
             )
+            .order_by("common_name", "indicator")
             .defer("latlong")
         )
 
