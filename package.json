@@ -41,6 +41,6 @@
     "watch": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"/\\\" --bundle --watch --format=esm --sourcemap  --loader:.png=dataurl",
     "build": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --minify --sourcemap --target=chrome71  --loader:.png=dataurl",
     "lint": "tsc -noEmit && eslint busstops/static/js/src",
-    "test": "jest"
+    "test": "TZ=UTC jest"
   }
 }
