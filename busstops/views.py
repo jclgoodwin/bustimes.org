@@ -711,7 +711,7 @@ class StopPointDetailView(DetailView):
         "locality",
         "locality__parent",
         "locality__district",
-        # "stop_area",
+        "stop_area",
     )
     queryset = queryset.defer("locality__latlong", "locality__parent__latlong")
 
@@ -748,8 +748,10 @@ class StopPointDetailView(DetailView):
             self.object.locality and self.object.locality.district,
             self.object.locality and self.object.locality.parent,
             self.object.locality,
-            # self.object.stop_area,
         ]
+        if self.object.stop_area and self.object.stop_area.stop_area_type != "GPBS":
+            # stop area (if it is not an on-street pair)
+            context["breadcrumb"].append(self.object.stop_area)
 
         if not (self.object.active or context["services"]):
             return context
@@ -851,35 +853,40 @@ class StopAreaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        context["children"] = (
+            self.object.stoppoint_set.annotate(
+                line_names=ArrayAgg(
+                    "service__route__line_name",
+                    distinct=True,
+                )
+            )
+            .filter(service__current=True)
+            .order_by("common_name", "indicator")
+        )
+
         services = Service.objects.filter(
             current=True, stops__stop_area=self.object
         ).annotate(operators=ArrayAgg("operator__name", distinct=True))
         context.update(get_departures_context(self.object, services, self.request.GET))
-
-        context["children"] = self.object.stoppoint_set.annotate(
-            line_names=ArrayAgg(
-                "service__route__line_name",
-                distinct=True,
-            )
-        ).order_by("common_name", "indicator")
-
-        for stop in context["children"]:
-            if " " in stop.indicator:
-                context["indicator_prefix"] = stop.indicator.split(" ")[
-                    0
-                ].title()  # Stand, Stance, Stop
-            break
-
-        stops_dict = {stop.pk: stop for stop in context["children"]}
-
-        for item in context["departures"]:
-            item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
 
         context["breadcrumb"] = [
             self.object.admin_area.region,
             self.object.admin_area,
             self.object.parent,
         ]
+
+        for stop in context["children"]:
+            if " " in stop.indicator:
+                context["indicator_prefix"] = stop.indicator.split(" ")[
+                    0
+                ].title()  # Stand, Stance, Stop
+                break
+        context["breadcrumb"] += [stop.locality.parent, stop.locality]
+
+        stops_dict = {stop.pk: stop for stop in context["children"]}
+
+        for item in context["departures"]:
+            item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
 
         return context
 
@@ -1468,7 +1475,9 @@ def search(request):
             query = SearchQuery(query_text, search_type="websearch", config="english")
             rank = SearchRank(F("search_vector"), query)
 
-            localities = Locality.objects.filter()
+            localities = Locality.objects.filter(
+                Exists("stoppoint") | Exists("locality")
+            )
             operators = Operator.objects.filter(
                 operator_has_current_services_or_vehicles
             )

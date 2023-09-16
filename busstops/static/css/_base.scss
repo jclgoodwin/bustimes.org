@@ -1197,6 +1197,11 @@ input:not(:checked) + label {
         margin: 0 -.5em;
     }
 
+    th {
+        border: 0;
+        padding-right: 0.5em;
+    }
+
     td {
         border: 0;
         padding: .125em .5em;

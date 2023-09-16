@@ -128,7 +128,7 @@
                 {% if vehicle.branding and vehicle.branding != 'None' %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
                 {% if notes_column %}<td class="trivia">{% if not vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
-                {% if garage_column %}<td class="trivia">{% firstof vehicle.garage_name  '' %}</td>{% endif %}
+                {% if garage_column %}<td class="trivia">{{ vehicle.garage_name|default:'' }}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}

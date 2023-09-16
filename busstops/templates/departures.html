@@ -44,7 +44,7 @@
                 {% endif %}{% if item.link %}</a>{% endif %}
             </td>
             {% if object is stoparea %}
-                <td>{{ item.stop_time.stop.get_icon }}</td>
+                <td>{{ item.stop_time.stop.get_icon|default:"" }}</td>
             {% endif %}
         </tr>
         {% if forloop.last %}
