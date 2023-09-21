@@ -414,3 +414,12 @@ NYCC:
     name: North Yorkshire Council
     url: https://www.northyorks.gov.uk/public-transport
     twitter: northyorksc
+BNVB:
+    name: Bee Network - Vision Bus
+BNSM:
+    name: Bee Network - Stagecoach Manchester
+BNDB:
+    name: Bee Network - Diamond Bus North West
+BNGN:
+    name: Bee Network - Go North West
+    
