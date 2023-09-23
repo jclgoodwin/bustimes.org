@@ -1,5 +1,6 @@
 from django.test import TestCase
-from django.core.management import call_command
+
+from .. import tasks
 
 
 class StatsTest(TestCase):
@@ -10,5 +11,5 @@ class StatsTest(TestCase):
         response = self.client.get("/timetable-source-stats.json")
         self.assertEqual(response.json(), [])
 
-        call_command("stats")
-        call_command("timetable_source_stats")
+        tasks.stats()
+        tasks.timetable_source_stats()

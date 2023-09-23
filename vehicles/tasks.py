@@ -1,11 +1,16 @@
+from datetime import timedelta
+
 from ciso8601 import parse_datetime
+from django.core.cache import cache
 from django.db import IntegrityError
-from django.db.models import Q
-from huey.contrib.djhuey import db_task
+from django.db.models import Count, Q
+from django.utils import timezone
+from huey import crontab
+from huey.contrib.djhuey import db_periodic_task, db_task
 
 from busstops.models import DataSource, Operator
 
-from .models import Vehicle, VehicleJourney
+from .models import Vehicle, VehicleEdit, VehicleJourney
 
 
 @db_task()
@@ -116,3 +121,63 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
         vehicle.latest_journey = journey
         vehicle.latest_journey_data = data
         vehicle.save(update_fields=["latest_journey", "latest_journey_data"])
+
+
+@db_periodic_task(crontab(minute="*/5"))
+def stats():
+    now = timezone.now()
+    half_hour_ago = now - timedelta(minutes=30)
+    journeys = VehicleJourney.objects.filter(
+        latest_vehicle__isnull=False, datetime__gte=half_hour_ago
+    )
+
+    stats = {
+        "datetime": now,
+        "pending_vehicle_edits": VehicleEdit.objects.filter(approved=None).count(),
+        "vehicle_journeys": journeys.count(),
+        "service_vehicle_journeys": journeys.filter(service__isnull=False).count(),
+        "trip_vehicle_journeys": journeys.filter(trip__isnull=False).count(),
+    }
+
+    history = cache.get("vehicle-tracking-stats", [])
+
+    history = history[-3000:] + [stats]
+
+    cache.set("vehicle-tracking-stats", history, None)
+
+
+@db_periodic_task(crontab(minute=4, hour=10))
+def timetable_source_stats():
+    now = timezone.now()
+
+    sources = (
+        DataSource.objects.annotate(
+            count=Count(
+                "route__service",
+                filter=Q(route__service__current=True),
+                distinct=True,
+            ),
+        )
+        .filter(count__gt=0)
+        .order_by("name")
+    )
+
+    stats = {"datetime": now, "sources": {}}
+    for source in sources:
+        name = source.name
+        if "_" in name:
+            name = source.name.split("_")[0]
+        elif name.startswith("Stagecoach"):
+            name = "Stagecoach"
+
+        if name in stats["sources"]:
+            stats["sources"][name] += source.count
+        else:
+            stats["sources"][name] = source.count
+
+    history = cache.get("timetable-source-stats", [])
+    history = history[-3000:]
+
+    history.append(stats)
+
+    cache.set("timetable-source-stats", history, None)
