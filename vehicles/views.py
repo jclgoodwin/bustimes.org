@@ -618,9 +618,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
         context["date"] = date
 
         journeys = (
-            journeys.filter(datetime__date=date)
-            .select_related("trip")
-            .order_by("datetime")
+            journeys.filter(datetime__date=date).select_related("trip").order_by("id")
         )
 
         if dates:
@@ -1249,14 +1247,14 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         next_previous_filter = {"vehicle_id": journey.vehicle_id}
 
     try:
-        next_journey = journey.get_next_by_datetime(**next_previous_filter)
+        next_journey = journey.get_next_by_id(**next_previous_filter)
     except VehicleJourney.DoesNotExist:
         pass
     else:
         data["next"] = {"id": next_journey.id, "datetime": next_journey.datetime}
 
     try:
-        previous_journey = journey.get_previous_by_datetime(**next_previous_filter)
+        previous_journey = journey.get_previous_by_id(**next_previous_filter)
     except VehicleJourney.DoesNotExist:
         pass
     else:
