@@ -25,15 +25,15 @@ export type Vehicle = {
     text_colour?: string;
     css?: string;
     right_css?: string;
-  },
+  };
   progress?: {
-    "id": number,
-    "sequence": number,
-    "prev_stop": string,
-    "next_stop": string,
-    "progress": number
-  },
-  delay?: number
+    id: number;
+    sequence: number;
+    prev_stop: string;
+    next_stop: string;
+    progress: number;
+  };
+  delay?: number;
 };
 
 type VehicleMarkerProps = {
@@ -93,7 +93,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
       <div
         data-vehicle-id={vehicle.id}
         className={className}
-        style={background ? { background: background } : {}}
+        style={background ? { background: background } : undefined}
       >
         {marker}
       </div>
@@ -105,7 +105,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
       latitude={vehicle.coordinates[1]}
       longitude={vehicle.coordinates[0]}
       rotation={rotation}
-      style={{ zIndex: selected ? 1 : undefined }}
+      style={{ zIndex: selected ? 1 : 0 }}
       data-vehicle-id={vehicle.id}
     >
       {marker}
