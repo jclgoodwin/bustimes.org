@@ -1191,6 +1191,12 @@ input:not(:checked) + label {
     .next {
         margin: 0;
     }
+
+    .is-highlighted {
+        a {
+            color: var(--active-link-color);
+        }
+    }
 }
 
 .credit {

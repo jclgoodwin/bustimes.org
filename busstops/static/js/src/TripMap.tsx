@@ -190,6 +190,18 @@ export default function TripMap() {
 
   const [clickedStop, setClickedStop] = React.useState<Stop>();
 
+  const highlightedStop = React.useMemo(() => {
+    if (clickedStop) {
+      return clickedStop.properties.url;
+    }
+    if (document.referrer) {
+      const referrer = new URL(document.referrer).pathname;
+      if (referrer.indexOf("/stops/") === 0) {
+        return referrer;
+      }
+    }
+  }, [clickedStop]);
+
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
       const target = e.originalEvent.target;
@@ -412,7 +424,7 @@ export default function TripMap() {
         </Map>
       </div>
       <div className="trip-timetable map-sidebar">
-        <TripTimetable trip={trip} vehicle={tripVehicle} />
+        <TripTimetable trip={trip} vehicle={tripVehicle} highlightedStop={highlightedStop} />
       </div>
     </React.Fragment>
   );

@@ -38,14 +38,13 @@ export type Trip = {
   notes?: Note[];
 };
 
-type RowProps = {
+function Row({ stop, onMouseEnter, vehicle, aimedColumn, highlightedStop}: {
   stop: TripTime;
   onMouseEnter?: (stop: TripTime) => void;
   vehicle?: Vehicle;
   aimedColumn?: boolean;
-};
-
-function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
+  highlightedStop?: string
+}) {
   const handleMouseEnter = React.useCallback(() => {
     if (onMouseEnter) {
       if (stop.stop.location) {
@@ -54,18 +53,24 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
     }
   }, [stop, onMouseEnter]);
 
+  let className;
+
   let stopName: string | ReactElement = stop.stop.name;
   if (stop.stop.icon) {
     stopName = `${stopName} (${stop.stop.icon})`;
   }
   if (stop.stop.atco_code) {
-    stopName = <a href={`/stops/${stop.stop.atco_code}`}>{stopName}</a>;
+    let url = `/stops/${stop.stop.atco_code}`;
+    if (url === highlightedStop) {
+      className = "is-highlighted";
+    }
+    stopName = <a href={url}>{stopName}</a>;
   }
 
-  let className;
   if (stop.timing_status && stop.timing_status !== "PTP") {
-    className = "minor";
+    className = className ? className + " minor" : "minor";
   }
+
 
   let rowSpan;
   if (
@@ -122,18 +127,18 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn }: RowProps) {
   );
 }
 
-type TripTimetableProps = {
-  trip: Trip;
-  onMouseEnter?: (stop: TripTime) => void;
-  vehicle?: Vehicle;
-  loading?: boolean | null;
-};
-
 const TripTimetable = React.memo(function TripTimetable({
   trip,
   onMouseEnter,
   vehicle,
-}: TripTimetableProps) {
+  highlightedStop
+}: {
+  trip: Trip;
+  onMouseEnter?: (stop: TripTime) => void;
+  vehicle?: Vehicle;
+  loading?: boolean | null;
+  highlightedStop?: string;
+}) {
   const aimedColumn = trip.times?.some(
     (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,
   );
@@ -156,6 +161,7 @@ const TripTimetable = React.memo(function TripTimetable({
               stop={stop}
               onMouseEnter={onMouseEnter}
               vehicle={vehicle}
+              highlightedStop={highlightedStop}
             />
           ))}
         </tbody>
