@@ -1,34 +1,33 @@
 {% load urlise %}
 
+{% if situations %}
+<div class="situations">
 {% for situation in situations %}
     {% if situation.summary != 'Does not stop here' %}
-    <div class="situation">
-        {% if situation.summary or situation.reason %}
-            <div class="summary">
-                {% if situation.reason %}
-                    <div class="reason">
-                        {{ situation.nice_reason|capfirst }}
-                    </div>
-                {% endif %}
-                <h2>{{ situation.summary }}</h2>
-                {% if situation.validityperiod_set.all|length == 1%}
-                    {{ situation.validityperiod_set.all.0 }}
-                {% endif %}
-            </div>
-        {% elif situation.validityperiod_set.all|length == 1 %}
-            {{ situation.validityperiod_set.all.0 }}
-        {% endif %}
+
+        {% if situation.summary %}
+            <details class="situation">
+            <summary>
+                {{ situation.summary }}
+                {% for validity_period in situation.list_validity_periods %}
+                    <div class="dates">{{ validity_period }}</div>
+                {% endfor %}
+            </summary>
+        {% else %}<div class="situation">{% endif %}
+
         {% if situation.text %}
             {{ situation.text|linebreaks|urlize }}
         {% endif %}
         {% for consequence in situation.consequences %}
-            {% ifchanged consequence.text %}{% if consequence.text %}
+            {% ifchanged consequence.text %}{% if consequence.text and consequence.text != situation.text %}
                 {{ consequence.text|linebreaks|urlize }}
             {% endif %}{% endifchanged %}
         {% endfor %}
         {% for link in situation.link_set.all %}
             {{ link.url|urlise }}
         {% endfor %}
-    </div>
     {% endif %}
+    {% if situation.summary %}</details>{% else %}</div>{% endif %}
 {% endfor %}
+</div>
+{% endif %}

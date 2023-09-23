@@ -1,6 +1,7 @@
 from django.contrib.postgres.fields import DateTimeRangeField
 from django.db import models
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.text import camel_case_to_spaces
 
 from busstops.templatetags.date_range import date_range
@@ -12,12 +13,13 @@ class Situation(models.Model):
         models.CASCADE,
         limit_choices_to={
             "name__in": (
+                "bustimes.org",
+                "Bus Open Data Service",
                 "Ito World",
-                "TfE",
+                # "TfE",
                 "TfL",
                 "Transport for the North",
-                "Transport for West Midlands",
-                "bustimes.org",
+                # "Transport for West Midlands",
             )
         },
     )
@@ -42,6 +44,20 @@ class Situation(models.Model):
     class Meta:
         unique_together = ("source", "situation_number")
         index_together = (("current", "publication_window"),)
+
+    def list_validity_periods(self):
+        validity_periods = self.validityperiod_set.all()
+        if len(validity_periods) == 1:
+            current_timezone = timezone.get_current_timezone()
+            period = validity_periods[0].period
+            if period.lower and period.upper:
+                lower = period.lower.astimezone(current_timezone)
+                upper = period.upper.astimezone(current_timezone)
+                if lower.date() == upper.date():
+                    return [
+                        f"""{lower.strftime("%H:%M")}–{upper.strftime("%H:%M, %-d %B %Y")}"""
+                    ]
+            return [date_range(period)]
 
 
 class Link(models.Model):

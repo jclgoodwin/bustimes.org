@@ -30,7 +30,7 @@ class Command(BaseCommand):
         response = session.get(
             "https://api.tfl.gov.uk/StopPoint/mode/bus/Disruption",
             params=settings.TFL,
-            timeout=10,
+            timeout=30,
         )
 
         for item in response.json():
@@ -61,9 +61,10 @@ class Command(BaseCommand):
                     source=source,
                 )
             situation.current = True
-            situation.text = item["description"].replace("\\n", "\n")
+            situation.text = item["description"].replace("\\n", "\n").strip()
             if ": " in situation.text:
                 situation.summary, situation.text = situation.text.split(": ", 1)
+            situation.text = situation.text.replace(". ", ".\n\n")
             situation.publication_window = window
             situation.reason = item["type"]
             situation.save()
@@ -87,7 +88,7 @@ class Command(BaseCommand):
         response = session.get(
             "https://api.tfl.gov.uk/line/mode/bus/status",
             params=settings.TFL,
-            timeout=10,
+            timeout=30,
         )
 
         for item in response.json():
@@ -135,6 +136,8 @@ class Command(BaseCommand):
 
                 if ": " in situation.text and situation.text.index(": ") < 255:
                     situation.summary, situation.text = situation.text.split(": ", 1)
+
+                situation.text = situation.text.replace(". ", ".\n\n")
 
                 situation.current = True
                 situation.save()

@@ -117,16 +117,17 @@ label {
     cursor: pointer;
 }
 
+details {
+    margin: 1em 0;
+}
+
 summary {
+    cursor: pointer;
     font-weight: bold;
 }
 
 summary::marker {
     color: var(--border-color-darker);
-}
-
-details {
-    margin: 1em 0;
 }
 
 @import '../js/accessible-autocomplete/accessible-autocomplete.min';
@@ -1299,32 +1300,34 @@ time,
     }
 }
 
-.situation {
+.situations {
     border: 1px solid var(--border-color);
-    border-radius: .5em;
+    border-bottom: 0;
     margin: 1em 0;
-    padding: 1em;
-    padding-top: .5em;
 
-    .reason {
-        background: var(--brand-color);
-        border-radius: .5em 0 .5em 0;
-        float: left;
-        margin: -.5em 1em 0 -1em;
-        padding: .5em 1em;
+    .situation {
+        border-bottom: 1px solid var(--border-color);
+        padding: 1em;
+        margin: 0;
+
+        p:first-child {
+            margin-top: 0;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
     }
 
-    h2 {
-        font-size: 1em;
-        display: inline;
+    summary {
+        padding: 1em;
+        margin: -1em;
     }
 
-    p:first-child {
-        margin-top: .5em;
-    }
-
-    p:last-child {
-        margin-bottom: 0;
+    .dates {
+        font-weight: normal;
+        display: inline-block;
+        margin-left: 1em;
     }
 }
 

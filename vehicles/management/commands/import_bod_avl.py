@@ -602,7 +602,9 @@ class Command(ImportLiveVehiclesCommand):
     #    after=after_log(logger, logging.ERROR),
     # )
     def get_items(self):
-        response = self.session.get(self.source.url, params=self.source.settings)
+        response = self.session.get(
+            self.source.url, params=self.source.settings, timeout=30
+        )
         if not response.ok:
             return []
 
