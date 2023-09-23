@@ -36,7 +36,7 @@ declare global {
   }
 }
 
-const error = <div class="sorry">Sorry, something has gone wrong</div>;
+const error = <div className="sorry">Sorry, something has gone wrong</div>;
 
 let rootElement = document.getElementById("hugemap");
 if (rootElement) {
