@@ -15,9 +15,17 @@
 </div>
 
 {% if stops %}
-    <h2>Stops in {{ locality }}</h2>
+    <section>
+        <header>
+            <h2>Stops in {{ locality }}</h2>
 
-    {% include 'stops.html' with stops=stops class=' long' %}
+            {% if object.latlong %}
+                <a href="/map#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}">Map</a>
+            {% endif %}
+        </header>
+
+        {% include 'stops.html' with stops=stops class=' long' %}
+    </section>
 {% endif %}
 
 {% if services %}

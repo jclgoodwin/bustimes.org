@@ -1,6 +1,6 @@
 // 1000px
 
-header {
+.site-header {
     div {
         padding: 0 1em;
     }
@@ -33,7 +33,7 @@ main {
 }
 
 .wide {
-    header {
+    .site-header {
         div {
             width: 62.5em;
         }

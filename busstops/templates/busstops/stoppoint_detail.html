@@ -45,10 +45,15 @@
 {% endif %}
 
 {% if nearby %}
-    <div class="aside">
-        <h2>Nearby stops</h2>
+    <section class="aside">
+        <header>
+            <h2>Nearby stops</h2>
+            {% if object.latlong %}
+                <a href="/map#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}">Map</a>
+            {% endif %}
+        </header>
         {% include 'stops.html' with stops=nearby %}
-    </div>
+    </section>
 {% endif %}
 
 </div>

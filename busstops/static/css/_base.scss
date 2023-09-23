@@ -213,7 +213,7 @@ details {
     text-transform: uppercase;
 }
 
-header {
+.site-header {
     background: var(--brand-color);
     overflow: hidden;
     padding-left: env(safe-area-inset-left);
@@ -347,6 +347,20 @@ h1 .reg {
 h2 {
     font-size: 1.25em;
     margin-top: 1em;
+}
+
+section header {
+    display: flex;
+    align-items: baseline;
+    gap: 1em;
+
+    h2 {
+        margin: .5em 0 0;
+    }
+
+    a {
+        line-height: 1;
+    }
 }
 
 h3 {
