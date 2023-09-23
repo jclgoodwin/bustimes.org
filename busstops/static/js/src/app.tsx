@@ -36,12 +36,16 @@ declare global {
   }
 }
 
+const error = <div class="sorry">Sorry, something has gone wrong</div>;
+
 let rootElement = document.getElementById("hugemap");
 if (rootElement) {
   let root = createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <BigMap />
+      <Sentry.ErrorBoundary fallback={error}>
+        <BigMap />
+      </Sentry.ErrorBoundary>
     </React.StrictMode>,
   );
 } else {
@@ -51,21 +55,27 @@ if (rootElement) {
       let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <OperatorMap noc={window.OPERATOR_ID} />
+          <Sentry.ErrorBoundary fallback={error}>
+            <OperatorMap noc={window.OPERATOR_ID} />
+          </Sentry.ErrorBoundary>
         </React.StrictMode>,
       );
     } else if (window.SERVICE_ID) {
       let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <ServiceMap serviceId={window.SERVICE_ID} />
+          <Sentry.ErrorBoundary fallback={error}>
+            <ServiceMap serviceId={window.SERVICE_ID} />
+          </Sentry.ErrorBoundary>
         </React.StrictMode>,
       );
     } else if (window.STOPS) {
       let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <TripMap />
+          <Sentry.ErrorBoundary fallback={error}>
+            <TripMap />
+          </Sentry.ErrorBoundary>
         </React.StrictMode>,
       );
     }
@@ -75,7 +85,9 @@ if (rootElement) {
       let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
-          <History />
+          <Sentry.ErrorBoundary fallback={error}>
+            <History />
+          </Sentry.ErrorBoundary>
         </React.StrictMode>,
       );
     }
