@@ -28,6 +28,7 @@ else:
     EMAIL_TIMEOUT = 10
 
 INSTALLED_APPS = [
+    "daphne",
     "accounts",
     "busstops",
     "django.contrib.admin",
@@ -114,7 +115,7 @@ if DEBUG and "runserver" in sys.argv:
 
 ROOT_URLCONF = "buses.urls"
 
-ASGI_APPLICATION = "vehicles.routing.application"
+ASGI_APPLICATION = "buses.asgi.application"
 
 
 DATABASES = {"default": dj_database_url.config(conn_max_age=None)}

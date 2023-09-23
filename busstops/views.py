@@ -1,11 +1,11 @@
 # coding=utf-8
 """View definitions."""
+import asyncio
 import csv
 import datetime
 import os
 import sys
 import traceback
-from time import sleep
 from urllib.parse import urlencode
 
 import requests
@@ -86,7 +86,7 @@ def version(request):
     )
 
 
-def count_iterator():
+async def count_iterator():
     yield """<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>
     """
     lyric = """Do you count?
@@ -128,11 +128,11 @@ Count up all the ways that you could change it if you try,
 But there is too much else to do then suddenly you die!"""
     for i, line in enumerate(lyric.split("\n")):
         if line == "":
-            sleep(0.3)
+            await asyncio.sleep(0.3)
         yield f"""{line}</br>"""
 
 
-def count(request):
+async def count(request):
     return StreamingHttpResponse(count_iterator())
 
 
