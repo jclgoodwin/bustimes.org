@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from .. import tasks
+from ... import tasks
 
 
 class StatsTest(TestCase):
