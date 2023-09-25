@@ -162,7 +162,13 @@ it("shows delay", () => {
   tree = component.toJSON();
   expect(tree).toMatchSnapshot();
 
-  component.update(<TripTimetable trip={trip} vehicle={vehicle} highlightedStop="/stops/2900N12245" />);
+  component.update(
+    <TripTimetable
+      trip={trip}
+      vehicle={vehicle}
+      highlightedStop="/stops/2900N12245"
+    />,
+  );
   tree = component.toJSON();
   expect(tree).toMatchSnapshot();
 });

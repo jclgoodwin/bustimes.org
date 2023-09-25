@@ -424,7 +424,11 @@ export default function TripMap() {
         </Map>
       </div>
       <div className="trip-timetable map-sidebar">
-        <TripTimetable trip={trip} vehicle={tripVehicle} highlightedStop={highlightedStop} />
+        <TripTimetable
+          trip={trip}
+          vehicle={tripVehicle}
+          highlightedStop={highlightedStop}
+        />
       </div>
     </React.Fragment>
   );

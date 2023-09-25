@@ -38,12 +38,18 @@ export type Trip = {
   notes?: Note[];
 };
 
-function Row({ stop, onMouseEnter, vehicle, aimedColumn, highlightedStop}: {
+function Row({
+  stop,
+  onMouseEnter,
+  vehicle,
+  aimedColumn,
+  highlightedStop,
+}: {
   stop: TripTime;
   onMouseEnter?: (stop: TripTime) => void;
   vehicle?: Vehicle;
   aimedColumn?: boolean;
-  highlightedStop?: string
+  highlightedStop?: string;
 }) {
   const handleMouseEnter = React.useCallback(() => {
     if (onMouseEnter) {
@@ -70,7 +76,6 @@ function Row({ stop, onMouseEnter, vehicle, aimedColumn, highlightedStop}: {
   if (stop.timing_status && stop.timing_status !== "PTP") {
     className = className ? className + " minor" : "minor";
   }
-
 
   let rowSpan;
   if (
@@ -131,7 +136,7 @@ const TripTimetable = React.memo(function TripTimetable({
   trip,
   onMouseEnter,
   vehicle,
-  highlightedStop
+  highlightedStop,
 }: {
   trip: Trip;
   onMouseEnter?: (stop: TripTime) => void;
