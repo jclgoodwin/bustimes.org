@@ -20,6 +20,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@sentry/esbuild-plugin": "^2.7.1",
     "@sentry/react": "^7.57.0",
     "@types/lodash": "^4.14.197",
     "@types/node": "^20.5.0",
@@ -28,6 +29,8 @@
     "@types/react-timeago": "^4.1.3",
     "accessible-autocomplete": "^2.0.4",
     "html5shiv": "^3.7.3",
+    "leaflet": "^1.9.4",
+    "leaflet.locatecontrol": "^0.79.0",
     "loadjs": "^4.2.0",
     "maplibre-gl": "^3.2.0",
     "react": "^18.2.0",
@@ -38,8 +41,8 @@
     "wouter": "^2.11.0"
   },
   "scripts": {
-    "watch": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --watch --format=esm --sourcemap  --loader:.png=dataurl",
-    "build": "esbuild busstops/static/js/src/app.tsx --outdir=busstops/static/js/dist --define:process.env.API_ROOT=\\\"https://bustimes.org/\\\" --bundle --minify --sourcemap --target=chrome71  --loader:.png=dataurl",
+    "watch": "node esbuild-watch.mjs",
+    "build": "node esbuild-build.mjs",
     "lint": "tsc -noEmit && eslint busstops/static/js/src",
     "test": "TZ=UTC jest"
   }
