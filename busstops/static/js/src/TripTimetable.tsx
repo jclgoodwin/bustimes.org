@@ -95,7 +95,7 @@ function Row({
   if (!actual) {
     if (
       vehicle?.progress &&
-      vehicle.progress.prev_stop === stop.stop.atco_code
+      vehicle.progress.id === stop.id
     ) {
       actual = vehicle.datetime;
       if (vehicle.progress.progress > 0.1) {
