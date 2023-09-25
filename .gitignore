@@ -1,10 +1,8 @@
 .DS_Store
 .metadata_never_index
 *.pyc
-/config/gunicorn.py
 /data
 /node_modules/
-/htmlcov/
 /staticfiles/
 /busstops/static/js/dist
 /busstops/static/css/*.css
@@ -14,3 +12,9 @@
 /slim-bustimes.sql
 /.idea
 dist/
+
+/manage.sh
+/credentials.sh
+
+# Sentry Auth Token
+.env.sentry-build-plugin
