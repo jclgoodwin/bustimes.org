@@ -1,4 +1,5 @@
 import React, { ReactElement, memo } from "react";
+import {captureException} from "@sentry/react";
 
 import Map, {
   Source,
@@ -455,6 +456,7 @@ export default function BigMap() {
       cursor={cursor}
       onLoad={handleMapLoad}
       interactiveLayerIds={["stops", "vehicles"]}
+      onError={captureException}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
