@@ -105,7 +105,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
       latitude={vehicle.coordinates[1]}
       longitude={vehicle.coordinates[0]}
       rotation={rotation}
-      style={{ zIndex: selected ? 1 : 0 }}
+      style={{ zIndex: selected ? 2 : 1 }}
       data-vehicle-id={vehicle.id}
     >
       {marker}
