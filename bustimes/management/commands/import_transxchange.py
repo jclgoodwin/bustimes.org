@@ -1103,10 +1103,14 @@ class Command(BaseCommand):
             if description:
                 service.description = description
 
-            for operator in operators.values():
-                if operator.colour_id:
-                    service.colour_id = operator.colour_id
-                    break
+            # London bus red
+            if service_code and service.mode == "bus" and service_code[:4] == "tfl_":
+                service.colour_id = 127
+            else:
+                for operator in operators.values():
+                    if operator.colour_id:
+                        service.colour_id = operator.colour_id
+                        break
 
             line_brand = line.line_brand
             if txc_service.marketing_name:
