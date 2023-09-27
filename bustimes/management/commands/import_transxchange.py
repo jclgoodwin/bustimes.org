@@ -1056,8 +1056,8 @@ class Command(BaseCommand):
                     existing = self.source.service_set.filter(
                         Q(service_code=service_code)
                         |
-                        # London (change of operator):
-                        Q(line_name__iexact=line.line_name, description=description)
+                        # London - assume line name is unique:
+                        Q(line_name__iexact=line.line_name)
                     ).first()
             elif unique_service_code:
                 service_code = unique_service_code
