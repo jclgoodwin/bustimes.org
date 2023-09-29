@@ -93,10 +93,7 @@ function Row({
   actual = stop.expected_departure_time || stop.expected_arrival_time; // Irish live departures
 
   if (!actual) {
-    if (
-      vehicle?.progress &&
-      vehicle.progress.id === stop.id
-    ) {
+    if (vehicle?.progress && vehicle.progress.id === stop.id) {
       actual = vehicle.datetime;
       if (vehicle.progress.progress > 0.1) {
         actualRowSpan = 2;

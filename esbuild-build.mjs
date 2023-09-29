@@ -3,7 +3,7 @@ import * as esbuild from "esbuild";
 import { sentryEsbuildPlugin } from "@sentry/esbuild-plugin";
 
 await esbuild.build({
-  entryPoints: ["busstops/static/js/src/app.tsx", "busstops/static/js/src/bigmap.js"],
+  entryPoints: ["busstops/static/js/src/app.tsx", "busstops/static/js/src/bigmap.js", "busstops/static/js/src/bigmap-classic.js"],
   outdir: "busstops/static/js/dist",
   bundle: true,
   minify: true,

@@ -257,7 +257,7 @@ function handleVehicle(item) {
     });
     marker
       .addTo(window.bustimes.map)
-      .bindPopup("", {autoPan: false})
+      .bindPopup("", { autoPan: false })
       .on("popupopen", handlePopupOpen)
       .on("popupclose", handlePopupClose);
   }

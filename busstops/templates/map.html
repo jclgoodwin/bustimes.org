@@ -49,11 +49,7 @@
     </div>
 {% endblock %}
 
-{% block footer %}{% endblock %}
-
-{% block foot %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
+{% block footer %}
     <script>
         INITIAL_VIEW_STATE = {
         {% if request.headers.cf_ipcountry == "IE" %}
@@ -66,6 +62,21 @@
             zoom: 5,
         };
     </script>
-    <script src="{% static 'js/dist/app.js' %}"></script>
+{% endblock %}
+
+{% block foot %}
+    {% load static %}
+    <script>
+        OLD_JS = [
+            "{% static 'js/dist/bigmap-classic.css' %}",
+            "{% static 'js/reqwest.min.js' %}",
+            "{% static 'js/dist/bigmap-classic.js' %}"
+        ];
+        NEW_JS = [
+            "{% static 'js/dist/app.css' %}",
+            "{% static 'js/dist/app.js' %}",
+        ];
+    </script>
+    <script src="{% static 'js/dist/bigmap.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}
