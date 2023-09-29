@@ -854,7 +854,7 @@ class StopAreaDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["children"] = (
+        stops = (
             self.object.stoppoint_set.annotate(
                 line_names=ArrayAgg(
                     "service__route__line_name",
@@ -864,6 +864,7 @@ class StopAreaDetailView(DetailView):
             .filter(service__current=True)
             .order_by("common_name", "indicator")
         )
+        context["children"] = stops
 
         services = Service.objects.filter(
             current=True, stops__stop_area=self.object
@@ -876,18 +877,20 @@ class StopAreaDetailView(DetailView):
             self.object.parent,
         ]
 
-        for stop in context["children"]:
-            if " " in stop.indicator:
-                context["indicator_prefix"] = stop.indicator.split(" ")[
-                    0
-                ].title()  # Stand, Stance, Stop
-                break
-        context["breadcrumb"] += [stop.locality.parent, stop.locality]
+        if stops:
+            for stop in stops:
+                if " " in stop.indicator:
+                    context["indicator_prefix"] = stop.indicator.split(" ")[
+                        0
+                    ].title()  # Stand, Stance, Stop
+                    break
+            if stop.locality:
+                context["breadcrumb"] += [stop.locality.parent, stop.locality]
 
-        stops_dict = {stop.pk: stop for stop in context["children"]}
+            stops_dict = {stop.pk: stop for stop in stops}
 
-        for item in context["departures"]:
-            item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
+            for item in context["departures"]:
+                item["stop_time"].stop = stops_dict[item["stop_time"].stop_id]
 
         return context
 
