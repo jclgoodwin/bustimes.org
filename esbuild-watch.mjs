@@ -8,6 +8,7 @@ let context = await esbuild.context({
   bundle: true,
 
   sourcemap: true,
+  logLevel: 'info',
 
 
   loader: { ".png": "dataurl" },

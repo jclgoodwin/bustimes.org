@@ -8,8 +8,8 @@ await esbuild.build({
   bundle: true,
   minify: true,
   sourcemap: true,
+  logLevel: 'info',
   target: "chrome71",
-
   loader: { ".png": "dataurl" },
   define: {
     "process.env.API_ROOT": '"https://bustimes.org/"'

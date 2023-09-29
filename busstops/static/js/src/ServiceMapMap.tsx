@@ -1,10 +1,8 @@
 import React from "react";
 
-import Map, {
+import {
   Source,
   Layer,
-  NavigationControl,
-  GeolocateControl,
   LayerProps,
   MapEvent,
   MapLayerMouseEvent,
@@ -15,6 +13,7 @@ import routeStopMarker from "../../route-stop-marker.png";
 import StopPopup, { Stop } from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
+import BusTimesMap from "./Map";
 
 declare global {
   interface Window {
@@ -41,8 +40,6 @@ export default function ServiceMapMap({
   geometry,
   stops,
 }: ServiceMapMapProps) {
-  const darkMode = false;
-
   const [cursor, setCursor] = React.useState<string>();
 
   const onMouseEnter = React.useCallback(() => {
@@ -130,11 +127,7 @@ export default function ServiceMapMap({
   };
 
   return (
-    <Map
-      dragRotate={false}
-      touchPitch={false}
-      pitchWithRotate={false}
-      maxZoom={18}
+    <BusTimesMap
       initialViewState={{
         bounds: window.EXTENT,
         fitBoundsOptions: {
@@ -144,19 +137,10 @@ export default function ServiceMapMap({
       cursor={cursor}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      mapStyle={
-        darkMode
-          ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-          : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-      }
-      RTLTextPlugin={""}
       onClick={handleMapClick}
       onLoad={handleMapLoad}
       interactiveLayerIds={["stops"]}
     >
-      <NavigationControl showCompass={false} />
-      <GeolocateControl />
-
       {vehicles ? (
         vehicles.map((item) => {
           return (
@@ -198,6 +182,6 @@ export default function ServiceMapMap({
           <Layer {...stopsStyle} />
         </Source>
       )}
-    </Map>
+    </BusTimesMap>
   );
 }

@@ -1,11 +1,8 @@
 import React, { ReactElement, memo } from "react";
-import { captureException } from "@sentry/react";
 
-import Map, {
+import {
   Source,
   Layer,
-  NavigationControl,
-  GeolocateControl,
   ViewState,
   LngLatBounds,
   MapEvent,
@@ -18,6 +15,7 @@ import stopMarker from "../../stop-marker.png";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup, { Stop } from "./StopPopup";
+import BusTimesMap from "./Map";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -234,8 +232,6 @@ const Vehicles = memo(function Vehicles({
 });
 
 export default function BigMap() {
-  const darkMode = false;
-
   const [vehicles, setVehicles] = React.useState(null);
 
   const [stops, setStops] = React.useState(null);
@@ -435,32 +431,17 @@ export default function BigMap() {
   const showBuses = shouldShowVehicles(zoom);
 
   return (
-    <Map
+    <BusTimesMap
       initialViewState={window.INITIAL_VIEW_STATE}
-      dragRotate={false}
-      touchPitch={false}
-      pitchWithRotate={false}
       onMoveEnd={handleMoveEnd}
-      minZoom={5}
-      maxZoom={18}
-      mapStyle={
-        darkMode
-          ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-          : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-      }
       hash={true}
-      RTLTextPlugin={""}
       onClick={handleMapClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       cursor={cursor}
       onLoad={handleMapLoad}
       interactiveLayerIds={["stops", "vehicles"]}
-      onError={(e) => captureException(e.error)}
     >
-      <NavigationControl showCompass={false} />
-      <GeolocateControl />
-
       {stops && showStops ? (
         <Stops
           stops={stops}
@@ -483,6 +464,6 @@ export default function BigMap() {
           {!showBuses ? <div>Zoom in to see buses</div> : null}
         </div>
       ) : null}
-    </Map>
+    </BusTimesMap>
   );
 }

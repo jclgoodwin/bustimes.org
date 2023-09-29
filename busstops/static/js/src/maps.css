@@ -39,7 +39,10 @@
 .vehicle-marker.selected {
   border-color: #000;
 }
-.vehicle-marker.selected + .arrow {
+
+.maplibregl-user-location-dot,
+.maplibregl-user-location-accuracy-circle {
+  pointer-events: none;
 }
 
 /*

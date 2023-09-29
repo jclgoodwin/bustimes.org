@@ -1,10 +1,8 @@
 import React from "react";
 
-import Map, {
+import {
   Source,
   Layer,
-  NavigationControl,
-  GeolocateControl,
   MapEvent,
   LayerProps,
   MapLayerMouseEvent,
@@ -21,6 +19,7 @@ import TripTimetable, { Trip, TripTime } from "./TripTimetable";
 import StopPopup, { Stop } from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
+import BusTimesMap from "./Map";
 
 declare global {
   interface Window {
@@ -175,8 +174,6 @@ export default function TripMap() {
   const navigateToTrip = React.useCallback((item: Vehicle) => {
     navigate("/trips/" + item.trip_id);
   }, []);
-
-  const darkMode = false;
 
   const [cursor, setCursor] = React.useState("");
 
@@ -359,11 +356,7 @@ export default function TripMap() {
   return (
     <React.Fragment>
       <div className="trip-map has-sidebar">
-        <Map
-          dragRotate={false}
-          touchPitch={false}
-          pitchWithRotate={false}
-          maxZoom={18}
+        <BusTimesMap
           style={{
             position: "absolute",
             top: 0,
@@ -379,19 +372,10 @@ export default function TripMap() {
           cursor={cursor}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
-          mapStyle={
-            darkMode
-              ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-              : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-          }
-          RTLTextPlugin={""}
           onClick={handleMapClick}
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
         >
-          <NavigationControl showCompass={false} />
-          <GeolocateControl />
-
           <Route times={trip.times} />
 
           {vehicles.map((item) => {
@@ -421,7 +405,7 @@ export default function TripMap() {
               onClose={() => setClickedStop(undefined)}
             />
           ) : null}
-        </Map>
+        </BusTimesMap>
       </div>
       <div className="trip-timetable map-sidebar">
         <TripTimetable

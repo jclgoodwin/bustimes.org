@@ -1,16 +1,12 @@
 import React from "react";
 
-import Map, {
-  NavigationControl,
-  GeolocateControl,
-  MapEvent,
-  MapLayerMouseEvent,
-} from "react-map-gl/maplibre";
+import { MapEvent, MapLayerMouseEvent } from "react-map-gl/maplibre";
 
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
 import { LngLatBounds } from "maplibre-gl";
+import BusTimesMap from "./Map";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -28,8 +24,6 @@ function getBounds(items: Vehicle[]) {
 }
 
 export default function OperatorMap({ noc }: OperatorMapProps) {
-  const darkMode = false;
-
   const [vehiclesList, setVehicles] = React.useState<Vehicle[]>();
 
   const vehiclesById = React.useMemo(() => {
@@ -101,6 +95,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
         return;
       }
     }
+    setClickedVehicleMarker(undefined);
   }, []);
 
   const handleMapLoad = React.useCallback((event: MapEvent) => {
@@ -125,11 +120,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
   return (
     <React.Fragment>
       <div className="operator-map">
-        <Map
-          dragRotate={false}
-          touchPitch={false}
-          pitchWithRotate={false}
-          maxZoom={18}
+        <BusTimesMap
           initialViewState={{
             bounds: bounds,
             fitBoundsOptions: {
@@ -137,18 +128,9 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
               padding: 50,
             },
           }}
-          mapStyle={
-            darkMode
-              ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-              : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-          }
-          RTLTextPlugin={""}
           onClick={handleMapClick}
           onLoad={handleMapLoad}
         >
-          <NavigationControl showCompass={false} />
-          <GeolocateControl />
-
           {vehiclesList.map((item) => {
             return (
               <VehicleMarker
@@ -165,7 +147,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
               onClose={() => setClickedVehicleMarker(undefined)}
             />
           )}
-        </Map>
+        </BusTimesMap>
       </div>
       {/*{clickedTripId ? <TripLayer tripId={clickedTripId} /> : null}*/}
     </React.Fragment>

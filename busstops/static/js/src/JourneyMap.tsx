@@ -1,15 +1,15 @@
 import React from "react";
 
-import Map, {
+import {
   Source,
   Layer,
-  NavigationControl,
-  GeolocateControl,
   Popup,
   MapEvent,
   LayerProps,
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
+
+import BusTimesMap from "./Map";
 
 import routeStopMarker from "../../route-stop-marker.png";
 import arrow from "../../arrow.png";
@@ -291,8 +291,6 @@ export default function JourneyMap({
   journey?: VehicleJourney;
   loading: boolean;
 }) {
-  const darkMode = false;
-
   const [cursor, setCursor] = React.useState<string>();
 
   const [clickedLocation, setClickedLocation] =
@@ -407,11 +405,7 @@ export default function JourneyMap({
     <React.Fragment>
       <div className="journey-map has-sidebar">
         {bounds ? (
-          <Map
-            dragRotate={false}
-            touchPitch={false}
-            pitchWithRotate={false}
-            maxZoom={18}
+          <BusTimesMap
             initialViewState={{
               bounds: bounds,
               fitBoundsOptions: {
@@ -422,19 +416,10 @@ export default function JourneyMap({
             onMouseEnter={onMouseEnter}
             onMouseMove={onMouseEnter}
             onMouseLeave={onMouseLeave}
-            mapStyle={
-              darkMode
-                ? "https://tiles.stadiamaps.com/styles/alidade_smooth_dark.json"
-                : "https://tiles.stadiamaps.com/styles/alidade_smooth.json"
-            }
-            RTLTextPlugin={""}
             onClick={handleMapClick}
             onLoad={handleMapLoad}
             interactiveLayerIds={["stops", "locations"]}
           >
-            <NavigationControl showCompass={false} />
-            <GeolocateControl />
-
             {journey.stops ? <Stops stops={journey.stops} /> : null}
 
             {journey.locations ? (
@@ -457,7 +442,7 @@ export default function JourneyMap({
             {clickedLocation ? (
               <LocationPopup location={clickedLocation} />
             ) : null}
-          </Map>
+          </BusTimesMap>
         ) : null}
       </div>
       <Sidebar
