@@ -1,0 +1,22 @@
+{% extends 'map.html' %}
+
+{% block foot %}
+    {% load static %}
+    <script>
+        INITIAL_VIEW_STATE = {
+        {% if request.headers.cf_ipcountry == "IE" %}
+            latitude: 53.45,
+            longitude: -7.5,
+        {% else %}
+            latitude: 54,
+            longitude: -2.9,
+        {% endif %}
+            zoom: 5,
+        };
+    </script>
+    <link rel="stylesheet" href="{% static 'js/dist/bigmap.css' %}">
+    <script src="{% static 'js/reqwest.min.js' %}"></script>
+    <script src="{% static 'js/dist/bigmap.js' %}"></script>
+
+    <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
+{% endblock %}

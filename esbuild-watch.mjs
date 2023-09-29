@@ -3,7 +3,7 @@ import * as esbuild from "esbuild";
 
 
 let context = await esbuild.context({
-  entryPoints: ["busstops/static/js/src/app.tsx"],
+  entryPoints: ["busstops/static/js/src/app.tsx", "busstops/static/js/src/bigmap.js"],
   outdir: "busstops/static/js/dist",
   bundle: true,
 

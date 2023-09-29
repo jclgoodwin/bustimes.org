@@ -56,4 +56,5 @@ urlpatterns = [
     path("liveries.<int:version>.css", views.liveries_css),
     path("map", views.map, name="map"),
     path("maps", views.map),
+    path("map/old", views.map_classic),
 ]

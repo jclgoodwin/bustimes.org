@@ -5,6 +5,7 @@
     "@babel/preset-flow": "^7.22.5",
     "@babel/preset-react": "^7.22.5",
     "@types/jest": "^29.5.4",
+    "@types/leaflet": "^1.9.6",
     "@types/loadjs": "^4.0.1",
     "@types/react-test-renderer": "^18.0.1",
     "autoprefixer": "^10.4.13",

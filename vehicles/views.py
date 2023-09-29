@@ -1,7 +1,6 @@
 import datetime
 import json
 import logging
-import os
 from itertools import pairwise
 from urllib.parse import urlencode
 
@@ -123,7 +122,17 @@ def map(request):
         "map.html",
         {
             "liveries_css_version": liveries_css_version(),
-            "sentry_release": os.environ.get("COMMIT_HASH"),
+        },
+    )
+
+
+@require_GET
+def map_classic(request):
+    return render(
+        request,
+        "map_classic.html",
+        {
+            "liveries_css_version": liveries_css_version(),
         },
     )
 
