@@ -1,7 +1,4 @@
-# coding=utf-8
 """View definitions."""
-import asyncio
-import csv
 import datetime
 import os
 import sys
@@ -21,13 +18,7 @@ from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
 from django.db.models import F, OuterRef, Prefetch, Q
 from django.db.models.functions import Coalesce, Now
-from django.http import (
-    Http404,
-    HttpResponse,
-    HttpResponseBadRequest,
-    JsonResponse,
-    StreamingHttpResponse,
-)
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import resolve
 from django.utils import timezone
@@ -84,56 +75,6 @@ def version(request):
     return HttpResponse(
         os.environ.get("KAMAL_CONTAINER_NAME"), content_type="text/plain"
     )
-
-
-async def count_iterator():
-    yield """<!doctype html><html lang="en"><head><meta charset="utf-8"></head><body>
-    """
-    lyric = """Do you count?
-I do!
-Let’s count together!
-
-Counting, counting, counting, counting,
-Counting things you like.
-One, two bits of cake
-One, two, three wheels upon a trike.
-One, two, three, four dollies.
-One, two, three, four, five balloons!
-One, two, three, four, five, six monkeys wearing pantaloons!
-
-One, two, three, four, five, six, seven floppy little cats,
-One, two, three, four, five, six, seven, eight old fashioned hats.
-Counting is a lot of fun if you are under four!
-Try again in thirty years; it’s not so fun no more.
-
-You will find that there’s a lot of boring things to count-
-Count them, count them, count them,
-You must have the right amount!
-Calories, and speeding points, and pennies in your purse-
-Count your blessings too, because it daily gets much worse!
-
-Problems, problems, problems, problems
-Piling up on you.
-They just keep on coming and there’s nothing you can do.
-Relationships, and health, and sex, and God, and jobs, and sex,
-There are far more problems than a four-year-old expects!
-
-Counting opportunities that got away from you;
-Regrets, and disappointments, don’t forget the failures too.
-Counting all the so-called friends who stab you in the back;
-There’s so many, it becomes a problem keeping track!
-Counting all the ways the world’s a giant ball of crap-
-War, and famine, all around, but here’s a funny app!
-Count up all the ways that you could change it if you try,
-But there is too much else to do then suddenly you die!"""
-    for i, line in enumerate(lyric.split("\n")):
-        if line == "":
-            await asyncio.sleep(0.3)
-        yield f"""{line}</br>"""
-
-
-async def count(request):
-    return StreamingHttpResponse(count_iterator())
 
 
 def not_found(request, exception):
@@ -383,57 +324,6 @@ def stops_json(request):
             ],
         }
     )
-
-
-# ATCOCode,NaptanCode,PlateCode,CleardownCode,CommonName,CommonNameLang,ShortCommonName,ShortCommonNameLang,Landmark,LandmarkLang,
-# Street,StreetLang,Crossing,CrossingLang,Indicator,IndicatorLang,Bearing,NptgLocalityCode,LocalityName,ParentLocalityName,
-# GrandParentLocalityName,Town,TownLang,Suburb,SuburbLang,LocalityCentre,GridType,Easting,Northing,Longitude,Latitude,StopType,
-# BusStopType,TimingStatus,DefaultWaitTime,Notes,NotesLang,AdministrativeAreaCode,
-# CreationDateTime,ModificationDateTime,RevisionNumber,Modification,Status
-def stops_csv(request):
-    response = HttpResponse(
-        content_type="text/plain",
-        # headers={'Content-Disposition': 'attachment; filename="stops.csv"'},
-    )
-
-    writer = csv.writer(response)
-    writer.writerow(
-        [
-            "ATCOCode",
-            "NaptanCode",
-            "CommonName",
-            "Indicator",
-            "Bearing",
-            "LocalityName",
-            "Longitude",
-            "Latitude",
-            "CreationDateTime",
-            "ModificationDateTime",
-        ]
-    )
-
-    stops = StopPoint.objects.all().filter(
-        latlong__isnull=False, modified_at__isnull=False
-    )
-    stops = stops.annotate(locality_name=F("locality__name"))
-
-    for stop in stops.order_by().values():
-        writer.writerow(
-            [
-                stop["atco_code"],
-                stop["naptan_code"],
-                stop["common_name"],
-                stop["indicator"],
-                stop["bearing"],
-                stop["locality_name"],
-                stop["latlong"].x,
-                stop["latlong"].y,
-                stop["created_at"],
-                stop["modified_at"],
-            ]
-        )
-
-    return response
 
 
 class UppercasePrimaryKeyMixin:

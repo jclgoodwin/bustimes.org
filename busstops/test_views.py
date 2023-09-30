@@ -288,7 +288,20 @@ class ViewsTests(TestCase):
         self.assertContains(response, "/localities/melton-constable")
 
     def test_stops(self):
+        # no params - bad request
         response = self.client.get("/stops.json")
+        self.assertEqual(response.status_code, 400)
+
+        # bounding box too big - bad request
+        response = self.client.get(
+            "/stops.json",
+            {
+                "ymax": "54.9",
+                "xmax": "1.1",
+                "ymin": "52.8",
+                "xmin": "0",
+            },
+        )
         self.assertEqual(response.status_code, 400)
 
         response = self.client.get(
@@ -486,3 +499,18 @@ class ViewsTests(TestCase):
     def test_version(self):
         response = self.client.get("/version")
         self.assertTrue(response.content)
+
+        with patch.dict("os.environ", {"COMMIT_HASH": "i've had a ploughman's"}):
+            response = self.client.get("/version")
+        self.assertEqual(
+            response.content,
+            b"<a href=\"https://github.com/jclgoodwin/bustimes.org/commit/i've had a ploughman's\">"
+            b"i've had a ploughman's</a>",
+        )
+
+    def test_redirects(self):
+        response = self.client.get("/ads.txt")
+        self.assertEqual(response.status_code, 302)
+
+        response = self.client.get("/.well-known/change-password")
+        self.assertEqual(response.status_code, 302)

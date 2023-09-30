@@ -28,7 +28,6 @@ urlpatterns = [
     ),
     path("offline", TemplateView.as_view(template_name="offline.html")),
     path("version", views.version),
-    path("count", views.count),
     path("contact", views.contact, name="contact"),
     path("cookies", TemplateView.as_view(template_name="cookies.html")),
     path("privacy", TemplateView.as_view(template_name="cookies.html")),
@@ -40,7 +39,6 @@ urlpatterns = [
     path("ads.txt", views.ads_txt),
     path("robots.txt", views.robots_txt),
     path("stops.json", views.stops_json),
-    path("stops.csv", views.stops_csv),
     path(
         "regions/<pk>",
         cache_page(1800)(views.RegionDetailView.as_view()),
