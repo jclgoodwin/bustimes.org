@@ -48,7 +48,10 @@
   ],
   "targets": {
     "default": {
-      "distDir": "busstops/static/js/dist"
+      "distDir": "busstops/static/js/dist",
+      "engines": {
+        "browsers": "Chrome 71"
+      }
     }
   },
   "scripts": {
