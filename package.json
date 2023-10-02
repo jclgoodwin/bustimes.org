@@ -52,8 +52,8 @@
     }
   },
   "scripts": {
-    "watch": "API_ROOT=https://bustimes.org parcel watch",
-    "build": "API_ROOT=https://bustimes.org parcel build",
+    "watch": "API_ROOT=https://bustimes.org/ parcel watch",
+    "build": "API_ROOT=https://bustimes.org/ parcel build",
     "lint": "tsc -noEmit && eslint busstops/static/js/src",
     "test": "TZ=UTC jest"
   }
