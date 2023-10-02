@@ -6,7 +6,7 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY busstops/static /app/busstops/static
-COPY .env.* Makefile esbuild-build.mjs .eslintrc.js tsconfig.json /app/
+COPY Makefile .eslintrc.js tsconfig.json /app/
 RUN npm run lint && npm run build
 RUN make build-static
 
