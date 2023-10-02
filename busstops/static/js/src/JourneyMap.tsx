@@ -39,10 +39,10 @@ type StopTime = {
   atco_code: string;
   name: string;
   aimed_arrival_time: string;
-  aimed_departure_time: string;
+  aimed_departure_time: string | null;
   minor: boolean;
   heading: number;
-  coordinates?: [number, number];
+  coordinates?: [number, number] | null;
   actual_departure_time: string;
 };
 
@@ -172,23 +172,25 @@ const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
       type="geojson"
       data={{
         type: "FeatureCollection",
-        features: stops.map((s) => {
-          return {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: s.coordinates,
-            },
-            properties: {
-              atco_code: s.atco_code,
-              name: s.name,
-              minor: s.minor,
-              heading: s.heading,
-              aimed_arrival_time: s.aimed_arrival_time,
-              aimed_departure_time: s.aimed_departure_time,
-            },
-          };
-        }),
+        features: stops
+          .filter((s) => s.coordinates)
+          .map((s) => {
+            return {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: s.coordinates,
+              },
+              properties: {
+                atco_code: s.atco_code,
+                name: s.name,
+                minor: s.minor,
+                heading: s.heading,
+                aimed_arrival_time: s.aimed_arrival_time,
+                aimed_departure_time: s.aimed_departure_time,
+              },
+            };
+          }),
       }}
     >
       <Layer {...stopsStyle} />
@@ -267,7 +269,7 @@ function Sidebar({
                 stop: {
                   atco_code: stop.atco_code,
                   name: stop.name,
-                  location: stop.coordinates,
+                  location: stop.coordinates || undefined,
                 },
                 timing_status: stop.minor ? "OTH" : "PTP",
                 aimed_arrival_time: stop.aimed_arrival_time,
