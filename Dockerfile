@@ -11,7 +11,7 @@ RUN npm run lint && npm run build
 RUN make build-static
 
 
-FROM python:3.12-bullseye
+FROM python:3.11-bullseye
 # the non-slim image has GCC which is needed for installing some stuff
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -28,7 +28,7 @@ COPY poetry.lock pyproject.toml /app/
 RUN poetry install --only main --no-root
 
 
-FROM python:3.12-slim-bullseye
+FROM python:3.11-slim-bullseye
 
 # install GDAL (https://docs.djangoproject.com/en/4.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
