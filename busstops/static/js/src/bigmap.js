@@ -10,7 +10,7 @@ function isWebglSupported() {
       // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
       // for more details.
       const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
-      if (context && typeof context.getParameter == "function") {
+      if (context && typeof context.getParameter == "function" && !context.isContextLost()) {
         return true;
       }
     } catch (e) {
