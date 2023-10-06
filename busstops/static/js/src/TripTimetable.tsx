@@ -88,7 +88,7 @@ function Row({
   }
 
   let actual,
-    actualRowSpan = rowSpan;
+    actualRowSpan = rowSpan || 1;
 
   actual = stop.expected_departure_time || stop.expected_arrival_time; // Irish live departures
 
@@ -96,7 +96,7 @@ function Row({
     if (vehicle?.progress && vehicle.progress.id === stop.id) {
       actual = vehicle.datetime;
       if (vehicle.progress.progress > 0.1) {
-        actualRowSpan = 2;
+        actualRowSpan += 1;
       }
     } else {
       actual = stop.actual_departure_time; // vehicle history
