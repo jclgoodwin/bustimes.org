@@ -33,7 +33,9 @@ class TimetableForm(forms.Form):
         self.related = kwargs.pop("related")
         super().__init__(*args, **kwargs)
         if self.related:
-            self.fields["service"].choices = [(s.id, s.line_name) for s in self.related]
+            self.fields["service"].choices = [
+                (s.id, s.get_line_name()) for s in self.related
+            ]
         else:
             del self.fields["service"]
 

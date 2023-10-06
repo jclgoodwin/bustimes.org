@@ -48,15 +48,16 @@ def get_destination_ref(destination_ref):
 
 
 def get_line_name_query(line_ref):
+    line_name = line_ref.replace("_", " ")
     return (
         Exists(
             ServiceCode.objects.filter(
                 service=OuterRef("id"), scheme__endswith="SIRI", code=line_ref
             )
         )
-        | Q(line_name__iexact=line_ref)
+        | Q(line_name__iexact=line_name)
         | Exists(
-            Route.objects.filter(service=OuterRef("id"), line_name__iexact=line_ref)
+            Route.objects.filter(service=OuterRef("id"), line_name__iexact=line_name)
         )
     )
 

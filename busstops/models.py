@@ -691,7 +691,7 @@ class Service(models.Model):
         ]
 
     def __str__(self):
-        line_name = ", ".join(self.get_line_names())
+        line_name = self.get_line_name()
         description = None
         if hasattr(self, "direction") and hasattr(
             self, f"{self.direction}_description"
@@ -729,8 +729,11 @@ class Service(models.Model):
             return self.line_names
         return [self.line_name]
 
+    def get_line_name(self):
+        return ", ".join(self.get_line_names())
+
     def get_line_name_and_brand(self):
-        line_name = ", ".join(self.get_line_names())
+        line_name = self.get_line_name()
         if self.line_brand:
             return f"{line_name} - {self.line_brand}"
         return line_name
