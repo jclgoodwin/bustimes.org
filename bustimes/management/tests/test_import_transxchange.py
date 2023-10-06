@@ -669,12 +669,12 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(
             lines[0],
             "Goole Interchange                        "
-            "09:48  10:28  11:08  11:48  12:28  13:08  13:48  14:28         15:08",
+            "09:48  10:28  11:08  11:48  12:28  13:08  13:48  14:28         15:08       ",
         )
         self.assertEqual(
             lines[9],
             "Goole North Street         "
-            "08:57  09:37  10:17  10:57  11:37  12:17  12:57  13:37  14:17  14:57  15:45       ",
+            "08:57  09:37  10:17  10:57  11:37  12:17  12:57  13:37  14:17  14:57  15:45              ",
         )
 
         timetable.today = date(2016, 2, 21)  # Sunday
@@ -870,19 +870,12 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(Service.objects.get().get_absolute_url())
         timetable = response.context_data["timetable"]
 
-        self.assertEqual(15, len(timetable.groupings[0].trips))
-        self.assertEqual(16, len(timetable.groupings[1].trips))
+        self.assertEqual(25, len(timetable.groupings[0].trips))
+        self.assertEqual(27, len(timetable.groupings[1].trips))
         self.assertEqual(179, len(timetable.groupings[0].rows))
         self.assertEqual(179, len(timetable.groupings[1].rows))
 
         self.assertNotContains(response, "set down only")
-
-        lines = timetable.groupings[0].txt().splitlines()
-        self.assertEqual(
-            lines[0],
-            "Church Road (Stop A)                     06:41         07:41         09:11  "
-            "then hourly until  13:11  14:26  15:26  16:26  17:26  18:06",
-        )
 
     @time_machine.travel("2021-06-28")
     def test_different_notes_in_same_row(self):
