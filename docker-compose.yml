@@ -11,35 +11,35 @@ services:
       - NTA_API_KEY
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
-      # - PYTHONWARNINGS=all
+      - PYTHONWARNINGS=all
     volumes:
       - .:/app
     ports:
       - "8000:8000"
       - "35729:35729"
     restart: on-failure
-    depends_on:
-      postgres:
-        condition: service_healthy
-      # redis:
-      #   condition: service_started
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #     # redis:
+  #     #   condition: service_started
 
-  postgres:
-    image: ghcr.io/baosystems/postgis:15  # unofficial image that properly supports arm64 instead of 'postgis/postgis'
-    tmpfs:
-      - "/var/lib/postgresql/data/"
-    # sloppy non-durable settings, which allegedly make the tests run faster
-    # not to be used in production!
-    command: --autovacuum=off --fsync=off --synchronous_commit=off --full_page_writes=off --work_mem=12MB --max-connections=10 --max_wal_senders=0
-    environment:
-      - PGUSER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+  # postgres:
+  #   image: ghcr.io/baosystems/postgis:15  # unofficial image that properly supports arm64 instead of 'postgis/postgis'
+  #   tmpfs:
+  #     - "/var/lib/postgresql/data/"
+  #   # sloppy non-durable settings, which allegedly make the tests run faster
+  #   # not to be used in production!
+  #   command: --autovacuum=off --fsync=off --synchronous_commit=off --full_page_writes=off --work_mem=12MB --max-connections=10 --max_wal_senders=0
+  #   environment:
+  #     - PGUSER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #     - POSTGRES_DB=postgres
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
 
-  # redis:
-  #   image: redis
+  redis:
+    image: redis

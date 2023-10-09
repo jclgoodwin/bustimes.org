@@ -504,7 +504,7 @@ class VehicleCode(models.Model):
         return f"{self.scheme} {self.code}"
 
     class Meta:
-        index_together = ("code", "scheme")
+        indexes = [models.Index(fields=("code", "scheme"))]
 
 
 class VehicleEditFeature(models.Model):
@@ -798,11 +798,8 @@ class VehicleRevision(models.Model):
 
     def list_changes(self, html=True):
         for field in ("operator", "type", "livery"):
-
             if getattr(self, f"from_{field}_id") or getattr(self, f"to_{field}_id"):
-
                 if getattr(__class__, f"from_{field}").is_cached(self):
-
                     before = getattr(self, f"from_{field}")
                     after = getattr(self, f"to_{field}")
 

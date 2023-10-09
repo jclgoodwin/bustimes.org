@@ -26,6 +26,7 @@ class Situation(models.Model):
     situation_number = models.CharField(max_length=36, blank=True)
     reason = models.CharField(max_length=25, blank=True)
     summary = models.CharField(max_length=255, blank=True)
+    participant_ref = models.CharField(max_length=36, blank=True)
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
     created = models.DateTimeField()
@@ -42,8 +43,10 @@ class Situation(models.Model):
         return reverse("situation", args=(self.id,))
 
     class Meta:
-        unique_together = ("source", "situation_number")
-        index_together = (("current", "publication_window"),)
+        indexes = [
+            models.Index(fields=["current", "publication_window"]),
+            models.Index(fields=["source", "situation_number"]),
+        ]
 
     def list_validity_periods(self):
         validity_periods = self.validityperiod_set.all()

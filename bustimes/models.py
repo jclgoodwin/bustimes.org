@@ -56,11 +56,9 @@ class Route(models.Model):
 
     class Meta:
         unique_together = ("source", "code")
-        index_together = (
-            ("start_date", "end_date"),
-            ("source", "service_code"),
-        )
         indexes = [
+            models.Index(fields=("start_date", "end_date")),
+            models.Index(fields=("source", "service_code")),
             models.Index(Upper("line_name"), name="route_line_name"),
         ]
 
@@ -149,7 +147,7 @@ class Calendar(models.Model):
     contains = Route.contains
 
     class Meta:
-        index_together = (("start_date", "end_date"),)
+        indexes = [models.Index(fields=["start_date", "end_date"])]
 
     def is_sufficiently_simple(self, today, future) -> bool:
         if self.summary or all(
@@ -348,7 +346,7 @@ class Trip(models.Model):
         return time_datetime(self.end, date)
 
     class Meta:
-        index_together = (("route", "start", "end"),)
+        indexes = [models.Index(fields=["route", "start", "end"])]
 
     def copy(self, start):
         difference = start - self.start
@@ -409,7 +407,7 @@ class StopTime(models.Model):
 
     class Meta:
         ordering = ("id",)
-        index_together = (("stop", "departure"),)
+        indexes = [models.Index(fields=["stop", "departure"])]
 
     def __str__(self):
         return format_timedelta(self.arrival_or_departure())
