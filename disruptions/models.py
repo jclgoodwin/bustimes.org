@@ -14,12 +14,9 @@ class Situation(models.Model):
         limit_choices_to={
             "name__in": (
                 "bustimes.org",
-                "Bus Open Data Service",
-                "Ito World",
-                # "TfE",
                 "TfL",
-                "Transport for the North",
-                # "Transport for West Midlands",
+                "Bus Open Data",
+                "Bus Open Data Service",
             )
         },
     )

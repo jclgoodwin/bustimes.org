@@ -22,8 +22,15 @@ class LinkInline(admin.TabularInline):
 @admin.register(Situation)
 class SituationAdmin(admin.ModelAdmin):
     inlines = [ValidityPeriodInline, LinkInline, ConsequenceInline]
-    list_display = ["__str__", "reason", "source", "current", "stops"]
-    list_filter = ["reason", "source", "current"]
+    list_display = [
+        "__str__",
+        "reason",
+        "participant_ref",
+        "source",
+        "current",
+        "stops",
+    ]
+    list_filter = ["current", "source", "participant_ref", "reason"]
     readonly_fields = ["data"]
 
     @admin.display(ordering="stops")

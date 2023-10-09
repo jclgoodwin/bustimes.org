@@ -48,6 +48,7 @@ def handle_item(item, source):
     if reason:
         situation.reason = reason
 
+    situation.participant_ref = item.find("ParticipantRef").text
     situation.summary = item.find("Summary").text
     situation.text = item.find("Description").text
     situation.save()
