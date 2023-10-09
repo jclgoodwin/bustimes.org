@@ -24,8 +24,8 @@ class User(AbstractUser):
     score = models.IntegerField(blank=True, null=True)
     objects = CustomUserManager()
 
-    REQUIRED_FIELDS = []
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = "email"  # this was a bad idea
+    REQUIRED_FIELDS = ["username"]  # so that ./manage.py createsuperuser works
 
     def get_absolute_url(self):
         return reverse("user_detail", args=(self.id,))
