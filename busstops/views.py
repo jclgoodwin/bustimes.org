@@ -1011,8 +1011,7 @@ class ServiceDetailView(DetailView):
         )
         context["situations"] = (
             Situation.objects.filter(
-                Exists(consequences.filter(situation=OuterRef("id")))
-                | Q(situation_number="", source=236),
+                Exists(consequences.filter(situation=OuterRef("id"))),
                 publication_window__contains=Now(),
                 current=True,
             )
