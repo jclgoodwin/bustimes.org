@@ -5,7 +5,14 @@ from django.db.models import OuterRef, Q
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import BankHolidayDate, Calendar, CalendarBankHoliday, CalendarDate, Trip, StopTime
+from .models import (
+    BankHolidayDate,
+    Calendar,
+    CalendarBankHoliday,
+    CalendarDate,
+    StopTime,
+    Trip,
+)
 
 differ = Differ(charjunk=lambda _: True)
 
@@ -61,7 +68,8 @@ def get_routes(routes, when=None, from_date=None):
         routes.sort(key=lambda r: r.revision_number)
         revision_numbers = {}
         for route in routes:
-            route.key = f"{route.service_code}:{route.service_id}"
+            route.key = route.service_code.replace(":0", ":")
+            route.key = f"{route.key}:{route.service_id}"
 
             if route.source.name.startswith(
                 "First Bus_"
