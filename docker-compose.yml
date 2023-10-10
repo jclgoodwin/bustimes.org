@@ -11,7 +11,7 @@ services:
       - NTA_API_KEY
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
-      - PYTHONWARNINGS=all
+      # - PYTHONWARNINGS=all
     volumes:
       - .:/app
     ports:
@@ -25,7 +25,7 @@ services:
   #     #   condition: service_started
 
   postgres:
-    image: ghcr.io/baosystems/postgis:15  # unofficial image that properly supports arm64 instead of 'postgis/postgis'
+    image: postgis/postgis
     tmpfs:
       - "/var/lib/postgresql/data/"
     # sloppy non-durable settings, which allegedly make the tests run faster
