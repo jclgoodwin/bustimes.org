@@ -1514,3 +1514,20 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertContains(response, "Kings Lynn,Bus Station")
         self.assertContains(response, "Peterborough,Bus Station")
+
+        trip = Trip.objects.first()
+        response = self.client.get(f"/trips/{trip.id}")
+        self.assertContains(response, "Kings Lynn,Bus Station")
+        self.assertContains(response, "Peterborough,Bus Station")
+
+        response = self.client.get(f"/trips/{trip.id}/block")
+        self.assertContains(response, "Sundays")
+        self.assertContains(response, "15:05")
+        self.assertContains(response, "16:00")
+
+        garage = Garage.objects.first()
+        response = self.client.get("/garages.csv")
+        self.assertContains(response, "Vulcan Road")
+
+        response = self.client.get(f"/garages/{garage.id}/trips.csv")
+        self.assertContains(response, "Sundays,2023-10-22,,6021")
