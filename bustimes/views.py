@@ -328,12 +328,11 @@ def stop_debug(request, atco_code: str):
         ]
     ).items():
         response_text = response.text
-        if "xml" in response.headers["content-type"]:
-            ET.register_namespace("", "http://www.siri.org.uk/siri")
-            xml = ET.XML(response.text)
-            ET.indent(xml)
-            response_text = ET.tostring(xml).decode()
-            response_text = mark_safe(highlight(response_text, XmlLexer(), formatter))
+        ET.register_namespace("", "http://www.siri.org.uk/siri")
+        xml = ET.XML(response.text)
+        ET.indent(xml)
+        response_text = ET.tostring(xml).decode()
+        response_text = mark_safe(highlight(response_text, XmlLexer(), formatter))
         responses.append(
             {"url": response.url, "text": response_text, "headers": response.headers}
         )

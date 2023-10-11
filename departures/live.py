@@ -59,7 +59,7 @@ def blend(departures, live_rows, stop=None):
                     row["data"] = live_row["data"]
                 if "cancelled" in live_row:
                     row["cancelled"] = live_row["cancelled"]
-                if "vehicle" in live_row and "vehicle" not in row:
+                if "vehicle" in live_row and not row.get("vehicle"):
                     row["vehicle"] = live_row["vehicle"]
                 replaced = True
                 break
@@ -156,7 +156,6 @@ def get_departures(stop, services, when) -> dict:
             routes_by_service,
         ).exists()
     ):
-
         live_rows = None
 
         operators = set()
@@ -184,7 +183,6 @@ def get_departures(stop, services, when) -> dict:
                 blend(departures, live_rows)
 
         elif departures:
-
             # Edinburgh
             if stop.naptan_code and (
                 "Lothian Buses" in operators
@@ -216,7 +214,7 @@ def get_departures(stop, services, when) -> dict:
             if live_rows:
                 blend(departures, live_rows)
 
-                if source and source.name in ("Aberdeen", "Pembrokeshire", "SPT"):
+                if source:
                     # Record some information about the vehicle and journey,
                     # for enthusiasts,
                     # because the source doesn't support vehicle locations
