@@ -99,6 +99,8 @@ class ImportTransXChangeTest(TestCase):
                 # to test handling of leading zero missing in TxC data:
                 ("0260006515", "Acorn Close", "adj", -1.121080085, 52.671200066),
                 ("0260006516", "Church Hill", "opp", -1.121200186, 52.673322583),
+                # excel split reg
+                ("0500FWISH025", "Wisbech Bus Station", "", 0, 50),
             )
         )
 
@@ -1487,3 +1489,28 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(
             import_transxchange.get_summary("SCHOOLDAYS holidays"), "school holidays"
         )
+
+    @time_machine.travel("2023-10-23")
+    def test_split_registration(self):
+        self.handle_files(
+            "FECS.zip",
+            [
+                "A_B_C-FECS_A_B_C--FECS-NORWICH-2023-10-22-NO3BSH-BODS_V1_1.xml",
+                "B_C_A-FECS_B_C_A--FECS-NORWICH-2023-10-22-NO3BSH-BODS_V1_1.xml",
+            ],
+        )
+        self.assertEqual(6, Service.objects.filter(current=True).count())  # !
+
+        self.handle_files(
+            "FECS.zip",
+            [
+                "A_B_C-FECS_A_B_C--FECS-NORWICH-2023-10-22-NO3BSH-BODS_V1_1.xml",
+                "B_C_A-FECS_B_C_A--FECS-NORWICH-2023-10-22-NO3BSH-BODS_V1_1.xml",
+            ],
+        )
+        self.assertEqual(3, Service.objects.filter(route__isnull=True).count())  # !!
+        service = Service.objects.first()
+        response = self.client.get(service.get_absolute_url())
+
+        self.assertContains(response, "Kings Lynn,Bus Station")
+        self.assertContains(response, "Peterborough,Bus Station")
