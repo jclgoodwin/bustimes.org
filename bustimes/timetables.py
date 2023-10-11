@@ -155,6 +155,7 @@ class Timetable:
                         calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
                         calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time,
                     ),
+                    default=[],
                 ),
                 bank_holiday_exclusions=ArrayAgg(
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
@@ -163,6 +164,7 @@ class Timetable:
                         calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
                         calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time,
                     ),
+                    default=[],
                 ),
             )
             .prefetch_related("calendardate_set")
@@ -248,7 +250,6 @@ class Timetable:
         del trips
 
         for grouping in self.groupings:
-
             if not self.detailed:
                 grouping.trips.sort(key=lambda t: t.start)
                 grouping.merge_split_trips()
@@ -654,12 +655,10 @@ class Grouping:
 
         sorter = graphlib.TopologicalSorter()
         for a_index, a in enumerate(self.trips):
-
             a_top = rows.index(a.top)
             a_bottom = rows.index(a.bottom)
 
             for b_index, b in enumerate(self.trips):
-
                 if a_index == b_index:
                     continue
 

@@ -647,7 +647,7 @@ class ServiceManager(models.Manager):
     def with_line_names(self):
         return self.get_queryset().annotate(
             line_names=ArrayAgg(
-                Coalesce("route__line_name", "line_name"), distinct=True
+                Coalesce("route__line_name", "line_name"), distinct=True, default=None
             )
         )
 
@@ -837,7 +837,6 @@ class Service(models.Model):
                     code__contains="swe_",
                 ).order_by("start_date")
                 for i, route in enumerate(routes):
-
                     parts = route.code.split("-")
                     net, line = parts[0].split("_")
                     if not net.isalpha() or not net.islower():
@@ -915,7 +914,9 @@ class Service(models.Model):
                 .defer("search_vector", "geometry")
             )
             services = sorted(
-                services.annotate(operators=ArrayAgg("operator__name", distinct=True)),
+                services.annotate(
+                    operators=ArrayAgg("operator__name", distinct=True, default=None)
+                ),
                 key=Service.get_order,
             )
             cache.set(key, services, 86400)
