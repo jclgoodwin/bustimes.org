@@ -15,7 +15,7 @@ interactions:
       User-Agent: [python-requests/2.19.1]
       content-type: [application/soap+xml]
     method: POST
-    uri: http://belfastapp.acishorizon.com/DataService.asmx
+    uri: http://mobileapp.belfast.vix-its.com/DataService.asmx
   response:
     body: {string: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetArrivalsForStopsResponse
@@ -65,7 +65,7 @@ interactions:
       User-Agent: [python-requests/2.19.1]
       content-type: [application/soap+xml]
     method: POST
-    uri: http://belfastapp.acishorizon.com/DataService.asmx
+    uri: http://mobileapp.belfast.vix-its.com/DataService.asmx
   response:
     body: {string: '<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><soap:Body><GetArrivalsForStopsResponse

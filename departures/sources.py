@@ -253,7 +253,7 @@ class EdinburghDepartures(RemoteDepartures):
 class AcisHorizonDepartures(RemoteDepartures):
     """Departures from a SOAP endpoint (lol)"""
 
-    request_url = "http://belfastapp.acishorizon.com/DataService.asmx"
+    request_url = "http://mobileapp.belfast.vix-its.com/DataService.asmx"
     headers = {"content-type": "application/soap+xml"}
     ns = {
         "a": "http://www.acishorizon.com/",

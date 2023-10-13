@@ -39,7 +39,7 @@ def items_from_response(response):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "acis"
-    url = "http://belfastapp.acishorizon.com/DataService.asmx"
+    url = "http://mobileapp.belfast.vix-its.com/DataService.asmx"
 
     def get_response(self, latitute=None, longitude=None):
         if latitute and longitude:
