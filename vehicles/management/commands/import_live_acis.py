@@ -26,11 +26,7 @@ OPERATORS = {
 
 
 def items_from_response(response):
-    try:
-        items = ET.fromstring(response.text)
-    except ET.ParseError:
-        print(response)
-        return ()
+    items = ET.fromstring(response.text)
     return items.findall(
         "s:Body/a:GetVehiclesNearPointResponse/a:GetVehiclesNearPointResult/a:Vehicles/a:VehicleRealtime",
         NS,
@@ -39,7 +35,7 @@ def items_from_response(response):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "acis"
-    url = "http://mobileapp.belfast.vix-its.com/DataService.asmx"
+    url = "https://mobileapp.belfast.vix-its.com/DataService.asmx"
 
     def get_response(self, latitute=None, longitude=None):
         if latitute and longitude:

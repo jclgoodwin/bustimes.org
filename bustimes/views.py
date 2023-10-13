@@ -328,11 +328,14 @@ def stop_debug(request, atco_code: str):
         ]
     ).items():
         response_text = response.text
-        ET.register_namespace("", "http://www.siri.org.uk/siri")
-        xml = ET.XML(response.text)
-        ET.indent(xml)
-        response_text = ET.tostring(xml).decode()
-        response_text = mark_safe(highlight(response_text, XmlLexer(), formatter))
+        try:
+            ET.register_namespace("", "http://www.siri.org.uk/siri")
+            xml = ET.XML(response.text)
+            ET.indent(xml)
+            response_text = ET.tostring(xml).decode()
+            response_text = mark_safe(highlight(response_text, XmlLexer(), formatter))
+        except ET.ParseError:
+            pass
         responses.append(
             {"url": response.url, "text": response_text, "headers": response.headers}
         )

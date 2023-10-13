@@ -253,8 +253,11 @@ class EdinburghDepartures(RemoteDepartures):
 class AcisHorizonDepartures(RemoteDepartures):
     """Departures from a SOAP endpoint (lol)"""
 
-    request_url = "http://mobileapp.belfast.vix-its.com/DataService.asmx"
-    headers = {"content-type": "application/soap+xml"}
+    request_url = "https://mobileapp.belfast.vix-its.com/DataService.asmx"
+    headers = {
+        "Content-Type": "text/xml; charset=utf-8",
+        "SOAPAction": "http://www.acishorizon.com/GetArrivalsForStops",
+    }
     ns = {
         "a": "http://www.acishorizon.com/",
         "s": "http://www.w3.org/2003/05/soap-envelope",
@@ -280,7 +283,12 @@ class AcisHorizonDepartures(RemoteDepartures):
         )
 
     def departures_from_response(self, res):
-        items = ET.fromstring(res.text)
+        try:
+            items = ET.fromstring(res.text)
+        except ET.ParseError as e:
+            logger = logging.getLogger(__name__)
+            logger.error(e, exc_info=True)
+            return
         items = items.find(
             "s:Body/a:GetArrivalsForStopsResponse/a:GetArrivalsForStopsResult", self.ns
         )
