@@ -16,7 +16,7 @@ from .models import Vehicle, VehicleEdit, VehicleJourney
 @db_task()
 def log_vehicle_journey(service, data, time, destination, source_name, url, trip_id):
     operator_ref = data.get("OperatorRef")
-    if operator_ref == "SWB":  # Stagecoach
+    if operator_ref in ("McG", "SWB", "MID"):  # McGills/Stagecoach/
         return
 
     if not time:
@@ -46,7 +46,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
 
     if operator.noc == "FABD":  # Aberdeen
         vehicle = vehicle.removeprefix("111-").removeprefix("S-")
-    elif operator.parent == "Stagecoach":
+    elif operator.parent == "Stagecoach" or operator.noc == "MCGL":
         return
 
     data_source, _ = DataSource.objects.get_or_create({"url": url}, name=source_name)
