@@ -247,10 +247,12 @@ def status(request):
 
     other_statuses = cache.get_many(
         [
-            "Aircoach_status",
-            "TfE_status",
-            "Stagecoach_status",
             "Realtime_Transport_Operators_status",
+            "acis_status",
+            "NAT_status",
+            "TfE_status",
+            "jersey_status",
+            "Stagecoach_status",
         ]
     ).items()
 
