@@ -146,7 +146,7 @@ class Command(ImportLiveVehiclesCommand):
             ):
                 return latest_journey
 
-        journey.destination = item.find("a:VehicleDestination", NS).text
+        journey.destination = item.findtext("a:VehicleDestination", "", NS)
 
         operator = item.find("a:VehicleOperatorName", NS).text
 
