@@ -84,7 +84,9 @@ def vehicles(request):
         Exists("vehicle", filter=Q(withdrawn=False))
     ).only("name", "slug")
 
-    new_operators = operators.annotate(min=SubqueryMin("vehicle__id"),).order_by(
+    new_operators = operators.annotate(
+        min=SubqueryMin("vehicle__id"),
+    ).order_by(
         "-min"
     )[:36]
 
@@ -1163,7 +1165,6 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         previous = None
         previous_latlong = None
         for location in locations:
-
             latlong = Point(location["coordinates"])
 
             if previous_latlong:
@@ -1251,23 +1252,22 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     if vehicle_id:
         next_previous_filter = {"vehicle_id": vehicle_id}
     elif service_id:
-        next_previous_filter = {"service_id": service_id}
+        next_previous_filter = {
+            "service_id": service_id,
+            "datetime__date": journey.datetime,
+        }
     else:
         next_previous_filter = {"vehicle_id": journey.vehicle_id}
 
     try:
-        next_journey = journey.get_next_by_datetime(
-            **next_previous_filter, datetime__date__gte=journey.datetime
-        )
+        next_journey = journey.get_next_by_datetime(**next_previous_filter)
     except VehicleJourney.DoesNotExist:
         pass
     else:
         data["next"] = {"id": next_journey.id, "datetime": next_journey.datetime}
 
     try:
-        previous_journey = journey.get_previous_by_datetime(
-            **next_previous_filter, datetime__date__lte=journey.datetime
-        )
+        previous_journey = journey.get_previous_by_datetime(**next_previous_filter)
     except VehicleJourney.DoesNotExist:
         pass
     else:
