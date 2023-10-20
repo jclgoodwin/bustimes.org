@@ -19,7 +19,6 @@ jobs:
         npm run lint
         npm test
         npm run build
-        make build-static
 
     - id: cache-docker
       uses: actions/cache@v3
