@@ -4,9 +4,6 @@
 /data
 /node_modules/
 /staticfiles/
-/busstops/static/js/dist
-/busstops/static/css/*.css
-/busstops/static/css/*.css.map
 /.env
 /.coverage
 /slim-bustimes.sql

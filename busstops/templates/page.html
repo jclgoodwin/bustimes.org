@@ -16,13 +16,7 @@
 <script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"bustimes.org","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
 {% load static %}
 <link rel="manifest" href="{% static 'manifest.webmanifest' %}">
-<!--[if gte IE 9]><!-->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-<!--<![endif]-->
-<!--[if lt IE 9]>
-    <link rel="stylesheet" href="{% static 'css/ie.css' %}">
-    <script src="{% static "js/html5shiv/html5shiv-printshiv.min.js" %}"></script>
-<![endif]-->
+<link rel="stylesheet" href="{% static 'css/dist/style.css' %}">
 
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@bustimes_org">
