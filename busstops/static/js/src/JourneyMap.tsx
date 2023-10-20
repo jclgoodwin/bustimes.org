@@ -370,7 +370,7 @@ export default function JourneyMap({
     };
   }, []);
 
-  const bounds = React.useMemo((): LngLatBounds | undefined => {
+  const bounds = React.useMemo((): LngLatBounds | null => {
     if (journey) {
       const _bounds = new LngLatBounds();
       if (journey.locations) {
@@ -389,6 +389,7 @@ export default function JourneyMap({
         return _bounds;
       }
     }
+    return null;
   }, [journey]);
 
   React.useEffect(() => {

@@ -157,7 +157,7 @@ const Vehicles = memo(function Vehicles({
 
   const vehiclesGeoJson = React.useMemo(() => {
     if (vehicles.length < 1000) {
-      return;
+      return null;
     }
     return {
       type: "FeatureCollection",

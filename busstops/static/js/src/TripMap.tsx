@@ -197,6 +197,7 @@ export default function TripMap() {
         return referrer;
       }
     }
+    return "";
   }, [clickedStop]);
 
   const handleMapClick = React.useCallback(
