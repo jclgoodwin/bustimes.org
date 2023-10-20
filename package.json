@@ -29,6 +29,7 @@
     "leaflet.locatecontrol": "^0.79.0",
     "loadjs": "^4.2.0",
     "maplibre-gl": "^3.2.0",
+    "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-map-gl": "^7.1.2",
