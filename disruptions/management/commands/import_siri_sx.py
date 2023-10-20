@@ -30,9 +30,11 @@ def handle_item(item, source):
         situation = Situation.objects.get(
             source=source, situation_number=situation_number
         )
-        if situation.data == xml or not situation.current:
+        if situation.data == xml and situation.current:
             return situation.id
         created = False
+        if not situation.current:
+            situation.current = True
     except Situation.DoesNotExist:
         situation = Situation(
             source=source, situation_number=situation_number, current=True

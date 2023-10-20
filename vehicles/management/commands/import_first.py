@@ -157,6 +157,7 @@ class Command(ImportLiveVehiclesCommand):
 
         async with websockets.connect(
             socket_info["data"]["url"],
+            max_size=40000000,
             extra_headers={
                 "Authorization": f'Bearer {socket_info["data"]["access-token"]}'
             },
@@ -179,7 +180,11 @@ class Command(ImportLiveVehiclesCommand):
                 except (KeyError, ValueError) as e:
                     print(e)
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        super().add_arguments(parser)
+        parser.add_argument("operator_name", type=str)
+
+    def handle(self, operator_name, *args, **options):
         self.source = DataSource.objects.update_or_create(
             {
                 "url": "https://prod.mobileapi.firstbus.co.uk/api/v2/bus/service/socketInfo"
@@ -188,8 +193,7 @@ class Command(ImportLiveVehiclesCommand):
         )[0]
 
         self.cache = {}
-
-        operator = Operator.objects.get(name="Aircoach")
+        operator = Operator.objects.get(name=operator_name)
 
         extent = self.get_extent(operator)
         loop = asyncio.get_event_loop()
