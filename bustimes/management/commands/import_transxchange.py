@@ -376,7 +376,6 @@ class Command(BaseCommand):
 
         try:
             with zipfile.ZipFile(archive_name) as archive:
-
                 self.set_service_descriptions(archive)
 
                 namelist = archive.namelist()
@@ -523,7 +522,6 @@ class Command(BaseCommand):
             summary.append(f"{operating_profile.week_of_month} week of the month")
 
         for sodt in operating_profile.serviced_organisations:
-
             working = sodt.working
             operation = sodt.operation
 
@@ -1053,13 +1051,17 @@ class Command(BaseCommand):
                 if service_code is None:
                     service_code = txc_service.service_code
 
-                if service_code[:4] in ("nrc_", "tfl_") or not existing:
-                    # assume service code is at least unique within a TNDS region
+                if service_code[:4] in ("nrc_", "tfl_"):  # L
+                    # London: assume line_name is unique within region:
                     existing = self.source.service_set.filter(
                         Q(service_code=service_code)
-                        |
-                        # London - assume line name is unique:
-                        Q(line_name__iexact=line.line_name)
+                        | Q(line_name__iexact=line.line_name)
+                    ).first()
+                elif not existing:
+                    # assume service code is at least unique within a TNDS region:
+                    existing = self.source.service_set.filter(
+                        Q(service_code=service_code)
+                        | Q(description=description, line_name__iexact=line.line_name)
                     ).first()
             elif unique_service_code:
                 service_code = unique_service_code
@@ -1272,12 +1274,10 @@ class Command(BaseCommand):
 
             # route links (geometry between stops):
             if transxchange.route_sections:
-
                 route_links = list(self.get_route_links(journeys, transxchange))
 
                 # we're not interested in straight lines between stops
                 if any(len(link.track) > 2 for link in route_links):
-
                     if service_created:
                         existing_route_links = {}
                     else:
@@ -1289,7 +1289,6 @@ class Command(BaseCommand):
                     route_links_to_create = {}
 
                     for route_link in route_links:
-
                         from_stop = stops.get(route_link.from_stop)
                         to_stop = stops.get(route_link.to_stop)
 
