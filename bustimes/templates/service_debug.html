@@ -19,27 +19,6 @@
     <li><a href="{% url 'admin:busstops_service_change' object.pk %}">Edit</a></li>
 </ul>
 
-<style>
-    path:hover {
-        stroke: black;
-    }
-</style>
-
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="{{ view_box }}" width="{{ width }}" height="{{ height }}">
-    {% for stopusage in stopusages %}
-        <circle cx="{{ stopusage.stop.latlong.x }}" cy="-{{ stopusage.stop.latlong.y }}" r="0.001" fill="red" fill-opacity="0.5"></circle>
-        <text x="{{ stopusage.stop.latlong.x }}" y="-{{ stopusage.stop.latlong.y }}" font-size="0.003"{% if stopusage.direction == "outbound" %} text-anchor="end"{% endif %}>
-            <a href="{{ stopusage.stop.get_absolute_url }}">
-                {{ stopusage.stop }}
-            </a>
-        </text>
-    {% endfor %}
-
-    {% for route_link in route_links %}
-        <path stroke="#87f" stroke-width="0.0005" fill="none" d="{{ route_link.svg }}"></path>
-    {% endfor %}
-</svg>
-
 <pre>{{ object.yaml }}</pre>
 
 {% if service.servicecode_set.all %}
