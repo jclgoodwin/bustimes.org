@@ -28,6 +28,7 @@ def cache_page(max_age):
 
             response = view_func(request, *args, **kw)
 
+            update_cache_middleware.cache_timeout = max_age
             update_cache_middleware.process_response(request, response)
 
             return response
