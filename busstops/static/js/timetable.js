@@ -28,7 +28,7 @@
         }
         if (timetableForm) {
             timetableForm.onchange = function() {
-                if (!(FormData && URLSearchParams)) { // old browser
+                if (typeof URLSearchParams === "undefined" || typeof FormData === "undefined") { // old browser
                     timetableForm.submit();
                     return;
                 }
