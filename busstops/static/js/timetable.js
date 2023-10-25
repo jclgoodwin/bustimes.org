@@ -28,6 +28,11 @@
         }
         if (timetableForm) {
             timetableForm.onchange = function() {
+                if (!FormData) { // old browser
+                    timetableForm.submit();
+                    return;
+                }
+
                 timetableWrapper.className = 'loading';
 
                 var formData = new FormData(timetableForm);
