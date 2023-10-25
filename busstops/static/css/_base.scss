@@ -520,6 +520,10 @@ form p select {
         margin-right: 1em;
     }
 
+    p {
+        margin: 0;
+    }
+
     div {
         display: inline-block;
     }
@@ -854,6 +858,10 @@ th a,
     display: block;
     margin: -.25em -.5em;
     padding: .25em .5em;
+}
+
+.stop-name[rowspan="2"] a {
+    padding: 1.25em 0;
 }
 
 th,
