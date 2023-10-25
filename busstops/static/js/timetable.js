@@ -28,7 +28,7 @@
         }
         if (timetableForm) {
             timetableForm.onchange = function() {
-                if (!FormData) { // old browser
+                if (!(FormData && URLSearchParams)) { // old browser
                     timetableForm.submit();
                     return;
                 }
