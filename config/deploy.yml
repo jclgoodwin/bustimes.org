@@ -8,7 +8,6 @@ image: jclgoodwin/bustimes-org
 servers:
   - 10.131.29.248
   - 10.131.113.91
-  - 10.131.33.248
 
 builder:
   multiarch: false
