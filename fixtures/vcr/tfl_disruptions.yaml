@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python-requests/2.28.1
     method: GET
-    uri: https://api.tfl.gov.uk/StopPoint/mode/bus/Disruption
+    uri: https://api.tfl.gov.uk/StopPoint/Mode/bus/Disruption
   response:
     body:
       string: '[{"$type":"Tfl.Api.Presentation.Entities.DisruptedPoint, Tfl.Api.Presentation.Entities","atcoCode":"490010717E","fromDate":"2022-12-08T08:00:00Z","toDate":"2023-01-31T17:00:00Z","description":"Bus
@@ -381,7 +381,7 @@ interactions:
       User-Agent:
       - python-requests/2.28.1
     method: GET
-    uri: https://api.tfl.gov.uk/line/mode/bus/status
+    uri: https://api.tfl.gov.uk/Line/Mode/bus/Status
   response:
     body:
       string: "[{\"$type\":\"Tfl.Api.Presentation.Entities.Line, Tfl.Api.Presentation.Entities\",\"id\":\"1\",\"name\":\"1\",\"modeName\":\"bus\",\"disruptions\":[],\"created\":\"2022-11-29T14:31:06.777Z\",\"modified\":\"2022-11-29T14:31:06.777Z\",\"lineStatuses\":[{\"$type\":\"Tfl.Api.Presentation.Entities.LineStatus,
