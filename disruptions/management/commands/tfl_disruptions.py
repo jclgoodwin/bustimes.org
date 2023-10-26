@@ -28,13 +28,12 @@ class Command(BaseCommand):
         situations = set()
 
         response = session.get(
-            "https://api.tfl.gov.uk/StopPoint/mode/bus/Disruption",
+            "https://api.tfl.gov.uk/StopPoint/Mode/bus/Disruption",
             params=settings.TFL,
             timeout=30,
         )
 
         for item in response.json():
-
             stops = (
                 StopPoint.objects.filter(
                     Q(atco_code=item["atcoCode"]) | Q(stop_area=item["atcoCode"])
@@ -64,6 +63,8 @@ class Command(BaseCommand):
             situation.text = item["description"].replace("\\n", "\n").strip()
             if ": " in situation.text:
                 situation.summary, situation.text = situation.text.split(": ", 1)
+            else:
+                situation.reason = item["type"]
             situation.text = situation.text.replace(". ", ".\n\n")
             situation.publication_window = window
             situation.reason = item["type"]
@@ -86,13 +87,12 @@ class Command(BaseCommand):
             situations.add(situation.id)
 
         response = session.get(
-            "https://api.tfl.gov.uk/line/mode/bus/status",
+            "https://api.tfl.gov.uk/Line/Mode/bus/Status",
             params=settings.TFL,
             timeout=30,
         )
 
         for item in response.json():
-
             if item["lineStatuses"][0]["statusSeverityDescription"] == "Good Service":
                 assert len(item["lineStatuses"]) == 1
                 continue
