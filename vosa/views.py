@@ -59,12 +59,13 @@ class RegistrationView(UpperCaseSlugMixin, DetailView):
                 operators[0],
             ] + context["breadcrumb"]
 
-        context["services"] = Service.objects.with_line_names().filter(
+        services = Service.objects.with_line_names().filter(
             Exists(
                 Route.objects.filter(service=OuterRef("id"), registration=self.object)
             ),
             current=True,
         )
+        context["services"] = sorted(services, key=Service.get_order)
         if context["services"]:
             context["colours"] = get_colours(context["services"])
 
