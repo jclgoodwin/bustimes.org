@@ -256,11 +256,16 @@ export default function BigMap() {
 
   const loadStops = React.useCallback(() => {
     const _bounds = bounds.current as LngLatBounds;
+    setLoadingStops(true);
     fetchJson("stops", _bounds).then((items) => {
       stopsHighWaterMark.current = _bounds;
+      setLoadingStops(false);
       setStops(items);
     });
   }, []);
+
+  const [loadingStops, setLoadingStops] = React.useState(false);
+  const [loadingBuses, setLoadingBuses] = React.useState(false);
 
   const loadVehicles = React.useCallback(() => {
     if (document.hidden) {
@@ -277,6 +282,8 @@ export default function BigMap() {
     }
     vehiclesAbortController.current = new AbortController() as AbortController;
 
+    setLoadingBuses(true);
+
     fetch(url, {
       signal: vehiclesAbortController.current.signal,
     })
@@ -289,16 +296,19 @@ export default function BigMap() {
               setVehicles(items);
             });
           }
+          setLoadingBuses(false);
           if (!document.hidden) {
             timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
           }
         },
         () => {
           // never mind
+          setLoadingBuses(false);
         },
       )
       .catch(() => {
         // never mind
+        setLoadingBuses(false);
       });
   }, []);
 
@@ -458,10 +468,11 @@ export default function BigMap() {
         />
       ) : null}
 
-      {zoom && !showStops ? (
+      {zoom && (!showStops || loadingBuses || loadingStops) ? (
         <div className="maplibregl-ctrl map-status-bar">
-          Zoom in to see stops
+          {!showStops ? "Zoom in to see stops" : null }
           {!showBuses ? <div>Zoom in to see buses</div> : null}
+          { loadingBuses || loadingStops ? <div>Loading…</div> : null}
         </div>
       ) : null}
     </BusTimesMap>

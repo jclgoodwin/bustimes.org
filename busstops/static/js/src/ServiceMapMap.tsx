@@ -151,9 +151,7 @@ export default function ServiceMapMap({
             />
           );
         })
-      ) : (
-        <div className="maplibregl-ctrl">Loading</div>
-      )}
+      ) : null}
 
       {clickedVehicle ? (
         <VehiclePopup
