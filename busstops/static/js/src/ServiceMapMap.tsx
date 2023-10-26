@@ -50,7 +50,7 @@ export default function ServiceMapMap({
     setCursor("");
   }, []);
 
-  const vehiclesById = React.useMemo(() => {
+  const vehiclesById = React.useMemo<{ [id: string] : Vehicle; }>(() => {
     if (vehicles) {
       return Object.assign(
         {},

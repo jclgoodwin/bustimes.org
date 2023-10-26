@@ -80,7 +80,7 @@ type StopsProps = {
 };
 
 function Stops({ stops, clickedStopUrl, setClickedStop }: StopsProps) {
-  const stopsById = React.useMemo(() => {
+  const stopsById = React.useMemo<{ [url: string] : Stop; }>(() => {
     return Object.assign(
       {},
       ...stops.features.map((stop) => ({ [stop.properties.url]: stop })),
@@ -151,7 +151,7 @@ const Vehicles = memo(function Vehicles({
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
 }: VehiclesProps) {
-  const vehiclesById = React.useMemo(() => {
+  const vehiclesById = React.useMemo<{ [id: string] : Vehicle; }>(() => {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
   }, [vehicles]);
 
