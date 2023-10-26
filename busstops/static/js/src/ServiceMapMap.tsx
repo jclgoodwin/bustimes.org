@@ -8,7 +8,7 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import routeStopMarker from "../../route-stop-marker.png";
+import routeStopMarker from "data-url:../../route-stop-marker.png";
 
 import StopPopup, { Stop } from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";

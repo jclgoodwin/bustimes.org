@@ -11,8 +11,8 @@ import {
 
 import BusTimesMap from "./Map";
 
-import routeStopMarker from "../../route-stop-marker.png";
-import arrow from "../../arrow.png";
+import routeStopMarker from "data-url:../../route-stop-marker.png";
+import arrow from "data-url:../../arrow.png";
 
 import { LngLatBounds } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
