@@ -498,3 +498,6 @@ class LiveDeparturesTest(TestCase):
         self.assertEqual(journey.vehicle.latest_journey_data, args[1])
         self.assertEqual(journey.trip, self.trip)
         self.assertEqual(str(journey.datetime), "2019-02-09 12:10:00+00:00")
+
+        response = self.client.get(f"{journey.vehicle.get_absolute_url()}/debug")
+        self.assertEqual(response.headers["content-type"], "application/json")
