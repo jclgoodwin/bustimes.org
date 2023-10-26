@@ -1256,6 +1256,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             "service_id": service_id,
             "datetime__date": journey.datetime,
         }
+        data["vehicle"] = str(journey.vehicle)
     else:
         next_previous_filter = {"vehicle_id": journey.vehicle_id}
 

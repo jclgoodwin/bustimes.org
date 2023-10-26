@@ -54,6 +54,7 @@ export type VehicleJourney = {
   direction: string;
   stops: StopTime[];
   locations: VehicleJourneyLocation[];
+  vehicle?: string;
   next: {
     id: number;
     datetime: string;
@@ -249,16 +250,23 @@ function Sidebar({
     }
   }
 
+  let text = today;
+  if (journey.vehicle) {
+    text += " " + journey.vehicle;
+  } else {
+    text += " " + journey.route_name;
+    if (journey.destination) {
+      text += " to " + journey.destination;
+    }
+  }
+
   return (
     <div className={className}>
       <div className="navigation">
         {previousLink}
         {nextLink}
       </div>
-      <p>
-        {today} {journey.route_name}{" "}
-        {journey.destination ? " to " + journey.destination : null}
-      </p>
+      <p>{text}</p>
       {journey.stops ? (
         <TripTimetable
           onMouseEnter={onMouseEnter}

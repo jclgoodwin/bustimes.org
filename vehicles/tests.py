@@ -203,7 +203,9 @@ class VehiclesTests(TestCase):
         # can't connect to redis - no drama
         with override_settings(REDIS_URL="redis://localhose:69"):
             with self.assertNumQueries(3):
-                response = self.client.get(f"/journeys/{self.journey.id}.json")
+                response = self.client.get(
+                    f"/vehicles/{self.vehicle_1.id}/journeys/{self.journey.id}.json"
+                )
         self.assertEqual(
             {
                 "code": "",
