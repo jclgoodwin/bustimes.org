@@ -35,7 +35,7 @@ class Command(ImportLiveVehiclesCommand):
                 source=self.source,
                 operator=operator,
                 code=vehicle_code,
-                fleet_code=fleet_number or "",
+                fleet_code=str(fleet_number or ""),
                 fleet_number=fleet_number,
             )
             created = True
@@ -130,7 +130,6 @@ class Command(ImportLiveVehiclesCommand):
         return services.aggregate(Extent("geometry"))["geometry__extent"]
 
     async def sock_it(self, operator, extent):
-
         socket_info = requests.get(
             self.source.url,
             headers={

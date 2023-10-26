@@ -441,11 +441,12 @@ class Command(ImportLiveVehiclesCommand):
 
         if origin_aimed_departure_time:
             difference = origin_aimed_departure_time - datetime
-            if operator_ref == "TFLO":
-                if difference < -timedelta(hours=1) or difference > timedelta(hours=1):
-                    origin_aimed_departure_time = None
-            elif difference > timedelta(hours=20):
-                origin_aimed_departure_time -= timedelta(hours=24)
+            if difference > timedelta(hours=20):
+                origin_aimed_departure_time -= timedelta(days=1)
+            elif operator_ref == "TFLO" and (
+                difference < -timedelta(hours=1) or difference > timedelta(hours=1)
+            ):
+                origin_aimed_departure_time = None
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
@@ -528,7 +529,6 @@ class Command(ImportLiveVehiclesCommand):
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
-
                 journey.trip = journey.get_trip(
                     datetime=datetime,
                     date=journey_date,
@@ -677,7 +677,6 @@ class Command(ImportLiveVehiclesCommand):
         }
 
         for i, item in enumerate(tqdm.tqdm(items)):
-
             vehicle_identity = identities[i]
 
             journey_identity = self.journeys_ids[vehicle_identity]
