@@ -1,0 +1,50 @@
+{% extends 'page.html' %}
+
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+{% block content %}
+
+<style>
+    table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .routes {
+        width: 60px;
+    }
+
+    td {
+        overflow: hidden;
+    }
+</style>
+
+<h1>{{ object }}</h1>
+
+<table>
+    <thead>
+        <th scope="col">service code</th>
+        <th scope="col">line name</th>
+        <th scope="col">revision №</th>
+        <th scope="col">start</th>
+        <th scope="col">end</th>
+        <th scope="col">xml</th>
+        <th scope="col">timetable</th>
+    </thead>
+    <tbody>
+    {% for route in routes %}
+        <tr>
+            <td>{% ifchanged route.service_code %}{{ route.service_code }}{% endifchanged %}</td>
+            <td>{% ifchanged route.line_name %}{{ route.line_name }}{% endifchanged %}</td>
+            <td>{{ route.revision_number }}</td>
+            <td>{{ route.start_date }}</td>
+            <td>{{ route.end_date }}</td>
+            <td class="link"><a href="{{ route.get_absolute_url }}">xml</a></td>
+            <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
+        </tr>
+    {% endfor %}
+</tbody>
+
+{% endblock %}

@@ -125,8 +125,9 @@ def not_found(request, exception):
         except Http404:
             pass
 
-    assert "#" not in request.path
+    # assert "#" not in request.path
 
+    # anonymise request (cos response may be cached)
     request.user = AnonymousUser
 
     if request.resolver_match:

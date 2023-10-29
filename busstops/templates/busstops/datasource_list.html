@@ -1,0 +1,53 @@
+{% extends 'page.html' %}
+
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
+
+{% block bodyclass %}{% endblock %}
+
+
+{% block content %}
+
+<style>
+    table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    .routes {
+        width: 60px;
+    }
+
+    td {
+        overflow: hidden;
+    }
+</style>
+
+<table>
+    <thead>
+        <th scope="col">dataset</th>
+        <th scope="col">url</th>
+        <th scope="col" class="routes">routes</th>
+        <th scope="col">updated</th>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+        <tr>
+            <td class="link nowrap"><a href="/sources/{{ object.id }}">{{ object.get_nice_name }}</a></td>
+            <td class="nowrap">
+                {% if ".bus-data.dft." in object.url %}
+                    👑
+                    {{ object.get_nice_url|urlize }}
+                {% else %}
+                    {% if ".transportforireland." in object.url %}
+                        🇮🇪
+                    {% endif %}
+                    {{ object.url|urlize }}
+                {% endif %}
+            </td>
+            <td class="link"><a href="/sources/{{ object.id }}">{{ object.routes }}</a></td>
+            <td>{{ object.datetime }}</td>
+        </tr>
+    {% endfor %}
+</tbody>
+
+{% endblock %}

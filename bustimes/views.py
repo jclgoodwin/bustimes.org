@@ -9,7 +9,7 @@ import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Exists, OuterRef, Prefetch
+from django.db.models import Count, Exists, OuterRef, Prefetch
 from django.http import (
     FileResponse,
     Http404,
@@ -22,6 +22,7 @@ from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.views.decorators.http import require_GET
 from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import XmlLexer
@@ -95,6 +96,30 @@ def maybe_download_file(local_path, s3_key):
         client.download_file(
             Bucket="bustimes-data", Key=s3_key, Filename=str(local_path)
         )
+
+
+class SourceListView(ListView):
+    model = DataSource
+    queryset = (
+        DataSource.objects.annotate(
+            routes=Count("route"),
+        )
+        .filter(routes__gt=0)
+        .order_by("url")
+    )
+
+
+class SourceDetailView(DetailView):
+    model = DataSource
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["routes"] = self.object.route_set.order_by(
+            "service_code", "line_name", "start_date", "revision_number"
+        )
+
+        return context
 
 
 @require_GET
