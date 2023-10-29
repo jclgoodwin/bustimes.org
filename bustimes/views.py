@@ -115,11 +115,16 @@ class SourceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["routes"] = self.object.route_set.order_by(
-            "service_code", "line_name", "start_date", "revision_number"
-        ).annotate(
-            trips=Count("trip"),
+        context["routes"] = (
+            self.object.route_set.order_by(
+                "service_code", "line_name", "start_date", "revision_number"
+            )
+            .annotate(
+                trips=Count("trip"),
+            )
+            .select_related("service")
         )
+
         context["breadcrumb"] = [
             {"get_line_name_and_brand": "Sources", "get_absolute_url": "/sources"}
         ]
