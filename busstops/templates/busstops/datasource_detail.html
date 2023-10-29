@@ -12,8 +12,8 @@
         width: 100%;
     }
 
-    .routes {
-        width: 60px;
+    .short {
+        width: 100px;
     }
 
     td {
@@ -26,12 +26,13 @@
 <table>
     <thead>
         <th scope="col">service code</th>
-        <th scope="col">line name</th>
-        <th scope="col">revision №</th>
+        <th scope="col" class="short">line name</th>
+        <th scope="col" class="short">revision №</th>
         <th scope="col">start</th>
         <th scope="col">end</th>
-        <th scope="col">xml</th>
-        <th scope="col">timetable</th>
+        <th scope="col" class="short">xml</th>
+        <th scope="col" class="short">timetable</th>
+        <th scope="col" class="short">trips</th>
     </thead>
     <tbody>
     {% for route in routes %}
@@ -43,8 +44,10 @@
             <td>{{ route.end_date }}</td>
             <td class="link"><a href="{{ route.get_absolute_url }}">xml</a></td>
             <td class="link"><a href="{{ route.service.get_absolute_url }}">{{ route.line_name }}</a></td>
+            <td class="link"><a href="{{ route.service.get_absolute_url }}/debug">{{ route.trips }}</a></td>
         </tr>
     {% endfor %}
-</tbody>
+    </tbody>
+</table>
 
 {% endblock %}

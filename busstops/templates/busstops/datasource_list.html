@@ -4,7 +4,6 @@
 
 {% block bodyclass %}{% endblock %}
 
-
 {% block content %}
 
 <style>
@@ -32,7 +31,7 @@
     <tbody>
     {% for object in object_list %}
         <tr>
-            <td class="link nowrap"><a href="/sources/{{ object.id }}">{{ object.get_nice_name }}</a></td>
+            <td class="link nowrap"><a href="/sources/{{ object.id }}">{{ object }}</a></td>
             <td class="nowrap">
                 {% if ".bus-data.dft." in object.url %}
                     👑
@@ -48,6 +47,7 @@
             <td>{{ object.datetime }}</td>
         </tr>
     {% endfor %}
-</tbody>
+    </tbody>
+</table>
 
 {% endblock %}

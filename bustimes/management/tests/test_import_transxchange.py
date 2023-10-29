@@ -727,6 +727,12 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(service.get_absolute_url() + "/debug")
         self.assertContains(response, route.get_absolute_url())
 
+        response = self.client.get("/sources")
+        self.assertContains(response, "EA.zip")
+
+        response = self.client.get(f"/sources/{service.source_id}")
+        self.assertContains(response, "32-20-_-y10-1")
+
         with patch("boto3.client"):
             with self.assertRaises(FileNotFoundError):
                 self.client.get(route.get_absolute_url())
