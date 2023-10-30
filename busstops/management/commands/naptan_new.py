@@ -36,8 +36,11 @@ def get_point(element, atco_code):
             case "ITM":
                 srid = 2157
             case "IrishOS":
-                assert atco_code[0] != "8"  # not actually in Ireland, must be a mistake
-                srid = 27700
+                if atco_code[0] == "8":
+                    srid = 2157
+                else:
+                    # not actually in Ireland, must be a mistake
+                    srid = 27700
             case "UKOS" | None:
                 srid = 27700
         return GEOSGeometry(f"SRID={srid};POINT({easting} {northing})")
@@ -293,7 +296,6 @@ class Command(BaseCommand):
             if element.tag == "StopPoint":
                 atco_code = element.findtext("AtcoCode")
                 if atco_code[:3] != atco_code_prefix:
-
                     if atco_code_prefix:
                         self.update_and_create()
 
