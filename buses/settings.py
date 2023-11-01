@@ -9,7 +9,9 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "[::1] localhost joshuas-mbp").split()
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost joshuas-mbp"
+).split()
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))
@@ -106,12 +108,7 @@ if DEBUG and "runserver" in sys.argv:
         "debug_toolbar.middleware.DebugToolbarMiddleware",
         "debug_toolbar_force.middleware.ForceDebugToolbarMiddleware",
     ]
-
-    # Docker
-    import socket
-
-    _, _, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[:-1] + "1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+    INTERNAL_IPS = ["192.168.65.1"]
 
 ROOT_URLCONF = "buses.urls"
 
