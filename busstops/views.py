@@ -1355,11 +1355,21 @@ def search(request):
             res = requests.get(
                 "https://api.postcodes.io/postcodes/" + postcode, timeout=1
             )
-            if res.ok:
-                result = res.json()["result"]
-                point = Point(result["longitude"], result["latitude"], srid=4326)
+        elif validation.is_valid_partial_postcode(postcode):
+            res = requests.get(
+                "https://api.postcodes.io/outcodes/" + postcode, timeout=1
+            )
+        else:
+            postcode = None
 
-                context["postcode"] = (
+        if postcode and res.ok:
+            result = res.json()["result"]
+            point = Point(result["longitude"], result["latitude"], srid=4326)
+
+            context["postcode"] = {
+                "postcode": result.get("postcode") or result.get("outcode"),
+                "latlong": point,
+                "localities": (
                     Locality.objects.filter(latlong__bboverlaps=point.buffer(0.05))
                     .filter(
                         Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)
@@ -1367,8 +1377,9 @@ def search(request):
                     .distinct()
                     .annotate(distance=Distance("latlong", point))
                     .order_by("distance")
-                    .defer("latlong")[:2]
-                )
+                    .defer("latlong")
+                ),
+            }
 
         if "postcode" not in context:
             query = SearchQuery(query_text, search_type="websearch", config="english")

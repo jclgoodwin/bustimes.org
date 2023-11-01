@@ -261,6 +261,21 @@ class ViewsTests(TestCase):
             with self.assertNumQueries(2):
                 response = self.client.get("/search?q=w1a 1aa")
 
+            self.assertContains(response, "W1A 1AA")
+            self.assertContains(
+                response, """<a href="/map#16/51.5186/-0.1438">Map</a>"""
+            )
+            self.assertContains(response, "Melton Constable")
+            self.assertContains(response, "/localities/melton-constable")
+            self.assertNotContains(response, "results found for")
+
+            # outcode
+            with self.assertNumQueries(1):
+                response = self.client.get("/search?q=nr1")
+            self.assertContains(
+                response, """<a href="/map#16/52.6265/1.3067">Map</a>"""
+            )
+
             self.assertContains(response, "Melton Constable")
             self.assertContains(response, "/localities/melton-constable")
             self.assertNotContains(response, "results found for")

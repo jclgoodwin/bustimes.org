@@ -6,7 +6,7 @@
 
 <h1>Search</h1>
 
-<p>Search for places, operators, services or full UK postcodes</p>
+<p>Search for places, operators, services or UK postcodes</p>
 
 <form method="get" action="/search" class="search">
 
@@ -16,12 +16,17 @@
 
 {% if form.is_valid %}
     {% if postcode %}
-        <h2>Postcode {{ query.upper }}</h2>
-        <ul>
-            {% for locality in postcode %}
-                <li><a href="{{ locality.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
-            {% endfor %}
-        </ul>
+        <section>
+            <header>
+                <h2>Places near {{ postcode.postcode }}</h2>
+                <a href="/map#16/{{ postcode.latlong.y|floatformat:4 }}/{{ postcode.latlong.x|floatformat:4 }}">Map</a>
+            </header>
+            <ul>
+                {% for locality in postcode.localities %}
+                    <li><a href="{{ locality.get_absolute_url }}">{{ locality.get_qualified_name }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
     {% else %}
 
         {% if localities or operators or services %}
