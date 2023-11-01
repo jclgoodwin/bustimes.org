@@ -9,6 +9,7 @@ from asgiref.sync import sync_to_async
 from ciso8601 import parse_datetime
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Point
+from django.db.models import Q
 from django.utils import timezone
 
 from busstops.models import DataSource, Operator, Service
@@ -116,9 +117,10 @@ class Command(ImportLiveVehiclesCommand):
 
         vehicle_codes = [item["status"]["vehicle_id"].split("-")[6] for item in items]
         print(vehicle_codes)
-        vehicles = operator.vehicle_set.filter(code__in=vehicle_codes).select_related(
-            "latest_journey"
+        vehicles = Vehicle.objects.filter(
+            Q(operator__parent="First") | Q(operator=operator), code__in=vehicle_codes
         )
+        vehicles = vehicles.select_related("latest_journey")
         vehicles = {vehicle.code: vehicle for vehicle in vehicles}
         for i, item in enumerate(items):
             self.handle_item(item, vehicles.get(vehicle_codes[i]), operator)
@@ -145,7 +147,7 @@ class Command(ImportLiveVehiclesCommand):
                 "method": "configuration",
                 "params": {
                     # "operator": "ACAH",
-                    # "service": "X1",
+                    # "stop_of_interest": "2900N12216",
                     "min_lon": min_lon,
                     "max_lon": max_lon,
                     "min_lat": min_lat,
