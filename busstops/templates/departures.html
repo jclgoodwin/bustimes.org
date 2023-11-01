@@ -3,7 +3,7 @@
     {% if when %}
     <form autocomplete="off">
         <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required>
-        <input type="time" name="time" value="{{ when.time }}">
+        <input type="time" name="time" value="{{ when.time|time:'H:i' }}">
         <input type="submit" value="Go">
     </form>
     {% else %}<h2>Next departures</h2>{% endif %}
@@ -36,11 +36,11 @@
             </td>
             <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
                 {% if item.cancelled %}
-                    <del>{{ item.time.time }}</del>
+                    <del>{{ item.time|time:"H:i" }}</del>
                 {% elif item.live %}
-                    {{ item.live.time }}⚡&#xfe0f;
+                    {{ item.live|time:"H:i" }}⚡&#xfe0f;
                 {% else %}
-                    {% firstof item.time.time item.time %}
+                    {{ item.time|time:"H:i" }}
                 {% endif %}{% if item.link %}</a>{% endif %}
             </td>
             {% if object is stoparea %}
