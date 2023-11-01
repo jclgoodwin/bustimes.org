@@ -21,20 +21,22 @@ interactions:
         End","ced":null,"ccg":"NHS North West London","nuts":"Westminster","pfa":"Metropolitan
         Police","codes":{"admin_district":"E09000033","admin_county":"E99999999","admin_ward":"E05013808","parish":"E43000236","parliamentary_constituency":"E14000639","ccg":"E38000256","ccg_id":"W2U3Z","ced":"E99999999","nuts":"TLI32","lsoa":"E01004765","msoa":"E02000972","lau2":"E09000033","pfa":"E23000001"}}}'
     headers:
+      Age:
+      - '99346'
       CF-Cache-Status:
       - HIT
       CF-RAY:
-      - 81f1ed472cc4887d-LHR
+      - 81f21f357aa46323-LHR
       Connection:
       - keep-alive
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Wed, 01 Nov 2023 06:02:05 GMT
+      - Wed, 01 Nov 2023 06:36:10 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=HporUkSEarkIUwUcBXLgJ4cMR0quh9Q%2FHIoXhXnZ7sEVqXBObyjrBj3t9Sml6KJHompOY9AkJ3%2FhI%2FZwvZ%2BpnyCDjpTGtybGT%2BKDlL8e1CmKM0t6gm%2BjL4qb4fR5raMk3pMRv7eDlDKXiJ9x6AU%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=QcCCAi3pJC3V58kV5msBl1fOY08n3ett%2FRXH2oCjjmqqqP3w06UGSY6NkMAT8jBP%2FQl6rfJw8o5w9Qc29A0Ef%2B8pjCc380pzupWVhtGD9epSFIvSISE%2FEDhjBy1WaD%2BGrGq9IlfEsLWT4OQv6eU%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Transfer-Encoding:
@@ -74,22 +76,20 @@ interactions:
         St Andrew South East","Sprowston East","Thorpe Hamlet","Lakenham"],"country":["England"],"parliamentary_constituency":["Norwich
         South","South Norfolk","Norwich North"]}}'
     headers:
-      Age:
-      - '1014330'
       CF-Cache-Status:
       - HIT
       CF-RAY:
-      - 81f1ed47dc4c640d-LHR
+      - 81f21f362fca413b-LHR
       Connection:
       - keep-alive
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Wed, 01 Nov 2023 06:02:05 GMT
+      - Wed, 01 Nov 2023 06:36:10 GMT
       NEL:
       - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
       Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=rA81EkDJyvKIuMyWm1tOgqo9u8GWiJiI8KPqNvUqkzij7uXv7eas7CcHofGV%2F97mhp9QpAytzPBB4RSd1hu3ocdr0X7%2BDCFZSo74HAFfNi55T%2B0R%2FfFSyDsb06W24EnUWdUZGIeAym9THosab6Y%3D"}],"group":"cf-nel","max_age":604800}'
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=GrXvXEVOr97E8R1zY7e9jUS03UAvqRKo78UyN4Pvjhr0qhojUNqTjugSY7Hs2%2FlBKsS5L%2FTI0sJw0yrVXgU63Br%2FkYMbdNbU0kSBZwaB2znKNOmH75mG3egDq5DdXHOYngVwC2y2CLJ2m%2B1EaiY%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Transfer-Encoding:
@@ -107,4 +107,52 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.31.0
+    method: GET
+    uri: https://api.postcodes.io/postcodes/W1A1AJ
+  response:
+    body:
+      string: '{"status":404,"error":"Postcode not found"}'
+    headers:
+      Age:
+      - '58'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 81f21f36a82c637f-LHR
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '43'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Wed, 01 Nov 2023 06:36:10 GMT
+      NEL:
+      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
+      Report-To:
+      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v3?s=n3R9HmTWxWUvSvST01beAMhXSDj1Y2Ju%2FBgnyD2%2Fry%2FQlKDu45qBON3t3fOWG7R0buz2Ecos9pUoYrZL0WD0kpSY%2Bxkvw8RMxGXOWXI9L%2F2XHtDo%2BWqVCygGFnjJcll0LvgTjU0kfZAXhDrcOh4%3D"}],"group":"cf-nel","max_age":604800}'
+      Server:
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      access-control-allow-origin:
+      - '*'
+      etag:
+      - W/"2b-60dCBHUxbddknotWwisUCk6O8SA"
+      x-gnu:
+      - Michael J Blanchard
+    status:
+      code: 404
+      message: Not Found
 version: 1

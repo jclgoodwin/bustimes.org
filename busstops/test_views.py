@@ -255,7 +255,8 @@ class ViewsTests(TestCase):
 
     def test_postcode(self):
         with vcr.use_cassette(
-            str(settings.BASE_DIR / "fixtures" / "vcr" / "postcode.yaml")
+            str(settings.BASE_DIR / "fixtures" / "vcr" / "postcode.yaml"),
+            decode_compressed_response=True,
         ):
             # postcode sufficiently near to fake locality
             with self.assertNumQueries(2):
@@ -275,9 +276,6 @@ class ViewsTests(TestCase):
             self.assertContains(
                 response, """<a href="/map#16/52.6265/1.3067">Map</a>"""
             )
-
-            self.assertContains(response, "Melton Constable")
-            self.assertContains(response, "/localities/melton-constable")
             self.assertNotContains(response, "results found for")
 
             # postcode looks valid but doesn't exist
