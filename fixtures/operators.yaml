@@ -99,7 +99,7 @@ MULB:
 TAFV:
     url: http://tafvalleycoaches.co.uk
 HOGG:
-    url: http://roadhoggs.net/timetables.html
+    url: https://roadhoggs.co.uk/timetables/
 JTMT:
     url: ""
 EBLY:
@@ -145,8 +145,6 @@ A1CS:
     name: A1 Coaches (Fife)
 AOLC:
     name: A1 Coaches (Liverpool)
-GLOB:
-    name: Globe Coaches (Wales)
 GLCS:
     name: Globe Holidays (Barnsley)
 YCST:
@@ -201,7 +199,7 @@ TRDU:
     phone: 01382 221609
     email: xploredundee@mcgillsbuses.co.uk
 RYCA:
-    url: https://ryedalect.org/regular-bus-routes/
+    url: https://ryedalect.org/our-services/local-bus-services/
     address: |
         2 Minster Court
         Hugden Way
@@ -232,16 +230,11 @@ CTCL:
     phone: 024 7669 1433
 TEXP:
     phone: 07545 164579
-ECWY:
-    twitter: ""
-    phone: 01424 210744
 STNE:
     url: https://stanley-travel.com/bus-timetables/
-DWYN:
-    phone: ""
 RBTS:
     name: Roberts Travel
-    url: https://www.robertstravelgroup.co.uk/bus-timetables
+    url: https://www.robertstravelgroup.co.uk/
 EOSB:
     name: Swallow Coaches
     url: https://www.swallowcoach.co.uk/bus-services
@@ -256,20 +249,8 @@ KCTB:
         NR1 3NX
 HEDO:
     url: https://www.hedinghamandchambers.co.uk/
-    phone: 03301 020801
-    address: |
-        Unit 6-7 Stephenson Road
-        Clacton
-        Essex
-        CO15 4XA
 CHAM:
     url: https://www.hedinghamandchambers.co.uk/
-    phone: 03301 020801
-    address: |
-        Unit 6-7 Stephenson Road
-        Clacton
-        Essex
-        CO15 4XA
 ENSB:
     name: Ensignbus
 NOTB:
@@ -312,9 +293,6 @@ ALPI:
     url: https://www.alpine-travel.co.uk/
 CLTR:
     url: https://www.clynnogandtrefor.com/
-LTRV:
-    email: info@libratravel.co.uk
-    url: https://www.libratravel.co.uk/
 AINT:
     url: http://www.aintreecoachline.com/
     email: info@aintreecoachline.com
@@ -352,8 +330,6 @@ UNOE:
    twitter: UnoHerts
 FCWL:
     twitter: by_Kernow
-AKSS:
-    twitter: ArrivaKent
 EXLN:
     url: https://www.expresslines.co.uk/
 SSSN:
@@ -404,9 +380,6 @@ WNGS:
     url: https://www.diamondbuses.com/
 MINS:
     twitter: ""
-ALTO:
-    url: http://www.transporabus.co.uk/
-    email: hello@transporabus.co.uk
 NMCO:
     url: https://www.nickmaddycoaches.co.uk/
     phone: 01981 240888
