@@ -244,7 +244,7 @@ def stop_times_json(request, atco_code):
             when = parse_datetime(request.GET["when"])
         except ValueError:
             return HttpResponseBadRequest(
-                f"'{request.GET['when']}' isn't in the right format"
+                "'when' isn't in the right format (should be an ISO 8601 datetime)"
             )
         current_timezone = timezone.get_current_timezone()
         when = when.astimezone(current_timezone)
