@@ -57,4 +57,5 @@ urlpatterns = [
     path("map", views.map, name="map"),
     path("maps", views.map),
     path("map/old", views.map_classic),
+    path("siri/<uuid:uuid>", views.siri_post),
 ]

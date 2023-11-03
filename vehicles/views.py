@@ -41,6 +41,7 @@ from . import filters, forms
 from .management.commands import import_bod_avl
 from .models import (
     Livery,
+    SiriSubscription,
     Vehicle,
     VehicleEdit,
     VehicleEditFeature,
@@ -1322,3 +1323,19 @@ def debug(request):
             }
 
     return render(request, "vehicles/debug.html", {"form": form, "result": result})
+
+
+@require_GET
+def siri_post(request, uuid):
+    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
+    subscription.sample = request.body.decode()
+    subscription.save(update_fields=["sample"])
+    return HttpResponse(
+        f"""<Siri xmlns="http://www.siri.org.uk/siri">
+  <DataReceivedAcknowledgement>
+    <ResponseTimestamp>{timezone.now().isoformat()}</ResponseTimestamp>
+    <Status>true</Status>
+  </DataReceivedAcknowledgement>
+</Siri>""",
+        content_type="text/xml",
+    )
