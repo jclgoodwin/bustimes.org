@@ -37,7 +37,7 @@
 
 .maplibregl-marker:hover .vehicle-marker,
 .vehicle-marker.selected {
-  border-color: #000;
+  outline: 1px solid #000;
 }
 
 .maplibregl-user-location-dot,

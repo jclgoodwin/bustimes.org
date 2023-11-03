@@ -28,6 +28,7 @@ Sentry.init({
     "WKWebView API client did not respond to this postMessage",
     "Origin https://bustimes.org is not allowed by Access-Control-Allow-Origin.",
     "Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'https://t.richaudience.com/",
+    "https://cdn.unblockia.com/",
   ],
 });
 
