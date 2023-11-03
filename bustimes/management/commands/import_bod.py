@@ -415,28 +415,27 @@ def stagecoach(specific_operator=None):
 
         nocs = list(source.operators.values_list("noc", flat=True))
 
-        for url in source.url.split():
-            filename = Path(url).name
-            path = settings.DATA_DIR / filename
+        filename = Path(source.url).name
+        path = settings.DATA_DIR / filename
 
-            command.source, _ = DataSource.objects.get_or_create(
-                {"name": source.name}, url=url
-            )
+        command.source, _ = DataSource.objects.get_or_create(
+            {"name": source.name}, url=source.url
+        )
 
-            modified, last_modified = download_if_changed(path, url)
-            sha1 = get_sha1(path)
+        modified, last_modified = download_if_changed(path, source.url)
+        sha1 = get_sha1(path)
 
-            if command.source.datetime != last_modified:
-                modified = True
+        if command.source.datetime != last_modified:
+            modified = True
 
-            if modified:
-                # use sha1 checksum to check if file has really changed -
-                # last_modified seems to change every night
-                # even when contents stay the same
-                if sha1 == command.source.sha1 or not command.source.older_than(
-                    last_modified
-                ):
-                    modified = False
+        if modified:
+            # use sha1 checksum to check if file has really changed -
+            # last_modified seems to change every night
+            # even when contents stay the same
+            if sha1 == command.source.sha1 or not command.source.older_than(
+                last_modified
+            ):
+                modified = False
 
             command.source.sha1 = sha1
 

@@ -304,7 +304,6 @@ class ImportBusOpenDataTest(TestCase):
         with patch(
             "vehicles.views.redis_client", fakeredis.FakeStrictRedis()
         ) as fake_redis:
-
             response = self.client.get(f"/journeys/{journey.id}.json")
             json = response.json()
             self.assertIn("stops", json)
@@ -383,12 +382,10 @@ class ImportBusOpenDataTest(TestCase):
 
     @time_machine.travel(datetime.datetime(2020, 6, 10))
     def test_import_stagecoach(self):
-
         source = TimetableDataSource.objects.create(
             name="Stagecoach East",
             region_id="EA",
-            url="https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange.zip "
-            "https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange_2_4.zip",
+            url="https://opendata.stagecoachbus.com/stagecoach-sccm-route-schedule-data-transxchange_2_4.zip",
         )
         source.operators.add("SCCM")
 
@@ -429,24 +426,23 @@ class ImportBusOpenDataTest(TestCase):
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                for archive_name in (
-                    "stagecoach-sccm-route-schedule-data-transxchange.zip",
-                    "stagecoach-sccm-route-schedule-data-transxchange_2_4.zip",
-                ):
-                    path = Path(directory) / archive_name
+                archive_name = (
+                    "stagecoach-sccm-route-schedule-data-transxchange_2_4.zip"
+                )
+                path = Path(directory) / archive_name
 
-                    with zipfile.ZipFile(path, "a") as open_zipfile:
-                        for filename in (
-                            "904_FE_PF_904_20210102.xml",
-                            "904_VI_PF_904_20200830.xml",
-                        ):
-                            open_zipfile.write(FIXTURES_DIR / filename, filename)
+                with zipfile.ZipFile(path, "a") as open_zipfile:
+                    for filename in (
+                        "904_FE_PF_904_20210102.xml",
+                        "904_VI_PF_904_20200830.xml",
+                    ):
+                        open_zipfile.write(FIXTURES_DIR / filename, filename)
 
                 with patch(
                     "bustimes.management.commands.import_bod.download_if_changed",
                     return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
-                    with self.assertNumQueries(124):
+                    with self.assertNumQueries(110):
                         call_command("import_bod", "stagecoach")
                     download_if_changed.assert_called_with(
                         path, "https://opendata.stagecoachbus.com/" + archive_name
@@ -460,13 +456,13 @@ class ImportBusOpenDataTest(TestCase):
                     )
                     route_link.save()
 
-                    with self.assertNumQueries(6):
+                    with self.assertNumQueries(5):
                         call_command("import_bod", "stagecoach")
 
                     with self.assertNumQueries(1):
                         call_command("import_bod", "stagecoach", "SCOX")
 
-                    with self.assertNumQueries(91):
+                    with self.assertNumQueries(80):
                         call_command("import_bod", "stagecoach", "SCCM")
 
                     route_link.refresh_from_db()
