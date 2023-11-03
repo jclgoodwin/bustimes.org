@@ -21,6 +21,8 @@ registry:
   password:
     - KAMAL_REGISTRY_PASSWORD
 
+asset_path: /staticfiles
+
 # Inject ENV variables into containers (secrets come from .env).
 env:
   clear:
