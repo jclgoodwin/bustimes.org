@@ -5,6 +5,7 @@ from itertools import pairwise
 from urllib.parse import urlencode
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
@@ -20,7 +21,7 @@ from django.http import (
     JsonResponse,
     QueryDict,
 )
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.cache import get_conditional_response, set_response_etag
@@ -207,7 +208,7 @@ def operator_vehicles(request, slug=None, parent=None):
 
     if form:
         if not request.user.is_authenticated:
-            return redirect(f"/accounts/login/?next={request.path}")
+            return redirect_to_login(request.path)
 
         check_user(request)
 
