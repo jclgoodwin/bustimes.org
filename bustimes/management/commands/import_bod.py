@@ -225,7 +225,6 @@ def bus_open_data(api_key, specific_operator):
             sources.append(command.source)
 
             if specific_operator or command.source.datetime != dataset["modified"]:
-
                 logger.info(dataset["name"])
 
                 filename = str(command.source.id)
@@ -238,7 +237,6 @@ def bus_open_data(api_key, specific_operator):
                 command.source.datetime = dataset["modified"]
 
                 with log_time_taken(logger):
-
                     download(path, command.source.url)
 
                     handle_file(command, path)
@@ -348,7 +346,6 @@ def ticketer(specific_operator=None):
                 command.source.datetime = timezone.now()
 
                 with log_time_taken(logger):
-
                     handle_file(command, path)
 
                     command.mark_old_services_as_not_current()
@@ -378,7 +375,6 @@ def do_stagecoach_source(command, last_modified, filename, nocs):
     command.source.datetime = timezone.now()
 
     with log_time_taken(logger):
-
         handle_file(command, filename)
 
         command.mark_old_services_as_not_current()
@@ -412,17 +408,12 @@ def stagecoach(specific_operator=None):
         logger.info(timetable_data_sources)
 
     for source in timetable_data_sources:
-
         command.region_id = source.region_id
         command.service_ids = set()
         command.route_ids = set()
         command.garages = {}
 
         nocs = list(source.operators.values_list("noc", flat=True))
-
-        sources = []  # one (TXC 2.1) or two (2.1 and 2.4) sources
-
-        command.preferred_source = None
 
         for url in source.url.split():
             filename = Path(url).name
@@ -431,7 +422,6 @@ def stagecoach(specific_operator=None):
             command.source, _ = DataSource.objects.get_or_create(
                 {"name": source.name}, url=url
             )
-            sources.append(command.source)
 
             modified, last_modified = download_if_changed(path, url)
             sha1 = get_sha1(path)
@@ -453,9 +443,7 @@ def stagecoach(specific_operator=None):
             if modified or specific_operator:
                 do_stagecoach_source(command, last_modified, filename, nocs)
 
-            command.preferred_source = command.source
-
-        clean_up(nocs, sources)
+        clean_up(nocs, [command.source])
         command.finish_services()
 
 

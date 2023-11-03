@@ -979,18 +979,6 @@ class Command(BaseCommand):
             ):
                 continue
 
-            # Stagecoach: prefer TXC 2.1 to 2.4
-            if (
-                self.source.name.startswith("Stagecoach")
-                and self.preferred_source
-                and Service.objects.filter(
-                    current=True,
-                    route__source=self.preferred_source,
-                    route__line_name__iexact=line.line_name,
-                ).exists()
-            ):
-                continue
-
             existing = None
 
             services = Service.objects.order_by("-current", "id").filter(
