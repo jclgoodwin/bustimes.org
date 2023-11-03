@@ -44,7 +44,7 @@ class StopTimeInline(admin.TabularInline):
 
 @admin.register(TimetableDataSource)
 class TimetableDataSourceAdmin(admin.ModelAdmin):
-    raw_id_fields = ["operators"]
+    autocomplete_fields = ["operators"]
     list_display = ["id", "name", "url", "nocs", "active", "complete"]
     list_filter = ["active", "complete"]
     search_fields = ["url", "name", "search"]

@@ -137,7 +137,7 @@ class OperatorAdmin(admin.ModelAdmin):
     search_fields = ("noc", "name")
     raw_id_fields = ("region", "regions", "siblings", "colour")
     inlines = [OperatorCodeInline]
-    readonly_fields = ["search_vector"]
+    readonly_fields = ["search_vector", "modified_at"]
     prepopulated_fields = {"slug": ("name",)}
     autocomplete_fields = ("licences",)
 
@@ -288,7 +288,7 @@ class ServiceAdmin(GISModelAdmin):
         FromServiceLinkInline,
         ToServiceLinkInline,
     ]
-    readonly_fields = ["search_vector"]
+    readonly_fields = ["search_vector", "modified_at"]
     list_editable = ["colour", "line_brand"]
     list_select_related = ["colour"]
     actions = ["current_false", "merge", "unmerge"]
