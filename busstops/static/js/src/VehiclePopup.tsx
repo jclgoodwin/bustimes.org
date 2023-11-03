@@ -61,7 +61,7 @@ export default function VehiclePopup({
     [item, onTripClick],
   );
 
-  let line_name = item.service?.line_name;
+  let line_name = item.service?.line_name || "";
   if (item.destination) {
     if (line_name) {
       line_name += " to ";
