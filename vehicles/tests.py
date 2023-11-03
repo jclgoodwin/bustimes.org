@@ -12,6 +12,7 @@ from busstops.models import DataSource, Operator, Region, Service
 
 from .models import (
     Livery,
+    SiriSubscription,
     Vehicle,
     VehicleEdit,
     VehicleEditFeature,
@@ -1014,3 +1015,11 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?search=fd54jya")
         self.assertEqual(1, response.json()["count"])
+
+    def test_siri_post(self):
+        response = self.client.post("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
+        self.assertEqual(404, response.status_code)
+
+        SiriSubscription.objects.create(uuid="475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
+        response = self.client.post("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
+        self.assertEqual(200, response.status_code)
