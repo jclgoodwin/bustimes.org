@@ -78,6 +78,9 @@ def get_routes(routes, when=None, from_date=None):
             ):  # journeys may be split between sources (First Bristol)
                 route.key = f"{route.key}:{route.source_id}"
 
+            if route.source.name.startswith("Stagecoach"):
+                route.key = f"{route.key}:{route.code}"
+
             # use some clues in the filename (or a very good clue in the source URL)
             # to tell if the data is from Ticketer, and adapt accordingly
             # - the revision number applies to a bit of the filename
