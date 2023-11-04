@@ -31,7 +31,13 @@ class SituationAdmin(admin.ModelAdmin):
         "stops",
     ]
     list_filter = ["current", "source", "participant_ref", "reason"]
-    readonly_fields = ["situation_number", "reason", "participant_ref", "data"]
+    readonly_fields = [
+        "created",
+        "situation_number",
+        "reason",
+        "participant_ref",
+        "data",
+    ]
 
     @admin.display(ordering="stops")
     def stops(self, obj):

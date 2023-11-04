@@ -19,6 +19,7 @@ class Situation(models.Model):
                 "Bus Open Data Service",
             )
         },
+        default=236,
     )
     situation_number = models.CharField(max_length=36, blank=True)
     reason = models.CharField(max_length=25, blank=True)
@@ -26,12 +27,12 @@ class Situation(models.Model):
     participant_ref = models.CharField(max_length=36, blank=True)
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
-    created = models.DateTimeField()
+    created = models.DateTimeField(auto_now_add=True)
     publication_window = DateTimeRangeField()
     current = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.summary or self.text
+        return self.summary or self.text or super().__str__()
 
     def nice_reason(self):
         return camel_case_to_spaces(self.reason)
