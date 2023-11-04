@@ -21,6 +21,7 @@
   height: 16px;
   background: #fff;
   border: 1px solid var(--marker-border-color);
+  margin: 1px;
   text-align: center;
   overflow: hidden;
   line-height: 16px;
@@ -58,16 +59,16 @@
   border: 4px solid transparent;
   border-right: 5px solid var(--marker-arrow-color);
   border-left: 0;
-  left: -6px;
+  left: -5px;
   position: absolute;
-  top: 5px;
+  top: 6px;
 }
 
 .right + .arrow {
   border-left: 5px solid var(--marker-arrow-color);
   border-right: 0;
   left: auto;
-  right: -6px;
+  right: -5px;
 }
 
 .maplibregl-popup {
