@@ -1379,9 +1379,9 @@ def search(request):
                     .order_by("distance")
                     .defer("latlong")
                 ),
-            }
+            }[:20]
 
-        if "postcode" not in context:
+        if "postcode" not in context or result.get("outcode"):
             query = SearchQuery(query_text, search_type="websearch", config="english")
             rank = SearchRank(F("search_vector"), query)
 
