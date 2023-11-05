@@ -1377,9 +1377,9 @@ def search(request):
                     .distinct()
                     .annotate(distance=Distance("latlong", point))
                     .order_by("distance")
-                    .defer("latlong")
+                    .defer("latlong")[:20]
                 ),
-            }[:20]
+            }
 
         if "postcode" not in context or result.get("outcode"):
             query = SearchQuery(query_text, search_type="websearch", config="english")
