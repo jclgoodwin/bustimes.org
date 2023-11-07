@@ -171,7 +171,8 @@ class OperatorAdmin(admin.ModelAdmin):
 
         if request.path.endswith("/autocomplete/"):
             queryset = queryset.filter(
-                Exists(
+                Q(noc=search_term)
+                | Exists(
                     models.Service.objects.filter(operator=OuterRef("pk"), current=True)
                 )
             )
