@@ -271,7 +271,7 @@ class ViewsTests(TestCase):
             self.assertNotContains(response, "results found for")
 
             # outcode
-            with self.assertNumQueries(1):
+            with self.assertNumQueries(4):
                 response = self.client.get("/search?q=nr1")
             self.assertContains(
                 response, """<a href="/map#16/52.6265/1.3067">Map</a>"""
@@ -281,7 +281,7 @@ class ViewsTests(TestCase):
             # postcode looks valid but doesn't exist
             with self.assertNumQueries(4):
                 response = self.client.get("/search?q=w1a 1aj")
-            self.assertContains(response, "0 places")
+            self.assertContains(response, "0 operators")
 
     def test_admin_area(self):
         """Admin area containing just one child should redirect to that child"""

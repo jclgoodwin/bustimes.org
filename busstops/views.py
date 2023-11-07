@@ -1381,7 +1381,7 @@ def search(request):
                 ),
             }
 
-        if "postcode" not in context or result.get("outcode"):
+        if "postcode" not in context or not result.get("postcode"):
             query = SearchQuery(query_text, search_type="websearch", config="english")
             rank = SearchRank(F("search_vector"), query)
 
