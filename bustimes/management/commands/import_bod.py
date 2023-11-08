@@ -56,6 +56,7 @@ def clean_up(operators, sources, incomplete=False):
 
 
 def is_noc(search_term: str) -> bool:
+    assert str
     return len(search_term) <= 4 and search_term.isupper()
 
 
