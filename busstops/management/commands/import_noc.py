@@ -1,5 +1,3 @@
-import csv
-import io
 import xml.etree.ElementTree as ET
 
 import requests
@@ -8,6 +6,8 @@ from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import transaction
 from django.utils.text import slugify
+
+from vosa.models import Licence
 
 from ...models import DataSource, Operator, OperatorCode
 
@@ -33,73 +33,24 @@ def get_mode(mode):
     return mode
 
 
-def noc_csv(code_sources: list, operators: dict):
-    operator_codes = []
-    names = {}
+def get_operator_codes(code_sources, noc, operator, noc_line):
+    operator_codes = [
+        OperatorCode(source=code_sources[0][1], code=noc, operator=operator)
+    ]
 
-    url = "https://mytraveline.info/NOC/NOC_DB.csv"
-
-    response = requests.get(url)
-
-    for row in csv.DictReader(io.StringIO(response.text)):
-        if row["Date Ceased"]:
-            continue
-
-        noc = row["NOCCODE"]
-        if noc[:1] == "=":
-            noc = noc[1:]
-        assert "=" not in noc and noc.isupper(), noc
-
-        if noc == "#NAME?":  # microsoft excel crap
-            continue
-        assert len(noc) <= 4
-
-        mode = get_mode(row["Mode"])
-
-        if mode == "airline":
-            continue
-
-        if noc in operators:
-            operator = operators[noc]
-        else:
-            operator = Operator(
-                region_id=get_region_id(row["TLRegOwn"]), vehicle_mode=mode
-            )
-            operators[noc] = operator
-
-        operator.name = row["OperatorPublicName"]
-
-        slug = operator.slug or slugify(operator.name)
-
-        if not operator.noc:
-            operator.noc = noc
-
-            if slug in names:  # cope with duplicate slug
-                if not names[slug].slug:
-                    names[slug].save(force_insert=True)
-                operator.save(force_insert=True)
-            # else:
-            #     operator.slug = slug
-
-            operator_codes.append(
-                OperatorCode(source=code_sources[0][1], code=noc, operator=operator)
-            )
-
-            for col, source in code_sources[1:]:
-                if row[col] and row[col] != noc:
-                    operator_codes.append(
-                        OperatorCode(
-                            source=source,
-                            code=row[col],
-                            operator=operator,
-                        )
+    for col, source in code_sources[1:]:
+        code = noc_line.find(col).text
+        if code:
+            code = code.removeprefix("=")
+            if code != noc:
+                operator_codes.append(
+                    OperatorCode(
+                        source=source,
+                        code=code,
+                        operator=operator,
                     )
-
-        names[slug] = operator
-
-    to_create = [o for o in operators.values() if not o.slug]
-    Operator.objects.bulk_create(to_create)
-    OperatorCode.objects.bulk_create(operator_codes)
+                )
+    return operator_codes
 
 
 class Command(BaseCommand):
@@ -127,12 +78,10 @@ class Command(BaseCommand):
             "operatorcode_set", "licences"
         ).in_bulk()
 
-        noc_csv(code_sources, operators)
-
         with open(settings.BASE_DIR / "fixtures" / "operators.yaml") as open_file:
             overrides = yaml.load(open_file, Loader=yaml.BaseLoader)
 
-        names = set()
+        operators_by_slug = {operator.slug: operator for operator in operators.values()}
 
         url = "https://www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml"
         response = requests.get(url)
@@ -153,19 +102,29 @@ class Command(BaseCommand):
         #     assert e_id not in operators_by_id
         #     operators_by_id[e_id] = e
 
+        noc_lines = {
+            line.findtext("NOCCODE").removeprefix("="): line
+            for line in element.find("NOCLines")
+        }
+
         to_create = []
         to_update = []
+        operator_codes = []
+        licences = []
 
-        # noc_records = {}
         for e in element.find("NOCTable"):
-
-            # e_id = e.findtext("PubNmId")
-            # if e_id in noc_records:
-            #     print(ET.tostring(noc_records[e_id]))
-            #     print(ET.tostring(e))
-            # noc_records[e_id] = e
-
             noc = e.findtext("NOCCODE").removeprefix("=")
+
+            if noc in noc_lines:
+                noc_line = noc_lines[noc]
+            else:
+                print(noc)
+                continue
+
+            vehicle_mode = get_mode(noc_line.findtext("Mode"))
+            if vehicle_mode == "airline":
+                continue
+
             # op = operators_by_id[e.findtext("OpId")]
             public_name = public_names[e.findtext("PubNmId")]
 
@@ -192,24 +151,45 @@ class Command(BaseCommand):
                         print(name)
                     name = override["name"]
 
-            create_or_update = False
-
             if noc not in operators:
                 # print(noc, e.findtext("OperatorPublicName"), e.findtext("VOSA_PSVLicenseName"), op.findtext("OpNm"))
 
-                operators[noc] = Operator(noc=noc, name=name)
+                operators[noc] = Operator(
+                    noc=noc,
+                    name=name,
+                    region_id=get_region_id(noc_line.findtext("TLRegOwn")),
+                    vehicle_mode=vehicle_mode,
+                )
                 operator = operators[noc]
+
+                slug = slugify(operator.name)
+                if slug in operators_by_slug:
+                    # duplicate name – save now to avoid slug collision
+                    operator.save()
+                    to_update.append(operator)
+                else:
+                    operator.slug = slug
+                    to_create.append(operator)
+
+                operators_by_slug[operator.slug or slug] = operator
 
                 operator.url = url
                 operator.twitter = twitter
 
-                if operator.name in names:
-                    # duplicate name – save now to avoid slug collision
-                    operator.save(force_insert=True)
-                else:
-                    # operator.slug = slugify(operator.name)
-                    to_create.append(operator)
-                    create_or_update = True
+                operator_codes += get_operator_codes(
+                    code_sources, noc, operator, noc_line
+                )
+                try:
+                    licences.append(
+                        Operator.licences.through(
+                            operator=operator,
+                            licence=Licence.objects.get(
+                                licence_number=noc_line.findtext("Licence")
+                            ),
+                        )
+                    )
+                except Licence.DoesNotExist:
+                    pass
 
             else:
                 operator = operators[noc]
@@ -224,12 +204,18 @@ class Command(BaseCommand):
                     name != operator.name
                     or url != operator.url
                     or twitter != operator.twitter
+                    or vehicle_mode != operator.vehicle_mode
                 ):
                     operator.name = name
                     operator.url = url
                     operator.twitter = twitter
+                    operator.vehicle_mode = vehicle_mode
                     to_update.append(operator)
-                    create_or_update = True
+
+                if not operator.operatorcode_set.all():
+                    operator_codes += get_operator_codes(
+                        code_sources, noc, operator, noc_line
+                    )
 
             try:
                 operator.clean_fields(exclude=["noc", "slug", "region"])
@@ -237,21 +223,13 @@ class Command(BaseCommand):
                 if "url" in e.message_dict:
                     # print(e, operator.url)
                     operator.url = ""
-                    if not create_or_update:
-                        to_update.append(operator)
                 else:
                     print(noc, e)
 
-            names.add(operator.name)
-
         Operator.objects.bulk_create(to_create)
-        Operator.objects.bulk_update(to_update, ["url", "twitter", "name"])
+        Operator.objects.bulk_update(
+            to_update, ["url", "twitter", "name", "vehicle_mode"]
+        )
 
-        # licences = {}
-        # for e in element.find("Licence"):
-        #     e_id = e.findtext("OpId")
-        #     if e_id in licences:
-        #         print(ET.tostring(licences[e_id]), ET.tostring(e))
-        #     licences[e_id] = e
-
-        # print(public_names)
+        OperatorCode.objects.bulk_create(operator_codes)
+        Licence.objects.bulk_create(licences)

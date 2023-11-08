@@ -31,14 +31,13 @@ class ImportOperatorsTest(TestCase):
         # Operator.objects.create(noc="AFCL", name="Arriva Midlands")
 
     def test_import_noc(self):
-
         FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
         with vcr.use_cassette(
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
         ) as cassette:
-            with self.assertNumQueries(4021):
+            with self.assertNumQueries(6891):
                 call_command("import_noc")
             cassette.rewind()
             with self.assertNumQueries(18):
