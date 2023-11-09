@@ -23,7 +23,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         base_url = "https://admin.opendatani.gov.uk/api/3/action/package_show"
         ids = [
-            "ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016",
+            "ulsterbus-and-goldline-timetable-data-from-08-11-2023",
             "metro-timetable-data-valid-from-18-june-until-31-august-2016",
         ]
 

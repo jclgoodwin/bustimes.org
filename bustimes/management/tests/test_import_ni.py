@@ -1,10 +1,12 @@
 """Tests for importing Northern Ireland data
 """
-import vcr
-from unittest.mock import patch
 from pathlib import Path
+from unittest.mock import patch
+
+import vcr
 from django.core.management import call_command
 from django.test import TestCase
+
 from busstops.models import DataSource
 
 
@@ -16,7 +18,7 @@ class ImportNornIronTest(TestCase):
                 DataSource(
                     name="ULB",
                     url="https://www.opendatani.gov.uk/dataset/"
-                    "ulsterbus-and-goldline-timetable-data-from-28-june-31-august-2016",
+                    "ulsterbus-and-goldline-timetable-data-from-08-11-2023",
                     datetime="2020-07-01T10:35:39.433122Z",
                 ),
                 DataSource(
