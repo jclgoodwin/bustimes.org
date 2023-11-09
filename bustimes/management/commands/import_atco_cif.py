@@ -39,7 +39,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for archive_name in options["filenames"]:
-
             if "ulb" in archive_name.lower() or "ulsterbus" in archive_name.lower():
                 source_name = "ULB"
             else:
@@ -271,12 +270,14 @@ class Command(BaseCommand):
                 self.sequence = 0
                 self.trip_header = line
                 self.exceptions = []
+                self.operator = self.trip_header[3:7].decode().strip()
+                if self.operator == "BE":
+                    self.operator = "ie-01"
 
             case b"QE":
                 self.exceptions.append(line)
 
             case b"QO" | b"QI" | b"QT":  # stop time
-
                 stop_time = StopTime(sequence=self.sequence, trip=self.trip)
                 self.sequence += 1
 
@@ -291,12 +292,11 @@ class Command(BaseCommand):
                 self.stop_times.append(stop_time)
 
                 if identity == b"QO":  # origin stop
-
                     departure = parse_time(line[14:18])
 
                     calendar = self.get_calendar()
                     self.trip = Trip(
-                        operator_id=self.trip_header[3:7].decode().strip(),
+                        operator_id=self.operator,
                         ticket_machine_code=self.trip_header[7:13].decode().strip(),
                         block=self.trip_header[42:48].decode().strip(),
                         start=departure,
@@ -309,7 +309,6 @@ class Command(BaseCommand):
                     stop_time.sequence = 0
 
                 elif identity == b"QI":  # intermediate stop
-
                     timing_status = line[26:28]
                     if timing_status == b"T1":
                         timing_status = "PTP"
