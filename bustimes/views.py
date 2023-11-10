@@ -478,7 +478,7 @@ def tfl_vehicle(request, reg: str):
     reg = reg.upper()
 
     response = requests.get(
-        f"https://api.tfl.gov.uk/vehicle/{reg}/arrivals", params=settings.TFL, timeout=4
+        f"https://api.tfl.gov.uk/Vehicle/{reg}/Arrivals", params=settings.TFL, timeout=8
     )
     if response.ok:
         data = response.json()

@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - python-requests/2.25.1
     method: GET
-    uri: https://api.tfl.gov.uk/vehicle/LTZ1243/arrivals
+    uri: https://api.tfl.gov.uk/Vehicle/LTZ1243/Arrivals
   response:
     body:
       string: '[{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"1566189989","operationType":1,"vehicleId":"LTZ1243","naptanId":"490004215M","stationName":"Bow
@@ -147,7 +147,7 @@ interactions:
       User-Agent:
       - python-requests/2.25.1
     method: GET
-    uri: https://api.tfl.gov.uk/vehicle/LJ53NHP/arrivals
+    uri: https://api.tfl.gov.uk/Vehicle/LJ53NHP/Arrivals
   response:
     body:
       string: '[]'
