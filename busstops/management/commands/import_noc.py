@@ -132,7 +132,7 @@ class Command(BaseCommand):
             if noc in noc_lines:
                 noc_line = noc_lines[noc]
             else:
-                print(noc)
+                # print(noc)
                 continue
 
             vehicle_mode = get_mode(noc_line.findtext("Mode"))

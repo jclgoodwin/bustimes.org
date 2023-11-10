@@ -27,7 +27,7 @@ class ImportOperatorsTest(TestCase):
 
         # Operator.objects.create(noc="A1CS", name="A1 Coaches")
         # Operator.objects.create(noc="AMSY", name="Arriva North West")
-        # Operator.objects.create(noc="ANWE", name="Arriva North West")
+        Operator.objects.create(noc="ANWE", name="Arriva North West")
         # Operator.objects.create(noc="AMAN", name="Arriva North West")
         # Operator.objects.create(noc="AMID", name="Arriva Midlands")
         # Operator.objects.create(noc="AFCL", name="Arriva Midlands")
@@ -45,7 +45,7 @@ class ImportOperatorsTest(TestCase):
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
         ) as cassette:
-            with self.assertNumQueries(3810):
+            with self.assertNumQueries(3811):
                 call_command("import_noc")
             cassette.rewind()
 
@@ -77,6 +77,8 @@ class ImportOperatorsTest(TestCase):
         kernow = Operator.objects.get(noc="FCWL")
         self.assertEqual(kernow.url, "https://www.firstbus.co.uk/cornwall")
         self.assertEqual(kernow.twitter, "by_Kernow")
+        self.assertEqual(1, kernow.operatorcode_set.count())
+        self.assertEqual(1, kernow.licences.count())
 
         cymru = Operator.objects.get(noc="FCYM")
         self.assertEqual(cymru.name, "First Cymru")
