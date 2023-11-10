@@ -101,4 +101,5 @@ class NaptanTest(TestCase):
 
         # stop area
         stop = StopArea.objects.get(id="701GA00001")
-        self.assertEqual(stop.latlong.coords, (-6.96706899058396, 55.19115290579295))
+        self.assertAlmostEqual(stop.latlong.x, -6.96706899058396)
+        self.assertAlmostEqual(stop.latlong.y, 55.19115290579295)
