@@ -4,6 +4,8 @@ import vcr
 from django.core.management import call_command
 from django.test import TestCase
 
+from vosa.models import Licence
+
 from ...models import Operator, Region
 
 
@@ -30,6 +32,12 @@ class ImportOperatorsTest(TestCase):
         # Operator.objects.create(noc="AMID", name="Arriva Midlands")
         # Operator.objects.create(noc="AFCL", name="Arriva Midlands")
 
+        Licence.objects.create(
+            licence_number="PB0000582",
+            discs=0,
+            authorised_discs=0,
+        )  # Arriva Yorkshire
+
     def test_import_noc(self):
         FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -37,10 +45,17 @@ class ImportOperatorsTest(TestCase):
             str(FIXTURES_DIR / "noc.yaml"),
             decode_compressed_response=True,
         ) as cassette:
-            with self.assertNumQueries(6891):
+            with self.assertNumQueries(3810):
                 call_command("import_noc")
             cassette.rewind()
-            with self.assertNumQueries(18):
+
+            Licence.objects.create(
+                licence_number="PH0004983",
+                discs=0,
+                authorised_discs=0,
+            )  # First Kernow
+
+            with self.assertNumQueries(20):
                 call_command("import_noc")
 
         c2c = Operator.objects.get(noc="CC")

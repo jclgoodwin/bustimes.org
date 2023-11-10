@@ -53,6 +53,18 @@ def get_operator_codes(code_sources, noc, operator, noc_line):
     return operator_codes
 
 
+def get_operator_licences(operator, noc_line, licences_by_number):
+    licence_number = noc_line.findtext("Licence")
+    if licence_number in licences_by_number:
+        return [
+            Operator.licences.through(
+                operator=operator,
+                licence=licences_by_number[licence_number],
+            )
+        ]
+    return []
+
+
 class Command(BaseCommand):
     @transaction.atomic()
     def handle(self, **kwargs):
@@ -77,6 +89,8 @@ class Command(BaseCommand):
         operators = Operator.objects.prefetch_related(
             "operatorcode_set", "licences"
         ).in_bulk()
+
+        licences_by_number = Licence.objects.in_bulk(field_name="licence_number")
 
         with open(settings.BASE_DIR / "fixtures" / "operators.yaml") as open_file:
             overrides = yaml.load(open_file, Loader=yaml.BaseLoader)
@@ -110,7 +124,7 @@ class Command(BaseCommand):
         to_create = []
         to_update = []
         operator_codes = []
-        licences = []
+        operator_licences = []
 
         for e in element.find("NOCTable"):
             noc = e.findtext("NOCCODE").removeprefix("=")
@@ -179,17 +193,9 @@ class Command(BaseCommand):
                 operator_codes += get_operator_codes(
                     code_sources, noc, operator, noc_line
                 )
-                try:
-                    licences.append(
-                        Operator.licences.through(
-                            operator=operator,
-                            licence=Licence.objects.get(
-                                licence_number=noc_line.findtext("Licence")
-                            ),
-                        )
-                    )
-                except Licence.DoesNotExist:
-                    pass
+                operator_licences += get_operator_licences(
+                    operator, noc_line, licences_by_number
+                )
 
             else:
                 operator = operators[noc]
@@ -216,6 +222,10 @@ class Command(BaseCommand):
                     operator_codes += get_operator_codes(
                         code_sources, noc, operator, noc_line
                     )
+                if not operator.licences.all():
+                    operator_licences += get_operator_licences(
+                        operator, noc_line, licences_by_number
+                    )
 
             try:
                 operator.clean_fields(exclude=["noc", "slug", "region"])
@@ -232,4 +242,4 @@ class Command(BaseCommand):
         )
 
         OperatorCode.objects.bulk_create(operator_codes)
-        Licence.objects.bulk_create(licences)
+        Operator.licences.through.objects.bulk_create(operator_licences)
