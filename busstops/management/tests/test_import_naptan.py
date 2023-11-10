@@ -7,7 +7,7 @@ import vcr
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
-from ...models import AdminArea, DataSource, Locality, Region, StopPoint
+from ...models import AdminArea, DataSource, Locality, Region, StopArea, StopPoint
 
 
 class NaptanTest(TestCase):
@@ -27,6 +27,7 @@ class NaptanTest(TestCase):
         AdminArea.objects.create(
             id=92, atco_code="320", name="North Yorkshire", region_id="EA"
         )
+        AdminArea.objects.create(id=701, atco_code="701", name="Derry", region_id="EA")
         Locality.objects.create(id="E0017763", name="Old Catton", admin_area_id=91)
         # Locality.objects.create(id="E0017806", name="Berney Arms", admin_area_id=91)
         Locality.objects.create(id="N0078629", name="Neasham Road", admin_area_id=15)
@@ -39,14 +40,12 @@ class NaptanTest(TestCase):
 
         with TemporaryDirectory() as temp_dir:
             with vcr.use_cassette(str(fixtures_dir / "naptan.yml")) as cassette:
-
                 temp_dir_path = Path(temp_dir)
 
                 with override_settings(DATA_DIR=temp_dir_path):
-
                     self.assertFalse((temp_dir_path / "naptan.xml").exists())
 
-                    with self.assertNumQueries(24):
+                    with self.assertNumQueries(26):
                         call_command("naptan_new")
 
                     source = DataSource.objects.get(name="NaPTAN")
@@ -99,3 +98,7 @@ class NaptanTest(TestCase):
         # overriden stop
         stop = StopPoint.objects.get(atco_code="2900B482")
         self.assertEqual(str(stop), "green (adj) \u2199")
+
+        # stop area
+        stop = StopArea.objects.get(id="701GA00001")
+        self.assertEqual(stop.latlong.coords, (-6.96706899058396, 55.19115290579295))

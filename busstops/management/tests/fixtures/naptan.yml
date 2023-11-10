@@ -305,6 +305,23 @@ interactions:
       <AdministrativeAreaRef>092</AdministrativeAreaRef>
     </StopPoint>
   </StopPoints>
+  <StopAreas>
+    <StopArea CreationDateTime="2014-05-30T00:00:00.000" ModificationDateTime="2021-08-24T15:04:51.000" Modification="new" RevisionNumber="145" Status="active">
+      <StopAreaCode>701GA00001</StopAreaCode>
+      <Name xml:lang="en">Magilligan Ferry Port</Name>
+      <AdministrativeAreaRef>701</AdministrativeAreaRef>
+      <StopAreaType>GPBS</StopAreaType>
+      <Location>
+        <Translation>
+          <GridType>IrishOS</GridType>
+          <Easting>265836</Easting>
+          <Northing>438715</Northing>
+          <Longitude>-6.9661710</Longitude>
+          <Latitude>55.1911494</Latitude>
+        </Translation>
+      </Location>
+    </StopArea>
+  </StopAreas>
 </NaPTAN>'}
     headers:
       Content-Type: [application/zip]

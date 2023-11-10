@@ -36,10 +36,11 @@ def get_point(element, atco_code):
             case "ITM":
                 srid = 2157
             case "IrishOS":
-                if atco_code[0] == "8":
-                    srid = 2157
+                if atco_code[0] in "78":
+                    srid = 29902
                 else:
-                    # not actually in Ireland, must be a mistake
+                    # not actually in Ireland, may be a mistake?
+                    print(ET.tostring(element))
                     srid = 27700
             case "UKOS" | None:
                 srid = 27700
