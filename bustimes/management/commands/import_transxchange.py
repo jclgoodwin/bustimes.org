@@ -259,19 +259,15 @@ class Command(BaseCommand):
         if licence_number:
             try:
                 return Operator.objects.get(licences__licence_number=licence_number)
-            except Operator.DoesNotExist:
+            except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
                 pass
-            except Operator.MultipleObjectsReturned as e:
-                logger.error(e, exc_info=True)
 
         name = get_operator_name(operator_element)
 
         try:
             return Operator.objects.get(name__iexact=name)
-        except Operator.DoesNotExist:
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             pass
-        except Operator.MultipleObjectsReturned as e:
-            logger.error(e, exc_info=True)
 
         # Get by regional operator code
         operator_code = operator_element.findtext("OperatorCode")
