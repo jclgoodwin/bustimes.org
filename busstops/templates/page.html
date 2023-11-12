@@ -67,8 +67,9 @@ gtag('config', 'G-X2Z0KM7Z5C', {
 {% endblock %}
 <main>
     {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
-    <div id="content"></div>
-    {% block content %}{% endblock %}
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
 </main>
 
 {% block footer %}
