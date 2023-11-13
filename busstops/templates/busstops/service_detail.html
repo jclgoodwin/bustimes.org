@@ -59,20 +59,19 @@
 {% endif %}
 
 {% if fare_tables %}
-        <h2 id="fares">Fare tables</h2>
+    <h2 id="fares">Fare tables</h2>
 
-        <p>
-            <select id="fare-tables">
-                <option></option>
-                {% for table in fare_tables %}
-                    <option  value="{{ table.id }}">{{ table.tariff }}</option>
-                {% endfor %}
-            </select>
-            <noscript><input type="submit"></noscript>
-        </p>
+    <p>
+        <select id="fare-tables">
+            <option></option>
+            {% for table in fare_tables %}
+                <option  value="{{ table.id }}">{{ table.tariff }}</option>
+            {% endfor %}
+        </select>
+        <noscript><input type="submit"></noscript>
+    </p>
 
-        <div id="fare-table"></div>
-    </div>
+    <div id="fare-table"></div>
 {% endif %}
 
 {% if related %}
