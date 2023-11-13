@@ -42,7 +42,7 @@
         {% endif %}
 
         <div class="timetable-wrapper-wrapper">
-            {% if grouping.has_minor_stops and grouping.rows|length > 15 %}
+            {% if grouping.has_minor_stops and grouping.rows|length > 25 %}
                 <input type="checkbox" id="show-all-stops-{{ forloop.counter }}">
                 <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
             {% endif %}
