@@ -341,6 +341,14 @@ export default function TripMap() {
     const map = event.target;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+
+    const image = new Image();
+    image.src = routeStopMarker;
+    image.onload = function () {
+      map.addImage("stop", image, {
+        pixelRatio: 2,
+      });
+    };
   }, []);
 
   const clickedVehicle =
@@ -368,7 +376,6 @@ export default function TripMap() {
           onClick={handleMapClick}
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
-          images={[routeStopMarker]}
         >
           <Route times={trip.times} />
 

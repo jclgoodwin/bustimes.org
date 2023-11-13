@@ -360,6 +360,22 @@ export default function JourneyMap({
     mapRef.current = map;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+
+    const image = new Image();
+    image.src = routeStopMarker;
+    image.onload = function () {
+      map.addImage("stop", image, {
+        pixelRatio: 2,
+      });
+    };
+
+    const arrowImage = new Image();
+    arrowImage.src = arrow;
+    arrowImage.onload = function () {
+      map.addImage("arrow", arrowImage, {
+        pixelRatio: 2,
+      });
+    };
   }, []);
 
   const bounds = React.useMemo((): LngLatBounds | null => {
@@ -414,7 +430,6 @@ export default function JourneyMap({
             onClick={handleMapClick}
             onLoad={handleMapLoad}
             interactiveLayerIds={["stops", "locations"]}
-            images={[routeStopMarker, arrow]}
           >
             {journey.stops ? <Stops stops={journey.stops} /> : null}
 
