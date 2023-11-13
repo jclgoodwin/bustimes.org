@@ -126,7 +126,7 @@ function Stops({ stops, clickedStopUrl, setClickedStop }: StopsProps) {
 }
 
 function fetchJson(what: string, bounds: LngLatBounds) {
-  const url = "/" + what + ".json" + getBoundsQueryString(bounds);
+  const url = apiRoot + what + ".json" + getBoundsQueryString(bounds);
 
   return fetch(url).then(
     (response) => {
@@ -417,14 +417,6 @@ export default function BigMap() {
       }
     }
     setZoom(zoom);
-
-    const image = new Image();
-    image.src = stopMarker;
-    image.onload = function () {
-      map.addImage("stop", image, {
-        pixelRatio: 2,
-      });
-    };
   };
 
   const [cursor, setCursor] = React.useState("");
@@ -450,6 +442,7 @@ export default function BigMap() {
       onMouseLeave={onMouseLeave}
       cursor={cursor}
       onLoad={handleMapLoad}
+      images={[stopMarker]}
       interactiveLayerIds={["stops", "vehicles"]}
     >
       {stops && showStops ? (
