@@ -15,19 +15,17 @@
         }
 
         #content {
-            bottom: 0;
-            max-width: 100%;
-            margin: 0;
-            padding: 0;
-            position: absolute;
-            top: 3.5em;
-            width: 100%;
+            height: calc(100vh - 3.5em);
         }
 
         @media (min-height: 480px) {
-            .wide main {
-                bottom: 100px;
+            #content {
+                height: calc(100vh - 3.5em - 90px);
             }
+        }
+
+        #content + div[data-ub-carousel="true"] { /* unblockio */
+            margin: 0 auto;
         }
     </style>
 {% endblock %}

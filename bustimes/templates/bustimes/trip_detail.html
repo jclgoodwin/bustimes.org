@@ -10,16 +10,26 @@
         border: 0;
     }
 
+    #content {
+        height: calc(100vh - 12.5em);
+    }
+
+
+
     @media (min-width: 48em) {
         footer ul {
             border: 0;
+        }
+
+        footer .user {
+            display: none;
         }
 
         footer {
             bottom: 0;
             position: absolute;
             width: 100%;
-            z-index: -1;
+
         }
     }
 
