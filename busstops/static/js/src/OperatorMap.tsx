@@ -26,7 +26,7 @@ function getBounds(items: Vehicle[]) {
 export default function OperatorMap({ noc }: OperatorMapProps) {
   const [vehiclesList, setVehicles] = React.useState<Vehicle[]>();
 
-  const vehiclesById = React.useMemo<{ [id: string] : Vehicle; }>(() => {
+  const vehiclesById = React.useMemo<{ [id: string]: Vehicle }>(() => {
     if (vehiclesList) {
       return Object.assign(
         {},

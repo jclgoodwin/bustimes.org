@@ -1,27 +1,39 @@
 import React from "react";
 import { captureException } from "@sentry/react";
 
-
 import Map, {
   NavigationControl,
-  GeolocateControl
+  GeolocateControl,
 } from "react-map-gl/maplibre";
 import type { Map as MapType } from "maplibre-gl";
 
+import stopMarker from "data-url:../../stop-marker.png";
+import routeStopMarker from "data-url:../../route-stop-marker.png";
+import arrow from "data-url:../../arrow.png";
+
+const images: { [imageName: string]: string } = {
+  "stop-marker": stopMarker,
+  "route-stop-marker": routeStopMarker,
+  arrow: arrow
+};
+
 export default function BusTimesMap(props: any) {
-  const mapRef = React.useCallback((map: MapType) => {
-    if (map) {
-      for (let src of props.images) {
-        const image = new Image();
-        image.src = src;
-        image.onload = function () {
-          map.addImage("stop", image, {
-            pixelRatio: 2,
-          });
-        };
+  const mapRef = React.useCallback(
+    (map: MapType) => {
+      if (map && props.images) {
+        for (let imageName of props.images) {
+          const image = new Image();
+          image.src = images[imageName];
+          image.onload = function () {
+            map.addImage(imageName, image, {
+              pixelRatio: 2,
+            });
+          };
+        }
       }
-    }
-  }, [props.images]);
+    },
+    [props.images],
+  );
 
   return (
     <Map

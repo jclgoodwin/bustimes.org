@@ -10,8 +10,6 @@ import {
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
-import stopMarker from "data-url:../../stop-marker.png";
-
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup, { Stop } from "./StopPopup";
@@ -80,7 +78,7 @@ type StopsProps = {
 };
 
 function Stops({ stops, clickedStopUrl, setClickedStop }: StopsProps) {
-  const stopsById = React.useMemo<{ [url: string] : Stop; }>(() => {
+  const stopsById = React.useMemo<{ [url: string]: Stop }>(() => {
     return Object.assign(
       {},
       ...stops.features.map((stop) => ({ [stop.properties.url]: stop })),
@@ -103,7 +101,7 @@ function Stops({ stops, clickedStopUrl, setClickedStop }: StopsProps) {
               "text-allow-overlap": true,
               "text-size": 10,
               "icon-rotate": ["+", 45, ["get", "bearing"]],
-              "icon-image": "stop",
+              "icon-image": "stop-marker",
               "icon-allow-overlap": true,
               "icon-ignore-placement": true,
               "text-ignore-placement": true,
@@ -151,7 +149,7 @@ const Vehicles = memo(function Vehicles({
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
 }: VehiclesProps) {
-  const vehiclesById = React.useMemo<{ [id: string] : Vehicle; }>(() => {
+  const vehiclesById = React.useMemo<{ [id: string]: Vehicle }>(() => {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
   }, [vehicles]);
 
@@ -442,7 +440,7 @@ export default function BigMap() {
       onMouseLeave={onMouseLeave}
       cursor={cursor}
       onLoad={handleMapLoad}
-      images={[stopMarker]}
+      images={["stop-marker"]}
       interactiveLayerIds={["stops", "vehicles"]}
     >
       {stops && showStops ? (
@@ -463,9 +461,9 @@ export default function BigMap() {
 
       {zoom && (!showStops || loadingBuses || loadingStops) ? (
         <div className="maplibregl-ctrl map-status-bar">
-          {!showStops ? "Zoom in to see stops" : null }
+          {!showStops ? "Zoom in to see stops" : null}
           {!showBuses ? <div>Zoom in to see buses</div> : null}
-          { loadingBuses || loadingStops ? <div>Loading…</div> : null}
+          {loadingBuses || loadingStops ? <div>Loading…</div> : null}
         </div>
       ) : null}
     </BusTimesMap>

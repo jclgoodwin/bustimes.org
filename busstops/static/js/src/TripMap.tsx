@@ -8,8 +8,6 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import routeStopMarker from "data-url:../../route-stop-marker.png";
-
 import { useRoute } from "wouter";
 import { navigate } from "wouter/use-location";
 
@@ -37,7 +35,7 @@ const stopsStyle: LayerProps = {
   type: "symbol",
   layout: {
     "icon-rotate": ["+", 45, ["get", "bearing"]],
-    "icon-image": "stop",
+    "icon-image": "route-stop-marker",
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,
   },
@@ -368,7 +366,7 @@ export default function TripMap() {
           onClick={handleMapClick}
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
-          images={[routeStopMarker]}
+          images={["route-stop-marker"]}
         >
           <Route times={trip.times} />
 

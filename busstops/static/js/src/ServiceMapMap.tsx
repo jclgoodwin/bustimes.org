@@ -8,8 +8,6 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import routeStopMarker from "data-url:../../route-stop-marker.png";
-
 import StopPopup, { Stop } from "./StopPopup";
 import VehicleMarker, { Vehicle } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
@@ -50,7 +48,7 @@ export default function ServiceMapMap({
     setCursor("");
   }, []);
 
-  const vehiclesById = React.useMemo<{ [id: string] : Vehicle; }>(() => {
+  const vehiclesById = React.useMemo<{ [id: string]: Vehicle }>(() => {
     if (vehicles) {
       return Object.assign(
         {},
@@ -112,7 +110,7 @@ export default function ServiceMapMap({
     type: "symbol",
     layout: {
       "icon-rotate": ["+", 45, ["get", "bearing"]],
-      "icon-image": "stop",
+      "icon-image": "route-stop-marker",
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
     },
@@ -132,19 +130,19 @@ export default function ServiceMapMap({
       onClick={handleMapClick}
       onLoad={handleMapLoad}
       interactiveLayerIds={["stops"]}
-      images={[routeStopMarker]}
+      images={["route-stop-marker"]}
     >
-      {vehicles ? (
-        vehicles.map((item) => {
-          return (
-            <VehicleMarker
-              key={item.id}
-              selected={item === clickedVehicle}
-              vehicle={item}
-            />
-          );
-        })
-      ) : null}
+      {vehicles
+        ? vehicles.map((item) => {
+            return (
+              <VehicleMarker
+                key={item.id}
+                selected={item === clickedVehicle}
+                vehicle={item}
+              />
+            );
+          })
+        : null}
 
       {clickedVehicle ? (
         <VehiclePopup

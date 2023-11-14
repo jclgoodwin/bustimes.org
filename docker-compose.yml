@@ -14,6 +14,7 @@ services:
       # - PYTHONWARNINGS=all
     volumes:
       - .:/app
+      - ../bustimes-static:/staticfiles
     ports:
       - "8000:8000"
       - "35729:35729"

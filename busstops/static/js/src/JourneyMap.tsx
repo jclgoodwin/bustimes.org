@@ -11,9 +11,6 @@ import {
 
 import BusTimesMap from "./Map";
 
-import routeStopMarker from "data-url:../../route-stop-marker.png";
-import arrow from "data-url:../../arrow.png";
-
 import { LngLatBounds } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
@@ -70,7 +67,7 @@ const stopsStyle: LayerProps = {
   type: "symbol",
   layout: {
     "icon-rotate": ["+", 45, ["get", "heading"]],
-    "icon-image": "stop",
+    "icon-image": "route-stop-marker",
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,
   },
@@ -414,7 +411,7 @@ export default function JourneyMap({
             onClick={handleMapClick}
             onLoad={handleMapLoad}
             interactiveLayerIds={["stops", "locations"]}
-            images={[routeStopMarker, arrow]}
+            images={["route-stop-marker", "arrow"]}
           >
             {journey.stops ? <Stops stops={journey.stops} /> : null}
 
