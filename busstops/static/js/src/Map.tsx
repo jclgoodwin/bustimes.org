@@ -4,8 +4,8 @@ import { captureException } from "@sentry/react";
 import Map, {
   NavigationControl,
   GeolocateControl,
+  MapEvent
 } from "react-map-gl/maplibre";
-import type { Map as MapType } from "maplibre-gl";
 
 import stopMarker from "data-url:../../stop-marker.png";
 import routeStopMarker from "data-url:../../route-stop-marker.png";
@@ -18,27 +18,33 @@ const images: { [imageName: string]: string } = {
 };
 
 export default function BusTimesMap(props: any) {
-  const mapRef = React.useCallback(
-    (map: MapType) => {
-      if (map && props.images) {
-        for (let imageName of props.images) {
-          const image = new Image();
-          image.src = images[imageName];
-          image.onload = function () {
-            map.addImage(imageName, image, {
-              pixelRatio: 2,
-            });
-          };
-        }
+  const imageNames = props.images;
+  const onLoad = props.onLoad;
+
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
+    if (imageNames) {
+      const map = event.target;
+
+      for (let imageName of imageNames) {
+        const image = new Image();
+        image.src = images[imageName];
+        image.onload = function () {
+          map.addImage(imageName, image, {
+            pixelRatio: 2,
+          });
+        };
       }
-    },
-    [props.images],
-  );
+    }
+
+    if (onLoad) {
+      onLoad(event);
+    }
+  }, [imageNames, onLoad]);
 
   return (
     <Map
       {...props}
-      ref={mapRef}
+      onLoad={handleMapLoad}
       touchPitch={false}
       pitchWithRotate={false}
       dragRotate={false}
