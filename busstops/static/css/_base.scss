@@ -1415,7 +1415,8 @@ nav {
         pointer-events: none;
         z-index: 9999;
 
-        #AFM_inContentTop_ad {
+        iframe {
+            background: var(--background-color);
             pointer-events: auto;
         }
     }

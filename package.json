@@ -43,7 +43,10 @@
   "targets": {
     "css": {
       "source": "busstops/static/css/style.scss",
-      "distDir": "busstops/static/css/dist"
+      "distDir": "busstops/static/css/dist",
+      "engines": {
+        "browsers": "Chrome 71"
+      }
     },
     "js": {
       "source": [
