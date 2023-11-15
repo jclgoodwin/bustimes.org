@@ -107,15 +107,6 @@ class Command(BaseCommand):
             assert e_id not in public_names
             public_names[e_id] = e
 
-        # for e in element:
-        #     print(e)
-
-        # operators_by_id = {}
-        # for e in element.find("Operators"):
-        #     e_id = e.findtext("OpId")
-        #     assert e_id not in operators_by_id
-        #     operators_by_id[e_id] = e
-
         noc_lines = {
             line.findtext("NOCCODE").removeprefix("="): line
             for line in element.find("NOCLines")
@@ -166,8 +157,6 @@ class Command(BaseCommand):
                     name = override["name"]
 
             if noc not in operators:
-                # print(noc, e.findtext("OperatorPublicName"), e.findtext("VOSA_PSVLicenseName"), op.findtext("OpNm"))
-
                 operators[noc] = Operator(
                     noc=noc,
                     name=name,
@@ -198,13 +187,9 @@ class Command(BaseCommand):
                 )
 
             else:
+                # update existing operator
+
                 operator = operators[noc]
-
-                # if operator.name != name:
-                #     print(operator.name, name)
-
-                # if operators[noc].name != public_name.findtext("OperatorPublicName"):
-                # print(operators[noc], ET.tostring(public_name))
 
                 if (
                     name != operator.name
@@ -218,10 +203,6 @@ class Command(BaseCommand):
                     operator.vehicle_mode = vehicle_mode
                     to_update.append(operator)
 
-                if not operator.operatorcode_set.all():
-                    operator_codes += get_operator_codes(
-                        code_sources, noc, operator, noc_line
-                    )
                 if not operator.licences.all():
                     operator_licences += get_operator_licences(
                         operator, noc_line, licences_by_number
