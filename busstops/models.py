@@ -583,7 +583,7 @@ class OperatorCode(models.Model):
     code = models.CharField(max_length=100, db_index=True)
 
     class Meta:
-        unique_together = ("code", "source")
+        unique_together = ("operator", "code", "source")
 
     def __str__(self):
         return self.code
