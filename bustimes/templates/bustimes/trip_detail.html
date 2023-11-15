@@ -11,8 +11,9 @@
     }
 
     @media (min-width: 48em) {
-        #content {
-            height: calc(100vh - 12.5em);
+        main:has(#content + div) #content {
+            height: calc(100vh - 146px);
+            margin: 0;
         }
 
         footer ul {
