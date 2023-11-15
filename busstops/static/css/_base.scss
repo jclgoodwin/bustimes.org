@@ -1295,10 +1295,6 @@ time,
     font-variant-numeric: tabular-nums;
 }
 
-#hugemap {
-    height: 100%;
-}
-
 .message {
     border: 1px solid var(--border-color);
     padding: 1em;
@@ -1412,8 +1408,22 @@ nav {
     }
 }
 
-#content + div[data-ub-carousel="true"] { // unblockio
-    margin: 1em auto;
+@media (min-height: 480px) {
+    .ad-wrapper {
+        position: sticky;
+        top: 0;
+        pointer-events: none;
+        z-index: 9999;
+        background: hotpink;
+
+        #AFM_inContentTop_ad {
+            pointer-events: auto;
+        }
+    }
+}
+
+#content {
+    margin-bottom: 1.5em;
 }
 
 body.has-overlay {

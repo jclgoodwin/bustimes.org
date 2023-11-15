@@ -14,18 +14,16 @@
             padding: 0;
         }
 
+        #hugemap {
+            position: absolute;
+            top: 56px;  /* header */
+            width: 100%;
+            bottom: 90px;
+        }
+
         #content {
-            height: calc(100vh - 3.5em);
-        }
-
-        @media (min-height: 480px) {
-            #content {
-                height: calc(100vh - 3.5em - 90px);
-            }
-        }
-
-        #content + div[data-ub-carousel="true"] { /* unblockio */
-            margin: 0 auto;
+            height: calc(100vh - 146px);
+            margin: 0;
         }
     </style>
 {% endblock %}
