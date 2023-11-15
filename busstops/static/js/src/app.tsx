@@ -29,11 +29,12 @@ Sentry.init({
     "Origin https://bustimes.org is not allowed by Access-Control-Allow-Origin.",
     "Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'https://t.richaudience.com/",
   ],
-   integrations: [
+  integrations: [
     new Sentry.Integrations.GlobalHandlers({
       onerror: true,
       onunhandledrejection: false,
-    })
+    }),
+  ],
 });
 
 declare global {
