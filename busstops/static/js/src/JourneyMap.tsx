@@ -357,6 +357,13 @@ export default function JourneyMap({
     mapRef.current = map;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+
+    if (bounds) {
+      map.fitBounds(bounds, {
+        padding: 50,
+      });
+
+    }
   }, []);
 
   const bounds = React.useMemo((): LngLatBounds | null => {
