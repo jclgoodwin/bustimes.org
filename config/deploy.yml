@@ -15,9 +15,10 @@ builder:
 # Credentials for your image host.
 registry:
   # Specify the registry server, if you're not using Docker Hub
-  server: ghcr.io
-  username: jclgoodwin
+  server: registry.digitalocean.com/hobsbawm
   # see https://github.com/settings/tokens
+  username:
+    - KAMAL_REGISTRY_PASSWORD
   password:
     - KAMAL_REGISTRY_PASSWORD
 
