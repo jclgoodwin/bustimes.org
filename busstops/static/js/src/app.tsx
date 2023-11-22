@@ -42,7 +42,12 @@ declare global {
     SERVICE_ID: number;
     STOPS: Trip;
     OPERATOR_ID: string;
+    globalThis: Window
   }
+}
+
+if (typeof window.globalThis === "undefined") {
+  window.globalThis = window;
 }
 
 const error = <div className="sorry">Sorry, something has gone wrong</div>;
