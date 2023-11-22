@@ -1,5 +1,5 @@
 import React from "react";
-import { captureException } from "@sentry/react";
+// import { captureException } from "@sentry/react";
 
 import Map, {
   NavigationControl,
@@ -55,7 +55,7 @@ export default function BusTimesMap(props: any) {
       maxZoom={18}
       mapStyle="https://tiles.stadiamaps.com/styles/alidade_smooth.json"
       RTLTextPlugin={""}
-      onError={(e) => captureException(e.error)}
+      // onError={(e) => captureException(e.error)}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
