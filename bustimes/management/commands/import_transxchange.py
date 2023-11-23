@@ -1165,14 +1165,14 @@ class Command(BaseCommand):
                 service_created = True
             service.save()
 
-            if not service_created:
-                if (
-                    "_" in service.slug
-                    or "-" not in service.slug
-                    or not existing_current_service
-                ):
-                    service.slug = ""
-                    service.save(update_fields=["slug"])
+            # if not service_created:
+            #     if (
+            #         "_" in service.slug
+            #         or "-" not in service.slug
+            #         or not existing_current_service
+            #     ):
+            #         service.slug = ""
+            #         service.save(update_fields=["slug"])
 
             if operators:
                 if existing and not existing_current_service:
