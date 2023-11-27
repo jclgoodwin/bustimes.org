@@ -186,6 +186,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "buses.context_processors.ad",
+                "vehicles.context_processors.liveries_css_version",
             ],
             "loaders": [
                 (

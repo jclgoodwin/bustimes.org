@@ -41,7 +41,6 @@ from busstops.models import (
 from departures import avl, gtfsr, live
 from vehicles.models import Vehicle
 from vehicles.rtpi import add_progress_and_delay
-from vehicles.utils import liveries_css_version
 
 from .download_utils import download
 from .models import Garage, Route, StopTime, Trip
@@ -442,8 +441,6 @@ class TripDetailView(DetailView):
         stops_json = JSONRenderer().render(trip_serializer.data)
 
         context["stops_json"] = mark_safe(stops_json.decode())
-
-        context["liveries_css_version"] = liveries_css_version()
 
         return context
 

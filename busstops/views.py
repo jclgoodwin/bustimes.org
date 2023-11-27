@@ -36,7 +36,7 @@ from departures import live
 from disruptions.models import Consequence, Situation
 from fares.models import FareTable
 from vehicles.models import Vehicle
-from vehicles.utils import liveries_css_version, redis_client
+from vehicles.utils import redis_client
 from vosa.models import Registration
 
 from . import forms
@@ -1066,8 +1066,6 @@ class ServiceDetailView(DetailView):
             ]
         except (Region.DoesNotExist, Region.MultipleObjectsReturned):
             context["breadcrumb"] = [self.object.region]
-
-        context["liveries_css_version"] = liveries_css_version()
 
         context["links"] = []
 

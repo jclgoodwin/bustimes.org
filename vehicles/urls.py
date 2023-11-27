@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic.base import TemplateView
 
 from . import views
 
@@ -54,8 +55,8 @@ urlpatterns = [
         name="service_journey",
     ),
     path("liveries.<int:version>.css", views.liveries_css),
-    path("map", views.map, name="map"),
-    path("maps", views.map),
-    path("map/old", views.map_classic),
+    path("map", TemplateView.as_view(template_name="map.html"), name="map"),
+    path("maps", TemplateView.as_view(template_name="map.html")),
+    path("map/old", TemplateView.as_view(template_name="map_classic.html")),
     path("siri/<uuid:uuid>", views.siri_post),
 ]

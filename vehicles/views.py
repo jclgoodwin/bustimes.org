@@ -57,7 +57,6 @@ from .utils import (  # calculate_bearing,
     do_revision,
     do_revisions,
     get_vehicle_edit,
-    liveries_css_version,
     redis_client,
 )
 
@@ -116,28 +115,6 @@ def vehicles(request):
             "status": list(status),
             "new_operators": list(new_operators),
             "operators": list(operators),
-        },
-    )
-
-
-@require_GET
-def map(request):
-    return render(
-        request,
-        "map.html",
-        {
-            "liveries_css_version": liveries_css_version(),
-        },
-    )
-
-
-@require_GET
-def map_classic(request):
-    return render(
-        request,
-        "map_classic.html",
-        {
-            "liveries_css_version": liveries_css_version(),
         },
     )
 
@@ -337,7 +314,6 @@ def operator_vehicles(request, slug=None, parent=None):
         ),
         "garage_column": len(garage_names) > 1,
         "form": form,
-        "liveries_css_version": liveries_css_version(),
     }
 
     return render(request, "operator_vehicles.html", context)
@@ -355,7 +331,6 @@ def operator_map(request, slug):
             "object": operator,
             "operator": operator,
             "breadcrumb": [operator.region, operator],
-            "liveries_css_version": liveries_css_version(),
         },
     )
 
@@ -1022,7 +997,6 @@ def vehicle_edits(request):
             "parameters": parameters,
             "toggle_order": toggle_order,
             "edits": page,
-            "liveries_css_version": liveries_css_version(),
         },
     )
 
