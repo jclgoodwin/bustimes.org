@@ -167,7 +167,7 @@ Disallow: /fares/
 Disallow: /vehicles/tfl/
 Disallow: /*?date=*
 Disallow: /services/*/*
-Disallow: /vehicles/*?cursor=*
+Disallow: /sources
 Disallow: /*/debug
 
 User-agent: GPTBot

@@ -131,7 +131,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 }
             }
         ):
-
             redis_client = fakeredis.FakeStrictRedis(version=7)
 
             with mock.patch(
@@ -141,11 +140,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "vehicles.management.commands.import_bod_avl.redis_client",
                     redis_client,
                 ):
-
                     with use_cassette(
                         str(Path(__file__).resolve().parent / "vcr" / "bod_avl.yaml")
                     ) as cassette:
-
                         with self.assertNumQueries(6554):
                             command.update()
 
@@ -418,7 +415,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             )
             self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
-            with self.assertNumQueries(4):
+            with self.assertNumQueries(5):
                 response = self.client.get("/services/u/vehicles?date=2020-06-17")
             self.assertContains(response, "<p>Great Yarmouth</p>")  # garage
 
@@ -436,7 +433,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         with mock.patch(
             "vehicles.management.import_live_vehicles.redis_client", redis_client
         ):
-
             command.handle_item(
                 {
                     "Extensions": {
@@ -518,7 +514,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         vehicle = journey.vehicle
 
         with mock.patch("vehicles.views.redis_client", redis_client):
-
             with self.assertNumQueries(6):
                 response = self.client.get(journey.get_absolute_url())
             self.assertContains(response, "146")

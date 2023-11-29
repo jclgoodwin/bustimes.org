@@ -70,7 +70,6 @@ class GTFSTest(TestCase):
 
     def test_import_gtfs(self):
         with TemporaryDirectory() as directory:
-
             make_zipfile(directory, "Seamus_Doherty")
             make_zipfile(directory, "Mortons")
             make_zipfile(directory, "Wexford_Bus")
@@ -80,7 +79,6 @@ class GTFSTest(TestCase):
             ) as cassette, override_settings(DATA_DIR=Path(directory)), self.assertLogs(
                 "bustimes.download_utils", "ERROR"
             ) as cm:
-
                 call_command(
                     "import_gtfs", ["Mortons", "Wexford Bus", "Seamus Doherty"]
                 )
@@ -149,7 +147,7 @@ class GTFSTest(TestCase):
             datetime.date(2020, 12, 3),
         ):
             with time_machine.travel(day):
-                with self.assertNumQueries(16):
+                with self.assertNumQueries(15):
                     response = self.client.get(f"/services/165?date={day}")
                 timetable = response.context_data["timetable"]
                 self.assertEqual(day, timetable.date)

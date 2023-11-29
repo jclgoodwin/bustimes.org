@@ -1123,16 +1123,6 @@ class ImportTransXChangeTest(TestCase):
             """<div style="background:#c0c0c0;color:#111111">Navy Blue Line</div>""",
         )
 
-        response = self.client.get("/status")
-        self.assertContains(
-            response,
-            """<tr>
-                <th scope="row">S</th>
-                <td>1</td>
-                <td>None</td>
-            </tr>""",
-        )
-
         # set current=False and re-import - should reset operator etc:
         service.operator.add(self.fecs)
         service.current = False

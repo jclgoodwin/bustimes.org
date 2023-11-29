@@ -231,25 +231,6 @@
 
 <h2>TNDS</h2>
 
-<p>Compare to the <a href="https://www.travelinedata.org.uk/traveline-open-data/data-reporting/">Traveline data reporting page</a></p>
-
-<table>
-    <thead>
-        <tr>
-            <th scope="col"></th>
-            <th scope="col">Services</th>
-            <th scope="col">Updated</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for source in tnds %}
-            <tr>
-                <th scope="row">{{ source.name }}</th>
-                <td>{{ source.count }}</td>
-                <td>{{ source.datetime }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<p>See <a href="/sources">timetable data sources</a></p>
 
 {% endblock %}

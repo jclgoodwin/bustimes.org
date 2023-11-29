@@ -134,7 +134,7 @@ class SiriSXTest(TestCase):
             "Towards Manchester the 142 service will begin outside Didsbury Cricket club . ",
         )
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(13):
             response = self.client.get("/services/156")
 
         self.assertContains(
