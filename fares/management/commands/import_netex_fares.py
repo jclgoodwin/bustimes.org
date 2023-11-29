@@ -168,9 +168,10 @@ class Command(BaseCommand):
             price_element = price_group_element.find(
                 "members/GeographicalIntervalPrice"
             )  # assume only 1 ~
-            price = models.Price(amount=price_element.findtext("Amount"))
-            price_groups[price_group_element.attrib["id"]] = price
-            price_group_prices[price_element.attrib["id"]] = price
+            if price_element is not None:
+                price = models.Price(amount=price_element.findtext("Amount"))
+                price_groups[price_group_element.attrib["id"]] = price
+                price_group_prices[price_element.attrib["id"]] = price
         models.Price.objects.bulk_create(price_groups.values())
 
         fare_zones = get_fare_zones(
@@ -260,7 +261,6 @@ class Command(BaseCommand):
                 )
                 if distance_matrix_element_elements:
                     for distance_matrix_element in distance_matrix_element_elements:
-
                         price_group_ref = distance_matrix_element.find(
                             "priceGroups/PriceGroupRef"
                         )
@@ -491,7 +491,6 @@ class Command(BaseCommand):
                         cells_element = sub_sub_fare_table_element.find("cells")
                         if cells_element:
                             for cell_element in cells_element:
-
                                 time_interval_price = cell_element.find(
                                     "TimeIntervalPrice"
                                 )
@@ -556,7 +555,6 @@ class Command(BaseCommand):
         logger.info(dataset)
 
         with log_time_taken(logger):
-
             try:
                 dataset.operators.set(item["noc"])
             except IntegrityError:
@@ -614,7 +612,6 @@ class Command(BaseCommand):
         logger.info(noc)
 
         with log_time_taken(logger):
-
             dataset.tariff_set.all().delete()
 
             self.user_profiles = {}
