@@ -4,6 +4,7 @@ import logging
 from itertools import pairwise
 from urllib.parse import urlencode
 
+import xmltodict
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.gis.geos import GEOSException, Point
@@ -1306,6 +1307,20 @@ def siri_post(request, uuid):
     subscription = get_object_or_404(SiriSubscription, uuid=uuid)
     subscription.sample = request.body.decode()
     subscription.save(update_fields=["sample"])
+
+    command = import_bod_avl.Command()
+    command.source_name = subscription.name
+    command.do_source()
+
+    body = request.body.decode()
+    data = xmltodict.parse(body, dict_constructor=dict, force_list=["VehicleActivity"])
+    for item in data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
+        "VehicleActivity"
+    ]:
+        command.handle_item(item)
+
+    command.save()
+
     return HttpResponse(
         f"""<Siri xmlns="http://www.siri.org.uk/siri">
   <DataReceivedAcknowledgement>
