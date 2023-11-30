@@ -141,7 +141,6 @@ class Command(BaseCommand):
         return StopPoint.objects.only("atco_code").in_bulk(stops), stops_not_created
 
     def handle_route(self, line):
-
         line_name = line["route_short_name"]
         description = line["route_long_name"]
         if not line_name and " " not in description:
@@ -264,9 +263,7 @@ class Command(BaseCommand):
             previous_line = None
             # use stop_times.txt to calculate trips' start times, end times and destinations:
             for line in read_file(archive, "stop_times.txt"):
-
                 if not previous_line or previous_line["trip_id"] != line["trip_id"]:
-
                     # shape = self.shapes[trip_shapes[line["trip_id"]]]
 
                     if trip:
@@ -443,13 +440,17 @@ class Command(BaseCommand):
 
         for service in services:
             if service.id in self.service_shapes:
-                linestrings = [
-                    LineString(*[point[0] for point in self.shapes[shape]])
-                    for shape in self.service_shapes[service.id]
-                    if shape in self.shapes
-                ]
-                service.geometry = MultiLineString(*linestrings)
-                service.save(update_fields=["geometry"])
+                try:
+                    linestrings = [
+                        LineString(*[point[0] for point in self.shapes[shape]])
+                        for shape in self.service_shapes[service.id]
+                        if shape in self.shapes
+                    ]
+                except TypeError as e:
+                    print(e)
+                else:
+                    service.geometry = MultiLineString(*linestrings)
+                    service.save(update_fields=["geometry"])
             else:
                 pass
 
@@ -517,7 +518,6 @@ class Command(BaseCommand):
                 and last_modified != source.datetime
                 or options["collections"]
             ):
-
                 logger.info(f"{source} {last_modified}")
                 if last_modified:
                     source.datetime = last_modified
