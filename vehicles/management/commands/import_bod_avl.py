@@ -720,7 +720,7 @@ class Command(ImportLiveVehiclesCommand):
 
         self.save()
 
-    def get_changed_items(self):
+    def get_changed_items(self, items=None):
         changed_items = []
         changed_journey_items = []
         changed_item_identities = []
@@ -730,7 +730,7 @@ class Command(ImportLiveVehiclesCommand):
 
         total_items = 0
 
-        for i, item in enumerate(self.get_items()):
+        for i, item in enumerate(items or self.get_items()):
             vehicle_identity = self.get_vehicle_identity(item)
 
             journey_identity = self.get_journey_identity(item)

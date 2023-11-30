@@ -1318,12 +1318,20 @@ def siri_post(request, uuid):
     if "HeartbeatNotification" in data["Siri"]:
         pass
     else:
-        for item in data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
+        items = data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
             "VehicleActivity"
-        ]:
-            command.handle_item(item)
+        ]
 
-        command.save()
+        (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        ) = command.get_changed_items(items)
+
+        command.handle_items(changed_items, changed_item_identities)
+        command.handle_items(changed_journey_items, changed_journey_identities)
 
     return HttpResponse(
         f"""<Siri xmlns="http://www.siri.org.uk/siri">
