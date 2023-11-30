@@ -1,0 +1,23 @@
+{% extends 'page.html' %}
+
+{% block title %}Jobs – bustimes.org{% endblock %}
+
+{% block canonical %}
+    <link rel="canonical" href="https://bustimes.org/jobs">
+{% endblock %}
+
+{% block bodyclass %}narrow{% endblock %}
+
+{% block content %}
+
+{% load email_obfuscator %}
+
+<h1>Jobs</h1>
+
+<p>Come and work on bustimes.org, the #3 UK ground transportation website (according to <a href="https://www.similarweb.com/website/bustimes.org/#overview">SimilarWeb</a>).</p>
+
+<p>You don’t need to have experience of any of our <a href="https://github.com/jclgoodwin/bustimes.org">technology stack</a> (Python, Django, TypeScript, React) or public transport data, but it might be relevant if you do.</p>
+
+I have no positions to advertise yet, but if you’re already interested &hellip; {{ 'careeeers@bustimes.org'|obfuscate_mailto }}.
+
+{% endblock %}
