@@ -1314,12 +1314,16 @@ def siri_post(request, uuid):
 
     body = request.body.decode()
     data = xmltodict.parse(body, dict_constructor=dict, force_list=["VehicleActivity"])
-    for item in data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
-        "VehicleActivity"
-    ]:
-        command.handle_item(item)
 
-    command.save()
+    if "HeartbeatNotification" in data["Siri"]:
+        pass
+    else:
+        for item in data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
+            "VehicleActivity"
+        ]:
+            command.handle_item(item)
+
+        command.save()
 
     return HttpResponse(
         f"""<Siri xmlns="http://www.siri.org.uk/siri">
