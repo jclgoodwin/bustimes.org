@@ -793,12 +793,7 @@ class Command(ImportLiveVehiclesCommand):
             )
         )
         bod_status = bod_status[-50:]
-        cache.set_many(
-            {
-                "bod_avl_status": bod_status,
-            },
-            None,
-        )
+        cache.set("bod_avl_status", bod_status, None)
 
         time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")

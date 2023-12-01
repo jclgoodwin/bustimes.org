@@ -1304,6 +1304,8 @@ def debug(request):
 @csrf_exempt
 @require_POST
 def siri_post(request, uuid):
+    now = timezone.now()
+
     subscription = get_object_or_404(SiriSubscription, uuid=uuid)
     subscription.sample = request.body.decode()
     subscription.save(update_fields=["sample"])
@@ -1333,10 +1335,23 @@ def siri_post(request, uuid):
         command.handle_items(changed_items, changed_item_identities)
         command.handle_items(changed_journey_items, changed_journey_identities)
 
+        # stats for last 10 updates:
+        stats = cache.get("tfw_status", [])
+        stats.append(
+            (
+                timezone.now(),
+                now,
+                total_items,
+                len(changed_items) + len(changed_journey_items),
+            )
+        )
+        stats = stats[-50:]
+        cache.set("tfw_status", stats, None)
+
     return HttpResponse(
         f"""<Siri xmlns="http://www.siri.org.uk/siri">
   <DataReceivedAcknowledgement>
-    <ResponseTimestamp>{timezone.now().isoformat()}</ResponseTimestamp>
+    <ResponseTimestamp>{now.isoformat()}</ResponseTimestamp>
     <Status>true</Status>
   </DataReceivedAcknowledgement>
 </Siri>""",

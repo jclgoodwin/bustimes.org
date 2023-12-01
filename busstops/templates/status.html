@@ -88,8 +88,9 @@
 
 <h2>AVL</h2>
 
+{% for key, items in bod_avl_status.items %}
 <details>
-<summary>BODS</summary>
+<summary>{{ key }}</summary>
 
 <table>
     <thead>
@@ -102,7 +103,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for item in bod_avl_status %}
+        {% for item in items %}
             <tr>
                 <td>{{ item.fetched|date:'H:i:s' }}</td>
                 <td>{{ item.timestamp|date:'H:i:s' }}</td>
@@ -114,6 +115,7 @@
     </tbody>
 </table>
 </details>
+{% endfor %}
 
 {% for name, status in statuses %}<details>
     <summary>{{ name }}</summary>

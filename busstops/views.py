@@ -234,23 +234,30 @@ def status(request):
         count=SubqueryCount("route"),
     ).order_by("url")
 
-    bod_avl_status = cache.get("bod_avl_status", [])
-    bod_avl_status = [
-        {
-            "fetched": item[0],
-            "timestamp": item[1],
-            "age": item[0] - item[1],
-            "items": item[2],
-            "changed": item[3],
-        }
-        for item in bod_avl_status
-    ]
+    context = {
+        "nptg": DataSource.objects.filter(name="NPTG").first(),
+        "naptan": DataSource.objects.filter(name="NaPTAN").first(),
+        "tnds": sources.filter(url__contains="tnds.basemap"),
+        "bod_avl_status": {},
+    }
 
-    other_statuses = cache.get_many(
+    for key in ("bod_avl_status", "tfw_status"):
+        status = cache.get(key, [])
+        context["bod_avl_status"][key.split("_")[0]] = [
+            {
+                "fetched": item[0],
+                "timestamp": item[1],
+                "age": item[0] - item[1],
+                "items": item[2],
+                "changed": item[3],
+            }
+            for item in status
+        ]
+
+    context["statuses"] = cache.get_many(
         [
             "Realtime_Transport_Operators_status",
             "acis_status",
-            "NAT_status",
             "TfE_status",
             "jersey_status",
             "Stagecoach_status",
@@ -260,13 +267,7 @@ def status(request):
     return render(
         request,
         "status.html",
-        {
-            "nptg": DataSource.objects.filter(name="NPTG").first(),
-            "naptan": DataSource.objects.filter(name="NaPTAN").first(),
-            "bod_avl_status": bod_avl_status,
-            "statuses": other_statuses,
-            "tnds": sources.filter(url__contains="tnds.basemap"),
-        },
+        context,
     )
 
 
