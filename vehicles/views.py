@@ -5,6 +5,7 @@ from itertools import pairwise
 from urllib.parse import urlencode
 
 import xmltodict
+from ciso8601 import parse_datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.gis.geos import GEOSException, Point
@@ -1324,6 +1325,9 @@ def siri_post(request, uuid):
             "VehicleActivity"
         ]
 
+        timestamp = parse_datetime(data["Siri"]["ServiceDelivery"]["ResponseTimestamp"])
+        command.source.datetime = timestamp
+
         (
             changed_items,
             changed_journey_items,
@@ -1339,8 +1343,8 @@ def siri_post(request, uuid):
         stats = cache.get("tfw_status", [])
         stats.append(
             (
-                timezone.now(),
                 now,
+                timestamp,
                 total_items,
                 len(changed_items) + len(changed_journey_items),
             )
