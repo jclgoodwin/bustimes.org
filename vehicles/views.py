@@ -1346,7 +1346,9 @@ def siri_post(request, uuid):
                 now,
                 timestamp,
                 total_items,
-                len(changed_items) + len(changed_journey_items),
+                data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
+                    "SubscriptionRef"
+                ],
             )
         )
         stats = stats[-50:]
