@@ -385,6 +385,9 @@ class Command(ImportLiveVehiclesCommand):
             except KeyError:
                 pass
 
+        if journey_ref == "UNKNOWN":
+            journey_ref = None
+
         try:
             ticket_machine = item["Extensions"]["VehicleJourney"]["Operational"][
                 "TicketMachine"
