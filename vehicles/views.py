@@ -1354,12 +1354,4 @@ def siri_post(request, uuid):
         stats = stats[-50:]
         cache.set("tfw_status", stats, None)
 
-    return HttpResponse(
-        f"""<Siri xmlns="http://www.siri.org.uk/siri">
-  <DataReceivedAcknowledgement>
-    <ResponseTimestamp>{now.isoformat()}</ResponseTimestamp>
-    <Status>true</Status>
-  </DataReceivedAcknowledgement>
-</Siri>""",
-        content_type="text/xml",
-    )
+    return HttpResponse("")
