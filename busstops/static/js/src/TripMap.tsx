@@ -159,6 +159,8 @@ export default function TripMap() {
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
+  const [loading, setLoading] = React.useState(true);
+
   const bounds = React.useMemo((): LngLatBounds => {
     const _bounds = new LngLatBounds();
     for (let item of trip.times) {
@@ -271,6 +273,8 @@ export default function TripMap() {
         url = `${url}?service=${window.SERVICE}&trip=${tripId}`;
       }
 
+      setLoading(true);
+
       clearTimeout(timeout.current);
 
       if (vehiclesAbortController.current) {
@@ -288,6 +292,7 @@ export default function TripMap() {
           }
           response.json().then(function (items: Vehicle[]): void {
             setVehicles(items);
+            setLoading(false);
             for (const item of items) {
               if (
                 (tripId &&
@@ -397,6 +402,13 @@ export default function TripMap() {
               onClose={() => setClickedStop(undefined)}
             />
           ) : null}
+
+          {loading ? (
+            <div className="maplibregl-ctrl map-status-bar">
+              Loading…
+            </div>
+          ) : null}
+
         </BusTimesMap>
       </div>
       <div className="trip-timetable map-sidebar">
