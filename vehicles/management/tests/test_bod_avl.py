@@ -143,7 +143,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     with use_cassette(
                         str(Path(__file__).resolve().parent / "vcr" / "bod_avl.yaml")
                     ) as cassette:
-                        with self.assertNumQueries(6554):
+                        with self.assertNumQueries(6550):
                             command.update()
 
                         cassette.rewind()
