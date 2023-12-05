@@ -68,7 +68,7 @@
         {% if dates %}
             <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
                 {% for option in dates %}
-                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                    <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
                 {% endfor %}
             </select>
         {% else %}

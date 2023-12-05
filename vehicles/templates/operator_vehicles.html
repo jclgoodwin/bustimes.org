@@ -111,7 +111,7 @@
                 </td>
                 <td class="last-seen">
                     {% if vehicle.last_seen.today %}
-                        {{ vehicle.last_seen.when|time }}
+                        {{ vehicle.last_seen.when|time:"H:i" }}
                     {% else %}
                         {{ vehicle.last_seen.when|date:"j M H:i" }}
                     {% endif %}

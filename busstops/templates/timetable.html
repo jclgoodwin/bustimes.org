@@ -16,7 +16,7 @@
         {% elif timetable.date_options %}
             <select name="date" aria-label="Date">
                 {% for option in timetable.date_options %}
-                    <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option }}</option>
+                    <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
                 {% endfor %}
             </select>
         {% elif timetable.date %}
@@ -175,7 +175,7 @@
         {% endif %}
 
         {% if timetable.expired %}
-            <p>Try a previous date like <a href="?date={{ timetable.expired.isoformat }}">{{ timetable.expired }}</a>?</p>
+            <p>Try a previous date like <a href="?date={{ timetable.expired.isoformat }}">{{ timetable.expired|date:"l j F Y" }}</a>?</p>
         {% endif %}
 
         {% include 'route.html' %}
