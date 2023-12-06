@@ -268,6 +268,7 @@ class ServiceAdmin(GISModelAdmin):
         "public_use",
         "colour",
         "line_brand",
+        "modified_at",
     )
     list_filter = (
         SplitServiceFilter,
