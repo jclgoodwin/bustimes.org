@@ -205,7 +205,9 @@ def get_calendars(when, calendar_ids=None):
     )
 
 
-def get_stop_times(date: datetime, time: timedelta, stop, services_routes: dict):
+def get_stop_times(
+    date: datetime, time: timedelta, stop, services_routes: dict, trips=None
+):
     times = StopTime.objects.filter(pick_up=True)
 
     try:
@@ -214,9 +216,13 @@ def get_stop_times(date: datetime, time: timedelta, stop, services_routes: dict)
         times = times.filter(stop=stop)
 
     if time:
-        times = times.filter(departure__gte=time)
+        time_filter = Q(departure__gte=time)
+        if trips:
+            time_filter |= Q(trip__in=trips)
+        times = times.filter(time_filter)
     else:
         times = times.filter(departure__isnull=False)
+
     routes = []
     for service_routes in services_routes.values():
         routes += get_routes(service_routes, date)

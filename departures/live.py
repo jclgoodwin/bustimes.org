@@ -113,19 +113,19 @@ def get_departures(stop, services, when) -> dict:
         else:
             routes_by_service[route.service_id] = [route]
 
-    departures = TimetableDepartures(
-        stop, services, when or now, routes_by_service
-    ).get_departures()
+    departures = None
 
-    if live_departures:
-        departures = live_departures + departures
-    elif not when:
+    if not when and live_departures is None:
         vehicle_locations = avl.get_tracking(stop, services)
         if vehicle_locations:
             by_trip = {
                 item["trip_id"]: item for item in vehicle_locations if "trip_id" in item
             }
             if by_trip:
+                departures = TimetableDepartures(
+                    stop, services, now, routes_by_service, by_trip
+                ).get_departures()
+
                 for departure in departures:
                     trip_id = departure["stop_time"].trip_id
                     if "vehicle" in departure and trip_id not in by_trip:
@@ -142,6 +142,21 @@ def get_departures(stop, services, when) -> dict:
                             departure["live"] = departure["time"] + datetime.timedelta(
                                 seconds=delay
                             )
+                        departures = [
+                            dep
+                            for dep in departures
+                            if "live" not in dep
+                            or dep["live"] >= now
+                            or dep["time"] >= now
+                        ]
+
+    if departures is None:
+        departures = TimetableDepartures(
+            stop, services, when or now, routes_by_service
+        ).get_departures()
+
+    if live_departures:
+        departures = live_departures + departures
 
     one_hour = datetime.timedelta(hours=1)
     one_hour_ago = now - one_hour

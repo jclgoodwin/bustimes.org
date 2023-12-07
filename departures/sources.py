@@ -359,7 +359,7 @@ class TimetableDepartures(Departures):
         }
 
     def get_times(self, date, time=None):
-        times = get_stop_times(date, time, self.stop, self.routes)
+        times = get_stop_times(date, time, self.stop, self.routes, self.trips)
         times = times.select_related(
             "trip__route__service", "trip__destination__locality"
         )
@@ -424,9 +424,10 @@ class TimetableDepartures(Departures):
 
         return times
 
-    def __init__(self, stop, services, now, routes):
+    def __init__(self, stop, services, now, routes, trips=None):
         self.routes = routes
         self.tracking = any(service.tracking for service in services)
+        self.trips = trips
         super().__init__(stop, services, now)
 
 
