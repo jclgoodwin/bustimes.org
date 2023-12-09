@@ -98,20 +98,19 @@ class Command(BaseCommand):
 
             existing_routes[route.code] = route  # deals with duplicate rows
 
-        trips = {trip.ticket_machine_code: trip for trip in operator.trip_set.all()}
+        trips = {trip.vehicle_journey_code: trip for trip in operator.trip_set.all()}
         for i, row in feed.trips.iterrows():
             trip = Trip(
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
                 inbound=row.direction_id == 1,
-                ticket_machine_code=row.trip_id,
                 vehicle_journey_code=row.trip_id,
                 operator=operator,
             )
-            if trip.ticket_machine_code in trips:
+            if trip.vehicle_journey_code in trips:
                 # reuse existing trip id
-                trip.id = trips[trip.ticket_machine_code].id
-            trips[trip.ticket_machine_code] = trip
+                trip.id = trips[trip.vehicle_journey_code].id
+            trips[trip.vehicle_journey_code] = trip
 
         stop_times = []
         for i, row in feed.stop_times.iterrows():
