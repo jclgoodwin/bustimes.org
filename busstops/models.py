@@ -570,7 +570,17 @@ class Operator(SearchMixin, models.Model):
 
 class StopCode(models.Model):
     stop = models.ForeignKey(StopPoint, models.CASCADE)
-    source = models.ForeignKey(DataSource, models.CASCADE)
+    source = models.ForeignKey(
+        "busstops.DataSource",
+        models.CASCADE,
+        limit_choices_to={
+            "name__in": (
+                "FlixBus",
+                "National coach code",
+            )
+        },
+        default=3695,  # FlixBus
+    )
     code = models.CharField(max_length=100)
 
     class Meta:

@@ -70,7 +70,7 @@ class StopPointAdmin(GISModelAdmin):
 @admin.register(models.StopCode)
 class StopCodeAdmin(admin.ModelAdmin):
     list_display = ["stop", "code", "source"]
-    raw_id_fields = ["stop", "source"]
+    raw_id_fields = ["stop"]
 
 
 @admin.register(models.StopArea)
