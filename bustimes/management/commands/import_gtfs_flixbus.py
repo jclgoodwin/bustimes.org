@@ -27,29 +27,20 @@ class Command(BaseCommand):
         url = "https://gtfs.gis.flix.tech/gtfs_generic_eu.zip"
 
         modified, last_modified = download_if_changed(path, url)
-        print(modified, last_modified)
-        print("a")
+
+        if not modified:
+            return
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
         feed = feed.restrict_to_routes(
             [route_id for route_id in feed.routes.route_id if route_id.startswith("UK")]
         )
-        print(feed)
-        feed.describe()
-        print("b")
-
-        # import ipdb
-        # ipdb.set_trace()
 
         stops_data = {row.stop_id: row for i, row in feed.stops.iterrows()}
         stop_codes = {
             stop_code.code: stop_code.stop_id for stop_code in source.stopcode_set.all()
         }
-        # for row in stops_data:
-        #     print(f"{row},{stops_data[row].stop_lat},{stops_data[row].stop_lon}")
-
-        # return
 
         existing_services = {
             service.line_name: service for service in operator.service_set.all()
@@ -59,7 +50,7 @@ class Command(BaseCommand):
 
         calendars = get_calendars(feed)
 
-        for i, row in feed.routes.iterrows():
+        for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
             line_name = row.route_id.removeprefix("UK")
 
             if line_name in existing_services:
@@ -76,6 +67,8 @@ class Command(BaseCommand):
             service.description = route.description = row.route_long_name
             service.current = True
             service.colour_id = operator.colour_id
+            service.source = source
+            service.geometry = row.geometry.wkt
 
             service.save()
             service.operator.add(operator)
@@ -118,7 +111,6 @@ class Command(BaseCommand):
             )
             if row.stop_id in stop_codes:
                 stop_time.stop_id = stop_codes[row.stop_id]
-                print(stop_codes[row.stop_id], row.stop_id)
             else:
                 stop_time.stop_code = stop_name
 
@@ -156,3 +148,6 @@ class Command(BaseCommand):
                     current=False
                 )
             )
+            if last_modified:
+                source.datetime = last_modified
+                source.save(update_fields=["datetime"])
