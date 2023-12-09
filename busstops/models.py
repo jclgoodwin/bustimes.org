@@ -214,6 +214,9 @@ class DataSource(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse("source_detail", args=(self.id,))
+
     def get_nice_name(self):
         return self.name.split("_")[0]
 
