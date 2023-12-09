@@ -239,20 +239,25 @@ class Command(BaseCommand):
             calendars = {}
             for line in read_file(archive, "calendar.txt"):
                 calendar = get_calendar(line)
-                calendar.save()
                 calendars[line["service_id"]] = calendar
+            Calendar.objects.bulk_create(calendars.values())
 
+            calendar_dates = []
             for line in read_file(archive, "calendar_dates.txt"):
                 operation = (
                     line["exception_type"] == "1"
                 )  # '1' = operates, '2' = does not operate
-                CalendarDate.objects.create(
-                    calendar=calendars[line["service_id"]],
-                    start_date=parse_date(line["date"]),
-                    end_date=parse_date(line["date"]),
-                    operation=operation,
-                    special=operation,  # additional date of operation
+                calendar_dates.append(
+                    CalendarDate(
+                        calendar=calendars[line["service_id"]],
+                        start_date=parse_date(line["date"]),
+                        end_date=parse_date(line["date"]),
+                        operation=operation,
+                        special=operation,  # additional date of operation
+                    )
                 )
+            CalendarDate.objects.bulk_create(calendar_dates)
+            del calendar_dates
 
             trip_shapes = {}
             trips = {}
