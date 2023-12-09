@@ -364,7 +364,7 @@ export default function JourneyMap({
       });
 
     }
-  }, []);
+  }, [bounds]);
 
   const bounds = React.useMemo((): LngLatBounds | null => {
     if (journey) {
