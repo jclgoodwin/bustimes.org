@@ -3,7 +3,6 @@ from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
-from django.utils.dateparse import parse_duration
 from google.protobuf import json_format
 from google.transit import gtfs_realtime_pb2
 
@@ -83,21 +82,16 @@ class Command(ImportLiveVehiclesCommand):
             f"{item.vehicle.trip.start_date} 12:00:00",
             "%Y%m%d %H:%M:%S",
         )
-        if datetime.fromtimestamp(item.vehicle.timestamp) - start_date > timedelta(hours=12):
+        if datetime.fromtimestamp(item.vehicle.timestamp) - start_date > timedelta(
+            hours=12
+        ):
             start_date += timedelta(days=1)
-
-        start_time = (
-            start_date
-            - timedelta(hours=12)
-            + parse_duration(item.vehicle.trip.start_time)
-        ).replace(tzinfo=self.tzinfo)
 
         journey = VehicleJourney(code=item.vehicle.trip.trip_id)
 
         if (
-            (latest_journey := vehicle.latest_journey)
-            and latest_journey.code == journey.code
-        ):
+            latest_journey := vehicle.latest_journey
+        ) and latest_journey.code == journey.code:
             return latest_journey
 
         service = None
@@ -149,6 +143,7 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         return VehicleLocation(
+            heading=item.vehicle.position.bearing,
             latlong=GEOSGeometry(
                 f"POINT({item.vehicle.position.longitude} {item.vehicle.position.latitude})"
             ),
