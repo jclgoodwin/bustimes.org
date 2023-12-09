@@ -52,6 +52,7 @@ tenacity = "^8.2.2"
 django-livereload-server = "^0.4"
 daphne = "^4.0.0"
 requests-toolbelt = "^1.0.0"
+gtfs-kit = "^6.0.0"
 
 [tool.poetry.dev-dependencies]
 django-debug-toolbar = "^4.0.0"
