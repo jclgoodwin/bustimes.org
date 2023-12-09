@@ -352,20 +352,6 @@ export default function JourneyMap({
 
   const mapRef = React.useRef<any>();
 
-  const handleMapLoad = React.useCallback((event: MapEvent) => {
-    const map = event.target;
-    mapRef.current = map;
-    map.keyboard.disableRotation();
-    map.touchZoomRotate.disableRotation();
-
-    if (bounds) {
-      map.fitBounds(bounds, {
-        padding: 50,
-      });
-
-    }
-  }, [bounds]);
-
   const bounds = React.useMemo((): LngLatBounds | null => {
     if (journey) {
       const _bounds = new LngLatBounds();
@@ -387,6 +373,20 @@ export default function JourneyMap({
     }
     return null;
   }, [journey]);
+
+  const handleMapLoad = React.useCallback((event: MapEvent) => {
+    const map = event.target;
+    mapRef.current = map;
+    map.keyboard.disableRotation();
+    map.touchZoomRotate.disableRotation();
+
+    if (bounds) {
+      map.fitBounds(bounds, {
+        padding: 50,
+      });
+
+    }
+  }, [bounds]);
 
   React.useEffect(() => {
     if (bounds && mapRef.current) {
