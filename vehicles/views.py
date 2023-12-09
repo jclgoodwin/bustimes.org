@@ -5,7 +5,6 @@ from itertools import pairwise
 from urllib.parse import urlencode
 
 import xmltodict
-from ciso8601 import parse_datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.gis.geos import GEOSException, Point
@@ -55,6 +54,7 @@ from .models import (
     VehicleRevisionFeature,
 )
 from .rtpi import add_progress_and_delay
+from .tasks import handle_siri_post
 from .utils import (  # calculate_bearing,
     do_revision,
     do_revisions,
@@ -1305,52 +1305,11 @@ def debug(request):
 @csrf_exempt
 @require_POST
 def siri_post(request, uuid):
-    now = timezone.now()
-
-    subscription = get_object_or_404(SiriSubscription, uuid=uuid)
+    get_object_or_404(SiriSubscription, uuid=uuid)
 
     body = request.body.decode()
     data = xmltodict.parse(body, dict_constructor=dict, force_list=["VehicleActivity"])
 
-    if "HeartbeatNotification" in data["Siri"]:
-        subscription.sample = request.body.decode()
-        subscription.save(update_fields=["sample"])
-    else:
-        command = import_bod_avl.Command()
-        command.source_name = subscription.name
-        command.do_source()
-
-        items = data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
-            "VehicleActivity"
-        ]
-
-        timestamp = parse_datetime(data["Siri"]["ServiceDelivery"]["ResponseTimestamp"])
-        command.source.datetime = timestamp
-
-        (
-            changed_items,
-            changed_journey_items,
-            changed_item_identities,
-            changed_journey_identities,
-            total_items,
-        ) = command.get_changed_items(items)
-
-        command.handle_items(changed_items, changed_item_identities)
-        command.handle_items(changed_journey_items, changed_journey_identities)
-
-        # stats for last 10 updates:
-        stats = cache.get("tfw_status", [])
-        stats.append(
-            (
-                now,
-                timestamp,
-                total_items,
-                data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
-                    "SubscriptionRef"
-                ],
-            )
-        )
-        stats = stats[-50:]
-        cache.set("tfw_status", stats, None)
+    handle_siri_post(uuid, data)
 
     return HttpResponse("")

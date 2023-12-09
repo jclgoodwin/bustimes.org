@@ -100,7 +100,6 @@ class Command(BaseCommand):
             if not trip.start:
                 trip.start = row.arrival_time
             trip.end = row.departure_time
-            # trip.destination_id = row.stop_id
 
             stop_time = StopTime(
                 arrival=row.arrival_time,
@@ -113,6 +112,8 @@ class Command(BaseCommand):
                 stop_time.stop_id = stop_codes[row.stop_id]
             else:
                 stop_time.stop_code = stop_name
+
+            trip.destination_id = stop_time.stop_id
 
             stop_times.append(stop_time)
 

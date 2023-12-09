@@ -10,7 +10,59 @@ from huey.contrib.djhuey import db_periodic_task, db_task
 
 from busstops.models import DataSource, Operator
 
-from .models import Vehicle, VehicleEdit, VehicleJourney
+from .management.commands import import_bod_avl
+from .models import SiriSubscription, Vehicle, VehicleEdit, VehicleJourney
+
+
+@db_task()
+def handle_siri_post(uuid, data):
+    now = timezone.now()
+
+    data = data["Siri"]
+
+    subscription = SiriSubscription.objects.get(uuid=uuid)
+
+    if "HeartbeatNotification" in data:
+        timestamp = parse_datetime(data["HeartbeatNotification"]["RequestTimestamp"])
+        total_items = 0
+        subscription_ref = None
+    else:
+        data = data["ServiceDelivery"]
+
+        command = import_bod_avl.Command()
+        command.source_name = subscription.name
+        command.do_source()
+
+        items = data["VehicleMonitoringDelivery"]["VehicleActivity"]
+
+        timestamp = parse_datetime(data["ResponseTimestamp"])
+        command.source.datetime = timestamp
+
+        (
+            changed_items,
+            changed_journey_items,
+            changed_item_identities,
+            changed_journey_identities,
+            total_items,
+        ) = command.get_changed_items(items)
+
+        command.handle_items(changed_items, changed_item_identities)
+        command.handle_items(changed_journey_items, changed_journey_identities)
+
+        subscription_ref = data["VehicleMonitoringDelivery"]["SubscriptionRef"]
+
+    # stats for last 50 updates:
+    stats = cache.get("tfw_status", [])
+    stats.append(
+        (
+            now,
+            timestamp,
+            total_items,
+            subscription_ref,
+        )
+    )
+    stats = stats[-50:]
+    cache.set("tfw_status", stats, None)
 
 
 @db_task()
