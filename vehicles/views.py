@@ -1308,19 +1308,18 @@ def siri_post(request, uuid):
     now = timezone.now()
 
     subscription = get_object_or_404(SiriSubscription, uuid=uuid)
-    subscription.sample = request.body.decode()
-    subscription.save(update_fields=["sample"])
-
-    command = import_bod_avl.Command()
-    command.source_name = subscription.name
-    command.do_source()
 
     body = request.body.decode()
     data = xmltodict.parse(body, dict_constructor=dict, force_list=["VehicleActivity"])
 
     if "HeartbeatNotification" in data["Siri"]:
-        pass
+        subscription.sample = request.body.decode()
+        subscription.save(update_fields=["sample"])
     else:
+        command = import_bod_avl.Command()
+        command.source_name = subscription.name
+        command.do_source()
+
         items = data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"][
             "VehicleActivity"
         ]
