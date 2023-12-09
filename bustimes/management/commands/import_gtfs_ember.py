@@ -136,7 +136,15 @@ class Command(BaseCommand):
             existing_trips = [trip for trip in trips.values() if trip.id]
             Trip.objects.bulk_update(
                 existing_trips,
-                fields=["route", "calendar", "start", "end", "destination"],
+                fields=[
+                    "route",
+                    "calendar",
+                    "start",
+                    "end",
+                    "destination",
+                    "block",
+                    "ticket_machine_code",
+                ],
             )
 
             StopTime.objects.filter(trip__in=existing_trips).delete()

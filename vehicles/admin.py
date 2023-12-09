@@ -317,6 +317,13 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
     show_full_result_count = False
     ordering = ("-id",)
 
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        if not request.GET:
+            # no filter yet - return empty queryset rather than trying to load ALL journeys
+            return queryset.none()
+        return queryset
+
 
 class LiveryAdminForm(forms.ModelForm):
     save_as = True
