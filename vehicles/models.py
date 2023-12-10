@@ -954,9 +954,9 @@ class VehicleLocation:
         ordering = ("id",)
 
     def get_appendage(self):
-        # early = self.early
-        # if early is not None:
-        #     early = round(early.total_seconds() / 60)
+        delay = self.delay
+        if delay is not None:
+            delay = round(delay.total_seconds() / 60)
 
         if self.heading is None or type(self.heading) is int:
             heading = self.heading
@@ -977,8 +977,8 @@ class VehicleLocation:
             self.latlong.y,
             heading is not None,
             heading or 0,
-            False,  # early is not None
-            0,  # early or 0
+            delay is not None,
+            delay or 0,
         )
 
     @staticmethod
@@ -1007,7 +1007,7 @@ class VehicleLocation:
         }
 
         if self.delay is not None:
-            json["delay"] = -self.delay.total_seconds()
+            json["delay"] = self.delay.total_seconds()
 
         if self.tfl_code:
             json["tfl_code"] = self.tfl_code
