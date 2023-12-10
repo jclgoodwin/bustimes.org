@@ -13,6 +13,7 @@ from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
+from django.utils.dateparse import parse_duration
 
 from busstops.models import (
     Locality,
@@ -576,6 +577,9 @@ class Command(ImportLiveVehiclesCommand):
         if bearing:
             # Assume '0' means None. There's only a 1/360 chance the bus is actually facing exactly north
             bearing = float(bearing) or None
+        delay = monitored_vehicle_journey.get("delay")
+        if delay:
+            delay = parse_duration(delay)
         location = VehicleLocation(
             latlong=latlong,
             heading=bearing,

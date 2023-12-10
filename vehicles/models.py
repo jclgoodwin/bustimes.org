@@ -926,12 +926,15 @@ class Occupancy(models.TextChoices):
 
 
 class VehicleLocation:
-    """This used to be a model, is no longer stored in the database but this code is still here for historical reasons"""
+    """This used to be a model,
+    is no longer stored in the database
+    but this code is still here for historical reasons
+    """
 
-    def __init__(self, latlong, heading=None, early=None, occupancy=None, block=None):
+    def __init__(self, latlong, heading=None, delay=None, occupancy=None, block=None):
         self.latlong = latlong
         self.heading = heading
-        self.early = early
+        self.delay = delay
         self.occupancy = occupancy
         self.seated_occupancy = None
         self.seated_capacity = None
@@ -951,9 +954,9 @@ class VehicleLocation:
         ordering = ("id",)
 
     def get_appendage(self):
-        early = self.early
-        if early is not None:
-            early = round(early.total_seconds() / 60)
+        # early = self.early
+        # if early is not None:
+        #     early = round(early.total_seconds() / 60)
 
         if self.heading is None or type(self.heading) is int:
             heading = self.heading
@@ -974,8 +977,8 @@ class VehicleLocation:
             self.latlong.y,
             heading is not None,
             heading or 0,
-            early is not None,
-            early or 0,
+            False,  # early is not None
+            0,  # early or 0
         )
 
     @staticmethod
@@ -1003,8 +1006,8 @@ class VehicleLocation:
             "block": self.block,
         }
 
-        if self.early is not None:
-            json["delay"] = -self.early.total_seconds()
+        if self.delay is not None:
+            json["delay"] = -self.delay.total_seconds()
 
         if self.tfl_code:
             json["tfl_code"] = self.tfl_code
