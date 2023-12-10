@@ -159,7 +159,9 @@ def bus_open_data(api_key, specific_operator):
 
     datasets = []
 
-    timetable_data_sources = TimetableDataSource.objects.filter(url="", active=True)
+    timetable_data_sources = TimetableDataSource.objects.filter(
+        ~Q(search=""), url="", active=True
+    )
     if specific_operator:
         timetable_data_sources = timetable_data_sources.filter(name=specific_operator)
         if not timetable_data_sources:
