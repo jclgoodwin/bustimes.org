@@ -577,7 +577,7 @@ class Command(ImportLiveVehiclesCommand):
         if bearing:
             # Assume '0' means None. There's only a 1/360 chance the bus is actually facing exactly north
             bearing = float(bearing) or None
-        delay = monitored_vehicle_journey.get("delay")
+        delay = monitored_vehicle_journey.get("Delay")
         if delay:
             delay = parse_duration(delay)
         location = VehicleLocation(
