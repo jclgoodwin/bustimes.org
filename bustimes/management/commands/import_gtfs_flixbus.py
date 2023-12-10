@@ -69,6 +69,7 @@ class Command(BaseCommand):
             service.colour_id = operator.colour_id
             service.source = source
             service.geometry = row.geometry.wkt
+            service.region_id = "GB"
 
             service.save()
             service.operator.add(operator)
@@ -135,6 +136,10 @@ class Command(BaseCommand):
 
             StopTime.objects.filter(trip__in=existing_trips).delete()
             StopTime.objects.bulk_create(stop_times)
+
+            for service in source.service_set.filter(current=True):
+                service.do_stop_usages()
+                service.update_search_vector()
 
             print(
                 source.route_set.exclude(id__in=[route.id for route in routes]).delete()
