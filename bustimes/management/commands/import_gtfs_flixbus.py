@@ -1,12 +1,13 @@
 import logging
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import gtfs_kit
 from django.conf import settings
-
-# from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.utils.dateparse import parse_duration
 
 from busstops.models import DataSource, Operator, Service
 
@@ -49,6 +50,18 @@ class Command(BaseCommand):
         routes = []
 
         calendars = get_calendars(feed)
+
+        # get UTC offset (0 or 1 hours) at midday at the start of each calendar
+        # (the data uses UTC times but we want local times)
+        tzinfo = ZoneInfo("Europe/London")
+        utc_offsets = {
+            calendar.start_date: datetime.strptime(
+                f"{calendar.start_date} 12", "%Y%m%d %H"
+            )
+            .replace(tzinfo=tzinfo)
+            .utcoffset()
+            for calendar in calendars.values()
+        }
 
         for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
             line_name = row.route_id.removeprefix("UK")
@@ -98,13 +111,18 @@ class Command(BaseCommand):
             stop_name = stops_data[row.stop_id].stop_name
 
             trip = trips[row.trip_id]
+            offset = utc_offsets[trip.calendar.start_date]
+
+            arrival_time = parse_duration(row.arrival_time) + offset
+            departure_time = parse_duration(row.departure_time) + offset
+
             if not trip.start:
-                trip.start = row.arrival_time
-            trip.end = row.departure_time
+                trip.start = arrival_time
+            trip.end = departure_time
 
             stop_time = StopTime(
-                arrival=row.arrival_time,
-                departure=row.departure_time,
+                arrival=arrival_time,
+                departure=departure_time,
                 sequence=row.stop_sequence,
                 trip=trip,
                 timing_status="PTP" if row.timepoint else "OTH",
