@@ -223,7 +223,8 @@ def stop_time_json(stop_time, date) -> dict:
             "line_name": route.line_name,
             "operators": operators,
         },
-        "destination": {
+        "destination": destination
+        and {
             "atco_code": destination.atco_code,
             "name": destination.get_qualified_name(),
             "locality": destination.locality and str(destination.locality),
