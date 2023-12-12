@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
+
 from google.protobuf import json_format
 from google.transit import gtfs_realtime_pb2
 
@@ -12,7 +15,7 @@ class Command(BaseCommand):
     source_name = "Ember"
 
     def do_source(self):
-        # self.tzinfo = ZoneInfo("Europe/London")
+        self.tzinfo = ZoneInfo("Europe/London")
         self.source, _ = DataSource.objects.get_or_create(name=self.source_name)
         self.url = "https://api.ember.to/v1/gtfs/realtime/"
         return self
@@ -83,6 +86,16 @@ class Command(BaseCommand):
             route__source=self.source, vehicle_journey_code=journey.code
         )
         journey.trip = trip
+
+        journey.datetime = datetime.strptime(
+            f"{item.vehicle.trip.start_date} 12", "%Y%m%d %H"
+        )
+        journey.datetime = (
+            journey.datetime.replace(tzinfo=self.tzinfo)
+            - timedelta(hours=12)
+            + trip.start
+        )
+
         journey.service = trip.route.service
 
         journey.route_name = journey.service.line_name
