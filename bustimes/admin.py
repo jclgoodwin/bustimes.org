@@ -65,14 +65,14 @@ class RouteAdmin(admin.ModelAdmin):
     list_filter = [("source", admin.RelatedOnlyFieldListFilter)]
     raw_id_fields = ["source", "service", "registration"]
     search_fields = ["code"]
-    inlines = [TripInline]
+    # inlines = [TripInline]
 
 
 @admin.register(Trip)
 class TripAdmin(admin.ModelAdmin):
-    raw_id_fields = ["route"] + TripInline.raw_id_fields
-    inlines = [StopTimeInline]
     list_filter = [("calendar", admin.EmptyFieldListFilter)]
+    raw_id_fields = ["route"] + TripInline.raw_id_fields
+    # inlines = [StopTimeInline]
 
 
 class CalendarDateInline(admin.TabularInline):
