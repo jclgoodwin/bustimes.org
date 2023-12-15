@@ -83,7 +83,7 @@ class Command(BaseCommand):
             return latest_journey
 
         trip = Trip.objects.get(
-            route__source=self.source, vehicle_journey_code=journey.code
+            operator="EMBR", vehicle_journey_code=journey.code
         )
         journey.trip = trip
 
