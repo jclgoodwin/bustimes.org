@@ -643,7 +643,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     try:
         pipe = redis_client.pipeline(transaction=False)
         for journey in journeys:
-            pipe.exists(f"journey{journey.id}")
+            pipe.exists(journey.get_redis_key())
 
         locations = pipe.execute()
     except (ConnectionError, AttributeError):
@@ -1128,7 +1128,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     }
 
     if redis_client:
-        locations = redis_client and redis_client.lrange(f"journey{pk}", 0, -1)
+        locations = redis_client and redis_client.lrange(journey.get_redis_key(), 0, -1)
     else:
         locations = None
 

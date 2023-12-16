@@ -912,6 +912,10 @@ class VehicleJourney(models.Model):
         ]
         unique_together = (("vehicle", "datetime"),)
 
+    def get_redis_key(self):
+        # TODO: change to use uuid
+        return f"journey{self.id}"
+
     get_trip = get_trip
 
 
@@ -970,7 +974,7 @@ class VehicleLocation:
         else:
             heading = round(self.heading)
 
-        return f"journey{self.journey.id}", struct.pack(
+        return self.journey.get_redis_key(), struct.pack(
             "I 2f ?h ?h",
             round(self.datetime.timestamp()),
             self.latlong.x,
