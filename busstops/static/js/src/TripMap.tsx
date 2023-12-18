@@ -159,7 +159,7 @@ export default function TripMap() {
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
 
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = React.useState(false);
 
   const bounds = React.useMemo((): LngLatBounds => {
     const _bounds = new LngLatBounds();
