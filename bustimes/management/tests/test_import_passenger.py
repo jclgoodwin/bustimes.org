@@ -1,9 +1,12 @@
 from pathlib import Path
 from unittest.mock import patch
-from vcr import use_cassette
-from django.test import TestCase, override_settings
+
 from django.core.management import call_command
-from busstops.models import Region, Operator, DataSource
+from django.test import TestCase, override_settings
+from vcr import use_cassette
+
+from busstops.models import DataSource, Operator, Region
+
 from ...models import Route, TimetableDataSource
 
 
@@ -38,6 +41,7 @@ class ImportPassengerTest(TestCase):
             [
                 "INFO:bustimes.management.commands.import_bod:Unilink",
                 "INFO:bustimes.management.commands.import_bod:{"
+                "'dates': ['2022-03-27', '2022-04-24'], "
                 "'url': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1648047602.zip', "
                 "'filename': 'unilink_1648047602.zip', 'modified': True}",
             ],

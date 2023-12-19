@@ -60,24 +60,22 @@ def get_versions(session, url):
 
     soup = bs4.BeautifulSoup(response.text, "lxml")
 
-    element = soup.find("h3")
-    assert element.text.startswith("Current Data")
-    assert element.text.endswith(")")
-    dates = element.text.removeprefix("Current Data (").removesuffix(")").split(" to ")
-    assert len(dates) == 2
+    for heading in soup.find_all("h3"):
+        text = heading.text
+        assert " to " in text
 
-    for element in element.next_siblings:
-        if type(element) is not bs4.element.Tag:
-            continue
-        if element.text == "Download TransXChange":
-            assert element.tag == "a"
+        dates = text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+        assert len(dates) == 2
+
+        for element in heading.next_siblings:
+            if type(element) is not bs4.element.Tag:
+                continue
+            link = element.find("a")
+            assert link.text == "Download TransXChange"
+            url = urljoin(response.url, link.attrs["href"])
             assert "/txc" in url
-            url = urljoin(element.base_url, element.attrs["href"])
             versions.append(get_version(dates, url))
-        elif element.tag == "h3":
-            dates = element.text.split(" to ")
-            assert len(dates) == 2
-        elif element.tag == "h2":
+
             break
 
     return versions
