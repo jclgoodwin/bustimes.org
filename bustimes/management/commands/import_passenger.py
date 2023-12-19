@@ -99,8 +99,7 @@ class Command(BaseCommand):
         sources = DataSource.objects.filter(url__startswith=prefix)
 
         timetable_data_sources = TimetableDataSource.objects.filter(
-            # active=True,
-            url__startswith=prefix
+            active=True, url__startswith=prefix
         )
         if operator_name:
             timetable_data_sources = timetable_data_sources.filter(name=operator_name)
