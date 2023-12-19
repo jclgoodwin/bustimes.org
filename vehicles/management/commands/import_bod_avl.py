@@ -4,7 +4,6 @@ import json
 import zipfile
 from datetime import date, timedelta
 
-import tqdm
 import xmltodict
 from ciso8601 import parse_datetime
 from django.conf import settings
@@ -683,7 +682,7 @@ class Command(ImportLiveVehiclesCommand):
             if item
         }
 
-        for i, item in enumerate(tqdm.tqdm(items)):
+        for i, item in enumerate(items):
             vehicle_identity = identities[i]
 
             journey_identity = self.journeys_ids[vehicle_identity]

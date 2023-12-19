@@ -68,13 +68,12 @@ class Command(BaseCommand):
             ).simplify()
             line_string = wkt.loads(line_string.wkt)
 
-            if line_string.type != "LineString":
+            if line_string.geom_type != "LineString":
                 continue
 
             pairs = list(self.get_pairs(sequence["stopPoint"]))
 
             for i, pair in enumerate(list(pairs)):
-
                 from_point = pair[0][1]
                 to_point = pair[1][1]
 

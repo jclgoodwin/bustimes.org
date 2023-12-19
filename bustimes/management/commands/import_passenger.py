@@ -5,12 +5,13 @@ import os
 from time import sleep
 from urllib.parse import urljoin, urlparse
 
+import bs4
 import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from django.utils import timezone
-from requests_html import HTMLSession
+from requests import Session
 
 from busstops.models import DataSource
 
@@ -20,7 +21,7 @@ from .import_bod import clean_up, get_operator_ids, handle_file, logger
 from .import_transxchange import Command as TransXChangeCommand
 
 
-def get_version(url):
+def get_version(dates, url):
     modified = False
 
     filename = os.path.basename(urlparse(url).path)
@@ -37,6 +38,7 @@ def get_version(url):
             modified = True
 
     return {
+        "dates": dates,
         "url": url,
         "filename": filename,
         "modified": modified,
@@ -55,11 +57,28 @@ def get_versions(session, url):
         logger.warning(f"{url} {response}")
         sleep(5)
         return
-    for element in response.html.find():
-        if element.tag == "a":
+
+    soup = bs4.BeautifulSoup(response.text, "lxml")
+
+    element = soup.find("h3")
+    assert element.text.startswith("Current Data")
+    assert element.text.endswith(")")
+    dates = element.text.removeprefix("Current Data (").removesuffix(")").split(" to ")
+    assert len(dates) == 2
+
+    for element in element.next_siblings:
+        if type(element) is not bs4.element.Tag:
+            continue
+        if element.text == "Download TransXChange":
+            assert element.tag == "a"
+            assert "/txc" in url
             url = urljoin(element.base_url, element.attrs["href"])
-            if "/txc" in url:
-                versions.append(get_version(url))
+            versions.append(get_version(dates, url))
+        elif element.tag == "h3":
+            dates = element.text.split(" to ")
+            assert len(dates) == 2
+        elif element.tag == "h2":
+            break
 
     return versions
 
@@ -73,21 +92,26 @@ class Command(BaseCommand):
         command = TransXChangeCommand()
         command.set_up()
 
-        session = HTMLSession()
+        session = Session()
 
         prefix = "https://data.discoverpassenger.com/operator"
 
         sources = DataSource.objects.filter(url__startswith=prefix)
 
         timetable_data_sources = TimetableDataSource.objects.filter(
-            active=True, url__startswith=prefix
+            # active=True,
+            url__startswith=prefix
         )
         if operator_name:
             timetable_data_sources = timetable_data_sources.filter(name=operator_name)
 
         for source in timetable_data_sources:
-
             versions = get_versions(session, source.url)
+
+            source.settings = {
+                version["filename"]: version["dates"] for version in versions
+            }
+            print(source.settings)
 
             if versions:
                 prefix = versions[0]["filename"].split("_")[0]
