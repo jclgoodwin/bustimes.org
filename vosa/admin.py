@@ -53,5 +53,5 @@ class VariationAdmin(admin.ModelAdmin):
         "effective_date",
         "date_received",
     ]
-    list_filter = ["registration_status"]
+    list_filter = ["effective_date", "date_received", "registration_status"]
     raw_id_fields = ["registration"]
