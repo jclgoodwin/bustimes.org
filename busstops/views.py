@@ -162,6 +162,7 @@ def robots_txt(request):
         content = """User-agent: *
 Disallow: /search
 Disallow: /trips/
+Disallow: /api/
 Disallow: /accounts/
 Disallow: /fares/
 Disallow: /vehicles/tfl/
