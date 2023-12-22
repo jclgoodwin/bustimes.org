@@ -129,9 +129,14 @@ AMTM:
 AMNO:
     name: Arriva Midlands North
     url: https://www.arrivabus.co.uk/midlands
-AFCL:
-    name: Arriva Derby
-    url: https://www.arrivabus.co.uk/derby
+AKSS:
+    url: https://www.arrivabus.co.uk/kent-and-surrey
+ARHE:
+    url: https://www.arrivabus.co.uk/herts-and-essex
+ADER:
+    url: https://www.arrivabus.co.uk/midlands/bus-travel-in-derby
+AMID:
+    url: https://www.arrivabus.co.uk/midlands
 AMSY:
     name: Arriva Merseyside
     url: https://www.arrivabus.co.uk/north-west
@@ -400,3 +405,7 @@ FTZL:
 AJTX:
     url: http://taxi-one.co.uk/
     twitter: AnthonyMullane
+TLYH:
+    url: https://www.tallyhoholidays.co.uk/Service-details
+HRBT:
+    url: https://www.herbertstravel.co.uk/
