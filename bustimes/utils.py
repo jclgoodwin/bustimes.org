@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from difflib import Differ
 
 from django.db.models import OuterRef, Q
@@ -30,6 +30,22 @@ class log_time_taken:
 
 def get_routes(routes, when=None, from_date=None):
     revision_numbers = set(route.revision_number for route in routes)
+
+    current_prefixes = {}
+    for route in routes:
+        if route.source.settings:
+            for prefix, dates in route.source.settings.items():
+                if when and date.fromisoformat(dates[0]) <= when < date.fromisoformat(
+                    dates[1]
+                ):
+                    current_prefixes[route.source_id] = prefix
+    if current_prefixes:
+        routes = [
+            route
+            for route in routes
+            if route.source_id not in current_prefixes
+            or route.code.startswith(current_prefixes[route.source_id])
+        ]
 
     if len(revision_numbers) == 1:
         if when:

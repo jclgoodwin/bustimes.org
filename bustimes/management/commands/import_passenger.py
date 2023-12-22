@@ -105,11 +105,6 @@ class Command(BaseCommand):
         for source in timetable_data_sources:
             versions = get_versions(session, source.url)
 
-            source.settings = {
-                version["filename"]: version["dates"] for version in versions
-            }
-            print(source.settings)
-
             if versions:
                 prefix = versions[0]["filename"].split("_")[0]
                 prefix = f"{prefix}_"  # eg 'transdevblazefield_'
@@ -128,6 +123,10 @@ class Command(BaseCommand):
             command.source, _ = DataSource.objects.get_or_create(
                 {"name": source.name}, url=source.url
             )
+
+            command.source.settings = {
+                version["filename"]: version["dates"] for version in versions
+            }
 
             if new_versions or operator_name:
                 logger.info(source.name)

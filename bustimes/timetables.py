@@ -195,11 +195,10 @@ class Timetable:
                 else:
                     self.date = self.today
 
-            if len(routes) > 1:
-                # consider revision numbers:
-                routes = get_routes(routes, when=self.date)
-                if routes:
-                    self.current_routes = routes
+            # consider revision numbers:
+            routes = get_routes(routes, when=self.date)
+            if routes:
+                self.current_routes = routes
 
         if not self.calendar:
             if self.calendars:
