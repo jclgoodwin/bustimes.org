@@ -98,7 +98,7 @@ def get_service_code(filename):
     Given a filename like 'ea_21-45A-_-y08-1.xml',
     returns a service_code like 'ea_21-45A-_-y08'
     """
-    parts = filename.split("-")  # ['ea_21', '3', '_', '1']
+    parts = filename.split("/")[-1].split("-")  # ['ea_21', '3', '_', '1']
     if len(parts) == 5:
         net = parts[0].split("_")[0]
         if len(net) <= 3 and net.isalpha() and net.islower():
