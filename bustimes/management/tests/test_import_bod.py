@@ -512,7 +512,7 @@ class ImportBusOpenDataTest(TestCase):
         BankHolidayDate.objects.create(
             bank_holiday=BankHoliday.objects.get(name="ChristmasDay"), date="2020-12-25"
         )
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(15):
             response = self.client.get(
                 "/services/904-huntingdon-peterborough?date=2020-12-25"
             )
