@@ -30,7 +30,7 @@
         <noscript><input type="submit"></noscript>
     </form>
 
-    {% cache 3600 timetable object.id object.modified_at timetable.detailed form.vehicles.value timetable.calendar_ids timetable.calendar.id form.cleaned_data.service %}
+    {% cache 3600 timetable object.id object.modified_at timetable.detailed form.vehicles.value timetable.calendar_ids timetable.calendar.id form.cleaned_data.service timetable.current_routes %}
 
     {% for grouping in timetable.render.groupings %}
         {% if forloop.first %}<div class="groupings">{% endif %}
