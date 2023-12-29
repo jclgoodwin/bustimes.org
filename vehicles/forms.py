@@ -3,6 +3,7 @@ from datetime import timedelta
 from urllib.parse import quote_plus
 
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Count, OuterRef, Q
 from django.urls import reverse
@@ -247,7 +248,10 @@ can’t be contradicted"""
                     f"The ticket machine code ({vehicle.code}) can’t be contradicted"
                 )
 
-            if not vehicle.notes and vehicle.operator_id != "NATX":
+            if not (
+                vehicle.notes
+                or vehicle.operator_id in settings.ALLOW_VEHICLE_NOTES_OPERATORS
+            ):
                 del self.fields["notes"]
 
         if vehicle.is_spare_ticket_machine():
