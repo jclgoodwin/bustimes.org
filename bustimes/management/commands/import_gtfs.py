@@ -408,8 +408,20 @@ class Command(BaseCommand):
                     trip=trips[line["trip_id"]],
                     timing_status="PTP" if line.get("timepoint", "1") == "1" else "OTH",
                 )
-                if line.get("pickup_type") == "1":  # "No pickup available"
-                    stop_time.pick_up = False
+                match line.get("pickup_type"):
+                    case "0":  # Regularly scheduled pickup
+                        stop_time.pick_up = True
+                    case "1":  # "No pickup available"
+                        stop_time.pick_up = False
+                    case _:
+                        assert False
+                match line.get("drop_off_type"):
+                    case "0":  # Regularly scheduled drop off
+                        stop_time.set_down = True
+                    case "1":  # "No drop off available"
+                        stop_time.set_down = False
+                    case _:
+                        assert False
 
                 if stop:
                     stop_time.stop = stop
