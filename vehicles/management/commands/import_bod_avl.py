@@ -64,7 +64,7 @@ def get_line_name_query(line_ref):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
-    wait = 17
+    wait = 10
     reg_operators = {"BDRB", "COMT", "TDY", "ROST", "CT4N", "TBTN", "OTSS"}
     services = (
         Service.objects.using(settings.READ_DATABASE)
@@ -815,11 +815,9 @@ class Command(ImportLiveVehiclesCommand):
         wait = witching_hour - now
         if wait < 0:
             wait += 10
-        if time_taken < 10:
-            wait += 10
         diff = worst_hour - witching_hour
         print(f"{witching_hour=} {worst_hour=} {diff=} {now=} {wait=}\n")
         if diff % 10 == 9:
             return wait
 
-        return max(self.wait - time_taken, 0)
+        return max(11 - time_taken, 0)
