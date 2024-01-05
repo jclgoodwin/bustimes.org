@@ -228,14 +228,10 @@ if REDIS_URL and not TEST:
         SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 
-TIME_FORMAT = "H:i"
-DATE_FORMAT = "l j F Y"
-# DATETIME_FORMAT = "j M H:i"
 TIME_ZONE = "Europe/London"
 USE_TZ = True
 USE_I18N = False
 LANGUAGE_CODE = "en-gb"
-USE_L10N = False  # force use of TIME_FORMAT, DATE_FORMAT etc. Alas, deprecated
 
 
 if TEST:
