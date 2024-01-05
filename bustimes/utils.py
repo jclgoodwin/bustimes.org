@@ -29,8 +29,6 @@ class log_time_taken:
 
 
 def get_routes(routes, when=None, from_date=None):
-    revision_numbers = set(route.revision_number for route in routes)
-
     current_prefixes = {}
     for route in routes:
         if route.source.settings:
@@ -46,6 +44,9 @@ def get_routes(routes, when=None, from_date=None):
             if route.source_id not in current_prefixes
             or route.code.startswith(current_prefixes[route.source_id])
         ]
+        return routes
+
+    revision_numbers = set(route.revision_number for route in routes)
 
     if len(revision_numbers) == 1:
         if when:
@@ -93,9 +94,6 @@ def get_routes(routes, when=None, from_date=None):
                 "National Express West Midlands"
             ):  # journeys may be split between sources (First Bristol)
                 route.key = f"{route.key}:{route.source_id}"
-
-            if route.source.name.startswith("Stagecoach"):
-                route.key = f"{route.key}:{route.code}"
 
             # use some clues in the filename (or a very good clue in the source URL)
             # to tell if the data is from Ticketer, and adapt accordingly
