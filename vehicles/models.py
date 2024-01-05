@@ -913,7 +913,9 @@ class VehicleJourney(models.Model):
         unique_together = (("vehicle", "datetime"),)
 
     def get_redis_key(self):
-        if self.datetime > datetime.datetime(2023, 12, 18, 18, tzinfo=timezone.utc):
+        if self.datetime > datetime.datetime(
+            2023, 12, 18, 18, tzinfo=datetime.timezone.utc
+        ):
             return self.uuid.bytes
         return f"journey{self.id}"
 
