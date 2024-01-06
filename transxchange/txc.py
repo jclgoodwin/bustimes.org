@@ -16,19 +16,18 @@ class Stop:
     """A TransXChange StopPoint."""
 
     def __init__(self, element):
-        if element:
-            atco_code = element.findtext("StopPointRef")
-            if not atco_code:
-                atco_code = element.findtext("AtcoCode", "")
-            self.atco_code = atco_code.upper()
+        atco_code = element.findtext("StopPointRef")
+        if not atco_code:
+            atco_code = element.findtext("AtcoCode", "")
+        self.atco_code = atco_code.upper()
 
-            self.common_name = element.findtext("CommonName")
-            if not self.common_name:
-                self.common_name = element.findtext("Descriptor/CommonName")
+        self.common_name = element.findtext("CommonName")
+        if not self.common_name:
+            self.common_name = element.findtext("Descriptor/CommonName")
 
-            self.indicator = element.findtext("Indicator")
+        self.indicator = element.findtext("Indicator")
 
-            self.locality = element.findtext("LocalityName")
+        self.locality = element.findtext("LocalityName")
 
     def __str__(self):
         name = self.common_name
@@ -323,7 +322,6 @@ class VehicleJourney:
         wait_time = None
 
         for timinglink, journey_timinglink in self.get_timinglinks():
-
             if journey_timinglink and journey_timinglink.from_activity:
                 activity = journey_timinglink.from_activity
             elif stopusage and stopusage.activity != timinglink.origin.activity:
@@ -386,10 +384,10 @@ class ServicedOrganisation:
         self.name = element.findtext("Name")
 
         working_days = element.findall("WorkingDays/DateRange")
-        self.working_days = [DateRange(e) for e in working_days if e]
+        self.working_days = [DateRange(e) for e in working_days if len(e)]
 
         holidays = element.findall("Holidays/DateRange")
-        self.holidays = [DateRange(e) for e in holidays if e]
+        self.holidays = [DateRange(e) for e in holidays if len(e)]
 
         self.hash = ET.tostring(element)
 
@@ -473,12 +471,12 @@ class OperatingProfile:
         nonoperation_days = element.findall(
             "SpecialDaysOperation/DaysOfNonOperation/DateRange"
         )
-        self.nonoperation_days = [DateRange(e) for e in nonoperation_days if e]
+        self.nonoperation_days = [DateRange(e) for e in nonoperation_days if len(e)]
 
         operation_days = element.findall(
             "SpecialDaysOperation/DaysOfOperation/DateRange"
         )
-        self.operation_days = [DateRange(e) for e in operation_days if e]
+        self.operation_days = [DateRange(e) for e in operation_days if len(e)]
 
         # Serviced Organisation:
 
@@ -507,7 +505,7 @@ class OperatingProfile:
             "BankHolidayOperation/DaysOfNonOperation"
         )
 
-        if not self.operation_bank_holidays:
+        if self.operation_bank_holidays is None:
             if element.find("RegularDayType/HolidaysOnly") is not None:
                 self.operation_bank_holidays = element.find("RegularDayType")
 

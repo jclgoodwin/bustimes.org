@@ -195,7 +195,7 @@ class Command(BaseCommand):
 
             user_profile = None
             trip_type = ""
-            if fare_structure_elements:
+            if fare_structure_elements is not None:
                 user_profile = fare_structure_elements.find(
                     "FareStructureElement/GenericParameterAssignment/limitations/UserProfile"
                 )
@@ -255,7 +255,7 @@ class Command(BaseCommand):
                         tariff.services.add(service)
 
             distance_matrix_elements = {}
-            if fare_structure_elements:
+            if fare_structure_elements is not None:
                 distance_matrix_element_elements = fare_structure_elements.find(
                     "FareStructureElement/distanceMatrixElements"
                 )
@@ -289,7 +289,7 @@ class Command(BaseCommand):
                     distance_matrix_elements.values()
                 )
 
-            if fare_structure_elements:
+            if fare_structure_elements is not None:
                 access_zones = fare_structure_elements.find(
                     "FareStructureElement/GenericParameterAssignment/validityParameters/FareZoneRef"
                 )

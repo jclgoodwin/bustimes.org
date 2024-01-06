@@ -449,7 +449,7 @@ class Command(BaseCommand):
         return self.bank_holidays[bank_holiday_name]
 
     def do_bank_holidays(self, holiday_elements, operation: bool, calendar_dates: list):
-        if not holiday_elements:
+        if holiday_elements is None:
             return
 
         for element in holiday_elements:
