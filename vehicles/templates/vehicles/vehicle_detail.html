@@ -114,7 +114,7 @@
                     <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip }}</a>
                 </td>
             {% else %}
-                <td class="tabular">{{ journey.datetime|time }}</td>
+                <td class="tabular">{{ journey.datetime|time:"H:i" }}</td>
             {% endif %}
             <td>{% firstof journey.destination journey.direction %}</td>
             {% if journey.locations %}
@@ -145,11 +145,11 @@
     {% if next_date or previous_date %}
         <nav>
             {% if previous_date %}
-                <p class="previous"><a href="?date={{ previous_date.isoformat }}">&larr; {{ previous_date }}</a></p>
+                <p class="previous"><a href="?date={{ previous_date.isoformat }}">&larr; {{ previous_date|date:"l j F Y" }}</a></p>
             {% endif %}
 
             {% if next_date %}
-                <p class="next"><a href="?date={{ next_date.isoformat }}">{{ next_date }} &rarr;</a></p>
+                <p class="next"><a href="?date={{ next_date.isoformat }}">{{ next_date|date:"l j F Y" }} &rarr;</a></p>
             {% endif %}
         </nav>
     {% endif %}

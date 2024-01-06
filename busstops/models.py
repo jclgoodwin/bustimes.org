@@ -640,21 +640,25 @@ class ServiceColour(models.Model):
 class ServiceManager(models.Manager):
     def with_documents(self):
         vector = SearchVector(
-            StringAgg("route__line_name", delimiter=" ", distinct=True),
+            StringAgg("route__line_name", delimiter=" ", distinct=True, default=""),
             weight="A",
         )
         vector += SearchVector("line_brand", weight="A", config="english")
         vector += SearchVector("description", weight="B", config="english")
         vector += SearchVector(
-            StringAgg("operator__name", delimiter=" "), weight="B", config="english"
+            StringAgg("operator__name", delimiter=" ", default=""),
+            weight="B",
+            config="english",
         )
         vector += SearchVector(
-            StringAgg("stops__locality__name", delimiter=" "),
+            StringAgg("stops__locality__name", delimiter=" ", default=""),
             weight="C",
             config="english",
         )
         vector += SearchVector(
-            StringAgg("stops__common_name", delimiter=" "), weight="D", config="english"
+            StringAgg("stops__common_name", delimiter=" ", default=""),
+            weight="D",
+            config="english",
         )
         return self.get_queryset().annotate(document=vector)
 

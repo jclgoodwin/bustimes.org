@@ -130,7 +130,9 @@ def liveries_css(request, version=0):
     return HttpResponse("".join(styles), content_type="text/css")
 
 
-features_string_agg = StringAgg("features__name", ", ", ordering=["features__name"])
+features_string_agg = StringAgg(
+    "features__name", ", ", ordering=["features__name"], default=""
+)
 
 
 def get_vehicle_order(vehicle):
