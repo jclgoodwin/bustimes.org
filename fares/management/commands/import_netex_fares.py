@@ -235,31 +235,31 @@ class Command(BaseCommand):
             )
             tariffs[tariff.code] = tariff
 
-            operator = tariff_element.find("OperatorRef")
-            if operator is not None:
+            operator_ref = tariff_element.find("OperatorRef")
+            if operator_ref is not None:
                 try:
                     operator = Operator.objects.get(
-                        noc=operator.attrib["ref"].removeprefix("noc:")
+                        noc=operator_ref.attrib["ref"].removeprefix("noc:")
                     )
                 except Operator.DoesNotExist:
                     pass
-            if operator:
-                tariff.operators.add(operator)
+                else:
+                    tariff.operators.add(operator)
 
-                line_ref = tariff_element.find("LineRef")
-                if line_ref is not None:
-                    line = lines[line_ref.attrib["ref"]]
-                    line_name = line.findtext("PublicCode")
-                    service = get_service(operator, line_name)
-                    if service:
-                        tariff.services.add(service)
+                    line_ref = tariff_element.find("LineRef")
+                    if line_ref is not None:
+                        line = lines[line_ref.attrib["ref"]]
+                        line_name = line.findtext("PublicCode")
+                        service = get_service(operator, line_name)
+                        if service:
+                            tariff.services.add(service)
 
             distance_matrix_elements = {}
             if fare_structure_elements is not None:
                 distance_matrix_element_elements = fare_structure_elements.find(
                     "FareStructureElement/distanceMatrixElements"
                 )
-                if distance_matrix_element_elements:
+                if distance_matrix_element_elements is not None:
                     for distance_matrix_element in distance_matrix_element_elements:
                         price_group_ref = distance_matrix_element.find(
                             "priceGroups/PriceGroupRef"
@@ -297,7 +297,7 @@ class Command(BaseCommand):
                     tariff.access_zones.add(fare_zones[access_zones.attrib["ref"]])
 
             time_intervals_element = tariff_element.find("timeIntervals")
-            if time_intervals_element:
+            if time_intervals_element is not None:
                 for time_interval in time_intervals_element:
                     time_interval, _ = models.TimeInterval.objects.get_or_create(
                         code=time_interval.attrib["id"],
@@ -348,7 +348,7 @@ class Command(BaseCommand):
             columns_element = fare_table_element.find("columns")
             rows_element = fare_table_element.find("rows")
 
-            if columns_element and rows_element:
+            if columns_element is not None and rows_element is not None:
                 table, created = models.FareTable.objects.update_or_create(
                     {
                         "user_profile": user_profile,
@@ -368,7 +368,7 @@ class Command(BaseCommand):
                     table.row_set.all().delete()
 
                 columns = {}
-                if columns_element:
+                if columns_element is not None:
                     for column in columns_element:
                         column = models.Column(
                             table=table,
@@ -380,7 +380,7 @@ class Command(BaseCommand):
                 models.Column.objects.bulk_create(columns.values())
 
                 rows = {}
-                if rows_element:
+                if rows_element is not None:
                     for row in rows_element:
                         row = models.Row(
                             table=table,
@@ -396,7 +396,7 @@ class Command(BaseCommand):
 
                 # Stagecoach
                 distance_matrix_elements = tariff_element.find("distanceMatrixElements")
-                if distance_matrix_elements:
+                if distance_matrix_elements is not None:
                     distance_matrix_elements = {
                         element.attrib["id"]: element
                         for element in distance_matrix_elements
@@ -434,7 +434,7 @@ class Command(BaseCommand):
             ):
                 # fare tables within fare tables
                 cells_element = sub_fare_table_element.find("cells")
-                if cells_element:
+                if cells_element is not None:
                     for cell_element in cells_element:
                         distance_matrix_element_price = cell_element.find(
                             "DistanceMatrixElementPrice"
@@ -484,17 +484,16 @@ class Command(BaseCommand):
                 else:
                     sales_offer_package = None
 
-                if sub_fare_table_element.find("includes"):
-                    for sub_sub_fare_table_element in sub_fare_table_element.find(
-                        "includes"
-                    ):
+                includes = sub_fare_table_element.find("includes")
+                if includes is not None:
+                    for sub_sub_fare_table_element in includes:
                         cells_element = sub_sub_fare_table_element.find("cells")
-                        if cells_element:
+                        if cells_element is not None:
                             for cell_element in cells_element:
                                 time_interval_price = cell_element.find(
                                     "TimeIntervalPrice"
                                 )
-                                if time_interval_price:
+                                if time_interval_price is not None:
                                     time_interval = time_interval_price.find(
                                         "TimeIntervalRef"
                                     )

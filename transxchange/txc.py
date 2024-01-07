@@ -482,7 +482,7 @@ class OperatingProfile:
 
         self.serviced_organisations = []
 
-        if sodt := element.find("ServicedOrganisationDayType"):
+        if (sodt := element.find("ServicedOrganisationDayType")) is not None:
             for path, operation, working in (
                 ("DaysOfOperation/Holidays/ServicedOrganisationRef", True, False),
                 ("DaysOfOperation/WorkingDays/ServicedOrganisationRef", True, True),
@@ -568,7 +568,7 @@ class Service:
             self.destination = self.destination.replace("`", "'").strip()
 
         self.vias = element.find("StandardService/Vias")
-        if self.vias:
+        if self.vias is not None:
             self.vias = [via.text for via in self.vias]
 
         self.journey_patterns = {
