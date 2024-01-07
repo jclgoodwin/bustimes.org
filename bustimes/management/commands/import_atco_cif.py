@@ -347,6 +347,7 @@ class Command(BaseCommand):
                     or previous_identity == b"QI"
                     or previous_identity == b"QT"
                 ):
+                    # stop time note
                     note = note.lower()
                     if note == "pick up only" or note == "pick up  only":
                         if previous_identity != b"QT":
@@ -365,6 +366,7 @@ class Command(BaseCommand):
                     or previous_identity == b"QE"
                     or previous_identity == b"QN"
                 ):
+                    # trip note
                     code = line[2:7].decode(encoding).strip()
                     note, _ = Note.objects.get_or_create(code=code, text=note)
                     self.notes.append(note)

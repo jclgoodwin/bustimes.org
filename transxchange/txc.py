@@ -160,8 +160,6 @@ class JourneyPatternStopUsage:
             if self.notes == [("R", "Sets down by request to driver only")]:
                 if self.activity != "setDown":
                     self.activity = "setDown"
-            else:
-                print(stop_ref, self.notes)
 
         self.row = None
         self.parent = None
@@ -218,6 +216,7 @@ class VehicleJourneyTimingLink:
             (note_element.find("NoteCode").text, note_element.find("NoteText").text)
             for note_element in element.findall("Notes/Note")
         ]
+        assert not self.notes
 
 
 class VehicleType:
@@ -340,7 +339,9 @@ class VehicleJourney:
                 elif stopusage.wait_time is not None:
                     wait_time = stopusage.wait_time
 
-                notes = journey_timinglink and journey_timinglink.notes
+                notes = (
+                    journey_timinglink and journey_timinglink.notes or stopusage.notes
+                )
 
                 if wait_time:
                     next_time = time + wait_time
@@ -372,7 +373,11 @@ class VehicleJourney:
 
         if not deadrun:
             activity = journey_timinglink and journey_timinglink.to_activity
-            notes = journey_timinglink and journey_timinglink.notes
+            notes = (
+                journey_timinglink
+                and journey_timinglink.notes
+                or timinglink.destination.notes
+            )
             yield Cell(timinglink.destination, time, time, activity, notes)
 
 
@@ -599,8 +604,7 @@ class Service:
             (note_element.find("NoteCode").text, note_element.find("NoteText").text)
             for note_element in element.findall("Note")
         ]
-        if self.notes:
-            print(self.notes)
+        assert not self.notes
 
 
 class Line:
@@ -742,5 +746,3 @@ class Cell:
 
         self.activity = activity
         self.notes = notes
-        if self.notes:
-            print(self.notes)

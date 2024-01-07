@@ -462,7 +462,7 @@ class ImportBusOpenDataTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command("import_bod", "stagecoach", "SCOX")
 
-                    with self.assertNumQueries(80):
+                    with self.assertNumQueries(118):
                         call_command("import_bod", "stagecoach", "SCCM")
 
                     route_link.refresh_from_db()

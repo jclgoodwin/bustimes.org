@@ -661,6 +661,17 @@ class Command(BaseCommand):
 
         return stop_time
 
+    def get_note(self, note_code, note_text):
+        note_cache_key = f"{note_code}:{note_text}"
+        if note_cache_key in self.notes:
+            note = self.notes[note_cache_key]
+        else:
+            note, _ = Note.objects.get_or_create(
+                code=note_code or "", text=note_text[:255]
+            )
+            self.notes[note_cache_key] = note
+        return note
+
     def handle_journeys(
         self,
         route_code: str,
@@ -682,6 +693,7 @@ class Command(BaseCommand):
 
         trips = []
         trip_notes = []
+        stop_time_notes = []
 
         for journey in journeys:
             calendar = None
@@ -739,6 +751,15 @@ class Command(BaseCommand):
                 if not stop_time.timing_status:
                     blank = True
 
+                if cell.notes:
+                    for note_code, note_text in cell.notes:
+                        note = self.get_note(note_code, note_text)
+                        if not trip_notes or trip_notes[-1].trip is not trip:
+                            trip_notes.append(Trip.notes.through(trip=trip, note=note))
+                        stop_time_notes.append(
+                            StopTime.notes.through(stoptime=stop_time, note=note)
+                        )
+
             # last stop
             if not stop_time.arrival:
                 stop_time.arrival = stop_time.departure
@@ -756,16 +777,8 @@ class Command(BaseCommand):
                     if not stop_time.timing_status:
                         stop_time.timing_status = "OTH"
 
-            for note, text in journey.notes.items():
-                note_cache_key = f"{note}:{text}"
-                if note_cache_key in self.notes:
-                    note = self.notes[note_cache_key]
-                else:
-                    if len(text) > 255:
-                        logger.warning(f"{text}")
-                        text = text[:255]
-                    note, _ = Note.objects.get_or_create(code=note or "", text=text)
-                    self.notes[note_cache_key] = note
+            for note_code, note_text in journey.notes.items():
+                note = self.get_note(note_code, note_text)
                 trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
         if not route_created:
@@ -822,6 +835,8 @@ class Command(BaseCommand):
         for stop_time in stop_times:
             stop_time.trip = stop_time.trip  # set trip_id
         StopTime.objects.bulk_create(stop_times, batch_size=1000)
+
+        StopTime.notes.through.objects.bulk_create(stop_time_notes, batch_size=1000)
 
     def get_description(self, txc_service):
         description = txc_service.description
