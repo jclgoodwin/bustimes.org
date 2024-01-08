@@ -129,8 +129,8 @@ DATABASES["default"]["ENGINE"] = "django.contrib.gis.db.backends.postgis"
 if DEBUG and "runserver" in sys.argv:
     del DATABASES["default"]["CONN_MAX_AGE"]  # reset to the default (0)
 
-# TEST_RUNNER = "django_slowtests.testrunner.DiscoverSlowestTestsRunner"
-# NUM_SLOW_TESTS = 10
+TEST_RUNNER = "django_slowtests.testrunner.DiscoverSlowestTestsRunner"
+NUM_SLOW_TESTS = 10
 
 AUTH_USER_MODEL = "accounts.User"
 LOGIN_REDIRECT_URL = "/vehicles"

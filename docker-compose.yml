@@ -27,9 +27,9 @@ services:
     image: postgis/postgis
     tmpfs:
       - "/var/lib/postgresql/data/"
-    # sloppy non-durable settings, which allegedly make the tests run faster
-    # not to be used in production!
-    command: --autovacuum=off --fsync=off --synchronous_commit=off --full_page_writes=off --work_mem=12MB --max-connections=10 --max_wal_senders=0
+    # # sloppy non-durable settings, which allegedly make the tests run faster
+    # # not to be used in production!
+    # command: --autovacuum=off --fsync=off --synchronous_commit=off --full_page_writes=off --work_mem=12MB --max-connections=10 --max_wal_senders=0
     environment:
       - PGUSER=postgres
       - POSTGRES_PASSWORD=postgres

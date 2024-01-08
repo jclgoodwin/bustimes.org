@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from pathlib import Path
 
 import time_machine
@@ -101,6 +102,10 @@ class FaresTest(TestCase):
         self.assertContains(response, '<th colspan="8">Welbourn</th>')
         self.assertContains(response, '<th colspan="2">Greylees</th>')
         self.assertContains(response, '<th colspan="1">Ancaster</th')
+
+    def test_service_fares_not_found(self):
+        response = self.client.get(f"{self.wm06.get_absolute_url()}/fares")
+        self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_ad_hoc(self):
         command = Command()
