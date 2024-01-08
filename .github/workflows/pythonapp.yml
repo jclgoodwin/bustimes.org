@@ -34,9 +34,11 @@ jobs:
     - run: docker compose build
       if: steps.cache-docker.outputs.cache-hit != 'true'  # not an full exact match
 
-    - name: Run tests
+    - run: docker compose up -d web postgres
+
+    - name: run tests
       run: |
-        docker compose run web bash -c "./manage.py collectstatic --noinput && coverage run ./manage.py test && coverage xml"
+        docker compose exec web bash -c "./manage.py collectstatic --noinput && coverage run ./manage.py test && coverage xml"
 
     - run: |
         mkdir -p /tmp/docker-save \
