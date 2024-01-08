@@ -107,6 +107,20 @@ class VehiclesTests(TestCase):
             service=service,
             route_name="2",
         )
+        VehicleJourney.objects.create(
+            vehicle=cls.vehicle_1,
+            datetime="2020-10-16 12:00:00+00:00",
+            source=source,
+            service=service,
+            route_name="2",
+        )
+        VehicleJourney.objects.create(
+            vehicle=cls.vehicle_1,
+            datetime="2020-10-20 12:00:00+00:00",
+            source=source,
+            service=service,
+            route_name="2",
+        )
 
         cls.vehicle_1.latest_journey = cls.journey
         cls.vehicle_1.save()
@@ -197,6 +211,10 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "Trent Barton")
         self.assertContains(response, "#FF0000")
 
+        self.assertContains(response, ">00:47<")
+        self.assertContains(response, ">13:00<")
+        self.assertContains(response, ">&larr; Friday 16 October 2020<")
+
         with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
@@ -213,6 +231,11 @@ class VehiclesTests(TestCase):
                 "datetime": "2020-10-19T23:47:00Z",
                 "destination": "",
                 "direction": "",
+                "next": {"datetime": "2020-10-20T12:00:00Z", "id": self.journey.id + 2},
+                "previous": {
+                    "datetime": "2020-10-16T12:00:00Z",
+                    "id": self.journey.id + 1,
+                },
                 "route_name": "2",
             },
             response.json(),
@@ -384,7 +407,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         self.client.force_login(self.staff_user)
 
         response = self.client.get("/admin/vehicles/vehiclejourney/?trip__isnull=1")
-        self.assertContains(response, "0 of 1 selected")
+        self.assertContains(response, "0 of 3 selected")
 
     def test_search(self):
         response = self.client.get("/search?q=fd54jya")
