@@ -13,6 +13,7 @@ RUN npm run lint && npm run build
 FROM python:3.12
 
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 # install GDAL (https://docs.djangoproject.com/en/4.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
