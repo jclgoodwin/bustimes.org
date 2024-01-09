@@ -12,7 +12,7 @@ from django.utils.timezone import localdate
 from sql_util.utils import Exists
 
 from .formatting import format_timedelta
-from .models import Calendar, StopTime, Trip
+from .models import Calendar, Note, StopTime, Trip
 from .utils import get_calendars, get_descriptions, get_routes
 
 differ = Differ(charjunk=lambda _: True)
@@ -225,7 +225,9 @@ class Timetable:
                 ).order_by("trip_id", "id"),
                 to_attr="times",
             ),
-            "notes",
+            Prefetch(
+                "notes", queryset=Note.objects.annotate(stoptimes=ArrayAgg("stoptime"))
+            ),
         )
 
         if self.detailed:
@@ -243,6 +245,12 @@ class Timetable:
                 self.groupings[1].trips.append(trip)
             else:
                 self.groupings[0].trips.append(trip)
+
+            for note in trip.notes.all():
+                if note.stoptimes:
+                    for stoptime in trip.times:
+                        if stoptime.id in note.stoptimes:
+                            stoptime.note = note
 
         del trips
 
@@ -856,7 +864,7 @@ class Grouping:
             if max_notes > 1 or not notes:
                 for key in self.column_feet:
                     if key not in note_ids:
-                        if not self.column_feet[key][-1].notes:
+                        if not self.column_feet[key][-1].note:
                             # expand existing empty cell
                             self.column_feet[key][-1].span += 1
                         else:
@@ -941,7 +949,7 @@ class ColumnHead:
 
 class ColumnFoot:
     def __init__(self, note, span=1):
-        self.notes = note and note.text
+        self.note = note
         self.span = span
 
 
