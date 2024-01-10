@@ -28,7 +28,7 @@ class Situation(models.Model):
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    publication_window = DateTimeRangeField()
+    publication_window = DateTimeRangeField(default=lambda: [timezone.now()])
     current = models.BooleanField(default=True)
 
     def __str__(self):
