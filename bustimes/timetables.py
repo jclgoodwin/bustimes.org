@@ -152,8 +152,10 @@ class Timetable:
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
                     filter=Q(
                         calendarbankholiday__operation=True,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time,
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__range=[
+                            self.today,
+                            four_weeks_time,
+                        ],
                     ),
                     default=[],
                 ),
@@ -161,8 +163,10 @@ class Timetable:
                     "calendarbankholiday__bank_holiday__bankholidaydate__date",
                     filter=Q(
                         calendarbankholiday__operation=False,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__gte=self.today,
-                        calendarbankholiday__bank_holiday__bankholidaydate__date__lte=four_weeks_time,
+                        calendarbankholiday__bank_holiday__bankholidaydate__date__range=[
+                            self.today,
+                            four_weeks_time,
+                        ],
                     ),
                     default=[],
                 ),

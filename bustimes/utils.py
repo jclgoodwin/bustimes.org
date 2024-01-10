@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 from difflib import Differ
 
-from django.db.models import OuterRef, Q
+from django.db.models import FilteredRelation, OuterRef, Q
 from django.utils import timezone
 from sql_util.utils import Exists
 
@@ -210,7 +210,9 @@ def get_stop_times(date: datetime, time: timedelta, stop, services_routes: dict)
     routes = []
     for service_routes in services_routes.values():
         routes += get_routes(service_routes, date)
-    return times.filter(trip__route__in=routes, trip__calendar__in=get_calendars(date))
+    return times.annotate(
+        trips=FilteredRelation("trip", condition=Q(trip__route__in=routes))
+    ).filter(trips__calendar__in=get_calendars(date))
 
 
 def get_descriptions(routes):
