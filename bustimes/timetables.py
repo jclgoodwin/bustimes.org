@@ -220,13 +220,13 @@ class Timetable:
         trips = trips.prefetch_related(
             Prefetch(
                 "stoptime_set",
-                queryset=StopTime.objects.filter(
-                    Q(pick_up=True) | Q(set_down=True)
-                ).order_by("trip_id", "id"),
+                queryset=StopTime.objects.annotate(note_ids=ArrayAgg("notes"))
+                .filter(Q(pick_up=True) | Q(set_down=True))
+                .order_by("trip_id", "id"),
                 to_attr="times",
             ),
             Prefetch(
-                "notes", queryset=Note.objects.annotate(stoptimes=ArrayAgg("stoptime"))
+                "notes", queryset=Note.objects.annotate(stoptimes=Exists("stoptime"))
             ),
         )
 
@@ -249,7 +249,7 @@ class Timetable:
             for note in trip.notes.all():
                 if note.stoptimes:
                     for stoptime in trip.times:
-                        if stoptime.id in note.stoptimes:
+                        if note.id in stoptime.note_ids:
                             stoptime.note = note
 
         del trips

@@ -661,16 +661,9 @@ class Command(BaseCommand):
 
         return stop_time
 
+    @cache
     def get_note(self, note_code, note_text):
-        note_cache_key = f"{note_code}:{note_text}"
-        if note_cache_key in self.notes:
-            note = self.notes[note_cache_key]
-        else:
-            note, _ = Note.objects.get_or_create(
-                code=note_code or "", text=note_text[:255]
-            )
-            self.notes[note_cache_key] = note
-        return note
+        return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
     def handle_journeys(
         self,

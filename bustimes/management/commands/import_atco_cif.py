@@ -1,6 +1,7 @@
 import os
 import zipfile
 from datetime import date, datetime, timedelta, timezone
+from functools import cache
 
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
@@ -99,10 +100,15 @@ class Command(BaseCommand):
         )
         self.source.save(update_fields=["datetime"])
 
+    @cache
+    def get_note(self, note_code, note_text):
+        return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
+
     def handle_file(self, open_file):
         self.route = None
         self.trip = None
         self.stop_times = []
+        self.stop_time_notes = []
         self.notes = []
 
         encoding = "cp1252"
@@ -331,44 +337,54 @@ class Command(BaseCommand):
                     self.trip.save()
 
                     if self.notes:
-                        self.trip.notes.set(self.notes)
+                        self.trip.notes.add(*self.notes)
                         self.notes = []
 
                     for stop_time in self.stop_times:
                         stop_time.trip = stop_time.trip  # set trip_id
                     StopTime.objects.bulk_create(self.stop_times)
+
+                    if self.stop_time_notes:
+                        StopTime.notes.through.objects.bulk_create(self.stop_time_notes)
+                        self.stop_time_notes = []
                     self.stop_times = []
 
             case b"QN":  # note
                 previous_identity = previous_line[:2]
                 note = line[7:].decode(encoding).strip()
+                code = line[2:7].decode(encoding).strip()
                 if (
                     previous_identity == b"QO"
                     or previous_identity == b"QI"
                     or previous_identity == b"QT"
                 ):
                     # stop time note
-                    note = note.lower()
-                    if note == "pick up only" or note == "pick up  only":
+                    note_lower = note.lower()
+                    if note_lower == "pick up only" or note_lower == "pick up  only":
                         if previous_identity != b"QT":
                             self.stop_times[-1].set_down = False
                     elif (
-                        note == "set down only"
-                        or note == ".set down only"
-                        or note == "drop off only"
+                        note_lower == "set down only"
+                        or note_lower == ".set down only"
+                        or note_lower == "drop off only"
                     ):
                         if previous_identity != b"QT":
                             self.stop_times[-1].pick_up = False
                     else:
-                        print(note)
+                        note = self.get_note(code, note)
+                        self.stop_time_notes.append(
+                            StopTime.notes.through(
+                                stoptime=self.stop_times[-1], note=note
+                            )
+                        )
+                        self.notes.append(note)
                 elif (
                     previous_identity == b"QS"
                     or previous_identity == b"QE"
                     or previous_identity == b"QN"
                 ):
                     # trip note
-                    code = line[2:7].decode(encoding).strip()
-                    note, _ = Note.objects.get_or_create(code=code, text=note)
+                    note = self.get_note(code, note)
                     self.notes.append(note)
                 else:
                     print(previous_identity[:2], line)

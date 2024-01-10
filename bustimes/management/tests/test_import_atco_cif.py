@@ -43,15 +43,16 @@ class ImportAtcoCifTest(TestCase):
         )
 
     def test_ulsterbus(self):
-
         with TemporaryDirectory() as directory:
             zipfile_path = os.path.join(directory, "ulb.zip")
 
             write_files_to_zipfile(zipfile_path, ["218 219.cif"])
 
             with time_machine.travel("2019-10-09"):
-                call_command("import_atco_cif", zipfile_path)
-                call_command("import_atco_cif", zipfile_path)
+                with self.assertNumQueries(362):
+                    call_command("import_atco_cif", zipfile_path)
+                with self.assertNumQueries(371):
+                    call_command("import_atco_cif", zipfile_path)
 
         self.assertEqual(5, Route.objects.count())
         self.assertEqual(5, Service.objects.count())

@@ -1345,7 +1345,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, '<td>08:00<abbr title="set down only">s</abbr>')
         self.assertContains(response, '<td>08:26<abbr title="pick up only">p</abbr>')
 
-    @time_machine.travel("2023-07-24")
+    @time_machine.travel("2023-07-20")
     def test_stop_usage_notes(self):
         with patch("os.path.getmtime", return_value=1690162625):
             call_command("import_transxchange", FIXTURES_DIR / "swe_40-228-_-y10-1.xml")
@@ -1356,6 +1356,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(
             response, '<td>18:07<abbr title="set down only">s</abbr></td>'
         )
+        self.assertContains(response, "<strong>Sch</strong> Schooldays Only")
+        self.assertContains(response, "<td>07:56<strong>Sch</strong></td>")
 
     def test_get_operator_name(self):
         blue_triangle_element = ET.fromstring(
