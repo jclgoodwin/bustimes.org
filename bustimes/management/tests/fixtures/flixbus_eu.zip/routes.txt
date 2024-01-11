@@ -1,0 +1,4 @@
+agency_id,route_id,route_short_name,route_long_name,route_type,route_desc,route_url,route_color,route_text_color,bikes_allowed,route_sort_order
+FLIXBUS-eu,UK006,FlixBus UK006,London - Cambridge,3,,,73D700,FFFFFF,,
+FLIXBUS-eu,UK004,FlixBus UK004,London - Northampton - Nottingham,3,,,73D700,FFFFFF,,
+FLIXBUS-eu,N401,FlixBus N401,Venice - Strasbourg,3,,,73D700,FFFFFF,,
