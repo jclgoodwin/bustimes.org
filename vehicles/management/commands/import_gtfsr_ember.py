@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
+from functools import cache
 from zoneinfo import ZoneInfo
 
 from google.protobuf import json_format
 from google.transit import gtfs_realtime_pb2
 
 from busstops.models import DataSource
-from bustimes.models import Trip
+from bustimes.models import Note, StopTime, Trip
 
 from ...models import Vehicle, VehicleJourney
 from .import_gtfsr_ie import Command as BaseCommand
@@ -13,6 +14,10 @@ from .import_gtfsr_ie import Command as BaseCommand
 
 class Command(BaseCommand):
     source_name = "Ember"
+
+    @cache
+    def get_note(self, note_code, note_text):
+        return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
     def do_source(self):
         self.tzinfo = ZoneInfo("Europe/London")
@@ -30,9 +35,11 @@ class Command(BaseCommand):
         items = []
         vehicle_codes = []
 
+        stop_notes = {}
+
         # build list of vehicles that have moved
         for item in feed.entity:
-            if item.vehicle.vehicle.id:
+            if item.HasField("vehicle"):
                 key = item.vehicle.vehicle.id
                 value = (
                     item.vehicle.trip.route_id,
@@ -46,8 +53,25 @@ class Command(BaseCommand):
                     vehicle_codes.append(key)
                     vehicle_codes.append(key.replace(" ", ""))
                     self.previous_locations[key] = value
+            elif item.HasField("alert"):
+                note = self.get_note(
+                    item.alert.header_text.translation[0].text[:1],
+                    item.alert.description_text.translation[0].text,
+                )
+                if note in stop_notes:
+                    stop_notes[note].append(item.alert.informed_entity[0].stop_id)
+                else:
+                    stop_notes[note] = [item.alert.informed_entity[0].stop_id]
 
         self.prefetch_vehicles(vehicle_codes)
+
+        for note in stop_notes:
+            stop_times = StopTime.objects.filter(
+                stop__in=stop_notes[note], trip__operator="EMBR"
+            )
+            trips = Trip.objects.filter(stoptime__in=stop_times, operator="EMBR")
+            note.stoptime_set.set(stop_times)
+            note.trip_set.set(trips)
 
         return items
 
@@ -82,9 +106,7 @@ class Command(BaseCommand):
         ) and latest_journey.code == journey.code:
             return latest_journey
 
-        trip = Trip.objects.get(
-            operator="EMBR", vehicle_journey_code=journey.code
-        )
+        trip = Trip.objects.get(operator="EMBR", vehicle_journey_code=journey.code)
         journey.trip = trip
 
         journey.datetime = datetime.strptime(
@@ -99,7 +121,8 @@ class Command(BaseCommand):
         journey.service = trip.route.service
 
         journey.route_name = journey.service.line_name
-        journey.destination = str(trip.destination.locality)
+        if trip.destination_id:
+            journey.destination = str(trip.destination.locality)
 
         vehicle.latest_journey_data = json_format.MessageToDict(item)
 
