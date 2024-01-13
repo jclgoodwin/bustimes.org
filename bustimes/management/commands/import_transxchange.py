@@ -921,8 +921,7 @@ class Command(BaseCommand):
                         for timing_link in section.timinglinks:
                             try:
                                 route_link = route_links[timing_link.route_link_ref]
-                            except KeyError as e:
-                                print(e)
+                            except KeyError:
                                 continue
                             if route_link.track:
                                 yield route_link
