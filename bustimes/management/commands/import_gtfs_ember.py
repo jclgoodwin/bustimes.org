@@ -82,14 +82,16 @@ class Command(BaseCommand):
             if row.route_id in existing_services:
                 service = existing_services[row.route_id]
             else:
-                service = Service(line_name=row.route_id, source=source)
+                service = Service(line_name=row.route_id)
 
             if row.route_id in existing_routes:
                 route = existing_routes[row.route_id]
             else:
-                route = Route(code=row.route_id, source=source)
+                route = Route(code=row.route_id)
+            route.source = source
             route.service = service
             route.line_name = row.route_id
+            service.source = source
             service.description = route.description = row.route_long_name
             service.current = True
             service.geometry = row.geometry.wkt
