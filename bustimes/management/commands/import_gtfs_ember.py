@@ -104,7 +104,10 @@ class Command(BaseCommand):
 
             existing_routes[route.code] = route  # deals with duplicate rows
 
-        trips = {trip.vehicle_journey_code: trip for trip in operator.trip_set.all()}
+        existing_trips = {
+            trip.vehicle_journey_code: trip for trip in operator.trip_set.all()
+        }
+        trips = []
         for i, row in feed.trips.iterrows():
             trip = Trip(
                 route=existing_routes[row.route_id],
@@ -113,10 +116,11 @@ class Command(BaseCommand):
                 vehicle_journey_code=row.trip_id,
                 operator=operator,
             )
-            if trip.vehicle_journey_code in trips:
+            if trip.vehicle_journey_code in existing_trips:
                 # reuse existing trip id
-                trip.id = trips[trip.vehicle_journey_code].id
-            trips[trip.vehicle_journey_code] = trip
+                trip.id = existing_trips[trip.vehicle_journey_code].id
+            trips.append(trip)
+        del existing_trips
 
         stop_times = []
         for i, row in feed.stop_times.iterrows():
@@ -141,8 +145,8 @@ class Command(BaseCommand):
             stop_times.append(stop_time)
 
         with transaction.atomic():
-            Trip.objects.bulk_create([trip for trip in trips.values() if not trip.id])
-            existing_trips = [trip for trip in trips.values() if trip.id]
+            Trip.objects.bulk_create([trip for trip in trips if not trip.id])
+            existing_trips = [trip for trip in trips if trip.id]
             Trip.objects.bulk_update(
                 existing_trips,
                 fields=[
@@ -152,7 +156,7 @@ class Command(BaseCommand):
                     "end",
                     "destination",
                     "block",
-                    "ticket_machine_code",
+                    "vehicle_journey_code" "inbound",
                 ],
             )
 
@@ -167,9 +171,7 @@ class Command(BaseCommand):
                 source.route_set.exclude(id__in=[route.id for route in routes]).delete()
             )
             print(
-                operator.trip_set.exclude(
-                    id__in=[trip.id for trip in trips.values()]
-                ).delete()
+                operator.trip_set.exclude(id__in=[trip.id for trip in trips]).delete()
             )
             print(
                 operator.service_set.filter(current=True, route__isnull=True).update(
