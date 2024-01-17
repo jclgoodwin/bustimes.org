@@ -372,11 +372,12 @@ class Command(BaseCommand):
                             self.stop_times[-1].pick_up = False
                     else:
                         note = self.get_note(code, note)
-                        self.stop_time_notes.append(
-                            StopTime.notes.through(
-                                stoptime=self.stop_times[-1], note=note
+                        if self.stop_times:
+                            self.stop_time_notes.append(
+                                StopTime.notes.through(
+                                    stoptime=self.stop_times[-1], note=note
+                                )
                             )
-                        )
                         self.notes.append(note)
                 elif (
                     previous_identity == b"QS"
