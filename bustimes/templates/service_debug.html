@@ -73,7 +73,7 @@
 <tr style="vertical-align:top">
     <td>{% if trip.sequence %}{{ trip.sequence }}{% endif %}</td>
     <td class="link">{% if trip.block %}<a href="{{ trip.get_absolute_url }}/block">{{ trip.block }}</a>{% endif %}</td>
-    <td>{{ trip.ticket_machine_code }}</td>
+    <td>{% firstof trip.ticket_machine_code trip.vehicle_journey_code %}</td>
     <td>{% if trip.inbound %}in{% else %}out{% endif %}</td>
     <td class="link"><a href="{{ trip.get_absolute_url }}">{{ trip.start }}</a></td>
     <td>{{ trip.end }}</td>
