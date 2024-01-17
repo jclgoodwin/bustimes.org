@@ -147,10 +147,13 @@ class Command(BaseCommand):
                 fields=[
                     "route",
                     "calendar",
+                    "inbound",
                     "start",
                     "end",
                     "destination",
                     "block",
+                    "vehicle_journey_code",
+                    "operator",
                     "ticket_machine_code",
                 ],
             )
