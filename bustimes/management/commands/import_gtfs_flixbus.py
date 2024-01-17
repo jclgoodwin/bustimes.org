@@ -42,6 +42,7 @@ class Command(BaseCommand):
         stop_codes = {
             stop_code.code: stop_code.stop_id for stop_code in source.stopcode_set.all()
         }
+        missing_stops = set()
 
         existing_services = {
             service.line_name: service for service in operator.service_set.all()
@@ -108,8 +109,6 @@ class Command(BaseCommand):
 
         stop_times = []
         for i, row in feed.stop_times.iterrows():
-            stop_name = stops_data[row.stop_id].stop_name
-
             trip = trips[row.trip_id]
             offset = utc_offsets[trip.calendar.start_date]
 
@@ -130,7 +129,11 @@ class Command(BaseCommand):
             if row.stop_id in stop_codes:
                 stop_time.stop_id = stop_codes[row.stop_id]
             else:
-                stop_time.stop_code = stop_name
+                stop = stops_data[row.stop_id]
+                stop_time.stop_code = stop.stop_name
+                if row.stop_id not in missing_stops:
+                    logger.info(stop)
+                    missing_stops.add(row.stop_id)
 
             trip.destination_id = stop_time.stop_id
 
