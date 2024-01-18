@@ -201,7 +201,7 @@ function loadStops() {
     "&xmin=" +
     round(bounds.getWest());
   lastStopsReq = reqwest({
-    url: "https://bustimes.org/stops.json" + params,
+    url: "/stops.json" + params,
     success: function (data) {
       if (data && data.features) {
         stopsHighWater = bounds;

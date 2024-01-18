@@ -1,0 +1,20 @@
+stop_id,stop_name,stop_lat,stop_lon,zone_id,location_type,stop_timezone,wheelchair_boarding
+640014188,Dundee Greenmarket,56.456120,-2.974720,640014188,0,Europe/London,1
+6400L00019,Dundee West,56.462677,-3.054680,6400L00019,0,Europe/London,1
+64804203,Longforgan,56.457180,-3.128600,64804203,0,Europe/London,1
+64800191,Inchture,56.447108,-3.170071,64800191,0,Europe/London,1
+64801650,St Madoes,56.375360,-3.306660,64801650,0,Europe/London,1
+64803287,Inchture,56.443050,-3.177020,64803287,0,Europe/London,1
+64804242,Longforgan,56.458120,-3.126930,64804242,0,Europe/London,1
+640017235,Dundee Railway Station,56.457860,-2.969170,640017235,0,Europe/London,1
+64801647,Walnut Grove,56.382796,-3.404654,64801647,0,Europe/London,1
+64802696,Bridge of Earn,56.344795,-3.402653,64802696,0,Europe/London,1
+64804323,Kinross P&R,56.206317,-3.433365,64804323,0,Europe/London,1
+6500D0254,Rosyth,56.036069,-3.415373,6500D0254,0,Europe/London,1
+6200247604,Ingliston P&R,55.939070,-3.356090,6200247604,0,Europe/London,1
+6200247603,Edinburgh Airport (Stop G),55.948047,-3.364236,6200247603,0,Europe/London,1
+6200202805,Edinburgh Zoo,55.942352,-3.266966,6200202805,0,Europe/London,1
+6200202930,Haymarket (Stop HB),55.945944,-3.218346,6200202930,0,Europe/London,1
+6200206520,St Andrew Square,55.954905,-3.193094,6200206520,0,Europe/London,1
+6200246935,Haymarket (Stop HH),55.945848,-3.219407,6200246935,0,Europe/London,1
+6200247060,Edinburgh Zoo,55.942079,-3.267927,6200247060,0,Europe/London,1

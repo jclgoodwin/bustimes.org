@@ -57,13 +57,9 @@ class Command(BaseCommand):
         url = "https://api.ember.to/v1/gtfs/static/"
 
         modified, last_modified = download_if_changed(path, url)
-        print(modified, last_modified)
-        print("a")
+        assert modified
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
-        # print(feed)
-        # feed.describe()
-        print("b")
 
         operator = Operator.objects.get(name="Ember")
         source = DataSource.objects.get(name="Ember")
