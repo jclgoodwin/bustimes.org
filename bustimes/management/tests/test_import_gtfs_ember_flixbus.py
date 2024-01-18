@@ -2,11 +2,14 @@ import datetime
 from pathlib import Path
 from unittest.mock import patch
 
+import fakeredis
 import time_machine
+import vcr
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
 from busstops.models import DataSource, Operator, Region, Service, StopCode, StopPoint
+from vehicles.management.commands import import_gtfsr_ember
 
 from ...models import Route, Trip
 
@@ -125,3 +128,25 @@ class FlixbusTest(TestCase):
         self.assertContains(response, "/stops/6200247603")
 
         self.assertEqual(Service.objects.all().count(), 2)
+
+        # GTFSR
+        command = import_gtfsr_ember.Command()
+        command.do_source()
+
+        with patch(
+            "vehicles.management.import_live_vehicles.redis_client",
+            fakeredis.FakeStrictRedis(),
+        ):
+            with vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
+                command.update()
+
+        response = self.client.get(service.get_absolute_url())
+        self.assertContains(
+            response,
+            "Pre-book journey at least 10 minutes before the scheduled departure time",
+        )
+
+        journey = service.vehiclejourney_set.first()
+        self.assertEqual(str(journey.trip), "15:35")
+        self.assertEqual(str(journey.datetime), "2024-01-18 15:35:00+00:00")
+        self.assertEqual(journey.code, "5WGNCip")

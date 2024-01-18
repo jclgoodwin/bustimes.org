@@ -106,23 +106,26 @@ class Command(BaseCommand):
         ) and latest_journey.code == journey.code:
             return latest_journey
 
-        trip = Trip.objects.get(operator="EMBR", vehicle_journey_code=journey.code)
-        journey.trip = trip
+        try:
+            trip = Trip.objects.get(operator="EMBR", vehicle_journey_code=journey.code)
+        except Trip.DoesNotExist:
+            pass
+        else:
+            journey.trip = trip
 
-        journey.datetime = datetime.strptime(
-            f"{item.vehicle.trip.start_date} 12", "%Y%m%d %H"
-        )
-        journey.datetime = (
-            journey.datetime.replace(tzinfo=self.tzinfo)
-            - timedelta(hours=12)
-            + trip.start
-        )
+            journey.datetime = (
+                datetime.strptime(
+                    f"{item.vehicle.trip.start_date} 12", "%Y%m%d %H"
+                ).replace(tzinfo=self.tzinfo)
+                - timedelta(hours=12)
+                + trip.start
+            )
 
-        journey.service = trip.route.service
+            journey.service = trip.route.service
 
-        journey.route_name = journey.service.line_name
-        if trip.destination_id:
-            journey.destination = str(trip.destination.locality)
+            journey.route_name = journey.service.line_name
+            if trip.destination_id:
+                journey.destination = str(trip.destination.locality)
 
         vehicle.latest_journey_data = json_format.MessageToDict(item)
 
