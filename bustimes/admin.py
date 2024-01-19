@@ -48,6 +48,7 @@ class TimetableDataSourceAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "url", "nocs", "active", "complete"]
     list_filter = ["active", "complete"]
     search_fields = ["url", "name", "search"]
+    actions = ["activate", "deactivate"]
 
     def nocs(self, obj):
         return obj.nocs
@@ -57,6 +58,14 @@ class TimetableDataSourceAdmin(admin.ModelAdmin):
         if "changelist" in request.resolver_match.view_name:
             return queryset.annotate(nocs=StringAgg("operators", ", ", distinct=True))
         return queryset
+
+    def activate(self, request, queryset):
+        count = queryset.order_by().update(active=True)
+        self.message_user(request, f"Activated {count}")
+
+    def deactivate(self, request, queryset):
+        count = queryset.order_by().update(active=False)
+        self.message_user(request, f"Deactivated {count}")
 
 
 @admin.register(Route)
