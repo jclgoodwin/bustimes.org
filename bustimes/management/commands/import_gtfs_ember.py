@@ -90,6 +90,8 @@ class Command(BaseCommand):
             service.source = source
             service.description = route.description = row.route_long_name
             service.current = True
+            service.colour_id = operator.colour_id
+            # service.region_id = "S"
             service.geometry = row.geometry.wkt
 
             service.save()
