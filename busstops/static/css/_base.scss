@@ -512,6 +512,7 @@ form p select {
 .grouping {
     flex-grow: 1;
     max-width: 100%;
+    content-visibility: auto;
 }
 
 .timetable-date {
@@ -1441,6 +1442,10 @@ body.has-overlay {
         height: 90px;
         overflow: hidden;
         background: var(--background-color);
+    }
+
+    #timetable {
+        content-visibility: hidden;
     }
 }
 
