@@ -203,3 +203,14 @@ body .maplibregl-popup-close-button {
   padding: 0.25em 0.5em;
   border-radius: 0 6px 0 0;
 }
+
+.map-style-switcher {
+  padding: 4px 9px;
+}
+
+.map-style-switcher summary {
+/*  width: 29px;*/
+/*  height: 29px;*/
+/*  overflow: hidden;*/
+  list-style: none;
+}
