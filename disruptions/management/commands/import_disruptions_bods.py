@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def fetch(self):
         url = "https://data.bus-data.dft.gov.uk/disruptions/download/bulk_archive"
 
-        source = DataSource.objects.get_or_create(name="Bus Open Data Service")[0]
+        source = DataSource.objects.get_or_create(name="Bus Open Data")[0]
 
         situations = []
 
