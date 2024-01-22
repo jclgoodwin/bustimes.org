@@ -204,13 +204,26 @@ body .maplibregl-popup-close-button {
   border-radius: 0 6px 0 0;
 }
 
-.map-style-switcher {
-  padding: 4px 9px;
+.map-style-switcher summary {
+  background-image: url('../../svg/layers.svg');
+  width: 29px;
+  height: 29px;
+  overflow: hidden;
+  margin-left: auto;
+  text-indent: 100%;
+  white-space: nowrap;
+ list-style: none;
 }
 
-.map-style-switcher summary {
-/*  width: 29px;*/
-/*  height: 29px;*/
-/*  overflow: hidden;*/
-  list-style: none;
+.map-style-switcher summary:hover {
+  background-color: #0000000d;
+}
+
+.map-style-switcher label {
+  display: block;
+  padding: 0 3px;
+}
+
+.map-style-switcher input {
+  margin-left: 0;
 }

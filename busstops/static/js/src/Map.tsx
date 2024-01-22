@@ -27,20 +27,28 @@ const mapStyles = [
   // ["alidade_satellite", "Satellite"],
 ];
 
+type StyleSwitcherProps = {
+  style: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+};
+
 class StyleSwitcher {
-  constructor(props) {
+  style: string;
+  handleChange: React.ChangeEventHandler<HTMLInputElement>;
+  _container?: HTMLElement;
+
+  constructor(props: StyleSwitcherProps) {
     this.style = props.style;
     this.handleChange = props.onChange;
   }
 
-  onAdd(map) {
-    this._map = map;
+  onAdd() {
     this._container = document.createElement('div');
 
     let root = createRoot(this._container);
     root.render(
       <details className="maplibregl-ctrl maplibregl-ctrl-group map-style-switcher">
-        <summary className="maplibregl-ctrl-icon">Map style</summary>
+        <summary>Map style</summary>
         {mapStyles.map(style => {
           let [key, value] = style;
           return <label key={key}><input type="radio" value={key} name="map-style" defaultChecked={key === this.style} onChange={this.handleChange} />{value}</label>;
@@ -51,12 +59,11 @@ class StyleSwitcher {
   }
 
   onRemove() {
-    this._container.parentNode.removeChild(this._container);
-    this._map = undefined;
+    this._container?.parentNode?.removeChild(this._container);
   }
 }
 
-const StyleSwitcherControl = memo(function(props) {
+const StyleSwitcherControl = memo(function(props: StyleSwitcherProps) {
   useControl(() => new StyleSwitcher(props));
 
   return null;
@@ -107,7 +114,7 @@ export default function BusTimesMap(props: any) {
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
-      <StyleSwitcherControl style={mapStyle} onChange={(e) => setMapStyle(e.target.value)} />
+      <StyleSwitcherControl style={mapStyle} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMapStyle(e.target.value)} />
       <AttributionControl compact={false} />
       {props.children}
     </Map>
