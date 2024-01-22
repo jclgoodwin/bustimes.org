@@ -16,7 +16,6 @@ class Situation(models.Model):
                 "bustimes.org",
                 "TfL",
                 "Bus Open Data",
-                "Bus Open Data Service",
             )
         },
         default=236,
