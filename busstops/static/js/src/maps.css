@@ -203,3 +203,27 @@ body .maplibregl-popup-close-button {
   padding: 0.25em 0.5em;
   border-radius: 0 6px 0 0;
 }
+
+.map-style-switcher summary {
+  background-image: url('../../svg/layers.svg');
+  width: 29px;
+  height: 29px;
+  overflow: hidden;
+  margin-left: auto;
+  text-indent: 100%;
+  white-space: nowrap;
+ list-style: none;
+}
+
+.map-style-switcher summary:hover {
+  background-color: #0000000d;
+}
+
+.map-style-switcher label {
+  display: block;
+  padding: 0 3px;
+}
+
+.map-style-switcher input {
+  margin-left: 0;
+}
