@@ -73,7 +73,9 @@ export default function BusTimesMap(props: any) {
   const imageNames = props.images;
   const onLoad = props.onLoad;
 
-  const [mapStyle, setMapStyle] = React.useState("alidade_smooth");
+  const [mapStyle, setMapStyle] = React.useState(() => {
+    return localStorage.getItem("map-style") || "alidade_smooth";
+  });
 
   const handleMapLoad = React.useCallback(
     (event: MapEvent) => {
@@ -98,6 +100,12 @@ export default function BusTimesMap(props: any) {
     [imageNames, onLoad],
   );
 
+  const handleMapStyleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const style = e.target.value;
+    setMapStyle(style);
+    localStorage.setItem("map-style", style);
+  }, []);
+
   return (
     <Map
       {...props}
@@ -114,7 +122,7 @@ export default function BusTimesMap(props: any) {
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
-      <StyleSwitcherControl style={mapStyle} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMapStyle(e.target.value)} />
+      <StyleSwitcherControl style={mapStyle} onChange={handleMapStyleChange} />
       <AttributionControl compact={false} />
       {props.children}
     </Map>
