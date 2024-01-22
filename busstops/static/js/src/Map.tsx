@@ -74,7 +74,13 @@ export default function BusTimesMap(props: any) {
   const onLoad = props.onLoad;
 
   const [mapStyle, setMapStyle] = React.useState(() => {
-    return localStorage.getItem("map-style") || "alidade_smooth";
+    try {
+      const style = localStorage.getItem("map-style");
+      if (style) {
+        return style;
+      }
+    } catch {}
+    return "alidade_smooth";
   });
 
   const handleMapLoad = React.useCallback(
@@ -103,7 +109,9 @@ export default function BusTimesMap(props: any) {
   const handleMapStyleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const style = e.target.value;
     setMapStyle(style);
-    localStorage.setItem("map-style", style);
+    try {
+      localStorage.setItem("map-style", style);
+    } catch {}
   }, []);
 
   return (
