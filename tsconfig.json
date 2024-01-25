@@ -6,10 +6,10 @@
     "strict": true,
   },
   "files": [
-    "busstops/static/js/src/app.d.ts",
-    "busstops/static/js/src/app.tsx",
+    "frontend/js/app.d.ts",
+    "frontend/js/app.tsx",
   ],
   "include": [
-    "busstops/static/js/src/__tests__/",
+    "frontend/js/__tests__/",
   ]
 }

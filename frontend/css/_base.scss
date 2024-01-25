@@ -130,7 +130,7 @@ summary::marker {
     color: var(--border-color-darker);
 }
 
-@import '../js/accessible-autocomplete/accessible-autocomplete.min';
+@import '../../node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css';
 
 .autocomplete__hint {
     font: inherit;

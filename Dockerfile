@@ -5,7 +5,7 @@ WORKDIR /app/
 COPY package.json package-lock.json /app/
 RUN npm install
 
-COPY busstops/static /app/busstops/static
+COPY frontend /app/frontend
 COPY .eslintrc.js tsconfig.json /app/
 RUN npm run lint && npm run build
 

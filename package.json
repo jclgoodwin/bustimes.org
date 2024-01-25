@@ -42,7 +42,7 @@
   },
   "targets": {
     "css": {
-      "source": "busstops/static/css/style.scss",
+      "source": "frontend/css/style.scss",
       "distDir": "busstops/static/css/dist",
       "engines": {
         "browsers": "Chrome 71"
@@ -50,9 +50,9 @@
     },
     "js": {
       "source": [
-        "busstops/static/js/src/app.tsx",
-        "busstops/static/js/src/bigmap.js",
-        "busstops/static/js/src/bigmap-classic.js"
+        "frontend/js/app.tsx",
+        "frontend/js/bigmap.js",
+        "frontend/js/bigmap-classic.js"
       ],
       "distDir": "busstops/static/js/dist",
       "engines": {
@@ -63,7 +63,7 @@
   "scripts": {
     "watch": "API_ROOT=/ parcel watch",
     "build": "API_ROOT=/ parcel build",
-    "lint": "tsc -noEmit && eslint busstops/static/js/src",
+    "lint": "tsc -noEmit && eslint frontend/js",
     "test": "TZ=UTC jest"
   }
 }

@@ -10,9 +10,9 @@ import Map, {
   useControl
 } from "react-map-gl/maplibre";
 
-import stopMarker from "data-url:../../stop-marker.png";
-import routeStopMarker from "data-url:../../route-stop-marker.png";
-import arrow from "data-url:../../arrow.png";
+import stopMarker from "data-url:../stop-marker.png";
+import routeStopMarker from "data-url:../route-stop-marker.png";
+import arrow from "data-url:../arrow.png";
 
 const images: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
