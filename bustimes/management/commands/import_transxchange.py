@@ -772,7 +772,8 @@ class Command(BaseCommand):
 
             for note_code, note_text in journey.notes.items():
                 note = self.get_note(note_code, note_text)
-                trip_notes.append(Trip.notes.through(trip=trip, note=note))
+                if not trip_notes or trip_notes[-1].trip is not trip:
+                    trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
         if not route_created:
             # reuse trip ids if the number and start times haven't changed
