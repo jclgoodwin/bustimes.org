@@ -1,16 +1,22 @@
 from time import sleep, time
 
+import ciso8601
 import polyline
 import requests_cache
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
+from django.utils import timezone
 
 from bustimes.models import RouteLink
-from vehicles.management.commands.import_nx import parse_datetime
 from vehicles.models import VehicleJourney
 
 from ...models import DataSource, Service
+
+
+def parse_datetime(string):
+    datetime = ciso8601.parse_datetime(string)
+    return timezone.make_aware(datetime)
 
 
 class Command(BaseCommand):
@@ -68,8 +74,6 @@ class Command(BaseCommand):
                 continue
 
             line_name = service.line_name
-            if line_name == "M37":
-                line_name = "M37N"
             url = source.url.format(f"{line_name}/{start}/{end}")
 
             response = self.session.get(url, timeout=10)
