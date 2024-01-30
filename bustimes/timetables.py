@@ -243,13 +243,33 @@ class Timetable:
 
         routes = {route.id: route for route in self.current_routes}
 
+        if len(self.operators) > 1:
+            # merged services: correct mismatched inbound/outbound direction
+            inbound_dests = {
+                trip.destination_id for trip in trips if trip.inbound is True
+            }
+            outbound_dests = {
+                trip.destination_id for trip in trips if trip.inbound is False
+            }
+
+            if not inbound_dests.isdisjoint(outbound_dests):
+                prev_operator = False
+                for trip in trips:
+                    if prev_operator is False:
+                        prev_operator = trip.operator_id
+                    elif trip.operator_id != prev_operator:
+                        trip.inbound = not trip.inbound
+
         for trip in trips:
             trip.route = routes[trip.route_id]
+
+            # split inbound and outbound trips into lists
             if trip.inbound:
                 self.groupings[1].trips.append(trip)
             else:
                 self.groupings[0].trips.append(trip)
 
+            # stop-specific notes
             for note in trip.notes.all():
                 if note.stoptimes:
                     for stoptime in trip.times:
