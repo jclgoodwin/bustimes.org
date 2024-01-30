@@ -142,21 +142,30 @@
                     </tbody>
                 {% if grouping.column_feet %}<tfoot>
                     {% for row in grouping.column_feet.values %}
-                        <tr>
-                            {% if row|length > 1 %}
-                                <th></th>
-                            {% endif %}
+                        {% if row|length > 1 %}
+                            <tr><th></th>
                             {% for foot in row %}
                                 <td{% if foot.span > 1 or row|length == 1 %} colspan="{% if row|length == 1 %}{{ foot.span|add:1 }}{% else %}{{ foot.span }}{% endif %}"{% endif %}>
                                     {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ foot.note.text|urlise }}{% endif %}
                                 </td>
                             {% endfor %}
-                        </tr>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tfoot>{% endif %}
                 </table>
             </div>
         </div>
+
+
+        {% for row in grouping.column_feet.values %}
+            {% if row|length == 1 %}
+                {% for foot in row %}
+                    <p>{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ foot.note.text|urlise }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+
 
         {% if grouping.has_set_down_only %}
             <p>Times marked <strong>s</strong> – “set down only” – the {{ object.mode }} will only stop to drop passengers off</p>
