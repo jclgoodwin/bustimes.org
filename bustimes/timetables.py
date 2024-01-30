@@ -241,9 +241,7 @@ class Timetable:
             self.date = None
             return
 
-        routes = {route.id: route for route in self.current_routes}
-
-        if self.has_operators:
+        if len(self.current_routes) > 1 and self.has_operators:
             # merged services: correct mismatched inbound/outbound direction
             inbound_dests = {
                 trip.destination_id for trip in trips if trip.inbound is True
@@ -259,6 +257,8 @@ class Timetable:
                         prev_operator = trip.operator_id
                     elif trip.operator_id != prev_operator:
                         trip.inbound = not trip.inbound
+
+        routes = {route.id: route for route in self.current_routes}
 
         for trip in trips:
             trip.route = routes[trip.route_id]
