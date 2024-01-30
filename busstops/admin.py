@@ -341,7 +341,9 @@ class ServiceAdmin(GISModelAdmin):
         first.current = True
 
         for other in others:
-            other.route_set.update(service=first)
+            if other.current:
+                other.route_set.update(service=first)
+                first.operator.add(*other.operator.all())
             other.vehiclejourney_set.update(service=first)
             other.servicecode_set.filter(
                 ~Exists(
