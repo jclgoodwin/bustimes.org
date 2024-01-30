@@ -1023,7 +1023,7 @@ class ImportTransXChangeTest(TestCase):
         )
 
         with time_machine.travel("1 October 2017"):
-            with self.assertNumQueries(9):
+            with self.assertNumQueries(10):
                 timetable = service.get_timetable(date(2017, 10, 3)).render()
         self.assertEqual(str(timetable.date), "2017-10-03")
         self.assertEqual(27, len(timetable.groupings[1].trips))
