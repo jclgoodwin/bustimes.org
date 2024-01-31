@@ -75,10 +75,13 @@ gtag('config', 'G-X2Z0KM7Z5C', {
 {% block footer %}
 <footer>
     {% if user.is_authenticated %}
-        <ul class="user">
-            <li>user {{ user.id }}</li>
-            <li><a href="{% url 'logout' %}">Log out</a></li>
-        </ul>
+        <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <ul class="user">
+                <li>user {{ user.id }}</li>
+                <li><button class="button">Log out</button></li>
+            </ul>
+        </form>
     {% endif %}
     <ul>
         <li><a href="/contact">Contact</a></li>
