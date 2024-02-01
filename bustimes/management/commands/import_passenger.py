@@ -172,4 +172,4 @@ class Command(BaseCommand):
             if new_versions or operator_name:
                 command.finish_services()
 
-                command.source.save()
+            command.source.save()
