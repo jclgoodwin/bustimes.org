@@ -11,11 +11,11 @@ export type Vehicle = {
   tfl_code?: string;
   trip_id?: number;
   service_id?: number;
-  service: {
+  service?: {
     url?: string;
     line_name: string;
   };
-  vehicle: {
+  vehicle?: {
     url: string;
     name: string;
     features?: string;
@@ -47,7 +47,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
   let rotation = vehicle.heading;
 
   let background = "";
-  if (vehicle.vehicle.css) {
+  if (vehicle.vehicle?.css) {
     background = vehicle.vehicle.css;
   }
 
@@ -55,7 +55,7 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
     if (rotation < 180) {
       rotation -= 90;
       className += " right";
-      if (vehicle.vehicle.right_css) {
+      if (vehicle.vehicle?.right_css) {
         background = vehicle.vehicle.right_css;
       }
     } else {
@@ -63,9 +63,9 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
     }
   }
 
-  if (vehicle.vehicle.livery) {
+  if (vehicle.vehicle?.livery) {
     className += " livery-" + vehicle.vehicle.livery;
-  } else if (background && vehicle.vehicle.text_colour) {
+  } else if (background && vehicle.vehicle?.text_colour) {
     className += " white-text";
   }
 
@@ -73,9 +73,9 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
     className += " selected";
   }
 
-  let marker: string | ReactElement = vehicle.service?.line_name;
+  let marker: string | ReactElement = vehicle.service?.line_name || "";
 
-  if (vehicle.vehicle.livery && vehicle.vehicle.livery !== 262) {
+  if (vehicle.vehicle?.livery && vehicle.vehicle.livery !== 262) {
     marker = (
       <svg
         width="24"

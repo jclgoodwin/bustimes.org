@@ -169,10 +169,10 @@ const Vehicles = memo(function Vehicles({
                 coordinates: vehicle.coordinates,
               },
               properties: {
-                url: vehicle.vehicle.url,
+                url: vehicle.vehicle?.url,
                 colour:
-                  vehicle.vehicle.colour ||
-                  (vehicle.vehicle.colours?.length === 7
+                  vehicle.vehicle?.colour ||
+                  (vehicle.vehicle?.colours?.length === 7
                     ? vehicle.vehicle.colours
                     : "#fff"),
               },
