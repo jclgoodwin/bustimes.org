@@ -32,6 +32,8 @@ from ..import_live_vehicles import ImportLiveVehiclesCommand  # , logger, loggin
 
 
 def get_destination_ref(destination_ref):
+    destination_ref = destination_ref.removeprefix("NT")  # Nottingham City Transport
+
     if (
         " " in destination_ref
         or len(destination_ref) < 4
@@ -41,8 +43,6 @@ def get_destination_ref(destination_ref):
     ):
         # destination ref is a fake ATCO code, or maybe a postcode or other placeholder
         return
-
-    destination_ref = destination_ref.removeprefix("NT")  # Nottingham City Transport
 
     return destination_ref
 
