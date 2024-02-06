@@ -42,7 +42,7 @@ def get_destination_ref(destination_ref):
         # destination ref is a fake ATCO code, or maybe a postcode or other placeholder
         return
 
-    # destination_ref = destination_ref.removeprefix("NT")  # Nottingham City Transport
+    destination_ref = destination_ref.removeprefix("NT")  # Nottingham City Transport
 
     return destination_ref
 
@@ -532,15 +532,40 @@ class Command(ImportLiveVehiclesCommand):
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
-                journey.trip = journey.get_trip(
-                    datetime=datetime,
-                    date=journey_date,
-                    operator_ref=operator_ref,
-                    origin_ref=monitored_vehicle_journey.get("OriginRef"),
-                    destination_ref=destination_ref,
-                    departure_time=origin_aimed_departure_time,
-                    journey_code=journey_code,
-                )
+                # treat the weird Nottingham City Transport data specially
+                if (
+                    operator_ref == "NT"
+                    and origin_aimed_departure_time is None
+                    and journey_ref[:2] == "NT"
+                    and (block_ref := monitored_vehicle_journey.get("BlockRef"))
+                    and (
+                        end := monitored_vehicle_journey.get(
+                            "DestinationAimedArrivalTime"
+                        )
+                    )
+                ):
+                    end = timezone.localtime(parse_datetime(end))
+                    end = timedelta(hours=end.hour, minutes=end.minute)
+                    try:
+                        journey.trip = Trip.objects.get(
+                            block=block_ref,
+                            destination=destination_ref,
+                            route__service=journey.service,
+                            end=end,
+                        )
+                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                        pass
+
+                else:
+                    journey.trip = journey.get_trip(
+                        datetime=datetime,
+                        date=journey_date,
+                        operator_ref=operator_ref,
+                        origin_ref=monitored_vehicle_journey.get("OriginRef"),
+                        destination_ref=destination_ref,
+                        departure_time=origin_aimed_departure_time,
+                        journey_code=journey_code,
+                    )
 
                 if trip := journey.trip:
                     if (

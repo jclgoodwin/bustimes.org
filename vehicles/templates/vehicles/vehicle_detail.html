@@ -108,7 +108,7 @@
                     {{ journey.line_name }}
                 {% endif %}
             </td>
-            <td class="tabular">{{ journey.code }}</td>
+            <td class="tabular">{% if journey.code|length < 20 %}{{ journey.code }}{% endif %}</td>
             {% if journey.trip_id %}
                 <td class="link tabular">
                     <a href="{% if journey.locations %}#journeys/{{ journey.id }}{% else %}{{ journey.trip.get_absolute_url }}{% endif %}">{{ journey.trip }}</a>
