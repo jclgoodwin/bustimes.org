@@ -338,7 +338,8 @@ class Command(BaseCommand):
         old_routes = self.source.route_set.filter(~Q(id__in=self.route_ids))
         # do this first to prevent IntegrityError (VehicleJourney trip field)
         old_routes.update(service=None)
-        old_routes.delete()
+        for route in old_routes:
+            route.delete()
 
         old_services = self.source.service_set.filter(current=True, route=None)
         old_services = old_services.filter(~Q(id__in=self.service_ids))
