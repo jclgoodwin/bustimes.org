@@ -319,7 +319,7 @@ class VehicleJourneyAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        if not request.GET:
+        if "changelist" in request.resolver_match.view_name and not request.GET:
             # no filter yet - return empty queryset rather than trying to load ALL journeys
             return queryset.none()
         return queryset
