@@ -282,7 +282,6 @@ class StopPointTests(TestCase):
 
         stop.indicator = ""
         stop.common_name = "Castle Meadow CR"
-
         self.assertEqual(stop.get_icon(), "CR")
 
         stop.common_name = "YMCA"
@@ -290,3 +289,6 @@ class StopPointTests(TestCase):
 
         stop.common_name = "P"
         self.assertEqual(stop.get_icon(), "P")
+
+        stop.common_name = "Brecon Interchange Stop 12"
+        self.assertEqual(stop.get_icon(), "12")

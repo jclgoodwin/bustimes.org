@@ -485,8 +485,9 @@ class StopPoint(models.Model):
                         return b
 
         if self.common_name:
+            # "Bus Station A" or "Bus Station 4"
             parts = self.common_name.split()
-            if parts[-1].isupper() and len(parts[-1]) < 3:
+            if (parts[-1].isdigit() or parts[-1].isupper()) and len(parts[-1]) < 3:
                 return parts[-1]
 
     def get_line_names(self):
