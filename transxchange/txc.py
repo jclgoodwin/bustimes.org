@@ -488,7 +488,10 @@ class OperatingProfile:
 
         self.serviced_organisations = []
 
-        if (sodt := element.find("ServicedOrganisationDayType")) is not None:
+        if (
+            serviced_organisations
+            and (sodt := element.find("ServicedOrganisationDayType")) is not None
+        ):
             for path, operation, working in (
                 ("DaysOfOperation/Holidays/ServicedOrganisationRef", True, False),
                 ("DaysOfOperation/WorkingDays/ServicedOrganisationRef", True, True),
