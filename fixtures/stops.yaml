@@ -12,16 +12,19 @@
     crossing: The Street
     bearing: NE
     latlong: POINT(1.0239 52.8685)
+
+# no longer called "Whipsnade Wild Anmal Park" or "ZSL Whipsnade Zoo"
 '021016052':
-    common_name: ZSL Whipsnade Zoo
-    landmark: ZSL Whipsnade Zoo
+    landmark: Whipsnade Zoo
 '021016053':
-    common_name: ZSL Whipsnade Zoo
-    landmark: ZSL Whipsnade Zoo
+    landmark: Whipsnade Zoo
+
+# clarify that "Walmer Castle" is a pub, not a castle (it's quite near Deal Castle)
 '2400A033500A':
     landmark: the Walmer Castle pub
 '2400108582':
     landmark: the Walmer Castle pub
+
 3500B267100:
     common_name: Cross Street
     indicator: ''
