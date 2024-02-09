@@ -15,7 +15,7 @@ const History = lazy(() => import("./History"));
 Sentry.init({
   dsn: "https://0d628b6fff45463bb803d045b99aa542@o55224.ingest.sentry.io/1379883",
   allowUrls: [/bustimes\.org\/static\//],
-  ignoreErrors: [
+  ignoreErrors: [  // ignore errors in third-party advert code
     "Load failed",
     "Failed to fetch",
     "AbortError: The user aborted a request",
@@ -28,6 +28,7 @@ Sentry.init({
     "WKWebView API client did not respond to this postMessage",
     "Origin https://bustimes.org is not allowed by Access-Control-Allow-Origin.",
     "Failed to execute 'send' on 'XMLHttpRequest': Failed to load 'https://t.richaudience.com/",
+    "undefined is not an object (evaluating 'navigator.connection.effectiveType')",
   ],
   integrations: [
     new Sentry.Integrations.GlobalHandlers({
