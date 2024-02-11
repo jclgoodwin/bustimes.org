@@ -1210,11 +1210,16 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
 
     if "stops" in data and "locations" in data:
         # only stops with coordinates
-        if stops := [stop for stop in data["stops"] if stop["coordinates"]]:
+        stops = [stop for stop in data["stops"] if stop["coordinates"]]
+        if stops:
+            stop_coords = [stop["coordinates"][::-1] for stop in stops]
+            vehicle_coords = [
+                location["coordinates"][::-1] for location in data["locations"]
+            ]
             try:
                 haversine_vector_results = haversine_vector(
-                    [stop["coordinates"] for stop in stops],
-                    [location["coordinates"] for location in data["locations"]],
+                    stop_coords,
+                    vehicle_coords,
                     Unit.METERS,
                     comb=True,
                 )
