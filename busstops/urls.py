@@ -31,7 +31,6 @@ urlpatterns = [
     path("contact", views.contact, name="contact"),
     path("cookies", TemplateView.as_view(template_name="cookies.html")),
     path("privacy", TemplateView.as_view(template_name="cookies.html")),
-    path("jobs", TemplateView.as_view(template_name="jobs.html")),
     path("503", TemplateView.as_view(template_name="503.html")),
     path("data", TemplateView.as_view(template_name="data.html")),
     path("status", views.status),
