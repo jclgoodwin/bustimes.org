@@ -40,6 +40,7 @@ def get_destination_ref(destination_ref):
         or not destination_ref[:4].isdigit()
         or destination_ref[:3] == "000"
         or destination_ref[:3] == "999"
+        or destination_ref[:3] == "980"
     ):
         # destination ref is a fake ATCO code, or maybe a postcode or other placeholder
         return
