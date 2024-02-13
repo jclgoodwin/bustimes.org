@@ -155,10 +155,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
             else:
                 location = self.create_vehicle_location(item)
                 if not location or location.latlong.equals_exact(latest_latlong):
-                    # location hasn't changed
-                    # - so assume the data is old
-                    # – if the vehicle was really stationary the location would "drift" a bit
-                    return
+                    if datetime:
+                        # location hasn't changed
+                        # - so assume the data is old
+                        # – if the vehicle was really stationary the location would "drift" a bit
+                        datetime = latest_datetime
+                    else:
+                        return
         # elif now and datetime and (now - datetime).total_seconds() > 600:
         #     # more than 10 minutes old
         #     return
