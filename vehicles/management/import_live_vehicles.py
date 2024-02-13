@@ -154,7 +154,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 return
             else:
                 location = self.create_vehicle_location(item)
-                if not location or location.latlong.equals_exact(latest_latlong, 0.001):
+                if not location or location.latlong.equals_exact(latest_latlong):
                     # location hasn't changed
                     # - so assume the data is old
                     # – if the vehicle was really stationary the location would "drift" a bit
