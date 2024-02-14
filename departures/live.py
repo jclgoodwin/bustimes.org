@@ -133,8 +133,11 @@ def get_departures(stop, services, when) -> dict:
                     elif trip_id in by_trip and stop.pk[:4] == "2900":
                         rtpi.add_progress_and_delay(by_trip[trip_id])
                         if "delay" in by_trip[trip_id]:
+                            delay = by_trip[trip_id]["delay"]
+                            if delay < 0 and by_trip[trip_id]["sequence"] == 0:
+                                delay = 0
                             departure["live"] = departure["time"] + datetime.timedelta(
-                                seconds=by_trip[trip_id]["delay"]
+                                seconds=delay
                             )
 
     one_hour = datetime.timedelta(hours=1)

@@ -1,3 +1,5 @@
+# "Real Time Passenger Information"-ish stuff - calculating delays etc
+
 from datetime import timedelta
 from itertools import pairwise
 
@@ -9,49 +11,80 @@ from bustimes.models import RouteLink, StopTime, Trip
 from vehicles.utils import calculate_bearing
 
 
-def get_progress(item):
-    point = Point(*item["coordinates"])
-
+def get_stop_times(item):
     trips = Trip.objects.get(id=item["trip_id"]).get_trips()
 
-    stop_times = (
+    return (
         StopTime.objects.filter(trip__in=trips)
         .filter(stop__latlong__isnull=False)
         .select_related("stop")
         .order_by("trip__start", "id")
     )
 
-    if not stop_times:
-        return
+
+class Progress:
+    def __init__(self, stop_times, prev_stop_time, next_stop_time, progress, distance):
+        self.stop_times = list(stop_times)
+        self.sequence = self.stop_times.index(prev_stop_time)
+        self.prev_stop_time = prev_stop_time
+        self.next_stop_time = next_stop_time
+        self.progress = round(progress, 3)
+        self.distance = distance
+
+    def to_json(self):
+        return {
+            "id": self.prev_stop_time.id,
+            "sequence": self.sequence,
+            "prev_stop": self.prev_stop_time.stop_id,
+            "next_stop": self.next_stop_time.stop_id,
+            "progress": self.progress,
+        }
+
+
+def get_progress(item):
+    point = Point(*item["coordinates"])
+
+    stop_times = get_stop_times(item)
 
     pairs = [
         (a, b, LineString([a.stop.latlong, b.stop.latlong]))
         for a, b in pairwise(stop_times)
     ]
 
-    pairs.sort(key=lambda pair: pair[2].distance(point))
+    # compute distances:
+    pairs = ((pair, pair[2].distance(point)) for pair in pairs)
+    # filter out pairs further about than 1.1 km:
+    nearby_pairs = [pair for pair in pairs if pair[1] < 0.01]
 
-    closest = pairs[0]
+    if not nearby_pairs:
+        return
 
-    if len(pairs) >= 2 and item["heading"] is not None:
+    nearby_pairs.sort(key=lambda pair: pair[1])
 
+    closest, distance = nearby_pairs[0]
+
+    if len(nearby_pairs) >= 2 and item["heading"] is not None:
         vehicle_heading = int(item["heading"])
 
+        # TODO: use RouteLink if there is one
         route_bearing = calculate_bearing(
             closest[0].stop.latlong, closest[1].stop.latlong
         )
 
         difference = (vehicle_heading - route_bearing + 180) % 360 - 180
-        if not (-90 < difference < 90):
+        next_closest, next_closest_distance = nearby_pairs[1]
+
+        if not (-90 < difference < 90) and next_closest_distance < 0.001:
             # bus seems to be heading the wrong way - does the bus go both ways on this road?
             # try the next closest pair of stops:
             route_bearing = calculate_bearing(
-                pairs[1][0].stop.latlong, pairs[1][1].stop.latlong
+                next_closest[0].stop.latlong, next_closest[1].stop.latlong
             )
 
             difference = (vehicle_heading - route_bearing + 180) % 360 - 180
             if -90 < difference < 90:
-                closest = pairs[1]
+                closest = next_closest
+                distance = next_closest_distance
 
     line_string = closest[2]
     if "service_id" in item:
@@ -66,32 +99,33 @@ def get_progress(item):
 
     progress = line_string.project_normalized(point)
 
-    return closest[0], closest[1], progress
+    return Progress(stop_times, closest[0], closest[1], progress, distance)
 
 
 def add_progress_and_delay(item):
-    prev_stop, next_stop, progress = get_progress(item)
+    try:
+        progress = get_progress(item)
+    except TypeError:
+        return
 
-    item["progress"] = {
-        "id": prev_stop.id,
-        "sequence": prev_stop.sequence,
-        "prev_stop": prev_stop.stop_id,
-        "next_stop": next_stop.stop_id,
-        "progress": round(progress, 3),
-    }
+    item["progress"] = progress.to_json()
     when = parse_datetime(item["datetime"])
     when = timezone.localtime(when)
     when = timedelta(hours=when.hour, minutes=when.minute, seconds=when.second)
 
-    prev_time = prev_stop.departure_or_arrival()
-    next_time = next_stop.arrival_or_departure()
+    prev_time = progress.prev_stop_time.departure_or_arrival()
+    next_time = progress.next_stop_time.arrival_or_departure()
 
     # correct for timetable times being > 24 hours:
     if when - prev_time < -timedelta(hours=12):
         when += timedelta(hours=24)
+    elif when - prev_time > timedelta(hours=12):
+        when -= timedelta(hours=24)
+
+    # TODO: cope with waittimes better
 
     try:
-        expected_time = prev_time + (next_time - prev_time) * progress
+        expected_time = prev_time + (next_time - prev_time) * progress.progress
     except ValueError:
         pass
     else:
