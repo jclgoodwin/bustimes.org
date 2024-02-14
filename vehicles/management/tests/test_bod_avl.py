@@ -375,7 +375,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 json[0]["progress"],
                 {
                     "id": a.id,
-                    "sequence": None,
+                    "sequence": 0,
                     "prev_stop": a.stop_id,
                     "next_stop": "b",
                     "progress": 0.097,
