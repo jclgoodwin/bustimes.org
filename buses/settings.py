@@ -11,7 +11,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost joshuas-mbp"
+    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost joshuas-mbp.lan"
 ).split()
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
@@ -212,7 +212,7 @@ elif TEST:
 
 
 CACHES = {}
-if TEST:
+if TEST or DEBUG:
     CACHES["default"] = {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}
 elif DEBUG or not REDIS_URL:
     CACHES["default"] = {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}

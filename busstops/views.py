@@ -246,13 +246,13 @@ def status(request):
         status = cache.get(key, [])
         context["bod_avl_status"][key.split("_")[0]] = [
             {
-                "fetched": item[0],
-                "timestamp": item[1],
-                "age": item[0] - item[1],
-                "items": item[2],
-                "changed": item[3],
+                "fetched": fetched,
+                "timestamp": timestamp,
+                "age": fetched - timestamp,
+                "items": items,
+                "changed": changed,
             }
-            for item in status
+            for fetched, timestamp, items, changed in status
         ]
 
     context["statuses"] = cache.get_many(

@@ -415,12 +415,12 @@ class StopTime(models.Model):
     def __repr__(self):
         return f"<StopTime: {self.pk} {self.stop_id} {self}>"
 
-    def arrival_or_departure(self):
+    def arrival_or_departure(self) -> timedelta:
         if self.arrival is not None:
             return self.arrival
         return self.departure
 
-    def departure_or_arrival(self):
+    def departure_or_arrival(self) -> timedelta:
         if self.departure is not None:
             return self.departure
         return self.arrival
