@@ -229,6 +229,15 @@ class ScheduleAdherenceTest(TestCase):
         self.assertEqual(item["progress"]["progress"], 1)
         self.assertEqual(item["delay"], 967)
 
+        # more than 12 hours early/late - should adjust by 24 hours
         item["datetime"] = "2023-08-30T22:59:00Z"
         rtpi.add_progress_and_delay(item)
         self.assertEqual(item["delay"], -38100)
+
+        # a long way off route
+        item["coordinates"] = [0, 50]
+        del item["progress"]
+        del item["delay"]
+        rtpi.add_progress_and_delay(item)
+        self.assertNotIn("progress", item)
+        self.assertNotIn("delay", item)

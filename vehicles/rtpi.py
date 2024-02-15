@@ -103,9 +103,8 @@ def get_progress(item):
 
 
 def add_progress_and_delay(item):
-    try:
-        progress = get_progress(item)
-    except TypeError:
+    progress = get_progress(item)
+    if not progress:
         return
 
     item["progress"] = progress.to_json()
@@ -124,10 +123,6 @@ def add_progress_and_delay(item):
 
     # TODO: cope with waittimes better
 
-    try:
-        expected_time = prev_time + (next_time - prev_time) * progress.progress
-    except ValueError:
-        pass
-    else:
-        delay = int((when - expected_time).total_seconds())
-        item["delay"] = delay
+    expected_time = prev_time + (next_time - prev_time) * progress.progress
+    delay = int((when - expected_time).total_seconds())
+    item["delay"] = delay
