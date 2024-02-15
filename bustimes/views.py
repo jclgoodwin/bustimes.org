@@ -25,7 +25,7 @@ from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
-from pygments.lexers import XmlLexer
+from pygments.lexers import JsonLexer, XmlLexer
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
@@ -344,14 +344,18 @@ def stop_debug(request, atco_code: str):
         ]
     ).items():
         response_text = response.text
+        # syntax-highlight and pretty-print XML and JSON responses
         try:
+            # XML
             ET.register_namespace("", "http://www.siri.org.uk/siri")
             xml = ET.XML(response.text)
             ET.indent(xml)
             response_text = ET.tostring(xml).decode()
             response_text = mark_safe(highlight(response_text, XmlLexer(), formatter))
         except ET.ParseError:
-            pass
+            # JSON
+            response_text = json.dumps(response.json(), indent=2)
+            response_text = mark_safe(highlight(response_text, JsonLexer(), formatter))
         responses.append(
             {"url": response.url, "text": response_text, "headers": response.headers}
         )

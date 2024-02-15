@@ -115,6 +115,9 @@ class LiveDeparturesTest(TestCase):
             NotImplementedError, departures.departures_from_response, None
         )
 
+    @override_settings(
+        CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+    )
     def test_tfl(self):
         """Test the Transport for London live departures source"""
 
@@ -182,6 +185,10 @@ class LiveDeparturesTest(TestCase):
         """,
             html=True,
         )
+
+        # live departures debug view
+        response = self.client.get(f"/stops/{self.london_stop.pk}/debug")
+        self.assertContains(response, "<code>")
 
     @time_machine.travel(date(2018, 10, 27))
     def test_translink_metro(self):
@@ -423,11 +430,18 @@ class LiveDeparturesTest(TestCase):
         )
 
     @patch("departures.live.log_vehicle_journey")
+    @override_settings(
+        CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+    )
     def test_worcestershire(self, mocked_log_vehicle_journey):
         with time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"):
             with vcr.use_cassette("fixtures/vcr/worcester.yaml"):
                 with self.assertNumQueries(9):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
+
+                debug_response = self.client.get(
+                    f"{self.worcester_stop.get_absolute_url()}/debug"
+                )
 
         trip_url = f"{self.trip.get_absolute_url()}"
 
@@ -446,6 +460,8 @@ class LiveDeparturesTest(TestCase):
         )
         self.assertContains(response, "EVESHAM Bus Station")
         self.assertNotContains(response, "WORCESTER")
+
+        self.assertContains(debug_response, "<code>")
 
         args = (
             None,
