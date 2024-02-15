@@ -187,8 +187,8 @@
             {% if not vehicle %}LIVERIES_CSS_URL = "/liveries.{{ liveries_css_version }}.css";{% endif %}
         </script>
         {% load static %}
-        <link rel="stylesheet" href="{% static 'js/dist/app.css' %}">
-        <script async src="{% static 'js/dist/app.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
+        <script async src="{% static 'dist/js/app.js' %}"></script>
         {% if vehicle.livery %}
         <style>{% for css in vehicle.livery.get_styles %}{{ css|safe }}{% endfor %}</style>
         {% endif %}

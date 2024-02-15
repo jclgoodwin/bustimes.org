@@ -41,20 +41,14 @@
     "wouter": "^2.11.0"
   },
   "targets": {
-    "css": {
-      "source": "frontend/css/style.scss",
-      "distDir": "busstops/static/css/dist",
-      "engines": {
-        "browsers": "Chrome 71"
-      }
-    },
-    "js": {
+    "default": {
       "source": [
+        "frontend/css/style.scss",
         "frontend/js/app.tsx",
         "frontend/js/bigmap.js",
         "frontend/js/bigmap-classic.js"
       ],
-      "distDir": "busstops/static/js/dist",
+      "distDir": "busstops/static/dist",
       "engines": {
         "browsers": "Chrome 71"
       }

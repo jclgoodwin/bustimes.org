@@ -8,7 +8,7 @@
 /.coverage
 /slim-bustimes.sql
 /.idea
-dist/
+/busstops/static/dist/
 
 /manage.sh
 /credentials.sh

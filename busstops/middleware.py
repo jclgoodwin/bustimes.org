@@ -1,4 +1,4 @@
-from pathlib import PurePath
+import re
 
 from django.middleware.gzip import GZipMiddleware
 from django.utils.cache import add_never_cache_headers
@@ -8,20 +8,14 @@ from whitenoise.middleware import WhiteNoiseMiddleware
 
 class WhiteNoiseWithFallbackMiddleware(WhiteNoiseMiddleware):
     def immutable_file_test(self, path, url):
-        # esbuild:
-        if url.startswith("/static/js/dist/") and PurePath(path).stem[-9:-8] == "-":
-            return True
-        return super().immutable_file_test(path, url)
+        # ensure that cache-control headers are added
+        # for files with hashes added by parcel e.g. "dist/js/BigMap.19ec75b5.js"
+        return re.match(r"^.+\.[0-9a-f]{8}\..+$", url)
 
     # https://github.com/evansd/whitenoise/issues/245
     def __call__(self, request):
         response = super().__call__(request)
         if response.status_code == 404 and request.path.startswith(self.static_prefix):
-            # fallback_path = self.get_name_without_hash(request.path)
-            # request.path = request.path_info = fallback_path
-            # fallback_response = super().__call__(request)
-            # if fallback_response:
-            #     response = fallback_response
             add_never_cache_headers(response)
         return response
 

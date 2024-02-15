@@ -69,15 +69,15 @@
     {% load static %}
     <script>
         OLD_JS = [
-            "{% static 'js/dist/bigmap-classic.css' %}",
             "{% static 'js/reqwest.min.js' %}",
-            "{% static 'js/dist/bigmap-classic.js' %}"
+            "{% static 'dist/js/bigmap-classic.css' %}",
+            "{% static 'dist/js/bigmap-classic.js' %}"
         ];
         NEW_JS = [
-            "{% static 'js/dist/app.css' %}",
-            "{% static 'js/dist/app.js' %}",
+            "{% static 'dist/js/app.css' %}",
+            "{% static 'dist/js/app.js' %}",
         ];
     </script>
-    <script src="{% static 'js/dist/bigmap.js' %}"></script>
+    <script src="{% static 'dist/js/bigmap.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}
