@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "livereload",
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "django.contrib.sitemaps",
@@ -105,7 +104,6 @@ CSP_FRAME_SRC = ["https:"]
 if DEBUG and "runserver" in sys.argv:
     INSTALLED_APPS.append("debug_toolbar")
     MIDDLEWARE += [
-        "livereload.middleware.LiveReloadScript",
         "debug_toolbar.middleware.DebugToolbarMiddleware",
         "debug_toolbar_force.middleware.ForceDebugToolbarMiddleware",
     ]
