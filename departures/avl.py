@@ -4,7 +4,6 @@ from vehicles.utils import redis_client
 
 
 def get_tracking(stop, services):
-
     if not redis_client:
         return
 
@@ -15,13 +14,10 @@ def get_tracking(stop, services):
         return
 
     vehicle_ids = list(redis_client.sunion(set_names))
-    # print(vehicle_ids)
 
     vehicle_locations = redis_client.mget(
         [f"vehicle{int(vehicle_id)}" for vehicle_id in vehicle_ids]
     )
     vehicle_locations = [json.loads(item) for item in vehicle_locations if item]
-
-    # print(vehicle_locations)
 
     return vehicle_locations

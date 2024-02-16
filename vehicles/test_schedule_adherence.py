@@ -1,19 +1,17 @@
+import json
 from unittest.mock import patch
 
 import fakeredis
+import time_machine
 from django.test import TestCase
 
-from busstops.models import DataSource, StopPoint
-from bustimes.models import Route, StopTime, Trip
+from busstops.models import DataSource, Service, StopPoint, StopUsage
+from bustimes.models import Calendar, Route, StopTime, Trip
 
 from . import rtpi
 from .models import VehicleJourney
 
 
-@patch(
-    "vehicles.views.redis_client",
-    fakeredis.FakeStrictRedis(),
-)
 class ScheduleAdherenceTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -125,14 +123,34 @@ class ScheduleAdherenceTest(TestCase):
         )
 
         source = DataSource.objects.create()
+        cls.service = Service.objects.create(tracking=True)
+        StopUsage.objects.create(service=cls.service, stop_id="210021509680", order=0)
+        route = Route.objects.create(source=source, service=cls.service)
 
-        route = Route.objects.create(source=source)
+        calendar = Calendar.objects.create(
+            mon=True,
+            tue=True,
+            wed=True,
+            thu=True,
+            fri=True,
+            sat=True,
+            sun=True,
+            start_date="2022-01-01",
+        )
 
         trip = Trip.objects.create(
-            route=route, start="10:30:00", end="10:54:00", destination_id="210021503158"
+            route=route,
+            start="10:30:00",
+            end="10:54:00",
+            destination_id="210021503158",
+            calendar=calendar,
         )
         trip_after_midnight = Trip.objects.create(
-            route=route, start="24:01:00", end="24:10:00", destination_id="210021503158"
+            route=route,
+            start="24:01:00",
+            end="24:10:00",
+            destination_id="210021503158",
+            calendar=calendar,
         )
 
         StopTime.objects.bulk_create(
@@ -163,7 +181,6 @@ class ScheduleAdherenceTest(TestCase):
                 ),
             ]
         )
-
         cls.journey = VehicleJourney.objects.create(
             trip=trip, datetime="2022-01-04T00:00:00Z", source=source
         )
@@ -241,3 +258,29 @@ class ScheduleAdherenceTest(TestCase):
         rtpi.add_progress_and_delay(item)
         self.assertNotIn("progress", item)
         self.assertNotIn("delay", item)
+
+    @time_machine.travel("2024-02-16T00:00:07Z")
+    def test_stop_times(self):
+        redis_client = fakeredis.FakeStrictRedis()
+
+        with patch("departures.avl.redis_client", redis_client):
+            redis_client.sadd(f"service{self.service.id}vehicles", 1)
+            redis_client.set(
+                "vehicle1",
+                json.dumps(
+                    {
+                        "id": 1,
+                        "journey_id": 1,
+                        "coordinates": [-0.332185, 51.750952],
+                        "heading": 0,
+                        "trip_id": self.journey.trip_id,
+                        "datetime": "2023-08-31T09:50:07Z",
+                    }
+                ),
+            )
+            response = self.client.get("/stops/210021509680/times.json")
+        response_json = response.json()
+        self.assertEqual(response_json["times"][0]["delay"], "P0DT00H16M07S")
+        self.assertEqual(
+            response_json["times"][0]["expected_departure_time"], "2024-02-16T10:59:07Z"
+        )

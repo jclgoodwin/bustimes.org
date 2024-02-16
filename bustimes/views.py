@@ -310,7 +310,7 @@ def stop_times_json(request, atco_code):
                 add_progress_and_delay(item)
                 delay = timedelta(seconds=item["delay"])
                 time["delay"] = delay
-                if delay < 0 and item["sequence"] == 0:
+                if delay < timedelta() and item["sequence"] == 0:
                     delay = 0
                 if time["aimed_departure_time"]:
                     time["expected_departure_time"] = (
