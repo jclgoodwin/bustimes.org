@@ -1,6 +1,7 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Popup } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
+import type { Vehicle } from "./VehicleMarker";
 
 function getTimeDelta(seconds: number) {
   const minutes = Math.round(seconds / 60);
@@ -37,7 +38,7 @@ export function Delay({
 }
 
 type VehiclePopupProps = {
-  item: any;
+  item: Vehicle;
   onClose: any;
   closeButton?: boolean;
   onTripClick?: any;
@@ -48,7 +49,7 @@ export default function VehiclePopup({
   item,
   onClose,
   closeButton = true,
-  onTripClick = null,
+  onTripClick,
   activeLink = false,
 }: VehiclePopupProps) {
   const handleTripClick = React.useCallback(
@@ -61,7 +62,7 @@ export default function VehiclePopup({
     [item, onTripClick],
   );
 
-  let line_name = item.service?.line_name || "";
+  let line_name: ReactNode = item.service?.line_name || "";
   if (item.destination) {
     if (line_name) {
       line_name += " to ";
@@ -87,8 +88,8 @@ export default function VehiclePopup({
     }
   }
 
-  let vehicle = item.vehicle.name;
-  if (item.vehicle.url) {
+  let vehicle: ReactNode = item.vehicle?.name;
+  if (item.vehicle?.url) {
     vehicle = <a href={`${item.vehicle.url}`}>{vehicle}</a>;
   }
 
@@ -104,7 +105,7 @@ export default function VehiclePopup({
     >
       <div>{line_name}</div>
       {vehicle}
-      {item.vehicle.features && (
+      {item.vehicle?.features && (
         <div>{item.vehicle.features.replace("<br>", ", ")}</div>
       )}
       {item.seats && (

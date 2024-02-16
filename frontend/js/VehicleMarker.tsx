@@ -34,6 +34,8 @@ export type Vehicle = {
     progress: number;
   };
   delay?: number;
+  seats?: string;
+  wheelchair?: string;
 };
 
 type VehicleMarkerProps = {
