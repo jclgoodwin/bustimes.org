@@ -308,18 +308,21 @@ def stop_times_json(request, atco_code):
             if time["trip_id"] in by_trip:
                 item = by_trip[time["trip_id"]]
                 add_progress_and_delay(item)
-                delay = timedelta(seconds=item["delay"])
-                time["delay"] = delay
-                if delay < timedelta() and item["progress"]["sequence"] == 0:
-                    delay = timedelta()
-                if time["aimed_departure_time"]:
-                    time["expected_departure_time"] = (
-                        time["aimed_departure_time"] + delay
-                    )
-                if time["aimed_arrival_time"]:
-                    time["expected_arrival_time"] = time["aimed_arrival_time"] + delay
-                else:
-                    time["expected_arrival_time"] = time["expected_departure_time"]
+                if "delay" in item:
+                    delay = timedelta(seconds=item["delay"])
+                    time["delay"] = delay
+                    if delay < timedelta() and item["progress"]["sequence"] == 0:
+                        delay = timedelta()
+                    if time["aimed_departure_time"]:
+                        time["expected_departure_time"] = (
+                            time["aimed_departure_time"] + delay
+                        )
+                    if time["aimed_arrival_time"]:
+                        time["expected_arrival_time"] = (
+                            time["aimed_arrival_time"] + delay
+                        )
+                    else:
+                        time["expected_arrival_time"] = time["expected_departure_time"]
     return JsonResponse({"times": times})
 
 

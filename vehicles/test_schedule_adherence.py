@@ -278,9 +278,27 @@ class ScheduleAdherenceTest(TestCase):
                     }
                 ),
             )
-            response = self.client.get("/stops/210021509680/times.json")
-        response_json = response.json()
-        self.assertEqual(response_json["times"][0]["delay"], "P0DT00H16M07S")
-        self.assertEqual(
-            response_json["times"][0]["expected_departure_time"], "2024-02-16T10:59:07Z"
-        )
+            response_json = self.client.get("/stops/210021509680/times.json").json()
+            self.assertEqual(response_json["times"][0]["delay"], "P0DT00H16M07S")
+            self.assertEqual(
+                response_json["times"][0]["expected_departure_time"],
+                "2024-02-16T10:59:07Z",
+            )
+
+            # a long way off-route - no prediction
+            redis_client.set(
+                "vehicle1",
+                json.dumps(
+                    {
+                        "id": 1,
+                        "journey_id": 1,
+                        "coordinates": [1, 50],
+                        "heading": 0,
+                        "trip_id": self.journey.trip_id,
+                        "datetime": "2023-08-31T09:50:07Z",
+                    }
+                ),
+            )
+            response_json = self.client.get("/stops/210021509680/times.json").json()
+            self.assertNotIn("delay", response_json["times"][0])
+            self.assertNotIn("expected_departure_time", response_json["times"][0])
