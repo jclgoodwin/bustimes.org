@@ -10,7 +10,9 @@ class WhiteNoiseWithFallbackMiddleware(WhiteNoiseMiddleware):
     def immutable_file_test(self, path, url):
         # ensure that cache-control headers are added
         # for files with hashes added by parcel e.g. "dist/js/BigMap.19ec75b5.js"
-        return re.match(r"^.+\.[0-9a-f]{8}\..+$", url)
+        if re.match(r"^.+\.[0-9a-f]{8,12}\..+$", url):
+            return True
+        return super().immutable_file_test(path, url)
 
     # https://github.com/evansd/whitenoise/issues/245
     def __call__(self, request):
