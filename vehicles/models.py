@@ -697,7 +697,7 @@ class VehicleEdit(models.Model):
         revision = VehicleRevision(
             user_id=self.user_id,
             vehicle_id=self.vehicle_id,
-            datetime=self.datetime,
+            created_at=self.datetime,
             message=self.url,
             to_livery_id=self.livery_id,
             changes={},
@@ -752,8 +752,8 @@ class VehicleRevisionFeature(models.Model):
 
 
 class VehicleRevision(models.Model):
-    datetime = models.DateTimeField()
     vehicle = models.ForeignKey(Vehicle, models.CASCADE)
+
     from_operator = models.ForeignKey(
         Operator, models.SET_NULL, null=True, blank=True, related_name="revision_from"
     )
@@ -776,14 +776,30 @@ class VehicleRevision(models.Model):
     to_livery = models.ForeignKey(
         Livery, models.SET_NULL, null=True, blank=True, related_name="revision_to"
     )
-    changes = models.JSONField(null=True, blank=True)
-    message = models.TextField(blank=True)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True
-    )
+
     features = models.ManyToManyField(
         VehicleFeature, blank=True, through=VehicleRevisionFeature
     )
+
+    changes = models.JSONField(null=True, blank=True)
+    message = models.TextField(blank=True)
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True
+    )
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="approved",
+    )
+    created_at = models.DateTimeField()
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+    pending = models.BooleanField(default=False)
+    disapproved = models.BooleanField(default=False)
+    score = models.SmallIntegerField(default=0)
 
     def __str__(self):
         return ", ".join(

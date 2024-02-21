@@ -843,6 +843,10 @@ table {
     }
 }
 
+.revisions-list li + li {
+    border-top: 1px solid var(--border-color);
+}
+
 .wrap {
     white-space: normal;
     overflow-wrap: anywhere;

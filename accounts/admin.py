@@ -49,9 +49,9 @@ class UserAdmin(admin.ModelAdmin):
             obj.revisions,
         )
 
-    @admin.display(ordering="approved")
+    @admin.display(ordering="approved_count")
     def approved(self, obj):
-        return get_count(obj, "approved", "exact=1")
+        return get_count(obj, "approved_count", "exact=1")
 
     @admin.display(ordering="disapproved")
     def disapproved(self, obj):
@@ -68,7 +68,7 @@ class UserAdmin(admin.ModelAdmin):
             "admin:accounts_user_change",
         ):
             return queryset.annotate(
-                approved=SubqueryCount("vehicleedit", filter=Q(approved=True)),
+                approved_count=SubqueryCount("vehicleedit", filter=Q(approved=True)),
                 disapproved=SubqueryCount("vehicleedit", filter=Q(approved=False)),
                 pending=SubqueryCount("vehicleedit", filter=Q(approved=None)),
                 revisions=SubqueryCount("vehiclerevision"),

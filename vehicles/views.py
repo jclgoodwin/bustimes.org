@@ -228,7 +228,7 @@ def operator_vehicles(request, slug=None, parent=None):
                             (revision.vehicle for revision in revisions), changed_fields
                         )
                     for revision in revisions:
-                        revision.datetime = now
+                        revision.created_at = now
                     VehicleRevision.objects.bulk_create(revisions)
                     VehicleRevisionFeature.objects.bulk_create(features)
                     context["revisions"] = len(revisions)
@@ -878,7 +878,7 @@ def edit_vehicle(request, **kwargs):
                     raise
             else:
                 if revision:
-                    revision.datetime = now
+                    revision.created_at = now
                     revision.save()
                     if features:
                         VehicleRevisionFeature.objects.bulk_create(features)

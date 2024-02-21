@@ -457,7 +457,7 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         "vehicle",
         "user",
     ]
-    list_display = ["datetime", "vehicle", "__str__", user, "message"]
+    list_display = ["created_at", "vehicle", "__str__", user, "message"]
     actions = ["revert"]
     list_filter = [
         RevisionChangeFilter,
