@@ -32,7 +32,7 @@
                     {{ feature }}
                 {% endfor %}
                 {% if revision.message %}
-                    <p>{{ revision.message|urlize|linebreaksbr }}
+                    <p class="wrap">{{ revision.message|urlize|linebreaksbr }}
                 {% endif %}
         </tr>
         {% endfor %}

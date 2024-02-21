@@ -847,7 +847,7 @@ table {
     border-top: 1px solid var(--border-color);
 }
 
-.wrap {
+.wrap, .wrap a {
     white-space: normal;
     overflow-wrap: anywhere;
 }
