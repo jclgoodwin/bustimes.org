@@ -182,6 +182,9 @@ def operator_vehicles(request, slug=None, parent=None):
         ),
     )
 
+    if not vehicles:
+        raise Http404
+
     vehicles = sorted(vehicles, key=get_vehicle_order)
     if not parent and operator.name == "National Express":
         vehicles = sorted(vehicles, key=lambda v: v.notes)

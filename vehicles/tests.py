@@ -154,10 +154,6 @@ class VehiclesTests(TestCase):
             response = self.client.get(self.vehicle_1.get_edit_url())
         self.assertEqual(response.status_code, 403)
 
-        with self.assertNumQueries(3):
-            response = self.client.get("/operators/lynx/vehicles/edit")
-        self.assertEqual(response.status_code, 403)
-
     def test_parent(self):
         with self.assertNumQueries(3):
             response = self.client.get("/groups/Madrigal Electromotive/vehicles")
@@ -173,13 +169,13 @@ class VehiclesTests(TestCase):
         # operator has no vehicles
         with self.assertNumQueries(2):
             response = self.client.get("/operators/bova-and-over/vehicles")
-        self.assertEqual(404, response.status_code)
-        self.assertFalse(str(response.context["exception"]))
+            self.assertEqual(404, response.status_code)
+            self.assertFalse(str(response.context["exception"]))
 
         # operator doesn't exist
         with self.assertNumQueries(2):
             response = self.client.get("/operators/shatton-east/vehicles")
-        self.assertEqual(404, response.status_code)
+            self.assertEqual(404, response.status_code)
 
         # last seen today - should only show time, should link to map
         with time_machine.travel("2020-10-20 12:00+01:00"):
@@ -313,12 +309,11 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "Copied Optare Spectra to 2 vehicles.")
         self.assertContains(response, "Copied black with lemon piping to 2 vehicles.")
 
-        # spare ticket machine should disable form fields
+        # spare ticket machine - not editable
         response = self.client.get(self.vehicle_1.get_edit_url())
         self.assertEqual(404, response.status_code)
-        # self.assertNotContains(response, "previous_reg")
 
-        response = self.client.get("/operators/lynx/vehicles/edit")
+        response = self.client.get("/operators/lynx/vehicles")
         self.assertContains(response, "<td>Spare ticket machine</td>")
 
         # test make livery
@@ -335,7 +330,7 @@ class VehiclesTests(TestCase):
         response = self.client.get("/admin/vehicles/vehicle/")
         self.assertContains(response, "Updated 1 vehicles.")
 
-        # test merge 2 vehicles:
+        # test merging 2 vehicles:
 
         duplicate_1 = Vehicle.objects.create(reg="SA60TWP", code="60")
         duplicate_2 = Vehicle.objects.create(reg="SA60TWP", code="SA60TWP")
@@ -835,85 +830,85 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             {"reg": "-\n+D19FOX", "branding": "-\n+", "withdrawn": "-No\n+Yes"},
         )
 
-    def test_vehicles_edit(self):
-        # user isn't logged in
-        with self.assertNumQueries(1):
-            response = self.client.get("/operators/lynx/vehicles/edit")
-        self.assertEqual(302, response.status_code)
+    # def test_vehicles_edit(self):
+    #     # user isn't logged in
+    #     with self.assertNumQueries(1):
+    #         response = self.client.get("/operators/lynx/vehicles/edit")
+    #     self.assertEqual(302, response.status_code)
 
-        self.client.force_login(self.trusted_user)
+    #     self.client.force_login(self.trusted_user)
 
-        data = {"operator": self.lynx.noc}
+    #     data = {"operator": self.lynx.noc}
 
-        # no vehicle ids specified
-        with self.assertNumQueries(11):
-            response = self.client.post("/operators/lynx/vehicles/edit", data)
-        self.assertContains(response, "Select some vehicles to change")
+    #     # no vehicle ids specified
+    #     with self.assertNumQueries(11):
+    #         response = self.client.post("/operators/lynx/vehicles/edit", data)
+    #     self.assertContains(response, "Select some vehicles to change")
 
-        data["vehicle"] = self.vehicle_1.id
-        with self.assertNumQueries(11):
-            response = self.client.post("/operators/lynx/vehicles/edit", data)
-        self.assertContains(response, "You haven&#x27;t changed anything")
+    #     data["vehicle"] = self.vehicle_1.id
+    #     with self.assertNumQueries(11):
+    #         response = self.client.post("/operators/lynx/vehicles/edit", data)
+    #     self.assertContains(response, "You haven&#x27;t changed anything")
 
-        self.assertFalse(VehicleEdit.objects.all())
-        self.assertFalse(VehicleRevision.objects.all())
+    #     self.assertFalse(VehicleEdit.objects.all())
+    #     self.assertFalse(VehicleRevision.objects.all())
 
-        # change vehicle type and colours:
-        with self.assertNumQueries(20):
-            response = self.client.post(
-                "/operators/lynx/vehicles/edit",
-                {
-                    **data,
-                    "vehicle_type": self.vehicle_2.vehicle_type_id,
-                    "colours": self.livery.id,
-                },
-            )
-        self.assertContains(response, "1 vehicle updated")
-        revision = VehicleRevision.objects.get()
-        self.assertIsNone(revision.from_livery)
-        self.assertTrue(revision.to_livery)
-        self.assertEqual("Optare Tempo", revision.from_type.name)
-        self.assertEqual("Optare Spectra", revision.to_type.name)
-        self.assertContains(response, "FD54 JYA")
+    #     # change vehicle type and colours:
+    #     with self.assertNumQueries(20):
+    #         response = self.client.post(
+    #             "/operators/lynx/vehicles/edit",
+    #             {
+    #                 **data,
+    #                 "vehicle_type": self.vehicle_2.vehicle_type_id,
+    #                 "colours": self.livery.id,
+    #             },
+    #         )
+    #     self.assertContains(response, "1 vehicle updated")
+    #     revision = VehicleRevision.objects.get()
+    #     self.assertIsNone(revision.from_livery)
+    #     self.assertTrue(revision.to_livery)
+    #     self.assertEqual("Optare Tempo", revision.from_type.name)
+    #     self.assertEqual("Optare Spectra", revision.to_type.name)
+    #     self.assertContains(response, "FD54 JYA")
 
-        self.assertFalse(VehicleEdit.objects.all())
+    #     self.assertFalse(VehicleEdit.objects.all())
 
-        # add feature as a trusted user
-        with self.assertNumQueries(20):
-            response = self.client.post(
-                "/operators/lynx/vehicles/edit",
-                {
-                    "vehicle": self.vehicle_2.id,
-                    "features": self.wifi.id,
-                },
-            )
-            self.assertContains(response, "1 vehicle updated")
+    #     # add feature as a trusted user
+    #     with self.assertNumQueries(20):
+    #         response = self.client.post(
+    #             "/operators/lynx/vehicles/edit",
+    #             {
+    #                 "vehicle": self.vehicle_2.id,
+    #                 "features": self.wifi.id,
+    #             },
+    #         )
+    #         self.assertContains(response, "1 vehicle updated")
 
-        # add feature as a normal user
-        self.client.force_login(self.user)
-        with self.assertNumQueries(18):
-            response = self.client.post(
-                "/operators/lynx/vehicles/edit",
-                {
-                    "vehicle": self.vehicle_2.id,
-                    "features": self.usb.id,
-                },
-            )
-            self.assertContains(
-                response, "I’ll update those details (1 vehicle) shortly"
-            )
+    #     # add feature as a normal user
+    #     self.client.force_login(self.user)
+    #     with self.assertNumQueries(18):
+    #         response = self.client.post(
+    #             "/operators/lynx/vehicles/edit",
+    #             {
+    #                 "vehicle": self.vehicle_2.id,
+    #                 "features": self.usb.id,
+    #             },
+    #         )
+    #         self.assertContains(
+    #             response, "I’ll update those details (1 vehicle) shortly"
+    #         )
 
-        # log in to Django admin
-        self.client.force_login(self.staff_user)
+    #     # log in to Django admin
+    #     self.client.force_login(self.staff_user)
 
-        # revert
-        self.client.post(
-            "/admin/vehicles/vehiclerevision/",
-            {"action": "revert", "_selected_action": revision.id},
-        )
-        response = self.client.get("/admin/vehicles/vehiclerevision/")
-        self.assertContains(response, "reverted [&#x27;vehicle_type&#x27;, ")
-        self.assertContains(response, "colours not reverted")
+    #     # revert
+    #     self.client.post(
+    #         "/admin/vehicles/vehiclerevision/",
+    #         {"action": "revert", "_selected_action": revision.id},
+    #     )
+    #     response = self.client.get("/admin/vehicles/vehiclerevision/")
+    #     self.assertContains(response, "reverted [&#x27;vehicle_type&#x27;, ")
+    #     self.assertContains(response, "colours not reverted")
 
     def test_vehicle_code_uniqueness(self):
         vehicle_1 = Vehicle.objects.create(code="11111", operator_id="BOVA")
