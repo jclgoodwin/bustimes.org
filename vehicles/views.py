@@ -6,7 +6,6 @@ from urllib.parse import urlencode
 
 import xmltodict
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import redirect_to_login
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
@@ -28,7 +27,7 @@ from django.utils import timezone
 from django.utils.cache import get_conditional_response, set_response_etag
 from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET, require_POST
+from django.views.decorators.http import require_POST, require_safe
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
@@ -55,12 +54,7 @@ from .models import (
 )
 from .rtpi import add_progress_and_delay
 from .tasks import handle_siri_post
-from .utils import (  # calculate_bearing,
-    do_revision,
-    do_revisions,
-    get_vehicle_edit,
-    redis_client,
-)
+from .utils import do_revision, get_vehicle_edit, redis_client  # calculate_bearing,
 
 
 class Vehicles:
@@ -80,7 +74,7 @@ class Vehicles:
         return url
 
 
-@require_GET
+@require_safe
 def vehicles(request):
     """index of recently AVL-enabled operators, etc"""
 
@@ -143,6 +137,7 @@ def get_vehicle_order(vehicle):
     return Service.get_line_name_order(vehicle.fleet_code or vehicle.code)
 
 
+@require_safe
 def operator_vehicles(request, slug=None, parent=None):
     """fleet list"""
 
@@ -155,115 +150,50 @@ def operator_vehicles(request, slug=None, parent=None):
                 operators, operatorcode__code=slug, operatorcode__source__name="slug"
             )
         vehicles = operator.vehicle_set
-    elif parent:
-        operators = list(operators.filter(parent=parent))
+    else:
+        assert parent
+        operators = operators.filter(parent=parent).in_bulk()
         if not operators:
             raise Http404
-        vehicles = Vehicle.objects.filter(operator__in=operators).select_related(
-            "operator"
-        )
-        operator = operators[0]
+        vehicles = Vehicle.objects.filter(operator__in=operators)
 
     if "withdrawn" not in request.GET:
         vehicles = vehicles.filter(withdrawn=False)
 
     vehicles = vehicles.order_by("fleet_number", "fleet_code", "reg", "code")
-    if not parent:
+
+    if parent:
+        context = {}
+    else:
         vehicles = vehicles.annotate(feature_names=features_string_agg)
         vehicles = vehicles.annotate(
             pending_edits=Exists("vehicleedit", filter=Q(approved=None))
         )
         vehicles = vehicles.select_related("latest_journey")
 
+        context = {"object": operator, "breadcrumb": [operator.region, operator]}
+
     vehicles = vehicles.annotate(
+        livery_name=F("livery__name"),
         vehicle_type_name=F("vehicle_type__name"),
         garage_name=Case(
             When(garage__name="", then="garage__code"),
             default="garage__name",
         ),
-    ).select_related("livery")
-
-    context = {"breadcrumb": [operator.region, operator]}
-
-    form = request.path.endswith("/edit")
-
-    now = timezone.localtime()
-
-    if form:
-        if not request.user.is_authenticated:
-            return redirect_to_login(request.path)
-
-        check_user(request)
-
-        context["breadcrumb"].append(Vehicles(operator=operator))
-        initial = {
-            "operator": operator,
-        }
-        form = forms.EditVehiclesForm(
-            request.POST or None, initial=initial, operator=operator, user=request.user
-        )
-
-        if request.POST:
-            vehicle_ids = request.POST.getlist("vehicle")
-            if not vehicle_ids:
-                form.add_error(None, "Select some vehicles to change")
-            if not form.has_really_changed():
-                form.add_error(None, "You haven't changed anything")
-            elif form.is_valid():
-                data = {key: form.cleaned_data[key] for key in form.changed_data}
-
-                ticked_vehicles = Vehicle.objects.filter(id__in=vehicle_ids)
-                if "features" in data:
-                    ticked_vehicles = ticked_vehicles.prefetch_related("features")
-
-                revisions, features, changed_fields = do_revisions(
-                    ticked_vehicles, data, request.user
-                )
-                if not features:
-                    revisions = [revision for revision in revisions if str(revision)]
-
-                if revisions:
-                    if changed_fields:
-                        Vehicle.objects.bulk_update(
-                            (revision.vehicle for revision in revisions), changed_fields
-                        )
-                    for revision in revisions:
-                        revision.created_at = now
-                    VehicleRevision.objects.bulk_create(revisions)
-                    VehicleRevisionFeature.objects.bulk_create(features)
-                    context["revisions"] = len(revisions)
-
-                if data:
-                    # this will fetch the vehicles list
-                    # - slightly important that it occurs before any change of operator
-                    edits = [
-                        get_vehicle_edit(vehicle, data, now, request)
-                        for vehicle in ticked_vehicles
-                    ]
-                    features = [
-                        feature for _, features, _ in edits for feature in features
-                    ]
-                    edits = VehicleEdit.objects.bulk_create(
-                        edit for edit, features, changed in edits if changed or features
-                    )
-                    VehicleEditFeature.objects.bulk_create(features)
-                    context["edits"] = edits
-
-                form = forms.EditVehiclesForm(
-                    initial=initial, operator=operator, user=request.user
-                )
+    )
 
     vehicles = sorted(vehicles, key=get_vehicle_order)
-    if operator.name == "National Express":
+    if not parent and operator.name == "National Express":
         vehicles = sorted(vehicles, key=lambda v: v.notes)
-
-    if not vehicles:
-        raise Http404
 
     if parent:
         paginator = Paginator(vehicles, 1000)
         page = request.GET.get("page")
         vehicles = paginator.get_page(page)
+
+        for v in vehicles:
+            v.operator = operators[v.operator_id]
+
         context["paginator"] = paginator
     else:
         paginator = None
@@ -278,6 +208,8 @@ def operator_vehicles(request, slug=None, parent=None):
     context["columns"] = columns
 
     if not parent:
+        now = timezone.localtime()
+
         # midnight or 12 hours ago, whichever happened first
         if now.hour >= 12:
             today = now - datetime.timedelta(hours=now.hour, minutes=now.minute)
@@ -306,7 +238,6 @@ def operator_vehicles(request, slug=None, parent=None):
     context = {
         **context,
         "parent": parent,
-        "object": operator,
         "vehicles": vehicles,
         "branding_column": any(
             vehicle.branding and vehicle.branding != "None" for vehicle in vehicles
@@ -317,14 +248,13 @@ def operator_vehicles(request, slug=None, parent=None):
             for vehicle in vehicles
         ),
         "garage_column": len(garage_names) > 1,
-        "form": form,
     }
 
     return render(request, "operator_vehicles.html", context)
 
 
 @cache_page(max_age=300)
-@require_GET
+@require_safe
 def operator_map(request, slug):
     operator = get_object_or_404(Operator.objects.select_related("region"), slug=slug)
 
@@ -383,7 +313,7 @@ def respond_conditionally(request, response):
     )
 
 
-@require_GET
+@require_safe
 def vehicles_json(request) -> JsonResponse:
     try:
         bounds = get_bounding_box(request)
@@ -700,7 +630,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     return context
 
 
-@require_GET
+@require_safe
 def service_vehicles_history(request, slug):
     service = get_object_or_404(Service.objects.with_line_names(), slug=slug)
 
@@ -1066,7 +996,7 @@ def vehicle_edit_action(request, edit_id, action):
     return HttpResponse()
 
 
-@require_GET
+@require_safe
 def vehicle_history(request, **kwargs):
     vehicle = get_object_or_404(Vehicle, **kwargs)
     revisions = vehicle.vehiclerevision_set.select_related(
@@ -1087,7 +1017,7 @@ def vehicle_history(request, **kwargs):
     )
 
 
-@require_GET
+@require_safe
 def vehicles_history(request):
     revisions = (
         VehicleRevision.objects.all()
@@ -1117,7 +1047,7 @@ def vehicles_history(request):
     )
 
 
-@require_GET
+@require_safe
 def journey_json(request, pk, vehicle_id=None, service_id=None):
     journey = get_object_or_404(VehicleJourney.objects.select_related("trip"), pk=pk)
 
@@ -1266,7 +1196,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     return JsonResponse(data)
 
 
-@require_GET
+@require_safe
 def latest_journey_debug(request, **kwargs):
     vehicle = get_object_or_404(Vehicle, **kwargs)
     if not vehicle.latest_journey_data:

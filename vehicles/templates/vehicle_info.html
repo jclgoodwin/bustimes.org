@@ -48,7 +48,9 @@
 
 {% if vehicle.is_editable or request.user.is_superuser %}
     <ul class="horizontal">
-        <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
+        {% if vehicle.is_editable %}
+            <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
+        {% endif %}
 
         {% if pending_edits %}
             <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}">Pending edits</a></li>

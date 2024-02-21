@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}{% if form %}Edit – {% endif %}Fleet list – {% firstof parent object %} – bustimes.org{% endblock %}
+{% block title %}Fleet list – {% firstof parent object %} – bustimes.org{% endblock %}
 
 {% block canonical %}
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
@@ -16,52 +16,35 @@
 
 <h1>{% firstof parent object %}</h1>
 
-{% if form %}
-    {% if revisions %}
-        <p class="message">{{ revisions }} vehicle{{ revisions|pluralize }} updated</p>
-    {% endif %}
-
-    {% if edits %}
-        <p class="message">I’ll update {% if revisions %}the other{% else %}those{% endif %} details ({{ edits|length }} vehicle{{ edits|length|pluralize }}) shortly</p>
-    {% endif %}
-
-    <p>Select vehicles to update:</p>
-
-    <p><kbd>Shift</kbd> + click to select multiple consecutive vehicles</p>
-{% else %}
-    {% if not parent %}
-        <ul class="tabs">
-            <li><a href="{{ object.get_absolute_url }}">Routes</a></li>
-            {% if map %}
-                <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
-            {% endif %}
-            <li>{{ vehicles|length }} vehicle{{ vehicles|length|pluralize }}</li>
-        </ul>
-    {% endif %}
-
-    <p>This is an <strong>unofficial</strong> and probably incomplete list of {% firstof parent object %}
-    {% if parent and operators and operators|length < 10 %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %} vehicles (or their ticket machines), created purely as a by-product of the live bus tracking system.</p>
-
-    <p>Remember:</p>
-
-    <ul class="bulleted">
-        <li>Ticket machines IDs don’t always correspond with the actual vehicles they’re attached to. Equipment is often swapped between vehicles.</li>
-        <li>Vehicles don’t always track all the time. If a journey isn’t listed, it doesn’t necessarily mean it didn’t operate.</li>
-        {% if garage_column %}
-            <li>“Garage” information is worked out automatically, using the Garage field in the operator’s timetable data and the last trip a vehicle worked.</li>
+{% if not parent %}
+    <ul class="tabs">
+        <li><a href="{{ object.get_absolute_url }}">Routes</a></li>
+        {% if map %}
+            <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
         {% endif %}
+        <li>{{ vehicles|length }} vehicle{{ vehicles|length|pluralize }}</li>
     </ul>
-
-    {% if not parent and object.parent %}
-        <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
-    {% endif %}
 {% endif %}
 
-{% if form %}
-    <form action="{{ object.get_absolute_url }}/vehicles/edit" method="POST">
-{% elif not parent %}
+<p>This is an <strong>unofficial</strong> and probably incomplete list of {% firstof parent object %}
+{% if parent and operators and operators|length < 10 %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %} vehicles (or their ticket machines), created purely as a by-product of the live bus tracking system.</p>
+
+<p>Remember:</p>
+
+<ul class="bulleted">
+    <li>Ticket machines IDs don’t always correspond with the actual vehicles they’re attached to. Equipment is often swapped between vehicles.</li>
+    <li>Vehicles don’t always track all the time. If a journey isn’t listed, it doesn’t necessarily mean it didn’t operate.</li>
+    {% if garage_column %}
+        <li>“Garage” information is worked out automatically, using the Garage field in the operator’s timetable data and the last trip a vehicle worked.</li>
+    {% endif %}
+</ul>
+
+{% if not parent and object.parent %}
+    <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
+{% endif %}
+
+{% if not parent %}
     <ul class="horizontal">
-        <li><a class="button" href="{{ object.get_absolute_url }}/vehicles/edit">Edit</a></li>
         <li><a href="/vehicles/history?vehicle__operator={{ object.noc }}">Recent changes</a></li>
         <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}">Pending vehicle edits</a></li>
         {% if request.user.is_superuser %}
@@ -74,7 +57,6 @@
 <table class="fleet compact">
     <thead>
         <tr>
-            {% if form %}<th></th>{% endif %}
             <th scope="col" colspan="2"></th>
             {% if not parent %}<th scope="col" colspan="2">Last tracked</th>{% endif %}
             <th scope="col">Type</th>
@@ -117,12 +99,12 @@
                     {% endif %}
                 </td>{% endif %}
                 <td>{% if vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
-                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %} class="livery-cell"{% endif %}{% if branding_column %}{% if not vehicle.branding or vehicle.branding == 'None' %} colspan="2"{% endif %}{% endif %}>
+                <td{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery_id %} class="livery-cell"{% endif %}{% if branding_column %}{% if not vehicle.branding or vehicle.branding == 'None' %} colspan="2"{% endif %}{% endif %}>
                     {% if vehicle.colours == 'Other' %}
                         {{ vehicle.colours }}
-                    {% elif vehicle.colours or vehicle.livery %}
+                    {% elif vehicle.colours or vehicle.livery_id %}
                         <div class="livery{% if vehicle.livery_id %} livery-{{ vehicle.livery_id }}{% else %}" style="background:{{ vehicle.get_livery }}{% endif %}"></div>
-                        {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
+                        {% if vehicle.livery_id and vehicle.branding != 'None' %}{{ vehicle.livery_name }}{% endif %}
                     {% endif %}
                 </td>
                 {% if vehicle.branding and vehicle.branding != 'None' %}<td>{{ vehicle.branding }}</td>{% endif %}
@@ -134,11 +116,7 @@
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 {% if vehicle.is_editable %}
                     <td>{{ vehicle.get_flickr_link }}</td>
-                    {% if not form %}
-                        <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>
-                    {% elif vehicle.pending_edits %}
-                        <td><abbr title="pending edits">*</abbr></td>
-                    {% endif %}
+                    <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>
                 {% endif %}
             </tr>
         {% endfor %}
@@ -148,26 +126,4 @@
 
 {% include 'pagination.html' with page=vehicles %}
 
-{% if form %}
-    <div class="edit-vehicles">
-        {{ form.as_p }}
-    </div>
-
-    {% csrf_token %}
-
-    <input type="submit" value="Save changes">
-
-    </form>
-
-{% endif %}
-
-{% endblock %}
-
-{% block foot %}
-    {% if form %}
-        {% load static %}
-        <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
-        <script async src="{% static 'js/edit-vehicle.js' %}"></script>
-        <script async src="{% static 'js/edit-vehicles.js' %}"></script>
-    {% endif %}
 {% endblock %}
