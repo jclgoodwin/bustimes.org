@@ -8,11 +8,11 @@ urlpatterns = [
     path(
         "operators/<slug>/vehicles", views.operator_vehicles, name="operator_vehicles"
     ),
-    path(
-        "operators/<slug>/vehicles/edit",
-        views.operator_vehicles,
-        name="operator_vehicles_edit",
-    ),
+    # path(
+    #     "operators/<slug>/vehicles/edit",
+    #     views.operator_vehicles,
+    #     name="operator_vehicles_edit",
+    # ),
     path("operators/<slug>/map", views.operator_map, name="operator_map"),
     path("operators/<slug>/debug", views.operator_debug),
     path("services/<slug>/vehicles", views.service_vehicles_history),
@@ -55,6 +55,7 @@ urlpatterns = [
         name="service_journey",
     ),
     path("liveries.<int:version>.css", views.liveries_css),
+    path("rules", TemplateView.as_view(template_name="rules.html")),
     path("map", TemplateView.as_view(template_name="map.html"), name="map"),
     path("maps", TemplateView.as_view(template_name="map.html")),
     path("map/old", TemplateView.as_view(template_name="map_classic.html")),
