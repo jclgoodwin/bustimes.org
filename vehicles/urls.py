@@ -8,11 +8,6 @@ urlpatterns = [
     path(
         "operators/<slug>/vehicles", views.operator_vehicles, name="operator_vehicles"
     ),
-    # path(
-    #     "operators/<slug>/vehicles/edit",
-    #     views.operator_vehicles,
-    #     name="operator_vehicles_edit",
-    # ),
     path("operators/<slug>/map", views.operator_map, name="operator_map"),
     path("operators/<slug>/debug", views.operator_debug),
     path("services/<slug>/vehicles", views.service_vehicles_history),
