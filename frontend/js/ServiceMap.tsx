@@ -105,7 +105,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     }
 
     const loadVehicles = () => {
-      if (document.hidden) {
+      if (document.hidden && !first.current) {
         return;
       }
 
