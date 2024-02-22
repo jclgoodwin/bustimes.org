@@ -1007,6 +1007,8 @@ class Command(BaseCommand):
                         and "Chester" in description
                         or line.line_name == "59"
                         and self.source.name == "Stagecoach East Scotland"
+                        or line.line_name == "700"
+                        and "Stagecoach" in self.source.name
                     )
                 ):
                     q = (Q(source=self.source) | q) & Q(description=description)
