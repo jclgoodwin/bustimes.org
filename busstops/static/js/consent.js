@@ -4,7 +4,7 @@
     var host = 'bustimes.org';
     var element = document.createElement('script');
     var firstScript = document.getElementsByTagName('script')[0];
-    var url = 'https://cmp.quantcast.com'
+    var url = 'https://cmp.inmobi.com'
         .concat('/choice/', 'QhvLnH_DqGvuS', '/', host, '/choice.js?tag_version=V2');
     var uspTries = 0;
     var uspTriesLimit = 3;
