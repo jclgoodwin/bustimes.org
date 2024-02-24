@@ -517,11 +517,11 @@ form p select {
 .timetable-date {
     select {
         padding: .5em 1.5em .5em .5em;
-        margin-right: 1em;
     }
 
     p {
         margin: 0;
+        display: inline-block;
     }
 
     div {
@@ -530,7 +530,7 @@ form p select {
 
     label {
         display: inline-block;
-        margin: 1em 1em 0 0;
+        margin-left: 1em;
     }
 
     + .table-wrapper {
