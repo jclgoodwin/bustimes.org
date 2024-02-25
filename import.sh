@@ -32,7 +32,7 @@ PASSWORD=$2
 cd data/TNDS
 
 ncsd_old=$(ls -l NCSD.zip)
-wget -qN http://www.basemap.co.uk/data/NCSD/NCSD.zip
+wget -qN https://download.basemap.co.uk/Data/NCSD/NCSD.zip
 ncsd_new=$(ls -l NCSD.zip)
 
 tfl_old=$(ls -l L.zip)
