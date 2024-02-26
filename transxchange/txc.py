@@ -382,17 +382,13 @@ class VehicleJourney:
                 prev_activity = stopusage.activity
 
         if not deadrun:
-            activity = None
             notes = None
-            if journey_timinglink:
-                activity = journey_timinglink.to_activity
+            if journey_timinglink and journey_timinglink.notes:
                 notes = journey_timinglink.notes
-            if not activity:
-                activity = timinglink.destination.activity
-            if not notes:
-                notes = timinglink.destination.notes
+            else:
+                notes = stopusage.notes
 
-            yield Cell(timinglink.destination, time, time, activity, notes)
+            yield Cell(stopusage, time, time, prev_activity, notes)
 
 
 class ServicedOrganisation:
