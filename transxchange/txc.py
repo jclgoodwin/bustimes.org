@@ -331,6 +331,7 @@ class VehicleJourney:
                 # assume "pickUp" + "setDown" = "pickUpAndSetDown" = None
                 activity = None
 
+            # <From>
             stopusage = timinglink.origin
 
             if deadrun and self.start_deadrun == timinglink.id:
@@ -366,6 +367,7 @@ class VehicleJourney:
             elif self.end_deadrun == timinglink.id:
                 deadrun_next = True  # start of dead run
 
+            # <To>
             stopusage = timinglink.destination
 
             if not deadrun:
