@@ -316,20 +316,20 @@ class VehicleJourney:
 
     def get_times(self):
         stopusage = None
+        prev_activity = None
         time = self.departure_time
         deadrun = self.start_deadrun is not None
         deadrun_next = False
         wait_time = None
-
         for timinglink, journey_timinglink in self.get_timinglinks():
             if journey_timinglink and journey_timinglink.from_activity:
                 activity = journey_timinglink.from_activity
-
-            # "to" of previous link
-            if stopusage and stopusage.activity != timinglink.origin.activity:
-                activity = None  # equivalent to pickUpAndSetDown
             else:
                 activity = timinglink.origin.activity
+
+            if stopusage and prev_activity != activity:
+                # assume "pickUp" + "setDown" = "pickUpAndSetDown" = None
+                activity = None
 
             stopusage = timinglink.origin
 
@@ -374,13 +374,22 @@ class VehicleJourney:
                 else:
                     wait_time = stopusage.wait_time
 
+            if journey_timinglink and journey_timinglink.to_activity:
+                prev_activity = journey_timinglink.to_activity
+            else:
+                prev_activity = stopusage.activity
+
         if not deadrun:
-            activity = journey_timinglink and journey_timinglink.to_activity
-            notes = (
-                journey_timinglink
-                and journey_timinglink.notes
-                or timinglink.destination.notes
-            )
+            activity = None
+            notes = None
+            if journey_timinglink:
+                activity = journey_timinglink.to_activity
+                notes = journey_timinglink.notes
+            if not activity:
+                activity = timinglink.destination.activity
+            if not notes:
+                notes = timinglink.destination.notes
+
             yield Cell(timinglink.destination, time, time, activity, notes)
 
 
