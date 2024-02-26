@@ -34,6 +34,10 @@
                 {% if revision.message %}
                     <p class="wrap">{{ revision.message|urlize|linebreaksbr }}
                 {% endif %}
+            <p class="actions">
+                {{ revision.score }}
+                <button class="button">👍 Thanks</button>
+                <button class="button">☠️ No</button>
         </tr>
         {% endfor %}
     </tbody>

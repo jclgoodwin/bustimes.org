@@ -1,23 +1,21 @@
 {% extends 'page.html' %}
 
-{% block title %}Vehicle edits – bustimes.org{% endblock %}
+{% block title %}{% if vehicle %}History – {{ vehicle }}{% else %}Recent changes {% endif %} – bustimes.org{% endblock %}
 
-{% block head %}
-    <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
-{% endblock %}
+{% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
 {% block fuse %}{% endblock %}
 
-{% block bodyclass %}{% endblock %}
+{% block bodyclass %}narrow{% endblock %}
 
 {% block content %}
 
 <ul class="tabs">
     <li><a href="/vehicles/history">Recent changes</a></li>
-    <li>Pending vehicle edits</li>
+    <li>Pending</li>
 </ul>
 
-<h1>Pending vehicle edits</h1>
+<h1>Pending changes</h1>
 
 <div class="sidebar">
     <form>
@@ -27,43 +25,10 @@
     </form>
 </div>
 
-{% if edits %}
+{% include 'vehicle_revisions.html' with revisions=revisions %}
 
-{% if perms.vehicles_change_vehicle %}
-    <form id="edits" method="POST">
-
-    <p>
-        <input type="submit" name="action" value="apply">
-        <input type="submit" name="action" value="approve">
-        <input type="submit" name="action" value="disapprove">
-    </p>
+{% if not vehicle %}
+    {% include 'pagination.html' with page=revisions %}
 {% endif %}
-
-<div class="table-wrapper">
-    {% include 'vehicle_edits_table.html' %}
-</div>
-
-{% csrf_token %}
-
-{% if perms.vehicles_change_vehicle %}
-    <p>
-        <input type="submit" name="action" value="apply">
-        <input type="submit" name="action" value="approve">
-        <input type="submit" name="action" value="disapprove">
-    </p>
-
-    </form>
-{% endif %}
-
-{% include 'pagination.html' with page=edits %}
-
-{% endif %}
-
-{% endblock %}
-
-{% block foot %}
-
-{% load static %}
-<script async src="{% static 'js/edit-vehicles.js' %}"></script>
 
 {% endblock %}

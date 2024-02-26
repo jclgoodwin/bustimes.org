@@ -1,12 +1,12 @@
 from django.db.models import Q
 from django_filters.rest_framework import (
-    FilterSet,
-    NumberFilter,
-    ModelChoiceFilter,
-    ChoiceFilter,
     BooleanFilter,
+    CharFilter,
+    ChoiceFilter,
+    FilterSet,
+    ModelChoiceFilter,
+    NumberFilter,
 )
-
 from sql_util.utils import Exists, SubqueryCount
 
 from busstops.models import Operator
@@ -35,8 +35,8 @@ class VehicleEditFilter(FilterSet):
             ("features", "Features"),
         ),
     )
-    vehicle = NumberFilter()
-    user = NumberFilter()
+    vehicle_id = NumberFilter(label="Vehicle ID")
+    user = NumberFilter(label="User ID")
     vehicle__operator = ModelChoiceFilter(
         label="Operator",
         queryset=Operator.objects.filter(
@@ -73,9 +73,8 @@ class VehicleEditFilter(FilterSet):
 
 
 class VehicleRevisionFilter(FilterSet):
-    vehicle__operator = ModelChoiceFilter(
-        label="Operator",
-        queryset=Operator.objects.filter(Exists("vehicle")).only("name"),
+    vehicle__operator = CharFilter(
+        label="Operator ID",
     )
-    vehicle = NumberFilter()
-    user = NumberFilter()
+    vehicle = NumberFilter(label="Vehicle ID")
+    user = NumberFilter(label="User ID")

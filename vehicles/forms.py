@@ -1,5 +1,4 @@
 import re
-from datetime import timedelta
 from urllib.parse import quote_plus
 
 from django import forms
@@ -7,7 +6,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Count, OuterRef, Q
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.html import format_html
 from sql_util.utils import Exists
 
@@ -63,22 +61,48 @@ def get_livery_choices(operator, vehicle, user):
     return choices
 
 
-class EditVehiclesForm(forms.Form):
+class EditVehicleForm(forms.Form):
+    field_order = [
+        "spare_ticket_machine",
+        "withdrawn",
+        "fleet_number",
+        "reg",
+        "operator",
+        "vehicle_type",
+        "colours",
+        "other_colour",
+        "branding",
+        "name",
+        "previous_reg",
+        "features",
+        "notes",
+    ]
     spare_ticket_machine = forms.BooleanField(
         required=False,
         help_text="Only to be used if the ticket machine code is something like SPARE",
     )
-    operator = forms.ModelChoiceField(queryset=None, label="Operator", empty_label="")
-    other_vehicle_type = forms.CharField(required=False, max_length=50)
-    vehicle_type = forms.ModelChoiceField(
-        queryset=VehicleType.objects, label="Type", required=False, empty_label=""
+    withdrawn = forms.BooleanField(
+        label="Remove from list",
+        required=False,
+        help_text="""Don't feel you need to "tidy up" by removing vehicles you only *think* have been withdrawn""",
     )
+
+    fleet_number = forms.CharField(required=False, max_length=24)
+    reg = fields.RegField(label="Number plate", required=False, max_length=24)
+
+    operator = forms.ModelChoiceField(queryset=None, empty_label="")
+
+    vehicle_type = forms.ModelChoiceField(
+        queryset=VehicleType.objects, required=False, empty_label=""
+    )
+    other_vehicle_type = forms.CharField(required=False, max_length=50)
+
     colours = forms.ChoiceField(
         label="Current livery",
         widget=forms.RadioSelect,
         required=False,
-        help_text="""To avoid arguments, please be patient and wait until the bus has been repainted
-(<em>not</em> "in the paint shop" or "awaiting repaint") before updating it here.""",
+        help_text="""To avoid arguments, please wait until the bus has *finished being repainted*
+(<em>not</em> "in the paint shop" or "awaiting repaint")""",
     )
     other_colour = forms.CharField(
         label="Other colours",
@@ -86,12 +110,29 @@ class EditVehiclesForm(forms.Form):
         required=False,
         max_length=255,
     )
+
+    branding = forms.CharField(
+        label="Other branding",
+        required=False,
+        max_length=40,
+    )
+    name = forms.CharField(
+        label="Vehicle name",
+        required=False,
+        max_length=40,
+    )
+    previous_reg = fields.RegField(
+        required=False,
+        max_length=24,
+        help_text="Separate multiple regs with a comma (,)",
+    )
+
     features = forms.ModelMultipleChoiceField(
         queryset=VehicleFeature.objects,
-        label="Features",
         widget=forms.CheckboxSelectMultiple,
         required=False,
     )
+    notes = forms.CharField(required=False, max_length=255)
     summary = fields.SummaryField(
         required=False,
         max_length=255,
@@ -126,74 +167,6 @@ link to a picture to prove it. Be polite.""",
                     return False
         return True
 
-    def __init__(self, *args, operator=None, user, vehicle=None, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        colours = None
-
-        if operator:
-            colours = get_livery_choices(operator, vehicle, user)
-
-        if colours:
-            if vehicle:
-                colours = [("", "None/mostly white/other")] + colours
-            else:
-                colours = [("", "No change")] + colours
-            self.fields["colours"].choices = colours
-        else:
-            del self.fields["colours"]
-            del self.fields["other_colour"]
-
-        if user.is_staff:
-            self.fields["operator"].queryset = Operator.objects.all()
-            self.fields["operator"].widget = forms.TextInput()
-        elif not vehicle:
-            del self.fields["operator"]
-
-
-class EditVehicleForm(EditVehiclesForm):
-    """With some extra fields, only applicable to editing a single vehicle"""
-
-    fleet_number = forms.CharField(required=False, max_length=24)
-    reg = fields.RegField(label="Number plate", required=False, max_length=24)
-    branding = forms.CharField(
-        label="Other branding",
-        required=False,
-        max_length=40,
-        help_text="Please leave this blank, it's unnecessary information",
-    )
-    name = forms.CharField(
-        label="Vehicle name",
-        required=False,
-        max_length=40,
-        help_text="Please leave this blank, it's unnecessary information",
-    )
-    previous_reg = fields.RegField(
-        required=False,
-        max_length=24,
-        help_text="Separate multiple regs with a comma (,)",
-    )
-    withdrawn = forms.BooleanField(
-        label="Remove from list",
-        required=False,
-    )
-    notes = forms.CharField(required=False, max_length=255)
-    field_order = [
-        "spare_ticket_machine",
-        "withdrawn",
-        "fleet_number",
-        "reg",
-        "operator",
-        "vehicle_type",
-        "colours",
-        "other_colour",
-        "branding",
-        "name",
-        "previous_reg",
-        "features",
-        "notes",
-    ]
-
     def clean_operator(self):
         old = self.initial["operator"]
         new = self.cleaned_data["operator"]
@@ -208,7 +181,20 @@ class EditVehicleForm(EditVehiclesForm):
         return reg
 
     def __init__(self, *args, user, vehicle, **kwargs):
-        super().__init__(*args, **kwargs, user=user, vehicle=vehicle)
+        super().__init__(*args, **kwargs)
+
+        if vehicle.operator:
+            colours = get_livery_choices(vehicle.operator, vehicle, user)
+
+            if colours:
+                if vehicle:
+                    colours = [("", "None/mostly white/other")] + colours
+                else:
+                    colours = [("", "No change")] + colours
+                self.fields["colours"].choices = colours
+            else:
+                del self.fields["colours"]
+                del self.fields["other_colour"]
 
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True
@@ -274,22 +260,9 @@ can’t be contradicted"""
                 del self.fields["colours"]
                 del self.fields["other_colour"]
 
-        if (
-            vehicle.latest_journey
-            and timezone.now() - vehicle.latest_journey.datetime < timedelta(days=3)
-        ):
-            try:
-                operator_ref = vehicle.latest_journey_data["MonitoredVehicleJourney"][
-                    "OperatorRef"
-                ]
-            except (TypeError, KeyError):
-                pass
-            else:
-                if vehicle.operator_id == operator_ref:
-                    self.fields["operator"].disabled = True
-
         if user.is_staff:
-            pass
+            self.fields["operator"].queryset = Operator.objects.all()
+            self.fields["operator"].widget = forms.TextInput()
         elif (
             not vehicle.operator or vehicle.operator.parent
         ):  # vehicle has no operator, or operator is part of a group

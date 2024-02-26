@@ -4,14 +4,7 @@ import re
 from django.core.cache import caches
 from django.core.cache.backends.base import InvalidCacheBackendError
 
-from .models import (
-    Livery,
-    VehicleEdit,
-    VehicleEditFeature,
-    VehicleRevision,
-    VehicleRevisionFeature,
-    VehicleType,
-)
+from .models import Livery, VehicleRevision, VehicleRevisionFeature, VehicleType
 
 try:
     redis_client = caches["redis"]._cache.get_client()
@@ -55,239 +48,136 @@ def match_reg(string):
     )
 
 
-def get_vehicle_edit(vehicle, fields, now, request):
-    edit = VehicleEdit(vehicle=vehicle, datetime=now)
+def get_revision(vehicle, data):
+    revision = VehicleRevision(vehicle=vehicle, changes={})
+    features = []
 
-    changed = False
+    # create a VehicleRevision record
 
-    if request.user.is_authenticated:
-        edit.user = request.user
+    if "withdrawn" in data:
+        from_value = "Yes" if revision.vehicle.withdrawn else "No"
+        to_value = "Yes" if data["withdrawn"] else "No"
+        revision.changes["withdrawn"] = f"-{from_value}\n+{to_value}"
+        del data["withdrawn"]
 
-    if "fleet_number" in fields:
-        if fields["fleet_number"]:
-            edit.fleet_number = fields["fleet_number"]
+    if "vehicle_type" in data:
+        try:
+            vehicle_type = VehicleType.objects.get(name=data["vehicle_type"])
+        except VehicleType.DoesNotExist:
+            pass
         else:
-            edit.fleet_number = f"-{vehicle.fleet_code or vehicle.fleet_number}"
-        changed = True
-
-    for field in ("reg", "vehicle_type", "branding", "name", "notes"):
-        if field in fields and str(fields[field]) != str(getattr(vehicle, field)):
-            if fields[field]:
-                setattr(edit, field, fields[field])
-            else:
-                setattr(edit, field, f"-{getattr(vehicle, field)}")
-            changed = True
-
-    if fields.get("other_vehicle_type") and fields["other_vehicle_type"] != str(
-        vehicle.vehicle_type
-    ):
-        edit.vehicle_type = fields["other_vehicle_type"]
-        changed = True
-
-    if "spare_ticket_machine" in fields:
-        if fields["spare_ticket_machine"]:
-            edit.notes = "Spare ticket machine"
-        elif vehicle.notes:
-            edit.notes = f"-{vehicle.notes}"
-        changed = True
-
-    if "withdrawn" in fields:
-        edit.withdrawn = fields["withdrawn"]
-        changed = True
-
-    changes = {}
-    if "previous_reg" in fields:
-        changes["Previous reg"] = fields["previous_reg"]
-    if changes:
-        edit.changes = changes
-        changed = True
-
-    edit.url = fields.get("summary", "")
-
-    if fields.get("colours"):
-        if fields["colours"].isdigit():
-            edit.livery_id = int(fields["colours"])
-            if edit.livery_id != vehicle.livery_id:
-                changed = True
-        elif fields["colours"]:
-            edit.colours = fields["colours"]
-            if edit.colours != vehicle.colours:
-                changed = True
-    if fields.get("other_colour"):
-        edit.colours = fields["other_colour"]
-        changed = True
-
-    features = []
-    if "features" in fields:
-        for feature in fields["features"]:
-            if feature not in vehicle.features.all():
-                features.append(VehicleEditFeature(edit=edit, feature=feature))
-        for feature in vehicle.features.all():
-            if feature not in fields["features"]:
-                features.append(
-                    VehicleEditFeature(edit=edit, feature=feature, add=False)
-                )
-
-    return edit, features, changed
-
-
-def do_revisions(vehicles, data, user):
-    revisions = [
-        VehicleRevision(vehicle=vehicle, user=user, changes={}) for vehicle in vehicles
-    ]
-    features = []
-    changed_fields = []
-
-    # actually edit some vehicle fields, depending on how trusted the user is,
-    # create a VehicleRevision record,
-    # and remove fields from the 'data' dict so they're not part of any VehicleEdits created in the next step
-
-    if user.trusted:
-        if "withdrawn" in data:
-            to_value = "Yes" if data["withdrawn"] else "No"
-            for revision in revisions:
-                from_value = "Yes" if revision.vehicle.withdrawn else "No"
-                revision.changes["withdrawn"] = f"-{from_value}\n+{to_value}"
-                revision.vehicle.withdrawn = data["withdrawn"]
-            changed_fields.append("withdrawn")
-            del data["withdrawn"]
-
-        if "vehicle_type" in data:
-            try:
-                vehicle_type = VehicleType.objects.get(name=data["vehicle_type"])
-            except VehicleType.DoesNotExist:
-                pass
-            else:
-                for revision in revisions:
-                    if revision.vehicle.vehicle_type_id != vehicle_type.id:
-                        revision.from_type = revision.vehicle.vehicle_type
-                        revision.to_type = vehicle_type
-                        revision.vehicle.vehicle_type = vehicle_type
-                changed_fields.append("vehicle_type")
-                del data["vehicle_type"]
-
-        if "colours" in data:
-            if data["colours"].isdigit():
-                livery = Livery.objects.get(id=data["colours"])
-                for revision in revisions:
-                    if revision.vehicle.livery_id != livery.id:
-                        revision.from_livery = revision.vehicle.livery
-                        revision.to_livery = livery
-                        revision.vehicle.livery = livery
-                        if revision.vehicle.colours:
-                            revision.changes[
-                                "colours"
-                            ] = f"-{revision.vehicle.colours}\n+"
-                            revision.vehicle.colours = ""
-            else:
-                to_colour = data.get("other_colour") or data["colours"]
-                for revision in revisions:
-                    revision.from_livery = revision.vehicle.livery
-                    revision.vehicle.livery = None
-                    if revision.vehicle.colours != to_colour:
-                        revision.changes[
-                            "colours"
-                        ] = f"-{revision.vehicle.colours}\n+{to_colour}"
-                        revision.vehicle.colours = to_colour
-            changed_fields += ["livery", "colours"]
-            del data["colours"]
-            if "other_colour" in data:
-                del data["other_colour"]
-
-        if "features" in data:
-            for revision in revisions:
-                for feature in revision.vehicle.features.all():
-                    if feature not in data["features"]:
-                        features.append(
-                            VehicleRevisionFeature(
-                                revision=revision, feature=feature, add=False
-                            )
-                        )
-                for feature in data["features"]:
-                    if feature not in revision.vehicle.features.all():
-                        features.append(
-                            VehicleRevisionFeature(
-                                revision=revision, feature=feature, add=True
-                            )
-                        )
-                revision.vehicle.features.set(data["features"])
-            del data["features"]
-
-    if "summary" in data:
-        for revision in revisions:
-            revision.message = data["summary"]
+            revision.from_type = revision.vehicle.vehicle_type
+            revision.to_type = vehicle_type
+            del data["vehicle_type"]
 
     # operator has its own ForeignKey fields:
-
     if "operator" in data:
-        for revision in revisions:
-            revision.from_operator = revision.vehicle.operator
-            revision.to_operator = data["operator"]
-            revision.vehicle.operator = data["operator"]
-        changed_fields.append("operator")
+        revision.from_operator = revision.vehicle.operator
+        revision.to_operator = data["operator"]
         del data["operator"]
 
-    return revisions, features, changed_fields
+    if "colours" in data:
+        if data["colours"].isdigit():  # livery id
+            livery = Livery.objects.get(id=data["colours"])
+            if revision.vehicle.livery_id != livery.id:
+                revision.from_livery = revision.vehicle.livery
+                revision.to_livery = livery
+                if revision.vehicle.colours:
+                    revision.changes["colours"] = f"-{revision.vehicle.colours}\n+"
+        else:
+            to_colour = data.get("other_colour") or data["colours"]
+            revision.from_livery = revision.vehicle.livery
+            if revision.vehicle.colours != to_colour:
+                revision.changes[
+                    "colours"
+                ] = f"-{revision.vehicle.colours}\n+{to_colour}"
 
+        del data["colours"]
+        if "other_colour" in data:
+            del data["other_colour"]
 
-def do_revision(vehicle, data, user):
-    (revision,), features, changed_fields = do_revisions([vehicle], data, user)
+    if "features" in data:
+        for feature in revision.vehicle.features.all():
+            if feature not in data["features"]:
+                features.append(
+                    VehicleRevisionFeature(
+                        revision=revision, feature=feature, add=False
+                    )
+                )
+        for feature in data["features"]:
+            if feature not in revision.vehicle.features.all():
+                features.append(
+                    VehicleRevisionFeature(revision=revision, feature=feature, add=True)
+                )
+        del data["features"]
+
+    if "summary" in data:
+        revision.message = data["summary"]
+        del data["summary"]
 
     if "fleet_number" in data:
-        if (
-            user.trusted
-            or data["fleet_number"]
-            and data["fleet_number"] in re.split("_- ", vehicle.code)
-        ):
-            revision.changes[
-                "fleet number"
-            ] = f"-{vehicle.fleet_code or vehicle.fleet_number}\n+{data['fleet_number']}"
-            vehicle.fleet_code = data["fleet_number"]
-            changed_fields.append("fleet_code")
-            if vehicle.fleet_code.isdigit():
-                vehicle.fleet_number = vehicle.fleet_code
-            else:
-                vehicle.fleet_number = None
-            changed_fields.append("fleet_number")
-            del data["fleet_number"]
+        revision.changes[
+            "fleet number"
+        ] = f"-{vehicle.fleet_code or vehicle.fleet_number}\n+{data['fleet_number']}"
+        del data["fleet_number"]
 
-    if "reg" in data:
-        if (
-            user.trusted
-            or data["reg"]
-            and data["reg"] in re.sub("_- ", "", vehicle.code)
-        ):
-            revision.changes["reg"] = f"-{vehicle.reg}\n+{data['reg']}"
-            vehicle.reg = data["reg"]
-            changed_fields.append("reg")
-            del data["reg"]
+    if "previous_reg" in data and match_reg(data["previous_reg"]):
+        revision.changes["previous reg"] = f"-\n+{data['previous_reg']}"
+        del data["previous_reg"]
 
-    if user.trusted:
-        if "previous_reg" in data and match_reg(data["previous_reg"]):
-            revision.changes["previous reg"] = f"-\n+{data['previous_reg']}"
-            vehicle.data = {"Previous reg": data["previous_reg"]}
-            changed_fields.append("data")
-            del data["previous_reg"]
+    for field in ("reg", "notes", "branding", "name"):
+        if field in data:
+            from_value = getattr(vehicle, field)
+            to_value = data[field]
+            revision.changes[field] = f"-{from_value}\n+{to_value}"
+            del data[field]
 
-        if "branding" in data and data["branding"] == "":
-            revision.changes["branding"] = f"-{vehicle.branding}\n+"
-            vehicle.branding = ""
-            changed_fields.append("branding")
-            del data["branding"]
+    assert not data
 
-    if user.has_perm("vehicles.change_vehicle"):
-        for field in ("notes", "branding", "name"):
-            if field in data:
-                from_value = getattr(vehicle, field)
-                to_value = data[field]
-                revision.changes[field] = f"-{from_value}\n+{to_value}"
-                setattr(vehicle, field, to_value)
-                changed_fields.append(field)
-                del data[field]
+    return revision, features
 
-    if changed_fields:
-        vehicle.save(update_fields=changed_fields)
 
-    if changed_fields or features:
-        return revision, features
-    return None, None
+def apply_revision(revision):
+    changed_fields = []
+    vehicle = revision.vehicle
+
+    if revision.from_type_id != revision.to_type_id:
+        vehicle.vehicle_type_id = revision.to_type_id
+        changed_fields.append("vehicle_type")
+
+    for field in ("operator", "livery"):
+        from_value = getattr(revision, f"from_{field}_id")
+        to_value = getattr(revision, f"to_{field}_id")
+        if from_value != to_value:
+            setattr(vehicle, f"{field}_id", to_value)
+            changed_fields.append(field)
+
+    for field in ("reg", "notes", "branding", "name"):
+        if field in revision.changes:
+            from_value, to_value = revision.changes[field].split("\n")
+            assert to_value[0] == "+"
+            setattr(vehicle, field, to_value[1:])
+            changed_fields.append(field)
+
+    if "previous reg" in revision.changes:
+        if not vehicle.data:
+            vehicle.data = {}
+        vehicle.data["Previous reg"] = revision.changes["previous reg"]
+        changed_fields.append("data")
+
+    if "fleet_number" in revision.changes:
+        vehicle.fleet_code = revision.changes["fleet_number"]
+        if vehicle.fleet_code.isdigit():
+            vehicle.fleet_number = None
+        else:
+            vehicle.fleet_number = None
+        changed_fields.append("fleet_number")
+        changed_fields.append("fleet_code")
+
+    vehicle.save(update_fields=changed_fields)
+
+    for feature in revision.vehiclerevisionfeature_set.all():
+        if feature.add:
+            vehicle.features.add(feature)
+        else:
+            vehicle.features.remove(feature)

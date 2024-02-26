@@ -45,7 +45,6 @@ from .models import (
     SiriSubscription,
     Vehicle,
     VehicleEdit,
-    VehicleEditFeature,
     VehicleEditVote,
     VehicleJourney,
     VehicleLocation,
@@ -54,7 +53,7 @@ from .models import (
 )
 from .rtpi import add_progress_and_delay
 from .tasks import handle_siri_post
-from .utils import do_revision, get_vehicle_edit, redis_client  # calculate_bearing,
+from .utils import apply_revision, get_revision, redis_client  # calculate_bearing,
 
 
 class Vehicles:
@@ -769,7 +768,6 @@ def edit_vehicle(request, **kwargs):
     form = forms.EditVehicleForm(
         request.POST or None,
         initial=initial,
-        operator=vehicle.operator,
         vehicle=vehicle,
         user=request.user,
     )
@@ -780,6 +778,7 @@ def edit_vehicle(request, **kwargs):
         if not form.has_really_changed():
             form.add_error(None, "You haven't changed anything")
         elif form.is_valid():
+            # check someone else hasn't proposed the changes
             data = {key: form.cleaned_data[key] for key in form.changed_data}
             for edit in pending_edits:
                 if (
@@ -798,9 +797,24 @@ def edit_vehicle(request, **kwargs):
                     )
 
         if form.is_valid():
-            now = timezone.now()
             try:
-                revision, features = do_revision(vehicle, data, request.user)
+                with transaction.atomic():
+                    revision, features = get_revision(vehicle, data)
+                    revision.user = request.user
+                    revision.created_at = timezone.now()
+                    revision.save()
+
+                    VehicleRevisionFeature.objects.bulk_create(features)
+
+                    if request.user.trusted:
+                        apply_revision(revision)
+                    else:
+                        revision.pending = True
+                        revision.save(update_fields=["pending"])
+
+                    context["revision"] = revision
+                    form = None
+
             except IntegrityError:
                 if "operator" in form.changed_data:
                     form.add_error(
@@ -809,27 +823,6 @@ def edit_vehicle(request, **kwargs):
                     )
                 else:
                     raise
-            else:
-                if revision:
-                    revision.created_at = now
-                    revision.save()
-                    if features:
-                        VehicleRevisionFeature.objects.bulk_create(features)
-                    context["revision"] = revision
-
-                if data:
-                    edit, features, changed = get_vehicle_edit(
-                        vehicle, data, now, request
-                    )
-                    if changed or features:
-                        edit.save()
-                        context["edit"] = edit
-                        VehicleEditFeature.objects.bulk_create(features)
-
-                if revision or edit.id:
-                    form = None
-                else:
-                    form.add_error(None, "You haven't changed anything")
 
     if form:
         context["pending_edits"] = pending_edits
@@ -857,29 +850,29 @@ def edit_vehicle(request, **kwargs):
 def vehicle_edits(request):
     record_ip_address(request)
 
-    if request.method == "POST":
-        assert request.user.is_staff
-        edits = VehicleEdit.objects.filter(id__in=request.POST.getlist("edit"))
-        action = request.POST["action"]
-        for edit in edits:
-            if action == "apply":
-                edit.apply(user=request.user)
-            else:
-                if action == "approve":
-                    edit.approved = True
-                else:
-                    assert action == "disapprove"
-                    edit.approved = False
-                edit.arbiter = request.user
-        if action != "apply":
-            VehicleEdit.objects.bulk_update(edits, fields=["approved", "arbiter"])
+    # if request.method == "POST":
+    #     assert request.user.is_staff
+    #     edits = VehicleEdit.objects.filter(id__in=request.POST.getlist("edit"))
+    #     action = request.POST["action"]
+    #     for edit in edits:
+    #         if action == "apply":
+    #             edit.apply(user=request.user)
+    #         else:
+    #             if action == "approve":
+    #                 edit.approved = True
+    #             else:
+    #                 assert action == "disapprove"
+    #                 edit.approved = False
+    #             edit.arbiter = request.user
+    #     if action != "apply":
+    #         VehicleEdit.objects.bulk_update(edits, fields=["approved", "arbiter"])
 
-    edits = VehicleEdit.objects.order_by("-id")
+    # edits = VehicleEdit.objects.order_by("-id")
 
-    if not request.user.is_superuser:
-        edits = edits.filter(approved=None)
+    # if not request.user.is_superuser:
+    #     edits = edits.filter(approved=None)
 
-    edits = edits.select_related(
+    edits = VehicleRevision.objects.select_related(
         "livery",
         "vehicle__livery",
         "user",
@@ -902,7 +895,7 @@ def vehicle_edits(request):
 
     query_dict = QueryDict("pending=true", mutable=True)
     query_dict.update(request.GET)
-    f = filters.VehicleEditFilter(query_dict, queryset=edits)
+    f = filters.VehicleRevisionFilter(query_dict, queryset=edits)
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)

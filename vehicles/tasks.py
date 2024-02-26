@@ -11,7 +11,7 @@ from huey.contrib.djhuey import db_periodic_task, db_task
 from busstops.models import DataSource, Operator
 
 from .management.commands import import_bod_avl
-from .models import SiriSubscription, Vehicle, VehicleEdit, VehicleJourney
+from .models import SiriSubscription, Vehicle, VehicleJourney, VehicleRevision
 
 
 @db_task()
@@ -185,7 +185,9 @@ def stats():
 
     stats = {
         "datetime": now,
-        "pending_vehicle_edits": VehicleEdit.objects.filter(approved=None).count(),
+        "pending_vehicle_edits": VehicleRevision.objects.filter(
+            pending=True, disapproved=False
+        ).count(),
         "vehicle_journeys": journeys.count(),
         "service_vehicle_journeys": journeys.filter(service__isnull=False).count(),
         "trip_vehicle_journeys": journeys.filter(trip__isnull=False).count(),
