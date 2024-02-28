@@ -95,7 +95,6 @@ class EditVehicleForm(forms.Form):
     vehicle_type = forms.ModelChoiceField(
         queryset=VehicleType.objects, required=False, empty_label=""
     )
-    other_vehicle_type = forms.CharField(required=False, max_length=50)
 
     colours = forms.ChoiceField(
         label="Current livery",

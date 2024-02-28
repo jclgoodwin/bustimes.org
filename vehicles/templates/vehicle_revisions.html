@@ -2,7 +2,7 @@
 
 <ul class="revisions-list">
     {% for revision in revisions %}
-        <li>
+        <li id="revision-{{ revision.id }}">
             <p>
                 {% if not vehicle %}
                     <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &bull;
@@ -36,10 +36,13 @@
                 {% endif %}
             <p class="actions">
                 {{ revision.score }}
-                <button class="button">👍 Thanks</button>
-                <button class="button">☠️ No</button>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-</div>
+                {% if revision.pending %}
+                    <button class="button">👍 Approve</button>
+                    <button class="button">☠️ Disapprove</button>
+                {% else %}
+                    <button class="button">👍 Thanks</button>
+                    <button class="button">☠️ No</button>
+                {% endif %}
+        </li>
+    {% endfor %}
+</ul>

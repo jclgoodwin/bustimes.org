@@ -4,7 +4,7 @@ import re
 from django.core.cache import caches
 from django.core.cache.backends.base import InvalidCacheBackendError
 
-from .models import Livery, VehicleRevision, VehicleRevisionFeature, VehicleType
+from .models import Livery, VehicleRevision, VehicleRevisionFeature
 
 try:
     redis_client = caches["redis"]._cache.get_client()
@@ -61,14 +61,10 @@ def get_revision(vehicle, data):
         del data["withdrawn"]
 
     if "vehicle_type" in data:
-        try:
-            vehicle_type = VehicleType.objects.get(name=data["vehicle_type"])
-        except VehicleType.DoesNotExist:
-            pass
-        else:
-            revision.from_type = revision.vehicle.vehicle_type
-            revision.to_type = vehicle_type
-            del data["vehicle_type"]
+        vehicle_type = data["vehicle_type"]
+        revision.from_type = revision.vehicle.vehicle_type
+        revision.to_type = vehicle_type
+        del data["vehicle_type"]
 
     # operator has its own ForeignKey fields:
     if "operator" in data:
@@ -121,7 +117,7 @@ def get_revision(vehicle, data):
         ] = f"-{vehicle.fleet_code or vehicle.fleet_number}\n+{data['fleet_number']}"
         del data["fleet_number"]
 
-    if "previous_reg" in data and match_reg(data["previous_reg"]):
+    if "previous_reg" in data:
         revision.changes["previous reg"] = f"-\n+{data['previous_reg']}"
         del data["previous_reg"]
 
@@ -162,7 +158,9 @@ def apply_revision(revision):
     if "previous reg" in revision.changes:
         if not vehicle.data:
             vehicle.data = {}
-        vehicle.data["Previous reg"] = revision.changes["previous reg"]
+        from_value, to_value = revision.changes["previous reg"].split("\n")
+        assert to_value[0] == "+"
+        vehicle.data["Previous reg"] = to_value[1:]
         changed_fields.append("data")
 
     if "fleet_number" in revision.changes:

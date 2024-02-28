@@ -14,13 +14,7 @@ from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Case, F, Max, OuterRef, Q, When
 from django.db.models.functions import Coalesce, Now
-from django.http import (
-    Http404,
-    HttpResponse,
-    HttpResponseBadRequest,
-    JsonResponse,
-    QueryDict,
-)
+from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils import timezone
@@ -31,7 +25,7 @@ from django.views.decorators.http import require_POST, require_safe
 from django.views.generic.detail import DetailView
 from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
-from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
+from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
 from buses.utils import cache_page
 from busstops.models import Operator, Service
@@ -166,7 +160,7 @@ def operator_vehicles(request, slug=None, parent=None):
     else:
         vehicles = vehicles.annotate(feature_names=features_string_agg)
         vehicles = vehicles.annotate(
-            pending_edits=Exists("vehicleedit", filter=Q(approved=None))
+            pending_edits=Exists("vehiclerevision", filter=Q(pending=True))
         )
         vehicles = vehicles.select_related("latest_journey")
 
@@ -684,8 +678,8 @@ class VehicleDetailView(DetailView):
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
 
-        context["pending_edits"] = self.object.vehicleedit_set.filter(
-            approved=None
+        context["pending_edits"] = self.object.vehiclerevision_set.filter(
+            pending=True
         ).exists()
 
         if self.object.operator:
@@ -742,7 +736,6 @@ def edit_vehicle(request, **kwargs):
         "operator": vehicle.operator,
         "reg": vehicle.reg,
         "vehicle_type": vehicle.vehicle_type,
-        "other_vehicle_type": str(vehicle.vehicle_type or ""),
         "features": vehicle.features.all(),
         "colours": str(vehicle.livery_id or vehicle.colours),
         "branding": vehicle.branding,
@@ -772,7 +765,7 @@ def edit_vehicle(request, **kwargs):
         user=request.user,
     )
 
-    pending_edits = vehicle.vehicleedit_set.filter(approved=None)
+    pending_edits = vehicle.vehiclerevision_set.filter(pending=True)
 
     if request.POST:
         if not form.has_really_changed():
@@ -780,28 +773,28 @@ def edit_vehicle(request, **kwargs):
         elif form.is_valid():
             # check someone else hasn't proposed the changes
             data = {key: form.cleaned_data[key] for key in form.changed_data}
-            for edit in pending_edits:
-                if (
-                    edit.livery_id
-                    and "colours" in data
-                    and str(edit.livery_id) == data["colours"]
-                ):
-                    form.add_error("colours", "There's already a pending edit for that")
-                if (
-                    edit.vehicle_type
-                    and "vehicle_type" in data
-                    and edit.vehicle_type == str(data["vehicle_type"])
-                ):
-                    form.add_error(
-                        "vehicle_type", "There's already a pending edit for that"
-                    )
+            # for edit in pending_edits:
+            #     if (
+            #         edit.livery_id
+            #         and "colours" in data
+            #         and str(edit.livery_id) == data["colours"]
+            #     ):
+            #         form.add_error("colours", "There's already a pending edit for that")
+            #     if (
+            #         edit.vehicle_type
+            #         and "vehicle_type" in data
+            #         and edit.vehicle_type == str(data["vehicle_type"])
+            #     ):
+            #         form.add_error(
+            #             "vehicle_type", "There's already a pending edit for that"
+            #         )
 
         if form.is_valid():
+            revision, features = get_revision(vehicle, data)
+            revision.user = request.user
+            revision.created_at = timezone.now()
             try:
                 with transaction.atomic():
-                    revision, features = get_revision(vehicle, data)
-                    revision.user = request.user
-                    revision.created_at = timezone.now()
                     revision.save()
 
                     VehicleRevisionFeature.objects.bulk_create(features)
@@ -848,87 +841,7 @@ def edit_vehicle(request, **kwargs):
 
 @login_required
 def vehicle_edits(request):
-    record_ip_address(request)
-
-    # if request.method == "POST":
-    #     assert request.user.is_staff
-    #     edits = VehicleEdit.objects.filter(id__in=request.POST.getlist("edit"))
-    #     action = request.POST["action"]
-    #     for edit in edits:
-    #         if action == "apply":
-    #             edit.apply(user=request.user)
-    #         else:
-    #             if action == "approve":
-    #                 edit.approved = True
-    #             else:
-    #                 assert action == "disapprove"
-    #                 edit.approved = False
-    #             edit.arbiter = request.user
-    #     if action != "apply":
-    #         VehicleEdit.objects.bulk_update(edits, fields=["approved", "arbiter"])
-
-    # edits = VehicleEdit.objects.order_by("-id")
-
-    # if not request.user.is_superuser:
-    #     edits = edits.filter(approved=None)
-
-    edits = VehicleRevision.objects.select_related(
-        "livery",
-        "vehicle__livery",
-        "user",
-        "vehicle__vehicle_type",
-        "vehicle__operator",
-        "vehicle__latest_journey",  # for determining whether a "withdraw" edit is newer than last journey
-    )
-    edits = edits.prefetch_related(
-        "vehicleeditfeature_set__feature", "vehicle__features"
-    )
-
-    order = request.GET.get("order")
-
-    if order in ("score", "-score"):
-        edits = edits.order_by(order)
-    if order in ("edit_count", "-edit_count"):
-        edit_count = SubqueryCount("vehicle__vehicleedit", filter=Q(approved=None))
-        edits = edits.annotate(edit_count=edit_count)
-        edits = edits.order_by(order, "vehicle")
-
-    query_dict = QueryDict("pending=true", mutable=True)
-    query_dict.update(request.GET)
-    f = filters.VehicleRevisionFilter(query_dict, queryset=edits)
-
-    if f.is_valid():
-        paginator = Paginator(f.qs, 100)
-        page = paginator.get_page(request.GET.get("page"))
-    else:
-        page = None
-
-    parameters = {key: value for key, value in request.GET.items() if key != "page"}
-
-    toggle_order = {
-        "score": urlencode(
-            {**parameters, "order": "score" if order == "-score" else "-score"}
-        ),
-        "vehicle": urlencode(
-            {
-                **parameters,
-                "order": "edit_count" if order == "-edit_count" else "-edit_count",
-            }
-        ),
-    }
-
-    parameters = urlencode(parameters)
-
-    return render(
-        request,
-        "vehicle_edits.html",
-        {
-            "filter": f,
-            "parameters": parameters,
-            "toggle_order": toggle_order,
-            "edits": page,
-        },
-    )
+    return vehicles_history(request, pending=True)
 
 
 @require_POST
@@ -995,9 +908,13 @@ def vehicle_edit_action(request, edit_id, action):
 @require_safe
 def vehicle_history(request, **kwargs):
     vehicle = get_object_or_404(Vehicle, **kwargs)
-    revisions = vehicle.vehiclerevision_set.select_related(
-        "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
-    ).order_by("-id")
+    revisions = (
+        vehicle.vehiclerevision_set.filter(pending=False)
+        .select_related(
+            "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
+        )
+        .order_by("-id")
+    )
     return render(
         request,
         "vehicle_history.html",
@@ -1014,9 +931,9 @@ def vehicle_history(request, **kwargs):
 
 
 @require_safe
-def vehicles_history(request):
+def vehicles_history(request, pending=False):
     revisions = (
-        VehicleRevision.objects.all()
+        VehicleRevision.objects.filter(pending=pending)
         .select_related(
             "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
         )
@@ -1034,7 +951,7 @@ def vehicles_history(request):
 
     return render(
         request,
-        "vehicle_history.html",
+        "vehicle_edits.html" if pending else "vehicle_history.html",
         {
             "filter": f,
             "revisions": page,

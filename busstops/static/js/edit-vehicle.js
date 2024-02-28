@@ -4,14 +4,11 @@
 (function () {
     'use strict';
 
-    document.getElementById('id_other_vehicle_type').parentNode.remove();
-
     // vehicle type
     var selectElement = document.getElementById('id_vehicle_type');
     if (selectElement) {
         accessibleAutocomplete.enhanceSelectElement({
-            selectElement: selectElement,
-            name: 'other_vehicle_type',
+            selectElement: selectElement
         });
     }
 

@@ -12,20 +12,19 @@
 
     <h1>Thank you</h1>
 
-    {% if revision %}
+    {% if revision.pending %}
+        <p>Your changes:</p>
+    {% else %}
         <p>Details updated, and recorded in <a href="/vehicles/history">the changelog for all to see</a>:</p>
-
-        <p>
-            {% for key, from, to in revision.list_changes %}
-                Changed {{ key }} {% if from %}from {{ from }} {% endif %}to {{ to }}
-                {% if not forloop.last %}<br>{% endif %}
-            {% endfor %}
-        </p>
     {% endif %}
 
-    {% if edit %}
-        <p>I’ll update {% if revision %}the other{% else %}those{% endif %} details shortly</p>
-    {% endif %}
+    <p>
+        {% for key, from, to in revision.list_changes %}
+            Changed {{ key }} {% if from %}from {{ from }} {% endif %}to {{ to }}
+            {% if not forloop.last %}<br>{% endif %}
+        {% endfor %}
+    </p>
+
 
 {% else %}
 
@@ -35,7 +34,7 @@
         <div class="message">
             <p>❗ There’s already a pending edit for this vehicle</p>
 
-            {% include 'vehicle_edits_table.html' with edits=pending_edits %}
+            {% include 'vehicle_revisions.html' with revisions=pending_edits %}
         </div>
     {% endif %}
 
