@@ -38,7 +38,6 @@ from .models import (
     Livery,
     SiriSubscription,
     Vehicle,
-    VehicleEdit,
     VehicleEditVote,
     VehicleJourney,
     VehicleLocation,
@@ -678,8 +677,11 @@ class VehicleDetailView(DetailView):
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
 
-        context["pending_edits"] = self.object.vehiclerevision_set.filter(
+        context["pending_edits_exists"] = self.object.vehiclerevision_set.filter(
             pending=True
+        ).exists()
+        context["revisions_exists"] = self.object.vehiclerevision_set.filter(
+            pending=False, disapproved=False
         ).exists()
 
         if self.object.operator:
@@ -846,26 +848,38 @@ def vehicle_edits(request):
 
 @require_POST
 @login_required
-def vehicle_edit_vote(request, edit_id, direction):
-    edit = get_object_or_404(VehicleEdit, id=edit_id)
+def vehicle_revision_vote(request, revision_id, direction):
+    revisions = VehicleRevision.objects.filter(id=revision_id)
 
-    assert request.user.id != edit.user_id
+    revision = get_object_or_404(revisions)
+
+    assert request.user.id != revision.user_id
     assert request.user.trusted is not False
 
-    votes = edit.vehicleeditvote_set
     positive = direction == "up"
+    score_change = 1 if positive else -1
 
-    VehicleEditVote.objects.update_or_create(
-        {"positive": positive}, for_edit=edit, by_user=request.user
-    )
+    try:
+        VehicleEditVote.objects.create(
+            positive=positive, for_revision=revision, by_user=request.user
+        )
+    except IntegrityError:
+        vote = VehicleEditVote.objects.get(for_revision=revision, by_user=request.user)
+        if vote.positive == positive:
+            # can't vote in the same direction twice
+            score_change = 0
+        else:
+            score_change *= 2
+            vote.positive = positive
+            vote.save(update_fields=["positive"])
 
-    # a bit dodgy - a vote could change direction between the two count queries!
-    edit.score = (
-        votes.filter(positive=True).count() - votes.filter(positive=False).count()
-    )
-    edit.save(update_fields=["score"])
+    if score_change != 0:
+        revisions.update(score=F("score") + score_change)
+        (type(revision.user)).objects.filter(id=revision.user_id).update(
+            score=Coalesce("score", 0) + score_change
+        )
 
-    return HttpResponse(edit.score)
+    return HttpResponse(revisions.get().score)
 
 
 @require_POST
@@ -882,25 +896,30 @@ def vehicle_revision_revert(request, revision_id):
 
 @require_POST
 @login_required
-def vehicle_edit_action(request, edit_id, action):
-    edit = get_object_or_404(VehicleEdit, id=edit_id)
+def vehicle_revision_action(request, revision_id, action):
+    revisions = VehicleRevision.objects.filter(id=revision_id)
+
+    revision = get_object_or_404(revisions)
 
     if not request.user.has_perm("vehicles.change_vehicle"):
         assert (
-            action == "disapprove" and request.user.id == edit.user_id
+            action == "disapprove" and request.user.id == revision.user_id
         ) or request.user.trusted
 
     if action == "apply":
-        edit.apply(user=request.user)
+        apply_revision(revision)
+        revisions.update(
+            approved_by=request.user,
+            approved_at=Now(),
+            pending=False,
+            disapproved=False,
+        )
+    elif action == "disapprove":
+        revisions.update(
+            approved_by=request.user, approved_at=Now(), pending=False, disapproved=True
+        )
     else:
-        if action == "disapprove":
-            edit.approved = False
-        else:
-            assert action == "approve"
-            edit.approved = True
-        edit.arbiter = request.user
-
-        edit.save(update_fields=["approved", "arbiter"])
+        assert False
 
     return HttpResponse()
 
@@ -909,7 +928,7 @@ def vehicle_edit_action(request, edit_id, action):
 def vehicle_history(request, **kwargs):
     vehicle = get_object_or_404(Vehicle, **kwargs)
     revisions = (
-        vehicle.vehiclerevision_set.filter(pending=False)
+        vehicle.vehiclerevision_set.filter(pending=False, disapproved=False)
         .select_related(
             "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
         )

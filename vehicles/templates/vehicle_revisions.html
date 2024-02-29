@@ -1,6 +1,9 @@
 {% load humanize %}
+{% load static %}
 
-<ul class="revisions-list">
+<script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
+
+<ul class="revisions-list" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% for revision in revisions %}
         <li id="revision-{{ revision.id }}">
             <p>
@@ -13,35 +16,30 @@
                         &bull; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
                     {% endif %}
                 {% endif %}
-                {% if request.user.is_superuser %}
+                {% if user.is_superuser %}
                     &bull; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
                 {% endif %}
             <p>
-                {% for key, from, to in revision.list_changes %}
-                    <strong>{{ key }}</strong>
-                    {% if from %}
-                        from {{ from }}
-                    {% endif %}
-                    {% if to %}
-                        to
-                        {{ to }}
-                    {% endif %}
-                    <br>
-                {% endfor %}
-                {% for feature in revision.vehiclerevisionfeature_set.all %}
-                    {{ feature }}
-                {% endfor %}
-                {% if revision.message %}
-                    <p class="wrap">{{ revision.message|urlize|linebreaksbr }}
-                {% endif %}
-            <p class="actions">
-                {{ revision.score }}
-                {% if revision.pending %}
-                    <button class="button">👍 Approve</button>
-                    <button class="button">☠️ Disapprove</button>
-                {% else %}
-                    <button class="button">👍 Thanks</button>
-                    <button class="button">☠️ No</button>
+                {% include "vehicle_revision.html" %}
+            <p class="actions" hx-target="#revision-{{ revision.id }} .score">
+                <span class="score">{{ revision.score }}</span>
+                    {% if revision.pending %}
+                        {% if revision.user_id == user.id %}
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove" hx-target="#revision-{{ revision.id }}">☠️ Undo</button>
+                        {% elif user.trusted %}
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/approve">👍 Approve</button>
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove">☠️ Disapprove</button>
+                        {% elif user.trusted is not False %}
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍 Yes</button>
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">☠️ No</button>
+                        {% endif %}
+                    {% elif user.trusted is not False %}
+                        {% if revision.user_id != user.id %}
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍 Thanks</button>
+                            {% if user.trusted %}
+                                <button class="button" hx-post="/vehicles/history/{{ revision.id }}/revert">☠️ Revert</button>
+                            {% endif %}
+                        {% endif %}
                 {% endif %}
         </li>
     {% endfor %}

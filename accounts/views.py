@@ -1,6 +1,8 @@
-from django.contrib.auth import get_user_model, views as auth_views
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import get_user_model
+from django.contrib.auth import views as auth_views
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, render
+
 from . import forms
 
 UserModel = get_user_model()
@@ -43,7 +45,7 @@ def user_detail(request, pk):
 
     revisions = user.vehiclerevision_set.select_related(
         "vehicle", "from_livery", "to_livery", "from_type", "to_type"
-    )
+    ).prefetch_related("vehiclerevisionfeature_set__feature")
     revisions = revisions.order_by("-id")
     paginator = Paginator(revisions, 100)
     page = request.GET.get("page")

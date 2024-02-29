@@ -52,11 +52,11 @@
             <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
         {% endif %}
 
-        {% if pending_edits %}
+        {% if pending_edits_exists %}
             <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}">Pending edits</a></li>
         {% endif %}
 
-        {% if vehicle.vehiclerevision_set.exists %}
+        {% if revisions_exists %}
             <li><a href="{{ vehicle.get_history_url }}">History</a></li>
         {% endif %}
 

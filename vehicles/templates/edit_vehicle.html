@@ -19,10 +19,7 @@
     {% endif %}
 
     <p>
-        {% for key, from, to in revision.list_changes %}
-            Changed {{ key }} {% if from %}from {{ from }} {% endif %}to {{ to }}
-            {% if not forloop.last %}<br>{% endif %}
-        {% endfor %}
+        {% include "vehicle_revision.html" %}
     </p>
 
 
@@ -77,4 +74,5 @@
         <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
         <script async src="{% static 'js/edit-vehicle.js' %}"></script>
     {% endif %}
+
 {% endblock %}

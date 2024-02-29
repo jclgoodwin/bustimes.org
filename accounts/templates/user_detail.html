@@ -6,6 +6,8 @@
 
 {% block fuse %}{% endblock %}
 
+{% block bodyclass %}narrow{% endblock %}
+
 {% block content %}
 
     <h1>{% if object.trusted is False %}<del>{% endif %}User {{ object.id }}{% if object.trusted is False %}</del>{% endif %}</h1>
@@ -16,6 +18,13 @@
 
     {% if object == user %}
         <p>That's you!</p>
+    {% endif %}
+
+    {% if object.score %}
+        <dl>
+            <dt>Score</dt>
+            <dd>{{ object.score }}</dd>
+        </dl>
     {% endif %}
 
     {% if form %}

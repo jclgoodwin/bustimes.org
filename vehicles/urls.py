@@ -17,8 +17,13 @@ urlpatterns = [
     path("vehicles/history", views.vehicles_history),
     path("vehicles/history/<int:revision_id>/revert", views.vehicle_revision_revert),
     path("vehicles/edits", views.vehicle_edits),
-    path("vehicles/edits/<int:edit_id>/vote/<direction>", views.vehicle_edit_vote),
-    path("vehicles/edits/<int:edit_id>/<action>", views.vehicle_edit_action),
+    path(
+        "vehicles/revisions/<int:revision_id>/vote/<direction>",
+        views.vehicle_revision_vote,
+    ),
+    path(
+        "vehicles/revisions/<int:revision_id>/<action>", views.vehicle_revision_action
+    ),
     path("vehicles/<int:pk>", views.VehicleDetailView.as_view()),
     path("vehicles/<slug>", views.VehicleDetailView.as_view(), name="vehicle_detail"),
     path("vehicles/<int:id>/edit", views.edit_vehicle),

@@ -566,7 +566,10 @@ class VehicleEditVote(models.Model):
     positive = models.BooleanField()
 
     class Meta:
-        unique_together = ("by_user", "for_edit")
+        unique_together = (
+            ("by_user", "for_edit"),
+            ("by_user", "for_revision"),
+        )
 
 
 class VehicleRevisionFeature(models.Model):
@@ -608,7 +611,7 @@ class VehicleRevision(models.Model):
     )
 
     changes = models.JSONField(null=True, blank=True)
-    message = models.TextField(blank=True)
+    message = models.TextField(null=True, blank=True)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True
@@ -625,6 +628,8 @@ class VehicleRevision(models.Model):
 
     pending = models.BooleanField(default=False)
     disapproved = models.BooleanField(default=False)
+    disapproved_reason = models.TextField(null=True, blank=True)
+
     score = models.SmallIntegerField(default=0)
 
     def __str__(self):
