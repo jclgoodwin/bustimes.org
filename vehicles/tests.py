@@ -457,6 +457,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
+        self.assertContains(response, "You haven&#x27;t changed anything")
         self.assertNotContains(response, "already")
 
         # edit nothing but summary
@@ -474,6 +475,8 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_really_changed())
         self.assertNotContains(response, "already")
+        self.assertContains(response, "You haven&#x27;t changed anything")
+        self.assertNotContains(response, "already")
 
         # edit fleet number
         initial["fleet_number"] = "2"
@@ -481,15 +484,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context["form"])
-        self.assertContains(response, "Changed fleet number from 1 to 2")
-        revision = response.context["revision"]
-        self.assertEqual(
-            revision.message,
-            """Poo poo pants
-
-https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
-        )
-
+        self.assertContains(response, "<strong>fleet number</strong>")
         revision = response.context["revision"]
         self.assertEqual(str(revision), "fleet number: 1 → 2, previous reg:  → BEAN")
         self.assertEqual(
@@ -523,7 +518,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         #     '<td class="field-pending">'
         #     f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">1</a></td>',
         # )
-
         with self.assertNumQueries(5):
             response = self.client.get("/vehicles/edits")
         self.assertContains(response, "<strong>previous reg</strong>", html=True)
@@ -531,21 +525,41 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         del initial["colours"]
 
+        # try voting for own revision
+        with self.assertRaises(AssertionError):
+            response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/up")
+        with self.assertRaises(AssertionError):
+            response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/down")
+
+        # vote for edit
+        self.client.force_login(self.trusted_user)
+        response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/up")
+        self.assertEqual(response.content, b"1")
+
+        # apply edit
+        self.client.force_login(self.trusted_user)
+        response = self.client.post(f"/vehicles/revisions/{revision.id}/apply")
+        revision.refresh_from_db()
+        self.assertFalse(revision.pending)
+        self.assertFalse(revision.disapproved)
+
+        self.client.force_login(self.staff_user)
+
         # staff user can fully edit branding and notes
         initial["branding"] = "Crag Hopper"
         initial["notes"] = "West Coast Motors"
         with self.assertNumQueries(15):
             response = self.client.post(url, initial)
-        self.assertContains(
-            response, "Changed notes from Trent Barton to West Coast Motors"
-        )
-        self.assertContains(response, "Changed branding to Crag Hopper")
+        self.assertContains(response, "<strong>notes</strong>")
+        self.assertContains(response, "from Trent Barton")
+        self.assertContains(response, "to West Coast Motors")
+        self.assertContains(response, "to Crag Hopper")
 
         del initial["previous_reg"]
 
         # remove a feature
         del initial["features"]
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             response = self.client.post(url, initial)
 
         feature = VehicleRevisionFeature.objects.get()
@@ -645,7 +659,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         url = self.vehicle_1.get_edit_url()
 
         # create a revision
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             response = self.client.post(
                 url,
                 {
@@ -767,9 +781,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             str(response.context["revision"]),
             "colours: #c0c0c0 → , previous reg:  → K292JVF,P44CEX, reg:  → DA04DDA, branding: Coastliner → ",
         )
-        self.assertContains(response, "Changed reg to DA04DDA")
-        self.assertContains(response, "Changed previous reg to K292JVF,P44CEX")
-        self.assertContains(response, "Changed branding from Coastliner to")
+        self.assertContains(response, "<strong>reg</strong>")
+        self.assertContains(response, "to DA04DDA")
+        self.assertContains(response, "<strong>previous reg</strong>")
+        self.assertContains(response, "to K292JVF,P44CEX")
+        self.assertContains(response, "<strong>branding</strong>")
+        self.assertContains(response, "from Coastliner")
 
         # test previous reg display
         response = self.client.get(self.vehicle_3.get_absolute_url())
@@ -787,12 +804,13 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "colours": "Other",
                 },
             )
+        self.assertContains(response, "<strong>livery</strong>")
         self.assertContains(
             response,
-            'Changed livery from <span class="livery" '
-            'style="background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)"></span> to None',
+            '<span class="livery" style="background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)"></span>',
         )
-        self.assertContains(response, "Changed colours to Other")
+        self.assertContains(response, "<strong>colours</strong>")
+        self.assertContains(response, "to Other")
 
         revision = VehicleRevision.objects.first()
         self.assertEqual(

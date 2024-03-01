@@ -46,28 +46,28 @@
     {% endif %}
 </dl>
 
-{% if vehicle.is_editable or request.user.is_superuser %}
+{% with vehicle.get_flickr_link as flickr_link %}
+{% if vehicle.is_editable or request.user.is_superuser or flickr_link %}
     <ul class="horizontal">
         {% if vehicle.is_editable %}
             <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
         {% endif %}
 
-        {% if pending_edits_exists %}
+        {% if pending_edits.exists %}
             <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}">Pending edits</a></li>
         {% endif %}
 
-        {% if revisions_exists %}
+        {% if revisions.exists %}
             <li><a href="{{ vehicle.get_history_url }}">History</a></li>
         {% endif %}
 
-        {% with vehicle.get_flickr_link as flickr_link %}
-            {% if flickr_link %}
-                <li>{{ flickr_link }}</li>
-            {% endif %}
-        {% endwith %}
+        {% if flickr_link %}
+            <li>{{ flickr_link }}</li>
+        {% endif %}
 
         {% if request.user.is_superuser %}
             <li><a href="{% url 'admin:vehicles_vehicle_change' vehicle.pk %}">✎</a></li>
         {% endif %}
     </ul>
 {% endif %}
+{% endwith %}

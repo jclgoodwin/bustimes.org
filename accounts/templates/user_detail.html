@@ -39,11 +39,6 @@
         <p>{{ ou.operator }} expert</p>
     {% endfor %}
 
-    <ul class="tabs">
-        <li>Recent changes</li>
-        <li><a href="/vehicles/edits?user={{ object.id }}">Pending edits</a></li>
-    </ul>
-
     {% include 'pagination.html' with page=revisions %}
 
     {% include 'vehicle_revisions.html' with revisions=revisions by_user=object %}

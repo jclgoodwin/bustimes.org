@@ -677,12 +677,10 @@ class VehicleDetailView(DetailView):
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
 
-        context["pending_edits_exists"] = self.object.vehiclerevision_set.filter(
-            pending=True
-        ).exists()
-        context["revisions_exists"] = self.object.vehiclerevision_set.filter(
-            pending=False, disapproved=False
-        ).exists()
+        context["pending_edits"] = self.object.vehiclerevision_set.filter(pending=True)
+        context["revisions"] = self.object.vehiclerevision_set.filter(
+            ~Q(disapproved=True), pending=False
+        )
 
         if self.object.operator:
             context["breadcrumb"] = [
@@ -795,17 +793,15 @@ def edit_vehicle(request, **kwargs):
             revision, features = get_revision(vehicle, data)
             revision.user = request.user
             revision.created_at = timezone.now()
+            if not request.user.trusted:
+                revision.pending = True
             try:
                 with transaction.atomic():
                     revision.save()
-
                     VehicleRevisionFeature.objects.bulk_create(features)
 
                     if request.user.trusted:
-                        apply_revision(revision)
-                    else:
-                        revision.pending = True
-                        revision.save(update_fields=["pending"])
+                        apply_revision(revision, features)
 
                     context["revision"] = revision
                     form = None
@@ -929,9 +925,7 @@ def vehicle_history(request, **kwargs):
     vehicle = get_object_or_404(Vehicle, **kwargs)
     revisions = (
         vehicle.vehiclerevision_set.filter(pending=False, disapproved=False)
-        .select_related(
-            "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
-        )
+        .select_related("from_livery", "to_livery", "from_type", "to_type", "user")
         .order_by("-id")
     )
     return render(

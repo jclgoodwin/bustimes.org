@@ -78,7 +78,7 @@ gtag('config', 'G-X2Z0KM7Z5C', {
         <form action="{% url 'logout' %}" method="POST">
             {% csrf_token %}
             <ul class="user">
-                <li>user {{ user.id }}</li>
+                <li><a href="/accounts/users/{{ user.id }}">user {{ user.id }}</a></li>
                 <li><button class="button">Log out</button></li>
                 <li><a href="/rules">Rules & FAQ</a></li>
             </ul>

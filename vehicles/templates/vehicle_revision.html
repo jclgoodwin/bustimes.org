@@ -1,12 +1,7 @@
 {% for key, from, to in revision.list_changes %}
     <strong>{{ key }}</strong>
-    {% if from %}
-        from {{ from }}
-    {% endif %}
-    {% if to %}
-        to
-        {{ to }}
-    {% endif %}
+    {% if from %}from {{ from }}{% endif %}
+    {% if to %}to {{ to }}{% endif %}
     <br>
 {% endfor %}
 {% for feature in revision.vehiclerevisionfeature_set.all %}

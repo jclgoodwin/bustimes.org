@@ -21,6 +21,13 @@
                 {% endif %}
             <p>
                 {% include "vehicle_revision.html" %}
+
+            {% if revision.disapproved %}
+                <p><strong>Disapproved</strong> by user {{ revision.approved_by_id }}
+            {% elif revision.approved_by_id %}
+                <p><strong>Approved</strong> by user {{ revision.approved_by_id }}
+            {% endif %}
+
             <p class="actions" hx-target="#revision-{{ revision.id }} .score">
                 <span class="score">{{ revision.score }}</span>
                     {% if revision.pending %}
@@ -36,9 +43,9 @@
                     {% elif user.trusted is not False %}
                         {% if revision.user_id != user.id %}
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍 Thanks</button>
-                            {% if user.trusted %}
-                                <button class="button" hx-post="/vehicles/history/{{ revision.id }}/revert">☠️ Revert</button>
-                            {% endif %}
+                        {% endif %}
+                        {% if user.is_superuser %}
+                            <button class="button" hx-post="/vehicles/history/{{ revision.id }}/revert">☠️ Revert</button>
                         {% endif %}
                 {% endif %}
         </li>

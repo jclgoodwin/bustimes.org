@@ -186,7 +186,7 @@ def stats():
     stats = {
         "datetime": now,
         "pending_vehicle_edits": VehicleRevision.objects.filter(
-            pending=True, disapproved=False
+            ~Q(disapproved=True), pending=True
         ).count(),
         "vehicle_journeys": journeys.count(),
         "service_vehicle_journeys": journeys.filter(service__isnull=False).count(),

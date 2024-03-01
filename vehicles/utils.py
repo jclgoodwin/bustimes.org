@@ -54,6 +54,10 @@ def get_revision(vehicle, data):
 
     # create a VehicleRevision record
 
+    if "spare_ticket_machine" in data:
+        data["notes"] = "Spare ticket machine" if data["spare_ticket_machine"] else ""
+        del data["spare_ticket_machine"]
+
     if "withdrawn" in data:
         from_value = "Yes" if revision.vehicle.withdrawn else "No"
         to_value = "Yes" if data["withdrawn"] else "No"
@@ -133,7 +137,7 @@ def get_revision(vehicle, data):
     return revision, features
 
 
-def apply_revision(revision):
+def apply_revision(revision, features=None):
     changed_fields = []
     vehicle = revision.vehicle
 
@@ -148,7 +152,7 @@ def apply_revision(revision):
             setattr(vehicle, f"{field}_id", to_value)
             changed_fields.append(field)
 
-    for field in ("reg", "notes", "branding", "name"):
+    for field in ("reg", "notes", "branding", "name", "colours"):
         if field in revision.changes:
             from_value, to_value = revision.changes[field].split("\n")
             assert to_value[0] == "+"
@@ -174,8 +178,11 @@ def apply_revision(revision):
 
     vehicle.save(update_fields=changed_fields)
 
-    for feature in revision.vehiclerevisionfeature_set.all():
+    if features is None:
+        features = revision.vehiclerevisionfeature_set.all()
+
+    for feature in features:
         if feature.add:
-            vehicle.features.add(feature)
+            vehicle.features.add(feature.feature_id)
         else:
-            vehicle.features.remove(feature)
+            vehicle.features.remove(feature.feature_id)
