@@ -509,15 +509,15 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertEqual(0, VehicleEdit.objects.all().count())
 
         response = self.client.get("/admin/accounts/user/")
-        # self.assertContains(
-        #     response,
-        #     '<td class="field-approved">'
-        #     f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=1">0</a></td>'
-        #     '<td class="field-disapproved">'
-        #     f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=0">0</a></td>'
-        #     '<td class="field-pending">'
-        #     f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">1</a></td>',
-        # )
+        self.assertContains(
+            response,
+            '<td class="field-approved">'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=1">0</a></td>'
+            '<td class="field-disapproved">'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=0">0</a></td>'
+            '<td class="field-pending">'
+            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">0</a></td>',
+        )
         with self.assertNumQueries(5):
             response = self.client.get("/vehicles/edits")
         self.assertContains(response, "<strong>previous reg</strong>", html=True)
@@ -622,20 +622,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.assertContains(response, "Your changes")
 
-        # edit = VehicleEdit.objects.get()
-        # self.assertEqual(
-        #     edit.get_changes(),
-        #     {
-        #         "reg": "<del>UWW2X</del>",
-        #         "previous reg": "K292JVF",
-        #     },
-        # )
-
         response = self.client.get("/vehicles/edits")
         self.assertContains(response, "Luther Blisset")
-
-        # response = self.client.get(f"{self.vehicle_2.get_absolute_url()}/history")
-        # self.assertContains(response, "Luther Blisset")
 
         with self.assertNumQueries(13):
             response = self.client.get(url)
@@ -700,20 +688,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertTrue(revision.pending)
         self.assertIsNone(revision.approved_at)
 
-        # edit = VehicleEdit.objects.get()
-
-        # self.client.force_login(
-        #     self.trusted_user
-        # )  # switch user to vote (can't vote on one's own edits)
-
-        # # vote for edit
-        # with self.assertNumQueries(12):
-        #     self.client.post(f"/vehicles/edits/{edit.id}/vote/up")
-        # with self.assertNumQueries(10):
-        #     self.client.post(f"/vehicles/edits/{edit.id}/vote/down")
-        # with self.assertNumQueries(10):
-        #     self.client.post(f"/vehicles/edits/{edit.id}/vote/down")
-
         with self.assertNumQueries(6):
             response = self.client.get("/vehicles/edits")
         self.assertEqual(len(response.context["revisions"]), 1)
@@ -722,36 +696,17 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.get("/vehicles/edits?change=reg")
         self.assertEqual(len(response.context["revisions"]), 1)
 
-        # self.client.force_login(self.staff_user)
+        self.client.force_login(self.staff_user)
 
-        # # try to apply the edit
-        # with self.assertNumQueries(16):
-        #     self.client.post(f"/vehicles/edits/{edit.id}/apply")
+        revision = VehicleRevision.objects.last()
+        self.assertEqual(
+            revision.changes,
+            {"reg": "-FD54JYA\n+", "colours": "-#FF0000\n+", "fleet number": "-1\n+"},
+        )
 
-        # # -not marked as approved- _vehicle type created_ cos there was no vehicle type matching name
-        # edit.refresh_from_db()
-        # self.assertTrue(edit.approved)
-
-        # vehicle = Vehicle.objects.get(id=self.vehicle_1.id)
-        # self.assertIsNone(vehicle.fleet_number)
-        # self.assertEqual("", vehicle.fleet_code)
-        # self.assertEqual("", vehicle.reg)
-
-        # revision = VehicleRevision.objects.last()
-        # self.assertEqual(
-        #     revision.changes, {"reg": "-FD54JYA\n+", "fleet number": "-1\n+"}
-        # )
-        # revision = edit.make_revision()
-        # self.assertEqual(revision.changes, {"reg": "-\n+", "fleet number": "-\n+"})
-
-        # with self.assertNumQueries(4):
-        #     self.client.post(f"/vehicles/edits/{edit.id}/approve")
-        # with self.assertNumQueries(4):
-        #     self.client.post(f"/vehicles/edits/{edit.id}/disapprove")
-
-        # # test user view
-        # response = self.client.get(self.staff_user.get_absolute_url())
-        # self.assertContains(response, "Trent Barton")
+        # test user view
+        response = self.client.get(self.staff_user.get_absolute_url())
+        self.assertContains(response, "from FD54JYA")
 
     def test_vehicle_edit_3(self):
         self.client.force_login(self.user)
@@ -767,11 +722,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                 {"reg": "D19 FOX", "previous_reg": "QC FBPE", "withdrawn": True},
             )
         self.assertContains(response, "Your changes")
-
-        # edit = VehicleEdit.objects.get()
-        # self.assertFalse(edit.vehicle.withdrawn)
-        # edit.apply(save=False)
-        # self.assertTrue(edit.vehicle.withdrawn)
+        self.assertContains(response, "<strong>removed from list</strong>")
+        revision = response.context["revision"]
 
         with self.assertNumQueries(15):
             response = self.client.post(
@@ -787,8 +739,13 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.client.force_login(self.trusted_user)
 
+        # apply
+        self.client.post(f"/vehicles/revisions/{revision.id}/apply")
+        revision.vehicle.refresh_from_db()
+        self.assertTrue(revision.vehicle.withdrawn)
+
         with self.assertNumQueries(9):
-            # trusted user - can edit reg and remove branding
+            # trusted user - can edit reg
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
                 {
@@ -799,14 +756,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             )
         self.assertEqual(
             str(response.context["revision"]),
-            "colours: #c0c0c0 → , previous reg:  → K292JVF,P44CEX, reg:  → DA04DDA, branding: Coastliner → ",
+            "added to list:  → , previous reg:  → K292JVF,P44CEX, reg: D19FOX → DA04DDA",
         )
         self.assertContains(response, "<strong>reg</strong>")
         self.assertContains(response, "to DA04DDA")
         self.assertContains(response, "<strong>previous reg</strong>")
         self.assertContains(response, "to K292JVF,P44CEX")
-        self.assertContains(response, "<strong>branding</strong>")
-        self.assertContains(response, "from Coastliner")
 
         # test previous reg display
         response = self.client.get(self.vehicle_3.get_absolute_url())
@@ -850,24 +805,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                 f"vehicle {revision.vehicle_id} previous reg not reverted",
             ],
         )
-        # self.assertEqual(revision.vehicle.reg, "")
-
-        # # bulk approve edit
-        # with self.assertRaises(AssertionError):
-        #     response = self.client.post(
-        #         "/vehicles/edits", {"action": "apply", "edit": edit.id}
-        #     )
-
-        # self.client.force_login(self.staff_user)
-        # with self.assertNumQueries(14):
-        #     response = self.client.post(
-        #         "/vehicles/edits", {"action": "apply", "edit": edit.id}
-        #     )
-        # revision = VehicleRevision.objects.last()
-        # self.assertEqual(
-        #     revision.changes,
-        #     {"reg": "-\n+D19FOX", "branding": "-\n+", "withdrawn": "-No\n+Yes"},
-        # )
 
     def test_vehicle_code_uniqueness(self):
         vehicle_1 = Vehicle.objects.create(code="11111", operator_id="BOVA")

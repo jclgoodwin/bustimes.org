@@ -765,32 +765,15 @@ def edit_vehicle(request, **kwargs):
         user=request.user,
     )
 
-    pending_edits = vehicle.vehiclerevision_set.filter(pending=True)
-
     if request.POST:
         if not form.has_really_changed():
             form.add_error(None, "You haven't changed anything")
-        elif form.is_valid():
-            # check someone else hasn't proposed the changes
-            data = {key: form.cleaned_data[key] for key in form.changed_data}
-            # for edit in pending_edits:
-            #     if (
-            #         edit.livery_id
-            #         and "colours" in data
-            #         and str(edit.livery_id) == data["colours"]
-            #     ):
-            #         form.add_error("colours", "There's already a pending edit for that")
-            #     if (
-            #         edit.vehicle_type
-            #         and "vehicle_type" in data
-            #         and edit.vehicle_type == str(data["vehicle_type"])
-            #     ):
-            #         form.add_error(
-            #             "vehicle_type", "There's already a pending edit for that"
-            #         )
 
         if form.is_valid():
+            data = {key: form.cleaned_data[key] for key in form.changed_data}
+
             revision, features = get_revision(vehicle, data)
+
             revision.user = request.user
             revision.created_at = timezone.now()
             if not request.user.trusted:
@@ -816,7 +799,7 @@ def edit_vehicle(request, **kwargs):
                     raise
 
     if form:
-        context["pending_edits"] = pending_edits
+        context["pending_edits"] = vehicle.vehiclerevision_set.filter(pending=True)
 
     if vehicle.operator:
         context["breadcrumb"] = [vehicle.operator, Vehicles(vehicle=vehicle), vehicle]
