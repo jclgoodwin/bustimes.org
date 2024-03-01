@@ -76,14 +76,17 @@ if (rootElement) {
         </React.StrictMode>,
       );
     } else if (window.SERVICE_ID) {
-      let root = createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <Sentry.ErrorBoundary fallback={error}>
-            <ServiceMap serviceId={window.SERVICE_ID} />
-          </Sentry.ErrorBoundary>
-        </React.StrictMode>,
-      );
+      rootElement = document.getElementById("map-link");
+      if (rootElement) {
+        let root = createRoot(rootElement);
+        root.render(
+          <React.StrictMode>
+            <Sentry.ErrorBoundary fallback={error}>
+              <ServiceMap serviceId={window.SERVICE_ID} />
+            </Sentry.ErrorBoundary>
+          </React.StrictMode>,
+        );
+      }
     } else if (window.STOPS) {
       let root = createRoot(rootElement);
       root.render(

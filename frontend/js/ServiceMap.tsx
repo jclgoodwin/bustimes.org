@@ -1,4 +1,5 @@
 import React, { lazy, MouseEvent, Suspense } from "react";
+import { createPortal } from "react-dom";
 
 import loadjs from "loadjs";
 import { Vehicle } from "./VehicleMarker";
@@ -19,6 +20,8 @@ declare global {
 type ServiceMapProps = {
   serviceId: number;
 };
+
+const mapContainer = document.getElementById("map");
 
 export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const [isOpen, setOpen] = React.useState(() => {
@@ -169,7 +172,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     </a>
   );
 
-  if (!isOpen) {
+  if (!isOpen || !mapContainer) {
     return button;
   }
 
@@ -182,16 +185,18 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   return (
     <React.Fragment>
       {button}
-      <div className="service-map">
-        {closeButton}
-        <Suspense fallback={<div className="sorry">Loading…</div>}>
-          <ServiceMapMap
-            vehicles={vehicles}
-            geometry={geometry}
-            stops={stops}
-          />
-        </Suspense>
-      </div>
+      {createPortal(
+        <div className="service-map">
+          {closeButton}
+          <Suspense fallback={<div className="sorry">Loading…</div>}>
+            <ServiceMapMap
+              vehicles={vehicles}
+              geometry={geometry}
+              stops={stops}
+            />
+          </Suspense>
+        </div>
+      , mapContainer)}
     </React.Fragment>
   );
 }
