@@ -34,7 +34,7 @@
                         {% if revision.user_id == user.id %}
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove" hx-target="#revision-{{ revision.id }}">☠️ Undo</button>
                         {% elif user.trusted %}
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/approve">👍 Approve</button>
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove">☠️ Disapprove</button>
                         {% elif user.trusted is not False %}
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍 Yes</button>

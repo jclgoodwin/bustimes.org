@@ -543,9 +543,16 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertFalse(revision.pending)
         self.assertFalse(revision.disapproved)
 
+        response = self.client.get(revision.vehicle.get_absolute_url())
+        self.assertContains(response, "B EAN")
+        self.assertContains(response, "Wi-Fi")
+        self.assertNotContains(response, "Pending edits")
+        self.assertContains(response, "History")
+        self.assertEqual(revision.vehicle.fleet_number, 2)
+
         self.client.force_login(self.staff_user)
 
-        # staff user can fully edit branding and notes
+        # staff user can edit branding and notes
         initial["branding"] = "Crag Hopper"
         initial["notes"] = "West Coast Motors"
         with self.assertNumQueries(15):
@@ -554,16 +561,29 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, "from Trent Barton")
         self.assertContains(response, "to West Coast Motors")
         self.assertContains(response, "to Crag Hopper")
+        revision = response.context["revision"]
 
         del initial["previous_reg"]
 
+        self.client.force_login(self.trusted_user)
+
+        response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/down")
+        self.assertEqual(response.content, b"-1")
+        response = self.client.post(f"/vehicles/revisions/{revision.id}/disapprove")
+
         # remove a feature
         del initial["features"]
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(21):
             response = self.client.post(url, initial)
 
         feature = VehicleRevisionFeature.objects.get()
         self.assertEqual(str(feature), "<del>Wi-Fi</del>")
+
+        response = self.client.get(revision.vehicle.get_absolute_url())
+        self.assertNotContains(response, "B EAN")
+        self.assertNotContains(response, "Wi-Fi")
+        self.assertNotContains(response, "Pending edits")
+        self.assertContains(response, "History")
 
     def test_vehicle_edit_2(self):
         self.client.force_login(self.staff_user)

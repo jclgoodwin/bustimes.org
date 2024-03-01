@@ -118,7 +118,7 @@ def get_revision(vehicle, data):
     if "fleet_number" in data:
         revision.changes[
             "fleet number"
-        ] = f"-{vehicle.fleet_code or vehicle.fleet_number}\n+{data['fleet_number']}"
+        ] = f"-{vehicle.fleet_code or vehicle.fleet_number or ''}\n+{data['fleet_number'] or ''}"
         del data["fleet_number"]
 
     if "previous_reg" in data:
@@ -152,29 +152,41 @@ def apply_revision(revision, features=None):
             setattr(vehicle, f"{field}_id", to_value)
             changed_fields.append(field)
 
-    for field in ("reg", "notes", "branding", "name", "colours"):
-        if field in revision.changes:
-            from_value, to_value = revision.changes[field].split("\n")
-            assert to_value[0] == "+"
-            setattr(vehicle, field, to_value[1:])
+    for field in revision.changes:
+        value = revision.changes[field]
+        from_value, to_value = value.split("\n")
+        assert to_value[0] == "+"
+        to_value = to_value[1:]
+
+        if field in ("reg", "notes", "branding", "name", "colours"):
+            setattr(vehicle, field, to_value)
             changed_fields.append(field)
 
-    if "previous reg" in revision.changes:
-        if not vehicle.data:
-            vehicle.data = {}
-        from_value, to_value = revision.changes["previous reg"].split("\n")
-        assert to_value[0] == "+"
-        vehicle.data["Previous reg"] = to_value[1:]
-        changed_fields.append("data")
+        elif field == "previous reg":
+            if not vehicle.data:
+                vehicle.data = {}
+            vehicle.data["Previous reg"] = to_value
+            changed_fields.append("data")
 
-    if "fleet_number" in revision.changes:
-        vehicle.fleet_code = revision.changes["fleet_number"]
-        if vehicle.fleet_code.isdigit():
-            vehicle.fleet_number = None
+        elif field == "fleet number":
+            vehicle.fleet_code = to_value
+            if vehicle.fleet_code.isdigit():
+                vehicle.fleet_number = int(vehicle.fleet_code)
+            else:
+                vehicle.fleet_number = None
+            changed_fields.append("fleet_number")
+            changed_fields.append("fleet_code")
+
+        elif field == "withdrawn":
+            if to_value == "Yes":
+                vehicle.withdrawn = True
+            else:
+                assert to_value == "No"
+                vehicle.withdrawn = False
+            changed_fields.append("withdrawn")
+
         else:
-            vehicle.fleet_number = None
-        changed_fields.append("fleet_number")
-        changed_fields.append("fleet_code")
+            assert False
 
     vehicle.save(update_fields=changed_fields)
 
