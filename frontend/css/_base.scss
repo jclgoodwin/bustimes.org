@@ -84,14 +84,10 @@ a {
     color: var(--link-color);
     text-decoration: none;
 
-    &:hover {
+    &:hover,
+    &:focus {
         text-decoration: underline;
         text-decoration-skip-ink: auto;
-    }
-
-    &:focus {
-        outline: var(--brand-color) solid 2px;
-        text-decoration: underline;
     }
 
     &:active {
@@ -591,7 +587,7 @@ dd {
 main li {
     break-inside: avoid;
 
-    a {
+    > a {
         display: block;
         overflow: hidden;
         padding: .125em 0;
@@ -685,7 +681,7 @@ table {
     a {
         align-items: center;
         display: flex;
-        margin-bottom: 1em;
+        padding: .5em 0;
         white-space: normal;
 
         small {
@@ -1467,24 +1463,22 @@ body.has-overlay {
 }
 
 .tabs {
-    box-shadow: inset 0 -1px var(--brand-color-darker);
+    border-bottom: 1px solid var(--brand-color-darker);
     display: flex;
     overflow: visible;
+    margin: 0 -1em;
 
-    li {
-        background: var(--background-color);
-        border: 1px solid var(--brand-color-darker);
-        border-bottom: 0;
-        border-radius: .5em 0.5em 0 0;
+    > li {
+        box-shadow: inset 0 -4px var(--brand-color-darker);
         float: left;
-        margin-right: -1px;
-        padding: .75em 1em;
+        margin: 0 1em;
+        padding-top: .25em;
+        padding-bottom: .75em;
 
-        a {
-            border-radius: .5em 0.5em 0 0;
-            box-shadow: inset 0 -1px var(--brand-color-darker);
-            margin: -.75em -1em;
-            padding: .75em 1em;
+        > a {
+            box-shadow: inset 0 -4px var(--background-color);
+            padding: .25em 1em .75em;
+            margin: -.25em -1em -.75em;
         }
     }
 }

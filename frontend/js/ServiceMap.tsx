@@ -163,7 +163,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   }
 
   const button = (
-    <a className="button" href="#map" onClick={openMap}>
+    <a href="#map" onClick={openMap}>
       Map
       {countString ? ` (tracking ${countString})` : null}
     </a>

@@ -38,7 +38,10 @@
 </div>
 
 {% if object.geometry %}
-    <div id="map"><a class="button" href="#map">Map</a></div>
+    <ul class="tabs">
+        <li>Timetable</li>
+        <li id="map"><a href="#map">Map</a></li>
+    </ul>
 {% endif %}
 
 {% include 'situations.html' %}
