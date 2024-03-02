@@ -500,8 +500,9 @@ form p select {
 }
 
 .groupings {
+    margin-top: 1em;
     display: flex;
-    gap: 0 2em;
+    gap: 1em 2em;
     flex-wrap: wrap;
 }
 
@@ -510,7 +511,13 @@ form p select {
     max-width: 100%;
 }
 
+.grouping h2 {
+    margin-top: 0;
+}
+
 .timetable-date {
+    margin: 1em 0;
+
     select {
         padding: .5em 1.5em .5em .5em;
     }
@@ -739,10 +746,11 @@ table {
     + .name {
         margin-left: -.75em;
     }
-
 }
 
 .service-map {
+    display: none;
+
     bottom: 0;
     left: 0;
     position: fixed;
@@ -756,6 +764,10 @@ table {
 
     // height: auto;
     z-index: 1;
+}
+
+#map:target .service-map {
+    display: block;
 }
 
 .ad-wrapper + #map .service-map {
@@ -1466,7 +1478,7 @@ body.has-overlay {
     border-bottom: 1px solid var(--brand-color-darker);
     display: flex;
     overflow: visible;
-    margin: 0 -1em;
+    margin: 1em -1em;
 
     > li {
         box-shadow: inset 0 -4px var(--brand-color-darker);
