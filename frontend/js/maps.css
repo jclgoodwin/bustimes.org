@@ -205,14 +205,14 @@ body .maplibregl-popup-close-button {
 }
 
 .map-style-switcher summary {
-  background-image: url('data-url:../svg/layers.svg');
+  background-image: url("data-url:../svg/layers.svg");
   width: 29px;
   height: 29px;
   overflow: hidden;
   margin-left: auto;
   text-indent: 100%;
   white-space: nowrap;
- list-style: none;
+  list-style: none;
 }
 
 .map-style-switcher summary:hover {

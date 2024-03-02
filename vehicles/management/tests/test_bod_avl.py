@@ -490,6 +490,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             response.json(),
             {
                 "code": "146_20201128_12_58",
+                "current": True,
                 "datetime": "2020-11-28T12:58:25Z",
                 "destination": "Southwold",
                 "direction": "inbound",

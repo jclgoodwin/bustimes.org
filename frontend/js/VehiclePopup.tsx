@@ -40,7 +40,6 @@ export function Delay({
 type VehiclePopupProps = {
   item: Vehicle;
   onClose: any;
-  closeButton?: boolean;
   onTripClick?: any;
   activeLink?: boolean;
 };
@@ -48,7 +47,6 @@ type VehiclePopupProps = {
 export default function VehiclePopup({
   item,
   onClose,
-  closeButton = true,
   onTripClick,
   activeLink = false,
 }: VehiclePopupProps) {
@@ -100,7 +98,6 @@ export default function VehiclePopup({
       longitude={item.coordinates[0]}
       closeOnClick={false}
       onClose={onClose}
-      closeButton={closeButton}
       focusAfterOpen={false}
     >
       <div>{line_name}</div>

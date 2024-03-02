@@ -1,5 +1,21 @@
 import React, { ReactElement, memo } from "react";
-import { Marker } from "react-map-gl/maplibre";
+import { Marker, MapLayerMouseEvent } from "react-map-gl/maplibre";
+
+export function getClickedVehicleMarkerId(
+  e: MapLayerMouseEvent,
+): number | undefined {
+  // handle click on VehicleMarker element
+  const target = e.originalEvent.target;
+  if (target instanceof HTMLElement || target instanceof SVGElement) {
+    let vehicleId = target.dataset.vehicleId;
+    if (!vehicleId && target.parentElement) {
+      vehicleId = target.parentElement.dataset.vehicleId;
+    }
+    if (vehicleId) {
+      return parseInt(vehicleId, 10);
+    }
+  }
+}
 
 export type Vehicle = {
   id: number;

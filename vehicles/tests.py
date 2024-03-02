@@ -222,6 +222,7 @@ class VehiclesTests(TestCase):
         self.assertEqual(
             {
                 "code": "",
+                "current": True,
                 "datetime": "2020-10-19T23:47:00Z",
                 "destination": "",
                 "direction": "",

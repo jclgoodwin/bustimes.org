@@ -195,8 +195,9 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
               stops={stops}
             />
           </Suspense>
-        </div>
-      , mapContainer)}
+        </div>,
+        mapContainer,
+      )}
     </React.Fragment>
   );
 }

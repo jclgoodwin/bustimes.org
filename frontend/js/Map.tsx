@@ -7,7 +7,7 @@ import Map, {
   GeolocateControl,
   MapEvent,
   AttributionControl,
-  useControl
+  useControl,
 } from "react-map-gl/maplibre";
 
 import stopMarker from "data-url:../stop-marker.png";
@@ -43,17 +43,28 @@ class StyleSwitcher {
   }
 
   onAdd() {
-    this._container = document.createElement('div');
+    this._container = document.createElement("div");
 
     let root = createRoot(this._container);
     root.render(
       <details className="maplibregl-ctrl maplibregl-ctrl-group map-style-switcher">
         <summary>Map style</summary>
-        {mapStyles.map(style => {
+        {mapStyles.map((style) => {
           let [key, value] = style;
-          return <label key={key}><input type="radio" value={key} name="map-style" defaultChecked={key === this.style} onChange={this.handleChange} />{value}</label>;
+          return (
+            <label key={key}>
+              <input
+                type="radio"
+                value={key}
+                name="map-style"
+                defaultChecked={key === this.style}
+                onChange={this.handleChange}
+              />
+              {value}
+            </label>
+          );
         })}
-      </details>
+      </details>,
     );
     return this._container;
   }
@@ -63,7 +74,7 @@ class StyleSwitcher {
   }
 }
 
-const StyleSwitcherControl = memo(function(props: StyleSwitcherProps) {
+const StyleSwitcherControl = memo(function (props: StyleSwitcherProps) {
   useControl(() => new StyleSwitcher(props));
 
   return null;
@@ -106,13 +117,16 @@ export default function BusTimesMap(props: any) {
     [imageNames, onLoad],
   );
 
-  const handleMapStyleChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const style = e.target.value;
-    setMapStyle(style);
-    try {
-      localStorage.setItem("map-style", style);
-    } catch {}
-  }, []);
+  const handleMapStyleChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const style = e.target.value;
+      setMapStyle(style);
+      try {
+        localStorage.setItem("map-style", style);
+      } catch {}
+    },
+    [],
+  );
 
   return (
     <Map

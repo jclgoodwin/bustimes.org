@@ -10,7 +10,10 @@ import {
 } from "react-map-gl/maplibre";
 import debounce from "lodash/debounce";
 
-import VehicleMarker, { Vehicle } from "./VehicleMarker";
+import VehicleMarker, {
+  Vehicle,
+  getClickedVehicleMarkerId,
+} from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import StopPopup, { Stop } from "./StopPopup";
 import BusTimesMap from "./Map";
@@ -364,17 +367,11 @@ export default function BigMap() {
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
       // handle click on VehicleMarker element
-      const target = e.originalEvent.target;
-      if (target instanceof HTMLElement || target instanceof SVGElement) {
-        let vehicleId = target.dataset.vehicleId;
-        if (!vehicleId && target.parentElement) {
-          vehicleId = target.parentElement.dataset.vehicleId;
-        }
-        if (vehicleId) {
-          setClickedVehicleMarker(parseInt(vehicleId, 10));
-          setClickedStop(undefined);
-          return;
-        }
+      const vehicleId = getClickedVehicleMarkerId(e);
+      if (vehicleId) {
+        setClickedVehicleMarker(vehicleId);
+        setClickedStop(undefined);
+        return;
       }
 
       // handle click on maplibre rendered feature

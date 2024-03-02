@@ -9,7 +9,10 @@ import {
 } from "react-map-gl/maplibre";
 
 import StopPopup, { Stop } from "./StopPopup";
-import VehicleMarker, { Vehicle } from "./VehicleMarker";
+import VehicleMarker, {
+  Vehicle,
+  getClickedVehicleMarkerId,
+} from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 import BusTimesMap from "./Map";
 
@@ -69,17 +72,11 @@ export default function ServiceMapMap({
 
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
-      const target = e.originalEvent.target;
-      if (target instanceof HTMLElement || target instanceof SVGElement) {
-        let vehicleId = target.dataset.vehicleId;
-        if (!vehicleId && target.parentElement) {
-          vehicleId = target.parentElement.dataset.vehicleId;
-        }
-        if (vehicleId) {
-          setClickedVehicleMarker(parseInt(vehicleId, 10));
-          setClickedStop(undefined);
-          return;
-        }
+      const vehicleId = getClickedVehicleMarkerId(e);
+      if (vehicleId) {
+        setClickedVehicleMarker(vehicleId);
+        setClickedStop(undefined);
+        return;
       }
 
       if (e.features?.length) {

@@ -2,7 +2,10 @@ import React from "react";
 
 import { MapEvent, MapLayerMouseEvent } from "react-map-gl/maplibre";
 
-import VehicleMarker, { Vehicle } from "./VehicleMarker";
+import VehicleMarker, {
+  Vehicle,
+  getClickedVehicleMarkerId,
+} from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
 
 import { LngLatBounds } from "maplibre-gl";
@@ -84,16 +87,10 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
 
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
     // handle click on VehicleMarker element
-    const target = e.originalEvent.target;
-    if (target instanceof HTMLElement || target instanceof SVGElement) {
-      let vehicleId = target.dataset.vehicleId;
-      if (!vehicleId && target.parentElement) {
-        vehicleId = target.parentElement.dataset.vehicleId;
-      }
-      if (vehicleId) {
-        setClickedVehicleMarker(parseInt(vehicleId, 10));
-        return;
-      }
+    const vehicleId = getClickedVehicleMarkerId(e);
+    if (vehicleId) {
+      setClickedVehicleMarker(vehicleId);
+      return;
     }
     setClickedVehicleMarker(undefined);
   }, []);

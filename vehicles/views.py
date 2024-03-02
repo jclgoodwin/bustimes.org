@@ -958,7 +958,9 @@ def vehicles_history(request, pending=False):
 
 @require_safe
 def journey_json(request, pk, vehicle_id=None, service_id=None):
-    journey = get_object_or_404(VehicleJourney.objects.select_related("trip"), pk=pk)
+    journey = get_object_or_404(
+        VehicleJourney.objects.select_related("trip", "vehicle"), pk=pk
+    )
 
     data = {
         "datetime": journey.datetime,
@@ -966,6 +968,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
         "code": journey.code,
         "destination": journey.destination,
         "direction": journey.direction,
+        "current": journey.vehicle and journey.id == journey.vehicle.latest_journey_id,
     }
 
     if redis_client:

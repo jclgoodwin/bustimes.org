@@ -14,11 +14,16 @@ import BusTimesMap from "./Map";
 import { LngLatBounds } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
+import VehicleMarker, {
+  Vehicle,
+  getClickedVehicleMarkerId,
+} from "./VehicleMarker";
+import VehiclePopup from "./VehiclePopup";
 
 type VehicleJourneyLocation = {
   coordinates: [number, number];
-  delta: number;
-  direction: number;
+  delta: number | null;
+  direction?: number | null;
   datetime: string;
 };
 
@@ -52,6 +57,7 @@ export type VehicleJourney = {
   stops: StopTime[];
   locations: VehicleJourneyLocation[];
   vehicle?: string;
+  current: boolean;
   next: {
     id: number;
     datetime: string;
@@ -112,7 +118,6 @@ function LocationPopup({ location }: LocationPopupProps) {
     <Popup
       latitude={location.geometry.coordinates[1]}
       longitude={location.geometry.coordinates[0]}
-      closeButton={false}
       closeOnClick={false}
       focusAfterOpen={false}
     >
@@ -291,6 +296,64 @@ function Sidebar({
   );
 }
 
+function JourneyVehicle({
+  journey,
+  onVehicleMove,
+  clickedVehicleMarker,
+  setClickedVehicleMarker
+}: {
+  journey: VehicleJourney;
+  onVehicleMove: (v: Vehicle) => void;
+  clickedVehicleMarker?: number;
+  setClickedVehicleMarker: (id?: number) => void
+}) {
+  const vehicleId = window.VEHICLE_ID;
+
+  const [vehicle, setVehicle] = React.useState<Vehicle>();
+
+  // const timeout = React.useRef<number>();
+
+  React.useEffect(() => {
+    let timeout: number;
+
+    const loadVehicle = () => {
+      fetch(`/vehicles.json?id=${vehicleId}`).then((response) => {
+        response.json().then((data: Vehicle[]) => {
+          if (data && data.length) {
+            if (data[0].datetime !== vehicle?.datetime) {
+              setVehicle(data[0]);
+              onVehicleMove(data[0])
+            }
+            timeout = window.setTimeout(loadVehicle, 12000); // 12 seconds
+          }
+        });
+      });
+    };
+
+    loadVehicle();
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [vehicleId]);
+
+  if (!vehicle) {
+    return null;
+  }
+
+  return (
+    <React.Fragment>
+      <VehicleMarker
+        selected={true}
+        vehicle={vehicle}
+      />
+      {clickedVehicleMarker ? (
+        <VehiclePopup item={vehicle} onClose={() => setClickedVehicleMarker()} />
+      ) : null}
+    </React.Fragment>
+  );
+}
+
 export default function JourneyMap({
   journey,
   loading = false,
@@ -304,6 +367,11 @@ export default function JourneyMap({
     React.useState<LocationPopupProps["location"]>();
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
+    const vehicleId = getClickedVehicleMarkerId(e);
+    if (vehicleId) {
+      return;
+    }
+
     if (e.features?.length) {
       setCursor("pointer");
 
@@ -323,7 +391,29 @@ export default function JourneyMap({
 
   const [clickedStop, setClickedStop] = React.useState<Stop>();
 
+  const [clickedVehicleMarker, setClickedVehicleMarker] = React.useState<
+    number | undefined
+  >();
+
+  const [locations, setLocations] = React.useState<VehicleJourneyLocation[]>([]);
+
+  const handleVehicleMove = React.useCallback((vehicle: Vehicle) => {
+    setLocations(locations.concat([{
+      coordinates: vehicle.coordinates,
+      delta: null,
+      datetime: vehicle.datetime,
+      direction: vehicle.heading
+    }]));
+  }, [locations]);
+
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
+    const vehicleId = getClickedVehicleMarkerId(e);
+    if (vehicleId) {
+      setClickedVehicleMarker(vehicleId);
+      setClickedStop(undefined);
+      return;
+    }
+
     if (e.features?.length) {
       for (const feature of e.features) {
         if (feature.layer.id === "stops") {
@@ -374,19 +464,21 @@ export default function JourneyMap({
     return null;
   }, [journey]);
 
-  const handleMapLoad = React.useCallback((event: MapEvent) => {
-    const map = event.target;
-    mapRef.current = map;
-    map.keyboard.disableRotation();
-    map.touchZoomRotate.disableRotation();
+  const handleMapLoad = React.useCallback(
+    (event: MapEvent) => {
+      const map = event.target;
+      mapRef.current = map;
+      map.keyboard.disableRotation();
+      map.touchZoomRotate.disableRotation();
 
-    if (bounds) {
-      map.fitBounds(bounds, {
-        padding: 50,
-      });
-
-    }
-  }, [bounds]);
+      if (bounds) {
+        map.fitBounds(bounds, {
+          padding: 50,
+        });
+      }
+    },
+    [bounds],
+  );
 
   React.useEffect(() => {
     if (bounds && mapRef.current) {
@@ -423,7 +515,7 @@ export default function JourneyMap({
             {journey.stops ? <Stops stops={journey.stops} /> : null}
 
             {journey.locations ? (
-              <Locations locations={journey.locations} />
+              <Locations locations={journey.locations.concat(locations)} />
             ) : null}
 
             {clickedStop ? (
@@ -441,6 +533,10 @@ export default function JourneyMap({
 
             {clickedLocation ? (
               <LocationPopup location={clickedLocation} />
+            ) : null}
+
+            {journey.locations && journey.current ? (
+              <JourneyVehicle journey={journey} onVehicleMove={handleVehicleMove} clickedVehicleMarker={clickedVehicleMarker} setClickedVehicleMarker={setClickedVehicleMarker} />
             ) : null}
           </BusTimesMap>
         ) : null}
