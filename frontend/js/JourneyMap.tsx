@@ -314,6 +314,10 @@ function JourneyVehicle({
   // const timeout = React.useRef<number>();
 
   React.useEffect(() => {
+    if (!vehicleId) {
+      return;
+    }
+
     let timeout: number;
 
     const loadVehicle = () => {
