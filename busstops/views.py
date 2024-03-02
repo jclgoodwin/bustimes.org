@@ -153,20 +153,21 @@ def error(request):
 
 
 def ads_txt(request):
+    "redirect to AdFirst Media–hosted ads.txt"
     return redirect("https://cdn.adfirst.media/adstxt/bustimes-ads.txt")
 
 
 @cache_control(max_age=3600)
 def robots_txt(request):
+    "robots.txt"
+
     if request.get_host() == "bustimes.org":  # live site
         content = """User-agent: *
-Disallow: /search
 Disallow: /trips/
 Disallow: /api/
 Disallow: /accounts/
 Disallow: /fares/
 Disallow: /vehicles/tfl/
-Disallow: /*?date=*
 Disallow: /services/*/*
 Disallow: /sources
 Disallow: /*/debug
