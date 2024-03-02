@@ -571,13 +571,26 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertEqual(response.content, b"-1")
         response = self.client.post(f"/vehicles/revisions/{revision.id}/disapprove")
 
-        # remove a feature
-        del initial["features"]
-        with self.assertNumQueries(21):
+        # add and remove a feature, change type
+        initial["features"] = self.usb.id
+        initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
+        with self.assertNumQueries(25):
             response = self.client.post(url, initial)
+        revision = response.context["revision"]
+        self.assertFalse(revision.pending)
 
-        feature = VehicleRevisionFeature.objects.get()
-        self.assertEqual(str(feature), "<del>Wi-Fi</del>")
+        feature = VehicleRevisionFeature.objects.all()
+        self.assertEqual(str(feature[0]), "<del>Wi-Fi</del>")
+        self.assertEqual(str(feature[1]), "<ins>USB</ins>")
+
+        # colour, spare ticket machine
+        initial["colours"] = self.livery.id
+        initial["spare_ticket_machine"] = True
+        with self.assertNumQueries(19):
+            response = self.client.post(url, initial)
+        revision = response.context["revision"]
+        self.assertEqual(revision.to_livery, self.livery)
+        self.assertFalse(revision.pending)
 
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertNotContains(response, "B EAN")
