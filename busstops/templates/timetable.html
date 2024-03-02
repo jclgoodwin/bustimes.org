@@ -42,8 +42,8 @@
         {% endif %}
 
         <div class="timetable-wrapper-wrapper">
-            {% if grouping.has_minor_stops and grouping.rows|length > 25 %}
-                <input type="checkbox" id="show-all-stops-{{ forloop.counter }}">
+            {% if grouping.has_minor_stops %}
+                <input type="checkbox" id="show-all-stops-{{ forloop.counter }}"{% if grouping.rows|length < 25 %} checked{% endif %}>
                 <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
             {% endif %}
             <div class="timetable-wrapper{% if grouping.width > 3 %} timetable-wrapper--wide{% endif %}">
