@@ -320,10 +320,10 @@ function JourneyVehicle({
       fetch(`/vehicles.json?id=${vehicleId}`).then((response) => {
         response.json().then((data: Vehicle[]) => {
           if (data && data.length) {
-            if (data[0].datetime !== vehicle?.datetime) {
+            // if (data[0].datetime !== vehicle?.datetime) {
               setVehicle(data[0]);
-              onVehicleMove(data[0])
-            }
+              // onVehicleMove(data[0])
+            // }
             timeout = window.setTimeout(loadVehicle, 12000); // 12 seconds
           }
         });
