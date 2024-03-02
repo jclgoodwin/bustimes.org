@@ -507,9 +507,20 @@ class VehicleCode(models.Model):
         indexes = [models.Index(fields=("code", "scheme"))]
 
 
-class VehicleEditFeature(models.Model):
+class VehicleEditVote(models.Model):
+    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
+    for_revision = models.ForeignKey(
+        "VehicleRevision", models.CASCADE, null=True, blank=True
+    )
+    positive = models.BooleanField()
+
+    class Meta:
+        unique_together = (("by_user", "for_revision"),)
+
+
+class VehicleRevisionFeature(models.Model):
     feature = models.ForeignKey(VehicleFeature, models.CASCADE)
-    edit = models.ForeignKey("VehicleEdit", models.CASCADE)
+    revision = models.ForeignKey("VehicleRevision", models.CASCADE)
     add = models.BooleanField(default=True)
 
     def __str__(self):
@@ -518,66 +529,6 @@ class VehicleEditFeature(models.Model):
         else:
             fmt = "<del>{}</del>"
         return format_html(fmt, self.feature)
-
-
-class VehicleEdit(models.Model):
-    vehicle = models.ForeignKey(Vehicle, models.CASCADE)
-    fleet_number = models.CharField(max_length=24, blank=True)
-    reg = models.CharField(max_length=24, blank=True)
-    vehicle_type = models.CharField(max_length=255, blank=True)
-    colours = models.CharField(max_length=255, blank=True)
-    livery = models.ForeignKey(Livery, models.SET_NULL, null=True, blank=True)
-    name = models.CharField(max_length=255, blank=True)
-    branding = models.CharField(max_length=255, blank=True)
-    notes = models.CharField(max_length=255, blank=True)
-    features = models.ManyToManyField(
-        VehicleFeature, blank=True, through=VehicleEditFeature
-    )
-    withdrawn = models.BooleanField(null=True)
-    changes = models.JSONField(null=True, blank=True)
-    url = models.URLField(blank=True, max_length=255)
-    approved = models.BooleanField(null=True, db_index=True)
-    arbiter = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="arbited",
-    )
-    score = models.SmallIntegerField(default=0)
-    datetime = models.DateTimeField(null=True, blank=True)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, models.SET_NULL, null=True, blank=True
-    )
-
-    def get_absolute_url(self):
-        return self.vehicle.get_absolute_url()
-
-    def __str__(self):
-        return str(self.id)
-
-
-class VehicleEditVote(models.Model):
-    by_user = models.ForeignKey(settings.AUTH_USER_MODEL, models.CASCADE)
-    for_edit = models.ForeignKey(VehicleEdit, models.CASCADE, null=True, blank=True)
-    for_revision = models.ForeignKey(
-        "VehicleRevision", models.CASCADE, null=True, blank=True
-    )
-    positive = models.BooleanField()
-
-    class Meta:
-        unique_together = (
-            ("by_user", "for_edit"),
-            ("by_user", "for_revision"),
-        )
-
-
-class VehicleRevisionFeature(models.Model):
-    feature = models.ForeignKey(VehicleFeature, models.CASCADE)
-    revision = models.ForeignKey("VehicleRevision", models.CASCADE)
-    add = models.BooleanField(default=True)
-
-    __str__ = VehicleEditFeature.__str__
 
 
 class VehicleRevision(models.Model):
@@ -637,11 +588,6 @@ class VehicleRevision(models.Model):
             f"{key}: {before} → {after}"
             for key, before, after in self.list_changes(html=False)
         )
-
-    def has_changes(self):
-        for field in self.list_changes(html=False):
-            return True
-        return False
 
     def list_changes(self, html=True):
         for field in ("operator", "type", "livery"):

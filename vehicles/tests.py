@@ -13,7 +13,6 @@ from .models import (
     Livery,
     SiriSubscription,
     Vehicle,
-    VehicleEdit,
     VehicleFeature,
     VehicleJourney,
     VehicleLocation,
@@ -506,17 +505,16 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, "already")
 
         self.assertEqual(1, VehicleRevision.objects.all().count())
-        self.assertEqual(0, VehicleEdit.objects.all().count())
 
         response = self.client.get("/admin/accounts/user/")
         self.assertContains(
             response,
-            '<td class="field-approved">'
-            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=1">0</a></td>'
+            '<td class="field-revisions">'
+            f'<a href="/admin/vehicles/vehiclerevision/?user={self.staff_user.id}&">1</a></td>'
             '<td class="field-disapproved">'
-            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__exact=0">0</a></td>'
+            f'<a href="/admin/vehicles/vehiclerevision/?user={self.staff_user.id}&disapproved=True">0</a></td>'
             '<td class="field-pending">'
-            f'<a href="/admin/vehicles/vehicleedit/?user={self.staff_user.id}&approved__isnull=True">0</a></td>',
+            f'<a href="/admin/vehicles/vehiclerevision/?user={self.staff_user.id}&pending=True">1</a></td>',
         )
         with self.assertNumQueries(5):
             response = self.client.get("/vehicles/edits")
@@ -619,7 +617,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertNotContains(response, "already")
         self.assertContains(response, "You haven&#x27;t changed anything")
 
-        self.assertEqual(0, VehicleEdit.objects.count())
         self.assertEqual(0, VehicleRevision.objects.count())
 
         self.assertNotContains(response, "/operators/bova-and-over")
@@ -729,7 +726,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertNotContains(response, "notes")
 
         with self.assertNumQueries(8):
-            # new user - can create a VehicleEdit
+            # new user - can create a pending revision
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
                 {"reg": "D19 FOX", "previous_reg": "QC FBPE", "withdrawn": True},

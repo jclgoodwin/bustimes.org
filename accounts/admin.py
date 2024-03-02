@@ -9,8 +9,8 @@ from .models import OperatorUser, User
 
 def get_count(obj, attribute, approved):
     return format_html(
-        '<a href="{}?user={}&approved__{}">{}</a>',
-        reverse("admin:vehicles_vehicleedit_changelist"),
+        '<a href="{}?user={}&{}">{}</a>',
+        reverse("admin:vehicles_vehiclerevision_changelist"),
         obj.id,
         approved,
         getattr(obj, attribute, None),
@@ -27,39 +27,31 @@ class UserAdmin(admin.ModelAdmin):
     raw_id_fields = ["user_permissions"]
     actions = ["trust", "distrust"]
     search_fields = ["username", "email"]
-    readonly_fields = ["revisions", "approved", "disapproved", "pending"]
+    readonly_fields = ["revisions", "disapproved", "pending"]
     list_display = [
         "id",
         "username",
         "email",
         "last_login",
         "is_active",
+        "score",
         "trusted",
     ] + readonly_fields
     list_display_links = ["id", "username"]
     inlines = [OperatorUserInline]
-    list_filter = ["is_staff", "groups"]
+    list_filter = ["trusted", "is_staff", "groups"]
 
     @admin.display(ordering="revisions")
     def revisions(self, obj):
-        return format_html(
-            '<a href="{}?user={}">{}</a>',
-            reverse("admin:vehicles_vehiclerevision_changelist"),
-            obj.id,
-            obj.revisions,
-        )
-
-    @admin.display(ordering="approved_count")
-    def approved(self, obj):
-        return get_count(obj, "approved_count", "exact=1")
+        return get_count(obj, "revisions", "")
 
     @admin.display(ordering="disapproved")
     def disapproved(self, obj):
-        return get_count(obj, "disapproved", "exact=0")
+        return get_count(obj, "disapproved", "disapproved=True")
 
     @admin.display(ordering="pending")
     def pending(self, obj):
-        return get_count(obj, "pending", "isnull=True")
+        return get_count(obj, "pending", "pending=True")
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -68,9 +60,10 @@ class UserAdmin(admin.ModelAdmin):
             "admin:accounts_user_change",
         ):
             return queryset.annotate(
-                approved_count=SubqueryCount("vehicleedit", filter=Q(approved=True)),
-                disapproved=SubqueryCount("vehicleedit", filter=Q(approved=False)),
-                pending=SubqueryCount("vehicleedit", filter=Q(approved=None)),
+                disapproved=SubqueryCount(
+                    "vehiclerevision", filter=Q(disapproved=True)
+                ),
+                pending=SubqueryCount("vehiclerevision", filter=Q(pending=True)),
                 revisions=SubqueryCount("vehiclerevision"),
             )
         return queryset

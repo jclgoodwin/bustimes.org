@@ -68,25 +68,6 @@ class VehicleCodeInline(admin.TabularInline):
     model = models.VehicleCode
 
 
-class VehicleEditInline(admin.TabularInline):
-    model = models.VehicleEdit
-    fields = [
-        "approved",
-        "datetime",
-        "fleet_number",
-        "reg",
-        "vehicle_type",
-        "livery_id",
-        "colours",
-        "branding",
-        "notes",
-        "changes",
-        user,
-    ]
-    readonly_fields = fields[1:]
-    show_change_link = True
-
-
 class DuplicateVehicleFilter(admin.SimpleListFilter):
     title = "duplicate"
     parameter_name = "duplicate"
@@ -159,7 +140,7 @@ class VehicleAdmin(admin.ModelAdmin):
         "lock",
         "unlock",
     )
-    inlines = [VehicleCodeInline, VehicleEditInline]
+    inlines = [VehicleCodeInline]
     readonly_fields = ["latest_journey_data"]
 
     def copy_livery(self, request, queryset):
@@ -206,7 +187,6 @@ class VehicleAdmin(admin.ModelAdmin):
             except IntegrityError:
                 pass
             vehicle.vehiclecode_set.update(vehicle=duplicate)
-            vehicle.vehicleedit_set.update(vehicle=duplicate)
             vehicle.vehiclerevision_set.update(vehicle=duplicate)
             if (
                 not duplicate.latest_journey_id
@@ -282,18 +262,6 @@ class UserFilter(admin.SimpleListFilter):
             case None:
                 return queryset
         return queryset.filter(user=self.value())
-
-
-@admin.register(models.VehicleEdit)
-class VehicleEditAdmin(admin.ModelAdmin):
-    list_display = ["datetime", "vehicle", "user", "changes", "notes", "url"]
-    list_select_related = ["vehicle", "user"]
-    list_filter = [
-        "approved",
-        "vehicle__withdrawn",
-        UserFilter,
-    ]
-    raw_id_fields = ["vehicle", "livery", "user", "arbiter"]
 
 
 @admin.register(models.VehicleJourney)
@@ -399,7 +367,6 @@ class LiveryAdmin(SimpleHistoryAdmin):
                 livery.vehicle_set.update(livery=queryset[0])
                 livery.revision_from.update(from_livery=queryset[0])
                 livery.revision_to.update(to_livery=queryset[0])
-                livery.vehicleedit_set.update(livery=queryset[0])
             self.message_user(request, "Merged")
 
     @admin.display(ordering="right_css")

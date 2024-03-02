@@ -12,11 +12,6 @@ except InvalidCacheBackendError:
     redis_client = None
 
 
-def flush_redis():
-    """For use in tests"""
-    redis_client.flushall()
-
-
 def calculate_bearing(a, b):
     a_lat = math.radians(a.y)
     a_lon = math.radians(a.x)
