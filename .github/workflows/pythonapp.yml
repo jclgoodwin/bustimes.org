@@ -46,8 +46,7 @@ jobs:
           && ls -lh /tmp/docker-save
       if: steps.cache-docker.outputs.cache-hit != 'true'  # not an full exact match
 
-    - uses: codecov/codecov-action@v3
+    - uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         fail_ci_if_error: false
-        verbose: true # optional (default = false)
