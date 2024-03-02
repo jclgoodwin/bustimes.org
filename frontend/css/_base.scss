@@ -749,8 +749,6 @@ table {
 }
 
 .service-map {
-    display: none;
-
     bottom: 0;
     left: 0;
     position: fixed;
@@ -764,6 +762,10 @@ table {
 
     // height: auto;
     z-index: 1;
+}
+
+#map .service-map {
+    display: none;
 }
 
 #map:target .service-map {
