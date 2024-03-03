@@ -584,16 +584,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
     if vehicle and vehicle.latest_journey_id:
         tracking = redis_client and redis_client.get(f"vehicle{vehicle.id}")
         if tracking:
-            tracking = json.loads(tracking)
-
-            if "tfl_code" in tracking:
-                context["tracking"] = f'/vehicles/tfl/{tracking["tfl_code"]}'
-            elif "trip_id" in tracking:
-                context["tracking"] = f'/trips/{tracking["trip_id"]}'
-            else:
-                context[
-                    "tracking"
-                ] = f'/map#15/{tracking["coordinates"][1]}/{tracking["coordinates"][0]}'
+            context["tracking"] = f"#journeys/{vehicle.latest_journey_id}"
 
         # predict next workings
         if vehicle.latest_journey_id == journeys[-1].pk:
