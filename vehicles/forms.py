@@ -22,7 +22,7 @@ def get_livery_choices(vehicle, user):
     if vehicle.operator_id:
         vehicles |= vehicle.operator.vehicle_set.filter(withdrawn=True)
 
-    liveries = Livery.objects.filter(id=vehicle.livery_id)
+    liveries = Livery.objects.filter(vehicle__in=vehicles)
     if vehicle.operator_id:
         liveries |= Livery.objects.filter(published=True, operators=vehicle.operator_id)
 

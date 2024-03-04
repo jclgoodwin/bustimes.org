@@ -33,11 +33,20 @@
             {% csrf_token %}
             <input type="submit" value="Save changes">
         </form>
+
+        <h2>Delete your account?</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" name="delete" value="☠️ Delete my account!">
+        </form>
     {% endif %}
 
     {% for ou in object.operatoruser_set.all %}
-        <p>{{ ou.operator }} expert</p>
+        <p>{{ ou.operator }}</p>
     {% endfor %}
+
+    <h2>Activity</h2>
 
     {% include 'pagination.html' with page=revisions %}
 

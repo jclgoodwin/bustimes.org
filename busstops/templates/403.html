@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Forbidden – bustimes.org{% endblock %}
+{% block title %}Sorry – bustimes.org{% endblock %}
 
 {% block fuse %}{% endblock %}
 
@@ -8,7 +8,7 @@
 
 {% block content %}
 
-<h1>Forbidden</h1>
+<h1>Sorry</h1>
 
 {% if exception %}
     <p>{{ exception }}</p>
@@ -16,10 +16,5 @@
     <p>Sorry, you don’t have permission to see this page. Don’t worry, you’re not missing much.</p>
 {% endif %}
 
-<form method="get" action="/search" class="search">
-    <h2><label for="q">Search</label></h2>
-    <input name="q" id="q" type="search" required>
-    <input type="submit" value="Search">
-</form>
 
 {% endblock %}

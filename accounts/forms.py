@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.core.exceptions import PermissionDenied
-from django.forms import EmailField, EmailInput, Form, NullBooleanField
+from django.forms import CharField, EmailField, EmailInput, Form, NullBooleanField
 
 User = get_user_model()
 
@@ -48,5 +48,9 @@ class LoginForm(AuthenticationForm):
     )
 
 
-class AdminUserForm(Form):
+class UserForm(Form):
+    username = CharField(
+        required=False,
+        help_text="Will be displayed publicly. Leave blank to be known by a number.",
+    )
     trusted = NullBooleanField()

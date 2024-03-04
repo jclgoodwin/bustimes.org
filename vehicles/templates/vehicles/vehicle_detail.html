@@ -142,18 +142,6 @@
     {% endfor %}
     </tbody></table></div>
 
-    {% if next_date or previous_date %}
-        <nav>
-            {% if previous_date %}
-                <p class="previous"><a href="?date={{ previous_date.isoformat }}">&larr; {{ previous_date|date:"l j F Y" }}</a></p>
-            {% endif %}
-
-            {% if next_date %}
-                <p class="next"><a href="?date={{ next_date.isoformat }}">{{ next_date|date:"l j F Y" }} &rarr;</a></p>
-            {% endif %}
-        </nav>
-    {% endif %}
-
     <div id="history"></div>
 
 {% endif %}

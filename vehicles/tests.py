@@ -85,6 +85,7 @@ class VehiclesTests(TestCase):
         cls.livery = Livery.objects.create(
             name="black with lemon piping", colours="#FF0000 #0000FF", published=True
         )
+        cls.livery.operators.add(cls.lynx)
         cls.vehicle_2 = Vehicle.objects.create(
             code="50",
             fleet_number=50,
@@ -207,7 +208,6 @@ class VehiclesTests(TestCase):
 
         self.assertContains(response, ">00:47<")
         self.assertContains(response, ">13:00<")
-        self.assertContains(response, ">&larr; Friday 16 October 2020<")
 
         with self.assertNumQueries(7):
             response = self.client.get(self.vehicle_2.get_absolute_url())
@@ -587,9 +587,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         initial["spare_ticket_machine"] = True
         with self.assertNumQueries(19):
             response = self.client.post(url, initial)
-        revision = response.context["revision"]
-        self.assertEqual(revision.to_livery, self.livery)
-        self.assertFalse(revision.pending)
+            revision = response.context["revision"]
+            self.assertEqual(revision.to_livery, self.livery)
+            self.assertFalse(revision.pending)
 
         response = self.client.get(revision.vehicle.get_absolute_url())
         self.assertNotContains(response, "B EAN")
@@ -722,11 +722,11 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
     def test_vehicle_edit_3(self):
         self.client.force_login(self.user)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(11):
             response = self.client.get(self.vehicle_3.get_edit_url())
         self.assertNotContains(response, "notes")
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(12):
             # new user - can create a pending revision
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
@@ -755,7 +755,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         revision.vehicle.refresh_from_db()
         self.assertTrue(revision.vehicle.withdrawn)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(11):
             # trusted user - can edit reg
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),

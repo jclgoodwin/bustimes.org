@@ -1,14 +1,25 @@
-from django.test import TestCase
 from django.core import mail
+from django.test import TestCase, override_settings
+
 from .models import User
 
 
 class RegistrationTest(TestCase):
+    @override_settings(DISABLE_REGISTRATION=True)
+    def test_registration_disabled(self):
+        with self.assertNumQueries(0):
+            response = self.client.post("/accounts/register/")
+        self.assertContains(
+            response, "Registration is temporarily closed", status_code=503
+        )
+
+    @override_settings(DISABLE_REGISTRATION=False)
     def test_blank_email(self):
         with self.assertNumQueries(0):
             response = self.client.post("/accounts/register/")
         self.assertContains(response, "This field is required")
 
+    @override_settings(DISABLE_REGISTRATION=False)
     def test_registration(self):
         response = self.client.get("/accounts/register/")
         self.assertContains(response, "Email address")

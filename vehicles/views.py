@@ -540,20 +540,11 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
         )
 
         if dates:
-            try:
-                index = dates.index(date)
-            except ValueError:
+            if date not in dates:
                 dates.append(date)
                 dates.sort()
-                index = dates.index(date)
-            else:
-                if not journeys:
-                    cache.delete(f"vehicle:{vehicle.id}:dates")
-
-            if index:
-                context["previous_date"] = dates[index - 1]
-            if len(dates) > index + 1:
-                context["next_date"] = dates[index + 1]
+            elif not journeys:
+                cache.delete(f"vehicle:{vehicle.id}:dates")
 
         context["journeys"] = journeys
 
@@ -885,9 +876,15 @@ def vehicle_revision_action(request, revision_id, action):
             disapproved=False,
         )
     elif action == "disapprove":
-        revisions.update(
-            approved_by=request.user, approved_at=Now(), pending=False, disapproved=True
-        )
+        if request.user.id == revision.user_id:
+            revisions.delete()  # cancel one's own edit
+        else:
+            revisions.update(
+                approved_by=request.user,
+                approved_at=Now(),
+                pending=False,
+                disapproved=True,
+            )
     else:
         assert False
 
