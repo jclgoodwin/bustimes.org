@@ -12,20 +12,20 @@ from sql_util.utils import Exists
 from busstops.models import Operator, Service
 
 from . import fields
-from .models import Livery, VehicleFeature, VehicleType, get_text_colour
+from .models import Livery, Vehicle, VehicleFeature, VehicleType, get_text_colour
 
 
-def get_livery_choices(operator, vehicle, user):
+def get_livery_choices(vehicle, user):
     choices = {}
 
-    q = Q(withdrawn=False)
-    if vehicle:
-        q |= Q(id=vehicle.id)
-    vehicles = operator.vehicle_set.filter(q)
+    vehicles = Vehicle.objects.filter(id=vehicle.id)
+    if vehicle.operator_id:
+        vehicles |= vehicle.operator.vehicle_set.filter(withdrawn=True)
 
-    liveries = Livery.objects.filter(
-        Q(vehicle__in=vehicles) | Q(operators=operator, published=True)
-    )
+    liveries = Livery.objects.filter(id=vehicle.livery_id)
+    if vehicle.operator_id:
+        liveries |= Livery.objects.filter(published=True, operators=vehicle.operator_id)
+
     liveries = liveries.annotate(popularity=Count("vehicle")).order_by("-popularity")
 
     for livery in liveries.distinct():
@@ -90,7 +90,7 @@ class EditVehicleForm(forms.Form):
     fleet_number = forms.CharField(required=False, max_length=24)
     reg = fields.RegField(label="Number plate", required=False, max_length=24)
 
-    operator = forms.ModelChoiceField(queryset=None, empty_label="")
+    operator = forms.ModelChoiceField(queryset=None, required=False, empty_label="")
 
     vehicle_type = forms.ModelChoiceField(
         queryset=VehicleType.objects, required=False, empty_label=""
@@ -182,18 +182,17 @@ link to a picture to prove it. Be polite.""",
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if vehicle.operator:
-            colours = get_livery_choices(vehicle.operator, vehicle, user)
+        colours = get_livery_choices(vehicle, user)
 
-            if colours:
-                if vehicle:
-                    colours = [("", "None/mostly white/other")] + colours
-                else:
-                    colours = [("", "No change")] + colours
-                self.fields["colours"].choices = colours
+        if colours:
+            if vehicle:
+                colours = [("", "None/mostly white/other")] + colours
             else:
-                del self.fields["colours"]
-                del self.fields["other_colour"]
+                colours = [("", "No change")] + colours
+            self.fields["colours"].choices = colours
+        else:
+            del self.fields["colours"]
+            del self.fields["other_colour"]
 
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True
