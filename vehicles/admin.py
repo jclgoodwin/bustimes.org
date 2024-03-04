@@ -423,6 +423,7 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         "to_livery",
         "vehicle",
         "user",
+        "approved_by",
     ]
     list_display = ["created_at", "vehicle", "__str__", user, "message"]
     actions = ["revert"]
