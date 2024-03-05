@@ -11,6 +11,9 @@ export function getClickedVehicleMarkerId(
     if (!vehicleId && target.parentElement) {
       vehicleId = target.parentElement.dataset.vehicleId;
     }
+    if (!vehicleId && target.firstChild instanceof HTMLElement) {
+      vehicleId = target.firstChild.dataset.vehicleId;
+    }
     if (vehicleId) {
       return parseInt(vehicleId, 10);
     }
