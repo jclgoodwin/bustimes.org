@@ -442,8 +442,11 @@ def vehicles_json(request) -> JsonResponse:
             if (
                 trip
                 and "delay" not in item
-                and "trip_id" in item
-                and item["trip_id"] == trip
+                and (
+                    "trip_id" in item
+                    and item["trip_id"] == trip
+                    or len(vehicle_ids) == 1
+                )
             ):
                 add_progress_and_delay(item)
 
