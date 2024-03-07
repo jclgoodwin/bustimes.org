@@ -1,4 +1,5 @@
 from datetime import timedelta
+from itertools import pairwise
 
 from django.contrib.gis.db import models
 from django.db.models.functions import Upper
@@ -373,7 +374,7 @@ class Trip(models.Model):
 
     def get_trips(self):
         if self.ticket_machine_code and self.block:
-            return (
+            trips = (
                 Trip.objects.filter(
                     calendar=self.calendar_id,
                     inbound=self.inbound,
@@ -384,6 +385,13 @@ class Trip(models.Model):
                 .order_by("start")
                 .distinct("start")
             )
+            for trip_a, trip_b in pairwise(trips):
+                if (
+                    trip_a.end > trip_b.start
+                    or trip_a.destination_id != trip_b.origin_id
+                ):
+                    return [self]
+            return trips
         return [self]
 
 
