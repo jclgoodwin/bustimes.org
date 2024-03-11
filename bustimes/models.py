@@ -373,7 +373,9 @@ class Trip(models.Model):
         return reverse("trip_detail", args=(self.id,))
 
     def get_trips(self):
-        if self.ticket_machine_code and self.block:
+        if self.ticket_machine_code and self.block and self.route.service_id:
+            # get other parts of this trip (if the service has been split into parts)
+            # see also get_split_trips
             trips = (
                 Trip.objects.filter(
                     calendar=self.calendar_id,
@@ -385,10 +387,10 @@ class Trip(models.Model):
                 .order_by("start")
                 .distinct("start")
             )
+            #
             for trip_a, trip_b in pairwise(trips):
-                if (
-                    trip_a.end > trip_b.start
-                    or trip_a.destination_id != trip_b.origin_id
+                if not (
+                    timedelta() < trip_b.start - trip_a.end < timedelta(minutes=15)
                 ):
                     return [self]
             return trips
