@@ -38,6 +38,7 @@ urlpatterns = [
     path("stats.json", views.stats),
     path("ads.txt", views.ads_txt),
     path("robots.txt", views.robots_txt),
+    path("qr/<slug>", views.qr),
     path("stops.json", views.stops_json),
     path(
         "regions/<pk>",
