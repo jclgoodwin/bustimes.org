@@ -121,6 +121,8 @@ def not_found(request, exception):
                 pass
 
         context["exception"] = exception
+    elif request.path[:6] == "/STOP/":
+        return redirect(f"/stops/{request.path[6:]}")
     elif len(request.path) > 1 and request.path.endswith("/"):
         try:
             resolver_match = resolve(request.path[:-1])
@@ -247,7 +249,8 @@ def qr(request, slug):
             stop,
             mark_safe(
                 qrcode.make(
-                    f"HTTPS://BUSTIM.ES/STOPS/{stop.atco_code}", image_factory=factory
+                    f"HTTPS://BUSTIMES.ORG/STOPS/{stop.atco_code}",
+                    image_factory=factory,
                 )
                 .to_string()
                 .decode()

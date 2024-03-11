@@ -521,9 +521,19 @@ class ViewsTests(TestCase):
             b"i've had a ploughman's</a>",
         )
 
+    def test_qr_codes(self):
+        Service.objects.all().update(current=True)
+        response = self.client.get("/qr/melton-constable")
+        self.assertContains(response, "Melton Constable, opp Bus Shelter")
+        self.assertContains(response, '<svg width="33mm" height="33mm"')
+
     def test_redirects(self):
         response = self.client.get("/ads.txt")
         self.assertEqual(response.status_code, 302)
 
         response = self.client.get("/.well-known/change-password")
         self.assertEqual(response.status_code, 302)
+
+        response = self.client.get("/STOP/2900ABC1")
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, "/stops/2900ABC1")
