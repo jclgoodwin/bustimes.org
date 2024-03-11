@@ -249,7 +249,7 @@ def qr(request, slug):
             stop,
             mark_safe(
                 qrcode.make(
-                    f"HTTPS://BUSTIMES.ORG/STOPS/{stop.atco_code}",
+                    f"HTTPS://BUSTIMES.ORG/STOP/{stop.atco_code}",
                     image_factory=factory,
                 )
                 .to_string()
