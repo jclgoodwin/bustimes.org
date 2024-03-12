@@ -300,12 +300,12 @@ function JourneyVehicle({
   journey,
   onVehicleMove,
   clickedVehicleMarker,
-  setClickedVehicleMarker
+  setClickedVehicleMarker,
 }: {
   journey: VehicleJourney;
   onVehicleMove: (v: Vehicle) => void;
-  clickedVehicleMarker?: number;
-  setClickedVehicleMarker: (id?: number) => void
+  clickedVehicleMarker: boolean;
+  setClickedVehicleMarker: (b: boolean) => void;
 }) {
   const vehicleId = window.VEHICLE_ID;
 
@@ -325,8 +325,8 @@ function JourneyVehicle({
         response.json().then((data: Vehicle[]) => {
           if (data && data.length) {
             // if (data[0].datetime !== vehicle?.datetime) {
-              setVehicle(data[0]);
-              // onVehicleMove(data[0])
+            setVehicle(data[0]);
+            // onVehicleMove(data[0])
             // }
             timeout = window.setTimeout(loadVehicle, 12000); // 12 seconds
           }
@@ -347,12 +347,12 @@ function JourneyVehicle({
 
   return (
     <React.Fragment>
-      <VehicleMarker
-        selected={true}
-        vehicle={vehicle}
-      />
+      <VehicleMarker selected={clickedVehicleMarker} vehicle={vehicle} />
       {clickedVehicleMarker ? (
-        <VehiclePopup item={vehicle} onClose={() => setClickedVehicleMarker()} />
+        <VehiclePopup
+          item={vehicle}
+          onClose={() => setClickedVehicleMarker(false)}
+        />
       ) : null}
     </React.Fragment>
   );
@@ -395,28 +395,38 @@ export default function JourneyMap({
 
   const [clickedStop, setClickedStop] = React.useState<Stop>();
 
-  const [clickedVehicleMarker, setClickedVehicleMarker] = React.useState<
-    number | undefined
-  >();
+  const [clickedVehicleMarker, setClickedVehicleMarker] =
+    React.useState<boolean>(true);
 
-  const [locations, setLocations] = React.useState<VehicleJourneyLocation[]>([]);
+  const [locations, setLocations] = React.useState<VehicleJourneyLocation[]>(
+    [],
+  );
 
-  const handleVehicleMove = React.useCallback((vehicle: Vehicle) => {
-    setLocations(locations.concat([{
-      coordinates: vehicle.coordinates,
-      delta: null,
-      datetime: vehicle.datetime,
-      direction: vehicle.heading
-    }]));
-  }, [locations]);
+  const handleVehicleMove = React.useCallback(
+    (vehicle: Vehicle) => {
+      setLocations(
+        locations.concat([
+          {
+            coordinates: vehicle.coordinates,
+            delta: null,
+            datetime: vehicle.datetime,
+            direction: vehicle.heading,
+          },
+        ]),
+      );
+    },
+    [locations],
+  );
 
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
     if (vehicleId) {
-      setClickedVehicleMarker(vehicleId);
+      setClickedVehicleMarker(true);
       setClickedStop(undefined);
       return;
     }
+
+    setClickedVehicleMarker(false);
 
     if (e.features?.length) {
       for (const feature of e.features) {
@@ -540,7 +550,12 @@ export default function JourneyMap({
             ) : null}
 
             {journey.locations && journey.current ? (
-              <JourneyVehicle journey={journey} onVehicleMove={handleVehicleMove} clickedVehicleMarker={clickedVehicleMarker} setClickedVehicleMarker={setClickedVehicleMarker} />
+              <JourneyVehicle
+                journey={journey}
+                onVehicleMove={handleVehicleMove}
+                clickedVehicleMarker={clickedVehicleMarker}
+                setClickedVehicleMarker={setClickedVehicleMarker}
+              />
             ) : null}
           </BusTimesMap>
         ) : null}
