@@ -212,6 +212,8 @@ def operator_vehicles(request, slug=None, parent=None):
         else:
             today = now - datetime.timedelta(hours=12)
 
+        context["today"] = today
+
         for vehicle in vehicles:
             if vehicle.latest_journey:
                 when = vehicle.latest_journey.datetime
