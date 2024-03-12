@@ -64,7 +64,7 @@ class Command(BaseCommand):
             for calendar in calendars.values()
         }
 
-        for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
+        for i, row in feed.routes.iterrows():
             line_name = row.route_id.removeprefix("UK")
 
             if line_name in existing_services:
@@ -82,7 +82,7 @@ class Command(BaseCommand):
             service.current = True
             service.colour_id = operator.colour_id
             service.source = source
-            service.geometry = row.geometry.wkt
+            # service.geometry = row.geometry.wkt
             service.region_id = "GB"
 
             service.save()
