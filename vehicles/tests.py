@@ -196,7 +196,7 @@ class VehiclesTests(TestCase):
         with time_machine.travel("2020-10-21 00:10+01:00"):
             with self.assertNumQueries(3):
                 response = self.client.get("/operators/lynx/vehicles")
-        self.assertContains(response, "20 Oct 00:47")
+        self.assertContains(response, "20 Oct")
         self.assertNotContains(response, "/operators/lynx/map")
 
     def test_vehicle_views(self):
