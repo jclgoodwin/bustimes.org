@@ -1,3 +1,4 @@
+import functools
 from datetime import timedelta
 
 from ciso8601 import parse_datetime
@@ -12,6 +13,14 @@ from busstops.models import DataSource, Operator
 
 from .management.commands import import_bod_avl
 from .models import SiriSubscription, Vehicle, VehicleJourney, VehicleRevision
+
+
+@functools.cache
+def get_bod_avl_command(source_name):
+    command = import_bod_avl.Command()
+    command.source_name = source_name
+    command.do_source()
+    return command
 
 
 @db_task()
@@ -29,9 +38,7 @@ def handle_siri_post(uuid, data):
     else:
         data = data["ServiceDelivery"]
 
-        command = import_bod_avl.Command()
-        command.source_name = subscription.name
-        command.do_source()
+        command = get_bod_avl_command(subscription.name)
 
         items = data["VehicleMonitoringDelivery"]["VehicleActivity"]
 

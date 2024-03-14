@@ -26,9 +26,7 @@ from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleCode, VehicleJourney, VehicleLocation
 from ...utils import redis_client
-from ..import_live_vehicles import ImportLiveVehiclesCommand  # , logger, logging
-
-# from tenacity import after_log, retry, wait_exponential
+from ..import_live_vehicles import ImportLiveVehiclesCommand
 
 
 def get_destination_ref(destination_ref):
@@ -46,6 +44,20 @@ def get_destination_ref(destination_ref):
         return
 
     return destination_ref
+
+
+@functools.cache
+def get_destination_name(destination_ref):
+    try:
+        return Locality.objects.get(stoppoint=destination_ref).name
+    except Locality.DoesNotExist:
+        if (
+            destination_ref.isdigit()
+            and destination_ref[0:1] != "0"
+            and destination_ref[2:3] == "0"
+        ):
+            return get_destination_name(f"0{destination_ref}")
+    return ""
 
 
 def get_line_name_query(line_ref):
@@ -83,20 +95,6 @@ class Command(ImportLiveVehiclesCommand):
     @staticmethod
     def get_datetime(item):
         return parse_datetime(item["RecordedAtTime"])
-
-    @staticmethod
-    @functools.cache
-    def get_destination_name(destination_ref):
-        try:
-            return Locality.objects.get(stoppoint=destination_ref).name
-        except Locality.DoesNotExist:
-            if (
-                destination_ref.isdigit()
-                and destination_ref[0:1] != "0"
-                and destination_ref[2:3] == "0"
-            ):
-                return Command.get_destination_name(f"0{destination_ref}")
-        return ""
 
     @functools.cache
     def get_operator(self, operator_ref):
@@ -496,7 +494,7 @@ class Command(ImportLiveVehiclesCommand):
         if not journey.destination:
             # use stop locality
             if destination_ref:
-                journey.destination = self.get_destination_name(destination_ref)
+                journey.destination = get_destination_name(destination_ref)
             # use destination name string (often not very descriptive)
             if not journey.destination:
                 destination = monitored_vehicle_journey.get("DestinationName")
@@ -573,9 +571,7 @@ class Command(ImportLiveVehiclesCommand):
                         not (destination_ref and journey.destination)
                         and trip.destination_id
                     ):
-                        journey.destination = self.get_destination_name(
-                            trip.destination_id
-                        )
+                        journey.destination = get_destination_name(trip.destination_id)
 
                     update_fields = []
 
@@ -630,10 +626,6 @@ class Command(ImportLiveVehiclesCommand):
                 location.wheelchair_capacity = int(extensions["WheelchairCapacity"])
         return location
 
-    # @retry(
-    #    wait=wait_exponential(multiplier=1, min=10, max=20),
-    #    after=after_log(logger, logging.ERROR),
-    # )
     def get_items(self):
         response = self.session.get(
             self.source.url, params=self.source.settings, timeout=30
