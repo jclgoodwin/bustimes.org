@@ -647,6 +647,10 @@ class ServiceManager(models.Manager):
         vector += SearchVector("line_brand", weight="A", config="english")
         vector += SearchVector("description", weight="B", config="english")
         vector += SearchVector(
+            StringAgg("operator__noc", delimiter=" ", default=""),
+            weight="B",
+        )
+        vector += SearchVector(
             StringAgg("operator__name", delimiter=" ", default=""),
             weight="B",
             config="english",
