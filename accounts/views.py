@@ -57,9 +57,9 @@ class PasswordResetView(auth_views.PasswordResetView):
 def user_detail(request, pk):
     user = get_object_or_404(UserModel, pk=pk)
 
-    if user.trusted is False and not request.user.is_superuser:
-        revisions = None
-    else:
+    context = {"object": user}
+
+    if user.trusted is not False or request.user.is_superuser:
         revisions = user.vehiclerevision_set.select_related(
             "vehicle", "from_livery", "to_livery", "from_type", "to_type"
         ).prefetch_related("vehiclerevisionfeature_set__feature")
@@ -67,6 +67,8 @@ def user_detail(request, pk):
         paginator = Paginator(revisions, 100)
         page = request.GET.get("page")
         revisions = paginator.get_page(page)
+
+        context["revisions"] = revisions
 
     if request.user == user or request.user.is_superuser:
         initial = {
@@ -78,12 +80,18 @@ def user_detail(request, pk):
         if not request.user.is_superuser:
             del form.fields["trusted"]
 
+        delete_form = forms.DeleteForm()
+
         if request.POST and form.is_valid():
-            if "delete" in request.POST:
-                assert request.user == user
-                user.is_active = False
-                user.save(update_fields=["is_active"])
-            elif "username" in form.cleaned_data:
+            if "confirm_delete" in request.POST:
+                delete_form = forms.DeleteForm(request.POST)
+                if delete_form.is_valid():
+                    assert request.user == user
+                    assert delete_form.cleaned_data["confirm_delete"]
+                    user.is_active = False
+                    user.save(update_fields=["is_active"])
+
+            if "username" in form.changed_data:
                 user.username = form.cleaned_data["username"]
                 if not user.username:
                     user.username = user.email
@@ -92,16 +100,13 @@ def user_detail(request, pk):
                 except IntegrityError:
                     form.add_error("username", "Username taken")
                     user.username = initial["username"] or user.email
-            else:
+
+            if "trusted" in form.changed_data:
                 assert request.user.is_superuser
                 user.trusted = form.cleaned_data["trusted"]
                 user.save(update_fields=["trusted"])
 
-    else:
-        form = None
+        context["form"] = form
+        context["delete_form"] = delete_form
 
-    return render(
-        request,
-        "user_detail.html",
-        {"object": user, "revisions": revisions, "form": form},
-    )
+    return render(request, "user_detail.html", context)

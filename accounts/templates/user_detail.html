@@ -28,7 +28,7 @@
     {% endif %}
 
     {% if form %}
-        <form method="POST">
+        <form method="POST" autocomplete="off">
             {{ form.as_p }}
             {% csrf_token %}
             <input type="submit" value="Save changes">
@@ -36,9 +36,10 @@
 
         <h2>Delete your account?</h2>
 
-        <form method="POST">
+        <form method="POST" autocomplete="off">
             {% csrf_token %}
-            <input type="submit" name="delete" value="☠️ Delete my account!">
+            {{ delete_form.as_p }}
+            <input type="submit" value="☠️ Delete my account!">
         </form>
     {% endif %}
 

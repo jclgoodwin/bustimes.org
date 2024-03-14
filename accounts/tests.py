@@ -73,6 +73,63 @@ class RegistrationTest(TestCase):
             )
             self.assertEqual(302, response.status_code)
 
+    def test_update_user(self):
+        super_user = User.objects.create(
+            username="josh", is_staff=True, is_superuser=True, email="j@example.com"
+        )
+        other_user = User.objects.create(
+            username="ken@example.com",
+            trusted=None,
+            email="ken@example.com",
+        )
+
+        # super user can change trustedness:
+
+        self.client.force_login(super_user)
+
+        response = self.client.post(other_user.get_absolute_url(), {"trusted": "true"})
+        other_user.refresh_from_db()
+        self.assertTrue(other_user.trusted)
+
+        self.assertNotContains(response, "That's you!")
+
+        self.client.post(other_user.get_absolute_url(), {"trusted": "false"})
+        other_user.refresh_from_db()
+        self.assertFalse(other_user.trusted)
+
+        self.client.post(other_user.get_absolute_url(), {"trusted": "unknown"})
+        other_user.refresh_from_db()
+        self.assertIsNone(other_user.trusted)
+
+        self.client.force_login(other_user)
+
+        # set username:
+
+        response = self.client.post(
+            other_user.get_absolute_url(), {"username": "kenton schweppes"}
+        )
+        other_user.refresh_from_db()
+        self.assertEqual(other_user.username, "kenton schweppes")
+
+        self.assertContains(response, "That's you!")
+
+        self.client.post(other_user.get_absolute_url(), {"username": ""})
+        other_user.refresh_from_db()
+        self.assertEqual(other_user.username, "ken@example.com")
+
+        # user can delete own account:
+
+        with self.assertNumQueries(7):
+            self.client.post(other_user.get_absolute_url(), {"confirm_delete": False})
+            # confirm delete not ticked
+        other_user.refresh_from_db()
+        self.assertTrue(other_user.is_active)
+
+        with self.assertNumQueries(8):
+            self.client.post(other_user.get_absolute_url(), {"confirm_delete": "on"})
+        other_user.refresh_from_db()
+        self.assertFalse(other_user.is_active)
+
     def test_password_reset(self):
         with self.assertNumQueries(0):
             response = self.client.get("/accounts/password_reset/")

@@ -1,7 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.core.exceptions import PermissionDenied
-from django.forms import CharField, EmailField, EmailInput, Form, NullBooleanField
+from django.forms import (
+    BooleanField,
+    CharField,
+    EmailField,
+    EmailInput,
+    Form,
+    NullBooleanField,
+)
 
 User = get_user_model()
 
@@ -54,3 +61,7 @@ class UserForm(Form):
         help_text="Will be displayed publicly. Leave blank to be known by a number.",
     )
     trusted = NullBooleanField()
+
+
+class DeleteForm(Form):
+    confirm_delete = BooleanField(label="Please delete my account")
