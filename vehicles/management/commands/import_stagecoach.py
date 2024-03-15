@@ -59,7 +59,6 @@ def has_stop(stop):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Stagecoach"
-    operator_ids = {"SCEM": "SCGH", "SCSO": "SCCO"}
     previous_locations = {}
 
     def do_source(self):
@@ -102,7 +101,6 @@ class Command(ImportLiveVehiclesCommand):
         operator_id = item.get("oc")
 
         if vehicle_code in self.vehicle_cache:
-
             vehicle = self.vehicle_cache[vehicle_code]
 
             if (
@@ -127,8 +125,6 @@ class Command(ImportLiveVehiclesCommand):
             if vehicle:
                 return vehicle, False
 
-        if operator_id and operator_id in self.operator_ids:
-            operator_id = self.operator_ids[operator_id]
         if operator_id in self.operators:
             operator = self.operators[operator_id]
         else:
