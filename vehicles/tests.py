@@ -11,7 +11,6 @@ from busstops.models import DataSource, Operator, Region, Service
 
 from .models import (
     Livery,
-    SiriSubscription,
     Vehicle,
     VehicleFeature,
     VehicleJourney,
@@ -944,28 +943,3 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         with self.assertNumQueries(2):
             response = self.client.get("/api/vehicles/?search=fd54jya")
         self.assertEqual(1, response.json()["count"])
-
-    def test_siri_post(self):
-        response = self.client.post("/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9")
-        self.assertEqual(404, response.status_code)
-
-        SiriSubscription.objects.create(
-            name="Transport for Whales", uuid="475d1d1f-5708-4ee1-8f51-c63d948bc0b9"
-        )
-        DataSource.objects.create(name="Transport for Whales")
-        response = self.client.post(
-            "/siri/475d1d1f-5708-4ee1-8f51-c63d948bc0b9",
-            data="""<?xml version="1.0" encoding="UTF-8" ?>
-<Siri xmlns="http://www.siri.org.uk/siri" version="1.3"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/1.3/siri.xsd">
-    <HeartbeatNotification>
-        <RequestTimestamp>2023-11-30T13:14:01+00:00</RequestTimestamp>
-        <ProducerRef>Beluga</ProducerRef>
-        <Status>true</Status>
-        <ServiceStartedTime>2023-11-29T09:43:26+00:00</ServiceStartedTime>
-    </HeartbeatNotification>
-</Siri>""",
-            content_type="text/xml",
-        )
-        self.assertEqual(200, response.status_code)

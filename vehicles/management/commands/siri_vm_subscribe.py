@@ -1,11 +1,10 @@
-from datetime import datetime, timezone, timedelta
-
 import uuid
-import requests
-from requests_toolbelt.adapters.source import SourceAddressAdapter
+from datetime import datetime, timedelta, timezone
 
-from django.core.management.base import BaseCommand
+import requests
 from django.core.cache import cache
+from django.core.management.base import BaseCommand
+from requests_toolbelt.adapters.source import SourceAddressAdapter
 
 from ...models import SiriSubscription
 
@@ -24,7 +23,11 @@ class Command(BaseCommand):
         session = requests.Session()
         session.mount("https://", SourceAddressAdapter("10.16.0.7"))
 
-        consumer_address = f"http://139.59.197.131/siri/{SiriSubscription.objects.get().uuid}"
+        consumer_address = (
+            f"http://139.59.197.131/siri/{SiriSubscription.objects.get().uuid}"
+        )
+
+        initial_termination_time = now + timedelta(hours=20) - timedelta(minutes=6)
 
         data = f"""<Siri xmlns="http://www.siri.org.uk/siri" version="1.3">
     <SubscriptionRequest>
@@ -33,7 +36,7 @@ class Command(BaseCommand):
         <ConsumerAddress>{consumer_address}</ConsumerAddress>
         <VehicleMonitoringSubscriptionRequest>
             <SubscriptionIdentifier>{uuid.uuid4()}</SubscriptionIdentifier>
-            <InitialTerminationTime>{(now + timedelta(hours=20) - timedelta(minutes=6)).isoformat()}</InitialTerminationTime>
+            <InitialTerminationTime>{initial_termination_time.isoformat()}</InitialTerminationTime>
             <VehicleMonitoringRequest>
                 <RequestTimestamp>{now.isoformat()}</RequestTimestamp>
             </VehicleMonitoringRequest>
@@ -45,12 +48,9 @@ class Command(BaseCommand):
         </SubscriptionContext>
     </SubscriptionRequest>
 </Siri>"""
-        print(data)
 
-        foo = session.post(
+        session.post(
             endpoint,
             data=data,
             headers={"content-type": "text/xml"},
         )
-        print(foo)
-        print(foo.content)
