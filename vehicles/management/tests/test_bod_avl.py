@@ -189,7 +189,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             }
         }
     )
-    @time_machine.travel("2020-10-17T08:34:09Z", tick=False)
+    @time_machine.travel("2020-10-17T08:34:09", tick=False)
     def test_new_bod_avl_b(self):
         items = [
             {
@@ -370,9 +370,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
             response = self.client.get(f"/vehicles.json?trip={self.trip.id}")
             json = response.json()
-            self.assertEqual(len(json), 6)
+            self.assertEqual(len(json), 3)
             self.assertEqual(
-                json[3]["progress"],
+                json[0]["progress"],
                 {
                     "id": a.id,
                     "sequence": 0,
@@ -381,7 +381,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "progress": 0.097,
                 },
             )
-            self.assertEqual(json[3]["delay"], 27962)
+            self.assertEqual(json[0]["delay"], 27962)
 
             with self.assertNumQueries(0):
                 response = self.client.get("/vehicles.json?service=ff")
