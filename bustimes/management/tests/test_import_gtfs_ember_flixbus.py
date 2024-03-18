@@ -88,6 +88,9 @@ class FlixbusTest(TestCase):
             call_command("import_gtfs_flixbus")
 
         response = self.client.get("/operators/flixbus")
+
+        self.assertEqual(2, Service.objects.all().count())
+
         self.assertContains(response, "London - Northampton - Nottingham")
         self.assertContains(response, "London - Cambridge")
 

@@ -7,6 +7,7 @@ import gtfs_kit
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.db.models import Min
 from django.utils.dateparse import parse_duration
 
 from busstops.models import DataSource, Operator, Service
@@ -64,6 +65,10 @@ class Command(BaseCommand):
             for calendar in calendars.values()
         }
 
+        geometries = {}
+        for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
+            geometries[row.route_id] = row.geometry.wkt
+
         for i, row in feed.routes.iterrows():
             line_name = row.route_id.removeprefix("UK")
 
@@ -82,7 +87,7 @@ class Command(BaseCommand):
             service.current = True
             service.colour_id = operator.colour_id
             service.source = source
-            # service.geometry = row.geometry.wkt
+            service.geometry = geometries.get(row.route_id)
             service.region_id = "GB"
 
             service.save()
@@ -170,6 +175,13 @@ class Command(BaseCommand):
             print(
                 source.route_set.exclude(id__in=[route.id for route in routes]).delete()
             )
+
+            for route in source.route_set.annotate(
+                start=Min("trip__calendar__start_date")
+            ):
+                route.start_date = route.start
+                route.save(update_fields=["start_date"])
+
             print(
                 operator.trip_set.exclude(
                     id__in=[trip.id for trip in trips.values()]
