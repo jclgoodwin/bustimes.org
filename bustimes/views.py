@@ -523,12 +523,6 @@ def tfl_vehicle(request, reg: str):
     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
         service = None
 
-    if service and vehicle:
-        operator = service.operator.first()
-        if vehicle.operator != operator:
-            vehicle.operator = operator
-            vehicle.save(update_fields=["operator"])
-
     stops = StopPoint.objects.in_bulk(atco_codes)
     if not stops:
         stops = StopArea.objects.in_bulk(atco_codes)
