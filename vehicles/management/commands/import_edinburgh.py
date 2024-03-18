@@ -34,7 +34,7 @@ class Command(ImportLiveVehiclesCommand):
 
         # build list of vehicles that have moved
         for item in super().get_items()["vehicles"]:
-            key = item["vehicle_id"]
+            key = item["vehicle_id"].removeprefix("T")
             value = (
                 item["service_name"],
                 item["journey_id"],
@@ -56,7 +56,7 @@ class Command(ImportLiveVehiclesCommand):
         if item["longitude"] == -7.557172 and item["latitude"] == 49.7668:
             return None, None
 
-        vehicle_code = item["vehicle_id"]
+        vehicle_code = item["vehicle_id"].removeprefix("T")
 
         if vehicle_code in self.vehicle_cache:
             return self.vehicle_cache[vehicle_code], False

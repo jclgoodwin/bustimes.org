@@ -169,13 +169,18 @@ class VehicleAdmin(admin.ModelAdmin):
 
     def deduplicate(self, request, queryset):
         for vehicle in queryset.order_by("id"):
-            if not vehicle.reg:
+            if not vehicle.reg and not vehicle.fleet_code:
                 self.message_user(request, f"{vehicle} has no reg")
                 continue
             try:
-                duplicate = models.Vehicle.objects.get(
-                    id__lt=vehicle.id, reg__iexact=vehicle.reg
-                )  # vehicle with lower id number we will keep
+                if vehicle.reg:
+                    duplicate = models.Vehicle.objects.get(
+                        id__lt=vehicle.id, reg__iexact=vehicle.reg
+                    )  # vehicle with lower id number we will keep
+                else:
+                    duplicate = models.Vehicle.objects.get(
+                        id__lt=vehicle.id, fleet_code__iexact=vehicle.fleet_code
+                    )  # vehicle with lower id number we will keep
             except (
                 models.Vehicle.DoesNotExist,
                 models.Vehicle.MultipleObjectsReturned,
