@@ -414,6 +414,11 @@ class RevisionChangeFilter(admin.SimpleListFilter):
         return queryset
 
 
+class VehicleEditVoteInline(admin.TabularInline):
+    model = models.VehicleEditVote
+    readonly_fields = ["by_user"]
+
+
 @admin.register(models.VehicleRevision)
 class VehicleRevisionAdmin(admin.ModelAdmin):
     raw_id_fields = [
@@ -421,6 +426,8 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         "to_operator",
         "from_livery",
         "to_livery",
+        "from_type",
+        "to_type",
         "vehicle",
         "user",
         "approved_by",
@@ -433,6 +440,7 @@ class VehicleRevisionAdmin(admin.ModelAdmin):
         ("vehicle__operator", admin.RelatedOnlyFieldListFilter),
     ]
     list_select_related = ["from_operator", "to_operator", "vehicle", "user"]
+    inlines = [VehicleEditVoteInline]
 
     def revert(self, request, queryset):
         for revision in queryset.prefetch_related("vehicle"):
