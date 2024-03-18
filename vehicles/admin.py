@@ -179,7 +179,9 @@ class VehicleAdmin(admin.ModelAdmin):
                     )  # vehicle with lower id number we will keep
                 else:
                     duplicate = models.Vehicle.objects.get(
-                        id__lt=vehicle.id, fleet_code__iexact=vehicle.fleet_code
+                        id__lt=vehicle.id,
+                        operator=vehicle.operator_id,
+                        fleet_code__iexact=vehicle.fleet_code,
                     )  # vehicle with lower id number we will keep
             except (
                 models.Vehicle.DoesNotExist,
