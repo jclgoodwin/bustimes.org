@@ -769,6 +769,11 @@ def edit_vehicle(request, **kwargs):
                     if request.user.trusted:
                         apply_revision(revision, features)
 
+                    # score decrements with each edit!
+                    (type(revision.user)).objects.filter(id=revision.user_id).update(
+                        score=Coalesce("score", 0) - 1
+                    )
+
                     context["revision"] = revision
                     form = None
 
@@ -820,6 +825,9 @@ def vehicle_revision_vote(request, revision_id, direction):
 
     positive = direction == "up"
     score_change = 1 if positive else -1
+
+    if not positive:  # can only down-vote pending edits
+        assert revision.pending
 
     try:
         VehicleEditVote.objects.create(

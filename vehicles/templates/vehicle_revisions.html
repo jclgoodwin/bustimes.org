@@ -44,8 +44,7 @@
                         {% endif %}
                     {% elif user.trusted is not False %}
                         {% if revision.user_id != user.id %}
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up" title="Thank">👍</button>
                         {% endif %}
                         {% if user.is_superuser %}
                             <button class="button" hx-post="/vehicles/history/{{ revision.id }}/revert">⚠️ Revert</button>
