@@ -27,6 +27,7 @@ from haversine import Unit, haversine, haversine_vector
 from redis.exceptions import ConnectionError
 from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
+from accounts.models import User
 from buses.utils import cache_page
 from busstops.models import Operator, Service
 from busstops.utils import get_bounding_box
@@ -770,7 +771,7 @@ def edit_vehicle(request, **kwargs):
                         apply_revision(revision, features)
 
                     # score decrements with each edit!
-                    (type(revision.user)).objects.filter(id=revision.user_id).update(
+                    User.objects.filter(id=revision.user_id).update(
                         score=Coalesce("score", 0) - 1
                     )
 
@@ -845,7 +846,7 @@ def vehicle_revision_vote(request, revision_id, direction):
 
     if score_change != 0:
         revisions.update(score=F("score") + score_change)
-        (type(revision.user)).objects.filter(id=revision.user_id).update(
+        User.objects.filter(id=revision.user_id).update(
             score=Coalesce("score", 0) + score_change
         )
 
