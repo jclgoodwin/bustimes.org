@@ -206,7 +206,7 @@ def get_calendars(when, calendar_ids=None):
 
 
 def get_stop_times(
-    date: datetime, time: timedelta, stop, services_routes: dict, trips=None
+    date: date, time: timedelta, stop, services_routes: dict, trips=None
 ):
     times = StopTime.objects.filter(pick_up=True)
 
