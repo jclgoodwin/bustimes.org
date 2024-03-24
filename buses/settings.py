@@ -11,7 +11,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost joshuas-mbp.lan"
+    "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost joshuas-macbook-pro.local"
 ).split()
 
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]

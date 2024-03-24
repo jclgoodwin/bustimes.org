@@ -73,12 +73,17 @@ def user_detail(request, pk):
     if request.user == user or request.user.is_superuser:
         initial = {
             "trusted": user.trusted,
-            "username": user.username if user.username != user.email else "",
+            "name": user.username if user.username != user.email else "",
         }
 
         form = forms.UserForm(request.POST or None, initial=initial)
         if not request.user.is_superuser:
             del form.fields["trusted"]
+
+        form.fields[
+            "name"
+        ].help_text = f"Will be displayed publicly. Leave blank to be 'user {user.id}'"
+        form.fields["name"].widget.attrs["placeholder"] = f"user {user.id}"
 
         delete_form = forms.DeleteForm()
 
@@ -91,15 +96,15 @@ def user_detail(request, pk):
                     user.is_active = False
                     user.save(update_fields=["is_active"])
 
-            if "username" in form.changed_data:
-                user.username = form.cleaned_data["username"]
+            if "name" in form.changed_data:
+                user.username = form.cleaned_data["name"]
                 if not user.username:
                     user.username = user.email
                 try:
                     user.save(update_fields=["username"])
                 except IntegrityError:
-                    form.add_error("username", "Username taken")
-                    user.username = initial["username"] or user.email
+                    form.add_error("name", "Username taken")
+                    user.username = initial["name"] or user.email
 
             if "trusted" in form.changed_data:
                 assert request.user.is_superuser

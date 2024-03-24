@@ -106,14 +106,14 @@ class RegistrationTest(TestCase):
         # set username:
 
         response = self.client.post(
-            other_user.get_absolute_url(), {"username": "kenton schweppes"}
+            other_user.get_absolute_url(), {"name": "kenton_schweppes"}
         )
         other_user.refresh_from_db()
-        self.assertEqual(other_user.username, "kenton schweppes")
+        self.assertEqual(other_user.username, "kenton_schweppes")
 
         self.assertContains(response, "That's you!")
 
-        self.client.post(other_user.get_absolute_url(), {"username": ""})
+        self.client.post(other_user.get_absolute_url(), {"name": ""})
         other_user.refresh_from_db()
         self.assertEqual(other_user.username, "ken@example.com")
 

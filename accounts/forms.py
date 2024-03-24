@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import PermissionDenied
 from django.forms import (
     BooleanField,
@@ -56,9 +57,8 @@ class LoginForm(AuthenticationForm):
 
 
 class UserForm(Form):
-    username = CharField(
-        required=False,
-        help_text="Will be displayed publicly. Leave blank to be known by a number.",
+    name = CharField(
+        required=False, label="Username", validators=[UnicodeUsernameValidator()]
     )
     trusted = NullBooleanField()
 
