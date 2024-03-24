@@ -76,16 +76,25 @@ class DuplicateVehicleFilter(admin.SimpleListFilter):
         return (
             ("reg", "same reg"),
             ("operator", "same reg and operator"),
+            ("fleet_code", "same fleet code"),
+            ("code", "same code"),
         )
 
     def queryset(self, request, queryset):
-        if self.value():
-            vehicles = models.Vehicle.objects.filter(
-                ~Q(id=OuterRef("id")), reg__iexact=OuterRef("reg")
-            )
-            if self.value() == "operator":
-                vehicles = vehicles.filter(operator=OuterRef("operator"))
-            queryset = queryset.filter(~Q(reg__iexact=""), Exists(vehicles))
+        if value := self.value():
+            duplicates = models.Vehicle.objects.filter(~Q(id=OuterRef("id")))
+            if value == "code":
+                duplicates = duplicates.filter(code__iexact=OuterRef("code"))
+            elif value == "fleet_code":
+                duplicates = duplicates.filter(code__iexact=OuterRef("fleet_code"))
+            else:
+                # reg
+                duplicates = duplicates.filter(reg__iexact=OuterRef("reg"))
+                # reg and operator
+                if value == "operator":
+                    duplicates = duplicates.filter(operator=OuterRef("operator"))
+
+            queryset = queryset.filter(~Q(reg__iexact=""), Exists(duplicates))
 
         return queryset
 
