@@ -175,8 +175,8 @@ const Vehicles = memo(function Vehicles({
                 url: vehicle.vehicle?.url,
                 colour:
                   vehicle.vehicle?.colour ||
-                  (vehicle.vehicle?.colours?.length === 7
-                    ? vehicle.vehicle.colours
+                  (vehicle.vehicle?.css?.length === 7
+                    ? vehicle.vehicle.css
                     : "#fff"),
               },
             };

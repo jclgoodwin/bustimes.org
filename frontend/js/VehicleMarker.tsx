@@ -44,7 +44,6 @@ export type Vehicle = {
     features?: string;
     livery?: number;
     colour?: string;
-    colours?: string;
     text_colour?: string;
     css?: string;
     right_css?: string;
