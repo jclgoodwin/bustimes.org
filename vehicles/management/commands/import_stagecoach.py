@@ -100,6 +100,10 @@ class Command(ImportLiveVehiclesCommand):
 
         operator_id = item.get("oc")
 
+        service_operator = item.get("so")
+        if service_operator == "SMA" and operator_id == "SCLK":
+            operator_id = "SCMN"
+
         if vehicle_code in self.vehicle_cache:
             vehicle = self.vehicle_cache[vehicle_code]
 
