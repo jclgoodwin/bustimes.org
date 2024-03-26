@@ -1,4 +1,3 @@
-import os
 import xml.etree.cElementTree as ET
 import zipfile
 from datetime import date
@@ -820,10 +819,7 @@ class ImportTransXChangeTest(TestCase):
 
         garage = Garage.objects.create(code="LE", name="Leicester")
 
-        call_command(
-            "import_transxchange",
-            os.path.join(FIXTURES_DIR, "22A 22B 22C 08032021.xml"),
-        )
+        call_command("import_transxchange", FIXTURES_DIR / "22A 22B 22C 08032021.xml")
 
         self.assertEqual(str(Trip.objects.get(ticket_machine_code="1935")), "19:35")
 
@@ -1526,3 +1522,11 @@ class ImportTransXChangeTest(TestCase):
 
         response = self.client.get(f"/garages/{garage.id}/trips.csv")
         self.assertContains(response, "Sundays,2023-10-22,,6021")
+
+    @time_machine.travel("2024-01-01")
+    def test_frequency(self):
+        # import a document with a Frequency structure (journey repeats every 10 minutes)
+        call_command("import_transxchange", FIXTURES_DIR / "BNSM_59.xml")
+
+        route = Route.objects.get(line_name="59")
+        self.assertEqual(route.trip_set.all().count(), 155)

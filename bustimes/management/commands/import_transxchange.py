@@ -776,6 +776,24 @@ class Command(BaseCommand):
                 if not trip_notes or trip_notes[-1].trip is not trip:
                     trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
+            if journey.frequency_interval:
+                # trip repeats every 10 minutes, for example:
+                while trip.start < journey.frequency_end_time:
+                    trip = Trip(
+                        inbound=trip.inbound,
+                        calendar=trip.calendar,
+                        route=trip.route,
+                        journey_pattern=trip.journey_pattern,
+                        operator=trip.operator,
+                        start=trip.start + journey.frequency_interval,
+                    )
+                    journey.departure_time = trip.start
+                    for cell in journey.get_times():
+                        stop_time = self.get_stop_time(trip, cell, stops)
+                        stop_times.append(stop_time)
+                    trip.end = stop_time.arrival_or_departure()
+                    trips.append(trip)
+
         if not route_created:
             # reuse trip ids if the number and start times haven't changed
             existing_trips = route.trip_set.order_by("id")

@@ -12,6 +12,13 @@ logger = logging.getLogger(__name__)
 WEEKDAYS = {day: i for i, day in enumerate(calendar.day_name)}  # {'Monday:' 0,
 
 
+def parse_time(string: str) -> datetime.timedelta:
+    hours, minutes, seconds = string.split(":")
+    return datetime.timedelta(
+        hours=int(hours), minutes=int(minutes), seconds=int(seconds)
+    )
+
+
 class Stop:
     """A TransXChange StopPoint."""
 
@@ -279,10 +286,7 @@ class VehicleJourney:
                 self.operating_profile, serviced_organisations
             )
 
-        hours, minutes, seconds = element.find("DepartureTime").text.split(":")
-        self.departure_time = datetime.timedelta(
-            hours=int(hours), minutes=int(minutes), seconds=int(seconds)
-        )
+        self.departure_time = parse_time(element.findtext("DepartureTime"))
         departure_day_shift = element.findtext("DepartureDayShift")
         if departure_day_shift:
             self.departure_time += datetime.timedelta(days=int(departure_day_shift))
@@ -305,6 +309,17 @@ class VehicleJourney:
                 note_element.find("NoteCode").text: note_element.find("NoteText").text
                 for note_element in note_elements
             }
+
+            self.frequency = None
+        frequency = element.find("Frequency")
+        if frequency is not None:
+            print(ET.tostring(frequency).decode())
+            self.frequency_interval = parse_duration(
+                frequency.findtext("Interval/ScheduledFrequency")
+            )
+            self.frequency_end_time = parse_time(frequency.findtext("EndTime"))
+        else:
+            self.frequency_interval = None
 
     def get_timinglinks(self):
         pattern_links = self.journey_pattern.get_timinglinks()
