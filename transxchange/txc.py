@@ -310,16 +310,16 @@ class VehicleJourney:
                 for note_element in note_elements
             }
 
-            self.frequency = None
+        self.frequency_interval = None
         frequency = element.find("Frequency")
         if frequency is not None:
             print(ET.tostring(frequency).decode())
-            self.frequency_interval = parse_duration(
-                frequency.findtext("Interval/ScheduledFrequency")
-            )
+            interval = frequency.find("Interval")
+            if interval is not None:
+                self.frequency_interval = parse_duration(
+                    interval.findtext("ScheduledFrequency")
+                )
             self.frequency_end_time = parse_time(frequency.findtext("EndTime"))
-        else:
-            self.frequency_interval = None
 
     def get_timinglinks(self):
         pattern_links = self.journey_pattern.get_timinglinks()
