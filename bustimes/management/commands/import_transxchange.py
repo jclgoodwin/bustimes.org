@@ -689,7 +689,7 @@ class Command(BaseCommand):
         trip_notes = []
         stop_time_notes = []
 
-        for journey in journeys:
+        for i, journey in enumerate(journeys):
             calendar = None
             if journey.operating_profile:
                 calendar = self.get_calendar(
@@ -777,22 +777,30 @@ class Command(BaseCommand):
                     trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
             if journey.frequency_interval:
-                # trip repeats every 10 minutes, for example:
-                while trip.start < journey.frequency_end_time:
-                    trip = Trip(
-                        inbound=trip.inbound,
-                        calendar=trip.calendar,
-                        route=trip.route,
-                        journey_pattern=trip.journey_pattern,
-                        operator=trip.operator,
-                        start=trip.start + journey.frequency_interval,
-                    )
-                    journey.departure_time = trip.start
-                    for cell in journey.get_times():
-                        stop_time = self.get_stop_time(trip, cell, stops)
-                        stop_times.append(stop_time)
-                    trip.end = stop_time.arrival_or_departure()
-                    trips.append(trip)
+                if len(journeys) > i:
+                    next_journey = journeys[i + 1]
+                    if journey.frequency_interval != next_journey.frequency_interval:
+                        print(
+                            trip.start,
+                            journey.frequency_interval,
+                            journey.frequency_end_time,
+                        )
+                        # trip repeats every 10 minutes, for example:
+                        while trip.start < journey.frequency_end_time:
+                            trip = Trip(
+                                inbound=trip.inbound,
+                                calendar=trip.calendar,
+                                route=trip.route,
+                                journey_pattern=trip.journey_pattern,
+                                operator=trip.operator,
+                                start=trip.start + journey.frequency_interval,
+                            )
+                            journey.departure_time = trip.start
+                            for cell in journey.get_times():
+                                stop_time = self.get_stop_time(trip, cell, stops)
+                                stop_times.append(stop_time)
+                            trip.end = stop_time.arrival_or_departure()
+                            trips.append(trip)
 
         if not route_created:
             # reuse trip ids if the number and start times haven't changed

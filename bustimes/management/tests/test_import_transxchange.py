@@ -1526,7 +1526,16 @@ class ImportTransXChangeTest(TestCase):
     @time_machine.travel("2024-01-01")
     def test_frequency(self):
         # import a document with a Frequency structure (journey repeats every 10 minutes)
-        call_command("import_transxchange", FIXTURES_DIR / "BNSM_59.xml")
+        self.handle_files("FECS.zip", ["BNSM_59.xml", "CBBH_10LU.xml", "CBNL_22.xml"])
 
+        # automatically created journey every 10 minutes
         route = Route.objects.get(line_name="59")
         self.assertEqual(route.trip_set.all().count(), 155)
+
+        # PastTheHour, but all journeys specified in file
+        route = Route.objects.get(line_name="22")
+        self.assertEqual(route.trip_set.all().count(), 97)
+
+        # all journeys specified in file
+        route = Route.objects.get(line_name="10")
+        self.assertEqual(route.trip_set.all().count(), 125)
