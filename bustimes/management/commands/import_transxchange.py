@@ -777,7 +777,7 @@ class Command(BaseCommand):
                     trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
             if journey.frequency_interval:
-                if len(journeys) > i:
+                if len(journeys) > i + 1:
                     next_journey = journeys[i + 1]
                     if journey.frequency_interval != next_journey.frequency_interval:
                         print(
