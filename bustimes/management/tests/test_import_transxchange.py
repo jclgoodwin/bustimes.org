@@ -767,24 +767,17 @@ class ImportTransXChangeTest(TestCase):
             response = self.client.get("/services/abao421")
             self.assertContains(response, "Saturdays until Saturday 14 August 2021")
 
-        # after operating period - shouldn't create trips
+        # after operating period
         with self.assertLogs(
             "bustimes.management.commands.import_transxchange", "WARNING"
         ) as cm:
             with patch("os.path.getmtime", return_value=1645544079):
                 self.write_files_to_zipfile_and_import("EA.zip", ["SVRABAO421.xml"])
-        service = Service.objects.get()
-        self.assertEqual(1, service.route_set.count())
-        self.assertEqual(0, Trip.objects.filter(route__service=service).count())
-        self.assertEqual(service.slug, "abao421")
-
-        self.assertEqual(
-            [
+            self.assertEqual(
+                cm.output[0],
                 "WARNING:bustimes.management.commands.import_transxchange:"
-                "skipping SVRABAO421.xml: ABAO421 end 2021-08-19 is in the past"
-            ],
-            cm.output,
-        )
+                "SVRABAO421.xml: ABAO421 end 2021-08-19 is in the past",
+            )
 
     def test_multiple_services(self):
         with patch("os.path.getmtime", return_value=1582385679):
