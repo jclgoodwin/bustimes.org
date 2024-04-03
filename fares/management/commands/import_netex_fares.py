@@ -525,9 +525,14 @@ class Command(BaseCommand):
         parser.add_argument("api_key", type=str)
 
     def handle_archive(self, dataset, file):
+        filenames = set()
         with zipfile.ZipFile(file) as archive:
             for filename in archive.namelist():
-                self.handle_file(dataset, archive.open(filename), filename)
+                if filename in filenames:
+                    logger.warn(f"duplicate filename {filename} in {archive}")
+                else:
+                    self.handle_file(dataset, archive.open(filename), filename)
+                    filenames.add(filename)
 
     def handle_bods_dataset(self, item):
         download_url = item["url"]
