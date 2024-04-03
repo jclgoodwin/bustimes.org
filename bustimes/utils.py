@@ -79,14 +79,13 @@ def get_routes(routes, when=None, from_date=None):
     ):
         return [max(routes, key=lambda r: r.code)]
 
-    # use maximum revision number for each service_code
+    # use maximum revision number for each service_code (TxC Service)
     if when and len(revision_numbers) > 1:
         routes = list(routes)
         routes.sort(key=lambda r: r.revision_number)
         revision_numbers = {}
         for route in routes:
             route.key = route.service_code.replace(":0", ":")
-            route.key = f"{route.key}:{route.service_id}"
 
             if route.source.name.startswith(
                 "First Bus_"
