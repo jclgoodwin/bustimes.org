@@ -668,20 +668,14 @@ class Command(BaseCommand):
 
     def handle_journeys(
         self,
-        route_code: str,
-        route_defaults: dict,
+        route,
+        route_created: bool,
         stops: dict,
         journeys,
         txc_service,
         operators: dict,
     ):
         default_calendar = None
-
-        route, route_created = Route.objects.update_or_create(
-            route_defaults, source=self.source, code=route_code
-        )
-
-        self.route_ids.add(route.id)
 
         stop_times = []
 
@@ -763,7 +757,7 @@ class Command(BaseCommand):
             trips.append(trip)
 
             if trip.start == trip.end:
-                logger.warning(f"{route_code} trip {trip} takes no time")
+                logger.warning(f"{route.code} trip {trip} takes no time")
 
             if blank and any(stop_time.timing_status for stop_time in stop_times):
                 # not all timing statuses are blank - mark any blank ones as minor
@@ -812,7 +806,7 @@ class Command(BaseCommand):
                             trips[i].id = old_trip.id
                         else:
                             logger.info(
-                                f"{route_code} {old_trip.start} {trips[i].start}"
+                                f"{route.code} {old_trip.start} {trips[i].start}"
                             )
                             existing_trips.delete()
                             existing_trips = None
@@ -955,24 +949,25 @@ class Command(BaseCommand):
                                 yield route_link
 
     def handle_service(self, filename: str, transxchange, txc_service, today, stops):
+        skip_journeys = False
+
         if (
             txc_service.operating_period.end
             and txc_service.operating_period.end < txc_service.operating_period.start
         ):
             logger.warning(
-                f"skipping {filename} {txc_service.service_code}: "
+                f"{filename} {txc_service.service_code}: "
                 f"end {txc_service.operating_period.end} is before start {txc_service.operating_period.start}"
             )
-            return
 
         if (
             txc_service.operating_period.end
             and txc_service.operating_period.end < today
         ):
             logger.warning(
-                f"skipping {filename}: {txc_service.service_code} end {txc_service.operating_period.end} is in the past"
+                f"{filename}: {txc_service.service_code} end {txc_service.operating_period.end} is in the past"
             )
-            return
+            skip_journeys = True
 
         operators = self.get_operators(transxchange, txc_service)
 
@@ -1344,9 +1339,16 @@ class Command(BaseCommand):
             if len(txc_service.lines) > 1:
                 route_code += f"#{line.id}"
 
-            self.handle_journeys(
-                route_code, route_defaults, stops, journeys, txc_service, operators
+            route, route_created = Route.objects.update_or_create(
+                route_defaults, source=self.source, code=route_code
             )
+
+            self.route_ids.add(route.id)
+
+            if not skip_journeys:
+                self.handle_journeys(
+                    route, route_created, stops, journeys, txc_service, operators
+                )
 
     @staticmethod
     def do_stops(transxchange_stops: dict) -> dict:
