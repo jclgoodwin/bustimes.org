@@ -79,10 +79,16 @@ def initialisms(word, **kwargs):
         return word
 
 
-def get_summary(summary):
+def get_summary(summary: str):
+    summary = summary.strip()
+
     # London wtf
     if summary == "not School vacation in free public holidays regulation holidays":
         return "not school holidays"
+
+    # Scotland
+    if summary.startswith("QE0 : ") and summary.endswith(".cif"):
+        return ""
 
     summary = summary.replace(" days days", " days")
     summary = summary.replace("olidays holidays", "olidays")
