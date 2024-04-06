@@ -1396,22 +1396,25 @@ def search(request):
 
         if postcode and res.ok:
             result = res.json()["result"]
-            point = Point(result["longitude"], result["latitude"], srid=4326)
 
-            context["postcode"] = {
-                "postcode": result.get("postcode") or result.get("outcode"),
-                "latlong": point,
-                "localities": (
-                    Locality.objects.filter(latlong__bboverlaps=point.buffer(0.05))
-                    .filter(
-                        Q(stoppoint__active=True) | Q(locality__stoppoint__active=True)
-                    )
-                    .distinct()
-                    .annotate(distance=Distance("latlong", point))
-                    .order_by("distance")
-                    .defer("latlong")[:20]
-                ),
-            }
+            if result["longitude"] is not None:
+                point = Point(result["longitude"], result["latitude"], srid=4326)
+
+                context["postcode"] = {
+                    "postcode": result.get("postcode") or result.get("outcode"),
+                    "latlong": point,
+                    "localities": (
+                        Locality.objects.filter(latlong__bboverlaps=point.buffer(0.05))
+                        .filter(
+                            Q(stoppoint__active=True)
+                            | Q(locality__stoppoint__active=True)
+                        )
+                        .distinct()
+                        .annotate(distance=Distance("latlong", point))
+                        .order_by("distance")
+                        .defer("latlong")[:20]
+                    ),
+                }
 
         if "postcode" not in context or not result.get("postcode"):
             query = SearchQuery(query_text, search_type="websearch", config="english")
