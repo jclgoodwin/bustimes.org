@@ -9,7 +9,7 @@ import {
 } from "react-map-gl/maplibre";
 
 import { useRoute } from "wouter";
-import { navigate } from "wouter/use-location";
+import { useLocation } from "wouter";
 
 import { LngLatBounds } from "maplibre-gl";
 
@@ -158,6 +158,7 @@ const Route = React.memo(function Route({ times }: RouteProps) {
 
 export default function TripMap() {
   const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
+  const [, navigate] = useLocation();
   const tripId: string | undefined = params?.tripId;
 
   const [trip, setTrip] = React.useState<Trip>(window.STOPS);
@@ -176,7 +177,7 @@ export default function TripMap() {
 
   const navigateToTrip = React.useCallback((item: Vehicle) => {
     navigate("/trips/" + item.trip_id);
-  }, []);
+  }, [navigate]);
 
   const [cursor, setCursor] = React.useState("");
 
