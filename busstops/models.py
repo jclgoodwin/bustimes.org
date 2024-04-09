@@ -774,8 +774,12 @@ class Service(models.Model):
 
     @staticmethod
     def get_line_name_order(line_name):
-        groups = SERVICE_ORDER_REGEX.match(line_name).groups()
-        return (groups[0], int(groups[1]) if groups[1] else 0, groups[2])
+        prefix, number, suffix = SERVICE_ORDER_REGEX.match(line_name).groups()
+        if number:
+            number = int(number)
+        else:
+            number = 0
+        return (number, prefix, suffix)
 
     def get_tfl_url(self):
         return f"https://tfl.gov.uk/bus/timetable/{self.line_name}/"
