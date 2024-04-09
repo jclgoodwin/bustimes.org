@@ -1016,26 +1016,35 @@ class ServiceDetailView(DetailView):
 
         # timetable
 
-        if self.object.timetable_wrong:
-            date = None
-        else:
-            form = forms.TimetableForm(self.request.GET, related=context["related"])
+        date = None
 
+        if not self.object.timetable_wrong:
             if context["related"]:
                 context["linked_services"] = self.object.get_linked_services()
 
-            context["timetable"] = form.get_timetable(self.object)
-            context["form"] = form
-            date = form.cleaned_data.get("date")
+            form = forms.TimetableForm(
+                self.request.GET or None,
+                service=self.object,
+                related=context["related"],
+            )
 
-            if (
-                date
-                and not (
-                    context["timetable"].calendars and context["timetable"].calendar_ids
-                )
-                and date < timezone.localdate()
-            ):
-                return {"redirect_to": self.object}
+            context["timetable"] = form.get_timetable(self.object)
+
+            context["form"] = form
+
+            if form.is_valid():
+                date = form.cleaned_data.get("date")
+
+                # date in past - redirect to today?
+                if (
+                    date
+                    and not (
+                        context["timetable"].calendars
+                        and context["timetable"].calendar_ids
+                    )
+                    and date < timezone.localdate()
+                ):
+                    return {"redirect_to": self.object}
 
             context["registrations"] = Registration.objects.filter(
                 Exists(self.object.route_set.filter(registration=OuterRef("id")))
@@ -1223,9 +1232,10 @@ class ServiceDetailView(DetailView):
 
 
 def service_timetable(request, service_id):
-    service = get_object_or_404(Service.objects.defer("geometry"), id=service_id)
+    services = Service.objects.with_line_names().defer("geometry", "search_vector")
+    service = get_object_or_404(services, id=service_id)
     related_options = service.get_similar_services()
-    form = forms.TimetableForm(request.GET, related=related_options)
+    form = forms.TimetableForm(request.GET, service=service, related=related_options)
 
     context = {
         "object": service,

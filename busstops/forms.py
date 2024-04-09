@@ -30,32 +30,42 @@ class TimetableForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
+        service = kwargs.pop("service")
         self.related = kwargs.pop("related")
         super().__init__(*args, **kwargs)
+
+        line_names = service.get_line_names()
+        self.fields["service"].choices = [
+            (line_name, line_name) for line_name in line_names
+        ]
+        self.fields["service"].initial = list(line_names)
+
         if self.related:
-            self.fields["service"].choices = [
-                (s.id, s.get_line_name()) for s in self.related
-            ]
-        else:
+            for s in self.related:
+                self.fields["service"].choices += [
+                    (line_name, line_name) for line_name in s.get_line_names()
+                ]
+        if len(self.fields["service"].choices) <= 1:
             del self.fields["service"]
 
     def get_timetable(self, service):
         if self.is_valid():
             date = self.cleaned_data["date"]
             calendar_id = self.cleaned_data["calendar"]
-            also_services = [
-                s for s in self.related if str(s.id) in self.cleaned_data["service"]
-            ]
+            line_names = self.cleaned_data.get("service")
+            detailed = self.cleaned_data["detailed"]
         else:
             date = None
             calendar_id = None
-            also_services = ()
+            detailed = False
+            line_names = None
 
         return service.get_timetable(
             day=date,
             calendar_id=calendar_id,
-            also_services=also_services,
-            detailed=self.cleaned_data.get("detailed"),
+            also_services=self.related,
+            line_names=line_names or service.get_line_names(),
+            detailed=detailed,
         )
 
 

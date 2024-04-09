@@ -946,11 +946,18 @@ class Service(models.Model):
         return services
 
     def get_timetable(
-        self, day=None, calendar_id=None, also_services=(), detailed=False
+        self,
+        day=None,
+        calendar_id=None,
+        also_services=[],
+        line_names=None,
+        detailed=False,
     ):
         """Given a Service, return a Timetable"""
 
         cache_key = f"s{self.id}:{int(self.modified_at.timestamp())}:{day or calendar_id}:{detailed}"
+        if line_names:
+            cache_key += ":".join(line_names)
         for s in also_services:
             cache_key += f":{s.id}:{int(s.modified_at.timestamp())}"
 
@@ -965,7 +972,11 @@ class Service(models.Model):
             if also_services:
                 routes = Route.objects.filter(service__in=[self] + also_services)
             else:
-                routes = self.route_set
+                routes = self.route_set.all()
+
+            if line_names:
+                routes = routes.filter(line_name__in=line_names)
+
             operators = self.operator.all()
             try:
                 timetable = Timetable(
