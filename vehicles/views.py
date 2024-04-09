@@ -124,9 +124,9 @@ features_string_agg = StringAgg(
 
 def get_vehicle_order(vehicle):
     if vehicle.notes == "Spare ticket machine":
-        return ("ZZ", vehicle.fleet_number or 0, vehicle.code)
+        return (vehicle.fleet_number or 0, vehicle.code)
     if vehicle.fleet_number:
-        return ("", vehicle.fleet_number, "")
+        return (vehicle.fleet_number, "AA")
     return Service.get_line_name_order(vehicle.fleet_code or vehicle.code)
 
 
