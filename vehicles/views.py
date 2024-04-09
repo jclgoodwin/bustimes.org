@@ -29,7 +29,7 @@ from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 
 from accounts.models import User
 from buses.utils import cache_page
-from busstops.models import Operator, Service
+from busstops.models import SERVICE_ORDER_REGEX, Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime, Trip
 
@@ -124,10 +124,16 @@ features_string_agg = StringAgg(
 
 def get_vehicle_order(vehicle):
     if vehicle.notes == "Spare ticket machine":
-        return (vehicle.fleet_number or 0, vehicle.code)
+        return ("", vehicle.fleet_number or 0, vehicle.code)
+
     if vehicle.fleet_number:
-        return (vehicle.fleet_number, "AA")
-    return Service.get_line_name_order(vehicle.fleet_code or vehicle.code)
+        return ("", vehicle.fleet_number)
+
+    prefix, number, suffix = SERVICE_ORDER_REGEX.match(
+        vehicle.fleet_code or vehicle.code
+    ).groups()
+    number = int(number) if number else 0
+    return (prefix, number, suffix)
 
 
 @require_safe
