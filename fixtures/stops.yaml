@@ -1,3 +1,5 @@
+# relocate stops from The Street to Dereham Road - buses don't run through Briningham village
+# see https://www.flickr.com/photos/55355638@N05/9821099604/
 2900B482:
     common_name: green
     landmark: village sign
@@ -22,10 +24,14 @@
 3500B267100:
     common_name: Cross Street
     indicator: ''
+
+# nearer the surgery than the college
 4200F177501:
     common_name: Atherstone Surgery
 4200F177502:
     common_name: Atherstone Surgery
+
+# clarify that the church isn't the main church in Wells-next-the-Sea
 2900W5712:
     landmark: Congregational church
 
