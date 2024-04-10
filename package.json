@@ -51,7 +51,7 @@
       ],
       "distDir": "busstops/static/dist",
       "engines": {
-        "browsers": "Chrome 71"
+        "browsers": "Chrome 70"
       }
     }
   },
