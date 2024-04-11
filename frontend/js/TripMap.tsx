@@ -381,7 +381,7 @@ export default function TripMap() {
             return (
               <VehicleMarker
                 key={item.id}
-                selected={item.id === clickedVehicleMarkerId}
+                selected={item.id === clickedVehicleMarkerId || item.trip_id === tripId}
                 vehicle={item}
               />
             );
