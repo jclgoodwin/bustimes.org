@@ -48,22 +48,27 @@ from .models import Garage, Route, StopTime, Trip
 
 class ServiceDebugView(DetailView):
     model = Service
-    trips = (
-        Trip.objects.select_related("garage")
-        .prefetch_related(
-            "calendar__calendardate_set",
-            "calendar__calendarbankholiday_set__bank_holiday",
-        )
-        .order_by("calendar", "inbound", "start")
-    )
-    prefetch = Prefetch("route_set__trip_set", queryset=trips)
-    queryset = model.objects.prefetch_related(prefetch)
     template_name = "service_debug.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        for route in self.object.route_set.all():
+        trips = (
+            Trip.objects.select_related("garage")
+            .prefetch_related(
+                "calendar__calendardate_set",
+                "calendar__calendarbankholiday_set__bank_holiday",
+            )
+            .order_by("calendar", "inbound", "start")
+        )
+
+        routes = (
+            self.object.route_set.select_related("source")
+            .prefetch_related(Prefetch("trip_set", queryset=trips))
+            .order_by("service_code", "revision_number", "start_date", "line_name")
+        )
+
+        for route in routes:
             previous_trip = None
 
             for trip in route.trip_set.all():
@@ -75,6 +80,8 @@ class ServiceDebugView(DetailView):
                     previous_trip = trip
                 else:
                     previous_trip.rowspan += 1
+
+        context["routes"] = routes
 
         context["stopusages"] = self.object.stopusage_set.select_related(
             "stop__locality"

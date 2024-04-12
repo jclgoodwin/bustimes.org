@@ -245,6 +245,7 @@ class DataSource(models.Model):
         elif "tnds" in self.url:
             url = "https://www.travelinedata.org.uk/"
             text = "the Traveline National Dataset (TNDS)"
+            date = self.datetime
         elif url:
             text = self.get_nice_name()
             date = self.datetime
