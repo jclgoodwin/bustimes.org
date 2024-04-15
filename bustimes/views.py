@@ -153,7 +153,7 @@ def route_xml(request, source, code=""):
                     code = ""
 
                 elif ".zip/" in code:
-                    sub_archive, code = code.split("/")
+                    sub_archive, code = code.split("/", 1)
                     archive = zipfile.ZipFile(archive.open(sub_archive))
 
             if code:
@@ -178,8 +178,8 @@ def route_xml(request, source, code=""):
             path = settings.DATA_DIR / "ticketer" / f"{path}.zip"
         elif "bus-data.dft.gov.uk" in source.url:
             path = settings.DATA_DIR / "bod" / str(source.id)
-        elif "data.discoverpassenger" in source.url:
-            path, code = code.split("/")
+        elif "data.discoverpassenger" in source.url and "/" in code:
+            path, code = code.split("/", 1)
             url = f"https://s3-eu-west-1.amazonaws.com/passenger-sources/{path.split('_')[0]}/txc/{path}"
             path = settings.DATA_DIR / path
         else:
