@@ -1,28 +1,59 @@
 /*jslint browser: true*/
-/*global accessibleAutocomplete*/
 
 (function () {
     'use strict';
 
-    // vehicle type
-    var selectElement = document.getElementById('id_vehicle_type');
-    if (selectElement) {
-        accessibleAutocomplete.enhanceSelectElement({
-            selectElement: selectElement
-        });
+
+    function formatLivery(livery) {
+        if (!livery.css) {
+            return livery.text;
+        }
+        return $(
+            '<div><div class="livery" style="background:'+ livery.css + '"></div>' + livery.text + '</div>'
+        );
     }
 
-    // other colour
-    function toggleOtherColour() {
-        var otherCheckbox = document.querySelector('#id_colours [value="Other"]');
-        if (otherCheckbox) {
-            var display = otherCheckbox.checked ? '' : 'none';
-            document.getElementById('id_other_colour').parentNode.style.display = display;
+    function data(params) {
+        var query = {
+            limit: 100,
+            name: params.term,
+            published: true,
+            offset: ((params.page | 1) - 1) * 100,
+            delay: 250
         }
+        return query;
     }
-    var radios = document.querySelectorAll('#id_colours [type="radio"]');
-    for (var i = radios.length - 1; i >= 0; i -= 1) {
-        radios[i].addEventListener('change', toggleOtherColour);
+
+    function processResults(data) {
+        return {
+            results: data.results.map(function(item) {
+                return {
+                    id: item.id,
+                    text: item.name,
+                    css: item.left_css
+                };
+            }),
+            pagination: {
+                more: data.next ? true : false
+            }
+        };
     }
-    toggleOtherColour();
+
+    $('#id_vehicle_type').select2({
+        ajax: {
+            url: '/api/vehicletypes/',
+            data: data,
+            processResults: processResults,
+        }
+    });
+
+    $('#id_colours').select2({
+        ajax: {
+            url: '/api/liveries/',
+            data: data,
+            processResults: processResults,
+        },
+        templateResult: formatLivery,
+        templateSelection: formatLivery,
+    });
 })();

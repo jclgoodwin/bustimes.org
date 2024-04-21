@@ -1,9 +1,14 @@
 from django.db.models import Q
-from django_filters.rest_framework import CharFilter, FilterSet, NumberFilter, DateTimeFilter
+from django_filters.rest_framework import (
+    CharFilter,
+    DateTimeFilter,
+    FilterSet,
+    NumberFilter,
+)
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip
-from vehicles.models import Vehicle
+from vehicles.models import Livery, Vehicle, VehicleType
 
 
 class VehicleFilter(FilterSet):
@@ -56,3 +61,19 @@ class TripFilter(FilterSet):
     class Meta:
         model = Trip
         fields = ["ticket_machine_code", "vehicle_journey_code", "block"]
+
+
+class LiveryFilter(FilterSet):
+    name = CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        model = Livery
+        fields = ["name", "published"]
+
+
+class VehicleTypeFilter(FilterSet):
+    name = CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        model = VehicleType
+        fields = ["name"]

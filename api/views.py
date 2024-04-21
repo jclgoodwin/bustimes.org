@@ -36,11 +36,15 @@ class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
 class LiveryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Livery.objects.order_by("id")
     serializer_class = serializers.LiverySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = filters.LiveryFilter
 
 
 class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = VehicleType.objects.all()
     serializer_class = serializers.VehicleTypeSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = filters.VehicleTypeFilter
 
 
 class OperatorViewSet(viewsets.ReadOnlyModelViewSet):

@@ -56,6 +56,8 @@
         <input type="submit" value="Save changes">
     </form>
 
+    {{ form.media }}
+
 {% endif %}
 
 {% if previous %}
@@ -65,14 +67,5 @@
 {% if next %}
     <p class="next"><a href="{{ next.get_edit_url }}">{{ next }} &rarr;</a></p>
 {% endif %}
-
-{% endblock %}
-
-{% block foot %}
-   {% if form %}
-        {% load static %}
-        <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
-        <script async src="{% static 'js/edit-vehicle.js' %}"></script>
-    {% endif %}
 
 {% endblock %}

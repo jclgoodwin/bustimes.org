@@ -1,67 +1,31 @@
 import re
-from urllib.parse import quote_plus
 
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db.models import Count, OuterRef, Q
-from django.urls import reverse
-from django.utils.html import format_html
+from django.db.models import OuterRef, Q
 from sql_util.utils import Exists
 
 from busstops.models import Operator, Service
 
 from . import fields
-from .models import Livery, Vehicle, VehicleFeature, VehicleType, get_text_colour
-
-
-def get_livery_choices(vehicle, user):
-    choices = {}
-
-    vehicles = Vehicle.objects.filter(id=vehicle.id)
-    if vehicle.operator_id:
-        vehicles |= vehicle.operator.vehicle_set.filter(withdrawn=True)
-
-    liveries = Livery.objects.filter(vehicle__in=vehicles)
-    if vehicle.operator_id:
-        liveries |= Livery.objects.filter(published=True, operators=vehicle.operator_id)
-
-    liveries = liveries.annotate(popularity=Count("vehicle")).order_by("-popularity")
-
-    for livery in liveries.distinct():
-        choices[livery.id] = livery.preview(name=True)
-
-        if user.has_perm("vehicles.change_livery"):
-            url = reverse("admin:vehicles_livery_change", args=(livery.id,))
-            choices[livery.id] += format_html(' <a href="{}">(edit)</a>', url)
-
-    # add ad hoc vehicle colours
-    for vehicle in vehicles.filter(
-        ~Q(colours=""), ~Q(colours="Other"), livery=None
-    ).distinct("colours"):
-        choices[vehicle.colours] = Livery(
-            colours=vehicle.colours, name=f"{vehicle.colours}"
-        ).preview(name=True)
-
-        if user.has_perm("vehicles.change_livery"):
-            url = reverse("admin:vehicles_livery_add")
-            choices[vehicle.colours] += format_html(
-                ' <a href="{}?colours={}&amp;operator={}">(add proper livery)</a>',
-                url,
-                quote_plus(vehicle.colours),
-                vehicle.operator_id,
-            )
-
-    # replace the dictionary with a list of key, label pairs
-    choices = list(choices.items())
-
-    if choices:
-        choices.append(("Other", "Other"))
-
-    return choices
+from .models import Livery, VehicleFeature, VehicleType, get_text_colour
 
 
 class EditVehicleForm(forms.Form):
+    @property
+    def media(self):
+        return forms.Media(
+            js=(
+                "admin/js/vendor/jquery/jquery.min.js",
+                "admin/js/vendor/select2/select2.full.min.js",
+                "js/edit-vehicle.js",
+            ),
+            css={
+                "screen": ("admin/css/vendor/select2/select2.min.css",),
+            },
+        )
+
     field_order = [
         "spare_ticket_machine",
         "withdrawn",
@@ -96,9 +60,9 @@ class EditVehicleForm(forms.Form):
         queryset=VehicleType.objects, required=False, empty_label=""
     )
 
-    colours = forms.ChoiceField(
+    colours = forms.ModelChoiceField(
         label="Current livery",
-        widget=forms.RadioSelect,
+        queryset=Livery.objects,
         required=False,
         help_text="""To avoid arguments, please wait until the bus has *finished being repainted*
 (<em>not</em> "in the paint shop" or "awaiting repaint")""",
@@ -182,17 +146,17 @@ link to a picture to prove it. Be polite.""",
     def __init__(self, *args, user, vehicle, **kwargs):
         super().__init__(*args, **kwargs)
 
-        colours = get_livery_choices(vehicle, user)
-
-        if colours:
-            if vehicle:
-                colours = [("", "None/mostly white/other")] + colours
-            else:
-                colours = [("", "No change")] + colours
-            self.fields["colours"].choices = colours
+        if vehicle.vehicle_type_id:
+            self.fields["vehicle_type"].choices = (
+                (vehicle.vehicle_type_id, vehicle.vehicle_type),
+            )
         else:
-            del self.fields["colours"]
-            del self.fields["other_colour"]
+            self.fields["vehicle_type"].choices = ()
+
+        if vehicle.livery_id:
+            self.fields["colours"].choices = ((vehicle.livery_id, vehicle.livery),)
+        else:
+            self.fields["colours"].choices = ()
 
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True

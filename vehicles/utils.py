@@ -4,7 +4,7 @@ import re
 from django.core.cache import caches
 from django.core.cache.backends.base import InvalidCacheBackendError
 
-from .models import Livery, VehicleRevision, VehicleRevisionFeature
+from .models import VehicleRevision, VehicleRevisionFeature
 
 try:
     redis_client = caches["redis"]._cache.get_client()
@@ -72,22 +72,20 @@ def get_revision(vehicle, data):
         del data["operator"]
 
     if "colours" in data:
-        if data["colours"].isdigit():  # livery id
-            livery = Livery.objects.get(id=data["colours"])
-            if revision.vehicle.livery_id != livery.id:
-                revision.from_livery = revision.vehicle.livery
-                revision.to_livery = livery
-                if revision.vehicle.colours:
-                    revision.changes["colours"] = f"-{revision.vehicle.colours}\n+"
-        else:
-            to_colour = data.get("other_colour") or data["colours"]
+        livery = data["colours"]
+        if revision.vehicle.livery_id != (livery and livery.id):
             revision.from_livery = revision.vehicle.livery
-            if revision.vehicle.colours != to_colour:
-                revision.changes[
-                    "colours"
-                ] = f"-{revision.vehicle.colours}\n+{to_colour}"
-
+            revision.to_livery = livery
+            if revision.vehicle.colours:
+                revision.changes["colours"] = f"-{revision.vehicle.colours}\n+"
         del data["colours"]
+
+    if "other_colour" in data:
+        to_colour = data["other_colour"]
+        revision.from_livery = revision.vehicle.livery
+        if revision.vehicle.colours != to_colour:
+            revision.changes["colours"] = f"-{revision.vehicle.colours}\n+{to_colour}"
+
         if "other_colour" in data:
             del data["other_colour"]
 
