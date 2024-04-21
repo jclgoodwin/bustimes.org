@@ -777,7 +777,7 @@ class Service(models.Model):
     def get_line_name_order(line_name):
         prefix, number, suffix = SERVICE_ORDER_REGEX.match(line_name).groups()
         number = number.zfill(4)
-        if prefix == "X":
+        if prefix == "X" or prefix == "N":
             return ("", number, prefix, suffix)
         return (prefix, number, suffix)
 
