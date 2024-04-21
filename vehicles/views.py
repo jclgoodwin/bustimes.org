@@ -795,7 +795,18 @@ def edit_vehicle(request, **kwargs):
                     raise
 
     if form:
-        context["pending_edits"] = vehicle.vehiclerevision_set.filter(pending=True)
+        context["pending_edits"] = (
+            vehicle.vehiclerevision_set.filter(pending=True)
+            .select_related(
+                "from_type",
+                "to_type",
+                "from_operator",
+                "to_operator",
+                "from_livery",
+                "to_livery",
+            )
+            .prefetch_related("vehiclerevisionfeature_set__feature")
+        )
 
     if vehicle.operator:
         context["breadcrumb"] = [vehicle.operator, Vehicles(vehicle=vehicle), vehicle]
