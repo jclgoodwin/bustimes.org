@@ -126,6 +126,10 @@ summary::marker {
     color: var(--border-color-darker);
 }
 
+.cf-turnstile {
+    margin-top: -1em;
+}
+
 @import '../../node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css';
 
 .autocomplete__hint {

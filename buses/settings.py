@@ -318,3 +318,5 @@ TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
 
 ABBREVIATE_HOURLY = False
 DISABLE_REGISTRATION = False
+
+DISPOSABLE_EMAIL_DOMAINS = BASE_DIR / "fixtures" / "disposable_email_domains.txt"

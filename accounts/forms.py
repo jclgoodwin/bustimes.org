@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
 from django.contrib.auth.validators import UnicodeUsernameValidator
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import SuspiciousOperation
 from django.forms import (
     BooleanField,
     CharField,
@@ -10,11 +10,15 @@ from django.forms import (
     Form,
     NullBooleanField,
 )
+from django_email_blacklist import DisposableEmailChecker
+from turnstile.fields import TurnstileField
 
 User = get_user_model()
 
 
 class RegistrationForm(PasswordResetForm):
+    turnstile = TurnstileField(label="Confirm that you’re a human (not a robot)")
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -22,20 +26,28 @@ class RegistrationForm(PasswordResetForm):
         self.fields["email"].help_text = "Will be kept private"
 
     def save(self, request=None):
+        email_address = self.cleaned_data["email"]
+
+        email_checker = DisposableEmailChecker()
+        if email_checker.is_disposable(email_address):
+            raise SuspiciousOperation
+
         ip_address = request.headers.get("cf-connecting-ip")
 
         if ip_address:
             if User.objects.filter(trusted=False, ip_address=ip_address).exists():
-                raise PermissionDenied
+                raise SuspiciousOperation
 
         try:
-            self.user = User.objects.get(email__iexact=self.cleaned_data["email"])
+            self.user = User.objects.get(email__iexact=email_address)
         except User.DoesNotExist:
-            self.user = User.objects.create_user(
-                self.cleaned_data["email"], self.cleaned_data["email"]
-            )
+            self.user = User.objects.create_user(email_address, email_address)
 
-        if request and ip_address:
+        if not self.user.is_active:
+            self.user.is_active = True
+            self.user.save(update_fields=["is_active"])
+
+        if ip_address:
             self.user.ip_address = ip_address
             self.user.save(update_fields=["ip_address"])
 
