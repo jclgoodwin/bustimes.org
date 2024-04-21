@@ -58,6 +58,10 @@
 
     {{ form.media }}
 
+    {% if vehicle.livery %}
+        <style>{% for css in vehicle.livery.get_styles %}{{ css|safe }}{% endfor %}</style>
+    {% endif %}
+
 {% endif %}
 
 {% if previous %}

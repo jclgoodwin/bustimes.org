@@ -107,8 +107,6 @@ link to a picture to prove it. Be polite.""",
 
     def clean_other_colour(self):
         if self.cleaned_data["other_colour"]:
-            if self.cleaned_data.get("colours") != "Other":
-                return
             try:
                 get_text_colour(self.cleaned_data["other_colour"])
             except ValueError as e:

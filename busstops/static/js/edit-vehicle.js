@@ -5,11 +5,16 @@
 
 
     function formatLivery(livery) {
-        if (!livery.css) {
+        if (!livery.id) {
             return livery.text;
         }
+        if (livery.css) {
+            return $(
+                '<div><div class="livery" style="background:'+ livery.css + '"></div>' + livery.text + '</div>'
+            );
+        }
         return $(
-            '<div><div class="livery" style="background:'+ livery.css + '"></div>' + livery.text + '</div>'
+            '<div><div class="livery livery-'+ livery.id + '"></div>' + livery.text + '</div>'
         );
     }
 

@@ -361,9 +361,8 @@ class LiveryAdmin(SimpleHistoryAdmin):
     list_filter = [
         "published",
         "updated_at",
-        ("operators", admin.RelatedOnlyFieldListFilter),
+        ("vehicle__operator", admin.RelatedOnlyFieldListFilter),
     ]
-    autocomplete_fields = ["operators"]
     readonly_fields = ["left", "right", "blob", "updated_at"]
     ordering = ["-id"]
 

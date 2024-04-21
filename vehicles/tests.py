@@ -84,7 +84,6 @@ class VehiclesTests(TestCase):
         cls.livery = Livery.objects.create(
             name="black with lemon piping", colours="#FF0000 #0000FF", published=True
         )
-        cls.livery.operators.add(cls.lynx)
         cls.vehicle_2 = Vehicle.objects.create(
             code="50",
             fleet_number=50,
@@ -584,7 +583,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # colour, spare ticket machine
         initial["colours"] = self.livery.id
         initial["spare_ticket_machine"] = True
-        with self.assertNumQueries(20):
+        with self.assertNumQueries(16):
             response = self.client.post(url, initial)
             revision = response.context["revision"]
             self.assertEqual(revision.to_livery, self.livery)
@@ -626,7 +625,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         initial["branding"] = "Coastliner"
         initial["previous_reg"] = "k292  jvf"
         initial["reg"] = ""
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context["form"])
 
@@ -635,7 +634,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get("/vehicles/edits")
         self.assertContains(response, "Luther Blisset")
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             response = self.client.get(url)
         self.assertContains(response, "already")
 
@@ -658,7 +657,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.post(url, initial)
             self.assertContains(response, "You haven&#x27;t changed anything")
 
-        initial["colours"] = None
         initial["other_colour"] = "Bath is my favourite spa town, and so is Harrogate"
         with self.assertNumQueries(11):
             response = self.client.post(url, initial)
