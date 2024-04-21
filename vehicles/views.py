@@ -5,6 +5,7 @@ from itertools import pairwise
 from urllib.parse import urlencode
 
 import xmltodict
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
@@ -185,7 +186,7 @@ def operator_vehicles(request, slug=None, parent=None):
         raise Http404
 
     vehicles = sorted(vehicles, key=get_vehicle_order)
-    if not parent and operator.name == "National Express":
+    if not parent and operator.noc in settings.ALLOW_VEHICLE_NOTES_OPERATORS:
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
     if parent:
