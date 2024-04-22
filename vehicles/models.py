@@ -596,13 +596,15 @@ class VehicleRevision(models.Model):
                     if field == "livery":
                         if before:
                             before = format_html(
-                                '<span class="livery" style="background:{}"></span>',
+                                '<span class="livery" style="background:{}"></span>{}',
                                 before.left_css,
+                                before.name,
                             )
                         if after:
                             after = format_html(
-                                '<span class="livery" style="background:{}"></span>',
+                                '<span class="livery" style="background:{}"></span>{}',
                                 after.left_css,
+                                after.name,
                             )
                 else:
                     before = getattr(self, f"from_{field}_id")
