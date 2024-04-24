@@ -1,0 +1,42 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.3.1
+        bundler-cache: true
+
+    - name: Install Kamal
+      run: |
+        gem install kamal
+
+    - name: Set up SSH
+      env:
+        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+      run: |
+        mkdir .ssh
+        pwd
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > .ssh/github_actions
+        chmod 600 .ssh/github_actions
+        ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+        ssh-add .ssh/github_actions
+
+    - name: Deploy
+      env:
+        KAMAL_REGISTRY_USERNAME: ${{ github.actor }}
+        KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+      run: |
+        kamal deploy -d staging
