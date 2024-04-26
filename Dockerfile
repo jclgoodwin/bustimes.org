@@ -24,7 +24,7 @@ RUN apt-get update && \
 ENV VIRTUAL_ENV=/opt/poetry
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
-RUN $VIRTUAL_ENV/bin/pip install poetry==1.7.1
+RUN $VIRTUAL_ENV/bin/pip install poetry==1.8.2
 
 WORKDIR /app/
 
