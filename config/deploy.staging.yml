@@ -1,0 +1,9 @@
+servers:
+  - 209.38.166.186
+
+registry:
+  server: ghcr.io
+  username:
+    - KAMAL_REGISTRY_USERNAME
+  password:
+    - KAMAL_REGISTRY_PASSWORD
