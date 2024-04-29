@@ -4,6 +4,7 @@ from django_filters.rest_framework import (
     DateTimeFilter,
     FilterSet,
     NumberFilter,
+    OrderingFilter,
 )
 
 from busstops.models import Operator, Service, StopPoint
@@ -17,6 +18,8 @@ class VehicleFilter(FilterSet):
     reg = CharFilter(lookup_expr="iexact")
     slug = CharFilter()
     operator = CharFilter()
+
+    ordering = OrderingFilter(fields=(("id", "id"),))
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(Q(reg__iexact=value) | Q(fleet_code__iexact=value))
