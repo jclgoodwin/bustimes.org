@@ -64,7 +64,14 @@ def get_routes(routes, when=None, from_date=None):
         return routes
 
     sources = set(route.source for route in routes)
-    if len(sources) > 1 and any(source.name == "W" for source in sources):
+    if (
+        len(sources) > 1
+        and any(
+            route.code.startswith("Merged") and route.source.name == "W"
+            for route in routes
+        )
+        and any
+    ):
         routes = [route for route in routes if route.source.name == "W"]
         if len(routes) <= 1:
             return routes
