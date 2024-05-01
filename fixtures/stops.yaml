@@ -35,6 +35,11 @@
 2900W5712:
     landmark: Congregational church
 
+5710AWA11099:
+    common_name: Wyndham Arcade Stop JE
+5710WDB48472:
+    common_name: Wyndham Arcade Stop JJ
+
 # in Knaresborough, not Calcutt
 3200YNA06567:
     locality_id: E0056345
