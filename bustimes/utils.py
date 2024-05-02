@@ -29,14 +29,19 @@ class log_time_taken:
 
 
 def get_routes(routes, when=None, from_date=None):
+    # complicated way of working out which Passenger .zip applies
     current_prefixes = {}
     for route in routes:
-        if route.source.settings:
-            for prefix, dates in route.source.settings.items():
-                if when and date.fromisoformat(dates[0]) <= when < date.fromisoformat(
-                    dates[1]
-                ):
+        if route.source.settings and route.source_id not in route.soruce.settings:
+            prefix_dates = [
+                (prefix, date.fromisoformat(dates[0]), date.fromisoformat(dates[1]))
+                for prefix, dates in route.source.settings.items()
+            ]
+            prefix_dates.sort(key=lambda p, f, t: f)  # sort by from_date
+            for prefix, from_date, to_date in prefix_dates:
+                if when and (from_date <= when < to_date):
                     current_prefixes[route.source_id] = prefix
+                    break
     if current_prefixes:
         routes = [
             route
