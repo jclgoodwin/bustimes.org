@@ -37,7 +37,7 @@ def get_routes(routes, when=None, from_date=None):
                 (prefix, date.fromisoformat(dates[0]), date.fromisoformat(dates[1]))
                 for prefix, dates in route.source.settings.items()
             ]
-            prefix_dates.sort(key=lambda p, f, t: f)  # sort by from_date
+            prefix_dates.sort(key=lambda item: item[1])  # sort by from_date
             for prefix, from_date, to_date in prefix_dates:
                 if when and (from_date <= when < to_date):
                     current_prefixes[route.source_id] = prefix
