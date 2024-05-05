@@ -1255,7 +1255,7 @@ class Command(BaseCommand):
 
             route_defaults = {
                 "line_name": line.line_name,
-                "line_brand": line_brand,
+                "line_brand": line_brand or "",
                 "outbound_description": line.outbound_description or "",
                 "inbound_description": line.inbound_description or "",
                 "start_date": txc_service.operating_period.start,
