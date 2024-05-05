@@ -1140,7 +1140,9 @@ class Command(BaseCommand):
                         service.colour_id = operator.colour_id
                         break
 
-            line_brand = line.line_brand
+            line_brand = line.line_brand or line.marketing_name
+            if line_brand:
+                logger.info(line_brand)
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
                 if txc_service.marketing_name in (
