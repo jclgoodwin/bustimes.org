@@ -350,6 +350,42 @@ class BusTimesTest(TestCase):
 
         self.assertFalse(get_routes([]), 2)
 
+    def test_get_routes_passenger(self):
+        source = DataSource(
+            id=1,
+            name="McGill",
+            settings={
+                "mcgills_1714387585.zip": ["2024-05-06", "2024-05-07"],
+                "mcgills_1714388037.zip": ["2024-05-13", "2025-05-14"],
+                "mcgills_1714389553.zip": ["2024-04-29", "2025-04-30"],
+            },
+        )
+        routes = [
+            Route(
+                id=1,
+                code="mcgills_1714387585.zip/foo.xml",  # starts 2024-05-06
+                source=source,
+                line_name="1",
+            ),
+            Route(
+                id=2,
+                code="mcgills_1714388037.zip/foo.xml",  # starts 2024-05-13
+                source=source,
+                line_name="2",
+            ),
+            Route(
+                id=3,
+                code="mcgills_1714389553.zip/foo.xml",  # starts 2024-04-29
+                source=source,
+                line_name="3",
+            ),
+        ]
+
+        self.assertEqual(get_routes(routes, date(2024, 4, 1)), [])
+        self.assertEqual(get_routes(routes, date(2024, 4, 29)), [routes[2]])
+        self.assertEqual(get_routes(routes, date(2024, 5, 6)), [routes[0]])
+        self.assertEqual(get_routes(routes, date(2024, 5, 14)), [routes[1]])
+
     def test_garage(self):
         garage = Garage(code="LOW", name="LOWESTOFT TOWN")
         self.assertEqual(str(garage), "Lowestoft Town")

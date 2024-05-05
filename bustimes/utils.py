@@ -32,22 +32,26 @@ def get_routes(routes, when=None, from_date=None):
     # complicated way of working out which Passenger .zip applies
     current_prefixes = {}
     for route in routes:
-        if route.source.settings and route.source_id not in route.source.settings:
+        if route.source.settings and route.source_id not in current_prefixes:
+            current_prefixes[route.source.id] = None
+
             prefix_dates = [
                 (prefix, date.fromisoformat(dates[0]), date.fromisoformat(dates[1]))
                 for prefix, dates in route.source.settings.items()
             ]
             prefix_dates.sort(key=lambda item: item[1])  # sort by from_date
-            for prefix, from_date, to_date in prefix_dates:
-                if when and (from_date <= when < to_date):
+            for prefix, start, end in prefix_dates:
+                if when and (start <= when < end):
                     current_prefixes[route.source_id] = prefix
-                    break
     if current_prefixes:
         routes = [
             route
             for route in routes
             if route.source_id not in current_prefixes
-            or route.code.startswith(current_prefixes[route.source_id])
+            or (
+                current_prefixes[route.source.id]
+                and route.code.startswith(current_prefixes[route.source_id])
+            )
         ]
         return routes
 
