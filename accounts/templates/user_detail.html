@@ -10,11 +10,11 @@
 
 {% block content %}
 
-    <h1>{% if object.trusted is False %}<del>{% endif %}User {{ object.id }}{% if object.trusted is False %}</del>{% endif %}</h1>
-
-    {% if perms.accounts_change_user %}
-        {{ object.username }}
-    {% endif %}
+    <h1>
+        {% if object.trusted is False %}<del>{% endif %}
+        User {{ object.id }}
+        {% if object.trusted is False %}</del>{% endif %}
+    </h1>
 
     {% if object == user %}
         <p>That's you!</p>
@@ -29,6 +29,11 @@
 
     {% if form %}
         <form method="POST" autocomplete="off">
+            <p>
+                Email address<br>
+                {{ object.email }}
+            </p>
+
             {{ form.as_p }}
             {% csrf_token %}
             <input type="submit" value="Save changes">

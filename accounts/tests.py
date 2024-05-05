@@ -123,13 +123,13 @@ class RegistrationTest(TestCase):
 
         # user can delete own account:
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": False})
             # confirm delete not ticked
         other_user.refresh_from_db()
         self.assertTrue(other_user.is_active)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(6):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": "on"})
         other_user.refresh_from_db()
         self.assertFalse(other_user.is_active)

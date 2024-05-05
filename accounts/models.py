@@ -32,5 +32,5 @@ class User(AbstractUser):
 
     def __str__(self):
         if "@" not in self.username:
-            return self.username
+            return f"{self.id}: {self.username}"
         return f"{self.id}"
