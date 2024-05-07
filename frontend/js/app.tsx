@@ -41,9 +41,9 @@ Sentry.init({
 
 declare global {
   interface Window {
-    SERVICE_ID: number;
-    STOPS: Trip;
-    OPERATOR_ID: string;
+    SERVICE_ID?: number;
+    STOPS?: Trip;
+    OPERATOR_ID?: string;
     globalThis: Window;
   }
 }
@@ -67,7 +67,10 @@ if (rootElement) {
 } else {
   rootElement = document.getElementById("map");
   if (rootElement) {
-    if (window.location.href.indexOf("/operators/") !== -1) {
+    if (
+      window.location.href.indexOf("/operators/") !== -1 &&
+      window.OPERATOR_ID
+    ) {
       let root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
@@ -93,7 +96,7 @@ if (rootElement) {
       root.render(
         <React.StrictMode>
           <Sentry.ErrorBoundary fallback={error}>
-            <TripMap />
+            <TripMap trip={window.STOPS} />
           </Sentry.ErrorBoundary>
         </React.StrictMode>,
       );

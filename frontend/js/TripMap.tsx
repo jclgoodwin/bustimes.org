@@ -24,10 +24,7 @@ import BusTimesMap from "./Map";
 
 declare global {
   interface Window {
-    SERVICE: number;
-    TRIP_ID: number;
     VEHICLE_ID: number;
-    STOPS: Trip;
   }
 }
 
@@ -42,7 +39,7 @@ const stopsStyle: LayerProps = {
     "text-size": 11,
     "text-font": ["Stadia Regular"],
   },
-  "paint": {
+  paint: {
     "text-halo-color": "#fff",
     "text-halo-width": 2,
   },
@@ -147,10 +144,13 @@ const Route = React.memo(function Route({ times }: RouteProps) {
                   url: stop.stop.atco_code
                     ? `/stops/${stop.stop.atco_code}`
                     : null,
-                  "name": stop.stop.name,
-                  "bearing": stop.stop.bearing,
-                  "time": stop.aimed_arrival_time || stop.aimed_departure_time || stop.expected_arrival_time,
-                  "priority": stop.timing_status === "PTP" ? 0 : 1 // symbol-sort-key lower number - "higher" priority
+                  name: stop.stop.name,
+                  bearing: stop.stop.bearing,
+                  time:
+                    stop.aimed_arrival_time ||
+                    stop.aimed_departure_time ||
+                    stop.expected_arrival_time,
+                  priority: stop.timing_status === "PTP" ? 0 : 1, // symbol-sort-key lower number - "higher" priority
                 },
               };
             }),
@@ -162,12 +162,12 @@ const Route = React.memo(function Route({ times }: RouteProps) {
   );
 });
 
-export default function TripMap() {
+export default function TripMap(props: { trip: Trip }) {
   const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
   const [, navigate] = useLocation();
   const tripId: string | undefined = params?.tripId;
 
-  const [trip, setTrip] = React.useState<Trip>(window.STOPS);
+  const [trip, setTrip] = React.useState<Trip>(props.trip);
 
   const [loading, setLoading] = React.useState(false);
 
@@ -180,10 +180,6 @@ export default function TripMap() {
     }
     return _bounds;
   }, [trip]);
-
-  const navigateToTrip = React.useCallback((item: Vehicle) => {
-    navigate("/trips/" + item.trip_id);
-  }, [navigate]);
 
   const [cursor, setCursor] = React.useState("");
 
@@ -250,7 +246,7 @@ export default function TripMap() {
 
   const loadTrip = React.useCallback((tripId: string) => {
     setTripVehicle(undefined);
-    if (window.STOPS.id && window.STOPS.id.toString() === tripId) {
+    if (window.STOPS?.id && window.STOPS.id.toString() === tripId) {
       setTrip(window.STOPS);
       return;
     }
@@ -270,10 +266,10 @@ export default function TripMap() {
       let url = `${apiRoot}vehicles.json`;
       if (window.VEHICLE_ID) {
         url = `${url}?id=${window.VEHICLE_ID}`;
-      } else if (!window.SERVICE || !tripId) {
+      } else if (!trip?.service?.id || !tripId) {
         return;
       } else {
-        url = `${url}?service=${window.SERVICE}&trip=${tripId}`;
+        url = `${url}?service=${trip.service.id}&trip=${tripId}`;
       }
 
       setLoading(true);
@@ -281,7 +277,8 @@ export default function TripMap() {
       clearTimeout(timeout.current);
 
       if (vehiclesAbortController.current) {
-        vehiclesAbortController.current.abort();
+        debugger;
+        vehiclesAbortController.current.abort("There's a new sheriff in town!");
       }
       vehiclesAbortController.current =
         new AbortController() as AbortController;
@@ -316,6 +313,7 @@ export default function TripMap() {
           }
         },
         (reason) => {
+          debugger;
           // never mind
         },
       );
@@ -381,7 +379,9 @@ export default function TripMap() {
             return (
               <VehicleMarker
                 key={item.id}
-                selected={item.id === clickedVehicleMarkerId || item.trip_id === tripId}
+                selected={
+                  item.id === clickedVehicleMarkerId || item.trip_id === tripId
+                }
                 vehicle={item}
               />
             );
@@ -391,7 +391,6 @@ export default function TripMap() {
             <VehiclePopup
               item={clickedVehicle}
               activeLink={clickedVehicle.trip_id?.toString() === tripId}
-              onTripClick={navigateToTrip}
               onClose={() => {
                 setClickedVehicleMarker(undefined);
               }}

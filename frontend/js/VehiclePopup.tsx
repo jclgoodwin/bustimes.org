@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { Popup } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
+import { Link } from "wouter";
 import type { Vehicle } from "./VehicleMarker";
 
 function getTimeDelta(seconds: number) {
@@ -40,25 +41,25 @@ export function Delay({
 type VehiclePopupProps = {
   item: Vehicle;
   onClose: any;
-  onTripClick?: any;
+  // onTripClick?: any;
   activeLink?: boolean;
 };
 
 export default function VehiclePopup({
   item,
   onClose,
-  onTripClick,
+  // onTripClick,
   activeLink = false,
 }: VehiclePopupProps) {
-  const handleTripClick = React.useCallback(
-    (e: React.MouseEvent) => {
-      if (onTripClick) {
-        e.preventDefault();
-        onTripClick(item);
-      }
-    },
-    [item, onTripClick],
-  );
+  // const handleTripClick = React.useCallback(
+  //   (e: React.MouseEvent) => {
+  //     if (onTripClick) {
+  //       e.preventDefault();
+  //       onTripClick(item);
+  //     }
+  //   },
+  //   [item, onTripClick],
+  // );
 
   let line_name: ReactNode = item.service?.line_name || "";
   if (item.destination) {
@@ -74,11 +75,7 @@ export default function VehiclePopup({
     }
   } else if (item.trip_id) {
     if (!activeLink) {
-      line_name = (
-        <a href={`/trips/${item.trip_id}`} onClick={handleTripClick}>
-          {line_name}
-        </a>
-      );
+      line_name = <Link href={`/trips/${item.trip_id}`}>{line_name}</Link>;
     }
   } else if (item.service?.url) {
     if (item.service.url !== window.location.pathname) {

@@ -1,11 +1,11 @@
 import React from "react";
 
-import TripTimetable from "./TripTimetable";
+import TripTimetable, { Trip } from "./TripTimetable";
 
 const apiRoot = process.env.API_ROOT;
 
-export default function TripLayer({ tripId }) {
-  const [trip, setTrip] = React.useState(null);
+export default function TripLayer({ tripId }: { tripId: number }) {
+  const [trip, setTrip] = React.useState<Trip>();
 
   React.useEffect(() => {
     fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
