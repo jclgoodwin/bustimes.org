@@ -29,6 +29,7 @@ from ...models import (
     Calendar,
     CalendarDate,
     Garage,
+    Note,
     Route,
     RouteLink,
     Trip,
@@ -1003,6 +1004,17 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(res.context_data["timetable"].date), "2017-10-01")
         # self.assertNotContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         self.assertEqual(18, len(res.context_data["timetable"].groupings[0].trips))
+
+        # notes
+        self.assertContains(
+            res,
+            "<td>Night Service, runs Saturday night/Sunday morning ONLY;special fares may</td>",
+            html=True,
+        )
+        self.assertContains(
+            res, "<p>Low floor bus - access for pushchairs and wheelchairs</p>"
+        )
+        self.assertEqual(Note.objects.filter(trip__start="02:30:00").count(), 4)
 
         self.assertContains(
             res,
