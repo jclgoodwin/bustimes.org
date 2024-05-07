@@ -718,8 +718,16 @@ def edit_vehicle(request, **kwargs):
         **kwargs,
     )
 
-    if not vehicle.is_editable():
-        raise Http404
+    if (
+        vehicle.operator_id
+        and User.operators.through.objects.filter(operator=vehicle.operator_id)
+        .exclude(user=request.user)
+        .exists()
+        and not request.user.operators.filter(noc=vehicle.operator_id).exists()
+    ):
+        raise PermissionDenied(
+            f'Editing {vehicle.operator} vehicles is restricted to "local experts"'
+        )
 
     context = {}
     revision = None
@@ -946,7 +954,7 @@ def vehicle_history(request, **kwargs):
 @require_safe
 def vehicles_history(request, pending=False):
     revisions = (
-        VehicleRevision.objects.filter(pending=pending)
+        VehicleRevision.objects.filter(pending=pending, disapproved=False)
         .select_related(
             "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
         )

@@ -301,13 +301,7 @@ class Vehicle(models.Model):
         return " " in self.get_reg()
 
     def is_editable(self) -> bool:
-        if self.locked or (
-            self.is_spare_ticket_machine()
-            and not self.livery_id
-            and not self.vehicle_type_id
-        ):
-            return False
-        return True
+        return not self.locked
 
     def save(self, *args, update_fields=None, **kwargs):
         if (

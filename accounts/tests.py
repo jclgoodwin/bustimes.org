@@ -107,6 +107,10 @@ class RegistrationTest(TestCase):
 
         self.client.force_login(other_user)
 
+        # normal user can't see email addresses
+        response = self.client.get(super_user.get_absolute_url())
+        self.assertNotContains(response, "ken@example.com")
+
         # set username:
 
         response = self.client.post(

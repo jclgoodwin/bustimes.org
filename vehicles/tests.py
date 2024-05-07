@@ -306,9 +306,9 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "Copied Optare Spectra to 2 vehicles.")
         self.assertContains(response, "Copied black with lemon piping to 2 vehicles.")
 
-        # spare ticket machine - not editable
-        response = self.client.get(self.vehicle_1.get_edit_url())
-        self.assertEqual(404, response.status_code)
+        # # spare ticket machine - not editable
+        # response = self.client.get(self.vehicle_1.get_edit_url())
+        # self.assertEqual(404, response.status_code)
 
         response = self.client.get("/operators/lynx/vehicles")
         self.assertContains(response, "<td>Spare ticket machine</td>")
@@ -436,7 +436,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
 
         self.client.force_login(self.staff_user)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(9):
             response = self.client.get(url)
         self.assertNotContains(response, "already")
 
@@ -452,7 +452,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         }
 
         # edit nothing
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
         self.assertContains(response, "You haven&#x27;t changed anything")
@@ -469,7 +469,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
             "-aWWgKX-aotzn6-aiadaL-adWEKk/ blah"
         )
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_really_changed())
         self.assertNotContains(response, "already")
@@ -479,7 +479,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         # edit fleet number
         initial["fleet_number"] = "2"
         initial["previous_reg"] = "bean"
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context["form"])
         self.assertContains(response, "<strong>fleet number</strong>")
@@ -493,7 +493,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         )
 
         # should not create an edit
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             initial["colours"] = "#FFFF00"
             response = self.client.post(url, initial)
         self.assertTrue(response.context["form"].has_changed())
@@ -552,7 +552,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # staff user can edit branding and notes
         initial["branding"] = "Crag Hopper"
         initial["notes"] = "West Coast Motors"
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertContains(response, "<strong>notes</strong>")
         self.assertContains(response, "from Trent Barton")
@@ -571,7 +571,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # add and remove a feature, change type
         initial["features"] = self.usb.id
         initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
-        with self.assertNumQueries(22):
+        with self.assertNumQueries(23):
             response = self.client.post(url, initial)
         revision = response.context["revision"]
         self.assertFalse(revision.pending)
@@ -583,7 +583,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # colour, spare ticket machine
         initial["colours"] = self.livery.id
         initial["spare_ticket_machine"] = True
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             response = self.client.post(url, initial)
             revision = response.context["revision"]
             self.assertEqual(revision.to_livery, self.livery)
@@ -610,7 +610,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "notes": "",
         }
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
         self.assertNotContains(response, "already")
@@ -625,7 +625,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         initial["branding"] = "Coastliner"
         initial["previous_reg"] = "k292  jvf"
         initial["reg"] = ""
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context["form"])
 
@@ -634,7 +634,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get("/vehicles/edits")
         self.assertContains(response, "Luther Blisset")
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.get(url)
         self.assertContains(response, "already")
 
@@ -653,12 +653,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "notes": "",
         }
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
             self.assertContains(response, "You haven&#x27;t changed anything")
 
         initial["other_colour"] = "Bath is my favourite spa town, and so is Harrogate"
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(12):
             response = self.client.post(url, initial)
             self.assertEqual(
                 response.context["form"].errors,
@@ -675,7 +675,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         url = self.vehicle_1.get_edit_url()
 
         # create a revision
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             response = self.client.post(
                 url,
                 {
@@ -716,6 +716,23 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.staff_user.get_absolute_url())
         self.assertContains(response, "from FD54JYA")
 
+    def test_operator_user_permission(self):
+        self.client.force_login(self.staff_user)
+
+        self.user.operators.add(self.vehicle_1.operator_id)
+
+        # another user has permission
+        response = self.client.get(self.vehicle_1.get_edit_url())
+        self.assertContains(
+            response, "Editing Lynx vehicles is restricted", status_code=403
+        )
+
+        # give logged-in user permission
+        self.staff_user.operators.add(self.vehicle_1.operator_id)
+
+        response = self.client.get(self.vehicle_1.get_edit_url())
+        self.assertNotContains(response, "Editing Lynx vehicles is restricted")
+
     def test_vehicle_edit_3(self):
         self.client.force_login(self.user)
 
@@ -733,7 +750,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, "<strong>removed from list</strong>")
         revision = response.context["revision"]
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),
                 {
@@ -775,7 +792,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.vehicle_3.get_absolute_url())
         self.assertContains(response, ">K292 JVF, P44 CEX<")
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             # trusted user - can edit colour
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),
