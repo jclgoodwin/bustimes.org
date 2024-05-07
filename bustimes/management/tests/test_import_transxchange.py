@@ -1010,9 +1010,10 @@ class ImportTransXChangeTest(TestCase):
             res,
             "<td>Night Service, runs Saturday night/Sunday morning ONLY;special fares may</td>",
             html=True,
+            count=1,
         )
         self.assertContains(
-            res, "<p>Low floor bus - access for pushchairs and wheelchairs</p>"
+            res, "<p>Low floor bus - access for pushchairs and wheelchairs</p>", count=2
         )
         self.assertEqual(Note.objects.filter(trip__start="02:30:00").count(), 4)
 
