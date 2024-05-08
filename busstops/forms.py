@@ -45,7 +45,9 @@ class TimetableForm(forms.Form):
                 self.fields["service"].choices += [
                     (line_name, line_name) for line_name in s.get_line_names()
                 ]
-        if len(self.fields["service"].choices) <= 1:
+        if len(self.fields["service"].choices) > 1:
+            self.fields["service"].choices.sort()
+        else:
             del self.fields["service"]
 
     def get_timetable(self, service):
