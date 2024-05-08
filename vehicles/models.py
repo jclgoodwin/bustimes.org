@@ -156,7 +156,6 @@ A livery can be adequately represented with a list of colours and an angle.""",
         default=False, help_text="Equivalent to setting the angle to 90"
     )
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
-    locked = models.BooleanField(default=False)
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
