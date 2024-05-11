@@ -894,8 +894,9 @@ def vehicle_revision_revert(request, revision_id):
 
 @require_POST
 @login_required
+@transaction.atomic
 def vehicle_revision_action(request, revision_id, action):
-    revisions = VehicleRevision.objects.filter(id=revision_id)
+    revisions = VehicleRevision.objects.filter(id=revision_id).select_for_update()
 
     revision = get_object_or_404(revisions)
 
@@ -913,6 +914,7 @@ def vehicle_revision_action(request, revision_id, action):
             disapproved=False,
         )
     elif action == "disapprove":
+        assert revision.pending
         if request.user.id == revision.user_id:
             revisions.delete()  # cancel one's own edit
         else:
