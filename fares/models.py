@@ -43,7 +43,7 @@ class DataSet(models.Model):
             if "bus-data.dft.gov.uk" in self.url:
                 text = f"{text}/Bus Open Data Service"
 
-            text = format_html('<a href="{}">{}</a>', self.url, text)
+            text = format_html('<a href="{}" nofollow>{}</a>', self.url, text)
 
         if self.datetime:
             text = f"{text}, {self.datetime:%-d %B %Y}"

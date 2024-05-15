@@ -162,9 +162,8 @@ class ImportBusOpenDataTest(TestCase):
 
         self.assertContains(
             response,
-            "Timetable data from "
-            '<a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/Bus Open Data Service (BODS)</a>, '
-            "1 April 2020.",
+            """Timetable data from <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/" nofollow>Lynx/Bus Open \
+Data Service (BODS)</a>, 1 April 2020.""",
         )
 
         # test views:

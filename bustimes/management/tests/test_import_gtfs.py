@@ -136,7 +136,7 @@ class GTFSTest(TestCase):
 
         self.assertContains(
             response,
-            '<a href="https://www.transportforireland.ie/transitData/PT_Data.html#:~:text=Mortons">Transport '
+            '<a href="https://www.transportforireland.ie/transitData/PT_Data.html#:~:text=Mortons" nofollow>Transport '
             "for Ireland</a>",
         )
 
