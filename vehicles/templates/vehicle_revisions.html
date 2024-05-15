@@ -38,13 +38,16 @@
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove">⚠️ Disapprove</button>
-                        {% elif user.trusted is not False %}
+                        {% elif user.trusted is not False and user.score > 0 %}
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
                         {% endif %}
                     {% elif user.trusted is not False %}
                         {% if revision.user_id != user.id %}
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up" title="Thank">👍</button>
+                            {% if user.trusted and revision.disapproved %}
+                                <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>
+                            {% endif %}
                         {% endif %}
                         {% if user.is_superuser %}
                             <button class="button" hx-post="/vehicles/history/{{ revision.id }}/revert">⚠️ Revert</button>
