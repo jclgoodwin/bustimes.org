@@ -43,7 +43,7 @@
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
                         {% endif %}
                     {% elif user.trusted is not False %}
-                        {% if revision.user_id != user.id %}
+                        {% if revision.user_id != user.id and user.score > 0 %}
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up" title="Thank">👍</button>
                             {% if user.trusted and revision.disapproved %}
                                 <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>

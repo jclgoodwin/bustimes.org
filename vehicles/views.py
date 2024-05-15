@@ -850,7 +850,7 @@ def vehicle_revision_vote(request, revision_id, direction):
 
     assert request.user.id != revision.user_id
     assert request.user.trusted is not False
-    assert request.user.score > 0
+    assert request.user.score and request.user.score > 0
 
     positive = direction == "up"
     score_change = 1 if positive else -1

@@ -132,7 +132,7 @@ class VehiclesTests(TestCase):
             date_joined="2020-10-19 23:47+00:00",
         )
         cls.trusted_user = User.objects.create(
-            username="norma", trusted=True, email="n@example.com"
+            username="norma", trusted=True, email="n@example.com", score=2
         )
         cls.user = User.objects.create(
             username="ken",
