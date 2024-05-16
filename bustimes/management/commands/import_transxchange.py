@@ -749,9 +749,11 @@ class Command(BaseCommand):
                     for note_code, note_text in cell.notes:
                         note = self.get_note(note_code, note_text)
                         if not (
-                            trip_notes
-                            and trip_notes[-1].trip is trip
-                            and trip_notes[-1].note is note
+                            # trip_notes
+                            # and trip_notes[-1].trip is trip
+                            any(
+                                tn.trip is trip and tn.note is note for tn in trip_notes
+                            )
                         ):
                             trip_notes.append(Trip.notes.through(trip=trip, note=note))
                         stop_time_notes.append(
@@ -777,7 +779,12 @@ class Command(BaseCommand):
 
             for note_code, note_text in journey.notes.items():
                 note = self.get_note(note_code, note_text)
-                trip_notes.append(Trip.notes.through(trip=trip, note=note))
+                if not (
+                    # trip_notes
+                    # and trip_notes[-1].trip is trip
+                    any(tn.trip is trip and tn.note is note for tn in trip_notes)
+                ):
+                    trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
             if journey.frequency_interval:
                 if len(journeys) > i + 1:
