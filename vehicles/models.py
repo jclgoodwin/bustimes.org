@@ -6,6 +6,7 @@ from collections import Counter
 from math import ceil
 from urllib.parse import quote
 
+import lightningcss
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -170,23 +171,35 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def minify(css):
+        prefix = ".livery{background:"
+        suffix = "}"
+        css = lightningcss.process_stylesheet(prefix + css + suffix)
+        assert css.startswith(prefix)
+        assert css.endswith(suffix)
+        return css[19:-1]
+
     def set_css(self):
         if self.css:
             css = self.css
-            self.left_css = css
+            self.css = self.minify(css)
+            self.left_css = self.css
             for angle in re.findall(r"\((\d+)deg,", css):
                 replacement = 360 - int(angle)
                 css = css.replace(f"({angle}deg,", f"({replacement}deg,", 1)
                 # doesn't work with e.g. angles {a, b} where a = 360 - b
             self.right_css = css.replace("left", "right")
 
-        elif self.colours and self.colours != "Other":
+        elif self.colours:
             self.left_css = get_css(
                 self.colours.split(), None, self.horizontal, self.angle
             )
             self.right_css = get_css(
                 self.colours.split(), 90, self.horizontal, self.angle
             )
+        self.right_css = self.minify(self.right_css)
+        self.left_css = self.minify(self.left_css)
 
     def preview(self, name=False):
         if self.left_css:
