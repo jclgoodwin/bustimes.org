@@ -45,6 +45,8 @@
     }
 
     $('#id_vehicle_type').select2({
+        allowClear: true,
+        placeholder: "",
         ajax: {
             url: '/api/vehicletypes/',
             data: data,
@@ -53,6 +55,8 @@
     });
 
     $('#id_colours').select2({
+        allowClear: true,
+        placeholder: "",
         ajax: {
             url: '/api/liveries/',
             data: data,
