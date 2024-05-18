@@ -60,13 +60,13 @@ class VehicleModelTests(TestCase):
         livery.save()
         self.assertEqual(
             '<div style="height:1.5em;width:2.25em;background:linear-gradient'
-            + '(to top,#7D287D 34%,#FDEE00 34%)" title="Go-Coach"></div>',
+            + '(#fdee00 66%,#7d287d 66%)" title="Go-Coach"></div>',
             livery.preview(),
         )
         self.assertEqual(
             livery.get_styles(),
             [
-                f""".livery-{livery.id} {{\n  background: linear-gradient(to top,#7D287D 34%,#FDEE00 34%);
+                f""".livery-{livery.id} {{\n  background: linear-gradient(#fdee00 66%,#7d287d 66%)
   color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""
             ],
         )

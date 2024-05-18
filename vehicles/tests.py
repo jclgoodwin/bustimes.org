@@ -361,7 +361,7 @@ class VehiclesTests(TestCase):
             response,
             """<td class="field-left">\
 <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
+background:linear-gradient(90deg,red 50%,#00f 50%)">
                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
             </svg></td>""",
         )
@@ -369,7 +369,7 @@ background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
             response,
             """<td class="field-right">\
 <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
+background:linear-gradient(270deg,red 50%,#00f 50%)">
                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
             </svg>""",
         )
@@ -412,14 +412,8 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         response = self.client.get("/liveries.44.css")
         self.assertEqual(
             response.content.decode(),
-            f""".livery-{self.livery.id} {{
-  background: linear-gradient(to right,#FF0000 50%,#0000FF 50%);
-  color:#fff;fill:#fff
-}}
-.livery-{self.livery.id}.right {{
-  background: linear-gradient(to left,#FF0000 50%,#0000FF 50%)
-}}
-""",
+            f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
+.livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}""",
         )
 
     def test_vehicle_edit_1(self):
@@ -807,7 +801,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, "<strong>livery</strong>")
         self.assertContains(
             response,
-            '<span class="livery" style="background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)"></span>',
+            '<span class="livery" style="background:linear-gradient(90deg,red 50%,#00f 50%)"></span>',
         )
         self.assertContains(response, "<strong>livery</strong>")
 
@@ -932,8 +926,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "livery": {
                             "id": self.vehicle_2.livery_id,
                             "name": "black with lemon piping",
-                            "left": "linear-gradient(to right,#FF0000 50%,#0000FF 50%)",
-                            "right": "linear-gradient(to left,#FF0000 50%,#0000FF 50%)",
+                            "left": "linear-gradient(90deg,red 50%,#00f 50%)",
+                            "right": "linear-gradient(270deg,red 50%,#00f 50%)",
                         },
                         "branding": "",
                         "operator": {
