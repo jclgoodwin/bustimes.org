@@ -183,7 +183,6 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def set_css(self):
         if self.css:
             css = self.css
-            self.css = self.minify(css)
             self.left_css = self.css
             for angle in re.findall(r"\((\d+)deg,", css):
                 replacement = 360 - int(angle)
@@ -198,8 +197,6 @@ A livery can be adequately represented with a list of colours and an angle.""",
             self.right_css = get_css(
                 self.colours.split(), 90, self.horizontal, self.angle
             )
-        self.right_css = self.minify(self.right_css)
-        self.left_css = self.minify(self.left_css)
 
     def preview(self, name=False):
         if self.left_css:
@@ -237,10 +234,14 @@ A livery can be adequately represented with a list of colours and an angle.""",
 
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
-        if update_fields is None and (self.css or self.colours):
-            self.set_css()
-            if self.colours and not self.id:
-                self.white_text = get_text_colour(self.colours) == "#fff"
+        if update_fields is None:
+            if self.css or self.colours:
+                self.set_css()
+                if self.colours and not self.id:
+                    self.white_text = get_text_colour(self.colours) == "#fff"
+            if self.right_css:
+                self.right_css = self.minify(self.right_css)
+                self.left_css = self.minify(self.left_css)
         super().save(*args, update_fields=update_fields, **kwargs)
 
     def get_styles(self):
