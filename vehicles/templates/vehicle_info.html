@@ -1,6 +1,6 @@
-{% if vehicle.colours and vehicle.colours != 'Other' or vehicle.livery %}
+{% if vehicle.colours or vehicle.livery %}
     <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
-    {% if vehicle.livery and vehicle.branding != 'None' %}{{ vehicle.livery }}{% endif %}
+    {% if vehicle.livery %}{{ vehicle.livery }}{% endif %}
 {% endif %}
 
 {% if vehicle.notes %}
@@ -15,7 +15,7 @@
         </div>
     {% endif %}
 
-    {% if vehicle.branding and vehicle.branding != 'None' %}
+    {% if vehicle.branding %}
         <div>
             <dt>Branding</dt>
             <dd>{{ vehicle.branding }}</dd>

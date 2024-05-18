@@ -125,7 +125,7 @@ features_string_agg = StringAgg(
 
 def get_vehicle_order(vehicle):
     if vehicle.notes == "Spare ticket machine":
-        return ("", vehicle.fleet_number or 0, vehicle.code)
+        return ("", vehicle.fleet_number or 99999, vehicle.code)
 
     if vehicle.fleet_number:
         return ("", vehicle.fleet_number)
@@ -244,9 +244,7 @@ def operator_vehicles(request, slug=None, parent=None):
         **context,
         "parent": parent,
         "vehicles": vehicles,
-        "branding_column": any(
-            vehicle.branding and vehicle.branding != "None" for vehicle in vehicles
-        ),
+        "branding_column": any(vehicle.branding for vehicle in vehicles),
         "name_column": any(vehicle.name for vehicle in vehicles),
         "notes_column": any(
             vehicle.notes and not vehicle.is_spare_ticket_machine()
