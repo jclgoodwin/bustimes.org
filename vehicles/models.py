@@ -11,6 +11,7 @@ from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
+from django.db.models import Q, UniqueConstraint
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils import timezone
@@ -586,6 +587,25 @@ class VehicleRevision(models.Model):
     disapproved_reason = models.TextField(null=True, blank=True)
 
     score = models.SmallIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["to_operator"],
+                condition=Q(pending=True),
+                name="unique_pending_operator",
+            ),
+            UniqueConstraint(
+                fields=["to_type"],
+                condition=Q(pending=True),
+                name="unique_pending_type",
+            ),
+            UniqueConstraint(
+                fields=["to_livery"],
+                condition=Q(pending=True),
+                name="unique_pending_livery",
+            ),
+        ]
 
     def __str__(self):
         return ", ".join(

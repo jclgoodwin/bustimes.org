@@ -7,6 +7,10 @@ from django.utils.text import camel_case_to_spaces
 from busstops.templatetags.date_range import date_range
 
 
+def from_now():
+    return [timezone.now()]
+
+
 class Situation(models.Model):
     source = models.ForeignKey(
         "busstops.DataSource",
@@ -27,7 +31,7 @@ class Situation(models.Model):
     text = models.TextField(blank=True)
     data = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
-    publication_window = DateTimeRangeField(default=lambda: [timezone.now()])
+    publication_window = DateTimeRangeField(default=from_now)
     current = models.BooleanField(default=True)
 
     def __str__(self):
