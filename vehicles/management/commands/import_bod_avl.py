@@ -527,7 +527,10 @@ class Command(ImportLiveVehiclesCommand):
 
                 if not vehicle.operator_id:
                     vehicle.operator = operator
-                    vehicle.save(update_fields=["operator"])
+                    try:
+                        vehicle.save(update_fields=["operator"])
+                    except IntegrityError:
+                        pass
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
