@@ -777,7 +777,9 @@ def edit_vehicle(request, **kwargs):
 
             revision.user = request.user
             revision.created_at = timezone.now()
-            if not request.user.trusted:
+            if not (
+                request.user.trusted or request.user.score and request.user_score > 100
+            ):
                 revision.pending = True
             try:
                 with transaction.atomic():
