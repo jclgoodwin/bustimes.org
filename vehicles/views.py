@@ -786,7 +786,7 @@ def edit_vehicle(request, **kwargs):
                     revision.save()
                     VehicleRevisionFeature.objects.bulk_create(features)
 
-                    if request.user.trusted:
+                    if not revision.pending:
                         apply_revision(revision, features)
 
                     # score decrements with each edit!
