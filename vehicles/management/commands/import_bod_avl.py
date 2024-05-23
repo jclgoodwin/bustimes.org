@@ -13,6 +13,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django.utils.dateparse import parse_duration
+from sentry_sdk.crons import monitor
 
 from busstops.models import (
     Locality,
@@ -788,6 +789,7 @@ class Command(ImportLiveVehiclesCommand):
             total_items,
         )
 
+    @monitor(monitor_slug="bod_avl")
     def update(self):
         now = timezone.now()
 
