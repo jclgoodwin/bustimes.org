@@ -3,10 +3,8 @@ import re
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db.models import OuterRef, Q
-from sql_util.utils import Exists
 
-from busstops.models import Operator, Service
+from busstops.models import Operator
 
 from . import fields
 from .models import Livery, VehicleFeature, VehicleType, get_text_colour
@@ -54,7 +52,12 @@ class EditVehicleForm(forms.Form):
     fleet_number = forms.CharField(required=False, max_length=24)
     reg = fields.RegField(label="Number plate", required=False, max_length=24)
 
-    operator = forms.ModelChoiceField(queryset=None, required=False, empty_label="")
+    operator = forms.ModelChoiceField(
+        queryset=Operator.objects,
+        required=False,
+        empty_label="",
+        widget=forms.TextInput(),
+    )
 
     vehicle_type = forms.ModelChoiceField(
         queryset=VehicleType.objects, required=False, empty_label=""
@@ -219,38 +222,6 @@ can’t be contradicted"""
             ):
                 del self.fields["colours"]
                 del self.fields["other_colour"]
-
-        if user.is_staff:
-            self.fields["operator"].queryset = Operator.objects.all()
-            self.fields["operator"].widget = forms.TextInput()
-        elif (
-            not vehicle.operator or vehicle.operator.parent
-        ):  # vehicle has no operator, or operator is part of a group
-            operators = Operator.objects
-            if user.trusted and vehicle.operator:
-                # any sibling operator
-                operators = operators.filter(parent=vehicle.operator.parent)
-                condition = Exists(
-                    Service.objects.filter(current=True, operator=OuterRef("pk")).only(
-                        "id"
-                    )
-                )
-                condition |= Exists("vehicle")
-            elif vehicle.latest_journey:
-                # only operators whose services the vehicle has operated
-                condition = Exists(
-                    Service.objects.filter(
-                        operator=OuterRef("pk"), id=vehicle.latest_journey.service_id
-                    )
-                )
-            else:
-                del self.fields["operator"]
-                return
-            if vehicle.operator:
-                condition |= Q(pk=vehicle.operator_id)
-            self.fields["operator"].queryset = operators.filter(condition)
-        else:
-            del self.fields["operator"]
 
 
 class DebuggerForm(forms.Form):
