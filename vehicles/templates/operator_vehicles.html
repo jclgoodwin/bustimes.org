@@ -73,20 +73,11 @@
     <tbody>
         {% for vehicle in vehicles %}
             <tr id="{{ vehicle.slug }}">
-                {% if form %}
-                    <td>{% if vehicle.is_editable %}<input type="checkbox" name="vehicle" value="{{ vehicle.id }}">{% endif %}</td>
-                {% endif %}
-                {% if not vehicle.fleet_code and not vehicle.fleet_number and not vehicle.reg %}
-                    <td colspan="2">
-                        <a href="{{ vehicle.get_absolute_url }}">{{ vehicle }}</a>
-                    </td>
-                {% else %}
-                    <td class="number tabular">
-                        {% if vehicle.fleet_code or vehicle.fleet_number %}
-                            <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number %}</a>
-                        {% endif %}
-                    </td>
-                    <td>{% if vehicle.reg %}<a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>{{ vehicle.get_reg }}</a>{% endif %}</td>
+                <td class="tabular"{% if not vehicle.reg %} colspan="2"{% endif %}>
+                    <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number vehicle.code %}</a>
+                </td>
+                {% if vehicle.reg %}
+                    <td><a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>{{ vehicle.get_reg }}</a></td>
                 {% endif %}
                 {% if not parent %}<td class="last-seen">
                     {{ vehicle.last_seen.service }}
