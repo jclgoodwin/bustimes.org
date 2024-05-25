@@ -671,7 +671,7 @@ class VehicleDetailView(DetailView):
 
         context["pending_edits"] = self.object.vehiclerevision_set.filter(pending=True)
         context["revisions"] = self.object.vehiclerevision_set.filter(
-            ~Q(disapproved=True), pending=False
+            pending=False, disapproved=False
         )
 
         if self.object.operator:
@@ -797,12 +797,17 @@ def edit_vehicle(request, **kwargs):
                     context["revision"] = revision
                     form = None
 
-            except IntegrityError:
-                if "operator" in form.changed_data:
-                    form.add_error(
-                        "operator",
-                        f"{form.cleaned_data['operator']} already has a vehicle with the code {vehicle.code}",
-                    )
+            except IntegrityError as e:
+                error = "There's already a pending edit for that"
+                if "unique_pending_livery" in e.args[0]:
+                    form.add_error("colours", error)
+                elif "unique_pending_type" in e.args[0]:
+                    form.add_error("vehicle_type", error)
+                elif "unique_pending_operator" in e.args[0]:
+                    form.add_error("operator", error)
+                elif "vehicle_operator_and_code" in e.args[0]:
+                    error = f"{form.cleaned_data['operator']} already has a vehicle with the code {vehicle.code}"
+                    form.add_error("operator", error)
                 else:
                     raise
 
@@ -837,11 +842,6 @@ def edit_vehicle(request, **kwargs):
             "next": vehicle.get_next(),
         },
     )
-
-
-@login_required
-def vehicle_edits(request):
-    return vehicles_history(request, pending=True)
 
 
 @require_POST
@@ -935,40 +935,18 @@ def vehicle_revision_action(request, revision_id, action):
 
 
 @require_safe
-def vehicle_history(request, **kwargs):
-    vehicle = get_object_or_404(Vehicle, **kwargs)
+def vehicle_edits(request):
     revisions = (
-        vehicle.vehiclerevision_set.filter(pending=False, disapproved=False)
-        .select_related("from_livery", "to_livery", "from_type", "to_type", "user")
-        .order_by("-id")
-    )
-    return render(
-        request,
-        "vehicle_history.html",
-        {
-            "breadcrumb": [
-                vehicle.operator,
-                vehicle.operator and Vehicles(vehicle=vehicle),
-                vehicle,
-            ],
-            "vehicle": vehicle,
-            "revisions": revisions,
-        },
-    )
-
-
-@require_safe
-def vehicles_history(request, pending=False):
-    revisions = (
-        VehicleRevision.objects.filter(pending=pending, disapproved=False)
-        .select_related(
+        VehicleRevision.objects.select_related(
             "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
         )
         .prefetch_related("vehiclerevisionfeature_set__feature")
+        .order_by("-id")
     )
-    revisions = revisions.order_by("-id")
 
-    f = filters.VehicleRevisionFilter(request.GET, queryset=revisions)
+    f = filters.VehicleRevisionFilter(
+        request.GET or {"pending": True, "disapproved": False}, queryset=revisions
+    )
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)
@@ -978,7 +956,7 @@ def vehicles_history(request, pending=False):
 
     return render(
         request,
-        "vehicle_edits.html" if pending else "vehicle_history.html",
+        "vehicle_edits.html",
         {
             "filter": f,
             "revisions": page,

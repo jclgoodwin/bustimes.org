@@ -54,11 +54,11 @@
         {% endif %}
 
         {% if pending_edits.exists %}
-            <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}">Pending edits</a></li>
+            <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}&pending=true">Pending edits</a></li>
         {% endif %}
 
         {% if revisions.exists %}
-            <li><a href="{{ vehicle.get_history_url }}">History</a></li>
+            <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}&pending=false&disapproved=false">History</a></li>
         {% endif %}
 
         {% if flickr_link %}

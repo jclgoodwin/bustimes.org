@@ -181,7 +181,6 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, "20 Oct")
         self.assertContains(response, "00:47")
         self.assertContains(response, "/operators/lynx/map")
-        self.assertContains(response, "/vehicles/history?vehicle__operator=LYNX")
         self.assertContains(response, "/vehicles/edits?vehicle__operator=LYNX")
         self.assertContains(response, "/operators/lynx/map")
 

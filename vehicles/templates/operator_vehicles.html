@@ -45,8 +45,8 @@
 
 {% if not parent %}
     <ul class="horizontal">
-        <li><a href="/vehicles/history?vehicle__operator={{ object.noc }}">Recent changes</a></li>
-        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}">Pending vehicle edits</a></li>
+        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&pending=false&disapproved=false">Recent changes</a></li>
+        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&pending=true">Pending vehicle edits</a></li>
         {% if request.user.is_superuser %}
             <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}?operator={{ object.noc }}">✎</a></li>
         {% endif %}
@@ -74,10 +74,20 @@
         {% for vehicle in vehicles %}
             <tr id="{{ vehicle.slug }}">
                 <td class="tabular"{% if not vehicle.reg %} colspan="2"{% endif %}>
-                    <a href="{{ vehicle.get_absolute_url }}">{% firstof vehicle.fleet_code vehicle.fleet_number vehicle.code %}</a>
+                    <a href="{{ vehicle.get_absolute_url }}">
+                        {% if vehicle.fleet_code or vehicle.fleet_number %}
+                            {% firstof vehicle.fleet_code vehicle.fleet_number %}
+                        {% elif not vehicle.reg %}
+                            {{ vehicle.code }}
+                        {% endif %}
+                    </a>
                 </td>
                 {% if vehicle.reg %}
-                    <td><a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>{{ vehicle.get_reg }}</a></td>
+                    <td>
+                        <a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>
+                            {{ vehicle.get_reg }}
+                        </a>
+                    </td>
                 {% endif %}
                 {% if not parent %}<td class="last-seen">
                     {{ vehicle.last_seen.service }}
