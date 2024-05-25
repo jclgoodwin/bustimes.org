@@ -591,17 +591,17 @@ class VehicleRevision(models.Model):
     class Meta:
         constraints = [
             UniqueConstraint(
-                fields=["to_operator"],
+                fields=["vehicle", "to_operator"],
                 condition=Q(pending=True),
                 name="unique_pending_operator",
             ),
             UniqueConstraint(
-                fields=["to_type"],
+                fields=["vehicle", "to_type"],
                 condition=Q(pending=True),
                 name="unique_pending_type",
             ),
             UniqueConstraint(
-                fields=["to_livery"],
+                fields=["vehicle", "to_livery"],
                 condition=Q(pending=True),
                 name="unique_pending_livery",
             ),
