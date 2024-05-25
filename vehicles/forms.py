@@ -144,20 +144,29 @@ link to a picture to prove it. Be polite.""",
             raise ValidationError("A spare ticket machine can’t have a number plate")
         return reg
 
-    def __init__(self, *args, user, vehicle, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, data, *args, user, vehicle, **kwargs):
+        super().__init__(data, *args, **kwargs)
 
-        if vehicle.vehicle_type_id:
-            self.fields["vehicle_type"].choices = (
-                (vehicle.vehicle_type_id, vehicle.vehicle_type),
+        self.fields["vehicle_type"].choices = []
+        if vehicle.vehicle_type:
+            self.fields["vehicle_type"].choices.append(
+                (vehicle.vehicle_type_id, vehicle.vehicle_type)
             )
-        else:
-            self.fields["vehicle_type"].choices = ()
+        if data and "vehicle_type" in data:
+            self.fields["vehicle_type"].choices.append(
+                (
+                    data["vehicle_type"],
+                    self.fields["vehicle_type"].to_python(data["vehicle_type"]),
+                ),
+            )
 
+        self.fields["colours"].choices = []
         if vehicle.livery_id:
-            self.fields["colours"].choices = ((vehicle.livery_id, vehicle.livery),)
-        else:
-            self.fields["colours"].choices = ()
+            self.fields["colours"].choices.append((vehicle.livery_id, vehicle.livery))
+        if data and "colours" in data:
+            self.fields["colours"].choices.append(
+                (data["colours"], self.fields["colours"].to_python(data["colours"]))
+            )
 
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True
