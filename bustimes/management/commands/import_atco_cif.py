@@ -107,7 +107,6 @@ class Command(BaseCommand):
     def handle_file(self, open_file):
         self.route = None
         self.trip = None
-        self.stop_times = []
         self.stop_time_notes = []
         self.notes = []
 
@@ -301,6 +300,9 @@ class Command(BaseCommand):
                     departure = parse_time(line[14:18])
 
                     calendar = self.get_calendar()
+                    if self.trip and not self.trip.id:
+                        print(f"ignoring unterminated trip, next line {line}")
+                    self.stop_times = []
                     self.trip = Trip(
                         operator_id=self.operator,
                         ticket_machine_code=self.trip_header[7:13].decode().strip(),
@@ -347,7 +349,6 @@ class Command(BaseCommand):
                     if self.stop_time_notes:
                         StopTime.notes.through.objects.bulk_create(self.stop_time_notes)
                         self.stop_time_notes = []
-                    self.stop_times = []
 
             case b"QN":  # note
                 previous_identity = previous_line[:2]
