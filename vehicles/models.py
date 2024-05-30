@@ -31,6 +31,9 @@ def format_reg(reg):
             return reg[:3] + " " + reg[3:]
         if reg[-2:].isalpha():
             return reg[:-2] + " " + reg[-2:]
+        if reg[:2].isalpha():
+            return reg[:2] + " " + reg[2:]
+
     return reg
 
 

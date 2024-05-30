@@ -12,6 +12,9 @@ class VehicleModelTests(TestCase):
             "search/?text=3990ME%20or%20%223990%20ME%22&sort", vehicle.get_flickr_url()
         )
 
+        vehicle.reg = "HC6422"
+        self.assertEqual(str(vehicle), "HC 6422")
+
         vehicle.reg = "J122018"
         self.assertEqual(str(vehicle), "J122018")
 
