@@ -301,6 +301,10 @@ class Command(BaseCommand):
                     departure = parse_time(line[14:18])
 
                     calendar = self.get_calendar()
+                    if self.trip and not self.trip.id:
+                        print("unterminated trip!")
+                        self.stop_times = []
+
                     self.trip = Trip(
                         operator_id=self.operator,
                         ticket_machine_code=self.trip_header[7:13].decode().strip(),
@@ -342,6 +346,7 @@ class Command(BaseCommand):
 
                     for stop_time in self.stop_times:
                         stop_time.trip = stop_time.trip  # set trip_id
+                        assert stop_time.trip_id
                     StopTime.objects.bulk_create(self.stop_times)
 
                     if self.stop_time_notes:
