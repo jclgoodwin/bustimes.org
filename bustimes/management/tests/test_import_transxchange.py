@@ -734,9 +734,10 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "32-20-_-y10-1")
 
         with patch("boto3.client"):
-            with override_settings(DATA_DIR=Path("poo-pants")):
-                with self.assertRaises(FileNotFoundError):
-                    self.client.get(route.get_absolute_url())
+            with TemporaryDirectory() as data_dir:
+                with override_settings(DATA_DIR=Path(data_dir)):
+                    with self.assertRaises(FileNotFoundError):
+                        self.client.get(route.get_absolute_url())
 
     def test_multiple_operators(self):
         """
