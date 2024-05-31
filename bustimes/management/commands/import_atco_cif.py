@@ -276,7 +276,7 @@ class Command(BaseCommand):
                 self.sequence = 0
                 self.trip_header = line
                 self.exceptions = []
-                self.operator = self.trip_header[3:7].decode().strip()
+                self.operator = self.trip_header[3:7].decode().strip() or None
                 if self.operator == "BE":
                     self.operator = "ie-01"
 
