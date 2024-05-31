@@ -2,12 +2,23 @@ import re
 
 from django import forms
 from django.conf import settings
+from django.contrib.admin.widgets import AutocompleteSelect
 from django.core.exceptions import ValidationError
 
 from busstops.models import Operator
 
 from . import fields
-from .models import Livery, VehicleFeature, VehicleType, get_text_colour
+from .models import Livery, Vehicle, VehicleFeature, VehicleType, get_text_colour
+
+
+class AutcompleteWidget(forms.Select):
+    optgroups = AutocompleteSelect.optgroups
+
+    def __init__(self, field=None, attrs=None, choices=(), using=None):
+        self.field = field
+        self.attrs = {} if attrs is None else attrs.copy()
+        self.choices = choices
+        self.db = None
 
 
 class EditVehicleForm(forms.Form):
@@ -60,10 +71,14 @@ class EditVehicleForm(forms.Form):
     )
 
     vehicle_type = forms.ModelChoiceField(
-        queryset=VehicleType.objects, required=False, empty_label=""
+        widget=AutcompleteWidget(field=Vehicle.vehicle_type.field),
+        queryset=VehicleType.objects,
+        required=False,
+        empty_label="",
     )
 
     colours = forms.ModelChoiceField(
+        widget=AutcompleteWidget(field=Vehicle.livery.field),
         label="Current livery",
         queryset=Livery.objects,
         required=False,
@@ -146,27 +161,6 @@ link to a picture to prove it. Be polite.""",
 
     def __init__(self, data, *args, user, vehicle, **kwargs):
         super().__init__(data, *args, **kwargs)
-
-        self.fields["vehicle_type"].choices = []
-        if vehicle.vehicle_type:
-            self.fields["vehicle_type"].choices.append(
-                (vehicle.vehicle_type_id, vehicle.vehicle_type)
-            )
-        if data and "vehicle_type" in data:
-            self.fields["vehicle_type"].choices.append(
-                (
-                    data["vehicle_type"],
-                    self.fields["vehicle_type"].to_python(data["vehicle_type"]),
-                ),
-            )
-
-        self.fields["colours"].choices = []
-        if vehicle.livery_id:
-            self.fields["colours"].choices.append((vehicle.livery_id, vehicle.livery))
-        if data and "colours" in data:
-            self.fields["colours"].choices.append(
-                (data["colours"], self.fields["colours"].to_python(data["colours"]))
-            )
 
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True

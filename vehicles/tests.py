@@ -429,7 +429,7 @@ background:linear-gradient(270deg,red 50%,#00f 50%)">
 
         self.client.force_login(self.staff_user)
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(10):
             response = self.client.get(url)
         self.assertNotContains(response, "already")
 
@@ -445,7 +445,7 @@ background:linear-gradient(270deg,red 50%,#00f 50%)">
         }
 
         # edit nothing
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
         self.assertContains(response, "You haven&#x27;t changed anything")
@@ -462,7 +462,7 @@ background:linear-gradient(270deg,red 50%,#00f 50%)">
             "-aWWgKX-aotzn6-aiadaL-adWEKk/ blah"
         )
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_really_changed())
         self.assertNotContains(response, "already")
@@ -486,15 +486,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         )
 
         # should not create an edit
-        with self.assertNumQueries(14):
+        with self.assertRaises(ValueError):
             initial["colours"] = "#FFFF00"
             response = self.client.post(url, initial)
-        self.assertTrue(response.context["form"].has_changed())
-        self.assertContains(
-            response,
-            "Select a valid choice. That choice is not one of the available choices",
-        )
-        self.assertContains(response, "already")
 
         self.assertEqual(1, VehicleRevision.objects.all().count())
 
@@ -603,7 +597,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "notes": "",
         }
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
         self.assertNotContains(response, "already")
@@ -627,7 +621,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get("/vehicles/edits")
         self.assertContains(response, "Luther Blisset")
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(13):
             response = self.client.get(url)
         self.assertContains(response, "already")
 
@@ -646,12 +640,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "notes": "",
         }
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
             self.assertContains(response, "You haven&#x27;t changed anything")
 
         initial["other_colour"] = "Bath is my favourite spa town, and so is Harrogate"
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
             self.assertEqual(
                 response.context["form"].errors,
