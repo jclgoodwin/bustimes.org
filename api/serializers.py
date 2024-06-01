@@ -185,15 +185,16 @@ class TripSerializer(serializers.ModelSerializer):
             }
 
     def get_times(self, obj):
+        if not hasattr(obj, "stops"):
+            return
+
         route_links = {}
         if obj.route.service:
             for link in obj.route.service.routelink_set.all():
                 route_links[(link.from_stop_id, link.to_stop_id)] = link
         previous_stop_id = None
 
-        stop_times = getattr(obj, "stops", obj.stoptime_set.all())
-
-        for stop_time in stop_times:
+        for stop_time in obj.stops:
             route_link = route_links.get((previous_stop_id, stop_time.stop_id))
             if stop := stop_time.stop:
                 name = stop.get_name_for_timetable()

@@ -3,7 +3,7 @@ from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
 
 from busstops.models import Operator, Service, StopPoint
-from bustimes.models import Trip
+from bustimes.models import StopTime, Trip
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
 from . import filters, serializers
@@ -72,13 +72,29 @@ class StopViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class TripViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Trip.objects.prefetch_related(
-        "stoptime_set__stop__locality", "route__service__routelink_set", "notes"
-    )
+    queryset = Trip.objects.select_related(
+        "route__service", "operator"
+    ).prefetch_related("notes")
     serializer_class = serializers.TripSerializer
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.TripFilter
+
+    def get_object(self):
+        obj = super().get_object()
+        trips = obj.get_trips()
+        stops = (
+            StopTime.objects.filter(trip__in=trips)
+            .select_related("stop__locality")
+            .defer(
+                "stop__search_vector",
+                "stop__locality__search_vector",
+                "stop__locality__latlong",
+            )
+            .order_by("trip__start", "id")
+        )
+        obj.stops = stops
+        return obj
 
 
 class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
