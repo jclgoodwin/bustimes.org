@@ -170,6 +170,7 @@ Data Service (BODS)</a>, 1 April 2020.""",
 
         trip = route.trip_set.first()
 
+        # legacy api still used by busmiles?
         response = self.client.get(f"/trips/{trip.id}.json")
         self.assertEqual(27, len(response.json()["times"]))
 

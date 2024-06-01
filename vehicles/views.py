@@ -568,23 +568,23 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
     # annotate journeys with whether each one has some location history in redis
     # (in order to show the "Map" link or not)
-    try:
-        pipe = redis_client.pipeline(transaction=False)
-        for journey in journeys:
-            pipe.exists(journey.get_redis_key())
+    if redis_client:
+        try:
+            pipe = redis_client.pipeline(transaction=False)
+            for journey in journeys:
+                pipe.exists(journey.get_redis_key())
 
-        locations = pipe.execute()
-    except (ConnectionError, AttributeError):
-        for journey in journeys:
-            journey.locations = True
-    else:
-        for i, journey in enumerate(journeys):
-            journey.locations = locations[i]
+            locations = pipe.execute()
+        except (ConnectionError, AttributeError):
+            for journey in journeys:
+                journey.locations = True
+        else:
+            for i, journey in enumerate(journeys):
+                journey.locations = locations[i]
 
     # "Track this bus" button
     if vehicle and vehicle.latest_journey_id:
-        tracking = redis_client and redis_client.get(f"vehicle{vehicle.id}")
-        if tracking:
+        if redis_client and redis_client.get(f"vehicle{vehicle.id}"):
             context["tracking"] = f"#journeys/{vehicle.latest_journey_id}"
 
         # predict next workings
