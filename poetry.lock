@@ -85,17 +85,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.34.116"
+version = "1.34.117"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.34.116-py3-none-any.whl", hash = "sha256:e7f5ab2d1f1b90971a2b9369760c2c6bae49dae98c084a5c3f5c78e3968ace15"},
-    {file = "boto3-1.34.116.tar.gz", hash = "sha256:53cb8aeb405afa1cd2b25421e27a951aeb568026675dec020587861fac96ac87"},
+    {file = "boto3-1.34.117-py3-none-any.whl", hash = "sha256:1506589e30566bbb2f4997b60968ff7d4ef8a998836c31eedd36437ac3b7408a"},
+    {file = "boto3-1.34.117.tar.gz", hash = "sha256:c8a383b904d6faaf7eed0c06e31b423db128e4c09ce7bd2afc39d1cd07030a51"},
 ]
 
 [package.dependencies]
-botocore = ">=1.34.116,<1.35.0"
+botocore = ">=1.34.117,<1.35.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -104,13 +104,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.34.116"
+version = "1.34.117"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.34.116-py3-none-any.whl", hash = "sha256:ec4d42c816e9b2d87a2439ad277e7dda16a4a614ef6839cf66f4c1a58afa547c"},
-    {file = "botocore-1.34.116.tar.gz", hash = "sha256:269cae7ba99081519a9f87d7298e238d9e68ba94eb4f8ddfa906224c34cb8b6c"},
+    {file = "botocore-1.34.117-py3-none-any.whl", hash = "sha256:26a431997f882bcdd1e835f44c24b2a1752b1c4e5183c2ce62999ce95d518d6c"},
+    {file = "botocore-1.34.117.tar.gz", hash = "sha256:4637ca42e6c51aebc4d9a2d92f97bf4bdb042e3f7985ff31a659a11e4c170e73"},
 ]
 
 [package.dependencies]
@@ -1841,13 +1841,13 @@ tests = ["pytest"]
 
 [[package]]
 name = "pycountry"
-version = "23.12.11"
+version = "24.6.1"
 description = "ISO country, subdivision, language, currency and script definitions and their translations"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pycountry-23.12.11-py3-none-any.whl", hash = "sha256:2ff91cff4f40ff61086e773d61e72005fe95de4a57bfc765509db05695dc50ab"},
-    {file = "pycountry-23.12.11.tar.gz", hash = "sha256:00569d82eaefbc6a490a311bfa84a9c571cff9ddbf8b0a4f4e7b4f868b4ad925"},
+    {file = "pycountry-24.6.1-py3-none-any.whl", hash = "sha256:f1a4fb391cd7214f8eefd39556d740adcc233c778a27f8942c8dca351d6ce06f"},
+    {file = "pycountry-24.6.1.tar.gz", hash = "sha256:b61b3faccea67f87d10c1f2b0fc0be714409e8fcdcc1315613174f6466c10221"},
 ]
 
 [[package]]
@@ -2143,13 +2143,13 @@ crt = ["botocore[crt] (>=1.33.2,<2.0a.0)"]
 
 [[package]]
 name = "sentry-sdk"
-version = "2.3.1"
+version = "2.3.0"
 description = "Python client for Sentry (https://sentry.io)"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "sentry_sdk-2.3.1-py2.py3-none-any.whl", hash = "sha256:c5aeb095ba226391d337dd42a6f9470d86c9fc236ecc71cfc7cd1942b45010c6"},
-    {file = "sentry_sdk-2.3.1.tar.gz", hash = "sha256:139a71a19f5e9eb5d3623942491ce03cf8ebc14ea2e39ba3e6fe79560d8a5b1f"},
+    {file = "sentry_sdk-2.3.0-py2.py3-none-any.whl", hash = "sha256:a107311652733a12cb004f177705bed7afc9e09bd308288ab2d4c6b6d6993a05"},
+    {file = "sentry_sdk-2.3.0.tar.gz", hash = "sha256:78c96373fb1f7c69a4054f9b93360974247f2525f72ee7a3a099b1df33998d7a"},
 ]
 
 [package.dependencies]
@@ -2893,4 +2893,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.13,>=3.11"
-content-hash = "69893419924bdf69948339533f0ade8f240ffb21ce59cdf98692581ba910d1f3"
+content-hash = "493322e284befb890faebb172b627eff67bcefbfeda3a3b10b9255329c864e37"
