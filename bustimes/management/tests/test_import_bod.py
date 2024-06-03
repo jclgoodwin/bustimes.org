@@ -282,7 +282,7 @@ Data Service (BODS)</a>, 1 April 2020.""",
         trip = journey.get_trip(destination_ref="2900K132")
         self.assertEqual(trip.ticket_machine_code, "1")
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(2):
             trip = journey.get_trip(
                 origin_ref="2900K132",
                 destination_ref="2900K132",
