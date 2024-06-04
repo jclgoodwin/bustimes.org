@@ -41,12 +41,10 @@ class ImportOperatorsTest(TestCase):
     def test_import_noc(self):
         FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
-        with vcr.use_cassette(
-            str(FIXTURES_DIR / "noc.yaml"),
-            decode_compressed_response=True,
-        ) as cassette:
-            with self.assertNumQueries(3819):
+        with vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")) as cassette:
+            with self.assertNumQueries(3454):
                 call_command("import_noc")
+
             cassette.rewind()
 
             Licence.objects.create(

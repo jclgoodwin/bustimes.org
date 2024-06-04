@@ -33,11 +33,15 @@ def get_mode(mode):
     return mode
 
 
-def get_operator_codes(code_sources, noc, operator, noc_line):
+def get_operator_codes(
+    code_sources: tuple[tuple[str, DataSource]], noc, operator, noc_line
+):
+    # "National Operator Codes"
     operator_codes = [
         OperatorCode(source=code_sources[0][1], code=noc, operator=operator)
     ]
 
+    # "L", "SW", "WM" etc
     for col, source in code_sources[1:]:
         code = noc_line.find(col).text
         if code:
@@ -68,6 +72,7 @@ def get_operator_licences(operator, noc_line, licences_by_number):
 class Command(BaseCommand):
     @transaction.atomic()
     def handle(self, **kwargs):
+        # this does 12+ database queries could be reduced but it's not worth it:
         code_sources = [
             (col, DataSource.objects.get_or_create(name=name)[0])
             for col, name in (
@@ -85,11 +90,20 @@ class Command(BaseCommand):
                 ("EM", "EM"),
             )
         ]
+        noc_source = code_sources[0][1].id
 
         operators = Operator.objects.prefetch_related(
             "operatorcode_set", "licences"
         ).in_bulk()
 
+        merged_operator_codes = {
+            code.code: code
+            for operator in operators.values()
+            for code in operator.operatorcode_set.all()
+            if code.source_id == noc_source and code.code != operator.noc
+        }
+
+        # all licences (not just ones with operators attached)
         licences_by_number = Licence.objects.in_bulk(field_name="licence_number")
 
         with open(settings.BASE_DIR / "fixtures" / "operators.yaml") as open_file:
@@ -124,6 +138,10 @@ class Command(BaseCommand):
                 noc_line = noc_lines[noc]
             else:
                 # print(noc)
+                continue
+
+            # another operator has that code as sort of an alias - bail
+            if noc in merged_operator_codes:
                 continue
 
             vehicle_mode = get_mode(noc_line.findtext("Mode"))
@@ -168,7 +186,7 @@ class Command(BaseCommand):
                 slug = slugify(operator.name)
                 if slug in operators_by_slug:
                     # duplicate name – save now to avoid slug collision
-                    operator.save()
+                    operator.save(force_insert=True)
                     to_update.append(operator)
                 else:
                     operator.slug = slug
@@ -217,9 +235,20 @@ class Command(BaseCommand):
                 else:
                     print(noc, e)
 
-        Operator.objects.bulk_create(to_create)
+        Operator.objects.bulk_create(
+            to_create,
+            update_fields=(
+                "url",
+                "twitter",
+                "name",
+                "vehicle_mode",
+                "slug",
+                "region_id",
+                "vehicle_mode",
+            ),
+        )
         Operator.objects.bulk_update(
-            to_update, ["url", "twitter", "name", "vehicle_mode"]
+            to_update, ("url", "twitter", "name", "vehicle_mode")
         )
 
         OperatorCode.objects.bulk_create(operator_codes)
