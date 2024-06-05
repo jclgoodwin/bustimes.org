@@ -614,16 +614,6 @@ files = [
 django-nine = ">=0.2.3"
 
 [[package]]
-name = "django-email-blacklist"
-version = "1.0.1"
-description = "Python class for use with Django to detect Disposable Emails."
-optional = false
-python-versions = "*"
-files = [
-    {file = "django-email-blacklist-1.0.1.tar.gz", hash = "sha256:5cfdde6107c3b016dd1bcc19c056b1cf7ee6a958b14d68e2a524a6bf3524318a"},
-]
-
-[[package]]
 name = "django-email-obfuscator"
 version = "0.1.5"
 description = "A Django template filter to protect email addresses from     crawlers."
@@ -2878,4 +2868,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.13,>=3.11"
-content-hash = "2c49861fd48aff723f7b73a00cda1c8940d7489cd4cadd1388b33e4cb8434638"
+content-hash = "649de503263c3682ba2d91af8b649936077e9703928cdcabe48b246fe232175a"

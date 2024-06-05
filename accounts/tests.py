@@ -6,7 +6,6 @@ from django.test import TestCase, override_settings
 from .models import User
 
 
-@override_settings(PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
 class RegistrationTest(TestCase):
     @override_settings(DISABLE_REGISTRATION=True)
     def test_registration_disabled(self):
@@ -22,27 +21,28 @@ class RegistrationTest(TestCase):
             response = self.client.post("/accounts/register/")
         self.assertContains(response, "This field is required")
 
-    @override_settings(DISABLE_REGISTRATION=False)
-    @patch("turnstile.fields.TurnstileField.validate", return_value=True)
-    @patch(
-        "django_email_blacklist.DisposableEmailChecker.is_disposable",
-        return_value=False,
+    @override_settings(
+        DISABLE_REGISTRATION=False,
+        PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"],
     )
-    def test_registration(self, mocked_validate, mocked_is_disposable):
+    @patch("turnstile.fields.TurnstileField.validate", return_value=True)
+    def test_registration(self, mocked_validate):
         response = self.client.get("/accounts/register/")
         self.assertContains(response, "Email address")
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(4):
             # create new account
             response = self.client.post(
                 "/accounts/register/",
                 {"email": "rufus@herring.pizza", "turnstile": "foo"},
+                headers={"CF-Connecting-IP": "6.6.6.6"},
             )
         self.assertContains(response, "Check your email (rufus@herring.pizza")
         self.assertEqual("bustimes.org account", mail.outbox[0].subject)
         self.assertIn("a bustimes.org account", mail.outbox[0].body)
 
         user = User.objects.get()
+        self.assertEqual(user.ip_address, "6.6.6.6")
         user.is_active = False
         user.save()
 

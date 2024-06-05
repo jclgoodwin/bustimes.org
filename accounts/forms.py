@@ -10,7 +10,6 @@ from django.forms import (
     Form,
     NullBooleanField,
 )
-from django_email_blacklist import DisposableEmailChecker
 from turnstile.fields import TurnstileField
 
 User = get_user_model()
@@ -27,10 +26,6 @@ class RegistrationForm(PasswordResetForm):
 
     def save(self, request=None):
         email_address = self.cleaned_data["email"]
-
-        email_checker = DisposableEmailChecker()
-        if email_checker.is_disposable(email_address):
-            raise SuspiciousOperation
 
         ip_address = request.headers.get("cf-connecting-ip")
 
