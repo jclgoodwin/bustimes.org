@@ -1,6 +1,7 @@
 import React from "react";
 
 import { MapEvent, MapLayerMouseEvent } from "react-map-gl/maplibre";
+import { Route, Switch } from "wouter";
 
 import VehicleMarker, {
   Vehicle,
@@ -10,6 +11,8 @@ import VehiclePopup from "./VehiclePopup";
 
 import { LngLatBounds } from "maplibre-gl";
 import BusTimesMap from "./Map";
+import TripMap from "./TripMap";
+import BigMap from "./BigMap";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -115,8 +118,8 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   return (
-    <React.Fragment>
-      <div className="operator-map">
+    <Switch>
+      <Route path="/operators/:slug/map">
         <BusTimesMap
           initialViewState={{
             bounds: bounds,
@@ -145,8 +148,13 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
             />
           )}
         </BusTimesMap>
-      </div>
-      {/*{clickedTripId ? <TripLayer tripId={clickedTripId} /> : null}*/}
-    </React.Fragment>
+      </Route>
+      <Route path="/trips/:tripId">
+        <BigMap />
+      </Route>
+      <Route path="/map">
+        <BigMap />
+      </Route>
+    </Switch>
   );
 }
