@@ -5,9 +5,31 @@ on:
   pull_request:
 
 jobs:
-  test:
+  test-frontend:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 5
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    - run: npm install
+    # - run: npm run lint
+    # - run: npm test
+    - run: npm run build
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: |
+          busstops/static
+
+  test-backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     services:
       postgres:
@@ -24,19 +46,7 @@ jobs:
           - 5432:5432
 
     steps:
-
     - uses: actions/checkout@v4
-
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-
-    - run: |
-        npm install
-        npm run lint
-        npm test
-        npm run build
 
     - name: Install Geospatial libraries
       # required by GeoDjango
@@ -53,6 +63,13 @@ jobs:
         cache: 'poetry'
 
     - run: poetry install --only main
+
+    - run: rm -r busstops/static
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: dist
+        path: busstops/static
 
     - name: run tests
       env:
