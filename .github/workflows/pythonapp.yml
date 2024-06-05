@@ -11,6 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    services:
+      postgres:
+        image: postgis/postgis
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --mount type=tmpfs,destination=/var/lib/postgresql/data
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
     steps:
 
     - uses: actions/checkout@v4
@@ -26,31 +40,25 @@ jobs:
         npm test
         npm run build
 
-    - id: cache-docker
-      uses: actions/cache@v4
+    - uses: actions/setup-python@v5
       with:
-        path: /tmp/docker-save
-        key: docker-save-${{ hashFiles('Dockerfile') }}-${{ hashFiles('poetry.lock') }}
-        restore-keys: |
-          docker-save-${{ hashFiles('Dockerfile') }}
-          docker-save-
-
-    - run: docker load -i /tmp/docker-save/snapshot.tar || true
-
-    - run: docker compose build
-      if: steps.cache-docker.outputs.cache-hit != 'true'  # not an full exact match
-
-    - run: docker compose up -d web postgres
-
-    - name: run tests
-      run: |
-        docker compose exec web bash -c "./manage.py collectstatic --noinput && coverage run ./manage.py test && coverage xml"
+        python-version: '3.12'
+        cache: 'poetry'
 
     - run: |
-        mkdir -p /tmp/docker-save \
-          && docker save bustimesorg-web -o /tmp/docker-save/snapshot.tar \
-          && ls -lh /tmp/docker-save
-      if: steps.cache-docker.outputs.cache-hit != 'true'  # not an full exact match
+        poetry install --no-root
+
+    - name: run tests
+      env:
+        SECRET_KEY: gdffesgfxc1as9rsxgv4
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPASSWORD: postgres
+        DB_NAME: postgres
+      run: |
+        poetry run ./manage.py collectstatic --noinput \
+          && poetry run coverage run ./manage.py test
+          && poetry run coverage xml
 
     - uses: codecov/codecov-action@v4
       with:
