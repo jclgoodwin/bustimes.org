@@ -34,7 +34,7 @@ psycopg = "^3.1.8"
 PyYAML = "^6.0.0"
 redis = "^5.0.0"
 requests-cache = "^1.1.0"
-sentry-sdk = {extras = ["django"], version = "2.3.0"}
+sentry-sdk = {extras = ["django"], version = "^2.4.0"}
 Shapely = "^2.0.1"
 time-machine = "^2.4.0"
 titlecase = "^2.3"
