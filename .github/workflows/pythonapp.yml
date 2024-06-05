@@ -38,12 +38,20 @@ jobs:
         npm test
         npm run build
 
+    - name: Install Geospatial libraries
+      # required by GeoDjango
+      # see https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/geolibs/
+      run: |
+        sudo apt-get update && sudo apt-get install binutils libproj-dev gdal-bin
+
     - name: Install poetry
       run: pipx install poetry
+
     - uses: actions/setup-python@v5
       with:
         python-version: '3.12'
         cache: 'poetry'
+
     - run: poetry install
 
     - name: run tests
@@ -54,9 +62,9 @@ jobs:
         PGPASSWORD: postgres
         DB_NAME: postgres
       run: |
-        poetry run ./manage.py collectstatic --noinput \
-          && poetry run coverage run ./manage.py test
-          && poetry run coverage xml
+        poetry run ./manage.py collectstatic --noinput && \
+        poetry run coverage run ./manage.py test && \
+        poetry run coverage xml
 
     - uses: codecov/codecov-action@v4
       with:
