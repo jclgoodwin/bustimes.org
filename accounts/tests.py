@@ -21,7 +21,11 @@ class RegistrationTest(TestCase):
             response = self.client.post("/accounts/register/")
         self.assertContains(response, "This field is required")
 
-    @override_settings(DISABLE_REGISTRATION=False)
+    # enable registration, and use faster (less secure) password hashing
+    @override_settings(
+        DISABLE_REGISTRATION=False,
+        PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"],
+    )
     @patch("turnstile.fields.TurnstileField.validate", return_value=True)
     def test_registration(self, mocked_validate):
         response = self.client.get("/accounts/register/")
