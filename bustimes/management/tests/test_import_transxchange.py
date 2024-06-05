@@ -1519,6 +1519,11 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "Kings Lynn,Bus Station")
         self.assertContains(response, "Peterborough,Bus Station")
 
+        # test modern trip API too:
+        with self.assertNumQueries(5):
+            response = self.client.get(f"/api/trips/{trip.id}.json")
+        self.assertEqual(response.json()["block"], "6001")
+
         response = self.client.get(f"/trips/{trip.id}/block")
         self.assertContains(response, "Sundays")
         self.assertContains(response, "15:05")

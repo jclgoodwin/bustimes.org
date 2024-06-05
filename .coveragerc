@@ -4,7 +4,3 @@ plugins =
 omit =
     */migrations/*
     */fixtures/*
-    */virtualenvs/*
-    busstops/static/*
-    buses/asgi.py
-    buses/wsgi.py
