@@ -24,7 +24,11 @@ class RegistrationTest(TestCase):
 
     @override_settings(DISABLE_REGISTRATION=False)
     @patch("turnstile.fields.TurnstileField.validate", return_value=True)
-    def test_registration(self, mocked_validate):
+    @patch(
+        "django_email_blacklist.DisposableEmailChecker.is_disposable",
+        return_value=False,
+    )
+    def test_registration(self, mocked_validate, mocked_is_disposable):
         response = self.client.get("/accounts/register/")
         self.assertContains(response, "Email address")
 
