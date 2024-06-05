@@ -6,6 +6,7 @@ from django.test import TestCase, override_settings
 from .models import User
 
 
+@override_settings(PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"])
 class RegistrationTest(TestCase):
     @override_settings(DISABLE_REGISTRATION=True)
     def test_registration_disabled(self):
@@ -21,11 +22,7 @@ class RegistrationTest(TestCase):
             response = self.client.post("/accounts/register/")
         self.assertContains(response, "This field is required")
 
-    # enable registration, and use faster (less secure) password hashing
-    @override_settings(
-        DISABLE_REGISTRATION=False,
-        PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"],
-    )
+    @override_settings(DISABLE_REGISTRATION=False)
     @patch("turnstile.fields.TurnstileField.validate", return_value=True)
     def test_registration(self, mocked_validate):
         response = self.client.get("/accounts/register/")

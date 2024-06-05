@@ -85,8 +85,6 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_CF_VISITOR", '{"scheme":"https"}')
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# if not (DEBUG or TEST):
-#     SECURE_SSL_REDIRECT = True
 SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org", "https://staging.bustimes.org"]
