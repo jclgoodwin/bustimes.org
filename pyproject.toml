@@ -3,6 +3,7 @@ name = "bustimes.org"
 version = "0.1.0"
 description = ""
 authors = ["Josh Goodwin <j@joshuagoodw.in>"]
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "<3.13,>=3.11"
@@ -73,3 +74,7 @@ profile = "black"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.coverage.run]
+plugins = ["django_coverage_plugin"]
+omit =  ["*/migrations/*"]

@@ -52,7 +52,7 @@ jobs:
         python-version: '3.12'
         cache: 'poetry'
 
-    - run: poetry install
+    - run: poetry install --only main
 
     - name: run tests
       env:
@@ -63,10 +63,13 @@ jobs:
         DB_NAME: postgres
       run: |
         poetry run ./manage.py collectstatic --noinput && \
-        poetry run coverage run ./manage.py test && \
-        poetry run coverage xml
+        poetry run coverage run ./manage.py test
+
+    - name: generate coverage report
+      run: poetry run coverage xml
 
     - uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         fail_ci_if_error: false
+        files: ./coverage.xml

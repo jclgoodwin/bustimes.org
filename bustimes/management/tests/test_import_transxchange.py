@@ -1524,6 +1524,9 @@ class ImportTransXChangeTest(TestCase):
             response = self.client.get(f"/api/trips/{trip.id}.json")
         self.assertEqual(response.json()["block"], "6001")
 
+        with self.assertNumQueries(2):
+            response = self.client.get("/api/trips/")
+
         response = self.client.get(f"/trips/{trip.id}/block")
         self.assertContains(response, "Sundays")
         self.assertContains(response, "15:05")
