@@ -23,7 +23,7 @@ class GTFSRTTest(TestCase):
         cls.service.operator.add(cls.operator)
 
         route = Route.objects.create(
-            service=cls.service, source=source, code="3504_50174"
+            service=cls.service, source=source, code="4099_68164"
         )
 
         calendar = Calendar.objects.create(
@@ -40,7 +40,7 @@ class GTFSRTTest(TestCase):
         # deliberately duplicate trips
         cls.trip_1 = Trip.objects.create(
             route=route,
-            ticket_machine_code="3504_46086",
+            ticket_machine_code="4099_18890",
             start="10:25:00",
             end="11:25:00",
             calendar=calendar,
@@ -48,7 +48,7 @@ class GTFSRTTest(TestCase):
         )
         cls.trip_2 = Trip.objects.create(
             route=route,
-            ticket_machine_code="3504_46086",
+            ticket_machine_code="4099_18890",
             start="10:25:00",
             end="11:25:00",
         )
@@ -73,9 +73,9 @@ class GTFSRTTest(TestCase):
                 c.do_source()
                 c.update()
 
-        self.assertEqual(VehicleJourney.objects.all().count(), 1043)
+        self.assertEqual(VehicleJourney.objects.all().count(), 51)
         self.assertEqual(self.service.vehiclejourney_set.count(), 5)
         self.assertEqual(self.trip_1.vehiclejourney_set.count(), 1)
         self.assertEqual(self.trip_2.vehiclejourney_set.count(), 0)
-        self.assertEqual(Vehicle.objects.filter(operator=None).count(), 1042)
+        self.assertEqual(Vehicle.objects.filter(operator=None).count(), 50)
         self.assertEqual(self.operator.vehicle_set.count(), 1)

@@ -89,11 +89,7 @@ class Command(ImportLiveVehiclesCommand):
             + parse_duration(item.vehicle.trip.start_time)
         ).replace(tzinfo=self.tzinfo)
 
-        if datetime.fromtimestamp(item.vehicle.timestamp) - start_date > timedelta(
-            hours=12
-        ):
-            start_date += timedelta(days=1)
-            start_date_time += timedelta(days=1)
+        # assert not (datetime.fromtimestamp(item.vehicle.timestamp) - start_date_time > timedelta(hours=12))
 
         journey = VehicleJourney(code=item.vehicle.trip.trip_id)
 
@@ -117,7 +113,7 @@ class Command(ImportLiveVehiclesCommand):
                 route__trip__ticket_machine_code=journey.code,
             ).distinct()
 
-        if len(services) == 1:
+        if services:
             service = services[0]
 
         trips = Trip.objects.filter(ticket_machine_code=journey.code)
