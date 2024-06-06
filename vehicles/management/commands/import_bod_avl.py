@@ -78,7 +78,6 @@ def get_line_name_query(line_ref):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
-    wait = 10
     reg_operators = {"BDRB", "COMT", "TDY", "ROST", "CT4N", "TBTN", "OTSS"}
     services = (
         Service.objects.using(settings.READ_DATABASE)
