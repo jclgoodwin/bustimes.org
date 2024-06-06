@@ -17,8 +17,8 @@ jobs:
         node-version: '20'
         cache: 'npm'
     - run: npm install
-    # - run: npm run lint
-    # - run: npm test
+    - run: npm run lint
+    - run: npm test
     - run: npm run build
 
     - uses: actions/upload-artifact@v4

@@ -116,7 +116,13 @@ function Row({
           {stopName}
         </td>
         {aimedColumn ? (
-          <td>{stop.aimed_arrival_time || stop.aimed_departure_time}</td>
+          <td>{
+            stop.aimed_arrival_time || stop.aimed_departure_time
+            }{
+              !stop.set_down ? <abbr title="picks up only">p</abbr> : null
+            }{
+              !stop.pick_up ? <abbr title="sets down only">s</abbr> : null
+          }</td>
         ) : null}
         {actual}
       </tr>
