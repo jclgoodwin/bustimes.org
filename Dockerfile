@@ -31,7 +31,8 @@ WORKDIR /app/
 COPY poetry.lock pyproject.toml /app/
 RUN poetry install --only main --no-root
 
-COPY --from=0 /app/node_modules /app/node_modules
+COPY --from=0 /app/node_modules/htmx.org/dist /app/node_modules/htmx.org/dist
+COPY --from=0 /app/node_modules/reqwest/reqwest.min.js /app/node_modules/reqwest/
 COPY --from=0 /app/busstops/static /app/busstops/static
 COPY . /app/
 

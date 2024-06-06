@@ -19,6 +19,11 @@ ALLOWED_HOSTS = os.environ.get(
     "ALLOWED_HOSTS", "[::1] 127.0.0.1 localhost joshuas-macbook-pro.local"
 ).split()
 
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://bustimes.org https://staging.bustimes.org https://bustimes-org.fly.dev",
+).split()
+
 TEST = "test" in sys.argv or "pytest" in sys.argv[0]
 DEBUG = bool(os.environ.get("DEBUG", False))
 
@@ -87,7 +92,6 @@ SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
-CSRF_TRUSTED_ORIGINS = ["https://bustimes.org", "https://staging.bustimes.org"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_URLS_REGEX = r"(^\/(api\/|(vehicles|stops)\.json)|.*\/journeys\/.*)"
@@ -170,7 +174,7 @@ HUEY = {
 }
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR.parent / "bustimes-static")
+STATIC_ROOT = os.environ.get("STATIC_ROOT", BASE_DIR / "staticfiles")
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
