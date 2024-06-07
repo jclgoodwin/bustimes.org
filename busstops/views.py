@@ -1,4 +1,5 @@
 """View definitions."""
+
 import datetime
 import os
 import sys
@@ -30,7 +31,7 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
 from redis.exceptions import ConnectionError
-from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
+from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.utils import cache_page
@@ -263,14 +264,10 @@ def qr(request, slug):
 
 
 def status(request):
-    sources = DataSource.objects.annotate(
-        count=SubqueryCount("route"),
-    ).order_by("url")
-
     context = {
-        "nptg": DataSource.objects.filter(name="NPTG").first(),
-        "naptan": DataSource.objects.filter(name="NaPTAN").first(),
-        "tnds": sources.filter(url__contains="tnds.basemap"),
+        "sources": DataSource.objects.filter(
+            name__in=["National Operator Codes", "NPTG", "NaPTAN"]
+        ),
         "bod_avl_status": {},
     }
 

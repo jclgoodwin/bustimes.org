@@ -300,7 +300,14 @@ class ViewsTests(TestCase):
         self.assertContains(response, "<h1>Melton Constable</h1>")
         self.assertContains(response, "/localities/melton-constable")
 
-    def test_stops(self):
+    def test_stops_api(self):
+        response = self.client.get("/api/stops.json")
+        self.assertEqual(
+            response.json()["results"][0]["long_name"],
+            "Melton Constable, adjacent to Bus Shelter",
+        )
+
+    def test_stops_json(self):
         # no params - bad request
         response = self.client.get("/stops.json")
         self.assertEqual(response.status_code, 400)

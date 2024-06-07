@@ -62,4 +62,6 @@ fi
 
 ./manage.py import_gtfs
 
+./manage.py update_search_indexes
+
 finish

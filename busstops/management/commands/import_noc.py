@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 
 import requests
 import yaml
+from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.management import BaseCommand
 from django.db import transaction
@@ -90,7 +91,20 @@ class Command(BaseCommand):
                 ("EM", "EM"),
             )
         ]
-        noc_source = code_sources[0][1].id
+        noc_source = code_sources[0][1]
+
+        url = "https://www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml"
+        response = requests.get(url)
+        element = ET.fromstring(response.text)
+
+        generation_date = parse_datetime(element.attrib["generationDate"])
+        if generation_date == noc_source.datetime:
+            return
+
+        noc_source.datetime = generation_date
+        noc_source.save(
+            update_fields=["datetime"]
+        )  # ok to do this now cos we're inside a transaction
 
         operators = Operator.objects.prefetch_related(
             "operatorcode_set", "licences"
@@ -100,7 +114,7 @@ class Command(BaseCommand):
             code.code: code
             for operator in operators.values()
             for code in operator.operatorcode_set.all()
-            if code.source_id == noc_source and code.code != operator.noc
+            if code.source_id == noc_source.id and code.code != operator.noc
         }
 
         # all licences (not just ones with operators attached)
@@ -110,10 +124,6 @@ class Command(BaseCommand):
             overrides = yaml.load(open_file, Loader=yaml.BaseLoader)
 
         operators_by_slug = {operator.slug: operator for operator in operators.values()}
-
-        url = "https://www.travelinedata.org.uk/noc/api/1.0/nocrecords.xml"
-        response = requests.get(url)
-        element = ET.fromstring(response.text)
 
         public_names = {}
         for e in element.find("PublicName"):

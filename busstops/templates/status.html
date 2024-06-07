@@ -8,14 +8,12 @@
 
 <table>
     <tbody>
+        {% for source in sources %}
         <tr>
-            <th scope="row">NPTG</th>
-            <td>{{ nptg.datetime }}</td>
+            <th scope="row">{{ source.name }}</th>
+            <td>{{ source.datetime }}</td>
         </tr>
-        <tr>
-            <th scope="row">NaPTAN</th>
-            <td>{{ naptan.datetime }}</td>
-        </tr>
+        {% endfor %}
     </tbody>
 </table>
 

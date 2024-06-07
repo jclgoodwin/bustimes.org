@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from vosa.models import Licence
 
-from ...models import Operator, Region
+from ...models import DataSource, Operator, Region
 
 
 class ImportOperatorsTest(TestCase):
@@ -42,10 +42,17 @@ class ImportOperatorsTest(TestCase):
         FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
         with vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")) as cassette:
-            with self.assertNumQueries(3454):
+            with self.assertNumQueries(3455):
                 call_command("import_noc")
 
             cassette.rewind()
+
+            with self.assertNumQueries(14):
+                call_command("import_noc")
+
+            cassette.rewind()
+
+            DataSource.objects.update(datetime=None)
 
             Licence.objects.create(
                 licence_number="PH0004983",
@@ -53,7 +60,7 @@ class ImportOperatorsTest(TestCase):
                 authorised_discs=0,
             )  # First Kernow
 
-            with self.assertNumQueries(20):
+            with self.assertNumQueries(21):
                 call_command("import_noc")
 
         c2c = Operator.objects.get(noc="CC")
