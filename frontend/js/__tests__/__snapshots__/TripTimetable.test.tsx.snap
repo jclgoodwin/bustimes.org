@@ -28,11 +28,6 @@ exports[`shows delay 1`] = `
       </td>
       <td>
         10:05
-        <abbr
-          title="picks up only"
-        >
-          p
-        </abbr>
       </td>
     </tr>
     <tr
@@ -154,11 +149,6 @@ exports[`shows delay 2`] = `
       </td>
       <td>
         10:05
-        <abbr
-          title="picks up only"
-        >
-          p
-        </abbr>
       </td>
     </tr>
     <tr
@@ -283,11 +273,6 @@ exports[`shows delay 3`] = `
       </td>
       <td>
         10:05
-        <abbr
-          title="picks up only"
-        >
-          p
-        </abbr>
       </td>
     </tr>
     <tr
