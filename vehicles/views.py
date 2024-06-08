@@ -603,6 +603,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                             operator=last_trip.operator_id,
                             garage=last_trip.garage_id,
                         )
+                        .distinct("start")
                         .order_by("start")
                         .annotate(
                             destination_name=F("destination__locality__name"),
@@ -1048,9 +1049,9 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             data["stops"].append(
                 {
                     "atco_code": stoptime.stop_id,
-                    "name": stop.get_name_for_timetable()
-                    if stop
-                    else stoptime.stop_code,
+                    "name": (
+                        stop.get_name_for_timetable() if stop else stoptime.stop_code
+                    ),
                     "aimed_arrival_time": stoptime.arrival_time(),
                     "aimed_departure_time": stoptime.departure_time(),
                     "minor": stoptime.is_minor(),
