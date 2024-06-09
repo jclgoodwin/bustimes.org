@@ -1,4 +1,5 @@
 import re
+from http import HTTPStatus
 
 from django.middleware.gzip import GZipMiddleware
 from django.utils.cache import add_never_cache_headers
@@ -17,7 +18,9 @@ class WhiteNoiseWithFallbackMiddleware(WhiteNoiseMiddleware):
     # https://github.com/evansd/whitenoise/issues/245
     def __call__(self, request):
         response = super().__call__(request)
-        if response.status_code == 404 and request.path.startswith(self.static_prefix):
+        if response.status_code == HTTPStatus.NOT_FOUND and request.path.startswith(
+            self.static_prefix
+        ):
             add_never_cache_headers(response)
         return response
 

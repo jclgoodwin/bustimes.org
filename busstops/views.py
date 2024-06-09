@@ -4,6 +4,7 @@ import datetime
 import os
 import sys
 import traceback
+from http import HTTPStatus
 from urllib.parse import urlencode
 
 import qrcode
@@ -141,8 +142,9 @@ def not_found(request, exception):
     else:
         cache_timeout = 3600  # no matching url pattern, cache for an hour
 
+    context["ad"] = False
     response = render(request, "404.html", context)
-    response.status_code = 404
+    response.status_code = HTTPStatus.NOT_FOUND
     patch_response_headers(response, cache_timeout=cache_timeout)
     return response
 
@@ -767,7 +769,7 @@ class StopPointDetailView(DetailView):
     def render_to_response(self, context):
         response = super().render_to_response(context)
         if not (self.object.active or context["services"]):
-            response.status_code = 404
+            response.status_code = HTTPStatus.NOT_FOUND
             patch_response_headers(response)
         return response
 
@@ -922,8 +924,8 @@ class OperatorDetailView(DetailView):
             ).first()
             if alternative:
                 return redirect(alternative)
-
-            status_code = 404  # not found
+            context["ad"] = False
+            status_code = HTTPStatus.NOT_FOUND
 
         response = super().render_to_response(context)
         if status_code:
