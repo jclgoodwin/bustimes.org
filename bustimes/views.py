@@ -48,22 +48,27 @@ from .models import Garage, Route, StopTime, Trip
 
 class ServiceDebugView(DetailView):
     model = Service
-    trips = (
-        Trip.objects.select_related("garage")
-        .prefetch_related(
-            "calendar__calendardate_set",
-            "calendar__calendarbankholiday_set__bank_holiday",
-        )
-        .order_by("calendar", "inbound", "start")
-    )
-    prefetch = Prefetch("route_set__trip_set", queryset=trips)
-    queryset = model.objects.prefetch_related(prefetch)
     template_name = "service_debug.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        for route in self.object.route_set.all():
+        trips = (
+            Trip.objects.select_related("garage")
+            .prefetch_related(
+                "calendar__calendardate_set",
+                "calendar__calendarbankholiday_set__bank_holiday",
+            )
+            .order_by("calendar", "inbound", "start")
+        )
+
+        routes = (
+            self.object.route_set.select_related("source")
+            .prefetch_related(Prefetch("trip_set", queryset=trips))
+            .order_by("service_code", "revision_number", "start_date", "line_name")
+        )
+
+        for route in routes:
             previous_trip = None
 
             for trip in route.trip_set.all():
@@ -75,6 +80,8 @@ class ServiceDebugView(DetailView):
                     previous_trip = trip
                 else:
                     previous_trip.rowspan += 1
+
+        context["routes"] = routes
 
         context["stopusages"] = self.object.stopusage_set.select_related(
             "stop__locality"
@@ -141,6 +148,15 @@ def route_xml(request, source, code=""):
         maybe_download_file(path, f"TNDS/{filename}")
         with zipfile.ZipFile(path) as archive:
             if code:
+                if code.endswith(".zip"):
+                    archive = zipfile.ZipFile(archive.open(code))
+                    code = ""
+
+                elif ".zip/" in code:
+                    sub_archive, code = code.split("/", 1)
+                    archive = zipfile.ZipFile(archive.open(sub_archive))
+
+            if code:
                 try:
                     return FileResponse(archive.open(code), content_type="text/plain")
                 except KeyError as e:
@@ -155,18 +171,23 @@ def route_xml(request, source, code=""):
             if not path.parent.exists():
                 path.parent.mkdir()
             download(path, source.url)
-    elif ".zip" not in code and code != source.name:
+    elif code != source.name:
+        url = source.url
         if source.url.startswith("https://opendata.ticketer.com/uk/"):
             path = source.url.split("/")[4]
             path = settings.DATA_DIR / "ticketer" / f"{path}.zip"
         elif "bus-data.dft.gov.uk" in source.url:
             path = settings.DATA_DIR / "bod" / str(source.id)
+        elif "data.discoverpassenger" in source.url and "/" in code:
+            path, code = code.split("/", 1)
+            url = f"https://s3-eu-west-1.amazonaws.com/passenger-sources/{path.split('_')[0]}/txc/{path}"
+            path = settings.DATA_DIR / path
         else:
             raise Http404
         if not path.exists():
             if not path.parent.exists():
                 path.parent.mkdir(parents=True)
-            download(path, source.url)
+            download(path, url)
     elif "/" in code:
         path = code.split("/")[0]  # archive name
         code = code[len(path) + 1 :]

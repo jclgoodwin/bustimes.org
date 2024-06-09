@@ -266,7 +266,7 @@ export default function BigMap() {
   }, []);
 
   const [loadingStops, setLoadingStops] = React.useState(false);
-  const [loadingBuses, setLoadingBuses] = React.useState(false);
+  const [loadingBuses, setLoadingBuses] = React.useState(true);
 
   const loadVehicles = React.useCallback(() => {
     if (document.hidden) {
@@ -410,6 +410,8 @@ export default function BigMap() {
       if (shouldShowStops(zoom)) {
         loadStops();
       }
+    } else {
+      setLoadingBuses(false);
     }
     setZoom(zoom);
   };

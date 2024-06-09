@@ -12,6 +12,9 @@ class VehicleModelTests(TestCase):
             "search/?text=3990ME%20or%20%223990%20ME%22&sort", vehicle.get_flickr_url()
         )
 
+        vehicle.reg = "HC6422"
+        self.assertEqual(str(vehicle), "HC 6422")
+
         vehicle.reg = "J122018"
         self.assertEqual(str(vehicle), "J122018")
 
@@ -60,13 +63,13 @@ class VehicleModelTests(TestCase):
         livery.save()
         self.assertEqual(
             '<div style="height:1.5em;width:2.25em;background:linear-gradient'
-            + '(to top,#7D287D 34%,#FDEE00 34%)" title="Go-Coach"></div>',
+            + '(#fdee00 66%,#7d287d 66%)" title="Go-Coach"></div>',
             livery.preview(),
         )
         self.assertEqual(
             livery.get_styles(),
             [
-                f""".livery-{livery.id} {{\n  background: linear-gradient(to top,#7D287D 34%,#FDEE00 34%);
+                f""".livery-{livery.id} {{\n  background: linear-gradient(#fdee00 66%,#7d287d 66%);
   color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""
             ],
         )
@@ -75,10 +78,10 @@ class VehicleModelTests(TestCase):
         livery.angle = 45
         livery.save()
         self.assertEqual(
-            "linear-gradient(45deg,#7D287D 34%,#FDEE00 34%)", livery.left_css
+            "linear-gradient(45deg,#7d287d 34%,#fdee00 34%)", livery.left_css
         )
         self.assertEqual(
-            "linear-gradient(315deg,#7D287D 34%,#FDEE00 34%)", livery.right_css
+            "linear-gradient(315deg,#7d287d 34%,#fdee00 34%)", livery.right_css
         )
 
         livery.angle = None
@@ -86,23 +89,23 @@ class VehicleModelTests(TestCase):
 
         vehicle = Vehicle(livery=livery)
         self.assertEqual(
-            "linear-gradient(to left,#7D287D 34%,#FDEE00 34%)", vehicle.get_livery(179)
+            "linear-gradient(270deg,#7d287d 34%,#fdee00 34%)", vehicle.get_livery(179)
         )
         self.assertIsNone(vehicle.get_text_colour())
 
         vehicle.livery.colours = "#c0c0c0"
         vehicle.livery.save()
-        self.assertEqual("#c0c0c0", vehicle.get_livery(200))
+        self.assertEqual("silver", vehicle.get_livery(200))
 
-        livery.css = "linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)"
+        livery.css = "linear-gradient(45deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)"
         livery.set_css()
         self.assertEqual(
             livery.left_css,
-            "linear-gradient(45deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)",
+            "linear-gradient(45deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)",
         )
         self.assertEqual(
             livery.right_css,
-            "linear-gradient(315deg,#ED1B23 35%,#fff 35%,#fff 45%,#ED1B23 45%)",
+            "linear-gradient(315deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)",
         )
 
     def test_livery_validation(self):

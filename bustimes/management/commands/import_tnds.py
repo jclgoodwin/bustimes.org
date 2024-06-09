@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
+from sentry_sdk.crons import monitor
 
 from busstops.models import DataSource
 
@@ -70,6 +71,7 @@ class Command(BaseCommand):
 
             self.changed_files.append((path, source))
 
+    @monitor(monitor_slug="import_tnds")
     def handle(self, username, password, *args, **options):
         import logging
         from ftplib import FTP

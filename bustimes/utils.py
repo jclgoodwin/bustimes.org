@@ -29,20 +29,29 @@ class log_time_taken:
 
 
 def get_routes(routes, when=None, from_date=None):
+    # complicated way of working out which Passenger .zip applies
     current_prefixes = {}
     for route in routes:
-        if route.source.settings:
-            for prefix, dates in route.source.settings.items():
-                if when and date.fromisoformat(dates[0]) <= when < date.fromisoformat(
-                    dates[1]
-                ):
+        if route.source.settings and route.source_id not in current_prefixes:
+            current_prefixes[route.source.id] = None
+
+            prefix_dates = [
+                (prefix, date.fromisoformat(dates[0]), date.fromisoformat(dates[1]))
+                for prefix, dates in route.source.settings.items()
+            ]
+            prefix_dates.sort(key=lambda item: item[1])  # sort by from_date
+            for prefix, start, end in prefix_dates:
+                if when and (start <= when < end):
                     current_prefixes[route.source_id] = prefix
     if current_prefixes:
         routes = [
             route
             for route in routes
             if route.source_id not in current_prefixes
-            or route.code.startswith(current_prefixes[route.source_id])
+            or (
+                current_prefixes[route.source.id]
+                and route.code.startswith(current_prefixes[route.source_id])
+            )
         ]
         return routes
 
@@ -64,7 +73,9 @@ def get_routes(routes, when=None, from_date=None):
         return routes
 
     sources = set(route.source for route in routes)
-    if len(sources) > 1 and any(source.name == "W" for source in sources):
+    if len(sources) > 1 and any(
+        route.code.startswith("Merged") and route.source.name == "W" for route in routes
+    ):
         routes = [route for route in routes if route.source.name == "W"]
         if len(routes) <= 1:
             return routes
@@ -311,46 +322,65 @@ def get_trip(
     else:
         start = None
 
-    if start is not None:
-        trips_at_start = trips.filter(start=start)
-
-        # special strategy for TfL data
-        if operator_ref == "TFLO" and departure_time and origin_ref and destination_ref:
-            trips_at_start = trips_at_start.filter(
-                Exists("stoptime", filter=Q(stop=origin_ref)),
-                Exists("stoptime", filter=Q(stop=destination_ref)),
-            )
-        elif destination:
-            if direction:
-                destination |= direction
-            trips_at_start = trips_at_start.filter(destination)
-        elif direction:
-            trips_at_start = trips_at_start.filter(direction)
-
+    # special strategy for TfL data
+    if operator_ref == "TFLO" and departure_time and origin_ref and destination:
         try:
-            return trips_at_start.get()
-        except Trip.MultipleObjectsReturned:
             try:
-                return trips_at_start.get(calendar__in=get_calendars(date))
-            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                pass
+                trips = trips.filter(
+                    Exists("stoptime", filter=Q(stop=origin_ref)),
+                    Exists("stoptime", filter=Q(stop=destination_ref)),
+                    start=start,
+                )
+                return trips.get()
+            except Trip.MultipleObjectsReturned:
+                trips = trips.filter(calendar__in=get_calendars(date))
+                return trips.get()
+        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+            return
+
+    if journey.code:
+        code = Q(ticket_machine_code=journey.code) | Q(
+            vehicle_journey_code=journey.code
+        )
+    else:
+        code = None
+
+    calendars = Q(calendar__in=get_calendars(date))
+
+    if code and start:
+        try:
+            try:
+                return trips.filter(code, start=start).get()
+            except Trip.MultipleObjectsReturned:
+                if direction:
+                    try:
+                        return trips.filter(
+                            code, calendars, direction, start=start
+                        ).get()
+                    except Trip.MultipleObjectsReturned:
+                        return
+                return trips.filter(code, calendars, start=start).get()
+        except Trip.MultipleObjectsReturned:
+            return
         except Trip.DoesNotExist:
-            if destination and departure_time:
-                try:
-                    return trips.get(start=start, calendar__in=get_calendars(date))
-                except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                    pass
+            pass
 
-    if not journey.code:
-        return
+    if code:
+        try:
+            try:
+                return trips.filter(code).get()
+            except Trip.MultipleObjectsReturned:
+                return trips.filter(code, calendars).get()
+        except Trip.MultipleObjectsReturned:
+            return
+        except Trip.DoesNotExist:
+            pass
 
-    trips = trips.filter(
-        Q(ticket_machine_code=journey.code) | Q(vehicle_journey_code=journey.code)
-    )
-
-    try:
-        return trips.get()
-    except Trip.DoesNotExist:
-        return
-    except Trip.MultipleObjectsReturned:
-        return trips.filter(calendar__in=get_calendars(date)).first()
+    if start:
+        try:
+            try:
+                return trips.filter(start=start).get()
+            except Trip.MultipleObjectsReturned:
+                return trips.filter(calendars, start=start).get()
+        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+            return

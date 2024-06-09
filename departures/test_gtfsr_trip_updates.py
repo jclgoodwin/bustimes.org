@@ -158,7 +158,7 @@ class GTFSRTTest(TestCase):
         ):
             with vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):
                 # trip with some delays
-                with self.assertNumQueries(5):
+                with self.assertNumQueries(6):
                     response = self.client.get(self.trip.get_absolute_url())
                 self.assertContains(response, '"06:47"')
 

@@ -126,48 +126,8 @@ summary::marker {
     color: var(--border-color-darker);
 }
 
-@import '../../node_modules/accessible-autocomplete/dist/accessible-autocomplete.min.css';
-
-.autocomplete__hint {
-    font: inherit;
-}
-
-.autocomplete__hint,
-.autocomplete__input {
-    border: 1px solid var(--border-color);
-    margin: 0;  // for Safari
-}
-
-.autocomplete__menu {
-    border: 1px solid var(--border-color);
-    border-top: 0;
-    width: calc(100% - 2px);
-}
-
-.autocomplete__input--focused {
-    box-shadow: none;
-}
-
-.autocomplete__hint,
-.autocomplete__input,
-.autocomplete__option {
-    font-size: 1em;
-    padding: 4px;
-}
-
-.autocomplete__option {
-    border-color: var(--border-color);
-}
-
-.autocomplete__option--odd {
-    background: none;
-}
-
-.autocomplete__option--focused,
-.autocomplete__option:hover {
-    background: var(--brand-color);
-    border-color: var(--brand-color-darker);
-    color: var(--text-color);
+.cf-turnstile {
+    margin-top: -1em;
 }
 
 .errorlist:not(.nonfield) {
@@ -183,26 +143,8 @@ summary::marker {
     padding: 1em;
 }
 
-#id_colours,
 #id_features {
     margin-top: -.5em;
-}
-
-#id_colours {
-    label {
-        display: inline-block;
-        padding: .25em;
-    }
-
-    label div {  // livery preview
-        display: inline-block;
-        margin-right: .25em;
-        vertical-align: middle;
-    }
-
-    input {
-        margin-right: .75em;
-    }
 }
 
 #id_reg,
@@ -825,10 +767,6 @@ table {
 
     td {
         overflow: hidden;
-    }
-
-    .number {
-        text-align: right;
     }
 
     .trivia {

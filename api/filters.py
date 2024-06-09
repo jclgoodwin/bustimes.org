@@ -1,9 +1,15 @@
 from django.db.models import Q
-from django_filters.rest_framework import CharFilter, FilterSet, NumberFilter, DateTimeFilter
+from django_filters.rest_framework import (
+    CharFilter,
+    DateTimeFilter,
+    FilterSet,
+    NumberFilter,
+    OrderingFilter,
+)
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import Trip
-from vehicles.models import Vehicle
+from vehicles.models import Livery, Vehicle, VehicleType
 
 
 class VehicleFilter(FilterSet):
@@ -12,6 +18,8 @@ class VehicleFilter(FilterSet):
     reg = CharFilter(lookup_expr="iexact")
     slug = CharFilter()
     operator = CharFilter()
+
+    ordering = OrderingFilter(fields=(("id", "id"),))
 
     def search_filter(self, queryset, name, value):
         return queryset.filter(Q(reg__iexact=value) | Q(fleet_code__iexact=value))
@@ -56,3 +64,20 @@ class TripFilter(FilterSet):
     class Meta:
         model = Trip
         fields = ["ticket_machine_code", "vehicle_journey_code", "block"]
+
+
+class LiveryFilter(FilterSet):
+    name = CharFilter(lookup_expr="icontains")
+    vehicle__operator = CharFilter(label="Operator", distinct=True)
+
+    class Meta:
+        model = Livery
+        fields = ["name", "published"]
+
+
+class VehicleTypeFilter(FilterSet):
+    name = CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        model = VehicleType
+        fields = ["name"]

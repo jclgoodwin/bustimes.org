@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.core import mail
 from django.test import TestCase, override_settings
 
@@ -19,41 +21,48 @@ class RegistrationTest(TestCase):
             response = self.client.post("/accounts/register/")
         self.assertContains(response, "This field is required")
 
-    @override_settings(DISABLE_REGISTRATION=False)
-    def test_registration(self):
+    @override_settings(
+        DISABLE_REGISTRATION=False,
+        PASSWORD_HASHERS=["django.contrib.auth.hashers.MD5PasswordHasher"],
+    )
+    @patch("turnstile.fields.TurnstileField.validate", return_value=True)
+    def test_registration(self, mocked_validate):
         response = self.client.get("/accounts/register/")
         self.assertContains(response, "Email address")
 
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(4):
+            # create new account
             response = self.client.post(
                 "/accounts/register/",
-                {
-                    "email": "rufus@herring.pizza",
-                },
+                {"email": "rufus@herring.pizza", "turnstile": "foo"},
+                headers={"CF-Connecting-IP": "6.6.6.6"},
             )
         self.assertContains(response, "Check your email (rufus@herring.pizza")
         self.assertEqual("bustimes.org account", mail.outbox[0].subject)
         self.assertIn("a bustimes.org account", mail.outbox[0].body)
 
-        with self.assertNumQueries(1):
+        user = User.objects.get()
+        self.assertEqual(user.ip_address, "6.6.6.6")
+        user.is_active = False
+        user.save()
+
+        with self.assertNumQueries(2):
+            # reactivate existing account
             response = self.client.post(
                 "/accounts/register/",
-                {
-                    "email": "RUFUS@HeRRInG.piZZa",
-                },
+                {"email": "RUFUS@HeRRInG.piZZa", "turnstile": "foo"},
             )
 
         user = User.objects.get()
         self.assertEqual(user.username, "rufus@herring.pizza")
         self.assertEqual(user.email, "rufus@herring.pizza")
+        self.assertIs(True, user.is_active)
         self.assertEqual(str(user), str(user.id))
 
         with self.assertNumQueries(2):
             response = self.client.post(
                 "/accounts/register/",
-                {
-                    "email": "ROY@HotMail.com",
-                },
+                {"email": "ROY@HotMail.com", "turnstile": "foo"},
             )
 
         user = User.objects.get(email__iexact="ROY@HotMail.com")
@@ -103,6 +112,10 @@ class RegistrationTest(TestCase):
 
         self.client.force_login(other_user)
 
+        # normal user can't see email addresses
+        response = self.client.get(super_user.get_absolute_url())
+        self.assertNotContains(response, "ken@example.com")
+
         # set username:
 
         response = self.client.post(
@@ -119,13 +132,13 @@ class RegistrationTest(TestCase):
 
         # user can delete own account:
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": False})
             # confirm delete not ticked
         other_user.refresh_from_db()
         self.assertTrue(other_user.is_active)
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(6):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": "on"})
         other_user.refresh_from_db()
         self.assertFalse(other_user.is_active)

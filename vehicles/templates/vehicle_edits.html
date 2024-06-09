@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}{% if vehicle %}History – {{ vehicle }}{% else %}Recent changes {% endif %} – bustimes.org{% endblock %}
+{% block title %}Vehicle edits – bustimes.org{% endblock %}
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
@@ -10,12 +10,7 @@
 
 {% block content %}
 
-<ul class="tabs">
-    <li><a href="/vehicles/history">Recent changes</a></li>
-    <li>Pending</li>
-</ul>
-
-<h1>Pending changes</h1>
+<h1>Vehicle edits</h1>
 
 <div class="sidebar">
     <form>

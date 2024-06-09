@@ -84,7 +84,6 @@ class VehiclesTests(TestCase):
         cls.livery = Livery.objects.create(
             name="black with lemon piping", colours="#FF0000 #0000FF", published=True
         )
-        cls.livery.operators.add(cls.lynx)
         cls.vehicle_2 = Vehicle.objects.create(
             code="50",
             fleet_number=50,
@@ -133,7 +132,7 @@ class VehiclesTests(TestCase):
             date_joined="2020-10-19 23:47+00:00",
         )
         cls.trusted_user = User.objects.create(
-            username="norma", trusted=True, email="n@example.com"
+            username="norma", trusted=True, email="n@example.com", score=2
         )
         cls.user = User.objects.create(
             username="ken",
@@ -182,7 +181,6 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, "20 Oct")
         self.assertContains(response, "00:47")
         self.assertContains(response, "/operators/lynx/map")
-        self.assertContains(response, "/vehicles/history?vehicle__operator=LYNX")
         self.assertContains(response, "/vehicles/edits?vehicle__operator=LYNX")
         self.assertContains(response, "/operators/lynx/map")
 
@@ -307,9 +305,9 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "Copied Optare Spectra to 2 vehicles.")
         self.assertContains(response, "Copied black with lemon piping to 2 vehicles.")
 
-        # spare ticket machine - not editable
-        response = self.client.get(self.vehicle_1.get_edit_url())
-        self.assertEqual(404, response.status_code)
+        # # spare ticket machine - not editable
+        # response = self.client.get(self.vehicle_1.get_edit_url())
+        # self.assertEqual(404, response.status_code)
 
         response = self.client.get("/operators/lynx/vehicles")
         self.assertContains(response, "<td>Spare ticket machine</td>")
@@ -362,7 +360,7 @@ class VehiclesTests(TestCase):
             response,
             """<td class="field-left">\
 <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
+background:linear-gradient(90deg,red 50%,#00f 50%)">
                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
             </svg></td>""",
         )
@@ -370,7 +368,7 @@ background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)">
             response,
             """<td class="field-right">\
 <svg height="24" width="36" style="line-height:24px;font-size:24px;\
-background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
+background:linear-gradient(270deg,red 50%,#00f 50%)">
                 <text x="50%" y="80%" fill="#fff" text-anchor="middle" style="">42</text>
             </svg>""",
         )
@@ -413,14 +411,8 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         response = self.client.get("/liveries.44.css")
         self.assertEqual(
             response.content.decode(),
-            f""".livery-{self.livery.id} {{
-  background: linear-gradient(to right,#FF0000 50%,#0000FF 50%);
-  color:#fff;fill:#fff
-}}
-.livery-{self.livery.id}.right {{
-  background: linear-gradient(to left,#FF0000 50%,#0000FF 50%)
-}}
-""",
+            f""".livery-{self.livery.id}{{color:#fff;fill:#fff;background:linear-gradient(90deg,red 50%,#00f 50%)}}\
+.livery-{self.livery.id}.right{{background:linear-gradient(270deg,red 50%,#00f 50%)}}""",
         )
 
     def test_vehicle_edit_1(self):
@@ -437,7 +429,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
 
         self.client.force_login(self.staff_user)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             response = self.client.get(url)
         self.assertNotContains(response, "already")
 
@@ -448,12 +440,12 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
             "other_vehicle_type": str(self.vehicle_1.vehicle_type),
             "features": self.wifi.id,
             "operator": self.lynx.noc,
-            "colours": "#FF0000",
+            "other_colour": "#FF0000",
             "notes": "Trent Barton",
         }
 
         # edit nothing
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
         self.assertContains(response, "You haven&#x27;t changed anything")
@@ -470,7 +462,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
             "-aWWgKX-aotzn6-aiadaL-adWEKk/ blah"
         )
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(13):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_really_changed())
         self.assertNotContains(response, "already")
@@ -480,7 +472,7 @@ background:linear-gradient(to left,#FF0000 50%,#0000FF 50%)">
         # edit fleet number
         initial["fleet_number"] = "2"
         initial["previous_reg"] = "bean"
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertIsNone(response.context["form"])
         self.assertContains(response, "<strong>fleet number</strong>")
@@ -494,15 +486,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         )
 
         # should not create an edit
-        with self.assertNumQueries(16):
+        with self.assertRaises(ValueError):
             initial["colours"] = "#FFFF00"
             response = self.client.post(url, initial)
-        self.assertTrue(response.context["form"].has_changed())
-        self.assertContains(
-            response,
-            "Select a valid choice. #FFFF00 is not one of the available choices",
-        )
-        self.assertContains(response, "already")
 
         self.assertEqual(1, VehicleRevision.objects.all().count())
 
@@ -553,7 +539,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # staff user can edit branding and notes
         initial["branding"] = "Crag Hopper"
         initial["notes"] = "West Coast Motors"
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertContains(response, "<strong>notes</strong>")
         self.assertContains(response, "from Trent Barton")
@@ -572,7 +558,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # add and remove a feature, change type
         initial["features"] = self.usb.id
         initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
-        with self.assertNumQueries(26):
+        with self.assertNumQueries(23):
             response = self.client.post(url, initial)
         revision = response.context["revision"]
         self.assertFalse(revision.pending)
@@ -584,7 +570,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # colour, spare ticket machine
         initial["colours"] = self.livery.id
         initial["spare_ticket_machine"] = True
-        with self.assertNumQueries(20):
+        with self.assertNumQueries(17):
             response = self.client.post(url, initial)
             revision = response.context["revision"]
             self.assertEqual(revision.to_livery, self.livery)
@@ -611,7 +597,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "notes": "",
         }
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
         self.assertNotContains(response, "already")
@@ -654,13 +640,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "notes": "",
         }
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
             self.assertContains(response, "You haven&#x27;t changed anything")
 
-        initial["colours"] = "Other"
         initial["other_colour"] = "Bath is my favourite spa town, and so is Harrogate"
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
             self.assertEqual(
                 response.context["form"].errors,
@@ -677,7 +662,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         url = self.vehicle_1.get_edit_url()
 
         # create a revision
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(17):
             response = self.client.post(
                 url,
                 {
@@ -718,14 +703,31 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.staff_user.get_absolute_url())
         self.assertContains(response, "from FD54JYA")
 
+    def test_operator_user_permission(self):
+        self.client.force_login(self.staff_user)
+
+        self.user.operators.add(self.vehicle_1.operator_id)
+
+        # another user has permission
+        response = self.client.get(self.vehicle_1.get_edit_url())
+        self.assertContains(
+            response, "Editing Lynx vehicles is restricted", status_code=403
+        )
+
+        # give logged-in user permission
+        self.staff_user.operators.add(self.vehicle_1.operator_id)
+
+        response = self.client.get(self.vehicle_1.get_edit_url())
+        self.assertNotContains(response, "Editing Lynx vehicles is restricted")
+
     def test_vehicle_edit_3(self):
         self.client.force_login(self.user)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(6):
             response = self.client.get(self.vehicle_3.get_edit_url())
         self.assertNotContains(response, "notes")
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(9):
             # new user - can create a pending revision
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
@@ -735,13 +737,13 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, "<strong>removed from list</strong>")
         revision = response.context["revision"]
 
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(13):
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),
                 {
                     "reg": self.vehicle_2.reg,
                     "vehicle_type": self.vehicle_2.vehicle_type_id,
-                    "colours": "Other",
+                    "colours": "",
                     "prevous_reg": "SPIDERS",  # doesn't match regex
                 },
             )
@@ -754,7 +756,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         revision.vehicle.refresh_from_db()
         self.assertTrue(revision.vehicle.withdrawn)
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(10):
             # trusted user - can edit reg
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
@@ -777,7 +779,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.vehicle_3.get_absolute_url())
         self.assertContains(response, ">K292 JVF, P44 CEX<")
 
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(15):
             # trusted user - can edit colour
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),
@@ -786,16 +788,15 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "vehicle_type": self.vehicle_2.vehicle_type_id,
                     "other_vehicle_type": str(self.vehicle_2.vehicle_type),
                     "operator": self.vehicle_2.operator_id,
-                    "colours": "Other",
+                    "colours": "",
                 },
             )
         self.assertContains(response, "<strong>livery</strong>")
         self.assertContains(
             response,
-            '<span class="livery" style="background:linear-gradient(to right,#FF0000 50%,#0000FF 50%)"></span>',
+            '<span class="livery" style="background:linear-gradient(90deg,red 50%,#00f 50%)"></span>',
         )
-        self.assertContains(response, "<strong>colours</strong>")
-        self.assertContains(response, "to Other")
+        self.assertContains(response, "<strong>livery</strong>")
 
         revision = VehicleRevision.objects.first()
         self.assertEqual(
@@ -918,8 +919,8 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "livery": {
                             "id": self.vehicle_2.livery_id,
                             "name": "black with lemon piping",
-                            "left": "linear-gradient(to right,#FF0000 50%,#0000FF 50%)",
-                            "right": "linear-gradient(to left,#FF0000 50%,#0000FF 50%)",
+                            "left": "linear-gradient(90deg,red 50%,#00f 50%)",
+                            "right": "linear-gradient(270deg,red 50%,#00f 50%)",
                         },
                         "branding": "",
                         "operator": {

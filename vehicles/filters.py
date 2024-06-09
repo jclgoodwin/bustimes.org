@@ -1,4 +1,4 @@
-from django_filters.rest_framework import CharFilter, FilterSet, NumberFilter
+from django_filters import BooleanFilter, CharFilter, FilterSet, NumberFilter
 
 
 class VehicleRevisionFilter(FilterSet):
@@ -7,3 +7,5 @@ class VehicleRevisionFilter(FilterSet):
     )
     vehicle = NumberFilter(label="Vehicle ID")
     user = NumberFilter(label="User ID")
+    pending = BooleanFilter()
+    disapproved = BooleanFilter()

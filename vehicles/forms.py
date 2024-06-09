@@ -1,67 +1,40 @@
 import re
-from urllib.parse import quote_plus
 
 from django import forms
 from django.conf import settings
+from django.contrib.admin.widgets import AutocompleteSelect
 from django.core.exceptions import ValidationError
-from django.db.models import Count, OuterRef, Q
-from django.urls import reverse
-from django.utils.html import format_html
-from sql_util.utils import Exists
 
-from busstops.models import Operator, Service
+from busstops.models import Operator
 
 from . import fields
 from .models import Livery, Vehicle, VehicleFeature, VehicleType, get_text_colour
 
 
-def get_livery_choices(vehicle, user):
-    choices = {}
+class AutcompleteWidget(forms.Select):
+    optgroups = AutocompleteSelect.optgroups
 
-    vehicles = Vehicle.objects.filter(id=vehicle.id)
-    if vehicle.operator_id:
-        vehicles |= vehicle.operator.vehicle_set.filter(withdrawn=True)
-
-    liveries = Livery.objects.filter(vehicle__in=vehicles)
-    if vehicle.operator_id:
-        liveries |= Livery.objects.filter(published=True, operators=vehicle.operator_id)
-
-    liveries = liveries.annotate(popularity=Count("vehicle")).order_by("-popularity")
-
-    for livery in liveries.distinct():
-        choices[livery.id] = livery.preview(name=True)
-
-        if user.has_perm("vehicles.change_livery"):
-            url = reverse("admin:vehicles_livery_change", args=(livery.id,))
-            choices[livery.id] += format_html(' <a href="{}">(edit)</a>', url)
-
-    # add ad hoc vehicle colours
-    for vehicle in vehicles.filter(
-        ~Q(colours=""), ~Q(colours="Other"), livery=None
-    ).distinct("colours"):
-        choices[vehicle.colours] = Livery(
-            colours=vehicle.colours, name=f"{vehicle.colours}"
-        ).preview(name=True)
-
-        if user.has_perm("vehicles.change_livery"):
-            url = reverse("admin:vehicles_livery_add")
-            choices[vehicle.colours] += format_html(
-                ' <a href="{}?colours={}&amp;operator={}">(add proper livery)</a>',
-                url,
-                quote_plus(vehicle.colours),
-                vehicle.operator_id,
-            )
-
-    # replace the dictionary with a list of key, label pairs
-    choices = list(choices.items())
-
-    if choices:
-        choices.append(("Other", "Other"))
-
-    return choices
+    def __init__(self, field=None, attrs=None, choices=(), using=None):
+        self.field = field
+        self.attrs = {} if attrs is None else attrs.copy()
+        self.choices = choices
+        self.db = None
 
 
 class EditVehicleForm(forms.Form):
+    @property
+    def media(self):
+        return forms.Media(
+            js=(
+                "admin/js/vendor/jquery/jquery.min.js",
+                "admin/js/vendor/select2/select2.full.min.js",
+                "js/edit-vehicle.js",
+            ),
+            css={
+                "screen": ("admin/css/vendor/select2/select2.min.css",),
+            },
+        )
+
     field_order = [
         "spare_ticket_machine",
         "withdrawn",
@@ -90,15 +63,24 @@ class EditVehicleForm(forms.Form):
     fleet_number = forms.CharField(required=False, max_length=24)
     reg = fields.RegField(label="Number plate", required=False, max_length=24)
 
-    operator = forms.ModelChoiceField(queryset=None, required=False, empty_label="")
-
-    vehicle_type = forms.ModelChoiceField(
-        queryset=VehicleType.objects, required=False, empty_label=""
+    operator = forms.ModelChoiceField(
+        queryset=Operator.objects,
+        required=False,
+        empty_label="",
+        widget=forms.TextInput(),
     )
 
-    colours = forms.ChoiceField(
+    vehicle_type = forms.ModelChoiceField(
+        widget=AutcompleteWidget(field=Vehicle.vehicle_type.field),
+        queryset=VehicleType.objects,
+        required=False,
+        empty_label="",
+    )
+
+    colours = forms.ModelChoiceField(
+        widget=AutcompleteWidget(field=Vehicle.livery.field),
         label="Current livery",
-        widget=forms.RadioSelect,
+        queryset=Livery.objects,
         required=False,
         help_text="""To avoid arguments, please wait until the bus has *finished being repainted*
 (<em>not</em> "in the paint shop" or "awaiting repaint")""",
@@ -143,8 +125,6 @@ link to a picture to prove it. Be polite.""",
 
     def clean_other_colour(self):
         if self.cleaned_data["other_colour"]:
-            if self.cleaned_data.get("colours") != "Other":
-                return
             try:
                 get_text_colour(self.cleaned_data["other_colour"])
             except ValueError as e:
@@ -179,20 +159,8 @@ link to a picture to prove it. Be polite.""",
             raise ValidationError("A spare ticket machine can’t have a number plate")
         return reg
 
-    def __init__(self, *args, user, vehicle, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        colours = get_livery_choices(vehicle, user)
-
-        if colours:
-            if vehicle:
-                colours = [("", "None/mostly white/other")] + colours
-            else:
-                colours = [("", "No change")] + colours
-            self.fields["colours"].choices = colours
-        else:
-            del self.fields["colours"]
-            del self.fields["other_colour"]
+    def __init__(self, data, *args, user, vehicle, **kwargs):
+        super().__init__(data, *args, **kwargs)
 
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True
@@ -257,38 +225,6 @@ can’t be contradicted"""
             ):
                 del self.fields["colours"]
                 del self.fields["other_colour"]
-
-        if user.is_staff:
-            self.fields["operator"].queryset = Operator.objects.all()
-            self.fields["operator"].widget = forms.TextInput()
-        elif (
-            not vehicle.operator or vehicle.operator.parent
-        ):  # vehicle has no operator, or operator is part of a group
-            operators = Operator.objects
-            if user.trusted and vehicle.operator:
-                # any sibling operator
-                operators = operators.filter(parent=vehicle.operator.parent)
-                condition = Exists(
-                    Service.objects.filter(current=True, operator=OuterRef("pk")).only(
-                        "id"
-                    )
-                )
-                condition |= Exists("vehicle")
-            elif vehicle.latest_journey:
-                # only operators whose services the vehicle has operated
-                condition = Exists(
-                    Service.objects.filter(
-                        operator=OuterRef("pk"), id=vehicle.latest_journey.service_id
-                    )
-                )
-            else:
-                del self.fields["operator"]
-                return
-            if vehicle.operator:
-                condition |= Q(pk=vehicle.operator_id)
-            self.fields["operator"].queryset = operators.filter(condition)
-        else:
-            del self.fields["operator"]
 
 
 class DebuggerForm(forms.Form):

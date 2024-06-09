@@ -1,26 +1,20 @@
 from django.core.management.base import BaseCommand
-from django.db.models import Exists, OuterRef
 
 from ...models import Locality, Operator, Service
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for locality in Locality.objects.with_documents():
-            locality.search_vector = locality.document
-            locality.save(update_fields=["search_vector"])
 
-        has_services = Exists(
-            Service.objects.filter(current=True, operator=OuterRef("pk"))
-        )
-        for operator in Operator.objects.with_documents().filter(has_services):
-            operator.search_vector = operator.document
-            operator.save(update_fields=["search_vector"])
+        for queryset in (
+            Locality.objects.with_documents(),
+            Operator.objects.with_documents(),
+            Service.objects.with_documents().filter(current=True),
+        ):
+            to_update = []
+            for item in queryset:
+                if item.search_vector != item.document:
+                    item.search_vector = item.document
+                    to_update.append(item)
 
-        print(Operator.objects.filter(~has_services).update(search_vector=None))
-
-        for service in Service.objects.with_documents().filter(current=True):
-            service.search_vector = service.document
-            service.save(update_fields=["search_vector"])
-
-        print(Service.objects.filter(current=False).update(search_vector=None))
+            queryset.bulk_update(to_update, ["search_vector"])

@@ -141,7 +141,15 @@ class Command(BaseCommand):
                 stop = stops_data[row.stop_id]
                 stop_time.stop_code = stop.stop_name
                 if row.stop_id not in missing_stops:
-                    logger.info(stop)
+                    logger.info(
+                        f"{stop.stop_name} {stop.stop_code} {stop.stop_timezone} {stop.platform_code}"
+                    )
+                    logger.info(
+                        f"https://bustimes.org/map#16/{stop.stop_lat}/{stop.stop_lon}"
+                    )
+                    logger.info(
+                        f"https://bustimes.org/admin/busstops/stopcode/add/?code={stop.stop_id}\n"
+                    )
                     missing_stops.add(row.stop_id)
 
             trip.destination_id = stop_time.stop_id

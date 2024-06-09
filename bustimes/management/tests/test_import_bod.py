@@ -162,15 +162,15 @@ class ImportBusOpenDataTest(TestCase):
 
         self.assertContains(
             response,
-            "Timetable data from "
-            '<a href="https://data.bus-data.dft.gov.uk/category/dataset/35/">Lynx/Bus Open Data Service (BODS)</a>, '
-            "1 April 2020.",
+            """Timetable data from <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/" nofollow>Lynx/Bus Open \
+Data Service (BODS)</a>, 1 April 2020.""",
         )
 
         # test views:
 
         trip = route.trip_set.first()
 
+        # legacy api still used by busmiles?
         response = self.client.get(f"/trips/{trip.id}.json")
         self.assertEqual(27, len(response.json()["times"]))
 
@@ -282,7 +282,7 @@ class ImportBusOpenDataTest(TestCase):
         trip = journey.get_trip(destination_ref="2900K132")
         self.assertEqual(trip.ticket_machine_code, "1")
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(2):
             trip = journey.get_trip(
                 origin_ref="2900K132",
                 destination_ref="2900K132",

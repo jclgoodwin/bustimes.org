@@ -4,7 +4,9 @@ import logging
 from itertools import pairwise
 from urllib.parse import urlencode
 
+import lightningcss
 import xmltodict
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
@@ -114,7 +116,9 @@ def liveries_css(request, version=0):
     liveries = Livery.objects.filter(published=True).order_by("id")
     for livery in liveries:
         styles += livery.get_styles()
-    return HttpResponse("".join(styles), content_type="text/css")
+    styles = "".join(styles)
+    styles = lightningcss.process_stylesheet(styles)
+    return HttpResponse(styles, content_type="text/css")
 
 
 features_string_agg = StringAgg(
@@ -124,7 +128,7 @@ features_string_agg = StringAgg(
 
 def get_vehicle_order(vehicle):
     if vehicle.notes == "Spare ticket machine":
-        return ("", vehicle.fleet_number or 0, vehicle.code)
+        return ("", vehicle.fleet_number or 99999, vehicle.code)
 
     if vehicle.fleet_number:
         return ("", vehicle.fleet_number)
@@ -185,7 +189,7 @@ def operator_vehicles(request, slug=None, parent=None):
         raise Http404
 
     vehicles = sorted(vehicles, key=get_vehicle_order)
-    if not parent and operator.name == "National Express":
+    if not parent and operator.noc in settings.ALLOW_VEHICLE_NOTES_OPERATORS:
         vehicles = sorted(vehicles, key=lambda v: v.notes)
 
     if parent:
@@ -243,9 +247,7 @@ def operator_vehicles(request, slug=None, parent=None):
         **context,
         "parent": parent,
         "vehicles": vehicles,
-        "branding_column": any(
-            vehicle.branding and vehicle.branding != "None" for vehicle in vehicles
-        ),
+        "branding_column": any(vehicle.branding for vehicle in vehicles),
         "name_column": any(vehicle.name for vehicle in vehicles),
         "notes_column": any(
             vehicle.notes and not vehicle.is_spare_ticket_machine()
@@ -566,23 +568,23 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
     # annotate journeys with whether each one has some location history in redis
     # (in order to show the "Map" link or not)
-    try:
-        pipe = redis_client.pipeline(transaction=False)
-        for journey in journeys:
-            pipe.exists(journey.get_redis_key())
+    if redis_client:
+        try:
+            pipe = redis_client.pipeline(transaction=False)
+            for journey in journeys:
+                pipe.exists(journey.get_redis_key())
 
-        locations = pipe.execute()
-    except (ConnectionError, AttributeError):
-        for journey in journeys:
-            journey.locations = True
-    else:
-        for i, journey in enumerate(journeys):
-            journey.locations = locations[i]
+            locations = pipe.execute()
+        except (ConnectionError, AttributeError):
+            for journey in journeys:
+                journey.locations = True
+        else:
+            for i, journey in enumerate(journeys):
+                journey.locations = locations[i]
 
     # "Track this bus" button
     if vehicle and vehicle.latest_journey_id:
-        tracking = redis_client and redis_client.get(f"vehicle{vehicle.id}")
-        if tracking:
+        if redis_client and redis_client.get(f"vehicle{vehicle.id}"):
             context["tracking"] = f"#journeys/{vehicle.latest_journey_id}"
 
         # predict next workings
@@ -601,6 +603,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                             operator=last_trip.operator_id,
                             garage=last_trip.garage_id,
                         )
+                        .distinct("start")
                         .order_by("start")
                         .annotate(
                             destination_name=F("destination__locality__name"),
@@ -669,7 +672,7 @@ class VehicleDetailView(DetailView):
 
         context["pending_edits"] = self.object.vehiclerevision_set.filter(pending=True)
         context["revisions"] = self.object.vehiclerevision_set.filter(
-            ~Q(disapproved=True), pending=False
+            pending=False, disapproved=False
         )
 
         if self.object.operator:
@@ -717,8 +720,16 @@ def edit_vehicle(request, **kwargs):
         **kwargs,
     )
 
-    if not vehicle.is_editable():
-        raise Http404
+    if (
+        vehicle.operator_id
+        and User.operators.through.objects.filter(operator=vehicle.operator_id)
+        .exclude(user=request.user)
+        .exists()
+        and not request.user.operators.filter(noc=vehicle.operator_id).exists()
+    ):
+        raise PermissionDenied(
+            f'Editing {vehicle.operator} vehicles is restricted to "local experts"'
+        )
 
     context = {}
     revision = None
@@ -727,7 +738,8 @@ def edit_vehicle(request, **kwargs):
         "reg": vehicle.reg,
         "vehicle_type": vehicle.vehicle_type,
         "features": vehicle.features.all(),
-        "colours": str(vehicle.livery_id or vehicle.colours),
+        "colours": vehicle.livery_id,
+        "other_colour": vehicle.colours or "",
         "branding": vehicle.branding,
         "name": vehicle.name,
         "previous_reg": vehicle.data and vehicle.data.get("Previous reg") or None,
@@ -766,14 +778,16 @@ def edit_vehicle(request, **kwargs):
 
             revision.user = request.user
             revision.created_at = timezone.now()
-            if not request.user.trusted:
+            if not (
+                request.user.trusted or request.user.score and request.user.score > 100
+            ):
                 revision.pending = True
             try:
                 with transaction.atomic():
                     revision.save()
                     VehicleRevisionFeature.objects.bulk_create(features)
 
-                    if request.user.trusted:
+                    if not revision.pending:
                         apply_revision(revision, features)
 
                     # score decrements with each edit!
@@ -784,17 +798,33 @@ def edit_vehicle(request, **kwargs):
                     context["revision"] = revision
                     form = None
 
-            except IntegrityError:
-                if "operator" in form.changed_data:
-                    form.add_error(
-                        "operator",
-                        f"{form.cleaned_data['operator']} already has a vehicle with the code {vehicle.code}",
-                    )
+            except IntegrityError as e:
+                error = "There's already a pending edit for that"
+                if "unique_pending_livery" in e.args[0]:
+                    form.add_error("colours", error)
+                elif "unique_pending_type" in e.args[0]:
+                    form.add_error("vehicle_type", error)
+                elif "unique_pending_operator" in e.args[0]:
+                    form.add_error("operator", error)
+                elif "vehicle_operator_and_code" in e.args[0]:
+                    error = f"{form.cleaned_data['operator']} already has a vehicle with the code {vehicle.code}"
+                    form.add_error("operator", error)
                 else:
                     raise
 
     if form:
-        context["pending_edits"] = vehicle.vehiclerevision_set.filter(pending=True)
+        context["pending_edits"] = (
+            vehicle.vehiclerevision_set.filter(pending=True)
+            .select_related(
+                "from_type",
+                "to_type",
+                "from_operator",
+                "to_operator",
+                "from_livery",
+                "to_livery",
+            )
+            .prefetch_related("vehiclerevisionfeature_set__feature")
+        )
 
     if vehicle.operator:
         context["breadcrumb"] = [vehicle.operator, Vehicles(vehicle=vehicle), vehicle]
@@ -815,11 +845,6 @@ def edit_vehicle(request, **kwargs):
     )
 
 
-@login_required
-def vehicle_edits(request):
-    return vehicles_history(request, pending=True)
-
-
 @require_POST
 @login_required
 def vehicle_revision_vote(request, revision_id, direction):
@@ -829,6 +854,7 @@ def vehicle_revision_vote(request, revision_id, direction):
 
     assert request.user.id != revision.user_id
     assert request.user.trusted is not False
+    assert request.user.score and request.user.score > 0
 
     positive = direction == "up"
     score_change = 1 if positive else -1
@@ -873,8 +899,9 @@ def vehicle_revision_revert(request, revision_id):
 
 @require_POST
 @login_required
+@transaction.atomic
 def vehicle_revision_action(request, revision_id, action):
-    revisions = VehicleRevision.objects.filter(id=revision_id)
+    revisions = VehicleRevision.objects.filter(id=revision_id).select_for_update()
 
     revision = get_object_or_404(revisions)
 
@@ -892,6 +919,7 @@ def vehicle_revision_action(request, revision_id, action):
             disapproved=False,
         )
     elif action == "disapprove":
+        assert revision.pending
         if request.user.id == revision.user_id:
             revisions.delete()  # cancel one's own edit
         else:
@@ -908,40 +936,18 @@ def vehicle_revision_action(request, revision_id, action):
 
 
 @require_safe
-def vehicle_history(request, **kwargs):
-    vehicle = get_object_or_404(Vehicle, **kwargs)
+def vehicle_edits(request):
     revisions = (
-        vehicle.vehiclerevision_set.filter(pending=False, disapproved=False)
-        .select_related("from_livery", "to_livery", "from_type", "to_type", "user")
-        .order_by("-id")
-    )
-    return render(
-        request,
-        "vehicle_history.html",
-        {
-            "breadcrumb": [
-                vehicle.operator,
-                vehicle.operator and Vehicles(vehicle=vehicle),
-                vehicle,
-            ],
-            "vehicle": vehicle,
-            "revisions": revisions,
-        },
-    )
-
-
-@require_safe
-def vehicles_history(request, pending=False):
-    revisions = (
-        VehicleRevision.objects.filter(pending=pending)
-        .select_related(
+        VehicleRevision.objects.select_related(
             "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
         )
         .prefetch_related("vehiclerevisionfeature_set__feature")
+        .order_by("-id")
     )
-    revisions = revisions.order_by("-id")
 
-    f = filters.VehicleRevisionFilter(request.GET, queryset=revisions)
+    f = filters.VehicleRevisionFilter(
+        request.GET or {"pending": True, "disapproved": False}, queryset=revisions
+    )
 
     if f.is_valid():
         paginator = Paginator(f.qs, 100)
@@ -951,7 +957,7 @@ def vehicles_history(request, pending=False):
 
     return render(
         request,
-        "vehicle_edits.html" if pending else "vehicle_history.html",
+        "vehicle_edits.html",
         {
             "filter": f,
             "revisions": page,
@@ -1043,9 +1049,9 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             data["stops"].append(
                 {
                     "atco_code": stoptime.stop_id,
-                    "name": stop.get_name_for_timetable()
-                    if stop
-                    else stoptime.stop_code,
+                    "name": (
+                        stop.get_name_for_timetable() if stop else stoptime.stop_code
+                    ),
                     "aimed_arrival_time": stoptime.arrival_time(),
                     "aimed_departure_time": stoptime.departure_time(),
                     "minor": stoptime.is_minor(),

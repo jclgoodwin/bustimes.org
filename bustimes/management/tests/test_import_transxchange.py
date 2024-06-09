@@ -29,6 +29,7 @@ from ...models import (
     Calendar,
     CalendarDate,
     Garage,
+    Note,
     Route,
     RouteLink,
     Trip,
@@ -310,7 +311,7 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertContains(
             response,
-            'data from <a href="https://www.travelinedata.org.uk/">the Traveline National Dataset (TNDS)</a>',
+            'data from <a href="https://www.travelinedata.org.uk/" nofollow>the Traveline National Dataset (TNDS)</a>',
         )
 
         self.assertEqual(
@@ -733,9 +734,10 @@ class ImportTransXChangeTest(TestCase):
         self.assertContains(response, "32-20-_-y10-1")
 
         with patch("boto3.client"):
-            with override_settings(DATA_DIR=Path("poo-pants")):
-                with self.assertRaises(FileNotFoundError):
-                    self.client.get(route.get_absolute_url())
+            with TemporaryDirectory() as data_dir:
+                with override_settings(DATA_DIR=Path(data_dir)):
+                    with self.assertRaises(FileNotFoundError):
+                        self.client.get(route.get_absolute_url())
 
     def test_multiple_operators(self):
         """
@@ -1003,6 +1005,18 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(str(res.context_data["timetable"].date), "2017-10-01")
         # self.assertNotContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         self.assertEqual(18, len(res.context_data["timetable"].groupings[0].trips))
+
+        # notes
+        self.assertContains(
+            res,
+            "<td>Night Service, runs Saturday night/Sunday morning ONLY;special fares may</td>",
+            html=True,
+            count=1,
+        )
+        self.assertContains(
+            res, "<p>Low floor bus - access for pushchairs and wheelchairs</p>", count=2
+        )
+        self.assertEqual(Note.objects.filter(trip__start="02:30:00").count(), 4)
 
         self.assertContains(
             res,
@@ -1504,6 +1518,14 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(f"/trips/{trip.id}")
         self.assertContains(response, "Kings Lynn,Bus Station")
         self.assertContains(response, "Peterborough,Bus Station")
+
+        # test modern trip API too:
+        with self.assertNumQueries(5):
+            response = self.client.get(f"/api/trips/{trip.id}.json")
+        self.assertEqual(response.json()["block"], "6001")
+
+        with self.assertNumQueries(2):
+            response = self.client.get("/api/trips/")
 
         response = self.client.get(f"/trips/{trip.id}/block")
         self.assertContains(response, "Sundays")

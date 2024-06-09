@@ -748,7 +748,13 @@ class Command(BaseCommand):
                 if cell.notes:
                     for note_code, note_text in cell.notes:
                         note = self.get_note(note_code, note_text)
-                        if not trip_notes or trip_notes[-1].trip is not trip:
+                        if not (
+                            # trip_notes
+                            # and trip_notes[-1].trip is trip
+                            any(
+                                tn.trip is trip and tn.note is note for tn in trip_notes
+                            )
+                        ):
                             trip_notes.append(Trip.notes.through(trip=trip, note=note))
                         stop_time_notes.append(
                             StopTime.notes.through(stoptime=stop_time, note=note)
@@ -773,7 +779,11 @@ class Command(BaseCommand):
 
             for note_code, note_text in journey.notes.items():
                 note = self.get_note(note_code, note_text)
-                if not trip_notes or trip_notes[-1].trip is not trip:
+                if not (
+                    # trip_notes
+                    # and trip_notes[-1].trip is trip
+                    any(tn.trip is trip and tn.note is note for tn in trip_notes)
+                ):
                     trip_notes.append(Trip.notes.through(trip=trip, note=note))
 
             if journey.frequency_interval:
@@ -1140,7 +1150,9 @@ class Command(BaseCommand):
                         service.colour_id = operator.colour_id
                         break
 
-            line_brand = line.line_brand
+            line_brand = line.line_brand or line.marketing_name
+            if line_brand:
+                logger.info(line_brand)
             if txc_service.marketing_name:
                 logger.info(txc_service.marketing_name)
                 if txc_service.marketing_name in (
@@ -1253,7 +1265,7 @@ class Command(BaseCommand):
 
             route_defaults = {
                 "line_name": line.line_name,
-                "line_brand": line_brand,
+                "line_brand": line_brand or "",
                 "outbound_description": line.outbound_description or "",
                 "inbound_description": line.inbound_description or "",
                 "start_date": txc_service.operating_period.start,

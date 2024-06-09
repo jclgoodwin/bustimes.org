@@ -300,7 +300,14 @@ class ViewsTests(TestCase):
         self.assertContains(response, "<h1>Melton Constable</h1>")
         self.assertContains(response, "/localities/melton-constable")
 
-    def test_stops(self):
+    def test_stops_api(self):
+        response = self.client.get("/api/stops.json")
+        self.assertEqual(
+            response.json()["results"][0]["long_name"],
+            "Melton Constable, adjacent to Bus Shelter",
+        )
+
+    def test_stops_json(self):
         # no params - bad request
         response = self.client.get("/stops.json")
         self.assertEqual(response.status_code, 400)
@@ -364,13 +371,13 @@ class ViewsTests(TestCase):
 
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(7):
             response = self.client.get("/operators/VENT")
-            self.assertContains(response, "Page not found", status_code=404)
+            self.assertContains(response, "0 routes", status_code=404)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(7):
             response = self.client.get("/operators/nu-venture")
-            self.assertContains(response, "Page not found", status_code=404)
+            self.assertContains(response, "0 routes", status_code=404)
 
         with self.assertNumQueries(3):
             response = self.client.get("/operators/poop")
@@ -385,7 +392,7 @@ class ViewsTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "ouibus")
         self.assertContains(response, ">@dril<")
-        self.assertContains(response, 'twitter.com/dril"')
+        self.assertContains(response, 'x.com/dril"')
 
         # payment methods:
         self.assertContains(response, "euros")

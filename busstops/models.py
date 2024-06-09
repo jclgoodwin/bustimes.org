@@ -236,32 +236,28 @@ class DataSource(models.Model):
     def credit(self, route=None):
         url = self.get_nice_url()
         text = None
-        date = None
+        date = self.datetime
 
         if self.name == "L":
             text = "Transport for London"
         elif self.name == "GB":
             text = "the National Coach Services Database (NCSD)"
+            url = "https://www.data.gov.uk/dataset/3a3b32f3-d727-4623-aa17-daa2f39aaf92/national-coach-services-ncsd/"
         elif "tnds" in self.url:
             url = "https://www.travelinedata.org.uk/"
             text = "the Traveline National Dataset (TNDS)"
         elif url:
             text = self.get_nice_name()
-            date = self.datetime
         elif "transportforireland" in self.url:
             url = f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
             text = "Transport for Ireland"
-            date = self.datetime
         elif self.url.startswith("https://opendata.ticketer.com/uk/"):
             text = self.url
-            date = self.datetime
         elif self.name == "MET" or self.name == "ULB":
             url = self.url
             text = "Translink open data"
-            date = self.datetime
         else:
             text = self.name
-            date = self.datetime
 
         if url and "bus-data.dft.gov.uk" in url:
             text = f"{text}/Bus Open Data Service (BODS)"
@@ -276,7 +272,7 @@ class DataSource(models.Model):
 
         if text:
             if url:
-                text = format_html('<a href="{}">{}</a>', url, text)
+                text = format_html('<a href="{}" nofollow>{}</a>', url, text)
             else:
                 text = escape(text)
             if date:
@@ -776,7 +772,7 @@ class Service(models.Model):
     def get_line_name_order(line_name):
         prefix, number, suffix = SERVICE_ORDER_REGEX.match(line_name).groups()
         number = number.zfill(4)
-        if prefix == "X":
+        if prefix == "X" or prefix == "N":
             return ("", number, prefix, suffix)
         return (prefix, number, suffix)
 
@@ -800,7 +796,7 @@ class Service(models.Model):
 
     def is_megabus(self):
         return (
-            self.line_name in {"FAL", "TUBE", "M92"}
+            self.line_name in {"FAL", "TUBE"}
             or self.service_code == "PF0000459:197"  # X5
             or any(o.pk in {"MEGA", "SCMG", "SCLK"} for o in self.operator.all())
         )

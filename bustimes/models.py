@@ -2,6 +2,7 @@ from datetime import timedelta
 from itertools import pairwise
 
 from django.contrib.gis.db import models
+from django.db.models import Q
 from django.db.models.functions import Upper
 from django.urls import reverse
 from django.utils.timezone import localdate
@@ -373,14 +374,16 @@ class Trip(models.Model):
         return reverse("trip_detail", args=(self.id,))
 
     def get_trips(self):
-        if self.ticket_machine_code and self.block and self.route.service_id:
+        if self.ticket_machine_code and self.route.service_id:
             # get other parts of this trip (if the service has been split into parts)
             # see also get_split_trips
             trips = (
                 Trip.objects.filter(
+                    Q(ticket_machine_code=self.ticket_machine_code)
+                    | Q(vehicle_journey_code=self.vehicle_journey_code),
                     calendar=self.calendar_id,
                     inbound=self.inbound,
-                    ticket_machine_code=self.ticket_machine_code,
+                    operator=self.operator,
                     block=self.block,
                     route__service=self.route.service_id,
                 )

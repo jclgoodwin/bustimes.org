@@ -14,8 +14,8 @@ urlpatterns = [
     path("vehicles", views.vehicles),
     path("vehicles.json", views.vehicles_json),
     path("vehicles/debug", views.debug),
-    path("vehicles/history", views.vehicles_history),
     path("vehicles/history/<int:revision_id>/revert", views.vehicle_revision_revert),
+    path("vehicles/history", views.vehicle_edits),
     path("vehicles/edits", views.vehicle_edits),
     path(
         "vehicles/revisions/<int:revision_id>/vote/<direction>",
@@ -28,15 +28,6 @@ urlpatterns = [
     path("vehicles/<slug>", views.VehicleDetailView.as_view(), name="vehicle_detail"),
     path("vehicles/<int:id>/edit", views.edit_vehicle),
     path("vehicles/<slug>/edit", views.edit_vehicle, name="vehicle_edit"),
-    path(
-        "vehicles/<int:id>/history",
-        views.vehicle_history,
-    ),
-    path(
-        "vehicles/<slug>/history",
-        views.vehicle_history,
-        name="vehicle_history",
-    ),
     path(
         "vehicles/<int:id>/debug",
         views.latest_journey_debug,

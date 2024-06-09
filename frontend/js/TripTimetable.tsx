@@ -44,12 +44,16 @@ function Row({
   vehicle,
   aimedColumn,
   highlightedStop,
+  first=false,
+  last=false,
 }: {
   stop: TripTime;
   onMouseEnter?: (stop: TripTime) => void;
   vehicle?: Vehicle;
   aimedColumn?: boolean;
   highlightedStop?: string;
+  first: boolean;
+  last: boolean;
 }) {
   const handleMouseEnter = React.useCallback(() => {
     if (onMouseEnter) {
@@ -109,6 +113,19 @@ function Row({
     actual = <td rowSpan={actualRowSpan}>{actual}</td>;
   }
 
+  let caveat;
+  if (!first && !last) {
+    if (stop.set_down === false) {
+      if (stop.pick_up === false) {
+        caveat = <abbr title="does not stop">pass</abbr>;
+      } else {
+        caveat = <abbr title="picks up only">p</abbr>;
+      }
+    } else if (stop.pick_up === false) {
+      caveat = <abbr title="sets down only">s</abbr>;
+    }
+  }
+
   return (
     <React.Fragment>
       <tr className={className} onMouseEnter={handleMouseEnter}>
@@ -116,7 +133,7 @@ function Row({
           {stopName}
         </td>
         {aimedColumn ? (
-          <td>{stop.aimed_arrival_time || stop.aimed_departure_time}</td>
+          <td>{ stop.aimed_arrival_time || stop.aimed_departure_time }{ caveat }</td>
         ) : null}
         {actual}
       </tr>
@@ -145,6 +162,8 @@ const TripTimetable = React.memo(function TripTimetable({
     (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,
   );
 
+  const last = trip.times.length - 1;
+
   return (
     <React.Fragment>
       <table>
@@ -164,6 +183,8 @@ const TripTimetable = React.memo(function TripTimetable({
               onMouseEnter={onMouseEnter}
               vehicle={vehicle}
               highlightedStop={highlightedStop}
+              first={i === 0}
+              last={i === last}
             />
           ))}
         </tbody>

@@ -1,6 +1,7 @@
-import datetime
 import logging
 import os
+from datetime import datetime, timezone
+from http import HTTPStatus
 
 import requests
 from django.utils.http import http_date, parse_http_date
@@ -28,7 +29,7 @@ def download_if_changed(path, url, params=None):
     if path.exists():
         headers["if-modified-since"] = http_date(os.path.getmtime(path))
         response = session.head(url, params=params, headers=headers, timeout=10)
-        if response.status_code == 304:
+        if response.status_code == HTTPStatus.NOT_MODIFIED:
             modified = False
 
     if modified:
@@ -36,7 +37,7 @@ def download_if_changed(path, url, params=None):
             url, params=params, headers=headers, stream=True, timeout=10
         )
 
-        if response.status_code == 304:
+        if response.status_code == HTTPStatus.NOT_MODIFIED:
             modified = False
         elif not response.ok:
             modified = False
@@ -44,14 +45,12 @@ def download_if_changed(path, url, params=None):
         else:
             write_file(path, response)
 
-    last_modified = None
-    if "x-amz-meta-cb-modifiedtime" in response.headers:
-        last_modified = response.headers["x-amz-meta-cb-modifiedtime"]
-    elif "last-modified" in response.headers:
-        last_modified = response.headers["last-modified"]
+    last_modified = response.headers.get("last-modified") or response.headers.get(
+        "x-amz-meta-cb-modifiedtime"
+    )
     if last_modified:
-        last_modified = datetime.datetime.fromtimestamp(
-            parse_http_date(last_modified), datetime.timezone.utc
+        last_modified = datetime.fromtimestamp(
+            parse_http_date(last_modified), timezone.utc
         )
 
     return modified, last_modified

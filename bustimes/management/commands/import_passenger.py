@@ -169,7 +169,12 @@ class Command(BaseCommand):
             old_services = command.source.service_set.filter(current=True, route=None)
             logger.info(f"  old services: {old_services.update(current=False)}")
 
-            if new_versions or operator_name:
+            if new_versions or operator_name or old_routes:
+                if not (new_versions or operator_name):
+                    remaining_services = command.source.service_set.filter(current=True)
+                    command.service_ids = remaining_services.values_list(
+                        "id", flat=True
+                    )
                 command.finish_services()
 
             command.source.save()

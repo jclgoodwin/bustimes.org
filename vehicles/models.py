@@ -6,10 +6,12 @@ from collections import Counter
 from math import ceil
 from urllib.parse import quote
 
+import lightningcss
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.core.exceptions import ValidationError
+from django.db.models import Q, UniqueConstraint
 from django.db.models.functions import TruncDate, Upper
 from django.urls import reverse
 from django.utils import timezone
@@ -29,6 +31,9 @@ def format_reg(reg):
             return reg[:3] + " " + reg[3:]
         if reg[-2:].isalpha():
             return reg[:-2] + " " + reg[-2:]
+        if reg[:2].isalpha():
+            return reg[:2] + " " + reg[2:]
+
     return reg
 
 
@@ -156,10 +161,6 @@ A livery can be adequately represented with a list of colours and an angle.""",
         default=False, help_text="Equivalent to setting the angle to 90"
     )
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
-    operators = models.ManyToManyField(
-        "busstops.Operator", blank=True, related_name="liveries"
-    )
-    locked = models.BooleanField(default=False)
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
@@ -174,17 +175,26 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def __str__(self):
         return self.name
 
+    @staticmethod
+    def minify(css):
+        prefix = ".livery{background:"
+        suffix = "}"
+        css = lightningcss.process_stylesheet(prefix + css + suffix)
+        assert css.startswith(prefix)
+        assert css.endswith(suffix)
+        return css[19:-1]
+
     def set_css(self):
         if self.css:
             css = self.css
-            self.left_css = css
+            self.left_css = self.css
             for angle in re.findall(r"\((\d+)deg,", css):
                 replacement = 360 - int(angle)
                 css = css.replace(f"({angle}deg,", f"({replacement}deg,", 1)
                 # doesn't work with e.g. angles {a, b} where a = 360 - b
             self.right_css = css.replace("left", "right")
 
-        elif self.colours and self.colours != "Other":
+        elif self.colours:
             self.left_css = get_css(
                 self.colours.split(), None, self.horizontal, self.angle
             )
@@ -228,10 +238,14 @@ A livery can be adequately represented with a list of colours and an angle.""",
 
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
-        if update_fields is None and (self.css or self.colours):
-            self.set_css()
-            if self.colours and not self.id:
-                self.white_text = get_text_colour(self.colours) == "#fff"
+        if update_fields is None:
+            if self.css or self.colours:
+                self.set_css()
+                if self.colours and not self.id:
+                    self.white_text = get_text_colour(self.colours) == "#fff"
+            if self.right_css:
+                self.right_css = self.minify(self.right_css)
+                self.left_css = self.minify(self.left_css)
         super().save(*args, update_fields=update_fields, **kwargs)
 
     def get_styles(self):
@@ -304,13 +318,7 @@ class Vehicle(models.Model):
         return " " in self.get_reg()
 
     def is_editable(self) -> bool:
-        if self.locked or (
-            self.is_spare_ticket_machine()
-            and not self.livery_id
-            and not self.vehicle_type_id
-        ):
-            return False
-        return True
+        return not self.locked
 
     def save(self, *args, update_fields=None, **kwargs):
         if (
@@ -583,6 +591,25 @@ class VehicleRevision(models.Model):
 
     score = models.SmallIntegerField(default=0)
 
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                fields=["vehicle", "to_operator"],
+                condition=Q(pending=True),
+                name="unique_pending_operator",
+            ),
+            UniqueConstraint(
+                fields=["vehicle", "to_type"],
+                condition=Q(pending=True),
+                name="unique_pending_type",
+            ),
+            UniqueConstraint(
+                fields=["vehicle", "to_livery"],
+                condition=Q(pending=True),
+                name="unique_pending_livery",
+            ),
+        ]
+
     def __str__(self):
         return ", ".join(
             f"{key}: {before} → {after}"
@@ -599,13 +626,15 @@ class VehicleRevision(models.Model):
                     if field == "livery":
                         if before:
                             before = format_html(
-                                '<span class="livery" style="background:{}"></span>',
+                                '<span class="livery" style="background:{}"></span>{}',
                                 before.left_css,
+                                before.name,
                             )
                         if after:
                             after = format_html(
-                                '<span class="livery" style="background:{}"></span>',
+                                '<span class="livery" style="background:{}"></span>{}',
                                 after.left_css,
+                                after.name,
                             )
                 else:
                     before = getattr(self, f"from_{field}_id")
@@ -706,11 +735,7 @@ class VehicleJourney(models.Model):
         unique_together = (("vehicle", "datetime"),)
 
     def get_redis_key(self):
-        if self.datetime > datetime.datetime(
-            2023, 12, 18, 18, tzinfo=datetime.timezone.utc
-        ):
-            return self.uuid.bytes
-        return f"journey{self.id}"
+        return self.uuid.bytes
 
     get_trip = get_trip
 

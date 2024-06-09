@@ -7,6 +7,11 @@ from pathlib import Path
 from warnings import filterwarnings
 
 import dj_database_url
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.huey import HueyIntegration
+from sentry_sdk.integrations.logging import ignore_logger
+from sentry_sdk.integrations.redis import RedisIntegration
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["SECRET_KEY"]
@@ -80,8 +85,6 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_CF_VISITOR", '{"scheme":"https"}')
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# if not (DEBUG or TEST):
-#     SECURE_SSL_REDIRECT = True
 SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
 CSRF_TRUSTED_ORIGINS = ["https://bustimes.org", "https://staging.bustimes.org"]
@@ -240,36 +243,28 @@ filterwarnings(
 FORMS_URLFIELD_ASSUME_HTTPS = True
 
 
-if TEST:
-    pass
-elif not DEBUG and "collectstatic" not in sys.argv and "SENTRY_DSN" in os.environ:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.huey import HueyIntegration
-    from sentry_sdk.integrations.logging import ignore_logger
-    from sentry_sdk.integrations.redis import RedisIntegration
+def traces_sampler(context):
+    try:
+        url = context["wsgi_environ"]["RAW_URI"]
+    except KeyError:
+        return 0
+    if (
+        url.startswith("/vehicles.json")
+        or url.startswith("/stops.json")
+        or url == "/version"
+    ):
+        return 0
+    return 0.001
 
-    def traces_sampler(context):
-        try:
-            url = context["wsgi_environ"]["RAW_URI"]
-        except KeyError:
-            return 0
-        if (
-            url.startswith("/vehicles.json")
-            or url.startswith("/stops.json")
-            or url == "/version"
-        ):
-            return 0
-        return 0.001
 
-    sentry_sdk.init(
-        dsn=os.environ["SENTRY_DSN"],
-        integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
-        ignore_errors=[KeyboardInterrupt, RuntimeError],
-        release=os.environ.get("COMMIT_HASH") or os.environ.get("KAMAL_CONTAINER_NAME"),
-        traces_sampler=traces_sampler,
-    )
-    ignore_logger("django.security.DisallowedHost")
+sentry_sdk.init(
+    dsn=os.environ.get("SENTRY_DSN"),
+    integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
+    ignore_errors=[KeyboardInterrupt, RuntimeError],
+    release=os.environ.get("COMMIT_HASH") or os.environ.get("KAMAL_CONTAINER_NAME"),
+    traces_sampler=traces_sampler,
+)
+ignore_logger("django.security.DisallowedHost")
 
 if not TEST:
     LOGGING = {
@@ -317,4 +312,6 @@ TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5s
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
 
 ABBREVIATE_HOURLY = False
-DISABLE_REGISTRATION = True
+DISABLE_REGISTRATION = False
+
+DISPOSABLE_EMAIL_DOMAINS = BASE_DIR / "fixtures" / "disposable_email_domains.txt"

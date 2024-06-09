@@ -15,7 +15,7 @@
     {% if revision.pending %}
         <p>Your changes:</p>
     {% else %}
-        <p>Details updated, and recorded in <a href="/vehicles/history">the changelog for all to see</a>:</p>
+        <p>Details updated, and recorded in <a href="/vehicles/edits">the changelog for all to see</a>:</p>
     {% endif %}
 
     <p>
@@ -56,6 +56,12 @@
         <input type="submit" value="Save changes">
     </form>
 
+    {{ form.media }}
+
+    {% if vehicle.livery %}
+        <style>{% for css in vehicle.livery.get_styles %}{{ css|safe }}{% endfor %}</style>
+    {% endif %}
+
 {% endif %}
 
 {% if previous %}
@@ -65,14 +71,5 @@
 {% if next %}
     <p class="next"><a href="{{ next.get_edit_url }}">{{ next }} &rarr;</a></p>
 {% endif %}
-
-{% endblock %}
-
-{% block foot %}
-   {% if form %}
-        {% load static %}
-        <script src="{% static 'js/accessible-autocomplete/accessible-autocomplete.min.js' %}"></script>
-        <script async src="{% static 'js/edit-vehicle.js' %}"></script>
-    {% endif %}
 
 {% endblock %}

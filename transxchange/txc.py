@@ -646,6 +646,8 @@ class Line:
             self.line_brand = ""
         self.line_name = line_name.strip()
 
+        self.marketing_name = element.findtext("MarketingName")
+
         if (
             element.findtext("LineColour")
             or element.findtext("LineFontColour")

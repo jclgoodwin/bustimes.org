@@ -108,14 +108,13 @@ class Command(BaseCommand):
             for status in item["lineStatuses"]:
                 assert status["reason"] == status["disruption"]["description"]
 
-                assert len(status["validityPeriods"]) == 1
+                validity_periods = status["validityPeriods"]
 
                 window = DateTimeTZRange(
-                    status["validityPeriods"][0]["fromDate"],
-                    status["validityPeriods"][0]["toDate"],
+                    min(period["fromDate"] for period in validity_periods),
+                    max(period["toDate"] for period in validity_periods),
                     "[]",
                 )
-                assert len(status["validityPeriods"]) == 1
 
                 situation_number = get_hash(f"{status['reason']} {window}")
 
@@ -143,7 +142,7 @@ class Command(BaseCommand):
                 situation.save()
 
                 if created:
-                    for period in status["validityPeriods"]:
+                    for period in validity_periods:
                         window = DateTimeTZRange(
                             period["fromDate"], period["toDate"], "[]"
                         )

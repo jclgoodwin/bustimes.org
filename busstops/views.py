@@ -1,4 +1,5 @@
 """View definitions."""
+
 import datetime
 import os
 import sys
@@ -30,7 +31,7 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.cache import cache_control
 from django.views.generic.detail import DetailView
 from redis.exceptions import ConnectionError
-from sql_util.utils import Exists, SubqueryCount, SubqueryMax, SubqueryMin
+from sql_util.utils import Exists, SubqueryMax, SubqueryMin
 from ukpostcodeutils import validation
 
 from buses.utils import cache_page
@@ -263,14 +264,10 @@ def qr(request, slug):
 
 
 def status(request):
-    sources = DataSource.objects.annotate(
-        count=SubqueryCount("route"),
-    ).order_by("url")
-
     context = {
-        "nptg": DataSource.objects.filter(name="NPTG").first(),
-        "naptan": DataSource.objects.filter(name="NaPTAN").first(),
-        "tnds": sources.filter(url__contains="tnds.basemap"),
+        "sources": DataSource.objects.filter(
+            name__in=["National Operator Codes", "NPTG", "NaPTAN"]
+        ),
         "bod_avl_status": {},
     }
 
@@ -878,26 +875,27 @@ class OperatorDetailView(DetailView):
             # for 'from {date}' for future services:
             context["today"] = timezone.localdate()
 
-            context["breadcrumb"] = [self.object.region]
             context["colours"] = get_colours(context["services"])
 
-            # this is a bit of a faff,
-            # just to avoid doing separate queries
-            # for National Operator Codes and MyTrip
-            operator_codes = self.object.operatorcode_set.annotate(
-                source_name=F("source__name")
-            )
+        context["breadcrumb"] = [self.object.region]
 
-            context["nocs"] = [
-                code.code
-                for code in operator_codes
-                if code.source_name == "National Operator Codes"
-            ]
+        # this is a bit of a faff,
+        # just to avoid doing separate queries
+        # for National Operator Codes and MyTrip
+        operator_codes = self.object.operatorcode_set.annotate(
+            source_name=F("source__name")
+        )
 
-            # tickets tab:
-            context["tickets"] = any(
-                code.source_name == "MyTrip" for code in operator_codes
-            )
+        # tickets tab:
+        context["tickets"] = any(
+            code.source_name == "MyTrip" for code in operator_codes
+        )
+
+        context["nocs"] = [
+            code.code
+            for code in operator_codes
+            if code.source_name == "National Operator Codes"
+        ]
 
         # vehicles tab:
 
@@ -915,6 +913,8 @@ class OperatorDetailView(DetailView):
         return context
 
     def render_to_response(self, context):
+        status_code = None
+
         if not context["services"] and not context["vehicles"]:
             alternative = Operator.objects.filter(
                 operator_has_current_services,
@@ -922,8 +922,13 @@ class OperatorDetailView(DetailView):
             ).first()
             if alternative:
                 return redirect(alternative)
-            raise Http404
-        return super().render_to_response(context)
+
+            status_code = 404  # not found
+
+        response = super().render_to_response(context)
+        if status_code:
+            response.status_code = status_code
+        return response
 
 
 class ServiceDetailView(DetailView):

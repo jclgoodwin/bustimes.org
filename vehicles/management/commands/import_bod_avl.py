@@ -13,6 +13,7 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
 from django.utils.dateparse import parse_duration
+from sentry_sdk.crons import monitor
 
 from busstops.models import (
     Locality,
@@ -77,7 +78,6 @@ def get_line_name_query(line_ref):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
-    wait = 10
     reg_operators = {"BDRB", "COMT", "TDY", "ROST", "CT4N", "TBTN", "OTSS"}
     services = (
         Service.objects.using(settings.READ_DATABASE)
@@ -527,7 +527,10 @@ class Command(ImportLiveVehiclesCommand):
 
                 if not vehicle.operator_id:
                     vehicle.operator = operator
-                    vehicle.save(update_fields=["operator"])
+                    try:
+                        vehicle.save(update_fields=["operator"])
+                    except IntegrityError:
+                        pass
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
@@ -785,6 +788,7 @@ class Command(ImportLiveVehiclesCommand):
             total_items,
         )
 
+    @monitor(monitor_slug="bod_avl")
     def update(self):
         now = timezone.now()
 

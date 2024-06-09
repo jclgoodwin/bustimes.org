@@ -416,3 +416,11 @@ COEV:
     url: http://www.coacheventsservices.co.uk/
 ABLO: 
     name: Transport UK
+    url: https://www.transportukbus.com/
+TRST:
+    url: https://localbus.vectare.co.uk/central-connect
+    twitter: VectareEssex
+GLLN:
+    name: Central Connect
+    url: https://localbus.vectare.co.uk/central-connect
+    twitter: VectareEssex

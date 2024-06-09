@@ -37,10 +37,14 @@ const stopsStyle: LayerProps = {
   id: "stops",
   type: "symbol",
   layout: {
-    "icon-rotate": ["+", 45, ["get", "bearing"]],
-    "icon-image": "route-stop-marker",
-    "icon-allow-overlap": true,
-    "icon-ignore-placement": true,
+    "symbol-sort-key": ["get", "priority"],
+    "text-field": ["get", "time"],
+    "text-size": 11,
+    "text-font": ["Stadia Regular"],
+  },
+  "paint": {
+    "text-halo-color": "#fff",
+    "text-halo-width": 2,
   },
 };
 
@@ -143,8 +147,10 @@ const Route = React.memo(function Route({ times }: RouteProps) {
                   url: stop.stop.atco_code
                     ? `/stops/${stop.stop.atco_code}`
                     : null,
-                  name: stop.stop.name,
-                  bearing: stop.stop.bearing,
+                  "name": stop.stop.name,
+                  "bearing": stop.stop.bearing,
+                  "time": stop.aimed_arrival_time || stop.aimed_departure_time || stop.expected_arrival_time,
+                  "priority": stop.timing_status === "PTP" ? 0 : 1 // symbol-sort-key lower number - "higher" priority
                 },
               };
             }),
@@ -368,7 +374,6 @@ export default function TripMap() {
           onClick={handleMapClick}
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
-          images={["route-stop-marker"]}
         >
           <Route times={trip.times} />
 
@@ -376,7 +381,7 @@ export default function TripMap() {
             return (
               <VehicleMarker
                 key={item.id}
-                selected={item.id === clickedVehicleMarkerId}
+                selected={item.id === clickedVehicleMarkerId || item.trip_id === tripId}
                 vehicle={item}
               />
             );
