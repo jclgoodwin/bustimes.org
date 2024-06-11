@@ -854,7 +854,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(
             response,
             '<input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" '
-            'value="2020-10-20">'
+            'value="2020-10-20">',
             # '<option selected value="2020-10-20">Tuesday 20 October 2020</option>'
         )
         self.assertContains(response, "1 - FD54 JYA")
@@ -893,6 +893,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "branding": "",
                         "operator": {
                             "id": "LYNX",
+                            "slug": "lynx",
                             "name": "Lynx",
                             "parent": "Madrigal Electromotive",
                         },
@@ -925,6 +926,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "branding": "",
                         "operator": {
                             "id": "LYNX",
+                            "slug": "lynx",
                             "name": "Lynx",
                             "parent": "Madrigal Electromotive",
                         },
