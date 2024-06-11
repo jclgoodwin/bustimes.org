@@ -162,12 +162,12 @@ const Route = React.memo(function Route({ times }: RouteProps) {
   );
 });
 
-export default function TripMap(props: { trip: Trip }) {
+export default function TripMap(props: { trip?: Trip }) {
   const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
   const [, navigate] = useLocation();
   const tripId: string | undefined = params?.tripId;
 
-  const [trip, setTrip] = React.useState<Trip>(props.trip);
+  const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
   const [loading, setLoading] = React.useState(false);
 

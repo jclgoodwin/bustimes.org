@@ -41,7 +41,7 @@ export function Delay({
 type VehiclePopupProps = {
   item: Vehicle;
   onClose: any;
-  snazzyTripLink: boolean;
+  snazzyTripLink?: boolean;
   activeLink?: boolean;
 };
 
