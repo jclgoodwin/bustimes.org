@@ -18,10 +18,10 @@ import { Route, useRoute, useLocation } from "wouter";
 
 import type { Trip } from "./TripTimetable";
 import VehiclePopup from "./VehiclePopup";
-import TripLayer from "./TripLayer";
+// import TripLayer from "./TripLayer";
 import StopPopup, { Stop } from "./StopPopup";
 import BusTimesMap from "./Map";
-import TripMap from "./TripMap";
+// import TripMap from "./TripMap";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -436,27 +436,27 @@ function Map() {
 
   // trip
 
-  const [trip, setTrip] = React.useState<Trip>();
+  // const [trip, setTrip] = React.useState<Trip>();
 
-  const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
-  const [, navigate] = useLocation();
-  const tripId: string | undefined = params?.tripId;
+  // const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
+  // const [, navigate] = useLocation();
+  // const tripId: string | undefined = params?.tripId;
 
-  React.useEffect(() => {
-    if (tripId) {
-      fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-        if (response.ok) {
-          response.json().then(setTrip);
-        }
-      });
-    } else {
-      setTrip(undefined);
-    }
-  }, [tripId]);
+  // React.useEffect(() => {
+  //   if (tripId) {
+  //     fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
+  //       if (response.ok) {
+  //         response.json().then(setTrip);
+  //       }
+  //     });
+  //   } else {
+  //     setTrip(undefined);
+  //   }
+  // }, [tripId]);
 
-  if (trip) {
-    return <TripMap trip={trip} />
-  }
+  // if (trip) {
+  //   return <TripMap trip={trip} />
+  // }
 
   return (
     <BusTimesMap
@@ -500,12 +500,4 @@ function Map() {
 
 export default function BigMap() {
   return <Map />;
-  // return (
-  //   <React.Fragment>
-  //     <Map />
-  //     <Route path="/trips/:id">
-  //       {(params) => <TripLayer tripId={params.id} />}
-  //     </Route>
-  //   </React.Fragment>
-  // );
 }

@@ -171,14 +171,16 @@ export default function TripMap(props: { trip: Trip }) {
 
   const [loading, setLoading] = React.useState(false);
 
-  const bounds = React.useMemo((): LngLatBounds => {
-    const _bounds = new LngLatBounds();
-    for (let item of trip.times) {
-      if (item.stop.location) {
-        _bounds.extend(item.stop.location);
+  const bounds = React.useMemo((): LngLatBounds | undefined => {
+    if (trip) {
+      const _bounds = new LngLatBounds();
+      for (let item of trip.times) {
+        if (item.stop.location) {
+          _bounds.extend(item.stop.location);
+        }
       }
+      return _bounds;
     }
-    return _bounds;
   }, [trip]);
 
   const [cursor, setCursor] = React.useState("");
@@ -277,7 +279,6 @@ export default function TripMap(props: { trip: Trip }) {
       clearTimeout(timeout.current);
 
       if (vehiclesAbortController.current) {
-        debugger;
         vehiclesAbortController.current.abort("There's a new sheriff in town!");
       }
       vehiclesAbortController.current =
@@ -313,7 +314,6 @@ export default function TripMap(props: { trip: Trip }) {
           }
         },
         (reason) => {
-          debugger;
           // never mind
         },
       );
@@ -373,7 +373,7 @@ export default function TripMap(props: { trip: Trip }) {
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
         >
-          <Route times={trip.times} />
+          { trip ? <Route times={trip.times} /> : null }
 
           {vehicles.map((item) => {
             return (
@@ -391,6 +391,7 @@ export default function TripMap(props: { trip: Trip }) {
             <VehiclePopup
               item={clickedVehicle}
               activeLink={clickedVehicle.trip_id?.toString() === tripId}
+              snazzyTripLink
               onClose={() => {
                 setClickedVehicleMarker(undefined);
               }}
@@ -410,11 +411,13 @@ export default function TripMap(props: { trip: Trip }) {
         </BusTimesMap>
       </div>
       <div className="trip-timetable map-sidebar">
-        <TripTimetable
-          trip={trip}
-          vehicle={tripVehicle}
-          highlightedStop={highlightedStop}
-        />
+        {trip ? (
+          <TripTimetable
+            trip={trip}
+            vehicle={tripVehicle}
+            highlightedStop={highlightedStop}
+          />
+        ) : null}
       </div>
     </React.Fragment>
   );

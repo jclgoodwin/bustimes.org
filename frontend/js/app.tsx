@@ -32,7 +32,7 @@ Sentry.init({
     "undefined is not an object (evaluating 'navigator.connection.effectiveType')",
   ],
   integrations: [
-    new Sentry.Integrations.GlobalHandlers({
+    Sentry.globalHandlersIntegration({
       onerror: true,
       onunhandledrejection: false,
     }),

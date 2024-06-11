@@ -41,26 +41,16 @@ export function Delay({
 type VehiclePopupProps = {
   item: Vehicle;
   onClose: any;
-  // onTripClick?: any;
+  snazzyTripLink: boolean;
   activeLink?: boolean;
 };
 
 export default function VehiclePopup({
   item,
   onClose,
-  // onTripClick,
+  snazzyTripLink = false,
   activeLink = false,
 }: VehiclePopupProps) {
-  // const handleTripClick = React.useCallback(
-  //   (e: React.MouseEvent) => {
-  //     if (onTripClick) {
-  //       e.preventDefault();
-  //       onTripClick(item);
-  //     }
-  //   },
-  //   [item, onTripClick],
-  // );
-
   let line_name: ReactNode = item.service?.line_name || "";
   if (item.destination) {
     if (line_name) {
@@ -75,7 +65,11 @@ export default function VehiclePopup({
     }
   } else if (item.trip_id) {
     if (!activeLink) {
-      line_name = <Link href={`/trips/${item.trip_id}`}>{line_name}</Link>;
+      if (snazzyTripLink) {
+        line_name = <Link href={`/trips/${item.trip_id}`}>{line_name}</Link>;
+      } else {
+        line_name = <a href={`/trips/${item.trip_id}`}>{line_name}</a>;
+      }
     }
   } else if (item.service?.url) {
     if (item.service.url !== window.location.pathname) {

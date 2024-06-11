@@ -12,7 +12,6 @@ import VehiclePopup from "./VehiclePopup";
 import { LngLatBounds } from "maplibre-gl";
 import BusTimesMap from "./Map";
 import TripMap from "./TripMap";
-import BigMap from "./BigMap";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -119,7 +118,10 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
 
   return (
     <Switch>
-      <Route path="/operators/:slug/map">
+      <Route path="/trips/:tripId">
+        <TripMap />
+      </Route>
+      <Route>
         <BusTimesMap
           initialViewState={{
             bounds: bounds,
@@ -143,17 +145,12 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
 
           {clickedVehicle && (
             <VehiclePopup
+              snazzyTripLink
               item={clickedVehicle}
               onClose={() => setClickedVehicleMarker(undefined)}
             />
           )}
         </BusTimesMap>
-      </Route>
-      <Route path="/trips/:tripId">
-        <BigMap />
-      </Route>
-      <Route path="/map">
-        <BigMap />
       </Route>
     </Switch>
   );

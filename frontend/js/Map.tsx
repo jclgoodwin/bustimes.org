@@ -131,6 +131,7 @@ export default function BusTimesMap(props: any) {
   return (
     <Map
       {...props}
+      reuseMaps
       onLoad={handleMapLoad}
       touchPitch={false}
       pitchWithRotate={false}

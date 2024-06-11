@@ -33,6 +33,7 @@ class VehicleSerializer(serializers.ModelSerializer):
         if obj.operator_id:
             return {
                 "id": obj.operator_id,
+                "slug": obj.slug,
                 "name": obj.operator.name,
                 "parent": obj.operator.parent,
             }

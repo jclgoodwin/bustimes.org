@@ -44,8 +44,8 @@ function Row({
   vehicle,
   aimedColumn,
   highlightedStop,
-  first=false,
-  last=false,
+  first = false,
+  last = false,
 }: {
   stop: TripTime;
   onMouseEnter?: (stop: TripTime) => void;
@@ -133,7 +133,10 @@ function Row({
           {stopName}
         </td>
         {aimedColumn ? (
-          <td>{ stop.aimed_arrival_time || stop.aimed_departure_time }{ caveat }</td>
+          <td>
+            {stop.aimed_arrival_time || stop.aimed_departure_time}
+            {caveat}
+          </td>
         ) : null}
         {actual}
       </tr>
