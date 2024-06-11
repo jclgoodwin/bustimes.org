@@ -1065,7 +1065,7 @@ class Command(BaseCommand):
                 has_no_route = ~Exists(
                     Trip.objects.filter(route__service=OuterRef("id"))
                 )
-                condition = has_stop_usage & (has_stop_time | has_no_route)
+                condition = has_stop_time | (has_stop_usage & has_no_route)
             else:
                 condition = Exists(
                     Route.objects.filter(
@@ -1335,9 +1335,9 @@ class Command(BaseCommand):
                                     route_links_to_update[key] = existing_route_links[
                                         key
                                     ]
-                                    route_links_to_update[
-                                        key
-                                    ].geometry = route_link.track
+                                    route_links_to_update[key].geometry = (
+                                        route_link.track
+                                    )
                             else:
                                 route_links_to_create[key] = RouteLink(
                                     from_stop_id=from_stop.atco_code,

@@ -1498,16 +1498,9 @@ class ImportTransXChangeTest(TestCase):
                 "B_C_A-FECS_B_C_A--FECS-NORWICH-2023-10-22-NO3BSH-BODS_V1_1.xml",
             ],
         )
-        self.assertEqual(6, Service.objects.filter(current=True).count())  # !
+        self.assertEqual(3, Service.objects.filter(current=True).count())  # A, B, C
+        self.assertEqual(6, Route.objects.all().count())
 
-        self.handle_files(
-            "FECS.zip",
-            [
-                "A_B_C-FECS_A_B_C--FECS-NORWICH-2023-10-22-NO3BSH-BODS_V1_1.xml",
-                "B_C_A-FECS_B_C_A--FECS-NORWICH-2023-10-22-NO3BSH-BODS_V1_1.xml",
-            ],
-        )
-        self.assertEqual(3, Service.objects.filter(route__isnull=True).count())  # !!
         service = Service.objects.first()
         response = self.client.get(service.get_absolute_url())
 
