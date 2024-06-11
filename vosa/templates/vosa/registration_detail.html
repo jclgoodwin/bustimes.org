@@ -18,8 +18,8 @@
             <dd>{{ object.service_type_description|linebreaksbr }}</dd>
 
             <dt>Supported by subsidy?</dt>
-            <dd>{{ object.subsidies_description }}{% if object.subsidies_details %},
-                    {{ object.subsidies_details }}
+            <dd>{{ object.subsidies_description }}{% if object.subsidies_details %}<br>
+                    {{ object.subsidies_details|linebreaksbr }}
                 {% endif %}
             </dd>
 
