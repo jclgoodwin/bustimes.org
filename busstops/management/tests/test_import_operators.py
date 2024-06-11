@@ -93,3 +93,11 @@ class ImportOperatorsTest(TestCase):
 
         amsy = Operator.objects.get(noc="AMSY")
         self.assertEqual(amsy.name, "Arriva Merseyside")
+
+        # status page
+        response = self.client.get("/status")
+        self.assertContains(
+            response,
+            """<th scope="row">National Operator Codes</th>
+            <td>4 Jun 2024, 3:18 p.m.</td>""",
+        )
