@@ -32,7 +32,7 @@ declare global {
 }
 
 try {
-  if (localStorage.vehicleMap) {
+  if (localStorage.vehicleMap && !window.location.hash) {
     var parts = localStorage.vehicleMap.split("/");
     if (parts.length === 3) {
       window.INITIAL_VIEW_STATE = {

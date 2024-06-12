@@ -253,8 +253,7 @@ export default function TripMap(props: { tripId: string; trip?: Trip }) {
 
   const loadTrip = React.useCallback((tripId: string) => {
     setTripVehicle(undefined);
-    if (window.STOPS?.id && window.STOPS.id.toString() === tripId) {
-      setTrip(window.STOPS);
+    if (trip?.id?.toString() === tripId) {
       return;
     }
     fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
@@ -262,7 +261,7 @@ export default function TripMap(props: { tripId: string; trip?: Trip }) {
         response.json().then(setTrip);
       }
     });
-  }, []);
+  }, [trip]);
 
   React.useEffect(() => {
     const loadVehicles = (first = false) => {
