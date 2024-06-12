@@ -9,10 +9,10 @@ export default function MapRouter() {
   return (
     <Switch>
       <Route path="/trips/:tripId">
-        {(params) => <TripMap tripId={params.tripId} />}
+        {(params) => <TripMap trip={window.STOPS} tripId={params.tripId} />}
       </Route>
       <Route path="/operators/:operatorSlug/map">
-        {(params) => <OperatorMap noc={params.operatorSlug} />}
+        <OperatorMap noc={window.OPERATOR_ID || window.STOPS?.operator?.noc as string} />
       </Route>
       <Route path="/map">
         <BigMap />
