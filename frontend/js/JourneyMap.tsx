@@ -11,7 +11,7 @@ import {
 
 import BusTimesMap from "./Map";
 
-import { LngLatBounds } from "maplibre-gl";
+import { LngLatBounds, Map } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
 import StopPopup from "./StopPopup";
 import VehicleMarker, {
@@ -454,7 +454,7 @@ export default function JourneyMap({
     }
   }, []);
 
-  const mapRef = React.useRef<any>();
+  const mapRef = React.useRef<Map>();
 
   const bounds = React.useMemo((): LngLatBounds | null => {
     if (journey) {

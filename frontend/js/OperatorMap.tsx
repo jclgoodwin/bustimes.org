@@ -1,7 +1,6 @@
 import React from "react";
 
 import { MapEvent, MapLayerMouseEvent } from "react-map-gl/maplibre";
-import { Route, Switch } from "wouter";
 
 import VehicleMarker, {
   Vehicle,
@@ -117,41 +116,36 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   return (
-    <Switch>
-      <Route path="/trips/:tripId">
-        <TripMap />
-      </Route>
-      <Route>
-        <BusTimesMap
-          initialViewState={{
-            bounds: bounds,
-            fitBoundsOptions: {
-              maxZoom: 15,
-              padding: 50,
-            },
-          }}
-          onClick={handleMapClick}
-          onLoad={handleMapLoad}
-        >
-          {vehiclesList.map((item) => {
-            return (
-              <VehicleMarker
-                key={item.id}
-                selected={item === clickedVehicle}
-                vehicle={item}
-              />
-            );
-          })}
-
-          {clickedVehicle && (
-            <VehiclePopup
-              snazzyTripLink
-              item={clickedVehicle}
-              onClose={() => setClickedVehicleMarker(undefined)}
+    <div className="operator-map">
+      <BusTimesMap
+        initialViewState={{
+          bounds: bounds,
+          fitBoundsOptions: {
+            maxZoom: 15,
+            padding: 50,
+          },
+        }}
+        onClick={handleMapClick}
+        onLoad={handleMapLoad}
+      >
+        {vehiclesList.map((item) => {
+          return (
+            <VehicleMarker
+              key={item.id}
+              selected={item === clickedVehicle}
+              vehicle={item}
             />
-          )}
-        </BusTimesMap>
-      </Route>
-    </Switch>
+          );
+        })}
+
+        {clickedVehicle && (
+          <VehiclePopup
+            snazzyTripLink
+            item={clickedVehicle}
+            onClose={() => setClickedVehicleMarker(undefined)}
+          />
+        )}
+      </BusTimesMap>
+    </div>
   );
 }

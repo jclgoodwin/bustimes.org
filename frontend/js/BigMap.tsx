@@ -14,14 +14,10 @@ import VehicleMarker, {
   Vehicle,
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
-import { Route, useRoute, useLocation } from "wouter";
 
-import type { Trip } from "./TripTimetable";
 import VehiclePopup from "./VehiclePopup";
-// import TripLayer from "./TripLayer";
 import StopPopup, { Stop } from "./StopPopup";
 import BusTimesMap from "./Map";
-// import TripMap from "./TripMap";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -228,6 +224,7 @@ const Vehicles = memo(function Vehicles({
         <VehiclePopup
           item={clickedVehicle}
           onClose={() => setClickedVehicleMarker(null)}
+          snazzyTripLink
         />
       )}
       {clickedVehicle && vehiclesGeoJson && (
@@ -433,30 +430,6 @@ function Map() {
 
   const showStops = shouldShowStops(zoom);
   const showBuses = shouldShowVehicles(zoom);
-
-  // trip
-
-  // const [trip, setTrip] = React.useState<Trip>();
-
-  // const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
-  // const [, navigate] = useLocation();
-  // const tripId: string | undefined = params?.tripId;
-
-  // React.useEffect(() => {
-  //   if (tripId) {
-  //     fetch(`${apiRoot}api/trips/${tripId}/`).then((response) => {
-  //       if (response.ok) {
-  //         response.json().then(setTrip);
-  //       }
-  //     });
-  //   } else {
-  //     setTrip(undefined);
-  //   }
-  // }, [tripId]);
-
-  // if (trip) {
-  //   return <TripMap trip={trip} />
-  // }
 
   return (
     <BusTimesMap

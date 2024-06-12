@@ -689,6 +689,14 @@ table {
     }
 }
 
+#hugemap {
+    position: absolute;
+    top: 56px;  /* header */
+    right: 0;
+    bottom: 90px;
+    left: 0;
+}
+
 .service-map {
     bottom: 0;
     left: 0;
@@ -1065,6 +1073,11 @@ input:not(:checked) + label {
     right: 0;
     left: 0;
     bottom: 0;
+}
+
+.operator-map {
+    top: 104px;
+    bottom: 134px; /* ad 92px + footer 42px */
 }
 
 .trip-map {

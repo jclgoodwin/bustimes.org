@@ -8,10 +8,7 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import { useRoute } from "wouter";
-import { useLocation } from "wouter";
-
-import { LngLatBounds } from "maplibre-gl";
+import { LngLatBounds, Map } from "maplibre-gl";
 
 import TripTimetable, { Trip, TripTime } from "./TripTimetable";
 import StopPopup, { Stop } from "./StopPopup";
@@ -162,10 +159,8 @@ const Route = React.memo(function Route({ times }: RouteProps) {
   );
 });
 
-export default function TripMap(props: { trip?: Trip }) {
-  const [, params] = useRoute<{ tripId: "" }>("/trips/:tripId");
-  const [, navigate] = useLocation();
-  const tripId: string | undefined = params?.tripId;
+export default function TripMap(props: { tripId: string; trip?: Trip }) {
+  const tripId = props.tripId;
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
@@ -182,6 +177,16 @@ export default function TripMap(props: { trip?: Trip }) {
       return _bounds;
     }
   }, [trip]);
+
+  const mapRef = React.useRef<Map>();
+
+  React.useEffect(() => {
+    if (bounds && mapRef.current) {
+      mapRef.current.fitBounds(bounds, {
+        padding: 50,
+      });
+    }
+  }, [bounds]);
 
   const [cursor, setCursor] = React.useState("");
 
@@ -343,6 +348,7 @@ export default function TripMap(props: { trip?: Trip }) {
 
   const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
+    mapRef.current = map;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
   }, []);
@@ -373,7 +379,7 @@ export default function TripMap(props: { trip?: Trip }) {
           onLoad={handleMapLoad}
           interactiveLayerIds={["stops"]}
         >
-          { trip ? <Route times={trip.times} /> : null }
+          {trip ? <Route times={trip.times} /> : null}
 
           {vehicles.map((item) => {
             return (

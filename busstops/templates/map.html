@@ -4,29 +4,9 @@
 
 {% block head %}
     <meta property="og:title" content="Map – bustimes.org">
-    <style>
-        body {
-            overflow: hidden;
-        }
-
-        .wide main {
-            max-width: initial;
-            padding: 0;
-        }
-
-        #hugemap {
-            position: absolute;
-            top: 56px;  /* header */
-            width: 100%;
-            bottom: 90px;
-        }
-
-        main:has(#content + div) #content {
-            height: calc(100vh - 146px);
-            margin: 0;
-        }
-    </style>
 {% endblock %}
+
+{% block bodyclass %}{% endblock %}
 
 {% block header %}
    <header class="site-header">

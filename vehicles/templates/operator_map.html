@@ -8,41 +8,6 @@
 
 {% block head %}
     <meta property="og:title" content="Map – {{ object }}">
-    <style>
-    body {
-        overflow: hidden;
-    }
-
-    #map {
-        top: 104px;
-        left: 0;
-        position: absolute;
-        bottom: 134px; /* ad 92px + footer 42px */
-        width: 100%;
-    }
-
-    main:has(#content + div) #content {
-        height: calc(100vh - 194px);
-        margin: 0;
-    }
-
-    footer {
-        bottom: 0;
-        position: absolute;
-        width: 100%;
-    }
-
-    footer ul,
-    .breadcrumb {
-        border: 0;
-    }
-
-    @media (max-height: 480px) {
-        #map {
-            bottom: 42px;
-        }
-    }
-    </style>
 {% endblock %}
 
 {% block bodyclass %}{% endblock %}

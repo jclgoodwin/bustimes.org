@@ -5,10 +5,8 @@ import * as Sentry from "@sentry/react";
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Trip } from "./TripTimetable";
+import MapRouter from "./MapRouter";
 
-const BigMap = lazy(() => import("./BigMap"));
-const TripMap = lazy(() => import("./TripMap"));
-const OperatorMap = lazy(() => import("./OperatorMap"));
 const ServiceMap = lazy(() => import("./ServiceMap"));
 const History = lazy(() => import("./History"));
 
@@ -60,7 +58,7 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <Sentry.ErrorBoundary fallback={error}>
-        <BigMap />
+        <MapRouter />
       </Sentry.ErrorBoundary>
     </React.StrictMode>,
   );
@@ -75,7 +73,7 @@ if (rootElement) {
       root.render(
         <React.StrictMode>
           <Sentry.ErrorBoundary fallback={error}>
-            <OperatorMap noc={window.OPERATOR_ID} />
+            <MapRouter />
           </Sentry.ErrorBoundary>
         </React.StrictMode>,
       );
@@ -96,7 +94,7 @@ if (rootElement) {
       root.render(
         <React.StrictMode>
           <Sentry.ErrorBoundary fallback={error}>
-            <TripMap trip={window.STOPS} />
+            <MapRouter />
           </Sentry.ErrorBoundary>
         </React.StrictMode>,
       );
