@@ -357,7 +357,7 @@ export default function TripMap(props: { tripId: string; trip?: Trip }) {
         padding: 50,
       });
     }
-  }, []);
+  }, [bounds]);
 
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
