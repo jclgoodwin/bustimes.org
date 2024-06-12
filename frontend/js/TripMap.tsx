@@ -348,9 +348,15 @@ export default function TripMap(props: { tripId: string; trip?: Trip }) {
 
   const handleMapLoad = React.useCallback((event: MapEvent) => {
     const map = event.target;
-    mapRef.current = map;
     map.keyboard.disableRotation();
     map.touchZoomRotate.disableRotation();
+
+    mapRef.current = map;
+    if (bounds) {
+      map.fitBounds(bounds, {
+        padding: 50,
+      });
+    }
   }, []);
 
   const clickedVehicle =
@@ -386,7 +392,7 @@ export default function TripMap(props: { tripId: string; trip?: Trip }) {
               <VehicleMarker
                 key={item.id}
                 selected={
-                  item.id === clickedVehicleMarkerId || item.trip_id === tripId
+                  item.id === clickedVehicleMarkerId || item.trip_id?.toString() === tripId
                 }
                 vehicle={item}
               />
