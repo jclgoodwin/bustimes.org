@@ -24,7 +24,7 @@ const mapStyles = [
   ["alidade_smooth", "Default"],
   ["osm_bright", "Bright"],
   ["outdoors", "Outdoors"],
-  ["alidade_satellite", "Satellite"],
+  // ["alidade_satellite", "Satellite"],
 ];
 
 type StyleSwitcherProps = {
