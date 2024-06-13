@@ -11,16 +11,18 @@
                     <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &bull;
                 {% endif %}
                 {{ revision.created_at|naturaltime }}
-                {% if not by_user %}
-                    {% if revision.user %}
-                        &bull; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
-                    {% endif %}
+                {% if not by_user and revision.user %}
+                    &bull; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
                 {% endif %}
                 {% if user.is_superuser %}
                     &bull; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
                 {% endif %}
             <p>
-                {% include "vehicle_revision.html" %}
+                {% if revision.user.trusted is False or revision.disapproved and request.user.is_anonymous %}
+                    [This content is hidden because it might be offensive]
+                {% else %}
+                    {% include "vehicle_revision.html" %}
+                {% endif %}
 
             {% if revision.disapproved %}
                 <p><strong>Disapproved</strong> by user {{ revision.approved_by_id }}
