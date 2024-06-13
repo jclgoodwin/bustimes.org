@@ -681,9 +681,6 @@ class StopPointDetailView(DetailView):
             self.object.locality and self.object.locality.parent,
             self.object.locality,
         ]
-        if self.object.stop_area and self.object.stop_area.stop_area_type != "GPBS":
-            # stop area (if it is not an on-street pair)
-            context["breadcrumb"].append(self.object.stop_area)
 
         if not (self.object.active or context["services"]):
             return context
@@ -746,6 +743,14 @@ class StopPointDetailView(DetailView):
                 )
                 .defer("latlong")
             )
+
+            if (
+                self.object.stop_area
+                and self.object.stop_area.name
+                and self.object.stop_area.stop_area_type != "GPBS"
+            ):
+                # stop area (if it is not an on-street pair)
+                context["breadcrumb"].append(self.object.stop_area)
 
         consequences = Consequence.objects.filter(stops=self.object)
         context["situations"] = (
