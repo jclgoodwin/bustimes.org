@@ -526,7 +526,7 @@ class Command(BaseCommand):
             collections = collections.filter(name__in=options["collections"])
 
         for source in collections:
-            path = settings.DATA_DIR / Path(source.url).name
+            path: Path = settings.DATA_DIR / Path(source.url).name
 
             modified, last_modified = download_if_changed(path, source.url)
             if (
@@ -539,4 +539,8 @@ class Command(BaseCommand):
                 if last_modified:
                     source.datetime = last_modified
                 self.source = source
-                self.handle_zipfile(path)
+                try:
+                    self.handle_zipfile(path)
+                except zipfile.BadZipFile as e:
+                    logger.exception(e)
+                    path.unlink()
