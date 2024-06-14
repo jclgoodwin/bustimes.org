@@ -1,21 +1,19 @@
 import React from "react";
 import { Route, Switch } from "wouter";
 
-import BigMap from "./BigMap";
-import TripMap from "./TripMap";
-import OperatorMap from "./OperatorMap";
+import BigMap, { MapMode } from "./BigMap";
 
 export default function MapRouter() {
   return (
     <Switch>
       <Route path="/trips/:tripId">
-        {(params) => <TripMap trip={window.STOPS} tripId={params.tripId} />}
+        {(params) => <BigMap mode={MapMode.Trip} trip={window.STOPS} tripId={params.tripId} />}
       </Route>
       <Route path="/operators/:operatorSlug/map">
-        <OperatorMap noc={window.OPERATOR_ID || window.STOPS?.operator?.noc as string} />
+        <BigMap mode={MapMode.Operator} noc={window.OPERATOR_ID || window.STOPS?.operator?.noc as string} />
       </Route>
       <Route path="/map">
-        <BigMap />
+        <BigMap mode={MapMode.Slippy} />
       </Route>
     </Switch>
   );

@@ -10,7 +10,6 @@ import VehiclePopup from "./VehiclePopup";
 
 import { LngLatBounds } from "maplibre-gl";
 import BusTimesMap from "./Map";
-import TripMap from "./TripMap";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -19,7 +18,7 @@ type OperatorMapProps = {
 };
 
 function getBounds(items: Vehicle[]) {
-  let bounds = new LngLatBounds();
+  const bounds = new LngLatBounds();
   for (const item of items) {
     bounds.extend(item.coordinates);
   }
@@ -49,7 +48,7 @@ export default function OperatorMap({ noc }: OperatorMapProps) {
         return;
       }
 
-      let url = apiRoot + "vehicles.json?operator=" + noc;
+      const url = apiRoot + "vehicles.json?operator=" + noc;
       fetch(url).then((response) => {
         response.json().then((items) => {
           if (first) {

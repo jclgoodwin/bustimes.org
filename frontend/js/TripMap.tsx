@@ -63,7 +63,7 @@ type RouteProps = {
   times: TripTime[];
 };
 
-const Route = React.memo(function Route({ times }: RouteProps) {
+export const Route = React.memo(function Route({ times }: RouteProps) {
   const lines = [];
   const lineStrings = [];
   let prevLocation,
@@ -169,7 +169,7 @@ export default function TripMap(props: { tripId: string; trip?: Trip }) {
   const bounds = React.useMemo((): LngLatBounds | undefined => {
     if (trip) {
       const _bounds = new LngLatBounds();
-      for (let item of trip.times) {
+      for (const item of trip.times) {
         if (item.stop.location) {
           _bounds.extend(item.stop.location);
         }
@@ -180,13 +180,6 @@ export default function TripMap(props: { tripId: string; trip?: Trip }) {
 
   const mapRef = React.useRef<Map>();
 
-  React.useEffect(() => {
-    if (bounds && mapRef.current) {
-      mapRef.current.fitBounds(bounds, {
-        padding: 50,
-      });
-    }
-  }, [bounds]);
 
   const [cursor, setCursor] = React.useState("");
 

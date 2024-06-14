@@ -70,7 +70,7 @@ function Row({
     stopName = `${stopName} (${stop.stop.icon})`;
   }
   if (stop.stop.atco_code) {
-    let url = `/stops/${stop.stop.atco_code}`;
+    const url = `/stops/${stop.stop.atco_code}`;
     if (url === highlightedStop) {
       className = "is-highlighted";
     }

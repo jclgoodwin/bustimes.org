@@ -54,7 +54,7 @@ const error = <div className="sorry">Sorry, something has gone wrong</div>;
 
 let rootElement = document.getElementById("hugemap");
 if (rootElement) {
-  let root = createRoot(rootElement);
+  const root = createRoot(rootElement);
   root.render(
     <React.StrictMode>
       <Sentry.ErrorBoundary fallback={error}>
@@ -69,7 +69,7 @@ if (rootElement) {
       window.location.href.indexOf("/operators/") !== -1 &&
       window.OPERATOR_ID
     ) {
-      let root = createRoot(rootElement);
+      const root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <Sentry.ErrorBoundary fallback={error}>
@@ -80,7 +80,7 @@ if (rootElement) {
     } else if (window.SERVICE_ID) {
       rootElement = document.getElementById("map-link");
       if (rootElement) {
-        let root = createRoot(rootElement);
+        const root = createRoot(rootElement);
         root.render(
           <React.StrictMode>
             <Sentry.ErrorBoundary fallback={error}>
@@ -90,7 +90,7 @@ if (rootElement) {
         );
       }
     } else if (window.STOPS) {
-      let root = createRoot(rootElement);
+      const root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <Sentry.ErrorBoundary fallback={error}>
@@ -100,9 +100,9 @@ if (rootElement) {
       );
     }
   } else {
-    let rootElement = document.getElementById("history");
+    const rootElement = document.getElementById("history");
     if (rootElement) {
-      let root = createRoot(rootElement);
+      const root = createRoot(rootElement);
       root.render(
         <React.StrictMode>
           <Sentry.ErrorBoundary fallback={error}>

@@ -13,6 +13,7 @@ import Map, {
 import stopMarker from "data-url:../stop-marker.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
 import arrow from "data-url:../arrow.png";
+import type { Map as MapType } from "maplibre-gl";
 
 const images: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
@@ -45,12 +46,12 @@ class StyleSwitcher {
   onAdd() {
     this._container = document.createElement("div");
 
-    let root = createRoot(this._container);
+    const root = createRoot(this._container);
     root.render(
       <details className="maplibregl-ctrl maplibregl-ctrl-group map-style-switcher">
         <summary>Map style</summary>
         {mapStyles.map((style) => {
-          let [key, value] = style;
+          const [key, value] = style;
           return (
             <label key={key}>
               <input
@@ -83,6 +84,7 @@ const StyleSwitcherControl = memo(function (props: StyleSwitcherProps) {
 export default function BusTimesMap(props: any) {
   const imageNames = props.images;
   const onLoad = props.onLoad;
+  const mapRef = React.useRef<MapType>();
 
   const [mapStyle, setMapStyle] = React.useState(() => {
     try {
@@ -96,10 +98,11 @@ export default function BusTimesMap(props: any) {
 
   const handleMapLoad = React.useCallback(
     (event: MapEvent) => {
+      mapRef.current = event.target;
       if (imageNames) {
         const map = event.target;
 
-        for (let imageName of imageNames) {
+        for (const imageName of imageNames) {
           const image = new Image();
           image.src = images[imageName];
           image.onload = function () {

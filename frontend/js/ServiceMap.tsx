@@ -46,9 +46,9 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
 
   const [vehicles, setVehicles] = React.useState<Vehicle[]>();
 
-  const [stops, setStops] = React.useState(null);
+  const [stops, setStops] = React.useState();
 
-  const [geometry, setGeometry] = React.useState(null);
+  const [geometry, setGeometry] = React.useState();
 
   React.useEffect(() => {
     const handleHashChange = () => {
@@ -99,7 +99,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
             });
           }
         },
-        (reason) => {
+        () => {
           // never mind
         },
       );
@@ -112,7 +112,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
         return;
       }
 
-      let url = apiRoot + "vehicles.json?service=" + window.SERVICE_ID;
+      const url = apiRoot + "vehicles.json?service=" + window.SERVICE_ID;
       fetch(url).then(
         (response) => {
           if (response.ok) {
@@ -125,7 +125,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
             });
           }
         },
-        (reason) => {
+        () => {
           // never mind
         },
       );
@@ -154,8 +154,8 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     };
   }, [isOpen, serviceId]);
 
-  let count = vehicles && vehicles.length,
-    countString: string | undefined;
+  const count = vehicles && vehicles.length;
+  let countString: string | undefined;
 
   if (count) {
     if (count === 1) {

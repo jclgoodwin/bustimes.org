@@ -297,13 +297,13 @@ function Sidebar({
 }
 
 function JourneyVehicle({
-  journey,
-  onVehicleMove,
+  // journey,
+  // onVehicleMove,
   clickedVehicleMarker,
   setClickedVehicleMarker,
 }: {
-  journey: VehicleJourney;
-  onVehicleMove: (v: Vehicle) => void;
+  // journey: VehicleJourney;
+  // onVehicleMove: (v: Vehicle) => void;
   clickedVehicleMarker: boolean;
   setClickedVehicleMarker: (b: boolean) => void;
 }) {
@@ -381,7 +381,7 @@ export default function JourneyMap({
 
       for (const feature of e.features) {
         if (feature.layer.id === "locations") {
-          setClickedLocation(feature as any as LocationPopupProps["location"]);
+          setClickedLocation(feature as unknown as LocationPopupProps["location"]);
           break;
         }
       }
@@ -398,25 +398,25 @@ export default function JourneyMap({
   const [clickedVehicleMarker, setClickedVehicleMarker] =
     React.useState<boolean>(true);
 
-  const [locations, setLocations] = React.useState<VehicleJourneyLocation[]>(
-    [],
-  );
+  // const [locations, setLocations] = React.useState<VehicleJourneyLocation[]>(
+  //   [],
+  // );
 
-  const handleVehicleMove = React.useCallback(
-    (vehicle: Vehicle) => {
-      setLocations(
-        locations.concat([
-          {
-            coordinates: vehicle.coordinates,
-            delta: null,
-            datetime: vehicle.datetime,
-            direction: vehicle.heading,
-          },
-        ]),
-      );
-    },
-    [locations],
-  );
+  // const handleVehicleMove = React.useCallback(
+  //   (vehicle: Vehicle) => {
+  //     setLocations(
+  //       locations.concat([
+  //         {
+  //           coordinates: vehicle.coordinates,
+  //           delta: null,
+  //           datetime: vehicle.datetime,
+  //           direction: vehicle.heading,
+  //         },
+  //       ]),
+  //     );
+  //   },
+  //   [locations],
+  // );
 
   const handleMapClick = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
@@ -431,7 +431,7 @@ export default function JourneyMap({
     if (e.features?.length) {
       for (const feature of e.features) {
         if (feature.layer.id === "stops") {
-          setClickedStop(feature as any as Stop);
+          setClickedStop(feature as unknown as Stop);
           break;
         }
       }
@@ -529,7 +529,7 @@ export default function JourneyMap({
             {journey.stops ? <Stops stops={journey.stops} /> : null}
 
             {journey.locations ? (
-              <Locations locations={journey.locations.concat(locations)} />
+              <Locations locations={journey.locations} />
             ) : null}
 
             {clickedStop ? (
@@ -551,8 +551,8 @@ export default function JourneyMap({
 
             {journey.locations && journey.current ? (
               <JourneyVehicle
-                journey={journey}
-                onVehicleMove={handleVehicleMove}
+                // journey={journey}
+                // onVehicleMove={handleVehicleMove}
                 clickedVehicleMarker={clickedVehicleMarker}
                 setClickedVehicleMarker={setClickedVehicleMarker}
               />

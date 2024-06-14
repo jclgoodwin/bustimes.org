@@ -6,6 +6,7 @@ import {
   LayerProps,
   MapEvent,
   MapLayerMouseEvent,
+  MapGeoJSONFeature
 } from "react-map-gl/maplibre";
 
 import StopPopup, { Stop } from "./StopPopup";
@@ -32,8 +33,8 @@ const routeStyle: LayerProps = {
 
 type ServiceMapMapProps = {
   vehicles?: Vehicle[];
-  geometry: any;
-  stops: any;
+  geometry?: MapGeoJSONFeature;
+  stops?: MapGeoJSONFeature[];
 };
 
 export default function ServiceMapMap({
@@ -82,7 +83,7 @@ export default function ServiceMapMap({
       if (e.features?.length) {
         for (const stop of e.features) {
           if (stop.properties.url !== clickedStop?.properties.url) {
-            setClickedStop(stop as any as Stop);
+            setClickedStop(stop as unknown as Stop);
           }
         }
       } else {

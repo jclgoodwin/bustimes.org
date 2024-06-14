@@ -19,7 +19,7 @@ export function Delay({
     delay?: number;
   };
 }) {
-  let delay = item.delay;
+  const delay = item.delay;
   if (typeof delay !== "undefined") {
     let delayString,
       abs = Math.abs(delay);
