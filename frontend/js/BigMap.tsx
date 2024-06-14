@@ -6,11 +6,10 @@ import {
   ViewState,
   MapEvent,
   MapLayerMouseEvent,
-  useMap
+  useMap,
 } from "react-map-gl/maplibre";
-import { LngLatBounds, Map } from "maplibre-gl";
+import { LngLatBounds, Map, Hash } from "maplibre-gl";
 
-import { Hash } from "maplibre-gl";
 import debounce from "lodash/debounce";
 
 import VehicleMarker, {
@@ -79,12 +78,12 @@ type StopsProps = {
 
 
 function SlippyMapHash() {
-  const map = useMap();
+  const {current: map} = useMap();
 
   React.useEffect(() => {
-    if (map.current) {
+    if (map) {
       const hash = (new Hash());
-      hash.addTo(map.current);
+      hash.addTo(map as unknown as Map);
 
       return () => {
         hash.remove()
