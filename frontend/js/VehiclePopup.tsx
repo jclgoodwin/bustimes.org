@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Popup } from "react-map-gl/maplibre";
+import { Popup, PopupEvent } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
 import { Link } from "wouter";
 import type { Vehicle } from "./VehicleMarker";
@@ -21,8 +21,8 @@ export function Delay({
 }) {
   const delay = item.delay;
   if (typeof delay !== "undefined") {
-    let delayString,
-      abs = Math.abs(delay);
+    let delayString;
+    const abs = Math.abs(delay);
 
     if (abs < 45) {
       delayString = "On time";
@@ -40,7 +40,7 @@ export function Delay({
 
 type VehiclePopupProps = {
   item: Vehicle;
-  onClose: any;
+  onClose: (e: PopupEvent) => void;
   snazzyTripLink?: boolean;
   activeLink?: boolean;
 };

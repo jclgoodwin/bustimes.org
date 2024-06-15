@@ -4,9 +4,9 @@ import * as Sentry from "@sentry/react";
 
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { Trip } from "./TripTimetable";
 
-const ServiceMap = lazy(() => import("./ServiceMap"));
+import { Trip } from "./TripTimetable";
+import ServiceMap from "./ServiceMap";
 const History = lazy(() => import("./History"));
 const MapRouter = lazy(() => import("./MapRouter"));
 
@@ -52,8 +52,30 @@ if (typeof window.globalThis === "undefined") {
 
 const error = <div className="sorry">Sorry, something has gone wrong</div>;
 
-let rootElement = document.getElementById("hugemap");
-if (rootElement) {
+let rootElement;
+if ((rootElement = document.getElementById("history"))) {
+  // vehicle journey history
+  const root = createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <Sentry.ErrorBoundary fallback={error}>
+        <History />
+      </Sentry.ErrorBoundary>
+    </React.StrictMode>,
+  );
+} else if (
+  window.SERVICE_ID &&
+  (rootElement = document.getElementById("map-link"))
+) {
+  const root = createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <Sentry.ErrorBoundary fallback={error}>
+        <ServiceMap serviceId={window.SERVICE_ID} />
+      </Sentry.ErrorBoundary>
+    </React.StrictMode>,
+  );
+} else if ((rootElement = document.getElementById("hugemap"))) {
   const root = createRoot(rootElement);
   root.render(
     <React.StrictMode>
@@ -62,54 +84,4 @@ if (rootElement) {
       </Sentry.ErrorBoundary>
     </React.StrictMode>,
   );
-} else {
-  rootElement = document.getElementById("map");
-  if (rootElement) {
-    if (
-      window.location.href.indexOf("/operators/") !== -1 &&
-      window.OPERATOR_ID
-    ) {
-      const root = createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <Sentry.ErrorBoundary fallback={error}>
-            <MapRouter />
-          </Sentry.ErrorBoundary>
-        </React.StrictMode>,
-      );
-    } else if (window.SERVICE_ID) {
-      rootElement = document.getElementById("map-link");
-      if (rootElement) {
-        const root = createRoot(rootElement);
-        root.render(
-          <React.StrictMode>
-            <Sentry.ErrorBoundary fallback={error}>
-              <ServiceMap serviceId={window.SERVICE_ID} />
-            </Sentry.ErrorBoundary>
-          </React.StrictMode>,
-        );
-      }
-    } else if (window.STOPS) {
-      const root = createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <Sentry.ErrorBoundary fallback={error}>
-            <MapRouter />
-          </Sentry.ErrorBoundary>
-        </React.StrictMode>,
-      );
-    }
-  } else {
-    const rootElement = document.getElementById("history");
-    if (rootElement) {
-      const root = createRoot(rootElement);
-      root.render(
-        <React.StrictMode>
-          <Sentry.ErrorBoundary fallback={error}>
-            <History />
-          </Sentry.ErrorBoundary>
-        </React.StrictMode>,
-      );
-    }
-  }
 }

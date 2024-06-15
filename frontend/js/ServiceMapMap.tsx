@@ -6,7 +6,7 @@ import {
   LayerProps,
   MapEvent,
   MapLayerMouseEvent,
-  MapGeoJSONFeature
+  MapGeoJSONFeature,
 } from "react-map-gl/maplibre";
 
 import StopPopup, { Stop } from "./StopPopup";

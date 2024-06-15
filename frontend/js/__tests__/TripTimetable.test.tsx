@@ -1,8 +1,9 @@
+import React from "react";
 import renderer from "react-test-renderer";
 import TripTimetable, { Trip } from "../TripTimetable";
 import { Vehicle } from "../VehicleMarker";
 
-let trip: Trip = {
+const trip: Trip = {
   id: 273819070,
   vehicle_journey_code: "vj_41",
   ticket_machine_code: "29",
@@ -122,7 +123,7 @@ let trip: Trip = {
   ],
 };
 
-let vehicle: Vehicle = {
+const vehicle: Vehicle = {
   id: 20158,
   coordinates: [1.308246, 52.617555],
   heading: 303,

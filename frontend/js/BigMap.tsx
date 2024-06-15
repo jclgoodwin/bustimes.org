@@ -4,11 +4,11 @@ import {
   Source,
   Layer,
   ViewState,
-  MapEvent,
-  MapLayerMouseEvent,
   useMap,
+  ViewStateChangeEvent,
+  MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
-import { LngLatBounds, Map, Hash } from "maplibre-gl";
+import { LngLatBounds, Map, Hash, MapLibreEvent } from "maplibre-gl";
 
 import debounce from "lodash/debounce";
 
@@ -76,20 +76,19 @@ type StopsProps = {
   setClickedStop: (stop?: string) => void;
 };
 
-
 function SlippyMapHash() {
-  const {current: map} = useMap();
+  const mapRef = useMap();
 
   React.useEffect(() => {
-    if (map) {
-      const hash = (new Hash());
-      hash.addTo(map as unknown as Map);
-
+    if (mapRef.current) {
+      const map = mapRef.current.getMap();
+      const hash = map._hash || new Hash();
+      hash.addTo(map);
       return () => {
-        hash.remove()
+        hash.remove();
       };
     }
-  }, [map]);
+  }, [mapRef]);
 
   return null;
 }
@@ -247,7 +246,12 @@ const Vehicles = memo(function Vehicles({
   );
 });
 
-export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip, tripId?: string }) {
+export default function BigMap(props: {
+  mode: MapMode;
+  noc?: string;
+  trip?: Trip;
+  tripId?: string;
+}) {
   const mapRef = React.useRef<Map>();
 
   const [vehicles, setVehicles] = React.useState(null);
@@ -338,7 +342,12 @@ export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip
     } else if (props.noc) {
       url = apiRoot + "vehicles.json?operator=" + props.noc;
     } else if (trip?.service?.id) {
-      url = apiRoot + "vehicles.json?service=" + trip.service.id + "&trip=" + trip.id;
+      url =
+        apiRoot +
+        "vehicles.json?service=" +
+        trip.service.id +
+        "&trip=" +
+        trip.id;
     } else {
       return;
     }
@@ -375,7 +384,7 @@ export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip
 
   const handleMoveEnd = debounce(
     React.useCallback(
-      (evt: MapEvent) => {
+      (evt: ViewStateChangeEvent) => {
         const map = evt.target;
         boundsRef.current = map.getBounds() as LngLatBounds;
         const zoom = map.getZoom() as number;
@@ -454,7 +463,7 @@ export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip
     [clickedStop],
   );
 
-  const handleMapLoad = function (event: MapEvent) {
+  const handleMapLoad = function (event: MapLibreEvent) {
     const map = event.target;
     mapRef.current = map;
     map.keyboard.disableRotation();
@@ -511,11 +520,11 @@ export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip
       }
       return window.INITIAL_VIEW_STATE;
     } else if (props.mode === MapMode.Trip) {
-        return {
-          bounds: bounds,
-          fitBoundsOptions: {
-            padding: 50,
-          },
+      return {
+        bounds: bounds,
+        fitBoundsOptions: {
+          padding: 50,
+        },
       };
     } else {
       return {
@@ -526,14 +535,14 @@ export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip
         },
       };
     }
-  }, []);
+  }, [bounds, props.mode]);
 
   return (
     <React.Fragment>
       <BusTimesMap
         initialViewState={initialViewState}
-        onMoveEnd={props.mode===MapMode.Slippy ? handleMoveEnd : undefined}
-        hash={props.mode===MapMode.Slippy}
+        onMoveEnd={props.mode === MapMode.Slippy ? handleMoveEnd : undefined}
+        hash={props.mode === MapMode.Slippy}
         onClick={handleMapClick}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
@@ -542,8 +551,9 @@ export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip
         images={["stop-marker"]}
         interactiveLayerIds={["stops", "vehicles"]}
       >
-
-        {props.mode === MapMode.Trip && trip ? <Route times={trip.times} /> : null}
+        {props.mode === MapMode.Trip && trip ? (
+          <Route times={trip.times} />
+        ) : null}
 
         {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
 
@@ -565,15 +575,20 @@ export default function BigMap(props: { mode: MapMode, noc?: string, trip?: Trip
 
         {zoom && (!showStops || loadingBuses || loadingStops) ? (
           <div className="maplibregl-ctrl map-status-bar">
-            {props.mode === MapMode.Slippy && !showStops ? "zoooom in to see stops" : null}
+            {props.mode === MapMode.Slippy && !showStops
+              ? "zoooom in to see stops"
+              : null}
             {!showBuses ? <div>Zooerofdgxoooom in to see buses</div> : null}
             {loadingBuses || loadingStops ? <div>Loading…</div> : null}
           </div>
         ) : null}
       </BusTimesMap>
 
-      { props.mode === MapMode.Trip && trip ? <div className="trip-timetable"><TripTimetable trip={trip} /></div> : null }
-
+      {props.mode === MapMode.Trip ? (
+        <div className="trip-timetable map-sidebar">
+          {trip ? <TripTimetable trip={trip} /> : null}
+        </div>
+      ) : null}
     </React.Fragment>
   );
 }

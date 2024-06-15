@@ -381,7 +381,9 @@ export default function JourneyMap({
 
       for (const feature of e.features) {
         if (feature.layer.id === "locations") {
-          setClickedLocation(feature as unknown as LocationPopupProps["location"]);
+          setClickedLocation(
+            feature as unknown as LocationPopupProps["location"],
+          );
           break;
         }
       }

@@ -7,6 +7,7 @@ import Map, {
   GeolocateControl,
   MapEvent,
   AttributionControl,
+  MapProps,
   useControl,
 } from "react-map-gl/maplibre";
 
@@ -15,7 +16,7 @@ import routeStopMarker from "data-url:../route-stop-marker.png";
 import arrow from "data-url:../arrow.png";
 import type { Map as MapType } from "maplibre-gl";
 
-const images: { [imageName: string]: string } = {
+const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
   "route-stop-marker": routeStopMarker,
   arrow: arrow,
@@ -75,16 +76,31 @@ class StyleSwitcher {
   }
 }
 
-const StyleSwitcherControl = memo(function (props: StyleSwitcherProps) {
+const StyleSwitcherControl = memo(function StyleSwitcherControl(
+  props: StyleSwitcherProps,
+) {
   useControl(() => new StyleSwitcher(props));
 
   return null;
 });
 
-export default function BusTimesMap(props: any) {
-  const imageNames = props.images;
-  const onLoad = props.onLoad;
+export default function BusTimesMap(
+  props: MapProps & {
+    images?: string[];
+    onLoad?: (event: MapEvent) => void;
+
+    // workaround for wrong react-map-gl type definitions?
+    minPitch?: number;
+    maxPitch?: number;
+    scrollZoom?: boolean;
+    touchZoomRotate?: boolean;
+    localIdeographFontFamily?: string;
+    pitchWithRotate?: boolean;
+  },
+) {
   const mapRef = React.useRef<MapType>();
+  const onLoad = props.onLoad;
+  const imageNames = props.images;
 
   const [mapStyle, setMapStyle] = React.useState(() => {
     try {
@@ -92,7 +108,9 @@ export default function BusTimesMap(props: any) {
       if (style) {
         return style;
       }
-    } catch {}
+    } catch {
+      // ignore
+    }
     return "alidade_smooth";
   });
 
@@ -104,7 +122,7 @@ export default function BusTimesMap(props: any) {
 
         for (const imageName of imageNames) {
           const image = new Image();
-          image.src = images[imageName];
+          image.src = imagesByName[imageName];
           image.onload = function () {
             map.addImage(imageName, image, {
               pixelRatio: 2,
@@ -126,7 +144,9 @@ export default function BusTimesMap(props: any) {
       setMapStyle(style);
       try {
         localStorage.setItem("map-style", style);
-      } catch {}
+      } catch {
+        // ignore
+      }
     },
     [],
   );
