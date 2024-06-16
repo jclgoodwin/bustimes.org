@@ -42,6 +42,7 @@ declare global {
     SERVICE_ID?: number;
     STOPS?: Trip;
     OPERATOR_ID?: string;
+    VEHICLE_ID: number;
     globalThis: Window;
   }
 }

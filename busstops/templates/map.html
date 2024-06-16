@@ -11,7 +11,9 @@
 {% block header %}
    <header class="site-header">
         <a href="/" class="site-name">bustimes.org</a>
-
+        <ul>
+            <li><a href="/map{% if object.latlong %}#16/{{ object.latlong.y|floatformat:4 }}/{{ object.latlong.x|floatformat:4 }}{% endif %}">Map</a></li>
+        </ul>
         <form method="GET" action="/search" class="search">
             <label>
                 Search
@@ -30,6 +32,8 @@
     </div>
 {% endblock %}
 
+{% load static %}
+
 {% block footer %}
     <script>
         INITIAL_VIEW_STATE = {
@@ -42,12 +46,7 @@
         {% endif %}
             zoom: 5,
         };
-    </script>
-{% endblock %}
-
-{% block foot %}
-    {% load static %}
-    <script>
+        {% load static %}
         OLD_JS = [
             "{% static 'js/reqwest.min.js' %}",
             "{% static 'dist/js/bigmap-classic.css' %}",

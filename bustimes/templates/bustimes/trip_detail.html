@@ -1,48 +1,12 @@
-{% extends 'page.html' %}
+{% extends 'map.html' %}
 
 {% block title %}{{ object.route.line_name }} – bustimes.org{% endblock %}
 
 {% block canonical %}<meta name="robots" content="noindex,noarchive">{% endblock %}
 
-{% block head %}
-    <style>
-    .breadcrumb {
-        border: 0;
-    }
-
-    @media (min-width: 48em) {
-        footer ul {
-            border: 0;
-        }
-
-        footer .user {
-            display: none;
-        }
-
-        footer {
-            bottom: 0;
-            position: absolute;
-            width: 100%;
-
-        }
-    }
-
-    </style>
-{% endblock %}
-
-{% block bodyclass %}{% endblock %}
-
-{% block content %}
-
-<div id="hugemap">
-    <noscript>Sorry, this page requires JavaScript. You can still use most of the rest of the website.</noscript>
-</div>
-
-{% endblock %}
-
 {% load static %}
 
-{% block foot %}
+{% block footer %}
     <script>
         window.STOPS = {{ stops_json }};
         {% if object.route.service.tracking %}

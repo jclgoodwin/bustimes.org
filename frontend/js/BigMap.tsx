@@ -156,12 +156,14 @@ function fetchJson(what: string, bounds: LngLatBounds) {
 
 type VehiclesProps = {
   vehicles: Vehicle[];
+  tripId?: string;
   clickedVehicleMarkerId?: number;
   setClickedVehicleMarker: (vehicleId?: number) => void;
 };
 
 const Vehicles = memo(function Vehicles({
   vehicles,
+  tripId,
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
 }: VehiclesProps) {
@@ -208,7 +210,7 @@ const Vehicles = memo(function Vehicles({
       return (
         <VehicleMarker
           key={item.id}
-          selected={item === clickedVehicle}
+          selected={item === clickedVehicle || tripId && item.trip_id?.toString() === tripId || false}
           vehicle={item}
         />
       );
@@ -235,6 +237,7 @@ const Vehicles = memo(function Vehicles({
       {clickedVehicle && (
         <VehiclePopup
           item={clickedVehicle}
+          activeLink={clickedVehicle.trip_id?.toString() === tripId}
           onClose={() => setClickedVehicleMarker()}
           snazzyTripLink
         />
@@ -280,7 +283,7 @@ export default function BigMap(props: {
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
   React.useEffect(() => {
-    if (trip?.id?.toString() === props.tripId) {
+    if (!props.tripId || (trip?.id?.toString() === props.tripId)) {
       return;
     }
     fetch(`${apiRoot}api/trips/${props.tripId}/`).then((response) => {
@@ -309,6 +312,7 @@ export default function BigMap(props: {
       });
     }
   }, [bounds]);
+
 
   const loadStops = React.useCallback(() => {
     const _bounds = boundsRef.current as LngLatBounds;
@@ -381,6 +385,13 @@ export default function BigMap(props: {
         setLoadingBuses(false);
       });
   }, [props.mode, props.noc, trip]);
+
+  // operator mode
+  React.useEffect(() => {
+    if (props.noc) {
+      loadVehicles();
+    }
+  }, [props.noc, loadVehicles]);
 
   const handleMoveEnd = debounce(
     React.useCallback(
@@ -537,52 +548,68 @@ export default function BigMap(props: {
     }
   }, [bounds, props.mode]);
 
+  if (props.mode === MapMode.Operator && !(initialViewState && bounds)) {
+    if (!vehicles) {
+      return <div className="sorry">Loading…</div>;
+    }
+
+    return <div className="sorry">Sorry, no buses are tracking at the moment</div>;
+  }
+
+  let className = "big-map";
+  if (props.mode === MapMode.Trip) {
+    className += " has-sidebar";
+  }
+
   return (
     <React.Fragment>
-      <BusTimesMap
-        initialViewState={initialViewState}
-        onMoveEnd={props.mode === MapMode.Slippy ? handleMoveEnd : undefined}
-        hash={props.mode === MapMode.Slippy}
-        onClick={handleMapClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        cursor={cursor}
-        onLoad={handleMapLoad}
-        images={["stop-marker"]}
-        interactiveLayerIds={["stops", "vehicles"]}
-      >
-        {props.mode === MapMode.Trip && trip ? (
-          <Route times={trip.times} />
-        ) : null}
+      <div className={className}>
+        <BusTimesMap
+          initialViewState={initialViewState}
+          onMoveEnd={props.mode === MapMode.Slippy ? handleMoveEnd : undefined}
+          hash={props.mode === MapMode.Slippy}
+          onClick={handleMapClick}
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          cursor={cursor}
+          onLoad={handleMapLoad}
+          images={["stop-marker"]}
+          interactiveLayerIds={["stops", "vehicles"]}
+        >
+          {props.mode === MapMode.Trip && trip ? (
+            <Route times={trip.times} />
+          ) : null}
 
-        {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
+          {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
 
-        {props.mode === MapMode.Slippy && stops && showStops ? (
-          <Stops
-            stops={stops}
-            setClickedStop={setClickedStop}
-            clickedStopUrl={clickedStop}
-          />
-        ) : null}
+          {props.mode === MapMode.Slippy && stops && showStops ? (
+            <Stops
+              stops={stops}
+              setClickedStop={setClickedStop}
+              clickedStopUrl={clickedStop}
+            />
+          ) : null}
 
-        {vehicles && showBuses ? (
-          <Vehicles
-            vehicles={vehicles}
-            clickedVehicleMarkerId={clickedVehicleMarkerId}
-            setClickedVehicleMarker={setClickedVehicleMarker}
-          />
-        ) : null}
+          {vehicles && showBuses ? (
+            <Vehicles
+              vehicles={vehicles}
+              tripId={props.tripId}
+              clickedVehicleMarkerId={clickedVehicleMarkerId}
+              setClickedVehicleMarker={setClickedVehicleMarker}
+            />
+          ) : null}
 
-        {zoom && (!showStops || loadingBuses || loadingStops) ? (
-          <div className="maplibregl-ctrl map-status-bar">
-            {props.mode === MapMode.Slippy && !showStops
-              ? "zoooom in to see stops"
-              : null}
-            {!showBuses ? <div>Zooerofdgxoooom in to see buses</div> : null}
-            {loadingBuses || loadingStops ? <div>Loading…</div> : null}
-          </div>
-        ) : null}
-      </BusTimesMap>
+          {zoom && (!showStops || loadingBuses || loadingStops) ? (
+            <div className="maplibregl-ctrl map-status-bar">
+              {props.mode === MapMode.Slippy && !showStops
+                ? "zoooom in to see stops"
+                : null}
+              {!showBuses ? <div>Zooerofdgxoooom in to see buses</div> : null}
+              {loadingBuses || loadingStops ? <div>Loading…</div> : null}
+            </div>
+          ) : null}
+        </BusTimesMap>
+      </div>
 
       {props.mode === MapMode.Trip ? (
         <div className="trip-timetable map-sidebar">

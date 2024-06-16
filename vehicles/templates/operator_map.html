@@ -1,4 +1,4 @@
-{% extends 'page.html' %}
+{% extends 'map.html' %}
 
 {% block title %}Bus tracker map – {{ object }} – bustimes.org{% endblock %}
 
@@ -10,18 +10,9 @@
     <meta property="og:title" content="Map – {{ object }}">
 {% endblock %}
 
-{% block bodyclass %}{% endblock %}
+{% load static %}
 
-{% block content %}
-
-    <div id="map">
-        <noscript>Sorry, the map requires JavaScript. You can still use most of the rest of the website.</noscript>
-    </div>
-
-{% endblock %}
-
-{% block foot %}
-    {% load static %}
+{% block footer %}
     <script>OPERATOR_ID="{{ operator.noc }}";</script>
     <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
     <script src="{% static 'dist/js/app.js' %}"></script>

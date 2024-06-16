@@ -697,12 +697,17 @@ table {
     left: 0;
 }
 
+.big-map,
 .service-map {
-    bottom: 0;
-    left: 0;
-    position: fixed;
     right: 0;
     top: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+}
+
+.service-map {
+    position: fixed;
     background: var(--background-color);
 
     // make room for ads:
@@ -1033,6 +1038,7 @@ input:not(:checked) + label {
     }
 }
 
+// list of StopUsages (in the absence of a timetable)
 .route {
     a {
         margin-left: 1em;
@@ -1066,7 +1072,7 @@ input:not(:checked) + label {
     }
 }
 
-.operator-map,
+// .operator-map,
 .journey-map {
     position: absolute;
     top: 0;
@@ -1075,31 +1081,28 @@ input:not(:checked) + label {
     bottom: 0;
 }
 
-.operator-map {
-    top: 104px;
-    bottom: 134px; /* ad 92px + footer 42px */
-}
+// .operator-map {
+//     top: 104px;
+//     bottom: 134px; /* ad 92px + footer 42px */
+// }
 
-.trip-map {
-    top: 0;
-    position: sticky;
-    margin: 0 -1em;
-    height: 50vh;
-}
-
-.journey-map.has-sidebar {
+.has-sidebar {
     bottom: 30%;
 }
 
-.journey-map + .map-sidebar {
+.map-sidebar {
     position: absolute;
     top: 70%;
+    bottom: -90px;
     left: 0;
     right: 0;
-    bottom: -90px;
     overflow: auto;
     padding: 1em 1em 90px;
+
 }
+
+// .journey-map + .map-sidebar {
+// }
 
 .map-sidebar .navigation {
     overflow: hidden;

@@ -81,35 +81,22 @@ h1 {
     height: auto;
 }
 
-.trip-map,
-.trip-map + .map-sidebar {
-    top: 104px;
-    bottom: 42px;
-
-    @media (min-height: 480px) {
-        bottom: 134px; /* ad 92px + footer 42px */
-    }
-}
-
 .has-sidebar {
     left: 40%;
     right: 0;
-}
-
-.journey-map.has-sidebar {
     bottom: 0;
 }
 
-.journey-map + .map-sidebar {
-    top: 0;
-    margin: 0;
-    padding-top: 3em;
-}
-
 .map-sidebar {
+    top: 0;
     width: 40%;
     box-sizing: border-box;
-    padding: 0 1em;
-    margin-left: -1em;
+    // padding-top: 1em;
+    // padding-left: 1em;
+    // padding-right: 1em;
     overflow: auto;
+}
+
+.journey-map + .map-sidebar {
+    padding-top: 3em;
 }
