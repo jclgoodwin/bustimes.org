@@ -25,7 +25,7 @@ export default function MapRouter() {
       <Route path="/operators/:operatorSlug/map">
         <BigMap
           mode={MapMode.Operator}
-          noc={window.OPERATOR_ID || (window.STOPS?.operator?.noc as string)}
+          noc={window.OPERATOR_ID || (window.STOPS?.operator?.id as string)}
         />
       </Route>
       <Route path="/map">

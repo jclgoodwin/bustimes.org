@@ -9,6 +9,7 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 import { LngLatBounds, Map, Hash, MapLibreEvent } from "maplibre-gl";
+import { Link } from "wouter";
 
 import debounce from "lodash/debounce";
 
@@ -297,6 +298,47 @@ const Vehicles = memo(function Vehicles({
   );
 });
 
+function Sidebar(props: {
+  trip?: Trip;
+  tripId?: string;
+  vehicle?: Vehicle;
+  highlightedStop?: string;
+}) {
+  let className = "trip-timetable map-sidebar";
+
+  if (!props.trip) {
+    return <div className={className}></div>
+  }
+
+  if (props.trip.id && props.tripId !== props.trip.id?.toString()) {
+    className += " loading";
+  }
+
+  let operator
+  if (props.trip.operator) {
+    operator = <Link href={"/operators/" + props.trip.operator.slug + "/map"}>{ props.trip.operator.name }</Link>;
+  }
+
+  let lineName;
+  if (props.trip.service?.line_name) {
+    lineName = props.trip.service.line_name;
+    // if (props.trip.service.slug) {
+    //   lineName = <a href={"/services/" + props.trip.service.slug}>{lineName}</a>;
+    // }
+  }
+
+
+  return (
+    <div className={className}>
+      {operator}
+      {operator && lineName ? " • " : null}
+      {lineName}
+      <TripTimetable trip={props.trip} vehicle={props.vehicle} highlightedStop={props.highlightedStop} />
+    </div>
+  );
+}
+
+
 export default function BigMap(props: {
   mode: MapMode;
   noc?: string;
@@ -424,9 +466,7 @@ export default function BigMap(props: {
           (response) => {
             if (response.ok) {
               response.json().then((items: Vehicle[]) => {
-                if (_bounds) {
-                  vehiclesHighWaterMark.current = _bounds;
-                }
+                vehiclesHighWaterMark.current = _bounds;
 
                 if (first && !initialViewState) {
                   const bounds = new LngLatBounds();
@@ -445,9 +485,9 @@ export default function BigMap(props: {
                   for (const item of items) {
                     if (trip.id === item.trip_id) {
                       if (first) setClickedVehicleMarker(item.id);
+                      setTripVehicle(item);
+                      break;
                     }
-                    setTripVehicle(item);
-                    break;
                   }
                 }
 
@@ -635,14 +675,6 @@ export default function BigMap(props: {
     className += " has-sidebar";
   }
 
-  let tripTimetableClassName;
-  if (trip) {
-    tripTimetableClassName = "trip-timetable map-sidebar";
-    if (trip.id && props.tripId !== trip.id?.toString()) {
-      tripTimetableClassName += " loading";
-    }
-  }
-
   return (
     <React.Fragment>
       <div className={className}>
@@ -682,7 +714,10 @@ export default function BigMap(props: {
             />
           ) : null}
 
-          {zoom && (!showStops || loadingBuses || loadingStops) ? (
+          {zoom &&
+          ((props.mode === MapMode.Slippy && !showStops) ||
+            loadingBuses ||
+            loadingStops) ? (
             <div className="maplibregl-ctrl map-status-bar">
               {props.mode === MapMode.Slippy && !showStops
                 ? "Zoom in to see stops"
@@ -694,17 +729,7 @@ export default function BigMap(props: {
         </BusTimesMap>
       </div>
 
-      {props.mode === MapMode.Trip ? (
-        <div className={tripTimetableClassName}>
-          {trip ? (
-            <TripTimetable
-              trip={trip}
-              vehicle={tripVehicle}
-              highlightedStop={clickedStopUrl}
-            />
-          ) : null}
-        </div>
-      ) : null}
+      {props.mode === MapMode.Trip ? <Sidebar trip={trip} tripId={props.tripId} vehicle={tripVehicle} highlightedStop={clickedStopUrl} /> : null }
     </React.Fragment>
   );
 }
