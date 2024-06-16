@@ -97,10 +97,15 @@ function SlippyMapHash() {
   React.useEffect(() => {
     if (mapRef.current) {
       const map = mapRef.current.getMap();
-      const hash = map._hash || new Hash();
-      hash.addTo(map);
+      let hash: Hash;
+      if (!map._hash) {
+        hash = new Hash();
+        hash.addTo(map);
+      }
       return () => {
-        hash.remove();
+        if (hash) {
+          hash.remove();
+        }
       };
     }
   }, [mapRef]);
@@ -136,7 +141,7 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
 
   return (
     <React.Fragment>
-      <Source type="geojson" data={stops}>
+      { stops ? <Source type="geojson" data={stops}>
         <Layer
           {...{
             id: "stops",
@@ -159,7 +164,7 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
             },
           }}
         />
-      </Source>
+      </Source> : null }
       {clickedStop ? (
         <StopPopup
           item={clickedStop}
