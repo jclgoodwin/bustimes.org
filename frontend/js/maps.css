@@ -21,7 +21,7 @@
   height: 16px;
   background: #fff;
   border: 1px solid var(--marker-border-color);
-  border-left-color: var(--marker-arrow-color);
+/*  border-left-color: var(--marker-arrow-color);*/
   margin: 1px;
   text-align: center;
   overflow: hidden;
@@ -33,10 +33,12 @@
   display: block; /* cos svg is not block-level by default */
 }
 
+/*
 .vehicle-marker.right {
   border-left-color: var(--marker-border-color);
   border-right-color: var(--marker-arrow-color);
 }
+*/
 
 .vehicle-marker.white-text {
   color: #fff;
