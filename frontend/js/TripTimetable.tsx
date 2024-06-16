@@ -158,7 +158,6 @@ const TripTimetable = React.memo(function TripTimetable({
   trip: Trip;
   onMouseEnter?: (stop: TripTime) => void;
   vehicle?: Vehicle;
-  loading?: boolean | null;
   highlightedStop?: string;
 }) {
   const aimedColumn = trip.times?.some(

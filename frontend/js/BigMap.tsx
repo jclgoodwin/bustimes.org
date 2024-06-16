@@ -3,7 +3,7 @@ import React, { ReactElement, memo } from "react";
 import {
   Source,
   Layer,
-  ViewState,
+  MapProps,
   useMap,
   ViewStateChangeEvent,
   MapLayerMouseEvent,
@@ -27,11 +27,7 @@ const apiRoot = process.env.API_ROOT;
 
 declare global {
   interface Window {
-    INITIAL_VIEW_STATE: Partial<ViewState> & {
-      zoom: number;
-      latitude: number;
-      longitude: number;
-    };
+    INITIAL_VIEW_STATE: MapProps["initialViewState"];
   }
 }
 
@@ -86,9 +82,10 @@ export enum MapMode {
 }
 
 type StopsProps = {
-  stops: {
+  stops?: {
     features: Stop[];
   };
+  trip?: Trip;
   clickedStopUrl?: string;
   setClickedStop: (stop?: string) => void;
 };
@@ -110,13 +107,29 @@ function SlippyMapHash() {
   return null;
 }
 
-function Stops({ stops, clickedStopUrl, setClickedStop }: StopsProps) {
+function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
   const stopsById = React.useMemo<{ [url: string]: Stop }>(() => {
-    return Object.assign(
-      {},
-      ...stops.features.map((stop) => ({ [stop.properties.url]: stop })),
-    );
-  }, [stops]);
+    if (stops) {
+      return Object.assign(
+        {},
+        ...stops.features.map((stop) => ({ [stop.properties.url]: stop })),
+      );
+    }
+    if (trip) {
+      return Object.assign(
+        {},
+        ...trip.times.map((time) => {
+          const url = "/stops/" + time.stop.atco_code;
+          return {
+            [url]: {
+              properties: { url, name: time.stop.name },
+              geometry: { coordinates: time.stop.location },
+            },
+          };
+        }),
+      );
+    }
+  }, [stops, trip]);
 
   const clickedStop = clickedStopUrl && stopsById[clickedStopUrl];
 
@@ -168,6 +181,20 @@ function fetchJson(url: string) {
     },
   );
 }
+
+// function fetchVehicles(noc?: string, bounds?: LngLatBounds, service?: number, trip?: number) {
+//   let url;
+//   if (bounds) {
+//     url = getBoundsQueryString(bounds);
+//   } else if (noc) {
+//     url =  "?operator=" + noc;
+//   } else if (service && trip) {
+//     url =  "?service=" + service + "&trip=" + trip;
+//   } else {
+//     return;
+//   }
+//   return fetchJson("vehicles.json" + url);
+// }
 
 type VehiclesProps = {
   vehicles: Vehicle[];
@@ -225,7 +252,11 @@ const Vehicles = memo(function Vehicles({
       return (
         <VehicleMarker
           key={item.id}
-          selected={item === clickedVehicle || tripId && item.trip_id?.toString() === tripId || false}
+          selected={
+            item === clickedVehicle ||
+            (tripId && item.trip_id?.toString() === tripId) ||
+            false
+          }
           vehicle={item}
         />
       );
@@ -252,7 +283,9 @@ const Vehicles = memo(function Vehicles({
       {clickedVehicle && (
         <VehiclePopup
           item={clickedVehicle}
-          activeLink={clickedVehicle.trip_id?.toString() === tripId}
+          activeLink={
+            tripId ? clickedVehicle.trip_id?.toString() === tripId : false
+          }
           onClose={() => setClickedVehicleMarker()}
           snazzyTripLink
         />
@@ -269,24 +302,69 @@ export default function BigMap(props: {
   noc?: string;
   trip?: Trip;
   tripId?: string;
+  vehicleId?: number;
+  // } & ({
+  //   noc: string;
+  // } | {
+  //   trip: Trip;
+  //   tripId: string;
+  // } | {
+  //   vehicleId: number;
 }) {
   const mapRef = React.useRef<Map>();
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
-  const [vehicles, setVehicles] = React.useState(null);
+  const [vehicles, setVehicles] = React.useState<Vehicle[]>();
 
-  const [stops, setStops] = React.useState(null);
+  const [stops, setStops] = React.useState();
 
   const [zoom, setZoom] = React.useState<number>();
 
-  const [clickedStop, setClickedStop] = React.useState(() => {
+  const [clickedStopUrl, setClickedStopURL] = React.useState(() => {
     if (document.referrer) {
       const referrer = new URL(document.referrer).pathname;
       if (referrer.indexOf("/stops/") === 0) {
         return referrer;
       }
     }
+  });
+
+  const [tripVehicle, setTripVehicle] = React.useState<Vehicle>();
+
+  const tripBounds = React.useMemo(
+    function () {
+      if (trip) {
+        const bounds = new LngLatBounds();
+        for (const item of trip.times) {
+          if (item.stop.location) {
+            bounds.extend(item.stop.location);
+          }
+        }
+        return bounds;
+      }
+    },
+    [trip],
+  );
+
+  React.useEffect(() => {
+    if (mapRef.current && tripBounds) {
+      mapRef.current.fitBounds(tripBounds, {
+        padding: 50,
+      });
+    }
+  }, [tripBounds]);
+
+  const [initialViewState, setInitialViewState] = React.useState(function () {
+    if (tripBounds) {
+      return {
+        bounds: tripBounds,
+        fitBoundsOptions: {
+          padding: 50,
+        },
+      };
+    }
+    return window.INITIAL_VIEW_STATE;
   });
 
   const timeout = React.useRef<number>();
@@ -309,75 +387,98 @@ export default function BigMap(props: {
   const [loadingStops, setLoadingStops] = React.useState(false);
   const [loadingBuses, setLoadingBuses] = React.useState(true);
 
-  const loadVehicles = React.useCallback((first=false) => {
-    if (document.hidden) {
-      return;
-    }
-    clearTimeout(timeout.current);
+  const loadVehicles = React.useCallback(
+    (first = false) => {
+      if (document.hidden) {
+        return;
+      }
+      clearTimeout(timeout.current);
 
-    if (vehiclesAbortController.current) {
-      vehiclesAbortController.current.abort();
-    }
-    vehiclesAbortController.current = new AbortController() as AbortController;
+      if (vehiclesAbortController.current) {
+        vehiclesAbortController.current.abort();
+      }
+      vehiclesAbortController.current =
+        new AbortController() as AbortController;
 
-    let _bounds: LngLatBounds;
-    let url: string;
-    if (props.mode === MapMode.Slippy) {
-      _bounds = boundsRef.current as LngLatBounds;
-      url = getBoundsQueryString(_bounds);
-    } else if (props.noc) {
-      url = "?operator=" + props.noc;
-    } else if (trip?.service?.id) {
-      url = "?service=" + trip.service.id + "&trip=" + trip.id;
-    } else {
-      return;
-    }
+      let _bounds: LngLatBounds;
+      let url: string;
+      if (props.mode === MapMode.Slippy) {
+        _bounds = boundsRef.current as LngLatBounds;
+        url = getBoundsQueryString(_bounds);
+      } else if (props.noc) {
+        url = "?operator=" + props.noc;
+      } else if (trip?.service?.id) {
+        url = "?service=" + trip.service.id + "&trip=" + trip.id;
+      } else if (props.vehicleId) {
+        url = "?vehicle=" + props.vehicleId;
+      } else {
+        return;
+      }
 
-    setLoadingBuses(true);
+      setLoadingBuses(true);
 
-    return fetch(apiRoot + "vehicles.json" + url, {
-      signal: vehiclesAbortController.current.signal,
-    })
-      .then(
-        (response) => {
-          if (response.ok) {
-            response.json().then((items) => {
-              if (_bounds) {
-                vehiclesHighWaterMark.current = _bounds;
-              }
-              vehiclesLength.current = items.length;
-              setVehicles(items);
-
-              if (first && props.noc) {
-                _bounds = new LngLatBounds();
-                for (const item of items) {
-                  _bounds.extend(item.coordinates);
+      return fetch(apiRoot + "vehicles.json" + url, {
+        signal: vehiclesAbortController.current.signal,
+      })
+        .then(
+          (response) => {
+            if (response.ok) {
+              response.json().then((items: Vehicle[]) => {
+                if (_bounds) {
+                  vehiclesHighWaterMark.current = _bounds;
                 }
-              }
-            });
-          }
-          setLoadingBuses(false);
-          if (!document.hidden) {
-            timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
-          }
-        },
-        () => {
+
+                if (first && !initialViewState) {
+                  const bounds = new LngLatBounds();
+                  for (const item of items) {
+                    bounds.extend(item.coordinates);
+                  }
+                  setInitialViewState({
+                    bounds,
+                    fitBoundsOptions: {
+                      padding: 50,
+                    },
+                  });
+                }
+
+                if (trip && trip.id) {
+                  for (const item of items) {
+                    if (trip.id === item.trip_id) {
+                      if (first) setClickedVehicleMarker(item.id);
+                    }
+                    setTripVehicle(item);
+                    break;
+                  }
+                }
+
+                vehiclesLength.current = items.length;
+                setVehicles(items);
+              });
+            }
+            setLoadingBuses(false);
+            if (!document.hidden) {
+              timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
+            }
+          },
+          () => {
+            // never mind
+            setLoadingBuses(false);
+          },
+        )
+        .catch(() => {
           // never mind
           setLoadingBuses(false);
-        },
-      )
-      .catch(() => {
-        // never mind
-        setLoadingBuses(false);
-      });
-  }, [props.mode, props.noc, trip]);
+        });
+    },
+    [props.mode, props.noc, trip, props.vehicleId, initialViewState],
+  );
 
   // trip mode
 
   React.useEffect(() => {
     if (props.tripId) {
       if (trip?.id?.toString() === props.tripId) {
-        loadVehicles();
+        loadVehicles(true);
       } else {
         fetch(`${apiRoot}api/trips/${props.tripId}/`).then((response) => {
           if (response.ok) {
@@ -388,31 +489,10 @@ export default function BigMap(props: {
     }
   }, [props.tripId, trip, loadVehicles]);
 
-  const bounds = React.useMemo((): LngLatBounds | undefined => {
-    if (trip) {
-      const _bounds = new LngLatBounds();
-      for (const item of trip.times) {
-        if (item.stop.location) {
-          _bounds.extend(item.stop.location);
-        }
-      }
-      return _bounds;
-    }
-  }, [trip]);
-
-  React.useEffect(() => {
-    if (bounds && mapRef.current) {
-      mapRef.current.fitBounds(bounds, {
-        padding: 50,
-      });
-    }
-  }, [bounds]);
-
   // operator mode
   React.useEffect(() => {
     if (props.noc) {
-      loadVehicles()?.then(() => {
-      });
+      loadVehicles();
     }
   }, [props.noc, loadVehicles]);
 
@@ -464,8 +544,9 @@ export default function BigMap(props: {
     };
   }, [zoom, loadVehicles]);
 
-  const [clickedVehicleMarkerId, setClickedVehicleMarker] =
-    React.useState<number>();
+  const [clickedVehicleMarkerId, setClickedVehicleMarker] = React.useState<
+    number | undefined
+  >(props.vehicleId);
 
   const handleMapClick = React.useCallback(
     (e: MapLayerMouseEvent) => {
@@ -473,7 +554,7 @@ export default function BigMap(props: {
       const vehicleId = getClickedVehicleMarkerId(e);
       if (vehicleId) {
         setClickedVehicleMarker(vehicleId);
-        setClickedStop(undefined);
+        setClickedStopURL(undefined);
         return;
       }
 
@@ -484,17 +565,17 @@ export default function BigMap(props: {
             setClickedVehicleMarker(feature.id as number);
             return;
           }
-          if (feature.properties.url !== clickedStop) {
-            setClickedStop(feature.properties.url);
+          if (feature.properties.url !== clickedStopUrl) {
+            setClickedStopURL(feature.properties.url);
             break;
           }
         }
       } else {
-        setClickedStop(undefined);
+        setClickedStopURL(undefined);
       }
       setClickedVehicleMarker(undefined);
     },
-    [clickedStop],
+    [clickedStopUrl],
   );
 
   const handleMapLoad = function (event: MapLibreEvent) {
@@ -538,39 +619,28 @@ export default function BigMap(props: {
   const showStops = shouldShowStops(zoom);
   const showBuses = props.mode != MapMode.Slippy || shouldShowVehicles(zoom);
 
-  const initialViewState = React.useMemo(() => {
-    if (props.mode === MapMode.Slippy) {
-      return window.INITIAL_VIEW_STATE;
-    } else if (props.mode === MapMode.Trip) {
-      return {
-        bounds: bounds,
-        fitBoundsOptions: {
-          padding: 50,
-        },
-      };
-    } else {
-      return {
-        bounds: bounds,
-        fitBoundsOptions: {
-          maxZoom: 15,
-          padding: 50,
-        },
-      };
-    }
-  }, [bounds, props.mode]);
-
-  if (props.mode === MapMode.Operator && !(initialViewState && bounds)) {
+  if (props.mode === MapMode.Operator) {
     if (!vehicles) {
       return <div className="sorry">Loading…</div>;
     }
     if (!vehiclesLength.current) {
-      return <div className="sorry">Sorry, no buses are tracking at the moment</div>;
+      return (
+        <div className="sorry">Sorry, no buses are tracking at the moment</div>
+      );
     }
   }
 
   let className = "big-map";
   if (props.mode === MapMode.Trip) {
     className += " has-sidebar";
+  }
+
+  let tripTimetableClassName;
+  if (trip) {
+    tripTimetableClassName = "trip-timetable map-sidebar";
+    if (trip.id && props.tripId !== trip.id?.toString()) {
+      tripTimetableClassName += " loading";
+    }
   }
 
   return (
@@ -594,11 +664,12 @@ export default function BigMap(props: {
 
           {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
 
-          {stops && showStops ? (
+          {trip || (stops && showStops) ? (
             <Stops
               stops={stops}
-              setClickedStop={setClickedStop}
-              clickedStopUrl={clickedStop}
+              trip={trip}
+              setClickedStop={setClickedStopURL}
+              clickedStopUrl={clickedStopUrl}
             />
           ) : null}
 
@@ -616,7 +687,7 @@ export default function BigMap(props: {
               {props.mode === MapMode.Slippy && !showStops
                 ? "Zoom in to see stops"
                 : null}
-              {!showBuses ? <div>Zooerofdgxoooom in to see buses</div> : null}
+              {!showBuses ? <div>Zoom in to see buses</div> : null}
               {loadingBuses || loadingStops ? <div>Loading…</div> : null}
             </div>
           ) : null}
@@ -624,8 +695,14 @@ export default function BigMap(props: {
       </div>
 
       {props.mode === MapMode.Trip ? (
-        <div className="trip-timetable map-sidebar">
-          {trip ? <TripTimetable trip={trip} /> : null}
+        <div className={tripTimetableClassName}>
+          {trip ? (
+            <TripTimetable
+              trip={trip}
+              vehicle={tripVehicle}
+              highlightedStop={clickedStopUrl}
+            />
+          ) : null}
         </div>
       ) : null}
     </React.Fragment>

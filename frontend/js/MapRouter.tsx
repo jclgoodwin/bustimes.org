@@ -15,6 +15,13 @@ export default function MapRouter() {
           />
         )}
       </Route>
+      <Route path="/vehicles/tfl/:reg">
+        <BigMap
+          mode={MapMode.Trip}
+          trip={window.STOPS}
+          vehicleId={window.VEHICLE_ID}
+        />
+      </Route>
       <Route path="/operators/:operatorSlug/map">
         <BigMap
           mode={MapMode.Operator}
