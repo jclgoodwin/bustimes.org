@@ -9,7 +9,6 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 import { LngLatBounds, Map, Hash, MapLibreEvent } from "maplibre-gl";
-import { Link } from "wouter";
 
 import debounce from "lodash/debounce";
 
@@ -314,30 +313,12 @@ function Sidebar(props: {
     className += " loading";
   }
 
-  let operator
-  if (props.trip.operator) {
-    operator = <Link href={"/operators/" + props.trip.operator.slug + "/map"}>{ props.trip.operator.name }</Link>;
-  }
-
-  let lineName;
-  if (props.trip.service?.line_name) {
-    lineName = props.trip.service.line_name;
-    // if (props.trip.service.slug) {
-    //   lineName = <a href={"/services/" + props.trip.service.slug}>{lineName}</a>;
-    // }
-  }
-
-
   return (
     <div className={className}>
-      {operator}
-      {operator && lineName ? " • " : null}
-      {lineName}
       <TripTimetable trip={props.trip} vehicle={props.vehicle} highlightedStop={props.highlightedStop} />
     </div>
   );
 }
-
 
 export default function BigMap(props: {
   mode: MapMode;
