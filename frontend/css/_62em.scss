@@ -7,19 +7,14 @@
 }
 
 main {
-    padding-left: 2em;
-    padding-left: calc(env(safe-area-inset-left) + 2em);
-    padding-right: 2em;
-    padding-right: calc(env(safe-area-inset-right) + 2em);
+    padding: 0 2em;
 }
 
 .table-wrapper {
-    margin-left: calc(env(safe-area-inset-left) * -1 - 2em);
-    margin-right: calc(env(safe-area-inset-right) * -1 - 2em);
+    margin: 0 -2em;
 
     table {
-        padding-left: calc(env(safe-area-inset-left) + 2rem);
-        padding-right: calc(env(safe-area-inset-right) + 2rem);
+        padding: 0 2rem;
     }
 }
 

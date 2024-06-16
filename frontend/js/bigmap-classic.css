@@ -113,11 +113,3 @@
   left: -3px;
   transform-origin: 16px 4px;
 }
-
-.leaflet-left {
-  margin-left: env(safe-area-inset-left);
-}
-
-.leaflet-right {
-  margin-right: env(safe-area-inset-right);
-}
