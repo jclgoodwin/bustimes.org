@@ -306,7 +306,7 @@ function Sidebar(props: {
   let className = "trip-timetable map-sidebar";
 
   if (!props.trip) {
-    return <div className={className}></div>
+    return <div className={className}></div>;
   }
 
   if (props.trip.id && props.tripId !== props.trip.id?.toString()) {
@@ -315,7 +315,11 @@ function Sidebar(props: {
 
   return (
     <div className={className}>
-      <TripTimetable trip={props.trip} vehicle={props.vehicle} highlightedStop={props.highlightedStop} />
+      <TripTimetable
+        trip={props.trip}
+        vehicle={props.vehicle}
+        highlightedStop={props.highlightedStop}
+      />
     </div>
   );
 }
@@ -710,7 +714,14 @@ export default function BigMap(props: {
         </BusTimesMap>
       </div>
 
-      {props.mode === MapMode.Trip ? <Sidebar trip={trip} tripId={props.tripId} vehicle={tripVehicle} highlightedStop={clickedStopUrl} /> : null }
+      {props.mode === MapMode.Trip ? (
+        <Sidebar
+          trip={trip}
+          tripId={props.tripId}
+          vehicle={tripVehicle}
+          highlightedStop={clickedStopUrl}
+        />
+      ) : null}
     </React.Fragment>
   );
 }
