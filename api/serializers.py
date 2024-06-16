@@ -183,6 +183,7 @@ class TripSerializer(serializers.ModelSerializer):
                 "noc": obj.operator_id,
                 "name": obj.operator.name,
                 "vehicle_mode": obj.operator.vehicle_mode,
+                "slug": obj.operator.slug,
             }
 
     def get_times(self, obj):
