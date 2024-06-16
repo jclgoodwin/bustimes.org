@@ -9,6 +9,7 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 import { LngLatBounds, Map, Hash, MapLibreEvent } from "maplibre-gl";
+import { Link } from "wouter";
 
 import debounce from "lodash/debounce";
 
@@ -662,6 +663,7 @@ export default function BigMap(props: {
 
   return (
     <React.Fragment>
+      <Link className="map-link" href="/map">Map</Link>
       <div className={className}>
         <BusTimesMap
           initialViewState={initialViewState}

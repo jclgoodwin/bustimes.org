@@ -692,6 +692,21 @@ table {
     left: 0;
 }
 
+#hugemap .map-link {
+    background: var(--brand-color);
+    position: absolute;
+    top: -3.5em;
+    right: 0;
+    padding:  1em;
+    text-decoration: none;
+    color: var(--header-text-color);
+
+    &:hover {
+        background-color: var(--brand-color-darker);
+        // text-decoration: none;
+    }
+}
+
 .big-map,
 .service-map {
     right: 0;
