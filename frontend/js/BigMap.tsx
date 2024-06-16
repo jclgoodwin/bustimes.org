@@ -523,7 +523,7 @@ export default function BigMap(props: {
   // operator mode
   React.useEffect(() => {
     if (props.noc) {
-      loadVehicles();
+      loadVehicles(true);
     }
   }, [props.noc, loadVehicles]);
 
