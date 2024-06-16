@@ -177,13 +177,7 @@ class TripSerializer(serializers.ModelSerializer):
             "mode": obj.route.service.mode if obj.route.service else "",
         }
 
-    def get_operator(self, obj):
-        if obj.operator:
-            return {
-                "noc": obj.operator_id,
-                "name": obj.operator.name,
-                "vehicle_mode": obj.operator.vehicle_mode,
-            }
+    get_operator = VehicleSerializer.get_operator
 
     def get_times(self, obj):
         if not hasattr(obj, "stops"):
