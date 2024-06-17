@@ -6,12 +6,12 @@
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/map">
 {% endblock %}
 
+{% load static %}
+
 {% block head %}
     <meta property="og:title" content="Map – {{ object }}">
     <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
 {% endblock %}
-
-{% load static %}
 
 {% block footer %}
     <script>OPERATOR_ID="{{ operator.noc }}";</script>
