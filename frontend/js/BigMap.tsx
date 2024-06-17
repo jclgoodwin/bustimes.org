@@ -141,30 +141,32 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
 
   return (
     <React.Fragment>
-      { stops ? <Source type="geojson" data={stops}>
-        <Layer
-          {...{
-            id: "stops",
-            type: "symbol",
-            minzoom: 14,
-            layout: {
-              "text-field": ["get", "icon"],
-              "text-font": ["Stadia Regular"],
-              "text-allow-overlap": true,
-              "text-size": 10,
-              "icon-rotate": ["+", 45, ["get", "bearing"]],
-              "icon-image": "stop-marker",
-              "icon-allow-overlap": true,
-              "icon-ignore-placement": true,
-              "text-ignore-placement": true,
-              "icon-padding": [3],
-            },
-            paint: {
-              "text-color": "#ffffff",
-            },
-          }}
-        />
-      </Source> : null }
+      {stops ? (
+        <Source type="geojson" data={stops}>
+          <Layer
+            {...{
+              id: "stops",
+              type: "symbol",
+              minzoom: 14,
+              layout: {
+                "text-field": ["get", "icon"],
+                "text-font": ["Stadia Regular"],
+                "text-allow-overlap": true,
+                "text-size": 10,
+                "icon-rotate": ["+", 45, ["get", "bearing"]],
+                "icon-image": "stop-marker",
+                "icon-allow-overlap": true,
+                "icon-ignore-placement": true,
+                "text-ignore-placement": true,
+                "icon-padding": [3],
+              },
+              paint: {
+                "text-color": "#ffffff",
+              },
+            }}
+          />
+        </Source>
+      ) : null}
       {clickedStop ? (
         <StopPopup
           item={clickedStop}
@@ -504,12 +506,17 @@ export default function BigMap(props: {
     [props.mode, props.noc, trip, props.vehicleId, initialViewState],
   );
 
-  // trip mode
-
   React.useEffect(() => {
+    // trip mode:
     if (props.tripId) {
       if (trip?.id?.toString() === props.tripId) {
         loadVehicles(true);
+        document.title =
+          trip.service?.line_name +
+          " \u2013 " +
+          trip.operator?.name +
+          " \u2013 " +
+          "bustimes.org";
       } else {
         fetch(`${apiRoot}api/trips/${props.tripId}/`).then((response) => {
           if (response.ok) {
@@ -517,18 +524,15 @@ export default function BigMap(props: {
           }
         });
       }
-    }
-  }, [props.tripId, trip, loadVehicles]);
-
-  // vehicle or operator mode
-  React.useEffect(() => {
-    if (props.noc) {
+      // operator mode:
+    } else if (props.noc) {
       loadVehicles(true);
-    } else if (props.vehicleId) {
-      loadVehicles();
+    } else {
+      document.title = "Map \u2013 bustimes.org";
     }
-  }, [props.noc, props.vehicleId, loadVehicles]);
+  }, [props.tripId, trip, props.noc, loadVehicles]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleMoveEnd = React.useCallback(
     debounce(
       (evt: ViewStateChangeEvent) => {
@@ -670,7 +674,9 @@ export default function BigMap(props: {
 
   return (
     <React.Fragment>
-      <Link className="map-link" href="/map">Map</Link>
+      <Link className="map-link" href="/map">
+        Map
+      </Link>
       <div className={className}>
         <BusTimesMap
           initialViewState={initialViewState}
