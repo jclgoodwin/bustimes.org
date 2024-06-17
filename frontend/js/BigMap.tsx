@@ -443,7 +443,7 @@ export default function BigMap(props: {
       } else if (trip?.service?.id) {
         url = "?service=" + trip.service.id + "&trip=" + trip.id;
       } else if (props.vehicleId) {
-        url = "?vehicle=" + props.vehicleId;
+        url = "?id=" + props.vehicleId;
       } else {
         return;
       }

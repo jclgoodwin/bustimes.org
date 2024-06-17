@@ -4,16 +4,6 @@
 
 {% load static %}
 
-{% block head %}
-    <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
-    <style>
-        {% for style in object.livery.get_styles %}
-            {{ style }}
-        {% endfor %}
-    </style>
-    {{ block.super }}
-{% endblock %}
-
 {% block foot %}
     <script>
         window.STOPS = {{ stops_json }};
@@ -22,4 +12,5 @@
         {% endif %}
     </script>
     <script src="{% static 'dist/js/app.js' %}"></script>
+    <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}
