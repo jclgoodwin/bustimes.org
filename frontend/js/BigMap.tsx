@@ -520,15 +520,17 @@ export default function BigMap(props: {
     }
   }, [props.tripId, trip, loadVehicles]);
 
-  // operator mode
+  // vehicle or operator mode
   React.useEffect(() => {
     if (props.noc) {
       loadVehicles(true);
+    } else if (props.vehicleId) {
+      loadVehicles();
     }
-  }, [props.noc, loadVehicles]);
+  }, [props.noc, props.vehicleId, loadVehicles]);
 
-  const handleMoveEnd = debounce(
-    React.useCallback(
+  const handleMoveEnd = React.useCallback(
+    debounce(
       (evt: ViewStateChangeEvent) => {
         const map = evt.target;
         boundsRef.current = map.getBounds() as LngLatBounds;
@@ -553,12 +555,12 @@ export default function BigMap(props: {
         setZoom(zoom);
         updateLocalStorage(zoom, map.getCenter());
       },
-      [loadStops, loadVehicles],
+      400,
+      {
+        leading: true,
+      },
     ),
-    400,
-    {
-      leading: true,
-    },
+    [loadStops, loadVehicles],
   );
 
   React.useEffect(() => {
