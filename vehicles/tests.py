@@ -834,7 +834,16 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
     def test_big_map(self):
         with self.assertNumQueries(1):
-            self.client.get("/map")
+            response = self.client.get("/map")
+        self.assertContains(response, "latitude: 54,")
+
+        # 🇮🇪
+        response = self.client.get("/map", headers={"CF-IPCountry": "IE"})
+        self.assertContains(response, "latitude: 53.45,")
+
+        response = self.client.get("/map/old")
+        self.assertNotContains(response, "bigmap.js")
+        self.assertContains(response, "bigmap-classic.js")
 
     def test_vehicles(self):
         with self.assertNumQueries(3):
