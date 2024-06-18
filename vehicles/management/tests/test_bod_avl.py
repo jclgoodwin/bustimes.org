@@ -785,8 +785,11 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         OperatorCode.objects.create(operator=also, source=self.source, code="TFLO"),
         OperatorCode.objects.create(operator=alno, source=self.source, code="TFLO"),
 
-        service = Service.objects.create(line_name="498", current=True)
-        Route.objects.create(line_name="498", service=service, source=self.source)
+        london_source = DataSource.objects.create(name="L")
+        service = Service.objects.create(
+            line_name="498", current=True, source=london_source
+        )
+        Route.objects.create(line_name="498", service=service, source=london_source)
         service.operator.set([also, alno])
 
         livery = Livery.objects.create(id=262, name="TfL", published=True)

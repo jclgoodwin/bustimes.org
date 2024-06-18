@@ -252,6 +252,9 @@ class Command(ImportLiveVehiclesCommand):
 
         services = self.services.filter(line_name_query).defer("geometry")
 
+        if item["MonitoredVehicleJourney"]["OperatorRef"] == "TFLO":
+            return services.filter(source__name="L").first()
+
         if not operators:
             pass
         elif len(operators) == 1 and operators[0].parent and destination_ref:
