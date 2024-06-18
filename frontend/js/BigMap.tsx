@@ -511,12 +511,7 @@ export default function BigMap(props: {
     if (props.tripId) {
       if (trip?.id?.toString() === props.tripId) {
         loadVehicles(true);
-        document.title =
-          trip.service?.line_name +
-          " \u2013 " +
-          trip.operator?.name +
-          " \u2013 " +
-          "bustimes.org";
+        document.title = `${trip.service?.line_name} \u2013 ${trip.operator?.name} \u2013 bustimes.org`;
       } else {
         fetch(`${apiRoot}api/trips/${props.tripId}/`).then((response) => {
           if (response.ok) {
@@ -527,10 +522,12 @@ export default function BigMap(props: {
       // operator mode:
     } else if (props.noc) {
       loadVehicles(true);
+    } else if (props.vehicleId) {
+      loadVehicles();
     } else {
       document.title = "Map \u2013 bustimes.org";
     }
-  }, [props.tripId, trip, props.noc, loadVehicles]);
+  }, [props.tripId, trip, props.noc, props.vehicleId, loadVehicles]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleMoveEnd = React.useCallback(
@@ -674,9 +671,11 @@ export default function BigMap(props: {
 
   return (
     <React.Fragment>
-      <Link className="map-link" href="/map">
-        Map
-      </Link>
+      {props.mode === MapMode.Slippy ? null : (
+        <Link className="map-link" href="/map">
+          Map
+        </Link>
+      )}
       <div className={className}>
         <BusTimesMap
           initialViewState={initialViewState}

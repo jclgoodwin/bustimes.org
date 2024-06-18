@@ -4,7 +4,7 @@
 
 {% load static %}
 
-{% block foot %}
+{% block footer %}
     <script>
         window.STOPS = {{ stops_json }};
         {% if object %}
@@ -12,5 +12,4 @@
         {% endif %}
     </script>
     <script src="{% static 'dist/js/app.js' %}"></script>
-    <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
 {% endblock %}

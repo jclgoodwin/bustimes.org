@@ -17,7 +17,7 @@ from django.http import (
     HttpResponseBadRequest,
     JsonResponse,
 )
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.safestring import mark_safe
 from django.views.decorators.http import require_GET
@@ -505,6 +505,12 @@ def trip_block(request, pk: int):
 def tfl_vehicle(request, reg: str):
     reg = reg.upper()
 
+    vehicles = Vehicle.objects.select_related("latest_journey")
+    vehicle = vehicles.filter(vehiclecode__code=f"TFLO:{reg}").first()
+
+    if not vehicle:
+        raise Http404
+
     response = requests.get(
         f"https://api.tfl.gov.uk/Vehicle/{reg}/Arrivals", params=settings.TFL, timeout=8
     )
@@ -513,17 +519,10 @@ def tfl_vehicle(request, reg: str):
     else:
         data = None
 
-    vehicles = Vehicle.objects.select_related("livery", "operator", "vehicle_type")
-    vehicle = vehicles.filter(vehiclecode__code=f"TFLO:{reg}").first()
-
     if not data:
-        if not vehicle:
-            raise Http404
-        return render(
-            request,
-            "vehicles/vehicle_detail.html",
-            {"vehicle": vehicle, "object": vehicle},
-        )
+        if vehicle.latest_journey and vehicle.latest_journey.trip_id:
+            return redirect(vehicle.latest_journey.trip)
+        return redirect(vehicle)
 
     atco_codes = []
     for item in data:
@@ -550,14 +549,15 @@ def tfl_vehicle(request, reg: str):
 
     times = []
     for i, item in enumerate(data):
+        expected_arrival = timezone.localtime(parse_datetime(item["expectedArrival"]))
+        expected_arrival = round(expected_arrival.timestamp() / 60) * 60
+        expected_arrival = datetime.fromtimestamp(expected_arrival)
         time = {
             "id": i,
             "stop": {
                 "name": item["stationName"],
             },
-            "expected_arrival_time": str(
-                timezone.localtime(parse_datetime(item["expectedArrival"])).time()
-            ),
+            "expected_arrival_time": str(expected_arrival.time())[:5],
         }
         atco_code = item["naptanId"]
         stop = stops.get(atco_code) or stops.get(f"0{atco_code}")

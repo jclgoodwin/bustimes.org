@@ -24,13 +24,13 @@ class BusTimesTest(TestCase):
             ),
             decode_compressed_response=True,
         ):
-            with self.assertNumQueries(4):
+            with self.assertNumQueries(5):
                 response = self.client.get("/vehicles/tfl/LTZ1243")
 
             self.assertEqual("LTZ1243", response.context["object"].reg)
             self.assertContains(response, "Old Ford Road")
             self.assertContains(response, '"OB"')
-            self.assertContains(response, '"18:55:42"')
+            self.assertContains(response, '"18:56"')
 
             response = self.client.get("/vehicles/tfl/LJ53NHP")
             self.assertEqual(response.status_code, 404)
