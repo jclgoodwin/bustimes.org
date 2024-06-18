@@ -529,9 +529,8 @@ export default function BigMap(props: {
     }
   }, [props.tripId, trip, props.noc, props.vehicleId, loadVehicles]);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleMoveEnd = React.useCallback(
-    debounce(
+  const handleMoveEnd = debounce(
+    React.useCallback(
       (evt: ViewStateChangeEvent) => {
         const map = evt.target;
         boundsRef.current = map.getBounds() as LngLatBounds;
@@ -556,12 +555,10 @@ export default function BigMap(props: {
         setZoom(zoom);
         updateLocalStorage(zoom, map.getCenter());
       },
-      400,
-      {
-        leading: true,
-      },
+      [loadStops, loadVehicles],
     ),
-    [loadStops, loadVehicles],
+    400,
+    { leading: true },
   );
 
   React.useEffect(() => {
