@@ -274,7 +274,8 @@ class LiveDeparturesTest(TestCase):
                 "LOCATION": "redis://",
                 "OPTIONS": {"connection_class": fakeredis.FakeConnection},
             }
-        }
+        },
+        TFWM_OPERATORS={"National Express Coventry", "Jim's Great Buses"},
     )
     def test_west_midlands(self):
         DataSource.objects.create(

@@ -290,12 +290,12 @@ TFL = {  # London
     "app_key": os.environ.get("TFL_APP_KEY"),
 }
 TFWM_OPERATORS = {
-    "National Express West Midlands",
-    "National Express Coventry",
-    "Diamond Bus",
-    "Landflight",
-    "West Midlands Metro",
-    "Stagecoach Midlands",
+    # "National Express West Midlands",
+    # "National Express Coventry",
+    # "Diamond Bus",
+    # "Landflight",
+    # "West Midlands Metro",
+    # "Stagecoach Midlands",
 }
 NTA_API_KEY = os.environ.get("NTA_API_KEY")  # Ireland
 ALLOW_VEHICLE_NOTES_OPERATORS = (
