@@ -495,12 +495,12 @@ export default function BigMap(props: {
           },
           () => {
             // never mind
-            setLoadingBuses(false);
+            // setLoadingBuses(false);
           },
         )
         .catch(() => {
           // never mind
-          setLoadingBuses(false);
+          // setLoadingBuses(false);
         });
     },
     [props.mode, props.noc, trip, props.vehicleId, initialViewState],
@@ -694,8 +694,8 @@ export default function BigMap(props: {
 
           {trip || (stops && showStops) ? (
             <Stops
-              stops={stops}
-              trip={trip}
+              stops={props.mode === MapMode.Slippy ? stops: undefined}
+              trip={props.mode === MapMode.Trip ? trip : undefined}
               setClickedStop={setClickedStopURL}
               clickedStopUrl={clickedStopUrl}
             />
