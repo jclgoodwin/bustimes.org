@@ -769,7 +769,7 @@ def edit_vehicle(request, **kwargs):
     )
 
     if request.POST:
-        if not form.has_really_changed():
+        if form.has_changed() is False or form.changed_data == ["summary"]:
             form.add_error(None, "You haven't changed anything")
 
         if form.is_valid():

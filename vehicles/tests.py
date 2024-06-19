@@ -464,9 +464,8 @@ background:linear-gradient(270deg,red 50%,#00f 50%)">
 
         with self.assertNumQueries(13):
             response = self.client.post(url, initial)
-        self.assertFalse(response.context["form"].has_really_changed())
-        self.assertNotContains(response, "already")
         self.assertContains(response, "You haven&#x27;t changed anything")
+        self.assertNotContains(response, "already")
         self.assertNotContains(response, "already")
 
         # edit fleet number

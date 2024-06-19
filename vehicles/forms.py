@@ -130,20 +130,6 @@ link to a picture to prove it. Be polite.""",
 
         return self.cleaned_data["other_colour"]
 
-    def has_really_changed(self):
-        if not self.has_changed():
-            return False
-        for key in self.changed_data:
-            if all(
-                key == "summary" or key == "other_colour" for key in self.changed_data
-            ):
-                if not (
-                    "other_colour" in self.changed_data
-                    and self.data.get("other_colour")
-                ):
-                    return False
-        return True
-
     def clean_reg(self):
         reg = self.cleaned_data["reg"].replace(".", "")
         if self.cleaned_data["spare_ticket_machine"] and reg:
