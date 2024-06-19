@@ -1,5 +1,3 @@
-import re
-
 from django import forms
 from django.conf import settings
 from django.contrib.admin.widgets import AutocompleteSelect
@@ -146,17 +144,12 @@ link to a picture to prove it. Be polite.""",
                     return False
         return True
 
-    def clean_operator(self):
-        old = self.initial["operator"]
-        new = self.cleaned_data["operator"]
-        if old and new and old != new and old.parent == new.parent == "Go South West":
-            raise ValidationError("No")
-        return new
-
     def clean_reg(self):
         reg = self.cleaned_data["reg"].replace(".", "")
         if self.cleaned_data["spare_ticket_machine"] and reg:
-            raise ValidationError("A spare ticket machine can’t have a number plate")
+            raise ValidationError(
+                "A spare ticket machine can\u2019t have a number plate"
+            )
         return reg
 
     def __init__(self, data, *args, user, vehicle, **kwargs):
@@ -165,41 +158,7 @@ link to a picture to prove it. Be polite.""",
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True
 
-        if not user.is_staff and vehicle.fleet_code:
-            if vehicle.fleet_code in re.split(r"\W+", vehicle.code):
-                self.fields["fleet_number"].disabled = True
-                self.fields[
-                    "fleet_number"
-                ].help_text = f"""The ticket machine code ({vehicle.code})
-can’t be contradicted"""
-            elif vehicle.latest_journey_data:
-                try:
-                    vehicle_unique_id = vehicle.latest_journey_data["Extensions"][
-                        "VehicleJourney"
-                    ]["VehicleUniqueId"]
-                except (KeyError, TypeError):
-                    pass
-                else:
-                    if vehicle_unique_id == vehicle.fleet_code:
-                        if (
-                            not vehicle.code.isdigit()
-                            or vehicle.code == vehicle.fleet_code
-                        ):
-                            self.fields["fleet_number"].disabled = True
-                            self.fields[
-                                "fleet_number"
-                            ].help_text = f"""The ticket machine code ({vehicle_unique_id})
-can’t be contradicted"""
-
         if not user.is_superuser:
-            if vehicle.reg and vehicle.reg in re.sub(r"\W+", "", vehicle.code):
-                self.fields["reg"].disabled = True
-                self.fields[
-                    "reg"
-                ].help_text = (
-                    f"The ticket machine code ({vehicle.code}) can’t be contradicted"
-                )
-
             if not (
                 vehicle.notes
                 or vehicle.operator_id in settings.ALLOW_VEHICLE_NOTES_OPERATORS
