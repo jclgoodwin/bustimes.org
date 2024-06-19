@@ -114,7 +114,7 @@ function SlippyMapHash() {
 }
 
 function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
-  const stopsById = React.useMemo<{ [url: string]: Stop }>(() => {
+  const stopsById = React.useMemo<{ [url: string]: Stop } | undefined>(() => {
     if (stops) {
       return Object.assign(
         {},
@@ -137,7 +137,7 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
     }
   }, [stops, trip]);
 
-  const clickedStop = clickedStopUrl && stopsById[clickedStopUrl];
+  const clickedStop =  stopsById && clickedStopUrl && stopsById[clickedStopUrl];
 
   return (
     <React.Fragment>
