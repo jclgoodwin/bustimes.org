@@ -137,7 +137,7 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
     }
   }, [stops, trip]);
 
-  const clickedStop =  stopsById && clickedStopUrl && stopsById[clickedStopUrl];
+  const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
 
   return (
     <React.Fragment>
@@ -694,7 +694,7 @@ export default function BigMap(props: {
 
           {trip || (stops && showStops) ? (
             <Stops
-              stops={props.mode === MapMode.Slippy ? stops: undefined}
+              stops={props.mode === MapMode.Slippy ? stops : undefined}
               trip={props.mode === MapMode.Trip ? trip : undefined}
               setClickedStop={setClickedStopURL}
               clickedStopUrl={clickedStopUrl}
