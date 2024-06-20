@@ -470,6 +470,9 @@ export default function BigMap(props: {
       let url: string;
       if (props.mode === MapMode.Slippy) {
         _bounds = boundsRef.current as LngLatBounds;
+        if (!_bounds) {
+          return;
+        }
         url = getBoundsQueryString(_bounds);
       } else if (props.noc) {
         url = "?operator=" + props.noc;
