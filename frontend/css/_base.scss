@@ -1113,6 +1113,11 @@ input:not(:checked) + label {
 }
 
 .trip-timetable {
+    .breadcrumb {
+        margin-top: -1em;
+        border: 0
+    }
+
     table {
         table-layout: fixed;
         width: 100%;

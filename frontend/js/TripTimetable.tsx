@@ -32,8 +32,18 @@ export type Trip = {
   vehicle_journey_code?: string;
   ticket_machine_code?: string;
   block?: string;
-  service?: { id: number; line_name: string; mode: string };
-  operator?: { noc: string; name: string; vehicle_mode: string };
+  service?: {
+    slug?: string;
+    id: number;
+    line_name: string;
+    mode: string;
+  };
+  operator?: {
+    slug?: string;
+    noc: string;
+    name: string;
+    vehicle_mode: string;
+  };
   times: TripTime[];
   notes?: Note[];
 };

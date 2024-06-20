@@ -313,18 +313,49 @@ function Sidebar(props: {
 }) {
   let className = "trip-timetable map-sidebar";
 
-  if (!props.trip) {
+  const trip = props.trip;
+
+  if (!trip) {
     return <div className={className}></div>;
   }
 
-  if (props.trip.id && props.tripId !== props.trip.id?.toString()) {
+  if (trip.id && props.tripId !== trip.id?.toString()) {
     className += " loading";
+  }
+
+  let operator, service;
+  if (trip.operator) {
+    operator = (
+      <li>
+        <Link href={`/operators/${trip.operator.slug}/map`}>
+          {trip.operator.name}
+        </Link>
+      </li>
+    );
+  }
+
+  if (props.vehicle?.service) {
+    service = (
+      <li>
+        <a href={props.vehicle.service.url}>
+          {props.vehicle.service.line_name}
+        </a>
+      </li>
+    );
+    // } else if (trip.service) {
+    //   service = <li>{trip.service.line_name}</li>;
   }
 
   return (
     <div className={className}>
+      {operator || service ? (
+        <ul className="breadcrumb">
+          {operator}
+          {service}
+        </ul>
+      ) : null}
       <TripTimetable
-        trip={props.trip}
+        trip={trip}
         vehicle={props.vehicle}
         highlightedStop={props.highlightedStop}
       />
