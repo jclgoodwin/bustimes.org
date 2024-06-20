@@ -83,11 +83,10 @@ class Command(ImportLiveVehiclesCommand):
             f"{item.vehicle.trip.start_date} 12:00:00",
             "%Y%m%d %H:%M:%S",
         )
-        start_date_time = (
-            start_date
-            - timedelta(hours=12)
-            + parse_duration(item.vehicle.trip.start_time)
-        ).replace(tzinfo=self.tzinfo)
+        start_time = parse_duration(item.vehicle.trip.start_time)
+        start_date_time = (start_date + start_time - timedelta(hours=12)).replace(
+            tzinfo=self.tzinfo
+        )
 
         # assert not (datetime.fromtimestamp(item.vehicle.timestamp) - start_date_time > timedelta(hours=12))
 
@@ -123,6 +122,19 @@ class Command(ImportLiveVehiclesCommand):
             trips = trips.filter(route__source=self.source)
 
         trip = None
+
+        if not (trips or service) and "_" in journey.code:
+            code_suffix = journey.code.split("_", 1)[1]
+            try:
+                trip = Trip.objects.filter(
+                    route__source=self.source,
+                    start=start_time,
+                    ticket_machine_code__endswith=f"_{code_suffix}",
+                ).get()
+            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+                pass
+            else:
+                service = trip.route.service
 
         if trips:
             if len(trips) > 1:

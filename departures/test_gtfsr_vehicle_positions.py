@@ -79,3 +79,6 @@ class GTFSRTTest(TestCase):
         self.assertEqual(self.trip_2.vehiclejourney_set.count(), 0)
         self.assertEqual(Vehicle.objects.filter(operator=None).count(), 50)
         self.assertEqual(self.operator.vehicle_set.count(), 1)
+
+        vehicle_journey = VehicleJourney.objects.filter(trip__isnull=False).get()
+        self.assertEqual(str(vehicle_journey.datetime), "2024-06-06 01:55:00+00:00")
