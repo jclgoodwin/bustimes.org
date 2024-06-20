@@ -559,10 +559,12 @@ export default function BigMap(props: {
         document.title = "Bus tracker map \u2013 " + trip.operator.name + " \u2013 bustimes.org";
       }
       loadVehicles(true);
-    } else if (!props.vehicleId) {
-      document.title = "Map \u2013 bustimes.org";
+    } else {
+      if (!props.vehicleId) {
+        document.title = "Map \u2013 bustimes.org";
+      }
+      loadVehicles();
     }
-    loadVehicles();
   }, [props.tripId, trip, props.noc, props.vehicleId, loadVehicles]);
 
   const handleMoveEnd = debounce(
