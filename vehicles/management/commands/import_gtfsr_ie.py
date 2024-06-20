@@ -140,7 +140,7 @@ class Command(ImportLiveVehiclesCommand):
                 ticket_machine_code__endswith=f"_{code_suffix}",
             )
             if service:
-                trips = trips.filter.route__service = service
+                trips = trips.filter(route__service=service)
 
         if trips:
             if len(trips) > 1:
@@ -149,7 +149,7 @@ class Command(ImportLiveVehiclesCommand):
                 trips = trips.filter(calendar__in=calendars)
                 trip = trips.first()
             else:
-                trip = trip[0]
+                trip = trips[0]
 
         if service:
             journey.service = service
