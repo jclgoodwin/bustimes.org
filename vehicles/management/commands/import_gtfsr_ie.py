@@ -124,36 +124,49 @@ class Command(ImportLiveVehiclesCommand):
         trip = None
 
         if not (trips or service) and "_" in journey.code:
-            code_suffix = journey.code.split("_", 1)[1]
+            route_suffix = item.vehicle.trip.route_id.split("_", 1)[1]
             try:
-                trip = Trip.objects.filter(
+                service = Service.objects.filter(
                     route__source=self.source,
-                    start=start_time,
-                    ticket_machine_code__endswith=f"_{code_suffix}",
+                    route__code__endswith=f"_{route_suffix}",
                 ).get()
-            except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+            except (Service.MultipleObjectsReturned, Service.DoesNotExist):
                 pass
-            else:
-                service = trip.route.service
+
+            code_suffix = journey.code.split("_", 1)[1]
+            trips = Trip.objects.filter(
+                route__source=self.source,
+                start=start_time,
+                ticket_machine_code__endswith=f"_{code_suffix}",
+            )
+            if service:
+                trips = trips.filter.route__service = service
 
         if trips:
             if len(trips) > 1:
                 calendar_ids = [trip.calendar_id for trip in trips]
                 calendars = get_calendars(start_date, calendar_ids)
                 trips = trips.filter(calendar__in=calendars)
-            trip = trips.first()
+                trip = trips.first()
+            else:
+                trip = trip[0]
 
         if service:
             journey.service = service
+
+        if trip:
+            if not journey.service:
+                journey.service = trip.route.service
             journey.trip = trip
 
-            journey.route_name = service.line_name
-
-            if trip and trip.destination and trip.destination.locality:
+            if trip.destination and trip.destination.locality:
                 journey.destination = str(trip.destination.locality)
-            if trip and trip.operator_id and not vehicle.operator_id:
+            if trip.operator_id and not vehicle.operator_id:
                 vehicle.operator_id = trip.operator_id
                 vehicle.save(update_fields=["operator"])
+
+        if journey.service:
+            journey.route_name = journey.service.line_name
 
         vehicle.latest_journey_data = json_format.MessageToDict(item)
 
