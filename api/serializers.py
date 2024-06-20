@@ -174,7 +174,8 @@ class TripSerializer(serializers.ModelSerializer):
         return {
             "id": obj.route.service_id,
             "line_name": obj.route.line_name,
-            "mode": obj.route.service.mode if obj.route.service else "",
+            "slug": obj.route.service and obj.route.service.slug,
+            "mode": obj.route.service and obj.route.service.mode,
         }
 
     def get_operator(self, obj):
