@@ -327,9 +327,9 @@ function Sidebar(props: {
   if (trip.operator) {
     operator = (
       <li>
-        <Link href={`/operators/${trip.operator.slug}/map`}>
+        <a href={`/operators/${trip.operator.slug}`}>
           {trip.operator.name}
-        </Link>
+        </a>
       </li>
     );
   }
@@ -552,12 +552,14 @@ export default function BigMap(props: {
       }
       // operator mode:
     } else if (props.noc) {
+      if (props.noc === trip?.operator?.noc) {
+        document.title = "Bus tracker map \u2013 " + trip.operator.name + " \u2013 bustimes.org";
+      }
       loadVehicles(true);
-    } else if (props.vehicleId) {
-      loadVehicles();
-    } else {
+    } else if (!props.vehicleId) {
       document.title = "Map \u2013 bustimes.org";
     }
+    loadVehicles();
   }, [props.tripId, trip, props.noc, props.vehicleId, loadVehicles]);
 
   const handleMoveEnd = debounce(
