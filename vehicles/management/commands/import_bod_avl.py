@@ -158,9 +158,6 @@ class Command(ImportLiveVehiclesCommand):
             defaults["operator"] = operator
             if operator.parent:
                 condition = Q(operator__parent=operator.parent)
-
-                if operator.noc == "FBRI" and len(vehicle_ref) == 4:
-                    condition |= Q(operator="NCTP")
                 vehicles = self.vehicles.filter(condition)
             else:
                 vehicles = self.vehicles.filter(operator=operator)
