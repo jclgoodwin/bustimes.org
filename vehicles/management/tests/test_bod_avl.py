@@ -36,7 +36,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 Operator(noc="UNIB", region=region),
                 Operator(noc="FBRI", region=region, parent="First"),
                 Operator(noc="FECS", region=region, parent="First"),
-                Operator(noc="NCTP", region=region),
                 Operator(noc="NIBS", region=region),
                 Operator(noc="TCVW", region=region, name="National Express Coventry"),
                 Operator(
@@ -46,7 +45,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         )
         Vehicle.objects.bulk_create(
             [
-                Vehicle(operator_id="NCTP", code="2929", name="Jeff"),
+                Vehicle(operator_id="FBRI", code="2929", name="Jeff"),
                 Vehicle(operator_id="FECS", code="11111"),
             ]
         )
@@ -580,7 +579,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 ],
             )
 
-    def test_units(self):
+    def test_handle_item_2(self):
         command = import_bod_avl.Command()
         command.source = self.source
         # command.get_operator.cache_clear()
