@@ -30,15 +30,14 @@ DEBUG = bool(os.environ.get("DEBUG", False))
 SERVER_EMAIL = "contact@bustimes.org"
 DEFAULT_FROM_EMAIL = "bustimes.org <contact@bustimes.org>"
 
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_TIMEOUT = 10
 if TEST:
     EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
-else:
-    EMAIL_HOST = os.environ.get("EMAIL_HOST", "")
-    EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
-    EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
-    EMAIL_PORT = 465
-    EMAIL_USE_SSL = True
-    EMAIL_TIMEOUT = 10
 
 INSTALLED_APPS = [
     # "daphne",
