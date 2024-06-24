@@ -25,7 +25,7 @@
                 {% endif %}
 
             {% if revision.disapproved %}
-                <p><strong>Disapproved</strong> by user {{ revision.approved_by_id }}
+                <p><strong>Disapproved</strong> by user {{ revision.approved_by_id }}{% if revision.disapproved_reason %}: {{ revision.disapproved_reason }}{% endif %}
             {% elif revision.approved_by_id %}
                 <p><strong>Approved</strong> by user {{ revision.approved_by_id }}
             {% endif %}
@@ -39,7 +39,7 @@
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove">⚠️ Disapprove</button>
+                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove" hx-prompt="Reason for disapproving">⚠️ Disapprove</button>
                         {% elif user.trusted is not False and user.score > 0 %}
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
                             <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>

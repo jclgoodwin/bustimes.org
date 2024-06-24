@@ -929,6 +929,7 @@ def vehicle_revision_action(request, revision_id, action):
                 approved_at=Now(),
                 pending=False,
                 disapproved=True,
+                disapproved_reason=request.headers.get("HX-Prompt"),
             )
     else:
         assert False
