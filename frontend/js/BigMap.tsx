@@ -342,8 +342,14 @@ function Sidebar(props: {
         </a>
       </li>
     );
-    // } else if (trip.service) {
-    //   service = <li>{trip.service.line_name}</li>;
+  } else if (trip.service?.slug) {
+    service = (
+      <li>
+        <a href={`/services/${trip.service.slug}`}>
+          {trip.service.line_name}
+        </a>
+      </li>
+    );
   }
 
   return (
