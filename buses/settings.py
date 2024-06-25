@@ -260,16 +260,16 @@ def traces_sampler(context):
     return 0.001
 
 
-sentry_sdk.init(
-    dsn=os.environ.get("SENTRY_DSN"),
-    integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
-    ignore_errors=[KeyboardInterrupt, RuntimeError],
-    release=os.environ.get("COMMIT_HASH") or os.environ.get("KAMAL_CONTAINER_NAME"),
-    traces_sampler=traces_sampler,
-)
-ignore_logger("django.security.DisallowedHost")
+if "SENTRY_DSN" in os.environ and not TEST:
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN"),
+        integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
+        ignore_errors=[KeyboardInterrupt, RuntimeError],
+        release=os.environ.get("COMMIT_HASH") or os.environ.get("KAMAL_CONTAINER_NAME"),
+        traces_sampler=traces_sampler,
+    )
+    ignore_logger("django.security.DisallowedHost")
 
-if not TEST:
     LOGGING = {
         "version": 1,
         "disable_existing_loggers": False,
