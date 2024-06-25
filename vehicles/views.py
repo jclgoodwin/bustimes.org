@@ -606,7 +606,10 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
                         .distinct("start")
                         .order_by("start")
                         .annotate(
-                            destination_name=F("destination__locality__name"),
+                            destination_name=Coalesce(
+                                F("destination__locality__name"),
+                                "destination__common_name",
+                            ),
                             line_name=F("route__line_name"),
                         )
                     )
