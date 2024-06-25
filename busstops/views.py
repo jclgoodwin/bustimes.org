@@ -611,7 +611,10 @@ def get_departures_context(stop, services, form_data) -> dict:
 
     next_page = {}
     if context["departures"]:
-        context["live"] = any(item.get("live") for item in context["departures"])
+        context["has_live"] = any(item.get("live") for item in context["departures"])
+        context["has_scheduled"] = any(
+            item.get("time") for item in context["departures"]
+        )
         if len(context["departures"]) >= 10 and (
             last_time := context["departures"][-1].get("time")
         ):

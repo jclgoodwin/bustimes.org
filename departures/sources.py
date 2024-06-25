@@ -1,4 +1,5 @@
 """Various ways of getting live departures from some web service"""
+
 import datetime
 import logging
 import xml.etree.cElementTree as ET
@@ -398,6 +399,17 @@ class TimetableDepartures(Departures):
             self.get_row(stop_time, yesterday_date) for stop_time in yesterday_times
         ] + [self.get_row(stop_time, date) for stop_time in today_times]
 
+        if self.tracking:
+            trip_ids = [row["stop_time"].trip_id for row in times if row["time"]]
+            vehicles_by_trip = {
+                vehicle.trip_id: vehicle
+                for vehicle in Vehicle.objects.filter(
+                    latest_journey__trip__in=trip_ids
+                ).annotate(trip_id=F("latest_journey__trip"))
+            }
+            for row in times:
+                row["vehicle"] = vehicles_by_trip.get(row["stop_time"].trip_id)
+
         # add tomorrow's times until there are 10, or the next day until there more than 0
         i = 0
         while not times and i < 3 or len(times) < 10 and i == 0:
@@ -407,17 +419,6 @@ class TimetableDepartures(Departures):
                 self.get_row(stop_time, date)
                 for stop_time in self.get_times(date)[: 10 - len(times)]
             ]
-
-        if self.tracking:
-            trip_ids = [row["stop_time"].trip_id for row in times]
-            vehicles_by_trip = {
-                vehicle.trip_id: vehicle
-                for vehicle in Vehicle.objects.filter(
-                    latest_journey__trip__in=trip_ids
-                ).annotate(trip_id=F("latest_journey__trip"))
-            }
-            for row in times:
-                row["vehicle"] = vehicles_by_trip.get(row["stop_time"].trip_id)
 
         if yesterday_times:
             times.sort(key=get_departure_order)

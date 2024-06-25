@@ -21,6 +21,12 @@
                 <tbody>
                     {% if indicator_prefix %}
                         <tr><td colspan="3"></td><th scope="col">{{ indicator_prefix }}</th></tr>
+                    {% elif has_live %}
+                        <tr>
+                            <td colspan="2"></td>
+                            {% if has_scheduled %}<th scope="col">Time<wbr>table</th>{% endif %}
+                            <th scope="col">Ex<wbr>pected</th>
+                        </tr>
                     {% endif %}
             {% endif %}
         {% endifchanged %}
@@ -34,15 +40,22 @@
                 {{ item.destination }}
                 {% if item.vehicle %}<div class="vehicle">{{ item.vehicle }}</div>{% endif %}
             </td>
-            <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
-                {% if item.cancelled %}
-                    <del>{{ item.time|time:"H:i" }}</del>
-                {% elif item.live %}
-                    {{ item.live|time:"H:i" }}⚡&#xfe0f;
-                {% else %}
-                    {{ item.time|time:"H:i" }}
-                {% endif %}{% if item.link %}</a>{% endif %}
-            </td>
+            {% if has_scheduled %}
+                <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
+                    {% if item.cancelled %}
+                        <del>{{ item.time|time:"H:i" }}</del>
+                    {% else %}
+                        {{ item.time|time:"H:i" }}
+                    {% endif %}{% if item.link %}</a>{% endif %}
+                </td>
+            {% endif %}
+            {% if item.live %}
+                <td>
+                    {% if item.link %}<a href="{{ item.link }}">{% endif %}
+                    {{ item.live|time:"H:i" }}
+                    {% if item.link %}</a>{% endif %}
+                </td>
+            {% endif %}
             {% if object is stoparea %}
                 <td>{{ item.stop_time.stop.get_icon|default:"" }}</td>
             {% endif %}
@@ -60,10 +73,6 @@
         {% if when != now %}
             <p><a href="{{ object.get_absolute_url }}">&uarr; Now</a></p>
         {% endif %}
-    {% endif %}
-
-    {% if live %}
-        <p class="credit">⚡&#xfe0f; denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
     {% endif %}
 </div>
 {% endif %}

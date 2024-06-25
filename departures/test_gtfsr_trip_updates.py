@@ -173,5 +173,7 @@ class GTFSRTTest(TestCase):
                 response = self.client.get(
                     "/stops/8250DB000429?date=2022-05-04&time=05:00"
                 )
-                self.assertContains(response, "06:47⚡")
+                self.assertContains(response, "Ex<wbr>pected")
+                self.assertContains(response, "Time<wbr>table")
+                self.assertContains(response, "06:47")
                 self.assertContains(response, "<del>06:45</del>")

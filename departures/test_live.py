@@ -147,41 +147,44 @@ class LiveDeparturesTest(TestCase):
             """
                 <h2>Next departures</h2>
                 <table><tbody>
+                        <tr>
+                            <td colspan="2"></td>
+                            <th scope="col">Ex<wbr>pected</th>
+                        </tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1414</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1414">18:22⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1414">18:22</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital
                         <div class="vehicle">LX59AOM</div></td>
-                        <td><a href="/vehicles/tfl/LX59AOM">18:23⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOM">18:23</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1243</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1243">18:26⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1243">18:26</a></td></tr>
                     <tr><td>388</td><td>Stratford City
                         <div class="vehicle">YR59NPF</div></td>
-                        <td><a href="/vehicles/tfl/YR59NPF">18:26⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/YR59NPF">18:26</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1407</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1407">18:33⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1407">18:33</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital
                         <div class="vehicle">LX59AOL</div></td>
-                        <td><a href="/vehicles/tfl/LX59AOL">18:33⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOL">18:33</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1412</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1412">18:37⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1412">18:37</a></td></tr>
                     <tr><td>388</td><td>Stratford City
                         <div class="vehicle">PF52TFX</div></td>
-                        <td><a href="/vehicles/tfl/PF52TFX">18:44⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/PF52TFX">18:44</a></td></tr>
                     <tr><td>D3</td><td>Bethnal Green, Chest Hospital
                         <div class="vehicle">LX59AOA</div></td>
-                        <td><a href="/vehicles/tfl/LX59AOA">18:44⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LX59AOA">18:44</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1269</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1269">18:44⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1269">18:44</a></td></tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1393</div></td>
-                        <td><a href="/vehicles/tfl/LTZ1393">18:49⚡&#xfe0f;</a></td></tr>
+                        <td><a href="/vehicles/tfl/LTZ1393">18:49</a></td></tr>
                 </tbody></table>
-            <p class="credit">⚡&#xfe0f; denotes ‘live’ times guessed (sometimes badly) from buses’ actual locations</p>
         """,
             html=True,
         )
@@ -217,7 +220,7 @@ class LiveDeparturesTest(TestCase):
         )
         self.assertContains(
             res,
-            "<tr><td>1A</td><td>City Centre</td><td>07:54⚡&#xfe0f;</td></tr>",
+            "<tr><td>1A</td><td>City Centre</td><td></td><td>07:54</td></tr>",
             html=True,
         )
 
@@ -352,7 +355,7 @@ class LiveDeparturesTest(TestCase):
 
                     with self.assertNumQueries(9):
                         response = self.client.get(stop.get_absolute_url())
-        self.assertContains(response, "04:41⚡&#xfe0f;")
+        self.assertContains(response, "04:41")
 
     def test_blend(self):
         service = Service(line_name="X98")
@@ -411,7 +414,8 @@ class LiveDeparturesTest(TestCase):
                         "service": "9",
                         "destination": "Shilbottle",
                     },
-                ]
+                ],
+                "has_scheduled": True,
             },
         )
         self.assertContains(
