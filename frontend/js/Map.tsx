@@ -165,6 +165,10 @@ export default function BusTimesMap(
       RTLTextPlugin={""}
       attributionControl={false}
       // onError={(e) => captureException(e.error)}
+
+      // workaround for wrong react-map-gl type definitions?
+      transformRequest={undefined}
+      maxTileCacheSize={undefined}
     >
       <NavigationControl showCompass={false} />
       <GeolocateControl />
