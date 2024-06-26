@@ -1115,8 +1115,13 @@ input:not(:checked) + label {
 .trip-timetable {
     .breadcrumb {
         border: 0;
-        margin: -1em -1em 0;
+        margin: -1em -1em 1em;
+        padding-top: .65em;
         padding-left: .5em;
+
+        a {
+            padding: .25em .5em;
+        }
     }
 
     label + table {
