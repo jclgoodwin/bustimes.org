@@ -9,7 +9,7 @@
     {% else %}<h2>Next departures</h2>{% endif %}
     {% for item in departures %}
         {% ifchanged item.time.date %}
-            {% if forloop.first or item.time.date and item.time.date != today %}
+            {% if forloop.first or item.time and departures.0.time %}
                 {% if not forloop.first %}
                     </tbody>
                     </table>
