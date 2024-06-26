@@ -1122,12 +1122,18 @@ input:not(:checked) + label {
     table {
         table-layout: fixed;
         width: 100%;
+    }
+
+    tbody {
         white-space: nowrap;
     }
 
     th {
         width: 4em;
-        overflow: hidden;
+        font-size: .75em;
+        padding: .25rem .5rem;
+        border: 0;
+        border-bottom: 1px solid var(--border-color);
     }
 
     th:first-child {

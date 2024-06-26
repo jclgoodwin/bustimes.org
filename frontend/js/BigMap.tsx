@@ -327,9 +327,7 @@ function Sidebar(props: {
   if (trip.operator) {
     operator = (
       <li>
-        <a href={`/operators/${trip.operator.slug}`}>
-          {trip.operator.name}
-        </a>
+        <a href={`/operators/${trip.operator.slug}`}>{trip.operator.name}</a>
       </li>
     );
   }
@@ -345,9 +343,7 @@ function Sidebar(props: {
   } else if (trip.service?.slug) {
     service = (
       <li>
-        <a href={`/services/${trip.service.slug}`}>
-          {trip.service.line_name}
-        </a>
+        <a href={`/services/${trip.service.slug}`}>{trip.service.line_name}</a>
       </li>
     );
   }
@@ -562,7 +558,10 @@ export default function BigMap(props: {
       // operator mode:
     } else if (props.noc) {
       if (props.noc === trip?.operator?.noc) {
-        document.title = "Bus tracker map \u2013 " + trip.operator.name + " \u2013 bustimes.org";
+        document.title =
+          "Bus tracker map \u2013 " +
+          trip.operator.name +
+          " \u2013 bustimes.org";
       }
       loadVehicles(true);
     } else {

@@ -116,7 +116,7 @@ function Row({
       actual = stop.actual_departure_time; // vehicle history
     }
     if (actual) {
-      actual = new Date(actual).toTimeString().slice(0, 8);
+      actual = new Date(actual).toTimeString().slice(0, 5);
     }
   }
   if (actual) {
@@ -170,24 +170,49 @@ const TripTimetable = React.memo(function TripTimetable({
   vehicle?: Vehicle;
   highlightedStop?: string;
 }) {
+  const [showEarlierStops, setShowEarlierStops] = React.useState(false);
+
   const aimedColumn = trip.times?.some(
     (item: TripTime) => item.aimed_arrival_time || item.aimed_departure_time,
   );
+  const actualColumn =
+    vehicle ||
+    trip.times?.some(
+      (item: TripTime) =>
+        item.expected_arrival_time || item.expected_departure_time,
+    );
 
   const last = trip.times.length - 1;
+  let earlierStops = false;
+
+  let times = trip.times;
+  if (!showEarlierStops && vehicle && vehicle.progress) {
+    const index = times.findIndex((item) => item.id === vehicle.progress?.id);
+    if (index > 0) {
+      times = times.slice(index);
+      earlierStops = true;
+    }
+  }
 
   return (
     <React.Fragment>
+      {earlierStops || showEarlierStops ? (
+          <label><input
+            type="checkbox"
+            checked={showEarlierStops}
+            onChange={() => setShowEarlierStops(!showEarlierStops)}
+          /> Show previous stops</label>
+      ) : null}
       <table>
         <thead>
           <tr>
             <th></th>
-            {aimedColumn ? <th>Timetable</th> : null}
-            <th>Actual</th>
+            {aimedColumn ? <th>Sched&shy;uled</th> : null}
+            {actualColumn ? <th>Actual</th> : null}
           </tr>
         </thead>
         <tbody>
-          {trip.times.map((stop, i) => (
+          {times.map((stop, i) => (
             <Row
               key={stop.id || i}
               aimedColumn={aimedColumn}
