@@ -230,8 +230,6 @@ class DataSource(models.Model):
         # Stagecoach
         if "stagecoach" in self.url:
             return "https://www.stagecoachbus.com/open-data"
-        if self.settings and "url" in self.settings:
-            return self.settings["url"]
 
     def credit(self, route=None):
         url = self.get_nice_url()
