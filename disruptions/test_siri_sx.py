@@ -3,7 +3,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from vcr import use_cassette
 
-from busstops.models import DataSource, Operator, Region, Service, StopPoint, StopUsage
+from busstops.models import Operator, Region, Service, StopPoint, StopUsage
 
 from .models import Situation
 
@@ -87,18 +87,14 @@ class SiriSXTest(TestCase):
             ]
         )
         StopUsage.objects.create(service=service, stop_id="2800S11053A", order=69)
-        DataSource.objects.create(
-            name="Transport for the North",
-            settings={"app_id": "hen hom", "app_key": "roger poultry"},
-        )
 
     def test_siri_sx_request(self):
         cassette = str(VCR_DIR / "siri_sx.yaml")
 
-        with use_cassette(cassette, match_on=["body"]):
-            with self.assertNumQueries(120):
+        with use_cassette(cassette):
+            with self.assertNumQueries(123):
                 call_command("import_siri_sx")
-        with use_cassette(cassette, match_on=["body"]):
+        with use_cassette(cassette):
             with self.assertNumQueries(11):
                 call_command("import_siri_sx")
 
@@ -126,6 +122,7 @@ class SiriSXTest(TestCase):
         )
 
         consequence = situation.consequence_set.get()
+        self.maxDiff = None
         self.assertEqual(
             consequence.text,
             "Towards East Didsbury terminus customers should alight opposite East "

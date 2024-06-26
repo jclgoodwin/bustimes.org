@@ -1,5 +1,6 @@
+import io
 import xml.etree.cElementTree as ET
-from base64 import b64encode
+import zipfile
 
 import requests
 from ciso8601 import parse_datetime
@@ -121,34 +122,21 @@ def handle_item(item, source):
 
 class Command(BaseCommand):
     def fetch(self):
-        url = "http://api.transportforthenorth.com/siri/sx"
+        url = "https://data.bus-data.dft.gov.uk/disruptions/download/bulk_archive"
 
-        source = DataSource.objects.get(name="Transport for the North")
-        app_id = source.settings["app_id"]
-        app_key = source.settings["app_key"]
-        authorization = b64encode(f"{app_id}:{app_key}".encode()).decode()
+        source = DataSource.objects.get_or_create(name="Bus Open Data")[0]
 
         situations = []
 
-        response = requests.post(
-            url,
-            data=f"""<?xml version="1.0" encoding="UTF-8"?>
-<Siri xmlns="http://www.siri.org.uk/siri" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0"
-xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.0/xsd/siri.xsd">
-    <ServiceRequest>
-        <RequestorRef>{app_id}</RequestorRef>
-        <SituationExchangeRequest version="2.0">
-        </SituationExchangeRequest>
-    </ServiceRequest>
-</Siri>""",
-            headers={
-                "Authorization": f"Basic {authorization}",
-                "Content-Type": "application/xml",
-            },
-            stream=True,
-        )
+        response = requests.get(url, timeout=10)
+        assert response.ok
+        archive = zipfile.ZipFile(io.BytesIO(response.content))
 
-        for _, element in ET.iterparse(response.raw):
+        namelist = archive.namelist()
+        assert len(namelist) == 1
+        open_file = archive.open(namelist[0])
+
+        for _, element in ET.iterparse(open_file):
             if element.tag[:29] == "{http://www.siri.org.uk/siri}":
                 element.tag = element.tag[29:]
 
@@ -156,9 +144,9 @@ xsi:schemaLocation="http://www.siri.org.uk/siri http://www.siri.org.uk/schema/2.
                 situations.append(handle_item(element, source))
                 element.clear()
 
-        Situation.objects.filter(source=source, current=True).exclude(
-            id__in=situations
-        ).update(current=False)
+        source.situation_set.filter(current=True).exclude(id__in=situations).update(
+            current=False
+        )
 
     def handle(self, *args, **options):
         self.fetch()
