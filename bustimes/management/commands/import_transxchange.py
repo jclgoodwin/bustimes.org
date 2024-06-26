@@ -1085,7 +1085,7 @@ class Command(BaseCommand):
                 if service_code is None:
                     service_code = txc_service.service_code
 
-                if service_code[:4] in ("nrc_", "tfl_"):  # L
+                if service_code[:4] == "tfl_":
                     # London: assume line_name is unique within region:
                     existing = self.source.service_set.filter(
                         Q(service_code=service_code)
