@@ -1091,12 +1091,12 @@ input:not(:checked) + label {
 // }
 
 .has-sidebar {
-    bottom: 30%;
+    bottom: 45%;
 }
 
 .map-sidebar {
     position: absolute;
-    top: 70%;
+    top: 55%;
     bottom: -90px;
     left: 0;
     right: 0;
@@ -1117,6 +1117,10 @@ input:not(:checked) + label {
         border: 0;
         margin: -1em -1em 0;
         padding-left: .5em;
+    }
+
+    label + table {
+        margin-top: -2em;
     }
 
     table {
