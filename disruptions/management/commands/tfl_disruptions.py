@@ -98,7 +98,7 @@ class Command(BaseCommand):
                 continue
 
             services = Service.objects.only("id").filter(
-                line_name__iexact=item["name"], region="L", current=True
+                line_name__iexact=item["name"], region="L", current=True, mode="bus"
             )
             if not services:
                 continue
