@@ -231,12 +231,22 @@ class EdinburghDepartures(RemoteDepartures):
             vehicles = Vehicle.objects.filter(
                 source__name="TfE",
                 code__in=[item["vehicle"] for item in departures],
-            ).only("id", "code", "slug", "fleet_code", "fleet_number", "reg")
+            ).only(
+                "id",
+                "code",
+                "slug",
+                "fleet_code",
+                "fleet_number",
+                "reg",
+                "latest_journey_id",
+            )
             vehicles = {vehicle.code: vehicle for vehicle in vehicles}
             for item in departures:
                 vehicle = vehicles.get(item["vehicle"])
                 if vehicle:
-                    item["link"] = f"{vehicle.get_absolute_url()}#map"
+                    item["link"] = (
+                        f"{vehicle.get_absolute_url()}#journeys/{vehicle.latest_journey_id}"
+                    )
                     item["vehicle"] = vehicle
             hour = datetime.timedelta(hours=1)
             if all(

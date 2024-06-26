@@ -149,7 +149,7 @@ class LiveDeparturesTest(TestCase):
                 <table><tbody>
                         <tr>
                             <td colspan="2"></td>
-                            <th scope="col">Ex<wbr>pected</th>
+                            <th scope="col">Ex&shy;pected</th>
                         </tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
                         <div class="vehicle">LTZ1414</div></td>
@@ -268,7 +268,7 @@ class LiveDeparturesTest(TestCase):
             ):
                 with self.assertNumQueries(9):
                     response = self.client.get(stop.get_absolute_url())
-        self.assertContains(response, '<a href="/vehicles/none-686#map">')
+        self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')
 
     @override_settings(
         CACHES={
@@ -424,10 +424,18 @@ class LiveDeparturesTest(TestCase):
                 <h2>Next departures</h2>
                 <h3>Wednesday 4 May</h3>
                 <table><tbody>
+                    <tr>
+                        <td colspan="2"></td>
+                        <th scope="col">Sched&shy;uled</th>
+                    </tr>
                     <tr><td>X98</td><td>Bratislava</td><td>11:53</td><td></td></tr>
                 </tbody></table>
                 <h3>Saturday 7 May</h3>
                 <table><tbody>
+                    <tr>
+                        <td colspan="2"></td>
+                        <th scope="col">Sched&shy;uled</th>
+                    </tr>
                     <tr><td>9</td><td>Shilbottle</td><td>11:53</td><td></td></tr>
                 </tbody></table>
         """,

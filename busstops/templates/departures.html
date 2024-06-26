@@ -21,11 +21,11 @@
                 <tbody>
                     {% if indicator_prefix %}
                         <tr><td colspan="3"></td><th scope="col">{{ indicator_prefix }}</th></tr>
-                    {% elif has_live %}
+                    {% elif has_live or has_scheduled %}
                         <tr>
                             <td colspan="2"></td>
-                            {% if has_scheduled %}<th scope="col">Time<wbr>table</th>{% endif %}
-                            <th scope="col">Ex<wbr>pected</th>
+                            {% if has_scheduled %}<th scope="col">Sched&shy;uled</th>{% endif %}
+                            {% if has_live %}<th scope="col">Ex&shy;pected</th>{% endif %}
                         </tr>
                     {% endif %}
             {% endif %}
@@ -49,7 +49,7 @@
                     {% endif %}{% if item.link %}</a>{% endif %}
                 </td>
             {% endif %}
-            {% if item.live %}
+            {% if has_live and item.live %}
                 <td>
                     {% if item.link %}<a href="{{ item.link }}">{% endif %}
                     {{ item.live|time:"H:i" }}
