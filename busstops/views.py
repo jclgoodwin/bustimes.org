@@ -616,10 +616,11 @@ def get_departures_context(stop, services, form_data) -> dict:
             item.get("time") for item in context["departures"]
         )
         last_time = context["departures"][-1].get("time")
-        next_page = {
-            "date": last_time.date(),
-            "time": last_time.time().strftime("%H:%M"),
-        }
+        if last_time:
+            next_page = {
+                "date": last_time.date(),
+                "time": last_time.time().strftime("%H:%M"),
+            }
 
     if next_page:
         context["next_page"] = f"?{urlencode(next_page)}"

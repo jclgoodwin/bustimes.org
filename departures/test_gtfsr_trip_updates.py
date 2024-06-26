@@ -176,4 +176,4 @@ class GTFSRTTest(TestCase):
                 self.assertContains(response, "Ex&shy;pected")
                 self.assertContains(response, "Sched&shy;uled")
                 self.assertContains(response, "06:47")
-                self.assertContains(response, "<del>06:45</del>")
+                self.assertContains(response, "<del>06:45</del>", html=True)
