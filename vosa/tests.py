@@ -4,6 +4,7 @@ from unittest import mock
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
+from accounts.models import User
 from busstops.models import Operator, Region, Service
 
 from .models import Licence, Registration
@@ -18,6 +19,10 @@ class VosaTest(TestCase):
         )
         service = Service.objects.create(current=True, line_name="33B")
         service.operator.add(cls.operator)
+
+        cls.user = User.objects.create(
+            username="Roger", is_staff=True, is_superuser=True
+        )
 
     @override_settings(DATA_DIR=Path(__file__).resolve().parent / "fixtures")
     def test(self):
@@ -85,3 +90,8 @@ class VosaTest(TestCase):
         # reg with csv lines in odd order:
         reg = Registration.objects.get(registration_number="PF0000003/113")
         self.assertEqual(reg.registration_status, "Cancelled")
+
+        # admin
+        self.client.force_login(self.user)
+        response = self.client.get("/admin/vosa/licence/")
+        self.assertContains(response, ">AINS<")
