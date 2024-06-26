@@ -179,7 +179,7 @@ const TripTimetable = React.memo(function TripTimetable({
     vehicle ||
     trip.times?.some(
       (item: TripTime) =>
-        item.expected_arrival_time || item.expected_departure_time,
+        item.actual_departure_time || item.expected_arrival_time || item.expected_departure_time,
     );
 
   const last = trip.times.length - 1;
