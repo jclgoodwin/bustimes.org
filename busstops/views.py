@@ -615,20 +615,11 @@ def get_departures_context(stop, services, form_data) -> dict:
         context["has_scheduled"] = any(
             item.get("time") for item in context["departures"]
         )
-        if len(context["departures"]) >= 10 and (
-            last_time := context["departures"][-1].get("time")
-        ):
-            next_page = {
-                "date": last_time.date(),
-                "time": last_time.time().strftime("%H:%M"),
-            }
-
-    if not next_page and context["when"]:
-        if context["departures"] and (today := context["departures"][-1].get("time")):
-            today = today.date()
-        else:
-            today = context["when"].date()
-        next_page = {"date": today + datetime.timedelta(days=1)}
+        last_time = context["departures"][-1].get("time")
+        next_page = {
+            "date": last_time.date(),
+            "time": last_time.time().strftime("%H:%M"),
+        }
 
     if next_page:
         context["next_page"] = f"?{urlencode(next_page)}"

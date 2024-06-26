@@ -383,7 +383,7 @@ class Trip(models.Model):
                     | Q(vehicle_journey_code=self.vehicle_journey_code),
                     calendar=self.calendar_id,
                     inbound=self.inbound,
-                    operator=self.operator,
+                    operator_id=self.operator_id,
                     block=self.block,
                     route__service=self.route.service_id,
                 )

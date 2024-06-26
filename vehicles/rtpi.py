@@ -11,8 +11,12 @@ from bustimes.models import RouteLink, StopTime, Trip
 from vehicles.utils import calculate_bearing
 
 
-def get_stop_times(item):
-    trips = Trip.objects.get(id=item["trip_id"]).get_trips()
+def get_stop_times(item, stop_time=None):
+    if stop_time:
+        trip = stop_time.trip
+    else:
+        trip = Trip.objects.get(pk=item["trip_id"])
+    trips = trip.get_trips()
 
     return (
         StopTime.objects.filter(trip__in=trips)
@@ -41,10 +45,10 @@ class Progress:
         }
 
 
-def get_progress(item):
+def get_progress(item, stop_time=None):
     point = Point(*item["coordinates"])
 
-    stop_times = get_stop_times(item)
+    stop_times = get_stop_times(item, stop_time=stop_time)
 
     pairs = [
         (a, b, LineString([a.stop.latlong, b.stop.latlong]))
@@ -86,6 +90,9 @@ def get_progress(item):
                 closest = next_closest
                 distance = next_closest_distance
 
+    if stop_time and closest[0].id > stop_time.id:
+        return
+
     line_string = closest[2]
     if "service_id" in item:
         try:
@@ -102,8 +109,8 @@ def get_progress(item):
     return Progress(stop_times, closest[0], closest[1], progress, distance)
 
 
-def add_progress_and_delay(item):
-    progress = get_progress(item)
+def add_progress_and_delay(item, stop_time=None):
+    progress = get_progress(item, stop_time)
     if not progress:
         return
 

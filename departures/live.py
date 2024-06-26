@@ -129,11 +129,15 @@ def get_departures(stop, services, when) -> dict:
 
                 for departure in departures:
                     trip_id = departure["stop_time"].trip_id
-                    if "vehicle" in departure and trip_id not in by_trip:
-                        departure["vehicle"] = None
-                    elif trip_id in by_trip:
-                        rtpi.add_progress_and_delay(by_trip[trip_id])
-                        if "delay" in by_trip[trip_id]:
+
+                    if trip_id in by_trip:
+                        item = by_trip[trip_id]
+
+                        rtpi.add_progress_and_delay(
+                            by_trip[trip_id], departure["stop_time"]
+                        )
+
+                        if "delay" in item:
                             delay = by_trip[trip_id]["delay"]
                             if (
                                 delay < 0
@@ -143,13 +147,12 @@ def get_departures(stop, services, when) -> dict:
                             departure["live"] = departure["time"] + datetime.timedelta(
                                 seconds=delay
                             )
-                        departures = [
-                            dep
-                            for dep in departures
-                            if "live" not in dep
-                            or dep["live"] >= now
-                            or dep["time"] >= now
-                        ]
+
+                departures = [
+                    d
+                    for d in departures
+                    if d["time"] >= now or "live" in d and d["live"] >= now
+                ]
 
     if departures is None:
         departures = TimetableDepartures(

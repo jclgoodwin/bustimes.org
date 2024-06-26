@@ -42,11 +42,10 @@
             </td>
             {% if has_scheduled %}
                 <td>{% if item.link %}<a href="{{ item.link }}">{% endif %}
-                    {% if item.cancelled %}
-                        <del>{{ item.time|time:"H:i" }}</del>
-                    {% else %}
+                    {% if item.cancelled %}<del>{% endif %}
                         {{ item.time|time:"H:i" }}
-                    {% endif %}{% if item.link %}</a>{% endif %}
+                    {% if item.cancelled %}</del>{% endif %}
+                    {% if item.link %}</a>{% endif %}
                 </td>
             {% endif %}
             {% if has_live and item.live %}
