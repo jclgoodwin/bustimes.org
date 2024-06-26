@@ -10,7 +10,6 @@ import requests
 import xmltodict
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import F
 from django.utils import timezone
 
 from busstops.models import StopPoint
@@ -408,17 +407,6 @@ class TimetableDepartures(Departures):
         times = [
             self.get_row(stop_time, yesterday_date) for stop_time in yesterday_times
         ] + [self.get_row(stop_time, date) for stop_time in today_times]
-
-        if self.tracking:
-            trip_ids = [row["stop_time"].trip_id for row in times if row["time"]]
-            vehicles_by_trip = {
-                vehicle.trip_id: vehicle
-                for vehicle in Vehicle.objects.filter(
-                    latest_journey__trip__in=trip_ids
-                ).annotate(trip_id=F("latest_journey__trip"))
-            }
-            for row in times:
-                row["vehicle"] = vehicles_by_trip.get(row["stop_time"].trip_id)
 
         # add tomorrow's times until there are 10, or the next day until there more than 0
         i = 0

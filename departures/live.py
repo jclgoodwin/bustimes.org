@@ -1,4 +1,5 @@
 """Various ways of getting live departures from some web service"""
+
 import datetime
 
 from django.conf import settings
@@ -130,7 +131,7 @@ def get_departures(stop, services, when) -> dict:
                     trip_id = departure["stop_time"].trip_id
                     if "vehicle" in departure and trip_id not in by_trip:
                         departure["vehicle"] = None
-                    elif trip_id in by_trip and stop.pk[:4] == "2900":
+                    elif trip_id in by_trip:
                         rtpi.add_progress_and_delay(by_trip[trip_id])
                         if "delay" in by_trip[trip_id]:
                             delay = by_trip[trip_id]["delay"]
@@ -242,19 +243,25 @@ def get_departures(stop, services, when) -> dict:
                     for row in departures:
                         if "data" in row and "VehicleRef" in row["data"]:
                             log_vehicle_journey(
-                                row["service"].pk
-                                if type(row["service"]) is Service
-                                else None,
+                                (
+                                    row["service"].pk
+                                    if type(row["service"]) is Service
+                                    else None
+                                ),
                                 row["data"],
-                                str(row["origin_departure_time"])
-                                if "origin_departure_time" in row
-                                else None,
+                                (
+                                    str(row["origin_departure_time"])
+                                    if "origin_departure_time" in row
+                                    else None
+                                ),
                                 str(row["destination"]),
                                 source.name,
                                 source.url,
-                                row["stop_time"].trip_id
-                                if "stop_time" in row
-                                else None,
+                                (
+                                    row["stop_time"].trip_id
+                                    if "stop_time" in row
+                                    else None
+                                ),
                             )
 
     return {
