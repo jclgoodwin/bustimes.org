@@ -319,12 +319,18 @@ def get_trip(
         direction = None
 
     if departure_time:
-        start = timezone.localtime(departure_time)
-        start = timedelta(hours=start.hour, minutes=start.minute)
+        start_time = timezone.localtime(departure_time)
+        start = Q(start=timedelta(hours=start_time.hour, minutes=start_time.minute))
+        if start_time.hour < 6:
+            start |= Q(
+                start=timedelta(
+                    days=1, hours=start_time.hour, minutes=start_time.minute
+                )
+            )
     elif len(journey_code) == 4 and journey_code.isdigit() and int(journey_code) < 2400:
         hours = int(journey_code[:-2])
         minutes = int(journey_code[-2:])
-        start = timedelta(hours=hours, minutes=minutes)
+        start = Q(start=timedelta(hours=hours, minutes=minutes))
     else:
         start = None
 
@@ -335,7 +341,7 @@ def get_trip(
                 trips = trips.filter(
                     Exists("stoptime", filter=Q(stop=origin_ref)),
                     Exists("stoptime", filter=Q(stop=destination_ref)),
-                    start=start,
+                    start,
                 )
                 return trips.get()
             except Trip.MultipleObjectsReturned:
@@ -354,18 +360,22 @@ def get_trip(
     calendars = Q(calendar__in=get_calendars(date))
 
     if code and start:
+        if destination:
+            try:
+                return trips.filter(code, start, destination).get()
+            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
+                pass
+
         try:
             try:
-                return trips.filter(code, start=start).get()
+                return trips.filter(code, start).get()
             except Trip.MultipleObjectsReturned:
                 if direction:
                     try:
-                        return trips.filter(
-                            code, calendars, direction, start=start
-                        ).get()
+                        return trips.filter(code, calendars, direction, start).get()
                     except Trip.MultipleObjectsReturned:
                         return
-                return trips.filter(code, calendars, start=start).get()
+                return trips.filter(code, calendars, start).get()
         except Trip.MultipleObjectsReturned:
             return
         except Trip.DoesNotExist:
@@ -385,8 +395,8 @@ def get_trip(
     if start:
         try:
             try:
-                return trips.filter(start=start).get()
+                return trips.filter(start).get()
             except Trip.MultipleObjectsReturned:
-                return trips.filter(calendars, start=start).get()
+                return trips.filter(calendars, start).get()
         except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
             return
