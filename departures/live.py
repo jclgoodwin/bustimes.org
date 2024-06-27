@@ -133,9 +133,10 @@ def get_departures(stop, services, when) -> dict:
                     if trip_id in by_trip:
                         item = by_trip[trip_id]
 
-                        rtpi.add_progress_and_delay(
-                            by_trip[trip_id], departure["stop_time"]
-                        )
+                        if "progress" not in item:
+                            rtpi.add_progress_and_delay(
+                                by_trip[trip_id], departure["stop_time"]
+                            )
 
                         if "delay" in item:
                             delay = by_trip[trip_id]["delay"]
