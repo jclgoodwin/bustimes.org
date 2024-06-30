@@ -8,25 +8,19 @@
 
     <h1>{{ object }}</h1>
 
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col" colspan="3"></th>
+                    <th scope="col">To</th>
+                </tr>
+            </thead>
+            <tbody>
+
     {% for trip in trips %}
-
-        {% ifchanged trip.calendar_id %}
-            {% if not forloop.first %}</tbody></table></div>{% endif %}
-
-            <h2>{{ trip.calendar }}</h2>
-
-            <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th scope="col" colspan="3"></th>
-                        <th scope="col">To</th>
-                    </tr>
-                </thead>
-                <tbody>
-        {% endifchanged %}
-
         <tr>
+            <td>{% ifchanged trip.calendar_id %}{{ trip.calendar }}{% endifchanged %}</td>
             <td>{{ trip.route.line_name }}</td>
             <td class="link">
                 <a href="{{ trip.get_absolute_url }}">{{ trip }}</a>
@@ -37,11 +31,10 @@
                 <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
             {% endif %}
         </tr>
-
     {% endfor %}
 
-    </tbody>
-    </table>
+            </tbody>
+        </table>
     </div>
 
 {% endblock %}

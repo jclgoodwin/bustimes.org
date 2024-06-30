@@ -510,10 +510,9 @@ def trip_block(request, pk: int):
     trips = (
         Trip.objects.filter(
             block=trip.block,
-            # calendar=trip.calendar_id,
             route__source=trip.route.source,
         )
-        .order_by("start")
+        .order_by("start", "calendar")
         .select_related("route", "destination__locality")
     )
 
