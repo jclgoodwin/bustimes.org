@@ -1241,7 +1241,9 @@ input:not(:checked) + label {
         margin: .25em 0 .5em;
     }
 
-    h3,
+    h3 {
+        margin: 1em 0 -2em;
+    }
     p {
         margin: .5em 0;
     }
