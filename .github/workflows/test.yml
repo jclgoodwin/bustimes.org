@@ -74,10 +74,7 @@ jobs:
     - name: run tests
       env:
         SECRET_KEY: gdffesgfxc1as9rsxgv4
-        PGHOST: localhost
-        PGUSER: postgres
-        PGPASSWORD: postgres
-        DB_NAME: postgres
+        DATABASE_URL: postgis://postgres:postgres@localhost/postgres
       run: |
         poetry run ./manage.py collectstatic --noinput && \
         poetry run coverage run ./manage.py test -v 2
