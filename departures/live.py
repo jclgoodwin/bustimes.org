@@ -140,10 +140,12 @@ def get_departures(stop, services, when) -> dict:
                         if "progress" not in item:
                             rtpi.add_progress_and_delay(item, departure["stop_time"])
 
+                        if "progress" not in item:
+                            continue
+
                         if (
-                            "delay" in item
-                            and item["progress"]["id"] < departure["stop_time"].id
-                            and item["progress"]["id"] == departure["stop_time"].id
+                            item["progress"]["id"] < departure["stop_time"].id
+                            or item["progress"]["id"] == departure["stop_time"].id
                             and item["progress"]["progress"] == 0
                         ):
                             delay = item["delay"]
