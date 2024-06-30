@@ -141,7 +141,10 @@ def get_departures(stop, services, when) -> dict:
                             if departure["stop_time"].trip_id in by_trip
                         ],
                         Prefetch(
-                            "stoptime_set", StopTime.objects.select_related("stop")
+                            "stoptime_set",
+                            StopTime.objects.select_related("stop").filter(
+                                stop__latlong__isnull=False
+                            ),
                         ),
                     )
 

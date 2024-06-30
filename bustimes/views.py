@@ -335,7 +335,12 @@ def stop_times_json(request, atco_code):
     if by_trip:
         prefetch_related_objects(
             [time["stop_time"].trip for time in times if time["trip_id"] in by_trip],
-            Prefetch("stoptime_set", StopTime.objects.select_related("stop")),
+            Prefetch(
+                "stoptime_set",
+                StopTime.objects.select_related("stop").filter(
+                    stop__latlong__isnull=False
+                ),
+            ),
         )
 
         for time in times:
