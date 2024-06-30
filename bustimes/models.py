@@ -381,7 +381,7 @@ class Trip(models.Model):
                 Trip.objects.filter(
                     Q(ticket_machine_code=self.ticket_machine_code)
                     | Q(vehicle_journey_code=self.vehicle_journey_code),
-                    calendar=self.calendar_id,
+                    # calendar=self.calendar_id,
                     inbound=self.inbound,
                     operator_id=self.operator_id,
                     block=self.block,
