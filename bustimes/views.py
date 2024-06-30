@@ -299,7 +299,7 @@ def stop_times_json(request, atco_code):
         else:
             routes[route.service_id] = [route]
 
-    departures = live.TimetableDepartures(stop, services, None, routes)
+    departures = live.TimetableDepartures(stop, services, None, routes, by_trip)
     time_since_midnight = timedelta(
         hours=when.hour,
         minutes=when.minute,
@@ -318,6 +318,14 @@ def stop_times_json(request, atco_code):
         times.append(stop_time_json(stop_time, yesterday_date))
 
     # journeys that started today
+    # possibly late-running
+    if by_trip:
+        stop_times = departures.get_times(when.date(), time_since_midnight, by_trip)
+        for stop_time in stop_times.select_related(
+            "trip__route__service", "trip__operator"
+        )[:limit]:
+            times.append(stop_time_json(stop_time, when.date()))
+
     stop_times = departures.get_times(when.date(), time_since_midnight)
     for stop_time in stop_times.select_related(
         "trip__route__service", "trip__operator"
@@ -328,8 +336,17 @@ def stop_times_json(request, atco_code):
         for time in times:
             if time["trip_id"] in by_trip:
                 item = by_trip[time["trip_id"]]
-                add_progress_and_delay(item)
-                if "delay" in item:
+
+                if "progress" not in item:
+                    add_progress_and_delay(item)
+                if "progress" not in item:
+                    continue
+
+                if (
+                    item["progress"]["id"] < time["id"]
+                    or item["progress"]["id"] == time["id"]
+                    and item["progress"]["progress"] == 0
+                ):
                     delay = timedelta(seconds=item["delay"])
                     time["delay"] = delay
                     if delay < timedelta() and item["progress"]["sequence"] == 0:
@@ -344,6 +361,14 @@ def stop_times_json(request, atco_code):
                         )
                     else:
                         time["expected_arrival_time"] = time["expected_departure_time"]
+
+    times = [
+        time
+        for time in times
+        if "delay" in time
+        or (time["aimed_arrival_time"] or time["aimed_departure_time"]) >= when
+    ]
+
     return JsonResponse({"times": times})
 
 
