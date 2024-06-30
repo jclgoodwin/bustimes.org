@@ -9,7 +9,7 @@ import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Count, Exists, OuterRef, Prefetch
+from django.db.models import Count, Exists, OuterRef, Prefetch, prefetch_related_objects
 from django.http import (
     FileResponse,
     Http404,
@@ -238,6 +238,7 @@ def stop_time_json(stop_time, date) -> dict:
         )
 
     return {
+        "stop_time": stop_time,
         "id": stop_time.id,
         "trip_id": stop_time.trip_id,
         "service": {
@@ -332,17 +333,23 @@ def stop_times_json(request, atco_code):
         times.append(stop_time_json(stop_time, when.date()))
 
     if by_trip:
+        prefetch_related_objects(
+            [time["stop_time"].trip for time in times if time["trip_id"] in by_trip],
+            Prefetch("stoptime_set", StopTime.objects.select_related("stop")),
+        )
+
         for time in times:
             if time["trip_id"] in by_trip:
                 item = by_trip[time["trip_id"]]
 
                 if "progress" not in item:
-                    add_progress_and_delay(item)
+                    add_progress_and_delay(item, time["stop_time"])
                 if "progress" not in item:
                     continue
 
                 if (
-                    item["progress"]["id"] < time["id"]
+                    (time["aimed_arrival_time"] or time["aimed_departure_time"]) >= when
+                    or item["progress"]["id"] < time["id"]
                     or item["progress"]["id"] == time["id"]
                     and item["progress"]["progress"] == 0
                 ):
@@ -367,6 +374,8 @@ def stop_times_json(request, atco_code):
         if "delay" in time
         or (time["aimed_arrival_time"] or time["aimed_departure_time"]) >= when
     ]
+    for time in times:
+        del time["stop_time"]
 
     return JsonResponse({"times": times})
 

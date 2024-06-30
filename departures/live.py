@@ -3,10 +3,11 @@
 import datetime
 
 from django.conf import settings
+from django.db.models import Prefetch, prefetch_related_objects
 from django.utils import timezone
 
 from busstops.models import Service, SIRISource, StopPoint
-from bustimes.models import Route
+from bustimes.models import Route, StopTime
 from bustimes.utils import get_stop_times
 from vehicles import rtpi
 from vehicles.tasks import log_vehicle_journey
@@ -126,10 +127,23 @@ def get_departures(stop, services, when) -> dict:
             by_trip = {
                 item["trip_id"]: item for item in vehicle_locations if "trip_id" in item
             }
+
             if by_trip:
                 departures = TimetableDepartures(
                     stop, services, now, routes_by_service, by_trip
                 ).get_departures()
+
+                if by_trip:
+                    prefetch_related_objects(
+                        [
+                            departure["stop_time"].trip
+                            for departure in departures
+                            if departure["stop_time"].trip_id in by_trip
+                        ],
+                        Prefetch(
+                            "stoptime_set", StopTime.objects.select_related("stop")
+                        ),
+                    )
 
                 for departure in departures:
                     trip_id = departure["stop_time"].trip_id
@@ -144,7 +158,8 @@ def get_departures(stop, services, when) -> dict:
                             continue
 
                         if (
-                            item["progress"]["id"] < departure["stop_time"].id
+                            departure["time"] >= now
+                            or item["progress"]["id"] < departure["stop_time"].id
                             or item["progress"]["id"] == departure["stop_time"].id
                             and item["progress"]["progress"] == 0
                         ):
