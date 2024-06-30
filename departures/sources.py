@@ -368,8 +368,8 @@ class TimetableDepartures(Departures):
             "stop_time": stop_time,
         }
 
-    def get_times(self, date, time=None):
-        times = get_stop_times(date, time, self.stop, self.routes, self.trips)
+    def get_times(self, date, time=None, trips=None):
+        times = get_stop_times(date, time, self.stop, self.routes, trips)
         times = times.select_related(
             "trip__route__service", "trip__destination__locality"
         )
@@ -396,6 +396,10 @@ class TimetableDepartures(Departures):
         )
         all_today_times = self.get_times(date, time_since_midnight)
         today_times = list(all_today_times[: self.per_page])
+
+        if self.trips:
+            late_times = self.get_times(date, time_since_midnight, self.trips)
+            today_times = list(late_times) + today_times
 
         # for eg Victoria Coach Station where there are so many departures at the same time:
         if (

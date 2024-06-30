@@ -216,10 +216,10 @@ def get_stop_times(
         times = times.filter(stop=stop)
 
     if time:
-        time_filter = Q(departure__gte=time)
         if trips:
-            time_filter |= Q(trip__in=trips)
-        times = times.filter(time_filter)
+            times = times.filter(trip__in=trips, departure__lt=time)
+        else:
+            times = times.filter(departure__gte=time)
     else:
         times = times.filter(departure__isnull=False)
 

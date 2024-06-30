@@ -13,10 +13,10 @@ from vehicles.utils import calculate_bearing
 
 def get_stop_times(item, stop_time=None):
     if stop_time:
-        trip = stop_time.trip
+        trips = [stop_time.trip]
     else:
         trip = Trip.objects.get(pk=item["trip_id"])
-    trips = trip.get_trips()
+        trips = trip.get_trips()
 
     return (
         StopTime.objects.filter(trip__in=trips)

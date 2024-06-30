@@ -138,26 +138,25 @@ def get_departures(stop, services, when) -> dict:
                         item = by_trip[trip_id]
 
                         if "progress" not in item:
-                            rtpi.add_progress_and_delay(
-                                by_trip[trip_id], departure["stop_time"]
-                            )
+                            rtpi.add_progress_and_delay(item, departure["stop_time"])
 
-                        if "delay" in item:
-                            delay = by_trip[trip_id]["delay"]
-                            if (
-                                delay < 0
-                                and by_trip[trip_id]["progress"]["sequence"] == 0
-                            ):
+                        if (
+                            "delay" in item
+                            and item["progress"]["id"] < departure["stop_time"].id
+                            and item["progress"]["id"] == departure["stop_time"].id
+                            and item["progress"]["progress"] == 0
+                        ):
+                            delay = item["delay"]
+
+                            if delay < 0 and item["progress"]["sequence"] == 0:
+                                # early at first stop - assume won't leave early
                                 delay = 0
                             departure["live"] = departure["time"] + datetime.timedelta(
                                 seconds=delay
                             )
 
-                departures = [
-                    d
-                    for d in departures
-                    if d["time"] >= now or "live" in d and d["live"] >= now
-                ]
+                # filter out departures that have already happened
+                departures = [d for d in departures if d["time"] >= now or "live" in d]
 
     if departures is None:
         departures = TimetableDepartures(
