@@ -27,8 +27,9 @@
             <label>{{ form.vehicles }} {{ form.vehicles.label }}</label>
         {% endif %}
         {{ form.service }}
-        <noscript><input type="submit"></noscript>
+        <noscript><input type="submit" value="Go"></noscript>
     </form>
+    <noscript>{{ timetable.date|date:"l j F Y" }}</noscript>
 
     {% cache 3600 timetable object.id object.modified_at timetable.detailed form.vehicles.value timetable.calendar_ids timetable.calendar.id form.cleaned_data.service timetable.current_routes %}
 
