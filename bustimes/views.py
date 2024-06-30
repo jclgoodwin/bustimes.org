@@ -304,7 +304,6 @@ def stop_times_json(request, atco_code):
         hours=when.hour,
         minutes=when.minute,
         seconds=when.second,
-        microseconds=when.microsecond,
     )
 
     # any journeys that started yesterday

@@ -77,7 +77,6 @@ class Command(ImportLiveVehiclesCommand):
                 hours=now.hour,
                 minutes=now.minute,
                 seconds=now.second,
-                microseconds=now.microsecond,
             )
             trips = Trip.objects.filter(
                 start__lte=time_since_midnight + timedelta(minutes=5),
