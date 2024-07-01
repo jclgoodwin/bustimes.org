@@ -74,17 +74,17 @@ def blend(departures, live_rows, stop=None):
 
 def update_trip_ids(departures: list, live_rows: list) -> None:
     for live_row in live_rows:
-        if live_row["time"]:
-            for row in departures:
-                if (
-                    row["time"] == live_row["time"]
-                    and row["service"] == live_row["service"]
-                ):
-                    live_row["link"] = row["link"]
-                    trip = row["stop_time"].trip
-                    if trip.ticket_machine_code != live_row["tripId"]:
-                        trip.ticket_machine_code = live_row["tripId"]
-                        trip.save(update_fields=["ticket_machine_code"])
+        live_time = live_row["time"] or live_row["live"]
+        for row in departures:
+            if row["service"] == live_row["service"] and -datetime.timedelta(
+                minutes=1
+            ) < (row["time"] - live_time) < datetime.timedelta(minutes=1):
+                live_row["link"] = row["link"]
+                trip = row["stop_time"].trip
+                if trip.ticket_machine_code != live_row["tripId"]:
+                    trip.ticket_machine_code = live_row["tripId"]
+                    trip.save(update_fields=["ticket_machine_code"])
+                break
 
 
 def get_departures(stop, services, when) -> dict:
