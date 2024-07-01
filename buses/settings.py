@@ -296,6 +296,19 @@ TFWM_OPERATORS = {
     # "West Midlands Metro",
     # "Stagecoach Midlands",
 }
+ACIS_HORIZON_OPERATORS = {
+    "Ulsterbus",
+    "Ulsterbus Town Services",
+    "Translink Metro",
+    "Translink Glider",
+}
+TFE_OPERATORS = {
+    "Lothian Buses",
+    "Lothian Country Buses",
+    "East Coast Buses",
+    "Edinburgh Trams",
+}
+
 NTA_API_KEY = os.environ.get("NTA_API_KEY")  # Ireland
 ALLOW_VEHICLE_NOTES_OPERATORS = (
     "NATX",  # National Express

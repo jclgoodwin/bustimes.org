@@ -212,12 +212,7 @@ def get_departures(stop, services, when) -> dict:
 
         # Belfast
         if stop.atco_code[0] == "7" and not operators.isdisjoint(
-            {
-                "Ulsterbus",
-                "Ulsterbus Town Services",
-                "Translink Metro",
-                "Translink Glider",
-            }
+            settings.ACIS_HORIZON_OPERATORS
         ):
             live_rows = AcisHorizonDepartures(stop, services).get_departures()
             if live_rows:
@@ -231,18 +226,14 @@ def get_departures(stop, services, when) -> dict:
 
         elif departures:
             # Edinburgh
-            if stop.naptan_code and (
-                "Lothian Buses" in operators
-                or "Lothian Country Buses" in operators
-                or "East Coast Buses" in operators
-                or "Edinburgh Trams" in operators
-            ):
+            if stop.naptan_code and not operators.isdisjoint(settings.TFE_OPERATORS):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()
                 if live_rows:
                     update_trip_ids(departures, live_rows)
-
-                    departures = live_rows
-                    live_rows = None
+                    live_services = {r["service"] for r in live_rows}
+                    departures = [
+                        d for d in departures if d["service"] not in live_services
+                    ]
 
             source = None
 
