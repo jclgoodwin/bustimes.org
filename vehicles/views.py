@@ -2,7 +2,7 @@ import datetime
 import json
 import logging
 from itertools import pairwise
-from urllib.parse import urlencode
+from urllib.parse import unquote, urlencode
 
 import lightningcss
 import xmltodict
@@ -932,7 +932,7 @@ def vehicle_revision_action(request, revision_id, action):
                 approved_at=Now(),
                 pending=False,
                 disapproved=True,
-                disapproved_reason=request.headers.get("HX-Prompt"),
+                disapproved_reason=unquote(request.headers.get("HX-Prompt", "")),
             )
     else:
         assert False
