@@ -606,7 +606,10 @@ export default function BigMap(props: {
 
   React.useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden && zoom && shouldShowVehicles(zoom)) {
+      if (
+        !document.hidden &&
+        (props.mode !== MapMode.Slippy || (zoom && shouldShowVehicles(zoom)))
+      ) {
         loadVehicles();
       }
     };
@@ -616,7 +619,7 @@ export default function BigMap(props: {
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [zoom, loadVehicles]);
+  }, [zoom, loadVehicles, props.mode]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] = React.useState<
     number | undefined
@@ -668,10 +671,8 @@ export default function BigMap(props: {
       if (shouldShowVehicles(zoom)) {
         loadVehicles();
 
-        if (props.mode === MapMode.Slippy) {
-          if (shouldShowStops(zoom)) {
-            loadStops();
-          }
+        if (shouldShowStops(zoom)) {
+          loadStops();
         }
       } else {
         setLoadingBuses(false);
