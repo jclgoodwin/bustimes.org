@@ -215,7 +215,7 @@ def get_stop_times(
     except ValueError:
         times = times.filter(stop=stop)
 
-    if time:
+    if time is not None:
         if trips:
             times = times.filter(trip__in=trips, departure__lt=time)
         else:
