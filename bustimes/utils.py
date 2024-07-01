@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 from difflib import Differ
 
-from django.db.models import FilteredRelation, OuterRef, Q
+from django.db.models import OuterRef, Q
 from django.utils import timezone
 from sql_util.utils import Exists
 
@@ -206,7 +206,7 @@ def get_calendars(when, calendar_ids=None):
 
 
 def get_stop_times(
-    date: date, time: timedelta, stop, services_routes: dict, trips=None
+    date: date, time: timedelta, stop, services_routes: dict, trip_ids=None
 ):
     times = StopTime.objects.filter(pick_up=True)
 
@@ -215,20 +215,27 @@ def get_stop_times(
     except ValueError:
         times = times.filter(stop=stop)
 
+    routes = []
+    for service_routes in services_routes.values():
+        routes += get_routes(service_routes, date)
+
+    trips = Trip.objects.filter(
+        Exists(get_calendars(date).filter(id=OuterRef("calendar_id"))), route__in=routes
+    )
+
     if time is not None:
-        if trips:
-            times = times.filter(trip__in=trips, departure__lt=time)
+        if trip_ids:
+            trips = trips.filter(id__in=trip_ids, start__lt=time)
+            times = times.filter(departure__lt=time)
         else:
+            trips = trips.filter(end__gte=time)
             times = times.filter(departure__gte=time)
     else:
         times = times.filter(departure__isnull=False)
 
-    routes = []
-    for service_routes in services_routes.values():
-        routes += get_routes(service_routes, date)
-    return times.annotate(
-        trips=FilteredRelation("trip", condition=Q(trip__route__in=routes))
-    ).filter(trips__calendar__in=get_calendars(date))
+    times = times.filter(Exists(trips.filter(id=OuterRef("trip_id"))))
+
+    return times
 
 
 def get_descriptions(routes):
