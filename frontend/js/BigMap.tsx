@@ -457,7 +457,7 @@ export default function BigMap(props: {
 
   const loadVehicles = React.useCallback(
     (first = false) => {
-      if (document.hidden) {
+      if (!first && document.hidden) {
         return;
       }
       clearTimeout(timeout.current);
