@@ -1,3 +1,5 @@
+import requests
+from django.conf import settings
 from django.core.cache import cache
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -11,6 +13,18 @@ def liveries_cache_update(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=Vehicle)
-def vehicle_cache_update(sender, instance, **kwargs):
-    if instance.latest_journey_id:
+def vehicle_cache_update(sender, instance, created, **kwargs):
+    if not created and instance.latest_journey_id:
         cache.delete(f"journey{instance.latest_journey_id}")
+
+
+@receiver(post_save, sender=Vehicle)
+def vehicle_post_webhook(sender, instance, created, **kwargs):
+    if created and settings.NEW_VEHICLE_WEBHOOK_URL:
+        requests.post(
+            settings.NEW_VEHICLE_WEBHOOK_URL,
+            json={
+                "username": "bot",
+                "content": f"https://bustimes.org{instance.get_absolute_url()}",
+            },
+        )

@@ -317,6 +317,8 @@ ALLOW_VEHICLE_NOTES_OPERATORS = (
     "ie-1178",  # Dublin Express
 )
 
+NEW_VEHICLE_WEBHOOK_URL = os.environ.get("NEW_VEHICLE_WEBHOOK_URL")
+
 DATA_DIR = os.environ.get("DATA_DIR")
 if DATA_DIR:
     DATA_DIR = Path(DATA_DIR)
