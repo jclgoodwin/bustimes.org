@@ -40,28 +40,6 @@
 5710WDB48472:
     common_name: Wyndham Arcade Stop JJ
 
-# in Knaresborough, not Calcutt
-3200YNA06567:
-    locality_id: E0056345
-3200YNA96390:
-    locality_id: E0056345
-3200YND11130:
-    locality_id: E0056345
-3200YND11150:
-    locality_id: E0056345
-3200YND56980:
-    locality_id: E0056345
-3200YND56994:
-    locality_id: E0056345
-3200YND78020:
-    locality_id: E0056345
-3200YND78030:
-    locality_id: E0056345
-3200YND78040:
-    locality_id: E0056345
-3200YND78380:
-    locality_id: E0056345
-
 # in Oswestry, not Morda
 3500B067500:
     locality_id: E0050657
