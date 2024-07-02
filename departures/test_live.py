@@ -148,7 +148,8 @@ class LiveDeparturesTest(TestCase):
                 <h2>Next departures</h2>
                 <table><tbody>
                         <tr>
-                            <td colspan="2"></td>
+                            <td></td>
+                            <th scope="col">To</th>
                             <th scope="col">Ex&shy;pected</th>
                         </tr>
                     <tr><td><a href="/services/8">8</a></td><td>Bow Church
@@ -216,7 +217,9 @@ class LiveDeparturesTest(TestCase):
             res = self.client.get(stop.get_absolute_url())
         self.assertNotContains(res, "<h3>")
         self.assertContains(
-            res, "<tr><td>14B</td><td>City Express</td><td>08:22</td></tr>", html=True
+            res,
+            "<tr><td>14B</td><td>City Express</td><td>08:22</td><td></td></tr>",
+            html=True,
         )
         self.assertContains(
             res,
@@ -425,7 +428,8 @@ class LiveDeparturesTest(TestCase):
                 <h3>Wednesday 4 May</h3>
                 <table><tbody>
                     <tr>
-                        <td colspan="2"></td>
+                        <td></td>
+                        <th scope="col">To</th>
                         <th scope="col">Sched&shy;uled</th>
                     </tr>
                     <tr><td>X98</td><td>Bratislava</td><td>11:53</td><td></td></tr>
@@ -433,7 +437,8 @@ class LiveDeparturesTest(TestCase):
                 <h3>Saturday 7 May</h3>
                 <table><tbody>
                     <tr>
-                        <td colspan="2"></td>
+                        <td></td>
+                        <th scope="col">To</th>
                         <th scope="col">Sched&shy;uled</th>
                     </tr>
                     <tr><td>9</td><td>Shilbottle</td><td>11:53</td><td></td></tr>
@@ -467,6 +472,7 @@ class LiveDeparturesTest(TestCase):
                 </td>
                 <td>Crowngate Bus Station</td>
                 <td><a href="{trip_url}">10:54</a></td>
+                <td></td>
             </tr>
         """,
             html=True,

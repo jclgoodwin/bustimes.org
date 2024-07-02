@@ -1215,6 +1215,7 @@ input:not(:checked) + label {
         padding: 0;
         padding-left: .5rem;
         font-size: .75em;
+        vertical-align: bottom;
     }
 
     td {
@@ -1242,7 +1243,7 @@ input:not(:checked) + label {
     }
 
     h3 {
-        margin: 1em 0 -2em;
+        margin: 1em 0 -1em;
     }
     p {
         margin: .5em 0;
