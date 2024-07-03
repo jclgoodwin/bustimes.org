@@ -253,13 +253,13 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 journey.datetime = location.datetime
             try:
                 journey.save()
-            except IntegrityError:
+            except IntegrityError as e:
                 try:
                     journey = vehicle.vehiclejourney_set.using("default").get(
                         datetime=journey.datetime
                     )
                 except VehicleJourney.DoesNotExist:
-                    return
+                    logger.exception(e)
 
             if journey.service_id and VehicleJourney.service.is_cached(journey):
                 if not journey.service.tracking:
@@ -292,7 +292,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                     ["latest_journey", "latest_journey_data"],
                 )
             except IntegrityError as e:
-                logger.error(e)
+                logger.exception(e)
             self.vehicles_to_update = []
 
         # update locations in Redis
