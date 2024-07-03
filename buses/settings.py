@@ -207,7 +207,14 @@ TEMPLATES = [
                 )
             ],
         },
-    }
+    },
+    {
+        "BACKEND": "django.template.backends.jinja2.Jinja2",
+        "DIRS": ["busstops/templates/jinja2"],
+        "OPTIONS": {
+            "environment": "buses.jinja2.environment",
+        },
+    },
 ]
 if DEBUG:
     TEMPLATES[0]["OPTIONS"]["loaders"] = [

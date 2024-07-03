@@ -1,0 +1,24 @@
+<div class="groupings">
+    {% for stopusage in stopusages %}
+        {% if not loop.previtem or stopusage.direction != loop.previtem.direction %}
+            {% if loop.previtem %}</ul></div>{% endif %}
+            <div class="grouping">
+            <h2>
+                {{ stopusage.direction.capitalize() }}
+            </h2>
+            {% if has_minor_stops %}
+                <input type="checkbox" id="show-all-stops-{{ loop.index }}"{% if stopusages|length < 20 %} checked{% endif %}>
+                <label for="show-all-stops-{{ loop.index }}">Show all stops</label>
+            {% endif %}
+            <ul class="route">
+        {% endif %}
+        {% if not loop.previtem or stopusage != loop.previtem %}{% if not stopusage.suspended %}
+            <li{% if stopusage.is_minor() %} class="minor"{% endif %}>
+                <a href="{{ stopusage.stop.get_absolute_url() }}">{% if stopusage.situation %}⚠️&#xfe0f; {% endif %}{{ stopusage.stop.get_qualified_name() }}</a>
+            </li>
+        {% endif %}{% endif %}
+        {% if loop.last %}
+            </ul></div>
+        {% endif %}
+    {% endfor %}
+</div>

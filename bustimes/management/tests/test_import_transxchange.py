@@ -266,9 +266,10 @@ class ImportTransXChangeTest(TestCase):
         res = self.client.get(service.get_absolute_url() + "?date=2020-01-01")
         self.assertContains(
             res,
-            """<li>
-            <a href="/stops/2900A181"></a>
-        </li>""",
+            """
+            <li>
+                <a href="/stops/2900A181"></a>
+            </li>""",
         )
         self.assertContains(res, "Norwich - Wymondham - Attleborough")
         # self.assertContains(res, 'Attleborough - Wymondham - Norwich')
@@ -463,8 +464,8 @@ class ImportTransXChangeTest(TestCase):
 
         self.handle_files("EA.zip", ["set_5-28-A-y08.xml"])
         service = Service.objects.get()
-        response = self.client.get(f"/services/{service.id}/timetable")
-        timetable = response.context["timetable"]
+        response = self.client.get(service.get_absolute_url())
+        timetable = response.context_data["timetable"]
         self.assertEqual("2017-08-29", str(timetable.date))
 
         grouping = timetable.groupings[1]
@@ -1078,7 +1079,6 @@ class ImportTransXChangeTest(TestCase):
 
         res = self.client.get(service.get_absolute_url())
         self.assertEqual(res.context_data["breadcrumb"], [self.sc, self.fabd])
-        self.assertTemplateUsed(res, "busstops/service_detail.html")
         self.assertContains(
             res,
             '<td rowspan="63" class="then-every">then every 30 minutes until</td>',
@@ -1186,7 +1186,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(list(service.get_traveline_links()), [])
 
         self.assertEqual(res.context_data["breadcrumb"], [self.gb, self.megabus])
-        self.assertTemplateUsed(res, "busstops/service_detail.html")
+        # self.assertTemplateUsed(res, "busstops/service_detail.html")
         self.assertContains(res, "<h1>M11A - Belgravia - Liverpool</h1>")
         self.assertContains(
             res, '<option selected value="2017-01-22">Sunday 22 January 2017</option>'

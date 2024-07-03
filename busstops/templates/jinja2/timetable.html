@@ -1,6 +1,3 @@
-{% load urlise %}
-{% load cache %}
-
 {% if timetable %}
     <form class="timetable-date" autocomplete="off" onchange="this.submit()">
         {% if timetable.calendar_options %}
@@ -12,42 +9,40 @@
                 {% endfor %}
             </select>
         {% elif timetable.calendar %}
-            <p>{{ timetable.calendar.describe_for_timetable }}</p>
+            <p>{{ timetable.calendar.describe_for_timetable() }}</p>
         {% elif timetable.date_options %}
             <select name="date" aria-label="Date">
                 {% for option in timetable.date_options %}
-                    <option{% if option == timetable.date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
+                    <option{% if option == timetable.date %} selected{% endif %} value="{{ option }}">{{ option.strftime("%A %-d %B %Y") }}</option>
                 {% endfor %}
             </select>
         {% elif timetable.date %}
-            <input type="date" name="date" aria-label="Date" value="{{ timetable.date.isoformat }}">
+            <input type="date" name="date" aria-label="Date" value="{{ timetable.date }}">
         {% endif %}
         {% if timetable.detailed %}
             <label>{{ form.detailed }} {{ form.detailed.label }}</label>
             <label>{{ form.vehicles }} {{ form.vehicles.label }}</label>
         {% endif %}
-        {{ form.service }}
+        {% if form.service %}{{ form.service }}{% endif %}
         <noscript><input type="submit" value="Go"></noscript>
     </form>
-    <noscript>{{ timetable.date|date:"l j F Y" }}</noscript>
+    <noscript>{{ timetable.date }}</noscript>
 
-    {% cache 3600 timetable object.id object.modified_at timetable.detailed form.vehicles.value timetable.calendar_ids timetable.calendar.id form.cleaned_data.service timetable.current_routes %}
-
-    {% for grouping in timetable.render.groupings %}
-        {% if forloop.first %}<div class="groupings">{% endif %}
+    {% for grouping in timetable.render().groupings %}
+        {% if loop.first %}<div class="groupings">{% endif %}
 
         <div class="grouping">
 
-        {% if forloop.first != forloop.last %}
-            <h2>{{ grouping|linebreaksbr }}</h2>
+        {% if loop.first != loop.last %}
+            <h2>{{ linebreaksbr(grouping) }}</h2>
         {% endif %}
 
         <div class="timetable-wrapper-wrapper">
             {% if grouping.has_minor_stops %}
-                <input type="checkbox" id="show-all-stops-{{ forloop.counter }}"{% if grouping.rows|length < 25 %} checked{% endif %}>
-                <label for="show-all-stops-{{ forloop.counter }}">Show all stops</label>
+                <input type="checkbox" id="show-all-stops-{{ loop.index }}"{% if (grouping.rows|length) < 25 %} checked{% endif %}>
+                <label for="show-all-stops-{{ loop.index }}">Show all stops</label>
             {% endif %}
-            <div class="timetable-wrapper{% if grouping.width > 3 %} timetable-wrapper--wide{% endif %}">
+            <div class="timetable-wrapper{% if grouping.width() > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
                     {% if grouping.routes or timetable.detailed or timetable.has_operators %}
                         <thead>
@@ -56,7 +51,7 @@
                                 {% for head in grouping.routes %}
                                     <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
                                         {% if object.id != head.content.service_id %}
-                                            <a href="{{ head.content.service.get_absolute_url }}">{{ head.content.line_name }}</a>
+                                            <a href="{{ head.content.service.get_absolute_url() }}">{{ head.content.line_name }}</a>
                                         {% else %}
                                             {{ head.content.line_name }}
                                         {% endif %}
@@ -67,7 +62,7 @@
                             {% if timetable.has_operators %}
                                 <tr>
                                     <th scope="row">Operator</th>
-                                    {% for head in grouping.get_operators %}
+                                    {% for head in grouping.get_operators() %}
                                         <td{% if head.span > 1 %} colspan="{{ head.span }}"{% endif %}>
                                             {{ head.content }}
                                         </td>
@@ -79,23 +74,23 @@
                                     <tr class="link">
                                         <th scope="col">Block</th>
                                         {% for trip in grouping.trips %}
-                                            <td><a href="{{ trip.get_absolute_url }}/block">{{ trip.block }}</a></td>
+                                            <td><a href="{{ trip.get_absolute_url() }}/block">{{ trip.block }}</a></td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
                                 {% if timetable.has_vehicle_types %}
                                     <tr>
                                         <th scope="col">Vehicle type</th>
-                                        {% for head in grouping.get_vehicle_types %}
-                                            {{ head.get_html }}
+                                        {% for head in grouping.get_vehicle_types() %}
+                                            {{ head.get_html() }}
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
                                 {% if timetable.has_garages %}
                                     <tr>
                                         <th scope="col">Garage</th>
-                                        {% for head in grouping.get_garages %}
-                                            {{ head.get_html }}
+                                        {% for head in grouping.get_garages() %}
+                                            {{ head.get_html() }}
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
@@ -103,7 +98,7 @@
                                     <tr class="link">
                                         <th scope="col">Ticket machine code</th>
                                         {% for trip in grouping.trips %}
-                                            <td><a href="{{ trip.get_absolute_url }}">{{ trip.ticket_machine_code }}</a></td>
+                                            <td><a href="{{ trip.get_absolute_url() }}">{{ trip.ticket_machine_code }}</a></td>
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
@@ -115,11 +110,11 @@
                                         {% endfor %}
                                     </tr>
                                 {% endif %}
-                                {% if form.vehicles.value %}{% for date, vjs in grouping.vehicles_by_date %}
+                                {% if form.vehicles.value %}{% for date, vjs in grouping.vehicles_by_date() %}
                                     <tr>
                                         <th scope="col" >{{ date }}</th>
                                         {% for vj in vjs %}
-                                            <td class="link">{% if vj %}<a href="{{ vj.get_absolute_url }}">{{ vj.vehicle }}</a>{% endif %}</td>
+                                            <td class="link">{% if vj %}<a href="{{ vj.get_absolute_url() }}">{{ vj.vehicle }}</a>{% endif %}</td>
                                         {% endfor %}
                                     </tr>
                                 {% endfor %}{% endif %}
@@ -128,26 +123,26 @@
                     {% endif %}
                     <tbody>
                         {% for row in grouping.rows %}
-                            <tr{% if row.is_minor %} class="minor{% if row.od %} od{% endif %}"{% endif %}>
+                            <tr{% if row.is_minor() %} class="minor{% if row.od %} od{% endif %}"{% endif %}>
                                 <th{% if row.has_waittimes %} rowspan="2"{% endif %} class="stop-name" scope="row">
-                                    {% if row.stop.pk %}<a href="{{ row.stop.get_absolute_url }}">{% if row.stop.situation %}⚠️&#xfe0f; {% endif %}{{ row.stop.get_qualified_name }}</a>{% else %}{{ row.stop }}{% endif %}
+                                    {% if row.stop.pk %}<a href="{{ row.stop.get_absolute_url() }}">{% if row.stop.situation %}⚠️&#xfe0f; {% endif %}{{ row.stop.get_qualified_name() }}</a>{% else %}{{ row.stop }}{% endif %}
                                 </th>
-                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
+                            {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
-                                <tr class="{% if row.is_minor %}minor {% if row.od %}od {% endif %}{% endif %}dep">
-                                    {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}<td>{% if cell %}{% if cell.wait_time or not cell.last %}{{ cell.departure_time }}{% if cell.set_down_only %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
+                                <tr class="{% if row.is_minor() %}minor {% if row.od() %}od {% endif %}{% endif %}dep">
+                                    {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}<td>{% if cell %}{% if cell.wait_time or not cell.last %}{{ cell.departure_time() }}{% if cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                                 </tr>
                             {% endif %}
                         {% endfor %}
                     </tbody>
                 {% if grouping.column_feet %}<tfoot>
-                    {% for row in grouping.column_feet.values %}
-                        {% if row|length > 1 %}
+                    {% for row in grouping.column_feet.values() %}
+                        {% if (row|length) > 1 %}
                             <tr><th></th>
                             {% for foot in row %}
-                                <td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>
-                                    {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ foot.note.text|urlise }}{% endif %}
+                                <td{% if foot.span > 1  %} colspan="{{ foot.span }}"{% endif %}>
+                                    {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ urlise(foot.note.text) }}{% endif %}
                                 </td>
                             {% endfor %}
                             </tr>
@@ -159,44 +154,42 @@
         </div>
 
 
-        {% for row in grouping.column_feet.values %}
-            {% if row|length == 1 %}
+        {% for row in grouping.column_feet.values() %}
+            {% if (row|length) == 1 %}
                 {% for foot in row %}
-                    <p>{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ foot.note.text|urlise }}</p>
+                    <p>{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ urlise(foot.note.text) }}</p>
                 {% endfor %}
             {% endif %}
         {% endfor %}
 
 
-        {% if grouping.has_set_down_only %}
+        {% if grouping.has_set_down_only() %}
             <p>Times marked <strong>s</strong> – “set down only” – the {{ object.mode }} will only stop to drop passengers off</p>
         {% endif %}
 
-        {% if grouping.has_pick_up_only %}
+        {% if grouping.has_pick_up_only() %}
             <p>Times marked <strong>p</strong> –  “pick up only” – the {{ object.mode }} will only stop to pick up passengers</p>
         {% endif %}
 
         </div>
 
-        {% if forloop.last %}</div>{% endif %}
-    {% empty %}
+        {% if loop.last %}</div>{% endif %}
+    {% else %}
         {% if timetable.date %}
             <p>Sorry, no journeys found</p>
         {% endif %}
 
         {% if timetable.expired %}
-            <p>Try a previous date like <a href="?date={{ timetable.expired.isoformat }}">{{ timetable.expired|date:"l j F Y" }}</a>?</p>
+            <p>Try a previous date like <a href="?date={{ timetable.expired }}">{{ timetable.expired.strftime("%A %-d %B %Y") }}</a>?</p>
         {% endif %}
 
         {% include 'route.html' %}
     {% endfor %}
 
-    {% for credit in timetable.credits %}{% if forloop.first %}
-        <p class="credit">Timetable data from {% else %}, {% endif %}{{ credit }}{% if forloop.last %}{% if 'bus-data.dft.gov.uk' in credit %}.
+    {% for credit in timetable.credits() %}{% if loop.first %}
+        <p class="credit">Timetable data from {% else %}, {% endif %}{{ credit }}{% if loop.last %}{% if 'bus-data.dft.gov.uk' in credit %}.
         We’re not endorsed by, affiliated with or supported by them, and they don’t warrant the accuracy or quality of the information.{% endif %}
     </p>{% endif %}{% endfor %}
-
-    {% endcache %}
 
 {% else %}
     {% include 'route.html' %}

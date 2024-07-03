@@ -149,8 +149,8 @@ class SiriSXTest(TestCase):
         self.assertContains(
             response,
             '<a href="https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
-            '-(haydock)/" rel="nofollow">www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
-            "-(haydock)</a>",
+            '-(haydock)/" rel="noopener">https://www.merseytravel.gov.uk/travel-updates/east-lancashire-road'
+            "-(haydock)/</a>",
         )
 
         with self.assertNumQueries(7):

@@ -1,0 +1,31 @@
+{% if situations %}
+<div class="situations">
+{% for situation in situations %}
+    {% if situation.summary != 'Does not stop here' %}
+
+        {% if situation.summary %}
+            <details class="situation"{% if loop.first and loop.last and loop.text|length < 100 %} open{% endif %}>
+            <summary>
+                {{ situation.summary }}
+                {% for validity_period in situation.list_validity_periods() %}
+                    <div class="dates">{{ validity_period }}</div>
+                {% endfor %}
+            </summary>
+        {% else %}<div class="situation">{% endif %}
+
+        {% if situation.text %}
+            {{ linebreaks(situation.text|urlize) }}
+        {% endif %}
+        {% for consequence in situation.consequences %}
+            {% if not loop.previtem or consequence.text != loop.previtem.text %}{% if consequence.text and consequence.text != situation.text %}
+                {{ linebreaks(consequence.text|urlize) }}
+            {% endif %}{% endif %}
+        {% endfor %}
+        {% for link in situation.link_set.all() %}
+            {{ link.url|urlize }}
+        {% endfor %}
+    {% endif %}
+    {% if situation.summary %}</details>{% else %}</div>{% endif %}
+{% endfor %}
+</div>
+{% endif %}

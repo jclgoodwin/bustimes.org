@@ -1,15 +1,11 @@
 {% extends 'page.html' %}
 
-{% load urlise %}
-
-{% block title %}{{ object }} – {% if operators %}{{ operators|join:', ' }} – {% endif %}Bus Times{% endblock %}
-
-{% load static %}
+{% block title %}{{ object }} – {% if operators %}{{ operators.0 }} – {% endif %}Bus Times{% endblock %}
 
 {% block head %}
     <meta property="og:title" content="{{ object }}">
-    <meta property="og:description" content="{{ operators|join:', ' }}">
-    <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
+    <meta property="og:description" content="{{ operators.0 }}">
+    <link rel="stylesheet" href="{{ static('dist/js/app.css') }}">
 {% endblock %}
 
 {% block bodyclass %}{% endblock %}
@@ -21,15 +17,15 @@
 <p>
     {% if operators %}
         {% if object.mode %}
-            {{ object.get_a_mode }} service operated by
+            {{ object.get_a_mode() }} service operated by
         {% else %}
             Operated by
         {% endif %}
-        {% for operator in operators %}{% if not forloop.first %}{% if forloop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url }}">{{ operator }}</a>{% endfor %}
+        {% for operator in operators %}{% if not loop.first %}{% if loop.last %} and {% else %}, {% endif %}{% endif %}<a href="{{ operator.get_absolute_url() }}">{{ operator }}</a>{% endfor %}
     {% endif %}
 </p>
 
-{% if object.public_use is False %}
+{% if object.public_use is false %}
     <p>🧑‍🎓 This may be a "closed-door" school or works service, not open to the public</p>
 {% endif %}
 
@@ -55,10 +51,10 @@
 {% if registrations or vehicles %}
     <ul class="horizontal">
         {% for registration in registrations %}
-            <li><a href="{{ registration.get_absolute_url }}">{{ registration.registration_number }}</a>
+            <li><a href="{{ registration.get_absolute_url() }}">{{ registration.registration_number }}</a>
         {% endfor %}
         {% if vehicles %}
-            <li><a href="{{ object.get_absolute_url }}/vehicles">Vehicles</a>
+            <li><a href="{{ object.get_absolute_url() }}/vehicles">Vehicles</a>
         {% endif %}
     </ul>
 {% endif %}
@@ -79,11 +75,6 @@
     <div id="fare-table"></div>
 {% endif %}
 
-{% if related %}
-    <h2>Possibly similar services</h2>
-    {% include 'service_list.html' with services=related class="has-smalls" %}
-{% endif %}
-
 {% if links %}
     <h2>More information</h2>
     <ul>
@@ -97,11 +88,11 @@
     {% include 'operator-contact-details.html' %}
 {% endfor %}
 
-{% if object.public_use is not False and payment_methods %}
+{% if object.public_use is not false and payment_methods %}
     <p>
         {% for method in payment_methods %}
-            {% if not forloop.first %}{% if forloop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}
-            {% if forloop.first %}{{ method.name.capitalize }}{% else %}{{ method }}{% endif %}{% if method.url %}</a>{% endif %}
+            {% if not loop.first %}{% if loop.last %} or {% else %}, {% endif %}{% endif %}{% if method.url %}<a href="{{ method.url }}">{% endif %}
+            {% if loop.first %}{{ method.name.capitalize() }}{% else %}{{ method }}{% endif %}{% if method.url %}</a>{% endif %}
         {% endfor %} accepted
     </p>
 {% endif %}
@@ -121,15 +112,15 @@
     SERVICE_ID = {{ object.id }};
     {% if object.geometry %}
         {% if object.tracking %}SERVICE_TRACKING = true;{% endif %}
-        EXTENT = [{{ object.geometry.extent|join:"," }}];
-            LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version }}.css";
+        EXTENT = [{{ object.geometry.extent|join(",") }}];
+            LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
     </script>
-    <script async src="{% static 'dist/js/app.js' %}"></script>
+    <script async src="{{ static('dist/js/app.js') }}"></script>
     {% else %}</script>{% endif %}
 
-    <script src="{% static 'js/reqwest.min.js' %}"></script>
-    <script async src="{% static 'js/timetable.js' %}"></script>
+    <script src="{{ static('js/reqwest.min.js') }}"></script>
+    <script async src="{{ static('js/timetable.js') }}"></script>
     {% if fare_tables %}
-        <script async src="{% static 'js/fares.js' %}"></script>
+        <script async src="{{ static('js/fares.js') }}"></script>
     {% endif %}
 {% endblock %}
