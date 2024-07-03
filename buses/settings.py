@@ -108,12 +108,19 @@ CSP_STYLE_SRC_ELEM = ["'self'", "https:", "'unsafe-inline'"]
 CSP_FRAME_SRC = ["https:"]
 
 if DEBUG and "runserver" in sys.argv:
-    INSTALLED_APPS.append("debug_toolbar")
+    INSTALLED_APPS += [
+        "debug_toolbar",
+        "template_profiler_panel",
+    ]
     MIDDLEWARE += [
         "debug_toolbar.middleware.DebugToolbarMiddleware",
         "debug_toolbar_force.middleware.ForceDebugToolbarMiddleware",
     ]
     INTERNAL_IPS = ["127.0.0.1"]
+    DEBUG_TOOLBAR_PANELS = [
+        # ...
+        "template_profiler_panel.panels.template.TemplateProfilerPanel",
+    ]
 
 ROOT_URLCONF = "buses.urls"
 
