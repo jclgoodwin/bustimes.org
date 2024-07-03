@@ -196,7 +196,7 @@ TEMPLATES = [
             "loaders": [
                 (
                     "django.template.loaders.cached.Loader",
-                    ["template_minifier.template.loaders.app_directories.Loader"],
+                    ["django.template.loaders.app_directories.Loader"],
                 )
             ],
         },
