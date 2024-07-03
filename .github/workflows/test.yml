@@ -62,7 +62,7 @@ jobs:
         python-version: '3.12'
         cache: 'poetry'
 
-    - run: poetry install --only main
+    - run: poetry install --with test
 
     - run: rm -r busstops/static
 

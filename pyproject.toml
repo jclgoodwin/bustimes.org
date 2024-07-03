@@ -14,13 +14,11 @@ ciso8601 = "^2.2.0"
 dj-database-url = "^2.0.0"
 Django = "^5.0.1"
 django-autoslug = "^1.9.8"
-django-coverage-plugin = "^3.0.0"
 django-email-obfuscator = "^0.1.5"
 django-filter = "^24.1"
 # django-multidb-router = "^0.10"
 djangorestframework = "^3.14.0"
 django-simple-history = "^3.0.0"
-django-slowtests = "^1.1.1"
 django-sql-utils = "^0.7.0"
 django-template-minifier = "^1.1.0"
 gtfs-realtime-bindings = "^1.0.0"
@@ -33,20 +31,17 @@ protobuf = "^5.26.0"
 psycopg = "^3.1.8"
 PyYAML = "^6.0.0"
 redis = "^5.0.0"
-requests-cache = "^1.1.0"
 sentry-sdk = {extras = ["django"], version = "^2.4.0"}
 Shapely = "^2.0.1"
 time-machine = "^2.4.0"
 titlecase = "^2.3"
 uk-postcode-utils = "^1.1"
-vcrpy = "^6.0.0"
 webcolors = "^1.11.1"
 whitenoise = "^6.2.0"
 xmltodict = "^0.13.0"
 django-csp = "^3.7"
 django-cors-headers = "^4.2.0"
 pygments = "^2.15.1"
-fakeredis = "^2.12.1"
 django-turnstile = "^0.1.0"
 tenacity = "^8.2.2"
 requests-toolbelt = "^1.0.0"
@@ -55,6 +50,19 @@ websockets = "^12.0"
 lxml = "^5.0.0"
 qrcode = "^7.4.2"
 lightningcss = "^0.2.0"
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.test.dependencies]
+vcrpy = "^6.0.0"
+requests-cache = "^1.1.0"
+django-coverage-plugin = "^3.0.0"
+django-slowtests = "^1.1.1"
+fakeredis = "^2.12.1"
+
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^4.0.0"
