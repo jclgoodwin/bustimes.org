@@ -119,9 +119,9 @@ class Command(ImportLiveVehiclesCommand):
         journey = VehicleJourney(
             datetime=datetime,
             code=code or "",
-            route_name=item["PublishedLineName"],
+            route_name=item["PublishedLineName"] or "",
             service=self.get_service(item),
-            destination=item["DestinationStopName"],
+            destination=item["DestinationStopName"] or "",
         )
 
         if journey.service_id and not journey.id and datetime:
