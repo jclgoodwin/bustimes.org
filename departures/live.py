@@ -149,6 +149,9 @@ def get_departures(stop, services, when) -> dict:
                     )
 
                 for departure in departures:
+                    if departure["time"] - now > datetime.timedelta(hours=12):
+                        break
+
                     trip_id = departure["stop_time"].trip_id
 
                     if trip_id in by_trip:
