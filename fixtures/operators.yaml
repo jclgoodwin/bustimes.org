@@ -38,24 +38,11 @@ BS4U:
     phone: 01883 732791
 SPOT:
     url: http://www.spottravel.co.uk/leeds-castle/
-THAN:
-    name: Thandi Coaches
-    address: |
-        The Coach Station
-        2 Abberley Street
-        Smethwick
-        West Midlands
-        B66 2Q
-    email: contact@thandicoachesuk.com
-    url: http://thandicoachesuk.com
-    phone: 0121 565 2002
 CRES:
     address: |
         70 Marks Tey Road
         Fareham
         PO14 3UR
-RBNC:
-    name: Roy Brown’s Coaches of Builth Wells
 DJWA:
     name: Torbay Mini Buses
 ANRW:
@@ -108,8 +95,6 @@ HCMN:
     name: MacNeil Coaches
     phone: 075060 72309
 FALC:
-    name: Falcon Buses
-    url: https://www.falconbuses.co.uk
     twitter: FalconBusCoach
     email: ""
 NVTR:
@@ -240,11 +225,6 @@ STNE:
 RBTS:
     name: Roberts Travel
     url: https://www.robertstravelgroup.co.uk/
-EOSB:
-    name: Swallow Coaches
-    url: https://www.swallowcoach.co.uk/bus-services
-    address: ""
-    phone: ""
 KCTB:
     phone: 03300 539358
     address: |
@@ -280,8 +260,6 @@ HAIN:
     name: Phil Haines Coaches
 TLCT:
     name: TLC Travel
-DAGC:
-    twitter: ""
 HCTY:
     twitter: ""
 PLNG:
@@ -294,18 +272,12 @@ ULCO:
 CAEL:
     name: Caelloi
     url: https://www.caelloi.co.uk/
-ALPI:
-    url: https://www.alpine-travel.co.uk/
-CLTR:
-    url: https://www.clynnogandtrefor.com/
 AINT:
     url: http://www.aintreecoachline.com/
     email: info@aintreecoachline.com
     twitter: ""
 ALSC:
     url: https://www.alscoaches.com/
-BLPH:
-    url: https://www.blackburnprivatehire.co.uk/
 NUTT:
     name: Transpora North West
     aka: Coastliner Buses
@@ -335,8 +307,6 @@ UNOE:
    twitter: UnoHerts
 FCWL:
     twitter: by_Kernow
-EXLN:
-    url: https://www.expresslines.co.uk/
 SSSN:
     name: Shoreline Suncruisers
 COAC:
@@ -346,10 +316,6 @@ FLIX:
     name: FlixBus
 ALCG:
     url: https://www.alinenortheast.co.uk/
-NADT:
-    url: https://www.adventuretravel.cymru/
-    twitter: AdvTravelBus
-    email: info@AdventureTravel.Cymru
 FCYM:
     name: First Cymru
 FSMR:
@@ -385,9 +351,6 @@ WNGS:
     url: https://www.diamondbuses.com/
 MINS:
     twitter: ""
-NMCO:
-    url: https://www.nickmaddycoaches.co.uk/
-    phone: 01981 240888
 NYCC:
     name: North Yorkshire Council
     url: https://www.northyorks.gov.uk/public-transport
@@ -414,9 +377,6 @@ HRBT:
 COEV:
     name: Coach Events Services
     url: http://www.coacheventsservices.co.uk/
-ABLO: 
-    name: Transport UK
-    url: https://www.transportukbus.com/
 TRST:
     url: https://localbus.vectare.co.uk/central-connect
     twitter: VectareEssex
