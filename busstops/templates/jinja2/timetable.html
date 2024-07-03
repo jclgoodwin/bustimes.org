@@ -130,7 +130,7 @@
                             {% for cell in row.times %}{% if cell.colspan %}<td{% if grouping.routes or grouping.column_feet or timetable.has_operators %} colspan="{{ cell.colspan }}"{% endif %} rowspan="{{ cell.rowspan }}" class="then-every">{{ cell }}</td>{% else %}<td{% if row.has_waittimes and not cell.wait_time and not cell.first and not cell.last %} rowspan="2"{% endif %}>{% if cell %}{% if not row.has_waittimes or cell.wait_time or not cell.first %}{{ cell }}{% if cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                             </tr>
                             {% if row.has_waittimes %}
-                                <tr class="{% if row.is_minor() %}minor {% if row.od() %}od {% endif %}{% endif %}dep">
+                                <tr class="{% if row.is_minor() %}minor {% if row.od %}od {% endif %}{% endif %}dep">
                                     {% for cell in row.times %}{% if cell.wait_time or cell.first or cell.last %}<td>{% if cell %}{% if cell.wait_time or not cell.last %}{{ cell.departure_time() }}{% if cell.set_down_only() %}<abbr title="set down only">s</abbr>{% elif cell.pick_up_only() %}<abbr title="pick up only">p</abbr>{% endif %}{% endif %}{% if cell.stoptime.note %}<strong>{{ cell.stoptime.note.code }}</strong>{% endif %}{% endif %}</td>{% endif %}{% endfor %}
                                 </tr>
                             {% endif %}
@@ -141,7 +141,7 @@
                         {% if (row|length) > 1 %}
                             <tr><th></th>
                             {% for foot in row %}
-                                <td{% if foot.span > 1  %} colspan="{{ foot.span }}"{% endif %}>
+                                <td{% if foot.span > 1 %} colspan="{{ foot.span }}"{% endif %}>
                                     {% if foot.note %}{% if foot.note.stoptimes %}<strong>{{ foot.note.code }}</strong> {% endif %}{{ urlise(foot.note.text) }}{% endif %}
                                 </td>
                             {% endfor %}

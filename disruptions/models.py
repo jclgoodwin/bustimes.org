@@ -49,7 +49,7 @@ class Situation(models.Model):
             models.Index(fields=["source", "situation_number"]),
         ]
 
-    def list_validity_periods(self):
+    def list_validity_periods(self) -> list[str]:
         validity_periods = self.validityperiod_set.all()
         if len(validity_periods) == 1:
             current_timezone = timezone.get_current_timezone()
@@ -62,6 +62,7 @@ class Situation(models.Model):
                         f"""{lower.strftime("%H:%M")}–{upper.strftime("%H:%M, %-d %B %Y")}"""
                     ]
             return [date_range(period)]
+        return []
 
 
 class Link(models.Model):
