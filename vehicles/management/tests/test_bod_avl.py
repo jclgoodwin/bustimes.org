@@ -838,6 +838,31 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command = import_bod_avl.Command()
         command.source = self.source
 
+        o = Operator.objects.create(noc="NCTR")
+        OperatorCode.objects.create(operator=o, code="NT", source=self.source)
+        service = Service.objects.create(line_name="35")
+        service.operator.add(o)
+        r = Route.objects.create(line_name="35", service=service, source=self.source)
+        c = Calendar.objects.create(
+            mon=True,
+            tue=True,
+            wed=True,
+            thu=True,
+            fri=True,
+            sat=False,
+            sun=False,
+            start_date="2024-07-04",
+        )
+        stop = StopPoint.objects.create(atco_code="3390BU05", active=True)
+        t = Trip.objects.create(
+            start="08:01:00",
+            end="09:05:00",
+            block="4035",
+            calendar=c,
+            route=r,
+            destination=stop,
+        )
+
         item = {
             "Extensions": None,
             "ItemIdentifier": "8850451c-7678-4e4d-a076-70abac280ac6",
@@ -860,7 +885,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         }
         command.handle_item(item)
         command.save()
-        self.assertEqual(1, VehicleJourney.objects.count())
+        vj = VehicleJourney.objects.get()
+        self.assertEqual(vj.service, service)
+        self.assertEqual(vj.trip, t)
 
     @mock.patch(
         "vehicles.management.import_live_vehicles.redis_client",
