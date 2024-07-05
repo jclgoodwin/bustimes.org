@@ -532,6 +532,8 @@ class Command(ImportLiveVehiclesCommand):
                     except IntegrityError:
                         pass
 
+            block_ref = monitored_vehicle_journey.get("BlockRef")
+
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
                 # treat the weird Nottingham City Transport data specially
@@ -539,7 +541,7 @@ class Command(ImportLiveVehiclesCommand):
                     operator_ref == "NT"
                     and origin_aimed_departure_time is None
                     and journey_ref[:2] == "NT"
-                    and (block_ref := monitored_vehicle_journey.get("BlockRef"))
+                    and block_ref
                     and (
                         end := monitored_vehicle_journey.get(
                             "DestinationAimedArrivalTime"
@@ -567,6 +569,7 @@ class Command(ImportLiveVehiclesCommand):
                         destination_ref=destination_ref,
                         departure_time=origin_aimed_departure_time,
                         journey_code=journey_code,
+                        block_ref=block_ref,
                     )
 
                 if trip := journey.trip:

@@ -299,6 +299,7 @@ def get_trip(
     destination_ref=None,
     departure_time=None,
     journey_code="",
+    block_ref=None,
 ):
     if not journey.service:
         return
@@ -367,9 +368,15 @@ def get_trip(
     calendars = Q(calendar__in=get_calendars(date))
 
     if code and start:
+        if block_ref:
+            try:
+                return trips.filter(code, start, calendars, block=block_ref).get()
+            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
+                pass
+
         if destination:
             try:
-                return trips.filter(code, start, destination).get()
+                return trips.filter(code, start, calendars, destination).get()
             except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
                 pass
 
