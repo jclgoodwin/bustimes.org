@@ -239,6 +239,8 @@ class Command(ImportLiveVehiclesCommand):
 
     def create_vehicle_location(self, item):
         bearing = item.get("hg")
+        if bearing == "0":
+            return
 
         return VehicleLocation(
             latlong=GEOSGeometry(f"POINT({item['lo']} {item['la']})"),
