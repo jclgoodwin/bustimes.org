@@ -126,7 +126,6 @@ AMSY:
     name: Arriva Merseyside
     url: https://www.arrivabus.co.uk/north-west
 ANEA:
-    name: Arriva North East
     url: https://www.arrivabus.co.uk/north-east
 ANUM:
     name: Arriva Northumbria
@@ -236,8 +235,6 @@ HEDO:
     url: https://www.hedinghamandchambers.co.uk/
 CHAM:
     url: https://www.hedinghamandchambers.co.uk/
-ENSB:
-    name: Ensignbus
 NOTB:
     twitter: NottsCC
 BHBC:
@@ -258,8 +255,6 @@ WNCT:
     email: enquiries@wnct.co.uk
 HAIN:
     name: Phil Haines Coaches
-TLCT:
-    name: TLC Travel
 HCTY:
     twitter: ""
 PLNG:
@@ -312,8 +307,6 @@ SSSN:
 COAC:
     url: http://www.coachstyle.uk/
     email: coachstyleltd@btconnect.com
-FLIX:
-    name: FlixBus
 ALCG:
     url: https://www.alinenortheast.co.uk/
 FCYM:
