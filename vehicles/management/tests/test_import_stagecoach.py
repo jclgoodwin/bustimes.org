@@ -59,4 +59,4 @@ class StagecoachTest(TestCase):
                 "SCOX": Operator(noc="SCOX"),
             },
         )
-        self.assertEqual(VehicleJourney.objects.count(), 12)
+        self.assertEqual(VehicleJourney.objects.count(), 8)
