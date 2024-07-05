@@ -379,7 +379,7 @@ def get_trip(
         arrival_time = timezone.localtime(arrival_time)
         arrival_time = timedelta(hours=arrival_time.hour, minutes=arrival_time.minute)
         try:
-            journey.trip = Trip.objects.get(
+            return Trip.objects.get(
                 calendars,
                 block=block_ref,
                 destination=destination_ref,
