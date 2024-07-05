@@ -536,41 +536,23 @@ class Command(ImportLiveVehiclesCommand):
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
-                # treat the weird Nottingham City Transport data specially
-                if (
-                    operator_ref == "NT"
-                    and origin_aimed_departure_time is None
-                    and journey_ref[:2] == "NT"
-                    and block_ref
-                    and (
-                        end := monitored_vehicle_journey.get(
-                            "DestinationAimedArrivalTime"
-                        )
-                    )
-                ):
-                    end = timezone.localtime(parse_datetime(end))
-                    end = timedelta(hours=end.hour, minutes=end.minute)
-                    try:
-                        journey.trip = Trip.objects.get(
-                            block=block_ref,
-                            destination=destination_ref,
-                            route__service=journey.service,
-                            end=end,
-                        )
-                    except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-                        pass
+                arrival_time = monitored_vehicle_journey.get(
+                    "DestinationAimedArrivalTime"
+                )
+                if arrival_time:
+                    arrival_time = parse_datetime(arrival_time)
 
-                else:
-                    journey.trip = journey.get_trip(
-                        datetime=datetime,
-                        date=journey_date,
-                        operator_ref=operator_ref,
-                        origin_ref=monitored_vehicle_journey.get("OriginRef"),
-                        destination_ref=destination_ref,
-                        departure_time=origin_aimed_departure_time,
-                        journey_code=journey_code,
-                        block_ref=block_ref,
-                    )
+                journey.trip = journey.get_trip(
+                    datetime=datetime,
+                    date=journey_date,
+                    operator_ref=operator_ref,
+                    origin_ref=monitored_vehicle_journey.get("OriginRef"),
+                    destination_ref=destination_ref,
+                    departure_time=origin_aimed_departure_time,
+                    journey_code=journey_code,
+                    block_ref=block_ref,
+                    arrival_time=arrival_time,
+                )
 
                 if trip := journey.trip:
                     if (

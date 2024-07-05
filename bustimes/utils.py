@@ -300,6 +300,7 @@ def get_trip(
     departure_time=None,
     journey_code="",
     block_ref=None,
+    arrival_time=None,
 ):
     if not journey.service:
         return
@@ -366,6 +367,27 @@ def get_trip(
         code = None
 
     calendars = Q(calendar__in=get_calendars(date))
+
+    # treat the weird Nottingham City Transport data specially
+    if (
+        operator_ref == "NT"
+        and departure_time is None
+        and journey.code[:2] == "NT"
+        and block_ref
+        and arrival_time
+    ):
+        arrival_time = timezone.localtime(arrival_time)
+        arrival_time = timedelta(hours=arrival_time.hour, minutes=arrival_time.minute)
+        try:
+            journey.trip = Trip.objects.get(
+                calendars,
+                block=block_ref,
+                destination=destination_ref,
+                route__service=journey.service,
+                end=arrival_time,
+            )
+        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
+            pass
 
     if code and start:
         if block_ref:
