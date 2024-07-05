@@ -300,7 +300,6 @@ def get_trip(
     departure_time=None,
     journey_code="",
     block_ref=None,
-    arrival_time=None,
 ):
     if not journey.service:
         return
@@ -374,18 +373,16 @@ def get_trip(
         and departure_time is None
         and journey.code[:2] == "NT"
         and block_ref
-        and arrival_time
     ):
-        arrival_time = timezone.localtime(arrival_time)
-        arrival_time = timedelta(hours=arrival_time.hour, minutes=arrival_time.minute)
+        code = None
+        start = Q(start=journey.code[-19:-11])
         try:
-            return Trip.objects.get(
+            return trips.filter(
                 calendars,
+                start,
                 block=block_ref,
                 destination=destination_ref,
-                route__service=journey.service,
-                end=arrival_time,
-            )
+            ).get()
         except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
             pass
 

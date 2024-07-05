@@ -536,12 +536,6 @@ class Command(ImportLiveVehiclesCommand):
 
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
-                arrival_time = monitored_vehicle_journey.get(
-                    "DestinationAimedArrivalTime"
-                )
-                if arrival_time:
-                    arrival_time = parse_datetime(arrival_time)
-
                 journey.trip = journey.get_trip(
                     datetime=datetime,
                     date=journey_date,
@@ -551,7 +545,6 @@ class Command(ImportLiveVehiclesCommand):
                     departure_time=origin_aimed_departure_time,
                     journey_code=journey_code,
                     block_ref=block_ref,
-                    arrival_time=arrival_time,
                 )
 
                 if trip := journey.trip:

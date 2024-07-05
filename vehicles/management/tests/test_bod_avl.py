@@ -834,6 +834,38 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         "vehicles.management.import_live_vehicles.redis_client",
         fakeredis.FakeStrictRedis(version=7),
     )
+    def test_nottingham(self):
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        item = {
+            "Extensions": None,
+            "ItemIdentifier": "8850451c-7678-4e4d-a076-70abac280ac6",
+            "RecordedAtTime": "2024-07-05T06:56:03+00:00",
+            "ValidUntilTime": "2024-07-05T07:01:23.971896",
+            "MonitoredVehicleJourney": {
+                "Bearing": "75.0",
+                "LineRef": "NT35",
+                "BlockRef": "4035",
+                "VehicleRef": "531",
+                "OperatorRef": "NT",
+                "DirectionRef": "outbound",
+                "DestinationRef": "NT3390BU05",
+                "DestinationName": "Bulwell Bus Station stand E",
+                "VehicleLocation": {"Latitude": "52.95633", "Longitude": "-1.148409"},
+                "PublishedLineName": "35",
+                "VehicleJourneyRef": "NT35-Out-4035-NT3390J3-2024-07-05T08:01:00-2024-07-05",
+                "DestinationAimedArrivalTime": "2024-07-05T08:05:00+00:00",
+            },
+        }
+        command.handle_item(item)
+        command.save()
+        self.assertEqual(1, VehicleJourney.objects.count())
+
+    @mock.patch(
+        "vehicles.management.import_live_vehicles.redis_client",
+        fakeredis.FakeStrictRedis(version=7),
+    )
     def test_ambiguous_operator(self):
         command = import_bod_avl.Command()
         command.source = self.source
