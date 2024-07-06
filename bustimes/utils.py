@@ -366,12 +366,10 @@ def get_trip(
     else:
         code = Q()
 
-    calendars = Q(calendar__in=get_calendars(date))
-
     if operator_ref == "NT" and len(journey_code) > 30:
         code = Q()
 
-    score = Case(When(calendars, then=1), default=0)
+    score = 0
     if code:
         score += Case(When(code, then=1), default=0)
     if block_ref:
@@ -383,12 +381,14 @@ def get_trip(
     if destination:
         score += Case(When(destination, then=1), default=0)
 
-    trip = (
+    trips = (
         trips.filter(code | start, destination | direction)
         .annotate(score=score)
         .order_by("-score")
-        .first()
     )
 
-    if trip and trip.score:
-        return trip
+    if len(trips) > 1 and trips[0].score == trips[1].score:
+        trips = trips.filter(calendar__in=get_calendars(date))
+
+    if trips:
+        return trips[0]
