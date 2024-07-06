@@ -946,20 +946,11 @@ class Service(models.Model):
         self,
         day=None,
         calendar_id=None,
-        also_services=[],
+        also_services=None,
         line_names=None,
         detailed=False,
     ):
         """Given a Service, return a Timetable"""
-
-        cache_key = f"s{self.id}:{int(self.modified_at.timestamp())}:{day or calendar_id}:{detailed}"
-        if line_names:
-            cache_key += ":".join(line_names)
-        for s in also_services:
-            cache_key += f":{s.id}:{int(s.modified_at.timestamp())}"
-
-        if timetable := cache.get(cache_key):
-            return timetable
 
         if self.region_id == "NI" or self.source and "ireland" in self.source.url:
             timetable = Timetable(
@@ -989,7 +980,25 @@ class Service(models.Model):
                 logger.error(e, exc_info=True)
                 return
 
-        cache.set(cache_key, timetable, 3600)
+        cache_key = [
+            str(self.id),
+            str(self.modified_at.timestamp()),
+            str(detailed),
+        ]
+        if line_names:
+            cache_key += line_names
+        if also_services:
+            cache_key += [
+                f"{s.id}:{self.modified_at.timestamp()}" for s in also_services
+            ]
+        cache_key += [str(r.id) for r in timetable.current_routes]
+
+        if timetable.calendar:
+            cache_key += str(timetable.calendar.id)
+        elif timetable.calendars:
+            cache_key += [str(calendar_id) for calendar_id in timetable.calendar_ids]
+
+        timetable.cache_key = ":".join(cache_key)
 
         return timetable
 
