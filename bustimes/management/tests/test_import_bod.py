@@ -495,11 +495,10 @@ Data Service (BODS)</a>, 1 April 2020.""",
 
         with self.assertNumQueries(18):
             response = self.client.get("/services/904-huntingdon-peterborough")
-        # print(response.content.decode())
-        # self.assertContains(
-        #     response,
-        #     '<option selected value="2020-08-31">Monday 31 August 2020</option>',
-        # )
+        self.assertContains(response, "Possibly similar services")
+        self.assertContains(
+            response, '<a href="/services/904-huntingdon-peterborough-2">'
+        )
         self.assertContains(response, '<a href="/operators/huntingdon">Huntingdon</a>')
 
         with time_machine.travel("2021-01-11"):
