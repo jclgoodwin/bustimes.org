@@ -10,6 +10,7 @@ from urllib.parse import urlencode
 import qrcode
 import qrcode.image.svg
 import requests
+from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.geos import MultiLineString, Point
@@ -1241,11 +1242,15 @@ class ServiceDetailView(DetailView):
     def render_to_response(self, context):
         if "redirect_to" in context:
             return redirect(context["redirect_to"], permanent=True)
-        template = get_template("busstops/service_detail.html")
-        generator = template.template.generate(**context, request=self.request)
-        response = StreamingHttpResponse(generator, content_type="text/html")
-        response.context_data = context  # for testing
-        return response
+
+        if not settings.TEST:
+            template = get_template("busstops/service_detail.html")
+            generator = template.template.generate(
+                **context, ad=True, request=self.request
+            )
+            return StreamingHttpResponse(generator, content_type="text/html")
+
+        return super().render_to_response(context)
 
 
 def service_timetable(request, service_id):
