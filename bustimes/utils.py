@@ -1,7 +1,7 @@
 from datetime import date, datetime, timedelta
 from difflib import Differ
 
-from django.db.models import OuterRef, Q
+from django.db.models import Case, OuterRef, Q, When
 from django.utils import timezone
 from sql_util.utils import Exists
 
@@ -310,21 +310,22 @@ def get_trip(
         date = (departure_time or datetime).date()
 
     routes = get_routes(journey.service.route_set.select_related("source"), date)
-    if not routes:
-        return
-    trips = Trip.objects.filter(route__in=routes)
+    if routes:
+        trips = Trip.objects.filter(route__in=routes)
+    else:
+        trips = Trip.objects.filter(route__service=journey.service)
 
     if destination_ref and " " not in destination_ref and destination_ref[:3].isdigit():
         destination = Q(destination=destination_ref)
     else:
-        destination = None
+        destination = Q()
 
     if journey.direction == "outbound":
         direction = Q(inbound=False)
     elif journey.direction == "inbound":
         direction = Q(inbound=True)
     else:
-        direction = None
+        direction = Q()
 
     if departure_time:
         start_time = timezone.localtime(departure_time)
@@ -340,7 +341,7 @@ def get_trip(
         minutes = int(journey_code[-2:])
         start = Q(start=timedelta(hours=hours, minutes=minutes))
     else:
-        start = None
+        start = Q()
 
     # special strategy for TfL data
     if operator_ref == "TFLO" and departure_time and origin_ref and destination:
@@ -370,50 +371,24 @@ def get_trip(
     if operator_ref == "NT" and len(journey_code) > 30:
         code = Q()
 
-    if start:
-        if block_ref:
-            try:
-                return trips.filter(code, start, calendars, block=block_ref).get()
-            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
-                pass
-
-        if destination:
-            try:
-                return trips.filter(code, start, calendars, destination).get()
-            except (Trip.MultipleObjectsReturned, Trip.DoesNotExist):
-                pass
-
-        try:
-            try:
-                return trips.filter(code, start).get()
-            except Trip.MultipleObjectsReturned:
-                if direction:
-                    try:
-                        return trips.filter(code, calendars, direction, start).get()
-                    except Trip.MultipleObjectsReturned:
-                        return
-                return trips.filter(code, calendars, start).get()
-        except Trip.MultipleObjectsReturned:
-            return
-        except Trip.DoesNotExist:
-            pass
-
+    score = Case(When(calendars, then=1), default=0)
     if code:
-        try:
-            try:
-                return trips.filter(code).get()
-            except Trip.MultipleObjectsReturned:
-                return trips.filter(code, calendars).get()
-        except Trip.MultipleObjectsReturned:
-            return
-        except Trip.DoesNotExist:
-            pass
-
+        score += Case(When(code, then=1), default=0)
+    if block_ref:
+        score += Case(When(block=block_ref, then=1), default=0)
     if start:
-        try:
-            try:
-                return trips.filter(start).get()
-            except Trip.MultipleObjectsReturned:
-                return trips.filter(calendars, start).get()
-        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-            return
+        score += Case(When(start, then=1), default=0)
+    if direction:
+        score += Case(When(direction, then=1), default=0)
+    if destination:
+        score += Case(When(destination, then=1), default=0)
+
+    trip = (
+        trips.filter(code | start, destination | direction)
+        .annotate(score=score)
+        .order_by("-score")
+        .first()
+    )
+
+    if trip and trip.score:
+        return trip

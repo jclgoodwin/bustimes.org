@@ -101,7 +101,7 @@ class BusHubTest(TestCase):
         item["OperatorRef"] = "WNGS"
         item["VehicleRef"] = "20052"
         item["Bearing"] = "-1"
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(7):
             command.handle_item(item)
             command.save()
         self.assertEqual(2, Vehicle.objects.count())
