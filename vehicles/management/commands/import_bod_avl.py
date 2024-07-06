@@ -441,6 +441,18 @@ class Command(ImportLiveVehiclesCommand):
 
         operator_ref = monitored_vehicle_journey["OperatorRef"]
 
+        # treat the weird Nottingham City Transport data specially
+        if (
+            operator_ref == "NT"
+            and origin_aimed_departure_time is None
+            and journey_ref[:2] == "NT"
+            and journey_ref.count("-") == 9
+        ):
+            origin_aimed_departure_time = timezone.make_aware(
+                parse_datetime(journey_ref[-30:-11])
+            )
+            journey_date = date.fromisoformat(journey_ref[-10:])
+
         if origin_aimed_departure_time:
             difference = origin_aimed_departure_time - datetime
             if difference > timedelta(hours=20):

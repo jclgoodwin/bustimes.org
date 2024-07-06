@@ -862,12 +862,16 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             route=r,
             destination=stop,
         )
-
+        # duplicate
+        Trip.objects.create(
+            start="08:01:00",
+            end="09:05:00",
+            block="4035",
+            route=r,
+            destination=stop,
+        )
         item = {
-            "Extensions": None,
-            "ItemIdentifier": "8850451c-7678-4e4d-a076-70abac280ac6",
             "RecordedAtTime": "2024-07-05T06:56:03+00:00",
-            "ValidUntilTime": "2024-07-05T07:01:23.971896",
             "MonitoredVehicleJourney": {
                 "Bearing": "75.0",
                 "LineRef": "NT35",
@@ -888,6 +892,29 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         vj = VehicleJourney.objects.get()
         self.assertEqual(vj.service, service)
         self.assertEqual(vj.trip, t)
+
+        # trip after midnight
+        t_2 = Trip.objects.create(
+            start="24:02:00",
+            end="24:05:00",
+            block="4035",
+            calendar=c,
+            route=r,
+            destination=stop,
+        )
+        item["RecordedAtTime"] = "2024-07-05T23:02:56+00:00"
+        item["MonitoredVehicleJourney"][
+            "VehicleJourneyRef"
+        ] = "NT11-Out-51011-NT3390W3-2024-07-06T00:02:00-2024-07-05"
+        item["MonitoredVehicleJourney"]["VehicleLocation"] = {
+            "Latitude": "53.0",
+            "Longitude": "-1.12",
+        }
+        command.handle_item(item)
+        command.save()
+        vj = VehicleJourney.objects.last()
+        self.assertEqual(vj.service, service)
+        self.assertEqual(vj.trip, t_2)
 
     @mock.patch(
         "vehicles.management.import_live_vehicles.redis_client",

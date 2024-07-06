@@ -164,7 +164,7 @@ def get_routes(routes, when=None, from_date=None):
     return routes
 
 
-def get_calendars(when, calendar_ids=None):
+def get_calendars(when: date | datetime, calendar_ids=None):
     between_dates = Q(start_date__lte=when) & (Q(end_date__gte=when) | Q(end_date=None))
 
     calendars = Calendar.objects.filter(between_dates)
@@ -363,30 +363,14 @@ def get_trip(
             vehicle_journey_code=journey.code
         )
     else:
-        code = None
+        code = Q()
 
     calendars = Q(calendar__in=get_calendars(date))
 
-    # treat the weird Nottingham City Transport data specially
-    if (
-        operator_ref == "NT"
-        and departure_time is None
-        and journey.code[:2] == "NT"
-        and block_ref
-    ):
-        code = None
-        start = Q(start=journey.code[-19:-11])
-        try:
-            return trips.filter(
-                calendars,
-                start,
-                block=block_ref,
-                destination=destination_ref,
-            ).get()
-        except (Trip.DoesNotExist, Trip.MultipleObjectsReturned):
-            pass
+    if operator_ref == "NT" and len(journey_code) > 30:
+        code = Q()
 
-    if code and start:
+    if start:
         if block_ref:
             try:
                 return trips.filter(code, start, calendars, block=block_ref).get()
