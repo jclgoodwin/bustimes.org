@@ -22,8 +22,15 @@ from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
 from django.db.models import F, OuterRef, Prefetch, Q
 from django.db.models.functions import Coalesce, Now
-from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
+from django.http import (
+    Http404,
+    HttpResponse,
+    HttpResponseBadRequest,
+    JsonResponse,
+    StreamingHttpResponse,
+)
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import get_template
 from django.urls import resolve
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
@@ -1234,8 +1241,11 @@ class ServiceDetailView(DetailView):
     def render_to_response(self, context):
         if "redirect_to" in context:
             return redirect(context["redirect_to"], permanent=True)
-
-        return super().render_to_response(context)
+        template = get_template("busstops/service_detail.html")
+        generator = template.template.generate(**context, request=self.request)
+        response = StreamingHttpResponse(generator, content_type="text/html")
+        response.context_data = context  # for testing
+        return response
 
 
 def service_timetable(request, service_id):
