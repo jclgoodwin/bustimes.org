@@ -1,0 +1,28 @@
+{% if colours %}<style>{% for colour in colours %}
+.colour-{{ colour.id }} {
+    background: {{ colour.background }};
+    border-color: {{ colour.foreground }};
+    color: {{ colour.foreground }};
+}
+{% endfor %}</style>{% endif %}
+
+<ul class="service-list{% if class_name %} {{ class_name }}{% endif %}">
+{% for service in services %}
+    <li><a href="{{ service.get_absolute_url() }}">
+        {% for line_name in service.get_line_names() %}
+            {% if line_name and line_name not in service.line_brand %}
+                {% if ' ' not in line_name or line_name not in service.description %}
+                    <strong class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">
+                        {{ line_name }}
+                    </strong>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if service.line_brand %}
+            <strong class="name{% if service.colour_id %} colour colour-{{ service.colour_id }}{% endif %}">{{ service.line_brand }}</strong>
+        {% endif %}
+        <span class="description">{{ service.description }}</span>
+        {% if service.operators %}<small>{{ service.operators|join(", ") }}</small>{% endif %}
+    </a></li>
+{% endfor %}
+</ul>

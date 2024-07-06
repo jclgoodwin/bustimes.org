@@ -75,6 +75,11 @@
     <div id="fare-table"></div>
 {% endif %}
 
+{% if related %}
+    <h2>Possibly similar services</h2>
+    {% set services = related %}{% set class_name = "has-smalls" %}{% include 'service_list.html' %}
+{% endif %}
+
 {% if links %}
     <h2>More information</h2>
     <ul>
