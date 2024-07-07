@@ -266,11 +266,17 @@ def traces_sampler(context):
     except KeyError:
         return 0
     if (
-        url.startswith("/vehicles.json")
+        url == "/version"
+        or url.startswith("/vehicles.json")
         or url.startswith("/stops.json")
-        or url == "/version"
+        or url.startswith("/static/")
+        or url.startswith("/journeys/")
     ):
         return 0
+    if url.startswith("/stops/") or url.startswith("/services/"):
+        return 0.004
+    if url.startswith("/vehicles"):
+        return 0.0005
     return 0.001
 
 
