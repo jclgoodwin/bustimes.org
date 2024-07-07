@@ -1287,10 +1287,8 @@ class ImportTransXChangeTest(TestCase):
         )
         self.assertContains(
             response,
-            """
-                                <th class="stop-name" scope="row">
-                                    Stourbridge Junction Rail Station
-                                </th>""",
+            """<th class="stop-name" scope="row">Stourbridge Junction Rail Station</th>""",
+            html=True,
         )
         self.assertEqual(2, service.stopusage_set.count())
 
