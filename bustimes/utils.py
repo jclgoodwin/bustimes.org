@@ -5,14 +5,7 @@ from django.db.models import Case, OuterRef, Q, When
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import (
-    BankHolidayDate,
-    Calendar,
-    CalendarBankHoliday,
-    CalendarDate,
-    StopTime,
-    Trip,
-)
+from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip
 
 differ = Differ(charjunk=lambda _: True)
 
@@ -183,25 +176,21 @@ def get_calendars(when: date | datetime, calendar_ids=None):
     )
 
     calendar_bank_holidays = CalendarBankHoliday.objects.filter(
-        Exists(
-            BankHolidayDate.objects.filter(
-                date=when, bank_holiday=OuterRef("bank_holiday")
-            )
-        ),
+        bank_holiday__bankholidaydate__date=when,
         calendar=OuterRef("id"),
     )
     bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
-    bank_holiday_exclusions = ~Exists(calendar_bank_holidays.filter(operation=False))
+    bank_holiday_exclusions = Exists(calendar_bank_holidays.filter(operation=False))
 
     return calendars.filter(
         ~Exists(exclusions),
         Q(
-            bank_holiday_exclusions,
+            ~bank_holiday_exclusions,
             ~only_certain_dates | Exists(inclusions),
             **{f"{when:%a}".lower(): True},
         )
         | special_inclusions
-        | bank_holiday_inclusions & bank_holiday_exclusions,
+        | bank_holiday_inclusions & ~bank_holiday_exclusions,
     )
 
 
