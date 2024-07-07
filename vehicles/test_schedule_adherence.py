@@ -123,7 +123,7 @@ class ScheduleAdherenceTest(TestCase):
         )
 
         source = DataSource.objects.create()
-        cls.service = Service.objects.create(tracking=True)
+        cls.service = Service.objects.create(tracking=True, slug="s9")
         StopUsage.objects.create(service=cls.service, stop_id="210021509680", order=0)
         route = Route.objects.create(source=source, service=cls.service)
 

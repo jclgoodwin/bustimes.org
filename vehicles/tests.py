@@ -64,6 +64,7 @@ class VehiclesTests(TestCase):
 
         service = Service.objects.create(
             service_code="49",
+            slug="spixworth-hunworth-happisburgh",
             region=ea,
             tracking=True,
             description="Spixworth - Hunworth - Happisburgh",

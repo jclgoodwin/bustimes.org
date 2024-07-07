@@ -46,7 +46,7 @@ class StatsTest(TestCase):
         source = tasks.DataSource.objects.create(
             name="Top Mops Limited_Ventnor_31_20231016"
         )
-        service = Service.objects.create(source=source)
+        service = Service.objects.create(source=source, slug="31")
         Route.objects.create(source=source, service=service)
 
         tasks.timetable_source_stats()

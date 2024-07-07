@@ -42,6 +42,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+          -c fsync=off
+          -c full_page_writes=off
+          -c synchronous_commit=off
         ports:
           - 5432:5432
 
@@ -77,7 +80,7 @@ jobs:
         DATABASE_URL: postgis://postgres:postgres@localhost/postgres
       run: |
         poetry run ./manage.py collectstatic --noinput && \
-        poetry run coverage run ./manage.py test -v 2
+        poetry run coverage run ./manage.py test
 
     - name: generate coverage report
       run: poetry run coverage xml
