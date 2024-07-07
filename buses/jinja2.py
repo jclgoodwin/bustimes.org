@@ -66,6 +66,8 @@ class FragmentCacheExtension(Extension):
 
 def environment(**options):
     env = Environment(extensions=[FragmentCacheExtension], **options)
+    env.lstrip_blocks = True
+    env.trim_blocks = True
     env.globals.update(
         {
             "static": static,
