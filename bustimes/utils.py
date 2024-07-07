@@ -220,7 +220,8 @@ def get_stop_times(
         routes += get_routes(service_routes, date)
 
     trips = Trip.objects.filter(
-        Exists(get_calendars(date).filter(id=OuterRef("calendar_id"))), route__in=routes
+        route__in=routes,
+        calendar__in=get_calendars(date),
     )
 
     if time is not None:
@@ -233,7 +234,7 @@ def get_stop_times(
     else:
         times = times.filter(departure__isnull=False)
 
-    times = times.filter(Exists(trips.filter(id=OuterRef("trip_id"))))
+    times = times.filter(trip__in=trips)
 
     return times
 
