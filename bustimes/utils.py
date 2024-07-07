@@ -183,14 +183,14 @@ def get_calendars(when: date | datetime, calendar_ids=None):
     bank_holiday_exclusions = Exists(calendar_bank_holidays.filter(operation=False))
 
     return calendars.filter(
-        ~Exists(exclusions),
         Q(
+            Q(**{f"{when:%a}".lower(): True}),  # day of week
+            ~only_certain_dates | Exists(inclusions),  # special dates of operation
             ~bank_holiday_exclusions,
-            ~only_certain_dates | Exists(inclusions),
-            **{f"{when:%a}".lower(): True},
         )
         | special_inclusions
         | bank_holiday_inclusions & ~bank_holiday_exclusions,
+        ~Exists(exclusions),
     )
 
 
