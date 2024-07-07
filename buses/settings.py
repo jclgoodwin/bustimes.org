@@ -203,7 +203,7 @@ TEMPLATES = [
             "loaders": [
                 (
                     "django.template.loaders.cached.Loader",
-                    ["django.template.loaders.app_directories.Loader"],
+                    ["template_minifier.template.loaders.app_directories.Loader"],
                 )
             ],
         },
