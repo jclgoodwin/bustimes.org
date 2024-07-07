@@ -790,7 +790,8 @@ class Command(BaseCommand):
                 if len(journeys) > i + 1:
                     next_journey = journeys[i + 1]
                     if journey.frequency_interval != next_journey.frequency_interval:
-                        print(
+                        logger.info(
+                            "frequency: %s - every %s - %s",
                             trip.start,
                             journey.frequency_interval,
                             journey.frequency_end_time,

@@ -320,7 +320,6 @@ class VehicleJourney:
         self.frequency_interval = None
         frequency = element.find("Frequency")
         if frequency is not None:
-            print(ET.tostring(frequency).decode())
             interval = frequency.find("Interval")
             if interval is not None:
                 self.frequency_interval = parse_duration(

@@ -127,7 +127,7 @@ class Command(BaseCommand):
         )
 
         if stop.locality_id and stop.locality_id not in self.localities:
-            logger.warning(f"{atco_code} locality {stop.locality_id} does not exist")
+            logger.warning("%s locality %s does not exist", atco_code, stop.locality_id)
             stop.locality_id = None
 
         if atco_code.startswith(stop.admin_area_id):

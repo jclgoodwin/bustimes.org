@@ -1,5 +1,6 @@
 """Tests for importing NaPTAN data
 """
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -46,7 +47,10 @@ class NaptanTest(TestCase):
                     self.assertFalse((temp_dir_path / "naptan.xml").exists())
 
                     with self.assertNumQueries(26):
-                        call_command("naptan_new")
+                        with self.assertLogs(
+                            "busstops.management.commands.naptan_new", "WARNING"
+                        ):
+                            call_command("naptan_new")
 
                     source = DataSource.objects.get(name="NaPTAN")
                     self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
