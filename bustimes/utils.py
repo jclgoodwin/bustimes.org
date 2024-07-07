@@ -382,11 +382,11 @@ def get_trip(
     if destination:
         score += Case(When(destination, then=1), default=0)
 
-    trips = (
-        trips.filter(code | start, destination | direction)
-        .annotate(score=score)
-        .order_by("-score")
-    )
+    condition = code | start
+    if direction:
+        condition &= destination | direction
+
+    trips = trips.filter(condition).annotate(score=score).order_by("-score")
 
     if len(trips) > 1 and trips[0].score == trips[1].score:
         trips = trips.filter(calendar__in=get_calendars(date))
