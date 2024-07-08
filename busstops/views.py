@@ -659,16 +659,15 @@ class StopPointDetailView(DetailView):
         context = super().get_context_data(**kwargs)
 
         services = (
-            self.object.service_set.with_line_names()
-            .filter(
-                # Exists(
-                #     StopTime.objects.filter(
-                #         trip__route=OuterRef("route"), stop=self.object
-                #     )
-                #     .only("id")
-                #     .order_by()
-                # ),
-                current=True,
+            self.object.service_set.filter(
+                current=True, route__trip__stoptime__stop=self.object
+            )
+            .annotate(
+                line_names=ArrayAgg(
+                    Coalesce("route__line_name", "line_name"),
+                    distinct=True,
+                    default=None,
+                )
             )
             .defer("geometry", "search_vector")
         )
@@ -729,20 +728,20 @@ class StopPointDetailView(DetailView):
         if nearby is not None:
             context["nearby"] = (
                 nearby.exclude(pk=self.object.pk)
+                .filter(
+                    Exists(
+                        StopTime.objects.filter(
+                            trip__route=OuterRef("service__route"),
+                            stop=OuterRef("pk"),
+                        )
+                        .only("id")
+                        .order_by()
+                    )
+                )
                 .annotate(
                     line_names=ArrayAgg(
                         "service__route__line_name", distinct=True, default=None
                     )
-                )
-                .filter(
-                    # Exists(
-                    #     StopTime.objects.filter(
-                    #         trip__route=OuterRef("service__route"),
-                    #         stop=OuterRef("pk"),
-                    #     )
-                    #     .only("id")
-                    #     .order_by()
-                    # )
                 )
                 .defer("latlong")
             )
@@ -1494,7 +1493,10 @@ def search(request):
                 if query_text.isdigit():
                     context["vehicles"] = vehicles.filter(fleet_code__iexact=query_text)
                 elif not query_text.isalpha():
-                    context["vehicles"] = vehicles.filter(reg__iexact=query_text)
+                    context["vehicles"] = vehicles.filter(
+                        Q(reg__iexact=query_text)
+                        | Q(**{"data__Previous reg__icontains": query_text})
+                    )
 
             if context.get("services"):
                 context["colours"] = get_colours(context["services"])
