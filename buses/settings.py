@@ -65,11 +65,12 @@ INSTALLED_APPS = [
     "huey.contrib.djhuey",
     "corsheaders",
     "turnstile",
+    "csp",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    # "csp.middleware.CSPMiddleware",
+    "csp.middleware.CSPMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "busstops.middleware.GZipIfNotStreamingMiddleware",
     "busstops.middleware.WhiteNoiseWithFallbackMiddleware",
@@ -96,16 +97,19 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_URLS_REGEX = r"(^\/(api\/|(vehicles|stops)\.json)|.*\/journeys\/.*)"
 
 CSP_IMG_SRC = ["'self'", "https:", "data:"]
+CSP_SCRIPT_SRC = ["'unsafe-eval'"]
 CSP_SCRIPT_SRC_ATTR = ["'unsafe-inline'"]
 CSP_SCRIPT_SRC_ELEM = [
     "'self'",
     "'unsafe-inline'",
     "https:",
 ]
-CSP_CONNECT_SRC = ["'self'", "https:"]
+CSP_CONNECT_SRC = ["'self'", "https:", "ws:"]
 CSP_STYLE_SRC_ATTR = ["'unsafe-inline'"]
 CSP_STYLE_SRC_ELEM = ["'self'", "https:", "'unsafe-inline'"]
 CSP_FRAME_SRC = ["https:"]
+CSP_WORKER_SRC = ["blob:"]
+
 
 if DEBUG and "runserver" in sys.argv:
     INSTALLED_APPS += [
