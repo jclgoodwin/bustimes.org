@@ -5,6 +5,7 @@
 {% block canonical %}
     {% if vehicle and not request.GET.date %}
         {{ block.super }}
+        {% if vehicle.reg %}<meta name="keywords" content="{{ vehicle.reg }}">{% endif %}
     {% else %}
         <meta name="robots" content="noindex,noarchive">
     {% endif %}
