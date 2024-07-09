@@ -121,10 +121,9 @@ if DEBUG and "runserver" in sys.argv:
         "debug_toolbar_force.middleware.ForceDebugToolbarMiddleware",
     ]
     INTERNAL_IPS = ["127.0.0.1"]
-    DEBUG_TOOLBAR_PANELS = [
-        # ...
-        "template_profiler_panel.panels.template.TemplateProfilerPanel",
-    ]
+    # DEBUG_TOOLBAR_PANELS = [
+    #     "template_profiler_panel.panels.template.TemplateProfilerPanel",
+    # ]
 
 ROOT_URLCONF = "buses.urls"
 
