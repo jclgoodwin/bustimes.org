@@ -47,13 +47,21 @@
     "default": {
       "source": [
         "frontend/css/style.scss",
-        "frontend/js/app.tsx",
+        "frontend/js/app.tsx"
+      ],
+      "distDir": "busstops/static/dist",
+      "engines": {
+        "browsers": "Chrome 70"
+      }
+    },
+    "bigmap": {
+      "source": [
         "frontend/js/bigmap.js",
         "frontend/js/bigmap-classic.js"
       ],
       "distDir": "busstops/static/dist",
       "engines": {
-        "browsers": "Chrome 70"
+        "browsers": "ie >= 11"
       }
     }
   },

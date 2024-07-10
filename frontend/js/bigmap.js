@@ -25,7 +25,7 @@ function isWebglSupported() {
   return false;
 }
 
-if (isWebglSupported()) {
+if (typeof window.fetch !== "undefined" && isWebglSupported()) {
   loadjs(window.NEW_JS, {
     async: false,
   });

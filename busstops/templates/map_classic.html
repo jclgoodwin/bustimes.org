@@ -1,7 +1,20 @@
 {% extends 'map.html' %}
 
+{% load static %}
+
 {% block footer %}
-    {% load static %}
+    <script>
+        INITIAL_VIEW_STATE = {
+        {% if request.headers.cf_ipcountry == "IE" %}
+            latitude: 53.45,
+            longitude: -7.5,
+        {% else %}
+            latitude: 54,
+            longitude: -2.9,
+        {% endif %}
+            zoom: 5,
+        };
+    </script>
     <link rel="stylesheet" href="{% static 'dist/js/bigmap-classic.css' %}">
     <script src="{% static 'js/reqwest.min.js' %}"></script>
     <script src="{% static 'dist/js/bigmap-classic.js' %}"></script>
