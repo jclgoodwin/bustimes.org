@@ -85,17 +85,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.34.140"
+version = "1.34.142"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.34.140-py3-none-any.whl", hash = "sha256:23ca8d8f7a30c3bbd989808056b5fc5d68ff5121c02c722c6167b6b1bb7f8726"},
-    {file = "boto3-1.34.140.tar.gz", hash = "sha256:578bbd5e356005719b6b610d03edff7ea1b0824d078afe62d3fb8bea72f83a87"},
+    {file = "boto3-1.34.142-py3-none-any.whl", hash = "sha256:cae11cb54f79795e44248a9e53ec5c7328519019df1ba54bc01413f51c548626"},
+    {file = "boto3-1.34.142.tar.gz", hash = "sha256:72daee953cfa0631c584c9e3aef594079e1fe6a2f64c81ff791dab9a7b25c013"},
 ]
 
 [package.dependencies]
-botocore = ">=1.34.140,<1.35.0"
+botocore = ">=1.34.142,<1.35.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -104,13 +104,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.34.140"
+version = "1.34.142"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.34.140-py3-none-any.whl", hash = "sha256:43940d3a67d946ba3301631ba4078476a75f1015d4fb0fb0272d0b754b2cf9de"},
-    {file = "botocore-1.34.140.tar.gz", hash = "sha256:86302b2226c743b9eec7915a4c6cfaffd338ae03989cd9ee181078ef39d1ab39"},
+    {file = "botocore-1.34.142-py3-none-any.whl", hash = "sha256:9d8095bab0b93b9064e856730a7ffbbb4f897353d3170bec9ddccc5f4a3753bc"},
+    {file = "botocore-1.34.142.tar.gz", hash = "sha256:2eeb8e6be729c1f8ded723970ed6c6ac29cc3014d86a99e73428fa8bdca81f63"},
 ]
 
 [package.dependencies]
@@ -456,13 +456,13 @@ typing_extensions = ">=3.10.0.0"
 
 [[package]]
 name = "django"
-version = "5.0.6"
+version = "5.0.7"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "Django-5.0.6-py3-none-any.whl", hash = "sha256:8363ac062bb4ef7c3f12d078f6fa5d154031d129a15170a1066412af49d30905"},
-    {file = "Django-5.0.6.tar.gz", hash = "sha256:ff1b61005004e476e0aeea47c7f79b85864c70124030e95146315396f1e7951f"},
+    {file = "Django-5.0.7-py3-none-any.whl", hash = "sha256:f216510ace3de5de01329463a315a629f33480e893a9024fc93d8c32c22913da"},
+    {file = "Django-5.0.7.tar.gz", hash = "sha256:bd4505cae0b9bd642313e8fb71810893df5dc2ffcacaa67a33af2d5cd61888f2"},
 ]
 
 [package.dependencies]
@@ -876,13 +876,13 @@ redis = ["redis (>=3.0.0)"]
 
 [[package]]
 name = "identify"
-version = "2.5.36"
+version = "2.6.0"
 description = "File identification library for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "identify-2.5.36-py2.py3-none-any.whl", hash = "sha256:37d93f380f4de590500d9dba7db359d0d3da95ffe7f9de1753faa159e71e7dfa"},
-    {file = "identify-2.5.36.tar.gz", hash = "sha256:e5e00f54165f9047fbebeb4a560f9acfb8af4c88232be60a488e9b68d122745d"},
+    {file = "identify-2.6.0-py2.py3-none-any.whl", hash = "sha256:e79ae4406387a9d300332b5fd366d8994f1525e8414984e1a59e058b2eda2dd0"},
+    {file = "identify-2.6.0.tar.gz", hash = "sha256:cb171c685bdc31bcc4c1734698736a7d5b6c8bf2e0c15117f4d469c8640ae5cf"},
 ]
 
 [package.extras]
@@ -2038,21 +2038,21 @@ requests = ">=2.0.1,<3.0.0"
 
 [[package]]
 name = "rtree"
-version = "1.2.0"
+version = "1.3.0"
 description = "R-Tree spatial index for Python GIS"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "Rtree-1.2.0-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:80813bb1a66e65033e6601e54fded428a5b710b41948c83a298943587b3c3e4f"},
-    {file = "Rtree-1.2.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:6d6d1c63d97920e4cd1fa25ee0c911be3f79a34850d19166cc27bbb8ac119001"},
-    {file = "Rtree-1.2.0-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:5faf8752763258014a10feab67fe68f79eff62f7cfaadb5c338129b3e6d6a657"},
-    {file = "Rtree-1.2.0-py3-none-manylinux2014_i686.manylinux_2_17_i686.whl", hash = "sha256:460c40d246adea80291a406a30e3e0815a1d3a6d514c0438a4235090ba8cd832"},
-    {file = "Rtree-1.2.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:613f2158aeba6fcb5e4aa4c076bb6de85e20c4f9fb0a8b426a71d6ff5846795b"},
-    {file = "Rtree-1.2.0-py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:0b4ba127dfdbdc9e415d2bb578f6e6dff92082117722d8703b740231f7a0b1c3"},
-    {file = "Rtree-1.2.0-py3-none-musllinux_1_1_i686.whl", hash = "sha256:cd8653f0e961dcd3f3ab09e10a831885ea9feceb45be6bc761a773c314518b49"},
-    {file = "Rtree-1.2.0-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:3038f6d96bb66adb40d1cbb366a8a0676342102bc67ca5492f5734e70f38d9cd"},
-    {file = "Rtree-1.2.0-py3-none-win_amd64.whl", hash = "sha256:008d86fd8990f3ca15c06834ae597e16209b3e0a3d6512f0a3489c201011390f"},
-    {file = "Rtree-1.2.0.tar.gz", hash = "sha256:f5145f7852bf7f95c126fb16bf1a4c2ca9300ae151b07f8a0f7083ea47912675"},
+    {file = "Rtree-1.3.0-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:80879d9db282a2273ca3a0d896c84583940e9777477727a277624ebfd424c517"},
+    {file = "Rtree-1.3.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:4328e9e421797c347e6eb08efbbade962fe3664ebd60c1dffe82c40911b1e125"},
+    {file = "Rtree-1.3.0-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:037130d3ce1fc029de81941ec416ba5546f66228380ba19bb41f2ea1294e8423"},
+    {file = "Rtree-1.3.0-py3-none-manylinux2014_i686.manylinux_2_17_i686.whl", hash = "sha256:864a05d0c3b7ce6c5e34378b7ab630057603b79179368bc50624258bdf2ff631"},
+    {file = "Rtree-1.3.0-py3-none-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:ec2ed6d1635753dab966e68f592a9c4896f3f4ec6ad2b09b776d592eacd883a9"},
+    {file = "Rtree-1.3.0-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:b4485fb3e5c5e85b94a95f0a930a3848e040d2699cfb012940ba5b0130f1e09a"},
+    {file = "Rtree-1.3.0-py3-none-musllinux_1_2_i686.whl", hash = "sha256:7e2e9211f4fb404c06a08fd2cbebb03234214f73c51913bb371c3d9954e99cc9"},
+    {file = "Rtree-1.3.0-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:c021f4772b25cc24915da8073e553ded6fa8d0b317caa4202255ed26b2344c1c"},
+    {file = "Rtree-1.3.0-py3-none-win_amd64.whl", hash = "sha256:97f835801d24c10bbf02381abe5e327345c8296ec711dde7658792376abafc66"},
+    {file = "rtree-1.3.0.tar.gz", hash = "sha256:b36e9dd2dc60ffe3d02e367242d2c26f7281b00e1aaf0c39590442edaaadd916"},
 ]
 
 [[package]]
@@ -2074,13 +2074,13 @@ crt = ["botocore[crt] (>=1.33.2,<2.0a.0)"]
 
 [[package]]
 name = "sentry-sdk"
-version = "2.7.1"
+version = "2.8.0"
 description = "Python client for Sentry (https://sentry.io)"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "sentry_sdk-2.7.1-py2.py3-none-any.whl", hash = "sha256:ef1b3d54eb715825657cd4bb3cb42bb4dc85087bac14c56b0fd8c21abd968c9a"},
-    {file = "sentry_sdk-2.7.1.tar.gz", hash = "sha256:25006c7e68b75aaa5e6b9c6a420ece22e8d7daec4b7a906ffd3a8607b67c037b"},
+    {file = "sentry_sdk-2.8.0-py2.py3-none-any.whl", hash = "sha256:6051562d2cfa8087bb8b4b8b79dc44690f8a054762a29c07e22588b1f619bfb5"},
+    {file = "sentry_sdk-2.8.0.tar.gz", hash = "sha256:aa4314f877d9cd9add5a0c9ba18e3f27f99f7de835ce36bd150e48a41c7c646f"},
 ]
 
 [package.dependencies]
@@ -2125,13 +2125,13 @@ tornado = ["tornado (>=6)"]
 
 [[package]]
 name = "setuptools"
-version = "70.2.0"
+version = "70.3.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "setuptools-70.2.0-py3-none-any.whl", hash = "sha256:b8b8060bb426838fbe942479c90296ce976249451118ef566a5a0b7d8b78fb05"},
-    {file = "setuptools-70.2.0.tar.gz", hash = "sha256:bd63e505105011b25c3c11f753f7e3b8465ea739efddaccef8f0efac2137bac1"},
+    {file = "setuptools-70.3.0-py3-none-any.whl", hash = "sha256:fe384da74336c398e0d956d1cae0669bc02eed936cdb1d49b57de1990dc11ffc"},
+    {file = "setuptools-70.3.0.tar.gz", hash = "sha256:f171bab1dfbc86b132997f26a119f6056a57950d058587841a0082e8830f9dc5"},
 ]
 
 [package.extras]
