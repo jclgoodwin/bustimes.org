@@ -240,7 +240,7 @@ Data Service (BODS)</a>, 1 April 2020.""",
 
         with self.assertNumQueries(1):
             response = self.client.get("/stops/2900W0321/departures?date=2020-05-02")
-        self.assertEqual(1, len(response.context_data["departures"]))
+        self.assertEqual(1, len(response.context["departures"]))
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
         self.assertContains(response, "Nearby stops")  # other stop in StopArea
