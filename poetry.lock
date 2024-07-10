@@ -519,24 +519,6 @@ files = [
 coverage = "*"
 
 [[package]]
-name = "django-csp"
-version = "3.8"
-description = "Django Content Security Policy support."
-optional = false
-python-versions = "*"
-files = [
-    {file = "django_csp-3.8-py3-none-any.whl", hash = "sha256:19b2978b03fcd73517d7d67acbc04fbbcaec0facc3e83baa502965892d1e0719"},
-    {file = "django_csp-3.8.tar.gz", hash = "sha256:ef0f1a9f7d8da68ae6e169c02e9ac661c0ecf04db70e0d1d85640512a68471c0"},
-]
-
-[package.dependencies]
-Django = ">=3.2"
-
-[package.extras]
-jinja2 = ["jinja2 (>=2.9.6)"]
-tests = ["jinja2 (>=2.9.6)", "pytest", "pytest-cov", "pytest-django", "pytest-ruff"]
-
-[[package]]
 name = "django-debug-toolbar"
 version = "4.4.5"
 description = "A configurable set of panels that display various debug information about the current request/response."
@@ -2824,4 +2806,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.13,>=3.11"
-content-hash = "b1cd8efbceca388ef176799f0a94c24b43072b3414d47cde94c39f9a85697f5f"
+content-hash = "e924153cabebd3fcddd5d90e4a53bba2752e3856f67423865b0b18b516618968"
