@@ -328,7 +328,7 @@ class AcisHorizonDepartures(RemoteDepartures):
 class TimetableDepartures(Departures):
     per_page = 12
 
-    def get_row(self, stop_time, date):
+    def get_row(self, stop_time):
         trip = stop_time.trip
         destination = trip.destination
         if destination:
@@ -344,21 +344,17 @@ class TimetableDepartures(Departures):
                 destination = destination.town or destination.common_name
 
         if stop_time.arrival is not None:
-            arrival = stop_time.arrival_datetime(date)
+            arrival = stop_time.arrival_datetime(stop_time.date)
         else:
             arrival = None
-        time = arrival
 
-        if stop_time.departure is not None:
-            departure = stop_time.departure_datetime(date)
-            time = departure
-        else:
-            departure = None
+        departure = stop_time.departure_datetime(stop_time.date)
+        time = departure
 
         return {
-            "origin_departure_time": trip.start_datetime(date),
+            "origin_departure_time": trip.start_datetime(stop_time.date),
             "time": time,
-            "date": date,
+            "date": stop_time.date,
             "arrival": arrival,
             "departure": departure,
             "destination": destination or "",
@@ -391,10 +387,9 @@ class TimetableDepartures(Departures):
         yesterday_date = (self.now - one_day).date()
         yesterday_time = time_since_midnight + one_day
 
-        yesterday_times = list(
-            self.get_times(yesterday_date, yesterday_time)[: self.per_page]
+        all_today_times = self.get_times(yesterday_date, yesterday_time).union(
+            self.get_times(date, time_since_midnight), all=True
         )
-        all_today_times = self.get_times(date, time_since_midnight)
         today_times = list(all_today_times[: self.per_page])
 
         if self.trips:
@@ -408,9 +403,7 @@ class TimetableDepartures(Departures):
         ):
             today_times += all_today_times[self.per_page : self.per_page + 8]
 
-        times = [
-            self.get_row(stop_time, yesterday_date) for stop_time in yesterday_times
-        ] + [self.get_row(stop_time, date) for stop_time in today_times]
+        times = [self.get_row(stop_time) for stop_time in today_times]
 
         # add tomorrow's times until there are 10, or the next day until there more than 0
         i = 0
@@ -418,12 +411,9 @@ class TimetableDepartures(Departures):
             i += 1
             date += one_day
             times += [
-                self.get_row(stop_time, date)
+                self.get_row(stop_time)
                 for stop_time in self.get_times(date)[: 10 - len(times)]
             ]
-
-        if yesterday_times:
-            times.sort(key=get_departure_order)
 
         return times
 

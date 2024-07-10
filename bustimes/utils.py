@@ -1,7 +1,17 @@
 from datetime import date, datetime, timedelta
 from difflib import Differ
 
-from django.db.models import Case, OuterRef, Q, When
+from ciso8601 import parse_datetime
+from django.db.models import (
+    Case,
+    DateTimeField,
+    ExpressionWrapper,
+    F,
+    OuterRef,
+    Q,
+    Value,
+    When,
+)
 from django.utils import timezone
 from sql_util.utils import Exists
 
@@ -197,7 +207,7 @@ def get_calendars(when: date | datetime, calendar_ids=None):
 def get_stop_times(
     date: date, time: timedelta, stop, services_routes: dict, trip_ids=None
 ):
-    times = StopTime.objects.filter(pick_up=True)
+    times = StopTime.objects.filter(pick_up=True).annotate(date=Value(date))
 
     try:
         times = times.filter(stop__stop_area=stop)
@@ -220,6 +230,16 @@ def get_stop_times(
         else:
             trips = trips.filter(end__gte=time)
             times = times.filter(departure__gte=time)
+
+            # yesterday = parse_datetime(f"{date - timedelta(days=1)}T12:00:00") - timedelta(hours=12)
+            midnight = parse_datetime(f"{date}T12:00:00") - timedelta(hours=12)
+
+            times = times.annotate(
+                departure_time=ExpressionWrapper(
+                    int(midnight.timestamp()) + F("departure"),
+                    output_field=DateTimeField(),
+                )
+            ).order_by("departure_time")
     else:
         times = times.filter(departure__isnull=False)
 

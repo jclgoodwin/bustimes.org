@@ -269,7 +269,7 @@ class LiveDeparturesTest(TestCase):
             with vcr.use_cassette(
                 "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
             ):
-                with self.assertNumQueries(9):
+                with self.assertNumQueries(8):
                     response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')
 
@@ -356,7 +356,7 @@ class LiveDeparturesTest(TestCase):
                     with self.assertNumQueries(1):
                         call_command("tfwm_gtfs_rt")
 
-                    with self.assertNumQueries(9):
+                    with self.assertNumQueries(8):
                         response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, "04:41")
 
@@ -454,7 +454,7 @@ class LiveDeparturesTest(TestCase):
     def test_worcestershire(self, mocked_log_vehicle_journey):
         with time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"):
             with vcr.use_cassette("fixtures/vcr/worcester.yaml"):
-                with self.assertNumQueries(9):
+                with self.assertNumQueries(8):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
 
                 debug_response = self.client.get(
