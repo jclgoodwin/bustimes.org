@@ -313,7 +313,7 @@ def stop_times_json(request, atco_code):
     stop_times = departures.get_times(yesterday_date, yesterday_time)
 
     for stop_time in stop_times.select_related(
-        "trip__route__service", "trip__operator"
+        "trip__destination__locality", "trip__route__service", "trip__operator"
     )[:limit]:
         times.append(stop_time_json(stop_time, yesterday_date))
 
@@ -322,13 +322,13 @@ def stop_times_json(request, atco_code):
     if by_trip:
         stop_times = departures.get_times(when.date(), time_since_midnight, by_trip)
         for stop_time in stop_times.select_related(
-            "trip__route__service", "trip__operator"
+            "trip__destination__locality", "trip__route__service", "trip__operator"
         )[:limit]:
             times.append(stop_time_json(stop_time, when.date()))
 
     stop_times = departures.get_times(when.date(), time_since_midnight)
     for stop_time in stop_times.select_related(
-        "trip__route__service", "trip__operator"
+        "trip__destination__locality", "trip__route__service", "trip__operator"
     )[:limit]:
         times.append(stop_time_json(stop_time, when.date()))
 

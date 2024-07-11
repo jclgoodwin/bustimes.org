@@ -10,9 +10,9 @@ import requests
 import xmltodict
 from django.conf import settings
 from django.core.cache import cache
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 
-from busstops.models import StopPoint
 from bustimes.utils import get_stop_times
 from vehicles.models import Vehicle
 
@@ -330,18 +330,6 @@ class TimetableDepartures(Departures):
 
     def get_row(self, stop_time):
         trip = stop_time.trip
-        destination = trip.destination
-        if destination:
-            if destination.locality_id:
-                if (
-                    type(self.stop) is not StopPoint
-                    or destination.locality_id != self.stop.locality_id
-                ):
-                    destination = destination.locality
-                else:
-                    destination = destination.common_name
-            else:
-                destination = destination.town or destination.common_name
 
         if stop_time.arrival is not None:
             arrival = stop_time.arrival_datetime(stop_time.date)
@@ -357,26 +345,23 @@ class TimetableDepartures(Departures):
             "date": stop_time.date,
             "arrival": arrival,
             "departure": departure,
-            "destination": destination or "",
-            "route": trip.route,
-            "service": trip.route.service,
+            "destination": stop_time.destination,
             "link": trip.get_absolute_url(),
             "stop_time": stop_time,
         }
 
     def get_times(self, date, time=None, trips=None):
-        times = get_stop_times(date, time, self.stop, self.routes, trips)
-        times = times.select_related(
-            "trip__route__service", "trip__destination__locality"
+        return (
+            get_stop_times(date, time, self.stop, self.routes, trips)
+            .select_related("trip")
+            .annotate(
+                destination=Coalesce(
+                    "trip__destination__locality__name",
+                    "trip__destination__common_name",
+                )
+            )
+            .order_by("departure")
         )
-        times = times.defer(
-            "trip__route__service__geometry",
-            "trip__route__service__search_vector",
-            "trip__destination__locality__latlong",
-            "trip__destination__locality__search_vector",
-        )
-
-        return times.order_by("departure")
 
     def get_departures(self):
         time_since_midnight = datetime.timedelta(
@@ -414,6 +399,14 @@ class TimetableDepartures(Departures):
                 self.get_row(stop_time)
                 for stop_time in self.get_times(date)[: 10 - len(times)]
             ]
+
+        routes = {
+            route.id: route for routes in self.routes.values() for route in routes
+        }
+        services = {s.id: s for s in self.services}
+        for t in times:
+            t["route"] = routes[t["stop_time"].trip.route_id]
+            t["service"] = services[t["route"].service_id]
 
         return times
 
