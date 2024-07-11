@@ -205,7 +205,7 @@ def get_calendars(when: date | datetime, calendar_ids=None):
 
 
 def get_stop_times(
-    date: date, time: timedelta, stop, services_routes: dict, trip_ids=None
+    date: date, time: timedelta | None, stop, services_routes: dict, trip_ids=None
 ):
     times = StopTime.objects.filter(pick_up=True).annotate(date=Value(date))
 
@@ -214,23 +214,23 @@ def get_stop_times(
     except ValueError:
         times = times.filter(stop=stop)
 
-    routes = []
-    for service_routes in services_routes.values():
-        routes += get_routes(service_routes, date)
+    if trip_ids:
+        trips = Trip.objects.filter(id__in=trip_ids, start__lt=time)
+        times = times.filter(departure__lt=time)
+    else:
+        routes = []
+        for service_routes in services_routes.values():
+            routes += get_routes(service_routes, date)
 
-    if not routes:
-        return times.none()
+        if not routes:
+            return times.none()
 
-    trips = Trip.objects.filter(
-        route__in=routes,
-        calendar__in=get_calendars(date),
-    )
+        trips = Trip.objects.filter(
+            route__in=routes,
+            calendar__in=get_calendars(date),
+        )
 
-    if time is not None:
-        if trip_ids:
-            trips = trips.filter(id__in=trip_ids, start__lt=time)
-            times = times.filter(departure__lt=time)
-        else:
+        if time is not None:
             trips = trips.filter(end__gte=time)
             times = times.filter(departure__gte=time)
 
@@ -243,8 +243,8 @@ def get_stop_times(
                     output_field=DateTimeField(),
                 )
             ).order_by("departure_time")
-    else:
-        times = times.filter(departure__isnull=False)
+        else:
+            times = times.filter(departure__isnull=False)
 
     times = times.filter(trip__in=trips)
 
