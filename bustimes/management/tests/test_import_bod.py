@@ -238,28 +238,28 @@ Data Service (BODS)</a>, 1 April 2020.""",
         #     "departures.live.NorfolkDepartures.get_departures", return_value=[]
         # ) as mocked:
 
-        with self.assertNumQueries(1):
-            response = self.client.get("/stops/2900W0321/departures?date=2020-05-02")
+        with self.assertNumQueries(7):
+            response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(1, len(response.context["departures"]))
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
         self.assertContains(response, "Nearby stops")  # other stop in StopArea
         self.assertContains(response, "<small>54</small>")
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
         self.assertContains(response, "<h3>Monday 4 May</h3>")  # next day
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(7):
             response = self.client.get("/stops/2900w0321/departures?date=poop")
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             response = self.client.get("/stations/2900A")
         self.assertEqual(str(response.context["when"]), "2020-05-01 01:00:00+01:00")
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(7):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
 
