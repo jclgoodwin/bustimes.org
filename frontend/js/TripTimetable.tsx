@@ -192,7 +192,7 @@ const TripTimetable = React.memo(function TripTimetable({
       earlierStops = true;
     }
   }
-  const last = times.length - 1;
+  const indexOfLastRow = times.length - 1;
 
   return (
     <React.Fragment>
@@ -220,8 +220,8 @@ const TripTimetable = React.memo(function TripTimetable({
               onMouseEnter={onMouseEnter}
               vehicle={vehicle}
               highlightedStop={highlightedStop}
-              first={i === 0}
-              last={i === last}
+              first={i === 0 && !earlierStops}
+              last={i === indexOfLastRow}
             />
           ))}
         </tbody>
