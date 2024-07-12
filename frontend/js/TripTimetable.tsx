@@ -182,7 +182,6 @@ const TripTimetable = React.memo(function TripTimetable({
         item.actual_departure_time || item.expected_arrival_time || item.expected_departure_time,
     );
 
-  const last = trip.times.length - 1;
   let earlierStops = false;
 
   let times = trip.times;
@@ -193,6 +192,7 @@ const TripTimetable = React.memo(function TripTimetable({
       earlierStops = true;
     }
   }
+  const last = times.length - 1;
 
   return (
     <React.Fragment>
