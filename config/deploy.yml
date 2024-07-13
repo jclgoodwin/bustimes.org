@@ -54,5 +54,7 @@ healthcheck:
 traefik:
   args:
     accesslog: true
+    accesslog.fields.headers.names.user-agent: keep
+    accesslog.fields.headers.names.referer: keep
     entrypoints.http.address: ":80" # for some reason, if trustedIPs is set then this must be set too
     entrypoints.http.forwardedHeaders.trustedIPs: 10.131.0.0/16
