@@ -1138,7 +1138,9 @@ class Command(BaseCommand):
                 service.service_code = service_code
 
             if description and (
-                not service.description or "Origin - Destination" not in description
+                not service.description
+                or "Origin - " not in description
+                and " - Destination" not in description
             ):
                 service.description = description
 
