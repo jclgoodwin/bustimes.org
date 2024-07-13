@@ -6,10 +6,10 @@ image: jclgoodwin/bustimes-org
 
 # Deploy to these servers.
 servers:
-  - 10.131.29.248
-  - 10.131.113.91
-  - 10.131.0.24
-  - 10.131.240.96
+  - 10.131.29.248  # everglory
+  - 10.131.0.24  # eveready
+  - 10.131.33.248  # everest
+  - 10.131.240.96  # everdainty
 
 builder:
   multiarch: false
@@ -50,8 +50,9 @@ healthcheck:
   path: /version
   port: 8000
 
+# use `kamal traefik reboot --hosts=HOST` to deploy changes to this - best not to do all hosts at once
 traefik:
   args:
     accesslog: true
-    accesslog.fields.headers.names.user-agent: keep
-    accesslog.fields.headers.names.Cf-Connecting-Ip: keep
+    entrypoints.http.address: ":80" # for some reason, if trustedIPs is set then this must be set too
+    entrypoints.http.forwardedHeaders.trustedIPs: 10.131.0.0/16
