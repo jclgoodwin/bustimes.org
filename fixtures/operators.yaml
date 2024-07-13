@@ -136,18 +136,18 @@ AOLC:
     name: A1 Coaches (Liverpool)
 GLCS:
     name: Globe Holidays (Barnsley)
-YCST:
-    name: Transdev York
+YACT:
+    name: https://www.transdevbus.co.uk/coastliner/  # (no separate York and Country URL yet)
 TPEN:
-    url: https://www.transdevbus.co.uk/teampennine/
+    url: https://www.transdevbus.co.uk/team-pennine/
 HRGT:
-    url: https://www.transdevbus.co.uk/harrogate/
+    url: https://www.transdevbus.co.uk/the-harrogate-bus-company/
 KDTR:
-    url: https://www.transdevbus.co.uk/keighley/
+    url: https://www.transdevbus.co.uk/the-keighley-bus-company/
 LNUD:
-    url: https://www.transdevbus.co.uk/blackburn/
+    url: https://www.transdevbus.co.uk/the-blackburn-bus-company/
 BPTR:
-    url: https://www.transdevbus.co.uk/burnley/
+    url: https://www.transdevbus.co.uk/the-burnley-bus-company/
 FECS:
     name: First Eastern Counties
     twitter: |
