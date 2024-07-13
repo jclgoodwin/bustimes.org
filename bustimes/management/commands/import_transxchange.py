@@ -872,11 +872,9 @@ class Command(BaseCommand):
 
     def get_description(self, txc_service):
         description = txc_service.description
-        if description:
-            if self.source.name.startswith("Stagecoach"):
-                description = None
-            elif description.isupper():
-                description = titlecase(description, callback=initialisms)
+
+        if description and description.isupper():
+            description = titlecase(description, callback=initialisms)
 
         origin = txc_service.origin
         destination = txc_service.destination
@@ -1139,7 +1137,9 @@ class Command(BaseCommand):
             if service_code:
                 service.service_code = service_code
 
-            if description:
+            if description and (
+                not service.description or "Origin - Destination" not in description
+            ):
                 service.description = description
 
             # London bus red
@@ -1158,7 +1158,6 @@ class Command(BaseCommand):
                 logger.info(txc_service.marketing_name)
                 if txc_service.marketing_name in (
                     "CornwallbyKernow",
-                    "Cardiff Bus",
                     line.line_name,
                 ):
                     pass
@@ -1177,6 +1176,9 @@ class Command(BaseCommand):
             ):
                 # e.g. (First Eastern Counties) 'Yellow Line'
                 line_brand = service.colour.name
+            if any(line_brand == operator.name for operator in operators.values()):
+                line_brand = ""
+
             if line_brand:
                 service.line_brand = line_brand
             elif not existing_current_service:
