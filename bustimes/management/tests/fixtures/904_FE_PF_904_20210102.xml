@@ -23130,7 +23130,7 @@
 <StopRequirements>
 <NoNewStopsRequired />
 </StopRequirements>
-<Description>CHANGE OF TIMETABLE DUE TO COVID-19</Description>
+<!-- <Description>CHANGE OF TIMETABLE DUE TO COVID-19</Description> -->
 <StandardService>
 <Origin>Huntingdon</Origin>
 <Destination>Peterborough</Destination>

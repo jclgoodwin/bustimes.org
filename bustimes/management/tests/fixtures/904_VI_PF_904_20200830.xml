@@ -18124,7 +18124,7 @@
 <StopRequirements>
 <NoNewStopsRequired />
 </StopRequirements>
-<Description>EVERY 60 MINS MONDAY TO SATURDAY</Description>
+<!-- <Description>EVERY 60 MINS MONDAY TO SATURDAY</Description> -->
 <StandardService>
 <Origin>Huntingdon</Origin>
 <Destination>Peterborough</Destination>
