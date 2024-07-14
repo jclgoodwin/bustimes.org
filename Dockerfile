@@ -29,7 +29,7 @@ RUN $VIRTUAL_ENV/bin/pip install poetry==1.8.3
 WORKDIR /app/
 
 COPY poetry.lock pyproject.toml /app/
-RUN poetry install --only main --no-root
+RUN poetry install --only main
 
 COPY --from=0 /app/node_modules/htmx.org/dist /app/node_modules/htmx.org/dist
 COPY --from=0 /app/node_modules/reqwest/reqwest.min.js /app/node_modules/reqwest/
