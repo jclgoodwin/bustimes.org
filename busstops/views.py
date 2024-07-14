@@ -168,11 +168,6 @@ def error(request):
     return response
 
 
-def ads_txt(request):
-    "redirect to AdFirst Media–hosted ads.txt"
-    return redirect("https://cdn.adfirst.media/adstxt/bustimes-ads.txt")
-
-
 @cache_control(max_age=3600)
 def robots_txt(request):
     "robots.txt"
@@ -199,10 +194,6 @@ Disallow: /
 """
 
     return HttpResponse(content, content_type="text/plain")
-
-
-def change_password(request):
-    return redirect("/accounts/password_reset/")
 
 
 def contact(request):

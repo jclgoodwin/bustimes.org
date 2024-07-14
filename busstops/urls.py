@@ -2,7 +2,7 @@ from django.apps import apps
 from django.contrib.sitemaps.views import index, sitemap
 from django.urls import include, path, re_path
 from django.views.decorators.cache import cache_control
-from django.views.generic.base import TemplateView
+from django.views.generic.base import RedirectView, TemplateView
 
 from buses.utils import cache_page
 from bustimes.urls import urlpatterns as bustimes_views
@@ -36,7 +36,10 @@ urlpatterns = [
     path("status", views.status),
     path("timetable-source-stats.json", views.timetable_source_stats),
     path("stats.json", views.stats),
-    path("ads.txt", views.ads_txt),
+    path(
+        "ads.txt",
+        RedirectView.as_view(url="https://cdn.adfirst.media/adstxt/bustimes-ads.txt"),
+    ),
     path("robots.txt", views.robots_txt),
     path("qr/<slug>", views.qr),
     path("stops.json", views.stops_json),
@@ -107,7 +110,10 @@ urlpatterns = [
     ),
     path("search", views.search, name="search"),
     path("journey", views.journey),
-    path(".well-known/change-password", views.change_password),
+    path(
+        ".well-known/change-password",
+        RedirectView.as_view(url="/accounts/password_change/"),
+    ),
     path("fares/", include(fares_urls)),
 ]
 
