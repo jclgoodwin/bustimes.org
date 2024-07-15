@@ -386,7 +386,7 @@ class Command(BaseCommand):
                 namelist = archive.namelist()
 
                 if "NCSD_TXC_2_4/" in namelist:
-                    filenames = [
+                    namelist = [
                         filename
                         for filename in namelist
                         if filename.startswith("NCSD_TXC_2_4/")
