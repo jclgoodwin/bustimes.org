@@ -124,7 +124,7 @@ def not_found(request, exception):
             try:
                 return redirect(
                     StopPoint.objects.get(
-                        naptan_code=request.resolver_match.kwargs["pk"]
+                        naptan_code__iexact=request.resolver_match.kwargs["pk"]
                     )
                 )
             except StopPoint.DoesNotExist:

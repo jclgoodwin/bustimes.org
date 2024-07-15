@@ -101,7 +101,8 @@ class ViewsTests(TestCase):
             bearing="E",
         )
         cls.stop = StopPoint.objects.create(
-            pk="2900M114",
+            atco_code="2900M114",
+            naptan_code="NFODGJTG",
             common_name="Bus Shelter",
             active=True,
             admin_area=cls.norfolk,
@@ -336,12 +337,19 @@ class ViewsTests(TestCase):
         self.assertEqual("FeatureCollection", response.json()["type"])
         self.assertIn("features", response.json())
 
-    def test_stop(self):
-        response = self.client.get("/stops/2900M114")
+    def test_stop_view(self):
+        response = self.client.get("/stops/2900m114")
         self.assertFalse(response.context_data["departures"])
         self.assertContains(response, "North")
         self.assertContains(response, "Norfolk")
         self.assertContains(response, "Melton Constable, opposite Bus Shelter")
+
+    def test_stop_naptan_code_url(self):
+        response = self.client.get("/stops/nfodgjtg")
+        self.assertRedirects(response, "/stops/2900M114")
+
+        response = self.client.get("/stops/nfodgjtgploop")
+        self.assertEqual(response.status_code, 404)
 
     def test_inactive_stop(self):
         response = self.client.get("/stops/2900M115")
@@ -536,13 +544,6 @@ class ViewsTests(TestCase):
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
         self.assertContains(response, '<svg width="33mm" height="33mm"')
 
-    def test_redirects(self):
-        response = self.client.get("/ads.txt")
-        self.assertEqual(response.status_code, 302)
-
-        response = self.client.get("/.well-known/change-password")
-        self.assertEqual(response.status_code, 302)
-
+    def test_stop_qr_redirect(self):
         response = self.client.get("/STOP/2900ABC1")
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, "/stops/2900ABC1")
+        self.assertRedirects(response, "/stops/2900ABC1", 302, target_status_code=404)

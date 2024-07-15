@@ -421,8 +421,7 @@ background:linear-gradient(270deg,red 50%,#00f 50%)">
 
         with self.assertNumQueries(0):
             response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, f"/accounts/login/?next={url}")
+        self.assertRedirects(response, f"/accounts/login/?next={url}", 302)
 
         with self.assertNumQueries(0):
             response = self.client.get(response.url)
