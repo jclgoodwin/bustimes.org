@@ -647,7 +647,8 @@ class StopPointDetailView(DetailView):
 
         services = (
             self.object.service_set.filter(
-                current=True, route__trip__stoptime__stop=self.object
+                Q(route__trip=None) | Q(route__trip__stoptime__stop=self.object),
+                current=True,
             )
             .annotate(
                 line_names=ArrayAgg(
