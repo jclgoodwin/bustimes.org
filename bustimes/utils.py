@@ -400,8 +400,10 @@ def get_trip(
 
     trips = trips.filter(condition).annotate(score=score).order_by("-score")
 
-    if len(trips) > 1 and trips[0].score == trips[1].score:
-        trips = trips.filter(calendar__in=get_calendars(date))
-
     if trips:
+        if len(trips) > 1 and trips[0].score == trips[1].score:
+            filtered_trips = trips.filter(calendar__in=get_calendars(date))
+            if filtered_trips:
+                trips = filtered_trips
+
         return trips[0]
