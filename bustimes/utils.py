@@ -223,7 +223,7 @@ def get_stop_times(
             routes += get_routes(service_routes, date)
 
         if not routes:
-            return times.none()
+            times = times.none()
 
         trips = Trip.objects.filter(
             route__in=routes,
