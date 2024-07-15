@@ -170,15 +170,16 @@ Data Service (BODS)</a>, 1 April 2020.""",
 
         trip = route.trip_set.first()
 
-        # legacy api still used by busmiles?
-        response = self.client.get(f"/trips/{trip.id}.json")
-        self.assertEqual(27, len(response.json()["times"]))
+        response = self.client.get(f"/api/trips/{trip.id}.json")
+        json = response.json()
+        self.assertEqual(27, len(json["times"]))
 
         response = self.client.get(trip.get_absolute_url())
 
         self.assertContains(response, "Clenchwarton Post Box")
         self.assertContains(response, "09:33")
 
+        # stop times json
         expected_json = {
             "times": [
                 {

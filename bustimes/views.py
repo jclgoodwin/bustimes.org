@@ -434,29 +434,6 @@ def stop_debug(request, atco_code: str):
     )
 
 
-@require_GET
-def trip_json(request, id: int):
-    trip = get_object_or_404(Trip, id=id)
-    times = []
-    for stop_time in trip.stoptime_set.select_related("stop__locality"):
-        stop = {}
-        if stop_time.stop:
-            stop["atco_code"] = stop_time.stop_id
-            stop["name"] = stop_time.stop.get_qualified_name()
-        else:
-            stop["name"] = stop_time.stop_code
-
-        times.append(
-            {
-                "stop": stop,
-                "aimed_arrival_time": stop_time.arrival_time(),
-                "aimed_departure_time": stop_time.departure_time(),
-            }
-        )
-
-    return JsonResponse({"times": times})
-
-
 class TripDetailView(DetailView):
     model = Trip
     queryset = model.objects.select_related(
