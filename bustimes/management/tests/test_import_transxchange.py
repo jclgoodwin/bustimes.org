@@ -131,8 +131,8 @@ class ImportTransXChangeTest(TestCase):
             call_command("import_transxchange", zipfile_path)
 
     @staticmethod
-    def write_file_to_zipfile(open_zipfile, filename):
-        open_zipfile.write(FIXTURES_DIR / filename, filename)
+    def write_file_to_zipfile(open_zipfile, filename, arcname=None):
+        open_zipfile.write(FIXTURES_DIR / filename, arcname=arcname or filename)
 
     @time_machine.travel("3 October 2016")
     def test_east_anglia(self):
@@ -1145,8 +1145,13 @@ class ImportTransXChangeTest(TestCase):
             with zipfile.ZipFile(zipfile_path, "a") as open_zipfile:
                 write_to_zipfile = partial(self.write_file_to_zipfile, open_zipfile)
                 path = Path("NCSD_TXC")
-                write_to_zipfile(path / "Megabus_Megabus14032016 163144_MEGA_M11A.xml")
-                write_to_zipfile(path / "Megabus_Megabus14032016 163144_MEGA_M12.xml")
+                path_2 = Path("NCSD_TXC_2_4")
+                filename_1 = "Megabus_Megabus14032016 163144_MEGA_M11A.xml"
+                filename_2 = "Megabus_Megabus14032016 163144_MEGA_M12.xml"
+                write_to_zipfile(path / filename_1)
+                write_to_zipfile(path / filename_2)
+                write_to_zipfile(path / filename_1, path_2 / filename_1)
+                write_to_zipfile(path / filename_2, path_2 / filename_2)
                 write_to_zipfile("IncludedServices.csv")
 
             with self.assertLogs(
