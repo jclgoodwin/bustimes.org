@@ -7,6 +7,10 @@
 # Where 'username' and 'password' are your username and password for the
 # Traveline National Dataset FTP server
 
+if [[ ! -f manage.py ]] ; then
+    echo './manage.py not found, exiting'
+    exit 1
+fi
 
 # create lockfile
 # I think it's important that this goes before the `trap`
@@ -42,10 +46,12 @@ tfl_new=$(ls -l L.zip)
 cd ../..
 
 if [[ $ncsd_old != $ncsd_new ]]; then
+    echo 'NCSD.zip'
     ./manage.py import_transxchange data/TNDS/NCSD.zip
 fi
 
 if [[ $tfl_old != $tfl_new ]]; then
+    echo 'L.zip'
     ./manage.py import_transxchange data/TNDS/L.zip
 fi
 
