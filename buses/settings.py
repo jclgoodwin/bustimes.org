@@ -65,12 +65,10 @@ INSTALLED_APPS = [
     "huey.contrib.djhuey",
     "corsheaders",
     "turnstile",
-    "csp",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "csp.middleware.CSPMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "busstops.middleware.GZipIfNotStreamingMiddleware",
     "busstops.middleware.WhiteNoiseWithFallbackMiddleware",
@@ -95,24 +93,6 @@ SECURE_REDIRECT_EXEMPT = [r"^version$"]
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_URLS_REGEX = r"(^\/(api\/|(vehicles|stops)\.json)|.*\/journeys\/.*)"
-
-CSP_REPORT_ONLY = True
-CSP_REPORT_URI = [
-    "https://o55224.ingest.sentry.io/api/118262/security/?sentry_key=9faa43b429904db0ab23b3b66c37eca0"
-]
-# CSP_REPORT_TO = ["csp-endpoint"]
-CSP_IMG_SRC = ["'self'", "https:", "data:"]
-CSP_SCRIPT_SRC = [
-    "'self'",
-    "'unsafe-inline'",
-    "'unsafe-eval'",
-    "https:",
-]
-CSP_CONNECT_SRC = ["'self'", "https:", "ws:"]
-CSP_STYLE_SRC = ["'self'", "https:", "'unsafe-inline'"]
-CSP_FRAME_SRC = ["https:"]
-CSP_WORKER_SRC = ["blob:"]
-
 
 if DEBUG and "runserver" in sys.argv:
     INSTALLED_APPS += [
