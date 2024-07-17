@@ -2,6 +2,10 @@
 
 {% block title %}{{ object }} – {{ object.name }} – bustimes.org{% endblock %}
 
+{% block head %}
+<link rel="alternate" type="application/rss+xml" href="{{ object.get_absolute_url }}/rss" title="RSS feed for {{ object }} – {{ object.name }}" />
+{% endblock %}
+
 {% block content %}
 
 <h1>{{ object }}</h1>
