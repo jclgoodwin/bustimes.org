@@ -1,4 +1,5 @@
 import io
+import logging
 import xml.etree.cElementTree as ET
 import zipfile
 
@@ -7,9 +8,11 @@ from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
 
-from busstops.models import DataSource, Service, StopPoint
+from busstops.models import DataSource, Operator, Service, StopPoint
 
 from ...models import Consequence, Link, Situation, ValidityPeriod
+
+logger = logging.getLogger(__name__)
 
 
 def get_period(element):
@@ -32,7 +35,7 @@ def handle_item(item, source):
             source=source, situation_number=situation_number
         )
         if situation.data == xml and situation.current:
-            return situation.id
+            return situation.id  # hasn't changed
         created = False
         if not situation.current:
             situation.current = True
@@ -110,12 +113,26 @@ def handle_item(item, source):
             "Affects/Networks/AffectedNetwork/AffectedLine"
         ):
             line_name = line.findtext("PublishedLineName") or line.findtext("LineRef")
-            for operator in line.findall("AffectedOperator"):
-                operator_ref = operator.find("OperatorRef").text
-                for service in services.filter(
+            for operator_ref in line.findall("AffectedOperator/OperatorRef"):
+                operator_ref = operator_ref.text
+                matching_services = services.filter(
                     line_name__iexact=line_name, operator=operator_ref
-                ):
-                    consequence.services.add(service)
+                )
+                if matching_services:
+                    consequence.services.add(*matching_services)
+                else:
+                    logger.info(f"{operator_ref=} {line_name=}")
+
+        for operator in consequence_element.findall(
+            "Affects/Operators/AffectedOperator"
+        ):
+            operator_ref = operator.findtext("OperatorRef")
+            try:
+                operator = Operator.objects.get(noc=operator_ref)
+            except Operator.DoesNotExist as e:
+                logger.exception(e)
+            else:
+                consequence.operators.add(operator)
 
     return situation.id
 
