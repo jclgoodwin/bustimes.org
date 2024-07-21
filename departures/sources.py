@@ -167,10 +167,14 @@ class TflDepartures(RemoteDepartures):
         return {"User-Agent": "bustimes.org"}
 
     def get_row(self, item):
-        vehicle = item["vehicleId"]
-        link = f"/vehicles/tfl/{vehicle}"
-        if vehicle[:1].isdigit() or vehicle[:3] == "TMP":
+        if item["modeName"] == "tube":
             vehicle = None
+            link = None
+        else:
+            vehicle = item["vehicleId"]
+            link = f"/vehicles/tfl/{vehicle}"
+            if vehicle[:1].isdigit() or vehicle[:3] == "TMP":
+                vehicle = None
         return {
             "live": parse_datetime(item.get("expectedArrival")),
             "service": self.get_service(item.get("lineName")),

@@ -522,9 +522,6 @@ def tfl_vehicle(request, reg: str):
     vehicles = Vehicle.objects.select_related("latest_journey")
     vehicle = vehicles.filter(vehiclecode__code=f"TFLO:{reg}").first()
 
-    if not vehicle:
-        raise Http404
-
     response = requests.get(
         f"https://api.tfl.gov.uk/Vehicle/{reg}/Arrivals", params=settings.TFL, timeout=8
     )
@@ -534,9 +531,11 @@ def tfl_vehicle(request, reg: str):
         data = None
 
     if not data:
-        if vehicle.latest_journey and vehicle.latest_journey.trip_id:
-            return redirect(vehicle.latest_journey.trip)
-        return redirect(vehicle)
+        if vehicle:
+            if vehicle.latest_journey and vehicle.latest_journey.trip_id:
+                return redirect(vehicle.latest_journey.trip)
+            return redirect(vehicle)
+        raise Http404
 
     atco_codes = []
     for item in data:
