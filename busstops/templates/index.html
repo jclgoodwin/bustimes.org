@@ -17,12 +17,14 @@
 
 <div class="panes">
     <div class="pane">
-        <h2>Search</h2>
-
-        <p>Search for places, operators or routes</p>
-
         <form method="get" action="/search" class="search">
-            <p><input name="q" type="search" required> <input type="submit" value="Search"></p>
+            <h2><label for="q">Search</label></h2>
+
+            <p><label for="q">Search for places, operators or routes</label></p>
+            <p>
+                <input id="q" name="q" type="search" required>
+                <input type="submit" value="Search">
+            </p>
         </form>
     </div>
 

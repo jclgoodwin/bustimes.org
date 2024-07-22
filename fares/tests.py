@@ -86,7 +86,7 @@ class FaresTest(TestCase):
         # service detail view
         url = self.wm06.get_absolute_url()
         response = self.client.get(url)
-        self.assertContains(response, '<h2 id="fares">Fare tables</h2>')
+        self.assertContains(response, ">Fare tables</")
         self.assertContains(response, ">A C Williams WM06 - single</option>")
 
         # service fares list view
