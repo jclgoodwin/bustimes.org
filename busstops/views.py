@@ -966,19 +966,21 @@ class ServiceDetailView(DetailView):
             alternative = None
 
             services = services.only("slug", "current").filter(current=True)
+            operators = service.operator.all()
 
             if service.line_name:
-                alternative = services.filter(
-                    line_name__iexact=service.line_name,
-                    operator__in=service.operator.all(),
-                    stops__service=service,
-                ).first()
+                if operators:
+                    alternative = services.filter(
+                        line_name__iexact=service.line_name,
+                        operator__in=operators,
+                        stops__service=service,
+                    ).first()
                 if not alternative:
                     alternative = services.filter(
                         line_name__iexact=service.line_name,
                         stops__service=service,
                     ).first()
-                if not alternative:
+                if not alternative and operators:
                     alternative = services.filter(
                         line_name__iexact=service.line_name,
                         operator__in=service.operator.all(),
@@ -986,6 +988,9 @@ class ServiceDetailView(DetailView):
 
             if not alternative and service.description:
                 alternative = services.filter(description=service.description).first()
+
+            if not alternative and operators:
+                alternative = operators[0]
 
             if alternative:
                 return alternative
@@ -997,9 +1002,10 @@ class ServiceDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        assert self.object.current
-
-        if self.object.slug != self.kwargs["slug"]:
+        if (
+            type(self.object) is not self.model
+            or self.object.slug != self.kwargs["slug"]
+        ):
             return {"redirect_to": self.object}
 
         operators = self.object.operator.all()
@@ -1228,7 +1234,10 @@ class ServiceDetailView(DetailView):
 
     def render_to_response(self, context):
         if "redirect_to" in context:
-            return redirect(context["redirect_to"], permanent=True)
+            return redirect(
+                context["redirect_to"],
+                permanent=(type(context["redirect_to"]) is self.model),
+            )
 
         if not settings.TEST:
             template = get_template("busstops/service_detail.html")
