@@ -272,7 +272,6 @@ if "SENTRY_DSN" in os.environ and not TEST:
         integrations=[DjangoIntegration(), RedisIntegration(), HueyIntegration()],
         ignore_errors=[KeyboardInterrupt, RuntimeError],
         release=os.environ.get("COMMIT_HASH") or os.environ.get("KAMAL_CONTAINER_NAME"),
-        traces_sampler=traces_sampler,
     )
     ignore_logger("django.security.DisallowedHost")
 
