@@ -179,7 +179,9 @@ const TripTimetable = React.memo(function TripTimetable({
     vehicle ||
     trip.times?.some(
       (item: TripTime) =>
-        item.actual_departure_time || item.expected_arrival_time || item.expected_departure_time,
+        item.actual_departure_time ||
+        item.expected_arrival_time ||
+        item.expected_departure_time,
     );
 
   let earlierStops = false;
@@ -197,11 +199,14 @@ const TripTimetable = React.memo(function TripTimetable({
   return (
     <React.Fragment>
       {earlierStops || showEarlierStops ? (
-          <label><input
+        <label>
+          <input
             type="checkbox"
             checked={showEarlierStops}
             onChange={() => setShowEarlierStops(!showEarlierStops)}
-          /> Show previous stops</label>
+          />
+          {" Show previous stops"}
+        </label>
       ) : null}
       <table>
         <thead>

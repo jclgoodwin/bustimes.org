@@ -116,7 +116,7 @@ export default function ServiceMapMap({
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
-    return (
+  return (
     <BusTimesMap
       initialViewState={{
         bounds: window.EXTENT,
@@ -166,7 +166,6 @@ export default function ServiceMapMap({
       )}
 
       <Stops stops={stops} />
-
     </BusTimesMap>
   );
 }

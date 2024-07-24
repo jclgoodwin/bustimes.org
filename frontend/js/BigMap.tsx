@@ -727,7 +727,6 @@ export default function BigMap(props: {
           onMouseLeave={onMouseLeave}
           cursor={cursor}
           onLoad={handleMapLoad}
-          images={["stop-marker"]}
           interactiveLayerIds={["stops", "vehicles"]}
         >
           {props.mode === MapMode.Trip && trip ? (

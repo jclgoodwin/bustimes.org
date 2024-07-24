@@ -17,5 +17,5 @@ export const useDarkMode = () => {
     };
   }, [query]);
 
-  return darkMode
+  return darkMode;
 };

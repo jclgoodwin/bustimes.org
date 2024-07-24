@@ -5,11 +5,10 @@ import { createRoot } from "react-dom/client";
 import Map, {
   NavigationControl,
   GeolocateControl,
-  MapEvent,
   AttributionControl,
   MapProps,
   useControl,
-  useMap
+  useMap,
 } from "react-map-gl/maplibre";
 
 import stopMarker from "data-url:../stop-marker.png";
@@ -25,7 +24,7 @@ const imagesByName: { [imageName: string]: string } = {
 
 const mapStyles = [
   ["alidade_smooth", "Default"],
-  ["alidade_smooth_dark", "Dark"],
+  ["alidade_smooth_dark", "Dark (experimental)"],
   ["osm_bright", "Bright"],
   ["outdoors", "Outdoors"],
   // ["alidade_satellite", "Satellite"],
@@ -87,11 +86,11 @@ const StyleSwitcherControl = memo(function StyleSwitcherControl(
 });
 
 function MapChild() {
-  const {current: map} = useMap();
+  const { current: map } = useMap();
 
   useEffect(() => {
     if (map) {
-      const onStyleImageMissing = function(e: MapStyleImageMissingEvent) {
+      const onStyleImageMissing = function (e: MapStyleImageMissingEvent) {
         if (e.id in imagesByName) {
           const image = new Image();
           image.src = imagesByName[e.id];
@@ -101,7 +100,7 @@ function MapChild() {
             });
           };
         }
-      }
+      };
 
       map.on("styleimagemissing", onStyleImageMissing);
 
@@ -128,7 +127,6 @@ export default function BusTimesMap(
     pitchWithRotate?: boolean;
   },
 ) {
-
   const [mapStyle, setMapStyle] = React.useState(() => {
     try {
       const style = localStorage.getItem("map-style");
@@ -140,7 +138,6 @@ export default function BusTimesMap(
     }
     return "alidade_smooth";
   });
-
 
   const handleMapStyleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,6 +151,10 @@ export default function BusTimesMap(
     },
     [],
   );
+
+  useEffect(() => {
+    document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
+  });
 
   return (
     <Map

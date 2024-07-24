@@ -3,11 +3,9 @@
   --marker-arrow-color: #000;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --marker-border-color: #000;
-    --marker-arrow-color: #fff;
-  }
+.dark-mode {
+  --marker-border-color: #000;
+  --marker-arrow-color: #fff;
 }
 
 .maplibregl-marker {
@@ -31,32 +29,18 @@
   display: block; /* cos svg is not block-level by default */
 }
 
-/*
-.vehicle-marker.right {
-  border-left-color: var(--marker-border-color);
-  border-right-color: var(--marker-arrow-color);
-}
-*/
-
 .vehicle-marker.white-text {
   color: #fff;
 }
 
 .maplibregl-marker:hover .vehicle-marker,
 .vehicle-marker.selected {
-  outline: 1px solid #000;
+  outline: 1px solid var(--marker-arrow-color); /* inverse of --marker-border-color */
 }
 
 .maplibregl-user-location-dot,
 .maplibregl-user-location-accuracy-circle {
   pointer-events: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  .maplibregl-marker:hover .vehicle-marker,
-  .vehicle-marker.selected {
-    border-color: #fff;
-  }
 }
 
 .arrow {
@@ -91,32 +75,6 @@ body .maplibregl-popup-content {
   display: block;
 }
 
-/*
-.stop {
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-}
-
-.stop-arrow,
-.rail {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid var(--white);
-  border-radius: 0 8px 8px;
-  height: 9px;
-  width: 9px;
-}
-
-.stop:hover .stop-arrow {
-  background: rgba(0, 0, 0, 0.9);
-}
-
-.no-direction .stop-arrow,
-.rail {
-  border-radius: 8px;
-}
-*/
-
 a.link-with-smalls {
   text-decoration: none;
 }
@@ -134,10 +92,12 @@ a.link-with-smalls:hover .description {
 
 body .maplibregl-map {
   font-family: inherit;
+  color: #222;
 }
 
 body .maplibregl-popup-content {
   background: var(--background-color);
+  color: var(--text-color);
   line-height: 1.5;
   padding: 10px;
 }
@@ -217,6 +177,15 @@ body .maplibregl-popup-close-button {
   text-indent: 100%;
   white-space: nowrap;
   list-style: none;
+}
+
+.dark-mode .map-style-switcher {
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+.dark-mode .map-style-switcher summary {
+  filter: invert(100%);
 }
 
 .map-style-switcher summary:hover {

@@ -19,23 +19,26 @@
     --summary-marker-color: var(--border-color);
 
     // supported-color-schemes: dark light;
-    color-scheme: dark light;
+    color-scheme: light;
+}
 
-    @media (prefers-color-scheme: dark) {
-        --brand-color: #2a2a2a;
-        --brand-color-darker: #333;
-        --brand-color-darker-darker: #444;
+.dark-mode {
+    --brand-color: #2a2a2a;
+    --brand-color-darker: #333;
+    --brand-color-darker-darker: #444;
 
-        --border-color-darker: #999;
+    --border-color: #333;
+    --border-color-darker: #999;
 
-        --background-color: #222;
-        --text-color: #fff;
+    --background-color: #222;
+    --text-color: #fff;
 
-        --link-color: #E4BFFF;
-        --active-link-color: #fff;
+    --link-color: #E4BFFF;
+    --active-link-color: #fff;
 
-        --summary-marker-color: #eee;
-    }
+    --summary-marker-color: #eee;
+
+    color-scheme: dark;
 }
 
 body {
