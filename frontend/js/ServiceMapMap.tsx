@@ -4,7 +4,6 @@ import {
   Source,
   Layer,
   LayerProps,
-  MapEvent,
   MapLayerMouseEvent,
   MapGeoJSONFeature,
 } from "react-map-gl/maplibre";
@@ -36,6 +35,27 @@ type ServiceMapMapProps = {
   geometry?: MapGeoJSONFeature;
   stops?: MapGeoJSONFeature[];
 };
+
+const stopsStyle: LayerProps = {
+  id: "stops",
+  type: "symbol",
+  layout: {
+    "icon-rotate": ["+", 45, ["get", "bearing"]],
+    "icon-image": "route-stop-marker",
+    "icon-allow-overlap": true,
+    "icon-ignore-placement": true,
+  },
+};
+
+function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
+  if (stops) {
+    return (
+      <Source type="geojson" data={stops}>
+        <Layer {...stopsStyle} />
+      </Source>
+    );
+  }
+}
 
 export default function ServiceMapMap({
   vehicles,
@@ -93,28 +113,10 @@ export default function ServiceMapMap({
     },
     [clickedStop],
   );
-
-  const handleMapLoad = React.useCallback((event: MapEvent) => {
-    const map = event.target;
-    map.keyboard.disableRotation();
-    map.touchZoomRotate.disableRotation();
-  }, []);
-
   const clickedVehicle =
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
-  const stopsStyle: LayerProps = {
-    id: "stops",
-    type: "symbol",
-    layout: {
-      "icon-rotate": ["+", 45, ["get", "bearing"]],
-      "icon-image": "route-stop-marker",
-      "icon-allow-overlap": true,
-      "icon-ignore-placement": true,
-    },
-  };
-
-  return (
+    return (
     <BusTimesMap
       initialViewState={{
         bounds: window.EXTENT,
@@ -126,9 +128,8 @@ export default function ServiceMapMap({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onClick={handleMapClick}
-      onLoad={handleMapLoad}
+      // onLoad={handleMapLoad}
       interactiveLayerIds={["stops"]}
-      images={["route-stop-marker"]}
     >
       {vehicles
         ? vehicles.map((item) => {
@@ -164,11 +165,8 @@ export default function ServiceMapMap({
         </Source>
       )}
 
-      {stops && (
-        <Source type="geojson" data={stops}>
-          <Layer {...stopsStyle} />
-        </Source>
-      )}
+      <Stops stops={stops} />
+
     </BusTimesMap>
   );
 }

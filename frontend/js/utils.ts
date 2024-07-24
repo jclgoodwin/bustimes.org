@@ -6,7 +6,7 @@ export const useDarkMode = () => {
   const [darkMode, setDarkMode] = useState(query.matches);
 
   useEffect(() => {
-    const handleChange = (e) => {
+    const handleChange = (e: MediaQueryListEvent) => {
       setDarkMode(e.matches);
     };
 

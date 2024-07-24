@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 // import { captureException } from "@sentry/react";
 
@@ -9,12 +9,13 @@ import Map, {
   AttributionControl,
   MapProps,
   useControl,
+  useMap
 } from "react-map-gl/maplibre";
 
 import stopMarker from "data-url:../stop-marker.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
 import arrow from "data-url:../arrow.png";
-import type { Map as MapType } from "maplibre-gl";
+import type { MapStyleImageMissingEvent } from "maplibre-gl";
 
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
@@ -24,6 +25,7 @@ const imagesByName: { [imageName: string]: string } = {
 
 const mapStyles = [
   ["alidade_smooth", "Default"],
+  ["alidade_smooth_dark", "Dark"],
   ["osm_bright", "Bright"],
   ["outdoors", "Outdoors"],
   // ["alidade_satellite", "Satellite"],
@@ -84,10 +86,38 @@ const StyleSwitcherControl = memo(function StyleSwitcherControl(
   return null;
 });
 
+function MapChild() {
+  const {current: map} = useMap();
+
+  useEffect(() => {
+    if (map) {
+      const onStyleImageMissing = function(e: MapStyleImageMissingEvent) {
+        if (e.id in imagesByName) {
+          const image = new Image();
+          image.src = imagesByName[e.id];
+          image.onload = function () {
+            map.addImage(e.id, image, {
+              pixelRatio: 2,
+            });
+          };
+        }
+      }
+
+      map.on("styleimagemissing", onStyleImageMissing);
+
+      return () => {
+        map.off("styleimagemissing", onStyleImageMissing);
+      };
+    }
+  });
+
+  return null;
+}
+
 export default function BusTimesMap(
   props: MapProps & {
-    images?: string[];
-    onLoad?: (event: MapEvent) => void;
+    // images?: string[];
+    // onLoad?: (event: MapEvent) => void;
 
     // workaround for wrong react-map-gl type definitions?
     minPitch?: number;
@@ -98,9 +128,6 @@ export default function BusTimesMap(
     pitchWithRotate?: boolean;
   },
 ) {
-  const mapRef = React.useRef<MapType>();
-  const onLoad = props.onLoad;
-  const imageNames = props.images;
 
   const [mapStyle, setMapStyle] = React.useState(() => {
     try {
@@ -114,29 +141,6 @@ export default function BusTimesMap(
     return "alidade_smooth";
   });
 
-  const handleMapLoad = React.useCallback(
-    (event: MapEvent) => {
-      mapRef.current = event.target;
-      if (imageNames) {
-        const map = event.target;
-
-        for (const imageName of imageNames) {
-          const image = new Image();
-          image.src = imagesByName[imageName];
-          image.onload = function () {
-            map.addImage(imageName, image, {
-              pixelRatio: 2,
-            });
-          };
-        }
-      }
-
-      if (onLoad) {
-        onLoad(event);
-      }
-    },
-    [imageNames, onLoad],
-  );
 
   const handleMapStyleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,7 +159,7 @@ export default function BusTimesMap(
     <Map
       {...props}
       reuseMaps
-      onLoad={handleMapLoad}
+      // onLoad={handleMapLoad}
       touchPitch={false}
       pitchWithRotate={false}
       dragRotate={false}
@@ -174,6 +178,9 @@ export default function BusTimesMap(
       <GeolocateControl />
       <StyleSwitcherControl style={mapStyle} onChange={handleMapStyleChange} />
       <AttributionControl compact={false} />
+
+      <MapChild />
+
       {props.children}
     </Map>
   );

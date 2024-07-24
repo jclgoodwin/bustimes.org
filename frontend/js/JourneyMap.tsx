@@ -526,7 +526,6 @@ export default function JourneyMap({
             onClick={handleMapClick}
             onLoad={handleMapLoad}
             interactiveLayerIds={["stops", "locations"]}
-            images={["route-stop-marker", "arrow"]}
           >
             {journey.stops ? <Stops stops={journey.stops} /> : null}
 
