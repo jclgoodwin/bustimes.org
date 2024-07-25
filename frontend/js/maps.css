@@ -179,12 +179,14 @@ body .maplibregl-popup-close-button {
   list-style: none;
 }
 
-.dark-mode .map-style-switcher {
+body.dark-mode .maplibregl-ctrl-group {
   background: var(--background-color);
   color: var(--text-color);
+  box-shadow: 0 0 0 2px #fff5;
 }
 
-.dark-mode .map-style-switcher summary {
+.dark-mode .map-style-switcher summary,
+.dark-mode .maplibregl-ctrl-icon {
   filter: invert(100%);
 }
 

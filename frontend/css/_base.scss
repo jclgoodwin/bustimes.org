@@ -398,7 +398,7 @@ select {
     }
 }
 
-@media (prefers-color-scheme: dark) {
+.dark-mode {
     select {
         background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 16 8' width='16' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon fill='%23eee' points='0,0 4,8 8,0'/%3E%3C/svg%3E");
     }
