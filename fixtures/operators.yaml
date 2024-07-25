@@ -290,10 +290,12 @@ DDIS:
     url: https://procterscoaches.com/dales-district-timetable/
 TANV:
     email: contact@tanat.co.uk
-    url: https://www.tanat.co.uk/
+    url: https://tanat.co.uk/
     twitter: ""
+BZCO:
+    url: https://www.beelinecoaches.co.uk/
 LNGS:
-    url: http://www.lylescoaches.co.uk/home
+    url: https://www.lylescoaches.co.uk/
 YSTN:
     url: https://www.stationcoaches.co.uk/
 SPMW:
