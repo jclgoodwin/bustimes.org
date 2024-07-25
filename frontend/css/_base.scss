@@ -680,7 +680,7 @@ table {
     position: absolute;
     top: 56px;  /* header */
     right: 0;
-    bottom: 90px;
+    bottom: 0;
     left: 0;
 }
 
@@ -714,7 +714,7 @@ table {
     background: var(--background-color);
 
     // make room for ads:
-    margin-bottom: 90px;
+    margin-bottom: 100px;
     box-shadow: var(--background-color) 0 -100px, var(--background-color) 0 126px;
 
     // height: auto;
@@ -1083,7 +1083,7 @@ input:not(:checked) + label {
 .map-sidebar {
     position: absolute;
     top: 55%;
-    bottom: -100px; // 100px tall ads
+    bottom: 0;
     left: 0;
     right: 0;
     overflow: auto;

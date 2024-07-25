@@ -178,7 +178,7 @@ export default function BusTimesMap(
       <NavigationControl showCompass={false} />
       <GeolocateControl />
       <StyleSwitcherControl style={mapStyle} onChange={handleMapStyleChange} />
-      <AttributionControl compact={false} />
+      <AttributionControl />
 
       <MapChild />
 
