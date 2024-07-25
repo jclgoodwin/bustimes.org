@@ -1076,11 +1076,6 @@ input:not(:checked) + label {
     bottom: 0;
 }
 
-// .operator-map {
-//     top: 104px;
-//     bottom: 134px; /* ad 92px + footer 42px */
-// }
-
 .has-sidebar {
     bottom: 45%;
 }
@@ -1088,11 +1083,11 @@ input:not(:checked) + label {
 .map-sidebar {
     position: absolute;
     top: 55%;
-    bottom: -90px;
+    bottom: -100px; // 100px tall ads
     left: 0;
     right: 0;
     overflow: auto;
-    padding: 1em 1em 90px;
+    padding: 1em 1em 100px;
 
 }
 
@@ -1493,10 +1488,7 @@ footer {
     clear: both;
     margin-top: 1.5em;
     text-align: center;
-
-    @media (min-height: 480px) {
-        margin-bottom: 92px;
-    }
+    margin-bottom: 100px; // sticky ad
 
     ul {
         border-top: 1px solid var(--brand-color-darker);
