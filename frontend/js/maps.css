@@ -203,8 +203,9 @@ body.dark-mode .maplibregl-ctrl-group {
   margin-left: 0;
 }
 
-.big-map .maplibregl-ctrl-bottom-right {
-  bottom: 100px;
+.big-map .maplibregl-ctrl-bottom-right,
+.service-map .maplibregl-ctrl-bottom-right {
+    bottom: 100px;
 }
 
 .has-sidebar .maplibregl-ctrl-bottom-right {
