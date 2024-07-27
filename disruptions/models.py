@@ -51,17 +51,46 @@ class Situation(models.Model):
 
     def list_validity_periods(self) -> list[str]:
         validity_periods = self.validityperiod_set.all()
-        if len(validity_periods) == 1:
-            current_timezone = timezone.get_current_timezone()
-            period = validity_periods[0].period
-            if period.lower and period.upper:
-                lower = period.lower.astimezone(current_timezone)
-                upper = period.upper.astimezone(current_timezone)
-                if lower.date() == upper.date():
-                    return [
-                        f"""{lower.strftime("%H:%M")}–{upper.strftime("%H:%M, %-d %B %Y")}"""
-                    ]
-            return [date_range(period)]
+        if not validity_periods:
+            return []
+        current_timezone = timezone.get_current_timezone()
+        periods = [
+            (
+                period.period.lower
+                and period.period.lower.astimezone(current_timezone),
+                period.period.upper
+                and period.period.upper.astimezone(current_timezone),
+            )
+            for period in validity_periods
+        ]
+        periods.sort()
+        if len(periods) == 1:
+            upper, lower = periods[0]
+            if upper and lower and upper.date() == lower.date():
+                return [
+                    f"""{lower.strftime("%H:%M")}–{upper.strftime("%H:%M, %-d %B %Y")}"""
+                ]
+            return [date_range(validity_periods[0].period)]
+        elif len(validity_periods) > 1:
+            first = periods[0]
+            last = periods[-1]
+            if (
+                first[0]
+                and last[0]
+                and first[0].date() - last[0].date()
+                == -timezone.timedelta(days=len(periods) - 1)
+                and all(
+                    period[0]
+                    and period[1]
+                    and first[0].time() == period[0].time()
+                    and first[1].time() == period[1].time()
+                    for period in periods[1:]
+                )
+            ):
+                return [
+                    f"""{first[0].strftime("%H:%M")}–{first[1].strftime("%H:%M")},
+{date_range(lower=first[0], upper=last[1])}"""
+                ]
         return []
 
 
