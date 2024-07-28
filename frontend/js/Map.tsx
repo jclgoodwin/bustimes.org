@@ -154,7 +154,7 @@ export default function BusTimesMap(
 
   useEffect(() => {
     document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
-  });
+  }, [mapStyle]);
 
   return (
     <Map

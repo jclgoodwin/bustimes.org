@@ -31,6 +31,9 @@
 
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}{% if ad is false %} no-ads{% endif %}">
+<script>
+if(localStorage&&localStorage["map-style"]&&localStorage["map-style"].endsWith("_dark")){document.body.classList.add("dark-mode");}
+</script>
 <a href="#content" class="skip">Skip to main content</a>
 {% block header %}
 <header class="site-header">
