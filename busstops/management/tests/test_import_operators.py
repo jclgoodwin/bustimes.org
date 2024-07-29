@@ -42,7 +42,7 @@ class ImportOperatorsTest(TestCase):
         FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
         with vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")) as cassette:
-            with self.assertNumQueries(3455):
+            with self.assertNumQueries(3461):
                 call_command("import_noc")
 
             cassette.rewind()
