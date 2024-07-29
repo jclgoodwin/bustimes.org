@@ -336,7 +336,7 @@ TYSW:
     twitter: ""
 YYTG:
     name: Yorkshire Buses
-    url: https://www.yorkshirebuses.co.uk/
+    # url: https://www.yorkshirebuses.co.uk/
     phone: 0113 246 4914
     email: Office@yorkshiretravelgroup.co.uk
     twitter: YorkshireBuses_
@@ -387,3 +387,7 @@ GLLN:
     name: Central Connect
     url: https://localbus.vectare.co.uk/central-connect
     twitter: CC_EssexHerts
+NCRC:
+    url: https://www.wilsonsbuses.co.uk/
+ABCF:
+    url: https://www.argyll-bute.gov.uk/roads-and-travel/public-transport/ferry-travel
