@@ -374,10 +374,16 @@ HRBT:
 COEV:
     name: Coach Events Services
     url: http://www.coacheventsservices.co.uk/
+VECT:
+    name: Central Connect
+    twitter: |
+        CC_EssexHerts
+        CC_EastEngland
+        CC_EastMidlands
 TRST:
     url: https://localbus.vectare.co.uk/central-connect
-    twitter: VectareEssex
+    twitter: CC_EssexHerts
 GLLN:
     name: Central Connect
     url: https://localbus.vectare.co.uk/central-connect
-    twitter: VectareEssex
+    twitter: CC_EssexHerts
