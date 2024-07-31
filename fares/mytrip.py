@@ -62,14 +62,18 @@ def operator_tickets(request, slug):
 def operator_ticket(request, slug, id):
     operator = get_object_or_404(Operator, slug=slug)
     source = get_source()
+    code = get_object_or_404(OperatorCode, operator=operator, source=source)
     response = get_response(source, id)
+
+    if response["_links"]["parent"]["id"] != code.code:
+        raise Http404
 
     context = {
         "breadcrumb": [operator, Tickets(operator)],
         "operator": operator,
         "title": response["title"],
         "description": response["description"],
-        "categories": response["_embedded"].get("topup", []),
+        "categories": response["_embedded"]["topup"],
     }
     for category in context["categories"]:
         category["price"] = f"{category['price'] / 100:.2f}"
