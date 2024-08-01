@@ -121,7 +121,7 @@ export default function ServiceMapMap({
       initialViewState={{
         bounds: window.EXTENT,
         fitBoundsOptions: {
-          padding: 20,
+          padding: { top: 20, bottom: 120, left: 20, right: 20}
         },
       }}
       cursor={cursor}

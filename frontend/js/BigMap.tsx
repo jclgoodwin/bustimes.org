@@ -505,7 +505,7 @@ export default function BigMap(props: {
                   setInitialViewState({
                     bounds,
                     fitBoundsOptions: {
-                      padding: 50,
+                      padding: { top: 50, bottom: 150, left: 50, right: 50}
                     },
                   });
                 }
