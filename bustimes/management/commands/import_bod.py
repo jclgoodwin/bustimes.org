@@ -271,7 +271,7 @@ def bus_open_data(api_key, specific_operator):
         ).exists():
             clean_up(source, sources, not source.complete)
         elif Service.objects.filter(
-            current=True, operator=operators, route__source__url__startswith=url_prefix
+            current=True, operator__in=operators, route__source__url__startswith=url_prefix
         ).exists():
             logger.warning(
                 f"""{operators} has no current data
