@@ -140,6 +140,9 @@ class Command(ImportLiveVehiclesCommand):
         if vehicle:
             return vehicle, False
 
+        if item.get("hg") == "0":
+            return  # don't create new vehicle
+
         vehicle = Vehicle.objects.create(
             operator=operator,
             source=self.source,
@@ -191,15 +194,6 @@ class Command(ImportLiveVehiclesCommand):
             journey = latest_journey
 
         if not journey.service_id and journey.route_name:
-            service = journey.route_name
-            alternatives = {
-                "PULS": "Pulse",
-                "YO-Y": "Yo-Yo",
-                "TRIA": "Triangle",
-            }
-            if service in alternatives:
-                service = alternatives[service]
-
             services = Service.objects.filter(current=True, operator__in=self.operators)
 
             stop = item.get("or") or item.get("pr") or item.get("nr")
@@ -211,18 +205,12 @@ class Command(ImportLiveVehiclesCommand):
                 services = services.filter(has_stop(item["fr"]))
 
             journey.service = services.filter(
-                Q(route__line_name__iexact=service) | Q(line_name__iexact=service)
+                Q(route__line_name__iexact=journey.route_name)
+                | Q(line_name__iexact=journey.route_name)
             ).first()
-            if not journey.service:
-                try:
-                    journey.service = services.get(
-                        service_code__icontains=f"-{service}-"
-                    )
-                except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-                    pass
 
             if not journey.service:
-                print(service, item.get("or"), vehicle.get_absolute_url())
+                print(journey.route_name, item.get("or"), vehicle.get_absolute_url())
 
         if departure_time and journey.service and not journey.id:
             journey.trip = journey.get_trip(
