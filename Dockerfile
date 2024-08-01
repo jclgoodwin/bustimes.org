@@ -40,4 +40,4 @@ ENV PORT=8000 SECRET_KEY=f STATIC_ROOT=/staticfiles
 RUN ./manage.py collectstatic --noinput
 
 EXPOSE 8000
-CMD ["gunicorn", "buses.wsgi"]
+ENTRYPOINT ["gunicorn", "buses.wsgi"]
