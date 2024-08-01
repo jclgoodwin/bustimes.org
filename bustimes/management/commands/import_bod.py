@@ -1,5 +1,6 @@
 """Import timetable data "fresh from the cow"
 """
+
 import hashlib
 import logging
 import xml.etree.cElementTree as ET
@@ -258,20 +259,19 @@ def bus_open_data(api_key, specific_operator):
                 service_ids |= command.service_ids
 
         # delete routes from any sources that have been made inactive
-        for o in operators:
-            if Service.objects.filter(
-                Q(source__in=sources) | Q(route__source__in=sources),
-                current=True,
-                operator=o,
-            ).exists():
-                clean_up([o], sources, not source.complete)
-            elif Service.objects.filter(
-                current=True, operator=o, route__source__url__startswith=url_prefix
-            ).exists():
-                logger.warning(
-                    f"""{o} has no current data
-  https://bustimes.org/admin/busstops/service/?operator__noc__exact={o}"""
-                )
+        if Service.objects.filter(
+            Q(source__in=sources) | Q(route__source__in=sources),
+            current=True,
+            operator__in=operators,
+        ).exists():
+            clean_up(operators, sources, not source.complete)
+        elif Service.objects.filter(
+            current=True, operator=operators, route__source__url__startswith=url_prefix
+        ).exists():
+            logger.warning(
+                f"""{operators} has no current data
+https://bustimes.org/admin/busstops/service/?operator__noc__in={','.join(operators)}"""
+            )
 
         command.service_ids = service_ids
         command.finish_services()
