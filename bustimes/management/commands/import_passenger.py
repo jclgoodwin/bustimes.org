@@ -144,7 +144,7 @@ class Command(BaseCommand):
                         logger.info(version)
                         handle_file(command, version["filename"], qualify_filename=True)
 
-                clean_up(operators, sources)
+                clean_up(source, sources)
 
                 operator_ids = get_operator_ids(command.source)
                 logger.info(f"  {operator_ids}")
