@@ -112,7 +112,7 @@ class ImportBusOpenDataTest(TestCase):
             with override_settings(DATA_DIR=Path(directory)):
                 call_command("import_bod", "0123456789abc19abc190123456789abc19abc19")
 
-                with self.assertNumQueries(7):
+                with self.assertNumQueries(6):
                     call_command(
                         "import_bod", "0123456789abc19abc190123456789abc19abc19"
                     )

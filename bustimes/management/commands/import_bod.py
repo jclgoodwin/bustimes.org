@@ -28,17 +28,22 @@ logger = logging.getLogger(__name__)
 session = requests.Session()
 
 
-def clean_up(operators, sources, incomplete=False):
+def clean_up(timetable_data_source, sources, incomplete=False):
     service_operators = Service.operator.through.objects.filter(
         service=OuterRef("service")
     )
+    operators = timetable_data_source.operators.values_list("noc", flat=True)
+
     routes = Route.objects.filter(
         ~Q(source__in=sources),
-        ~Q(source__name__in=("L", "bustimes.org")),
-        Exists(service_operators.filter(operator__in=operators)),
-        ~Exists(
-            service_operators.filter(~Q(operator__in=operators))
-        ),  # exclude joint services
+        Q(source__source=timetable_data_source)
+        | Q(
+            ~Q(source__name__in=("L", "bustimes.org")),
+            Exists(service_operators.filter(operator__in=operators)),
+            ~Exists(
+                service_operators.filter(~Q(operator__in=operators))
+            ),  # exclude joint services
+        ),
     )
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains="bus-data.dft.gov.uk")
@@ -264,7 +269,7 @@ def bus_open_data(api_key, specific_operator):
             current=True,
             operator__in=operators,
         ).exists():
-            clean_up(operators, sources, not source.complete)
+            clean_up(source, sources, not source.complete)
         elif Service.objects.filter(
             current=True, operator=operators, route__source__url__startswith=url_prefix
         ).exists():
@@ -353,9 +358,7 @@ def ticketer(specific_operator=None):
 
                     command.mark_old_services_as_not_current()
 
-                    nocs = list(source.operators.values_list("noc", flat=True))
-
-                    clean_up(nocs, [command.source])
+                    clean_up(source, [command.source])
 
                     command.finish_services()
 
@@ -445,7 +448,7 @@ def stagecoach(specific_operator=None):
             if modified or specific_operator:
                 do_stagecoach_source(command, last_modified, filename, nocs)
 
-        clean_up(nocs, [command.source])
+        clean_up(source, [command.source])
         command.finish_services()
 
 
