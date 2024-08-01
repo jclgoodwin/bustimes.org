@@ -43,14 +43,14 @@ class StagecoachTest(TestCase):
         with vcr.use_cassette(
             str(Path(__file__).resolve().parent / "vcr" / "stagecoach_vehicles.yaml")
         ) as cassette:
-            with self.assertNumQueries(82):
+            with self.assertNumQueries(54):
                 command.update()
 
             cassette.rewind()
             del command.previous_locations["19617"]
             del command.previous_locations["50275"]
 
-            with self.assertNumQueries(5):
+            with self.assertNumQueries(2):
                 command.update()
 
         self.assertEqual(
