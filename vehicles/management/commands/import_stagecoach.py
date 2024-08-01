@@ -95,7 +95,7 @@ class Command(ImportLiveVehiclesCommand):
 
         return items
 
-    def get_vehicle(self, item):
+    def get_vehicle(self, item) -> tuple[Vehicle, bool]:
         vehicle_code = item["fn"]
 
         operator_id = item.get("oc")
@@ -137,11 +137,8 @@ class Command(ImportLiveVehiclesCommand):
         vehicle = Vehicle.objects.filter(
             operator=None, code__iexact=vehicle_code
         ).first()
-        if vehicle:
+        if vehicle or item.get("hg") == "0":
             return vehicle, False
-
-        if item.get("hg") == "0":
-            return  # don't create new vehicle
 
         vehicle = Vehicle.objects.create(
             operator=operator,
