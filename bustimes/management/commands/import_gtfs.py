@@ -498,20 +498,20 @@ class Command(BaseCommand):
             if operator.region_id:
                 operator.save(update_fields=["region"])
 
+        old_routes = self.source.route_set.exclude(
+            id__in=(route.id for route in self.routes.values())
+        )
+        logger.info(old_routes.update(service=None))
+
         current_services = self.source.service_set.filter(current=True)
         logger.info(
             current_services.exclude(route__in=self.routes.values()).update(
                 current=False
             )
         )
-        logger.info(
-            current_services.exclude(route__trip__isnull=False).update(current=False)
-        )
-        logger.info(
-            self.source.route_set.exclude(
-                id__in=(route.id for route in self.routes.values())
-            ).delete()
-        )
+        for route in old_routes:
+            route.delete()
+
         StopPoint.objects.filter(active=False, service__current=True).update(
             active=True
         )
