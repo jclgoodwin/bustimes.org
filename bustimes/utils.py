@@ -1,3 +1,4 @@
+import logging
 from datetime import date, datetime, timedelta
 from difflib import Differ
 
@@ -18,6 +19,7 @@ from sql_util.utils import Exists
 from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip
 
 differ = Differ(charjunk=lambda _: True)
+logger = logging.getLogger(__name__)
 
 
 class log_time_taken:
@@ -120,7 +122,12 @@ def get_routes(routes, when=None, from_date=None):
             )
 
             if ".ticketer." in route.source.url:
-                assert looks_like_ticketer_route
+                if not looks_like_ticketer_route:
+                    logger.warning(
+                        "Ticketer %s in %s doesn't look like Ticketer data",
+                        route.code,
+                        route.source.url,
+                    )
                 route.key = f"{route.key}:{parts[1]}"
             elif looks_like_ticketer_route:
                 route.key = f"{route.key}:{parts[1]}"
