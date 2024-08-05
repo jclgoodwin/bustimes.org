@@ -37,13 +37,6 @@ def clean_up(timetable_data_source, sources, incomplete=False):
     routes = Route.objects.filter(
         ~Q(source__in=sources),
         Q(source__source=timetable_data_source)
-        | Q(
-            ~Q(source__name__in=("L", "bustimes.org")),
-            Exists(service_operators.filter(operator__in=operators)),
-            ~Exists(
-                service_operators.filter(~Q(operator__in=operators))
-            ),  # exclude joint services
-        ),
     )
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains="bus-data.dft.gov.uk")
@@ -270,13 +263,11 @@ def bus_open_data(api_key, specific_operator):
         if Service.objects.filter(
             Q(source__in=sources) | Q(route__source__in=sources),
             current=True,
-            operator__in=operators,
         ).exists():
             clean_up(source, sources, not source.complete)
         elif Service.objects.filter(
             current=True,
-            operator__in=operators,
-            route__source__url__startswith=url_prefix,
+            route__source__source=source,
         ).exists():
             logger.warning(
                 f"""{operators} has no current data
