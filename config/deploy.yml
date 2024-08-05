@@ -6,10 +6,31 @@ image: jclgoodwin/bustimes-org
 
 # Deploy to these servers.
 servers:
-  - 10.131.29.248  # everglory
-  - 10.131.0.24  # eveready
-  - 10.131.33.248  # everest
-  - 10.131.240.96  # everdainty
+  web:
+    hosts:
+      - 10.131.29.248  # everglory
+      - 10.131.0.24    # eveready
+      - 10.131.33.248  #  everest
+    env:
+      clear:
+        WEB_CONCURRENCY: 8
+        ALLOWED_HOSTS: "*"
+        EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
+      secret:
+        - TURNSTILE_SECRET
+        - DATABASE_URL
+        - REDIS_URL
+        - SENTRY_DSN
+        - EMAIL_HOST_USER
+        - EMAIL_HOST_PASSWORD
+        - TFL_APP_ID
+        - TFL_APP_KEY
+        - NTA_API_KEY
+        - AWS_ACCESS_KEY_ID
+        - AWS_SECRET_ACCESS_KEY
+  redis:
+    hosts:
+      - 104.248.168.195
 
 builder:
   multiarch: false
@@ -26,25 +47,6 @@ registry:
 
 asset_path: /staticfiles
 
-# Inject ENV variables into containers (secrets come from .env).
-env:
-  clear:
-    WEB_CONCURRENCY: 8
-    ALLOWED_HOSTS: "*"
-    EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
-  secret:
-    - TURNSTILE_SECRET
-    - DATABASE_URL
-    - REDIS_URL
-    - SENTRY_DSN
-    - EMAIL_HOST_USER
-    - EMAIL_HOST_PASSWORD
-    - TFL_APP_ID
-    - TFL_APP_KEY
-    - NTA_API_KEY
-    - AWS_ACCESS_KEY_ID
-    - AWS_SECRET_ACCESS_KEY
-
 # Configure a custom healthcheck (default is /up on port 3000)
 healthcheck:
   path: /version
@@ -58,3 +60,10 @@ traefik:
     accesslog.fields.headers.names.referer: keep
     entrypoints.http.address: ":80" # for some reason, if trustedIPs is set then this must be set too
     entrypoints.http.forwardedHeaders.trustedIPs: 10.131.0.0/16
+
+accessories:
+  valkey:
+    service: valkey
+    image: valkey/valkey
+    roles:
+      - redis
