@@ -229,7 +229,10 @@ def bus_open_data(api_key, specific_operator):
                 )
             command.source.name = dataset["name"]
             command.source.url = dataset["url"]
-            command.source.source = source
+            if command.source.source_id != source.id:
+                command.source.source = source
+                if command.source.id:
+                    command.source.save(update_fields=["source"])
 
             sources.append(command.source)
 
@@ -271,7 +274,9 @@ def bus_open_data(api_key, specific_operator):
         ).exists():
             clean_up(source, sources, not source.complete)
         elif Service.objects.filter(
-            current=True, operator__in=operators, route__source__url__startswith=url_prefix
+            current=True,
+            operator__in=operators,
+            route__source__url__startswith=url_prefix,
         ).exists():
             logger.warning(
                 f"""{operators} has no current data
