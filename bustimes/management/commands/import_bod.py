@@ -37,6 +37,13 @@ def clean_up(timetable_data_source, sources, incomplete=False):
     routes = Route.objects.filter(
         ~Q(source__in=sources),
         Q(source__source=timetable_data_source)
+        | Q(
+            ~Q(source__name__in=("L", "bustimes.org")),
+            Exists(service_operators.filter(operator__in=operators)),
+            ~Exists(
+                service_operators.filter(~Q(operator__in=operators))
+            ),  # exclude joint services
+        ),
     )
     if incomplete:  # leave other sources alone
         routes = routes.filter(source__url__contains="bus-data.dft.gov.uk")
