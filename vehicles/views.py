@@ -771,6 +771,8 @@ def edit_vehicle(request, **kwargs):
         user=request.user,
     )
 
+    context["livery"] = vehicle.livery
+
     if request.POST:
         if form.has_changed() is False or form.changed_data == ["summary"]:
             form.add_error(None, "You haven't changed anything")
@@ -816,6 +818,8 @@ def edit_vehicle(request, **kwargs):
                     form.add_error("operator", error)
                 else:
                     raise
+
+        context["livery"] = form.cleaned_data.get("colours")
 
     if form:
         context["pending_edits"] = (
