@@ -107,24 +107,26 @@ def handle_item(item, source):
         consequence.services.clear()
 
         services = Service.objects.filter(current=True)
-        if stops:
-            services = services.filter(stops__in=stops).distinct()
+        stops_filter = Q(stops__in=stops)
 
         for line in consequence_element.findall(
             "Affects/Networks/AffectedNetwork/AffectedLine"
         ):
             line_name = line.findtext("PublishedLineName") or line.findtext("LineRef")
+            line_filter = Q(route__line_name__iexact=line_name) | Q(
+                line_name__iexact=line_name
+            )
             for operator_ref in line.findall("AffectedOperator/OperatorRef"):
                 operator_ref = operator_ref.text
-                matching_services = services.filter(
-                    Q(route__line_name__iexact=line_name)
-                    | Q(line_name__iexact=line_name),
-                    operator=operator_ref,
-                )
+
+                matching_services = services.filter(line_filter, operator=operator_ref)
+                if len(matching_services) > 1:
+                    matching_services = matching_services.filter(stops_filter)
+
                 if matching_services:
                     consequence.services.add(*matching_services)
                 else:
-                    logger.info(f"{operator_ref=} {line_name=}")
+                    logger.info(f"{situation_number=} {operator_ref=} {line_name=}")
 
         for operator in consequence_element.findall(
             "Affects/Operators/AffectedOperator"
