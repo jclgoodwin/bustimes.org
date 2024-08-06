@@ -557,7 +557,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # add and remove a feature, change type
         initial["features"] = self.usb.id
         initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
-        with self.assertNumQueries(22):
+        with self.assertNumQueries(23):
             response = self.client.post(url, initial)
         revision = response.context["revision"]
         self.assertFalse(revision.pending)
@@ -569,7 +569,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # colour, spare ticket machine
         initial["colours"] = self.livery.id
         initial["spare_ticket_machine"] = True
-        with self.assertNumQueries(16):
+        with self.assertNumQueries(17):
             response = self.client.post(url, initial)
             revision = response.context["revision"]
             self.assertEqual(revision.to_livery, self.livery)
@@ -755,7 +755,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         revision.vehicle.refresh_from_db()
         self.assertTrue(revision.vehicle.withdrawn)
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             # trusted user - can edit reg
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
@@ -778,7 +778,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.vehicle_3.get_absolute_url())
         self.assertContains(response, ">K292 JVF, P44 CEX<")
 
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(13):
             # trusted user - can edit colour
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),

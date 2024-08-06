@@ -782,17 +782,18 @@ def edit_vehicle(request, **kwargs):
 
             revision.user = request.user
             revision.created_at = timezone.now()
-            if not (
-                request.user.trusted or request.user.score and request.user.score > 100
-            ):
-                revision.pending = True
+            revision.pending = True
             try:
                 with transaction.atomic():
                     revision.save()
                     VehicleRevisionFeature.objects.bulk_create(features)
 
-                    if not revision.pending:
+                    if request.user.trusted or (
+                        request.user.score and request.user.score > 100
+                    ):
                         apply_revision(revision, features)
+                        revision.pending = False
+                        revision.save(update_fields=["pending"])
 
                     # score decrements with each edit!
                     User.objects.filter(id=revision.user_id).update(
