@@ -7,6 +7,7 @@ import requests
 from ciso8601 import parse_datetime
 from django.core.management.base import BaseCommand
 from django.db.backends.postgresql.psycopg_any import DateTimeTZRange
+from django.db.models import Q
 
 from busstops.models import DataSource, Operator, Service, StopPoint
 
@@ -116,7 +117,9 @@ def handle_item(item, source):
             for operator_ref in line.findall("AffectedOperator/OperatorRef"):
                 operator_ref = operator_ref.text
                 matching_services = services.filter(
-                    line_name__iexact=line_name, operator=operator_ref
+                    Q(route__line_name__iexact=line_name)
+                    | Q(line_name__iexact=line_name),
+                    operator=operator_ref,
                 )
                 if matching_services:
                     consequence.services.add(*matching_services)

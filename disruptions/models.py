@@ -65,7 +65,7 @@ class Situation(models.Model):
         ]
         periods.sort()
         if len(periods) == 1:
-            upper, lower = periods[0]
+            lower, upper = periods[0]
             if upper and lower and upper.date() == lower.date():
                 return [
                     f"""{lower.strftime("%H:%M")}–{upper.strftime("%H:%M, %-d %B %Y")}"""
