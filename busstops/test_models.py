@@ -84,7 +84,7 @@ class OperatorTests(TestCase):
         self.client.force_login(self.user)
 
         response = self.client.get("/admin/busstops/operator/")
-        self.assertContains(response, '<td class="field-operator_codes"></td>')
+        self.assertContains(response, '<td class="field-operator_codes">-</td>')
         self.assertContains(
             response,
             '<td class="field-services"><a href="/admin/busstops/service/?operator__noc__exact=CHAR">0</a></td>'
