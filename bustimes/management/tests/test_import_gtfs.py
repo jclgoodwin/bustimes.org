@@ -74,11 +74,13 @@ class GTFSTest(TestCase):
             make_zipfile(directory, "Mortons")
             make_zipfile(directory, "Wexford_Bus")
 
-            with vcr.use_cassette(
-                str(FIXTURES_DIR / "google_transit_ie.yaml"),
-            ) as cassette, override_settings(DATA_DIR=Path(directory)), self.assertLogs(
-                "bustimes.download_utils", "ERROR"
-            ) as cm:
+            with (
+                vcr.use_cassette(
+                    str(FIXTURES_DIR / "google_transit_ie.yaml"),
+                ) as cassette,
+                override_settings(DATA_DIR=Path(directory)),
+                self.assertLogs("bustimes.download_utils", "ERROR") as cm,
+            ):
                 call_command(
                     "import_gtfs", ["Mortons", "Wexford Bus", "Seamus Doherty"]
                 )
@@ -136,8 +138,8 @@ class GTFSTest(TestCase):
 
         self.assertContains(
             response,
-            '<a href="https://www.transportforireland.ie/transitData/PT_Data.html#:~:text=Mortons" nofollow>Transport '
-            "for Ireland</a>",
+            '<a href="https://www.transportforireland.ie/transitData/PT_Data.html#:~:text=Mortons" rel="nofollow">'
+            "Transport for Ireland</a>",
         )
 
         for day in (
@@ -206,10 +208,13 @@ class GTFSTest(TestCase):
         path.unlink()
 
     def test_handle(self):
-        with patch(
-            "bustimes.management.commands.import_gtfs.download_if_changed",
-            return_value=(True, None),
-        ), self.assertRaises(FileNotFoundError):
+        with (
+            patch(
+                "bustimes.management.commands.import_gtfs.download_if_changed",
+                return_value=(True, None),
+            ),
+            self.assertRaises(FileNotFoundError),
+        ):
             with vcr.use_cassette(str(FIXTURES_DIR / "google_transit_ie.yaml")):
                 call_command("import_gtfs", "Wexford Bus")
 

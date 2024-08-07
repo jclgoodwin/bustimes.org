@@ -270,7 +270,7 @@ class DataSource(models.Model):
 
         if text:
             if url:
-                text = format_html('<a href="{}" nofollow>{}</a>', url, text)
+                text = format_html('<a href="{}" rel="nofollow">{}</a>', url, text)
             else:
                 text = escape(text)
             if date:
