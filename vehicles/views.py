@@ -819,7 +819,8 @@ def edit_vehicle(request, **kwargs):
                 else:
                     raise
 
-        context["livery"] = form.cleaned_data.get("colours")
+        if form:
+            context["livery"] = form.cleaned_data.get("colours")
 
     if form:
         context["pending_edits"] = (
