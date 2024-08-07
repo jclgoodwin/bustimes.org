@@ -113,6 +113,7 @@ def handle_item(item, source):
             "Affects/Networks/AffectedNetwork/AffectedLine"
         ):
             line_name = line.findtext("PublishedLineName") or line.findtext("LineRef")
+            line_name = line_name.replace("_", " ")
             line_filter = Q(route__line_name__iexact=line_name) | Q(
                 line_name__iexact=line_name
             )
