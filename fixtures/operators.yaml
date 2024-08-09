@@ -36,8 +36,6 @@ BS4U:
         RH8 0BT
     email: rtp@tandridge.gov.uk
     phone: 01883 732791
-SPOT:
-    url: http://www.spottravel.co.uk/leeds-castle/
 CRES:
     address: |
         70 Marks Tey Road
@@ -96,9 +94,6 @@ HCMN:
     phone: 075060 72309
 FALC:
     twitter: FalconBusCoach
-    email: ""
-NVTR:
-    url: https://nu-venture.online/
     email: ""
 CBBH:
     name: Centrebus (South)
@@ -223,7 +218,6 @@ STNE:
     url: https://stanley-travel.com/bus-timetables/
 RBTS:
     name: Roberts Travel
-    url: https://www.robertstravelgroup.co.uk/
 KCTB:
     phone: 03300 539358
     address: |
@@ -235,8 +229,6 @@ HEDO:
     url: https://www.hedinghamandchambers.co.uk/
 CHAM:
     url: https://www.hedinghamandchambers.co.uk/
-NOTB:
-    twitter: NottsCC
 BHBC:
     name: Brighton & Hove
 EDWC:
@@ -257,9 +249,6 @@ HAIN:
     name: Phil Haines Coaches
 HCTY:
     twitter: ""
-PLNG:
-    url: https://www.peelingscoaches.co.uk
-    email: info@peelingscoaches.co.uk
 ULCO:
     address: ""
     email: ""
@@ -271,8 +260,6 @@ AINT:
     url: http://www.aintreecoachline.com/
     email: info@aintreecoachline.com
     twitter: ""
-ALSC:
-    url: https://www.alscoaches.com/
 NUTT:
     name: Transpora North West
     aka: Coastliner Buses
@@ -306,9 +293,6 @@ FCWL:
     twitter: by_Kernow
 SSSN:
     name: Shoreline Suncruisers
-COAC:
-    url: http://www.coachstyle.uk/
-    email: coachstyleltd@btconnect.com
 ALCG:
     url: https://www.alinenortheast.co.uk/
 FCYM:
@@ -326,7 +310,7 @@ FSCE:
 EMIR:
     name: London Cable Car
     aka: Dangleway
-    url: https://tfl.gov.uk/modes/emirates-air-line/
+    url: https://tfl.gov.uk/modes/london-cable-car/
     twitter: ""
 TYSW:
     name: Applegates
@@ -340,8 +324,6 @@ YYTG:
     phone: 0113 246 4914
     email: Office@yorkshiretravelgroup.co.uk
     twitter: YorkshireBuses_
-GWIL:
-    url: https://willettscoaches.co.uk
 WNGS:
     url: https://www.diamondbuses.com/
 MINS:
