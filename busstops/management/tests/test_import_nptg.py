@@ -24,11 +24,9 @@ class ImportNPTGTest(TestCase):
             with vcr.use_cassette(
                 str(fixtures_dir / "nptg.yml"), decode_compressed_response=True
             ) as cassette:
-
                 temp_dir_path = Path(temp_dir)
 
                 with override_settings(DATA_DIR=temp_dir_path):
-
                     self.assertFalse((temp_dir_path / "nptg.xml").exists())
 
                     with self.assertNumQueries(565):

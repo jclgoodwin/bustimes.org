@@ -39,14 +39,12 @@ class EdinburghImportTest(TestCase):
                 / "edinburgh_vehicle_locations.yaml"
             )
         ) as cassette:
-
             command = Command()
             command.do_source()
 
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
             ):
-
                 with self.assertNumQueries(28):
                     command.update()
 

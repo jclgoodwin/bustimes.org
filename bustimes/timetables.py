@@ -478,18 +478,18 @@ class Repetition:
         # cleverly add non-breaking spaces if there aren't many rows
         if self.duration.seconds == 3600:
             if self.min_height < 3:
-                return "then\u00A0hourly until"
+                return "then\u00a0hourly until"
             return "then hourly until"
         if self.duration.seconds % 3600 == 0:
             duration = "{} hours".format(int(self.duration.seconds / 3600))
         else:
             duration = "{} minutes".format(int(self.duration.seconds / 60))
         if self.min_height < 3:
-            return "then\u00A0every {}\u00A0until".format(
-                duration.replace(" ", "\u00A0")
+            return "then\u00a0every {}\u00a0until".format(
+                duration.replace(" ", "\u00a0")
             )
         if self.min_height < 4:
-            return "then every\u00A0{} until".format(duration.replace(" ", "\u00A0"))
+            return "then every\u00a0{} until".format(duration.replace(" ", "\u00a0"))
         return "then every {} until".format(duration)
 
 
@@ -511,9 +511,9 @@ def abbreviate(grouping, i, in_a_row, difference):
         # interval more than 30 minutes
         return
     repetition = Repetition(in_a_row + 1, difference)
-    grouping.rows[0].times[
-        i - in_a_row - 2
-    ] = repetition  # replace top left cell with [[then every] colspan= rowspan=]
+    grouping.rows[0].times[i - in_a_row - 2] = (
+        repetition  # replace top left cell with [[then every] colspan= rowspan=]
+    )
     for j in range(
         i - in_a_row - 1, i - 1
     ):  # blank (in_a_row - 1) other cells from top row

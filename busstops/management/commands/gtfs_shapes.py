@@ -49,7 +49,6 @@ class Command(BaseCommand):
 
         for line in read_file(archive, "stop_times.txt"):
             if line["trip_id"] != trip_id:
-
                 from_stop_id = None
 
                 trip_id = line["trip_id"]
@@ -101,11 +100,9 @@ class Command(BaseCommand):
                         print(service)
 
             if service and shape:
-
                 to_stop_id = line["stop_id"]
 
                 if from_stop_id and (from_stop_id, to_stop_id) not in route_links:
-
                     from_point = self.stops[from_stop_id]
                     from_point = line_string.project(from_point)
                     to_point = self.stops[to_stop_id]

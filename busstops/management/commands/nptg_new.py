@@ -112,7 +112,6 @@ class Command(BaseCommand):
 
         iterator = ET.iterparse(path, events=["start", "end"])
         for event, element in iterator:
-
             if event == "start":
                 if (
                     element.tag
@@ -131,7 +130,6 @@ class Command(BaseCommand):
             element.tag = element.tag.removeprefix("{http://www.naptan.org.uk/}")
 
             if element.tag == "Regions":
-
                 for item in self.handle_regions(element):
                     if type(item) is Region:
                         if item.pk not in regions:

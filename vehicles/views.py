@@ -79,9 +79,7 @@ def vehicles(request):
 
     new_operators = operators.annotate(
         min=SubqueryMin("vehicle__id"),
-    ).order_by(
-        "-min"
-    )[:36]
+    ).order_by("-min")[:36]
 
     operator_journeys = VehicleJourney.objects.filter(
         latest_vehicle__operator=OuterRef("noc")

@@ -109,9 +109,9 @@ def get_revision(vehicle, data):
         del data["summary"]
 
     if "fleet_number" in data:
-        revision.changes[
-            "fleet number"
-        ] = f"-{vehicle.fleet_code or vehicle.fleet_number or ''}\n+{data['fleet_number'] or ''}"
+        revision.changes["fleet number"] = (
+            f"-{vehicle.fleet_code or vehicle.fleet_number or ''}\n+{data['fleet_number'] or ''}"
+        )
         del data["fleet_number"]
 
     if "previous_reg" in data:

@@ -1,5 +1,4 @@
-"""These settings rely on various environment variables being set
-"""
+"""These settings rely on various environment variables being set"""
 
 import os
 import sys

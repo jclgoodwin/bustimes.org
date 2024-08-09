@@ -32,7 +32,6 @@ class MyTripTest(TestCase):
         path = Path(__file__).resolve().parent / "data"
 
         with use_cassette(str(path / "mytrip.yaml"), decode_compressed_response=True):
-
             with patch("builtins.print") as mocked_print:
                 # fake inputting "NIBS" when asked for a matching operator code:
                 with patch("builtins.input", return_value="NIBS") as mocked_input:

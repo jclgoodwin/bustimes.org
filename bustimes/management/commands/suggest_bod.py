@@ -25,7 +25,13 @@ class Command(BaseCommand):
         formatter = TerminalFormatter()
 
         url = "https://data.bus-data.dft.gov.uk/api/v1/dataset/"
-        params = {"api_key": api_key, "status": ["published"], "limit": 100, "modifiedDate": "2023-01-01T00:00:00", "endDateStart": datetime.now().isoformat()}
+        params = {
+            "api_key": api_key,
+            "status": ["published"],
+            "limit": 100,
+            "modifiedDate": "2023-01-01T00:00:00",
+            "endDateStart": datetime.now().isoformat(),
+        }
         while url:
             response = session.get(url, params=params)
             print(response.url)

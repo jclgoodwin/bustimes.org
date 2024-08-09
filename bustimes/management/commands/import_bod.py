@@ -1,5 +1,4 @@
-"""Import timetable data "fresh from the cow"
-"""
+"""Import timetable data "fresh from the cow" """
 
 import hashlib
 import logging

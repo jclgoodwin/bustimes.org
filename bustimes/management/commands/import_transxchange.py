@@ -499,9 +499,7 @@ class Command(BaseCommand):
                 logger.warning(f"{date_range} is {difference.days} days long")
             calendar_dates.append(calendar_date)
 
-        bank_holidays = (
-            {}
-        )  # a dictionary to remove duplicates! (non-operation overrides operation)
+        bank_holidays = {}  # a dictionary to remove duplicates! (non-operation overrides operation)
 
         for bank_holiday in self.do_bank_holidays(
             holiday_elements=operating_profile.operation_bank_holidays,
@@ -857,7 +855,7 @@ class Command(BaseCommand):
                 batch_size=1000,
             )
             existing_trips = [t.id for t in existing_trips]
-            Trip.notes.through.objects.filter(trip__in=existing_trips).delete(),
+            (Trip.notes.through.objects.filter(trip__in=existing_trips).delete(),)
             StopTime.objects.filter(trip__in=existing_trips).delete()
         else:
             Trip.objects.bulk_create(trips, batch_size=1000)
@@ -1340,9 +1338,9 @@ class Command(BaseCommand):
                                     route_links_to_update[key] = existing_route_links[
                                         key
                                     ]
-                                    route_links_to_update[key].geometry = (
-                                        route_link.track
-                                    )
+                                    route_links_to_update[
+                                        key
+                                    ].geometry = route_link.track
                             else:
                                 route_links_to_create[key] = RouteLink(
                                     from_stop_id=from_stop.atco_code,

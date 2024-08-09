@@ -131,7 +131,9 @@ class Command(BaseCommand):
                     northing = line[23:31].strip()
                     if easting:
                         self.stops[stop_code].latlong = Point(
-                            int(easting), int(northing), srid=29902  # Irish Grid
+                            int(easting),
+                            int(northing),
+                            srid=29902,  # Irish Grid
                         )
         existing_stops = StopPoint.objects.in_bulk(self.stops.keys())
         stops_to_update = []

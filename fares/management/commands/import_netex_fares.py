@@ -282,9 +282,9 @@ class Command(BaseCommand):
                             price=price_groups[price_group_ref],
                             tariff=tariff,
                         )
-                        distance_matrix_elements[
-                            distance_matrix_element.code
-                        ] = distance_matrix_element
+                        distance_matrix_elements[distance_matrix_element.code] = (
+                            distance_matrix_element
+                        )
                 models.DistanceMatrixElement.objects.bulk_create(
                     distance_matrix_elements.values()
                 )

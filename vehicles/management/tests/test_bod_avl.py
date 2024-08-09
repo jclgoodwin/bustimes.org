@@ -781,8 +781,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         also = Operator.objects.create(noc="ALSO", name="Arriva London North")
         alno = Operator.objects.create(noc="ALNO", name="Arriva London South")
-        OperatorCode.objects.create(operator=also, source=self.source, code="TFLO"),
-        OperatorCode.objects.create(operator=alno, source=self.source, code="TFLO"),
+        (OperatorCode.objects.create(operator=also, source=self.source, code="TFLO"),)
+        (OperatorCode.objects.create(operator=alno, source=self.source, code="TFLO"),)
 
         london_source = DataSource.objects.create(name="L")
         service = Service.objects.create(
@@ -903,9 +903,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             destination=stop,
         )
         item["RecordedAtTime"] = "2024-07-05T23:02:56+00:00"
-        item["MonitoredVehicleJourney"][
-            "VehicleJourneyRef"
-        ] = "NT11-Out-51011-NT3390W3-2024-07-06T00:02:00-2024-07-05"
+        item["MonitoredVehicleJourney"]["VehicleJourneyRef"] = (
+            "NT11-Out-51011-NT3390W3-2024-07-06T00:02:00-2024-07-05"
+        )
         item["MonitoredVehicleJourney"]["VehicleLocation"] = {
             "Latitude": "53.0",
             "Longitude": "-1.12",

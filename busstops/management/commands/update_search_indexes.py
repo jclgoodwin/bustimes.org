@@ -5,7 +5,6 @@ from ...models import Locality, Operator, Service
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-
         for queryset in (
             Locality.objects.with_documents(),
             Operator.objects.with_documents(),

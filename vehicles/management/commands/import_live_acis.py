@@ -54,9 +54,7 @@ class Command(ImportLiveVehiclesCommand):
                     </GetVehiclesNearPoint>
                 </soap12:Body>
             </soap12:Envelope>
-        """.format(
-            latlong
-        )
+        """.format(latlong)
         return self.session.post(
             self.url,
             data=data,

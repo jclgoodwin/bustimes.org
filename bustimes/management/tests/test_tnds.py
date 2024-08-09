@@ -14,7 +14,6 @@ class TNDSTest(TestCase):
     @mock.patch("ftplib.FTP", autospec=True)
     @mock.patch("boto3.client", autospec=True)
     def test_import_tnds(self, boto3_client, ftp, mock_call_command):
-
         boto3_client.return_value.head_object = mock.Mock(
             return_value={
                 "ResponseMetadata": {

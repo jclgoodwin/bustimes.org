@@ -1,5 +1,4 @@
-"""Tests for importing NaPTAN data
-"""
+"""Tests for importing NaPTAN data"""
 
 from pathlib import Path
 from tempfile import TemporaryDirectory

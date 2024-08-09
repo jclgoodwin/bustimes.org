@@ -20,7 +20,6 @@ def parse_date(date_string: str):
 
 
 class Command(BaseCommand):
-
     def get_rows(self, path: str):
         with open(settings.DATA_DIR / path) as open_file:
             yield from csv.DictReader(open_file)
@@ -47,7 +46,6 @@ class Command(BaseCommand):
                         if row["OTC:Registration Number"]:
                             reg = regs.get(row["OTC:Registration Number"])
                             if not reg:
-
                                 lic = lics.get(row["OTC:Licence Number"])
                                 assert row["OTC Status"] == "Registered"
 

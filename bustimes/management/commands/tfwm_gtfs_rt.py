@@ -55,7 +55,6 @@ class Command(BaseCommand):
         by_stop = {}
 
         for item in feed.entity:
-
             try:
                 trip = trips[item.trip_update.trip.trip_id]
                 route = routes[trip["route_id"]]
@@ -64,7 +63,6 @@ class Command(BaseCommand):
 
             for stop_time_update in item.trip_update.stop_time_update:
                 if stop_time_update.departure.time:
-
                     departure = {
                         "time": stop_time_update.departure.time,
                         "delay": stop_time_update.departure.delay,

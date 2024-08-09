@@ -1,6 +1,6 @@
 # coding=utf-8
-"""Tests for live departures
-"""
+"""Tests for live departures"""
+
 from datetime import date, datetime
 from unittest.mock import patch
 

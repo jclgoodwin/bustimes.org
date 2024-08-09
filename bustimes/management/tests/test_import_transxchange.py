@@ -376,10 +376,12 @@ class ImportTransXChangeTest(TestCase):
         self.assertFalse(timetable.groupings[0].rows[43].has_waittimes)
         # self.assertTrue(timetable.groupings[1].rows[44].has_waittimes)
         # self.assertFalse(timetable.groupings[1].rows[45].has_waittimes)
-        self.assertEqual(
-            str(timetable.groupings[1].rows[0].times[:6]),
-            "[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]",
-        ),
+        (
+            self.assertEqual(
+                str(timetable.groupings[1].rows[0].times[:6]),
+                "[05:20, 06:20, 07:15, 08:10, 09:10, 10:10]",
+            ),
+        )
 
         # created despite leading 0 in an ATCO code
         self.assertEqual(2, service.stopusage_set.count())

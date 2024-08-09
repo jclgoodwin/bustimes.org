@@ -1,5 +1,5 @@
-"""Tests for importing Ireland stops and gazetteer
-"""
+"""Tests for importing Ireland stops and gazetteer"""
+
 import os
 from pathlib import Path
 from unittest.mock import patch

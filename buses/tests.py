@@ -1,5 +1,5 @@
-"""Tests for the buses app
-"""
+"""Tests for the buses app"""
+
 from django.test import TestCase
 from . import utils
 

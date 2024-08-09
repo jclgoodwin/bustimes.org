@@ -289,9 +289,7 @@ class AcisHorizonDepartures(RemoteDepartures):
                     </GetArrivalsForStops>
                 </s:Body>
             </s:Envelope>
-        """.format(
-            self.stop.pk
-        )
+        """.format(self.stop.pk)
         return requests.post(
             self.request_url, headers=self.headers, data=data, timeout=2
         )
@@ -504,9 +502,7 @@ class SiriSmDepartures(RemoteDepartures):
                     </StopMonitoringRequest>
                 </ServiceRequest>
             </Siri>
-        """.format(
-            timestamp, username, timestamp, self.stop.atco_code
-        )
+        """.format(timestamp, username, timestamp, self.stop.atco_code)
         headers = {"Content-Type": "application/xml"}
         return requests.post(
             self.source.url, data=request_xml, headers=headers, timeout=5

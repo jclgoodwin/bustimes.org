@@ -151,7 +151,6 @@ class Command(BaseCommand):
             registration.licence = licence
 
             if prev_reg_no != reg_no or var_no >= max_var_no:
-
                 status = line["Registration Status"]
                 registration.registration_status = status
 
