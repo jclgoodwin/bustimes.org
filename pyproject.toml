@@ -72,12 +72,6 @@ ipython = "^8.5.0"
 pre-commit = "^3.3.3"
 uritemplate = "^4.1.1"
 
-[tool.black]
-target-version = ['py312']
-
-[tool.isort]
-profile = "black"
-
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
