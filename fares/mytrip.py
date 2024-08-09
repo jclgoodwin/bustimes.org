@@ -65,7 +65,10 @@ def operator_ticket(request, slug, id):
     code = get_object_or_404(OperatorCode, operator=operator, source=source)
     response = get_response(source, id)
 
-    if response["_links"]["parent"]["id"] != code.code:
+    if (
+        response["_links"]["parent"]["id"] != code.code
+        or "topup" not in response["_embedded"]
+    ):
         raise Http404
 
     context = {
