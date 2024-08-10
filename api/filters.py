@@ -18,6 +18,7 @@ class VehicleFilter(FilterSet):
     reg = CharFilter(lookup_expr="iexact")
     slug = CharFilter()
     operator = CharFilter()
+    code = CharFilter("vehiclecode__code")
 
     ordering = OrderingFilter(fields=(("id", "id"),))
 
