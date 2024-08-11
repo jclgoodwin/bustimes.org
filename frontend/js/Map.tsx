@@ -14,7 +14,7 @@ import Map, {
 import stopMarker from "data-url:../stop-marker.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
 import arrow from "data-url:../arrow.png";
-import type { MapStyleImageMissingEvent } from "maplibre-gl";
+import type { Map as MapLibreMap, MapStyleImageMissingEvent } from "maplibre-gl";
 
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
@@ -85,19 +85,29 @@ const StyleSwitcherControl = memo(function StyleSwitcherControl(
   return null;
 });
 
-function MapChild() {
+function MapChild({onInit}: {onInit?: (map: MapLibreMap) => void}) {
   const { current: map } = useMap();
 
   useEffect(() => {
     if (map) {
+      const _map = map.getMap();
+      _map.keyboard.disableRotation();
+      _map.touchZoomRotate.disableRotation();
+
+      if (onInit) {
+        onInit(_map);
+      }
+
       const onStyleImageMissing = function (e: MapStyleImageMissingEvent) {
         if (e.id in imagesByName) {
           const image = new Image();
           image.src = imagesByName[e.id];
           image.onload = function () {
-            map.addImage(e.id, image, {
-              pixelRatio: 2,
-            });
+            if (!map.hasImage(e.id)) {
+              map.addImage(e.id, image, {
+                pixelRatio: 2,
+              });
+            }
           };
         }
       };
@@ -115,9 +125,7 @@ function MapChild() {
 
 export default function BusTimesMap(
   props: MapProps & {
-    // images?: string[];
-    // onLoad?: (event: MapEvent) => void;
-
+    onMapInit?: (map: MapLibreMap) => void;
     // workaround for wrong react-map-gl type definitions?
     minPitch?: number;
     maxPitch?: number;
@@ -160,7 +168,6 @@ export default function BusTimesMap(
     <Map
       {...props}
       reuseMaps
-      // onLoad={handleMapLoad}
       touchPitch={false}
       pitchWithRotate={false}
       dragRotate={false}
@@ -180,7 +187,7 @@ export default function BusTimesMap(
       <StyleSwitcherControl style={mapStyle} onChange={handleMapStyleChange} />
       <AttributionControl />
 
-      <MapChild />
+      <MapChild onInit={props.onMapInit} />
 
       {props.children}
     </Map>

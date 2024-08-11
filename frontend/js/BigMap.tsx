@@ -8,7 +8,7 @@ import {
   ViewStateChangeEvent,
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
-import { LngLatBounds, Map, Hash, MapLibreEvent } from "maplibre-gl";
+import { LngLatBounds, Map, Hash } from "maplibre-gl";
 import { Link } from "wouter";
 
 import debounce from "lodash/debounce";
@@ -189,20 +189,6 @@ function fetchJson(url: string) {
     },
   );
 }
-
-// function fetchVehicles(noc?: string, bounds?: LngLatBounds, service?: number, trip?: number) {
-//   let url;
-//   if (bounds) {
-//     url = getBoundsQueryString(bounds);
-//   } else if (noc) {
-//     url =  "?operator=" + noc;
-//   } else if (service && trip) {
-//     url =  "?service=" + service + "&trip=" + trip;
-//   } else {
-//     return;
-//   }
-//   return fetchJson("vehicles.json" + url);
-// }
 
 type VehiclesProps = {
   vehicles: Vehicle[];
@@ -655,24 +641,24 @@ export default function BigMap(props: {
     [clickedStopUrl],
   );
 
-  const handleMapLoad = function (event: MapLibreEvent) {
-    const map = event.target;
+  const handleMapInit = function (map: Map) {
     mapRef.current = map;
-    map.keyboard.disableRotation();
-    map.touchZoomRotate.disableRotation();
-    // map.showPadding = true;
-    // map.showCollisionBoxes = true;
-    // map.showTileBoundaries = true;
 
     if (props.mode === MapMode.Slippy) {
-      boundsRef.current = map.getBounds();
+      const bounds = map.getBounds();
       const zoom = map.getZoom();
 
-      if (shouldShowVehicles(zoom)) {
-        loadVehicles();
+      if (!boundsRef.current) {  // first load
+        boundsRef.current = bounds;
 
-        if (shouldShowStops(zoom)) {
-          loadStops();
+        if (shouldShowVehicles(zoom)) {
+          loadVehicles();
+
+          if (shouldShowStops(zoom)) {
+            loadStops();
+          }
+        } else {
+          boundsRef.current = bounds;
         }
       } else {
         setLoadingBuses(false);
@@ -726,7 +712,7 @@ export default function BigMap(props: {
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           cursor={cursor}
-          onLoad={handleMapLoad}
+          onMapInit={handleMapInit}
           interactiveLayerIds={["stops", "vehicles"]}
         >
           {props.mode === MapMode.Trip && trip ? (
