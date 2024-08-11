@@ -717,6 +717,16 @@ def check_user(request):
         )
 
 
+revision_display_related_fields = (
+    "from_type",
+    "to_type",
+    "from_operator",
+    "to_operator",
+    "from_livery",
+    "to_livery",
+)
+
+
 @login_required
 def edit_vehicle(request, **kwargs):
     record_ip_address(request)
@@ -831,14 +841,7 @@ def edit_vehicle(request, **kwargs):
     if form:
         context["pending_edits"] = (
             vehicle.vehiclerevision_set.filter(pending=True)
-            .select_related(
-                "from_type",
-                "to_type",
-                "from_operator",
-                "to_operator",
-                "from_livery",
-                "to_livery",
-            )
+            .select_related(*revision_display_related_fields)
             .prefetch_related("vehiclerevisionfeature_set__feature")
         )
 
@@ -864,9 +867,7 @@ def edit_vehicle(request, **kwargs):
 @require_POST
 @login_required
 def vehicle_revision_vote(request, revision_id, direction):
-    revisions = VehicleRevision.objects.filter(id=revision_id)
-
-    revision = get_object_or_404(revisions)
+    revision = get_object_or_404(VehicleRevision, id=revision_id)
 
     assert request.user.id != revision.user_id
     assert request.user.trusted is not False
@@ -893,12 +894,17 @@ def vehicle_revision_vote(request, revision_id, direction):
             vote.save(update_fields=["positive"])
 
     if score_change != 0:
-        revisions.update(score=F("score") + score_change)
+        revision.score = F("score") + score_change
+        revision.save(update_fields=["score"])
         User.objects.filter(id=revision.user_id).update(
             score=Coalesce("score", 0) + score_change
         )
 
-    return HttpResponse(revisions.get().score)
+    # referesh from DB
+    revision = VehicleRevision.objects.select_related(
+        *revision_display_related_fields, "vehicle"
+    ).get(id=revision_id)
+    return render(request, "vehicle_revision.html", {"revision": revision})
 
 
 @require_POST
@@ -917,46 +923,43 @@ def vehicle_revision_revert(request, revision_id):
 @login_required
 @transaction.atomic
 def vehicle_revision_action(request, revision_id, action):
-    revisions = VehicleRevision.objects.filter(id=revision_id).select_for_update()
-
-    revision = get_object_or_404(revisions)
+    revision = get_object_or_404(
+        VehicleRevision.objects.select_related(
+            *revision_display_related_fields, "vehicle"
+        ).select_for_update(of=["self"]),
+        id=revision_id,
+    )
 
     if not request.user.has_perm("vehicles.change_vehicle"):
         assert (
             action == "disapprove" and request.user.id == revision.user_id
         ) or request.user.trusted
 
+    revision.disapproved_reason = unquote(request.headers.get("HX-Prompt", ""))
+    revision.approved_by = request.user
+    revision.approved_at = Now()
+
     if action == "apply":
         apply_revision(revision)
-        revisions.update(
-            approved_by=request.user,
-            approved_at=Now(),
-            pending=False,
-            disapproved=False,
-        )
+        revision.pending = False
+        revision.disapproved = False
     elif action == "disapprove":
         assert revision.pending
         if request.user.id == revision.user_id:
-            revisions.delete()  # cancel one's own edit
-        else:
-            revisions.update(
-                approved_by=request.user,
-                approved_at=Now(),
-                pending=False,
-                disapproved=True,
-                disapproved_reason=unquote(request.headers.get("HX-Prompt", "")),
-            )
-    else:
-        assert False
+            revision.delete()  # cancel one's own edit
+        revision.pending = False
+        revision.disapproved = True
 
-    return HttpResponse()
+    revision.save()
+
+    return render(request, "vehicle_revision.html", {"revision": revision})
 
 
 @require_safe
 def vehicle_edits(request):
     revisions = (
         VehicleRevision.objects.select_related(
-            "vehicle", "from_livery", "to_livery", "from_type", "to_type", "user"
+            *revision_display_related_fields, "user", "vehicle"
         )
         .prefetch_related("vehiclerevisionfeature_set__feature")
         .order_by("-id")

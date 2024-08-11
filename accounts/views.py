@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, render
 
+from vehicles.views import revision_display_related_fields
 from . import forms
 
 UserModel = get_user_model()
@@ -61,7 +62,7 @@ def user_detail(request, pk):
 
     if user.trusted is not False or request.user.is_superuser:
         revisions = user.vehiclerevision_set.select_related(
-            "vehicle", "from_livery", "to_livery", "from_type", "to_type"
+            *revision_display_related_fields
         ).prefetch_related("vehiclerevisionfeature_set__feature")
         revisions = revisions.order_by("-id")
         paginator = Paginator(revisions, 100)

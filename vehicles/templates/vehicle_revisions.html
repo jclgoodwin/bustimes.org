@@ -1,60 +1,9 @@
-{% load humanize %}
 {% load static %}
 
 <script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
 
 <ul class="revisions-list" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
     {% for revision in revisions %}
-        <li id="revision-{{ revision.id }}">
-            <p>
-                {% if not vehicle %}
-                    <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &bull;
-                {% endif %}
-                {{ revision.created_at|naturaltime }}
-                {% if not by_user and revision.user %}
-                    &bull; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
-                {% endif %}
-                {% if user.is_superuser %}
-                    &bull; <a href="{% url 'admin:vehicles_vehiclerevision_change' revision.pk %}">✎</a>
-                {% endif %}
-            <p>
-                {% if revision.user.trusted is False and revision.disapproved or revision.disapproved and request.user.is_anonymous %}
-                    [This content is hidden because it might be offensive]
-                {% else %}
-                    {% include "vehicle_revision.html" %}
-                {% endif %}
-
-            {% if revision.disapproved %}
-                <p><strong>Disapproved</strong> by user {{ revision.approved_by_id }}{% if revision.disapproved_reason %}: {{ revision.disapproved_reason }}{% endif %}
-            {% elif revision.approved_by_id %}
-                <p><strong>Approved</strong> by user {{ revision.approved_by_id }}
-            {% endif %}
-
-            <p class="actions" hx-target="#revision-{{ revision.id }} .score">
-                <span class="score">{{ revision.score }}</span>
-                    {% if revision.pending %}
-                        {% if revision.user_id == user.id %}
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove" hx-target="#revision-{{ revision.id }}">⚠️ Cancel</button>
-                        {% elif user.trusted %}
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove" hx-prompt="Reason for disapproving">⚠️ Disapprove</button>
-                        {% elif user.trusted is not False and user.score > 0 %}
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
-                        {% endif %}
-                    {% elif user.trusted is not False %}
-                        {% if revision.user_id != user.id and user.score > 0 %}
-                            <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up" title="Thank">👍</button>
-                            {% if user.trusted and revision.disapproved %}
-                                <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>
-                            {% endif %}
-                        {% endif %}
-                        {% if user.is_superuser %}
-                            <button class="button" hx-post="/vehicles/history/{{ revision.id }}/revert">⚠️ Revert</button>
-                        {% endif %}
-                {% endif %}
-        </li>
+        {% include "vehicle_revision.html" %}
     {% endfor %}
 </ul>

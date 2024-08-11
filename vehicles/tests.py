@@ -517,7 +517,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # vote for edit
         self.client.force_login(self.trusted_user)
         response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/up")
-        self.assertEqual(response.content, b"1")
+        self.assertContains(response, ">1<")
 
         # apply edit
         self.client.force_login(self.trusted_user)
@@ -551,7 +551,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.client.force_login(self.trusted_user)
 
         response = self.client.post(f"/vehicles/revisions/{revision.id}/vote/down")
-        self.assertEqual(response.content, b"-1")
+        self.assertContains(response, ">-1<")
         response = self.client.post(f"/vehicles/revisions/{revision.id}/disapprove")
 
         with self.assertNumQueries(5):
