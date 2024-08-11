@@ -79,7 +79,6 @@ class Command(ImportLiveVehiclesCommand):
                 destination = destination["stop_name"].split(", ", 1)[0]
             journey = VehicleJourney(
                 route_name=item["line_name"],
-                direction=item["dir"],
                 datetime=departure_time,
                 source=self.source,
                 destination=destination,
@@ -87,7 +86,6 @@ class Command(ImportLiveVehiclesCommand):
                 service=service,
             )
             journey.trip = journey.get_trip(
-                origin_ref=item["origin_atcocode"],
                 departure_time=departure_time,
             )
             journey.save()
