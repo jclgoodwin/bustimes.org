@@ -66,6 +66,7 @@ class EditVehicleForm(forms.Form):
         required=False,
         empty_label="",
         widget=forms.TextInput(),
+        help="This only needs to change for permanent transfers, not for short-term loans to another depot",
     )
 
     vehicle_type = forms.ModelChoiceField(
@@ -80,8 +81,8 @@ class EditVehicleForm(forms.Form):
         label="Current livery",
         queryset=Livery.objects,
         required=False,
-        help_text="""To avoid arguments, please wait until the bus has *finished being repainted*
-(<em>not</em> "in the paint shop" or "awaiting repaint")""",
+        help_text="""Please wait until the bus has *finished being repainted*
+(<em>not</em> just "in the paint shop" or "awaiting repaint")""",
     )
     other_colour = forms.CharField(
         label="Other colours",
