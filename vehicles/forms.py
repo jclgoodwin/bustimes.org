@@ -113,11 +113,10 @@ class EditVehicleForm(forms.Form):
     )
     notes = forms.CharField(required=False, max_length=255)
     summary = fields.SummaryField(
-        required=False,
         max_length=255,
         help_text="""Briefly explain your changes,
 if they need explaining.
-E.g. how you know a vehicle has definitely been withdrawn or repainted,
+E.g. how you *know* a vehicle has *definitely been* withdrawn or repainted,
 link to a picture to prove it. Be polite.""",
     )
 

@@ -598,6 +598,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "other_vehicle_type": str(self.vehicle_2.vehicle_type),
             "colours": self.livery.id,
             "notes": "",
+            "summary": "I saw it with my eyes",
         }
 
         with self.assertNumQueries(14):
@@ -641,6 +642,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "colours": self.livery.id,
             "other_colour": "",
             "notes": "",
+            "summary": "I smelt it with my nose",
         }
 
         with self.assertNumQueries(14):
@@ -674,6 +676,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "reg": "",
                     "operator": self.vehicle_1.operator_id,
                     "notes": "Trent Barton",
+                    "summary": "I am the CEO of the company",
                 },
             )
         self.assertContains(response, "Thank you")
@@ -734,7 +737,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             # new user - can create a pending revision
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
-                {"reg": "D19 FOX", "previous_reg": "QC FBPE", "withdrawn": True},
+                {
+                    "reg": "D19 FOX",
+                    "previous_reg": "QC FBPE",
+                    "withdrawn": True,
+                    "summary": ".",
+                },
             )
         self.assertContains(response, "Your changes")
         self.assertContains(response, "<strong>removed from list</strong>")
@@ -748,6 +756,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "vehicle_type": self.vehicle_2.vehicle_type_id,
                     "colours": "",
                     "prevous_reg": "SPIDERS",  # doesn't match regex
+                    "summary": "I sold the manager this reg",
                 },
             )
             self.assertContains(response, "Your changes")
@@ -767,6 +776,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "reg": "DA04 DDA",
                     "branding": "",
                     "previous_reg": "K292  JVF,P44CEX",  # has to match regex
+                    "summary": "dunno",
                 },
             )
         self.assertEqual(
@@ -792,6 +802,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                     "other_vehicle_type": str(self.vehicle_2.vehicle_type),
                     "operator": self.vehicle_2.operator_id,
                     "colours": "",
+                    "summary": "I sold the manager a tin of paint",
                 },
             )
         self.assertContains(response, "<strong>livery</strong>")
@@ -828,7 +839,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.client.force_login(self.trusted_user)
 
-        response = self.client.post(vehicle_1.get_edit_url(), {"operator": "LYNX"})
+        response = self.client.post(
+            vehicle_1.get_edit_url(), {"operator": "LYNX", "summary": "BUSES Magazine"}
+        )
         self.assertContains(
             response,
             "<li>Lynx already has a vehicle with the code 11111</li>",
