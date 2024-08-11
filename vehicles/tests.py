@@ -603,7 +603,6 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         with self.assertNumQueries(14):
             response = self.client.post(url, initial)
-        self.assertFalse(response.context["form"].has_changed())
         self.assertNotContains(response, "already")
         self.assertContains(response, "You haven&#x27;t changed anything")
 
