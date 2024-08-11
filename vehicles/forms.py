@@ -66,7 +66,7 @@ class EditVehicleForm(forms.Form):
         required=False,
         empty_label="",
         widget=forms.TextInput(),
-        help="This only needs to change for permanent transfers, not for short-term loans to another depot",
+        help_text="This only needs to change for permanent transfers, not for short-term loans to another depot",
     )
 
     vehicle_type = forms.ModelChoiceField(
