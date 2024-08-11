@@ -78,7 +78,7 @@ jobs:
         DATABASE_URL: postgis://postgres:postgres@localhost/postgres
       run: |
         poetry run ./manage.py collectstatic --noinput && \
-        poetry run coverage run --concurrency=multiprocessing ./manage.py test --parallel
+        poetry run coverage run --concurrency=multiprocessing ./manage.py test --parallel 2
 
     - name: generate coverage report
       run: poetry run coverage combine && poetry run coverage xml
