@@ -621,7 +621,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
 @require_safe
 def service_vehicles_history(request, slug):
-    service = get_object_or_404(Service.objects.with_line_names(), slug=slug)
+    service: Service = get_object_or_404(Service.objects.with_line_names(), slug=slug)
 
     context = journeys_list(
         request, service.vehiclejourney_set.select_related("vehicle"), service=service
@@ -661,6 +661,14 @@ class VehicleDetailView(DetailView):
             **journeys_list(self.request, journeys, vehicle=self.object),
         }
         del journeys
+
+        if self.object.reg:
+            # for search engine purposes, use reg without space:
+            context["title"] = self.object.reg
+            if self.object.fleet_code:
+                context["title"] = self.object.fleet_code + " - " + context["title"]
+        else:
+            context["title"] = str(self.object)
 
         if "journeys" in context:
             garages = set(
@@ -955,7 +963,7 @@ def vehicle_edits(request):
     )
 
     f = filters.VehicleRevisionFilter(
-        request.GET or {"pending": True, "disapproved": False}, queryset=revisions
+        request.GET or {"status": "pending"}, queryset=revisions
     )
 
     if f.is_valid():

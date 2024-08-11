@@ -554,6 +554,10 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertEqual(response.content, b"-1")
         response = self.client.post(f"/vehicles/revisions/{revision.id}/disapprove")
 
+        with self.assertNumQueries(5):
+            response = self.client.get("/vehicles/edits?status=disapproved")
+        self.assertEqual(len(response.context["revisions"]), 1)
+
         # add and remove a feature, change type
         initial["features"] = self.usb.id
         initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
@@ -686,9 +690,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             response = self.client.get("/vehicles/edits")
         self.assertEqual(len(response.context["revisions"]), 1)
 
-        with self.assertNumQueries(6):
-            response = self.client.get("/vehicles/edits?change=reg")
-        self.assertEqual(len(response.context["revisions"]), 1)
+        with self.assertNumQueries(3):
+            response = self.client.get("/vehicles/edits?status=approved")
+        self.assertEqual(len(response.context["revisions"]), 0)
 
         self.client.force_login(self.staff_user)
 
