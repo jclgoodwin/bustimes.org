@@ -87,6 +87,7 @@ class Command(ImportLiveVehiclesCommand):
             )
             journey.trip = journey.get_trip(
                 departure_time=departure_time,
+                destination_ref=item["stops"][-1]["atcocode"],
             )
             journey.save()
 
