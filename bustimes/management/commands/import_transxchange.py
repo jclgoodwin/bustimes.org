@@ -482,6 +482,34 @@ class Command(BaseCommand):
         if calendar_hash in self.calendar_cache:
             return self.calendar_cache[calendar_hash]
 
+        calendar = Calendar(
+            mon=False,
+            tue=False,
+            wed=False,
+            thu=False,
+            fri=False,
+            sat=False,
+            sun=False,
+            start_date=operating_period.start,
+            end_date=operating_period.end,
+        )
+        for day in operating_profile.regular_days:
+            match day:
+                case 0:
+                    calendar.mon = True
+                case 1:
+                    calendar.tue = True
+                case 2:
+                    calendar.wed = True
+                case 3:
+                    calendar.thu = True
+                case 4:
+                    calendar.fri = True
+                case 5:
+                    calendar.sat = True
+                case 6:
+                    calendar.sun = True
+
         calendar_dates = [
             get_calendar_date(date_range=date_range, operation=False)
             for date_range in operating_profile.nonoperation_days
@@ -492,11 +520,18 @@ class Command(BaseCommand):
             )
 
             difference = date_range.end - date_range.start
-            if difference > datetime.timedelta(days=5):
-                # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation
+            if operating_profile.regular_days and difference > datetime.timedelta(
+                days=5
+            ):
+                # looks like this SpecialDaysOperation was meant to be treated like a ServicedOrganisation?
                 # (school term dates etc)
-                calendar_date.special = False
-                logger.warning(f"{date_range} is {difference.days} days long")
+                # calendar_date.special = False
+                logger.warning(
+                    "%s %s is %s days long",
+                    operating_profile.regular_days,
+                    date_range,
+                    difference.days,
+                )
             calendar_dates.append(calendar_date)
 
         bank_holidays = {}  # a dictionary to remove duplicates! (non-operation overrides operation)
@@ -550,37 +585,7 @@ class Command(BaseCommand):
         summary = ", ".join(summary)
 
         if summary:
-            summary = get_summary(summary)
-
-        calendar = Calendar(
-            mon=False,
-            tue=False,
-            wed=False,
-            thu=False,
-            fri=False,
-            sat=False,
-            sun=False,
-            start_date=operating_period.start,
-            end_date=operating_period.end,
-            summary=summary,
-        )
-
-        for day in operating_profile.regular_days:
-            match day:
-                case 0:
-                    calendar.mon = True
-                case 1:
-                    calendar.tue = True
-                case 2:
-                    calendar.wed = True
-                case 3:
-                    calendar.thu = True
-                case 4:
-                    calendar.fri = True
-                case 5:
-                    calendar.sat = True
-                case 6:
-                    calendar.sun = True
+            calendar.summary = get_summary(summary)
 
         calendar.save()
 
@@ -1013,6 +1018,8 @@ class Command(BaseCommand):
 
         for i, line in enumerate(txc_service.lines):
             line.line_name = line.line_name.replace("_", " ")
+            if "FLIX" in filename:
+                line.line_name = line.line_name.removeprefix("UK")
 
             # prefer a BODS-type source over TNDS
             if self.is_tnds() and self.should_defer_to_other_source(

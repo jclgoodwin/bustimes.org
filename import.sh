@@ -36,7 +36,7 @@ PASSWORD=$2
 cd data/TNDS
 
 ncsd_old=$(ls -l NCSD.zip)
-wget -qN https://download.basemap.co.uk/Data/NCSD/NCSD.zip
+wget -qN https://bodds-prod-coach-data.s3.eu-west-2.amazonaws.com/TxC-2.4.zip -O NCSD.zip
 ncsd_new=$(ls -l NCSD.zip)
 
 tfl_old=$(ls -l L.zip)
