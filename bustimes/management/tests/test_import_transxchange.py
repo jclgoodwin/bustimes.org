@@ -12,6 +12,7 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
+from accounts.models import User
 from busstops.models import (
     DataSource,
     Operator,
@@ -103,6 +104,7 @@ class ImportTransXChangeTest(TestCase):
                 ("0500FWISH025", "Wisbech Bus Station", "", 0, 50),
             )
         )
+        cls.user = User.objects.create()
 
     @staticmethod
     def handle_files(archive_name, filenames):
@@ -647,6 +649,7 @@ class ImportTransXChangeTest(TestCase):
             response, '<option value="2017-05-15">Monday 15 May 2017</option>'
         )
 
+        self.client.force_login(self.user)
         response = self.client.get(f"{service.get_absolute_url()}/debug")
         self.assertContains(response, "SpringBank")
         self.assertContains(response, "GoodFriday")
@@ -728,6 +731,7 @@ class ImportTransXChangeTest(TestCase):
 
         route = service.route_set.get()
 
+        self.client.force_login(self.user)
         response = self.client.get(service.get_absolute_url() + "/debug")
         self.assertContains(response, route.get_absolute_url())
 

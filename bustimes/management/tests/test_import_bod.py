@@ -12,6 +12,7 @@ from django.core.management import call_command
 from django.test import TestCase, override_settings
 from vcr import use_cassette
 
+from accounts.models import User
 from busstops.models import (
     AdminArea,
     DataSource,
@@ -59,6 +60,7 @@ class ImportBusOpenDataTest(TestCase):
                 OperatorCode(operator=schu, source=source, code="SCCM"),
             ]
         )
+        cls.user = User.objects.create()
 
     @use_cassette(str(FIXTURES_DIR / "bod_lynx.yaml"))
     @time_machine.travel(datetime.datetime(2020, 5, 1), tick=False)
@@ -119,8 +121,10 @@ class ImportBusOpenDataTest(TestCase):
 
                 route = Route.objects.get()
 
+                self.client.force_login(self.user)
                 response = self.client.get(route.get_absolute_url())
                 self.assertEqual(200, response.status_code)
+                self.client.logout()
 
         self.assertEqual(route.source.name, "Lynx_Clenchwarton_54_20200330")
         self.assertEqual(
@@ -363,6 +367,7 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
                 service = source.service_set.first()
                 route = service.route_set.first()
 
+                self.client.force_login(self.user)
                 response = self.client.get(route.get_absolute_url())
                 self.assertEqual(response.status_code, 200)
 
@@ -470,6 +475,7 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
                     route_link.refresh_from_db()
                     self.assertEqual(len(route_link.geometry.coords), 32)
 
+                self.client.force_login(self.user)
                 source = DataSource.objects.filter(name="Stagecoach East").first()
                 response = self.client.get(f"/sources/{source.id}/routes/")
 

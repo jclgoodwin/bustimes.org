@@ -11,6 +11,7 @@ from django.core.management import call_command
 from django.shortcuts import render
 from django.test import TestCase, override_settings
 
+from accounts.models import User
 from busstops.models import (
     AdminArea,
     DataSource,
@@ -108,6 +109,7 @@ class LiveDeparturesTest(TestCase):
         StopUsage.objects.create(
             stop_id=cls.worcester_stop.pk, service=worcester_44, order=1
         )
+        cls.user = User.objects.create()
 
     def test_abstract(self):
         departures = sources.RemoteDepartures(None, ())
@@ -191,6 +193,7 @@ class LiveDeparturesTest(TestCase):
         )
 
         # live departures debug view
+        self.client.force_login(self.user)
         response = self.client.get(f"/stops/{self.london_stop.pk}/debug")
         self.assertContains(response, "<code>")
 
@@ -457,6 +460,7 @@ class LiveDeparturesTest(TestCase):
                 with self.assertNumQueries(8):
                     response = self.client.get(self.worcester_stop.get_absolute_url())
 
+                self.client.force_login(self.user)
                 debug_response = self.client.get(
                     f"{self.worcester_stop.get_absolute_url()}/debug"
                 )

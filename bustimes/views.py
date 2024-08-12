@@ -8,6 +8,7 @@ from pathlib import Path
 import requests
 from ciso8601 import parse_datetime
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.db.models import Count, Exists, OuterRef, Prefetch, prefetch_related_objects
 from django.http import (
@@ -139,6 +140,7 @@ class SourceDetailView(DetailView):
 
 
 @require_GET
+@login_required
 def route_xml(request, source, code=""):
     source = get_object_or_404(DataSource, id=source)
 
@@ -386,6 +388,7 @@ def stop_times_json(request, atco_code):
 
 
 @require_GET
+@login_required
 def stop_debug(request, atco_code: str):
     stop = get_object_or_404(
         StopPoint.objects.select_related("locality"), atco_code=atco_code
