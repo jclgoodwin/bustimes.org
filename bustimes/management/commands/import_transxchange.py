@@ -527,8 +527,7 @@ class Command(BaseCommand):
                 # (school term dates etc)
                 # calendar_date.special = False
                 logger.warning(
-                    "%s %s is %s days long",
-                    operating_profile.regular_days,
+                    "%s is %s days long",
                     date_range,
                     difference.days,
                 )

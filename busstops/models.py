@@ -239,13 +239,15 @@ class DataSource(models.Model):
         if self.name == "L":
             text = "Transport for London"
         elif self.name == "GB":
-            text = "the National Coach Services Database (NCSD)"
-            url = "https://www.data.gov.uk/dataset/3a3b32f3-d727-4623-aa17-daa2f39aaf92/national-coach-services-ncsd/"
+            url = "https://data.bus-data.dft.gov.uk/coach/download"
+            text = "the Bus Open Data Service (BODS)"
         elif "tnds" in self.url:
             url = "https://www.travelinedata.org.uk/"
             text = "the Traveline National Dataset (TNDS)"
         elif url:
             text = self.get_nice_name()
+            if url and "bus-data.dft.gov.uk" in url:
+                text = f"{text}/Bus Open Data Service (BODS)"
         elif "transportforireland" in self.url:
             url = f"https://www.transportforireland.ie/transitData/PT_Data.html#:~:text={self.name}"
             text = "Transport for Ireland"
@@ -256,9 +258,6 @@ class DataSource(models.Model):
             text = "Translink open data"
         else:
             text = self.name
-
-        if url and "bus-data.dft.gov.uk" in url:
-            text = f"{text}/Bus Open Data Service (BODS)"
 
         if route:
             # get date from 'bluestar_1611829131.zip/Bluestar 31 01 2021_SER2.xml'

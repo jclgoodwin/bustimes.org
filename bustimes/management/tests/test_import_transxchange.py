@@ -412,10 +412,10 @@ class ImportTransXChangeTest(TestCase):
 
         self.assertEqual(14, len(timetable.date_options))
         self.assertEqual(
-            2, CalendarDate.objects.filter(operation=True, special=True).count()
+            4, CalendarDate.objects.filter(operation=True, special=True).count()
         )
         self.assertEqual(
-            2, CalendarDate.objects.filter(operation=True, special=False).count()
+            0, CalendarDate.objects.filter(operation=True, special=False).count()
         )
         self.assertEqual(19, CalendarDate.objects.filter(operation=False).count())
 
