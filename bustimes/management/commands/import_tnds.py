@@ -54,16 +54,21 @@ class Command(BaseCommand):
                 self.ftp.retrbinary(f"RETR {name}", open_file.write)
 
         if not existing or existing["ContentLength"] != details["size"]:
-            self.client.upload_file(str(path), self.bucket_name, s3_key)
-            self.client.copy(
-                {
-                    "Bucket": self.bucket_name,
-                    "Key": s3_key,
-                },
-                Bucket=self.bucket_name,
-                Key=versioned_s3_key,
-            )
-            etag = self.client.head_object(Bucket=self.bucket_name, Key=s3_key)["ETag"]
+            print(self.client.upload_file(str(path), self.bucket_name, s3_key))
+            new_etag = self.client.head_object(Bucket=self.bucket_name, Key=s3_key)[
+                "ETag"
+            ]
+
+            if etag != new_etag:  # copy a versioned copy
+                self.client.copy(
+                    {
+                        "Bucket": self.bucket_name,
+                        "Key": s3_key,
+                    },
+                    Bucket=self.bucket_name,
+                    Key=versioned_s3_key,
+                )
+                etag = new_etag
 
         if not etag or etag != source.sha1:
             source.sha1 = etag
