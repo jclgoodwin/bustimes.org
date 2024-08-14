@@ -947,6 +947,7 @@ def vehicle_revision_action(request, revision_id, action):
         assert revision.pending
         if request.user.id == revision.user_id:
             revision.delete()  # cancel one's own edit
+            return HttpResponse("")
         revision.pending = False
         revision.disapproved = True
 
