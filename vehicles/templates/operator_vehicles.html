@@ -45,8 +45,8 @@
 
 {% if not parent %}
     <ul class="horizontal">
-        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&pending=false&disapproved=false">Recent changes</a></li>
-        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&pending=true">Pending vehicle edits</a></li>
+        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&status=approved">Recent changes</a></li>
+        <li><a href="/vehicles/edits?vehicle__operator={{ object.noc }}&status=pending">Pending vehicle edits</a></li>
         {% if request.user.is_superuser %}
             <li><a href="{% url 'admin:vehicles_vehicle_changelist' %}?operator={{ object.noc }}">✎</a></li>
         {% endif %}
