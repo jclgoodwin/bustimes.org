@@ -367,7 +367,11 @@ def get_trip(
         arrival_time = timezone.localtime(arrival_time)
         end = Q(end=timedelta(hours=arrival_time.hour, minutes=arrival_time.minute))
         if arrival_time.hour < 6:
-            end |= Q(end=timedelta(days=1, hours=end.hour, minutes=end.minute))
+            end |= Q(
+                end=timedelta(
+                    days=1, hours=arrival_time.hour, minutes=arrival_time.minute
+                )
+            )
 
     # special strategy for TfL data
     if operator_ref == "TFLO" and departure_time and origin_ref and destination:

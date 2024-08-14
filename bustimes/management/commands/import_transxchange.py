@@ -198,7 +198,6 @@ class Command(BaseCommand):
     def set_up(self):
         self.service_descriptions = {}
         self.calendar_cache = {}
-        self.operators = {}
         self.missing_operators = []
         self.notes = {}
         self.garages = {}
@@ -242,10 +241,8 @@ class Command(BaseCommand):
         """
 
         operator_code = operator_element.findtext("NationalOperatorCode")
-        if not self.is_tnds():
-            if not operator_code:
-                operator_code = operator_element.findtext("OperatorCode")
-            operator_code = self.operators.get(operator_code, operator_code)
+        if not self.is_tnds() and not operator_code:
+            operator_code = operator_element.findtext("OperatorCode")
 
         if operator_code:
             if operator_code == "GAHL":
