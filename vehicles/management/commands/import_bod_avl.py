@@ -543,10 +543,16 @@ class Command(ImportLiveVehiclesCommand):
                     except IntegrityError:
                         pass
 
-            block_ref = monitored_vehicle_journey.get("BlockRef")
-
             # match trip (timetable) to journey:
             if journey.service and (origin_aimed_departure_time or journey_ref):
+                block_ref = monitored_vehicle_journey.get("BlockRef")
+
+                arrival_time = monitored_vehicle_journey.get(
+                    "DestinationAimedArrivalTime"
+                )
+                if arrival_time:
+                    arrival_time = parse_datetime(arrival_time)
+
                 journey.trip = journey.get_trip(
                     datetime=datetime,
                     date=journey_date,
@@ -554,6 +560,7 @@ class Command(ImportLiveVehiclesCommand):
                     origin_ref=monitored_vehicle_journey.get("OriginRef"),
                     destination_ref=destination_ref,
                     departure_time=origin_aimed_departure_time,
+                    arrival_time=arrival_time,
                     journey_code=journey_code,
                     block_ref=block_ref,
                 )

@@ -317,6 +317,7 @@ def get_trip(
     origin_ref=None,
     destination_ref=None,
     departure_time=None,
+    arrival_time=None,
     journey_code="",
     block_ref=None,
 ):
@@ -362,6 +363,12 @@ def get_trip(
     else:
         start = Q()
 
+    if arrival_time:
+        arrival_time = timezone.localtime(arrival_time)
+        end = Q(end=timedelta(hours=arrival_time.hour, minutes=arrival_time.minute))
+        if arrival_time.hour < 6:
+            end |= Q(end=timedelta(days=1, hours=end.hour, minutes=end.minute))
+
     # special strategy for TfL data
     if operator_ref == "TFLO" and departure_time and origin_ref and destination:
         try:
@@ -395,6 +402,8 @@ def get_trip(
         score += Case(When(block=block_ref, then=1), default=0)
     if start:
         score += Case(When(start, then=1), default=0)
+    if arrival_time:
+        score += Case(When(end, then=1), default=0)
     if direction:
         score += Case(When(direction, then=1), default=0)
     if destination:
