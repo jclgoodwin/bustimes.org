@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 self.ftp.retrbinary(f"RETR {name}", open_file.write)
 
         if not existing or existing["ContentLength"] != details["size"]:
-            print(self.client.upload_file(str(path), self.bucket_name, s3_key))
+            self.client.upload_file(str(path), self.bucket_name, s3_key)
             new_etag = self.client.head_object(Bucket=self.bucket_name, Key=s3_key)[
                 "ETag"
             ]
