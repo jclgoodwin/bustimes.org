@@ -3,44 +3,48 @@ import React from "react";
 import { Source, Layer, LayerProps } from "react-map-gl/maplibre";
 
 import { TripTime } from "./TripTimetable";
-
-const stopsStyle: LayerProps = {
-  id: "stops",
-  type: "symbol",
-  layout: {
-    "symbol-sort-key": ["get", "priority"],
-    "text-field": ["get", "time"],
-    "text-size": 11,
-    "text-font": ["Stadia Regular"],
-  },
-  paint: {
-    "text-halo-color": "#fff",
-    "text-halo-width": 2,
-  },
-};
-
-const routeStyle: LayerProps = {
-  type: "line",
-  paint: {
-    "line-color": "#666",
-    "line-width": 3,
-  },
-};
-
-const lineStyle: LayerProps = {
-  type: "line",
-  paint: {
-    "line-color": "#666",
-    "line-width": 3,
-    "line-dasharray": [2, 2],
-  },
-};
+import { ThemeContext } from "./Map";
 
 type RouteProps = {
   times: TripTime[];
 };
 
 export const Route = React.memo(function Route({ times }: RouteProps) {
+  const darkMode = React.useContext(ThemeContext);
+
+  const stopsStyle: LayerProps = {
+    id: "stops",
+    type: "symbol",
+    layout: {
+      "symbol-sort-key": ["get", "priority"],
+      "text-field": ["get", "time"],
+      "text-size": 11,
+      "text-font": ["Stadia Regular"],
+    },
+    paint: {
+      "text-color": darkMode ? "#fff" : "#333",
+      "text-halo-color": darkMode ? "#333" : "#fff",
+      "text-halo-width": 2,
+    },
+  };
+
+  const routeStyle: LayerProps = {
+    type: "line",
+    paint: {
+      "line-color": darkMode ? "#ddd" : "#666",
+      "line-width": 3,
+    },
+  };
+
+  const lineStyle: LayerProps = {
+    type: "line",
+    paint: {
+      "line-color": darkMode ? "#eee" : "#666",
+      "line-width": 2,
+      "line-dasharray": [2, 2],
+    },
+  };
+
   const lines = [];
   const lineStrings = [];
   let prevLocation,

@@ -14,7 +14,7 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import BusTimesMap from "./Map";
+import BusTimesMap, {ThemeContext} from "./Map";
 
 declare global {
   interface Window {
@@ -22,32 +22,45 @@ declare global {
   }
 }
 
-const routeStyle: LayerProps = {
-  type: "line",
-  paint: {
-    "line-color": "#777",
-    "line-width": 3,
-  },
-};
-
 type ServiceMapMapProps = {
   vehicles?: Vehicle[];
   geometry?: MapGeoJSONFeature;
   stops?: MapGeoJSONFeature[];
 };
 
-const stopsStyle: LayerProps = {
-  id: "stops",
-  type: "symbol",
-  layout: {
-    "icon-rotate": ["+", 45, ["get", "bearing"]],
-    "icon-image": "route-stop-marker",
-    "icon-allow-overlap": true,
-    "icon-ignore-placement": true,
-  },
-};
+
+function Geometry({geometry}: {geometry: MapGeoJSONFeature}) {
+  const darkMode = React.useContext(ThemeContext);
+
+  const routeStyle: LayerProps = {
+    type: "line",
+    paint: {
+      "line-color": darkMode ? "#ccc" : "#666",
+      "line-width": 3,
+    },
+  };
+
+  return (
+    <Source type="geojson" data={geometry}>
+      <Layer {...routeStyle} />
+    </Source>
+  );
+}
 
 function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
+  // const darkMode = React.useContext(ThemeContext);
+
+  const stopsStyle: LayerProps = {
+    id: "stops",
+    type: "symbol",
+    layout: {
+      "icon-rotate": ["+", 45, ["get", "bearing"]],
+      "icon-image": "route-stop-marker",
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+    },
+  };
+
   if (stops) {
     return (
       <Source type="geojson" data={stops}>
@@ -159,11 +172,7 @@ export default function ServiceMapMap({
         />
       ) : null}
 
-      {geometry && (
-        <Source type="geojson" data={geometry}>
-          <Layer {...routeStyle} />
-        </Source>
-      )}
+      {geometry && <Geometry geometry={geometry} />}
 
       <Stops stops={stops} />
     </BusTimesMap>

@@ -23,12 +23,12 @@
 }
 
 .dark-mode {
-    --brand-color: #2a2a2a;
-    --brand-color-darker: #333;
-    --brand-color-darker-darker: #444;
+    --brand-color: #444;
+    --brand-color-darker: #555;
+    --brand-color-darker-darker: #666;
 
-    --border-color: #333;
-    --border-color-darker: #999;
+    --border-color: #444;
+    --border-color-darker: #555;
 
     --background-color: #222;
     --text-color: #fff;
@@ -169,7 +169,6 @@ summary::marker {
 
     .site-name {
         font-size: 1.5em;
-        font-family: "Arial Narrow", Arial, "Roboto Condensed", sans-serif;
     }
 
     div {

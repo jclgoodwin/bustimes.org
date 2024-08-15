@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, createContext } from "react";
 import { createRoot } from "react-dom/client";
 // import { captureException } from "@sentry/react";
 
@@ -85,6 +85,8 @@ const StyleSwitcherControl = memo(function StyleSwitcherControl(
   return null;
 });
 
+export const ThemeContext = createContext(false);
+
 function MapChild({onInit}: {onInit?: (map: MapLibreMap) => void}) {
   const { current: map } = useMap();
 
@@ -165,31 +167,33 @@ export default function BusTimesMap(
   }, [mapStyle]);
 
   return (
-    <Map
-      {...props}
-      reuseMaps
-      touchPitch={false}
-      pitchWithRotate={false}
-      dragRotate={false}
-      minZoom={5}
-      maxZoom={18}
-      mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
-      RTLTextPlugin={""}
-      attributionControl={false}
-      // onError={(e) => captureException(e.error)}
+    <ThemeContext.Provider value={mapStyle.endsWith("_dark")}>
+      <Map
+        {...props}
+        reuseMaps
+        touchPitch={false}
+        pitchWithRotate={false}
+        dragRotate={false}
+        minZoom={5}
+        maxZoom={18}
+        mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
+        RTLTextPlugin={""}
+        attributionControl={false}
+        // onError={(e) => captureException(e.error)}
 
-      // workaround for wrong react-map-gl type definitions?
-      transformRequest={undefined}
-      maxTileCacheSize={undefined}
-    >
-      <NavigationControl showCompass={false} />
-      <GeolocateControl />
-      <StyleSwitcherControl style={mapStyle} onChange={handleMapStyleChange} />
-      <AttributionControl />
+        // workaround for wrong react-map-gl type definitions?
+        transformRequest={undefined}
+        maxTileCacheSize={undefined}
+      >
+        <NavigationControl showCompass={false} />
+        <GeolocateControl />
+        <StyleSwitcherControl style={mapStyle} onChange={handleMapStyleChange} />
+        <AttributionControl />
 
-      <MapChild onInit={props.onMapInit} />
+        <MapChild onInit={props.onMapInit} />
 
-      {props.children}
-    </Map>
+        {props.children}
+      </Map>
+    </ThemeContext.Provider>
   );
 }
