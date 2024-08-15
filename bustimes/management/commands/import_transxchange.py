@@ -417,6 +417,14 @@ class Command(BaseCommand):
             active=False,
         ).update(active=True)
 
+        if archive_name == "NCSD.zip" or archive_name == "L.zip":
+            import boto3
+
+            client = boto3.client(
+                "s3", endpoint_url="https://ams3.digitaloceanspaces.com"
+            )
+            client.upload_file(archive_name, "bustimes-data", "TNDS/" + archive_name)
+
     def finish_services(self):
         """update/create StopUsages, search_vector and geometry fields"""
 
