@@ -810,6 +810,7 @@ class VehicleLocation:
     def decode_appendage(location):
         location = struct.unpack("I 2f ?h ?h", location)
         return {
+            "id": location[0],
             "coordinates": location[1:3],
             "delta": (location[5] or None) and location[6],
             "direction": (location[3] or None) and location[4],

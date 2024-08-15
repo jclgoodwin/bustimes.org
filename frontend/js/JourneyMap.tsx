@@ -7,7 +7,7 @@ import {
   MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
 
-import BusTimesMap from "./Map";
+import BusTimesMap, { ThemeContext } from "./Map";
 
 import { LngLatBounds, Map } from "maplibre-gl";
 import TripTimetable, { TripTime } from "./TripTimetable";
@@ -19,6 +19,7 @@ import VehicleMarker, {
 import VehiclePopup from "./VehiclePopup";
 
 type VehicleJourneyLocation = {
+  id: number;
   coordinates: [number, number];
   delta: number | null;
   direction?: number | null;
@@ -74,31 +75,8 @@ const stopsStyle: LayerProps = {
     "icon-rotate": ["+", 45, ["get", "heading"]],
     "icon-image": "route-stop-marker",
     // "icon-padding": 0,
-    "icon-ignore-placement": true
-  },
-};
-
-const locationsStyle: LayerProps = {
-  id: "locations",
-  type: "symbol",
-  layout: {
-    "text-field": ["get", "time"],
-    "text-size": 11,
-    "text-font": ["Stadia Regular"],
-  },
-  paint: {
-    "text-halo-color": "#fff",
-    "text-halo-width": 2,
-  },
-};
-
-const routeStyle: LayerProps = {
-  type: "line",
-  paint: {
-    "line-color": "#666",
-    "line-opacity": 0.5,
-    "line-width": 3,
-    "line-dasharray": [1, 2],
+    "icon-allow-overlap": true,
+    "icon-ignore-placement": true,
   },
 };
 
@@ -107,6 +85,46 @@ const Locations = React.memo(function Locations({
 }: {
   locations: VehicleJourneyLocation[];
 }) {
+  const darkMode = React.useContext(ThemeContext);
+
+  const routeStyle: LayerProps = {
+    type: "line",
+    paint: {
+      "line-color": darkMode ? "#eee" : "#666",
+      "line-width": 2,
+      "line-dasharray": [2, 2],
+    },
+  };
+
+  const locationsStyle: LayerProps = {
+    id: "locations",
+    type: "symbol",
+    layout: {
+      "text-field": ["get", "time"],
+      "text-size": 11,
+      "text-font": ["Stadia Regular"],
+
+      "icon-rotate": ["+", 45, ["get", "heading"]],
+      "icon-image": "arrow",
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+      "icon-anchor": "top-left",
+
+      "text-allow-overlap": true,
+    },
+    paint: {
+      "text-opacity": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        1,
+        0,
+      ],
+      "text-color": darkMode ? "#fff" : "#333",
+      "text-halo-color": darkMode ? "#333" : "#fff",
+      "text-halo-width": 3,
+    },
+  };
+
   return (
     <React.Fragment>
       <Source
@@ -121,21 +139,22 @@ const Locations = React.memo(function Locations({
 
       <Source
         type="geojson"
+        id="locations"
         data={{
           type: "FeatureCollection",
           features: locations.map((l) => {
             return {
               type: "Feature",
+              id: l.id,
               geometry: {
                 type: "Point",
                 coordinates: l.coordinates,
               },
               properties: {
                 // delta: l.delta,
-                // heading: l.direction,
+                heading: l.direction,
                 // datetime: l.datetime,
-                time: (new Date(l.datetime)).toTimeString().slice(0, 8)
-
+                time: new Date(l.datetime).toTimeString().slice(0, 8),
               },
             };
           }),
@@ -255,7 +274,9 @@ function Sidebar({
         {previousLink}
         {nextLink}
       </div>
-      <p>{text} {reg}</p>
+      <p>
+        {text} {reg}
+      </p>
       {journey.stops ? (
         <TripTimetable
           onMouseEnter={onMouseEnter}
@@ -300,12 +321,15 @@ function JourneyVehicle({
 
   // const timeout = React.useRef<number>();
 
-  const handleVehicle = React.useCallback((v: Vehicle) => {
-    if (v.datetime !== vehicle?.datetime) {
-      setVehicle(v);
-      onVehicleMove(v);
-    }
-  }, [vehicle?.datetime, onVehicleMove]);
+  const handleVehicle = React.useCallback(
+    (v: Vehicle) => {
+      if (v.datetime !== vehicle?.datetime) {
+        setVehicle(v);
+        onVehicleMove(v);
+      }
+    },
+    [vehicle?.datetime, onVehicleMove],
+  );
 
   React.useEffect(() => {
     if (!vehicleId) {
@@ -358,8 +382,7 @@ export default function JourneyMap({
 }) {
   const [cursor, setCursor] = React.useState<string>();
 
-  // const [clickedLocation, setClickedLocation] =
-  //   React.useState<LocationPopupProps["location"]>();
+  const hoveredLocation = React.useRef<number>();
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     const vehicleId = getClickedVehicleMarkerId(e);
@@ -370,14 +393,22 @@ export default function JourneyMap({
     if (e.features?.length) {
       setCursor("pointer");
 
-      // for (const feature of e.features) {
-      //   if (feature.layer.id === "locations") {
-      //     setClickedLocation(
-      //       feature as unknown as LocationPopupProps["location"],
-      //     );
-      //     break;
-      //   }
-      // }
+      for (const feature of e.features) {
+        if (feature.layer.id === "locations") {
+          if (hoveredLocation.current) {
+            e.target.setFeatureState(
+              { source: "locations", id: hoveredLocation.current },
+              { hover: false },
+            );
+          }
+          e.target.setFeatureState(
+            { source: "locations", id: feature.id },
+            { hover: true },
+          );
+          hoveredLocation.current = feature.id as number;
+          return;
+        }
+      }
     }
   }, []);
 
@@ -400,6 +431,7 @@ export default function JourneyMap({
       setLocations(
         locations.concat([
           {
+            id: new Date(vehicle.datetime).getTime(),
             coordinates: vehicle.coordinates,
             delta: null,
             datetime: vehicle.datetime,
@@ -471,20 +503,16 @@ export default function JourneyMap({
     return null;
   }, [journey]);
 
-  const onMapInit = React.useCallback(
-    (map: Map) => {
-      // debugger;
-      mapRef.current = map;
+  const onMapInit = React.useCallback((map: Map) => {
+    // debugger;
+    mapRef.current = map;
 
-      // if (bounds) {
-      //   map.fitBounds(bounds, {
-      //     padding: 50,
-      //   });
-      // }
-
-    },
-    [],
-  );
+    // if (bounds) {
+    //   map.fitBounds(bounds, {
+    //     padding: 50,
+    //   });
+    // }
+  }, []);
 
   React.useEffect(() => {
     if (bounds && mapRef.current) {
@@ -515,13 +543,8 @@ export default function JourneyMap({
             onMouseLeave={onMouseLeave}
             onClick={handleMapClick}
             onMapInit={onMapInit}
-            interactiveLayerIds={["stops"]}
+            interactiveLayerIds={["stops", "locations"]}
           >
-
-            {journey.locations ? (
-              <Locations locations={journey.current ? journey.locations.concat(locations) : journey.locations} />
-            ) : null}
-
             {journey.stops ? <Stops stops={journey.stops} /> : null}
 
             {clickedStop ? (
@@ -536,11 +559,16 @@ export default function JourneyMap({
                 onClose={() => setClickedStop(undefined)}
               />
             ) : null}
-{/*
-            {clickedLocation ? (
-              <LocationPopup location={clickedLocation} />
-            ) : null} */}
 
+            {journey.locations ? (
+              <Locations
+                locations={
+                  journey.current
+                    ? journey.locations.concat(locations)
+                    : journey.locations
+                }
+              />
+            ) : null}
             {journey.locations && journey.current ? (
               <JourneyVehicle
                 // journey={journey}

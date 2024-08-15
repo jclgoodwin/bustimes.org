@@ -14,7 +14,7 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import BusTimesMap, {ThemeContext} from "./Map";
+import BusTimesMap, { ThemeContext } from "./Map";
 
 declare global {
   interface Window {
@@ -28,8 +28,7 @@ type ServiceMapMapProps = {
   stops?: MapGeoJSONFeature[];
 };
 
-
-function Geometry({geometry}: {geometry: MapGeoJSONFeature}) {
+function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
   const darkMode = React.useContext(ThemeContext);
 
   const routeStyle: LayerProps = {
@@ -134,7 +133,7 @@ export default function ServiceMapMap({
       initialViewState={{
         bounds: window.EXTENT,
         fitBoundsOptions: {
-          padding: { top: 20, bottom: 120, left: 20, right: 20}
+          padding: { top: 20, bottom: 120, left: 20, right: 20 },
         },
       }}
       cursor={cursor}

@@ -14,7 +14,10 @@ import Map, {
 import stopMarker from "data-url:../stop-marker.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
 import arrow from "data-url:../arrow.png";
-import type { Map as MapLibreMap, MapStyleImageMissingEvent } from "maplibre-gl";
+import type {
+  Map as MapLibreMap,
+  MapStyleImageMissingEvent,
+} from "maplibre-gl";
 
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
@@ -87,7 +90,7 @@ const StyleSwitcherControl = memo(function StyleSwitcherControl(
 
 export const ThemeContext = createContext(false);
 
-function MapChild({onInit}: {onInit?: (map: MapLibreMap) => void}) {
+function MapChild({ onInit }: { onInit?: (map: MapLibreMap) => void }) {
   const { current: map } = useMap();
 
   useEffect(() => {
@@ -187,7 +190,10 @@ export default function BusTimesMap(
       >
         <NavigationControl showCompass={false} />
         <GeolocateControl />
-        <StyleSwitcherControl style={mapStyle} onChange={handleMapStyleChange} />
+        <StyleSwitcherControl
+          style={mapStyle}
+          onChange={handleMapStyleChange}
+        />
         <AttributionControl />
 
         <MapChild onInit={props.onMapInit} />

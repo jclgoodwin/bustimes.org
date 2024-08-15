@@ -491,7 +491,7 @@ export default function BigMap(props: {
                   setInitialViewState({
                     bounds,
                     fitBoundsOptions: {
-                      padding: { top: 50, bottom: 150, left: 50, right: 50}
+                      padding: { top: 50, bottom: 150, left: 50, right: 50 },
                     },
                   });
                 }
@@ -550,10 +550,9 @@ export default function BigMap(props: {
           " \u2013 bustimes.org";
       }
       loadVehicles(true);
+    } else if (!props.vehicleId) {
+      document.title = "Map \u2013 bustimes.org";
     } else {
-      if (!props.vehicleId) {
-        document.title = "Map \u2013 bustimes.org";
-      }
       loadVehicles();
     }
   }, [props.tripId, trip, props.noc, props.vehicleId, loadVehicles]);
@@ -648,7 +647,8 @@ export default function BigMap(props: {
       const bounds = map.getBounds();
       const zoom = map.getZoom();
 
-      if (!boundsRef.current) {  // first load
+      if (!boundsRef.current) {
+        // first load
         boundsRef.current = bounds;
 
         if (shouldShowVehicles(zoom)) {
