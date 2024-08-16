@@ -495,12 +495,14 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "route_name": "146",
                 "locations": [
                     {
+                        "id": 1606568305,
                         "coordinates": [1.296442985534668, 52.62268829345703],
                         "datetime": "2020-11-28T12:58:25Z",
                         "delta": None,
                         "direction": None,
                     },
                     {
+                        "id": 1606576026,
                         "coordinates": [1.675892949104309, 52.328399658203125],
                         "datetime": "2020-11-28T15:07:06Z",
                         "delta": None,
@@ -877,7 +879,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "LineRef": "NT35",
                 "BlockRef": "4035",
                 "VehicleRef": "531",
-                "OperatorRef": "NT",
+                "OperatorRef": "NCTR",
                 "DirectionRef": "outbound",
                 "DestinationRef": "NT3390BU05",
                 "DestinationName": "Bulwell Bus Station stand E",
