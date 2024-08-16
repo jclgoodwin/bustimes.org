@@ -32,15 +32,15 @@ class ImportPassengerTest(TestCase):
                 with patch("bustimes.management.commands.import_passenger.write_file"):
                     with self.assertRaises(FileNotFoundError):
                         with self.assertLogs(
-                            "bustimes.management.commands.import_bod"
+                            "bustimes.management.commands.import_bod_timetables"
                         ) as cm:
                             call_command("import_passenger")
 
         self.assertEqual(
             cm.output,
             [
-                "INFO:bustimes.management.commands.import_bod:Unilink",
-                "INFO:bustimes.management.commands.import_bod:{"
+                "INFO:bustimes.management.commands.import_bod_timetables:Unilink",
+                "INFO:bustimes.management.commands.import_bod_timetables:{"
                 "'dates': ['2022-03-27', '2022-04-24'], "
                 "'url': 'https://s3-eu-west-1.amazonaws.com/passenger-sources/unilink/txc/unilink_1648047602.zip', "
                 "'filename': 'unilink_1648047602.zip', 'modified': True}",

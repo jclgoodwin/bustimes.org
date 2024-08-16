@@ -112,11 +112,14 @@ class ImportBusOpenDataTest(TestCase):
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                call_command("import_bod", "0123456789abc19abc190123456789abc19abc19")
+                call_command(
+                    "import_bod_timetables", "0123456789abc19abc190123456789abc19abc19"
+                )
 
                 with self.assertNumQueries(6):
                     call_command(
-                        "import_bod", "0123456789abc19abc190123456789abc19abc19"
+                        "import_bod_timetables",
+                        "0123456789abc19abc190123456789abc19abc19",
                     )
 
                 route = Route.objects.get()
@@ -353,14 +356,16 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
                         "bustimes.management.commands.import_transxchange",
                         "WARNING",
                     ) as cm:
-                        call_command("import_bod", "ticketer")
+                        call_command("import_bod_timetables", "ticketer")
 
                     with self.assertNumQueries(2):
-                        call_command("import_bod", "ticketer")  # not modified
+                        call_command(
+                            "import_bod_timetables", "ticketer"
+                        )  # not modified
 
                     with self.assertNumQueries(1):
                         call_command(
-                            "import_bod", "ticketer", "POOP"
+                            "import_bod_timetables", "ticketer", "POOP"
                         )  # no matching setting
 
                 source = DataSource.objects.get(name="Completely Coach Travel")
@@ -446,11 +451,11 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
                         open_zipfile.write(FIXTURES_DIR / filename, filename)
 
                 with patch(
-                    "bustimes.management.commands.import_bod.download_if_changed",
+                    "bustimes.management.commands.import_bod_timetables.download_if_changed",
                     return_value=(True, parse_datetime("2020-06-10T12:00:00+01:00")),
                 ) as download_if_changed:
                     with self.assertNumQueries(110):
-                        call_command("import_bod", "stagecoach")
+                        call_command("import_bod_timetables", "stagecoach")
                     download_if_changed.assert_called_with(
                         path, "https://opendata.stagecoachbus.com/" + archive_name
                     )
@@ -464,13 +469,13 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
                     route_link.save()
 
                     with self.assertNumQueries(5):
-                        call_command("import_bod", "stagecoach")
+                        call_command("import_bod_timetables", "stagecoach")
 
                     with self.assertNumQueries(1):
-                        call_command("import_bod", "stagecoach", "SCOX")
+                        call_command("import_bod_timetables", "stagecoach", "SCOX")
 
                     with self.assertNumQueries(118):
-                        call_command("import_bod", "stagecoach", "SCCM")
+                        call_command("import_bod_timetables", "stagecoach", "SCCM")
 
                     route_link.refresh_from_db()
                     self.assertEqual(len(route_link.geometry.coords), 32)

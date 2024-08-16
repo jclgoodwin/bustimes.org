@@ -16,7 +16,7 @@ from busstops.models import DataSource
 
 from ...download_utils import write_file
 from ...models import TimetableDataSource
-from .import_bod import clean_up, get_operator_ids, handle_file, logger
+from .import_bod_timetables import clean_up, get_operator_ids, handle_file, logger
 from .import_transxchange import Command as TransXChangeCommand
 
 

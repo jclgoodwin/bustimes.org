@@ -9,7 +9,7 @@ from django.test import TestCase
 from busstops.models import DataSource, Operator, Region, Service
 
 from ...models import VehicleJourney
-from ..commands.import_stagecoach import Command
+from ..commands.import_stagecoach_avl import Command
 
 
 @time_machine.travel("2019-11-17T04:32:00.000Z")
