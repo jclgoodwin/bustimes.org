@@ -395,7 +395,9 @@ export default function BigMap(props: {
             bounds.extend(item.stop.location);
           }
         }
-        return bounds;
+        if (!bounds.isEmpty()) {
+          return bounds;
+        }
       }
     },
     [trip],
