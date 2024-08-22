@@ -13,7 +13,7 @@ import Map, {
 
 import stopMarker from "data-url:../stop-marker.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
-import arrow from "data-url:../arrow.png";
+import arrow from "data-url:../history-arrow.png";
 import type {
   Map as MapLibreMap,
   MapStyleImageMissingEvent,
