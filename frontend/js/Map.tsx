@@ -227,7 +227,8 @@ export default function BusTimesMap(
           style={mapStyle}
           onChange={handleMapStyleChange}
         />
-        <AttributionControl />
+
+        { mapStyle === "ordnance_survey" ? <AttributionControl customAttribution="© Ordnance Survey" /> : <AttributionControl /> }
 
         <MapChild onInit={props.onMapInit} />
 
