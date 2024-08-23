@@ -11,7 +11,7 @@ type RouteProps = {
 
 export const Route = React.memo(function Route({ times }: RouteProps) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_dark";
+  const darkMode = theme === "alidade_smooth_dark";
   const font =
     theme === "ordnance_survey"
       ? ["Source Sans Pro Regular"]

@@ -86,7 +86,7 @@ const Locations = React.memo(function Locations({
   locations: VehicleJourneyLocation[];
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_dark";
+  const darkMode = theme === "alidade_smooth_dark";
   const font =
     theme === "ordnance_survey"
       ? ["Source Sans Pro Regular"]
