@@ -20,7 +20,7 @@ import VehicleMarker, {
 
 import VehiclePopup from "./VehiclePopup";
 import StopPopup, { Stop } from "./StopPopup";
-import BusTimesMap from "./Map";
+import BusTimesMap, { ThemeContext } from "./Map";
 import { Route } from "./TripMap";
 import TripTimetable, { Trip } from "./TripTimetable";
 
@@ -139,6 +139,12 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
 
   const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
 
+  const theme = React.useContext(ThemeContext);
+  const font =
+    theme === "ordnance_survey"
+      ? ["Source Sans Pro Regular"]
+      : ["Stadia Regular"];
+
   return (
     <React.Fragment>
       {stops ? (
@@ -150,7 +156,7 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
               minzoom: 14,
               layout: {
                 "text-field": ["get", "icon"],
-                "text-font": ["Stadia Regular"],
+                "text-font": font,
                 "text-allow-overlap": true,
                 "text-size": 10,
                 "icon-rotate": ["+", 45, ["get", "bearing"]],

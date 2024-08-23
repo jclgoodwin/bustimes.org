@@ -85,7 +85,12 @@ const Locations = React.memo(function Locations({
 }: {
   locations: VehicleJourneyLocation[];
 }) {
-  const darkMode = React.useContext(ThemeContext);
+  const theme = React.useContext(ThemeContext);
+  const darkMode = theme === "alidade_dark";
+  const font =
+    theme === "ordnance_survey"
+      ? ["Source Sans Pro Regular"]
+      : ["Stadia Regular"];
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -102,7 +107,7 @@ const Locations = React.memo(function Locations({
     layout: {
       "text-field": ["get", "time"],
       "text-size": 11,
-      "text-font": ["Stadia Regular"],
+      "text-font": font,
 
       "icon-rotate": ["+", 45, ["get", "heading"]],
       "icon-image": "arrow",

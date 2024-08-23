@@ -4,10 +4,9 @@
 <meta charset="utf-8">
 <title>{% block title %}{% if object %}{{ object.get_long_name or object.get_qualified_name or object }} – {% endif %}Bus Times{% endblock %}</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#ffff9e">
-<!-- <meta name="theme-color" content="#ffff9e" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#ffff9e" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="color-scheme" content="dark light"> -->
+<meta name="color-scheme" content="dark light">
 {% block canonical %}
     {% if object.get_absolute_url %}
         <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url() }}">
@@ -32,7 +31,7 @@
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}{% if ad is false %} no-ads{% endif %}">
 <script>
-if(localStorage&&localStorage["map-style"]&&localStorage["map-style"].endsWith("_dark")){document.body.classList.add("dark-mode");}
+!function(){var a=localStorage&&localStorage["map-style"];!a&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches&&(a="_dark"),a&&-1!==a.indexOf("_dark")&&document.body.classList.add("dark-mode")}();
 </script>
 <a href="#content" class="skip">Skip to main content</a>
 {% block header %}

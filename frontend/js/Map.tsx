@@ -26,11 +26,12 @@ const imagesByName: { [imageName: string]: string } = {
 };
 
 const mapStyles = [
-  ["alidade_smooth", "Default"],
-  ["alidade_smooth_dark", "Dark (experimental)"],
+  ["alidade_smooth", "Light"],
+  ["alidade_smooth_dark", "Dark"],
   ["osm_bright", "Bright"],
   ["outdoors", "Outdoors"],
   // ["alidade_satellite", "Satellite"],
+  ["ordnance_survey", "Ordnance Survey"],
 ];
 
 type StyleSwitcherProps = {
@@ -88,7 +89,7 @@ const StyleSwitcherControl = memo(function StyleSwitcherControl(
   return null;
 });
 
-export const ThemeContext = createContext(false);
+export const ThemeContext = createContext("");
 
 function MapChild({ onInit }: { onInit?: (map: MapLibreMap) => void }) {
   const { current: map } = useMap();
@@ -140,6 +141,8 @@ export default function BusTimesMap(
     pitchWithRotate?: boolean;
   },
 ) {
+  const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
   const [mapStyle, setMapStyle] = React.useState(() => {
     try {
       const style = localStorage.getItem("map-style");
@@ -149,37 +152,64 @@ export default function BusTimesMap(
     } catch {
       // ignore
     }
-    return "alidade_smooth";
+
+    return darkModeQuery.matches ? "alidade_smooth_dark" : "alidade_smooth";
   });
+
+  useEffect(() => {
+    const handleChange = (e: MediaQueryListEvent) => {
+      setMapStyle(e.matches ? "alidade_smooth_dark" : "alidade_smooth");
+    };
+
+    darkModeQuery.addEventListener("change", handleChange);
+
+    return () => {
+      darkModeQuery.removeEventListener("change", handleChange);
+    };
+  }, [darkModeQuery]);
 
   const handleMapStyleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const style = e.target.value;
+      const defaultStyle = darkModeQuery.matches
+        ? "alidade_smooth_dark"
+        : "alidade_smooth";
       setMapStyle(style);
       try {
-        localStorage.setItem("map-style", style);
+        if (style === defaultStyle) {
+          localStorage.removeItem("map-style");
+        } else {
+          localStorage.setItem("map-style", style);
+        }
       } catch {
         // ignore
       }
     },
-    [],
+    [darkModeQuery.matches],
   );
 
   useEffect(() => {
     document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
   }, [mapStyle]);
 
+  let mapStyleUrl;
+  if (mapStyle === "ordnance_survey") {
+    mapStyleUrl =
+      "https://api.os.uk/maps/vector/v1/vts/resources/styles?key=b45dBXyI0RA7DGx5hcftaqVk5GFBUCEY&srs=3857";
+  } else {
+    mapStyleUrl = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
+  }
   return (
-    <ThemeContext.Provider value={mapStyle.endsWith("_dark")}>
+    <ThemeContext.Provider value={mapStyle}>
       <Map
         {...props}
         reuseMaps
         touchPitch={false}
         pitchWithRotate={false}
         dragRotate={false}
-        minZoom={5}
+        minZoom={6}
         maxZoom={18}
-        mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
+        mapStyle={mapStyleUrl}
         RTLTextPlugin={""}
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
