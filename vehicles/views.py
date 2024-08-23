@@ -806,9 +806,7 @@ def edit_vehicle(request, **kwargs):
                     revision.save()
                     VehicleRevisionFeature.objects.bulk_create(features)
 
-                    if request.user.trusted or (
-                        request.user.score and request.user.score > 100
-                    ):
+                    if request.user.trusted:
                         apply_revision(revision, features)
                         revision.pending = False
                         revision.save(update_fields=["pending"])
