@@ -161,11 +161,14 @@ export default function BusTimesMap(
       setMapStyle(e.matches ? "alidade_smooth_dark" : "alidade_smooth");
     };
 
-    darkModeQuery.addEventListener("change", handleChange);
+    if (darkModeQuery.addEventListener) {
+      darkModeQuery.addEventListener("change", handleChange);
 
-    return () => {
-      darkModeQuery.removeEventListener("change", handleChange);
-    };
+      return () => {
+        darkModeQuery.removeEventListener("change", handleChange);
+      };
+    }
+
   }, [darkModeQuery]);
 
   const handleMapStyleChange = React.useCallback(
