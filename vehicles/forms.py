@@ -144,6 +144,9 @@ link to a picture to prove it. Be polite.""",
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True
 
+        if not (vehicle.livery_id and vehicle.vehicle_type_id and vehicle.reg):
+            self.fields["summary"].required = False
+
         if not user.is_superuser:
             if not (
                 vehicle.notes
