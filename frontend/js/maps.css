@@ -168,6 +168,10 @@ body .maplibregl-popup-close-button {
   border-radius: 0 6px 0 0;
 }
 
+.map-style-switcher {
+  white-space: nowrap;
+}
+
 .map-style-switcher summary {
   background-image: url("data-url:../svg/layers.svg");
   width: 29px;
@@ -177,6 +181,7 @@ body .maplibregl-popup-close-button {
   text-indent: 100%;
   white-space: nowrap;
   list-style: none;
+  /* float: right; */
 }
 
 body.dark-mode .maplibregl-ctrl-group {

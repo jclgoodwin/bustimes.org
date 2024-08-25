@@ -25,14 +25,14 @@ const imagesByName: { [imageName: string]: string } = {
   arrow: arrow,
 };
 
-const mapStyles = [
-  ["alidade_smooth", "Light"],
-  ["alidade_smooth_dark", "Dark"],
-  ["osm_bright", "Bright"],
-  ["outdoors", "Outdoors"],
-  // ["alidade_satellite", "Satellite"],
-  ["ordnance_survey", "Ordnance Survey"],
-];
+const mapStyles: { [key: string]: string } = {
+  alidade_smooth: "Light",
+  alidade_smooth_dark: "Dark",
+  osm_bright: "Bright",
+  // outdoors: "Outdoors",
+  // alidade_satellite: "Satellite",
+  // ordnance_survey: "Ordnance Survey",
+};
 
 type StyleSwitcherProps = {
   style: string;
@@ -56,21 +56,18 @@ class StyleSwitcher {
     root.render(
       <details className="maplibregl-ctrl maplibregl-ctrl-group map-style-switcher">
         <summary>Map style</summary>
-        {mapStyles.map((style) => {
-          const [key, value] = style;
-          return (
-            <label key={key}>
-              <input
-                type="radio"
-                value={key}
-                name="map-style"
-                defaultChecked={key === this.style}
-                onChange={this.handleChange}
-              />
-              {value}
-            </label>
-          );
-        })}
+        {Object.entries(mapStyles).map(([key, value]) => (
+          <label key={key}>
+            <input
+              type="radio"
+              value={key}
+              name="map-style"
+              defaultChecked={key === this.style}
+              onChange={this.handleChange}
+            />
+            {value}
+          </label>
+        ))}
       </details>,
     );
     return this._container;
@@ -146,7 +143,7 @@ export default function BusTimesMap(
   const [mapStyle, setMapStyle] = React.useState(() => {
     try {
       const style = localStorage.getItem("map-style");
-      if (style) {
+      if (style && style in mapStyles) {
         return style;
       }
     } catch {
@@ -168,7 +165,6 @@ export default function BusTimesMap(
         darkModeQuery.removeEventListener("change", handleChange);
       };
     }
-
   }, [darkModeQuery]);
 
   const handleMapStyleChange = React.useCallback(
@@ -228,7 +224,11 @@ export default function BusTimesMap(
           onChange={handleMapStyleChange}
         />
 
-        { mapStyle === "ordnance_survey" ? <AttributionControl customAttribution="© Ordnance Survey" /> : <AttributionControl /> }
+        {mapStyle === "ordnance_survey" ? (
+          <AttributionControl customAttribution="© Ordnance Survey" />
+        ) : (
+          <AttributionControl />
+        )}
 
         <MapChild onInit={props.onMapInit} />
 
