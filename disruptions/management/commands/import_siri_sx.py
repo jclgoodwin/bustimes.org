@@ -120,7 +120,7 @@ def handle_item(item, source):
             for operator_ref in line.findall("AffectedOperator/OperatorRef"):
                 operator_ref = operator_ref.text
 
-                matching_services = services.filter(line_filter, operator=operator_ref)
+                matching_services = services.filter(line_filter, operator=operator_ref).distinct()
                 if len(matching_services) > 1:
                     matching_services = matching_services.filter(stops_filter)
 
