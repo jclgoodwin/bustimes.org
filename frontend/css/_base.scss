@@ -449,6 +449,7 @@ form p select {
 
     select {
         padding: .5em 1.5em .5em .5em;
+        margin-right: 1em;
     }
 
     p {
@@ -462,14 +463,13 @@ form p select {
 
     label {
         display: inline-block;
-        margin-left: 1em;
+        margin-right: 1em;
     }
 
     + .table-wrapper {
         margin-top: 1em;
     }
 }
-
 
 input[type='search']::-webkit-search-decoration {
     -webkit-appearance: none;
@@ -879,7 +879,12 @@ thead {
     margin: 1em 0;
 
     input {
-        vertical-align: top;
+        margin: 0;
+    }
+
+    label {
+        padding-left: .5em;
+        margin-right: 1em;
     }
 }
 

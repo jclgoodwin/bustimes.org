@@ -41,8 +41,10 @@
 
         <div class="timetable-wrapper-wrapper">
             {% if grouping.has_minor_stops() %}
-                <input type="checkbox" id="show-all-stops-{{ loop.index }}"{% if (grouping.rows|length) < 25 %} checked{% endif %}>
-                <label for="show-all-stops-{{ loop.index }}">Show all stops</label>
+                <input type="radio" name="show-all-stops-{{ loop.index }}" id="timing-points-{{ loop.index }}" checked
+                ><label for="timing-points-{{ loop.index }}">Timing points</label>
+                <input type="radio" name="show-all-stops-{{ loop.index }}" id="show-all-stops-{{ loop.index }}"{% if (grouping.rows|length) < 25 %} checked{% endif %}
+                ><label for="show-all-stops-{{ loop.index }}">All stops</label>
             {% endif %}
             <div class="timetable-wrapper{% if grouping.width() > 3 %} timetable-wrapper--wide{% endif %}">
                 <table class="timetable">
