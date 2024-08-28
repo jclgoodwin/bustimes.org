@@ -406,9 +406,10 @@ class TimetableDepartures(Departures):
             route.id: route for routes in self.routes.values() for route in routes
         }
         services = {s.id: s for s in self.services}
-        for t in times:
-            t["route"] = routes[t["stop_time"].trip.route_id]
-            t["service"] = services[t["route"].service_id]
+        for trip in times:
+            trip["route"] = routes.get(trip["stop_time"].trip.route_id)
+            if trip["route"]:
+                trip["service"] = services.get(trip["route"].service_id)
 
         return times
 
