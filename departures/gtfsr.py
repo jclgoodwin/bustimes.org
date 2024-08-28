@@ -47,6 +47,18 @@ def get_trip_update(trip) -> dict:
             return feed["entity"][trip_id]
 
 
+def get_expected_time(scheduled_time, stop_time_update, key):
+    if key in stop_time_update:
+        update = stop_time_update[key]
+        if scheduled_time and "delay" in update:
+            expected_time = scheduled_time + timedelta(seconds=update["delay"])
+        elif "time" in update:
+            expected_time = update["time"]
+        else:
+            return
+        return format_timedelta(expected_time)
+
+
 def apply_trip_update(stops, trip_update: dict) -> None:
     if "stopTimeUpdate" not in trip_update["tripUpdate"]:
         return
@@ -74,16 +86,12 @@ def apply_trip_update(stops, trip_update: dict) -> None:
             stop_time.update = stop_time_update
             if stop_time_update["scheduleRelationship"] == "SKIPPED":
                 continue
-            if stop_time.arrival and "arrival" in stop_time_update:
-                stop_time.expected_arrival = format_timedelta(
-                    stop_time.arrival
-                    + timedelta(seconds=stop_time_update["arrival"]["delay"])
-                )
-            if stop_time.departure and "departure" in stop_time_update:
-                stop_time.expected_departure = format_timedelta(
-                    stop_time.departure
-                    + timedelta(seconds=stop_time_update["departure"]["delay"])
-                )
+            stop_time.expected_arrival = get_expected_time(
+                stop_time.arrival, stop_time_update, "arrival"
+            )
+            stop_time.expected_departure = get_expected_time(
+                stop_time.departure, stop_time_update, "departure"
+            )
 
 
 def update_stop_departures(departures: list) -> None:
