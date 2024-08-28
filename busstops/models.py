@@ -1055,7 +1055,7 @@ class Service(models.Model):
             or len(inbound_outbound_descriptions) > len(origins_and_destinations)
         ):
             description = " - ".join(max(origins_and_destinations, key=len))
-            if description != self.description:
+            if description != self.description and len(description) <= 255:
                 self.description = description
                 self.save(update_fields=["description"])
 
