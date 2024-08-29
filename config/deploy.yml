@@ -10,7 +10,7 @@ servers:
     hosts:
       - 10.131.29.248  # everglory
       - 10.131.0.24    # eveready
-      - 10.131.33.248  #  everest
+      - 10.131.240.95
     env:
       clear:
         WEB_CONCURRENCY: 8
@@ -28,10 +28,6 @@ servers:
         - NTA_API_KEY
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
-  redis:
-    hosts:
-      - 104.248.168.195
-
 builder:
   multiarch: false
 
@@ -61,9 +57,9 @@ traefik:
     entrypoints.http.address: ":80" # for some reason, if trustedIPs is set then this must be set too
     entrypoints.http.forwardedHeaders.trustedIPs: 10.131.0.0/16
 
-accessories:
-  valkey:
-    service: valkey
-    image: valkey/valkey
-    roles:
-      - redis
+#accessories:
+#  valkey:
+#    service: valkey
+#    image: valkey/valkey
+#    roles:
+#      - redis

@@ -20,6 +20,7 @@ def vehicle_cache_update(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Vehicle)
 def vehicle_post_webhook(sender, instance, created, **kwargs):
+    return
     if created and settings.NEW_VEHICLE_WEBHOOK_URL:
         requests.post(
             settings.NEW_VEHICLE_WEBHOOK_URL,

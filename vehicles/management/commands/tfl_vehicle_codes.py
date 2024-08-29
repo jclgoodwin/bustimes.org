@@ -32,14 +32,17 @@ class Command(BaseCommand):
 
         response = requests.get(url, timeout=10)
 
-        for line in response.text.split()[1:]:
+        for line in response.text.split("\n")[1:]:
+            # print(line)
             line = json.loads(line)
             _, vehicle_id, reg = line
+            reg = reg.strip()
             if reg.isdigit():  # tram?
                 continue
             code_code = f"TFLO:{vehicle_id}"
-            if code_code in existing_codes:
-                if existing_codes[code_code].vehicle.code == reg:
+            if code := existing_codes.get(code_code):
+                other_vehicle = code.vehicle
+                if other_vehicle.code == reg:
                     continue
             else:
                 existing_codes[code_code] = VehicleCode(code=code_code, scheme=scheme)
@@ -48,4 +51,5 @@ class Command(BaseCommand):
                 continue
             existing_codes[code_code].vehicle = vehicle
             existing_codes[code_code].save()
-            Vehicle.objects.filter(code=vehicle_id, operator=None).delete()
+            if other_vehicle and other_vehicle.id != vehicle.id:
+                other_vehicle.delete()
