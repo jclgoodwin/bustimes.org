@@ -20,7 +20,6 @@ def vehicle_cache_update(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=Vehicle)
 def vehicle_post_webhook(sender, instance, created, **kwargs):
-    return
     if created and settings.NEW_VEHICLE_WEBHOOK_URL:
         requests.post(
             settings.NEW_VEHICLE_WEBHOOK_URL,
@@ -28,4 +27,5 @@ def vehicle_post_webhook(sender, instance, created, **kwargs):
                 "username": "bot",
                 "content": f"https://bustimes.org{instance.get_absolute_url()}",
             },
+            timeout=1,
         )
