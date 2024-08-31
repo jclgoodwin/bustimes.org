@@ -126,8 +126,8 @@ class ImportLiveVehiclesCommand(BaseCommand):
             difference = datetime - now
             if difference > twelve_hours:
                 datetime = None  # datetime more than 12 hours in the future (probably The Green Bus)
-            if 3000 < difference.total_seconds() <= 3600:
-                datetime -= timedelta(hours=1)  # Watersons timezone
+            if 3000 < difference.total_seconds() <= 600:
+                logger.warning("datetime %s is in the future", datetime)
 
         location = None
         if vehicle is None:
