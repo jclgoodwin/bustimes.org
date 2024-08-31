@@ -26,7 +26,7 @@ from bustimes.models import Route, Trip
 
 from ...models import Vehicle, VehicleCode, VehicleJourney, VehicleLocation
 from ...utils import redis_client
-from ..import_live_vehicles import ImportLiveVehiclesCommand
+from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
 
 
 def get_destination_ref(destination_ref):
@@ -454,12 +454,17 @@ class Command(ImportLiveVehiclesCommand):
 
         if origin_aimed_departure_time:
             difference = origin_aimed_departure_time - datetime
-            if difference > timedelta(hours=20):
+            if difference > timedelta(
+                hours=20
+            ):  # more than 20 hours in the future? subtract a day
                 origin_aimed_departure_time -= timedelta(days=1)
-            elif operator_ref == "TFLO" and (
-                difference < -timedelta(hours=1) or difference > timedelta(hours=1)
-            ):
-                origin_aimed_departure_time = None
+            elif operator_ref == "TFLO":
+                if origin_aimed_departure_time.utcoffset():
+                    logger.warning(
+                        "TFL vehicle with non-UTC time, so bug may have been fixed"
+                    )
+                elif difference > timedelta(minutes=50):
+                    origin_aimed_departure_time -= timedelta(hours=1)
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
