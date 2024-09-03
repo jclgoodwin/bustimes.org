@@ -6,6 +6,7 @@ from django.test import TestCase, override_settings
 
 from busstops.models import DataSource, Operator, Service, StopPoint, StopUsage
 from bustimes.models import Calendar, Route, StopTime, Trip
+from . import gtfsr
 
 
 class GTFSRTTest(TestCase):
@@ -162,10 +163,6 @@ class GTFSRTTest(TestCase):
                     response = self.client.get(self.trip.get_absolute_url())
                 self.assertContains(response, '"06:47"')
 
-                # # cancelled trip:
-                # response = self.client.get(self.cancellable_trip.get_absolute_url())
-                # self.assertContains(response, "<p>Cancelled</p>")
-
                 response = self.client.get("/trip_updates")
                 self.assertContains(response, "1785 trip_updates")
                 self.assertContains(response, "2 matching trips")
@@ -176,4 +173,14 @@ class GTFSRTTest(TestCase):
                 self.assertContains(response, "Ex&shy;pected")
                 self.assertContains(response, "Sched&shy;uled")
                 self.assertContains(response, "06:47")
-                self.assertContains(response, "<del>06:45</del>", html=True)
+                self.assertContains(
+                    response, "<del>06:45</del>", html=True
+                )  # cancelled - struck through
+
+                # cancelled trip:
+                response = self.client.get(self.cancellable_trip.get_absolute_url())
+                self.assertTrue(response.context["stops_json"])
+
+    def test_no_feed(self):
+        with patch("departures.gtfsr.get_feed_entities", return_value=None):
+            self.assertIsNone(gtfsr.update_stop_departures(()))
