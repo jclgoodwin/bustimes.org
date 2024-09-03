@@ -1,3 +1,4 @@
+from datetime import timedelta
 from unittest.mock import patch
 
 import fakeredis
@@ -123,13 +124,14 @@ class GTFSRTTest(TestCase):
                     trip=cls.trip,
                     sequence=24,
                     stop_id="8250DB000427",
-                    departure="06:45:00",
+                    arrival="06:45:00",
+                    departure="06:50:00",
                 ),
                 StopTime(
                     trip=cls.trip,
                     sequence=26,
                     stop_id="8250DB000429",
-                    departure="06:45:00",
+                    departure="06:50:00",
                 ),
                 StopTime(
                     trip=cls.cancellable_trip,
@@ -172,7 +174,7 @@ class GTFSRTTest(TestCase):
                 )
                 self.assertContains(response, "Ex&shy;pected")
                 self.assertContains(response, "Sched&shy;uled")
-                self.assertContains(response, "06:47")
+                self.assertContains(response, "06:52")
                 self.assertContains(
                     response, "<del>06:45</del>", html=True
                 )  # cancelled - struck through
@@ -184,3 +186,27 @@ class GTFSRTTest(TestCase):
     def test_no_feed(self):
         with patch("departures.gtfsr.get_feed_entities", return_value=None):
             self.assertIsNone(gtfsr.update_stop_departures(()))
+
+    def test_get_expected_time(self):
+        update = {
+            "arrival": {"time": "1725349158", "uncertainty": 0},
+            "departure": {"delay": 560},
+            "scheduleRelationship": "SCHEDULED",
+            "stopId": "8250DB000427",
+            "stopSequence": 24,
+        }
+
+        self.assertEqual(
+            str(
+                gtfsr.get_expected_time(
+                    timedelta(hours=8, minutes=20), update, "arrival"
+                )
+            ),
+            "2024-09-03 08:39:18+01:00",
+        )
+        self.assertEqual(
+            gtfsr.get_expected_time(
+                timedelta(hours=8, minutes=30), update, "departure"
+            ),
+            "08:39",
+        )

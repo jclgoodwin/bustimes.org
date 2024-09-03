@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import requests
 from django.conf import settings
@@ -53,7 +54,9 @@ def get_expected_time(scheduled_time, stop_time_update, key):
         if scheduled_time and "delay" in update:
             expected_time = scheduled_time + timedelta(seconds=update["delay"])
         elif "time" in update:
-            expected_time = update["time"]
+            return datetime.fromtimestamp(
+                int(update["time"]), tz=ZoneInfo("Europe/Dublin")
+            )
         else:
             return
         return format_timedelta(expected_time)
