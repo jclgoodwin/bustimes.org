@@ -218,7 +218,7 @@ export default function BusTimesMap(
         maxTileCacheSize={undefined}
       >
         <NavigationControl showCompass={false} />
-        <GeolocateControl />
+        <GeolocateControl trackUserLocation />
         <StyleSwitcherControl
           style={mapStyle}
           onChange={handleMapStyleChange}
