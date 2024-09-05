@@ -475,9 +475,7 @@ input[type='search']::-webkit-search-decoration {
     -webkit-appearance: none;
 }
 
-ul,
-ol,
-li {
+ul {
     list-style: none;
     padding: 0;
 }
@@ -493,6 +491,10 @@ dt {
 
 dd {
     margin: 0 0 1em;
+}
+
+ol li {
+    margin-bottom: 1em;
 }
 
 // registration detail history

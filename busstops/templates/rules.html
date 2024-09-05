@@ -1,6 +1,6 @@
 {% extends 'page.html' %}
 
-{% block title %}Community guidelines{% endblock %}
+{% block title %}Rules & FAQ{% endblock %}
 
 {% block canonical %}
     <link rel="canonical" href="https://bustimes.org/rules">
@@ -10,27 +10,23 @@
 
 {% block content %}
 
-<h1>Vehicle editing rules & FAQ</h1>
+<h1>Vehicle editing rules</h1>
 
-<ul class="bulleted">
-<li>
-    <p><strong>If in doubt, do nothing.</strong> If you find yourself saying "probably", "correct me if I'm wrong", or using the future tense, stop.
-        However thrilling it may be to be the first to update this website with new information, be patient and wait until you can prove that (for example) a vehicle has been repainted.</p>
+<p>Vehicle details (type, colour etc.) are user-editable. If you want to get involved, great! But please follow these rules, to avoid wasting your own and others' time:</p>
 
-    <ul><li>
-        <p>A link to a private Facebook page is <em>not</em> acceptable proof, and nor is blindly copying information from other "enthusiast websites".</p>
-    </ul>
-
-<li>
-    <p>On the other hand: <strong>it's not your duty to enforce these rules</strong>. Don't be haughty or bumptious. If you can't prove they're wrong, <strong>don't undo someone else's changes</strong>. "Tidying up" isn't a thing – if anything, each edit creates more "mess" in the revision history.</p>
-
-<li>
-    <p><strong>Assume good faith.</strong> Before you accuse someone of "spam" or "vandalism", consider whether they've just made a mistake or are medically gormless. (<a href="https://en.wikipedia.org/wiki/Wikipedia:Assume_good_faith">Wikipedia</a>)</p>
-
-<li>
-    <p>Don't try to use the <em>edit vehicle details</em> feature to "message" other users or "the admins". If you must, <a href="/contact">contact bustimes.org</a>.</p>
-
-</ul>
+<ol class="rules">
+    <li>If a vehicle's <strong>tracking as the wrong vehicle</strong>
+        (i.e. the "ticket machine code" is wrong),
+        <strong>don't try to correct it</strong> on bustimes.org
+        – just wait for the operator to correct the ticket machine.
+    </li>
+    <li>Don't "remove from list" just because a vehicle's been advertised for sale, was involved in an accident, or hasn't tracked for a while.</li>
+    <li>Don't update a vehicle's livery until it's finished being repainted.</li>
+    <li><p>Do use the "summary" field to link to some evidence, such as a picture you've <a href="https://imgur.com/upload">uploaded to Imgur</a>.
+    But please don't link to private Facebook groups – private means I can't see them!</p></li>
+    <li>
+        <p>Don't use nonsense edits to try to "message" other users or "the admins". Instead, <a href="https://discord.com/invite/gY4PdDFau7">post in the Discord server</a> or <a href="/contact">send me an email</a>.
+</ol>
 
 <h2>FAQ</h2>
 
@@ -44,10 +40,19 @@
 
 <h3>How do I add a vehicle?</h3>
 
-<p>You can't. The vehicle lists on bustimes.org are purely a by-product of the automatic vehicle tracking system (the <a href="/map">live map</a> etc.). There are <a href="https://buslists.uk/">other fine websites</a> devoted to listing vehicles for the sake of it.</p>
+<p>You can't – the lists on bustimes.org are just a by-product of the <a href="/map">live bus tracker map</a>.
+    Other websites like <a href="https://buslists.uk/">buslists.uk</a> will always be more comprehensive.</p>
+
+<h3>How do I add or edit a livery?</h3>
+
+<p>Sorry, only a few users can do that, on the basis that too many cooks spoil the broth, and the livery icons don't need to be any more detailed than they already are.</p>
+
+<h3>Can I use this data?</h3>
+
+<p>Yes, it's available <a href="/api/">in the API</a>. <a href="https://busmiles.uk/">Busmiles</a> is an example of a site that uses it.</p>
 
 <h3>I have a different question, or maybe a comment</h3>
 
-<p><a href="/contact">Don't keep it to yourself</a></p>
+<p><a href="/contact">Ask me</a></p>
 
 {% endblock %}
