@@ -131,8 +131,8 @@ AOLC:
   name: A1 Coaches (Liverpool)
 GLCS:
   name: Globe Holidays (Barnsley)
-YACT:
-  name: https://www.transdevbus.co.uk/coastliner/ # (no separate York and Country URL yet)
+YCST:
+  name: Transdev York
 TPEN:
   url: https://www.transdevbus.co.uk/team-pennine/
 HRGT:
@@ -354,13 +354,6 @@ VECT:
     CC_EssexHerts
     CC_EastEngland
     CC_EastMidlands
-TRST:
-  url: https://localbus.vectare.co.uk/central-connect
-  twitter: CC_EssexHerts
-GLLN:
-  name: Central Connect
-  url: https://localbus.vectare.co.uk/central-connect
-  twitter: CC_EssexHerts
 NCRC:
   url: https://www.wilsonsbuses.co.uk/
 ABCF:
