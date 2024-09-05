@@ -47,6 +47,7 @@ class EditVehicleForm(forms.Form):
         "previous_reg",
         "features",
         "notes",
+        "rules",
     ]
     spare_ticket_machine = forms.BooleanField(
         required=False,
@@ -114,12 +115,17 @@ class EditVehicleForm(forms.Form):
     )
     notes = forms.CharField(required=False, max_length=255)
     summary = fields.SummaryField(
+        min_length=10,
         max_length=255,
-        help_text="""Briefly explain your changes,
-if they need explaining.
+        help_text="""Please briefly explain your changes and provide proof of your edit.
 E.g. how you *know* a vehicle has *definitely been* withdrawn or repainted,
 link to a picture to prove it. Be polite.""",
     )
+    rules = forms.BooleanField(
+        label="I agree that my edit is made in good faith and complies with the editing rules. I also acknowledge that abusing the vehicle editing feature may lead to a ban",
+        required=true,
+    )
+    #Maybe find a way for this note to change so Superusers see a note that misusing the form may result in privilages being revoked rather than threatening ban?
 
     def clean_other_colour(self):
         if self.cleaned_data["other_colour"]:
