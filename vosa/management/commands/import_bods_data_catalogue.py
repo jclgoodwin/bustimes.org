@@ -31,11 +31,11 @@ class Command(BaseCommand):
         )
         print(is_modified, modified_at)
 
-        lics = Licence.objects.all().in_bulk(field_name="licence_number")
+        lics = Licence.objects.in_bulk(field_name="licence_number")
         lics_to_create = []
         # lics_to_update = []
 
-        regs = Registration.objects.all().in_bulk(field_name="registration_number")
+        regs = Registration.objects.in_bulk(field_name="registration_number")
         regs_to_create = []
         regs_to_update = []
 

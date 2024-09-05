@@ -73,7 +73,7 @@ class GTFSRTTest(TestCase):
                 c.do_source()
                 c.update()
 
-        self.assertEqual(VehicleJourney.objects.all().count(), 51)
+        self.assertEqual(VehicleJourney.objects.count(), 51)
         self.assertEqual(self.service.vehiclejourney_set.count(), 5)
         self.assertEqual(self.trip_1.vehiclejourney_set.count(), 1)
         self.assertEqual(self.trip_2.vehiclejourney_set.count(), 0)

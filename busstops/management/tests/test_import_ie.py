@@ -20,12 +20,12 @@ class ImportIrelandTest(TestCase):
 
         call_command("nptg_new", fixtures_dir / "ie_nptg.xml")
 
-        regions = Region.objects.all().order_by("name")
+        regions = Region.objects.order_by("name")
         self.assertEqual(len(regions), 5)
         self.assertEqual(regions[0].name, "Connaught")
         self.assertEqual(regions[2].name, "Munster")
 
-        areas = AdminArea.objects.all().order_by("name")
+        areas = AdminArea.objects.order_by("name")
         self.assertEqual(len(areas), 40)
 
         self.assertEqual(areas[0].name, "Antrim")
@@ -51,7 +51,7 @@ class ImportIrelandTest(TestCase):
 
         call_command("naptan_new", fixtures_dir / "ie_naptan.xml")
 
-        stops = StopPoint.objects.all().order_by("atco_code")
+        stops = StopPoint.objects.order_by("atco_code")
         self.assertEqual(len(stops), 6)
         self.assertEqual(stops[0].atco_code, "700000004096")
         self.assertEqual(stops[0].common_name, "Rathfriland")

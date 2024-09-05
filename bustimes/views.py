@@ -652,7 +652,7 @@ def garage_trips(request, pk):
 
     writer = csv.writer(response)
     writer.writerow(["id", "calendar", "from_date", "to_date", "block"])
-    for trip in garage.trip_set.all().select_related("calendar"):
+    for trip in garage.trip_set.select_related("calendar"):
         writer.writerow(
             [
                 trip.id,

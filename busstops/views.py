@@ -940,7 +940,7 @@ class ServiceDetailView(DetailView):
     )
 
     def get_object(self, **kwargs):
-        services = Service.objects.all()
+        services = Service.objects
 
         try:
             service = super().get_object(**kwargs)
@@ -1089,11 +1089,9 @@ class ServiceDetailView(DetailView):
         #         for stop in consequence.stops.all():
         #             stop_situations[stop.atco_code] = situation
 
-        context["stopusages"] = (
-            self.object.stopusage_set.all()
-            .select_related("stop__locality")
-            .defer("stop__latlong", "stop__locality__latlong")
-        )
+        context["stopusages"] = self.object.stopusage_set.select_related(
+            "stop__locality"
+        ).defer("stop__latlong", "stop__locality__latlong")
         context["has_minor_stops"] = SimpleLazyObject(
             lambda: any(stop_usage.is_minor() for stop_usage in context["stopusages"])
         )

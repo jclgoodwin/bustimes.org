@@ -539,7 +539,7 @@ class ViewsTests(TestCase):
         )
 
     def test_qr_codes(self):
-        Service.objects.all().update(current=True)
+        Service.objects.update(current=True)
         response = self.client.get("/qr/melton-constable")
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
         self.assertContains(response, '<svg width="33mm" height="33mm"')

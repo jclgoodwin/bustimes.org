@@ -841,8 +841,8 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(garage.code, "GR")
         self.assertEqual(garage.name, "")
 
-        self.assertEqual(Service.objects.all().count(), 3)
-        self.assertEqual(RouteLink.objects.all().count(), 6)
+        self.assertEqual(Service.objects.count(), 3)
+        self.assertEqual(RouteLink.objects.count(), 6)
 
         # had 2 operators before running import_transxchange,
         # should now have just 1
@@ -982,7 +982,7 @@ class ImportTransXChangeTest(TestCase):
             service.description, "intu Trafford Centre - Eccles - Swinton - Bolton"
         )
 
-        self.assertEqual(0, service.stopusage_set.all().count())
+        self.assertEqual(0, service.stopusage_set.count())
 
         # Stagecoach Manchester 237
         service = Service.objects.get(service_code="NW_04_GMS_237_2")
@@ -1511,7 +1511,7 @@ class ImportTransXChangeTest(TestCase):
             ],
         )
         self.assertEqual(3, Service.objects.filter(current=True).count())  # A, B, C
-        self.assertEqual(6, Route.objects.all().count())
+        self.assertEqual(6, Route.objects.count())
 
         service = Service.objects.first()
         response = self.client.get(service.get_absolute_url())
@@ -1551,12 +1551,12 @@ class ImportTransXChangeTest(TestCase):
 
         # automatically created journey every 10 minutes
         route = Route.objects.get(line_name="59")
-        self.assertEqual(route.trip_set.all().count(), 155)
+        self.assertEqual(route.trip_set.count(), 155)
 
         # PastTheHour, but all journeys specified in file
         route = Route.objects.get(line_name="22")
-        self.assertEqual(route.trip_set.all().count(), 97)
+        self.assertEqual(route.trip_set.count(), 97)
 
         # all journeys specified in file
         route = Route.objects.get(line_name="10")
-        self.assertEqual(route.trip_set.all().count(), 125)
+        self.assertEqual(route.trip_set.count(), 125)

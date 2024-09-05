@@ -89,7 +89,7 @@ class FlixbusTest(TestCase):
 
         response = self.client.get("/operators/flixbus")
 
-        self.assertEqual(2, Service.objects.all().count())
+        self.assertEqual(2, Service.objects.count())
 
         self.assertContains(response, "London - Northampton - Nottingham")
         self.assertContains(response, "London - Cambridge")
@@ -108,7 +108,7 @@ class FlixbusTest(TestCase):
             response, "<td>10:30</td><td>15:00</td><td>19:15</td><td>23:40</td>"
         )
 
-        self.assertEqual(Service.objects.all().count(), 2)
+        self.assertEqual(Service.objects.count(), 2)
 
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_ember(self):
@@ -130,7 +130,7 @@ class FlixbusTest(TestCase):
         self.assertContains(response, "6200206520")
         self.assertContains(response, "/stops/6200247603")
 
-        self.assertEqual(Service.objects.all().count(), 2)
+        self.assertEqual(Service.objects.count(), 2)
 
         # GTFSR
         command = import_gtfsr_ember.Command()

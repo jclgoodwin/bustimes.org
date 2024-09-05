@@ -332,7 +332,7 @@ class VehiclesTests(TestCase):
         duplicate_1 = Vehicle.objects.create(reg="SA60TWP", code="60")
         duplicate_2 = Vehicle.objects.create(reg="SA60TWP", code="SA60TWP")
 
-        self.assertEqual(Vehicle.objects.all().count(), 5)
+        self.assertEqual(Vehicle.objects.count(), 5)
 
         response = self.client.get("/admin/vehicles/vehicle/?duplicate=reg")
         self.assertContains(response, '2 results (<a href="?">5 total</a>')
@@ -347,7 +347,7 @@ class VehiclesTests(TestCase):
                 "_selected_action": [duplicate_1.id, duplicate_2.id],
             },
         )
-        self.assertEqual(Vehicle.objects.all().count(), 4)
+        self.assertEqual(Vehicle.objects.count(), 4)
 
     def test_livery_admin(self):
         self.client.force_login(self.staff_user)
@@ -489,7 +489,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             initial["colours"] = "#FFFF00"
             response = self.client.post(url, initial)
 
-        self.assertEqual(1, VehicleRevision.objects.all().count())
+        self.assertEqual(1, VehicleRevision.objects.count())
 
         response = self.client.get("/admin/accounts/user/")
         self.assertContains(
@@ -566,9 +566,9 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         revision = response.context["revision"]
         self.assertFalse(revision.pending)
 
-        feature = VehicleRevisionFeature.objects.all()
-        self.assertEqual(str(feature[0]), "<del>Wi-Fi</del>")
-        self.assertEqual(str(feature[1]), "<ins>USB</ins>")
+        features = VehicleRevisionFeature.objects.all()
+        self.assertEqual(str(features[0]), "<del>Wi-Fi</del>")
+        self.assertEqual(str(features[1]), "<ins>USB</ins>")
 
         # colour, spare ticket machine
         initial["colours"] = self.livery.id

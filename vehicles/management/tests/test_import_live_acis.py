@@ -45,7 +45,7 @@ class ACISImportTest(TestCase):
         mocked_print.assert_called()
 
         # Should only create 18 items - two are duplicates
-        self.assertEqual(18, VehicleJourney.objects.all().count())
+        self.assertEqual(18, VehicleJourney.objects.count())
 
         with use_cassette(
             os.path.join(DIR, "vcr", "import_live_acis.yaml"), match_on=["body"]
@@ -53,7 +53,7 @@ class ACISImportTest(TestCase):
             command.update()
 
         # Should create no new items - no changes
-        self.assertEqual(18, VehicleJourney.objects.all().count())
+        self.assertEqual(18, VehicleJourney.objects.count())
 
     def test_get_items(self):
         command = import_live_acis.Command()
