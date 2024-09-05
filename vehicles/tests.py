@@ -182,7 +182,7 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, "20 Oct")
         self.assertContains(response, "00:47")
         self.assertContains(response, "/operators/lynx/map")
-        self.assertContains(response, "/vehicles/edits?vehicle__operator=LYNX")
+        self.assertContains(response, "/vehicles/edits?operator=LYNX")
         self.assertContains(response, "/operators/lynx/map")
 
         with self.assertNumQueries(6):
@@ -695,6 +695,10 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         with self.assertNumQueries(3):
             response = self.client.get("/vehicles/edits?status=approved")
         self.assertEqual(len(response.context["revisions"]), 0)
+
+        with self.assertNumQueries(6):
+            response = self.client.get("/vehicles/edits?operator=LYNX")
+        self.assertEqual(len(response.context["revisions"]), 1)
 
         self.client.force_login(self.staff_user)
 

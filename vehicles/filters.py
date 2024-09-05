@@ -1,10 +1,9 @@
 from django_filters import ChoiceFilter, CharFilter, FilterSet, NumberFilter
+from django.db.models import Q
 
 
 class VehicleRevisionFilter(FilterSet):
-    vehicle__operator = CharFilter(
-        label="Operator ID",
-    )
+    operator = CharFilter(label="Operator ID", method="operator_filter")
     vehicle = NumberFilter(label="Vehicle ID")
     user = NumberFilter(label="User ID")
     status = ChoiceFilter(
@@ -17,7 +16,12 @@ class VehicleRevisionFilter(FilterSet):
         method="status_filter",
     )
 
-    def status_filter(self, queryset, name, value):
+    def operator_filter(self, queryset, _, value):
+        return queryset.filter(
+            Q(vehicle__operator=value) | Q(from_operator=value) | Q(to_operator=value)
+        )
+
+    def status_filter(self, queryset, _, value):
         match value:
             case "pending":
                 return queryset.filter(pending=True, disapproved=False)
