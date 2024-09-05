@@ -48,6 +48,7 @@ class EditVehicleForm(forms.Form):
         "features",
         "notes",
         "rules",
+        "superrules",
     ]
     spare_ticket_machine = forms.BooleanField(
         required=False,
@@ -125,7 +126,10 @@ link to a picture to prove it. Be polite.""",
         label="I agree that my edit is made in good faith and complies with the editing rules. I also acknowledge that abusing the vehicle editing feature may lead to a ban",
         required=true,
     )
-    #Maybe find a way for this note to change so Superusers see a note that misusing the form may result in privilages being revoked rather than threatening ban?
+    superrules = forms.BooleanField(
+        label="I agree that my edit is made in good faith and I am not abusing my additional privilages. I also acknowledge that abusing editing feature may lead to privilaged being removed",
+        required=true,
+    )
 
     def clean_other_colour(self):
         if self.cleaned_data["other_colour"]:
@@ -154,11 +158,16 @@ link to a picture to prove it. Be polite.""",
             self.fields["summary"].required = False
 
         if not user.is_superuser:
+            del self.fields["superrules"]
             if not (
                 vehicle.notes
                 or vehicle.operator_id in settings.ALLOW_VEHICLE_NOTES_OPERATORS
             ):
                 del self.fields["notes"]
+            
+
+        if user.is_superuser:
+            del self.fields["rules"]
 
         if vehicle.is_spare_ticket_machine():
             del self.fields["notes"]
