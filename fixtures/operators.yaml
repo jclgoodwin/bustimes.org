@@ -348,6 +348,8 @@ HRBT:
 COEV:
   name: Coach Events Services
   url: http://www.coacheventsservices.co.uk/
+GLLN:
+  name: Central Connect
 VECT:
   name: Central Connect
   twitter: |
