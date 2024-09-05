@@ -28,6 +28,14 @@
         <p>Don't use nonsense edits to try to "message" other users or "the admins". Instead, <a href="https://discord.com/invite/gY4PdDFau7">post in the Discord server</a> or <a href="/contact">send me an email</a>.
 </ol>
 
+{% if form %}
+    <form method="POST">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <input type="submit" value="Let me edit">
+    </form>
+{% else %}
+
 <h2>FAQ</h2>
 
 <h3>Why haven't you designed a perfect system for handling edits, voting, moderation etc?</h3>
@@ -54,5 +62,7 @@
 <h3>I have a different question, or maybe a comment</h3>
 
 <p><a href="/contact">Ask me</a></p>
+
+{% endif %}
 
 {% endblock %}

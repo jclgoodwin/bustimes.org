@@ -7,6 +7,7 @@ from urllib.parse import unquote, urlencode
 import lightningcss
 import xmltodict
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
@@ -739,6 +740,20 @@ def edit_vehicle(request, **kwargs):
         **kwargs,
     )
 
+    form_data = request.POST or None
+
+    if not request.user.has_perm("vehicles.add_vehiclerevision"):
+        form = forms.RulesForm(form_data)
+        if form.is_valid():
+            request.user.user_permissions.add(
+                Permission.objects.get(codename="add_vehiclerevision")
+            )
+            form_data = None
+        else:
+            return render(
+                request, "rules.html", {"breadcrumb": [vehicle], "form": form}
+            )
+
     if (
         vehicle.operator_id
         and not request.user.trusted
@@ -781,7 +796,7 @@ def edit_vehicle(request, **kwargs):
         initial["fleet_number"] = str(vehicle.fleet_number)
 
     form = forms.EditVehicleForm(
-        request.POST or None,
+        form_data,
         initial=initial,
         vehicle=vehicle,
         user=request.user,
@@ -789,7 +804,7 @@ def edit_vehicle(request, **kwargs):
 
     context["livery"] = vehicle.livery
 
-    if request.POST:
+    if form_data:
         if form.has_changed() is False or form.changed_data == ["summary"]:
             form.add_error(None, "You haven't changed anything")
 

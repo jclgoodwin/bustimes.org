@@ -4,6 +4,7 @@ import fakeredis
 import time_machine
 from ciso8601 import parse_datetime
 from django.contrib.gis.geos import Point
+from django.contrib.auth.models import Permission
 from django.test import TestCase, override_settings
 
 from accounts.models import User
@@ -135,6 +136,8 @@ class VehiclesTests(TestCase):
         cls.trusted_user = User.objects.create(
             username="norma", trusted=True, email="n@example.com", score=2
         )
+        permission = Permission.objects.get(codename="add_vehiclerevision")
+        cls.trusted_user.user_permissions.add(permission)
         cls.user = User.objects.create(
             username="ken",
             trusted=None,
@@ -561,7 +564,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # add and remove a feature, change type
         initial["features"] = self.usb.id
         initial["vehicle_type"] = self.vehicle_2.vehicle_type_id
-        with self.assertNumQueries(23):
+        with self.assertNumQueries(25):
             response = self.client.post(url, initial)
         revision = response.context["revision"]
         self.assertFalse(revision.pending)
@@ -573,7 +576,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         # colour, spare ticket machine
         initial["colours"] = self.livery.id
         initial["spare_ticket_machine"] = True
-        with self.assertNumQueries(17):
+        with self.assertNumQueries(19):
             response = self.client.post(url, initial)
             revision = response.context["revision"]
             self.assertEqual(revision.to_livery, self.livery)
@@ -732,11 +735,22 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
     def test_vehicle_edit_3(self):
         self.client.force_login(self.user)
 
-        with self.assertNumQueries(6):
-            response = self.client.get(self.vehicle_3.get_edit_url())
-        self.assertNotContains(response, "notes")
+        url = self.vehicle_3.get_edit_url()
 
-        with self.assertNumQueries(9):
+        # first read the rules and tick the box
+        with self.assertNumQueries(5):
+            response = self.client.get(url)
+        self.assertContains(response, "read the rules")
+
+        with self.assertNumQueries(5):
+            response = self.client.get(url)
+        with self.assertNumQueries(10):
+            response = self.client.post(self.vehicle_3.get_edit_url(), {"rules": True})
+
+        self.assertNotContains(response, "notes")
+        self.assertNotContains(response, "read the rules")
+
+        with self.assertNumQueries(11):
             # new user - can create a pending revision
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
@@ -751,7 +765,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, "<strong>removed from list</strong>")
         revision = response.context["revision"]
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(15):
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),
                 {
@@ -771,7 +785,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         revision.vehicle.refresh_from_db()
         self.assertTrue(revision.vehicle.withdrawn)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(13):
             # trusted user - can edit reg
             response = self.client.post(
                 self.vehicle_3.get_edit_url(),
@@ -795,7 +809,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.vehicle_3.get_absolute_url())
         self.assertContains(response, ">K292 JVF, P44 CEX<")
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(15):
             # trusted user - can edit colour
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),

@@ -16,6 +16,10 @@
         {% if object.trusted is False %}</del>{% endif %}
     </h1>
 
+    {% if request.user.is_superuser %}
+        <p><a href="{% url 'admin:accounts_user_change' object.id %}">✎</a></p>
+    {% endif %}
+
     {% if object == user %}
         <p>That's you!</p>
     {% endif %}

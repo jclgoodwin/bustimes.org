@@ -181,3 +181,7 @@ class DebuggerForm(forms.Form):
 
 class DateForm(forms.Form):
     date = forms.DateField()
+
+
+class RulesForm(forms.Form):
+    rules = forms.BooleanField(label="I've read the rules", required=True)

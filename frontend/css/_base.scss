@@ -150,6 +150,21 @@ summary::marker {
     text-transform: uppercase;
 }
 
+body {
+    .select2-container--default .select2-selection--single {
+        background: var(--background-color);
+        height: auto;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: var(--text-color);
+    }
+
+    .select2-dropdown {
+        background: var(--background-color);
+    }
+}
+
 .site-header {
     background: var(--brand-color);
     overflow: hidden;
