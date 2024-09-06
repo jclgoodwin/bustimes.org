@@ -51,13 +51,6 @@
     <ul class="horizontal">
         {% if vehicle.is_editable %}
             <li><a href="{{ vehicle.get_edit_url }}">Edit</a></li>
-        {% endif %}
-
-        {% if pending_edits.exists %}
-            <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}&status=pending">Pending edits</a></li>
-        {% endif %}
-
-        {% if revisions.exists %}
             <li><a href="/vehicles/edits?vehicle={{ vehicle.id }}&status=approved">History</a></li>
         {% endif %}
 

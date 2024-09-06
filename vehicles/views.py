@@ -680,11 +680,6 @@ class VehicleDetailView(DetailView):
             if len(garages) == 1:
                 context["garage"] = Garage.objects.get(id=garages.pop())
 
-        context["pending_edits"] = self.object.vehiclerevision_set.filter(pending=True)
-        context["revisions"] = self.object.vehiclerevision_set.filter(
-            pending=False, disapproved=False
-        )
-
         if self.object.operator:
             context["breadcrumb"] = [
                 self.object.operator,

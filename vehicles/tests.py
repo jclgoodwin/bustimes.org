@@ -201,7 +201,7 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, "/operators/lynx/map")
 
     def test_vehicle_views(self):
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(6):
             response = self.client.get(self.vehicle_1.get_absolute_url() + "?date=poop")
         self.assertContains(response, "Optare Tempo")
         self.assertContains(response, "Trent Barton")
@@ -210,7 +210,7 @@ class VehiclesTests(TestCase):
         self.assertContains(response, ">00:47<")
         self.assertContains(response, ">13:00<")
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             response = self.client.get(self.vehicle_2.get_absolute_url())
         self.assertEqual(200, response.status_code)
 
