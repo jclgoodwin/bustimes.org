@@ -2,7 +2,7 @@ import datetime
 import json
 import logging
 from itertools import pairwise
-from urllib.parse import unquote, urlencode
+from urllib.parse import unquote
 
 import lightningcss
 import xmltodict
@@ -990,7 +990,6 @@ def vehicle_edits(request):
         {
             "filter": f,
             "revisions": page,
-            "parameters": urlencode(f.data),
         },
     )
 

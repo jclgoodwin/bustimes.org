@@ -1458,8 +1458,6 @@ def search(request):
                 operators=ArrayAgg("operator__name", distinct=True, default=None)
             )
 
-            context["parameters"] = urlencode({"q": query_text})
-
             for key, queryset in (
                 ("localities", localities),
                 ("operators", operators),
