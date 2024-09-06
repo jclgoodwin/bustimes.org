@@ -95,7 +95,7 @@ class Command(ImportLiveVehiclesCommand):
 
         if (latest_journey := vehicle.latest_journey) and (
             latest_journey.route_name,
-            journey.direction,
+            latest_journey.direction,
             latest_journey.destination,
         ) == (journey.route_name, journey.direction, journey.destination):
             journey.service_id = latest_journey.service_id
