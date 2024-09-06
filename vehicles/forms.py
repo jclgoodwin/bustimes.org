@@ -81,7 +81,7 @@ class EditVehicleForm(forms.Form):
         label="Current livery",
         queryset=Livery.objects,
         required=False,
-        help_text="""Please wait until the bus has *finished being repainted*
+        help_text="""Don't change this until the bus has *been painted*
 (<em>not</em> just "in the paint shop" or "awaiting repaint")""",
     )
     other_colour = forms.CharField(
@@ -115,7 +115,7 @@ class EditVehicleForm(forms.Form):
     notes = forms.CharField(required=False, max_length=255)
     summary = fields.SummaryField(
         max_length=255,
-        help_text="""Briefly explain your changes,
+        help_text="""Explain your changes,
 if they need explaining.
 E.g. how you *know* a vehicle has *definitely been* withdrawn or repainted,
 link to a picture to prove it. Be polite.""",
