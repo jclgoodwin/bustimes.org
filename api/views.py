@@ -1,6 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import StopTime, Trip
@@ -25,9 +27,11 @@ class CursorPagination(pagination.CursorPagination):
 
 
 class VehicleViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Vehicle.objects.select_related(
-        "vehicle_type", "livery", "operator", "garage"
-    ).order_by("id")
+    queryset = (
+        Vehicle.objects.select_related("vehicle_type", "livery", "operator", "garage")
+        .annotate(special_features=ArrayAgg("features__name", filter=~Q(features=None)))
+        .order_by("id")
+    )
     serializer_class = serializers.VehicleSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleFilter

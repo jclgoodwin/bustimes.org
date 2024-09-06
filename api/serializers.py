@@ -28,6 +28,7 @@ class VehicleSerializer(serializers.ModelSerializer):
     operator = serializers.SerializerMethodField()
     livery = serializers.SerializerMethodField()
     vehicle_type = VehicleTypeSerializer()
+    special_features = serializers.ListField()
 
     def get_operator(self, obj):
         if obj.operator_id:
@@ -64,6 +65,7 @@ class VehicleSerializer(serializers.ModelSerializer):
             "name",
             "notes",
             "withdrawn",
+            "special_features",
         ]
 
 
