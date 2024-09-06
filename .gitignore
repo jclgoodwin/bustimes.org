@@ -17,3 +17,5 @@
 .env.sentry-build-plugin
 
 /.parcel-cache/
+/.vscode/
+*.sqlite

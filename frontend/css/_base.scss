@@ -151,13 +151,24 @@ summary::marker {
 }
 
 body {
-    .select2-container--default .select2-selection--single {
+    .select2-container .select2-selection {
         background: var(--background-color);
-        height: auto;
-    }
+        border-color: var(--border-color);
+        border-radius: 8px;
+        height: 34px;
 
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        color: var(--text-color);
+        .select2-selection__rendered {
+            color: var(--text-color);
+            line-height: 32px;
+        }
+
+        .select2-selection__arrow {
+            height: 32px;
+        }
+
+        .livery {
+            margin-top: -2px;
+        }
     }
 
     .select2-dropdown {
