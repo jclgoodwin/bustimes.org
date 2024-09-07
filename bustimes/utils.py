@@ -46,6 +46,7 @@ def get_routes(routes, when=None, from_date=None):
             filter_by_revision_number = True
         if filter_by_revision_number:
             routes = routes.filter(
+                Q(start_date=None) | Q(start_date__lte=when),
                 ~Exists(
                     Route.objects.filter(
                         Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
@@ -53,8 +54,8 @@ def get_routes(routes, when=None, from_date=None):
                         start_date__lte=when,
                         revision_number__gt=OuterRef("revision_number"),
                     )
-                )
-            )
+                ),
+            ).order_by("id")
 
     # complicated way of working out which Passenger .zip applies
     current_prefixes = {}
@@ -184,9 +185,7 @@ def get_calendars(when: date | datetime, calendar_ids=None):
     )
 
 
-def get_stop_times(
-    date: date, time: timedelta | None, stop, services_routes: dict, trip_ids=None
-):
+def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=None):
     times = StopTime.objects.filter(pick_up=True).annotate(date=Value(date))
 
     try:
@@ -198,12 +197,10 @@ def get_stop_times(
         trips = Trip.objects.filter(id__in=trip_ids, start__lt=time)
         times = times.filter(departure__lt=time)
     else:
-        routes = []
-        for service_routes in services_routes.values():
-            routes += get_routes(service_routes, date)
+        routes = get_routes(routes, date)
 
         if not routes:
-            times = times.none()
+            return times.none()
 
         trips = Trip.objects.filter(
             route__in=routes,

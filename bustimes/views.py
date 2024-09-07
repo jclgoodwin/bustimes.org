@@ -276,7 +276,9 @@ def stop_times_json(request, atco_code):
     else:
         when = timezone.localtime()
         now = True
-    services = stop.service_set.filter(current=True).defer("geometry", "search_vector")
+    services = stop.service_set.filter(current=True, timetable_wrong=False).defer(
+        "geometry", "search_vector"
+    )
 
     by_trip = None
     if now:
@@ -295,12 +297,7 @@ def stop_times_json(request, atco_code):
             "'limit' isn't in the right format (an integer or nothing)"
         )
 
-    routes = {}
-    for route in Route.objects.filter(service__in=services).select_related("source"):
-        if route.service_id in routes:
-            routes[route.service_id].append(route)
-        else:
-            routes[route.service_id] = [route]
+    routes = Route.objects.filter(service__in=services).select_related("source")
 
     departures = live.TimetableDepartures(stop, services, None, routes, by_trip)
     time_since_midnight = timedelta(

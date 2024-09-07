@@ -104,17 +104,9 @@ def get_departures(stop, services, when) -> dict:
 
     now = timezone.localtime()
 
-    routes_by_service = {}
     routes = Route.objects.filter(
         service__in=[s for s in services if not s.timetable_wrong]
     ).select_related("source")
-
-    for route in routes:
-        if route.service_id in routes_by_service:
-            routes_by_service[route.service_id].append(route)
-        else:
-            routes_by_service[route.service_id] = [route]
-
     departures = None
 
     gtfsr_available = any(
@@ -130,7 +122,7 @@ def get_departures(stop, services, when) -> dict:
 
             if by_trip:
                 departures = TimetableDepartures(
-                    stop, services, now, routes_by_service, by_trip
+                    stop, services, now, routes, by_trip
                 ).get_departures()
 
                 if by_trip:
@@ -183,7 +175,7 @@ def get_departures(stop, services, when) -> dict:
 
     if departures is None:
         departures = TimetableDepartures(
-            stop, services, when or now, routes_by_service
+            stop, services, when or now, routes
         ).get_departures()
 
     if live_departures:
@@ -203,7 +195,7 @@ def get_departures(stop, services, when) -> dict:
             one_hour_ago.date(),
             datetime.timedelta(hours=one_hour_ago.hour, minutes=one_hour_ago.minute),
             stop,
-            routes_by_service,
+            routes,
         ).exists()
     ):
         live_rows = None
