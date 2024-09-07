@@ -215,23 +215,23 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
             ]
         }
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(7):
             response = self.client.get("/stops/2900W0321/times.json")
         self.assertEqual(response.json(), expected_json)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(7):
             response = self.client.get(
                 "/stops/2900W0321/times.json?when=2020-05-01T09:15:00%2b01:00"
             )
         self.assertEqual(response.json(), expected_json)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(7):
             response = self.client.get(
                 "/stops/2900W0321/times.json?when=2020-05-01T09:15:00"
             )
         self.assertEqual(response.json(), expected_json)
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(7):
             response = self.client.get("/stops/2900W0321/times.json?limit=10")
         self.assertEqual(1, len(response.json()["times"]))
 
@@ -247,7 +247,7 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
         #     "departures.live.NorfolkDepartures.get_departures", return_value=[]
         # ) as mocked:
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/stops/2900W0321?date=2020-05-02")
         self.assertEqual(1, len(response.context["departures"]))
         self.assertEqual(str(response.context["when"]), "2020-05-02 00:00:00")
@@ -258,7 +258,7 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
         with self.assertNumQueries(8):
             response = self.client.get("/stops/2900W0321?date=2020-05-02&time=11:00")
         self.assertEqual(str(response.context["when"]), "2020-05-02 11:00:00")
-        self.assertContains(response, "<h3>Monday 4 May</h3>")  # next day
+        self.assertContains(response, '<a href="?date=2020-05-03">')  # next day
 
         with self.assertNumQueries(7):
             response = self.client.get("/stops/2900w0321/departures?date=poop")

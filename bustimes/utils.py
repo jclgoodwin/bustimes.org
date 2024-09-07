@@ -8,15 +8,15 @@ from django.db.models import (
     DateTimeField,
     ExpressionWrapper,
     F,
-    OuterRef,
     Q,
     Value,
     When,
+    OuterRef,
 )
 from django.utils import timezone
 from sql_util.utils import Exists
 
-from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip
+from .models import Calendar, CalendarBankHoliday, CalendarDate, StopTime, Trip, Route
 
 differ = Differ(charjunk=lambda _: True)
 logger = logging.getLogger(__name__)
@@ -34,6 +34,28 @@ class log_time_taken:
 
 
 def get_routes(routes, when=None, from_date=None):
+    if when:
+        if type(routes) is list:
+            if filter_by_revision_number := any(
+                route.revision_number for route in routes
+            ):
+                routes = Route.objects.filter(
+                    id__in=[route.id for route in routes]
+                ).select_related("source")
+        else:
+            filter_by_revision_number = True
+        if filter_by_revision_number:
+            routes = routes.filter(
+                ~Exists(
+                    Route.objects.filter(
+                        Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
+                        service_code=OuterRef("service_code"),
+                        start_date__lte=when,
+                        revision_number__gt=OuterRef("revision_number"),
+                    )
+                )
+            )
+
     # complicated way of working out which Passenger .zip applies
     current_prefixes = {}
     for route in routes:
@@ -94,54 +116,6 @@ def get_routes(routes, when=None, from_date=None):
         for route in routes[1:]
     ):
         return [max(routes, key=lambda r: r.code)]
-
-    # use maximum revision number for each service_code (TxC Service)
-    if when and len(revision_numbers) > 1:
-        routes = list(routes)
-        routes.sort(key=lambda r: r.revision_number)
-        revision_numbers = {}
-        for route in routes:
-            route.key = route.service_code.replace(":0", ":")
-
-            if route.source.name.startswith(
-                "First Bus_"
-            ) or route.source.name.startswith(
-                "National Express West Midlands"
-            ):  # journeys may be split between sources (First Bristol)
-                route.key = f"{route.key}:{route.source_id}"
-
-            # use some clues in the filename (or a very good clue in the source URL)
-            # to tell if the data is from Ticketer, and adapt accordingly
-            # - the revision number applies to a bit of the filename
-            # (e.g. the '10W' bit in 'AMSY_10W_AMSYP...') *not* the service_code
-            parts = route.code.split("_")
-            looks_like_ticketer_route = (
-                7 >= len(parts) >= 6
-                and parts[3].isdigit()
-                and (parts[4].isdigit() or parts[4] == "-")
-            )
-
-            if ".ticketer." in route.source.url:
-                if not looks_like_ticketer_route:
-                    logger.warning(
-                        "Ticketer %s in %s doesn't look like Ticketer data",
-                        route.code,
-                        route.source.url,
-                    )
-                route.key = f"{route.key}:{parts[1]}"
-            elif looks_like_ticketer_route:
-                route.key = f"{route.key}:{parts[1]}"
-
-            if route.key not in revision_numbers or (
-                route.revision_number > revision_numbers[route.key]
-                and (not route.start_date or route.start_date <= when)
-            ):
-                revision_numbers[route.key] = route.revision_number
-        routes = [
-            route
-            for route in routes
-            if route.revision_number == revision_numbers[route.key]
-        ]
 
     sources = set(route.source_id for route in routes)
 

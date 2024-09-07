@@ -71,7 +71,7 @@
 
     {% if when %}
         {% if next_page %}
-            <p class="next"><a href="{{ next_page }}">Later &darr;</a></p>
+            <p class="next"><a href="{% querystring date=next_page.date time=next_page.time %}">{% if when.date < next_page.date %}{{ next_page.date }}{% else %}Later{% endif %} &darr;</a></p>
         {% endif %}
         {% if when != now %}
             <p><a href="{{ object.get_absolute_url }}">&uarr; Now</a></p>

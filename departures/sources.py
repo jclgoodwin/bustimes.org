@@ -392,15 +392,15 @@ class TimetableDepartures(Departures):
 
         times = [self.get_row(stop_time) for stop_time in today_times]
 
-        # add tomorrow's times until there are 10, or the next day until there more than 0
-        i = 0
-        while not times and i < 3 or len(times) < 10 and i == 0:
-            i += 1
-            date += one_day
-            times += [
-                self.get_row(stop_time)
-                for stop_time in self.get_times(date)[: 10 - len(times)]
-            ]
+        # # add tomorrow's times until there are 10, or the next day until there more than 0
+        # i = 0
+        # while not times and i < 3 or len(times) < 10 and i == 0:
+        #     i += 1
+        #     date += one_day
+        #     times += [
+        #         self.get_row(stop_time)
+        #         for stop_time in self.get_times(date)[: 10 - len(times)]
+        #     ]
 
         routes = {
             route.id: route for routes in self.routes.values() for route in routes

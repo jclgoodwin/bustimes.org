@@ -5,7 +5,6 @@ import os
 import sys
 import traceback
 from http import HTTPStatus
-from urllib.parse import urlencode
 
 import qrcode
 import qrcode.image.svg
@@ -600,25 +599,25 @@ def get_departures_context(stop, services, form_data) -> dict:
             time = datetime.time()  # 00:00
         when = datetime.datetime.combine(date, time)
     context["when"] = when
-
     departures = live.get_departures(stop, services, when)
     context.update(departures)
 
-    next_page = {}
     if context["departures"]:
         context["has_live"] = any(item.get("live") for item in context["departures"])
         context["has_scheduled"] = any(
             item.get("time") for item in context["departures"]
         )
-        last_time = context["departures"][-1].get("time")
-        if last_time:
-            next_page = {
+    if context["when"]:
+        if len(context["departures"]) < 12:
+            context["next_page"] = {
+                "date": context["when"].date() + datetime.timedelta(days=1),
+                "time": None,
+            }
+        elif last_time := context["departures"][-1].get("time"):
+            context["next_page"] = {
                 "date": last_time.date(),
                 "time": last_time.time().strftime("%H:%M"),
             }
-
-    if next_page:
-        context["next_page"] = f"?{urlencode(next_page)}"
 
     return context
 
