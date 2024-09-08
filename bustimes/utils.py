@@ -176,7 +176,7 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
         routes = get_routes(routes, date)
 
         if not routes:
-            return times.none()
+            times = times.none()
 
         trips = Trip.objects.filter(
             route__in=routes,
