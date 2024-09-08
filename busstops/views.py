@@ -173,6 +173,7 @@ def robots_txt(request):
 
     if request.get_host() == "bustimes.org":  # live site
         content = """User-agent: *
+Disallow: /trips/
 Disallow: /api/
 Disallow: /accounts/
 Disallow: /fares/
@@ -180,6 +181,12 @@ Disallow: /vehicles/tfl/
 Disallow: /services/*/*
 Disallow: /sources
 Disallow: /*/debug
+
+User-Agent: ImagesiftBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
