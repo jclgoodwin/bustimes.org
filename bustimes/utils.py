@@ -98,15 +98,17 @@ def get_routes(routes, when=None, from_date=None):
     if len(routes) <= 1:
         return routes
 
+    # TfL: parse Service Change Number from filename (like a revision number) and use the highest one
     # https://techforum.tfl.gov.uk/t/duplicate-files-in-journey-planner-datastore-is-there-a-way-to-choose-the-right-one/2571
-    if from_date and all(
-        route.source.name == "L"
-        and route.code.split("-")[:-1] == routes[0].code.split("-")[:-1]
-        and route.start_date == routes[0].start_date
-        and route.end_date == routes[0].end_date
-        for route in routes[1:]
-    ):
-        return [max(routes, key=lambda r: r.code)]
+    if when and any(route.source.name == "L" for route in routes):
+        routes = [
+            route
+            for route in routes
+            if route.source.name != "L"
+            or not any(
+                route.code[:-5] == r.code[:-5] and route.code < r.code for r in routes
+            )
+        ]
 
     # remove duplicates
     if len(set(route.source_id for route in routes)) > 1:

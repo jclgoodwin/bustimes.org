@@ -219,14 +219,14 @@ class BusTimesTest(TestCase):
                 code="55",
                 revision_number=3,
                 source=sources[0],
-                start_date=date(2022, 4, 1),
+                start_date=date(2022, 2, 1),
             ),
             Route(
                 service=service,
                 description="2",
                 revision_number=3,
                 source=sources[1],
-                start_date=date(2022, 4, 1),
+                start_date=date(2022, 2, 1),
             ),
             Route(
                 service=service,
@@ -234,7 +234,7 @@ class BusTimesTest(TestCase):
                 code="55b",
                 revision_number=4,
                 source=sources[0],
-                start_date=date(2022, 4, 1),
+                start_date=date(2022, 3, 1),
             ),
             Route(
                 service=service,
@@ -242,7 +242,7 @@ class BusTimesTest(TestCase):
                 code="55c",
                 revision_number=4,
                 source=sources[0],
-                start_date=date(2022, 4, 1),
+                start_date=date(2022, 3, 1),
             ),
             Route(
                 service=service,
@@ -322,11 +322,12 @@ class BusTimesTest(TestCase):
         self.assertEqual(get_routes(routes, when=date(2023, 3, 22)), routes[2:])
 
     def test_get_routes_tfl(self):
-        source = DataSource(id=1, name="L")
+        source = DataSource.objects.create(id=1, name="L")
 
         routes = [
             Route(
                 id=1,
+                service_code="683",
                 code="86-683-_-y05-60196",
                 revision_number=3,
                 start_date=date(2023, 2, 11),
@@ -334,13 +335,15 @@ class BusTimesTest(TestCase):
             ),
             Route(
                 id=2,
-                code="86-683-_-y05-60197",
+                service_code="683",
+                code="86-683-_-y05-60197",  # highest Service Change Number in filename
                 revision_number=3,
                 start_date=date(2023, 2, 11),
                 source=source,
             ),
             Route(
                 id=3,
+                service_code="683",
                 code="86-683-_-y05-59862",
                 revision_number=3,
                 start_date=date(2023, 2, 11),
@@ -348,7 +351,8 @@ class BusTimesTest(TestCase):
             ),
         ]
 
-        gotten_routes = get_routes(routes)
+        Route.objects.bulk_create(routes)
+        gotten_routes = get_routes(routes, when=date(2023, 2, 12))
         self.assertEqual(len(gotten_routes), 1)
         self.assertEqual(gotten_routes[0].code, "86-683-_-y05-60197")
         self.assertEqual(gotten_routes[0].id, 2)
