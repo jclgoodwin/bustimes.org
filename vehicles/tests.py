@@ -194,18 +194,19 @@ class VehiclesTests(TestCase):
         # last seen today - should only show time, should link to map
         with time_machine.travel("2020-10-20 12:00+01:00"):
             with self.assertNumQueries(3):
-                response = self.client.get("/operators/lynx/vehicles")
+                with override_settings(ALLOW_VEHICLE_NOTES_OPERATORS=("LYNX",)):
+                    response = self.client.get("/operators/lynx/vehicles")
 
         vehicles = response.context["vehicles"]
-        self.assertEqual(vehicles[0].reg, "FD54JYA")  # fleet number order
-        self.assertEqual(vehicles[1].reg, "UWW2X")
-        self.assertEqual(str(vehicles[2]), "DE69")
-        self.assertEqual(vehicles[3].reg, "K292KEX")  # age order
-        self.assertEqual(vehicles[4].reg, "T125OAH")
-        self.assertEqual(vehicles[5].reg, "SA60TWP")
-        self.assertEqual(vehicles[6].reg, "YN14ANV")
-        self.assertEqual(vehicles[7].reg, "YX24ANV")
-        self.assertEqual(vehicles[8].reg, "BB74BUS")
+        self.assertEqual(vehicles[0].reg, "UWW2X")
+        self.assertEqual(str(vehicles[1]), "DE69")
+        self.assertEqual(vehicles[2].reg, "K292KEX")  # age order
+        self.assertEqual(vehicles[3].reg, "T125OAH")
+        self.assertEqual(vehicles[4].reg, "SA60TWP")
+        self.assertEqual(vehicles[5].reg, "YN14ANV")
+        self.assertEqual(vehicles[6].reg, "YX24ANV")
+        self.assertEqual(vehicles[7].reg, "BB74BUS")
+        self.assertEqual(vehicles[8].reg, "FD54JYA")  # notes order
 
         self.assertNotContains(response, "20 Oct")
         self.assertContains(response, "00:47")
@@ -334,9 +335,10 @@ class VehiclesTests(TestCase):
         self.assertContains(response, "Copied Optare Spectra to 2 vehicles.")
         self.assertContains(response, "Copied black with lemon piping to 2 vehicles.")
 
-        # # spare ticket machine - not editable
-        # response = self.client.get(self.vehicle_1.get_edit_url())
-        # self.assertEqual(404, response.status_code)
+        # spare ticket machine - some fields not editable
+        response = self.client.get(self.vehicle_1.get_edit_url())
+        self.assertNotContains(response, "id_reg")
+        self.assertNotContains(response, "livery")
 
         response = self.client.get("/operators/lynx/vehicles")
         self.assertContains(response, "<td>Spare ticket machine</td>")
