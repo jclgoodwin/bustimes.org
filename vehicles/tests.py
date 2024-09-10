@@ -178,10 +178,35 @@ class VehiclesTests(TestCase):
             response = self.client.get("/operators/shatton-east/vehicles")
             self.assertEqual(404, response.status_code)
 
+        # some new vehicles for testing age-based ordering
+        Vehicle.objects.bulk_create(
+            [
+                Vehicle(reg="SA60TWP", code="SA60TWP", operator=self.lynx),
+                Vehicle(reg="BB74BUS", code="BB74BUS", operator=self.lynx),
+                Vehicle(reg="YX24ANV", code="YX24ANV", operator=self.lynx),
+                Vehicle(reg="K292KEX", code="K292KEX", operator=self.lynx),
+                Vehicle(reg="YN14ANV", code="YN14ANV", operator=self.lynx),
+                Vehicle(reg="T125OAH", code="T125OAH", operator=self.lynx),
+                Vehicle(fleet_code="DE69", code="DE69", operator=self.lynx),
+            ]
+        )
+
         # last seen today - should only show time, should link to map
         with time_machine.travel("2020-10-20 12:00+01:00"):
             with self.assertNumQueries(3):
                 response = self.client.get("/operators/lynx/vehicles")
+
+        vehicles = response.context["vehicles"]
+        self.assertEqual(vehicles[0].reg, "FD54JYA")  # fleet number order
+        self.assertEqual(vehicles[1].reg, "UWW2X")
+        self.assertEqual(str(vehicles[2]), "DE69")
+        self.assertEqual(vehicles[3].reg, "K292KEX")  # age order
+        self.assertEqual(vehicles[4].reg, "T125OAH")
+        self.assertEqual(vehicles[5].reg, "SA60TWP")
+        self.assertEqual(vehicles[6].reg, "YN14ANV")
+        self.assertEqual(vehicles[7].reg, "YX24ANV")
+        self.assertEqual(vehicles[8].reg, "BB74BUS")
+
         self.assertNotContains(response, "20 Oct")
         self.assertContains(response, "00:47")
         self.assertContains(response, "/operators/lynx/map")

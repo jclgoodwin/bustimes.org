@@ -125,12 +125,23 @@ features_string_agg = StringAgg(
 )
 
 
-def get_vehicle_order(vehicle):
+def get_vehicle_order(vehicle) -> tuple[str, int, str]:
     if vehicle.notes == "Spare ticket machine":
         return ("", vehicle.fleet_number or 99999, vehicle.code)
 
     if vehicle.fleet_number:
         return ("", vehicle.fleet_number)
+
+    # age-based ordering
+    if len(reg := vehicle.reg) == 7 and reg[-3:].isalpha():
+        if reg[:2].isalpha() and reg[2:4].isdigit():
+            year = int(reg[2:4])
+            if year > 50:
+                return ("Z", (year - 50) * 2 + 1, "")  # year 64 (september 2014) - 29
+            return ("Z", year * 2, "")  # year 14 (march 2014) - 28
+
+        if reg[1:4].isdigit():
+            return reg[0], int(reg[1:4]), reg[-3:]
 
     prefix, number, suffix = SERVICE_ORDER_REGEX.match(
         vehicle.fleet_code or vehicle.code
