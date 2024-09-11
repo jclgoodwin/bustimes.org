@@ -800,7 +800,7 @@ class Command(ImportLiveVehiclesCommand):
             total_items,
         ) = self.get_changed_items()
 
-        age = (now - self.source.datetime).total_seconds()
+        age = int((now - self.source.datetime).total_seconds())
         self.hist[now.second % 10] = age
         print(self.hist)
         print(
@@ -824,22 +824,23 @@ class Command(ImportLiveVehiclesCommand):
         cache.set("bod_avl_status", bod_status, None)
 
         if settings.STATUS_WEBHOOK_URL and len(bod_status) >= 2:
-            prev_age = bod_status[-2][1]
-            if age >= 300 and prev_age < 300:
+            prev_status = bod_status[-2]
+            prev_age = int((prev_status[0] - prev_status[1]).total_seconds())
+            if age >= 600 and prev_age < 600:
                 self.session.post(
                     settings.STATUS_WEBHOOK_URL,
                     json={
                         "username": "bot",
-                        "content": f"uh-oh, `🔴 {self.source.url}` hasn't updated since {self.source.datetime}",
+                        "content": f"uh-oh, \U0001F534 `{self.source.url}` hasn't updated since {self.source.datetime}",
                     },
                     timeout=1,
                 )
-            elif age < 300 and prev_age >= 300:
+            elif age < 600 and prev_age >= 600:
                 self.session.post(
                     settings.STATUS_WEBHOOK_URL,
                     json={
                         "username": "bot",
-                        "content": f"phew, 🟢 `{self.source.url}` has updated after {prev_age // 60} minutes of downtime",
+                        "content": f"phew, \U0001F7E2 `{self.source.url}` has updated at {self.source.datetime}, after {prev_age // 60} minutes",
                     },
                     timeout=1,
                 )
