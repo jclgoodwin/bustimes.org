@@ -823,6 +823,27 @@ class Command(ImportLiveVehiclesCommand):
         bod_status = bod_status[-50:]
         cache.set("bod_avl_status", bod_status, None)
 
+        if settings.STATUS_WEBHOOK_URL and len(bod_status) >= 2:
+            prev_age = bod_status[-2][1]
+            if age >= 300 and prev_age < 300:
+                self.session.post(
+                    settings.STATUS_WEBHOOK_URL,
+                    json={
+                        "username": "bot",
+                        "content": f"uh-oh, `🔴 {self.source.url}` hasn't updated since {self.source.datetime}",
+                    },
+                    timeout=1,
+                )
+            elif age < 300 and prev_age >= 300:
+                self.session.post(
+                    settings.STATUS_WEBHOOK_URL,
+                    json={
+                        "username": "bot",
+                        "content": f"phew, 🟢 `{self.source.url}` has updated after {prev_age // 60} minutes of downtime",
+                    },
+                    timeout=1,
+                )
+
         time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")
 
