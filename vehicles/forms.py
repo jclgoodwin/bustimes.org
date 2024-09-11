@@ -48,7 +48,7 @@ class EditVehicleForm(forms.Form):
         "features",
         "notes",
         "rules",
-        "superrules",
+        "trustedrules",
     ]
     spare_ticket_machine = forms.BooleanField(
         required=False,
@@ -126,8 +126,8 @@ link to a picture to prove it. Be polite.""",
         label="I agree that my edit is made in good faith and complies with the editing rules. I also acknowledge that abusing the vehicle editing feature may lead to a ban",
         required=true,
     )
-    superrules = forms.BooleanField(
-        label="I agree that my edit is made in good faith and I am not abusing my additional privilages. I also acknowledge that abusing editing feature may lead to privilaged being removed",
+    trustedrules = forms.BooleanField(
+        label="I agree that my edit is made in good faith and I am not abusing any additional privilages. I also acknowledge that abusing editing feature may lead to privilaged being removed",
         required=true,
     )
 
@@ -158,7 +158,6 @@ link to a picture to prove it. Be polite.""",
             self.fields["summary"].required = False
 
         if not user.is_superuser:
-            del self.fields["superrules"]
             if not (
                 vehicle.notes
                 or vehicle.operator_id in settings.ALLOW_VEHICLE_NOTES_OPERATORS
@@ -166,8 +165,10 @@ link to a picture to prove it. Be polite.""",
                 del self.fields["notes"]
             
 
-        if user.is_superuser:
+        if user.is_trusted:
             del self.fields["rules"]
+        else
+            del self.fields["trustedrules"]
 
         if vehicle.is_spare_ticket_machine():
             del self.fields["notes"]
