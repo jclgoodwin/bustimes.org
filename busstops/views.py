@@ -1133,16 +1133,6 @@ class ServiceDetailView(DetailView):
 
         context["links"] = []
 
-        if self.object.is_megabus():
-            megabus_url = self.object.get_megabus_url()
-            context["tickets_link"] = megabus_url
-            context["links"].append(
-                {
-                    "url": megabus_url,
-                    "text": "Buy tickets at megabus.com",
-                }
-            )
-
         if operators:
             operator = operators[0]
             context["breadcrumb"].append(operator)
@@ -1192,7 +1182,16 @@ class ServiceDetailView(DetailView):
                             "text": "Buy tickets at National Express",
                         }
                     )
-                    break
+                elif operator.name == "Megabus":
+                    context["tickets_link"] = (
+                        "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&ued=https%3A%2F%2Fuk.megabus.com"
+                    )
+                    context["links"].append(
+                        {
+                            "url": context["tickets_link"],
+                            "text": "Buy tickets at megabus.com",
+                        }
+                    )
 
         fare_tables = (
             FareTable.objects.filter(

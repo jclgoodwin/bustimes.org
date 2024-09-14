@@ -791,24 +791,6 @@ class Service(models.Model):
         )
         return f"http://www.{domain}/lts/#/timetables?{urlencode(query)}", name
 
-    def is_megabus(self):
-        return (
-            self.line_name in {"FAL", "TUBE"}
-            or self.service_code == "PF0000459:197"  # X5
-            or any(o.pk in {"MEGA", "SCMG", "SCLK"} for o in self.operator.all())
-        )
-
-    def get_megabus_url(self):
-        # Using a tuple of tuples, instead of a dict, because the order is important for tests
-        query = (
-            ("mid", 2678),
-            ("id", 242611),
-            ("clickref", "links"),
-            ("clickref2", self.service_code),
-            ("p", "https://uk.megabus.com"),
-        )
-        return "https://www.awin1.com/awclick.php?" + urlencode(query)
-
     def get_traveline_links(self, date=None):
         if not self.source:
             return
