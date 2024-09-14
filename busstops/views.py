@@ -894,11 +894,11 @@ class OperatorDetailView(DetailView):
             context["tickets_link"] = reverse(
                 "operator_tickets", kwargs={"slug": self.object.slug}
             )
-        elif self.object.noc == "MEGA":
+        elif self.object.name == "Megabus":
             context["tickets_link"] = (
                 "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&ued=https%3A%2F%2Fuk.megabus.com"
             )
-        elif self.object.noc == "NATX":
+        elif self.object.name == "National Express":
             context["tickets_link"] = (
                 "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
             )

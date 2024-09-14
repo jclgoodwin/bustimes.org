@@ -270,6 +270,9 @@ class VehiclesTests(TestCase):
             f"/vehicles/{self.vehicle_1.id}?date=2020-10-19#journeys/{self.journey.id}",
         )
 
+        response = self.client.get(f"/api/vehiclejourneys/{self.journey.id}.json")
+        self.assertEqual(response.json()["vehicle"]["reg"], "FD54JYA")
+
     def test_location_json(self):
         location = VehicleLocation(latlong=Point(0, 51))
         location.id = 1

@@ -413,6 +413,9 @@ class ViewsTests(TestCase):
         self.chariots.url = "http://nationalexpress.com"
         self.chariots.save()
 
+        response = self.client.get(self.chariots.get_absolute_url())
+        self.assertContains(response, ">Tickets<")
+
         response = self.client.get(self.service.get_absolute_url())
         self.assertNotContains(response, "Show all stops")
         self.assertContains(response, "Melton Constable, opp Bus Shelter")
@@ -428,6 +431,12 @@ class ViewsTests(TestCase):
         self.assertContains(
             response, "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
         )
+
+        self.chariots.name = "Megabus"
+        self.chariots.save()
+
+        response = self.client.get(self.chariots.get_absolute_url())
+        self.assertContains(response, ">Tickets<")
 
     def test_service_redirect(self):
         """An inactive service should redirect to a current service with the same description"""

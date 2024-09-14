@@ -506,6 +506,10 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
         self.assertEqual(2, Service.objects.count())
         self.assertEqual(2, Route.objects.count())
 
+        trip = route.trip_set.last()
+        response = self.client.get(f"/api/trips/{trip.id}/")
+        self.assertTrue(response.json()["times"][8]["track"])
+
         with self.assertNumQueries(18):
             response = self.client.get("/services/904-huntingdon-peterborough")
         self.assertContains(response, "Possibly similar services")
