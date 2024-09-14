@@ -299,11 +299,9 @@ FSCE:
   url: https://www.mcgillsscotlandeast.co.uk/
   phone: 03330 16 61 62
   email: enquiries@mcgillsscotlandeast.co.uk
-EMIR:
+IFSC:
   name: London Cable Car
   aka: Dangleway
-  url: https://tfl.gov.uk/modes/london-cable-car/
-  twitter: ""
 TYSW:
   name: Applegates
   url: http://applegates.co.uk/
