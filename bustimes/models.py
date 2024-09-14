@@ -379,13 +379,16 @@ class Trip(models.Model):
             # see also get_split_trips
             trips = (
                 Trip.objects.filter(
-                    Q(ticket_machine_code=self.ticket_machine_code)
-                    | Q(vehicle_journey_code=self.vehicle_journey_code),
-                    calendar=self.calendar_id,
-                    inbound=self.inbound,
-                    operator_id=self.operator_id,
-                    block=self.block,
-                    route__service=self.route.service_id,
+                    Q(id=self.id)
+                    | Q(
+                        Q(ticket_machine_code=self.ticket_machine_code)
+                        | Q(vehicle_journey_code=self.vehicle_journey_code),
+                        Q(start__gte=self.end) | Q(end__lte=self.start),
+                        block=self.block,
+                        inbound=self.inbound,
+                        operator_id=self.operator_id,
+                        route__service=self.route.service_id,
+                    )
                 )
                 .order_by("start")
                 .distinct("start")
