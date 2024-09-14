@@ -31,7 +31,7 @@ from django.http import (
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template
-from django.urls import resolve
+from django.urls import resolve, reverse
 from django.utils import timezone
 from django.utils.cache import patch_response_headers
 from django.utils.functional import SimpleLazyObject
@@ -890,9 +890,18 @@ class OperatorDetailView(DetailView):
         )
 
         # tickets tab:
-        context["tickets"] = any(
-            code.source_name == "MyTrip" for code in operator_codes
-        )
+        if any(code.source_name == "MyTrip" for code in operator_codes):
+            context["tickets_link"] = reverse(
+                "operator_tickets", kwargs={"slug": self.object.slug}
+            )
+        elif self.object.noc == "MEGA":
+            context["tickets_link"] = (
+                "https://www.awin1.com/cread.php?awinmid=2678&awinaffid=242611&ued=https%3A%2F%2Fuk.megabus.com"
+            )
+        elif self.object.noc == "NATX":
+            context["tickets_link"] = (
+                "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
+            )
 
         context["nocs"] = [
             code.code
@@ -1125,9 +1134,11 @@ class ServiceDetailView(DetailView):
         context["links"] = []
 
         if self.object.is_megabus():
+            megabus_url = self.object.get_megabus_url()
+            context["tickets_link"] = megabus_url
             context["links"].append(
                 {
-                    "url": self.object.get_megabus_url(),
+                    "url": megabus_url,
                     "text": "Buy tickets at megabus.com",
                 }
             )
@@ -1139,7 +1150,7 @@ class ServiceDetailView(DetailView):
 
             if operator.operatorcode_set.filter(source__name="MyTrip").exists():
                 context["app"] = {
-                    "url": f"{operator.get_absolute_url()}/tickets",
+                    "url": reverse("operator_tickets", kwargs={"slug": operator.slug}),
                     "name": "MyTrip app",
                 }
             for method in PaymentMethod.objects.filter(
@@ -1172,9 +1183,12 @@ class ServiceDetailView(DetailView):
                     context["payment_methods"].append(method)
             for operator in operators:
                 if operator.name == "National Express":
+                    context["tickets_link"] = (
+                        "https://nationalexpress.prf.hn/click/camref:1011ljPYw"
+                    )
                     context["links"].append(
                         {
-                            "url": "https://nationalexpress.prf.hn/click/camref:1011ljPYw",
+                            "url": context["tickets_link"],
                             "text": "Buy tickets at National Express",
                         }
                     )

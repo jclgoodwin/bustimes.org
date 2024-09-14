@@ -41,6 +41,9 @@
     <ul class="tabs">
         <li>Timetable</li>
         <li id="map-link"><a href="#map">Map</a></li>
+        {% if tickets_link %}
+            <li><a href="{{ tickets_link }}">Tickets</a></li>
+        {% endif %}
     </ul>
 {% endif %}
 
