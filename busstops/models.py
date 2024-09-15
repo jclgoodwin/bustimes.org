@@ -207,6 +207,8 @@ class DataSource(models.Model):
     source = models.ForeignKey(
         TimetableDataSource, models.CASCADE, null=True, blank=True
     )
+    last_modified = models.DateTimeField(null=True, blank=True)
+    etag = models.CharField(max_length=255, blank=True)
 
     class Meta:
         ordering = ["id"]
@@ -287,6 +289,8 @@ class DataSource(models.Model):
 class StopPoint(models.Model):
     """The smallest type of geographical point.
     A point at which vehicles stop"""
+
+    source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
 
     atco_code = models.CharField(max_length=16, primary_key=True)
     naptan_code = models.CharField(max_length=16, null=True, blank=True)
@@ -507,6 +511,8 @@ class OperatorManager(models.Manager):
 
 class Operator(SearchMixin, models.Model):
     """An entity that operates public transport services"""
+
+    source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
 
     noc = models.CharField(max_length=10, primary_key=True)  # e.g. 'YCST'
     name = models.CharField(max_length=100, db_index=True)
