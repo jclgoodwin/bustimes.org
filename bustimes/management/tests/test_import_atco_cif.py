@@ -33,7 +33,7 @@ class ImportAtcoCifTest(TestCase):
         )
 
         StopPoint.objects.bulk_create(
-            StopPoint(atco_code, latlong=Point(0, 0), active=True)
+            StopPoint(atco_code=atco_code, latlong=Point(0, 0), active=True)
             for atco_code in (
                 "700000015363",
                 "700000015687",
