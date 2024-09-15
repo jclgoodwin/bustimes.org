@@ -188,6 +188,8 @@ class VehiclesTests(TestCase):
                 Vehicle(reg="YN14ANV", code="YN14ANV", operator=self.lynx),
                 Vehicle(reg="T125OAH", code="T125OAH", operator=self.lynx),
                 Vehicle(fleet_code="DE69", code="DE69", operator=self.lynx),
+                Vehicle(fleet_code="G 2434", code="G_2434", operator=self.lynx),
+                Vehicle(fleet_code="J 1221", code="J_121", operator=self.lynx),
             ]
         )
 
@@ -199,14 +201,16 @@ class VehiclesTests(TestCase):
 
         vehicles = response.context["vehicles"]
         self.assertEqual(vehicles[0].reg, "UWW2X")
-        self.assertEqual(str(vehicles[1]), "DE69")
-        self.assertEqual(vehicles[2].reg, "K292KEX")  # age order
-        self.assertEqual(vehicles[3].reg, "T125OAH")
-        self.assertEqual(vehicles[4].reg, "SA60TWP")
-        self.assertEqual(vehicles[5].reg, "YN14ANV")
-        self.assertEqual(vehicles[6].reg, "YX24ANV")
-        self.assertEqual(vehicles[7].reg, "BB74BUS")
-        self.assertEqual(vehicles[8].reg, "FD54JYA")  # notes order
+        self.assertEqual(str(vehicles[1]), "J 1221")
+        self.assertEqual(str(vehicles[2]), "G 2434")
+        self.assertEqual(str(vehicles[3]), "DE69")
+        self.assertEqual(vehicles[4].reg, "K292KEX")  # age order
+        self.assertEqual(vehicles[5].reg, "T125OAH")
+        self.assertEqual(vehicles[6].reg, "SA60TWP")
+        self.assertEqual(vehicles[7].reg, "YN14ANV")
+        self.assertEqual(vehicles[8].reg, "YX24ANV")
+        self.assertEqual(vehicles[9].reg, "BB74BUS")
+        self.assertEqual(vehicles[10].reg, "FD54JYA")  # notes order
 
         self.assertNotContains(response, "20 Oct")
         self.assertContains(response, "00:47")

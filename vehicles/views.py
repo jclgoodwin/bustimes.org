@@ -133,7 +133,7 @@ def get_vehicle_order(vehicle) -> tuple[str, int, str]:
         return ("", vehicle.fleet_number)
 
     # age-based ordering
-    if len(reg := vehicle.reg) == 7 and reg[-3:].isalpha():
+    if not vehicle.fleet_code and len(reg := vehicle.reg) == 7 and reg[-3:].isalpha():
         if reg[:2].isalpha() and reg[2:4].isdigit():
             year = int(reg[2:4])
             if year > 50:
@@ -147,6 +147,8 @@ def get_vehicle_order(vehicle) -> tuple[str, int, str]:
         vehicle.fleet_code or vehicle.code
     ).groups()
     number = int(number) if number else 0
+    if " " in prefix:  # McGill's
+        return (suffix, number, prefix)
     return (prefix, number, suffix)
 
 
