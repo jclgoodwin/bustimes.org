@@ -141,7 +141,10 @@ class FlixbusTest(TestCase):
             fakeredis.FakeStrictRedis(),
         ):
             with vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
-                command.update()
+                with self.assertNumQueries(58):
+                    command.update()
+                with self.assertNumQueries(41):
+                    command.update()
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(
