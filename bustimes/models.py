@@ -393,13 +393,20 @@ class Trip(models.Model):
                 .order_by("start")
                 .distinct("start")
             )
-            #
+            no_minutes = timedelta()
+            fifteen_minutes = timedelta(minutes=15)
+            trips_list = []
             for trip_a, trip_b in pairwise(trips):
-                if not (
-                    timedelta() < trip_b.start - trip_a.end < timedelta(minutes=15)
-                ):
-                    return [self]
-            return trips
+                if no_minutes < trip_b.start - trip_a.end < fifteen_minutes:
+                    if not trips_list:
+                        trips_list.append(trip_a)
+                    trips_list.append(trip_b)
+                elif self in trips_list:
+                    return trips_list
+                else:
+                    trips_list = []
+            if self in trips_list:
+                return trips_list
         return [self]
 
 
