@@ -12,7 +12,7 @@ from django.utils.dateparse import parse_duration
 
 from busstops.models import DataSource, Operator, Service
 
-from ...download_utils import download_if_changed
+from ...download_utils import download_if_modified
 from ...models import Route, StopTime, Trip
 from .import_gtfs_ember import get_calendars
 
@@ -26,9 +26,9 @@ class Command(BaseCommand):
 
         path = settings.DATA_DIR / Path("flixbus_eu.zip")
 
-        url = "https://gtfs.gis.flix.tech/gtfs_generic_eu.zip"
+        source.url = "https://gtfs.gis.flix.tech/gtfs_generic_eu.zip"
 
-        modified, last_modified = download_if_changed(path, url)
+        modified, last_modified = download_if_modified(path, source)
 
         if not modified:
             return
@@ -39,7 +39,7 @@ class Command(BaseCommand):
             [route_id for route_id in feed.routes.route_id if route_id.startswith("UK")]
         )
 
-        stops_data = {row.stop_id: row for i, row in feed.stops.iterrows()}
+        stops_data = {row.stop_id: row for row in feed.stops.itertuples()}
         stop_codes = {
             stop_code.code: stop_code.stop_id for stop_code in source.stopcode_set.all()
         }
@@ -66,10 +66,10 @@ class Command(BaseCommand):
         }
 
         geometries = {}
-        for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
+        for row in gtfs_kit.routes.geometrize_routes(feed).itertuples():
             geometries[row.route_id] = row.geometry.wkt
 
-        for i, row in feed.routes.iterrows():
+        for row in feed.routes.itertuples():
             line_name = row.route_id.removeprefix("UK")
 
             if line_name in existing_services:
@@ -102,7 +102,7 @@ class Command(BaseCommand):
             trip.vehicle_journey_code: trip for trip in operator.trip_set.all()
         }
         trips = {}
-        for i, row in feed.trips.iterrows():
+        for row in feed.trips.itertuples():
             trip = Trip(
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
@@ -117,7 +117,7 @@ class Command(BaseCommand):
         del existing_trips
 
         stop_times = []
-        for i, row in feed.stop_times.iterrows():
+        for row in feed.stop_times.itertuples():
             trip = trips[row.trip_id]
             offset = utc_offsets[trip.calendar.start_date]
 

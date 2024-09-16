@@ -1,21 +1,20 @@
-import csv
-import io
 import logging
 import zipfile
-from datetime import datetime
 from pathlib import Path
 
+import gtfs_kit
+from numpy import nan
 from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.functions import Now
-from django.utils.dateparse import parse_duration
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
-from ...download_utils import download_if_changed
-from ...models import Calendar, CalendarDate, Route, StopTime, Trip
+from ...download_utils import download_if_modified
+from ...models import Route, StopTime, Trip
+from .import_gtfs_ember import get_calendars
 
 logger = logging.getLogger(__name__)
 
@@ -28,34 +27,6 @@ MODES = {
 }
 
 
-def parse_date(string):
-    return datetime.strptime(string, "%Y%m%d")
-
-
-def read_file(archive, name):
-    try:
-        with archive.open(name) as open_file:
-            with io.TextIOWrapper(open_file, encoding="utf-8-sig") as wrapped_file:
-                yield from csv.DictReader(wrapped_file)
-    except KeyError:
-        # file doesn't exist
-        return
-
-
-def get_calendar(line):
-    return Calendar(
-        mon="1" == line["monday"],
-        tue="1" == line["tuesday"],
-        wed="1" == line["wednesday"],
-        thu="1" == line["thursday"],
-        fri="1" == line["friday"],
-        sat="1" == line["saturday"],
-        sun="1" == line["sunday"],
-        start_date=parse_date(line["start_date"]),
-        end_date=parse_date(line["end_date"]),
-    )
-
-
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
@@ -66,10 +37,10 @@ class Command(BaseCommand):
         parser.add_argument("collections", nargs="*", type=str)
 
     def handle_operator(self, line):
-        agency_id = line["agency_id"]
+        agency_id = line.agency_id
         agency_id = f"ie-{agency_id}"
 
-        name = line["agency_name"]
+        name = line.agency_name
         if name == "National Express":
             name = "Dublin Express"
 
@@ -78,29 +49,28 @@ class Command(BaseCommand):
         ).first()
 
         if not operator:
-            operator = Operator(name=name, noc=agency_id, url=line["agency_url"])
+            operator = Operator(name=name, noc=agency_id, url=line.agency_url)
             operator.save()
-        elif operator.url != line["agency_url"]:
-            operator.url = line["agency_url"]
+        elif operator.url != line.agency_url:
+            operator.url = line.agency_url
             operator.save(update_fields=["url"])
 
         return operator
 
-    def do_stops(self, archive):
+    def do_stops(self, feed: gtfs_kit.feed.Feed):
         stops = {}
         admin_areas = {}
         stops_not_created = {}
-        for line in read_file(archive, "stops.txt"):
-            stop_id = line["stop_id"]
+        for i, line in feed.stops.iterrows():
+            stop_id = line.stop_id
             if stop_id[0] in "78" and len(stop_id) <= 16:
                 stop = StopPoint(
                     atco_code=stop_id,
-                    common_name=line["stop_name"],
-                    latlong=GEOSGeometry(
-                        f"POINT({line['stop_lon']} {line['stop_lat']})"
-                    ),
+                    common_name=line.stop_name,
+                    latlong=GEOSGeometry(f"POINT({line.stop_lon} {line.stop_lat})"),
                     locality_centre=False,
                     active=True,
+                    source=self.source,
                 )
                 if ", stop" in stop.common_name and stop.common_name.count(", ") == 1:
                     stop.common_name, stop.indicator = stop.common_name.split(", ")
@@ -141,19 +111,19 @@ class Command(BaseCommand):
         return StopPoint.objects.only("atco_code").in_bulk(stops), stops_not_created
 
     def handle_route(self, line):
-        line_name = line["route_short_name"]
-        description = line["route_long_name"]
+        line_name = line.route_short_name if type(line.route_short_name) is str else ""
+        description = line.route_long_name if type(line.route_long_name) is str else ""
         if not line_name and " " not in description:
             line_name = description
             if len(line_name) < 5:
                 description = ""
 
-        operator = self.operators.get(line["agency_id"])
+        operator = self.operators.get(line.agency_id)
         services = Service.objects.filter(operator=operator)
 
         q = Exists(
-            Route.objects.filter(code=line["route_id"], service=OuterRef("id"))
-        ) | Q(service_code=line["route_id"])
+            Route.objects.filter(code=line.route_id, service=OuterRef("id"))
+        ) | Q(service_code=line.route_id)
 
         if line_name and line_name not in ("rail", "InterCity"):
             q |= Q(line_name__iexact=line_name)
@@ -164,12 +134,11 @@ class Command(BaseCommand):
         if not service:
             service = Service(source=self.source)
 
-        service.service_code = line["route_id"]
+        service.service_code = line.route_id
         service.line_name = line_name
         service.description = description
-        service.mode = MODES.get(int(line["route_type"]), "")
+        service.mode = MODES.get(line.route_type, "")
         service.current = True
-        service.service_code = line["route_id"]
         service.source = self.source
         service.save()
 
@@ -187,290 +156,191 @@ class Command(BaseCommand):
                 "service": service,
             },
             source=self.source,
-            code=line["route_id"],
+            code=line.route_id,
         )
         if not created:
             route.trip_set.all().delete()
-        self.routes[line["route_id"]] = route
-        self.route_operators[line["route_id"]] = operator
+        self.routes[line.route_id] = route
+        self.route_operators[line.route_id] = operator
 
     def handle_zipfile(self, path):
-        self.shapes = {}
-        self.service_shapes = {}
+        feed = gtfs_kit.read_feed(path, dist_units="km")
+
         self.operators = {}
         self.routes = {}
         self.route_operators = {}
         self.services = {}
-        headsigns = {}
+
+        for agency in feed.agency.itertuples():
+            self.operators[agency.agency_id] = self.handle_operator(agency)
+
+        for route in feed.routes.itertuples():
+            self.handle_route(route)
 
         try:
-            archive = zipfile.ZipFile(path)
-        except zipfile.BadZipFile as e:
-            logger.exception(e)
-            path.unlink()
-            return
+            for route in gtfs_kit.routes.geometrize_routes(feed).itertuples():
+                self.routes[route.route_id].service.geometry = route.geometry.wkt
+                self.routes[route.route_id].service.save(update_fields=["geometry"])
+        except ValueError:
+            pass
 
-        with archive:
-            for line in read_file(archive, "shapes.txt"):
-                shape_id = line["shape_id"]
-                if shape_id not in self.shapes:
-                    self.shapes[shape_id] = []
-                self.shapes[shape_id].append(
-                    (
-                        GEOSGeometry(
-                            f"POINT({line['shape_pt_lon']} {line['shape_pt_lat']})"
-                        ),
-                        int(line["shape_pt_sequence"]),
-                        float(line["shape_dist_traveled"]),
-                    ),
-                )
-            for shape_id in self.shapes:
-                # sort by sequence number
-                self.shapes[shape_id].sort(key=lambda p: p[1])
+        stops, stops_not_created = self.do_stops(feed)
 
-            for line in read_file(archive, "agency.txt"):
-                self.operators[line["agency_id"]] = self.handle_operator(line)
+        calendars = get_calendars(feed)
 
-            for line in read_file(archive, "routes.txt"):
-                self.handle_route(line)
+        trips = {}
+        headsigns = {}
 
-            stops, stops_not_created = self.do_stops(archive)
-
-            calendars = {}
-            for line in read_file(archive, "calendar.txt"):
-                calendar = get_calendar(line)
-                calendars[line["service_id"]] = calendar
-            Calendar.objects.bulk_create(calendars.values())
-
-            calendar_dates = []
-            for line in read_file(archive, "calendar_dates.txt"):
-                operation = (
-                    line["exception_type"] == "1"
-                )  # '1' = operates, '2' = does not operate
-                calendar_dates.append(
-                    CalendarDate(
-                        calendar=calendars[line["service_id"]],
-                        start_date=parse_date(line["date"]),
-                        end_date=parse_date(line["date"]),
-                        operation=operation,
-                        special=operation,  # additional date of operation
-                    )
-                )
-            CalendarDate.objects.bulk_create(calendar_dates)
-            del calendar_dates
-
-            trip_shapes = {}
-            trips = {}
-            for line in read_file(archive, "trips.txt"):
-                trips[line["trip_id"]] = line
-
-            trip = None
-            previous_line = None
-            # use stop_times.txt to calculate trips' start times, end times and destinations:
-            for line in read_file(archive, "stop_times.txt"):
-                if not previous_line or previous_line["trip_id"] != line["trip_id"]:
-                    # shape = self.shapes[trip_shapes[line["trip_id"]]]
-
-                    if trip:
-                        trip["destination"] = stops.get(previous_line["stop_id"])
-                        trip["end"] = parse_duration(previous_line["arrival_time"])
-
-                    trip = trips[line["trip_id"]]
-                    trip["start"] = parse_duration(line["departure_time"])
-                    if line["stop_headsign"]:
-                        if not trip["trip_headsign"]:
-                            trip["trip_headsign"] = line["stop_headsign"]
-
-                # else:
-                #     from_stop = previous_line["stop_id"]
-                #     to_stop = line["stop_id"]
-                #     key = (from_stop, to_stop)
-                #     if key not in route_links:
-                #         print(line)
-                #         print(previous_line)
-                #         from_stop_dist = float(previous_line["shape_dist_traveled"])
-                #         to_stop_dist = float(line["shape_dist_traveled"])
-                #         points = [
-                #             point for point in shape
-                #             # point for point, seq, dist in shape
-                #             if from_stop_dist <= dist <= to_stop_dist
-                #         ]
-                #         print(points)
-                #         route_links[key] = RouteLink(
-                #             from_stop=from_stop,
-                #             to_stop=to_stop,
-                #             geometry=LineString(points)
-                #         )
-                #         route_links[key].save()
-
-                previous_line = line
-
-            if not previous_line:
-                pass
-                # stop_times.txt was empty
-            else:
-                # last trip:
-                trip["destination"] = stops.get(line["stop_id"])
-                trip["end"] = parse_duration(line["arrival_time"])
-
-            for trip_id in trips:
-                line = trips[trip_id]
-                if "start" not in line:
-                    logger.warning(f"trip {trip_id} has no stop times")
-                    continue
-                route = self.routes[line["route_id"]]
-                trips[trip_id] = Trip(
-                    route=route,
-                    calendar=calendars[line["service_id"]],
-                    inbound=line["direction_id"] == "1",
-                    ticket_machine_code=trip_id,
-                    start=line["start"],
-                    end=line["end"],
-                    destination=line["destination"],
-                    block=line.get("block_id", ""),
-                    vehicle_journey_code=line.get("trip_short_name", ""),
-                    operator=self.route_operators[line["route_id"]],
-                )
-                if line["shape_id"]:
-                    trip_shapes[line["trip_id"]] = line["shape_id"]
-                    if route.service_id not in self.service_shapes:
-                        self.service_shapes[route.service_id] = set()
-                    self.service_shapes[route.service_id].add(line["shape_id"])
-                headsign = line["trip_headsign"]
-                if headsign:
-                    if headsign.endswith(" -"):
-                        headsign = None
-                    elif headsign.startswith("- "):
-                        headsign = headsign[2:]
-                    if headsign:
-                        if line["route_id"] not in headsigns:
-                            headsigns[line["route_id"]] = {
-                                "0": set(),
-                                "1": set(),
-                            }
-                        headsigns[line["route_id"]][line["direction_id"]].add(headsign)
-
-            Trip.objects.bulk_create(
-                [trip for trip in trips.values() if isinstance(trip, Trip)],
-                batch_size=1000,
+        for line in feed.trips.itertuples():
+            route = self.routes[line.route_id]
+            trips[line.trip_id] = Trip(
+                route=route,
+                calendar=calendars[line.service_id],
+                inbound=line.direction_id == 1,
+                ticket_machine_code=line.trip_id,
+                block=getattr(line, "block_id", ""),
+                vehicle_journey_code=getattr(line, "trip_short_name", ""),
+                operator=self.route_operators[line.route_id],
             )
 
-            # headsigns - origins and destinations:
+            if (headsign := line.trip_headsign) is not nan:
+                if headsign.endswith(" -"):
+                    headsign = None
+                elif headsign.startswith("- "):
+                    headsign = headsign[2:]
+                if headsign:
+                    if line.route_id not in headsigns:
+                        headsigns[line.route_id] = {
+                            0: set(),
+                            1: set(),
+                        }
+                    headsigns[line.route_id][line.direction_id].add(headsign)
 
-            for route_id in headsigns:
-                route = self.routes[route_id]
-                origins = headsigns[route_id]["1"]  # inbound destinations
-                destinations = headsigns[route_id]["0"]  # outbound destinations
-                origin = ""
-                destination = ""
-                if len(origins) <= 1 and len(destinations) <= 1:
-                    if origins:
-                        origin = list(origins)[0]
-                    if destinations:
-                        destination = list(destinations)[0]
+        # use stop_times.txt to calculate trips' start times, end times and destinations:
 
-                    # if headsign contains ' - ' assume it's 'origin - destination', not just destination
-                    if origin and " - " in origin:
-                        route.inbound_description = origin
-                        origin = ""
-                    if destination and " - " in destination:
-                        route.outbound_description = destination
-                        destination = ""
+        trip = None
+        previous_line = None
 
-                    route.origin = origin
-                    route.destination = destination
+        for line in feed.stop_times.itertuples():
+            if not previous_line or previous_line.trip_id != line.trip_id:
+                if trip:
+                    trip.destination = stops.get(previous_line.stop_id)
+                    trip.end = previous_line.arrival_time
 
-                    route.save(
-                        update_fields=[
-                            "origin",
-                            "destination",
-                            "inbound_description",
-                            "outbound_description",
-                        ]
-                    )
+                trip = trips[line.trip_id]
+                trip.start = line.departure_time
+                # if line["stop_headsign"]:
+                #     if not trip["trip_headsign"]:
+                #         trip["trip_headsign"] = line["stop_headsign"]
 
-                    if not route.service.description:
-                        route.service.description = (
-                            route.outbound_description or route.inbound_description
-                        )
-                        route.service.save(update_fields=["description"])
+            previous_line = line
 
-            i = 0
-            stop_times = []
+        if previous_line:
+            # last trip:
+            trip.destination = stops.get(line.stop_id)
+            trip.end = line.arrival_time
 
-            for line in read_file(archive, "stop_times.txt"):
-                stop = stops.get(line["stop_id"])
+        for trip_id in trips:
+            trip = trips[trip_id]
+            if trip.start is None:
+                logger.warning(f"trip {trip_id} has no stop times")
+                del trips[trip_id]
 
-                stop_time = StopTime(
-                    arrival=parse_duration(line["arrival_time"]),
-                    departure=parse_duration(line["departure_time"]),
-                    sequence=line["stop_sequence"],
-                    trip=trips[line["trip_id"]],
-                    timing_status="PTP" if line.get("timepoint", "1") == "1" else "OTH",
-                )
-                match line.get("pickup_type"):
-                    case "0":  # Regularly scheduled pickup
-                        stop_time.pick_up = True
-                    case "1":  # "No pickup available"
-                        stop_time.pick_up = False
-                    case _:
-                        assert False
-                match line.get("drop_off_type"):
-                    case "0":  # Regularly scheduled drop off
-                        stop_time.set_down = True
-                    case "1":  # "No drop off available"
-                        stop_time.set_down = False
-                    case _:
-                        assert False
+        Trip.objects.bulk_create(
+            [trip for trip in trips.values() if isinstance(trip, Trip)],
+            batch_size=1000,
+        )
 
-                if stop:
-                    stop_time.stop = stop
-                elif line["stop_id"] in stops_not_created:
-                    stop_time.stop_code = stops_not_created[line["stop_id"]][
-                        "stop_name"
+        # headsigns - origins and destinations:
+
+        for route_id in headsigns:
+            route = self.routes[route_id]
+            origins = headsigns[route_id][1]  # inbound destinations
+            destinations = headsigns[route_id][0]  # outbound destinations
+            origin = ""
+            destination = ""
+            if len(origins) <= 1 and len(destinations) <= 1:
+                if origins:
+                    origin = list(origins)[0]
+                if destinations:
+                    destination = list(destinations)[0]
+
+                # if headsign contains ' - ' assume it's 'origin - destination', not just destination
+                if origin and " - " in origin:
+                    route.inbound_description = origin
+                    origin = ""
+                if destination and " - " in destination:
+                    route.outbound_description = destination
+                    destination = ""
+
+                route.origin = origin
+                route.destination = destination
+
+                route.save(
+                    update_fields=[
+                        "origin",
+                        "destination",
+                        "inbound_description",
+                        "outbound_description",
                     ]
-                else:
-                    stop_time.stop_code = line["stop_id"]
+                )
 
-                if stop_time.arrival == stop_time.departure:
-                    stop_time.arrival = None
+                if not route.service.description:
+                    route.service.description = (
+                        route.outbound_description or route.inbound_description
+                    )
+                    route.service.save(update_fields=["description"])
 
-                stop_times.append(stop_time)
+        i = 0
+        stop_times = []
 
-                if i == 999:
-                    StopTime.objects.bulk_create(stop_times)
-                    stop_times = []
-                    i = 0
-                else:
-                    i += 1
+        for line in feed.stop_times.itertuples():
+            stop_time = StopTime(
+                arrival=line.arrival_time,
+                departure=line.departure_time,
+                sequence=line.stop_sequence,
+                trip=trips[line.trip_id],
+                timing_status="PTP" if getattr(line, "timepoint", 1) == 1 else "OTH",
+            )
+            match line.pickup_type:
+                case 0:  # Regularly scheduled pickup
+                    stop_time.pick_up = True
+                case 1:  # "No pickup available"
+                    stop_time.pick_up = False
+                case _:
+                    assert False
+            match line.drop_off_type:
+                case 0:  # Regularly scheduled drop off
+                    stop_time.set_down = True
+                case 1:  # "No drop off available"
+                    stop_time.set_down = False
+                case _:
+                    assert False
 
-                # previous_line = line
+            if stop := stops.get(line.stop_id):
+                stop_time.stop = stop
+            elif stop := stops_not_created.ge(line.stop_id):
+                stop_time.stop_code = stop.stop_name
+            else:
+                stop_time.stop_code = line.stop_id
 
-        # # last trip
-        # if not stop_time.arrival:
-        #     stop_time.arrival = stop_time.departure
-        #     stop_time.departure = None
+            if stop_time.arrival == stop_time.departure:
+                stop_time.arrival = None
+
+            stop_times.append(stop_time)
+
+            if i == 999:
+                StopTime.objects.bulk_create(stop_times)
+                stop_times = []
+                i = 0
+            else:
+                i += 1
 
         StopTime.objects.bulk_create(stop_times)
 
         services = Service.objects.filter(id__in=self.services.keys())
 
         for service in services:
-            if service.id in self.service_shapes:
-                try:
-                    linestrings = [
-                        LineString(*[point[0] for point in self.shapes[shape]])
-                        for shape in self.service_shapes[service.id]
-                        if shape in self.shapes
-                    ]
-                except TypeError as e:
-                    print(e)
-                else:
-                    service.geometry = MultiLineString(*linestrings)
-                    service.save(update_fields=["geometry"])
-            else:
-                pass
-
             service.do_stop_usages()
 
             region = (
@@ -528,13 +398,8 @@ class Command(BaseCommand):
         for source in collections:
             path: Path = settings.DATA_DIR / Path(source.url).name
 
-            modified, last_modified = download_if_changed(path, source.url)
-            if (
-                modified
-                or last_modified
-                and last_modified != source.datetime
-                or options["collections"]
-            ):
+            modified, last_modified = download_if_modified(path, source)
+            if modified or last_modified != source.datetime or options["collections"]:
                 logger.info(f"{source} {last_modified}")
                 if last_modified:
                     source.datetime = last_modified
@@ -543,4 +408,5 @@ class Command(BaseCommand):
                     self.handle_zipfile(path)
                 except zipfile.BadZipFile as e:
                     logger.exception(e)
-                    path.unlink()
+
+            # sleep(2)

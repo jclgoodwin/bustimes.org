@@ -10,7 +10,7 @@ from django.db import transaction
 
 from busstops.models import DataSource, Operator, Service, StopPoint
 
-from ...download_utils import download_if_changed
+from ...download_utils import download_if_modified
 from ...models import Calendar, CalendarDate, Route, StopTime, Trip
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def get_calendars(feed) -> dict:
     calendars = {}
 
-    for i, row in feed.calendar.iterrows():
+    for row in feed.calendar.itertuples():
         calendars[row.service_id] = Calendar(
             mon=row.monday,
             tue=row.tuesday,
@@ -34,8 +34,8 @@ def get_calendars(feed) -> dict:
     Calendar.objects.bulk_create(calendars.values())
 
     calendar_dates = []
-    for i, row in feed.calendar_dates.iterrows():
-        operation = row["exception_type"] == 1  # '1' = operates, '2' = does not operate
+    for row in feed.calendar_dates.itertuples():
+        operation = row.exception_type == 1  # '1' = operates, '2' = does not operate
         calendar_dates.append(
             CalendarDate(
                 calendar=calendars[row.service_id],
@@ -54,15 +54,15 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         path = settings.DATA_DIR / Path("ember_gtfs.zip")
 
-        url = "https://api.ember.to/v1/gtfs/static/"
+        source = DataSource.objects.get(name="Ember")
+        source.url = "https://api.ember.to/v1/gtfs/static/"
 
-        modified, last_modified = download_if_changed(path, url)
+        modified, last_modified = download_if_modified(path, source)
         assert modified
 
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
         operator = Operator.objects.get(name="Ember")
-        source = DataSource.objects.get(name="Ember")
 
         existing_services = {
             service.line_name: service for service in operator.service_set.all()
@@ -74,7 +74,7 @@ class Command(BaseCommand):
 
         calendars = get_calendars(feed)
 
-        for i, row in gtfs_kit.routes.geometrize_routes(feed).iterrows():
+        for row in gtfs_kit.routes.geometrize_routes(feed).itertuples():
             if row.route_id in existing_services:
                 service = existing_services[row.route_id]
             else:
@@ -106,7 +106,7 @@ class Command(BaseCommand):
             trip.vehicle_journey_code: trip for trip in operator.trip_set.all()
         }
         trips = {}
-        for i, row in feed.trips.iterrows():
+        for row in feed.trips.itertuples():
             trip = Trip(
                 route=existing_routes[row.route_id],
                 calendar=calendars[row.service_id],
@@ -121,7 +121,7 @@ class Command(BaseCommand):
         del existing_trips
 
         stop_times = []
-        for i, row in feed.stop_times.iterrows():
+        for row in feed.stop_times.itertuples():
             trip = trips[row.trip_id]
             if not trip.start:
                 trip.start = row.arrival_time

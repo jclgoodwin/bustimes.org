@@ -70,7 +70,7 @@ class FlixbusTest(TestCase):
 
     def test_not_modified(self):
         with patch(
-            "bustimes.management.commands.import_gtfs_flixbus.download_if_changed",
+            "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
             return_value=(False, None),
         ):
             with self.assertNumQueries(2):
@@ -79,7 +79,7 @@ class FlixbusTest(TestCase):
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_flixbus(self):
         with patch(
-            "bustimes.management.commands.import_gtfs_flixbus.download_if_changed",
+            "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
             return_value=(
                 True,
                 datetime.datetime(2024, 6, 18, 10, 0, 0, tzinfo=datetime.timezone.utc),
@@ -113,7 +113,7 @@ class FlixbusTest(TestCase):
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_ember(self):
         with patch(
-            "bustimes.management.commands.import_gtfs_ember.download_if_changed",
+            "bustimes.management.commands.import_gtfs_ember.download_if_modified",
             return_value=(
                 True,
                 datetime.datetime(2024, 6, 18, 10, 0, 0, tzinfo=datetime.timezone.utc),

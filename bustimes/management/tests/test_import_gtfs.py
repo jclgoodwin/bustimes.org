@@ -12,7 +12,7 @@ from django.test import TestCase, override_settings
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...models import Route
-from ..commands import import_gtfs
+from ... import download_utils
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -157,6 +157,7 @@ class GTFSTest(TestCase):
 
         # big timetable
         service = Service.objects.get(route__code="21-963-1-y11-1")
+        self.assertEqual(service.mode, "bus")
         timetable = service.get_timetable(datetime.date(2017, 6, 7)).render()
         self.assertEqual(str(timetable.groupings[0]), "Outbound")
         self.assertEqual(
@@ -194,12 +195,12 @@ class GTFSTest(TestCase):
         cassette = str(FIXTURES_DIR / "download_if_modified.yaml")
 
         with vcr.use_cassette(cassette, match_on=["uri", "headers"]):
-            changed, when = import_gtfs.download_if_changed(path, url)
+            changed, when = download_utils.download_if_changed(path, url)
             self.assertTrue(changed)
             self.assertEqual(str(when), "2020-06-02 07:35:34+00:00")
 
             with patch("os.path.getmtime", return_value=1593870909.0) as getmtime:
-                changed, when = import_gtfs.download_if_changed(path, url)
+                changed, when = download_utils.download_if_changed(path, url)
                 self.assertTrue(changed)
                 self.assertEqual(str(when), "2020-06-02 07:35:34+00:00")
                 getmtime.assert_called_with(path)
@@ -210,10 +211,10 @@ class GTFSTest(TestCase):
     def test_handle(self):
         with (
             patch(
-                "bustimes.management.commands.import_gtfs.download_if_changed",
+                "bustimes.management.commands.import_gtfs.download_if_modified",
                 return_value=(True, None),
             ),
-            self.assertRaises(FileNotFoundError),
+            self.assertRaises(ValueError),
         ):
             with vcr.use_cassette(str(FIXTURES_DIR / "google_transit_ie.yaml")):
                 call_command("import_gtfs", "Wexford Bus")

@@ -21,6 +21,35 @@ def download(path, url):
     write_file(path, response)
 
 
+def download_if_modified(path, source):
+    headers = {"User-Agent": "bustimes.org"}
+    if path.exists():
+        if source.last_modified:
+            headers["if-modified-since"] = http_date(source.last_modified.timestamp())
+        if source.etag:
+            headers["if-none-match"] = source.etag
+    response = session.get(source.url, headers=headers, stream=True, timeout=10)
+
+    modified = response.status_code != HTTPStatus.NOT_MODIFIED
+
+    if response.ok:
+        if modified:
+            write_file(path, response)
+
+        if response.headers.get("last-modified"):
+            source.last_modified = datetime.fromtimestamp(
+                parse_http_date(response.headers["last-modified"]), timezone.utc
+            )
+        if response.headers.get("etag"):
+            source.etag = response.headers["etag"]
+        source.save(update_fields=["last_modified", "etag"])
+    else:
+        logger = logging.getLogger(__name__)
+        logger.error(f"{response} {response.url}")
+
+    return modified, source.last_modified
+
+
 def download_if_changed(path, url, params=None):
     logger = logging.getLogger(__name__)
 

@@ -1,4 +1,5 @@
 import io
+import csv
 import zipfile
 
 import requests_cache
@@ -8,7 +9,15 @@ from google.transit import gtfs_realtime_pb2
 
 from busstops.models import DataSource
 
-from .import_gtfs import read_file
+
+def read_file(archive, name):
+    try:
+        with archive.open(name) as open_file:
+            with io.TextIOWrapper(open_file, encoding="utf-8-sig") as wrapped_file:
+                yield from csv.DictReader(wrapped_file)
+    except KeyError:
+        # file doesn't exist
+        return
 
 
 class Command(BaseCommand):
