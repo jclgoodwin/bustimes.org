@@ -17,6 +17,9 @@ from bustimes.utils import get_stop_times
 from vehicles.models import Vehicle
 
 
+TIMEZONE = ZoneInfo("Europe/London")
+
+
 def get_departure_order(departure):
     if departure.get("live") and (
         not departure["time"] or departure["time"].date() == departure["live"].date()
@@ -26,7 +29,7 @@ def get_departure_order(departure):
         time = departure["time"]
     if timezone.is_naive(time):
         return time
-    return timezone.make_naive(time, WestMidlandsDepartures.timezone)
+    return timezone.make_naive(time, TIMEZONE)
 
 
 class Departures:
@@ -187,26 +190,6 @@ class TflDepartures(RemoteDepartures):
         return sorted(
             [self.get_row(item) for item in res.json()], key=lambda row: row["live"]
         )
-
-
-class WestMidlandsDepartures(RemoteDepartures):
-    timezone = ZoneInfo("Europe/London")
-
-    def get_row(self, item):
-        return {
-            "time": datetime.datetime.fromtimestamp(
-                item["time"] - item["delay"], self.timezone
-            ),
-            "live": datetime.datetime.fromtimestamp(item["time"], self.timezone),
-            "service": self.get_service(item["line_name"]),
-            "destination": item["destination"],
-            "vehicle": item["vehicle"],
-        }
-
-    def get_departures(self):
-        items = cache.get(f"tfwm:{self.stop.atco_code}")
-        if items:
-            return [self.get_row(item) for item in items]
 
 
 class EdinburghDepartures(RemoteDepartures):
@@ -419,7 +402,7 @@ class TimetableDepartures(Departures):
 
 
 def parse_datetime(string):
-    return ciso8601.parse_datetime(string).astimezone(WestMidlandsDepartures.timezone)
+    return ciso8601.parse_datetime(string).astimezone(TIMEZONE)
 
 
 class SiriSmDepartures(RemoteDepartures):

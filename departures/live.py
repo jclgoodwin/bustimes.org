@@ -19,7 +19,6 @@ from .sources import (
     SiriSmDepartures,
     TflDepartures,
     TimetableDepartures,
-    WestMidlandsDepartures,
     get_departure_order,
 )
 
@@ -210,12 +209,6 @@ def get_departures(stop, services, when) -> dict:
             settings.ACIS_HORIZON_OPERATORS
         ):
             live_rows = AcisHorizonDepartures(stop, services).get_departures()
-            if live_rows:
-                blend(departures, live_rows)
-
-        # West Midlands
-        elif not operators.isdisjoint(settings.TFWM_OPERATORS):
-            live_rows = WestMidlandsDepartures(stop, services).get_departures()
             if live_rows:
                 blend(departures, live_rows)
 
