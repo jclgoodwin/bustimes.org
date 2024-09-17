@@ -7,7 +7,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from bustimes.download_utils import download_if_changed
+from bustimes.download_utils import download_if_modified
 
 from ...models import Licence, Registration  # , Variation
 
@@ -25,9 +25,9 @@ class Command(BaseCommand):
             yield from csv.DictReader(open_file)
 
     def handle(self, **kwargs) -> None:
-        is_modified, modified_at = download_if_changed(
+        is_modified, modified_at = download_if_modified(
             settings.DATA_DIR / "data_catalogue.zip",
-            "https://data.bus-data.dft.gov.uk/catalogue/",
+            url="https://data.bus-data.dft.gov.uk/catalogue/",
         )
         print(is_modified, modified_at)
 

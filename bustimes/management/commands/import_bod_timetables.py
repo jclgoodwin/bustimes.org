@@ -18,7 +18,7 @@ from django.utils import timezone
 
 from busstops.models import DataSource, Operator, Service
 
-from ...download_utils import download, download_if_changed
+from ...download_utils import download, download_if_modified
 from ...models import Route, TimetableDataSource
 from ...utils import log_time_taken
 from .import_transxchange import Command as TransXChangeCommand
@@ -332,7 +332,7 @@ def ticketer(specific_operator=None):
             sleep(2)
             need_to_sleep = False
 
-        modified, last_modified = download_if_changed(path, source.url)
+        modified, last_modified = download_if_modified(path, command.source)
 
         if (
             specific_operator
@@ -430,7 +430,7 @@ def stagecoach(specific_operator=None):
             {"name": source.name}, url=source.url
         )
 
-        modified, last_modified = download_if_changed(path, source.url)
+        modified, last_modified = download_if_modified(path, command.source)
         sha1 = get_sha1(path)
 
         if command.source.datetime != last_modified:

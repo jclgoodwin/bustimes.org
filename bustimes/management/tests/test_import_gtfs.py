@@ -188,22 +188,21 @@ class GTFSTest(TestCase):
 
     def test_download_if_modified(self):
         path = Path("poop.txt")
-        url = "https://bustimes.org/static/js/global.js"
+        url = "https://bustimes.org/favicon.ico"
+        source = DataSource.objects.create(url=url)
 
         path.unlink(missing_ok=True)
 
         cassette = str(FIXTURES_DIR / "download_if_modified.yaml")
 
         with vcr.use_cassette(cassette, match_on=["uri", "headers"]):
-            changed, when = download_utils.download_if_changed(path, url)
+            changed, when = download_utils.download_if_modified(path, source)
             self.assertTrue(changed)
-            self.assertEqual(str(when), "2020-06-02 07:35:34+00:00")
+            self.assertEqual(str(when), "2024-09-06 13:11:02+00:00")
+            self.assertEqual(source.etag, 'W/"66daf156-37b"')
 
-            with patch("os.path.getmtime", return_value=1593870909.0) as getmtime:
-                changed, when = download_utils.download_if_changed(path, url)
-                self.assertTrue(changed)
-                self.assertEqual(str(when), "2020-06-02 07:35:34+00:00")
-                getmtime.assert_called_with(path)
+            changed, when = download_utils.download_if_modified(path, source)
+            self.assertFalse(changed)
 
         self.assertTrue(path.exists())
         path.unlink()

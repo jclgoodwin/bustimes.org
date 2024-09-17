@@ -5,7 +5,8 @@ from datetime import datetime
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from bustimes.download_utils import download_if_changed
+from busstops.models import DataSource
+from bustimes import download_utils
 
 from ...models import Licence, Registration, Variation
 
@@ -19,7 +20,8 @@ def parse_date(date_string: str):
 
 def download_if_modified(path: str):
     url = f"https://content.mgmt.dvsacloud.uk/olcs.prod.dvsa.aws/data-gov-uk-export/{path}"
-    return download_if_changed(settings.DATA_DIR / path, url)
+    source, _ = DataSource.objects.get_or_create(name=path, url=url)
+    return download_utils.download_if_modified(settings.DATA_DIR / path, source)
 
 
 class Command(BaseCommand):

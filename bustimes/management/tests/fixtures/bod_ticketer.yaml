@@ -257,7 +257,7 @@ interactions:
       - bustimes.org
       if-modified-since:
       - Wed, 13 Oct 2021 12:43:01 GMT
-    method: HEAD
+    method: GET
     uri: https://opendata.ticketer.com/uk/Completely_Coach_Travel/routes_and_timetables/current.zip
   response:
     body:

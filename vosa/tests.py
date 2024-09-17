@@ -27,13 +27,13 @@ class VosaTest(TestCase):
     @override_settings(DATA_DIR=Path(__file__).resolve().parent / "fixtures")
     def test(self):
         with mock.patch(
-            "vosa.management.commands.import_vosa.download_if_changed",
+            "vosa.management.commands.import_vosa.download_utils.download_if_modified",
             return_value=(True, None),
         ):
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(14):
                 call_command("import_vosa", "F")
 
-            with self.assertNumQueries(6):
+            with self.assertNumQueries(8):
                 call_command("import_vosa", "F")
 
         # multiple trading names
