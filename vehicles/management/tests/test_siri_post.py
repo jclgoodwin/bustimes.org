@@ -30,9 +30,9 @@ class SiriPostTest(TestCase):
                 "vehicles.management.commands.siri_vm_subscribe.cache.get",
                 return_value=[[datetime(2023, 12, 15, 8, 20, tzinfo=timezone.utc)]],
             ):
-                call_command("siri_vm_subscribe")
+                call_command("siri_vm_subscribe", "198.51.100.0", "http://example.com")
 
-            call_command("siri_vm_subscribe")
+            call_command("siri_vm_subscribe", "198.51.100.0", "http://example.com")
 
     def test_siri_post_404(self):
         response = self.client.post("/siri/7e491d62-e9de-44eb-b197-ab0419bb033d")

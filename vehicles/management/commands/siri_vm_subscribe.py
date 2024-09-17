@@ -10,7 +10,11 @@ from ...models import SiriSubscription
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument("source_address", type=str)
+        parser.add_argument("consumer_address", type=str)
+
+    def handle(self, source_address, consumer_address, *args, **options):
         endpoint = "https://obst-s2s.tfw.vix-its.com"
         requestor_ref = "TFW_Bustimes_VM"
 
@@ -21,11 +25,10 @@ class Command(BaseCommand):
                 return
 
         session = requests.Session()
-        session.mount("https://", SourceAddressAdapter("10.16.0.7"))
+        session.mount("https://", SourceAddressAdapter(source_address))
 
-        consumer_address = (
-            f"http://139.59.197.131/siri/{SiriSubscription.objects.get().uuid}"
-        )
+        subscription = SiriSubscription.objects.get()
+        consumer_address = f"{consumer_address}/siri/{subscription.uuid}"
 
         initial_termination_time = now + timedelta(hours=20) - timedelta(minutes=6)
 
