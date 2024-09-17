@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime, timezone
 from http import HTTPStatus
 
@@ -24,11 +25,15 @@ def download_if_modified(path, source=None, url=None):
     url = url or source.url
 
     headers = {"User-Agent": "bustimes.org"}
-    if source and path.exists():
-        if source.last_modified:
+    if path.exists():
+        if source and source.last_modified:
             headers["if-modified-since"] = http_date(source.last_modified.timestamp())
-        if source.etag:
+        else:
+            headers["if-modified-since"] = http_date(os.path.getmtime(path))
+
+        if source and source.etag:
             headers["if-none-match"] = source.etag
+
     response = session.get(url, headers=headers, stream=True, timeout=10)
 
     modified = response.status_code != HTTPStatus.NOT_MODIFIED
