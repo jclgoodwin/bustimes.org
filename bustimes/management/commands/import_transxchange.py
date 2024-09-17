@@ -96,7 +96,7 @@ def get_summary(summary: str):
 
     summary = re.sub(r"(?i)(school(day)?s)", "school", summary)
 
-    return summary
+    return summary[:255]
 
 
 def get_service_code(filename):
