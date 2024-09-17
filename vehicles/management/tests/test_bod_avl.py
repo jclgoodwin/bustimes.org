@@ -98,6 +98,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         #                                    fri=True, sat=True, sun=True, start_date='2020-10-20')
         # Trip.objects.create(route=route_c, start='15:32:00', end='23:00:00', calendar=calendar)
 
+        cls.vcr_path = Path(__file__).resolve().parent / "vcr"
+
     def test_get_operator(self):
         command = import_bod_avl.Command()
         command.source = self.source
@@ -139,9 +141,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                     "vehicles.management.commands.import_bod_avl.redis_client",
                     redis_client,
                 ):
-                    with use_cassette(
-                        str(Path(__file__).resolve().parent / "vcr" / "bod_avl.yaml")
-                    ) as cassette:
+                    with use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette:
                         command.update()
 
                         cassette.rewind()
@@ -1190,3 +1190,17 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "Expecting value: line 1 column 1 (char 0)",
             str(response.context["form"].errors),
         )
+
+    def test_zipfile(self):
+        self.source.url = "https://data.bus-data.dft.gov.uk/avl/download/sirivm_tfl"
+        command = import_bod_avl.Command()
+        command.source = self.source
+
+        with use_cassette(str(self.vcr_path / "bod_avl_zipfile.yaml")):
+            items = command.get_items()
+        self.assertIsNone(items)
+
+        self.source.url = "https://bustimes.org/404"
+        with use_cassette(str(self.vcr_path / "bod_avl_error.yaml")):
+            items = command.get_items()
+            self.assertEqual(items, [])

@@ -77,7 +77,6 @@ def get_line_name_query(line_ref):
 
 class Command(ImportLiveVehiclesCommand):
     source_name = "Bus Open Data"
-    reg_operators = {"BDRB", "COMT", "TDY", "ROST", "CT4N", "TBTN", "OTSS"}
     services = (
         Service.objects.using(settings.READ_DATABASE)
         .filter(current=True)
@@ -164,44 +163,26 @@ class Command(ImportLiveVehiclesCommand):
             defaults["operator"] = operators[0]
             vehicles = self.vehicles.filter(operator__in=operators)
 
-        if operator_ref == "MSOT":  # Marshalls of Sutton on Trent
-            defaults["fleet_code"] = vehicle_ref
-        elif "fleet_number" not in defaults and vehicle_unique_id:
+        condition = Q(code__iexact=vehicle_ref)
+        if vehicle_ref.isdigit():
+            defaults["fleet_number"] = vehicle_ref
+            if operators:
+                condition |= Q(code__endswith=f"-{vehicle_ref}") | Q(
+                    code__startswith=f"{vehicle_ref}_"
+                )
+        elif "_-_" in vehicle_ref:
+            fleet_number, reg = vehicle_ref.split("_-_", 2)
+            if fleet_number.isdigit():
+                defaults["fleet_number"] = fleet_number
+                reg = reg.replace("_", "")
+                defaults["reg"] = reg
+        if "fleet_number" not in defaults and vehicle_unique_id:
             # VehicleUniqueId
             if len(vehicle_unique_id) < len(vehicle_ref):
                 defaults["fleet_code"] = vehicle_unique_id
                 if vehicle_unique_id.isdigit():
                     defaults["fleet_number"] = vehicle_unique_id
 
-        condition = Q(code__iexact=vehicle_ref)
-        if operators:
-            if vehicle_ref.isdigit():
-                defaults["fleet_number"] = vehicle_ref
-                condition |= Q(code__endswith=f"-{vehicle_ref}") | Q(
-                    code__startswith=f"{vehicle_ref}_"
-                )
-            elif (
-                operator_ref[:1] == "F"
-                and "fleet_number" in defaults
-                and len(defaults["fleet_number"]) == 5
-            ):
-                # 20 may 2022 - some First vehicle refs changed :(
-                condition |= Q(fleet_code__iexact=defaults["fleet_number"])
-            else:
-                if "_-_" in vehicle_ref:
-                    fleet_number, reg = vehicle_ref.split("_-_", 2)
-                    if fleet_number.isdigit():
-                        defaults["fleet_number"] = fleet_number
-                        reg = reg.replace("_", "")
-                        defaults["reg"] = reg
-                        if operator_ref in self.reg_operators:
-                            condition |= Q(reg__iexact=reg)
-                elif operator_ref in self.reg_operators:
-                    reg = vehicle_ref.replace("_", "")
-                    condition |= Q(reg__iexact=reg)
-                elif operator_ref == "WHIP":
-                    code = vehicle_ref.replace("_", "")
-                    condition |= Q(fleet_code__iexact=code)
         vehicles = vehicles.filter(condition)
 
         try:
@@ -637,14 +618,14 @@ class Command(ImportLiveVehiclesCommand):
         if not response.ok:
             return []
 
-        if "datafeed" in self.source.url:
-            data = response.content
-        else:
+        if response.headers["content-type"] == "application/zip":
             with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
                 namelist = archive.namelist()
                 assert len(namelist) == 1
                 with archive.open(namelist[0]) as open_file:
                     data = open_file.read()
+        else:
+            data = response.content
 
         data = xmltodict.parse(
             data,
@@ -831,7 +812,7 @@ class Command(ImportLiveVehiclesCommand):
                     settings.STATUS_WEBHOOK_URL,
                     json={
                         "username": "bot",
-                        "content": f"uh-oh, \U0001F534 `{self.source.url}` hasn't updated since {self.source.datetime}",
+                        "content": f"uh-oh, \U0001f534 `{self.source.url}` hasn't updated since {self.source.datetime}",
                     },
                     timeout=1,
                 )
@@ -840,7 +821,7 @@ class Command(ImportLiveVehiclesCommand):
                     settings.STATUS_WEBHOOK_URL,
                     json={
                         "username": "bot",
-                        "content": f"phew, \U0001F7E2 `{self.source.url}` has updated at {self.source.datetime}, after {prev_age // 60} minutes",
+                        "content": f"phew, \U0001f7e2 `{self.source.url}` has updated at {self.source.datetime}, after {prev_age // 60} minutes",
                     },
                     timeout=1,
                 )
