@@ -109,10 +109,6 @@ interactions:
       - keep-alive
       Date:
       - Tue, 17 Sep 2024 11:49:14 GMT
-      NEL:
-      - '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}'
-      Report-To:
-      - '{"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=iocH4FfeMar0YGohl7ldBso96aDz7dUxa5FBGBaf7GWGlVw9HFw2KzGFyE%2BiwDAkKDFplzAUUKHL%2Ftff4DysBsUfq5vZWXgQd2%2BxA41eqaUSAgexrI3K2biJtWunYWK0ShoU34onSJNoe7M%3D"}],"group":"cf-nel","max_age":604800}'
       Server:
       - cloudflare
       Vary:
@@ -138,4 +134,59 @@ interactions:
     status:
       code: 304
       message: Not Modified
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - bustimes.org
+      if-modified-since:
+      - Fri, 06 Sep 2024 13:11:02 GMT
+    method: GET
+    uri: https://bustimes.org/favicon.ico
+  response:
+    body:
+      string: ''
+    headers:
+      Age:
+      - '23'
+      CF-Cache-Status:
+      - HIT
+      CF-RAY:
+      - 8c48df2e597a941e-LHR
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 17 Sep 2024 11:49:14 GMT
+      Server:
+      - cloudflare
+      Vary:
+      - Accept-Encoding
+      access-control-allow-origin:
+      - '*'
+      alt-svc:
+      - h3=":443"; ma=86400
+      cache-control:
+      - max-age=60, public
+      cross-origin-opener-policy:
+      - same-origin
+      etag:
+      - '"66daf156-37b"'
+      last-modified:
+      - Fri, 06 Sep 2024 13:11:02 GMT
+      referrer-policy:
+      - origin-when-cross-origin
+      strict-transport-security:
+      - max-age=2592000
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 304
+      message: Not Modified
+
 version: 1

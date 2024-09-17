@@ -48,6 +48,8 @@ def download_if_modified(path, source=None, url=None):
         logger.error(f"{response} {response.url}")
     elif modified:
         write_file(path, response)
+        if last_modified:
+            os.utime(path, (last_modified.timestamp(), last_modified.timestamp()))
 
         if source:
             source.last_modified = last_modified

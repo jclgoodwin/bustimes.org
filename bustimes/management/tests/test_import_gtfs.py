@@ -12,7 +12,7 @@ from django.test import TestCase, override_settings
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
 from ...models import Route
-from ... import download_utils
+from ...download_utils import download_if_modified
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
@@ -195,13 +195,18 @@ class GTFSTest(TestCase):
 
         cassette = str(FIXTURES_DIR / "download_if_modified.yaml")
 
-        with vcr.use_cassette(cassette, match_on=["uri", "headers"]):
-            changed, when = download_utils.download_if_modified(path, source)
+        with vcr.use_cassette(cassette, match_on=["uri", "headers"]) as cassette:
+            changed, when = download_if_modified(path, source)
             self.assertTrue(changed)
             self.assertEqual(str(when), "2024-09-06 13:11:02+00:00")
             self.assertEqual(source.etag, 'W/"66daf156-37b"')
 
-            changed, when = download_utils.download_if_modified(path, source)
+            changed, when = download_if_modified(path, source)
+            self.assertFalse(changed)
+
+            cassette.rewind()
+
+            changed, when = download_if_modified(path, url=url)
             self.assertFalse(changed)
 
         self.assertTrue(path.exists())
