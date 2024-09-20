@@ -4,7 +4,6 @@ from pathlib import Path
 import gtfs_kit
 from django.conf import settings
 
-# from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -33,19 +32,22 @@ def get_calendars(feed) -> dict:
         )
     Calendar.objects.bulk_create(calendars.values())
 
-    calendar_dates = []
-    for row in feed.calendar_dates.itertuples():
-        operation = row.exception_type == 1  # '1' = operates, '2' = does not operate
-        calendar_dates.append(
-            CalendarDate(
-                calendar=calendars[row.service_id],
-                start_date=row.date,
-                end_date=row.date,
-                operation=operation,
-                special=operation,  # additional date of operation
+    if feed.calendar_dates is not None:
+        calendar_dates = []
+        for row in feed.calendar_dates.itertuples():
+            operation = (
+                row.exception_type == 1
+            )  # '1' = operates, '2' = does not operate
+            calendar_dates.append(
+                CalendarDate(
+                    calendar=calendars[row.service_id],
+                    start_date=row.date,
+                    end_date=row.date,
+                    operation=operation,
+                    special=operation,  # additional date of operation
+                )
             )
-        )
-    CalendarDate.objects.bulk_create(calendar_dates)
+        CalendarDate.objects.bulk_create(calendar_dates)
 
     return calendars
 

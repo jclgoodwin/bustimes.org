@@ -1,5 +1,4 @@
 import logging
-import zipfile
 from pathlib import Path
 
 import gtfs_kit
@@ -406,7 +405,7 @@ class Command(BaseCommand):
                 self.source = source
                 try:
                     self.handle_zipfile(path)
-                except zipfile.BadZipFile as e:
+                except OSError as e:
                     logger.exception(e)
 
             # sleep(2)
