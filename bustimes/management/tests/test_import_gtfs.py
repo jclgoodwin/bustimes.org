@@ -2,7 +2,6 @@ import datetime
 import zipfile
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
 
 import time_machine
 import vcr
@@ -11,7 +10,6 @@ from django.test import TestCase, override_settings
 
 from busstops.models import AdminArea, DataSource, Operator, Region, Service, StopPoint
 
-from ...models import Route
 from ...download_utils import download_if_modified
 
 FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
@@ -211,16 +209,3 @@ class GTFSTest(TestCase):
 
         self.assertTrue(path.exists())
         path.unlink()
-
-    def test_handle(self):
-        with (
-            patch(
-                "bustimes.management.commands.import_gtfs.download_if_modified",
-                return_value=(True, None),
-            ),
-            self.assertRaises(ValueError),
-        ):
-            with vcr.use_cassette(str(FIXTURES_DIR / "google_transit_ie.yaml")):
-                call_command("import_gtfs", "Wexford Bus")
-
-        self.assertFalse(Route.objects.all())

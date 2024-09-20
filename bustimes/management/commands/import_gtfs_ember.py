@@ -35,9 +35,8 @@ def get_calendars(feed) -> dict:
     if feed.calendar_dates is not None:
         calendar_dates = []
         for row in feed.calendar_dates.itertuples():
-            operation = (
-                row.exception_type == 1
-            )  # '1' = operates, '2' = does not operate
+            operation = row.exception_type == 1
+            # 1: operates, 2: does not operate
             calendar_dates.append(
                 CalendarDate(
                     calendar=calendars[row.service_id],
