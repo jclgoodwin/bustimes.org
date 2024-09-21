@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 import gtfs_kit
+from zipfile import BadZipFile
 from numpy import nan
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
@@ -405,7 +406,7 @@ class Command(BaseCommand):
                 self.source = source
                 try:
                     self.handle_zipfile(path)
-                except OSError as e:
+                except (OSError, BadZipFile) as e:
                     logger.exception(e)
 
             # sleep(2)
