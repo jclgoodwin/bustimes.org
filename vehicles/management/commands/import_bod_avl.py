@@ -61,7 +61,7 @@ def get_destination_name(destination_ref):
 
 
 def get_line_name_query(line_ref):
-    line_name = line_ref.replace("_", " ")
+    line_name = line_ref.replace("_", " ").strip()
     return (
         Exists(
             ServiceCode.objects.filter(
