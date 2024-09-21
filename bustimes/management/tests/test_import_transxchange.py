@@ -102,6 +102,7 @@ class ImportTransXChangeTest(TestCase):
                 ("0260006516", "Church Hill", "opp", -1.121200186, 52.673322583),
                 # excel split reg
                 ("0500FWISH025", "Wisbech Bus Station", "", 0, 50),
+                ("0590PQG10", "Peterborough Bus Station", "", -0.246691, 52.57392),
             )
         )
         cls.user = User.objects.create()
@@ -1517,12 +1518,12 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(service.get_absolute_url())
 
         self.assertContains(response, "Kings Lynn,Bus Station")
-        self.assertContains(response, "Peterborough,Bus Station")
+        self.assertContains(response, "Peterborough Bus Station")
 
         trip = Trip.objects.first()
         response = self.client.get(f"/trips/{trip.id}")
         self.assertContains(response, "Kings Lynn,Bus Station")
-        self.assertContains(response, "Peterborough,Bus Station")
+        self.assertContains(response, "Peterborough Bus Station")
 
         # test modern trip API too:
         with self.assertNumQueries(5):
