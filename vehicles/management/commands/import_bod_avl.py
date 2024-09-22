@@ -739,7 +739,7 @@ class Command(ImportLiveVehiclesCommand):
 
         total_items = 0
 
-        for i, item in enumerate(items or self.get_items()):
+        for i, item in enumerate(items or self.get_items() or ()):
             vehicle_identity = self.get_vehicle_identity(item)
 
             journey_identity = self.get_journey_identity(item)
