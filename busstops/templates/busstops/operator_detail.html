@@ -25,7 +25,9 @@
 </div>
 
 <ul class="tabs">
-    <li>{{ services|length }} route{{ services|length|pluralize }}</li>
+    {% if services %}
+        <li>{{ services|length }} route{{ services|length|pluralize }}</li>
+    {% endif %}
     {% if map %}
         <li><a href="{{ object.get_absolute_url }}/map">Map</a></li>
     {% endif %}
