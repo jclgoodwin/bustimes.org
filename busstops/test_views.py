@@ -380,15 +380,15 @@ class ViewsTests(TestCase):
     def test_operator_not_found(self):
         """An operator with no services, or that doesn't exist, should should return a 404 response"""
         with self.assertNumQueries(7):
-            response = self.client.get("/operators/VENT")
-            self.assertContains(response, "0 routes", status_code=404)
+            response = self.client.get("/operators/VENT")  # noc
+            self.assertContains(response, "Nu-Venture", status_code=404)
 
         with self.assertNumQueries(7):
-            response = self.client.get("/operators/nu-venture")
-            self.assertContains(response, "0 routes", status_code=404)
+            response = self.client.get("/operators/nu-venture")  # slug
+            self.assertContains(response, "Nu-Venture", status_code=404)
 
         with self.assertNumQueries(3):
-            response = self.client.get("/operators/poop")
+            response = self.client.get("/operators/poop")  # doesn't exist
             self.assertEqual(response.status_code, 404)
 
         with self.assertNumQueries(1):
