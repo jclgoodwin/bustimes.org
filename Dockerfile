@@ -17,7 +17,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 
 # install GDAL (https://docs.djangoproject.com/en/4.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl gdal-bin libgdal-dev libxslt1.1 && \
+    apt-get install -y --no-install-recommends curl binutils libproj-dev gdal-bin && \
     rm -rf /var/lib/apt && \
     rm -rf /var/lib/dpkg/info/*
 
