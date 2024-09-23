@@ -187,6 +187,12 @@ Disallow: /
 
 User-agent: Bytespider
 Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
 """
     else:  # staging site/other
         content = """User-agent: Mediapartners-Google
