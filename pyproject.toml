@@ -59,6 +59,7 @@ requests-cache = "^1.1.0"
 django-coverage-plugin = "^3.0.0"
 django-slowtests = "^1.1.1"
 fakeredis = "^2.12.1"
+tblib = "^3.0.0"
 
 [tool.poetry.group.dev]
 optional = true
