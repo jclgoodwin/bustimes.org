@@ -22,6 +22,13 @@ def get_period(element):
     return DateTimeTZRange(start, end, "[]")
 
 
+def get_operators(operator_ref):
+    return Operator.objects.filter(
+        operatorcode__code=operator_ref,
+        operatorcode__source__name="National Operator Codes",
+    )
+
+
 def handle_item(item, source):
     situation_number = item.findtext("SituationNumber")
 
@@ -120,7 +127,9 @@ def handle_item(item, source):
             for operator_ref in line.findall("AffectedOperator/OperatorRef"):
                 operator_ref = operator_ref.text
 
-                matching_services = services.filter(line_filter, operator=operator_ref).distinct()
+                matching_services = services.filter(
+                    line_filter, operator__in=get_operators(operator_ref)
+                ).distinct()
                 if len(matching_services) > 1:
                     matching_services = matching_services.filter(stops_filter)
 
@@ -134,11 +143,9 @@ def handle_item(item, source):
         ):
             operator_ref = operator.findtext("OperatorRef")
             try:
-                operator = Operator.objects.get(noc=operator_ref)
+                consequence.operators.add(*get_operators(operator_ref))
             except Operator.DoesNotExist as e:
                 logger.exception(e)
-            else:
-                consequence.operators.add(operator)
 
     return situation.id
 
