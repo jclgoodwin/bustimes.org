@@ -305,8 +305,8 @@ def operator_debug(request, slug):
         pipe.exists(f"service{service.id}vehicles")
     tracking = pipe.execute()
 
-    for i, service in enumerate(services):
-        service.last_tracked = tracking[i]
+    for service, service_tracking in zip(services, tracking):
+        service.last_tracked = service_tracking
 
     return render(
         request,
@@ -397,17 +397,23 @@ def vehicles_json(request) -> JsonResponse:
     if set_names:
         vehicle_ids = list(redis_client.sunion(set_names))
 
+    vehicle_ids = [int(vehicle_id) for vehicle_id in vehicle_ids]
+
     vehicle_ids.sort()  # for etag stableness
 
     vehicle_locations = redis_client.mget(
-        [f"vehicle{int(vehicle_id)}" for vehicle_id in vehicle_ids]
+        [f"vehicle{vehicle_id}" for vehicle_id in vehicle_ids]
     )
     vehicle_locations = [
         json.loads(item) if item else item for item in vehicle_locations
     ]
 
     # remove expired items from 'vehicle_location_locations'
-    to_remove = [vehicle_ids[i] for i, item in enumerate(vehicle_locations) if not item]
+    to_remove = [
+        vehicle_id
+        for vehicle_id, item in zip(vehicle_ids, vehicle_locations)
+        if not item
+    ]
 
     if to_remove:
         redis_client.zrem("vehicle_location_locations", *to_remove)
@@ -420,8 +426,8 @@ def vehicles_json(request) -> JsonResponse:
     try:
         vehicles = all_vehicles.in_bulk(
             [
-                vehicle_ids[i]
-                for i, item in enumerate(vehicle_locations)
+                vehicle_id
+                for vehicle_id, item in zip(vehicle_ids, vehicle_locations)
                 if item and f"journey{item['journey_id']}" not in journeys
             ]
         )
@@ -436,8 +442,7 @@ def vehicles_json(request) -> JsonResponse:
 
     journeys_to_cache_later = {}
 
-    for i, item in enumerate(vehicle_locations):
-        vehicle_id = int(vehicle_ids[i])
+    for vehicle_id, item in zip(vehicle_ids, vehicle_locations):
         if item:
             journey_cache_key = f"journey{item['journey_id']}"
 
@@ -591,8 +596,8 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
             for journey in journeys:
                 journey.locations = True
         else:
-            for i, journey in enumerate(journeys):
-                journey.locations = locations[i]
+            for journey, location in zip(journeys, locations):
+                journey.locations = location
 
     # "Track this bus" button
     if vehicle and vehicle.latest_journey_id:
@@ -1119,14 +1124,14 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             except ValueError as e:
                 logging.exception(e)
             else:
-                for i, distances in enumerate(haversine_vector_results):
-                    minimum, index_of_minimum = min(
-                        ((value, index) for index, value in enumerate(distances))
+                for distances, location in zip(
+                    haversine_vector_results, data["locations"]
+                ):
+                    distance, nearest_stop = min(
+                        zip(distances, stops), key=lambda x: x[0]
                     )
-                    if minimum < 100:
-                        stops[index_of_minimum]["actual_departure_time"] = data[
-                            "locations"
-                        ][i]["datetime"]
+                    if distance < 100:
+                        nearest_stop["actual_departure_time"] = location["datetime"]
 
     if vehicle_id:
         next_previous_filter = {"vehicle_id": vehicle_id}
