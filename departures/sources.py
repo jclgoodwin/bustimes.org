@@ -2,7 +2,6 @@
 
 import datetime
 import logging
-import xml.etree.cElementTree as ET
 from zoneinfo import ZoneInfo
 
 import ciso8601
@@ -245,69 +244,6 @@ class EdinburghDepartures(RemoteDepartures):
                     else:
                         departure["live"] -= hour
             return departures
-
-
-class AcisHorizonDepartures(RemoteDepartures):
-    """Departures from a SOAP endpoint (lol)"""
-
-    request_url = "https://mobileapp.belfast.vix-its.com/DataService.asmx"
-    headers = {
-        "Content-Type": "text/xml; charset=utf-8",
-        "SOAPAction": "http://www.acishorizon.com/GetArrivalsForStops",
-    }
-    ns = {
-        "a": "http://www.acishorizon.com/",
-        "s": "http://www.w3.org/2003/05/soap-envelope",
-    }
-
-    def get_response(self):
-        data = """
-            <s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope">
-                <s:Body>
-                    <GetArrivalsForStops xmlns="http://www.acishorizon.com/">
-                        <stopRefs>
-                            <string>{}</string>
-                        </stopRefs>
-                        <maxResults>10</maxResults>
-                    </GetArrivalsForStops>
-                </s:Body>
-            </s:Envelope>
-        """.format(self.stop.pk)
-        return requests.post(
-            self.request_url, headers=self.headers, data=data, timeout=2
-        )
-
-    def departures_from_response(self, res):
-        try:
-            items = ET.fromstring(res.text)
-        except ET.ParseError as e:
-            logger = logging.getLogger(__name__)
-            logger.error(e, exc_info=True)
-            return
-        items = items.find(
-            "s:Body/a:GetArrivalsForStopsResponse/a:GetArrivalsForStopsResult", self.ns
-        )
-        items = items.findall(
-            "a:Stops/a:VirtualStop/a:StopArrivals/a:StopRealtime", self.ns
-        )
-        return [item for item in [self.get_row(item) for item in items] if item]
-
-    def get_row(self, item):
-        row = {
-            "service": self.get_service(
-                item.find("a:JourneyPublicServiceCode", self.ns).text
-            ),
-            "destination": item.find("a:Destination", self.ns).text,
-        }
-        time = item.find("a:TimeAsDateTime", self.ns).text
-        if time:
-            time = parse_datetime(time)
-            if item.find("a:IsPredicted", self.ns).text == "true":
-                row["live"] = time
-                row["time"] = None
-            else:
-                row["time"] = time
-            return row
 
 
 class TimetableDepartures(Departures):

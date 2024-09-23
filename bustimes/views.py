@@ -406,9 +406,7 @@ def stop_debug(request, atco_code: str):
         [
             f"TflDepartures:{stop.pk}",
             f"SiriSmDepartures:{stop.pk}",
-            f"AcisHorizonDepartures:{stop.pk}",
             f"EdinburghDepartures:{stop.pk}",
-            f"tfwm:{stop.pk}",
         ]
     ).items():
         response_text = response.text

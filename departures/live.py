@@ -14,7 +14,6 @@ from vehicles.tasks import log_vehicle_journey
 
 from . import avl, gtfsr
 from .sources import (
-    AcisHorizonDepartures,
     EdinburghDepartures,
     SiriSmDepartures,
     TflDepartures,
@@ -204,15 +203,7 @@ def get_departures(stop, services, when) -> dict:
             if service.operators:
                 operators.update(service.operators)
 
-        # Belfast
-        if stop.atco_code[0] == "7" and not operators.isdisjoint(
-            settings.ACIS_HORIZON_OPERATORS
-        ):
-            live_rows = AcisHorizonDepartures(stop, services).get_departures()
-            if live_rows:
-                blend(departures, live_rows)
-
-        elif departures:
+        if departures:
             # Edinburgh
             if stop.naptan_code and not operators.isdisjoint(settings.TFE_OPERATORS):
                 live_rows = EdinburghDepartures(stop, services, now).get_departures()

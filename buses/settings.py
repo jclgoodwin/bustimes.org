@@ -295,20 +295,6 @@ TFL = {  # London
     "app_id": os.environ.get("TFL_APP_ID"),
     "app_key": os.environ.get("TFL_APP_KEY"),
 }
-TFWM_OPERATORS = {
-    # "National Express West Midlands",
-    # "National Express Coventry",
-    # "Diamond Bus",
-    # "Landflight",
-    # "West Midlands Metro",
-    # "Stagecoach Midlands",
-}
-ACIS_HORIZON_OPERATORS = {
-    "Ulsterbus",
-    "Ulsterbus Town Services",
-    "Translink Metro",
-    "Translink Glider",
-}
 TFE_OPERATORS = {
     "Lothian Buses",
     "Lothian Country Buses",

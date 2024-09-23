@@ -228,11 +228,6 @@ class LiveDeparturesTest(TestCase):
             html=True,
         )
 
-    def test_translink_metro_no_services_running(self):
-        with vcr.use_cassette("fixtures/vcr/translink_metro.yaml", match_on=["body"]):
-            departures = live.AcisHorizonDepartures(StopPoint(pk="700000000748"), ())
-            self.assertEqual([], departures.get_departures())
-
     def test_edinburgh(self):
         vehicle_source = DataSource.objects.create(name="TfE")
         stop = StopPoint.objects.create(
