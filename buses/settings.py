@@ -172,6 +172,9 @@ STORAGES = {
     },
 }
 WHITENOISE_ROOT = BASE_DIR / "busstops" / "static" / "root"
+WHITENOISE_MIMETYPES = {
+    ".webmanifest": "application/manifest+json",
+}
 TEMPLATE_MINIFER_STRIP_FUNCTION = "buses.utils.minify"
 TEMPLATES = [
     {
