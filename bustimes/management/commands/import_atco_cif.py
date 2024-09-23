@@ -252,7 +252,7 @@ class Command(BaseCommand):
                     }
                     route_defaults = {
                         "line_name": line_name,
-                        "description": "description",
+                        "description": description,
                     }
                     if direction == b"O":
                         defaults["description"] = description
