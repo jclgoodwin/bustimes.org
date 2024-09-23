@@ -12,10 +12,9 @@ RUN npm run lint && npm run build
 
 FROM python:3.12
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=off PIP_DISABLE_PIP_VERSION_CHECK=on
 
-# install GDAL (https://docs.djangoproject.com/en/4.1/ref/contrib/gis/install/geolibs/)
+# install GDAL (https://docs.djangoproject.com/en/5.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl binutils libproj-dev gdal-bin && \
     rm -rf /var/lib/apt && \
