@@ -150,6 +150,8 @@ class Command(BaseCommand):
 
         open_file.seek(0)
 
+        self.filename = open_file.name
+
         # everything else
         previous_line = None
         for line in open_file:
@@ -227,11 +229,12 @@ class Command(BaseCommand):
             case b"QD":
                 operator = line[3:7].decode().strip()
                 line_name = line[7:11].decode().strip()
-                key = f"{line_name}_{operator}".upper()
+                service_code = f"{line_name}_{operator}".upper()
+                route_code = f"{self.filename}#{service_code}"
                 direction = line[11:12]
                 description = line[12:].decode().strip()
-                if key in self.routes:
-                    self.route = self.routes[key]
+                if route_code in self.routes:
+                    self.route = self.routes[route_code]
                     if direction == b"O":
                         self.route.service.description = description
                         self.route.description = description
@@ -258,7 +261,7 @@ class Command(BaseCommand):
                     else:
                         route_defaults["inbound_description"] = description
                     service, _ = Service.objects.update_or_create(
-                        defaults, service_code=key
+                        defaults, service_code=service_code
                     )
                     route_defaults["service"] = service
                     if operator:
@@ -267,12 +270,12 @@ class Command(BaseCommand):
                         service.operator.add(operator)
                     self.route, created = Route.objects.update_or_create(
                         route_defaults,
-                        code=key,
+                        code=route_code,
                         source=self.source,
                     )
                     if not created:
                         self.route.trip_set.all().delete()
-                    self.routes[key] = self.route
+                    self.routes[route_code] = self.route
 
             case b"QS":
                 self.sequence = 0

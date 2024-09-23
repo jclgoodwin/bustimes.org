@@ -59,7 +59,7 @@ class ImportAtcoCifTest(TestCase):
         self.assertEqual(106, StopUsage.objects.count())
 
         service = Service.objects.get(service_code="219A_GLE")
-        route = Route.objects.get(code="219A_GLE")
+        route = Route.objects.get(service__service_code="219A_GLE")
         self.assertEqual(
             "Belfast, Europa Buscentre - Antrim, Buscentre", service.description
         )

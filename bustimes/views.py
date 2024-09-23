@@ -167,6 +167,8 @@ def route_xml(request, source, code=""):
                 "\n".join(archive.namelist()), content_type="text/plain"
             )
 
+    content_type = "application/xml"
+
     if "stagecoach" in source.url:
         path = settings.DATA_DIR / source.url.split("/")[-1]
         if not path.exists():
@@ -184,6 +186,10 @@ def route_xml(request, source, code=""):
             path, code = code.split("/", 1)
             url = f"https://s3-eu-west-1.amazonaws.com/passenger-sources/{path.split('_')[0]}/txc/{path}"
             path = settings.DATA_DIR / path
+        elif "opendatani.gov.uk" in source.url:
+            path = settings.DATA_DIR / f"{source.id}.zip"
+            url = None
+            content_type = "text/plain"
         else:
             raise Http404
         if not path.exists():
@@ -200,7 +206,7 @@ def route_xml(request, source, code=""):
     if path:
         if code:
             with zipfile.ZipFile(path) as archive:
-                return FileResponse(archive.open(code), content_type="text/xml")
+                return FileResponse(archive.open(code), content_type=content_type)
     else:
         path = settings.DATA_DIR / code
 
@@ -213,7 +219,7 @@ def route_xml(request, source, code=""):
         pass
 
     # FileResponse automatically closes the file
-    return FileResponse(open(path, "rb"), content_type="text/xml")
+    return FileResponse(open(path, "rb"), content_type=content_type)
 
 
 def stop_time_json(stop_time, date) -> dict:
