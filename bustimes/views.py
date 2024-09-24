@@ -3,6 +3,7 @@ import json
 import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
+from itertools import pairwise
 from pathlib import Path
 
 import requests
@@ -472,6 +473,12 @@ class TripDetailView(DetailView):
             .order_by("trip__start", "id")
         )
         stops = list(stops)
+        if len(trips) > 1:
+            for a, b in pairwise(stops):
+                if a.trip_id != b.trip_id and a.stop_id != b.stop_id:
+                    # trips are not contiguous
+                    stops = [stop for stop in stops if stop.trip_id == self.object.id]
+                    break
 
         if stops:
             if stops[0].stop:

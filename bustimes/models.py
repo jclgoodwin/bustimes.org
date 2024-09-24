@@ -377,12 +377,14 @@ class Trip(models.Model):
         if self.ticket_machine_code and self.route.service_id:
             # get other parts of this trip (if the service has been split into parts)
             # see also get_split_trips
+            code_filter = Q(ticket_machine_code=self.ticket_machine_code)
+            if self.vehicle_journey_code:
+                code_filter |= Q(vehicle_journey_code=self.vehicle_journey_code)
             trips = (
                 Trip.objects.filter(
                     Q(id=self.id)
                     | Q(
-                        Q(ticket_machine_code=self.ticket_machine_code)
-                        | Q(vehicle_journey_code=self.vehicle_journey_code),
+                        code_filter,
                         Q(start__gte=self.end) | Q(end__lte=self.start),
                         ~Q(destination_id=self.destination_id),
                         block=self.block,

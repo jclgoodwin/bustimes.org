@@ -1082,6 +1082,13 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
             stoptimes = StopTime.objects.filter(trip__in=trips).order_by(
                 "trip__start", "id"
             )
+            for a, b in pairwise(stoptimes):
+                if a.trip_id != b.trip_id and a.stop_id != b.stop_id:
+                    # trips are not contiguous
+                    stops = [
+                        stop for stop in stoptimes if stop.trip_id == journey.trip.id
+                    ]
+                    break
 
         for stoptime in stoptimes.select_related("stop__locality"):
             stop = stoptime.stop

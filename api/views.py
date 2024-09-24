@@ -1,3 +1,4 @@
+from itertools import pairwise
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
@@ -97,6 +98,12 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
             )
             .order_by("trip__start", "id")
         )
+        if len(trips) > 1:
+            for a, b in pairwise(stops):
+                if a.trip_id != b.trip_id and a.stop_id != b.stop_id:
+                    # trips are not contiguous
+                    stops = [stop for stop in stops if stop.trip_id == obj.id]
+                    break
         obj.stops = stops
         return obj
 
