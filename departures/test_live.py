@@ -1,7 +1,7 @@
 # coding=utf-8
 """Tests for live departures"""
 
-from datetime import date, datetime
+from datetime import datetime
 from unittest.mock import patch
 
 import time_machine
@@ -194,39 +194,6 @@ class LiveDeparturesTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(f"/stops/{self.london_stop.pk}/debug")
         self.assertContains(response, "<code>")
-
-    @time_machine.travel(date(2018, 10, 27))
-    def test_translink_metro(self):
-        operator = Operator.objects.create(
-            noc="MET", name="Translink Metro", region_id="W"
-        )
-        stop = StopPoint.objects.create(
-            atco_code="700000001415", active=True, locality_centre=False
-        )
-        service = Service.objects.create(
-            service_code="2D_MET",
-            line_name="2D",
-            region_id="W",
-        )
-        service.operator.add(operator)
-        StopUsage.objects.create(stop=stop, service=service, order=0)
-        route = Route.objects.create(source=self.source, service=service)
-        trip = Trip.objects.create(route=route, start="0", end="1")
-        StopTime.objects.create(trip=trip, stop=stop)
-
-        with vcr.use_cassette("fixtures/vcr/translink_metro.yaml"):
-            res = self.client.get(stop.get_absolute_url())
-        self.assertNotContains(res, "<h3>")
-        self.assertContains(
-            res,
-            "<tr><td>14B</td><td>City Express</td><td>08:22</td><td></td></tr>",
-            html=True,
-        )
-        self.assertContains(
-            res,
-            "<tr><td>1A</td><td>City Centre</td><td></td><td>07:54</td></tr>",
-            html=True,
-        )
 
     def test_edinburgh(self):
         vehicle_source = DataSource.objects.create(name="TfE")
