@@ -472,3 +472,4 @@ class VehicleCodeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.VehicleFeature)
+admin.site.register(models.SiriSubscription)

@@ -51,4 +51,5 @@ urlpatterns = [
     path("maps", TemplateView.as_view(template_name="map.html")),
     path("map/old", TemplateView.as_view(template_name="map_classic.html")),
     path("siri/<uuid:uuid>", views.siri_post),
+    path("overland/<uuid:uuid>", views.overland),
 ]

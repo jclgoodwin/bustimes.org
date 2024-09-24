@@ -1225,3 +1225,46 @@ def siri_post(request, uuid):
     handle_siri_post(uuid, data)
 
     return HttpResponse("")
+
+
+@csrf_exempt
+@require_POST
+def overland(request, uuid):
+    get_object_or_404(SiriSubscription, uuid=uuid)
+
+    data = json.loads(request.body)
+
+    for item in data["locations"][-1:]:
+        when = item["properties"]["timestamp"]
+        operator, vehicle, journey = item["properties"]["device_id"].split(":")
+        lon, lat = item["geometry"]["coordinates"]
+        activity = {
+            "RecordedAtTime": when,
+            "MonitoredVehicleJourney": {
+                "OperatorRef": operator,
+                "VehicleRef": vehicle,
+                "LineRef": journey,
+                "VehicleLocation": {
+                    "Longitude": lon,
+                    "Latitude": lat,
+                },
+            },
+        }
+
+        handle_siri_post(
+            uuid,
+            {
+                "Siri": {
+                    "ServiceDelivery": {
+                        "ResponseTimestamp": when,
+                        "VehicleMonitoringDelivery": {
+                            "VehicleActivity": [activity],
+                            "SubscriptionRef": "",
+                        },
+                    }
+                }
+            },
+        )
+
+    # https://github.com/aaronpk/Overland-iOS#api
+    return JsonResponse({"result": "ok"})
