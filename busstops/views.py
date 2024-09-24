@@ -920,7 +920,9 @@ class OperatorDetailView(DetailView):
         context["vehicles"] = self.object.vehicle_set.filter(
             withdrawn=False, latest_journey__isnull=False
         ).exists()
-        if redis_client and context["vehicles"]:
+        if redis_client and (
+            context["vehicles"] or any(s.tracking for s in context["services"])
+        ):
             try:
                 context["map"] = redis_client.exists(
                     f"operator{self.object.noc}vehicles"
