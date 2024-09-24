@@ -571,14 +571,16 @@ class Command(BaseCommand):
             self.fare_products = {}
             self.fare_zones = get_existing_fare_zones(dataset)
 
-            if response.headers["Content-Type"] == "text/xml":
+            if (
+                content_type := response.headers["Content-Type"]
+            ) == "text/xml" or content_type == "application/xml":
                 # maybe not fully RFC 6266 compliant
                 filename = response.headers["Content-Disposition"].split("filename", 1)[
                     1
                 ][2:-1]
                 self.handle_file(dataset, response.raw, filename)
             else:
-                assert response.headers["Content-Type"] == "application/zip"
+                assert content_type == "application/zip"
                 try:
                     self.handle_archive(dataset, io.BytesIO(response.content))
                 except (KeyError, DataError):
