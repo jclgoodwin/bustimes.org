@@ -66,10 +66,19 @@ class Command(ImportLiveVehiclesCommand):
             return vehicle, False
 
         vehicle = self.vehicles.filter(
-            Q(code__iexact=vehicle_code) | Q(fleet_code__iexact=fleet_code),
+            fleet_code__iexact=fleet_code,
             operator=operator_id,
         ).first()
+        if not vehicle:
+           vehicle = self.vehicles.filter(
+                fleet_code__iexact=fleet_code,
+                operator__in=self.operators,
+            ).first()
+
         if vehicle:
+            if vehicle.code != vehicle_code:
+                vehicle.code = vehicle_code
+                vehicle.save(update_fields=["code"])
             return vehicle, False
 
         vehicle = Vehicle.objects.create(
