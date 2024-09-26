@@ -31,6 +31,12 @@ class VosaTest(TestCase):
             discs=0,
             authorised_discs=0,
         )
+        Licence.objects.create(
+            traffic_area="F",
+            licence_number="PF0000102",
+            discs=0,
+            authorised_discs=0,
+        )
 
     @override_settings(DATA_DIR=Path(__file__).resolve().parent / "fixtures")
     def test(self):
@@ -38,7 +44,7 @@ class VosaTest(TestCase):
             "vosa.management.commands.import_vosa.download_utils.download_if_modified",
             return_value=(True, None),
         ):
-            with self.assertNumQueries(15):
+            with self.assertNumQueries(18):
                 call_command("import_vosa", "F")
 
             with self.assertNumQueries(8):
@@ -112,3 +118,5 @@ Simonds Countrylink""",
         self.client.force_login(self.user)
         response = self.client.get("/admin/vosa/licence/")
         self.assertContains(response, ">AINS<")
+
+        self.assertEqual(Licence.objects.count(), 3)
