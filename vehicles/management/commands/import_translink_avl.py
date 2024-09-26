@@ -2,7 +2,6 @@ from datetime import timedelta, datetime
 from ciso8601 import parse_datetime
 
 from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import Q
 
 from busstops.models import Operator, Service
 
@@ -70,7 +69,7 @@ class Command(ImportLiveVehiclesCommand):
             operator=operator_id,
         ).first()
         if not vehicle:
-           vehicle = self.vehicles.filter(
+            vehicle = self.vehicles.filter(
                 fleet_code__iexact=fleet_code,
                 operator__in=self.operators,
             ).first()
