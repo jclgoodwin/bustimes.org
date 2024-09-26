@@ -658,6 +658,9 @@ class Command(ImportLiveVehiclesCommand):
     @staticmethod
     def get_journey_identity(item):
         monitored_vehicle_journey = item["MonitoredVehicleJourney"]
+        line_ref = monitored_vehicle_journey.get("LineRef")
+        line_name = monitored_vehicle_journey.get("PublishedLineName")
+
         try:
             journey_ref = monitored_vehicle_journey["FramedVehicleJourneyRef"]
         except (KeyError, ValueError):
@@ -667,7 +670,7 @@ class Command(ImportLiveVehiclesCommand):
         direction = monitored_vehicle_journey.get("DirectionRef")
         destination = monitored_vehicle_journey.get("DestinationName")
 
-        return f"{journey_ref} {departure} {direction} {destination}"
+        return f"{line_ref} {line_name} {journey_ref} {departure} {direction} {destination}"
 
     def handle_items(self, items, identities):
         vehicle_codes = VehicleCode.objects.filter(
