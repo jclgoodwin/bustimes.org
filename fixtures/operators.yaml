@@ -299,11 +299,6 @@ FSCE:
   url: https://www.mcgillsscotlandeast.co.uk/
   phone: 03330 16 61 62
   email: enquiries@mcgillsscotlandeast.co.uk
-EMIR:
-  name: London Cable Car
-  aka: Dangleway
-  url: https://tfl.gov.uk/modes/london-cable-car/
-  twitter: ""
 TYSW:
   name: Applegates
   url: http://applegates.co.uk/
@@ -348,10 +343,7 @@ HRBT:
 COEV:
   name: Coach Events Services
   url: http://www.coacheventsservices.co.uk/
-GLLN:
-  name: Central Connect
 VECT:
-  name: Central Connect
   twitter: |
     CC_EssexHerts
     CC_EastEngland
@@ -377,3 +369,5 @@ BDVC:
   url: https://www.basildoncts.co.uk/
 FACT:
   url: https://fact-cambs.co.uk/
+YTNB:
+  url: https://www.yarrantons.com/
