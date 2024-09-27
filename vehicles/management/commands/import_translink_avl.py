@@ -2,6 +2,7 @@ from datetime import timedelta, datetime
 from ciso8601 import parse_datetime
 
 from django.contrib.gis.geos import GEOSGeometry
+from django.db.models import Q
 
 from busstops.models import Operator, Service
 
@@ -94,14 +95,23 @@ class Command(ImportLiveVehiclesCommand):
             destination=item["DirectionText"],
             route_name=item["LineText"],
         )
-        if vehicle.latest_journey and journey.code == vehicle.latest_journey.code:
-            return vehicle.latest_journey
+        if (latest_journey := vehicle.latest_journey) and (
+            journey.code == latest_journey.code
+            and journey.route_name == latest_journey.route_name
+        ):
+            return latest_journey
 
         journey.service = Service.objects.filter(
+            Q(route__line_name__iexact=journey.route_name) | Q(route__line_name__iexact=f"G{journey.route_name}"),
             operator=vehicle.operator_id,
-            route__line_name__iexact=journey.route_name,
             current=True,
         ).first()
+        if not journey.service:
+            journey.service = Service.objects.filter(
+                operator__in=self.operators,
+                route__line_name__iexact=journey.route_name,
+                current=True,
+            ).first()
 
         if journey.service:
             journey.trip = journey.get_trip(date=parse_date(item["DayOfOperation"]))
