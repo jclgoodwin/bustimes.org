@@ -53,7 +53,7 @@ def download_if_modified(path, source=None, url=None):
 
         if source:
             source.last_modified = last_modified
-            source.etag = response.headers.get("etag")
+            source.etag = response.headers.get("etag", "")
             source.save(update_fields=["last_modified", "etag"])
 
     return modified, last_modified
