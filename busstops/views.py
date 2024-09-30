@@ -296,10 +296,12 @@ def status(request):
     context["statuses"] = cache.get_many(
         [
             "Realtime_Transport_Operators_status",
-            "acis_status",
+            "Irish_Citylink_status",
+            "Translink_status",
+            "Stagecoach_status",
+            "Ember_status",
             "TfE_status",
             "jersey_status",
-            "Stagecoach_status",
         ]
     ).items()
 
