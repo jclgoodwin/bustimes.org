@@ -112,7 +112,7 @@ def handle_file(command, path, qualify_filename=False):
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         if filename.endswith(".xml"):
                             logger.info(filename)
-                            logger.error(e, exc_info=True)
+                            logger.exception(e)
     except zipfile.BadZipFile:
         # plain XML
         with full_path.open() as open_file:
@@ -123,7 +123,7 @@ def handle_file(command, path, qualify_filename=False):
             try:
                 command.handle_file(open_file, filename)
             except (AttributeError, DataError) as e:
-                logger.error(e, exc_info=True)
+                logger.exception(e)
 
 
 def get_bus_open_data_paramses(sources, api_key):

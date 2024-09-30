@@ -964,7 +964,7 @@ class Service(models.Model):
             except (IndexError, UnboundLocalError, AssertionError) as e:
                 logger = logging.getLogger(__name__)
 
-                logger.error(e, exc_info=True)
+                logger.exception(e)
                 return
 
         cache_key = [

@@ -126,7 +126,7 @@ class Command(BaseCommand):
                 if element.tag[:31] == "{http://www.netex.org.uk/netex}":
                     element.tag = element.tag[31:]
         except ET.ParseError as e:
-            logger.error(e, exc_info=True)
+            logger.exception(e)
             return
 
         operators = element.findall(

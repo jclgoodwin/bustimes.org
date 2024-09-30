@@ -135,7 +135,7 @@ def get_operator_by(scheme, code):
         except Operator.DoesNotExist:
             pass
         except Operator.MultipleObjectsReturned as e:
-            logger.error(e, exc_info=True)
+            logger.exception(e)
 
 
 def get_open_data_operators():

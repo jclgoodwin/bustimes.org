@@ -140,7 +140,7 @@ class RemoteDepartures(Departures):
             except requests.exceptions.RequestException as e:
                 self.set_poorly(60)  # back off for 1 minute
                 logger = logging.getLogger(__name__)
-                logger.error(e, exc_info=True)
+                logger.exception(e)
                 return
 
             if response.ok:

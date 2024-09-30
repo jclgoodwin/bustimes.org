@@ -748,7 +748,7 @@ class TransXChange:
                 try:
                     self.journeys = self.__get_journeys(element, serviced_organisations)
                 except (AttributeError, KeyError) as e:
-                    logger.error(e, exc_info=True)
+                    logger.exception(e)
                     return
                 element.clear()
             elif tag == "Service":

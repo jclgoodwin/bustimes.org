@@ -91,7 +91,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
 
     @retry(
         wait=wait_exponential(multiplier=1, min=4, max=10),
-        before_sleep=before_sleep_log(logger, logging.DEBUG),
+        before_sleep=before_sleep_log(logger, logging.ERROR),
     )
     def get_items(self):
         response = self.session.get(self.url, timeout=20)
@@ -134,7 +134,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
             try:
                 vehicle, vehicle_created = self.get_vehicle(item)
             except Vehicle.MultipleObjectsReturned as e:
-                logger.error(e, exc_info=True)
+                logger.exception(e)
                 return
             if not vehicle:
                 return
@@ -396,7 +396,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                         # if it involves multiple spread out requests
                         self.handle_item(item, self.source.datetime)
                     except IntegrityError as e:
-                        logger.error(e, exc_info=True)
+                        logger.exception(e)
                     i += 1
                     if i == 50:
                         self.save()
@@ -406,7 +406,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
                 wait = 120  # no items - wait 2 minutes
         except requests.exceptions.RequestException as e:
             items = None
-            logger.error(e, exc_info=True)
+            logger.exception(e)
             wait = 120
 
         time_taken = (timezone.now() - now).total_seconds()
