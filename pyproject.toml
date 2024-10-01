@@ -57,10 +57,10 @@ requests-toolbelt = "^1.0.0"
 time-machine = "^2.4.0"
 vcrpy = "^6.0.0"
 requests-cache = "^1.1.0"
-django-coverage-plugin = "^3.0.0"
 django-slowtests = "^1.1.1"
 fakeredis = "^2.12.1"
 tblib = "^3.0.0"
+coverage = "^7.6.1"
 
 [tool.poetry.group.dev]
 optional = true
@@ -79,5 +79,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.coverage.run]
-#plugins = ["django_coverage_plugin"]
 omit =  ["*/migrations/*"]
