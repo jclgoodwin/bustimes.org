@@ -501,14 +501,16 @@ input[type='search']::-webkit-search-decoration {
     -webkit-appearance: none;
 }
 
+// lists
+
 ul {
     list-style: none;
-    padding: 0;
 }
 
 ul,
 ol {
     margin: 1em 0;
+    padding: 0;
 }
 
 dt {
@@ -523,21 +525,27 @@ ol li {
     margin-bottom: 1em;
 }
 
-// registration detail history
+ol ::marker {
+    font-variant-numeric: normal;
+}
+
+.rules,
 .history {
     > li {
         list-style: decimal;
         margin-left: 1.75em;
         padding-left: .25em;
     }
+}
 
-    ::marker {
-        font-variant-numeric: normal;
-    }
-
+// registration detail history
+.history {
     ul {
         display: flex;
 
+        li {
+            margin: 0;
+        }
         li + li {
             margin-left: 1.5em;
         }
