@@ -338,7 +338,19 @@ class Command(BaseCommand):
         return outbound, inbound
 
     def mark_old_services_as_not_current(self):
-        old_routes = self.source.route_set.filter(~Q(id__in=self.route_ids))
+        old_routes = self.source.route_set.filter(
+            ~Q(id__in=self.route_ids)
+            | Q(
+                ~Exists(
+                    Route.objects.filter(
+                        Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
+                        Q(end_date=None) | Q(end_date__gte=self.source.datetime),
+                        service_code=OuterRef("service_code"),
+                    )
+                ),
+                end_date__lte=self.source.datetime,
+            ),
+        )
         # do this first to prevent IntegrityError (VehicleJourney trip field)
         old_routes.update(service=None)
         for route in old_routes:
