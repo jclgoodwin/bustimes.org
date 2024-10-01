@@ -26,7 +26,6 @@ urlpatterns = [
         TemplateView.as_view(template_name="index.html"),
         name="index",
     ),
-    path("offline", TemplateView.as_view(template_name="offline.html")),
     path("version", views.version),
     path("contact", views.contact, name="contact"),
     path("cookies", TemplateView.as_view(template_name="cookies.html")),
