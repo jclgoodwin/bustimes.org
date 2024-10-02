@@ -83,9 +83,17 @@ jobs:
     - name: generate coverage report
       run: poetry run coverage combine && poetry run coverage html
 
-    - name: Upload coverage
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
-        AWS_EC2_METADATA_DISABLED: true
-      run: aws s3 sync htmlcov s3://bustimes-coverage --delete --endpoint-url=https://ams3.digitaloceanspaces.com --acl=public-read
+    - name: Coverage comment
+      id: coverage_comment
+      uses: py-cov-action/python-coverage-comment-action@v3
+      with:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Store Pull Request comment to be posted
+      uses: actions/upload-artifact@v4
+      if: steps.coverage_comment.outputs.COMMENT_FILE_WRITTEN == 'true'
+      with:
+        # If you use a different name, update COMMENT_ARTIFACT_NAME accordingly
+        name: python-coverage-comment-action
+        # If you use a different name, update COMMENT_FILENAME accordingly
+        path: python-coverage-comment-action.txt
