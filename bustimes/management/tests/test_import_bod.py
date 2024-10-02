@@ -112,15 +112,17 @@ class ImportBusOpenDataTest(TestCase):
 
         with TemporaryDirectory() as directory:
             with override_settings(DATA_DIR=Path(directory)):
-                call_command(
-                    "import_bod_timetables", "0123456789abc19abc190123456789abc19abc19"
-                )
+                api_key = "0123456789abc19abc190123456789abc19abc19"
 
+                call_command("import_bod_timetables", api_key)
+
+                with self.assertNumQueries(1):
+                    # no matching operator
+                    call_command("import_bod_timetables", api_key, "POOP")
+
+                # no changes
                 with self.assertNumQueries(6):
-                    call_command(
-                        "import_bod_timetables",
-                        "0123456789abc19abc190123456789abc19abc19",
-                    )
+                    call_command("import_bod_timetables", api_key)
 
                 route = Route.objects.get()
 
