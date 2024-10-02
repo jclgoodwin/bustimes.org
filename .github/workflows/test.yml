@@ -81,10 +81,11 @@ jobs:
         poetry run coverage run --concurrency=multiprocessing ./manage.py test --parallel 2 --keepdb
 
     - name: generate coverage report
-      run: poetry run coverage combine && poetry run coverage xml
+      run: poetry run coverage combine && poetry run coverage html
 
-    - uses: codecov/codecov-action@v4
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        fail_ci_if_error: false
-        files: ./coverage.xml
+    - name: Upload coverage
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.SPACE_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACE_SECRET_ACCESS_KEY }}
+        AWS_EC2_METADATA_DISABLED: true
+      run: aws s3 sync htmlcov s3://bustimes-coverage --delete --endpoint-url=https://ams3.digitaloceanspaces.com --acl=public-read
