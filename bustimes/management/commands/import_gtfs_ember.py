@@ -30,23 +30,37 @@ def get_calendars(feed) -> dict:
             start_date=row.start_date,
             end_date=row.end_date,
         )
-    Calendar.objects.bulk_create(calendars.values())
 
     if feed.calendar_dates is not None:
         calendar_dates = []
         for row in feed.calendar_dates.itertuples():
             operation = row.exception_type == 1
+
+            if (calendar := calendars.get(row.service_id)) is None:
+                calendar = Calendar(
+                    mon=False,
+                    tue=False,
+                    wed=False,
+                    thu=False,
+                    fri=False,
+                    sat=False,
+                    sun=False,
+                    start_date=row.date,  # dummy date
+                )
+                calendars[row.service_id] = calendar
             # 1: operates, 2: does not operate
             calendar_dates.append(
                 CalendarDate(
-                    calendar=calendars[row.service_id],
+                    calendar=calendar,
                     start_date=row.date,
                     end_date=row.date,
                     operation=operation,
                     special=operation,  # additional date of operation
                 )
             )
-        CalendarDate.objects.bulk_create(calendar_dates)
+
+    Calendar.objects.bulk_create(calendars.values())
+    CalendarDate.objects.bulk_create(calendar_dates)
 
     return calendars
 
