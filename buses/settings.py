@@ -320,8 +320,9 @@ else:
     DATA_DIR = BASE_DIR / "data"
 TNDS_DIR = DATA_DIR / "TNDS"
 
+# captchas
 TURNSTILE_SITEKEY = os.environ.get("TURNSTILE_SITEKEY", "0x4AAAAAAAFWiyCqdh2c-5sy")
 TURNSTILE_SECRET = os.environ.get("TURNSTILE_SECRET")
 
-ABBREVIATE_HOURLY = False
-DISABLE_REGISTRATION = True
+ABBREVIATE_HOURLY = False  # we override this in some tests, that's all
+DISABLE_REGISTRATION = os.environ.get("DISABLE_REGISTRATION", False)
