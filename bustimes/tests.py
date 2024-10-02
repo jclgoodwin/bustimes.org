@@ -298,26 +298,24 @@ class BusTimesTest(TestCase):
             Route(
                 code="1",
                 source=sources[0],
-                id=1,
                 revision_number=171,
                 start_date=date(2023, 2, 26),
             ),
             Route(
                 code="2",
                 source=sources[0],
-                id=2,
                 revision_number=165,
                 start_date=date(2023, 2, 19),
             ),
             Route(
                 code="3",
                 source=sources[0],
-                id=3,
                 revision_number=172,
                 start_date=date(2023, 3, 5),
             ),
         ]
         Route.objects.bulk_create(routes)
+
         self.assertEqual(get_routes(routes, when=date(2023, 2, 22)), routes[1:2])
         self.assertEqual(get_routes(routes, when=date(2023, 3, 22)), routes[2:])
 
@@ -326,7 +324,6 @@ class BusTimesTest(TestCase):
 
         routes = [
             Route(
-                id=1,
                 service_code="683",
                 code="86-683-_-y05-60196",
                 revision_number=3,
@@ -334,7 +331,6 @@ class BusTimesTest(TestCase):
                 source=source,
             ),
             Route(
-                id=2,
                 service_code="683",
                 code="86-683-_-y05-60197",  # highest Service Change Number in filename
                 revision_number=3,
@@ -342,7 +338,6 @@ class BusTimesTest(TestCase):
                 source=source,
             ),
             Route(
-                id=3,
                 service_code="683",
                 code="86-683-_-y05-59862",
                 revision_number=3,
@@ -350,12 +345,12 @@ class BusTimesTest(TestCase):
                 source=source,
             ),
         ]
-
         Route.objects.bulk_create(routes)
+
         gotten_routes = get_routes(routes, when=date(2023, 2, 12))
         self.assertEqual(len(gotten_routes), 1)
         self.assertEqual(gotten_routes[0].code, "86-683-_-y05-60197")
-        self.assertEqual(gotten_routes[0].id, 2)
+        self.assertEqual(gotten_routes[0], routes[1])
 
         self.assertFalse(get_routes([]), 2)
 
