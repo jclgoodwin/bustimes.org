@@ -31,10 +31,12 @@ def get_calendars(feed) -> dict:
             end_date=row.end_date,
         )
 
+    calendar_dates = []
+
     if feed.calendar_dates is not None:
-        calendar_dates = []
         for row in feed.calendar_dates.itertuples():
             operation = row.exception_type == 1
+            # 1: operates, 2: does not operate
 
             if (calendar := calendars.get(row.service_id)) is None:
                 calendar = Calendar(
@@ -48,7 +50,6 @@ def get_calendars(feed) -> dict:
                     start_date=row.date,  # dummy date
                 )
                 calendars[row.service_id] = calendar
-            # 1: operates, 2: does not operate
             calendar_dates.append(
                 CalendarDate(
                     calendar=calendar,
