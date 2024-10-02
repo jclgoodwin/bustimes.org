@@ -158,30 +158,27 @@ class GTFSRTTest(TestCase):
                     "OPTIONS": {"connection_class": fakeredis.FakeConnection},
                 }
             },
-        ):
-            with vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):
-                # trip with some delays
-                with self.assertNumQueries(7):
-                    response = self.client.get(self.trip.get_absolute_url())
-                self.assertContains(response, '"06:47"')
+        ), vcr.use_cassette("fixtures/vcr/nta_ie_trip_updates.yaml"):
+            # trip with some delays
+            with self.assertNumQueries(7):
+                response = self.client.get(self.trip.get_absolute_url())
+            self.assertContains(response, '"06:47"')
 
-                response = self.client.get("/trip_updates")
-                self.assertContains(response, "1785 trip_updates")
-                self.assertContains(response, "2 matching trips")
+            response = self.client.get("/trip_updates")
+            self.assertContains(response, "1785 trip_updates")
+            self.assertContains(response, "2 matching trips")
 
-                response = self.client.get(
-                    "/stops/8250DB000429?date=2022-05-04&time=05:00"
-                )
-                self.assertContains(response, "Ex&shy;pected")
-                self.assertContains(response, "Sched&shy;uled")
-                self.assertContains(response, "06:52")
-                self.assertContains(
-                    response, "<del>06:45</del>", html=True
-                )  # cancelled - struck through
+            response = self.client.get("/stops/8250DB000429?date=2022-05-04&time=05:00")
+            self.assertContains(response, "Ex&shy;pected")
+            self.assertContains(response, "Sched&shy;uled")
+            self.assertContains(response, "06:52")
+            self.assertContains(
+                response, "<del>06:45</del>", html=True
+            )  # cancelled - struck through
 
-                # cancelled trip:
-                response = self.client.get(self.cancellable_trip.get_absolute_url())
-                self.assertTrue(response.context["stops_json"])
+            # cancelled trip:
+            response = self.client.get(self.cancellable_trip.get_absolute_url())
+            self.assertTrue(response.context["stops_json"])
 
     def test_no_feed(self):
         with patch("departures.gtfsr.get_feed_entities", return_value=None):

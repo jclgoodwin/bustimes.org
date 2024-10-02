@@ -102,7 +102,8 @@ class Command(ImportLiveVehiclesCommand):
             return latest_journey
 
         journey.service = Service.objects.filter(
-            Q(route__line_name__iexact=journey.route_name) | Q(route__line_name__iexact=f"G{journey.route_name}"),
+            Q(route__line_name__iexact=journey.route_name)
+            | Q(route__line_name__iexact=f"G{journey.route_name}"),
             operator=vehicle.operator_id,
             current=True,
         ).first()

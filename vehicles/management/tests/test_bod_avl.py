@@ -136,18 +136,16 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
             with mock.patch(
                 "vehicles.management.import_live_vehicles.redis_client", redis_client
-            ):
-                with mock.patch(
-                    "vehicles.management.commands.import_bod_avl.redis_client",
-                    redis_client,
-                ):
-                    with use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette:
-                        command.update()
+            ), mock.patch(
+                "vehicles.management.commands.import_bod_avl.redis_client",
+                redis_client,
+            ), use_cassette(str(self.vcr_path / "bod_avl.yaml")) as cassette:
+                command.update()
 
-                        cassette.rewind()
+                cassette.rewind()
 
-                        with self.assertNumQueries(0):
-                            command.update()
+                with self.assertNumQueries(0):
+                    command.update()
 
             self.assertEqual(841, len(command.identifiers))
 
@@ -273,30 +271,28 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         with mock.patch(
             "vehicles.management.import_live_vehicles.redis_client", redis_client
+        ), mock.patch(
+            "vehicles.management.commands.import_bod_avl.redis_client", redis_client
+        ), mock.patch(
+            "vehicles.management.commands.import_bod_avl.Command.get_items",
+            return_value=items,
         ):
-            with mock.patch(
-                "vehicles.management.commands.import_bod_avl.redis_client", redis_client
-            ):
-                with mock.patch(
-                    "vehicles.management.commands.import_bod_avl.Command.get_items",
-                    return_value=items,
-                ):
-                    with self.assertNumQueries(42):
-                        wait = command.update()
-                    self.assertEqual(11, wait)
+            with self.assertNumQueries(42):
+                wait = command.update()
+            self.assertEqual(11, wait)
 
-                    with self.assertNumQueries(0):
-                        wait = command.update()
-                    self.assertEqual(11, wait)
+            with self.assertNumQueries(0):
+                wait = command.update()
+            self.assertEqual(11, wait)
 
-                    items[0]["RecordedAtTime"] = "2020-10-30T05:09:00+00:00"
-                    with self.assertNumQueries(1):
-                        command.update()
+            items[0]["RecordedAtTime"] = "2020-10-30T05:09:00+00:00"
+            with self.assertNumQueries(1):
+                command.update()
 
-                    items[0]["RecordedAtTime"] = "2020-10-30T05:10:00+00:00"
-                    items[0]["OriginAimedDepartureTime"] = "2020-10-30T09:00:00+00:00"
-                    with self.assertNumQueries(1):
-                        wait = command.update()
+            items[0]["RecordedAtTime"] = "2020-10-30T05:10:00+00:00"
+            items[0]["OriginAimedDepartureTime"] = "2020-10-30T09:00:00+00:00"
+            with self.assertNumQueries(1):
+                wait = command.update()
 
         journeys = VehicleJourney.objects.all()
 
@@ -313,9 +309,10 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         self.assertEqual(journey.vehicle.reg, "DW18HAM")
 
         # test operator map
-        with mock.patch("vehicles.views.redis_client", redis_client):
-            with self.assertNumQueries(1):
-                response = self.client.get("/vehicles.json?operator=HAMS")
+        with mock.patch(
+            "vehicles.views.redis_client", redis_client
+        ), self.assertNumQueries(1):
+            response = self.client.get("/vehicles.json?operator=HAMS")
         json = response.json()
         self.assertEqual(
             json,
@@ -393,17 +390,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             # test history view
             whippet_journey = VehicleJourney.objects.get(vehicle__operator="WHIP")
 
-            with time_machine.travel("2020-06-17"):
-                with self.assertNumQueries(7):
-                    response = self.client.get(whippet_journey.get_absolute_url())
-
-                # with patch("django.core.cache.cache.set") as mock_cache_set:
-                #     response = self.client.get(whippet_journey.get_absolute_url())
-                #     mock_cache_set.assert_called_with(
-                #         f"vehicle:{whippet_journey.vehicle_id}:dates",
-                #         [date(2020, 6, 17)],
-                #         86400.0
-                #     )
+            with time_machine.travel("2020-06-17"), self.assertNumQueries(7):
+                response = self.client.get(whippet_journey.get_absolute_url())
 
             self.assertContains(
                 response, '<a href="/services/u/vehicles?date=2020-06-17">UU</a>'
@@ -424,7 +412,6 @@ class BusOpenDataVehicleLocationsTest(TestCase):
     def test_handle_item(self):
         command = import_bod_avl.Command()
         command.source = self.source
-        # command.get_operator.cache_clear()
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
@@ -527,20 +514,21 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 )
             self.assertEqual(response.status_code, 400)
 
-            with mock.patch("vehicles.views.redis_client.geosearch", return_value=[]):
-                with self.assertNumQueries(0):
-                    response = self.client.get(
-                        "/vehicles.json?ymax=52.3&xmax=1.7&ymin=52.3&xmin=1.6"
-                    )
+            with (
+                mock.patch("vehicles.views.redis_client.geosearch", return_value=[]),
+                self.assertNumQueries(0),
+            ):
+                response = self.client.get(
+                    "/vehicles.json?ymax=52.3&xmax=1.7&ymin=52.3&xmin=1.6"
+                )
             self.assertEqual(response.json(), [])
 
             with mock.patch(
                 "vehicles.views.redis_client.geosearch", return_value=[vehicle.id]
-            ):
-                with self.assertNumQueries(1):
-                    response = self.client.get(
-                        "/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6"
-                    )
+            ), self.assertNumQueries(1):
+                response = self.client.get(
+                    "/vehicles.json?ymax=52.4&xmax=1.7&ymin=52.3&xmin=1.6"
+                )
             self.assertEqual(
                 response.json(),
                 [

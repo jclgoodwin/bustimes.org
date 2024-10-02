@@ -72,9 +72,8 @@ class FlixbusTest(TestCase):
         with patch(
             "bustimes.management.commands.import_gtfs_flixbus.download_if_modified",
             return_value=(False, None),
-        ):
-            with self.assertNumQueries(2):
-                call_command("import_gtfs_flixbus")
+        ), self.assertNumQueries(2):
+            call_command("import_gtfs_flixbus")
 
     @time_machine.travel("2023-01-01")
     def test_import_gtfs_flixbus(self):
@@ -139,12 +138,11 @@ class FlixbusTest(TestCase):
         with patch(
             "vehicles.management.import_live_vehicles.redis_client",
             fakeredis.FakeStrictRedis(),
-        ):
-            with vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
-                with self.assertNumQueries(58):
-                    command.update()
-                with self.assertNumQueries(41):
-                    command.update()
+        ), vcr.use_cassette(str(FIXTURES_DIR / "ember_gtfsr.yml")):
+            with self.assertNumQueries(58):
+                command.update()
+            with self.assertNumQueries(41):
+                command.update()
 
         response = self.client.get(service.get_absolute_url())
         self.assertContains(

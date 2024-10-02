@@ -194,10 +194,12 @@ class VehiclesTests(TestCase):
         )
 
         # last seen today - should only show time, should link to map
-        with time_machine.travel("2020-10-20 12:00+01:00"):
-            with self.assertNumQueries(3):
-                with override_settings(ALLOW_VEHICLE_NOTES_OPERATORS=("LYNX",)):
-                    response = self.client.get("/operators/lynx/vehicles")
+        with (
+            time_machine.travel("2020-10-20 12:00+01:00"),
+            self.assertNumQueries(3),
+            override_settings(ALLOW_VEHICLE_NOTES_OPERATORS=("LYNX",)),
+        ):
+            response = self.client.get("/operators/lynx/vehicles")
 
         vehicles = response.context["vehicles"]
         self.assertEqual(vehicles[0].reg, "UWW2X")
@@ -224,9 +226,8 @@ class VehiclesTests(TestCase):
         self.assertNotContains(response, "/operators/lynx/map")
 
         # last seen yesterday - should show date
-        with time_machine.travel("2020-10-21 00:10+01:00"):
-            with self.assertNumQueries(3):
-                response = self.client.get("/operators/lynx/vehicles")
+        with time_machine.travel("2020-10-21 00:10+01:00"), self.assertNumQueries(3):
+            response = self.client.get("/operators/lynx/vehicles")
         self.assertContains(response, "20 Oct")
         self.assertNotContains(response, "/operators/lynx/map")
 
@@ -245,11 +246,12 @@ class VehiclesTests(TestCase):
         self.assertEqual(200, response.status_code)
 
         # can't connect to redis - no drama
-        with override_settings(REDIS_URL="redis://localhose:69"):
-            with self.assertNumQueries(3):
-                response = self.client.get(
-                    f"/vehicles/{self.vehicle_1.id}/journeys/{self.journey.id}.json"
-                )
+        with override_settings(REDIS_URL="redis://localhose:69"), self.assertNumQueries(
+            3
+        ):
+            response = self.client.get(
+                f"/vehicles/{self.vehicle_1.id}/journeys/{self.journey.id}.json"
+            )
         self.assertEqual(
             {
                 "code": "",

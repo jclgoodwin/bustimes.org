@@ -9,7 +9,7 @@ interactions:
     method: GET
     uri: http://api.tfl.gov.uk/StopPoint/490014721F/arrivals
   response:
-    body: {string: !!python/unicode ''}
+    body: {string: ''}
     headers:
       accept-ranges: [bytes]
       age: ['0']

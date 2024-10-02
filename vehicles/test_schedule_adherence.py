@@ -291,11 +291,10 @@ class ScheduleAdherenceTest(TestCase):
                 self.assertContains(response, "10:59")  # expected time
 
             # past the scheduled time
-            with time_machine.travel("2024-02-16T10:50:00Z"):
-                with self.assertNumQueries(8):
-                    response = self.client.get("/stops/210021509680/departures")
-                    self.assertContains(response, "10:43")  # scheduled time
-                    self.assertContains(response, "10:59")  # expected time
+            with time_machine.travel("2024-02-16T10:50:00Z"), self.assertNumQueries(8):
+                response = self.client.get("/stops/210021509680/departures")
+                self.assertContains(response, "10:43")  # scheduled time
+                self.assertContains(response, "10:59")  # expected time
 
             # a long way off-route - no prediction
             redis_client.set(

@@ -742,11 +742,13 @@ class ImportTransXChangeTest(TestCase):
         response = self.client.get(f"/sources/{service.source_id}")
         self.assertContains(response, "32-20-_-y10-1")
 
-        with patch("boto3.client"):
-            with TemporaryDirectory() as data_dir:
-                with override_settings(DATA_DIR=Path(data_dir)):
-                    with self.assertRaises(FileNotFoundError):
-                        self.client.get(route.get_absolute_url())
+        with (
+            patch("boto3.client"),
+            TemporaryDirectory() as data_dir,
+            override_settings(DATA_DIR=Path(data_dir)),
+            self.assertRaises(FileNotFoundError),
+        ):
+            self.client.get(route.get_absolute_url())
 
     def test_multiple_operators(self):
         """
@@ -755,9 +757,8 @@ class ImportTransXChangeTest(TestCase):
 
         with self.assertLogs(
             "bustimes.management.commands.import_transxchange", "WARNING"
-        ) as cm:
-            with patch("os.path.getmtime", return_value=1582385679):
-                self.write_files_to_zipfile_and_import("EA.zip", ["SVRABAO421.xml"])
+        ) as cm, patch("os.path.getmtime", return_value=1582385679):
+            self.write_files_to_zipfile_and_import("EA.zip", ["SVRABAO421.xml"])
         service = Service.objects.get()
         self.assertTrue(service.current)
 
@@ -891,11 +892,8 @@ class ImportTransXChangeTest(TestCase):
     def test_different_notes_in_same_row(self):
         with self.assertLogs(
             "bustimes.management.commands.import_transxchange", "WARNING"
-        ) as cm:
-            with patch("os.path.getmtime", return_value=0):
-                call_command(
-                    "import_transxchange", FIXTURES_DIR / "twm_3-74-_-y11-1.xml"
-                )
+        ) as cm, patch("os.path.getmtime", return_value=0):
+            call_command("import_transxchange", FIXTURES_DIR / "twm_3-74-_-y11-1.xml")
 
         self.assertEqual(
             cm.output,
@@ -999,9 +997,8 @@ class ImportTransXChangeTest(TestCase):
         # self.assertContains(res, 'Timetable changes from <a href="?date=2017-09-03">Sunday 3 September 2017</a>')
         # self.assertContains(res, f'data-service="{service.id},{duplicate.id}"></div')
 
-        with time_machine.travel("1 October 2017"):
-            with self.assertNumQueries(17):
-                res = self.client.get(service.get_absolute_url())
+        with time_machine.travel("1 October 2017"), self.assertNumQueries(17):
+            res = self.client.get(service.get_absolute_url())
         # self.assertContains(res, """
         #         <thead>
         #             <tr>
@@ -1036,9 +1033,8 @@ class ImportTransXChangeTest(TestCase):
             "Glossop - Piccadilly Gardens, Manchester City Centre or Ashton Under Lyne",
         )
 
-        with time_machine.travel("1 October 2017"):
-            with self.assertNumQueries(11):
-                timetable = service.get_timetable(date(2017, 10, 3)).render()
+        with time_machine.travel("1 October 2017"), self.assertNumQueries(11):
+            timetable = service.get_timetable(date(2017, 10, 3)).render()
         self.assertEqual(str(timetable.date), "2017-10-03")
         self.assertEqual(27, len(timetable.groupings[1].trips))
         self.assertEqual(30, len(timetable.groupings[0].trips))

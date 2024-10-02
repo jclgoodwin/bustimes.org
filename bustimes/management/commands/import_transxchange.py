@@ -365,18 +365,19 @@ class Command(BaseCommand):
     def handle_sub_archive(self, archive, sub_archive_name):
         if sub_archive_name.startswith("__MACOSX"):
             return
-        with archive.open(sub_archive_name) as open_file:
-            with zipfile.ZipFile(open_file) as sub_archive:
-                for filename in sub_archive.namelist():
-                    if filename.startswith("__MACOSX"):
-                        continue
-                    if filename.endswith(".xml"):
-                        with sub_archive.open(filename) as open_file:
-                            self.handle_file(
-                                open_file, f"{sub_archive_name}/{filename}"
-                            )
-                    elif filename.endswith(".zip"):
-                        self.handle_sub_archive(sub_archive, filename)
+
+        with (
+            archive.open(sub_archive_name) as open_file,
+            zipfile.ZipFile(open_file) as sub_archive,
+        ):
+            for filename in sub_archive.namelist():
+                if filename.startswith("__MACOSX"):
+                    continue
+                if filename.endswith(".xml"):
+                    with sub_archive.open(filename) as open_file:
+                        self.handle_file(open_file, f"{sub_archive_name}/{filename}")
+                elif filename.endswith(".zip"):
+                    self.handle_sub_archive(sub_archive, filename)
 
     def handle_archive(self, archive_name, filenames):
         self.service_ids = set()

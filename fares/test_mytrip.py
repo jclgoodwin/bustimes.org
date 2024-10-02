@@ -32,10 +32,12 @@ class MyTripTest(TestCase):
         path = Path(__file__).resolve().parent / "data"
 
         with use_cassette(str(path / "mytrip.yaml"), decode_compressed_response=True):
-            with patch("builtins.print") as mocked_print:
-                # fake inputting "NIBS" when asked for a matching operator code:
-                with patch("builtins.input", return_value="NIBS") as mocked_input:
-                    call_command("mytrip_ticketing", "")
+            # fake inputting "NIBS" when asked for a matching operator code:
+            with (
+                patch("builtins.print") as mocked_print,
+                patch("builtins.input", return_value="NIBS") as mocked_input,
+            ):
+                call_command("mytrip_ticketing", "")
 
             mocked_print.assert_called_with(
                 "✔️ ", self.midland_classic, "Midland Classic"

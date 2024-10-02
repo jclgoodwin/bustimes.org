@@ -228,12 +228,10 @@ class LiveDeparturesTest(TestCase):
         )
         Vehicle.objects.create(source=vehicle_source, code="686")
 
-        with time_machine.travel(datetime(2022, 6, 14, 12)):
-            with vcr.use_cassette(
-                "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
-            ):
-                with self.assertNumQueries(9):
-                    response = self.client.get(stop.get_absolute_url())
+        with time_machine.travel(datetime(2022, 6, 14, 12)), vcr.use_cassette(
+            "fixtures/vcr/edinburgh.yaml", decode_compressed_response=True
+        ), self.assertNumQueries(9):
+            response = self.client.get(stop.get_absolute_url())
         self.assertContains(response, '<a href="/vehicles/none-686#journeys/None">')
 
     def test_blend(self):
@@ -328,15 +326,17 @@ class LiveDeparturesTest(TestCase):
         CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
     )
     def test_worcestershire(self, mocked_log_vehicle_journey):
-        with time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"):
-            with vcr.use_cassette("fixtures/vcr/worcester.yaml"):
-                with self.assertNumQueries(9):
-                    response = self.client.get(self.worcester_stop.get_absolute_url())
+        with (
+            time_machine.travel("Sat Feb 09 10:45:45 GMT 2019"),
+            vcr.use_cassette("fixtures/vcr/worcester.yaml"),
+        ):
+            with self.assertNumQueries(9):
+                response = self.client.get(self.worcester_stop.get_absolute_url())
 
-                self.client.force_login(self.user)
-                debug_response = self.client.get(
-                    f"{self.worcester_stop.get_absolute_url()}/debug"
-                )
+            self.client.force_login(self.user)
+            debug_response = self.client.get(
+                f"{self.worcester_stop.get_absolute_url()}/debug"
+            )
 
         trip_url = f"{self.trip.get_absolute_url()}"
 
