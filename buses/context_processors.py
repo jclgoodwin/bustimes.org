@@ -10,7 +10,4 @@ def ad(request):
     ):
         return {"ad": False}
 
-    if request.headers.get("cf-connecting-ip", "").startswith("138.38.229."):
-        return {"ad": not path.startswith("/stops/")}
-
     return {"ad": True}
