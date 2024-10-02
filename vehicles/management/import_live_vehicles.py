@@ -95,7 +95,7 @@ class ImportLiveVehiclesCommand(BaseCommand):
     )
     def get_items(self):
         response = self.session.get(self.url, timeout=20)
-        assert response.ok or response.status == 404
+        assert response.ok
         return response.json()
 
     @staticmethod

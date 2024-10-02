@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import json
 
 import requests
@@ -30,7 +31,7 @@ def get_response(source, code):
         headers={"x-api-key": source.settings["x-api-key"]},
         timeout=3,
     )
-    if response.status_code == 404:
+    if response.status_code == HTTPStatus.NOT_FOUND:
         raise Http404
     assert response.ok
     return response.json()
