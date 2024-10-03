@@ -567,20 +567,27 @@ def tfl_vehicle(request, reg: str):
     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
         service = None
 
-    if service and not vehicle:
+    if service:
         try:
             operator = service.operator.get()
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
-            pass
+            operator = None
         else:
-            vehicle = Vehicle.objects.create(code=reg, reg=reg, operator=operator)
-            VehicleCode.objects.create(vehicle=vehicle, code=f"TFLO:{reg}")
+            if not vehicle and not reg.startswith("TMP"):
+                vehicle = Vehicle.objects.create(code=reg, reg=reg, operator=operator)
+                VehicleCode.objects.create(vehicle=vehicle, code=f"TFLO:{reg}")
 
     stops = StopPoint.objects.in_bulk(atco_codes)
     if not stops:
         stops = StopArea.objects.in_bulk(atco_codes)
 
+    route_links = {
+        (link.from_stop_id, link.to_stop_id): link
+        for link in (service.routelink_set.all() if service else ())
+    }
+
     times = []
+    prev_stop = None
     for i, item in enumerate(data):
         expected_arrival = timezone.localtime(parse_datetime(item["expectedArrival"]))
         expected_arrival = round(expected_arrival.timestamp() / 60) * 60
@@ -603,12 +610,31 @@ def tfl_vehicle(request, reg: str):
             if stop.latlong:
                 time["stop"]["location"] = stop.latlong.coords
 
+            if prev_stop:
+                route_link = route_links.get((prev_stop.atco_code, stop.atco_code))
+                if route_link:
+                    time["track"] = route_link.geometry.coords
+
         if item["platformName"] and item["platformName"] != "null":
             time["stop"]["icon"] = item["platformName"]
 
         times.append(time)
 
-    stops_json = json.dumps({"times": times})
+        prev_stop = stop
+
+    stops_data = {"times": times}
+    if service:
+        stops_data["service"] = {
+            # "id": service.id,
+            "line_name": service.line_name,
+            "slug": service.slug,
+        }
+        if operator:
+            stops_data["operator"] = {
+                "noc": operator.noc,
+                "name": operator.name,
+                "slug": operator.slug,
+            }
 
     return render(
         request,
@@ -617,7 +643,7 @@ def tfl_vehicle(request, reg: str):
             "breadcrumb": [service],
             "data": data,
             "object": vehicle,
-            "stops_json": mark_safe(stops_json),
+            "stops_data": stops_data,
         },
     )
 

@@ -5,7 +5,6 @@ import * as Sentry from "@sentry/react";
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import { Trip } from "./TripTimetable";
 import ServiceMap from "./ServiceMap";
 const History = lazy(() => import("./History"));
 const MapRouter = lazy(() => import("./MapRouter"));
@@ -42,7 +41,6 @@ if (process.env.NODE_ENV === "production") {
 declare global {
   interface Window {
     SERVICE_ID?: number;
-    STOPS?: Trip;
     OPERATOR_ID?: string;
     VEHICLE_ID: number;
     globalThis: Window;

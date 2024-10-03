@@ -12,11 +12,9 @@
 {% endblock %}
 
 {% block footer %}
-    <script>
-        window.STOPS = {{ stops_json }};
-        {% if object.route.service.tracking %}
-            window.TRIP_ID = {{ object.id }};
-        {% endif %}
-    </script>
+    <script id="trip-data" type="application/json">{{ stops_json }}</script>
+    {% if object.route.service.tracking %}
+        <script>window.TRIP_ID = {{ object.id }};</script>
+    {% endif %}
     <script src="{% static 'dist/js/app.js' %}"></script>
 {% endblock %}

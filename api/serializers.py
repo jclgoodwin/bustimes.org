@@ -193,10 +193,12 @@ class TripSerializer(serializers.ModelSerializer):
         if not hasattr(obj, "stops"):
             return
 
-        route_links = {}
-        if obj.route.service:
-            for link in obj.route.service.routelink_set.all():
-                route_links[(link.from_stop_id, link.to_stop_id)] = link
+        route_links = {
+            (link.from_stop_id, link.to_stop_id): link
+            for link in (
+                obj.route.service.routelink_set.all() if obj.route.service else ()
+            )
+        }
         previous_stop_id = None
 
         for stop_time in obj.stops:
