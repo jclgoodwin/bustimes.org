@@ -16,7 +16,7 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=off PIP_DISABL
 
 # install GDAL (https://docs.djangoproject.com/en/5.1/ref/contrib/gis/install/geolibs/)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl binutils libproj-dev gdal-bin && \
+    apt-get install -y --no-install-recommends binutils libproj-dev gdal-bin && \
     rm -rf /var/lib/apt && \
     rm -rf /var/lib/dpkg/info/*
 

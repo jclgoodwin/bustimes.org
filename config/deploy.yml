@@ -29,8 +29,9 @@ servers:
         - AWS_ACCESS_KEY_ID
         - AWS_SECRET_ACCESS_KEY
         - NEW_VEHICLE_WEBHOOK_URL
+
 builder:
-  multiarch: false
+  arch: amd64
 
 # Credentials for your image host.
 registry:
@@ -44,23 +45,9 @@ registry:
 
 asset_path: /staticfiles
 
-# Configure a custom healthcheck (default is /up on port 3000)
-healthcheck:
-  path: /version
-  port: 8000
-
-# use `kamal traefik reboot --hosts=HOST` to deploy changes to this - best not to do all hosts at once
-traefik:
-  args:
-    accesslog: true
-    accesslog.fields.headers.names.user-agent: keep
-    accesslog.fields.headers.names.referer: keep
-    entrypoints.http.address: ":80" # for some reason, if trustedIPs is set then this must be set too
-    entrypoints.http.forwardedHeaders.trustedIPs: 10.131.0.0/16
-
-#accessories:
-#  valkey:
-#    service: valkey
-#    image: valkey/valkey
-#    roles:
-#      - redis
+proxy:
+  app_port: 8000
+  healthcheck:
+    path: /version
+  buffering:
+    responses: false

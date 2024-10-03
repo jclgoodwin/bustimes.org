@@ -4,6 +4,7 @@
 /data
 /node_modules/
 /staticfiles/
+/.kamal/secrets
 /.env
 /.coverage
 /slim-bustimes.sql
