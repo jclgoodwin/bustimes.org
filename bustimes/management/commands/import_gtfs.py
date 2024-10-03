@@ -244,7 +244,7 @@ class Command(BaseCommand):
             trip = trips[trip_id]
             if trip.start is None:
                 logger.warning(f"trip {trip_id} has no stop times")
-                del trips[trip_id]
+                trips[trip_id] = None
 
         Trip.objects.bulk_create(
             [trip for trip in trips.values() if isinstance(trip, Trip)],
