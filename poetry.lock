@@ -750,25 +750,24 @@ dev = ["black", "codecov", "pre-commit", "pytest (>=3.1.0)", "pytest-cov", "pyte
 
 [[package]]
 name = "gtfs-kit"
-version = "6.1.1"
-description = "A Python 3.9+ library for analyzing GTFS feeds."
+version = "8.1.1"
+description = "A Python library for analyzing GTFS feeds."
 optional = false
-python-versions = "<4,>=3.9"
+python-versions = ">=3.10"
 files = [
-    {file = "gtfs_kit-6.1.1-py3-none-any.whl", hash = "sha256:9f2c2edfb2df6da467cc76baf665680f6826446495789cc3cd276b70cb63582b"},
-    {file = "gtfs_kit-6.1.1.tar.gz", hash = "sha256:1ef60cd67f92fbc7811165c3fbce993fcab11402908d1765360ee8b69f59e786"},
+    {file = "gtfs_kit-8.1.1-py3-none-any.whl", hash = "sha256:f655cbe423c6201d98bb0019365f58a0bd8c4220fb4a8f7c7767d183f324cd17"},
+    {file = "gtfs_kit-8.1.1.tar.gz", hash = "sha256:ed008bf251dd02c840d542160d3c98c241fe4ad816d802e1db911c240aa09be6"},
 ]
 
 [package.dependencies]
 folium = ">=0"
-geopandas = ">=0"
+geopandas = ">=1"
 json2html = ">=1"
 pandas = ">=2.2.2"
 pycountry = ">=19"
 requests = ">=2"
 rtree = ">=0"
 shapely = ">=1.8"
-utm = ">=0.6"
 
 [[package]]
 name = "gtfs-realtime-bindings"
@@ -2402,16 +2401,6 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "p
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
-name = "utm"
-version = "0.7.0"
-description = "Bidirectional UTM-WGS84 converter for python"
-optional = false
-python-versions = "*"
-files = [
-    {file = "utm-0.7.0.tar.gz", hash = "sha256:3c9a3650e98bb6eecec535418d0dfd4db8f88c8ceaca112a0ff0787e116566e2"},
-]
-
-[[package]]
 name = "vcrpy"
 version = "6.0.1"
 description = "Automatically mock your HTTP interactions to simplify and speed up testing"
@@ -2765,4 +2754,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.14,>=3.11"
-content-hash = "d61345647419205d92dabed9d58bf88f00a4a83a107a778bb03bc5f863a13291"
+content-hash = "c10f17b41fe5fcee961e327560585887504b18eff5411d87789a01cb56a285c6"
