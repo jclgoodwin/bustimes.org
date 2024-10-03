@@ -41,7 +41,7 @@ from busstops.models import (
     StopUsage,
 )
 from departures import avl, gtfsr, live
-from vehicles.models import Vehicle
+from vehicles.models import Vehicle, VehicleCode
 from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
@@ -566,6 +566,15 @@ def tfl_vehicle(request, reg: str):
         )
     except (Service.DoesNotExist, Service.MultipleObjectsReturned):
         service = None
+
+    if service and not vehicle:
+        try:
+            operator = service.operator.get()
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
+            pass
+        else:
+            vehicle = Vehicle.objects.create(code=reg, reg=reg, operator=operator)
+            VehicleCode.objects.create(vehicle=vehicle, code=f"TFLO:{reg}")
 
     stops = StopPoint.objects.in_bulk(atco_codes)
     if not stops:
