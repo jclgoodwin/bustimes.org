@@ -90,7 +90,7 @@ class Command(BaseCommand):
 
         calendars = get_calendars(feed)
 
-        for row in gtfs_kit.routes.geometrize_routes(feed).itertuples():
+        for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
             if row.route_id in existing_services:
                 service = existing_services[row.route_id]
             else:
@@ -107,8 +107,8 @@ class Command(BaseCommand):
             service.description = route.description = row.route_long_name
             service.current = True
             service.colour_id = operator.colour_id
-            # service.region_id = "S"
-            service.geometry = row.geometry.wkt
+            if row.geometry:
+                service.geometry = row.geometry.wkt
 
             service.save()
             service.operator.add(operator)

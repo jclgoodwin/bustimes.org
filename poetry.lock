@@ -783,18 +783,18 @@ dev = ["black", "codecov", "pre-commit", "pytest (>=3.1.0)", "pytest-cov", "pyte
 
 [[package]]
 name = "gtfs-kit"
-version = "6.1.1"
-description = "A Python 3.9+ library for analyzing GTFS feeds."
+version = "7.0.0"
+description = "A Python library for analyzing GTFS feeds."
 optional = false
-python-versions = "<4,>=3.9"
+python-versions = ">=3.10"
 files = [
-    {file = "gtfs_kit-6.1.1-py3-none-any.whl", hash = "sha256:9f2c2edfb2df6da467cc76baf665680f6826446495789cc3cd276b70cb63582b"},
-    {file = "gtfs_kit-6.1.1.tar.gz", hash = "sha256:1ef60cd67f92fbc7811165c3fbce993fcab11402908d1765360ee8b69f59e786"},
+    {file = "gtfs_kit-7.0.0-py3-none-any.whl", hash = "sha256:2afe2b181b8d59c688a8d4395be06368d579281060792a45332a61ff611b744c"},
+    {file = "gtfs_kit-7.0.0.tar.gz", hash = "sha256:a9bf6ed50bdd367a19be646e9bafc47fedbcd1a75e7a1c2bc6476ad6ab3373ab"},
 ]
 
 [package.dependencies]
 folium = ">=0"
-geopandas = ">=0"
+geopandas = ">=1"
 json2html = ">=1"
 pandas = ">=2.2.2"
 pycountry = ">=19"
@@ -2862,4 +2862,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "<3.13,>=3.11"
-content-hash = "2b0ed2f9a056c285466f3f60c36c2e9bb4ddae54984032ca1e100d2aa72e951c"
+content-hash = "ebf65b1e51950bb1eeda788680f89febbfd88e0a23a867ba0e721038ecc83a02"

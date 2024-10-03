@@ -66,8 +66,12 @@ class Command(BaseCommand):
         }
 
         geometries = {}
-        for row in gtfs_kit.routes.geometrize_routes(feed).itertuples():
-            geometries[row.route_id] = row.geometry.wkt
+        for row in (
+            gtfs_kit.routes.filter("shape").get_routes(feed, as_gdf=True).itertuples()
+        ):
+            if row.geometry:
+                print(row.geometry, row.geometry.wkt)
+                geometries[row.route_id] = row.geometry.wkt
 
         for row in feed.routes.itertuples():
             line_name = row.route_id.removeprefix("UK")

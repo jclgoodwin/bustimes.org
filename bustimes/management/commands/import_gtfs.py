@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 import gtfs_kit
+from shapely.errors import EmptyPartError, GEOSException
 from zipfile import BadZipFile
 from numpy import nan
 from django.conf import settings
@@ -178,10 +179,10 @@ class Command(BaseCommand):
             self.handle_route(route)
 
         try:
-            for route in gtfs_kit.routes.geometrize_routes(feed).itertuples():
+            for route in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
                 self.routes[route.route_id].service.geometry = route.geometry.wkt
                 self.routes[route.route_id].service.save(update_fields=["geometry"])
-        except ValueError:
+        except (ValueError, EmptyPartError, GEOSException):
             pass
 
         stops, stops_not_created = self.do_stops(feed)
