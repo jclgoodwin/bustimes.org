@@ -16,10 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_calendars(feed) -> dict:
-    calendars = {}
-
-    for row in feed.calendar.itertuples():
-        calendars[row.service_id] = Calendar(
+    calendars = {
+        row.service_id: Calendar(
             mon=row.monday,
             tue=row.tuesday,
             wed=row.wednesday,
@@ -30,6 +28,8 @@ def get_calendars(feed) -> dict:
             start_date=row.start_date,
             end_date=row.end_date,
         )
+        for row in feed.calendar.itertuples()
+    }
 
     calendar_dates = []
 
