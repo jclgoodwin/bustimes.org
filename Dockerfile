@@ -35,8 +35,8 @@ COPY --from=0 /app/node_modules/reqwest/reqwest.min.js /app/node_modules/reqwest
 COPY --from=0 /app/busstops/static /app/busstops/static
 COPY . /app/
 
-ENV PORT=8000 SECRET_KEY=f STATIC_ROOT=/staticfiles
-RUN ./manage.py collectstatic --noinput
+ENV PORT=8000 STATIC_ROOT=/staticfiles
+RUN SECRET_KEY= ./manage.py collectstatic --noinput
 
 EXPOSE 8000
 ENTRYPOINT ["gunicorn", "buses.wsgi"]
