@@ -517,8 +517,9 @@ export default function BigMap(props: {
                 vehiclesLength.current = items.length;
                 setVehicles(items);
               });
+              setLoadingBuses(false);
             }
-            setLoadingBuses(false);
+
             if (!document.hidden) {
               timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
             }
@@ -668,8 +669,6 @@ export default function BigMap(props: {
         } else {
           boundsRef.current = bounds;
         }
-      } else {
-        setLoadingBuses(false);
       }
       setZoom(zoom);
     }
