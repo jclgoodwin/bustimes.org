@@ -107,7 +107,7 @@ class LiveDeparturesTest(TestCase):
         StopUsage.objects.create(
             stop_id=cls.worcester_stop.pk, service=worcester_44, order=1
         )
-        cls.user = User.objects.create()
+        cls.user = User.objects.create(is_staff=True, is_superuser=True)
 
     def test_abstract(self):
         departures = sources.RemoteDepartures(None, ())
