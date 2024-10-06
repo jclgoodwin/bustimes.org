@@ -85,17 +85,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.35.32"
+version = "1.35.34"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.35.32-py3-none-any.whl", hash = "sha256:786a243f4b4827c6ae149442bf544c2ae449570cf23616a5d386f7a2633e0e08"},
-    {file = "boto3-1.35.32.tar.gz", hash = "sha256:a7652962897340d34bc930ffc9311dcc441da975dd1b904d0172b06adbea3601"},
+    {file = "boto3-1.35.34-py3-none-any.whl", hash = "sha256:291e7b97a34967ed93297e6171f1bebb8529e64633dd48426760e3fdef1cdea8"},
+    {file = "boto3-1.35.34.tar.gz", hash = "sha256:57e6ee8504e7929bc094bb2afc879943906064179a1e88c23b4812e2c6f61532"},
 ]
 
 [package.dependencies]
-botocore = ">=1.35.32,<1.36.0"
+botocore = ">=1.35.34,<1.36.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -104,13 +104,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.35.32"
+version = "1.35.34"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.35.32-py3-none-any.whl", hash = "sha256:2c0c2b62dd156daf904525f3f523ae22bf34ac109d727acf0bbfbca291440fc3"},
-    {file = "botocore-1.35.32.tar.gz", hash = "sha256:5ecbcd2f112e991b1f95c88ebb0f8df1a7c4ad9681aff80ec77e67cc4836eaa9"},
+    {file = "botocore-1.35.34-py3-none-any.whl", hash = "sha256:ccb0fe397b11b81c9abc0c87029d17298e17bf658d8db5c0c5a551a12a207e7a"},
+    {file = "botocore-1.35.34.tar.gz", hash = "sha256:789b6501a3bb4a9591c1fe10da200cc315c1fa5df5ada19c720d8ef06439b3e3"},
 ]
 
 [package.dependencies]
@@ -119,7 +119,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""}
 
 [package.extras]
-crt = ["awscrt (==0.21.5)"]
+crt = ["awscrt (==0.22.0)"]
 
 [[package]]
 name = "branca"
@@ -1948,13 +1948,13 @@ png = ["pypng"]
 
 [[package]]
 name = "redis"
-version = "5.1.0"
+version = "5.1.1"
 description = "Python client for Redis database and key-value store"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "redis-5.1.0-py3-none-any.whl", hash = "sha256:fd4fccba0d7f6aa48c58a78d76ddb4afc698f5da4a2c1d03d916e4fd7ab88cdd"},
-    {file = "redis-5.1.0.tar.gz", hash = "sha256:b756df1e4a3858fcc0ef861f3fc53623a96c41e2b1f5304e09e0fe758d333d40"},
+    {file = "redis-5.1.1-py3-none-any.whl", hash = "sha256:f8ea06b7482a668c6475ae202ed8d9bcaa409f6e87fb77ed1043d912afd62e24"},
+    {file = "redis-5.1.1.tar.gz", hash = "sha256:f6c997521fedbae53387307c5d0bf784d9acc28d9f1d058abeac566ec4dbed72"},
 ]
 
 [package.dependencies]
