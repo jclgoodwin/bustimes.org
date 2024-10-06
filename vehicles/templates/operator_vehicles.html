@@ -57,24 +57,19 @@
 <table class="fleet compact">
     <thead>
         <tr>
-            <th scope="col" colspan="2"></th>
-            {% if not parent %}<th scope="col" colspan="2">Last tracked</th>{% endif %}
+            <th scope="col" colspan="3"></th>
+            <th scope="col" colspan="2">Last tracked</th>
+            <th scope="col" colspan="{{ dates|length }}">{{ dates.0|date:"M" }}</th>
             <th scope="col">Type</th>
-            <th scope="col">Livery</th>
-            {% if branding_column %}<th scope="col">Branding</th>{% endif %}
-            {% if name_column %}<th scope="col" class="trivia">Name</th>{% endif %}
-            {% if notes_column %}<th scope="col" class="trivia">Notes</th>{% endif %}
-            {% if garage_column %}<th scope="col" class="trivia">Garage</th>{% endif %}
-            {% for col in columns %}<th scope="col" class="trivia">{{ col }}</th>{% endfor %}
-            {% if features_column %}<th scope="col" class="trivia">Special features</th>{% endif %}
-            {% if parent %}<th>Operator</th>{% endif %}
+            {% if garage_column %}<th>Garage</td>{% endif %}
+            {% if parent %}<th scope="col">Operator</th>{% endif %}
         </tr>
     </thead>
     <tbody>
-        {% for vehicle in vehicles %}
+        {% for vehicle in vehicles %}{% with url=vehicle.get_absolute_url %}
             <tr id="{{ vehicle.slug }}">
                 <td class="tabular"{% if not vehicle.reg %} colspan="2"{% endif %}>
-                    <a href="{{ vehicle.get_absolute_url }}">
+                    <a href="{{ url }}">
                         {% if vehicle.fleet_code or vehicle.fleet_number %}
                             {% firstof vehicle.fleet_code vehicle.fleet_number %}
                         {% elif not vehicle.reg %}
@@ -84,12 +79,18 @@
                 </td>
                 {% if vehicle.reg %}
                     <td>
-                        <a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>
+                        <a href="{{ url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>
                             {{ vehicle.get_reg }}
                         </a>
                     </td>
                 {% endif %}
-                {% if not parent %}<td class="last-seen">
+
+                    <td{% if vehicle.colours or vehicle.livery_id %} class="livery-cell"{% endif %}>
+                    {% if vehicle.colours or vehicle.livery_id %}<div class="livery{% if vehicle.livery_id %} livery-{{ vehicle.livery_id }}{% else %}" style="background:{{ vehicle.get_livery }}{% endif %}"></div>{% endif %}
+                    <!-- {% if vehicle.livery_name %}{{ vehicle.livery_name }}{% else %}{{ vehicle.branding }}{% endif %} -->
+                </td>
+
+                <td class="last-seen">
                     {{ vehicle.last_seen.service }}
                 </td>
                 <td class="last-seen">
@@ -100,25 +101,32 @@
                     {% else %}
                         {{ vehicle.last_seen.when|date:"j M Y" }}
                     {% endif %}
-                </td>{% endif %}
-                <td>{% if vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
-                <td{% if vehicle.colours or vehicle.livery_id %} class="livery-cell"{% endif %}{% if branding_column %}{% if not vehicle.branding or not vehicle.livery_id %} colspan="2"{% endif %}{% endif %}>
-                    {% if vehicle.colours or vehicle.livery_id %}<div class="livery{% if vehicle.livery_id %} livery-{{ vehicle.livery_id }}{% else %}" style="background:{{ vehicle.get_livery }}{% endif %}"></div>{% endif %}
-                    {% if vehicle.livery_name %}{{ vehicle.livery_name }}{% else %}{{ vehicle.branding }}{% endif %}
                 </td>
-                {% if vehicle.branding and vehicle.livery_id %}<td>{{ vehicle.branding }}</td>{% endif %}
+
+                {% for date in vehicle.dates %}
+                    <td>{% if date %}
+                        <a href="{{ url }}?date={{ date.isoformat }}">{{ date|date:"j" }}</a>
+                    {% endif %}</td>
+                {% endfor %}
+
+                <td>{% if vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% else %}{{ vehicle.vehicle_type_name|default:"" }}{% endif %}</td>
+                {% if notes_column %}<td>{% if not vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
+                {% if garage_column %}<td>{{ vehicle.garage_name|default:'' }}</td>{% endif %}
+
+                {% comment %}
                 {% if name_column %}<td class="trivia">{{ vehicle.name }}</td>{% endif %}
-                {% if notes_column %}<td class="trivia">{% if not vehicle.is_spare_ticket_machine %}{{ vehicle.notes }}{% endif %}</td>{% endif %}
-                {% if garage_column %}<td class="trivia">{{ vehicle.garage_name|default:'' }}</td>{% endif %}
+                {% if vehicle.branding and vehicle.livery_id %}<td>{{ vehicle.branding }}</td>{% endif %}
                 {% for value in vehicle.column_values %}<td class="trivia">{{ value }}</td>{% endfor %}
                 {% if features_column %}<td class="trivia">{{ vehicle.feature_names }}</td>{% endif %}
+                {% endcomment %}
+
                 {% if parent %}<td>{{ vehicle.operator }}</td>{% endif %}
                 <td>{{ vehicle.get_flickr_link }}</td>
                 {% if vehicle.is_editable %}
                     <td><a href="{{ vehicle.get_edit_url }}">Edit{% if vehicle.pending_edits %}<abbr title="pending edits">*</abbr>{% endif %}</a></td>
                 {% endif %}
             </tr>
-        {% endfor %}
+        {% endwith %}{% endfor %}
     </tbody>
 </table>
 </div>

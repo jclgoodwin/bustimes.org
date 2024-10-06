@@ -10,12 +10,12 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import GEOSException, Point
-from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
-from django.db.models import Case, F, Max, OuterRef, Q, When
+from django.db.models import Case, F, Max, OuterRef, Q, FilteredRelation, When
 from django.db.models.functions import Coalesce, Now
 from django.http import Http404, HttpResponse, HttpResponseBadRequest, JsonResponse
 from django.shortcuts import get_object_or_404, render
@@ -156,8 +156,8 @@ def get_vehicle_order(vehicle) -> tuple[str, int, str]:
 def operator_vehicles(request, slug=None, parent=None):
     """fleet list"""
 
-    operators = Operator.objects.select_related("region")
     if slug:
+        operators = Operator.objects.select_related("region")
         try:
             operator = operators.get(slug=slug.lower())
         except Operator.DoesNotExist:
@@ -167,7 +167,8 @@ def operator_vehicles(request, slug=None, parent=None):
         vehicles = operator.vehicle_set
     else:
         assert parent
-        operators = operators.filter(parent=parent).in_bulk()
+        operator = None
+        operators = Operator.objects.filter(parent=parent).in_bulk()
         if not operators:
             raise Http404
         vehicles = Vehicle.objects.filter(operator__in=operators)
@@ -175,25 +176,37 @@ def operator_vehicles(request, slug=None, parent=None):
     if "withdrawn" not in request.GET:
         vehicles = vehicles.filter(withdrawn=False)
 
-    vehicles = vehicles.order_by("fleet_number", "fleet_code", "reg", "code")
+    vehicles = vehicles.annotate(
+        pending_edits=Exists("vehiclerevision", filter=Q(pending=True))
+    )
 
-    if parent:
-        context = {}
-    else:
-        vehicles = vehicles.annotate(feature_names=features_string_agg)
-        vehicles = vehicles.annotate(
-            pending_edits=Exists("vehiclerevision", filter=Q(pending=True))
-        )
-        vehicles = vehicles.select_related("latest_journey")
+    context = {}
+    if operator:
+        context["object"] = operator
+        context["breadcrumb"] = [operator.region, operator]
 
-        context = {"object": operator, "breadcrumb": [operator.region, operator]}
+    vehicles = vehicles.select_related("latest_journey")
 
     vehicles = vehicles.annotate(
-        livery_name=F("livery__name"),
         vehicle_type_name=F("vehicle_type__name"),
         garage_name=Case(
             When(garage__name="", then="garage__code"),
             default="garage__name",
+        ),
+    )
+
+    now = timezone.localtime()
+    today = now.date()
+    month_ago = today - datetime.timedelta(days=14)
+    vehicles = vehicles.annotate(
+        recent_journeys=FilteredRelation(
+            "vehiclejourney",
+            condition=Q(vehiclejourney__datetime__date__range=(month_ago, today)),
+        ),
+        dates=ArrayAgg(
+            "recent_journeys__datetime__date",
+            distinct=True,
+            default=[],
         ),
     )
 
@@ -216,7 +229,11 @@ def operator_vehicles(request, slug=None, parent=None):
     else:
         paginator = None
 
-        context["features_column"] = any(vehicle.feature_names for vehicle in vehicles)
+    dates = [today - datetime.timedelta(days=i) for i in range(14)]
+    for v in vehicles:
+        v.dates = [date if date in v.dates else None for date in dates]
+
+    context["dates"] = dates
 
     columns = set(key for vehicle in vehicles if vehicle.data for key in vehicle.data)
     for vehicle in vehicles:
@@ -225,19 +242,21 @@ def operator_vehicles(request, slug=None, parent=None):
         ]
     context["columns"] = columns
 
-    if not parent:
-        now = timezone.localtime()
+    garage_names = set(
+        vehicle.garage_name for vehicle in vehicles if vehicle.garage_name
+    )
 
-        # midnight or 12 hours ago, whichever happened first
-        if now.hour >= 12:
-            today = now - datetime.timedelta(hours=now.hour, minutes=now.minute)
-            today = today.replace(second=0, microsecond=0)
-        else:
-            today = now - datetime.timedelta(hours=12)
+    # midnight or 12 hours ago, whichever happened first
+    if now.hour >= 12:
+        today = now - datetime.timedelta(hours=now.hour, minutes=now.minute)
+        today = today.replace(second=0, microsecond=0)
+    else:
+        today = now - datetime.timedelta(hours=12)
 
-        context["today"] = today
+    context["today"] = today
 
-        for vehicle in vehicles:
+    for vehicle in vehicles:
+        try:
             if vehicle.latest_journey:
                 when = vehicle.latest_journey.datetime
                 vehicle.last_seen = {
@@ -245,14 +264,12 @@ def operator_vehicles(request, slug=None, parent=None):
                     "when": when,
                     "today": when >= today,
                 }
+        except VehicleJourney.DoesNotExist:
+            pass
 
-        context["map"] = any(
-            hasattr(vehicle, "last_seen") and vehicle.last_seen["today"]
-            for vehicle in vehicles
-        )
-
-    garage_names = set(
-        vehicle.garage_name for vehicle in vehicles if vehicle.garage_name
+    context["map"] = any(
+        hasattr(vehicle, "last_seen") and vehicle.last_seen["today"]
+        for vehicle in vehicles
     )
 
     context = {
