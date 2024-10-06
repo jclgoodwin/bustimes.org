@@ -1271,7 +1271,9 @@ class ServiceDetailView(DetailView):
             generator = template.template.generate(
                 **context, ad=True, request=self.request
             )
-            return StreamingHttpResponse(generator, content_type="text/html")
+            return StreamingHttpResponse(
+                generator, content_type="text/html", headers={"X-Accel-Buffering": "no"}
+            )
 
         return super().render_to_response(context)
 
