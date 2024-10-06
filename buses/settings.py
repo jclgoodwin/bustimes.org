@@ -114,7 +114,7 @@ ASGI_APPLICATION = "buses.asgi.application"
 
 DATABASES = {"default": dj_database_url.config(conn_max_age=None)}
 
-DATABASES["default"]["options"] = {
+DATABASES["default"]["OPTIONS"] = {
     "application_name": os.environ.get("APPLICATION_NAME") or " ".join(sys.argv)[-63:],
     "connect_timeout": 9,
 }
