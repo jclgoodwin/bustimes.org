@@ -1272,7 +1272,9 @@ class ServiceDetailView(DetailView):
                 **context, ad=True, request=self.request
             )
             return StreamingHttpResponse(
-                generator, content_type="text/html", headers={"X-Accel-Buffering": "no"}
+                generator,
+                content_type="text/html",
+                headers={"X-Accel-Buffering": "no", "Cache-Control": "no-cache"},
             )
 
         return super().render_to_response(context)
