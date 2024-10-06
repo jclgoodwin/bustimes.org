@@ -17,21 +17,18 @@
     {% endif %}
 
     <p>
-        {% include "vehicle_revision.html" %}
+        {% include "vehicle_revision.html" with by_user=user %}
     </p>
 
 
 {% else %}
 
-    <h1>Edit vehicle details</h1>
-
     {% if pending_edits %}
-        <div class="message">
-            <p>❗ There’s already a pending edit for this vehicle</p>
-
-            {% include 'vehicle_revisions.html' with revisions=pending_edits %}
-        </div>
+        <p class="message">❗ This vehicle has already been edited recently:</p>
+        {% include 'vehicle_revisions.html' with revisions=pending_edits %}
     {% endif %}
+
+    <h1>Edit vehicle details</h1>
 
     <p>ID:<br>
     <code>{{ vehicle.id }}</code> <button class="button" onclick="javascript:navigator.clipboard.writeText('{{ vehicle.id }}');this.blur()">Copy</button></p>

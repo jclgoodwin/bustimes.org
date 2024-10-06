@@ -92,23 +92,13 @@ class RegistrationTest(TestCase):
             email="ken@example.com",
         )
 
-        # super user can change trustedness:
+        # super user sees change link:
 
         self.client.force_login(super_user)
 
-        response = self.client.post(other_user.get_absolute_url(), {"trusted": "true"})
-        other_user.refresh_from_db()
-        self.assertTrue(other_user.trusted)
+        response = self.client.get(other_user.get_absolute_url())
 
-        self.assertNotContains(response, "That's you!")
-
-        self.client.post(other_user.get_absolute_url(), {"trusted": "false"})
-        other_user.refresh_from_db()
-        self.assertFalse(other_user.trusted)
-
-        self.client.post(other_user.get_absolute_url(), {"trusted": "unknown"})
-        other_user.refresh_from_db()
-        self.assertIsNone(other_user.trusted)
+        self.assertContains(response, "/change/")
 
         self.client.force_login(other_user)
 
@@ -132,13 +122,13 @@ class RegistrationTest(TestCase):
 
         # user can delete own account:
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(4):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": False})
             # confirm delete not ticked
         other_user.refresh_from_db()
         self.assertTrue(other_user.is_active)
 
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(5):
             self.client.post(other_user.get_absolute_url(), {"confirm_delete": "on"})
         other_user.refresh_from_db()
         self.assertFalse(other_user.is_active)

@@ -866,7 +866,9 @@ def edit_vehicle(request, **kwargs):
 
     if form:
         context["pending_edits"] = (
-            vehicle.vehiclerevision_set.filter(pending=True)
+            vehicle.vehiclerevision_set.filter(
+                Q(pending=True) | Q(created_at__gte=Now() - datetime.timedelta(days=7))
+            )
             .select_related(*revision_display_related_fields)
             .prefetch_related("vehiclerevisionfeature_set__feature")
         )
@@ -930,6 +932,7 @@ def vehicle_revision_vote(request, revision_id, direction):
     revision = VehicleRevision.objects.select_related(
         *revision_display_related_fields, "vehicle"
     ).get(id=revision_id)
+
     return render(request, "vehicle_revision.html", {"revision": revision})
 
 

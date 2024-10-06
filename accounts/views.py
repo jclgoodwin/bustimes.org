@@ -4,7 +4,9 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import IntegrityError
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
+from sql_util.utils import SubqueryCount
 
 from vehicles.views import revision_display_related_fields
 from . import forms
@@ -56,30 +58,29 @@ class PasswordResetView(auth_views.PasswordResetView):
 
 @login_required
 def user_detail(request, pk):
-    user = get_object_or_404(UserModel, pk=pk)
+    users = UserModel.objects.annotate(
+        total_count=SubqueryCount("vehiclerevision"),
+        approved_count=SubqueryCount(
+            "vehiclerevision", filter=Q(disapproved=False, pending=False)
+        ),
+        disapproved_count=SubqueryCount(
+            "vehiclerevision", filter=Q(pending=False, disapproved=True)
+        ),
+        pending_count=SubqueryCount(
+            "vehiclerevision", filter=Q(pending=True, disapproved=False)
+        ),
+    )
+
+    user = get_object_or_404(users, pk=pk)
 
     context = {"object": user}
 
-    if user.trusted is not False or request.user.is_superuser:
-        revisions = user.vehiclerevision_set.select_related(
-            *revision_display_related_fields
-        ).prefetch_related("vehiclerevisionfeature_set__feature")
-        revisions = revisions.order_by("-id")
-        paginator = Paginator(revisions, 100)
-        page = request.GET.get("page")
-        revisions = paginator.get_page(page)
-
-        context["revisions"] = revisions
-
-    if request.user == user or request.user.is_superuser:
+    if request.user == user:
         initial = {
-            "trusted": user.trusted,
             "name": user.username if user.username != user.email else "",
         }
 
         form = forms.UserForm(request.POST or None, initial=initial)
-        if not request.user.is_superuser:
-            del form.fields["trusted"]
 
         form.fields[
             "name"
@@ -106,11 +107,6 @@ def user_detail(request, pk):
                 except IntegrityError:
                     form.add_error("name", "Username taken")
                     user.username = initial["name"] or user.email
-
-            if "trusted" in form.changed_data:
-                assert request.user.is_superuser
-                user.trusted = form.cleaned_data["trusted"]
-                user.save(update_fields=["trusted"])
 
         context["form"] = form
         context["delete_form"] = delete_form

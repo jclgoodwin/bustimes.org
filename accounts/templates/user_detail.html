@@ -10,17 +10,25 @@
 
     <h1>
         {% if object.trusted is False %}<del>{% endif %}
-        User {{ object.id }}
+        User {{ object }}
         {% if object.trusted is False %}</del>{% endif %}
     </h1>
 
     {% if request.user.is_superuser %}
         <p><a href="{% url 'admin:accounts_user_change' object.id %}">✎</a></p>
+        <p>{{ object.email }}</p>
     {% endif %}
 
     {% if object == user %}
         <p>That's you!</p>
     {% endif %}
+
+    <ul class="horizontal">
+        <li><a href="/vehicles/edits?user={{ user.id }}">{{ object.total_count }} edit{{ object.total_count|pluralize }}</a></li>
+        <li><a href="/vehicles/edits?user={{ user.id }}&amp;status=pending">{{ object.pending_count }} pending</a></li>
+        <li><a href="/vehicles/edits?user={{ user.id }}&amp;status=approved">{{ object.approved_count }} approved</a></li>
+        <li><a href="/vehicles/edits?user={{ user.id }}&amp;status=disapproved">{{ object.disapproved_count }} disapproved</a></li>
+    </ul>
 
     {% if object.score %}
         <dl>
@@ -53,13 +61,5 @@
     {% for ou in object.operatoruser_set.all %}
         <p>{{ ou.operator }}</p>
     {% endfor %}
-
-    <h2>Activity</h2>
-
-    {% include 'pagination.html' with page=revisions %}
-
-    {% include 'vehicle_revisions.html' with revisions=revisions by_user=object %}
-
-    {% include 'pagination.html' with page=revisions %}
 
 {% endblock %}

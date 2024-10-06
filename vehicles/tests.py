@@ -749,7 +749,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         # test user view
         response = self.client.get(self.staff_user.get_absolute_url())
-        self.assertContains(response, "from FD54JYA")
+        self.assertContains(response, "0 disapproved")
 
     def test_operator_user_permission(self):
         self.client.force_login(self.staff_user)

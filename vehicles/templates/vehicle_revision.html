@@ -44,7 +44,9 @@
                 {% endif %}
             {% elif user.trusted is not False %}
                 {% if revision.user_id != user.id and user.score > 0 %}
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up" title="Thank">👍</button>
+                    {% if not revision.disapproved %}
+                        <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up" title="Thank">👍</button>
+                    {% endif %}
                     {% if user.trusted and revision.disapproved %}
                         <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>
                     {% endif %}
