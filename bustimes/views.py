@@ -608,20 +608,19 @@ def tfl_vehicle(request, reg: str):
                 time["stop"]["atco_code"] = stop.atco_code
                 time["stop"]["bearing"] = stop.get_heading()
 
+                if prev_stop:
+                    route_link = route_links.get((prev_stop.atco_code, stop.atco_code))
+                    if route_link:
+                        time["track"] = route_link.geometry.coords
+                prev_stop = stop
+
             if stop.latlong:
                 time["stop"]["location"] = stop.latlong.coords
-
-            if prev_stop:
-                route_link = route_links.get((prev_stop.atco_code, stop.atco_code))
-                if route_link:
-                    time["track"] = route_link.geometry.coords
 
         if item["platformName"] and item["platformName"] != "null":
             time["stop"]["icon"] = item["platformName"]
 
         times.append(time)
-
-        prev_stop = stop
 
     stops_data = {"times": times}
     if service:
