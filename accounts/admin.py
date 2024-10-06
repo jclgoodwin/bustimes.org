@@ -59,7 +59,7 @@ class UserAdmin(admin.ModelAdmin):
             "admin:accounts_user_changelist",
             "admin:accounts_user_change",
         ):
-            return queryset.annotate(
+            queryset = queryset.annotate(
                 disapproved=SubqueryCount(
                     "vehiclerevision", filter=Q(disapproved=True)
                 ),

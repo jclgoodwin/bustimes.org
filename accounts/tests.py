@@ -1,12 +1,12 @@
 from unittest.mock import patch
 
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TransactionTestCase, override_settings
 
 from .models import User
 
 
-class RegistrationTest(TestCase):
+class RegistrationTest(TransactionTestCase):
     @override_settings(DISABLE_REGISTRATION=True)
     def test_registration_disabled(self):
         with self.assertNumQueries(0):
@@ -41,7 +41,7 @@ class RegistrationTest(TestCase):
         self.assertEqual("bustimes.org account", mail.outbox[0].subject)
         self.assertIn("a bustimes.org account", mail.outbox[0].body)
 
-        user = User.objects.get()
+        user = User.objects.get(email="rufus@herring.pizza")
         self.assertEqual(user.ip_address, "6.6.6.6")
         user.is_active = False
         user.save()
@@ -100,6 +100,27 @@ class RegistrationTest(TestCase):
 
         self.assertContains(response, "/change/")
 
+        # trust/distrust in admin
+        response = self.client.post(
+            "/admin/accounts/user/",
+            {
+                "action": "trust",
+                "_selected_action": [other_user.id],
+            },
+        )
+        other_user.refresh_from_db()
+        self.assertTrue(other_user.trusted)
+
+        response = self.client.post(
+            "/admin/accounts/user/",
+            {
+                "action": "distrust",
+                "_selected_action": [other_user.id],
+            },
+        )
+        other_user.refresh_from_db()
+        self.assertFalse(other_user.trusted)
+
         self.client.force_login(other_user)
 
         # normal user can't see email addresses
@@ -113,6 +134,11 @@ class RegistrationTest(TestCase):
         )
         other_user.refresh_from_db()
         self.assertEqual(other_user.username, "kenton_schweppes")
+
+        response = self.client.post(other_user.get_absolute_url(), {"name": "josh"})
+        self.assertContains(
+            response, '<ul class="errorlist"><li>Username taken</li></ul>'
+        )
 
         self.assertContains(response, "That's you!")
 
