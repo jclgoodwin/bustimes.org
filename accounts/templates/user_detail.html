@@ -24,10 +24,10 @@
     {% endif %}
 
     <ul class="horizontal">
-        <li><a href="/vehicles/edits?user={{ user.id }}">{{ object.total_count }} edit{{ object.total_count|pluralize }}</a></li>
-        <li><a href="/vehicles/edits?user={{ user.id }}&amp;status=pending">{{ object.pending_count }} pending</a></li>
-        <li><a href="/vehicles/edits?user={{ user.id }}&amp;status=approved">{{ object.approved_count }} approved</a></li>
-        <li><a href="/vehicles/edits?user={{ user.id }}&amp;status=disapproved">{{ object.disapproved_count }} disapproved</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}">{{ object.total_count }} edit{{ object.total_count|pluralize }}</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=pending">{{ object.pending_count }} pending</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=approved">{{ object.approved_count }} approved</a></li>
+        <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=disapproved">{{ object.disapproved_count }} disapproved</a></li>
     </ul>
 
     {% if object.score %}
