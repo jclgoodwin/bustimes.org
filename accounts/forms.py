@@ -8,7 +8,6 @@ from django.forms import (
     EmailField,
     EmailInput,
     Form,
-    NullBooleanField,
 )
 from turnstile.fields import TurnstileField
 
@@ -67,7 +66,6 @@ class UserForm(Form):
     name = CharField(
         required=False, label="Username", validators=[UnicodeUsernameValidator()]
     )
-    trusted = NullBooleanField()
 
 
 class DeleteForm(Form):
