@@ -86,4 +86,4 @@ omit =  ["*/migrations/*"]
 unsafe-fixes = true
 
 [tool.ruff.lint]
-select = ["SIM117"]
+select = ["SIM117", "F401"]

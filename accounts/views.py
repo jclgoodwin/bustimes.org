@@ -2,13 +2,11 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
 from django.db import IntegrityError
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from sql_util.utils import SubqueryCount
 
-from vehicles.views import revision_display_related_fields
 from . import forms
 
 UserModel = get_user_model()
