@@ -17,10 +17,11 @@ servers:
         ALLOWED_HOSTS: "*"
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
       secret:
-        - TURNSTILE_SECRET
+        - SECRET_KEY
         - DATABASE_URL
         - REDIS_URL
         - SENTRY_DSN
+        - TURNSTILE_SECRET
         - EMAIL_HOST_USER
         - EMAIL_HOST_PASSWORD
         - TFL_APP_ID
