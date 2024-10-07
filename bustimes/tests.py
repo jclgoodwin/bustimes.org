@@ -16,7 +16,7 @@ class BusTimesTest(TestCase):
         DataSource.objects.create(id=7, name="London")
         Livery.objects.create(id=262, name="London", colours="#dc241f", published=True)
         v = Vehicle.objects.create(code="LTZ1243", reg="LTZ1243")
-        VehicleCode.objects.create(vehicle=v, code="TFLO:LTZ1243")
+        VehicleCode.objects.create(vehicle=v, code="TFLO:LTZ1243", scheme="BODS")
 
         with use_cassette(
             os.path.join(

@@ -532,7 +532,9 @@ def tfl_vehicle(request, reg: str):
     reg = reg.upper()
 
     vehicles = Vehicle.objects.select_related("latest_journey")
-    vehicle = vehicles.filter(vehiclecode__code=f"TFLO:{reg}").first()
+    vehicle = vehicles.filter(
+        vehiclecode__code=f"TFLO:{reg}", vehiclecode__scheme="BODS"
+    ).first()
 
     response = requests.get(
         f"https://api.tfl.gov.uk/Vehicle/{reg}/Arrivals", params=settings.TFL, timeout=8
@@ -576,7 +578,9 @@ def tfl_vehicle(request, reg: str):
         else:
             if not vehicle and not reg.startswith("TMP"):
                 vehicle = Vehicle.objects.create(code=reg, reg=reg, operator=operator)
-                VehicleCode.objects.create(vehicle=vehicle, code=f"TFLO:{reg}")
+                VehicleCode.objects.create(
+                    vehicle=vehicle, code=f"TFLO:{reg}", scheme="BODS"
+                )
 
     stops = StopPoint.objects.in_bulk(atco_codes)
     if not stops:
