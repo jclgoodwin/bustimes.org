@@ -32,12 +32,13 @@ jobs:
     timeout-minutes: 10
 
     permissions:
-      id-token: write
-      pages: write
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      # Gives the action the necessary permissions for publishing new
+      # comments in pull requests.
+      pull-requests: write
+      # Gives the action the necessary permissions for pushing data to the
+      # python-coverage-comment-action branch, and for editing existing
+      # comments (to avoid publishing multiple comments in the same PR)
+      contents: write
 
     services:
       postgres:
@@ -91,11 +92,7 @@ jobs:
     - name: generate coverage report
       run: poetry run coverage combine && poetry run coverage html
 
-    - name: upload artifact
-      uses: actions/upload-pages-artifact@v3
+    - name: Coverage comment
+      uses: py-cov-action/python-coverage-comment-action@v3
       with:
-        path: './htmlcov/'
-
-    - name: deploy to Github Pages
-      uses: actions/deploy-pages@v4
-      id: deployment
+        GITHUB_TOKEN: ${{ github.token }}
