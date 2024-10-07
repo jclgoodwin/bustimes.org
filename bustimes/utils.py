@@ -49,9 +49,9 @@ def get_routes(routes, when=None, from_date=None):
                 Q(start_date=None) | Q(start_date__lte=when),
                 ~Exists(
                     Route.objects.filter(
-                        Q(source=OuterRef("source")) | Q(service=OuterRef("service")),
                         Q(start_date__gt=OuterRef("start_date"))
                         | ~Q(end_date=OuterRef("end_date")),  # for bad data
+                        source=OuterRef("source"),
                         service_code=OuterRef("service_code"),
                         start_date__lte=when,
                         revision_number__gt=OuterRef("revision_number"),
