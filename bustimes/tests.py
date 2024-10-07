@@ -273,8 +273,8 @@ class BusTimesTest(TestCase):
         ]
         Route.objects.bulk_create(routes)
 
-        # maximum revision number
-        self.assertEqual(get_routes(routes[:5], when=date(2022, 4, 4)), [routes[4]])
+        # maximum revision number for each source
+        self.assertEqual(get_routes(routes[:5], when=date(2022, 4, 4)), routes[2:5])
 
         # ignore duplicate source with the same sha1
         self.assertEqual(get_routes(routes[:2]), [routes[1]])
