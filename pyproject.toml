@@ -6,7 +6,7 @@ authors = ["Josh Goodwin <j@joshuagoodw.in>"]
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "<3.13,>=3.11"
+python = "<3.14,>=3.11"
 beautifulsoup4 = "^4.12.1"
 boto3 = "^1.18.42"
 ciso8601 = "^2.2.0"
