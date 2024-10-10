@@ -16,10 +16,11 @@ logger = logging.getLogger(__name__)
 
 
 def get_datetime(string):
-    datetime = parse_datetime(string)
-    if not datetime.tzinfo:
-        return make_aware(datetime)
-    return datetime
+    if string:
+        datetime = parse_datetime(string)
+        if not datetime.tzinfo:
+            return make_aware(datetime)
+        return datetime
 
 
 def get_point(element, atco_code):
@@ -81,9 +82,18 @@ class Command(BaseCommand):
     def get_stop(self, element):
         atco_code = element.findtext("AtcoCode")
 
-        modified_at = element.attrib.get("ModificationDateTime")
-        if modified_at:
-            modified_at = get_datetime(modified_at)
+        modified_at = get_datetime(element.attrib.get("ModificationDateTime"))
+
+        for stop_area_ref in element.findall("StopAreas/StopAreaRef"):
+            stop_area_modified_at = get_datetime(
+                stop_area_ref.attrib.get("ModificationDateTime")
+            )
+            if (
+                not modified_at
+                or stop_area_modified_at
+                and stop_area_modified_at > modified_at
+            ):
+                modified_at = stop_area_modified_at
 
         if (
             atco_code in self.existing_stops

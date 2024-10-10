@@ -265,7 +265,7 @@ interactions:
         <PlusbusZoneRef CreationDateTime="2005-09-06T00:00:00.000" ModificationDateTime="2009-09-14T08:30:00.000" Modification="revise" RevisionNumber="2" Status="active">DLTN</PlusbusZoneRef>
       </PlusbusZones>
     </StopPoint>
-    <StopPoint CreationDateTime="2014-01-06T12:00:00" ModificationDateTime="2014-02-03T12:00:00" RevisionNumber="0" Status="active">
+    <StopPoint CreationDateTime="2003-02-22T14:04:04" Modification="revise" RevisionNumber="1" Status="active">
       <AtcoCode>3200GTAYTON0</AtcoCode>
       <NaptanCode />
       <PlateCode />
