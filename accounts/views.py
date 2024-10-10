@@ -18,7 +18,8 @@ def register(request):
             request,
             "403.html",
             {
-                "exception": "Registration is temporarily closed. Sorry. Please don't @ me",
+                "exception": """Registration is currently closed.
+Don't worry, of course you can continue to enjoy all the main features of bustimes.org without logging in.""",
             },
             status=503,
         )

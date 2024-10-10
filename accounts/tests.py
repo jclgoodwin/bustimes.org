@@ -12,7 +12,7 @@ class RegistrationTest(TransactionTestCase):
         with self.assertNumQueries(0):
             response = self.client.post("/accounts/register/")
         self.assertContains(
-            response, "Registration is temporarily closed", status_code=503
+            response, "Registration is currently closed", status_code=503
         )
 
     @override_settings(DISABLE_REGISTRATION=False)

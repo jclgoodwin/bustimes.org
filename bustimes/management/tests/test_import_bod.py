@@ -175,7 +175,7 @@ class ImportBusOpenDataTest(TestCase):
             response,
             """Timetable data from \
 <a href="https://data.bus-data.dft.gov.uk/category/dataset/35/" rel="nofollow">\
-Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
+Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020</time>.""",
         )
 
         # test views:
@@ -384,7 +384,7 @@ Lynx/Bus Open Data Service (BODS)</a>, 1 April 2020.""",
             response,
             "Timetable data from "
             "https://opendata.ticketer.com/uk/Completely_Coach_Travel/routes_and_timetables/current.zip, "
-            "24 September 2021",
+            """<time datetime="2021-09-24">24 September 2021</time>""",
         )
 
         self.assertEqual(

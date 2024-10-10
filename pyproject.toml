@@ -1,3 +1,6 @@
+[project]
+name = "bustimes.org"
+
 [tool.poetry]
 name = "bustimes.org"
 version = "0.1.0"

@@ -275,7 +275,9 @@ class DataSource(models.Model):
             else:
                 text = escape(text)
             if date:
-                text = mark_safe(f"{text}, {date:%-d %B %Y}")
+                text = mark_safe(
+                    f"""{text}, <time datetime="{date.date()}">{date:%-d %B %Y}</time>"""
+                )
             return text
 
         return ""
