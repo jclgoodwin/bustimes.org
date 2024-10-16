@@ -88,17 +88,15 @@ class Command(BaseCommand):
             stop_area_modified_at = get_datetime(
                 stop_area_ref.attrib.get("ModificationDateTime")
             )
-            if (
-                not modified_at
-                or stop_area_modified_at
-                and stop_area_modified_at > modified_at
+            if not modified_at or (
+                stop_area_modified_at and stop_area_modified_at > modified_at
             ):
                 modified_at = stop_area_modified_at
 
-        if (
-            atco_code in self.existing_stops
-            and modified_at == self.existing_stops[atco_code].modified_at
+        if (existing_stop := self.existing_stops.get(atco_code)) and (
+            modified_at == existing_stop.modified_at
             and atco_code not in self.overrides
+            and existing_stop.source_id == self.source.id
         ):
             return
 
@@ -134,6 +132,7 @@ class Command(BaseCommand):
             admin_area_id=element.findtext("AdministrativeAreaRef"),
             stop_area_id=stop_area,
             active=element.attrib.get("Status", "active") == "active",
+            source=self.source,
         )
 
         if stop.locality_id and stop.locality_id not in self.localities:
@@ -198,6 +197,7 @@ class Command(BaseCommand):
         "suburb",
         "town",
         "active",
+        "source",
     ]
 
     def download(self, source):
@@ -255,6 +255,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         source, created = DataSource.objects.get_or_create(name="NaPTAN")
+        self.source = source
 
         if options["filename"]:
             path = Path(options["filename"])
@@ -308,7 +309,7 @@ class Command(BaseCommand):
                     atco_code_prefix = atco_code[:3]
 
                     self.existing_stops = (
-                        StopPoint.objects.only("atco_code", "modified_at")
+                        StopPoint.objects.only("atco_code", "modified_at", "source_id")
                         .filter(atco_code__startswith=atco_code_prefix)
                         .order_by()
                         .in_bulk()
