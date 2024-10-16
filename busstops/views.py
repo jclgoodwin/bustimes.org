@@ -20,7 +20,7 @@ from django.contrib.sitemaps import Sitemap
 from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.paginator import Paginator
-from django.db.models import F, OuterRef, Prefetch, Q
+from django.db.models import F, OuterRef, Prefetch, Q, When, Case, Value
 from django.db.models.functions import Coalesce, Now
 from django.http import (
     Http404,
@@ -880,6 +880,18 @@ class OperatorDetailView(DetailView):
             .defer("geometry", "search_vector")
         )
         services = services.annotate(start_date=SubqueryMin("route__start_date"))
+
+        if self.object.name == "National Express":
+            services = services.annotate(
+                group=Case(
+                    When(
+                        route__code__contains="_Events-",
+                        then=Value("Festival & event travel"),
+                    ),
+                    default=Value(""),
+                )
+            )
+
         context["services"] = sorted(services, key=Service.get_order)
 
         if context["services"]:

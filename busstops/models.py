@@ -771,6 +771,8 @@ class Service(models.Model):
         return reverse("service_detail", args=(self.slug,))
 
     def get_order(self):
+        if hasattr(self, "group"):
+            return self.group, self.get_line_name_order(self.get_line_names()[0])
         return self.get_line_name_order(self.get_line_names()[0])
 
     @staticmethod
