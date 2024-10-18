@@ -1241,14 +1241,16 @@ def overland(request, uuid):
 
     for item in data["locations"][-1:]:
         when = item["properties"]["timestamp"]
-        operator, vehicle, journey = item["properties"]["device_id"].split(":")
+        device_id = item["properties"]["device_id"]
+        operator, vehicle, line_name, journey_ref = device_id.split(":")
         lon, lat = item["geometry"]["coordinates"]
         activity = {
             "RecordedAtTime": when,
             "MonitoredVehicleJourney": {
                 "OperatorRef": operator,
                 "VehicleRef": vehicle,
-                "LineRef": journey,
+                "PublishedLineName": line_name,
+                "VehicleJourneyRef": journey_ref,
                 "VehicleLocation": {
                     "Longitude": lon,
                     "Latitude": lat,
