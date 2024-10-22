@@ -6,7 +6,6 @@ from collections import Counter
 from math import ceil
 from urllib.parse import quote
 
-import lightningcss
 from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.gis.db import models
@@ -179,7 +178,8 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def minify(css):
         prefix = ".livery{background:"
         suffix = "}"
-        css = lightningcss.process_stylesheet(prefix + css + suffix)
+        # css = lightningcss.process_stylesheet(prefix + css + suffix)
+        css = prefix + css + suffix
         assert css.startswith(prefix)
         assert css.endswith(suffix)
         return css[19:-1]
