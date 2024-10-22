@@ -248,10 +248,6 @@ ULCO:
 CAEL:
   name: Caelloi
   url: https://www.caelloi.co.uk/
-AINT:
-  url: http://www.aintreecoachline.com/
-  email: info@aintreecoachline.com
-  twitter: ""
 NUTT:
   name: Transpora North West
   aka: Coastliner Buses
@@ -265,8 +261,6 @@ NUTT:
     FY4 4QU
 MDBC:
   url: ""
-DDIS:
-  url: https://procterscoaches.com/dales-district-timetable/
 TANV:
   email: contact@tanat.co.uk
   url: https://tanat.co.uk/
@@ -283,8 +277,6 @@ UNOE:
   twitter: UnoHerts
 FCWL:
   twitter: by_Kernow
-SSSN:
-  name: Shoreline Suncruisers
 ALCG:
   url: https://www.alinenortheast.co.uk/
 FCYM:
