@@ -807,27 +807,11 @@ class Command(ImportLiveVehiclesCommand):
         bod_status = bod_status[-50:]
         cache.set("bod_avl_status", bod_status, None)
 
-        if settings.STATUS_WEBHOOK_URL and len(bod_status) >= 2:
-            prev_status = bod_status[-2]
-            prev_age = int((prev_status[0] - prev_status[1]).total_seconds())
-            if age >= 600 and prev_age < 600:
-                self.session.post(
-                    settings.STATUS_WEBHOOK_URL,
-                    json={
-                        "username": "bot",
-                        "content": f"uh-oh, \U0001f534 `{self.source.url}` hasn't updated since {self.source.datetime}",
-                    },
-                    timeout=1,
-                )
-            elif age < 600 and prev_age >= 600:
-                self.session.post(
-                    settings.STATUS_WEBHOOK_URL,
-                    json={
-                        "username": "bot",
-                        "content": f"phew, \U0001f7e2 `{self.source.url}` has updated at {self.source.datetime}, after {prev_age // 60} minutes",
-                    },
-                    timeout=1,
-                )
+        if age > 60 and self.source.settings and "fallback_url" in self.source.settings:
+            # switch to the fallback if the bulk_download is too stale
+            self.url = self.source.settings["fallback_url"]
+        else:
+            self.url = self.source.url
 
         time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")
