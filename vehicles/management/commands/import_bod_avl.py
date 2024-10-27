@@ -82,6 +82,7 @@ class Command(ImportLiveVehiclesCommand):
         .filter(current=True)
         .defer("geometry", "search_vector")
     )
+    fallback_mode = False
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -612,9 +613,12 @@ class Command(ImportLiveVehiclesCommand):
         return location
 
     def get_items(self):
-        response = self.session.get(
-            self.source.url, params=self.source.settings, timeout=30
-        )
+        url = self.source.url
+        if self.fallback_mode:
+            url = self.source.settings.get("fallback_url") or url
+
+        response = self.session.get(url, timeout=30)
+
         if not response.ok:
             return []
 
@@ -807,11 +811,7 @@ class Command(ImportLiveVehiclesCommand):
         bod_status = bod_status[-50:]
         cache.set("bod_avl_status", bod_status, None)
 
-        if age > 60 and self.source.settings and "fallback_url" in self.source.settings:
-            # switch to the fallback if the bulk_download is too stale
-            self.url = self.source.settings["fallback_url"]
-        else:
-            self.url = self.source.url
+        self.fallback_mode = not self.fallback_mode and age > 60
 
         time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")
