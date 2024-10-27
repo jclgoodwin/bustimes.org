@@ -400,7 +400,7 @@ class Trip(models.Model):
             fifteen_minutes = timedelta(minutes=15)
             trips_list = []
             for trip_a, trip_b in pairwise(trips):
-                if no_minutes < trip_b.start - trip_a.end < fifteen_minutes:
+                if no_minutes <= trip_b.start - trip_a.end < fifteen_minutes:
                     if not trips_list:
                         trips_list.append(trip_a)
                     trips_list.append(trip_b)
