@@ -755,7 +755,7 @@ export default function BigMap(props: {
                 ? "Zoom in to see stops"
                 : null}
               {!showBuses ? <div>Zoom in to see buses</div> : null}
-              {loadingBuses || loadingStops ? <div>Loading…</div> : null}
+              {(showBuses && (loadingBuses || loadingStops)) ? <div>Loading…</div> : null}
             </div>
           ) : null}
         </BusTimesMap>
