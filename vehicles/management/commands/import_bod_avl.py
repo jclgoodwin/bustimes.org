@@ -637,8 +637,18 @@ class Command(ImportLiveVehiclesCommand):
             force_list=["VehicleActivity"],
         )
 
-        self.when = data["Siri"]["ServiceDelivery"]["ResponseTimestamp"]
-        self.source.datetime = parse_datetime(self.when)
+        previous_time = self.source.datetime
+
+        self.source.datetime = parse_datetime(
+            data["Siri"]["ServiceDelivery"]["ResponseTimestamp"]
+        )
+
+        if (
+            self.source.datetime
+            and previous_time
+            and self.source.datetime < previous_time
+        ):
+            return  # don't return old data
 
         return data["Siri"]["ServiceDelivery"]["VehicleMonitoringDelivery"].get(
             "VehicleActivity"
@@ -811,10 +821,14 @@ class Command(ImportLiveVehiclesCommand):
         bod_status = bod_status[-50:]
         cache.set("bod_avl_status", bod_status, None)
 
-        self.fallback_mode = not self.fallback_mode and age > 60
-
         time_taken = (timezone.now() - now).total_seconds()
         print(f"{time_taken=}")
+
+        if self.fallback_mode:
+            self.fallback_mode = False
+            return 30  # wait
+        elif age > 150 and not changed_items:
+            self.fallback_mode = True
 
         # bods updates "every 10 seconds",
         # it's usually worth waiting 0-9 seconds
