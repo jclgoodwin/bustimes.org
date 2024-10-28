@@ -1,4 +1,3 @@
-from itertools import pairwise
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
@@ -7,6 +6,7 @@ from django.db.models import Q
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import StopTime, Trip
+from bustimes.utils import contiguous_stoptimes_only
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
 from . import filters, serializers
@@ -99,11 +99,7 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
             .order_by("trip__start", "id")
         )
         if len(trips) > 1:
-            for a, b in pairwise(stops):
-                if a.trip_id != b.trip_id and a.stop_id != b.stop_id:
-                    # trips are not contiguous
-                    stops = [stop for stop in stops if stop.trip_id == obj.id]
-                    break
+            stops = contiguous_stoptimes_only(stops, obj.id)
         obj.stops = stops
         return obj
 

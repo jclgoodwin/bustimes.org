@@ -3,7 +3,6 @@ import json
 import xml.etree.ElementTree as ET
 import zipfile
 from datetime import datetime, timedelta
-from itertools import pairwise
 from pathlib import Path
 
 import requests
@@ -47,6 +46,7 @@ from vehicles.rtpi import add_progress_and_delay
 
 from .download_utils import download
 from .models import Garage, Route, StopTime, Trip
+from .utils import contiguous_stoptimes_only
 
 
 class ServiceDebugView(DetailView):
@@ -475,11 +475,7 @@ class TripDetailView(DetailView):
         )
         stops = list(stops)
         if len(trips) > 1:
-            for a, b in pairwise(stops):
-                if a.trip_id != b.trip_id and a.stop_id != b.stop_id:
-                    # trips are not contiguous
-                    stops = [stop for stop in stops if stop.trip_id == self.object.id]
-                    break
+            stops = contiguous_stoptimes_only(stops, self.object.id)
 
         if stops:
             if stops[0].stop:

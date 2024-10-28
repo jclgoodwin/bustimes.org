@@ -35,6 +35,7 @@ from buses.utils import cache_page
 from busstops.models import SERVICE_ORDER_REGEX, Operator, Service
 from busstops.utils import get_bounding_box
 from bustimes.models import Garage, Route, StopTime, Trip
+from bustimes.utils import contiguous_stoptimes_only
 
 from . import filters, forms
 from .management.commands import import_bod_avl
@@ -1087,13 +1088,7 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
                 .order_by("trip__start", "id")
                 .select_related("stop__locality")
             )
-            for a, b in pairwise(stoptimes):
-                if a.trip_id != b.trip_id and a.stop_id != b.stop_id:
-                    # trips are not contiguous
-                    stoptimes = [
-                        stop for stop in stoptimes if stop.trip_id == journey.trip.id
-                    ]
-                    break
+            stoptimes = contiguous_stoptimes_only(stoptimes, journey.trip.id)
 
         for stoptime in stoptimes:
             stop = stoptime.stop

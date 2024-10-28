@@ -1,6 +1,7 @@
 import logging
 from datetime import date, datetime, timedelta
 from difflib import Differ
+from itertools import pairwise
 
 from ciso8601 import parse_datetime
 from django.db.models import (
@@ -376,3 +377,12 @@ def get_trip(
                 trips = filtered_trips
 
         return trips[0]
+
+
+def contiguous_stoptimes_only(stoptimes, trip_id):
+    for a, b in pairwise(stoptimes):
+        if a.trip_id != b.trip_id and a.stop_id != b.stop_id:
+            # trips are not contiguous, return only the stops for trip_id
+            return [stop for stop in stoptimes if stop.trip_id == trip_id]
+    # trips were contiguous, return all stops
+    return stoptimes
