@@ -8,6 +8,7 @@ from django.contrib.gis.geos import LineString, Point
 from django.utils import timezone
 
 from bustimes.models import RouteLink, StopTime, Trip
+from bustimes.utils import contiguous_stoptimes_only
 from vehicles.utils import calculate_bearing
 
 
@@ -15,12 +16,17 @@ def get_stop_times(item):
     trip = Trip.objects.get(pk=item["trip_id"])
     trips = trip.get_trips()
 
-    return (
+    stop_times = (
         StopTime.objects.filter(trip__in=trips)
         .filter(stop__latlong__isnull=False)
         .select_related("stop")
         .order_by("trip__start", "id")
     )
+
+    if len(trips) > 1:
+        return contiguous_stoptimes_only(stop_times, trip.id)
+
+    return stop_times
 
 
 class Progress:
