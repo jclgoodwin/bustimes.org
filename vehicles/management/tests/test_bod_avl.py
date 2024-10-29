@@ -283,7 +283,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
             with self.assertNumQueries(0):
                 wait = command.update()
-            self.assertEqual(11, wait)
+            self.assertEqual(30, wait)
 
             items[0]["RecordedAtTime"] = "2020-10-30T05:09:00+00:00"
             with self.assertNumQueries(1):
