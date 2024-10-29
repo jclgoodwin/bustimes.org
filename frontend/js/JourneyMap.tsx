@@ -67,24 +67,6 @@ export type VehicleJourney = {
   };
 };
 
-const stopsStyle: LayerProps = {
-  id: "stops",
-  type: "symbol",
-  layout: {
-    // "symbol-sort-key": ["get", "priority"],
-    "icon-rotate": ["+", 45, ["get", "heading"]],
-    "icon-image": [
-      "case",
-      ["==", ["get", "heading"], ["literal", null]],
-      "route-stop-marker-circle",
-      "route-stop-marker"
-    ],
-    // "icon-padding": 0,
-    "icon-allow-overlap": true,
-    "icon-ignore-placement": true,
-  },
-};
-
 const Locations = React.memo(function Locations({
   locations,
 }: {
@@ -177,6 +159,9 @@ const Locations = React.memo(function Locations({
 });
 
 const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
+  const theme = React.useContext(ThemeContext);
+  const darkMode = theme === "alidade_smooth_dark";
+
   return (
     <Source
       type="geojson"
@@ -204,7 +189,27 @@ const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
           }),
       }}
     >
-      <Layer {...stopsStyle} />
+      <Layer
+        {...{
+          id: "stops",
+          type: "symbol",
+          layout: {
+            // "symbol-sort-key": ["get", "priority"],
+            "icon-rotate": ["+", 45, ["get", "heading"]],
+            "icon-image": [
+              "case",
+              ["==", ["get", "heading"], ["literal", null]],
+              darkMode
+                ? "route-stop-marker-dark-circle"
+                : "route-stop-marker-circle",
+              darkMode ? "route-stop-marker-circle" : "route-stop-marker",
+            ],
+            // "icon-padding": 0,
+            "icon-allow-overlap": true,
+            "icon-ignore-placement": true,
+          },
+        }}
+      />
     </Source>
   );
 });

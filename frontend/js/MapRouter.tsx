@@ -4,7 +4,7 @@ import { Route, Switch } from "wouter";
 import BigMap, { MapMode } from "./BigMap";
 import { Trip } from "./TripTimetable";
 
-const tripDataElement = document.getElementById('trip-data');
+const tripDataElement = document.getElementById("trip-data");
 let tripData: Trip | undefined;
 if (tripDataElement) {
   tripData = JSON.parse(tripDataElement.textContent as string) as Trip;
@@ -15,11 +15,7 @@ export default function MapRouter() {
     <Switch>
       <Route path="/trips/:tripId">
         {(params) => (
-          <BigMap
-            mode={MapMode.Trip}
-            trip={tripData}
-            tripId={params.tripId}
-          />
+          <BigMap mode={MapMode.Trip} trip={tripData} tripId={params.tripId} />
         )}
       </Route>
       <Route path="/vehicles/tfl/:reg">

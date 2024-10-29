@@ -48,6 +48,9 @@ function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
 }
 
 function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
+  const theme = React.useContext(ThemeContext);
+  const darkMode = theme === "alidade_smooth_dark";
+
   const stopsStyle: LayerProps = {
     id: "stops",
     type: "symbol",
@@ -56,8 +59,8 @@ function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
       "icon-image": [
         "case",
         ["==", ["get", "bearing"], ["literal", null]],
-        "route-stop-marker-circle",
-        "route-stop-marker"
+        darkMode ? "route-stop-marker-dark-circle" : "route-stop-marker-circle",
+        darkMode ? "route-stop-marker-dark" : "route-stop-marker",
       ],
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,

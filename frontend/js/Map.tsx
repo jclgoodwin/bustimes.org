@@ -15,6 +15,8 @@ import stopMarker from "data-url:../stop-marker.png";
 import stopMarkerCircle from "data-url:../stop-marker-circle.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
 import routeStopMarkerCircle from "data-url:../route-stop-marker-circle.png";
+import routeStopMarkerDark from "data-url:../route-stop-marker-dark.png";
+import routeStopMarkerDarkCircle from "data-url:../route-stop-marker-dark-circle.png";
 import arrow from "data-url:../history-arrow.png";
 import type {
   Map as MapLibreMap,
@@ -26,6 +28,8 @@ const imagesByName: { [imageName: string]: string } = {
   "stop-marker-circle": stopMarkerCircle,
   "route-stop-marker": routeStopMarker,
   "route-stop-marker-circle": routeStopMarkerCircle,
+  "route-stop-marker-dark": routeStopMarkerDark,
+  "route-stop-marker-dark-circle": routeStopMarkerDarkCircle,
   arrow: arrow,
 };
 
