@@ -62,6 +62,15 @@
     function setUp() {
         var departures = document.getElementById('departures');
         var form = departures.querySelector('form');
+        var submitButton = form.querySelector('input[type=submit]')
+
+        form.addEventListener("input", function() {
+            if (submitButton.value !== "Go") {
+                submitButton.value = "Go";
+                submitButton.title = "";
+                submitButton.ariaLabel = null;
+            }
+        })
 
         var formData = new FormData(form);
 

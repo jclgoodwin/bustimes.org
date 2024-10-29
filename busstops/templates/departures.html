@@ -4,7 +4,11 @@
         <form autocomplete="off">
             <input type="date" name="date" min="{{ today.isoformat }}" value="{{ when.date.isoformat }}" required>
             <input type="time" name="time" value="{{ when.time|time:'H:i' }}">
-            <input type="submit" value="Go">
+            {% if has_live or when == now %}
+                <input type="submit" value="↻" aria-label="Reload" title="Reload">
+            {% else %}
+                <input type="submit" value="Go">
+            {% endif %}
         </form>
     {% else %}
         <h2>Next departures</h2>
