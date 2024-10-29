@@ -160,7 +160,12 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
                 "text-allow-overlap": true,
                 "text-size": 10,
                 "icon-rotate": ["+", 45, ["get", "bearing"]],
-                "icon-image": "stop-marker",
+                "icon-image": [
+                  "case",
+                  ["==", ["get", "bearing"], ["literal", null]],
+                  "stop-marker-circle",
+                  "stop-marker"
+                ],
                 "icon-allow-overlap": true,
                 "icon-ignore-placement": true,
                 "text-ignore-placement": true,

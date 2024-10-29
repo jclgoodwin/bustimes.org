@@ -53,7 +53,12 @@ function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
     type: "symbol",
     layout: {
       "icon-rotate": ["+", 45, ["get", "bearing"]],
-      "icon-image": "route-stop-marker",
+      "icon-image": [
+        "case",
+        ["==", ["get", "bearing"], ["literal", null]],
+        "route-stop-marker-circle",
+        "route-stop-marker"
+      ],
       "icon-allow-overlap": true,
       "icon-ignore-placement": true,
     },

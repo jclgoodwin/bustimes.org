@@ -73,7 +73,12 @@ const stopsStyle: LayerProps = {
   layout: {
     // "symbol-sort-key": ["get", "priority"],
     "icon-rotate": ["+", 45, ["get", "heading"]],
-    "icon-image": "route-stop-marker",
+    "icon-image": [
+      "case",
+      ["==", ["get", "heading"], ["literal", null]],
+      "route-stop-marker-circle",
+      "route-stop-marker"
+    ],
     // "icon-padding": 0,
     "icon-allow-overlap": true,
     "icon-ignore-placement": true,

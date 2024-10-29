@@ -12,7 +12,9 @@ import Map, {
 } from "react-map-gl/maplibre";
 
 import stopMarker from "data-url:../stop-marker.png";
+import stopMarkerCircle from "data-url:../stop-marker-circle.png";
 import routeStopMarker from "data-url:../route-stop-marker.png";
+import routeStopMarkerCircle from "data-url:../route-stop-marker-circle.png";
 import arrow from "data-url:../history-arrow.png";
 import type {
   Map as MapLibreMap,
@@ -21,7 +23,9 @@ import type {
 
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
+  "stop-marker-circle": stopMarkerCircle,
   "route-stop-marker": routeStopMarker,
+  "route-stop-marker-circle": routeStopMarkerCircle,
   arrow: arrow,
 };
 
