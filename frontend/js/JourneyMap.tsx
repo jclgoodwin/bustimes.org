@@ -202,7 +202,7 @@ const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
               darkMode
                 ? "route-stop-marker-dark-circle"
                 : "route-stop-marker-circle",
-              darkMode ? "route-stop-marker-circle" : "route-stop-marker",
+              darkMode ? "route-stop-marker-dark" : "route-stop-marker",
             ],
             // "icon-padding": 0,
             "icon-allow-overlap": true,
