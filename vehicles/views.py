@@ -719,9 +719,11 @@ def record_ip_address(request):
 
 
 def check_user(request):
-    if settings.DISABLE_EDITING and not request.user.is_superuser:
+    if settings.DISABLE_EDITING and not request.user.has_perm(
+        "vehicles.change_vehicle"
+    ):
         raise PermissionDenied(
-            """This bit of the website in “read-only” mode.
+            """This bit of the website is in “read-only” mode.
             Sorry for the inconvenience.
             Don’t worry, you can still enjoy all of the main features of the website."""
         )
@@ -735,7 +737,7 @@ def check_user(request):
         and request.user.vehiclerevision_set.count() > 4
     ):
         raise PermissionDenied(
-            "As your account is so new, you must wait a bit before editing any more vehicles "
+            "As your account is so new, please wait a bit before editing any more vehicles"
         )
 
 
@@ -995,13 +997,6 @@ def vehicle_revision_action(request, revision_id, action):
 
 @require_safe
 def vehicle_edits(request):
-    if settings.DISABLE_EDITING and not request.user.is_superuser:
-        raise PermissionDenied(
-            """This bit of the website in “read-only” mode.
-            Sorry for the inconvenience.
-            Don’t worry, you can still enjoy all of the main features of the website."""
-        )
-
     revisions = (
         VehicleRevision.objects.select_related(
             *revision_display_related_fields, "user", "vehicle"
