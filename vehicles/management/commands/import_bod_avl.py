@@ -1,3 +1,4 @@
+from collections import namedtuple
 import functools
 import io
 import json
@@ -27,6 +28,11 @@ from bustimes.models import Route, Trip
 from ...models import Vehicle, VehicleCode, VehicleJourney, VehicleLocation
 from ...utils import redis_client
 from ..import_live_vehicles import ImportLiveVehiclesCommand, logger
+
+
+Status = namedtuple(
+    "Status", ("fetched_at", "timestamp", "total_items", "changed_items")
+)
 
 
 def get_destination_ref(destination_ref):
@@ -808,10 +814,10 @@ class Command(ImportLiveVehiclesCommand):
         self.handle_items(changed_items, changed_item_identities)
         self.handle_items(changed_journey_items, changed_journey_identities)
 
-        # stats for last 10 updates:
+        # stats for last 50 updates:
         bod_status = cache.get("bod_avl_status", [])
         bod_status.append(
-            (
+            Status(
                 now,
                 self.source.datetime,
                 total_items,
