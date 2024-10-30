@@ -8,7 +8,6 @@ const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
 const apiRoot = process.env.API_ROOT;
 
-let hasHistory = false;
 let hasCss = false;
 
 declare global {
@@ -29,14 +28,14 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   });
 
   const openMap = React.useCallback((e: MouseEvent) => {
-    hasHistory = true;
-    window.location.hash = "#map";
+    window.location.hash = "map";
+    window.history.replaceState({ hasHistory: true }, "", "");
     e.preventDefault();
   }, []);
 
   const closeMap = React.useCallback(() => {
     if (isOpen) {
-      if (hasHistory) {
+      if (window.history.state?.hasHistory) {
         window.history.back();
       } else {
         window.location.hash = "";

@@ -4,7 +4,6 @@ import { VehicleJourney } from "./JourneyMap";
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
 const apiRoot = process.env.API_ROOT as string;
-let hasHistory = 0;
 
 export default function History() {
   const [journeyId, setJourneyId] = React.useState(() => {
@@ -17,12 +16,10 @@ export default function History() {
 
   const closeMap = React.useCallback(() => {
     if (journeyId) {
-      if (hasHistory === 1) {
+      if (window.history.state?.hasHistory === 1) {
         window.history.back();
-        hasHistory -= 1;
       } else {
         window.location.hash = "";
-        hasHistory = 0;
       }
     }
   }, [journeyId]);
@@ -32,8 +29,15 @@ export default function History() {
   React.useEffect(() => {
     function handleHashChange() {
       if (window.location.hash.indexOf("#journeys/") === 0) {
+        if (!journeyId || window.history.state?.hasHistory) {
+          window.history.replaceState(
+            {
+              hasHistory: (window.history.state?.hasHistory || 0) + 1,
+            },
+            "",
+          );
+        }
         setJourneyId(window.location.hash.slice(1));
-        hasHistory += 1;
       } else {
         setJourneyId("");
       }

@@ -320,44 +320,38 @@ function Sidebar({
 }
 
 function JourneyVehicle({
+  vehicleId,
   // journey,
   onVehicleMove,
   clickedVehicleMarker,
   setClickedVehicleMarker,
 }: {
+  vehicleId: number;
   // journey: VehicleJourney;
   onVehicleMove: (v: Vehicle) => void;
   clickedVehicleMarker: boolean;
   setClickedVehicleMarker: (b: boolean) => void;
 }) {
-  const vehicleId = window.VEHICLE_ID;
-
   const [vehicle, setVehicle] = React.useState<Vehicle>();
 
-  // const timeout = React.useRef<number>();
-
-  const handleVehicle = React.useCallback(
-    (v: Vehicle) => {
-      if (v.datetime !== vehicle?.datetime) {
-        setVehicle(v);
-        onVehicleMove(v);
-      }
-    },
-    [vehicle?.datetime, onVehicleMove],
-  );
+  React.useEffect(() => {
+    if (vehicle) {
+      onVehicleMove(vehicle);
+    }
+  }, [vehicle, onVehicleMove]);
 
   React.useEffect(() => {
     if (!vehicleId) {
       return;
     }
 
-    let timeout: number;
+    let timeout: number, current = true;
 
     const loadVehicle = () => {
       fetch(`/vehicles.json?id=${vehicleId}`).then((response) => {
         response.json().then((data: Vehicle[]) => {
-          if (data && data.length) {
-            handleVehicle(data[0]);
+          if (current && data && data.length) {
+            setVehicle(data[0]);
             timeout = window.setTimeout(loadVehicle, 12000); // 12 seconds
           }
         });
@@ -367,9 +361,10 @@ function JourneyVehicle({
     loadVehicle();
 
     return () => {
+      current = false;
       clearTimeout(timeout);
     };
-  }, [vehicleId, handleVehicle]);
+  }, [vehicleId]);
 
   if (!vehicle) {
     return null;
@@ -443,17 +438,19 @@ export default function JourneyMap({
 
   const handleVehicleMove = React.useCallback(
     (vehicle: Vehicle) => {
-      setLocations(
-        locations.concat([
-          {
-            id: new Date(vehicle.datetime).getTime(),
-            coordinates: vehicle.coordinates,
-            delta: null,
-            datetime: vehicle.datetime,
-            direction: vehicle.heading,
-          },
-        ]),
-      );
+      if (!locations.length || locations[locations.length - 1].datetime !== vehicle.datetime) {
+        setLocations(
+          locations.concat([
+            {
+              id: new Date(vehicle.datetime).getTime(),
+              coordinates: vehicle.coordinates,
+              delta: null,
+              datetime: vehicle.datetime,
+              direction: vehicle.heading,
+            },
+          ]),
+        );
+      }
     },
     [locations],
   );
@@ -586,6 +583,7 @@ export default function JourneyMap({
             ) : null}
             {journey.locations && journey.current ? (
               <JourneyVehicle
+              vehicleId={window.VEHICLE_ID}
                 // journey={journey}
                 onVehicleMove={handleVehicleMove}
                 clickedVehicleMarker={clickedVehicleMarker}
