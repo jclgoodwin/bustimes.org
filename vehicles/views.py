@@ -719,6 +719,13 @@ def record_ip_address(request):
 
 
 def check_user(request):
+    if settings.DISABLE_EDITING and not request.user.is_superuser:
+        raise PermissionDenied(
+            """This bit of the website in “read-only” mode.
+            Sorry for the inconvenience.
+            Don’t worry, you can still enjoy all of the main features of the website."""
+        )
+
     if request.user.trusted is False:
         raise PermissionDenied
 
@@ -988,6 +995,13 @@ def vehicle_revision_action(request, revision_id, action):
 
 @require_safe
 def vehicle_edits(request):
+    if settings.DISABLE_EDITING and not request.user.is_superuser:
+        raise PermissionDenied(
+            """This bit of the website in “read-only” mode.
+            Sorry for the inconvenience.
+            Don’t worry, you can still enjoy all of the main features of the website."""
+        )
+
     revisions = (
         VehicleRevision.objects.select_related(
             *revision_display_related_fields, "user", "vehicle"
