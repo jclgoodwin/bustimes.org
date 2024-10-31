@@ -37,6 +37,7 @@ urlpatterns = [
         name="latest_journey_debug",
     ),
     path("vehicles/<slug>/debug", views.latest_journey_debug),
+    path("journeys/<int:pk>", views.VehicleJourneyDetailView.as_view()),
     path("journeys/<int:pk>.json", views.journey_json),
     path(
         "vehicles/<int:vehicle_id>/journeys/<int:pk>.json",

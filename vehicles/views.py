@@ -998,6 +998,10 @@ def vehicle_edits(request):
     )
 
 
+class VehicleJourneyDetailView(DetailView):
+    model = VehicleJourney
+
+
 @require_safe
 def journey_json(request, pk, vehicle_id=None, service_id=None):
     journey = get_object_or_404(
