@@ -37,6 +37,8 @@ def format_reg(reg):
 
 
 def get_css(colours, direction=None, horizontal=False, angle=None):
+    if angle is None:
+        angle = 90
     if len(colours) == 1:
         return colours[0]
     if direction is None:
@@ -47,14 +49,9 @@ def get_css(colours, direction=None, horizontal=False, angle=None):
     if horizontal:
         background += "to top"
     elif direction < 180:
-        if angle:
-            background += f"{360-angle}deg"
-        else:
-            background += "to left"
-    elif angle:
-        background += f"{angle}deg"
+        background += f"{360-angle}deg"
     else:
-        background += "to right"
+        background += f"{angle}deg"
     percentage = 100 / len(colours)
     for i, colour in enumerate(colours):
         if i != 0 and colour != colours[i - 1]:
