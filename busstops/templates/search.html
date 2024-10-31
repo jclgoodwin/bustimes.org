@@ -67,15 +67,13 @@
     {% if operators %}
         <h2 id="operators">{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
 
-        {% if operators %}
-            <ul>
-                {% for result in operators %}
-                    <li><a href="{{ result.get_absolute_url }}">{{ result.headline|safe }}</a></li>
-                {% endfor %}
-            </ul>
+        <ul>
+            {% for result in operators %}
+                <li><a href="{{ result.get_absolute_url }}">{{ result.headline|safe }}</a></li>
+            {% endfor %}
+        </ul>
 
-            {% include 'pagination.html' with page=operators hash='#operators' %}
-        {% endif %}
+        {% include 'pagination.html' with page=operators hash='#operators' %}
     {% endif %}
 
     {% if services %}
