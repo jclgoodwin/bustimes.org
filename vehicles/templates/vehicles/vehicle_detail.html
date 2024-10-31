@@ -63,16 +63,22 @@
     <p><a href="{{ tracking }}" class="button">Track this bus</a></p>
 {% endif %}
 
+{% load static %}
+
+<div id="journeys">
+
 {% if date %}
-    <form class="timetable-date" autocomplete="off">
+    <script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
+
+    <form class="timetable-date" autocomplete="off" hx-trigger="change" hx-get="" hx-select="#journeys" hx-target="#journeys" hx-indicator="#journeys" hx-swap="outerHTML">
         {% if dates %}
-            <select onchange="this.form.submit()" name="date" id="date" aria-label="Date">
+            <select name="date" id="date" aria-label="Date">
                 {% for option in dates %}
                     <option{% if option == date %} selected{% endif %} value="{{ option.isoformat }}">{{ option|date:"l j F Y" }}</option>
                 {% endfor %}
             </select>
         {% else %}
-            <input type="date" onchange="this.form.submit()" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
+            <input type="date" name="date" id="date" aria-label="Date" value="{{ date.isoformat }}">
         {% endif %}
         <noscript><input type="submit" value="Go"></noscript>
     </form>
@@ -142,13 +148,16 @@
     {% endfor %}
     </tbody></table></div>
 
-    <div id="history"></div>
-
-{% endif %}
-
-{% if garage %}
+    {% if garage %}
     <p>{{ garage }}</p>
+
 {% endif %}
+
+</div>
+
+{% endif %}
+
+<div id="history"></div>
 
 {% if vehicle and request.user.is_superuser %}
     <p><a href="{% url 'latest_journey_debug' vehicle.pk %}">Debug</a></p>
@@ -169,12 +178,11 @@
 {% endblock %}
 
 {% block foot %}
-    {% if journeys %}
+    {% if journeys or date %}
         <script>
             {% if vehicle %}VEHICLE_ID{% else %}SERVICE_ID{% endif %} = {{ object.id }};
             {% if not vehicle %}LIVERIES_CSS_URL = "/liveries.{{ liveries_css_version }}.css";{% endif %}
         </script>
-        {% load static %}
         <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
         <script async src="{% static 'dist/js/app.js' %}"></script>
         {% if vehicle.livery %}

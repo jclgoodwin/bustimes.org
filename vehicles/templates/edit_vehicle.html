@@ -30,9 +30,6 @@
 
     <h1>Edit vehicle details</h1>
 
-    <p>ID:<br>
-    <code>{{ vehicle.id }}</code> <button class="button" onclick="javascript:navigator.clipboard.writeText('{{ vehicle.id }}');this.blur()">Copy</button></p>
-
     <p>
         Ticket machine code:<br>
         {% if vehicle_unique_id and vehicle_unique_id != vehicle.code %}

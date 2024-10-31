@@ -44,6 +44,11 @@
             <dd>{{ vehicle.features.all|join:", " }}</dd>
         </div>
     {% endif %}
+
+    <div>
+        <dt>ID</dt>
+        <dd>{{ vehicle.id }}</dd>
+    </div>
 </dl>
 
 {% with vehicle.get_flickr_link as flickr_link %}
