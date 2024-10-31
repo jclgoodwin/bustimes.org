@@ -4,7 +4,7 @@ import logging
 from itertools import pairwise
 from urllib.parse import unquote
 
-import lightningcss
+# import lightningcss
 import xmltodict
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -117,7 +117,7 @@ def liveries_css(request, version=0):
     for livery in liveries:
         styles += livery.get_styles()
     styles = "".join(styles)
-    styles = lightningcss.process_stylesheet(styles)
+    # styles = lightningcss.process_stylesheet(styles)
     return HttpResponse(styles, content_type="text/css")
 
 
