@@ -64,7 +64,7 @@
         {% include 'pagination.html' with page=localities hash='#places' %}
     {% endif %}
 
-    {% if not postcode or operators %}
+    {% if operators %}
         <h2 id="operators">{{ operators.paginator.count }} operator{{ operators.paginator.count|pluralize }}</h2>
 
         {% if operators %}
