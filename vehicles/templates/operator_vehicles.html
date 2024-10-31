@@ -4,11 +4,11 @@
 
 {% block canonical %}
     <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}/vehicles">
-{% endblock %}
+{% endblock canonical %}
 
 {% block head %}
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
-{% endblock %}
+{% endblock head %}
 
 {% block bodyclass %}{% endblock %}
 
@@ -40,7 +40,7 @@
 </ul>
 
 {% if not parent and object.parent %}
-    <p>There’s also <a href="/groups/{{ object.parent}}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
+    <p>There’s also <a href="/groups/{{ object.parent }}/vehicles">a list of all {{ object.parent }} vehicles</a>.</p>
 {% endif %}
 
 {% if not parent %}
@@ -95,7 +95,7 @@
                 <td class="last-seen">
                     {% if vehicle.last_seen.today %}
                         {{ vehicle.last_seen.when|time:"H:i" }}
-                    {% elif vehicle.last_seen.when.year == today.year  %}
+                    {% elif vehicle.last_seen.when.year == today.year %}
                         {{ vehicle.last_seen.when|date:"j M" }}
                     {% else %}
                         {{ vehicle.last_seen.when|date:"j M Y" }}
@@ -125,4 +125,4 @@
 
 {% include 'pagination.html' with page=vehicles %}
 
-{% endblock %}
+{% endblock content %}

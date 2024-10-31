@@ -51,7 +51,7 @@
     </div>
 </dl>
 
-{% with vehicle.get_flickr_link as flickr_link %}
+{% with flickr_link=vehicle.get_flickr_link %}
 {% if vehicle.is_editable or request.user.is_superuser or flickr_link %}
     <ul class="horizontal">
         {% if vehicle.is_editable %}

@@ -11,7 +11,7 @@
     {% if object.get_absolute_url %}
         <link rel="canonical" href="https://bustimes.org{{ object.get_absolute_url }}">
     {% endif %}
-{% endblock %}
+{% endblock canonical %}
 <script type="application/ld+json">{"@context":"http://schema.org","@type":"WebSite","url":"https://bustimes.org","name":"bustimes.org","potentialAction":{"@type":"SearchAction","target":"https://bustimes.org/search?q={q}","query-input":"required name=q"}}</script>
 {% load static %}
 <link rel="icon" type="image/png" href="/favicon.ico">
@@ -28,7 +28,7 @@
 <script src="{% static 'js/consent.js' %}"></script>
 <script>if(typeof Array.prototype.includes!=="undefined"){s=document.getElementsByTagName('script')[0];var sc=document.createElement('script');sc.type='text/javascript';sc.async=true;sc.src='https://cdn.adfirst.media/hb/bustimes.js?v'+Math.floor(new Date().getTime()/600000);s.parentNode.insertBefore(sc,s);}</script>
 {% endif %}
-{% endblock %}
+{% endblock fuse %}
 
 </head>
 <body class="{% block bodyclass %}wide{% endblock %}{% if ad is False %} no-ads{% endif %}">
@@ -53,7 +53,7 @@
         </form>
     </div>
 </header>
-{% endblock %}
+{% endblock header %}
 <main>
     {% block breadcrumb %}{% include 'breadcrumb.html' %}{% endblock %}
     <div id="content">
@@ -81,7 +81,7 @@
         {% if ad %}<li><a href="javascript:window.__tcfapi('displayConsentUi',2,function(){})">Privacy settings</a></li>{% endif %}
     </ul>
 </footer>
-{% endblock %}
+{% endblock footer %}
 
 {% block foot %}{% endblock %}
 

@@ -4,7 +4,7 @@
 
 {% block head %}
     <meta property="og:title" content="Map – bustimes.org">
-{% endblock %}
+{% endblock head %}
 
 {% block bodyclass %}no-scroll{% endblock %}
 
@@ -22,7 +22,7 @@
             <input type="submit" value="Search">
         </form>
     </header>
-{% endblock %}
+{% endblock header %}
 
 {% block breadcrumb %}{% endblock %}
 
@@ -30,7 +30,7 @@
     <div id="hugemap">
         <noscript class="sorry">Sorry, the map requires JavaScript. You can still use most of the rest of the website.</noscript>
     </div>
-{% endblock %}
+{% endblock content %}
 
 {% load static %}
 
@@ -58,4 +58,4 @@
     </script>
     <script src="{% static 'dist/js/bigmap.js' %}"></script>
     <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
-{% endblock %}
+{% endblock footer %}

@@ -9,7 +9,7 @@
     {% else %}
         <meta name="robots" content="noindex,noarchive">
     {% endif %}
-{% endblock %}
+{% endblock canonical %}
 
 {% block head %}
     {% if vehicle %}
@@ -19,7 +19,7 @@
 {{ object.name }}{% endif %}">
 
     {% endif %}
-{% endblock %}
+{% endblock head %}
 
 {% block bodyclass %}narrow{% endblock %}
 
@@ -147,15 +147,13 @@
         </tr>
     {% endfor %}
     </tbody></table></div>
+{% endif %}
 
-    {% if garage %}
+{% if garage %}
     <p>{{ garage }}</p>
-
 {% endif %}
 
 </div>
-
-{% endif %}
 
 <div id="history"></div>
 
@@ -175,7 +173,7 @@
     </nav>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block foot %}
     {% if journeys or date %}
@@ -190,4 +188,4 @@
         {% endif %}
 
     {% endif %}
-{% endblock %}
+{% endblock foot %}

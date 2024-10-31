@@ -6,7 +6,7 @@
     <meta property="og:title" content="{{ object }}">
     <meta property="og:description" content="{{ operators.0 }}">
     <link rel="stylesheet" href="{{ static('dist/js/app.css') }}">
-{% endblock %}
+{% endblock head %}
 
 {% block bodyclass %}{% endblock %}
 
@@ -113,7 +113,7 @@
     <p><a href="{{ fare_cap.url }}">Get around for £2</a> – single fares are capped at £2 on this service</p>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block foot %}
     <script>
@@ -131,4 +131,4 @@
     {% if fare_tables %}
         <script async src="{{ static('js/fares.js') }}"></script>
     {% endif %}
-{% endblock %}
+{% endblock foot %}

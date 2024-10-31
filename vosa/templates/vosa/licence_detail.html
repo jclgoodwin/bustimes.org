@@ -4,7 +4,7 @@
 
 {% block head %}
 <link rel="alternate" type="application/rss+xml" href="{{ object.get_absolute_url }}/rss" title="RSS feed for {{ object }} – {{ object.name }}">
-{% endblock %}
+{% endblock head %}
 
 {% block content %}
 
@@ -121,4 +121,4 @@
     </table>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

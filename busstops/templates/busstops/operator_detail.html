@@ -2,7 +2,7 @@
 
 {% block head %}
     <meta property="og:title" content="{{ object }}">
-{% endblock %}
+{% endblock head %}
 
 {% block content %}
 
@@ -47,4 +47,4 @@
     <p><a href="{% url 'admin:busstops_operator_change' object.noc %}">✎</a></p>
 {% endif %}
 
-{% endblock %}
+{% endblock content %}

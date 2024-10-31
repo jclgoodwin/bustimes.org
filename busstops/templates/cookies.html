@@ -4,12 +4,12 @@
 
 {% block canonical %}
 <link rel="canonical" href="https://bustimes.org/privacy">
-{% endblock %}
+{% endblock canonical %}
 
 {% block fuse %}
 {% load static %}
 <script src="{% static 'js/consent.js' %}"></script>
-{% endblock %}
+{% endblock fuse %}
 
 {% block bodyclass %}narrow{% endblock %}
 
@@ -104,4 +104,4 @@ programmatic advertisements under the auspices of <a href="https://adfirstmedia.
     </tbody>
 </table>
 
-{% endblock %}
+{% endblock content %}
