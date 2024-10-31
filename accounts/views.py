@@ -75,16 +75,7 @@ def user_detail(request, pk):
     context = {"object": user}
 
     if request.user == user:
-        initial = {
-            "name": user.username if user.username != user.email else "",
-        }
-
-        form = forms.UserForm(request.POST or None, initial=initial)
-
-        form.fields[
-            "name"
-        ].help_text = f"Will be displayed publicly. Leave blank to be 'user {user.id}'"
-        form.fields["name"].widget.attrs["placeholder"] = f"user {user.id}"
+        form = forms.UserForm(request.POST or None, user=user)
 
         delete_form = forms.DeleteForm()
 
@@ -105,9 +96,17 @@ def user_detail(request, pk):
                     user.save(update_fields=["username"])
                 except IntegrityError:
                     form.add_error("name", "Username taken")
-                    user.username = initial["name"] or user.email
+                    user.refresh_from_db()
 
         context["form"] = form
         context["delete_form"] = delete_form
+
+    elif request.user.is_superuser:
+        form = forms.UserPermissionsForm(request.POST or None, user=user)
+
+        if request.POST and form.is_valid():
+            user.user_permissions.set(form.cleaned_data["permissions"])
+
+        context["form"] = form
 
     return render(request, "user_detail.html", context)

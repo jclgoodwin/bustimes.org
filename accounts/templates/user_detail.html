@@ -16,7 +16,6 @@
 
     {% if request.user.is_superuser %}
         <p><a href="{% url 'admin:accounts_user_change' object.id %}">✎</a></p>
-        <p>{{ object.email }}</p>
     {% endif %}
 
     {% if object == user %}
@@ -29,13 +28,6 @@
         <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=approved">{{ object.approved_count }} approved</a></li>
         <li><a href="/vehicles/edits?user={{ object.id }}&amp;status=disapproved">{{ object.disapproved_count }} disapproved</a></li>
     </ul>
-
-    {% if object.score %}
-        <dl>
-            <dt>Score</dt>
-            <dd>{{ object.score }}</dd>
-        </dl>
-    {% endif %}
 
     {% if form %}
         <form method="POST" autocomplete="off">

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, PasswordResetForm
+from django.contrib.auth.models import Permission
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import SuspiciousOperation
 from django.forms import (
@@ -8,6 +9,8 @@ from django.forms import (
     EmailField,
     EmailInput,
     Form,
+    ModelMultipleChoiceField,
+    CheckboxSelectMultiple,
 )
 from turnstile.fields import TurnstileField
 
@@ -66,6 +69,34 @@ class UserForm(Form):
     name = CharField(
         required=False, label="Username", validators=[UnicodeUsernameValidator()]
     )
+
+    def __init__(self, data, *args, user, **kwargs):
+        super().__init__(data, *args, **kwargs)
+
+        self.fields["name"].initial = (
+            user.username if user.username != user.email else ""
+        )
+        self.fields["name"].help_text = f"""Will be displayed publicly.
+Leave blank to be 'user {user.id}'"""
+        self.fields["name"].widget.attrs["placeholder"] = f"user {user.id}"
+
+
+class UserPermissionsForm(Form):
+    permissions = ModelMultipleChoiceField(
+        queryset=None, widget=CheckboxSelectMultiple, required=False
+    )
+
+    def __init__(self, data, *args, user, **kwargs):
+        super().__init__(data, *args, **kwargs)
+
+        self.fields["permissions"].initial = user.user_permissions.all()
+        self.fields["permissions"].queryset = Permission.objects.filter(
+            codename__in=(
+                "add_vehiclerevision",
+                "change_vehiclerevision",
+                "change_vehicle",
+            )
+        ).select_related("content_type")
 
 
 class DeleteForm(Form):
