@@ -19,12 +19,22 @@
     }
 
     function data(params) {
+        // return the query for the vehicle types/liveries API
         var query = {
             limit: 100,
-            name: params.term,
             published: true,
             offset: ((params.page | 1) - 1) * 100,
-            delay: 250
+        };
+        if (params.term) {
+            query.name = params.term;
+        } else {
+            var suggested = this.data("suggested");
+            if (suggested) {
+                query.id__in = this.data("suggested");
+            } else {
+                query.vehicle__operator = $('#id_operator').val();
+            }
+
         }
         return query;
     }
@@ -51,7 +61,8 @@
             url: '/api/vehicletypes/',
             data: data,
             processResults: processResults,
-        }
+            delay: 250
+        },
     });
 
     $('#id_colours').select2({
@@ -61,6 +72,7 @@
             url: '/api/liveries/',
             data: data,
             processResults: processResults,
+            delay: 250
         },
         templateResult: formatLivery,
         templateSelection: formatLivery,

@@ -789,7 +789,11 @@ def edit_vehicle(request, **kwargs):
             f'Editing {vehicle.operator} vehicles is restricted to "local experts"'
         )
 
-    context = {}
+    context = {
+        "previous": vehicle.get_previous(),
+        "next": vehicle.get_next(),
+    }
+
     revision = None
 
     try:
@@ -803,6 +807,7 @@ def edit_vehicle(request, **kwargs):
         form_data,
         vehicle=vehicle,
         user=request.user,
+        sibling_vehicles=(context["previous"], context["next"]),
     )
 
     context["livery"] = vehicle.livery
@@ -876,8 +881,6 @@ def edit_vehicle(request, **kwargs):
             "form": form,
             "object": vehicle,
             "vehicle": vehicle,
-            "previous": vehicle.get_previous(),
-            "next": vehicle.get_next(),
         },
     )
 

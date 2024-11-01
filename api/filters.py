@@ -73,7 +73,10 @@ class LiveryFilter(FilterSet):
 
     class Meta:
         model = Livery
-        fields = ["name", "published"]
+        fields = {
+            "published": ["exact"],
+            "id": ["exact", "in"],
+        }
 
 
 class VehicleTypeFilter(FilterSet):
@@ -81,4 +84,6 @@ class VehicleTypeFilter(FilterSet):
 
     class Meta:
         model = VehicleType
-        fields = ["name"]
+        fields = {
+            "id": ["exact", "in"],
+        }

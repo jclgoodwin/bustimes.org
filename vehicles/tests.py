@@ -848,7 +848,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get(self.vehicle_3.get_absolute_url())
         self.assertContains(response, ">K292 JVF, P44 CEX<")
 
-        with self.assertNumQueries(15):
+        with self.assertNumQueries(17):
             # trusted user - can edit colour
             response = self.client.post(
                 self.vehicle_2.get_edit_url(),
