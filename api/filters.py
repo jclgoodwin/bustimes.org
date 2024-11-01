@@ -81,6 +81,7 @@ class LiveryFilter(FilterSet):
 
 class VehicleTypeFilter(FilterSet):
     name = CharFilter(lookup_expr="icontains")
+    vehicle__operator = CharFilter(label="Operator", distinct=True)
 
     class Meta:
         model = VehicleType

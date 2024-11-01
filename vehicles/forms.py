@@ -141,27 +141,24 @@ link to a picture to prove it. Be polite.""",
     def __init__(self, data, *args, user, vehicle, sibling_vehicles, **kwargs):
         super().__init__(data, *args, **kwargs)
 
-        suggested_liveries = set()
-        suggested_vehicle_types = set()
-        for sibling in (vehicle,) + sibling_vehicles:
-            if sibling:
-                if sibling.livery_id:
-                    suggested_liveries.add(str(sibling.livery_id))
-                if sibling.vehicle_type_id:
-                    suggested_vehicle_types.add(str(sibling.vehicle_type_id))
-        self.fields["colours"].widget.attrs["data-suggested"] = ",".join(
-            suggested_liveries
-        )
-        self.fields["vehicle_type"].widget.attrs["data-suggested"] = ",".join(
-            suggested_vehicle_types
-        )
-
         self.fields["operator"].initial = vehicle.operator
         self.fields["reg"].initial = vehicle.reg
         self.fields["vehicle_type"].initial = vehicle.vehicle_type
-        self.fields["features"].initial = vehicle.features.all()
         self.fields["colours"].initial = vehicle.livery_id
+
+        if not vehicle.vehicle_type_id:
+            self.fields["vehicle_type"].widget.attrs["data-suggested"] = ",".join(
+                str(v.vehicle_type_id)
+                for v in sibling_vehicles
+                if v and v.vehicle_type_id
+            )
+        if not vehicle.livery_id:
+            self.fields["colours"].widget.attrs["data-suggested"] = ",".join(
+                str(v.livery_id) for v in sibling_vehicles if v and v.livery_id
+            )
+
         self.fields["other_colour"].initial = vehicle.colours or ""
+        self.fields["features"].initial = vehicle.features.all()
         self.fields["branding"].initial = vehicle.branding
         self.fields["name"].initial = vehicle.name
         self.fields["previous_reg"].initial = (

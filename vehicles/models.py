@@ -365,19 +365,27 @@ class Vehicle(models.Model):
             return str(fleet_code)
         return self.code.replace("_", " ")
 
-    def get_previous(self):
-        if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set.filter(
-                withdrawn=False, fleet_number__lt=self.fleet_number
+    def get_next(self, order=""):
+        lookup = "lt" if order == "-" else "gt"
+        if self.operator:
+            filter = {}
+            if self.fleet_number:
+                filter[f"fleet_number__{lookup}"] = self.fleet_number
+            else:
+                if self.fleet_code:
+                    filter[f"fleet_code__{lookup}"] = self.fleet_code
+                filter[f"code__{lookup}"] = self.code
+            return (
+                self.operator.vehicle_set.filter(
+                    **filter,
+                    withdrawn=False,
+                )
+                .order_by(f"{order}code", f"{order}fleet_code", f"{order}fleet_number")
+                .first()
             )
-            return vehicles.order_by("-fleet_number").first()
 
-    def get_next(self):
-        if self.fleet_number and self.operator:
-            vehicles = self.operator.vehicle_set.filter(
-                withdrawn=False, fleet_number__gt=self.fleet_number
-            )
-            return vehicles.order_by("fleet_number").first()
+    def get_previous(self):
+        return self.get_next(order="-")
 
     def get_reg(self):
         return format_reg(self.reg)
