@@ -1,6 +1,5 @@
 [![Test](https://github.com/jclgoodwin/bustimes.org/actions/workflows/test.yml/badge.svg)](https://github.com/jclgoodwin/bustimes.org/actions/workflows/test.yml)
-
-[Coverage](https://jclgoodwin.github.io/bustimes.org/)
+[![Coverage badge](https://raw.githubusercontent.com/jclgoodwin/bustimes.org/python-coverage-comment-action-data/badge.svg)](https://htmlpreview.github.io/?https://github.com/jclgoodwin/bustimes.org/blob/python-coverage-comment-action-data/htmlcov/index.html)
 
 ## What's this?
 
