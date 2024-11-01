@@ -1,6 +1,6 @@
 {% if vehicle.colours or vehicle.livery %}
     <div class="livery" style="background:{{ vehicle.get_livery }}"></div>
-    {% if vehicle.livery %}{{ vehicle.livery }}{% endif %}
+    {% if vehicle.livery %}{{ vehicle.livery }}{% if vehicle.branding %}/{% endif %}{% endif %}{{ vehicle.branding }}
 {% endif %}
 
 {% if vehicle.notes %}
@@ -11,17 +11,14 @@
     {% if vehicle.vehicle_type %}
         <div>
             <dt>Type</dt>
-            <dd>{{ vehicle.vehicle_type }}</dd>
+            <dd>
+                {{ vehicle.vehicle_type }}
+                {% if vehicle.vehicle_type.fuel == "electric" %}
+                    ⚡
+                {% endif %}
+            </dd>
         </div>
     {% endif %}
-
-    {% if vehicle.branding %}
-        <div>
-            <dt>Branding</dt>
-            <dd>{{ vehicle.branding }}</dd>
-        </div>
-    {% endif %}
-
     {% if vehicle.name %}
         <div>
             <dt>Name</dt>
@@ -44,11 +41,6 @@
             <dd>{{ vehicle.features.all|join:", " }}</dd>
         </div>
     {% endif %}
-
-    <div>
-        <dt>ID</dt>
-        <dd>{{ vehicle.id }}</dd>
-    </div>
 </dl>
 
 {% with flickr_link=vehicle.get_flickr_link %}
