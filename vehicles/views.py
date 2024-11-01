@@ -791,20 +791,6 @@ def edit_vehicle(request, **kwargs):
 
     context = {}
     revision = None
-    initial = {
-        "operator": vehicle.operator,
-        "reg": vehicle.reg,
-        "vehicle_type": vehicle.vehicle_type,
-        "features": vehicle.features.all(),
-        "colours": vehicle.livery_id,
-        "other_colour": vehicle.colours or "",
-        "branding": vehicle.branding,
-        "name": vehicle.name,
-        "previous_reg": vehicle.data and vehicle.data.get("Previous reg") or None,
-        "notes": vehicle.notes,
-        "withdrawn": vehicle.withdrawn,
-        "spare_ticket_machine": vehicle.is_spare_ticket_machine(),
-    }
 
     try:
         context["vehicle_unique_id"] = vehicle.latest_journey_data["Extensions"][
@@ -813,14 +799,8 @@ def edit_vehicle(request, **kwargs):
     except (KeyError, TypeError):
         pass
 
-    if vehicle.fleet_code:
-        initial["fleet_number"] = vehicle.fleet_code
-    elif vehicle.fleet_number is not None:
-        initial["fleet_number"] = str(vehicle.fleet_number)
-
     form = forms.EditVehicleForm(
         form_data,
-        initial=initial,
         vehicle=vehicle,
         user=request.user,
     )

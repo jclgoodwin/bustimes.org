@@ -140,6 +140,26 @@ link to a picture to prove it. Be polite.""",
     def __init__(self, data, *args, user, vehicle, **kwargs):
         super().__init__(data, *args, **kwargs)
 
+        self.fields["operator"].initial = vehicle.operator
+        self.fields["reg"].initial = vehicle.reg
+        self.fields["vehicle_type"].initial = vehicle.vehicle_type
+        self.fields["features"].initial = vehicle.features.all()
+        self.fields["colours"].initial = vehicle.livery_id
+        self.fields["other_colour"].initial = vehicle.colours or ""
+        self.fields["branding"].initial = vehicle.branding
+        self.fields["name"].initial = vehicle.name
+        self.fields["previous_reg"].initial = (
+            vehicle.data and vehicle.data.get("Previous reg") or None
+        )
+        self.fields["notes"].initial = vehicle.notes
+        self.fields["withdrawn"].initial = vehicle.withdrawn
+        self.fields["spare_ticket_machine"].initial = vehicle.is_spare_ticket_machine()
+
+        if vehicle.fleet_code:
+            self.fields["fleet_number"].initial = vehicle.fleet_code
+        elif vehicle.fleet_number is not None:
+            self.fields["fleet_number"].intial = str(vehicle.fleet_number)
+
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
             self.fields["spare_ticket_machine"].disabled = True
 
