@@ -65,7 +65,7 @@
 
 {% load static %}
 
-<div id="journeys">
+<div id="journeys" hx-history-elt>
 
 {% if date %}
     <script src="{% static 'js/htmx.org/htmx.min.js' %}"></script>
