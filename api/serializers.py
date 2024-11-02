@@ -100,9 +100,13 @@ class ServiceSerializer(serializers.ModelSerializer):
 
 
 class StopSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
     long_name = serializers.SerializerMethodField()
     location = serializers.SerializerMethodField()
     icon = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return obj.get_name_for_timetable()
 
     def get_long_name(self, obj):
         return obj.get_long_name()
@@ -120,6 +124,7 @@ class StopSerializer(serializers.ModelSerializer):
             "atco_code",
             "naptan_code",
             "common_name",
+            "name",
             "long_name",
             "location",
             "indicator",
