@@ -57,5 +57,5 @@
         ];
     </script>
     <script src="{% static 'dist/js/bigmap.js' %}"></script>
-    <link rel="stylesheet" href="/liveries.{{ liveries_css_version }}.css">
+    <link rel="stylesheet" media="print" href="/liveries.{{ liveries_css_version }}.css" onload="this.onload=null;this.removeAttribute('media')">
 {% endblock footer %}
