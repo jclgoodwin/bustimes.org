@@ -1115,7 +1115,7 @@ class Command(BaseCommand):
                 elif not existing:
                     # assume service code is at least unique within a TNDS region:
                     existing = self.source.service_set.filter(
-                        Q(service_code=service_code)
+                        Q(service_code=service_code, operator__in=operators.values())
                         | Q(description=description, line_name__iexact=line.line_name)
                     ).first()
             elif unique_service_code:
