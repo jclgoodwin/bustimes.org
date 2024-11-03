@@ -26,7 +26,7 @@
             offset: ((params.page | 1) - 1) * 100,
         };
         if (params.term) {
-            query.name = params.term;
+            query.name__icontains = params.term;
         } else {
             var suggested = this.data("suggested");
             if (suggested) {
@@ -34,7 +34,6 @@
             } else {
                 query.vehicle__operator = $('#id_operator').val();
             }
-
         }
         return query;
     }
@@ -43,7 +42,7 @@
         return {
             results: data.results.map(function(item) {
                 return {
-                    id: item.id,
+                    id: item.id || item.noc,
                     text: item.name,
                     css: item.left_css
                 };
@@ -77,4 +76,18 @@
         templateResult: formatLivery,
         templateSelection: formatLivery,
     });
+
+
+    $('#id_operator').select2({
+        allowClear: true,
+        placeholder: "",
+        ajax: {
+            url: '/api/operators/',
+            data: data,
+            processResults: processResults,
+            delay: 250
+        },
+        minimumInputLength: 1
+    });
+
 })();

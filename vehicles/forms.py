@@ -63,10 +63,10 @@ class EditVehicleForm(forms.Form):
     reg = fields.RegField(label="Number plate", required=False, max_length=24)
 
     operator = forms.ModelChoiceField(
+        widget=AutcompleteWidget(field=Vehicle.operator.field),
         queryset=Operator.objects,
         required=False,
         empty_label="",
-        widget=forms.TextInput(),
     )
 
     vehicle_type = forms.ModelChoiceField(
