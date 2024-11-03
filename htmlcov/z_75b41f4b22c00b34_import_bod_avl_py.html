@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-02 08:10 +0000
+            created at 2024-11-03 15:41 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -450,7 +450,7 @@
     <p class="run"><span class="n"><a id="t368" href="#t368">368</a></span><span class="t">                <span class="nam">framed</span> <span class="op">=</span> <span class="nam">monitored_vehicle_journey</span><span class="op">[</span><span class="str">"FramedVehicleJourneyRef"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t369" href="#t369">369</a></span><span class="t">                <span class="nam">journey_ref</span> <span class="op">=</span> <span class="nam">framed</span><span class="op">[</span><span class="str">"DatedVehicleJourneyRef"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t370" href="#t370">370</a></span><span class="t">                <span class="nam">journey_date</span> <span class="op">=</span> <span class="nam">date</span><span class="op">.</span><span class="nam">fromisoformat</span><span class="op">(</span><span class="nam">framed</span><span class="op">[</span><span class="str">"DataFrameRef"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t371" href="#t371">371</a></span><span class="t">            <span class="key">except</span> <span class="nam">KeyError</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t371" href="#t371">371</a></span><span class="t">            <span class="key">except</span> <span class="op">(</span><span class="nam">KeyError</span><span class="op">,</span> <span class="nam">ValueError</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t372" href="#t372">372</a></span><span class="t">                <span class="key">pass</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t373" href="#t373">373</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t374" href="#t374">374</a></span><span class="t">        <span class="key">if</span> <span class="nam">journey_ref</span> <span class="op">==</span> <span class="str">"UNKNOWN"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -944,7 +944,7 @@
             <a class="nav" href="z_75b41f4b22c00b34_import_bushub_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-02 08:10 +0000
+            created at 2024-11-03 15:41 +0000
         </p>
     </div>
 </footer>

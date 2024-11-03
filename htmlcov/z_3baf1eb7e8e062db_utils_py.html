@@ -54,8 +54,8 @@
             </div>
         </aside>
         <h2>
-            <span class="text">186 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">174<span class="text"> run</span></button>
+            <span class="text">188 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">176<span class="text"> run</span></button>
             <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">12<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_3baf1eb7e8e062db_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-02 08:10 +0000
+            created at 2024-11-03 15:41 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -463,11 +463,15 @@
     <p class="pln"><span class="n"><a id="t381" href="#t381">381</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t382" href="#t382">382</a></span><span class="t"><span class="key">def</span> <span class="nam">contiguous_stoptimes_only</span><span class="op">(</span><span class="nam">stoptimes</span><span class="op">,</span> <span class="nam">trip_id</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t383" href="#t383">383</a></span><span class="t">    <span class="key">for</span> <span class="nam">a</span><span class="op">,</span> <span class="nam">b</span> <span class="key">in</span> <span class="nam">pairwise</span><span class="op">(</span><span class="nam">stoptimes</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t384" href="#t384">384</a></span><span class="t">        <span class="key">if</span> <span class="nam">a</span><span class="op">.</span><span class="nam">trip_id</span> <span class="op">!=</span> <span class="nam">b</span><span class="op">.</span><span class="nam">trip_id</span> <span class="key">and</span> <span class="nam">a</span><span class="op">.</span><span class="nam">stop_id</span> <span class="op">!=</span> <span class="nam">b</span><span class="op">.</span><span class="nam">stop_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t385" href="#t385">385</a></span><span class="t">            <span class="com"># trips are not contiguous, return only the stops for trip_id</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t386" href="#t386">386</a></span><span class="t">            <span class="key">return</span> <span class="op">[</span><span class="nam">stop</span> <span class="key">for</span> <span class="nam">stop</span> <span class="key">in</span> <span class="nam">stoptimes</span> <span class="key">if</span> <span class="nam">stop</span><span class="op">.</span><span class="nam">trip_id</span> <span class="op">==</span> <span class="nam">trip_id</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t387" href="#t387">387</a></span><span class="t">    <span class="com"># trips were contiguous, return all stops</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t388" href="#t388">388</a></span><span class="t">    <span class="key">return</span> <span class="nam">stoptimes</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t384" href="#t384">384</a></span><span class="t">        <span class="key">if</span> <span class="nam">a</span><span class="op">.</span><span class="nam">trip_id</span> <span class="op">!=</span> <span class="nam">b</span><span class="op">.</span><span class="nam">trip_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t385" href="#t385">385</a></span><span class="t">            <span class="key">if</span> <span class="nam">a</span><span class="op">.</span><span class="nam">stop_id</span> <span class="op">!=</span> <span class="nam">b</span><span class="op">.</span><span class="nam">stop_id</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t386" href="#t386">386</a></span><span class="t">                <span class="com"># trips are not contiguous, return only the stops for trip_id</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t387" href="#t387">387</a></span><span class="t">                <span class="key">return</span> <span class="op">[</span><span class="nam">stop</span> <span class="key">for</span> <span class="nam">stop</span> <span class="key">in</span> <span class="nam">stoptimes</span> <span class="key">if</span> <span class="nam">stop</span><span class="op">.</span><span class="nam">trip_id</span> <span class="op">==</span> <span class="nam">trip_id</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t388" href="#t388">388</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t389" href="#t389">389</a></span><span class="t">                <span class="nam">a</span><span class="op">.</span><span class="nam">departure_time</span> <span class="op">=</span> <span class="nam">b</span><span class="op">.</span><span class="nam">departure_time</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t390" href="#t390">390</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t391" href="#t391">391</a></span><span class="t">    <span class="com"># trips were contiguous, return all stops</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t392" href="#t392">392</a></span><span class="t">    <span class="key">return</span> <span class="nam">stoptimes</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -477,7 +481,7 @@
             <a class="nav" href="z_3baf1eb7e8e062db_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-02 08:10 +0000
+            created at 2024-11-03 15:41 +0000
         </p>
     </div>
 </footer>

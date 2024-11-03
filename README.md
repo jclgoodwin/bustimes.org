@@ -13,7 +13,7 @@
 | accounts/views.py                                               |       61 |        1 |     98% |       108 |
 | api/\_\_init\_\_.py                                             |        0 |        0 |    100% |           |
 | api/api.py                                                      |       11 |        0 |    100% |           |
-| api/filters.py                                                  |       55 |        0 |    100% |           |
+| api/filters.py                                                  |       53 |        0 |    100% |           |
 | api/serializers.py                                              |      108 |        0 |    100% |           |
 | api/tests.py                                                    |        7 |        0 |    100% |           |
 | api/views.py                                                    |       72 |        0 |    100% |           |
@@ -75,13 +75,13 @@
 | bustimes/management/tests/test\_import\_gtfs\_ember\_flixbus.py |       70 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_ni.py                   |       21 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
-| bustimes/management/tests/test\_import\_transxchange.py         |      722 |        0 |    100% |           |
+| bustimes/management/tests/test\_import\_transxchange.py         |      723 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
-| bustimes/models.py                                              |      318 |        6 |     98% |92, 339, 342, 371, 408, 442 |
+| bustimes/models.py                                              |      318 |        7 |     98% |92, 182, 339, 342, 371, 408, 442 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      638 |       48 |     92% |62, 102-115, 144, 241-242, 259, 327-330, 342, 355-360, 406, 413, 481, 484, 500-503, 530, 639-654, 740-741, 812, 958-960 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
-| bustimes/utils.py                                               |      186 |       12 |     94% |204, 230-232, 252-253, 276, 321, 338-339, 351, 386 |
+| bustimes/utils.py                                               |      188 |       12 |     94% |204, 230-232, 252-253, 276, 321, 338-339, 351, 387 |
 | bustimes/views.py                                               |      365 |       66 |     82% |154-168, 177-179, 187-196, 198-206, 213, 235, 325, 334, 371, 377, 457, 507, 541, 545-547, 555, 570-577, 607-618, 627-633 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
@@ -163,7 +163,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15790** | **1001** | **94%** |           |
+|                                                       **TOTAL** | **15791** | **1002** | **94%** |           |
 
 
 ## Setup coverage badge

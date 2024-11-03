@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-02 08:10 +0000
+            created at 2024-11-03 15:41 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -1197,7 +1197,7 @@
     <p class="run"><span class="n"><a id="t1115" href="#t1115">1115</a></span><span class="t">                <span class="key">elif</span> <span class="key">not</span> <span class="nam">existing</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1116" href="#t1116">1116</a></span><span class="t">                    <span class="com"># assume service code is at least unique within a TNDS region:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1117" href="#t1117">1117</a></span><span class="t">                    <span class="nam">existing</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">.</span><span class="nam">service_set</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t1118" href="#t1118">1118</a></span><span class="t">                        <span class="nam">Q</span><span class="op">(</span><span class="nam">service_code</span><span class="op">=</span><span class="nam">service_code</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t1118" href="#t1118">1118</a></span><span class="t">                        <span class="nam">Q</span><span class="op">(</span><span class="nam">service_code</span><span class="op">=</span><span class="nam">service_code</span><span class="op">,</span> <span class="nam">operator__in</span><span class="op">=</span><span class="nam">operators</span><span class="op">.</span><span class="nam">values</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1119" href="#t1119">1119</a></span><span class="t">                        <span class="op">|</span> <span class="nam">Q</span><span class="op">(</span><span class="nam">description</span><span class="op">=</span><span class="nam">description</span><span class="op">,</span> <span class="nam">line_name__iexact</span><span class="op">=</span><span class="nam">line</span><span class="op">.</span><span class="nam">line_name</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t1120" href="#t1120">1120</a></span><span class="t">                    <span class="op">)</span><span class="op">.</span><span class="nam">first</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t1121" href="#t1121">1121</a></span><span class="t">            <span class="key">elif</span> <span class="nam">unique_service_code</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1571,7 +1571,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-02 08:10 +0000
+            created at 2024-11-03 15:41 +0000
         </p>
     </div>
 </footer>
