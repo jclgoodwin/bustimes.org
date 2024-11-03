@@ -20,7 +20,7 @@ import VehicleMarker, {
 
 import VehiclePopup from "./VehiclePopup";
 import StopPopup, { Stop } from "./StopPopup";
-import BusTimesMap, { ThemeContext } from "./Map";
+import BusTimesMap from "./Map";
 import { Route } from "./TripMap";
 import TripTimetable, { Trip } from "./TripTimetable";
 
