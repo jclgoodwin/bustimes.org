@@ -368,7 +368,7 @@ class Command(ImportLiveVehiclesCommand):
                 framed = monitored_vehicle_journey["FramedVehicleJourneyRef"]
                 journey_ref = framed["DatedVehicleJourneyRef"]
                 journey_date = date.fromisoformat(framed["DataFrameRef"])
-            except KeyError:
+            except (KeyError, ValueError):
                 pass
 
         if journey_ref == "UNKNOWN":
