@@ -1050,6 +1050,7 @@ class ImportTransXChangeTest(TestCase):
         service = Service.objects.create(
             service_code="ABBN017", line_name="N17", colour=colour, source=source
         )
+        service.operator.add(self.fabd)
 
         # simulate a Scotland zipfile:
         self.handle_files("S.zip", ["SVRABBN017.xml"])
