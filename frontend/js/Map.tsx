@@ -37,9 +37,6 @@ const mapStyles: { [key: string]: string } = {
   alidade_smooth: "Light",
   alidade_smooth_dark: "Dark",
   osm_bright: "Bright",
-  // outdoors: "Outdoors",
-  // alidade_satellite: "Satellite",
-  // ordnance_survey: "Ordnance Survey",
 };
 
 type StyleSwitcherProps = {
@@ -199,13 +196,6 @@ export default function BusTimesMap(
     document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
   }, [mapStyle]);
 
-  let mapStyleUrl;
-  if (mapStyle === "ordnance_survey") {
-    mapStyleUrl =
-      "https://api.os.uk/maps/vector/v1/vts/resources/styles?key=b45dBXyI0RA7DGx5hcftaqVk5GFBUCEY&srs=3857";
-  } else {
-    mapStyleUrl = `https://tiles.stadiamaps.com/styles/${mapStyle}.json`;
-  }
   return (
     <ThemeContext.Provider value={mapStyle}>
       <Map
@@ -216,7 +206,7 @@ export default function BusTimesMap(
         dragRotate={false}
         minZoom={2}
         maxZoom={18}
-        mapStyle={mapStyleUrl}
+        mapStyle={`https://tiles.stadiamaps.com/styles/${mapStyle}.json`}
         RTLTextPlugin={""}
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
@@ -231,13 +221,7 @@ export default function BusTimesMap(
           style={mapStyle}
           onChange={handleMapStyleChange}
         />
-
-        {mapStyle === "ordnance_survey" ? (
-          <AttributionControl customAttribution="© Ordnance Survey" />
-        ) : (
           <AttributionControl />
-        )}
-
         <MapChild onInit={props.onMapInit} />
 
         {props.children}

@@ -12,10 +12,6 @@ type RouteProps = {
 export const Route = React.memo(function Route({ times }: RouteProps) {
   const theme = React.useContext(ThemeContext);
   const darkMode = theme === "alidade_smooth_dark";
-  const font =
-    theme === "ordnance_survey"
-      ? ["Source Sans Pro Regular"]
-      : ["Stadia Regular"];
 
   const stopsStyle: LayerProps = {
     id: "stops",
@@ -24,7 +20,7 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
       "symbol-sort-key": ["get", "priority"],
       "text-field": ["get", "time"],
       "text-size": 11,
-      "text-font": font,
+      "text-font": ["Stadia Regular"],
     },
     paint: {
       "text-color": darkMode ? "#fff" : "#333",

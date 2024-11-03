@@ -74,10 +74,6 @@ const Locations = React.memo(function Locations({
 }) {
   const theme = React.useContext(ThemeContext);
   const darkMode = theme === "alidade_smooth_dark";
-  const font =
-    theme === "ordnance_survey"
-      ? ["Source Sans Pro Regular"]
-      : ["Stadia Regular"];
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -94,7 +90,7 @@ const Locations = React.memo(function Locations({
     layout: {
       "text-field": ["get", "time"],
       "text-size": 11,
-      "text-font": font,
+      "text-font": ["Stadia Regular"],
 
       "icon-rotate": ["+", 45, ["get", "heading"]],
       "icon-image": "arrow",
