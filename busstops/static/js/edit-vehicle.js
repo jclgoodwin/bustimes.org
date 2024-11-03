@@ -41,9 +41,13 @@
     function processResults(data) {
         return {
             results: data.results.map(function(item) {
+                var name = item.name;
+                if (item.noc) {
+                    name += " (" + item.noc + ")";
+                }
                 return {
                     id: item.id || item.noc,
-                    text: item.name,
+                    text: name,
                     css: item.left_css
                 };
             }),
