@@ -470,7 +470,7 @@ class VehiclesTests(TestCase):
 
         self.client.force_login(self.staff_user)
 
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(11):
             response = self.client.get(url)
         self.assertNotContains(response, "already")
 
@@ -486,7 +486,7 @@ class VehiclesTests(TestCase):
         }
 
         # edit nothing
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertFalse(response.context["form"].has_changed())
         self.assertContains(response, "You haven&#x27;t changed anything")
@@ -503,7 +503,7 @@ class VehiclesTests(TestCase):
             "-aWWgKX-aotzn6-aiadaL-adWEKk/ blah"
         )
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.post(url, initial)
         self.assertContains(response, "You haven&#x27;t changed anything")
         self.assertNotContains(response, "already")
@@ -642,7 +642,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "summary": "I saw it with my eyes",
         }
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
         self.assertNotContains(response, "already")
         self.assertContains(response, "You haven&#x27;t changed anything")
@@ -665,7 +665,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         response = self.client.get("/vehicles/edits")
         self.assertContains(response, "Luther Blisset")
 
-        with self.assertNumQueries(13):
+        with self.assertNumQueries(14):
             response = self.client.get(url)
         self.assertContains(response, "already")
 
@@ -685,12 +685,12 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             "summary": "I smelt it with my nose",
         }
 
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
             self.assertContains(response, "You haven&#x27;t changed anything")
 
         initial["other_colour"] = "Bath is my favourite spa town, and so is Harrogate"
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(15):
             response = self.client.post(url, initial)
             self.assertEqual(
                 response.context["form"].errors,

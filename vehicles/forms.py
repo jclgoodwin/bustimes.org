@@ -9,7 +9,7 @@ from . import fields
 from .models import Livery, Vehicle, VehicleFeature, VehicleType, get_text_colour
 
 
-class AutcompleteWidget(forms.Select):
+class AutocompleteWidget(forms.Select):
     # optgroups method from the Django admin AutocompleteSelect widget
     optgroups = AutocompleteSelect.optgroups
 
@@ -63,21 +63,21 @@ class EditVehicleForm(forms.Form):
     reg = fields.RegField(label="Number plate", required=False, max_length=24)
 
     operator = forms.ModelChoiceField(
-        widget=AutcompleteWidget(field=Vehicle.operator.field),
         queryset=Operator.objects,
+        widget=AutocompleteWidget(field=Vehicle.operator.field),
         required=False,
         empty_label="",
     )
 
     vehicle_type = forms.ModelChoiceField(
-        widget=AutcompleteWidget(field=Vehicle.vehicle_type.field),
+        widget=AutocompleteWidget(field=Vehicle.vehicle_type.field),
         queryset=VehicleType.objects,
         required=False,
         empty_label="",
     )
 
     colours = forms.ModelChoiceField(
-        widget=AutcompleteWidget(field=Vehicle.livery.field),
+        widget=AutocompleteWidget(field=Vehicle.livery.field),
         label="Current livery",
         queryset=Livery.objects,
         required=False,
