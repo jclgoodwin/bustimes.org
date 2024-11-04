@@ -158,7 +158,7 @@ def bods_disruptions():
 
     situations = []
 
-    response = requests.get(url, timeout=30)
+    response = requests.get(url, timeout=61)
     assert response.ok
     archive = zipfile.ZipFile(io.BytesIO(response.content))
 

@@ -623,7 +623,7 @@ class Command(ImportLiveVehiclesCommand):
         if self.fallback_mode:
             url = self.source.settings.get("fallback_url") or url
 
-        response = self.session.get(url, timeout=30)
+        response = self.session.get(url, timeout=61)
 
         if not response.ok:
             return []
@@ -835,6 +835,7 @@ class Command(ImportLiveVehiclesCommand):
             return 30  # wait
         elif age > 150 and not changed_items:
             self.fallback_mode = True
+            logger.warning("falling back")
 
         # bods updates "every 10 seconds",
         # it's usually worth waiting 0-9 seconds

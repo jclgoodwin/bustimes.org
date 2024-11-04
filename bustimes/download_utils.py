@@ -16,7 +16,7 @@ def write_file(path, response):
 
 
 def download(path, url):
-    response = session.get(url, stream=True, timeout=60)
+    response = session.get(url, stream=True, timeout=61)
     assert response.ok
     write_file(path, response)
 
@@ -34,7 +34,7 @@ def download_if_modified(path, source=None, url=None):
         if source and source.etag:
             headers["if-none-match"] = source.etag
 
-    response = session.get(url, headers=headers, stream=True, timeout=10)
+    response = session.get(url, headers=headers, stream=True, timeout=61)
 
     modified = response.status_code != HTTPStatus.NOT_MODIFIED
 
