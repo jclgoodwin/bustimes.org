@@ -1,9 +1,9 @@
 from django.conf import settings
-from django.core.management import call_command
 from django.test import TestCase
 from vcr import use_cassette
 
 from busstops.models import DataSource, Region, Service, StopPoint
+from .tfl_disruptions import tfl_disruptions
 
 
 class TfLDisruptionsTest(TestCase):
@@ -28,12 +28,12 @@ class TfLDisruptionsTest(TestCase):
             str(vcr_dir / "tfl_disruptions.yaml"), decode_compressed_response=True
         ) as cassette:
             with self.assertNumQueries(109):
-                call_command("tfl_disruptions")
+                tfl_disruptions()
 
             cassette.rewind()
 
             with self.assertNumQueries(105):
-                call_command("tfl_disruptions")
+                tfl_disruptions()
 
         response = self.client.get("/situations")
 
