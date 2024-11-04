@@ -77,7 +77,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      723 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
-| bustimes/models.py                                              |      318 |        6 |     98% |92, 339, 342, 371, 408, 442 |
+| bustimes/models.py                                              |      318 |        7 |     98% |92, 182, 339, 342, 371, 408, 442 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      638 |       48 |     92% |62, 102-115, 144, 241-242, 259, 327-330, 342, 355-360, 406, 413, 481, 484, 500-503, 530, 639-654, 740-741, 812, 958-960 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -93,12 +93,12 @@
 | departures/test\_live.py                                        |      111 |        0 |    100% |           |
 | disruptions/\_\_init\_\_.py                                     |        0 |        0 |    100% |           |
 | disruptions/admin.py                                            |       26 |        1 |     96% |        44 |
-| disruptions/management/commands/import\_siri\_sx.py             |      125 |       14 |     89% |49, 76, 88-91, 102-103, 134, 144-148 |
-| disruptions/management/commands/tfl\_disruptions.py             |       89 |        2 |     98% |   65, 106 |
 | disruptions/models.py                                           |       70 |        5 |     93% |41, 70, 94, 102, 112 |
+| disruptions/siri\_sx.py                                         |      122 |       14 |     89% |50, 77, 89-92, 103-104, 135, 145-149 |
 | disruptions/test\_siri\_sx.py                                   |       48 |        0 |    100% |           |
 | disruptions/test\_tfl\_disruptions.py                           |       34 |        0 |    100% |           |
 | disruptions/tests.py                                            |       16 |        0 |    100% |           |
+| disruptions/tfl\_disruptions.py                                 |       85 |        2 |     98% |   63, 104 |
 | disruptions/urls.py                                             |        3 |        0 |    100% |           |
 | disruptions/views.py                                            |        9 |        0 |    100% |           |
 | fares/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
@@ -163,7 +163,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15791** | **1001** | **94%** |           |
+|                                                       **TOTAL** | **15784** | **1002** | **94%** |           |
 
 
 ## Setup coverage badge
