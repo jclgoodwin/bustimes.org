@@ -294,7 +294,7 @@ class StopPoint(models.Model):
 
     source = models.ForeignKey(DataSource, models.DO_NOTHING, null=True, blank=True)
 
-    atco_code = models.CharField(max_length=16, primary_key=True)
+    atco_code = models.CharField(max_length=36, primary_key=True)
     naptan_code = models.CharField(max_length=16, null=True, blank=True)
 
     common_name = models.CharField(max_length=48)
