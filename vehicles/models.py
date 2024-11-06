@@ -371,16 +371,18 @@ class Vehicle(models.Model):
             filter = {}
             if self.fleet_number:
                 filter[f"fleet_number__{lookup}"] = self.fleet_number
+                order_by = [f"{order}fleet_number"]
             else:
                 if self.fleet_code:
                     filter[f"fleet_code__{lookup}"] = self.fleet_code
                 filter[f"code__{lookup}"] = self.code
+                order_by = [f"{order}code", f"{order}fleet_code"]
             return (
                 self.operator.vehicle_set.filter(
                     **filter,
                     withdrawn=False,
                 )
-                .order_by(f"{order}code", f"{order}fleet_code", f"{order}fleet_number")
+                .order_by(*order_by)
                 .first()
             )
 
@@ -429,48 +431,18 @@ class Vehicle(models.Model):
     def get_edit_url(self):
         return reverse("vehicle_edit", args=(self.slug or self.id,))
 
-    def get_history_url(self):
-        return reverse("vehicle_history", args=(self.slug or self.id,))
-
     def get_flickr_url(self):
         if self.reg:
             reg = self.get_reg()
             search = f'{self.reg} or "{reg}"'
-            if self.fleet_number and self.operator and self.operator.parent:
-                number = str(self.fleet_number)
-                if len(number) >= 5:
-                    search = f"{search} or {self.operator.parent} {number}"
-        else:
-            if self.fleet_code or self.fleet_number:
-                search = self.fleet_code or str(self.fleet_number)
-            else:
-                search = str(self).replace("/", " ")
-            if self.operator:
-                name = str(self.operator).split(" (", 1)[0]
-                if "Yellow" not in name:
-                    name = (
-                        str(self.operator)
-                        .replace(" Buses", "", 1)
-                        .replace(" Coaches", "", 1)
-                    )
-                if (
-                    name.startswith("First ")
-                    or name.startswith("Stagecoach ")
-                    or name.startswith("Arriva ")
-                ):
-                    name = name.split()[0]
-                search = f"{name} {search}"
-        return (
-            f"https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc"
-        )
+            return f"https://www.flickr.com/search/?text={quote(search)}&sort=date-taken-desc"
 
     def get_flickr_link(self):
-        if self.is_spare_ticket_machine():
-            return ""
-        return format_html(
-            '<a href="{}" target="_blank" rel="noopener">Flickr</a>',
-            self.get_flickr_url(),
-        )
+        if url := self.get_flickr_url():
+            return format_html(
+                '<a href="{}" target="_blank" rel="noopener">Flickr</a>', url
+            )
+        return ""
 
     get_flickr_link.short_description = "Flickr"
 

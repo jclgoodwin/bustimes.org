@@ -193,6 +193,10 @@ class VehiclesTests(TestCase):
             ]
         )
 
+        vehicle = Vehicle.objects.get(code="DE69")
+        self.assertEqual(vehicle.get_next().code, "G_2434")
+        self.assertEqual(vehicle.get_previous().code, "BB74BUS")
+
         # last seen today - should only show time, should link to map
         with (
             time_machine.travel("2020-10-20 12:00+01:00"),

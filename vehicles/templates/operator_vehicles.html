@@ -26,13 +26,17 @@
     </ul>
 {% endif %}
 
-<p>This is <strong>not a fleet list</strong>. It’s a list of {% firstof parent object %}
-{% if parent and operators and operators|length < 10 %} ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %}){% endif %} ticket machines, created as a by-product of the live bus tracking system.</p>
+<p>This is <strong>not intended to be a complete fleet list</strong>. It’s a really a list of
+{% firstof parent object %}
+{% if parent and operators and operators|length < 10 %}
+    ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %})
+{% endif %}
+ticket machines, a byproduct of the live bus tracking.</p>
 
 <p>Remember:</p>
 
 <ul class="bulleted">
-    <li>Ticket machines IDs might not correspond with the actual vehicles they’re attached to. Equipment is often swapped between vehicles.</li>
+    <li>Ticket machines IDs sometimes don’t correspond with the actual vehicles they’re attached to. (Equipment gets swapped between vehicles, etc.)</li>
     <li>Vehicles don’t always track all the time. If a journey isn’t listed, it doesn’t necessarily mean it didn’t operate.</li>
     {% if garage_column %}
         <li>“Garage” information is worked out automatically, using the Garage field in the operator’s timetable data and the last trip a vehicle worked.</li>

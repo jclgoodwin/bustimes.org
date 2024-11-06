@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from .models import Livery, Operator, Vehicle
+from .models import Livery, Vehicle
 
 
 class VehicleModelTests(TestCase):
@@ -18,26 +18,9 @@ class VehicleModelTests(TestCase):
         vehicle.reg = "J122018"
         self.assertEqual(str(vehicle), "J122018")
 
-        vehicle.notes = "Spare ticket machine"
-        self.assertEqual("", vehicle.get_flickr_link())
-
         vehicle = Vehicle(code="RML2604")
-        self.assertIn("search/?text=RML2604&sort", vehicle.get_flickr_url())
-
-        vehicle.operator = Operator(name="Lynx")
-        self.assertIn("search/?text=Lynx%20RML2604&sort", vehicle.get_flickr_url())
-
-        vehicle.fleet_number = "11111"
-        self.assertIn("search/?text=Lynx%2011111&sort", vehicle.get_flickr_url())
-
-        vehicle.reg = "YN69GHA"
-        vehicle.operator.parent = "Stagecoach"
-        vehicle.fleet_number = "11111"
-
-        self.assertIn(
-            "search/?text=YN69GHA%20or%20%22YN69%20GHA%22%20or%20Stagecoach%2011111&sort",
-            vehicle.get_flickr_url(),
-        )
+        self.assertIsNone(vehicle.get_flickr_url())
+        self.assertEqual("", vehicle.get_flickr_link())
 
     def test_vehicle_validation(self):
         vehicle = Vehicle(colours="ploop")
