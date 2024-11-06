@@ -6,9 +6,9 @@
 |---------------------------------------------------------------- | -------: | -------: | ------: | --------: |
 | accounts/\_\_init\_\_.py                                        |        0 |        0 |    100% |           |
 | accounts/admin.py                                               |       41 |        0 |    100% |           |
-| accounts/forms.py                                               |       50 |        1 |     98% |        36 |
+| accounts/forms.py                                               |       50 |        0 |    100% |           |
 | accounts/models.py                                              |       25 |        0 |    100% |           |
-| accounts/tests.py                                               |       92 |        0 |    100% |           |
+| accounts/tests.py                                               |       99 |        0 |    100% |           |
 | accounts/urls.py                                                |        4 |        0 |    100% |           |
 | accounts/views.py                                               |       61 |        1 |     98% |       108 |
 | api/\_\_init\_\_.py                                             |        0 |        0 |    100% |           |
@@ -16,7 +16,7 @@
 | api/filters.py                                                  |       53 |        0 |    100% |           |
 | api/serializers.py                                              |      108 |        0 |    100% |           |
 | api/tests.py                                                    |        7 |        0 |    100% |           |
-| api/views.py                                                    |       72 |        0 |    100% |           |
+| api/views.py                                                    |       73 |        0 |    100% |           |
 | buses/\_\_init\_\_.py                                           |        0 |        0 |    100% |           |
 | buses/context\_processors.py                                    |        5 |        0 |    100% |           |
 | buses/jinja2.py                                                 |       36 |        2 |     94% |    40, 61 |
@@ -77,7 +77,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      723 |        0 |    100% |           |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
-| bustimes/models.py                                              |      318 |        6 |     98% |92, 339, 342, 371, 408, 442 |
+| bustimes/models.py                                              |      318 |        7 |     98% |92, 182, 339, 342, 371, 408, 442 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      638 |       48 |     92% |62, 102-115, 144, 241-242, 259, 327-330, 342, 355-360, 406, 413, 481, 484, 500-503, 530, 639-654, 740-741, 812, 958-960 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -145,15 +145,15 @@
 | vehicles/management/tests/test\_siri\_post.py                   |       37 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
-| vehicles/models.py                                              |      541 |       36 |     93% |204, 206, 216, 250, 254, 258, 329, 335, 376, 403, 409, 433, 461, 496, 517, 645-646, 659, 684-686, 694-695, 698-699, 704-705, 727, 789, 796-799, 841, 854, 863, 874 |
+| vehicles/models.py                                              |      527 |       33 |     94% |204, 206, 216, 250, 254, 258, 329, 335, 405, 411, 468, 489, 617-618, 631, 656-658, 666-667, 670-671, 676-677, 699, 761, 768-771, 813, 826, 835, 846 |
 | vehicles/rtpi.py                                                |       73 |        1 |     99% |        27 |
 | vehicles/signals.py                                             |       17 |        1 |     94% |        24 |
 | vehicles/tasks.py                                               |      127 |       22 |     83% |63-73, 80, 85, 95, 102-105, 108, 110, 118, 132, 150, 164, 177-178, 232-233, 236 |
-| vehicles/test\_models.py                                        |       76 |        0 |    100% |           |
+| vehicles/test\_models.py                                        |       67 |        0 |    100% |           |
 | vehicles/test\_schedule\_adherence.py                           |       73 |        0 |    100% |           |
-| vehicles/tests.py                                               |      437 |        0 |    100% |           |
+| vehicles/tests.py                                               |      440 |        0 |    100% |           |
 | vehicles/urls.py                                                |        4 |        0 |    100% |           |
-| vehicles/utils.py                                               |      131 |        6 |     95% |36-38, 53-54, 182 |
+| vehicles/utils.py                                               |      126 |        3 |     98% |41-42, 170 |
 | vehicles/views.py                                               |      615 |       70 |     89% |341-342, 393, 420, 435-436, 455-456, 484-485, 512-517, 522-523, 554, 572-573, 575, 580, 596-598, 616-637, 717-718, 725, 739, 848, 850, 852, 857, 907-915, 935-941, 971-972, 999, 1048, 1051-1052, 1062, 1078-1083, 1123-1124, 1170, 1225-1264 |
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
 | vosa/admin.py                                                   |       36 |        0 |    100% |           |
@@ -163,7 +163,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15785** | **1001** | **94%** |           |
+|                                                       **TOTAL** | **15768** |  **995** | **94%** |           |
 
 
 ## Setup coverage badge
