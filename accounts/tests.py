@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from unittest.mock import patch
 
 from django.core import mail
@@ -30,19 +31,30 @@ class RegistrationTest(TransactionTestCase):
         response = self.client.get("/accounts/register/")
         self.assertContains(response, "Email address")
 
-        with self.assertNumQueries(4):
+        # IP address banned:
+        naughty_user = User.objects.create(trusted=False, ip_address="6.6.6.6")
+        with self.assertNumQueries(1):
             # create new account
             response = self.client.post(
                 "/accounts/register/",
                 {"email": "rufus@herring.pizza", "turnstile": "foo"},
                 headers={"CF-Connecting-IP": "6.6.6.6"},
             )
+            self.assertEqual(response.status_code, HTTPStatus.BAD_REQUEST)
+
+        # create new account successfully:
+        with self.assertNumQueries(4):
+            response = self.client.post(
+                "/accounts/register/",
+                {"email": "rufus@herring.pizza", "turnstile": "foo"},
+                headers={"CF-Connecting-IP": "1.2.3.4"},
+            )
         self.assertContains(response, "Check your email (rufus@herring.pizza")
         self.assertEqual("bustimes.org account", mail.outbox[0].subject)
         self.assertIn("a bustimes.org account", mail.outbox[0].body)
 
         user = User.objects.get(email="rufus@herring.pizza")
-        self.assertEqual(user.ip_address, "6.6.6.6")
+        self.assertEqual(user.ip_address, "1.2.3.4")
         user.is_active = False
         user.save()
 
@@ -53,7 +65,7 @@ class RegistrationTest(TransactionTestCase):
                 {"email": "RUFUS@HeRRInG.piZZa", "turnstile": "foo"},
             )
 
-        user = User.objects.get()
+        user.refresh_from_db()
         self.assertEqual(user.username, "rufus@herring.pizza")
         self.assertEqual(user.email, "rufus@herring.pizza")
         self.assertIs(True, user.is_active)
@@ -99,6 +111,10 @@ class RegistrationTest(TransactionTestCase):
         response = self.client.get(other_user.get_absolute_url())
 
         self.assertContains(response, "/change/")
+
+        # set permissions
+        with self.assertNumQueries(6):
+            response = self.client.post(other_user.get_absolute_url())
 
         # trust/distrust in admin
         response = self.client.post(
