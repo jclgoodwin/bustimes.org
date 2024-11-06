@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from shapely.errors import EmptyPartError
 import gtfs_kit
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -66,8 +67,13 @@ class Command(BaseCommand):
         }
 
         geometries = {}
-        for row in gtfs_kit.routes.geometrize_routes(feed).itertuples():
-            geometries[row.route_id] = row.geometry.wkt
+        try:
+            for row in gtfs_kit.routes.get_routes(feed, as_gdf=True).itertuples():
+                if row.geometry:
+                    print(row.geometry, row.geometry.wkt)
+                    geometries[row.route_id] = row.geometry.wkt
+        except EmptyPartError:
+            pass
 
         for row in feed.routes.itertuples():
             line_name = row.route_id.removeprefix("UK")
