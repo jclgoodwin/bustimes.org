@@ -26,7 +26,7 @@
     </ul>
 {% endif %}
 
-<p>This is <strong>not intended to be a complete fleet list</strong>. It’s a really a list of
+<p>This is <strong>not intended to be a complete fleet list</strong>. It's really a list of
 {% firstof parent object %}
 {% if parent and operators and operators|length < 10 %}
     ({% for operator in operators %}{% if not forloop.first and not forloop.last %}, {% elif forloop.last and not forloop.first %} and {% endif %}{{ operator }}{% endfor %})
