@@ -9,6 +9,8 @@ from bustimes.models import StopTime, Trip
 from bustimes.utils import contiguous_stoptimes_only
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
 
+from sql_util.utils import Exists
+
 from . import filters, serializers
 
 
@@ -53,7 +55,13 @@ class VehicleTypeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Operator.objects.order_by("noc")
+    queryset = (
+        Operator.objects.filter(
+            Exists("vehicle") | Exists("service", filter=Q(service__current=True))
+        )
+        .order_by("noc")
+        .defer("address", "email", "phone", "search_vector")
+    )
     serializer_class = serializers.OperatorSerializer
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
