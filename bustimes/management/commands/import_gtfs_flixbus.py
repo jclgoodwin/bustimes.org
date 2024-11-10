@@ -20,6 +20,26 @@ from .import_gtfs_ember import get_calendars
 logger = logging.getLogger(__name__)
 
 
+def get_stoppoint(stop, source):
+    stoppoint = StopPoint(
+        atco_code=stop.stop_id,
+        naptan_code=stop.stop_code,
+        common_name=stop.stop_name,
+        active=True,
+        source=source,
+        latlong=f"POINT({stop.stop_lon} {stop.stop_lat})",
+    )
+
+    if len(stoppoint.common_name) > 48:
+        if " (" in stoppoint.common_name and stoppoint.common_name[-1] == ")":
+            stoppoint.common_name, stoppoint.indicator = stoppoint.common_name.split(
+                " (", 1
+            )
+        stoppoint.indicator = stoppoint.indicator[:-1]
+
+    return stoppoint
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         operator = Operator.objects.get(name="FlixBus")
@@ -148,22 +168,7 @@ class Command(BaseCommand):
                 stop_time.stop_id = row.stop_id
 
                 if row.stop_id not in missing_stops:
-                    missing_stops[row.stop_id] = stoppoint = StopPoint(
-                        atco_code=row.stop_id,
-                        naptan_code=stop.stop_code,
-                        common_name=stop.stop_name,
-                        active=True,
-                        source=source,
-                        latlong=f"POINT({stop.stop_lon} {stop.stop_lat})",
-                    )
-
-                    if " (" in stoppoint.common_name and stoppoint.common_name.endswith(
-                        ")"
-                    ):
-                        stoppoint.common_name, stoppoint.indicator = (
-                            stoppoint.common_name.split(" (", 1)
-                        )
-                        stoppoint.indicator = stoppoint.indicator[:-1]
+                    missing_stops[row.stop_id] = get_stoppoint(stop, source)
 
                     logger.info(
                         f"{stop.stop_name} {stop.stop_code} {stop.stop_timezone} {stop.platform_code}"
@@ -181,7 +186,7 @@ class Command(BaseCommand):
         StopPoint.objects.bulk_create(
             missing_stops.values(),
             update_conflicts=True,
-            update_fields=["common_name", "naptan_code", "latlong"],
+            update_fields=["common_name", "indicator", "naptan_code", "latlong"],
             unique_fields=["atco_code"],
         )
 
