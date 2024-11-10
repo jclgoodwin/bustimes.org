@@ -11,7 +11,7 @@ from django.db import transaction
 from django.db.models import Min
 from django.utils.dateparse import parse_duration
 
-from busstops.models import DataSource, Operator, Service
+from busstops.models import DataSource, Operator, Service, StopPoint
 
 from ...download_utils import download_if_modified
 from ...models import Route, StopTime, Trip
@@ -44,7 +44,7 @@ class Command(BaseCommand):
         stop_codes = {
             stop_code.code: stop_code.stop_id for stop_code in source.stopcode_set.all()
         }
-        missing_stops = set()
+        missing_stops = {}
 
         existing_services = {
             service.line_name: service for service in operator.service_set.all()
@@ -145,8 +145,26 @@ class Command(BaseCommand):
                 stop_time.stop_id = stop_codes[row.stop_id]
             else:
                 stop = stops_data[row.stop_id]
-                stop_time.stop_code = stop.stop_name
+                stop_time.stop_id = row.stop_id
+
                 if row.stop_id not in missing_stops:
+                    missing_stops[row.stop_id] = stoppoint = StopPoint(
+                        atco_code=row.stop_id,
+                        naptan_code=stop.stop_code,
+                        common_name=stop.stop_name,
+                        active=True,
+                        source=source,
+                        latlong=f"POINT({stop.stop_lon} {stop.stop_lat})",
+                    )
+
+                    if " (" in stoppoint.common_name and stoppoint.common_name.endswith(
+                        ")"
+                    ):
+                        stoppoint.common_name, stoppoint.indicator = (
+                            stoppoint.common_name.split(" (", 1)
+                        )
+                        stoppoint.indicator = stoppoint.indicator[:-1]
+
                     logger.info(
                         f"{stop.stop_name} {stop.stop_code} {stop.stop_timezone} {stop.platform_code}"
                     )
@@ -154,13 +172,18 @@ class Command(BaseCommand):
                         f"https://bustimes.org/map#16/{stop.stop_lat}/{stop.stop_lon}"
                     )
                     logger.info(
-                        f"https://bustimes.org/admin/busstops/stopcode/add/?code={stop.stop_id}\n"
+                        f"https://bustimes.org/admin/busstops/stopcode/add/?code={row.stop_id}\n"
                     )
-                    missing_stops.add(row.stop_id)
 
             trip.destination_id = stop_time.stop_id
 
             stop_times.append(stop_time)
+        StopPoint.objects.bulk_create(
+            missing_stops.values(),
+            update_conflicts=True,
+            update_fields=["common_name", "naptan_code", "latlong"],
+            unique_fields=["atco_code"],
+        )
 
         with transaction.atomic():
             Trip.objects.bulk_create([trip for trip in trips.values() if not trip.id])
