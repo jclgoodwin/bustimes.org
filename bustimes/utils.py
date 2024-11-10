@@ -5,6 +5,7 @@ from itertools import pairwise
 
 from ciso8601 import parse_datetime
 from django.db.models import (
+    BigIntegerField,
     Case,
     DateTimeField,
     ExpressionWrapper,
@@ -14,6 +15,7 @@ from django.db.models import (
     When,
     OuterRef,
 )
+from django.db.models.functions import Cast
 from django.utils import timezone
 from sql_util.utils import Exists
 
@@ -196,7 +198,8 @@ def get_stop_times(date: date, time: timedelta | None, stop, routes, trip_ids=No
 
             times = times.annotate(
                 departure_time=ExpressionWrapper(
-                    int(midnight.timestamp()) + F("departure"),
+                    Value(int(midnight.timestamp()), output_field=BigIntegerField())
+                    + Cast(F("departure"), output_field=BigIntegerField()),
                     output_field=DateTimeField(),
                 )
             ).order_by("departure_time")

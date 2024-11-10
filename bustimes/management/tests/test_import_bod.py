@@ -247,6 +247,13 @@ Lynx/Bus Open Data Service (BODS)</a>, <time datetime="2020-04-01">1 April 2020<
             response = self.client.get("/stops/2900W0321/times.json?when=yesterday")
         self.assertEqual(400, response.status_code)
 
+        with self.assertNumQueries(8):
+            response = self.client.get("/stops/2900W0321?date=2038-01-19")
+            self.assertEqual(str(response.context["when"]), "2038-01-19 00:00:00")
+            self.assertEqual(
+                str(response.context["departures"][0]["time"]),
+                "2038-01-19 09:15:00+00:00",
+            )
         # with patch(
         #     "departures.live.NorfolkDepartures.get_departures", return_value=[]
         # ) as mocked:
