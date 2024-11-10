@@ -1,4 +1,5 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import vcr
 from django.core.management import call_command
@@ -41,8 +42,18 @@ class ImportOperatorsTest(TestCase):
     def test_import_noc(self):
         FIXTURES_DIR = Path(__file__).resolve().parent / "fixtures"
 
-        with vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")) as cassette:
-            with self.assertNumQueries(3450):
+        mock_overrides = {
+            "WRAY": {"url": "https://www.arrivabus.co.uk/yorkshire"},
+            "FCWL": {"twitter": "by_Kernow"},
+            "FCYM": {"name": "First Cymru"},
+            "AMSY": {"name": "Arriva Merseyside"},
+        }
+
+        with vcr.use_cassette(str(FIXTURES_DIR / "noc.yaml")) as cassette, patch(
+            "busstops.management.commands.import_noc.yaml.safe_load",
+            return_value=mock_overrides,
+        ):
+            with self.assertNumQueries(3510):
                 call_command("import_noc")
 
             cassette.rewind()
@@ -62,6 +73,8 @@ class ImportOperatorsTest(TestCase):
 
             with self.assertNumQueries(21):
                 call_command("import_noc")
+
+        self.assertEqual(Operator.objects.count(), 3105)
 
         c2c = Operator.objects.get(noc="CC")
         self.assertEqual(c2c.name, "c2c")

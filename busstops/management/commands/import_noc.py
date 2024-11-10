@@ -121,7 +121,7 @@ class Command(BaseCommand):
         licences_by_number = Licence.objects.in_bulk(field_name="licence_number")
 
         with open(settings.BASE_DIR / "fixtures" / "operators.yaml") as open_file:
-            overrides = yaml.load(open_file, Loader=yaml.BaseLoader)
+            overrides = yaml.safe_load(open_file)
 
         operators_by_slug = {operator.slug: operator for operator in operators.values()}
 
