@@ -1,4 +1,4 @@
-import React, { lazy, MouseEvent, Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import { createPortal } from "react-dom";
 
 import loadjs from "loadjs";
@@ -27,12 +27,6 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     return window.location.hash.indexOf("#map") === 0;
   });
 
-  const openMap = React.useCallback((e: MouseEvent) => {
-    window.location.hash = "map";
-    window.history.replaceState({ hasHistory: true }, "", "");
-    e.preventDefault();
-  }, []);
-
   const closeMap = React.useCallback(() => {
     if (isOpen) {
       if (window.history.state?.hasHistory) {
@@ -53,6 +47,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
     const handleHashChange = () => {
       if (window.location.hash.indexOf("#map") === 0) {
         setOpen(true);
+        window.history.replaceState({ hasHistory: true }, "");
       } else {
         setOpen(false);
       }
@@ -165,7 +160,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
   }
 
   const button = (
-    <a href="#map" onClick={openMap}>
+    <a href="#map">
       Map
       {countString ? ` (tracking ${countString})` : null}
     </a>
