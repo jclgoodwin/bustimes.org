@@ -430,7 +430,7 @@ class Command(BaseCommand):
             active=False,
         ).update(active=True)
 
-        if archive_name == "NCSD.zip" or archive_name == "L.zip":
+        if os.path.basename(archive_name) in ("NCSD.zip", "L.zip"):
             import boto3
 
             client = boto3.client(
