@@ -24,7 +24,7 @@ const mapContainer = document.getElementById("map");
 
 export default function ServiceMap({ serviceId }: ServiceMapProps) {
   const [isOpen, setOpen] = React.useState(() => {
-    return window.location.hash.indexOf("#map") === 0;
+    return window.location.hash === "#map";
   });
 
   const closeMap = React.useCallback(() => {
@@ -45,7 +45,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
 
   React.useEffect(() => {
     const handleHashChange = () => {
-      if (window.location.hash.indexOf("#map") === 0) {
+      if (window.location.hash === "#map") {
         setOpen(true);
         window.history.replaceState({ hasHistory: true }, "");
       } else {
