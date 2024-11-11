@@ -1145,7 +1145,7 @@ class ImportTransXChangeTest(TestCase):
     @time_machine.travel("22 January 2017")
     def test_megabus(self):
         # simulate a National Coach Service Database zip file
-        with TemporaryDirectory() as directory:
+        with TemporaryDirectory() as directory, patch("boto3.client") as mock_client:
             zipfile_path = Path(directory) / "NCSD.zip"
             with zipfile.ZipFile(zipfile_path, "a") as open_zipfile:
                 write_to_zipfile = partial(self.write_file_to_zipfile, open_zipfile)
@@ -1184,6 +1184,8 @@ class ImportTransXChangeTest(TestCase):
             self.assertNotEqual(
                 m12_trip_ids, Trip.objects.filter(route__line_name="M12").last().id
             )
+
+            mock_client.assert_called()
 
         # M11A
 
