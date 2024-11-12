@@ -2,7 +2,7 @@
     <nav>
         <ul class="horizontal">
             {% if page.has_previous %}
-                <li><a href="{% querystring page=None %}{{ hash }}">1</a></li>
+                <li><a href="{% querystring page=1 %}{{ hash }}">1</a></li>
                 {% if page.previous_page_number > 1 %}
                     {% if page.previous_page_number > 2 %}
                         <li>&hellip;</li>

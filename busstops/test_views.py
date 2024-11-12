@@ -250,8 +250,9 @@ class ViewsTests(TestCase):
         )
 
         response = self.client.get("/search?q=sandwich+deal&page=2")
+        # explicity link to page 1
         self.assertContains(
-            response, '<li><a href="?q=sandwich+deal#services">1</a></li>'
+            response, '<li><a href="?q=sandwich+deal&amp;page=1#services">1</a></li>'
         )
 
     def test_postcode(self):
