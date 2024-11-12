@@ -49,7 +49,7 @@ class NaptanTest(TestCase):
             temp_dir_path = Path(temp_dir)
 
             with override_settings(DATA_DIR=temp_dir_path):
-                self.assertFalse((temp_dir_path / "naptan.xml").exists())
+                self.assertFalse((temp_dir_path / "NaPTAN.xml").exists())
 
                 with self.assertNumQueries(24), self.assertLogs(
                     "busstops.management.commands.naptan_new", "WARNING"
@@ -59,7 +59,7 @@ class NaptanTest(TestCase):
                 source = DataSource.objects.get(name="NaPTAN")
                 self.assertEqual(str(source.datetime), "2022-01-19 12:56:29+00:00")
 
-                self.assertTrue((temp_dir_path / "naptan.xml").exists())
+                self.assertTrue((temp_dir_path / "NaPTAN.xml").exists())
 
                 cassette.rewind()
 
