@@ -32,11 +32,11 @@
 | busstops/management/commands/import\_ie\_transxchange.py        |       23 |        0 |    100% |           |
 | busstops/management/commands/import\_noc.py                     |      130 |        3 |     98% |155, 184, 246 |
 | busstops/management/commands/import\_tfl.py                     |       67 |        4 |     94% |44-45, 109-110 |
-| busstops/management/commands/naptan\_new.py                     |      161 |        4 |     98% |48, 101, 153, 219 |
+| busstops/management/commands/naptan\_new.py                     |      151 |        5 |     97% |47, 100, 152, 212, 257 |
 | busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
 | busstops/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
-| busstops/management/tests/test\_import\_ie.py                   |       64 |        0 |    100% |           |
-| busstops/management/tests/test\_import\_naptan.py               |       66 |        0 |    100% |           |
+| busstops/management/tests/test\_import\_ie.py                   |       67 |        0 |    100% |           |
+| busstops/management/tests/test\_import\_naptan.py               |       67 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       64 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_tfl.py                  |       18 |        0 |    100% |           |
@@ -163,7 +163,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15792** |  **990** | **94%** |           |
+|                                                       **TOTAL** | **15786** |  **991** | **94%** |           |
 
 
 ## Setup coverage badge
