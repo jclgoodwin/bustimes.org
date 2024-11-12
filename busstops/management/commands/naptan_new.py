@@ -1,8 +1,6 @@
 import logging
 import xml.etree.ElementTree as ET
-from pathlib import Path
 
-import requests
 import yaml
 from ciso8601 import parse_datetime
 from django.conf import settings
@@ -11,6 +9,7 @@ from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
 
 from busstops.models import AdminArea, DataSource, Locality, StopArea, StopPoint
+from bustimes.download_utils import download_if_modified
 
 logger = logging.getLogger(__name__)
 
@@ -200,12 +199,6 @@ class Command(BaseCommand):
         "source",
     ]
 
-    def download(self, source):
-        url = "https://naptan.api.dft.gov.uk/v1/access-nodes"
-        params = {"dataFormat": "xml"}
-
-        return requests.get(url, params, timeout=60, stream=True)
-
     def update_and_create(self):
         # create any new stop areas
         stops = [stop for stop in self.stops_to_create if stop.stop_area_id]
@@ -251,23 +244,17 @@ class Command(BaseCommand):
 
     @staticmethod
     def add_arguments(parser):
-        parser.add_argument("filename", nargs="?", type=str)
+        parser.add_argument("source_name", nargs="?", default="NaPTAN")
 
-    def handle(self, *args, **options):
-        source, created = DataSource.objects.get_or_create(name="NaPTAN")
+    def handle(self, *args, source_name, **options):
+        source = DataSource.objects.get(name=source_name)
         self.source = source
 
-        if options["filename"]:
-            path = Path(options["filename"])
-        else:
-            path = settings.DATA_DIR / "naptan.xml"
+        path = settings.DATA_DIR / f"{source_name}.xml"
+        modified, _ = download_if_modified(path, source)
 
-            # download new data if there is any
-            response = self.download(source)
-            if response:
-                with path.open("wb") as open_file:
-                    for chunk in response.iter_content(chunk_size=102400):
-                        open_file.write(chunk)
+        if not modified:
+            return
 
         # set up overrides/corrections
         overrides_path = settings.BASE_DIR / "fixtures" / "stops.yaml"
@@ -326,5 +313,4 @@ class Command(BaseCommand):
 
         self.update_and_create()
 
-        if not options["filename"]:
-            source.save(update_fields=["datetime"])
+        source.save(update_fields=["datetime"])

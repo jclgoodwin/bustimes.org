@@ -5,9 +5,9 @@ from pathlib import Path
 from unittest.mock import patch
 
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
-from ...models import AdminArea, Locality, Region, StopPoint
+from ...models import AdminArea, Locality, Region, StopPoint, DataSource
 
 
 class ImportIrelandTest(TestCase):
@@ -15,6 +15,7 @@ class ImportIrelandTest(TestCase):
 
     def test_ie_nptg_and_naptan(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
+        DataSource.objects.create(name="ie_naptan")
 
         # NPTG (places):
 
@@ -49,7 +50,13 @@ class ImportIrelandTest(TestCase):
 
         # NaPTAN (stops):
 
-        call_command("naptan_new", fixtures_dir / "ie_naptan.xml")
+        DataSource.objects.create(name="Irish NaPTAN")
+
+        with override_settings(DATA_DIR=fixtures_dir), patch(
+            "busstops.management.commands.naptan_new.download_if_modified",
+            return_value=(True, None),
+        ):
+            call_command("naptan_new", "ie_naptan")
 
         stops = StopPoint.objects.order_by("atco_code")
         self.assertEqual(len(stops), 6)

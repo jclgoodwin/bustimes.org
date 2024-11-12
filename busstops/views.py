@@ -275,7 +275,7 @@ def qr(request, slug):
 def status(request):
     context = {
         "sources": DataSource.objects.filter(
-            name__in=["National Operator Codes", "NPTG", "NaPTAN"]
+            name__in=["National Operator Codes", "NPTG", "NaPTAN", "Irish NaPTAN"]
         ),
         "bod_avl_status": {},
     }

@@ -13,6 +13,10 @@ from ...models import AdminArea, DataSource, Locality, Region, StopArea, StopPoi
 class NaptanTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        DataSource.objects.create(
+            name="NaPTAN",
+            url="https://naptan.api.dft.gov.uk/v1/access-nodes?dataFormat=xml",
+        )
         Region.objects.create(id="EA", name="East Anglia")
         AdminArea.objects.create(id=91, atco_code="290", name="Norfolk", region_id="EA")
         AdminArea.objects.create(
@@ -47,7 +51,7 @@ class NaptanTest(TestCase):
             with override_settings(DATA_DIR=temp_dir_path):
                 self.assertFalse((temp_dir_path / "naptan.xml").exists())
 
-                with self.assertNumQueries(26), self.assertLogs(
+                with self.assertNumQueries(24), self.assertLogs(
                     "busstops.management.commands.naptan_new", "WARNING"
                 ):
                     call_command("naptan_new")
@@ -59,12 +63,12 @@ class NaptanTest(TestCase):
 
                 cassette.rewind()
 
-                with self.assertNumQueries(3):
+                with self.assertNumQueries(4):
                     call_command("naptan_new")
 
                 cassette.rewind()
 
-                with self.assertNumQueries(3):
+                with self.assertNumQueries(4):
                     call_command("naptan_new")
 
                 source = DataSource.objects.get(name="NaPTAN")

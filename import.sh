@@ -31,6 +31,7 @@ PASSWORD=$2
 
 ./manage.py nptg_new
 ./manage.py naptan_new
+./manage.py naptan_new "Irish NaPTAN"
 
 
 cd data/TNDS
