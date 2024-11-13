@@ -33,20 +33,46 @@ interactions:
     uri: https://api.tfl.gov.uk/StopPoint/490014721F/arrivals
   response:
     body:
-      string: !!binary |
-        H4sIAAAAAAAAA+2Y32/TMBDH/5Uo4rGrbJ9/5q0MypDKNrFKjCEessajFmkSJe7GNPG/c0kLjIGY
-        tSnLQyflxeevfPblo/OdP93EL/x1ZeMknl/k40nlxse1bWzhU+/KYvy68M4727TWzC1a2yj6rzIe
-        xS7D5faoFBokB8LRVFa27nTzzhkdxZd26Ra5fdtqj6eCzaenqCvSyqdFZ+SGEMoVo1O0Nxsvh+mq
-        3eoHl69KH5342lqPs7krNguB1tvhVrkxVHnqL8p6tTW2C2autt1xcOyK83JdZGg9t2ntii9oU6YV
-        2ca7Yuv518buTnRr4l46H1m07/w1SrxboShdVTjJCJV7RO0xOacqYTQh/GwrmZcnm6NhUDiBUbxY
-        1zUGdVYutubWny+v0jprcHCQLr4W9joq6+goz6IpesR5+63C09hsUtfuMs3/csl5wtRYGWGk+e15
-        5i7tv6TitnRVZj+Deb5u4u+jXomREjTVcC8xH98Lc3g83XFiAGhPwDCZgAgDhqmEiIGA4VxJQgiI
-        e4GZzc8o4/B4YO7g8kSwvCyvov3lul4sHwYKFf2BQk0gKDLhZhBQKFVcSq66qAdwIs2OckI5sP6u
-        ICEDryCBrAyXUZhiIGQQKWB2NaNQxXojxSQ8kBRBEjoMKaAI15pAWEbhRO0oJ0rwnjABSECHYQI8
-        IXoQTBhIzaimLAyTTreLmBgh+8IEy1MSiAl+ZJgChWCGAAaUBHLCd5QTDFRfhSxLeGA6YZDQYdKJ
-        EACCgArod06FmRxNHo9JBn9y8gqeCBTrl0WaR29wQxie/SUqooOyqZzHv/fA4ravdrktbgPb5ba4
-        HaZdxvMTChpkQG3b0TN7pudWIaP6epzDQkYEPs7BnXe8p+yMqNSCG8YCKt6OnnfP9Nxul/qih4XT
-        w+6h5/MP4DraXg4YAAA=
+      string: '[{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"-1658364304","operationType":1,"vehicleId":"PF52TFX","naptanId":"490014721F",
+      "stationName":"Wilmot Street","lineId":"388","lineName":"388","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"","destinationName":"Stratford City",
+      "timestamp":"2016-07-26T17:21:04Z","timeToStation":1403,"currentLocation":"","towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:44:27.795969Z",
+      "timeToLive":"2016-07-26T17:44:57.795969Z","modeName":"bus"},
+      {"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"-1656638183","operationType":1,"vehicleId":"YR59NPF","naptanId":"490014721F",
+      "stationName":"Wilmot Street","lineId":"388","lineName":"388","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"","destinationName":"Stratford City",
+      "timestamp":"2016-07-26T17:21:04Z","timeToStation":331,"currentLocation":"","towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:26:35.795969Z",
+      "timeToLive":"2016-07-26T17:27:05.795969Z","modeName":"bus"},{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"-1447600035",
+      "operationType":1,"vehicleId":"LTZ1243","naptanId":"490014721F","stationName":"Wilmot Street","lineId":"8","lineName":"8","platformName":"F","direction":"inbound",
+      "bearing":"79","destinationNaptanId":"","destinationName":"Bow Church","timestamp":"2016-07-26T17:21:04Z","timeToStation":315,"currentLocation":"",
+      "towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:26:19.795969Z","timeToLive":"2016-07-26T17:26:49.795969Z","modeName":"bus"},
+      {"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"1174664779","operationType":1,"vehicleId":"LTZ1269","naptanId":"490014721F",
+      "stationName":"Wilmot Street","lineId":"8","lineName":"8","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"","destinationName":"Bow Church",
+      "timestamp":"2016-07-26T17:21:04Z","timeToStation":1432,"currentLocation":"","towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:44:56.795969Z",
+      "timeToLive":"2016-07-26T17:45:26.795969Z","modeName":"bus"},{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"-1447272356",
+      "operationType":1,"vehicleId":"LTZ1393","naptanId":"490014721F","stationName":"Wilmot Street","lineId":"8","lineName":"8","platformName":"F","direction":"inbound",
+      "bearing":"79","destinationNaptanId":"","destinationName":"Bow Church","timestamp":"2016-07-26T17:21:04Z","timeToStation":1722,"currentLocation":"",
+      "towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:49:46.795969Z","timeToLive":"2016-07-26T17:50:16.795969Z","modeName":"bus"},
+      {"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"370488039","operationType":1,"vehicleId":"LTZ1407","naptanId":"490014721F",
+      "stationName":"Wilmot Street","lineId":"8","lineName":"8","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"","destinationName":"Bow Church",
+      "timestamp":"2016-07-26T17:21:04Z","timeToStation":754,"currentLocation":"","towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:33:38.795969Z",
+      "timeToLive":"2016-07-26T17:34:08.795969Z","modeName":"bus"},{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"236821812","operationType":1,
+      "vehicleId":"LTZ1412","naptanId":"490014721F","stationName":"Wilmot Street","lineId":"8","lineName":"8","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"",
+      "destinationName":"Bow Church","timestamp":"2016-07-26T17:21:04Z","timeToStation":956,"currentLocation":"","towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:37:00.795969Z",
+      "timeToLive":"2016-07-26T17:37:30.795969Z","modeName":"bus"},
+      {"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"1040732310","operationType":1,"vehicleId":"LTZ1414","naptanId":"490014721F",
+      "stationName":"Wilmot Street","lineId":"8","lineName":"8","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"","destinationName":"Bow Church",
+      "timestamp":"2016-07-26T17:21:04Z","timeToStation":104,"currentLocation":"","towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:22:48.795969Z",
+      "timeToLive":"2016-07-26T17:23:18.795969Z","modeName":"bus"},{"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"553350375",
+      "operationType":1,"vehicleId":"LX59AOA","naptanId":"490014721F","stationName":"Wilmot Street","lineId":"d3","lineName":"D3","platformName":"F","direction":"inbound",
+      "bearing":"79","destinationNaptanId":"","destinationName":"Bethnal Green, Chest Hospital","timestamp":"2016-07-26T17:21:04Z","timeToStation":1431,"currentLocation":"",
+      "towards":"Hackney or Old Ford","expectedArrival":"2016-07-26T17:44:55.795969Z","timeToLive":"2016-07-26T17:45:25.795969Z","modeName":"bus"},
+      {"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"1430138366","operationType":1,"vehicleId":"LX59AOL","naptanId":"490014721F",
+      "stationName":"Wilmot Street","lineId":"d3","lineName":"D3","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"",
+      "destinationName":"Bethnal Green, Chest Hospital","timestamp":"2016-07-26T17:21:04Z","timeToStation":773,"currentLocation":"","towards":"Hackney or Old Ford",
+      "expectedArrival":"2016-07-26T17:33:57.795969Z","timeToLive":"2016-07-26T17:34:27.795969Z","modeName":"bus"},
+      {"$type":"Tfl.Api.Presentation.Entities.Prediction, Tfl.Api.Presentation.Entities","id":"-1168549229","operationType":1,"vehicleId":"LX59AOM","naptanId":"490014721F",
+      "stationName":"Wilmot Street","lineId":"d3","lineName":"D3","platformName":"F","direction":"inbound","bearing":"79","destinationNaptanId":"",
+      "destinationName":"Bethnal Green, Chest Hospital","timestamp":"2016-07-26T17:21:04Z","timeToStation":173,"currentLocation":"","towards":"Hackney or Old Ford",
+      "expectedArrival":"2016-07-26T17:23:57.795969Z","timeToLive":"2016-07-26T17:24:27.795969Z","modeName":"bus"}]'
     headers:
       access-control-allow-headers: [Content-Type]
       access-control-allow-methods: ['GET,POST,PUT,DELETE,OPTIONS']
