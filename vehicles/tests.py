@@ -136,8 +136,10 @@ class VehiclesTests(TestCase):
         cls.trusted_user = User.objects.create(
             username="norma", trusted=True, email="n@example.com", score=2
         )
-        permission = Permission.objects.get(codename="add_vehiclerevision")
-        cls.trusted_user.user_permissions.add(permission)
+        cls.trusted_user.user_permissions.add(
+            Permission.objects.get(codename="add_vehiclerevision"),
+            Permission.objects.get(codename="change_vehiclerevision"),
+        )
         cls.user = User.objects.create(
             username="ken",
             trusted=None,

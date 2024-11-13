@@ -5,7 +5,7 @@
             <a href="{{ revision.vehicle.get_absolute_url }}">{{ revision.vehicle }}</a> &bull;
         {% endif %}
         {{ revision.created_at|naturaltime }}
-        {% if not by_user and revision.user %}
+        {% if revision.user %}
             &bull; <a href="{{ revision.user.get_absolute_url }}">{{ revision.user }}</a>
         {% endif %}
         {% if user.is_superuser %}
@@ -30,29 +30,21 @@
 
     <p class="actions" hx-target="#revision-{{ revision.id }}">
         <span class="score">{{ revision.score }}</span>
-            {% if revision.pending %}
-                {% if revision.user_id == user.id %}
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove" hx-prompt="Reason for cancelling">⚠️ Cancel</button>
-                {% elif user.trusted %}
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply" hx-prompt="Reason for approving">👍 Apply</button>
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/disapprove" hx-prompt="Reason for disapproving">⚠️ Disapprove</button>
-                {% elif user.trusted is not False and user.score > 0 %}
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up">👍</button>
-                    <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/down">👎</button>
-                {% endif %}
+        {% if revision.pending %}
+            {% if revision.user_id == user.id %}
+                <button class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'disapprove' %}">⚠️ Cancel</button>
+            {% elif perms.vehicles.change_vehiclerevision %}
+                <button class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'apply' %}" hx-prompt="Reason for approving">👍 Apply</button>
+                <button class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'up' %}">👍</button>
+                <button class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'down' %}">👎</button>
+                <button class="button" hx-post="{% url 'vehicle_revision_action' revision.id 'disapprove' %}" hx-prompt="Reason for disapproving">⚠️ Disapprove</button>
             {% elif user.trusted is not False %}
-                {% if revision.user_id != user.id and user.score > 0 %}
-                    {% if not revision.disapproved %}
-                        <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/vote/up" title="Thank">👍</button>
-                    {% endif %}
-                    {% if user.trusted and revision.disapproved %}
-                        <button class="button" hx-post="/vehicles/revisions/{{ revision.id }}/apply">👍 Apply</button>
-                    {% endif %}
-                {% endif %}
-                {% if user.is_superuser %}
-                    <button class="button" hx-post="/vehicles/history/{{ revision.id }}/revert" hx-target="#revision-{{ revision.id }} .score">⚠️ Revert</button>
-                {% endif %}
-        {% endif %}
+                <button class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'up' %}">👍</button>
+                <button class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'down' %}">👎</button>
+            {% endif %}
+        {% elif user.trusted is not False %}
+            {% if revision.user_id != user.id and not revision.disapproved %}
+                <button class="button" hx-post="{% url 'vehicle_revision_vote' revision.id 'up' %}" title="Thank">👍</button>
+            {% endif %}
+    {% endif %}
 </li>

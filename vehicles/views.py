@@ -759,7 +759,7 @@ def edit_vehicle(request, **kwargs):
     vehicle = get_object_or_404(
         Vehicle.objects.select_related(
             "vehicle_type", "livery", "operator", "latest_journey"
-        ),
+        ).filter(locked=False),
         **kwargs,
     )
 
@@ -948,14 +948,17 @@ def vehicle_revision_action(request, revision_id, action):
     revision = get_object_or_404(
         VehicleRevision.objects.select_related(
             *revision_display_related_fields, "vehicle"
-        ).select_for_update(of=["self"]),
+        )
+        .filter(pending=True)
+        .select_for_update(of=["self"]),
         id=revision_id,
     )
 
-    if not request.user.has_perm("vehicles.change_vehicle"):
-        assert (
-            action == "disapprove" and request.user.id == revision.user_id
-        ) or request.user.trusted
+    if action == "disapprove" and request.user.id == revision.user_id:
+        revision.delete()  # cancel one's own edit
+        return HttpResponse("")
+    else:
+        assert request.user.has_perm("vehicles.change_vehiclerevision")
 
     revision.disapproved_reason = unquote(request.headers.get("HX-Prompt", ""))
     revision.approved_by = request.user
@@ -966,10 +969,6 @@ def vehicle_revision_action(request, revision_id, action):
         revision.pending = False
         revision.disapproved = False
     elif action == "disapprove":
-        assert revision.pending
-        if request.user.id == revision.user_id:
-            revision.delete()  # cancel one's own edit
-            return HttpResponse("")
         revision.pending = False
         revision.disapproved = True
 

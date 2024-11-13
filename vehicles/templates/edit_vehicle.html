@@ -16,10 +16,7 @@
         <p>Details updated, and recorded in <a href="/vehicles/edits?status=approved">the changelog for all to see</a>:</p>
     {% endif %}
 
-    <p>
-        {% include "vehicle_revision.html" with by_user=user %}
-    </p>
-
+    {% include "vehicle_revision_changes.html" %}
 
 {% else %}
 
