@@ -24,7 +24,7 @@
 
     {% if revision.disapproved or revision.approved_by_id %}
         <p><strong>{% if revision.disapproved %}Disa{% else %}A{% endif %}pproved</strong>
-            {% if revision.approved_by_id %}by user {{ revision.approved_by_id }}{% if revision.disapproved_reason %}:{% endif %}{% endif %}
+            {% if revision.approved_by_id %}by <a href="{% url 'user_detail' revision.approved_by_id %}">user {{ revision.approved_by_id }}</a>{% if revision.disapproved_reason %}:{% endif %}{% endif %}
             {% if revision.disapproved_reason %}{{ revision.disapproved_reason }}{% endif %}
     {% endif %}
 

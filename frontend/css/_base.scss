@@ -837,6 +837,33 @@ table {
     border-top: 1px solid var(--border-color);
 }
 
+.sidebar form {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 2em;
+    gap: 1em;
+
+    p {
+        margin: 0;
+        flex-grow: 1;
+        flex-basis: 7em;
+    }
+
+    .errorlist {
+        display: none;
+
+        + p select, + p input {
+            border-color: #f00;
+        }
+    }
+
+    p:last-child {
+        margin-top: 1.5em;
+        flex-basis: 0;
+        flex-grow: 0;
+    }
+}
+
 .wrap, .wrap a {
     white-space: normal;
     overflow-wrap: anywhere;

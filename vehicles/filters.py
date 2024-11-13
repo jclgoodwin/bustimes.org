@@ -6,6 +6,7 @@ class VehicleRevisionFilter(FilterSet):
     operator = CharFilter(label="Operator ID", method="operator_filter")
     vehicle = NumberFilter(label="Vehicle ID")
     user = NumberFilter(label="User ID")
+    approved_by = NumberFilter(label="(Dis)approver")
     status = ChoiceFilter(
         label="Status",
         choices=[

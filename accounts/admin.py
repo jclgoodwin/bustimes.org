@@ -39,7 +39,12 @@ class UserAdmin(admin.ModelAdmin):
     ] + readonly_fields
     list_display_links = ["id", "username"]
     inlines = [OperatorUserInline]
-    list_filter = ["trusted", "is_staff", "groups"]
+    list_filter = [
+        "trusted",
+        "is_staff",
+        "groups",
+        ("user_permissions", admin.RelatedOnlyFieldListFilter),
+    ]
 
     @admin.display(ordering="revisions")
     def revisions(self, obj):
