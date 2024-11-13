@@ -31,7 +31,6 @@
 | busstops/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | busstops/management/commands/import\_ie\_transxchange.py        |       23 |        0 |    100% |           |
 | busstops/management/commands/import\_noc.py                     |      130 |        3 |     98% |155, 184, 246 |
-| busstops/management/commands/import\_tfl.py                     |       67 |        4 |     94% |44-45, 109-110 |
 | busstops/management/commands/naptan\_new.py                     |      151 |        5 |     97% |47, 100, 152, 212, 257 |
 | busstops/management/commands/nptg\_new.py                       |       94 |        7 |     93% |148, 158, 163, 169-170, 172-173 |
 | busstops/management/tests/\_\_init\_\_.py                       |        0 |        0 |    100% |           |
@@ -39,9 +38,8 @@
 | busstops/management/tests/test\_import\_naptan.py               |       67 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_nptg.py                 |       31 |        0 |    100% |           |
 | busstops/management/tests/test\_import\_operators.py            |       64 |        0 |    100% |           |
-| busstops/management/tests/test\_import\_tfl.py                  |       18 |        0 |    100% |           |
 | busstops/middleware.py                                          |       20 |        0 |    100% |           |
-| busstops/models.py                                              |      618 |       21 |     97% |241, 287, 389, 426, 476, 502, 592, 630, 722, 833, 844, 863-864, 958-962, 1020, 1062, 1077, 1113 |
+| busstops/models.py                                              |      618 |       24 |     96% |241, 287, 389, 426, 476, 502, 592, 630, 722, 786, 824-828, 833, 844, 863-864, 958-962, 1020, 1062, 1077, 1113 |
 | busstops/templatetags/\_\_init\_\_.py                           |        0 |        0 |    100% |           |
 | busstops/templatetags/date\_range.py                            |       25 |        3 |     88% | 9, 22, 28 |
 | busstops/templatetags/urlise.py                                 |       20 |        0 |    100% |           |
@@ -85,7 +83,7 @@
 | bustimes/views.py                                               |      365 |       66 |     82% |154-168, 177-179, 187-196, 198-206, 213, 235, 325, 334, 371, 377, 457, 507, 541, 545-547, 555, 570-577, 607-618, 627-633 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
-| departures/gtfsr.py                                             |       91 |        3 |     97% |91, 107, 111 |
+| departures/gtfsr.py                                             |       91 |        2 |     98% |   91, 111 |
 | departures/live.py                                              |      133 |       14 |     89% |44, 59, 61, 63, 80-85, 143, 154, 166, 180 |
 | departures/sources.py                                           |      218 |       34 |     84% |30, 54, 59, 63, 96, 112, 122, 125-127, 137-144, 149-150, 164-165, 173-174, 179, 243, 310, 385, 389-390, 396-397, 400, 408 |
 | departures/test\_gtfsr\_trip\_updates.py                        |       45 |        0 |    100% |           |
@@ -163,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15792** |  **990** | **94%** |           |
+|                                                       **TOTAL** | **15707** |  **988** | **94%** |           |
 
 
 ## Setup coverage badge
