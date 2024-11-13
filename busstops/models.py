@@ -3,7 +3,6 @@
 import datetime
 import logging
 import re
-import time
 from urllib.parse import urlencode
 
 import yaml
@@ -786,27 +785,18 @@ class Service(models.Model):
     def get_tfl_url(self):
         return f"https://tfl.gov.uk/bus/timetable/{self.line_name}/"
 
-    def get_trapeze_link(self, date):
+    def get_trapeze_link(self):
         domain = "travelinescotland.com"
         name = "Timetable on the Traveline Scotland website"
-        if date:
-            date = int(time.mktime(date.timetuple()) * 1000)
-        else:
-            date = ""
-        query = (
-            ("timetableId", self.service_code),
-            ("direction", "OUTBOUND"),
-            ("queryDate", date),
-            ("queryTime", date),
-        )
-        return f"http://www.{domain}/lts/#/timetables?{urlencode(query)}", name
+        query = (("serviceId", self.service_code.replace("_", " ")),)
+        return f"http://www.{domain}/timetables?{urlencode(query)}", name
 
     def get_traveline_links(self, date=None):
         if not self.source:
             return
 
-        if self.source.name == "S" and "_" not in self.service_code:
-            yield self.get_trapeze_link(date)
+        if self.source.name == "S":
+            yield self.get_trapeze_link()
             return
 
         if self.source.name == "W" or self.region_id == "W":
