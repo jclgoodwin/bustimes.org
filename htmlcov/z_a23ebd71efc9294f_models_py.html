@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-13 09:40 +0000
+            created at 2024-11-13 09:49 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -871,7 +871,7 @@
     <p class="run"><span class="n"><a id="t789" href="#t789">789</a></span><span class="t">        <span class="nam">domain</span> <span class="op">=</span> <span class="str">"travelinescotland.com"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t790" href="#t790">790</a></span><span class="t">        <span class="nam">name</span> <span class="op">=</span> <span class="str">"Timetable on the Traveline Scotland website"</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t791" href="#t791">791</a></span><span class="t">        <span class="nam">query</span> <span class="op">=</span> <span class="op">(</span><span class="op">(</span><span class="str">"serviceId"</span><span class="op">,</span> <span class="nam">self</span><span class="op">.</span><span class="nam">service_code</span><span class="op">.</span><span class="nam">replace</span><span class="op">(</span><span class="str">"_"</span><span class="op">,</span> <span class="str">" "</span><span class="op">)</span><span class="op">)</span><span class="op">,</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t792" href="#t792">792</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="fst">http://www.</span><span class="op">{</span><span class="nam">domain</span><span class="op">}</span><span class="fst">/timetables?</span><span class="op">{</span><span class="nam">urlencode</span><span class="op">(</span><span class="nam">query</span><span class="op">)</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t792" href="#t792">792</a></span><span class="t">        <span class="key">return</span> <span class="fst">f"</span><span class="fst">https://www.</span><span class="op">{</span><span class="nam">domain</span><span class="op">}</span><span class="fst">/timetables?</span><span class="op">{</span><span class="nam">urlencode</span><span class="op">(</span><span class="nam">query</span><span class="op">)</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="nam">name</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t793" href="#t793">793</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t794" href="#t794">794</a></span><span class="t">    <span class="key">def</span> <span class="nam">get_traveline_links</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">date</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t795" href="#t795">795</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">self</span><span class="op">.</span><span class="nam">source</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -893,7 +893,7 @@
     <p class="run"><span class="n"><a id="t811" href="#t811">811</a></span><span class="t">            <span class="key">return</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t812" href="#t812">812</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t813" href="#t813">813</a></span><span class="t">        <span class="nam">base_url</span> <span class="op">=</span> <span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t814" href="#t814">814</a></span><span class="t">            <span class="str">"http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t814" href="#t814">814</a></span><span class="t">            <span class="str">"https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t815" href="#t815">815</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t816" href="#t816">816</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t817" href="#t817">817</a></span><span class="t">        <span class="nam">base_query</span> <span class="op">=</span> <span class="op">[</span><span class="op">(</span><span class="str">"command"</span><span class="op">,</span> <span class="str">"direct"</span><span class="op">)</span><span class="op">,</span> <span class="op">(</span><span class="str">"outputFormat"</span><span class="op">,</span> <span class="num">0</span><span class="op">)</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
@@ -1208,7 +1208,7 @@
             <a class="nav" href="z_b8e363a838fda594_date_range_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-13 09:40 +0000
+            created at 2024-11-13 09:49 +0000
         </p>
     </div>
 </footer>
