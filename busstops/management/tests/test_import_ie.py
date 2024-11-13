@@ -1,6 +1,5 @@
 """Tests for importing Ireland stops and gazetteer"""
 
-import os
 from pathlib import Path
 from unittest.mock import patch
 
@@ -11,7 +10,7 @@ from ...models import AdminArea, Locality, Region, StopPoint, DataSource
 
 
 class ImportIrelandTest(TestCase):
-    """Test the import_ie_nptg and import_ie_nptg command"""
+    """Test the NaPTAN and NPTG importers using Irish data"""
 
     def test_ie_nptg_and_naptan(self):
         fixtures_dir = Path(__file__).resolve().parent / "fixtures"
@@ -90,11 +89,3 @@ class ImportIrelandTest(TestCase):
         self.assertAlmostEqual(stop.latlong.y, 53.2719763661735)
         self.assertEqual(stop.admin_area_id, 846)
         self.assertEqual(stop.locality_id, "E0846001")
-
-        with patch("builtins.print") as mocked_print:
-            call_command(
-                "import_ie_transxchange",
-                os.path.join(fixtures_dir, "ie_transxchange.xml"),
-            )
-        mocked_print.assert_called_with("Bal-briggan")
-        # self.assertEqual(Locality.objects.get(id='E0824005').name, 'Bal-briggan')
