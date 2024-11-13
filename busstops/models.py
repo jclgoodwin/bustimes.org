@@ -789,7 +789,7 @@ class Service(models.Model):
         domain = "travelinescotland.com"
         name = "Timetable on the Traveline Scotland website"
         query = (("serviceId", self.service_code.replace("_", " ")),)
-        return f"http://www.{domain}/timetables?{urlencode(query)}", name
+        return f"https://www.{domain}/timetables?{urlencode(query)}", name
 
     def get_traveline_links(self, date=None):
         if not self.source:
@@ -811,7 +811,7 @@ class Service(models.Model):
             return
 
         base_url = (
-            "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"
+            "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST?"
         )
 
         base_query = [("command", "direct"), ("outputFormat", 0)]

@@ -205,7 +205,7 @@ class ImportTransXChangeTest(TestCase):
                 list(service.get_traveline_links()),
                 [
                     (
-                        "http://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST"
+                        "https://nationaljourneyplanner.travelinesw.com/swe-ttb/XSLT_TTB_REQUEST"
                         "?line=2113B&lineVer=1&net=swe&project=y08&sup=B&command=direct&outputFormat=0",
                         "Timetable on the Traveline South West website",
                     )
@@ -1061,7 +1061,7 @@ class ImportTransXChangeTest(TestCase):
         self.assertEqual(service.operator.first(), self.fabd)
         for url, text in service.get_traveline_links():
             self.assertEqual(
-                url, "http://www.travelinescotland.com/timetables?serviceId=ABBN017"
+                url, "https://www.travelinescotland.com/timetables?serviceId=ABBN017"
             )
             self.assertEqual(text, "Timetable on the Traveline Scotland website")
 
