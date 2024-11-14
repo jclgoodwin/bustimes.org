@@ -5,7 +5,6 @@ from functools import cache
 
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
-from django.db.models import Q
 
 from busstops.models import DataSource, Service, StopPoint, Operator
 
@@ -22,11 +21,17 @@ from ...models import (
 
 
 @cache
-def get_operator(code):
+def get_operator(code, source):
     try:
-        return Operator.objects.get(Q(noc=code) | Q(operatorcode__code=code))
+        return Operator.objects.get(noc=code)
     except Operator.DoesNotExist as e:
-        print(code)
+        pass
+    try:
+        return Operator.objects.get(
+            operatorcode__code=code, operatorcode__source=source
+        )
+    except (Operator.DoesNotExist, Operator.MultipleObjectsReturned) as e:
+        print(e, code)
 
 
 def parse_date(string):
@@ -274,7 +279,7 @@ class Command(BaseCommand):
                         defaults, service_code=service_code
                     )
                     route_defaults["service"] = service
-                    if operator := get_operator(operator_code):
+                    if operator := get_operator(operator_code, self.source):
                         service.operator.add(operator)
                     self.route, created = Route.objects.update_or_create(
                         route_defaults,
@@ -290,7 +295,7 @@ class Command(BaseCommand):
                 self.trip_header = line
                 self.exceptions = []
                 operator_code = self.trip_header[3:7].decode().strip() or None
-                self.operator = get_operator(operator_code)
+                self.operator = get_operator(operator_code, self.source)
 
             case b"QE":
                 self.exceptions.append(line)
