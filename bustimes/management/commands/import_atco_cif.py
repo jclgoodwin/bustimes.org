@@ -3,7 +3,7 @@ import zipfile
 from datetime import date, datetime, timedelta, timezone
 from functools import cache
 
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 
 from busstops.models import DataSource, Service, StopPoint, Operator
@@ -22,16 +22,17 @@ from ...models import (
 
 @cache
 def get_operator(code, source):
-    try:
-        return Operator.objects.get(noc=code)
-    except Operator.DoesNotExist as e:
-        pass
-    try:
-        return Operator.objects.get(
-            operatorcode__code=code, operatorcode__source=source
-        )
-    except (Operator.DoesNotExist, Operator.MultipleObjectsReturned) as e:
-        print(e, code)
+    if code:
+        try:
+            return Operator.objects.get(noc=code)
+        except Operator.DoesNotExist as e:
+            pass
+        try:
+            return Operator.objects.get(
+                operatorcode__code=code, operatorcode__source=source
+            )
+        except (Operator.DoesNotExist, Operator.MultipleObjectsReturned) as e:
+            print(e, code)
 
 
 def parse_date(string):
@@ -103,7 +104,10 @@ class Command(BaseCommand):
                 "description",
             ],
         )
-        Route.objects.bulk_update(self.routes.values(), ["inbound_description"])
+        Route.objects.bulk_update(
+            self.routes.values(),
+            ["inbound_description", "revision_number", "start_date"],
+        )
         for service in services:
             service.update_search_vector()
 
@@ -139,29 +143,24 @@ class Command(BaseCommand):
                     if name and stop_code not in self.stops:
                         name = name.decode(encoding).strip()
                         self.stops[stop_code] = StopPoint(
-                            atco_code=stop_code, common_name=name, active=True
+                            atco_code=stop_code,
+                            common_name=name,
+                            active=True,
+                            source=self.source,
                         )
                 elif stop_code in self.stops:
-                    easting = line[15:23].strip()
-                    northing = line[23:31].strip()
+                    easting = line[15:23].strip().decode()
+                    northing = line[23:31].strip().decode()
                     if easting:
-                        self.stops[stop_code].latlong = Point(
-                            int(easting),
-                            int(northing),
-                            srid=29902,  # Irish Grid
+                        self.stops[stop_code].latlong = GEOSGeometry(
+                            f"SRID=29902;POINT({easting} {northing})"
                         )
-        existing_stops = StopPoint.objects.in_bulk(self.stops.keys())
-        stops_to_update = []
-        new_stops = []
-        for stop_code in self.stops:
-            if stop_code in existing_stops:
-                stops_to_update.append(self.stops[stop_code])
-            else:
-                new_stops.append(self.stops[stop_code])
-        StopPoint.objects.bulk_update(
-            stops_to_update, fields=["common_name", "latlong"]
+        StopPoint.objects.bulk_create(
+            self.stops.values(),
+            update_conflicts=True,
+            update_fields=["common_name", "latlong", "active", "source"],
+            unique_fields=["atco_code"],
         )
-        StopPoint.objects.bulk_create(new_stops)
 
         open_file.seek(0)
 
@@ -247,7 +246,7 @@ class Command(BaseCommand):
                 service_code = f"{line_name}_{operator_code}".upper()
                 route_code = f"{self.filename}#{service_code}"
                 direction = line[11:12]
-                description = line[12:].decode().strip()
+                description = line[12:80].decode().strip()
                 if route_code in self.routes:
                     self.route = self.routes[route_code]
                     if direction == b"O":
@@ -268,6 +267,7 @@ class Command(BaseCommand):
                     route_defaults = {
                         "line_name": line_name,
                         "description": description,
+                        "service_code": service_code,
                     }
                     if direction == b"O":
                         defaults["description"] = description
@@ -294,7 +294,7 @@ class Command(BaseCommand):
                 self.sequence = 0
                 self.trip_header = line
                 self.exceptions = []
-                operator_code = self.trip_header[3:7].decode().strip() or None
+                operator_code = self.trip_header[3:7].decode().strip()
                 self.operator = get_operator(operator_code, self.source)
 
             case b"QE":
@@ -311,6 +311,7 @@ class Command(BaseCommand):
                     stop_time.stop_id = stop_id
                     self.stops[stop_id] = True
                 else:
+                    print(stop_id)
                     stop_time.stop_code = stop_id
                 self.stop_times.append(stop_time)
 
@@ -334,6 +335,15 @@ class Command(BaseCommand):
                     stop_time.trip = self.trip
                     stop_time.departure = departure
                     stop_time.sequence = 0
+
+                    if (
+                        not self.route.start_date
+                        or calendar.start_date < self.route.start_date
+                    ):
+                        self.route.start_date = calendar.start_date
+                        self.route.revision_number = calendar.start_date.strftime(
+                            "%Y%m%d"
+                        )
 
                 elif identity == b"QI":  # intermediate stop
                     timing_status = line[26:28]
@@ -373,7 +383,7 @@ class Command(BaseCommand):
 
             case b"QN":  # note
                 previous_identity = previous_line[:2]
-                note = line[7:].decode(encoding).strip()
+                note = line[7:81].decode(encoding).strip()
                 code = line[2:7].decode(encoding).strip()
                 if (
                     previous_identity == b"QO"

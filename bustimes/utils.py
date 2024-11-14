@@ -112,19 +112,6 @@ def get_routes(routes, when=None, from_date=None):
             )
         ]
 
-    if when and any(route.source.name in ("ULB", "MET") for route in routes):
-        routes = [
-            route
-            for route in routes
-            if route.source.name not in ("ULB", "MET")
-            or not any(
-                route.service_code == r.service_code
-                and route.start_date < r.start_date
-                and r.start_date >= when
-                for r in routes
-            )
-        ]
-
     # remove duplicates
     if len(set(route.source_id for route in routes)) > 1:
         sources_by_sha1 = {
