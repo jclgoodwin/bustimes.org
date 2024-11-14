@@ -5,8 +5,9 @@ from functools import cache
 
 from django.contrib.gis.geos import Point
 from django.core.management.base import BaseCommand
+from django.db.models import Q
 
-from busstops.models import DataSource, Service, StopPoint
+from busstops.models import DataSource, Service, StopPoint, Operator
 
 from ...models import (
     BankHoliday,
@@ -20,6 +21,14 @@ from ...models import (
 )
 
 
+@cache
+def get_operator(code):
+    try:
+        return Operator.objects.get(Q(noc=code) | Q(operatorcode__code=code))
+    except Operator.DoesNotExist as e:
+        print(code)
+
+
 def parse_date(string):
     if string == b"99999999":
         return
@@ -27,6 +36,11 @@ def parse_date(string):
         return date(year=int(string[:4]), month=int(string[4:6]), day=int(string[6:]))
     except ValueError:
         print(string)
+
+
+@cache
+def get_note(note_code, note_text):
+    return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
 
 def parse_time(string):
@@ -99,10 +113,6 @@ class Command(BaseCommand):
             )
         )
         self.source.save(update_fields=["datetime"])
-
-    @cache
-    def get_note(self, note_code, note_text):
-        return Note.objects.get_or_create(code=note_code or "", text=note_text[:255])[0]
 
     def handle_file(self, open_file):
         self.route = None
@@ -227,9 +237,9 @@ class Command(BaseCommand):
 
         match identity:
             case b"QD":
-                operator = line[3:7].decode().strip()
+                operator_code = line[3:7].decode().strip()
                 line_name = line[7:11].decode().strip()
-                service_code = f"{line_name}_{operator}".upper()
+                service_code = f"{line_name}_{operator_code}".upper()
                 route_code = f"{self.filename}#{service_code}"
                 direction = line[11:12]
                 description = line[12:].decode().strip()
@@ -264,9 +274,7 @@ class Command(BaseCommand):
                         defaults, service_code=service_code
                     )
                     route_defaults["service"] = service
-                    if operator:
-                        if operator == "BE":
-                            operator = "ie-01"
+                    if operator := get_operator(operator_code):
                         service.operator.add(operator)
                     self.route, created = Route.objects.update_or_create(
                         route_defaults,
@@ -281,9 +289,8 @@ class Command(BaseCommand):
                 self.sequence = 0
                 self.trip_header = line
                 self.exceptions = []
-                self.operator = self.trip_header[3:7].decode().strip() or None
-                if self.operator == "BE":
-                    self.operator = "ie-01"
+                operator_code = self.trip_header[3:7].decode().strip() or None
+                self.operator = get_operator(operator_code)
 
             case b"QE":
                 self.exceptions.append(line)
@@ -311,7 +318,7 @@ class Command(BaseCommand):
                         self.stop_times = []
 
                     self.trip = Trip(
-                        operator_id=self.operator,
+                        operator=self.operator,
                         ticket_machine_code=self.trip_header[7:13].decode().strip(),
                         block=self.trip_header[42:48].decode().strip(),
                         start=departure,
@@ -381,7 +388,7 @@ class Command(BaseCommand):
                         if previous_identity != b"QT":
                             self.stop_times[-1].pick_up = False
                     else:
-                        note = self.get_note(code, note)
+                        note = get_note(code, note)
                         if self.stop_times:
                             self.stop_time_notes.append(
                                 StopTime.notes.through(
@@ -395,7 +402,7 @@ class Command(BaseCommand):
                     or previous_identity == b"QN"
                 ):
                     # trip note
-                    note = self.get_note(code, note)
+                    note = get_note(code, note)
                     self.notes.append(note)
                 else:
                     print(previous_identity[:2], line)
