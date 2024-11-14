@@ -56,7 +56,7 @@
 | bustimes/formatting.py                                          |       19 |        0 |    100% |           |
 | bustimes/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | bustimes/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
-| bustimes/management/commands/import\_atco\_cif.py               |      238 |       24 |     90% |27-34, 39, 42-43, 65, 194, 196, 199, 201, 209, 215, 277, 310-314, 345-346, 413 |
+| bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 66, 193, 195, 198, 200, 208, 214, 277, 310-315, 355-356, 423 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      274 |       28 |     90% |48, 99, 103, 107-115, 120, 125-126, 146, 175, 185, 196, 264, 274-278, 294-295, 316, 332-333, 349 |
 | bustimes/management/commands/import\_gtfs.py                    |      237 |       24 |     90% |46, 77, 81, 131-132, 148, 209, 211, 271-272, 274-275, 311-312, 318-319, 323-326, 334-336, 384, 406 |
 | bustimes/management/commands/import\_gtfs\_ember.py             |       89 |        0 |    100% |           |
@@ -78,7 +78,7 @@
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      638 |       48 |     92% |62, 102-115, 144, 241-242, 259, 327-330, 342, 355-360, 406, 413, 481, 484, 500-503, 530, 639-654, 740-741, 812, 958-960 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
-| bustimes/utils.py                                               |      190 |       13 |     93% |116, 217, 243-245, 265-266, 289, 334, 351-352, 364, 400 |
+| bustimes/utils.py                                               |      188 |       12 |     94% |204, 230-232, 252-253, 276, 321, 338-339, 351, 387 |
 | bustimes/views.py                                               |      365 |       66 |     82% |154-168, 177-179, 187-196, 198-206, 213, 235, 325, 334, 371, 377, 457, 507, 541, 545-547, 555, 570-577, 607-618, 627-633 |
 | departures/\_\_init\_\_.py                                      |        0 |        0 |    100% |           |
 | departures/avl.py                                               |       12 |        1 |     92% |        14 |
@@ -160,7 +160,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15689** |  **993** | **94%** |           |
+|                                                       **TOTAL** | **15684** |  **993** | **94%** |           |
 
 
 ## Setup coverage badge
