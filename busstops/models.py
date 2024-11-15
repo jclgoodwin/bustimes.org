@@ -14,7 +14,7 @@ from django.contrib.postgres.aggregates import ArrayAgg, StringAgg
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
-from django.db.models import Exists, OuterRef, Q
+from django.db.models import Q
 from django.db.models.functions import Coalesce, Now, Upper
 from django.urls import reverse
 from django.utils.html import escape, format_html
@@ -863,64 +863,36 @@ class Service(models.Model):
             except (ValueError, IndexError):
                 pass
 
-    def get_linked_services_cache_key(self):
-        return f"{self.id}linked_services{self.modified_at.timestamp()}"
-
-    def get_similar_services_cache_key(self):
-        return f"{self.id}similar_services{self.modified_at.timestamp()}"
-
-    def get_linked_services(self):
-        services = cache.get(key := self.get_linked_services_cache_key())
-        if services is None:
-            services = list(
-                Service.objects.filter(
-                    Exists(
-                        ServiceLink.objects.filter(
-                            Q(from_service=self, to_service=OuterRef("pk"))
-                            | Q(from_service=OuterRef("pk"), to_service=self),
-                            how="parallel",
-                        )
-                    )
-                )
-                .order_by()
-                .defer("search_vector", "geometry")
-            )
-            cache.set(key, services, 86400)
-        return services
-
     def get_similar_services(self):
-        services = cache.get(key := self.get_similar_services_cache_key())
-        if services is None:
-            q = Q(
-                id__in=self.link_from.values("to_service").union(
-                    self.link_to.values("from_service")
-                )
+        q = Q(
+            id__in=self.link_from.values("to_service").union(
+                self.link_to.values("from_service")
             )
-            q |= Q(
-                id__in=Route.objects.filter(
-                    Q(registration__in=self.route_set.values("registration"))
-                    | Q(
-                        ~Q(service_code=""),
-                        ~Q(service_code__endswith=":"),
-                        service_code__in=self.route_set.values("service_code"),
-                        registration=None,
-                        source=self.source_id,
-                    ),
-                ).values("service")
-            )
-            services = (
-                Service.objects.with_line_names()
-                .filter(q, ~Q(pk=self.pk), current=True)
-                .order_by()
-                .defer("search_vector", "geometry")
-            )
-            services = sorted(
-                services.annotate(
-                    operators=ArrayAgg("operator__name", distinct=True, default=None)
+        )
+        q |= Q(
+            id__in=Route.objects.filter(
+                Q(registration__in=self.route_set.values("registration"))
+                | Q(
+                    ~Q(service_code=""),
+                    ~Q(service_code__endswith=":"),
+                    service_code__in=self.route_set.values("service_code"),
+                    registration=None,
+                    source=self.source_id,
                 ),
-                key=Service.get_order,
-            )
-            cache.set(key, services, 86400)
+            ).values("service")
+        )
+        services = (
+            Service.objects.with_line_names()
+            .filter(q, ~Q(pk=self.pk), current=True)
+            .order_by()
+            .defer("search_vector", "geometry")
+        )
+        services = sorted(
+            services.annotate(
+                operators=ArrayAgg("operator__name", distinct=True, default=None)
+            ),
+            key=Service.get_order,
+        )
         return services
 
     def get_timetable(

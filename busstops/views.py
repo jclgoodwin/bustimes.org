@@ -1048,14 +1048,7 @@ class ServiceDetailView(DetailView):
         operators = self.object.operator.all()
         context["operators"] = operators
 
-        # if self.object.public_use is False and (
-        #     self.object.source.name.startswith("First Bus_")
-        #     or self.object.source.name.startswith("Stagecoach")
-        # ):
-        #     self.object.public_use = None
-
         context["related"] = self.object.get_similar_services()
-
         if context["related"]:
             context["colours"] = get_colours(context["related"])
 
@@ -1064,9 +1057,6 @@ class ServiceDetailView(DetailView):
         date = None
 
         if not self.object.timetable_wrong:
-            if context["related"]:
-                context["linked_services"] = self.object.get_linked_services()
-
             form = forms.TimetableForm(
                 self.request.GET or None,
                 service=self.object,
