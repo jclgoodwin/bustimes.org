@@ -834,11 +834,6 @@ def edit_vehicle(request, **kwargs):
                         revision.pending = False
                         revision.save(update_fields=["pending"])
 
-                    # score decrements with each edit!
-                    User.objects.filter(id=revision.user_id).update(
-                        score=Coalesce("score", 0) - 1
-                    )
-
                     context["revision"] = revision
                     form = None
 
@@ -892,7 +887,6 @@ def vehicle_revision_vote(request, revision_id, direction):
 
     assert request.user.id != revision.user_id
     assert request.user.trusted is not False
-    assert request.user.score and request.user.score > 0
 
     positive = direction == "up"
     score_change = 1 if positive else -1
@@ -917,9 +911,6 @@ def vehicle_revision_vote(request, revision_id, direction):
     if score_change != 0:
         revision.score = F("score") + score_change
         revision.save(update_fields=["score"])
-        User.objects.filter(id=revision.user_id).update(
-            score=Coalesce("score", 0) + score_change
-        )
 
     # referesh from DB
     revision = VehicleRevision.objects.select_related(
@@ -949,7 +940,7 @@ def vehicle_revision_action(request, revision_id, action):
         VehicleRevision.objects.select_related(
             *revision_display_related_fields, "vehicle"
         )
-        .filter(pending=True)
+        .filter(Q(pending=True) | Q(approved_by=request.user))
         .select_for_update(of=["self"]),
         id=revision_id,
     )
@@ -958,7 +949,9 @@ def vehicle_revision_action(request, revision_id, action):
         revision.delete()  # cancel one's own edit
         return HttpResponse("")
     else:
-        assert request.user.has_perm("vehicles.change_vehiclerevision")
+        assert request.user.trusted or request.user.has_perm(
+            "vehicles.change_vehiclerevision"
+        )
 
     revision.disapproved_reason = unquote(request.headers.get("HX-Prompt", ""))
     revision.approved_by = request.user
