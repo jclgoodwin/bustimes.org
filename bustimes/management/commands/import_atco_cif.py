@@ -83,7 +83,7 @@ class Command(BaseCommand):
 
         with zipfile.ZipFile(archive_name) as archive:
             for filename in archive.namelist():
-                if filename.endswith(".cif"):
+                if filename.endswith(".cif") and "/archive/" not in filename.lower():
                     with archive.open(filename) as open_file:
                         self.handle_file(open_file)
         assert self.stop_times == []
@@ -229,6 +229,7 @@ class Command(BaseCommand):
                 start_date=parse_date(exception[2:10]),
                 end_date=parse_date(exception[10:18]),
                 operation=exception[18:19] == b"1",
+                special=exception[18:19] == b"1",
             )
             for exception in self.exceptions
         )
