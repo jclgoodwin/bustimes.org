@@ -184,7 +184,9 @@ class VehicleAdmin(admin.ModelAdmin):
             try:
                 if vehicle.reg:
                     duplicate = models.Vehicle.objects.get(
-                        id__lt=vehicle.id, reg__iexact=vehicle.reg
+                        id__lt=vehicle.id,
+                        operator=vehicle.operator_id,
+                        reg__iexact=vehicle.reg,
                     )  # vehicle with lower id number we will keep
                 else:
                     duplicate = models.Vehicle.objects.get(
@@ -222,7 +224,15 @@ class VehicleAdmin(admin.ModelAdmin):
             duplicate.save(
                 update_fields=["code", "fleet_code", "fleet_number", "reg", "withdrawn"]
             )
-            self.message_user(request, f"{vehicle} deleted, merged with {duplicate}")
+            self.message_user(
+                request,
+                format_html(
+                    "{} deleted, merged with <a href='{}'>{}</a>",
+                    vehicle,
+                    duplicate.get_absolute_url(),
+                    duplicate,
+                ),
+            )
 
     def spare_ticket_machine(self, request, queryset):
         queryset.update(
