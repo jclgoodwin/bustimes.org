@@ -949,9 +949,7 @@ def vehicle_revision_action(request, revision_id, action):
         revision.delete()  # cancel one's own edit
         return HttpResponse("")
     else:
-        assert request.user.trusted or request.user.has_perm(
-            "vehicles.change_vehiclerevision"
-        )
+        assert request.user.trusted
 
     revision.disapproved_reason = unquote(request.headers.get("HX-Prompt", ""))
     revision.approved_by = request.user

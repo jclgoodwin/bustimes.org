@@ -35,8 +35,8 @@ class EditVehicleForm(forms.Form):
         )
 
     field_order = [
-        "spare_ticket_machine",
         "withdrawn",
+        "spare_ticket_machine",
         "fleet_number",
         "reg",
         "operator",
@@ -51,12 +51,12 @@ class EditVehicleForm(forms.Form):
     ]
     spare_ticket_machine = forms.BooleanField(
         required=False,
-        help_text="Only to be used if the ticket machine code is something like SPARE",
+        help_text="i.e. the ticket machine code is something like SPARE",
     )
     withdrawn = forms.BooleanField(
         label="Remove from list",
         required=False,
-        help_text="""Don't feel you need to "tidy up" by removing vehicles you only *think* have been withdrawn""",
+        help_text="Rarely necessary, unless you're sure this vehicle has definitely been withdrawn for good",
     )
 
     fleet_number = forms.CharField(required=False, max_length=24)
@@ -95,6 +95,7 @@ class EditVehicleForm(forms.Form):
         label="Other branding",
         required=False,
         max_length=40,
+        help_text="If it's interesting or unusual",
     )
     name = forms.CharField(
         label="Vehicle name",
@@ -132,7 +133,7 @@ link to a picture to prove it. Be polite.""",
 
     def clean_reg(self):
         reg = self.cleaned_data["reg"].replace(".", "")
-        if self.cleaned_data["spare_ticket_machine"] and reg:
+        if self.cleaned_data.get("spare_ticket_machine") and reg:
             raise ValidationError(
                 "A spare ticket machine can\u2019t have a number plate"
             )
@@ -174,10 +175,11 @@ link to a picture to prove it. Be polite.""",
             self.fields["fleet_number"].intial = str(vehicle.fleet_number)
 
         if vehicle.vehicle_type_id and not vehicle.is_spare_ticket_machine():
-            self.fields["spare_ticket_machine"].disabled = True
+            del self.fields["spare_ticket_machine"]
 
         if not (vehicle.livery_id and vehicle.vehicle_type_id and vehicle.reg):
             self.fields["summary"].required = False
+            self.fields["summary"].label = "Summary (optional)"
 
         if not user.is_superuser:
             if not (

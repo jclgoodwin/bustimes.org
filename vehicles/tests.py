@@ -601,7 +601,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertContains(response, ">-1<")
         response = self.client.post(f"/vehicles/revisions/{revision.id}/disapprove")
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(5):
             response = self.client.get("/vehicles/edits?status=disapproved")
         self.assertEqual(len(response.context["revisions"]), 1)
 
