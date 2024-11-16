@@ -792,7 +792,7 @@ class Service(models.Model):
         return f"https://www.{domain}/timetables?{urlencode(query)}", name
 
     def get_traveline_links(self, date=None):
-        if not self.source:
+        if not self.source_id:
             return
 
         if self.source.name == "S":
@@ -864,26 +864,33 @@ class Service(models.Model):
                 pass
 
     def get_similar_services(self):
-        q = Q(
-            id__in=self.link_from.values("to_service").union(
-                self.link_to.values("from_service")
-            )
+        ids = self.link_from.values("to_service").union(
+            self.link_to.values("from_service")
         )
-        q |= Q(
-            id__in=Route.objects.filter(
-                Q(registration__in=self.route_set.values("registration"))
-                | Q(
-                    ~Q(service_code=""),
-                    ~Q(service_code__endswith=":"),
-                    service_code__in=self.route_set.values("service_code"),
-                    registration=None,
-                    source=self.source_id,
-                ),
+
+        # if self.service_code:
+        #     ids = ids.union(
+        #         Service.objects.filter(
+        #             ~Q(id=self.id),
+        #             source=self.source_id,
+        #             service_code=self.service_code
+        #         ).values("id")
+        #     )
+        # else:
+
+        ids = ids.union(
+            Route.objects.filter(
+                ~Q(service=self.id),
+                ~Q(service_code=""),
+                ~Q(service_code__endswith=":"),
+                service_code__in=self.route_set.values("service_code"),
+                source=self.source_id,
             ).values("service")
         )
+
         services = (
             Service.objects.with_line_names()
-            .filter(q, ~Q(pk=self.pk), current=True)
+            .filter(id__in=ids, current=True)
             .order_by()
             .defer("search_vector", "geometry")
         )
