@@ -42,8 +42,6 @@ class Command(BaseCommand):
         agency_id = f"ie-{agency_id}"
 
         name = line.agency_name
-        if name == "National Express":
-            name = "Dublin Express"
 
         operator = Operator.objects.filter(
             Q(name__iexact=name) | Q(noc=agency_id)
