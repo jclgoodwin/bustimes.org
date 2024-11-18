@@ -534,9 +534,15 @@ export default function JourneyMap({
     return <div className="sorry">Loading…</div>;
   }
 
+
+  let className = "journey-map has-sidebar";
+  if (!journey.stops) {
+    className += " no-stops";
+  }
+
   return (
     <React.Fragment>
-      <div className="journey-map has-sidebar">
+      <div className={className}>
         {bounds ? (
           <BusTimesMap
             initialViewState={{

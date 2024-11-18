@@ -1148,6 +1148,10 @@ input:not(:checked) + label {
     bottom: 45%;
 }
 
+.no-stops {
+    bottom: 248px;
+}
+
 .map-sidebar {
     position: absolute;
     top: 55%;
@@ -1156,11 +1160,12 @@ input:not(:checked) + label {
     right: 0;
     overflow: auto;
     padding: 1em 1em 100px;
-
 }
 
-// .journey-map + .map-sidebar {
-// }
+.no-stops + .map-sidebar {
+    top: auto;
+    height: 132px;
+}
 
 .map-sidebar .navigation {
     overflow: hidden;
