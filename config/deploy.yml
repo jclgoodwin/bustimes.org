@@ -10,12 +10,14 @@ servers:
     hosts:
       - 10.131.29.248  # everglory
       - 10.131.0.24    # eveready
-      - 10.131.240.95
+      - 10.131.240.95  # evergood
     env:
       clear:
         WEB_CONCURRENCY: 8
         ALLOWED_HOSTS: "*"
         EMAIL_HOST: email-smtp.eu-west-1.amazonaws.com
+        DISABLE_EDITING: ""
+        DISABLE_REGISTRATION: yes
       secret:
         - SECRET_KEY
         - DATABASE_URL
@@ -33,6 +35,9 @@ servers:
 
 builder:
   arch: amd64
+  cache:
+    type: registry
+    options: mode=max
 
 # Credentials for your image host.
 registry:
@@ -52,3 +57,7 @@ proxy:
     path: /version
   buffering:
     responses: false
+  logging:
+    request_headers:
+      - Referer
+    response_headers: []

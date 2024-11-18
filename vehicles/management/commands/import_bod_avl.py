@@ -451,8 +451,6 @@ class Command(ImportLiveVehiclesCommand):
                     logger.warning(
                         "TFL vehicle with non-UTC time, so bug may have been fixed"
                     )
-                elif difference > timedelta(minutes=50):
-                    origin_aimed_departure_time -= timedelta(hours=1)
 
         latest_journey = vehicle.latest_journey
         if latest_journey:
