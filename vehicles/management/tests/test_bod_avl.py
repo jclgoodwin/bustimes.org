@@ -265,7 +265,8 @@ class BusOpenDataVehicleLocationsTest(TestCase):
         command.source.datetime = command.get_datetime(
             {"RecordedAtTime": "2020-10-15T07:46:08+00:00"}
         )
-        # command.get_operator.cache_clear()
+        command.get_operator.cache_clear()
+        import_bod_avl.get_destination_name.cache_clear()
 
         redis_client = fakeredis.FakeStrictRedis(version=7)
 
@@ -277,7 +278,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             "vehicles.management.commands.import_bod_avl.Command.get_items",
             return_value=items,
         ):
-            with self.assertNumQueries(42):
+            with self.assertNumQueries(43):
                 wait = command.update()
             self.assertEqual(11, wait)
 
