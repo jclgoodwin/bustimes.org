@@ -4,13 +4,13 @@ from datetime import datetime
 from uuid import uuid4
 
 import requests
-import websockets
 from asgiref.sync import sync_to_async
 from ciso8601 import parse_datetime
 from django.contrib.gis.db.models import Extent
 from django.contrib.gis.geos import Point
 from django.db.models import Q
 from django.utils import timezone
+from websockets.asyncio.client import connect
 
 from busstops.models import DataSource, Operator, Service
 
@@ -155,10 +155,10 @@ class Command(ImportLiveVehiclesCommand):
             }
         )
 
-        async with websockets.connect(
+        async with connect(
             socket_info["data"]["url"],
             max_size=40000000,
-            extra_headers={
+            additional_headers={
                 "Authorization": f'Bearer {socket_info["data"]["access-token"]}'
             },
         ) as websocket:
