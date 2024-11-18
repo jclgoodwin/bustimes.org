@@ -338,7 +338,7 @@ def vehicles_json(request) -> JsonResponse:
         bounds = get_bounding_box(request)
     except KeyError:
         bounds = None
-    except GEOSException:
+    except (GEOSException, ValueError):
         return HttpResponseBadRequest()
 
     all_vehicles = (
