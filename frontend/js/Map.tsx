@@ -9,7 +9,10 @@ import Map, {
   MapProps,
   useControl,
   useMap,
-  Popup
+  Popup,
+  LngLat,
+  MapLayerMouseEvent,
+  PopupEvent,
 } from "react-map-gl/maplibre";
 
 import stopMarker from "data-url:../stop-marker.png";
@@ -23,7 +26,6 @@ import type {
   Map as MapLibreMap,
   MapStyleImageMissingEvent,
 } from "maplibre-gl";
-import { LngLat, MapLayerMouseEvent, PopupEvent } from "react-map-gl";
 
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
