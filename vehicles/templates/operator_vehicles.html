@@ -88,7 +88,7 @@ ticket machines, a byproduct of the live bus tracking.</p>
                 </td>
                 {% if vehicle.reg %}
                     <td>
-                        <a href="{{ vehicle.get_absolute_url }}"{% if vehicle.has_uk_reg %} class="reg"{% endif %}>
+                        <a href="{{ vehicle.get_absolute_url }}" class="reg">
                             {{ vehicle.get_reg }}
                         </a>
                     </td>

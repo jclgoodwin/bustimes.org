@@ -27,7 +27,7 @@
 
 {% if vehicle %}
     <h1>
-        {% if vehicle.has_uk_reg %}
+        {% if vehicle.reg %}
             {% if vehicle.fleet_code or vehicle.fleet_number %}
                 {% if vehicle.withdrawn %}<del>{% endif %}
                 {% firstof vehicle.fleet_code vehicle.fleet_number %}
