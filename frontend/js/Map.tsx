@@ -9,6 +9,7 @@ import Map, {
   MapProps,
   useControl,
   useMap,
+  Popup
 } from "react-map-gl/maplibre";
 
 import stopMarker from "data-url:../stop-marker.png";
@@ -22,6 +23,7 @@ import type {
   Map as MapLibreMap,
   MapStyleImageMissingEvent,
 } from "maplibre-gl";
+import { LngLat, MapLayerMouseEvent, PopupEvent } from "react-map-gl";
 
 const imagesByName: { [imageName: string]: string } = {
   "stop-marker": stopMarker,
@@ -192,6 +194,16 @@ export default function BusTimesMap(
     [darkModeQuery.matches],
   );
 
+  const [contextMenu, setContextMenu] = React.useState<LngLat>();
+
+  const onContextMenu = (e: MapLayerMouseEvent | PopupEvent) => {
+    if ('lngLat' in e) {
+      setContextMenu(e.lngLat);
+    } else {
+      setContextMenu(undefined);
+    }
+};
+
   useEffect(() => {
     document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
   }, [mapStyle]);
@@ -211,6 +223,8 @@ export default function BusTimesMap(
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
 
+        onContextMenu={onContextMenu}
+
         // workaround for wrong react-map-gl type definitions?
         transformRequest={undefined}
         maxTileCacheSize={undefined}
@@ -225,6 +239,10 @@ export default function BusTimesMap(
         <MapChild onInit={props.onMapInit} />
 
         {props.children}
+        {contextMenu ? <Popup longitude={contextMenu.lng} latitude={contextMenu.lat} onClose={onContextMenu}>
+          <a href={`https://www.openstreetmap.org/#map=15/${contextMenu.lat}/${contextMenu.lng}`} rel="noopener noreferrer">OpenStreetMap</a>
+          <a href={`https://www.google.com/maps/search/?api=1&query=${contextMenu.lat},${contextMenu.lng}`} rel="noopener noreferrer">Google Maps</a>
+        </Popup> : null}
       </Map>
     </ThemeContext.Provider>
   );
