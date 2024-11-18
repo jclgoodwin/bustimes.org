@@ -151,16 +151,17 @@ def get_calendars(when: date | datetime, calendar_ids=None):
         calendar=OuterRef("id"),
     )
     bank_holiday_inclusions = Exists(calendar_bank_holidays.filter(operation=True))
-    bank_holiday_exclusions = Exists(calendar_bank_holidays.filter(operation=False))
 
-    return calendars.filter(
+    return calendars.annotate(
+        bank_holiday_exclusions=Exists(calendar_bank_holidays.filter(operation=False))
+    ).filter(
         Q(
             Q(**{f"{when:%a}".lower(): True}),  # day of week
             ~only_certain_dates | Exists(inclusions),  # special dates of operation
-            ~bank_holiday_exclusions,
+            bank_holiday_exclusions=False,
         )
         | special_inclusions
-        | bank_holiday_inclusions & ~bank_holiday_exclusions,
+        | bank_holiday_inclusions & Q(bank_holiday_exclusions=False),
         ~Exists(exclusions),
     )
 

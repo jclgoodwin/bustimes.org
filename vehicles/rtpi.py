@@ -20,6 +20,7 @@ def get_stop_times(item):
         StopTime.objects.filter(trip__in=trips)
         .filter(stop__latlong__isnull=False)
         .select_related("stop")
+        .only("arrival", "departure", "stop__latlong")
         .order_by("trip__start", "id")
     )
 
@@ -52,7 +53,7 @@ def get_progress(item, stop_time=None):
     point = Point(*item["coordinates"])
 
     if stop_time:
-        stop_times = stop_time.trip.stoptime_set.all()
+        stop_times = stop_time.trip.stoptime_set.all()  # prefetched earlier
     else:
         stop_times = get_stop_times(item)
 
