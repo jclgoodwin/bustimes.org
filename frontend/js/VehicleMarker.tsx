@@ -26,6 +26,7 @@ export function getClickedVehicleMarkerId(
 
 export type Vehicle = {
   id: number;
+  journey_id?: number;
   coordinates: [number, number];
   heading?: number;
   datetime: string;
