@@ -18,6 +18,11 @@ export default function MapRouter() {
           <BigMap mode={MapMode.Trip} trip={tripData} tripId={params.tripId} />
         )}
       </Route>
+      <Route path="/journeys/:journeyId">
+        {(params) => (
+          <BigMap mode={MapMode.Journey} journeyId={params.journeyId} />
+        )}
+      </Route>
       <Route path="/vehicles/tfl/:reg">
         <BigMap
           mode={MapMode.Trip}

@@ -59,7 +59,13 @@ export default function VehiclePopup({
     line_name += item.destination;
   }
 
-  if (item.tfl_code) {
+  if (item.journey_id) {
+    if (!activeLink) {
+      line_name = (
+        <Link href={`/journeys/${item.journey_id}`}>{line_name}</Link>
+      );
+    }
+  } else if (item.tfl_code) {
     // if (!activeLink && snazzyTripLink) {
     //   line_name = <Link href={`/vehicles/tfl/${item.tfl_code}`}>{line_name}</Link>;
     // }

@@ -98,8 +98,8 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.TripFilter
 
-    def get_object(self):
-        obj = super().get_object()
+    @staticmethod
+    def get_stops(obj):
         trips = obj.get_trips()
         stops = (
             StopTime.objects.filter(trip__in=trips)
@@ -113,7 +113,11 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
         )
         if len(trips) > 1:
             stops = contiguous_stoptimes_only(stops, obj.id)
-        obj.stops = stops
+        return stops
+
+    def get_object(self):
+        obj = super().get_object()
+        obj.stops = self.get_stops(obj)
         return obj
 
 
@@ -126,6 +130,9 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
 
     def retrieve(self, request, *args, pk, **kwargs):
         instance = self.get_object()
+        if instance.trip:
+            instance.trip.stops = TripViewSet.get_stops(instance.trip)
+
         serializer = self.get_serializer(instance)
 
         extra_data = {}

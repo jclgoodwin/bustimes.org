@@ -466,8 +466,6 @@ def vehicles_json(request) -> JsonResponse:
                     journeys_to_cache_later[journey_cache_key] = journey
                     item.update(journey)
 
-            del item["journey_id"]
-
             if (
                 "progress" not in item
                 and "trip_id" in item

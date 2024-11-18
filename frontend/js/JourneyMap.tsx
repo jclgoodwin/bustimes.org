@@ -341,7 +341,8 @@ function JourneyVehicle({
       return;
     }
 
-    let timeout: number, current = true;
+    let timeout: number,
+      current = true;
 
     const loadVehicle = () => {
       fetch(`/vehicles.json?id=${vehicleId}`).then((response) => {
@@ -434,7 +435,10 @@ export default function JourneyMap({
 
   const handleVehicleMove = React.useCallback(
     (vehicle: Vehicle) => {
-      if (!locations.length || locations[locations.length - 1].datetime !== vehicle.datetime) {
+      if (
+        !locations.length ||
+        locations[locations.length - 1].datetime !== vehicle.datetime
+      ) {
         setLocations(
           locations.concat([
             {
@@ -585,7 +589,7 @@ export default function JourneyMap({
             ) : null}
             {journey.locations && journey.current ? (
               <JourneyVehicle
-              vehicleId={window.VEHICLE_ID}
+                vehicleId={window.VEHICLE_ID}
                 // journey={journey}
                 onVehicleMove={handleVehicleMove}
                 clickedVehicleMarker={clickedVehicleMarker}

@@ -80,13 +80,30 @@ export enum MapMode {
   Slippy,
   Operator,
   Trip,
+  Journey,
 }
+
+type Journey = {
+  id: number;
+  datetime: string;
+  vehicle: {
+    id: number;
+    slug: string;
+    fleet_code: string;
+    reg: string;
+  };
+  trip_id: number | null;
+  times: Trip["times"];
+  route_name: string;
+  destination: string;
+  time_aware_polyline: string;
+};
 
 type StopsProps = {
   stops?: {
     features: Stop[];
   };
-  trip?: Trip;
+  times?: Trip["times"];
   clickedStopUrl?: string;
   setClickedStop: (stop?: string) => void;
 };
@@ -113,7 +130,7 @@ function SlippyMapHash() {
   return null;
 }
 
-function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
+function Stops({ stops, times, clickedStopUrl, setClickedStop }: StopsProps) {
   const stopsById = React.useMemo<{ [url: string]: Stop } | undefined>(() => {
     if (stops) {
       return Object.assign(
@@ -121,10 +138,10 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
         ...stops.features.map((stop) => ({ [stop.properties.url]: stop })),
       );
     }
-    if (trip) {
+    if (times) {
       return Object.assign(
         {},
-        ...trip.times.map((time) => {
+        ...times.map((time) => {
           const url = "/stops/" + time.stop.atco_code;
           return {
             [url]: {
@@ -135,7 +152,7 @@ function Stops({ stops, trip, clickedStopUrl, setClickedStop }: StopsProps) {
         }),
       );
     }
-  }, [stops, trip]);
+  }, [stops, times]);
 
   const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
 
@@ -296,7 +313,7 @@ const Vehicles = memo(function Vehicles({
   );
 });
 
-function Sidebar(props: {
+function TripSidebar(props: {
   trip?: Trip;
   tripId?: string;
   vehicle?: Vehicle;
@@ -356,23 +373,62 @@ function Sidebar(props: {
   );
 }
 
-export default function BigMap(props: {
-  mode: MapMode;
-  noc?: string;
-  trip?: Trip;
-  tripId?: string;
-  vehicleId?: number;
-  // } & ({
-  //   noc: string;
-  // } | {
-  //   trip: Trip;
-  //   tripId: string;
-  // } | {
-  //   vehicleId: number;
+function JourneySidebar(props: {
+  journey?: Journey;
+  journeyId: string;
+  vehicle?: Vehicle;
+  highlightedStop?: string;
 }) {
+  let className = "trip-timetable map-sidebar";
+
+  const journey = props.journey;
+
+  if (!journey) {
+    return <div className={className}></div>;
+  }
+
+  if (journey.id && props.journeyId !== journey.id?.toString()) {
+    className += " loading";
+  }
+
+  return (
+    <div className={className}>
+      <p>
+        {journey.route_name} to {journey.destination}
+      </p>
+      <p>
+        <a href={`/vehicles/${journey.vehicle.slug}`}>
+          {journey.vehicle.fleet_code}{" "}
+          <span className="reg">{journey.vehicle.reg}</span>
+        </a>
+      </p>
+      <code>{journey.time_aware_polyline}</code>
+    </div>
+  );
+}
+
+export default function BigMap(
+  props: {
+    noc?: string;
+    trip?: Trip;
+    tripId?: string;
+    vehicleId?: number;
+    journeyId?: string;
+  } & (
+    | {
+        mode: MapMode.Journey;
+        journeyId: string;
+      }
+    | {
+        mode: MapMode.Trip | MapMode.Operator | MapMode.Slippy;
+      }
+  ),
+) {
   const mapRef = React.useRef<Map>();
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
+
+  const [journey, setJourney] = React.useState<Journey>();
 
   const [vehicles, setVehicles] = React.useState<Vehicle[]>();
 
@@ -393,9 +449,10 @@ export default function BigMap(props: {
 
   const tripBounds = React.useMemo(
     function () {
-      if (trip) {
+      const times = trip?.times || journey?.times;
+      if (times) {
         const bounds = new LngLatBounds();
-        for (const item of trip.times) {
+        for (const item of times) {
           if (item.stop.location) {
             bounds.extend(item.stop.location);
           }
@@ -405,7 +462,7 @@ export default function BigMap(props: {
         }
       }
     },
-    [trip],
+    [trip, journey],
   );
 
   React.useEffect(() => {
@@ -558,12 +615,27 @@ export default function BigMap(props: {
           " \u2013 bustimes.org";
       }
       loadVehicles(true);
+    } else if (props.journeyId) {
+      fetch(`${apiRoot}api/vehiclejourneys/${props.journeyId}/`).then(
+        (response) => {
+          if (response.ok) {
+            response.json().then(setJourney);
+          }
+        },
+      );
     } else if (!props.vehicleId) {
       document.title = "Map \u2013 bustimes.org";
     } else {
       loadVehicles();
     }
-  }, [props.tripId, trip, props.noc, props.vehicleId, loadVehicles]);
+  }, [
+    props.tripId,
+    trip,
+    props.noc,
+    props.vehicleId,
+    props.journeyId,
+    loadVehicles,
+  ]);
 
   const handleMoveEnd = debounce(
     React.useCallback(
@@ -698,13 +770,13 @@ export default function BigMap(props: {
   }
 
   let className = "big-map";
-  if (props.mode === MapMode.Trip) {
+  if (props.mode === MapMode.Trip || props.mode === MapMode.Journey) {
     className += " has-sidebar";
   }
 
   return (
     <React.Fragment>
-      {props.mode === MapMode.Slippy ? null : (
+      {props.mode !== MapMode.Slippy && (
         <Link className="map-link" href="/map">
           Map
         </Link>
@@ -725,12 +797,22 @@ export default function BigMap(props: {
             <Route times={trip.times} />
           ) : null}
 
+          {props.mode === MapMode.Journey && journey ? (
+            <Route times={journey.times} />
+          ) : null}
+
           {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
 
-          {trip || (stops && showStops) ? (
+          {trip || journey || (stops && showStops) ? (
             <Stops
               stops={props.mode === MapMode.Slippy ? stops : undefined}
-              trip={props.mode === MapMode.Trip ? trip : undefined}
+              times={
+                props.mode === MapMode.Trip
+                  ? trip?.times
+                  : props.mode === MapMode.Journey
+                    ? journey?.times
+                    : undefined
+              }
               setClickedStop={setClickedStopURL}
               clickedStopUrl={clickedStopUrl}
             />
@@ -763,10 +845,18 @@ export default function BigMap(props: {
       </div>
 
       {props.mode === MapMode.Trip ? (
-        <Sidebar
+        <TripSidebar
           trip={trip}
           tripId={props.tripId}
           vehicle={tripVehicle}
+          highlightedStop={clickedStopUrl}
+        />
+      ) : null}
+
+      {props.mode === MapMode.Journey ? (
+        <JourneySidebar
+          journey={journey}
+          journeyId={props.journeyId}
           highlightedStop={clickedStopUrl}
         />
       ) : null}
