@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_6a478a4b3744fc7a_signals_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-18 14:16 +0000
+            created at 2024-11-19 14:31 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -167,7 +167,7 @@
     <p class="run"><span class="n"><a id="t85" href="#t85">85</a></span><span class="t">        <span class="nam">difference</span> <span class="op">=</span> <span class="op">(</span><span class="nam">vehicle_heading</span> <span class="op">-</span> <span class="nam">route_bearing</span> <span class="op">+</span> <span class="num">180</span><span class="op">)</span> <span class="op">%</span> <span class="num">360</span> <span class="op">-</span> <span class="num">180</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t86" href="#t86">86</a></span><span class="t">        <span class="nam">next_closest</span><span class="op">,</span> <span class="nam">next_closest_distance</span> <span class="op">=</span> <span class="nam">nearby_pairs</span><span class="op">[</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t87" href="#t87">87</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t88" href="#t88">88</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="op">(</span><span class="op">-</span><span class="num">90</span> <span class="op">&lt;</span> <span class="nam">difference</span> <span class="op">&lt;</span> <span class="num">90</span><span class="op">)</span> <span class="key">and</span> <span class="nam">next_closest_distance</span> <span class="op">&lt;</span> <span class="num">0.001</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t88" href="#t88">88</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="op">(</span><span class="nam">abs</span><span class="op">(</span><span class="nam">difference</span><span class="op">)</span> <span class="op">&lt;</span> <span class="num">90</span><span class="op">)</span> <span class="key">and</span> <span class="nam">next_closest_distance</span> <span class="op">&lt;</span> <span class="num">0.001</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t89" href="#t89">89</a></span><span class="t">            <span class="com"># bus seems to be heading the wrong way - does the bus go both ways on this road?</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t90" href="#t90">90</a></span><span class="t">            <span class="com"># try the next closest pair of stops:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t91" href="#t91">91</a></span><span class="t">            <span class="nam">route_bearing</span> <span class="op">=</span> <span class="nam">calculate_bearing</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
@@ -175,7 +175,7 @@
     <p class="pln"><span class="n"><a id="t93" href="#t93">93</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t94" href="#t94">94</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t95" href="#t95">95</a></span><span class="t">            <span class="nam">difference</span> <span class="op">=</span> <span class="op">(</span><span class="nam">vehicle_heading</span> <span class="op">-</span> <span class="nam">route_bearing</span> <span class="op">+</span> <span class="num">180</span><span class="op">)</span> <span class="op">%</span> <span class="num">360</span> <span class="op">-</span> <span class="num">180</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">            <span class="key">if</span> <span class="op">-</span><span class="num">90</span> <span class="op">&lt;</span> <span class="nam">difference</span> <span class="op">&lt;</span> <span class="num">90</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t96" href="#t96">96</a></span><span class="t">            <span class="key">if</span> <span class="nam">abs</span><span class="op">(</span><span class="nam">difference</span><span class="op">)</span> <span class="op">&lt;</span> <span class="num">90</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t97" href="#t97">97</a></span><span class="t">                <span class="nam">closest</span> <span class="op">=</span> <span class="nam">next_closest</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t98" href="#t98">98</a></span><span class="t">                <span class="nam">distance</span> <span class="op">=</span> <span class="nam">next_closest_distance</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t99" href="#t99">99</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -228,7 +228,7 @@
             <a class="nav" href="z_6a478a4b3744fc7a_signals_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-11-18 14:16 +0000
+            created at 2024-11-19 14:31 +0000
         </p>
     </div>
 </footer>
