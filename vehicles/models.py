@@ -368,18 +368,20 @@ class Vehicle(models.Model):
             filter = {}
             if self.fleet_number:
                 filter[f"fleet_number__{lookup}"] = self.fleet_number
-                order_by = [f"{order}fleet_number"]
+                order_by = f"{order}fleet_number"
+            elif self.fleet_code:
+                filter[f"fleet_code__{lookup}"] = self.fleet_code
+                order_by = f"{order}fleet_code"
             else:
-                if self.fleet_code:
-                    filter[f"fleet_code__{lookup}"] = self.fleet_code
                 filter[f"code__{lookup}"] = self.code
-                order_by = [f"{order}code", f"{order}fleet_code"]
+                order_by = f"{order}code"
+
             return (
                 self.operator.vehicle_set.filter(
                     **filter,
                     withdrawn=False,
                 )
-                .order_by(*order_by)
+                .order_by(order_by)
                 .first()
             )
 
