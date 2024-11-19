@@ -98,7 +98,7 @@ def get_decoded_dimension_from_polyline(polyline, index):
     return index, (~result >> 1) if (result & 1) != 0 else (result >> 1)
 
 
-def decode_time_aware_polyline(polyline):
+def decode_time_aware_polyline(polyline) -> list:
     """
     Decode time aware polyline into list of gpx logs
     A gpx log is [lat, lng, time]

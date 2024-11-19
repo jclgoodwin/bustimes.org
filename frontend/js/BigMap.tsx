@@ -22,6 +22,7 @@ import VehiclePopup from "./VehiclePopup";
 import StopPopup, { Stop } from "./StopPopup";
 import BusTimesMap from "./Map";
 import { Route } from "./TripMap";
+import { Locations } from "./JourneyMap";
 import TripTimetable, { Trip } from "./TripTimetable";
 
 import { decodeTimeAwarePolyline } from "./time-aware-polyline";
@@ -87,7 +88,7 @@ export enum MapMode {
 
 type Journey = {
   id: number;
-  datetime: string;
+  datetime: string | number;
   vehicle: {
     id: number;
     slug: string;
@@ -476,6 +477,17 @@ export default function BigMap(
     [trip, journey],
   );
 
+  const journeyPolyline = React.useMemo(() => {
+    if (journey?.time_aware_polyline) {
+      return decodeTimeAwarePolyline(journey.time_aware_polyline).map(([lat, lng, timestamp], i) => {
+        return {
+          id: i,
+          coordinates: [lng, lat] as [number, number],
+          datetime: timestamp,
+        }})
+    }
+  }, [journey?.time_aware_polyline]);
+
   React.useEffect(() => {
     if (mapRef.current && tripBounds) {
       mapRef.current.fitBounds(tripBounds, {
@@ -846,6 +858,9 @@ export default function BigMap(
               ) : null}
             </div>
           ) : null}
+
+
+        {props.mode === MapMode.Journey && journeyPolyline && <Locations locations={journeyPolyline} />}
         </BusTimesMap>
       </div>
 
@@ -865,6 +880,8 @@ export default function BigMap(
           highlightedStop={clickedStopUrl}
         />
       ) : null}
+
+
     </React.Fragment>
   );
 }

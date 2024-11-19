@@ -21,9 +21,9 @@ import VehiclePopup from "./VehiclePopup";
 type VehicleJourneyLocation = {
   id: number;
   coordinates: [number, number];
-  delta: number | null;
+  // delta: number | null;
   direction?: number | null;
-  datetime: string;
+  datetime: string | number;
 };
 
 type Stop = {
@@ -67,7 +67,7 @@ export type VehicleJourney = {
   };
 };
 
-const Locations = React.memo(function Locations({
+export const Locations = React.memo(function Locations({
   locations,
 }: {
   locations: VehicleJourneyLocation[];
@@ -133,7 +133,7 @@ const Locations = React.memo(function Locations({
           features: locations.map((l) => {
             return {
               type: "Feature",
-              id: l.id,
+              // id: l.id,
               geometry: {
                 type: "Point",
                 coordinates: l.coordinates,
@@ -444,7 +444,7 @@ export default function JourneyMap({
             {
               id: new Date(vehicle.datetime).getTime(),
               coordinates: vehicle.coordinates,
-              delta: null,
+              // delta: null,
               datetime: vehicle.datetime,
               direction: vehicle.heading,
             },
