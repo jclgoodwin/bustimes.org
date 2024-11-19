@@ -3,15 +3,15 @@ function getDecodedDimensionFromPolyline(polyline: string, index: number) {
         shift = 0,
         b;
 
-    while (true) {
-        b = polyline.charCodeAt(index) - 63 - 1;
+    while (
+        (b = polyline.charCodeAt(index) - 64) >= 0x1F
+    ) {
+        console.log(b);
         index += 1;
         result += b << shift;
         shift += 5;
-        if (b < 0x1F) {
-            return [index, (result & 1) !== 0 ? ~result >> 1 : result >> 1];
-        }
     }
+    return [index, (result & 1) !== 0 ? ~result >> 1 : result >> 1];
 }
 
 export function decodeTimeAwarePolyline(polyline: string) {

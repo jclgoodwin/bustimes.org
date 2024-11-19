@@ -404,6 +404,7 @@ function JourneySidebar(props: {
           <span className="reg">{journey.vehicle.reg}</span>
         </a>
       </p>
+      <TripTimetable trip={journey} />
       <code>{journey.time_aware_polyline}</code>
     </div>
   );
