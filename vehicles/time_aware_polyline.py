@@ -63,7 +63,7 @@ def extend_time_aware_polyline(polyline, gpx_logs, last_gpx_log=None):
         d_time = time_stamp - last_time
 
         # Can be reused for any n-dimensional polyline
-        for v in [d_lat, d_lng, d_time]:
+        for v in (d_lat, d_lng, d_time):
             v = ~(v << 1) if v < 0 else v << 1
             while v >= 0x20:
                 polyline += chr((0x20 | (v & 0x1F)) + 63)
@@ -105,8 +105,9 @@ def decode_time_aware_polyline(polyline):
     """
     gpx_logs = []
     index = lat = lng = time_stamp = 0
+    length = len(polyline)
 
-    while index < len(polyline):
+    while index < length:
         index, lat_part = get_decoded_dimension_from_polyline(polyline, index)
         index, lng_part = get_decoded_dimension_from_polyline(polyline, index)
         index, time_part = get_decoded_dimension_from_polyline(polyline, index)

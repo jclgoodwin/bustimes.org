@@ -1,4 +1,4 @@
-import React, { ReactElement, memo } from "react";
+import React, { ReactElement, memo, useRef } from "react";
 
 import {
   Source,
@@ -23,6 +23,8 @@ import StopPopup, { Stop } from "./StopPopup";
 import BusTimesMap from "./Map";
 import { Route } from "./TripMap";
 import TripTimetable, { Trip } from "./TripTimetable";
+
+import { decodeTimeAwarePolyline } from "./time-aware-polyline";
 
 const apiRoot = process.env.API_ROOT;
 
@@ -447,19 +449,27 @@ export default function BigMap(
 
   const [tripVehicle, setTripVehicle] = React.useState<Vehicle>();
 
+  const initialViewState = useRef(window.INITIAL_VIEW_STATE);
+
   const tripBounds = React.useMemo(
     function () {
       const times = trip?.times || journey?.times;
-      if (times) {
-        const bounds = new LngLatBounds();
+      const bounds = new LngLatBounds();
+      if (times && times.length) {
         for (const item of times) {
           if (item.stop.location) {
             bounds.extend(item.stop.location);
           }
         }
-        if (!bounds.isEmpty()) {
-          return bounds;
+      } else if (journey?.time_aware_polyline) {
+        let lng, lat;
+        for ([lat, lng, ] of decodeTimeAwarePolyline(journey.time_aware_polyline)) {
+          bounds.extend([lng, lat]);
         }
+      }
+      if (!bounds.isEmpty()) {
+        initialViewState.current = {bounds};
+        return bounds;
       }
     },
     [trip, journey],
@@ -472,18 +482,6 @@ export default function BigMap(
       });
     }
   }, [tripBounds]);
-
-  const [initialViewState, setInitialViewState] = React.useState(function () {
-    if (tripBounds) {
-      return {
-        bounds: tripBounds,
-        fitBoundsOptions: {
-          padding: 50,
-        },
-      };
-    }
-    return window.INITIAL_VIEW_STATE;
-  });
 
   const timeout = React.useRef<number>();
   const boundsRef = React.useRef<LngLatBounds>();
@@ -547,17 +545,19 @@ export default function BigMap(
               response.json().then((items: Vehicle[]) => {
                 vehiclesHighWaterMark.current = _bounds;
 
-                if (first && !initialViewState) {
+                if (first && !initialViewState.current) {
                   const bounds = new LngLatBounds();
                   for (const item of items) {
                     bounds.extend(item.coordinates);
                   }
-                  setInitialViewState({
-                    bounds,
-                    fitBoundsOptions: {
-                      padding: { top: 50, bottom: 150, left: 50, right: 50 },
-                    },
-                  });
+                  if (!bounds.isEmpty()) {
+                    initialViewState.current = {
+                      bounds: bounds as LngLatBounds,
+                      fitBoundsOptions: {
+                        padding: { top: 50, bottom: 150, left: 50, right: 50 },
+                      },
+                    };
+                  }
                 }
 
                 if (trip && trip.id) {
@@ -590,7 +590,7 @@ export default function BigMap(
           // setLoadingBuses(false);
         });
     },
-    [props.mode, props.noc, trip, props.vehicleId, initialViewState],
+    [props.mode, props.noc, trip, props.vehicleId],
   );
 
   React.useEffect(() => {
@@ -769,6 +769,10 @@ export default function BigMap(
     }
   }
 
+  if (props.mode === MapMode.Journey && !tripBounds) {
+    return <div className="sorry">Loading…</div>;
+  }
+
   let className = "big-map";
   if (props.mode === MapMode.Trip || props.mode === MapMode.Journey) {
     className += " has-sidebar";
@@ -783,7 +787,7 @@ export default function BigMap(
       )}
       <div className={className}>
         <BusTimesMap
-          initialViewState={initialViewState}
+          initialViewState={initialViewState.current}
           onMoveEnd={props.mode === MapMode.Slippy ? handleMoveEnd : undefined}
           hash={props.mode === MapMode.Slippy}
           onClick={handleMapClick}
