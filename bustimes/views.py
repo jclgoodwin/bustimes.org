@@ -356,18 +356,17 @@ def stop_times_json(request, atco_code):
 
                 if "progress" not in item:
                     add_progress_and_delay(item, time["stop_time"])
-                if "progress" not in item:
+                if not (progress := item.get("progress")):
                     continue
 
                 if (
                     (time["aimed_arrival_time"] or time["aimed_departure_time"]) >= when
-                    or item["progress"]["id"] < time["id"]
-                    or item["progress"]["id"] == time["id"]
-                    and item["progress"]["progress"] == 0
+                    or progress["id"] < time["id"]
+                    or (progress["id"] == time["id"] and progress["progress"] == 0)
                 ):
                     delay = timedelta(seconds=item["delay"])
                     time["delay"] = delay
-                    if delay < timedelta() and item["progress"]["sequence"] == 0:
+                    if delay < timedelta() and progress["sequence"] == 0:
                         delay = timedelta()
                     if time["aimed_departure_time"]:
                         time["expected_departure_time"] = (

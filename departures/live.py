@@ -74,9 +74,9 @@ def update_trip_ids(departures: list, live_rows: list) -> None:
     for live_row in live_rows:
         live_time = live_row["time"] or live_row["live"]
         for row in departures:
-            if row["service"] == live_row["service"] and -datetime.timedelta(
-                minutes=1
-            ) < (row["time"] - live_time) < datetime.timedelta(minutes=1):
+            if row["service"] == live_row["service"] and (
+                abs(row["time"] - live_time) <= datetime.timedelta(minutes=2)
+            ):
                 live_row["link"] = row["link"]
                 trip = row["stop_time"].trip
                 if trip.ticket_machine_code != live_row["tripId"]:

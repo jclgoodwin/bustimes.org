@@ -85,7 +85,7 @@ def get_progress(item, stop_time=None):
         difference = (vehicle_heading - route_bearing + 180) % 360 - 180
         next_closest, next_closest_distance = nearby_pairs[1]
 
-        if not (-90 < difference < 90) and next_closest_distance < 0.001:
+        if not (abs(difference) < 90) and next_closest_distance < 0.001:
             # bus seems to be heading the wrong way - does the bus go both ways on this road?
             # try the next closest pair of stops:
             route_bearing = calculate_bearing(
@@ -93,7 +93,7 @@ def get_progress(item, stop_time=None):
             )
 
             difference = (vehicle_heading - route_bearing + 180) % 360 - 180
-            if -90 < difference < 90:
+            if abs(difference) < 90:
                 closest = next_closest
                 distance = next_closest_distance
 

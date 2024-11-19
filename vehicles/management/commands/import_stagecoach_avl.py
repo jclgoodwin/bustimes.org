@@ -154,16 +154,10 @@ class Command(ImportLiveVehiclesCommand):
         else:
             departure_time = None
 
-        code = item.get("td", "")  # trip id
-
-        latest_journey = vehicle.latest_journey
-
         if departure_time:
             if (
-                latest_journey
-                and -60
-                < (latest_journey.datetime - departure_time).total_seconds()
-                < 60
+                latest_journey := vehicle.latest_journey
+                and abs(latest_journey.datetime - departure_time).total_seconds() < 60
             ):
                 return latest_journey
             try:
@@ -180,7 +174,7 @@ class Command(ImportLiveVehiclesCommand):
             route_name=item.get("sn", ""),  # serviceNumber
         )
 
-        if code:
+        if code := item.get("td", ""):  # trip id:
             journey.code = code
         elif (
             not departure_time
