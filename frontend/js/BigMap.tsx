@@ -495,8 +495,8 @@ export default function BigMap(
     if (journey?.time_aware_polyline) {
       return decodeTimeAwarePolyline(journey.time_aware_polyline).map(([lat, lng, timestamp], i, arr) => {
         const calculateHeading = (a: [number, number] | [number, number, number], b: [number, number] | [number, number, number]) => {
-          const toRadians = (deg) => (deg * Math.PI) / 180;
-          const toDegrees = (rad) => (rad * 180) / Math.PI;
+          const toRadians = (deg: number) => (deg * Math.PI) / 180;
+          const toDegrees = (rad: number) => (rad * 180) / Math.PI;
 
           const lat1 = toRadians(a[0]);
           const lon1 = toRadians(a[1]);
@@ -520,7 +520,7 @@ export default function BigMap(
         );
         return {
           id: i,
-          coordinates: [lng, lat],
+          coordinates: [lng, lat] as [number, number],
           datetime: timestamp,
           direction: heading,
         };
