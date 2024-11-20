@@ -17,6 +17,7 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
+import LoadingSorry from "./LoadingSorry";
 
 type VehicleJourneyLocation = {
   id: number;
@@ -133,7 +134,7 @@ export const Locations = React.memo(function Locations({
           features: locations.map((l) => {
             return {
               type: "Feature",
-              // id: l.id,
+              id: l.id,
               geometry: {
                 type: "Point",
                 coordinates: l.coordinates,
@@ -535,9 +536,8 @@ export default function JourneyMap({
   }, [bounds]);
 
   if (!journey) {
-    return <div className="sorry">Loading…</div>;
+    return <LoadingSorry />;
   }
-
 
   let className = "journey-map has-sidebar";
   if (!journey.stops) {

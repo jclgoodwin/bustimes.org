@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 
 import loadjs from "loadjs";
 import { Vehicle } from "./VehicleMarker";
+import LoadingSorry from "./LoadingSorry";
 
 const ServiceMapMap = lazy(() => import("./ServiceMapMap"));
 
@@ -182,7 +183,7 @@ export default function ServiceMap({ serviceId }: ServiceMapProps) {
       {createPortal(
         <div className="service-map">
           {closeButton}
-          <Suspense fallback={<div className="sorry">Loading…</div>}>
+          <Suspense fallback={<LoadingSorry />}>
             <ServiceMapMap
               vehicles={vehicles}
               geometry={geometry}

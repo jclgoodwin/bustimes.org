@@ -6,6 +6,7 @@ import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
 import ServiceMap from "./ServiceMap";
+import LoadingSorry from "./LoadingSorry";
 const History = lazy(() => import("./History"));
 const MapRouter = lazy(() => import("./MapRouter"));
 
@@ -51,7 +52,7 @@ if (typeof window.globalThis === "undefined") {
   window.globalThis = window;
 }
 
-const error = <div className="sorry">Sorry, something has gone wrong</div>;
+const error = <LoadingSorry text="Sorry, something has gone wrong" />;
 
 let rootElement;
 if ((rootElement = document.getElementById("history"))) {

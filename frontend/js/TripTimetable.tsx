@@ -35,8 +35,8 @@ export type Trip = {
   service?: {
     slug?: string;
     id: number;
-    line_name: string;
-    mode: string;
+    line_name?: string;
+    mode?: string;
   };
   operator?: {
     slug?: string;

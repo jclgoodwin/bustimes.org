@@ -147,4 +147,9 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
             )
             extra_data["time_aware_polyline"] = polyline
 
+        extra_data["service"] = {
+            "id": instance.service_id,
+            "slug": instance.service.slug,
+        }
+
         return Response(serializer.data | extra_data)

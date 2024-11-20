@@ -14,7 +14,7 @@ import { Link } from "wouter";
 import debounce from "lodash/debounce";
 
 import VehicleMarker, {
-  Vehicle,
+  Vehicle as VehicleLocation,
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 
@@ -24,6 +24,7 @@ import BusTimesMap from "./Map";
 import { Route } from "./TripMap";
 import { Locations } from "./JourneyMap";
 import TripTimetable, { Trip } from "./TripTimetable";
+import LoadingSorry from "./LoadingSorry";
 
 import { decodeTimeAwarePolyline } from "./time-aware-polyline";
 
@@ -100,6 +101,10 @@ type Journey = {
   route_name: string;
   destination: string;
   time_aware_polyline: string;
+  service: {
+    id: number;
+    slug: string;
+  };
 };
 
 type StopsProps = {
@@ -216,7 +221,7 @@ function fetchJson(url: string) {
 }
 
 type VehiclesProps = {
-  vehicles: Vehicle[];
+  vehicles: VehicleLocation[];
   tripId?: string;
   clickedVehicleMarkerId?: number;
   setClickedVehicleMarker: (vehicleId?: number) => void;
@@ -228,7 +233,7 @@ const Vehicles = memo(function Vehicles({
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
 }: VehiclesProps) {
-  const vehiclesById = React.useMemo<{ [id: string]: Vehicle }>(() => {
+  const vehiclesById = React.useMemo<{ [id: string]: VehicleLocation }>(() => {
     return Object.assign({}, ...vehicles.map((item) => ({ [item.id]: item })));
   }, [vehicles]);
 
@@ -265,6 +270,7 @@ const Vehicles = memo(function Vehicles({
     clickedVehicleMarkerId && vehiclesById[clickedVehicleMarkerId];
 
   let markers: ReactElement[] | ReactElement;
+
 
   if (!vehiclesGeoJson) {
     markers = vehicles.map((item) => {
@@ -319,7 +325,7 @@ const Vehicles = memo(function Vehicles({
 function TripSidebar(props: {
   trip?: Trip;
   tripId?: string;
-  vehicle?: Vehicle;
+  vehicle?: VehicleLocation;
   highlightedStop?: string;
 }) {
   let className = "trip-timetable map-sidebar";
@@ -377,36 +383,44 @@ function TripSidebar(props: {
 }
 
 function JourneySidebar(props: {
-  journey?: Journey;
+  journey: Journey;
   journeyId: string;
-  vehicle?: Vehicle;
   highlightedStop?: string;
+  vehicle?: VehicleLocation
 }) {
-  let className = "trip-timetable map-sidebar";
+  const className = "trip-timetable map-sidebar";
 
   const journey = props.journey;
 
-  if (!journey) {
-    return <div className={className}></div>;
+  let service: string | ReactElement = `${journey.route_name} to ${journey.destination}`;
+  if (journey.service) {
+    service = (
+      <a href={`/services/${journey.service.slug}`}>
+        {service}
+      </a>
+    );
   }
 
-  if (journey.id && props.journeyId !== journey.id?.toString()) {
-    className += " loading";
-  }
+  // if (!journey) {
+  //   return <div className={className}></div>;
+  // }
+
+  // if (journey.id && props.journeyId !== journey.id?.toString()) {
+  //   className += " loading";
+  // }
 
   return (
     <div className={className}>
-      <p>
-        {journey.route_name} to {journey.destination}
-      </p>
-      <p>
-        <a href={`/vehicles/${journey.vehicle.slug}`}>
-          {journey.vehicle.fleet_code}{" "}
-          <span className="reg">{journey.vehicle.reg}</span>
-        </a>
-      </p>
-      <TripTimetable trip={journey} />
-      <code>{journey.time_aware_polyline}</code>
+      <p>{service}</p>
+      { journey.vehicle ? <p>
+          <a href={`/vehicles/${journey.vehicle.slug}`} className="vehicle-link">
+            {journey.vehicle.fleet_code}
+            {" "}
+            <span className="reg">{journey.vehicle.reg}</span>
+          </a>
+        </p> : null
+      }
+      { journey.trip_id ? <TripTimetable trip={journey} vehicle={props.vehicle} /> : null }
     </div>
   );
 }
@@ -434,7 +448,7 @@ export default function BigMap(
 
   const [journey, setJourney] = React.useState<Journey>();
 
-  const [vehicles, setVehicles] = React.useState<Vehicle[]>();
+  const [vehicles, setVehicles] = React.useState<VehicleLocation[]>();
 
   const [stops, setStops] = React.useState();
 
@@ -449,7 +463,7 @@ export default function BigMap(
     }
   });
 
-  const [tripVehicle, setTripVehicle] = React.useState<Vehicle>();
+  const [tripVehicle, setTripVehicle] = React.useState<VehicleLocation>();
 
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
@@ -555,7 +569,7 @@ export default function BigMap(
         .then(
           (response) => {
             if (response.ok) {
-              response.json().then((items: Vehicle[]) => {
+              response.json().then((items: VehicleLocation[]) => {
                 vehiclesHighWaterMark.current = _bounds;
 
                 if (first && !initialViewState.current) {
@@ -758,14 +772,42 @@ export default function BigMap(
     }
   };
 
-  const [cursor, setCursor] = React.useState("");
+  const [cursor, setCursor] = React.useState<string>();
 
-  const onMouseEnter = React.useCallback(() => {
+  const hoveredLocation = React.useRef<number>();
+
+  const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
     setCursor("pointer");
+
+    // journey map
+
+    const vehicleId = getClickedVehicleMarkerId(e);
+    if (vehicleId) {
+      return;
+    }
+
+    if (e.features?.length) {
+      for (const feature of e.features) {
+        if (feature.layer.id === "locations") {
+          if (hoveredLocation.current) {
+            e.target.setFeatureState(
+              { source: "locations", id: hoveredLocation.current },
+              { hover: false },
+            );
+          }
+          e.target.setFeatureState(
+            { source: "locations", id: feature.id },
+            { hover: true },
+          );
+          hoveredLocation.current = feature.id as number;
+          return;
+        }
+      }
+    }
   }, []);
 
   const onMouseLeave = React.useCallback(() => {
-    setCursor("");
+    setCursor(undefined);
   }, []);
 
   const showStops = shouldShowStops(zoom);
@@ -773,17 +815,15 @@ export default function BigMap(
 
   if (props.mode === MapMode.Operator) {
     if (!vehicles) {
-      return <div className="sorry">Loading…</div>;
+      return <LoadingSorry />;
     }
     if (!vehiclesLength.current) {
-      return (
-        <div className="sorry">Sorry, no buses are tracking at the moment</div>
-      );
+      return <LoadingSorry text="Sorry, no buses are tracking at the moment" />;
     }
   }
 
   if (props.mode === MapMode.Journey && !tripBounds) {
-    return <div className="sorry">Loading…</div>;
+    return <LoadingSorry />;
   }
 
   let className = "big-map";
@@ -805,10 +845,11 @@ export default function BigMap(
           hash={props.mode === MapMode.Slippy}
           onClick={handleMapClick}
           onMouseEnter={onMouseEnter}
+          onMouseMove={props.mode === MapMode.Journey ? onMouseEnter : undefined}
           onMouseLeave={onMouseLeave}
           cursor={cursor}
           onMapInit={handleMapInit}
-          interactiveLayerIds={["stops", "vehicles"]}
+          interactiveLayerIds={["stops", "vehicles", "locations"]}
         >
           {props.mode === MapMode.Trip && trip ? (
             <Route times={trip.times} />
@@ -873,13 +914,13 @@ export default function BigMap(
         />
       ) : null}
 
-      {props.mode === MapMode.Journey ? (
+      {props.mode === MapMode.Journey && journey ? (
         <JourneySidebar
           journey={journey}
           journeyId={props.journeyId}
           highlightedStop={clickedStopUrl}
         />
-      ) : null}
+      ) : null }
 
 
     </React.Fragment>
