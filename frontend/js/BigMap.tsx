@@ -493,12 +493,38 @@ export default function BigMap(
 
   const journeyPolyline = React.useMemo(() => {
     if (journey?.time_aware_polyline) {
-      return decodeTimeAwarePolyline(journey.time_aware_polyline).map(([lat, lng, timestamp], i) => {
+      return decodeTimeAwarePolyline(journey.time_aware_polyline).map(([lat, lng, timestamp], i, arr) => {
+        const calculateHeading = (a: [number, number] | [number, number, number], b: [number, number] | [number, number, number]) => {
+          const toRadians = (deg) => (deg * Math.PI) / 180;
+          const toDegrees = (rad) => (rad * 180) / Math.PI;
+
+          const lat1 = toRadians(a[0]);
+          const lon1 = toRadians(a[1]);
+          const lat2 = toRadians(b[0]);
+          const lon2 = toRadians(b[1]);
+
+          const dLon = lon2 - lon1;
+          const y = Math.sin(dLon) * Math.cos(lat2);
+          const x =
+            Math.cos(lat1) * Math.sin(lat2) -
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+
+          return Math.round((toDegrees(Math.atan2(y, x)) + 360) % 360);
+        };
+
+        const prev = arr[i - 1];
+        const next = arr[i + 1];
+        const heading = calculateHeading(
+          prev || [lat, lng],
+          next || [lat, lng],
+        );
         return {
           id: i,
-          coordinates: [lng, lat] as [number, number],
+          coordinates: [lng, lat],
           datetime: timestamp,
-        }})
+          direction: heading,
+        };
+      });
     }
   }, [journey?.time_aware_polyline]);
 
@@ -789,7 +815,7 @@ export default function BigMap(
     if (e.features?.length) {
       for (const feature of e.features) {
         if (feature.layer.id === "locations") {
-          if (hoveredLocation.current) {
+          if (hoveredLocation.current !== undefined) {
             e.target.setFeatureState(
               { source: "locations", id: hoveredLocation.current },
               { hover: false },
