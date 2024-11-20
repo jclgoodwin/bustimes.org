@@ -425,6 +425,17 @@ function JourneySidebar(props: {
   );
 }
 
+function getBounds(list: Array<any> | undefined, key: (arg0: any) => [number, number]) {
+  if (list && list.length) {
+    const bounds = new LngLatBounds();
+    list.reduce((bounds, item) => {
+      bounds.extend(key(item));
+      return bounds;
+    }, bounds);
+    return bounds;
+  }
+}
+
 export default function BigMap(
   props: {
     noc?: string;
@@ -467,29 +478,20 @@ export default function BigMap(
 
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
-  const tripBounds = React.useMemo(
-    function () {
-      const times = trip?.times || journey?.times;
-      const bounds = new LngLatBounds();
-      if (times && times.length) {
-        for (const item of times) {
-          if (item.stop.location) {
-            bounds.extend(item.stop.location);
-          }
-        }
-      } else if (journey?.time_aware_polyline) {
-        let lng, lat;
-        for ([lat, lng, ] of decodeTimeAwarePolyline(journey.time_aware_polyline)) {
-          bounds.extend([lng, lat]);
-        }
-      }
-      if (!bounds.isEmpty()) {
-        initialViewState.current = {bounds};
-        return bounds;
-      }
-    },
-    [trip, journey],
-  );
+  // const tripBounds = React.useMemo(
+  //   function () {
+  //     const times = trip?.times || journey?.times;
+  //     let bounds = getBounds(times, (time) => time.stop.location);
+  //     if (!bounds && journey?.time_aware_polyline) {
+  //       bounds = getBounds(decodeTimeAwarePolyline(journey.time_aware_polyline), ([lat, lng, ]) => [lng, lat]);
+  //     }
+  //     if (bounds && !bounds.isEmpty()) {
+  //       initialViewState.current = {bounds};
+  //       return bounds;
+  //     }
+  //   },
+  //   [trip, journey],
+  // );
 
   const journeyPolyline = React.useMemo(() => {
     if (journey?.time_aware_polyline) {
@@ -528,13 +530,13 @@ export default function BigMap(
     }
   }, [journey?.time_aware_polyline]);
 
-  React.useEffect(() => {
-    if (mapRef.current && tripBounds) {
-      mapRef.current.fitBounds(tripBounds, {
+  function fitBounds(bounds: LngLatBounds) {
+    if (mapRef.current && bounds) {
+      mapRef.current.fitBounds(bounds, {
         padding: 50,
       });
     }
-  }, [tripBounds]);
+  }
 
   const timeout = React.useRef<number>();
   const boundsRef = React.useRef<LngLatBounds>();
@@ -598,14 +600,12 @@ export default function BigMap(
               response.json().then((items: VehicleLocation[]) => {
                 vehiclesHighWaterMark.current = _bounds;
 
-                if (first && !initialViewState.current) {
-                  const bounds = new LngLatBounds();
-                  for (const item of items) {
-                    bounds.extend(item.coordinates);
-                  }
-                  if (!bounds.isEmpty()) {
+                if (!initialViewState.current) {
+                  const bounds = getBounds(items, (item) => item.coordinates);
+                  debugger;
+                  if (bounds) {
                     initialViewState.current = {
-                      bounds: bounds as LngLatBounds,
+                      bounds,
                       fitBoundsOptions: {
                         padding: { top: 50, bottom: 150, left: 50, right: 50 },
                       },
@@ -854,7 +854,7 @@ export default function BigMap(
     }
   }
 
-  if (props.mode === MapMode.Journey && !tripBounds) {
+  if (props.mode === MapMode.Journey && !initialViewState.current) {
     return <LoadingSorry />;
   }
 
@@ -953,7 +953,6 @@ export default function BigMap(
           highlightedStop={clickedStopUrl}
         />
       ) : null }
-
 
     </React.Fragment>
   );
