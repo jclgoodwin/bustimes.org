@@ -9,6 +9,7 @@ import xmltodict
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.contrib.gis.geos import GEOSException, Point
 from django.contrib.postgres.aggregates import StringAgg
 from django.core.cache import cache
@@ -979,10 +980,12 @@ def vehicle_edits(request):
     )
 
     f = filters.VehicleRevisionFilter(
-        request.GET or {"status": "pending"}, queryset=revisions
+        request.GET or {"status": "approved"}, queryset=revisions
     )
 
     if f.is_valid():
+        if f.form.cleaned_data["status"] != "approved" and request.user.is_anonymous:
+            return redirect_to_login(request.get_full_path())
         paginator = Paginator(f.qs, 100)
         page = paginator.get_page(request.GET.get("page"))
     else:
