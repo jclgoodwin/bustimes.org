@@ -472,7 +472,7 @@ class VehiclesTests(TestCase):
 
         with self.assertNumQueries(0):
             response = self.client.get(response.url)
-        self.assertContains(response, "<p>To edit vehicle details, please log in.</p>")
+        self.assertContains(response, "Log in")
 
         self.client.force_login(self.staff_user)
 
