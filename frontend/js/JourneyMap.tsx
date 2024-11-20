@@ -17,13 +17,14 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
+import LoadingSorry from "./LoadingSorry";
 
 type VehicleJourneyLocation = {
   id: number;
   coordinates: [number, number];
-  delta: number | null;
+  // delta: number | null;
   direction?: number | null;
-  datetime: string;
+  datetime: string | number;
 };
 
 type Stop = {
@@ -67,7 +68,7 @@ export type VehicleJourney = {
   };
 };
 
-const Locations = React.memo(function Locations({
+export const Locations = React.memo(function Locations({
   locations,
 }: {
   locations: VehicleJourneyLocation[];
@@ -341,7 +342,8 @@ function JourneyVehicle({
       return;
     }
 
-    let timeout: number, current = true;
+    let timeout: number,
+      current = true;
 
     const loadVehicle = () => {
       fetch(`/vehicles.json?id=${vehicleId}`).then((response) => {
@@ -434,13 +436,16 @@ export default function JourneyMap({
 
   const handleVehicleMove = React.useCallback(
     (vehicle: Vehicle) => {
-      if (!locations.length || locations[locations.length - 1].datetime !== vehicle.datetime) {
+      if (
+        !locations.length ||
+        locations[locations.length - 1].datetime !== vehicle.datetime
+      ) {
         setLocations(
           locations.concat([
             {
               id: new Date(vehicle.datetime).getTime(),
               coordinates: vehicle.coordinates,
-              delta: null,
+              // delta: null,
               datetime: vehicle.datetime,
               direction: vehicle.heading,
             },
@@ -531,9 +536,8 @@ export default function JourneyMap({
   }, [bounds]);
 
   if (!journey) {
-    return <div className="sorry">Loading…</div>;
+    return <LoadingSorry />;
   }
-
 
   let className = "journey-map has-sidebar";
   if (!journey.stops) {
@@ -585,7 +589,7 @@ export default function JourneyMap({
             ) : null}
             {journey.locations && journey.current ? (
               <JourneyVehicle
-              vehicleId={window.VEHICLE_ID}
+                vehicleId={window.VEHICLE_ID}
                 // journey={journey}
                 onVehicleMove={handleVehicleMove}
                 clickedVehicleMarker={clickedVehicleMarker}

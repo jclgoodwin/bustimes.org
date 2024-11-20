@@ -1,5 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { VehicleJourney } from "./JourneyMap";
+import LoadingSorry from "./LoadingSorry";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
 
@@ -103,7 +104,7 @@ export default function History() {
     <React.Fragment>
       <div className="service-map">
         {closeButton}
-        <Suspense fallback={<div className="sorry">Loading…</div>}>
+        <Suspense fallback={<LoadingSorry />}>
           <JourneyMap journey={journey} loading={loading} />
         </Suspense>
       </div>
