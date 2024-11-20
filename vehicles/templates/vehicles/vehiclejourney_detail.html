@@ -1,0 +1,9 @@
+{% extends 'bustimes/trip_detail.html' %}
+
+{% block title %}{{ object.route_name }} – {{ object.destination }} – bustimes.org{% endblock %}
+
+{% load static %}
+
+{% block footer %}
+    <script src="{% static 'dist/js/app.js' %}"></script>
+{% endblock footer %}

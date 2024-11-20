@@ -320,6 +320,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             [
                 {
                     "id": journey.vehicle_id,
+                    "journey_id": journey.id,
                     "block": "503",
                     "coordinates": [0.285348, 51.2135],
                     "vehicle": {
@@ -507,7 +508,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 response = self.client.get(journey.get_absolute_url())
             self.assertContains(response, "146")
             self.assertContains(response, ">Southwold<")
-            self.assertContains(response, f'<a href="#journeys/{journey.id}">Map</a>')
+            self.assertContains(response, f'<a href="/journeys/{journey.id}">Map</a>')
 
             with self.assertNumQueries(0):
                 response = self.client.get(
@@ -535,6 +536,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 [
                     {
                         "id": vehicle.id,
+                        "journey_id": vehicle.latest_journey_id,
                         "block": "2",
                         "coordinates": [1.675893, 52.328398],
                         "vehicle": {
@@ -556,6 +558,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 [
                     {
                         "id": vehicle.id,
+                        "journey_id": vehicle.latest_journey_id,
                         "block": "2",
                         "coordinates": [1.675893, 52.328398],
                         "vehicle": {
@@ -688,6 +691,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
             [
                 {
                     "id": vehicle.id,
+                    "journey_id": vehicle.latest_journey_id,
                     "block": "52",
                     "coordinates": [-1.586568, 55.084628],
                     "vehicle": {

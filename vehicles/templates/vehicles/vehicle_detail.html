@@ -124,7 +124,7 @@
             {% endif %}
             <td>{% firstof journey.destination journey.direction %}</td>
             {% if journey.locations %}
-                <td class="link"><a href="#journeys/{{ journey.id }}">Map</a></td>
+                <td class="link"><a href="/journeys/{{ journey.id }}">Map</a></td>
             {% endif %}
             {% if request.user.is_superuser %}
                 <td class="link">

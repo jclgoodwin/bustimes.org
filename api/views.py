@@ -1,13 +1,18 @@
+import struct
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import pagination, viewsets
 from rest_framework.exceptions import APIException
+from rest_framework.response import Response
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Q
+
+from vehicles.time_aware_polyline import encode_time_aware_polyline
 
 from busstops.models import Operator, Service, StopPoint
 from bustimes.models import StopTime, Trip
 from bustimes.utils import contiguous_stoptimes_only
 from vehicles.models import Livery, Vehicle, VehicleJourney, VehicleType
+from vehicles.utils import redis_client
 
 from sql_util.utils import Exists
 
@@ -93,8 +98,8 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.TripFilter
 
-    def get_object(self):
-        obj = super().get_object()
+    @staticmethod
+    def get_stops(obj):
         trips = obj.get_trips()
         stops = (
             StopTime.objects.filter(trip__in=trips)
@@ -108,7 +113,11 @@ class TripViewSet(viewsets.ReadOnlyModelViewSet):
         )
         if len(trips) > 1:
             stops = contiguous_stoptimes_only(stops, obj.id)
-        obj.stops = stops
+        return stops
+
+    def get_object(self):
+        obj = super().get_object()
+        obj.stops = self.get_stops(obj)
         return obj
 
 
@@ -118,3 +127,29 @@ class VehicleJourneyViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class = CursorPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = filters.VehicleJourneyFilter
+
+    def retrieve(self, request, *args, pk, **kwargs):
+        instance = self.get_object()
+        if instance.trip:
+            instance.trip.stops = TripViewSet.get_stops(instance.trip)
+
+        serializer = self.get_serializer(instance)
+
+        extra_data = {}
+
+        if redis_client:
+            locations = redis_client.lrange(instance.get_redis_key(), 0, -1)
+            locations = [
+                struct.unpack("I 2f ?h ?h", location) for location in locations
+            ]
+            polyline = encode_time_aware_polyline(
+                [[lat, lng, time] for time, lat, lng, _, _, _, _ in locations]
+            )
+            extra_data["time_aware_polyline"] = polyline
+
+        extra_data["service"] = {
+            "id": instance.service_id,
+            "slug": instance.service.slug,
+        }
+
+        return Response(serializer.data | extra_data)
