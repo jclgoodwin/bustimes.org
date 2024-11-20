@@ -1,4 +1,4 @@
-import React, { ReactElement, memo, useRef } from "react";
+import React, { ReactElement, memo, useEffect, useRef } from "react";
 
 import {
   Source,
@@ -271,7 +271,6 @@ const Vehicles = memo(function Vehicles({
 
   let markers: ReactElement[] | ReactElement;
 
-
   if (!vehiclesGeoJson) {
     markers = vehicles.map((item) => {
       return (
@@ -386,19 +385,16 @@ function JourneySidebar(props: {
   journey: Journey;
   journeyId: string;
   highlightedStop?: string;
-  vehicle?: VehicleLocation
+  vehicle?: VehicleLocation;
 }) {
   const className = "trip-timetable map-sidebar";
 
   const journey = props.journey;
 
-  let service: string | ReactElement = `${journey.route_name} to ${journey.destination}`;
+  let service: string | ReactElement =
+    `${journey.route_name} to ${journey.destination}`;
   if (journey.service) {
-    service = (
-      <a href={`/services/${journey.service.slug}`}>
-        {service}
-      </a>
-    );
+    service = <a href={`/services/${journey.service.slug}`}>{service}</a>;
   }
 
   // if (!journey) {
@@ -412,24 +408,37 @@ function JourneySidebar(props: {
   return (
     <div className={className}>
       <p>{service}</p>
-      { journey.vehicle ? <p>
-          <a href={`/vehicles/${journey.vehicle.slug}`} className="vehicle-link">
-            {journey.vehicle.fleet_code}
-            {" "}
+      {journey.vehicle ? (
+        <p>
+          <a
+            href={`/vehicles/${journey.vehicle.slug}`}
+            className="vehicle-link"
+          >
+            {journey.vehicle.fleet_code}{" "}
             <span className="reg">{journey.vehicle.reg}</span>
           </a>
-        </p> : null
-      }
-      { journey.trip_id ? <TripTimetable trip={journey} vehicle={props.vehicle} /> : null }
+        </p>
+      ) : null}
+      {journey.trip_id ? (
+        <TripTimetable trip={journey} vehicle={props.vehicle} />
+      ) : null}
     </div>
   );
 }
 
-function getBounds(list: Array<any> | undefined, key: (arg0: any) => [number, number]) {
+function getBounds<T>(
+  list: Array<T> | undefined,
+  key: (arg0: T) => [number, number] | undefined,
+) {
   if (list && list.length) {
     const bounds = new LngLatBounds();
-    list.reduce((bounds, item) => {
-      bounds.extend(key(item));
+    list.reduce((bounds, item?) => {
+      if (item) {
+        const value = key(item);
+        if (value) {
+          bounds.extend(value);
+        }
+      }
       return bounds;
     }, bounds);
     return bounds;
@@ -478,65 +487,70 @@ export default function BigMap(
 
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
-  // const tripBounds = React.useMemo(
-  //   function () {
-  //     const times = trip?.times || journey?.times;
-  //     let bounds = getBounds(times, (time) => time.stop.location);
-  //     if (!bounds && journey?.time_aware_polyline) {
-  //       bounds = getBounds(decodeTimeAwarePolyline(journey.time_aware_polyline), ([lat, lng, ]) => [lng, lat]);
-  //     }
-  //     if (bounds && !bounds.isEmpty()) {
-  //       initialViewState.current = {bounds};
-  //       return bounds;
-  //     }
-  //   },
-  //   [trip, journey],
-  // );
-
   const journeyPolyline = React.useMemo(() => {
     if (journey?.time_aware_polyline) {
-      return decodeTimeAwarePolyline(journey.time_aware_polyline).map(([lat, lng, timestamp], i, arr) => {
-        const calculateHeading = (a: [number, number] | [number, number, number], b: [number, number] | [number, number, number]) => {
-          const toRadians = (deg: number) => (deg * Math.PI) / 180;
-          const toDegrees = (rad: number) => (rad * 180) / Math.PI;
+      return decodeTimeAwarePolyline(journey.time_aware_polyline).map(
+        ([lat, lng, timestamp], i, arr) => {
+          const calculateHeading = (
+            a: [number, number] | [number, number, number],
+            b: [number, number] | [number, number, number],
+          ) => {
+            const toRadians = (deg: number) => (deg * Math.PI) / 180;
+            const toDegrees = (rad: number) => (rad * 180) / Math.PI;
 
-          const lat1 = toRadians(a[0]);
-          const lon1 = toRadians(a[1]);
-          const lat2 = toRadians(b[0]);
-          const lon2 = toRadians(b[1]);
+            const lat1 = toRadians(a[0]);
+            const lon1 = toRadians(a[1]);
+            const lat2 = toRadians(b[0]);
+            const lon2 = toRadians(b[1]);
 
-          const dLon = lon2 - lon1;
-          const y = Math.sin(dLon) * Math.cos(lat2);
-          const x =
-            Math.cos(lat1) * Math.sin(lat2) -
-            Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            const dLon = lon2 - lon1;
+            const y = Math.sin(dLon) * Math.cos(lat2);
+            const x =
+              Math.cos(lat1) * Math.sin(lat2) -
+              Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
 
-          return Math.round((toDegrees(Math.atan2(y, x)) + 360) % 360);
-        };
+            return Math.round((toDegrees(Math.atan2(y, x)) + 360) % 360);
+          };
 
-        const prev = arr[i - 1];
-        const next = arr[i + 1];
-        const heading = calculateHeading(
-          prev || [lat, lng],
-          next || [lat, lng],
-        );
-        return {
-          id: i,
-          coordinates: [lng, lat] as [number, number],
-          datetime: timestamp,
-          direction: heading,
-        };
-      });
+          const prev = arr[i - 1];
+          const next = arr[i + 1];
+          const heading = calculateHeading(
+            prev || [lat, lng],
+            next || [lat, lng],
+          );
+          return {
+            id: i,
+            coordinates: [lng, lat] as [number, number],
+            datetime: timestamp,
+            direction: heading,
+          };
+        },
+      );
     }
   }, [journey?.time_aware_polyline]);
 
-  function fitBounds(bounds: LngLatBounds) {
-    if (mapRef.current && bounds) {
-      mapRef.current.fitBounds(bounds, {
-        padding: 50,
-      });
+  function fitBounds(bounds?: LngLatBounds) {
+    if (bounds) {
+      if (!initialViewState.current) {
+        initialViewState.current = { bounds };
+      } else if (mapRef.current) {
+        mapRef.current.fitBounds(bounds, {
+          padding: 50,
+        });
+      }
     }
   }
+
+  useEffect(() => {
+    if (mapRef.current || !initialViewState.current) {
+      const times = trip?.times || journey?.times;
+      if (times && times.length) {
+        fitBounds(getBounds(times, (time) => time.stop.location));
+      } else if (journeyPolyline) {
+        fitBounds(getBounds(journeyPolyline, (item) => item.coordinates));
+      }
+    }
+  }, [trip, journey, journeyPolyline]);
 
   const timeout = React.useRef<number>();
   const boundsRef = React.useRef<LngLatBounds>();
@@ -602,7 +616,6 @@ export default function BigMap(
 
                 if (!initialViewState.current) {
                   const bounds = getBounds(items, (item) => item.coordinates);
-                  debugger;
                   if (bounds) {
                     initialViewState.current = {
                       bounds,
@@ -877,7 +890,9 @@ export default function BigMap(
           hash={props.mode === MapMode.Slippy}
           onClick={handleMapClick}
           onMouseEnter={onMouseEnter}
-          onMouseMove={props.mode === MapMode.Journey ? onMouseEnter : undefined}
+          onMouseMove={
+            props.mode === MapMode.Journey ? onMouseEnter : undefined
+          }
           onMouseLeave={onMouseLeave}
           cursor={cursor}
           onMapInit={handleMapInit}
@@ -932,8 +947,9 @@ export default function BigMap(
             </div>
           ) : null}
 
-
-        {props.mode === MapMode.Journey && journeyPolyline && <Locations locations={journeyPolyline} />}
+          {props.mode === MapMode.Journey && journeyPolyline && (
+            <Locations locations={journeyPolyline} />
+          )}
         </BusTimesMap>
       </div>
 
@@ -952,8 +968,7 @@ export default function BigMap(
           journeyId={props.journeyId}
           highlightedStop={clickedStopUrl}
         />
-      ) : null }
-
+      ) : null}
     </React.Fragment>
   );
 }
