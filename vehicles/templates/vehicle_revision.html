@@ -13,14 +13,9 @@
         {% endif %}
     <p>
 
-    {% if revision.disapproved and request.user.is_anonymous %}
-        [Log in to view]
-    {% else %}
-        {% if revision.disapproved %}<del>{% endif %}
-        {% include "vehicle_revision_changes.html" %}
-        {% if revision.disapproved %}</del>{% endif %}
-    {% endif %}
-
+    {% if revision.disapproved %}<del>{% endif %}
+    {% include "vehicle_revision_changes.html" %}
+    {% if revision.disapproved %}</del>{% endif %}
 
     {% if revision.disapproved or revision.approved_by_id %}
         <p><strong>{% if revision.disapproved %}Disa{% else %}A{% endif %}pproved</strong>

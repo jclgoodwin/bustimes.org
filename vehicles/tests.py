@@ -464,6 +464,11 @@ class VehiclesTests(TestCase):
     #         )
 
     def test_vehicle_edit_1(self):
+        response = self.client.get("/vehicles/edits?status=pending")
+        self.assertRedirects(
+            response, "/accounts/login/?next=/vehicles/edits%3Fstatus%3Dpending", 302
+        )
+
         url = self.vehicle_1.get_edit_url()
 
         with self.assertNumQueries(0):
@@ -549,7 +554,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
             f'<a href="/admin/vehicles/vehiclerevision/?user={self.staff_user.id}&pending=True">1</a></td>',
         )
         with self.assertNumQueries(5):
-            response = self.client.get("/vehicles/edits")
+            response = self.client.get("/vehicles/edits?status=")
         self.assertContains(response, "<strong>previous reg</strong>", html=True)
         self.assertContains(response, "BEAN")
 
@@ -668,7 +673,7 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
 
         self.assertContains(response, "Your changes")
 
-        response = self.client.get("/vehicles/edits")
+        response = self.client.get("/vehicles/edits?status=pending")
         self.assertContains(response, "Luther Blisset")
 
         with self.assertNumQueries(14):
@@ -736,11 +741,11 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
         self.assertIsNone(revision.approved_at)
 
         with self.assertNumQueries(6):
-            response = self.client.get("/vehicles/edits")
+            response = self.client.get("/vehicles/edits?status=")
         self.assertEqual(len(response.context["revisions"]), 1)
 
         with self.assertNumQueries(3):
-            response = self.client.get("/vehicles/edits?status=approved")
+            response = self.client.get("/vehicles/edits")  # approved
         self.assertEqual(len(response.context["revisions"]), 0)
 
         with self.assertNumQueries(6):
