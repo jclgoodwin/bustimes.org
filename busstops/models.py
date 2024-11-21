@@ -795,7 +795,11 @@ class Service(models.Model):
         if not self.source_id:
             return
 
-        if self.source.name == "S":
+        if (
+            self.source.name == "S"
+            and "_" in self.service_code
+            and not self.service_code.startswith("S_")
+        ):
             yield self.get_trapeze_link()
             return
 
