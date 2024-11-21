@@ -114,12 +114,12 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     # get or create vehicle
     defaults = {"source": data_source, "operator": operator, "code": vehicle}
 
+    operator_query = Q(operator=operator)
     if operator.parent:
-        vehicles = Vehicle.objects.filter(operator__parent=operator.parent)
-    else:
-        vehicles = operator.vehicle_set
-
-    vehicles = vehicles.select_related("latest_journey")
+        operator_query |= Q(operator__parent=operator.parent)
+    vehicles = Vehicle.objects.filter(
+        operator_query | Q(source=data_source)
+    ).select_related("latest_journey")
 
     if vehicle.isdigit():
         defaults["fleet_number"] = vehicle
@@ -131,7 +131,7 @@ def log_vehicle_journey(service, data, time, destination, source_name, url, trip
     else:
         vehicles = vehicles.filter(code__iexact=vehicle)
 
-    vehicle, created = vehicles.get_or_create(defaults)
+    vehicle, _ = vehicles.get_or_create(defaults)
 
     time = parse_datetime(time)
 
