@@ -156,10 +156,10 @@ class Command(ImportLiveVehiclesCommand):
 
         if departure_time:
             if (
-                latest_journey := vehicle.latest_journey
-                and abs(latest_journey.datetime - departure_time).total_seconds() < 60
+                vehicle.latest_journey
+                and abs(vehicle.latest_journey.datetime - departure_time).total_seconds() < 60
             ):
-                return latest_journey
+                return vehicle.latest_journey
             try:
                 return vehicle.vehiclejourney_set.get(datetime=departure_time)
             except VehicleJourney.DoesNotExist:
