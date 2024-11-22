@@ -692,7 +692,7 @@ export default function BigMap(props: {
     }
     if (!vehiclesLength.current) {
       return (
-        <div className="sorry">Sorry, no buses are tracking at the moment</div>
+        <div className="sorry"><p>Sorry, no buses are tracking at the moment.{" "}<a href="/map">Go to the main map?</a></p></div>
       );
     }
   }
