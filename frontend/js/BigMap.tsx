@@ -1,6 +1,6 @@
 import React, { type ReactElement, memo, useEffect, useRef } from "react";
 
-import { Hash, LngLatBounds, type Map as MapGL } from "maplibre-gl";
+import { Hash, type LngLatBounds, type Map as MapGL } from "maplibre-gl";
 import {
   Layer,
   type MapLayerMouseEvent,
@@ -18,13 +18,18 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 
-import { Locations } from "./JourneyMap";
+import {
+  Stops as JourneyStops,
+  Locations,
+  type VehicleJourney,
+} from "./JourneyMap";
 import LoadingSorry from "./LoadingSorry";
 import BusTimesMap from "./Map";
 import StopPopup, { type Stop } from "./StopPopup";
 import { Route } from "./TripMap";
-import TripTimetable, { type Trip } from "./TripTimetable";
+import TripTimetable, { type Trip, tripFromJourney } from "./TripTimetable";
 import VehiclePopup from "./VehiclePopup";
+import { getBounds } from "./utils";
 
 import { decodeTimeAwarePolyline } from "./time-aware-polyline";
 
@@ -373,7 +378,7 @@ function TripSidebar(props: {
 }
 
 function JourneySidebar(props: {
-  journey: Journey;
+  journey: VehicleJourney;
   journeyId: string;
   highlightedStop?: string;
   vehicle?: VehicleLocation;
@@ -382,10 +387,14 @@ function JourneySidebar(props: {
 
   const journey = props.journey;
 
+  const trip = React.useMemo(() => {
+    return tripFromJourney(journey);
+  }, [journey]);
+
   let service: string | ReactElement =
     `${journey.route_name} to ${journey.destination}`;
-  if (journey.service) {
-    service = <a href={`/services/${journey.service.slug}`}>{service}</a>;
+  if (props.vehicle?.service?.url) {
+    service = <a href={props.vehicle.service.url}>{service}</a>;
   }
 
   // if (!journey) {
@@ -399,7 +408,7 @@ function JourneySidebar(props: {
   return (
     <div className={className}>
       <p>{service}</p>
-      {journey.vehicle ? (
+      {/* {journey.vehicle ? (
         <p>
           <a
             href={`/vehicles/${journey.vehicle.slug}`}
@@ -409,31 +418,10 @@ function JourneySidebar(props: {
             <span className="reg">{journey.vehicle.reg}</span>
           </a>
         </p>
-      ) : null}
-      {journey.trip_id ? (
-        <TripTimetable trip={journey} vehicle={props.vehicle} />
-      ) : null}
+      ) : null} */}
+      {trip ? <TripTimetable trip={trip} vehicle={props.vehicle} /> : null}
     </div>
   );
-}
-
-function getBounds<T>(
-  list: Array<T> | undefined,
-  key: (arg0: T) => [number, number] | undefined,
-) {
-  if (list?.length) {
-    const bounds = new LngLatBounds();
-    list.reduce((bounds, item?) => {
-      if (item) {
-        const value = key(item);
-        if (value) {
-          bounds.extend(value);
-        }
-      }
-      return bounds;
-    }, bounds);
-    return bounds;
-  }
 }
 
 export default function BigMap(
@@ -457,7 +445,7 @@ export default function BigMap(
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
-  const [journey, setJourney] = React.useState<Journey>();
+  const [journey, setJourney] = React.useState<VehicleJourney>();
 
   const [vehicles, setVehicles] = React.useState<VehicleLocation[]>();
 
@@ -478,48 +466,6 @@ export default function BigMap(
 
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
-  const journeyPolyline = React.useMemo(() => {
-    if (journey?.time_aware_polyline) {
-      return decodeTimeAwarePolyline(journey.time_aware_polyline).map(
-        ([lat, lng, timestamp], i, arr) => {
-          const calculateHeading = (
-            a: [number, number] | [number, number, number],
-            b: [number, number] | [number, number, number],
-          ) => {
-            const toRadians = (deg: number) => (deg * Math.PI) / 180;
-            const toDegrees = (rad: number) => (rad * 180) / Math.PI;
-
-            const lat1 = toRadians(a[0]);
-            const lon1 = toRadians(a[1]);
-            const lat2 = toRadians(b[0]);
-            const lon2 = toRadians(b[1]);
-
-            const dLon = lon2 - lon1;
-            const y = Math.sin(dLon) * Math.cos(lat2);
-            const x =
-              Math.cos(lat1) * Math.sin(lat2) -
-              Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-
-            return Math.round((toDegrees(Math.atan2(y, x)) + 360) % 360);
-          };
-
-          const prev = arr[i - 1];
-          const next = arr[i + 1];
-          const heading = calculateHeading(
-            prev || [lat, lng],
-            next || [lat, lng],
-          );
-          return {
-            id: i,
-            coordinates: [lng, lat] as [number, number],
-            datetime: timestamp,
-            direction: heading,
-          };
-        },
-      );
-    }
-  }, [journey?.time_aware_polyline]);
-
   const fitBounds = React.useCallback((bounds?: LngLatBounds) => {
     if (bounds) {
       if (!initialViewState.current) {
@@ -534,14 +480,14 @@ export default function BigMap(
 
   useEffect(() => {
     if (mapRef.current || !initialViewState.current) {
-      const times = trip?.times || journey?.times;
+      const times = trip?.times;
       if (times?.length) {
         fitBounds(getBounds(times, (time) => time.stop.location));
-      } else if (journeyPolyline) {
-        fitBounds(getBounds(journeyPolyline, (item) => item.coordinates));
+      } else if (journey) {
+        fitBounds(getBounds(journey.locations, (item) => item.coordinates));
       }
     }
-  }, [trip, journey, journeyPolyline, fitBounds]);
+  }, [trip, journey, fitBounds]);
 
   const timeout = React.useRef<number>();
   const boundsRef = React.useRef<LngLatBounds>();
@@ -670,13 +616,11 @@ export default function BigMap(
       }
       loadVehicles(true);
     } else if (props.journeyId) {
-      fetch(`${apiRoot}api/vehiclejourneys/${props.journeyId}/`).then(
-        (response) => {
-          if (response.ok) {
-            response.json().then(setJourney);
-          }
-        },
-      );
+      fetch(`${apiRoot}journeys/${props.journeyId}.json`).then((response) => {
+        if (response.ok) {
+          response.json().then(setJourney);
+        }
+      });
     } else if (!props.vehicleId) {
       document.title = "Map \u2013 bustimes.org";
     } else {
@@ -893,22 +837,16 @@ export default function BigMap(
             <Route times={trip.times} />
           ) : null}
 
-          {props.mode === MapMode.Journey && journey ? (
-            <Route times={journey.times} />
+          {props.mode === MapMode.Journey && journey?.stops ? (
+            <JourneyStops stops={journey.stops} />
           ) : null}
 
           {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
 
-          {trip || journey || (stops && showStops) ? (
+          {trip || (stops && showStops) ? (
             <Stops
               stops={props.mode === MapMode.Slippy ? stops : undefined}
-              times={
-                props.mode === MapMode.Trip
-                  ? trip?.times
-                  : props.mode === MapMode.Journey
-                    ? journey?.times
-                    : undefined
-              }
+              times={props.mode === MapMode.Trip ? trip?.times : undefined}
               setClickedStop={setClickedStopURL}
               clickedStopUrl={clickedStopUrl}
             />
@@ -938,8 +876,8 @@ export default function BigMap(
             </div>
           ) : null}
 
-          {props.mode === MapMode.Journey && journeyPolyline && (
-            <Locations locations={journeyPolyline} />
+          {props.mode === MapMode.Journey && journey && (
+            <Locations locations={journey.locations} />
           )}
         </BusTimesMap>
       </div>

@@ -12,12 +12,13 @@ import BusTimesMap, { ThemeContext } from "./Map";
 import { LngLatBounds, type Map as MapGL } from "maplibre-gl";
 import LoadingSorry from "./LoadingSorry";
 import StopPopup from "./StopPopup";
-import TripTimetable, { type TripTime } from "./TripTimetable";
+import TripTimetable, { type TripTime, tripFromJourney } from "./TripTimetable";
 import VehicleMarker, {
   type Vehicle,
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
+import { getBounds } from "./utils";
 
 type VehicleJourneyLocation = {
   id: number;
@@ -37,7 +38,7 @@ type Stop = {
   };
 };
 
-type StopTime = {
+export type StopTime = {
   atco_code: string;
   name: string;
   aimed_arrival_time: string;
@@ -54,7 +55,7 @@ export type VehicleJourney = {
   code: string;
   destination: string;
   direction: string;
-  stops: StopTime[];
+  stops?: StopTime[];
   locations: VehicleJourneyLocation[];
   vehicle?: string;
   current: boolean;
@@ -156,7 +157,9 @@ export const Locations = React.memo(function Locations({
   );
 });
 
-const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
+export const Stops = React.memo(function Stops({
+  stops,
+}: { stops: StopTime[] }) {
   const theme = React.useContext(ThemeContext);
   const darkMode =
     theme === "alidade_smooth_dark" || theme === "alidade_satellite";
@@ -242,6 +245,10 @@ function Sidebar({
     className += " loading";
   }
 
+  const trip = React.useMemo(() => {
+    return tripFromJourney(journey);
+  }, [journey]);
+
   const today = new Date(journey.datetime).toLocaleDateString();
 
   let previousLink: React.ReactElement | string | undefined;
@@ -292,26 +299,8 @@ function Sidebar({
       <p>
         {text} {reg}
       </p>
-      {journey.stops ? (
-        <TripTimetable
-          onMouseEnter={onMouseEnter}
-          trip={{
-            times: journey.stops.map((stop, i: number) => {
-              return {
-                id: i,
-                stop: {
-                  atco_code: stop.atco_code,
-                  name: stop.name,
-                  location: stop.coordinates || undefined,
-                },
-                timing_status: stop.minor ? "OTH" : "PTP",
-                aimed_arrival_time: stop.aimed_arrival_time,
-                aimed_departure_time: stop.aimed_departure_time,
-                actual_departure_time: stop.actual_departure_time,
-              };
-            }),
-          }}
-        />
+      {trip ? (
+        <TripTimetable onMouseEnter={onMouseEnter} trip={trip} />
       ) : (
         <p>{journey.code}</p>
       )}
@@ -497,24 +486,9 @@ export default function JourneyMap({
 
   const mapRef = React.useRef<MapGL>();
 
-  const bounds = React.useMemo((): LngLatBounds | null => {
+  const bounds = React.useMemo(() => {
     if (journey) {
-      const _bounds = new LngLatBounds();
-      if (journey.locations) {
-        for (const item of journey.locations) {
-          _bounds.extend(item.coordinates);
-        }
-      }
-      if (journey.stops) {
-        for (const item of journey.stops) {
-          if (item.coordinates) {
-            _bounds.extend(item.coordinates);
-          }
-        }
-      }
-      if (!_bounds.isEmpty()) {
-        return _bounds;
-      }
+      return getBounds(journey.stops, (s) => s.coordinates);
     }
     return null;
   }, [journey]);
