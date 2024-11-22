@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Switch } from "wouter";
 
 import BigMap, { MapMode } from "./BigMap";
-import { Trip } from "./TripTimetable";
+import type { Trip } from "./TripTimetable";
 
 const tripDataElement = document.getElementById("trip-data");
 let tripData: Trip | undefined;

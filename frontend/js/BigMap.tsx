@@ -1,30 +1,30 @@
-import React, { ReactElement, memo, useEffect, useRef } from "react";
+import React, { type ReactElement, memo, useEffect, useRef } from "react";
 
+import { Hash, LngLatBounds, type Map as MapGL } from "maplibre-gl";
 import {
-  Source,
   Layer,
-  MapProps,
+  type MapLayerMouseEvent,
+  type MapProps,
+  Source,
+  type ViewStateChangeEvent,
   useMap,
-  ViewStateChangeEvent,
-  MapLayerMouseEvent,
 } from "react-map-gl/maplibre";
-import { LngLatBounds, Map, Hash } from "maplibre-gl";
 import { Link } from "wouter";
 
 import debounce from "lodash/debounce";
 
 import VehicleMarker, {
-  Vehicle as VehicleLocation,
+  type Vehicle as VehicleLocation,
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 
-import VehiclePopup from "./VehiclePopup";
-import StopPopup, { Stop } from "./StopPopup";
-import BusTimesMap from "./Map";
-import { Route } from "./TripMap";
 import { Locations } from "./JourneyMap";
-import TripTimetable, { Trip } from "./TripTimetable";
 import LoadingSorry from "./LoadingSorry";
+import BusTimesMap from "./Map";
+import StopPopup, { type Stop } from "./StopPopup";
+import { Route } from "./TripMap";
+import TripTimetable, { type Trip } from "./TripTimetable";
+import VehiclePopup from "./VehiclePopup";
 
 import { decodeTimeAwarePolyline } from "./time-aware-polyline";
 
@@ -36,7 +36,7 @@ declare global {
   }
 }
 
-const updateLocalStorage = debounce(function (zoom: number, latLng) {
+const updateLocalStorage = debounce((zoom: number, latLng) => {
   try {
     localStorage.setItem("vehicleMap", `${zoom}/${latLng.lat}/${latLng.lng}`);
   } catch (e) {
@@ -69,7 +69,7 @@ function containsBounds(
   a: LngLatBounds | undefined,
   b: LngLatBounds,
 ): boolean | undefined {
-  return a && a.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
+  return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
 function shouldShowStops(zoom?: number) {
@@ -81,10 +81,10 @@ function shouldShowVehicles(zoom?: number) {
 }
 
 export enum MapMode {
-  Slippy,
-  Operator,
-  Trip,
-  Journey,
+  Slippy = 0,
+  Operator = 1,
+  Trip = 2,
+  Journey = 3,
 }
 
 type Journey = {
@@ -150,7 +150,7 @@ function Stops({ stops, times, clickedStopUrl, setClickedStop }: StopsProps) {
       return Object.assign(
         {},
         ...times.map((time) => {
-          const url = "/stops/" + time.stop.atco_code;
+          const url = `/stops/${time.stop.atco_code}`;
           return {
             [url]: {
               properties: { url, name: time.stop.name },
@@ -332,14 +332,14 @@ function TripSidebar(props: {
   const trip = props.trip;
 
   if (!trip) {
-    return <div className={className}></div>;
+    return <div className={className} />;
   }
 
   if (trip.id && props.tripId !== trip.id?.toString()) {
     className += " loading";
   }
 
-  let operator, service;
+  let operator: ReactElement;
   if (trip.operator) {
     operator = (
       <li>
@@ -348,6 +348,7 @@ function TripSidebar(props: {
     );
   }
 
+  let service: ReactElement;
   if (props.vehicle?.service) {
     service = (
       <li>
@@ -430,7 +431,7 @@ function getBounds<T>(
   list: Array<T> | undefined,
   key: (arg0: T) => [number, number] | undefined,
 ) {
-  if (list && list.length) {
+  if (list?.length) {
     const bounds = new LngLatBounds();
     list.reduce((bounds, item?) => {
       if (item) {
@@ -462,7 +463,7 @@ export default function BigMap(
       }
   ),
 ) {
-  const mapRef = React.useRef<Map>();
+  const mapRef = React.useRef<MapGL>();
 
   const [trip, setTrip] = React.useState<Trip | undefined>(props.trip);
 
@@ -529,7 +530,7 @@ export default function BigMap(
     }
   }, [journey?.time_aware_polyline]);
 
-  function fitBounds(bounds?: LngLatBounds) {
+  const fitBounds = React.useCallback((bounds?: LngLatBounds) => {
     if (bounds) {
       if (!initialViewState.current) {
         initialViewState.current = { bounds };
@@ -539,18 +540,18 @@ export default function BigMap(
         });
       }
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (mapRef.current || !initialViewState.current) {
       const times = trip?.times || journey?.times;
-      if (times && times.length) {
+      if (times?.length) {
         fitBounds(getBounds(times, (time) => time.stop.location));
       } else if (journeyPolyline) {
         fitBounds(getBounds(journeyPolyline, (item) => item.coordinates));
       }
     }
-  }, [trip, journey, journeyPolyline]);
+  }, [trip, journey, journeyPolyline, fitBounds]);
 
   const timeout = React.useRef<number>();
   const boundsRef = React.useRef<LngLatBounds>();
@@ -562,7 +563,7 @@ export default function BigMap(
   const loadStops = React.useCallback(() => {
     const _bounds = boundsRef.current as LngLatBounds;
     setLoadingStops(true);
-    fetchJson("stops.json" + getBoundsQueryString(_bounds)).then((items) => {
+    fetchJson(`stops.json${getBoundsQueryString(_bounds)}`).then((items) => {
       stopsHighWaterMark.current = _bounds;
       setLoadingStops(false);
       setStops(items);
@@ -594,18 +595,18 @@ export default function BigMap(
         }
         url = getBoundsQueryString(_bounds);
       } else if (props.noc) {
-        url = "?operator=" + props.noc;
+        url = `?operator=${props.noc}`;
       } else if (trip?.service?.id) {
-        url = "?service=" + trip.service.id + "&trip=" + trip.id;
+        url = `?service=${trip.service.id}&trip=${trip.id}`;
       } else if (props.vehicleId) {
-        url = "?id=" + props.vehicleId;
+        url = `?id=${props.vehicleId}`;
       } else {
         return;
       }
 
       setLoadingBuses(true);
 
-      return fetch(apiRoot + "vehicles.json" + url, {
+      return fetch(`${apiRoot}vehicles.json${url}`, {
         signal: vehiclesAbortController.current.signal,
       })
         .then(
@@ -626,7 +627,7 @@ export default function BigMap(
                   }
                 }
 
-                if (trip && trip.id) {
+                if (trip?.id) {
                   for (const item of items) {
                     if (trip.id === item.trip_id) {
                       if (first) setClickedVehicleMarker(item.id);
@@ -675,10 +676,7 @@ export default function BigMap(
       // operator mode:
     } else if (props.noc) {
       if (props.noc === trip?.operator?.noc) {
-        document.title =
-          "Bus tracker map \u2013 " +
-          trip.operator.name +
-          " \u2013 bustimes.org";
+        document.title = `Bus tracker map \u2013 ${trip.operator.name} \u2013 bustimes.org`;
       }
       loadVehicles(true);
     } else if (props.journeyId) {
@@ -786,7 +784,7 @@ export default function BigMap(
     [clickedStopUrl],
   );
 
-  const handleMapInit = function (map: Map) {
+  const handleMapInit = (map: MapGL) => {
     mapRef.current = map;
 
     if (props.mode === MapMode.Slippy) {
@@ -850,20 +848,23 @@ export default function BigMap(
   }, []);
 
   const showStops = shouldShowStops(zoom);
-  const showBuses = props.mode != MapMode.Slippy || shouldShowVehicles(zoom);
+  const showBuses = props.mode !== MapMode.Slippy || shouldShowVehicles(zoom);
 
   if (props.mode === MapMode.Operator) {
     if (!vehicles) {
       return <LoadingSorry />;
     }
     if (!vehiclesLength.current) {
-<<<<<<< HEAD
       return (
-        <div className="sorry"><p>Sorry, no buses are tracking at the moment.{" "}<a href="/map">Go to the main map?</a></p></div>
+        <LoadingSorry
+          text={
+            <p>
+              Sorry, no buses are tracking at the moment.{" "}
+              <a href="/map">Go to the main map?</a>
+            </p>
+          }
+        />
       );
-=======
-      return <LoadingSorry text="Sorry, no buses are tracking at the moment" />;
->>>>>>> 6ddc5f0d7 (add missing LoadingSorry etc)
     }
   }
 

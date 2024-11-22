@@ -6,7 +6,7 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY frontend /app/frontend
-COPY .eslintrc.js tsconfig.json /app/
+COPY tsconfig.json /app/
 RUN npm run lint && npm run build
 
 

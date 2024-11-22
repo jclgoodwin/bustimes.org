@@ -1,9 +1,9 @@
 import React from "react";
 
-import { Source, Layer, LayerProps } from "react-map-gl/maplibre";
+import { Layer, type LayerProps, Source } from "react-map-gl/maplibre";
 
-import { TripTime } from "./TripTimetable";
 import { ThemeContext } from "./Map";
+import type { TripTime } from "./TripTimetable";
 
 type RouteProps = {
   times: TripTime[];
@@ -11,7 +11,8 @@ type RouteProps = {
 
 export const Route = React.memo(function Route({ times }: RouteProps) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode =
+    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   const stopsStyle: LayerProps = {
     id: "stops",
@@ -48,9 +49,9 @@ export const Route = React.memo(function Route({ times }: RouteProps) {
 
   const lines = [];
   const lineStrings = [];
-  let prevLocation,
-    prevTime,
-    i = null;
+  let prevTime: TripTime | undefined;
+  let prevLocation: [number, number] | undefined;
+  let i = null;
 
   for (const time of times) {
     if (time.track) {

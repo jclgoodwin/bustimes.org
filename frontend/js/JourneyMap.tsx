@@ -1,23 +1,23 @@
 import React from "react";
 
 import {
-  Source,
   Layer,
-  LayerProps,
-  MapLayerMouseEvent,
+  type LayerProps,
+  type MapLayerMouseEvent,
+  Source,
 } from "react-map-gl/maplibre";
 
 import BusTimesMap, { ThemeContext } from "./Map";
 
-import { LngLatBounds, Map } from "maplibre-gl";
-import TripTimetable, { TripTime } from "./TripTimetable";
+import { LngLatBounds, type Map as MapGL } from "maplibre-gl";
+import LoadingSorry from "./LoadingSorry";
 import StopPopup from "./StopPopup";
+import TripTimetable, { type TripTime } from "./TripTimetable";
 import VehicleMarker, {
-  Vehicle,
+  type Vehicle,
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import LoadingSorry from "./LoadingSorry";
 
 type VehicleJourneyLocation = {
   id: number;
@@ -74,7 +74,8 @@ export const Locations = React.memo(function Locations({
   locations: VehicleJourneyLocation[];
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode =
+    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -157,7 +158,8 @@ export const Locations = React.memo(function Locations({
 
 const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode =
+    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   return (
     <Source
@@ -223,7 +225,7 @@ function nextOrPreviousLink(
     return timeString;
   }
 
-  return string + " " + timeString;
+  return `${string} ${timeString}`;
 }
 
 function Sidebar({
@@ -242,7 +244,8 @@ function Sidebar({
 
   const today = new Date(journey.datetime).toLocaleDateString();
 
-  let previousLink, nextLink;
+  let previousLink: React.ReactElement | string | undefined;
+  let nextLink: React.ReactElement | string | undefined;
   if (journey) {
     if (journey.previous) {
       previousLink = nextOrPreviousLink(today, journey.previous);
@@ -269,14 +272,14 @@ function Sidebar({
     if (journey.vehicle.includes(" ")) {
       if (journey.vehicle.includes(" - ")) {
         const parts = journey.vehicle.split(" - ", 2);
-        text += " " + parts[0];
+        text += ` ${parts[0]}`;
         reg = <span className="reg">{parts[1]}</span>;
       }
     }
   } else {
-    text += " " + journey.route_name;
+    text += ` ${journey.route_name}`;
     if (journey.destination) {
-      text += " to " + journey.destination;
+      text += ` to ${journey.destination}`;
     }
   }
 
@@ -342,8 +345,8 @@ function JourneyVehicle({
       return;
     }
 
-    let timeout: number,
-      current = true;
+    let timeout: number;
+    let current = true;
 
     const loadVehicle = () => {
       fetch(`/vehicles.json?id=${vehicleId}`).then((response) => {
@@ -492,7 +495,7 @@ export default function JourneyMap({
     }
   }, []);
 
-  const mapRef = React.useRef<Map>();
+  const mapRef = React.useRef<MapGL>();
 
   const bounds = React.useMemo((): LngLatBounds | null => {
     if (journey) {
@@ -516,7 +519,7 @@ export default function JourneyMap({
     return null;
   }, [journey]);
 
-  const onMapInit = React.useCallback((map: Map) => {
+  const onMapInit = React.useCallback((map: MapGL) => {
     // debugger;
     mapRef.current = map;
 

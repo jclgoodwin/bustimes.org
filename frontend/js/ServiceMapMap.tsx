@@ -1,20 +1,20 @@
 import React from "react";
 
 import {
-  Source,
   Layer,
-  LayerProps,
-  MapLayerMouseEvent,
-  MapGeoJSONFeature,
+  type LayerProps,
+  type MapGeoJSONFeature,
+  type MapLayerMouseEvent,
+  Source,
 } from "react-map-gl/maplibre";
 
-import StopPopup, { Stop } from "./StopPopup";
+import BusTimesMap, { ThemeContext } from "./Map";
+import StopPopup, { type Stop } from "./StopPopup";
 import VehicleMarker, {
-  Vehicle,
+  type Vehicle,
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 import VehiclePopup from "./VehiclePopup";
-import BusTimesMap, { ThemeContext } from "./Map";
 
 declare global {
   interface Window {
@@ -30,7 +30,8 @@ type ServiceMapMapProps = {
 
 function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode =
+    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -49,7 +50,8 @@ function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
 
 function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
+  const darkMode =
+    theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   const stopsStyle: LayerProps = {
     id: "stops",
@@ -102,7 +104,7 @@ export default function ServiceMapMap({
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] = React.useState<
     number | undefined
-  >(function () {
+  >(() => {
     if (vehicles && vehicles.length === 1) {
       return vehicles[0].id;
     }

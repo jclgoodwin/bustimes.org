@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { VehicleJourney } from "./JourneyMap";
+import type { VehicleJourney } from "./JourneyMap";
 import LoadingSorry from "./LoadingSorry";
 
 const JourneyMap = lazy(() => import("./JourneyMap"));
@@ -70,11 +70,11 @@ export default function History() {
 
       let url = apiRoot;
       if (window.SERVICE_ID) {
-        url += "services/" + window.SERVICE_ID + "/";
+        url += `services/${window.SERVICE_ID}/`;
       } else if (window.VEHICLE_ID) {
-        url += "vehicles/" + window.VEHICLE_ID + "/";
+        url += `vehicles/${window.VEHICLE_ID}/`;
       }
-      url += journeyId + ".json";
+      url += `${journeyId}.json`;
 
       fetch(url).then((response) => {
         if (response.ok) {
@@ -95,7 +95,7 @@ export default function History() {
   }
 
   const closeButton = (
-    <button onClick={closeMap} className="map-button">
+    <button type="button" onClick={closeMap} className="map-button">
       Close map
     </button>
   );

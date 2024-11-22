@@ -1,12 +1,12 @@
+import * as Sentry from "@sentry/react";
 import React, { lazy } from "react";
 import { createRoot } from "react-dom/client";
-import * as Sentry from "@sentry/react";
 
 import "./maps.css";
 import "maplibre-gl/dist/maplibre-gl.css";
 
-import ServiceMap from "./ServiceMap";
 import LoadingSorry from "./LoadingSorry";
+import ServiceMap from "./ServiceMap";
 const History = lazy(() => import("./History"));
 const MapRouter = lazy(() => import("./MapRouter"));
 
@@ -54,7 +54,7 @@ if (typeof window.globalThis === "undefined") {
 
 const error = <LoadingSorry text="Sorry, something has gone wrong" />;
 
-let rootElement;
+let rootElement: HTMLElement | null;
 if ((rootElement = document.getElementById("history"))) {
   // vehicle journey history
   const root = createRoot(rootElement);

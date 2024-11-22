@@ -64,15 +64,17 @@
 {% block footer %}
 <footer>
     {% if user.is_authenticated %}
-        <form action="{% url 'logout' %}" method="POST">
-            {% csrf_token %}
-            <ul class="user">
-                <li><a href="/accounts/users/{{ user.id }}">user {{ user.id }}</a></li>
-                <li><button class="button">Log out</button></li>
-                <li><a href="/rules">Rules & FAQ</a></li>
-                <li><a href="https://discord.com/invite/gY4PdDFau7">Discord</a></li>
-            </ul>
-        </form>
+        <ul class="user">
+            <li><a href="/accounts/users/{{ user.id }}">user {{ user.id }}</a></li>
+            <li>
+                <form action="{% url 'logout' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="button">Log out</button>
+                </form>
+            </li>
+            <li><a href="/rules">Rules & FAQ</a></li>
+            <li><a href="https://discord.com/invite/gY4PdDFau7">Discord</a></li>
+        </ul>
     {% endif %}
     <ul>
         <li><a href="/contact">Contact</a></li>

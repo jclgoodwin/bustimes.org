@@ -1,7 +1,7 @@
 function getDecodedDimensionFromPolyline(polyline: string, index: number) {
-  let result = 1,
-    shift = 0,
-    b = 0x1f;
+  let result = 1;
+  let shift = 0;
+  let b = 0x1f;
 
   while (b >= 0x1f) {
     b = polyline.charCodeAt(index) - 64;
@@ -15,18 +15,18 @@ function getDecodedDimensionFromPolyline(polyline: string, index: number) {
 export function decodeTimeAwarePolyline(
   polyline: string,
 ): [number, number, number][] {
-  let index = 0,
-    lat = 0,
-    lng = 0,
-    timestamp = 0;
+  let index = 0;
+  let lat = 0;
+  let lng = 0;
+  let timestamp = 0;
   const response = [] as [number, number, number][];
 
   const length = polyline.length;
 
   while (index < length) {
-    let lat_diff = 0,
-      lng_diff,
-      timestamp_diff;
+    let lng_diff: number;
+    let lat_diff: number;
+    let timestamp_diff: number;
 
     [index, lng_diff] = getDecodedDimensionFromPolyline(polyline, index);
     [index, lat_diff] = getDecodedDimensionFromPolyline(polyline, index);
