@@ -40,6 +40,7 @@ const imagesByName: { [imageName: string]: string } = {
 const mapStyles: { [key: string]: string } = {
   alidade_smooth: "Light",
   alidade_smooth_dark: "Dark",
+  alidade_satellite: "Satellite",
   osm_bright: "Bright",
 };
 
