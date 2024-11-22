@@ -1010,6 +1010,9 @@ def journey_json(request, pk, vehicle_id=None, service_id=None):
     )
 
     data = {
+        "vehicle_id": journey.vehicle_id,
+        "service_id": journey.service_id,
+        "trip_id": journey.trip_id,
         "datetime": journey.datetime,
         "route_name": journey.route_name,
         "code": journey.code,
