@@ -339,31 +339,21 @@ function TripSidebar(props: {
     className += " loading";
   }
 
-  let operator: ReactElement;
-  if (trip.operator) {
-    operator = (
-      <li>
-        <a href={`/operators/${trip.operator.slug}`}>{trip.operator.name}</a>
-      </li>
-    );
-  }
+  const operator = trip.operator ? (
+    <li>
+      <a href={`/operators/${trip.operator.slug}`}>{trip.operator.name}</a>
+    </li>
+  ) : null;
 
-  let service: ReactElement;
-  if (props.vehicle?.service) {
-    service = (
-      <li>
-        <a href={props.vehicle.service.url}>
-          {props.vehicle.service.line_name}
-        </a>
-      </li>
-    );
-  } else if (trip.service?.slug) {
-    service = (
-      <li>
-        <a href={`/services/${trip.service.slug}`}>{trip.service.line_name}</a>
-      </li>
-    );
-  }
+  const service = props.vehicle?.service ? (
+    <li>
+      <a href={props.vehicle.service.url}>{props.vehicle.service.line_name}</a>
+    </li>
+  ) : trip.service?.slug ? (
+    <li>
+      <a href={`/services/${trip.service.slug}`}>{trip.service.line_name}</a>
+    </li>
+  ) : null;
 
   return (
     <div className={className}>
