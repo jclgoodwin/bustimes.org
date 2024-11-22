@@ -127,15 +127,11 @@ function SlippyMapHash() {
   React.useEffect(() => {
     if (mapRef.current) {
       const map = mapRef.current.getMap();
-      let hash: Hash;
-      if (!map._hash) {
-        hash = new Hash();
-        hash.addTo(map);
-      }
+      const hash = map._hash || new Hash();
+      map._hash = hash;
+      hash.addTo(map);
       return () => {
-        if (hash) {
-          hash.remove();
-        }
+        hash.remove();
       };
     }
   }, [mapRef]);
@@ -479,13 +475,11 @@ export default function BigMap(
   }, []);
 
   useEffect(() => {
-    if (mapRef.current || !initialViewState.current) {
-      const times = trip?.times;
-      if (times?.length) {
-        fitBounds(getBounds(times, (time) => time.stop.location));
-      } else if (journey) {
-        fitBounds(getBounds(journey.locations, (item) => item.coordinates));
-      }
+    const times = trip?.times;
+    if (times?.length) {
+      fitBounds(getBounds(times, (time) => time.stop.location));
+    } else if (journey) {
+      fitBounds(getBounds(journey.locations, (item) => item.coordinates));
     }
   }, [trip, journey, fitBounds]);
 
@@ -518,9 +512,8 @@ export default function BigMap(
 
       if (vehiclesAbortController.current) {
         vehiclesAbortController.current.abort();
+        vehiclesAbortController.current = undefined;
       }
-      vehiclesAbortController.current =
-        new AbortController() as AbortController;
 
       let _bounds: LngLatBounds;
       let url: string;
@@ -541,6 +534,9 @@ export default function BigMap(
       }
 
       setLoadingBuses(true);
+
+      vehiclesAbortController.current =
+        new AbortController() as AbortController;
 
       return fetch(`${apiRoot}vehicles.json${url}`, {
         signal: vehiclesAbortController.current.signal,
@@ -593,7 +589,7 @@ export default function BigMap(
           // setLoadingBuses(false);
         });
     },
-    [props.mode, props.noc, trip, props.vehicleId],
+    [props.mode, props.noc, trip?.service?.id, trip?.id, props.vehicleId],
   );
 
   React.useEffect(() => {
@@ -635,36 +631,42 @@ export default function BigMap(
     loadVehicles,
   ]);
 
-  const handleMoveEnd = debounce(
-    React.useCallback(
-      (evt: ViewStateChangeEvent) => {
-        const map = evt.target;
-        boundsRef.current = map.getBounds() as LngLatBounds;
-        const zoom = map.getZoom() as number;
+  const handleMoveEnd = React.useCallback(
+    debounce(
+      React.useCallback(
+        (evt: ViewStateChangeEvent) => {
+          const map = evt.target;
+          boundsRef.current = map.getBounds() as LngLatBounds;
+          const zoom = map.getZoom() as number;
 
-        if (shouldShowVehicles(zoom)) {
-          if (
-            !containsBounds(vehiclesHighWaterMark.current, boundsRef.current) ||
-            vehiclesLength.current >= 1000
-          ) {
-            loadVehicles();
+          if (shouldShowVehicles(zoom)) {
+            if (
+              !containsBounds(
+                vehiclesHighWaterMark.current,
+                boundsRef.current,
+              ) ||
+              vehiclesLength.current >= 1000
+            ) {
+              loadVehicles();
+            }
+
+            if (
+              shouldShowStops(zoom) &&
+              !containsBounds(stopsHighWaterMark.current, boundsRef.current)
+            ) {
+              loadStops();
+            }
           }
 
-          if (
-            shouldShowStops(zoom) &&
-            !containsBounds(stopsHighWaterMark.current, boundsRef.current)
-          ) {
-            loadStops();
-          }
-        }
-
-        setZoom(zoom);
-        updateLocalStorage(zoom, map.getCenter());
-      },
-      [loadStops, loadVehicles],
+          setZoom(zoom);
+          updateLocalStorage(zoom, map.getCenter());
+        },
+        [loadStops, loadVehicles],
+      ),
+      400,
+      { leading: true },
     ),
-    400,
-    { leading: true },
+    [],
   );
 
   React.useEffect(() => {
@@ -748,16 +750,14 @@ export default function BigMap(
   const hoveredLocation = React.useRef<number>();
 
   const onMouseEnter = React.useCallback((e: MapLayerMouseEvent) => {
-    setCursor("pointer");
-
-    // journey map
-
     const vehicleId = getClickedVehicleMarkerId(e);
     if (vehicleId) {
       return;
     }
 
     if (e.features?.length) {
+      setCursor("pointer");
+      // journey map
       for (const feature of e.features) {
         if (feature.layer.id === "locations") {
           if (hoveredLocation.current !== undefined) {
