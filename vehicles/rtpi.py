@@ -55,7 +55,10 @@ def get_progress(item, stop_time=None):
     if stop_time:
         stop_times = stop_time.trip.stoptime_set.all()  # prefetched earlier
     else:
-        stop_times = get_stop_times(item)
+        try:
+            stop_times = get_stop_times(item)
+        except Trip.DoesNotExist:
+            return
 
     pairs = [
         (a, b, LineString([a.stop.latlong, b.stop.latlong]))

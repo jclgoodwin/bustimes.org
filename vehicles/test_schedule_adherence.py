@@ -259,6 +259,10 @@ class ScheduleAdherenceTest(TestCase):
         self.assertNotIn("progress", item)
         self.assertNotIn("delay", item)
 
+        # trip doesn't exist
+        self.journey.trip.delete()
+        rtpi.add_progress_and_delay(item)
+
     @time_machine.travel("2024-02-16T00:00:07Z")
     def test_stop_times(self):
         redis_client = fakeredis.FakeStrictRedis()
