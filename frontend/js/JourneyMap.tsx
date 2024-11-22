@@ -73,7 +73,7 @@ const Locations = React.memo(function Locations({
   locations: VehicleJourneyLocation[];
 }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark";
+  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -156,7 +156,7 @@ const Locations = React.memo(function Locations({
 
 const Stops = React.memo(function Stops({ stops }: { stops: StopTime[] }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark";
+  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   return (
     <Source

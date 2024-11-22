@@ -30,7 +30,7 @@ type ServiceMapMapProps = {
 
 function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark";
+  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   const routeStyle: LayerProps = {
     type: "line",
@@ -49,7 +49,7 @@ function Geometry({ geometry }: { geometry: MapGeoJSONFeature }) {
 
 function Stops({ stops }: { stops?: MapGeoJSONFeature[] }) {
   const theme = React.useContext(ThemeContext);
-  const darkMode = theme === "alidade_smooth_dark";
+  const darkMode = theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
   const stopsStyle: LayerProps = {
     id: "stops",
