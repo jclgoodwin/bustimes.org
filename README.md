@@ -144,7 +144,7 @@
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
 | vehicles/models.py                                              |      526 |       33 |     94% |204, 206, 216, 250, 254, 258, 326, 332, 404, 410, 467, 488, 616-617, 630, 655-657, 665-666, 669-670, 675-676, 698, 760, 767-770, 812, 825, 834, 845 |
 | vehicles/rtpi.py                                                |       73 |        1 |     99% |        28 |
-| vehicles/signals.py                                             |       17 |        1 |     94% |        24 |
+| vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      127 |       22 |     83% |63-73, 80, 85, 95, 102-105, 108, 110, 119, 132, 150, 164, 177-178, 232-233, 236 |
 | vehicles/test\_models.py                                        |       67 |        0 |    100% |           |
 | vehicles/test\_schedule\_adherence.py                           |       73 |        0 |    100% |           |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15752** | **1054** | **93%** |           |
+|                                                       **TOTAL** | **15746** | **1053** | **93%** |           |
 
 
 ## Setup coverage badge
