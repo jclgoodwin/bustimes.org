@@ -18,11 +18,7 @@ import VehicleMarker, {
   getClickedVehicleMarkerId,
 } from "./VehicleMarker";
 
-import {
-  Stops as JourneyStops,
-  Locations,
-  type VehicleJourney,
-} from "./JourneyMap";
+import { JourneyStops, Locations, type VehicleJourney } from "./JourneyMap";
 import LoadingSorry from "./LoadingSorry";
 import BusTimesMap from "./Map";
 import StopPopup, { type Stop } from "./StopPopup";
@@ -74,6 +70,15 @@ function containsBounds(
   a: LngLatBounds | undefined,
   b: LngLatBounds,
 ): boolean | undefined {
+  // console.log(a, b);
+  // if (a) {
+  //   console.log("N", a.getNorth(), b.getNorth(), a.getNorth() >= b.getNorth());
+  //   console.log("E ", a.getEast(), b.getEast(), a.getEast() >= b.getEast());
+  //   console.log("S ", a.getSouth(), b.getSouth(), a.getSouth() <= b.getSouth());
+  //   console.log("W ", a.getWest(), b.getWest(), a.getWest() <= b.getWest());
+  // }
+
+  // console.log(a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast()));
   return a?.contains(b.getNorthWest()) && a.contains(b.getSouthEast());
 }
 
@@ -112,15 +117,6 @@ type Journey = {
   };
 };
 
-type StopsProps = {
-  stops?: {
-    features: Stop[];
-  };
-  times?: Trip["times"];
-  clickedStopUrl?: string;
-  setClickedStop: (stop?: string) => void;
-};
-
 function SlippyMapHash() {
   const mapRef = useMap();
 
@@ -139,7 +135,19 @@ function SlippyMapHash() {
   return null;
 }
 
-function Stops({ stops, times, clickedStopUrl, setClickedStop }: StopsProps) {
+function Stops({
+  stops,
+  times,
+  clickedStopUrl,
+  setClickedStop,
+}: {
+  stops?: {
+    features: Stop[];
+  };
+  times?: Trip["times"];
+  clickedStopUrl?: string;
+  setClickedStop: (stop?: string) => void;
+}) {
   const stopsById = React.useMemo<{ [url: string]: Stop } | undefined>(() => {
     if (stops) {
       return Object.assign(
@@ -529,6 +537,8 @@ export default function BigMap(
         url = `?service=${trip.service.id}&trip=${trip.id}`;
       } else if (props.vehicleId) {
         url = `?id=${props.vehicleId}`;
+      } else if (journey?.vehicle_id) {
+        url = `?id=${journey.vehicle_id}`;
       } else {
         return;
       }
@@ -559,9 +569,12 @@ export default function BigMap(
                   }
                 }
 
-                if (trip?.id) {
+                if (trip || journey?.vehicle_id) {
                   for (const item of items) {
-                    if (trip.id === item.trip_id) {
+                    if (
+                      (trip && trip.id === item.trip_id) ||
+                      journey?.vehicle_id === item.id
+                    ) {
                       if (first) setClickedVehicleMarker(item.id);
                       setTripVehicle(item);
                       break;
@@ -589,12 +602,12 @@ export default function BigMap(
           // setLoadingBuses(false);
         });
     },
-    [props.mode, props.noc, trip?.service?.id, trip?.id, props.vehicleId],
+    [props.mode, props.noc, trip, journey?.vehicle_id, props.vehicleId],
   );
 
   React.useEffect(() => {
-    // trip mode:
     if (props.tripId) {
+      // trip mode
       if (trip?.id?.toString() === props.tripId) {
         loadVehicles(true);
         document.title = `${trip.service?.line_name} \u2013 ${trip.operator?.name} \u2013 bustimes.org`;
@@ -605,19 +618,29 @@ export default function BigMap(
           }
         });
       }
-      // operator mode:
     } else if (props.noc) {
+      // operator mode
       if (props.noc === trip?.operator?.noc) {
         document.title = `Bus tracker map \u2013 ${trip.operator.name} \u2013 bustimes.org`;
       }
       loadVehicles(true);
     } else if (props.journeyId) {
-      fetch(`${apiRoot}journeys/${props.journeyId}.json`).then((response) => {
-        if (response.ok) {
-          response.json().then(setJourney);
+      // journey mode
+      if (journey?.id?.toString() === props.journeyId) {
+        if (journey.current) {
+          loadVehicles(true);
         }
-      });
+      } else {
+        fetch(`${apiRoot}journeys/${props.journeyId}.json`).then((response) => {
+          if (response.ok) {
+            response.json().then((journey: VehicleJourney) => {
+              setJourney({ ...journey, id: props.journeyId });
+            });
+          }
+        });
+      }
     } else if (!props.vehicleId) {
+      // slippy mode
       document.title = "Map \u2013 bustimes.org";
     } else {
       loadVehicles();
@@ -628,6 +651,7 @@ export default function BigMap(
     props.noc,
     props.vehicleId,
     props.journeyId,
+    journey,
     loadVehicles,
   ]);
 
@@ -838,7 +862,11 @@ export default function BigMap(
           ) : null}
 
           {props.mode === MapMode.Journey && journey?.stops ? (
-            <JourneyStops stops={journey.stops} />
+            <JourneyStops
+              stops={journey.stops}
+              clickedStopUrl={clickedStopUrl}
+              setClickedStop={setClickedStopURL}
+            />
           ) : null}
 
           {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
@@ -895,6 +923,7 @@ export default function BigMap(
         <JourneySidebar
           journey={journey}
           journeyId={props.journeyId}
+          vehicle={tripVehicle}
           highlightedStop={clickedStopUrl}
         />
       ) : null}

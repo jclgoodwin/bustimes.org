@@ -9,9 +9,9 @@ import {
 
 import BusTimesMap, { ThemeContext } from "./Map";
 
-import { LngLatBounds, type Map as MapGL } from "maplibre-gl";
+import type { Map as MapGL } from "maplibre-gl";
 import LoadingSorry from "./LoadingSorry";
-import StopPopup from "./StopPopup";
+import StopPopup, { type Stop } from "./StopPopup";
 import TripTimetable, { type TripTime, tripFromJourney } from "./TripTimetable";
 import VehicleMarker, {
   type Vehicle,
@@ -28,15 +28,15 @@ type VehicleJourneyLocation = {
   datetime: string | number;
 };
 
-type Stop = {
-  properties: {
-    name: string;
-    atco_code: string;
-  };
-  geometry: {
-    coordinates: [number, number];
-  };
-};
+// type Stop = {
+//   properties: {
+//     name: string;
+//     atco_code: string;
+//   };
+//   geometry: {
+//     coordinates: [number, number];
+//   };
+// };
 
 export type StopTime = {
   atco_code: string;
@@ -50,6 +50,10 @@ export type StopTime = {
 };
 
 export type VehicleJourney = {
+  id?: string;
+  vehicle_id?: number;
+  service_id?: number;
+  trip_id?: number;
   datetime: string;
   route_name?: string;
   code: string;
@@ -157,62 +161,85 @@ export const Locations = React.memo(function Locations({
   );
 });
 
-export const Stops = React.memo(function Stops({
+export const JourneyStops = React.memo(function Stops({
   stops,
-}: { stops: StopTime[] }) {
+  clickedStopUrl,
+  setClickedStop,
+}: {
+  stops: StopTime[];
+  clickedStopUrl: string | undefined;
+  setClickedStop: (s: string | undefined) => void;
+}) {
   const theme = React.useContext(ThemeContext);
   const darkMode =
     theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
+  const stopsById = React.useMemo<{ [url: string]: Stop } | undefined>(() => {
+    return Object.assign(
+      {},
+      ...stops.map((stop) => ({ [stop.atco_code]: stop })),
+    );
+  }, [stops]);
+
+  const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
+
   return (
-    <Source
-      type="geojson"
-      data={{
-        type: "FeatureCollection",
-        features: stops
-          .filter((s) => s.coordinates)
-          .map((s) => {
-            return {
-              type: "Feature",
-              geometry: {
-                type: "Point",
-                coordinates: s.coordinates,
-              },
-              properties: {
-                atco_code: s.atco_code,
-                name: s.name,
-                // minor: s.minor,
-                heading: s.heading,
-                aimed_arrival_time: s.aimed_arrival_time,
-                aimed_departure_time: s.aimed_departure_time,
-                // priority: s.minor ? 0 : 1, // symbol-sort-key lower number - "higher" priority
-              },
-            };
-          }),
-      }}
-    >
-      <Layer
-        {...{
-          id: "stops",
-          type: "symbol",
-          layout: {
-            // "symbol-sort-key": ["get", "priority"],
-            "icon-rotate": ["+", 45, ["get", "heading"]],
-            "icon-image": [
-              "case",
-              ["==", ["get", "heading"], ["literal", null]],
-              darkMode
-                ? "route-stop-marker-dark-circle"
-                : "route-stop-marker-circle",
-              darkMode ? "route-stop-marker-dark" : "route-stop-marker",
-            ],
-            // "icon-padding": 0,
-            "icon-allow-overlap": true,
-            "icon-ignore-placement": true,
-          },
+    <React.Fragment>
+      <Source
+        type="geojson"
+        data={{
+          type: "FeatureCollection",
+          features: stops
+            .filter((s) => s.coordinates)
+            .map((s) => {
+              return {
+                type: "Feature",
+                geometry: {
+                  type: "Point",
+                  coordinates: s.coordinates,
+                },
+                properties: {
+                  url: `/stops/${s.atco_code}`,
+                  name: s.name,
+                  // minor: s.minor,
+                  heading: s.heading,
+                  // aimed_arrival_time: s.aimed_arrival_time,
+                  // aimed_departure_time: s.aimed_departure_time,
+                  // priority: s.minor ? 0 : 1, // symbol-sort-key lower number - "higher" priority
+                },
+              };
+            }),
         }}
-      />
-    </Source>
+      >
+        <Layer
+          {...{
+            id: "stops",
+            type: "symbol",
+            layout: {
+              // "symbol-sort-key": ["get", "priority"],
+              "icon-rotate": ["+", 45, ["get", "heading"]],
+              "icon-image": [
+                "case",
+                ["==", ["get", "heading"], ["literal", null]],
+                darkMode
+                  ? "route-stop-marker-dark-circle"
+                  : "route-stop-marker-circle",
+                darkMode ? "route-stop-marker-dark" : "route-stop-marker",
+              ],
+              // "icon-padding": 0,
+              "icon-allow-overlap": true,
+              "icon-ignore-placement": true,
+            },
+          }}
+        />
+      </Source>
+      {clickedStop && (
+        <StopPopup
+          item={clickedStop}
+          onClose={() => setClickedStop(undefined)}
+        />
+      )}
+    </React.Fragment>
   );
 });
 
@@ -417,7 +444,7 @@ export default function JourneyMap({
     // setClickedLocation(undefined);
   }, []);
 
-  const [clickedStop, setClickedStop] = React.useState<Stop>();
+  const [clickedStopUrl, setClickedStop] = React.useState<string>();
 
   const [clickedVehicleMarker, setClickedVehicleMarker] =
     React.useState<boolean>(true);
@@ -461,7 +488,7 @@ export default function JourneyMap({
     if (e.features?.length) {
       for (const feature of e.features) {
         if (feature.layer.id === "stops") {
-          setClickedStop(feature as unknown as Stop);
+          setClickedStop(feature.properties.url);
           break;
         }
       }
@@ -472,15 +499,7 @@ export default function JourneyMap({
 
   const handleRowHover = React.useCallback((a: TripTime) => {
     if (a.stop.location && a.stop.atco_code) {
-      setClickedStop({
-        properties: {
-          atco_code: a.stop.atco_code,
-          name: a.stop.name,
-        },
-        geometry: {
-          coordinates: a.stop.location,
-        },
-      });
+      setClickedStop(`/stops/${a.stop.atco_code}`);
     }
   }, []);
 
@@ -540,18 +559,11 @@ export default function JourneyMap({
             onMapInit={onMapInit}
             interactiveLayerIds={["stops", "locations"]}
           >
-            {journey.stops ? <Stops stops={journey.stops} /> : null}
-
-            {clickedStop ? (
-              <StopPopup
-                item={{
-                  properties: {
-                    url: `/stops/${clickedStop.properties.atco_code}`,
-                    name: clickedStop.properties.name,
-                  },
-                  geometry: clickedStop.geometry,
-                }}
-                onClose={() => setClickedStop(undefined)}
+            {journey.stops ? (
+              <JourneyStops
+                stops={journey.stops}
+                clickedStopUrl={clickedStopUrl}
+                setClickedStop={setClickedStop}
               />
             ) : null}
 
