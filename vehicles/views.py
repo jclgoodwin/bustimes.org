@@ -593,8 +593,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
 
             locations = pipe.execute()
         except (ConnectionError, AttributeError):
-            for journey in journeys:
-                journey.locations = True
+            pass
         else:
             for journey, location in zip(journeys, locations):
                 journey.locations = location
