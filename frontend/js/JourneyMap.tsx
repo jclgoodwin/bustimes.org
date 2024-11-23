@@ -507,9 +507,11 @@ export default function JourneyMap({
 
   const bounds = React.useMemo(() => {
     if (journey) {
-      return getBounds(journey.stops, (s) => s.coordinates);
+      return getBounds(
+        journey.stops || journey.locations,
+        (s: StopTime | VehicleJourneyLocation) => s.coordinates,
+      );
     }
-    return null;
   }, [journey]);
 
   const onMapInit = React.useCallback((map: MapGL) => {
