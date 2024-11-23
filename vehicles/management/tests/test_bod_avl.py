@@ -473,6 +473,7 @@ class BusOpenDataVehicleLocationsTest(TestCase):
 
         with mock.patch("vehicles.views.redis_client", redis_client):
             response = self.client.get(f"/journeys/{journey.id}.json")
+        self.maxDiff = None
         self.assertEqual(
             response.json(),
             {
@@ -482,6 +483,9 @@ class BusOpenDataVehicleLocationsTest(TestCase):
                 "destination": "Southwold",
                 "direction": "inbound",
                 "route_name": "146",
+                "service_id": None,
+                "trip_id": None,
+                "vehicle_id": journey.vehicle_id,
                 "locations": [
                     {
                         "id": 1606568305,
