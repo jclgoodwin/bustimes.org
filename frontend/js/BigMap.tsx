@@ -387,7 +387,7 @@ function JourneySidebar(props: {
   highlightedStop?: string;
   vehicle?: VehicleLocation;
 }) {
-  const className = "trip-timetable map-sidebar";
+  let className = "trip-timetable map-sidebar";
 
   const journey = props.journey;
 
@@ -401,13 +401,9 @@ function JourneySidebar(props: {
     service = <a href={props.vehicle.service.url}>{service}</a>;
   }
 
-  // if (!journey) {
-  //   return <div className={className}></div>;
-  // }
-
-  // if (journey.id && props.journeyId !== journey.id?.toString()) {
-  //   className += " loading";
-  // }
+  if (!trip) {
+    className += " no-stops";
+  }
 
   return (
     <div className={className}>
@@ -826,7 +822,7 @@ export default function BigMap(
     }
   }
 
-  if (props.mode === MapMode.Journey && !initialViewState.current) {
+  if (props.mode === MapMode.Journey && !journey) {
     return <LoadingSorry />;
   }
 

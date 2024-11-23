@@ -96,7 +96,7 @@ export const Locations = React.memo(function Locations({
     type: "symbol",
     layout: {
       "text-field": ["get", "time"],
-      "text-size": 11,
+      "text-size": 12,
       "text-font": ["Stadia Regular"],
 
       "icon-rotate": ["+", 45, ["get", "heading"]],
