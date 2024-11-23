@@ -38,9 +38,10 @@ export const useDarkMode = () => {
 export function getBounds<T>(
   list: Array<T> | undefined,
   key: (arg0: T) => [number, number] | null | undefined,
+  initialBounds?: LngLatBounds,
 ) {
   if (list?.length) {
-    const bounds = new LngLatBounds();
+    const bounds = initialBounds || new LngLatBounds();
     list.reduce((bounds, item?) => {
       if (item) {
         const value = key(item);

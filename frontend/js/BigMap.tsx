@@ -1,4 +1,10 @@
-import React, { type ReactElement, memo, useEffect, useRef } from "react";
+import React, {
+  type ReactElement,
+  memo,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 
 import { Hash, type LngLatBounds, type Map as MapGL } from "maplibre-gl";
 import {
@@ -466,27 +472,34 @@ export default function BigMap(
 
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
-  const fitBounds = React.useCallback((bounds?: LngLatBounds) => {
+  const bounds = useMemo(() => {
+    const times = trip?.times;
+    let bounds: LngLatBounds | undefined;
+    if (times?.length) {
+      bounds = getBounds(times, (time) => time.stop.location);
+    }
+    if (journey) {
+      // maybe extend bounds
+      bounds = getBounds(journey.locations, (item) => item.coordinates, bounds);
+    }
+    return bounds;
+  }, [trip, journey]);
+
+  useEffect(() => {
     if (bounds) {
-      if (!initialViewState.current) {
-        initialViewState.current = { bounds };
-      } else if (mapRef.current) {
+      if (mapRef.current) {
         mapRef.current.fitBounds(bounds, {
           padding: 50,
         });
+      } else {
+        initialViewState.current = {
+          bounds: bounds,
+        };
       }
     }
-  }, []);
+  }, [bounds]);
 
-  useEffect(() => {
-    const times = trip?.times;
-    if (times?.length) {
-      fitBounds(getBounds(times, (time) => time.stop.location));
-    } else if (journey) {
-      fitBounds(getBounds(journey.locations, (item) => item.coordinates));
-    }
-  }, [trip, journey, fitBounds]);
-
+  // slippy map stuff
   const timeout = React.useRef<number>();
   const boundsRef = React.useRef<LngLatBounds>();
   const stopsHighWaterMark = React.useRef<LngLatBounds>();
@@ -822,7 +835,7 @@ export default function BigMap(
     }
   }
 
-  if (props.mode === MapMode.Journey && !journey) {
+  if (props.mode === MapMode.Journey && !initialViewState.current) {
     return <LoadingSorry />;
   }
 
