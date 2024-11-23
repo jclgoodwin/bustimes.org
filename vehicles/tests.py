@@ -271,6 +271,9 @@ class VehiclesTests(TestCase):
                     "id": self.journey.id + 1,
                 },
                 "route_name": "2",
+                "service_id": self.journey.service_id,
+                "trip_id": None,
+                "vehicle_id": self.journey.vehicle_id,
             },
             response.json(),
         )
