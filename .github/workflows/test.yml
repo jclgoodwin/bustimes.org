@@ -30,6 +30,7 @@ jobs:
   test-backend:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    needs: test-frontend
 
     permissions:
       # Gives the action the necessary permissions for publishing new
