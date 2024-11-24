@@ -532,22 +532,30 @@ export default function BigMap(
       }
 
       let _bounds: LngLatBounds | undefined;
-      let url: string;
-      if (props.mode === MapMode.Slippy) {
-        _bounds = boundsRef.current;
-        if (!_bounds) {
-          return;
-        }
-        url = getBoundsQueryString(_bounds);
-      } else if (props.noc) {
-        url = `?operator=${props.noc}`;
-      } else if (trip?.service?.id) {
-        url = `?service=${trip.service.id}&trip=${trip.id}`;
-      } else if (props.vehicleId) {
-        url = `?id=${props.vehicleId}`;
-      } else if (journey?.vehicle_id) {
-        url = `?id=${journey.vehicle_id}`;
-      } else {
+      let url: string | undefined;
+      switch (props.mode) {
+        case MapMode.Slippy:
+          if (boundsRef.current) {
+            url = getBoundsQueryString(boundsRef.current);
+          }
+          break;
+        case MapMode.Operator:
+          url = `?operator=${props.noc}`;
+          break;
+        case MapMode.Trip:
+          if (props.vehicleId) {
+            url = `?id=${props.vehicleId}`;
+          } else if (trip?.service) {
+            url = `?service=${trip.service.id}&trip=${trip.id}`;
+          }
+          break;
+        case MapMode.Journey:
+          if (journey?.vehicle_id) {
+            url = `?id=${journey.vehicle_id}`;
+          }
+          break;
+      }
+      if (!url) {
         return;
       }
 
