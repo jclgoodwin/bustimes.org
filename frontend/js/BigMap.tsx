@@ -591,7 +591,7 @@ export default function BigMap(
                   }
                 }
 
-                if (items.length || vehiclesLength.current) {
+                if (items.length || vehiclesLength.current || first) {
                   if (trip || journey?.vehicle_id) {
                     for (const item of items) {
                       if (
