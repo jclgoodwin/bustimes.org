@@ -225,7 +225,6 @@ export default function BusTimesMap(
         RTLTextPlugin={""}
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
-
         onContextMenu={onContextMenu}
         // workaround for wrong react-map-gl type definitions?
         transformRequest={undefined}

@@ -500,16 +500,17 @@ export default function BigMap(
   }, [bounds]);
 
   // slippy map stuff
-  const timeout = React.useRef<number>();
   const boundsRef = React.useRef<LngLatBounds>();
   const stopsHighWaterMark = React.useRef<LngLatBounds>();
+  const stopsTimeout = React.useRef<number>();
   const vehiclesHighWaterMark = React.useRef<LngLatBounds>();
+  const vehiclesTimeout = React.useRef<number>();
   const vehiclesAbortController = React.useRef<AbortController>();
   const vehiclesLength = React.useRef<number>(0);
 
   const loadStops = React.useCallback(() => {
     const _bounds = boundsRef.current as LngLatBounds;
-    setLoadingStops(true);
+
     fetchJson(`stops.json${getBoundsQueryString(_bounds)}`).then((items) => {
       stopsHighWaterMark.current = _bounds;
       setLoadingStops(false);
@@ -525,7 +526,7 @@ export default function BigMap(
       if (!first && document.hidden) {
         return;
       }
-      clearTimeout(timeout.current);
+      clearTimeout(vehiclesTimeout.current);
 
       if (vehiclesAbortController.current) {
         vehiclesAbortController.current.abort();
@@ -554,8 +555,7 @@ export default function BigMap(
 
       setLoadingBuses(true);
 
-      vehiclesAbortController.current =
-        new AbortController() as AbortController;
+      vehiclesAbortController.current = new AbortController();
 
       return fetch(`${apiRoot}vehicles.json${url}`, {
         signal: vehiclesAbortController.current.signal,
@@ -578,27 +578,29 @@ export default function BigMap(
                   }
                 }
 
-                if (trip || journey?.vehicle_id) {
-                  for (const item of items) {
-                    if (
-                      (trip && trip.id === item.trip_id) ||
-                      journey?.vehicle_id === item.id
-                    ) {
-                      if (first) setClickedVehicleMarker(item.id);
-                      setTripVehicle(item);
-                      break;
+                if (items.length) {
+                  if (trip || journey?.vehicle_id) {
+                    for (const item of items) {
+                      if (
+                        (trip && trip.id === item.trip_id) ||
+                        journey?.vehicle_id === item.id
+                      ) {
+                        if (first) setClickedVehicleMarker(item.id);
+                        setTripVehicle(item);
+                        break;
+                      }
                     }
                   }
-                }
 
-                vehiclesLength.current = items.length;
-                setVehicles(items);
+                  vehiclesLength.current = items.length;
+                  setVehicles(items);
+                }
               });
               setLoadingBuses(false);
             }
 
             if (!document.hidden) {
-              timeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
+              vehiclesTimeout.current = window.setTimeout(loadVehicles, 12000); // 12 seconds
             }
           },
           () => {
@@ -665,49 +667,41 @@ export default function BigMap(
   ]);
 
   const handleMoveEnd = React.useCallback(
-    debounce(
-      React.useCallback(
-        (evt: ViewStateChangeEvent) => {
-          const map = evt.target;
-          boundsRef.current = map.getBounds() as LngLatBounds;
-          const zoom = map.getZoom() as number;
+    (evt: ViewStateChangeEvent) => {
+      clearTimeout(vehiclesTimeout.current);
+      clearTimeout(stopsTimeout.current);
 
-          if (shouldShowVehicles(zoom)) {
-            if (
-              !containsBounds(
-                vehiclesHighWaterMark.current,
-                boundsRef.current,
-              ) ||
-              vehiclesLength.current >= 1000
-            ) {
-              loadVehicles();
-            }
+      const _bounds = evt.target.getBounds();
+      const _zoom = evt.viewState.zoom;
+      setZoom(_zoom);
+      boundsRef.current = _bounds;
 
-            if (
-              shouldShowStops(zoom) &&
-              !containsBounds(stopsHighWaterMark.current, boundsRef.current)
-            ) {
-              loadStops();
-            }
-          }
+      if (shouldShowVehicles(_zoom)) {
+        if (
+          !containsBounds(vehiclesHighWaterMark.current, boundsRef.current) ||
+          vehiclesLength.current >= 1000
+        ) {
+          setLoadingBuses(true);
+          vehiclesTimeout.current = window.setTimeout(loadVehicles, 200);
+        }
 
-          setZoom(zoom);
-          updateLocalStorage(zoom, map.getCenter());
-        },
-        [loadStops, loadVehicles],
-      ),
-      400,
-      { leading: true },
-    ),
-    [],
+        if (
+          shouldShowStops(_zoom) &&
+          !containsBounds(stopsHighWaterMark.current, boundsRef.current)
+        ) {
+          setLoadingStops(true);
+          vehiclesTimeout.current = window.setTimeout(loadStops, 200);
+        }
+      }
+      updateLocalStorage(_zoom, evt.target.getCenter());
+    },
+    [loadStops, loadVehicles],
   );
 
+  // (re)load vehicles on tab visibility change
   React.useEffect(() => {
     const handleVisibilityChange = () => {
-      if (
-        !document.hidden &&
-        (props.mode !== MapMode.Slippy || (zoom && shouldShowVehicles(zoom)))
-      ) {
+      if (!document.hidden) {
         loadVehicles();
       }
     };
@@ -717,7 +711,7 @@ export default function BigMap(
     return () => {
       window.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [zoom, loadVehicles, props.mode]);
+  }, [loadVehicles]);
 
   const [clickedVehicleMarkerId, setClickedVehicleMarker] = React.useState<
     number | undefined
@@ -753,30 +747,31 @@ export default function BigMap(
     [clickedStopUrl],
   );
 
-  const handleMapInit = (map: MapGL) => {
-    mapRef.current = map;
+  const handleMapInit = React.useCallback(
+    (map: MapGL) => {
+      mapRef.current = map;
 
-    if (props.mode === MapMode.Slippy) {
-      const bounds = map.getBounds();
-      const zoom = map.getZoom();
+      if (props.mode === MapMode.Slippy) {
+        if (!boundsRef.current) {
+          // first load
+          const _zoom = map.getZoom();
+          const _bounds = map.getBounds();
+          boundsRef.current = map.getBounds();
+          setZoom(_zoom);
 
-      if (!boundsRef.current) {
-        // first load
-        boundsRef.current = bounds;
-
-        if (shouldShowVehicles(zoom)) {
-          loadVehicles();
-
-          if (shouldShowStops(zoom)) {
-            loadStops();
+          if (shouldShowVehicles(_zoom)) {
+            setLoadingBuses(true);
+            loadVehicles();
+            if (shouldShowStops(_zoom)) {
+              setLoadingStops(true);
+              loadStops();
+            }
           }
-        } else {
-          boundsRef.current = bounds;
         }
       }
-      setZoom(zoom);
-    }
-  };
+    },
+    [props.mode, loadVehicles, loadStops],
+  );
 
   const [cursor, setCursor] = React.useState<string>();
 
