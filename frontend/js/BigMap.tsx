@@ -531,10 +531,10 @@ export default function BigMap(
         vehiclesAbortController.current = undefined;
       }
 
-      let _bounds: LngLatBounds;
+      let _bounds: LngLatBounds | undefined;
       let url: string;
       if (props.mode === MapMode.Slippy) {
-        _bounds = boundsRef.current as LngLatBounds;
+        _bounds = boundsRef.current;
         if (!_bounds) {
           return;
         }
@@ -564,7 +564,10 @@ export default function BigMap(
               response.json().then((items: VehicleLocation[]) => {
                 vehiclesHighWaterMark.current = _bounds;
 
-                if (!initialViewState.current) {
+                if (
+                  props.mode === MapMode.Operator &&
+                  !initialViewState.current
+                ) {
                   const bounds = getBounds(items, (item) => item.coordinates);
                   if (bounds) {
                     initialViewState.current = {
@@ -836,6 +839,9 @@ export default function BigMap(
   if (props.mode === MapMode.Trip || props.mode === MapMode.Journey) {
     className += " has-sidebar";
   }
+  // console.dir(bounds);
+  // console.dir(journey);
+  // console.dir(initialViewState.current);
 
   return (
     <React.Fragment>

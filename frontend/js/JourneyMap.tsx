@@ -28,16 +28,6 @@ type VehicleJourneyLocation = {
   datetime: string | number;
 };
 
-// type Stop = {
-//   properties: {
-//     name: string;
-//     atco_code: string;
-//   };
-//   geometry: {
-//     coordinates: [number, number];
-//   };
-// };
-
 export type StopTime = {
   atco_code: string;
   name: string;
@@ -174,14 +164,36 @@ export const JourneyStops = React.memo(function Stops({
   const darkMode =
     theme === "alidade_smooth_dark" || theme === "alidade_satellite";
 
-  const stopsById = React.useMemo<{ [url: string]: Stop } | undefined>(() => {
-    return Object.assign(
-      {},
-      ...stops.map((stop) => ({ [stop.atco_code]: stop })),
-    );
+  const features = React.useMemo(() => {
+    return stops
+      .filter((s) => s.coordinates)
+      .map((s) => {
+        return {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: s.coordinates,
+          },
+          properties: {
+            url: `/stops/${s.atco_code}`,
+            name: s.name,
+            heading: s.heading,
+          },
+        };
+      });
   }, [stops]);
 
-  const clickedStop = stopsById && clickedStopUrl && stopsById[clickedStopUrl];
+  const featuresByUrl = React.useMemo<
+    { [url: string]: Stop } | undefined
+  >(() => {
+    return Object.assign(
+      {},
+      ...features.map((stop) => ({ [stop.properties.url]: stop })),
+    );
+  }, [features]);
+
+  const clickedStop =
+    featuresByUrl && clickedStopUrl && featuresByUrl[clickedStopUrl];
 
   return (
     <React.Fragment>
@@ -189,26 +201,7 @@ export const JourneyStops = React.memo(function Stops({
         type="geojson"
         data={{
           type: "FeatureCollection",
-          features: stops
-            .filter((s) => s.coordinates)
-            .map((s) => {
-              return {
-                type: "Feature",
-                geometry: {
-                  type: "Point",
-                  coordinates: s.coordinates,
-                },
-                properties: {
-                  url: `/stops/${s.atco_code}`,
-                  name: s.name,
-                  // minor: s.minor,
-                  heading: s.heading,
-                  // aimed_arrival_time: s.aimed_arrival_time,
-                  // aimed_departure_time: s.aimed_departure_time,
-                  // priority: s.minor ? 0 : 1, // symbol-sort-key lower number - "higher" priority
-                },
-              };
-            }),
+          features: features,
         }}
       >
         <Layer
@@ -507,10 +500,8 @@ export default function JourneyMap({
 
   const bounds = React.useMemo(() => {
     if (journey) {
-      return getBounds(
-        journey.stops || journey.locations,
-        (s: StopTime | VehicleJourneyLocation) => s.coordinates,
-      );
+      const bounds = getBounds(journey.stops, (item) => item.coordinates);
+      return getBounds(journey.locations, (item) => item.coordinates, bounds);
     }
   }, [journey]);
 
