@@ -473,16 +473,14 @@ export default function BigMap(
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
   const bounds = useMemo(() => {
-    const times = trip?.times;
-    let bounds: LngLatBounds | undefined;
-    if (times?.length) {
-      bounds = getBounds(times, (time) => time.stop.location);
+    if (trip) {
+      return getBounds(trip.times, (time) => time.stop.location);
     }
     if (journey) {
+      const bounds = getBounds(journey.stops, (item) => item.coordinates);
       // maybe extend bounds
-      bounds = getBounds(journey.locations, (item) => item.coordinates, bounds);
+      return getBounds(journey.locations, (item) => item.coordinates, bounds);
     }
-    return bounds;
   }, [trip, journey]);
 
   useEffect(() => {
@@ -578,7 +576,7 @@ export default function BigMap(
                   }
                 }
 
-                if (items.length) {
+                if (items.length || vehiclesLength.current) {
                   if (trip || journey?.vehicle_id) {
                     for (const item of items) {
                       if (
@@ -830,7 +828,7 @@ export default function BigMap(
     }
   }
 
-  if (props.mode === MapMode.Journey && !initialViewState.current) {
+  if (props.mode === MapMode.Journey && !journey) {
     return <LoadingSorry />;
   }
 
