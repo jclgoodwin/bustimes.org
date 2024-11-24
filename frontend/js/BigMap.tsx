@@ -473,27 +473,31 @@ export default function BigMap(
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
   const bounds = useMemo(() => {
+    if (props.mode === MapMode.Slippy || props.mode === MapMode.Operator) {
+      return;
+    }
     if (trip) {
       return getBounds(trip.times, (time) => time.stop.location);
     }
     if (journey) {
-      const bounds = getBounds(journey.stops, (item) => item.coordinates);
+      const _bounds = getBounds(journey.stops, (item) => item.coordinates);
       // maybe extend bounds
-      return getBounds(journey.locations, (item) => item.coordinates, bounds);
+      return getBounds(journey.locations, (item) => item.coordinates, _bounds);
     }
-  }, [trip, journey]);
+  }, [props.mode, trip, journey]);
+
+  const fitBoundsOptions = useMemo(() => {
+    if (props.mode === MapMode.Slippy || props.mode === MapMode.Operator) {
+      return {
+        padding: { top: 50, bottom: 150, left: 50, right: 50 },
+      };
+    }
+    return { padding: 50 };
+  }, [props.mode]);
 
   useEffect(() => {
-    if (bounds) {
-      if (mapRef.current) {
-        mapRef.current.fitBounds(bounds, {
-          padding: 50,
-        });
-      } else {
-        initialViewState.current = {
-          bounds: bounds,
-        };
-      }
+    if (bounds && mapRef.current) {
+      mapRef.current.fitBounds(bounds, { padding: 50 });
     }
   }, [bounds]);
 
@@ -860,7 +864,9 @@ export default function BigMap(
       )}
       <div className={className}>
         <BusTimesMap
-          initialViewState={initialViewState.current}
+          initialViewState={
+            initialViewState.current || { bounds, fitBoundsOptions }
+          }
           onMoveEnd={props.mode === MapMode.Slippy ? handleMoveEnd : undefined}
           hash={props.mode === MapMode.Slippy}
           onClick={handleMapClick}
