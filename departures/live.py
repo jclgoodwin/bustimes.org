@@ -93,12 +93,14 @@ def get_departures(stop, services, when) -> dict:
         tfl_services = [s for s in services if s.service_code[:4] == "tfl_"]
         if tfl_services:
             live_departures = TflDepartures(stop, tfl_services).get_departures()
-            services = [s for s in services if s.service_code[:4] != "tfl_"]
-            if not services:
-                return {
-                    "departures": live_departures,
-                    "today": timezone.localdate(),
-                }
+            if live_departures:
+                # non-TfL services
+                services = [s for s in services if s.service_code[:4] != "tfl_"]
+                if not services:
+                    return {
+                        "departures": live_departures,
+                        "today": timezone.localdate(),
+                    }
 
     now = timezone.localtime()
 
