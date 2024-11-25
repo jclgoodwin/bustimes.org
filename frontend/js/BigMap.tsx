@@ -710,7 +710,7 @@ export default function BigMap(
           !containsBounds(stopsHighWaterMark.current, boundsRef.current)
         ) {
           setLoadingStops(true);
-          vehiclesTimeout.current = window.setTimeout(loadStops, 200);
+          stopsTimeout.current = window.setTimeout(loadStops, 200);
         }
       }
       updateLocalStorage(_zoom, evt.target.getCenter());
