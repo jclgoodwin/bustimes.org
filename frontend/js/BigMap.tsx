@@ -681,8 +681,14 @@ export default function BigMap(
 
   const handleMoveEnd = React.useCallback(
     (evt: ViewStateChangeEvent) => {
-      clearTimeout(vehiclesTimeout.current);
-      clearTimeout(stopsTimeout.current);
+      if (vehiclesTimeout.current) {
+        clearTimeout(vehiclesTimeout.current);
+        setLoadingBuses(false);
+      }
+      if (stopsTimeout.current) {
+        clearTimeout(stopsTimeout.current);
+        setLoadingStops(false);
+      }
 
       const _bounds = evt.target.getBounds();
       const _zoom = evt.viewState.zoom;
