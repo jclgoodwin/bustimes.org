@@ -540,7 +540,8 @@ export default function BigMap(
       switch (props.mode) {
         case MapMode.Slippy:
           if (boundsRef.current) {
-            url = getBoundsQueryString(boundsRef.current);
+            _bounds = boundsRef.current;
+            url = getBoundsQueryString(_bounds);
           }
           break;
         case MapMode.Operator:
