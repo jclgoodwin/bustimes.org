@@ -572,7 +572,7 @@ export default function BigMap(
           if (journey?.service_id) {
             url = `?service=${journey?.service_id}`;
             if (journey.trip_id) {
-              url += `&trip_id=${journey.trip_id}`;
+              url += `&trip=${journey.trip_id}`;
             }
           } else if (journey?.vehicle_id) {
             url = `?id=${journey.vehicle_id}`;

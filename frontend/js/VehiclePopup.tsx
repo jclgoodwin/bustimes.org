@@ -59,7 +59,7 @@ export default function VehiclePopup({
     line_name += item.destination;
   }
 
-  if (item.journey_id && snazzyTripLink) {
+  if (item.journey_id) {
     if (!activeLink) {
       if (snazzyTripLink) {
         line_name = (
