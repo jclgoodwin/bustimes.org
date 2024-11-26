@@ -473,9 +473,6 @@ export default function BigMap(
   const initialViewState = useRef(window.INITIAL_VIEW_STATE);
 
   const bounds = useMemo(() => {
-    if (props.mode === MapMode.Slippy || props.mode === MapMode.Operator) {
-      return;
-    }
     if (trip) {
       return getBounds(trip.times, (time) => time.stop.location);
     }
@@ -484,7 +481,7 @@ export default function BigMap(
       // maybe extend bounds
       return getBounds(journey.locations, (item) => item.coordinates, _bounds);
     }
-  }, [props.mode, trip, journey]);
+  }, [trip, journey]);
 
   const fitBoundsOptions = useMemo(() => {
     if (props.mode === MapMode.Slippy || props.mode === MapMode.Operator) {
