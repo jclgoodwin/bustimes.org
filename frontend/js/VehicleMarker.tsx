@@ -1,5 +1,5 @@
-import React, { ReactElement, memo } from "react";
-import { Marker, MapLayerMouseEvent } from "react-map-gl/maplibre";
+import React, { type ReactElement, memo } from "react";
+import { type MapLayerMouseEvent, Marker } from "react-map-gl/maplibre";
 
 export function getClickedVehicleMarkerId(
   e: MapLayerMouseEvent,
@@ -19,13 +19,14 @@ export function getClickedVehicleMarkerId(
       vehicleId = target.firstChild.dataset.vehicleId;
     }
     if (vehicleId) {
-      return parseInt(vehicleId, 10);
+      return Number.parseInt(vehicleId, 10);
     }
   }
 }
 
 export type Vehicle = {
   id: number;
+  journey_id?: number;
   coordinates: [number, number];
   heading?: number;
   datetime: string;
@@ -87,8 +88,10 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
     }
   }
 
-  if (vehicle.vehicle?.livery) {
-    className += " livery-" + vehicle.vehicle.livery;
+  const liveryId = vehicle.vehicle?.livery;
+
+  if (liveryId) {
+    className += ` livery-${liveryId}`;
   } else if (background && vehicle.vehicle?.text_colour) {
     className += " white-text";
   }
@@ -99,8 +102,10 @@ function VehicleMarker({ vehicle, selected }: VehicleMarkerProps) {
 
   let marker: string | ReactElement = vehicle.service?.line_name || "";
 
-  if (vehicle.vehicle?.livery && vehicle.vehicle.livery !== 262) {
+  if (liveryId && liveryId !== 262 && liveryId !== 1502) {
+    // not London or Bee Network
     marker = (
+      // biome-ignore lint/a11y/noSvgWithoutTitle: not sure what the best title would be
       <svg
         width="24"
         height="16"

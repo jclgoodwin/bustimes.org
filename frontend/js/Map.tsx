@@ -2,26 +2,26 @@ import React, { memo, useEffect, createContext } from "react";
 import { createRoot } from "react-dom/client";
 // import { captureException } from "@sentry/react";
 
-import Map, {
+import MapGL, {
   NavigationControl,
   GeolocateControl,
   AttributionControl,
-  MapProps,
+  type MapProps,
   useControl,
   useMap,
   Popup,
-  LngLat,
-  MapLayerMouseEvent,
-  PopupEvent,
+  type LngLat,
+  type MapLayerMouseEvent,
+  type PopupEvent,
 } from "react-map-gl/maplibre";
 
-import stopMarker from "data-url:../stop-marker.png";
-import stopMarkerCircle from "data-url:../stop-marker-circle.png";
-import routeStopMarker from "data-url:../route-stop-marker.png";
-import routeStopMarkerCircle from "data-url:../route-stop-marker-circle.png";
-import routeStopMarkerDark from "data-url:../route-stop-marker-dark.png";
-import routeStopMarkerDarkCircle from "data-url:../route-stop-marker-dark-circle.png";
 import arrow from "data-url:../history-arrow.png";
+import routeStopMarkerCircle from "data-url:../route-stop-marker-circle.png";
+import routeStopMarkerDarkCircle from "data-url:../route-stop-marker-dark-circle.png";
+import routeStopMarkerDark from "data-url:../route-stop-marker-dark.png";
+import routeStopMarker from "data-url:../route-stop-marker.png";
+import stopMarkerCircle from "data-url:../stop-marker-circle.png";
+import stopMarker from "data-url:../stop-marker.png";
 import type {
   Map as MapLibreMap,
   MapStyleImageMissingEvent,
@@ -111,11 +111,11 @@ function MapChild({ onInit }: { onInit?: (map: MapLibreMap) => void }) {
         onInit(_map);
       }
 
-      const onStyleImageMissing = function (e: MapStyleImageMissingEvent) {
+      const onStyleImageMissing = (e: MapStyleImageMissingEvent) => {
         if (e.id in imagesByName) {
           const image = new Image();
           image.src = imagesByName[e.id];
-          image.onload = function () {
+          image.onload = () => {
             if (!map.hasImage(e.id)) {
               map.addImage(e.id, image, {
                 pixelRatio: 2,
@@ -200,12 +200,12 @@ export default function BusTimesMap(
   const [contextMenu, setContextMenu] = React.useState<LngLat>();
 
   const onContextMenu = (e: MapLayerMouseEvent | PopupEvent) => {
-    if ('lngLat' in e) {
+    if ("lngLat" in e) {
       setContextMenu(e.lngLat);
     } else {
       setContextMenu(undefined);
     }
-};
+  };
 
   useEffect(() => {
     document.body.classList.toggle("dark-mode", mapStyle.endsWith("_dark"));
@@ -213,7 +213,7 @@ export default function BusTimesMap(
 
   return (
     <ThemeContext.Provider value={mapStyle}>
-      <Map
+      <MapGL
         {...props}
         reuseMaps
         touchPitch={false}
@@ -225,9 +225,7 @@ export default function BusTimesMap(
         RTLTextPlugin={""}
         attributionControl={false}
         // onError={(e) => captureException(e.error)}
-
         onContextMenu={onContextMenu}
-
         // workaround for wrong react-map-gl type definitions?
         transformRequest={undefined}
         maxTileCacheSize={undefined}
@@ -238,15 +236,31 @@ export default function BusTimesMap(
           style={mapStyle}
           onChange={handleMapStyleChange}
         />
-          <AttributionControl />
+        <AttributionControl />
         <MapChild onInit={props.onMapInit} />
 
         {props.children}
-        {contextMenu ? <Popup longitude={contextMenu.lng} latitude={contextMenu.lat} onClose={onContextMenu}>
-          <a href={`https://www.openstreetmap.org/#map=15/${contextMenu.lat}/${contextMenu.lng}`} rel="noopener noreferrer">OpenStreetMap</a>
-          <a href={`https://www.google.com/maps/search/?api=1&query=${contextMenu.lat},${contextMenu.lng}`} rel="noopener noreferrer">Google Maps</a>
-        </Popup> : null}
-      </Map>
+        {contextMenu ? (
+          <Popup
+            longitude={contextMenu.lng}
+            latitude={contextMenu.lat}
+            onClose={onContextMenu}
+          >
+            <a
+              href={`https://www.openstreetmap.org/#map=15/${contextMenu.lat}/${contextMenu.lng}`}
+              rel="noopener noreferrer"
+            >
+              OpenStreetMap
+            </a>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${contextMenu.lat},${contextMenu.lng}`}
+              rel="noopener noreferrer"
+            >
+              Google Maps
+            </a>
+          </Popup>
+        ) : null}
+      </MapGL>
     </ThemeContext.Provider>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Switch } from "wouter";
 
 import BigMap, { MapMode } from "./BigMap";
-import { Trip } from "./TripTimetable";
+import type { Trip } from "./TripTimetable";
 
 const tripDataElement = document.getElementById("trip-data");
 let tripData: Trip | undefined;
@@ -16,6 +16,11 @@ export default function MapRouter() {
       <Route path="/trips/:tripId">
         {(params) => (
           <BigMap mode={MapMode.Trip} trip={tripData} tripId={params.tripId} />
+        )}
+      </Route>
+      <Route path="/journeys/:journeyId">
+        {(params) => (
+          <BigMap mode={MapMode.Journey} journeyId={params.journeyId} />
         )}
       </Route>
       <Route path="/vehicles/tfl/:reg">
