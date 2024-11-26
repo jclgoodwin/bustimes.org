@@ -350,7 +350,7 @@ function TripSidebar(props: {
     return <div className={className} />;
   }
 
-  if (trip.id && props.tripId !== trip.id?.toString()) {
+  if (props.tripId !== trip.id?.toString()) {
     className += " loading";
   }
 
@@ -411,6 +411,10 @@ function JourneySidebar(props: {
     className += " no-stops";
   }
 
+  if (props.journeyId !== journey.id?.toString()) {
+    className += " loading";
+  }
+
   return (
     <div className={className}>
       <p>{service}</p>
@@ -425,7 +429,13 @@ function JourneySidebar(props: {
           </a>
         </p>
       ) : null} */}
-      {trip ? <TripTimetable trip={trip} vehicle={props.vehicle} /> : null}
+      {trip ? (
+        <TripTimetable
+          trip={trip}
+          vehicle={props.vehicle}
+          highlightedStop={props.highlightedStop}
+        />
+      ) : null}
     </div>
   );
 }
@@ -634,6 +644,8 @@ export default function BigMap(
         loadVehicles(true);
         document.title = `${trip.service?.line_name} \u2013 ${trip.operator?.name} \u2013 bustimes.org`;
       } else {
+        setJourney(undefined);
+        setTrip(undefined);
         fetch(`${apiRoot}api/trips/${props.tripId}/`).then((response) => {
           if (response.ok) {
             response.json().then(setTrip);
@@ -641,6 +653,8 @@ export default function BigMap(
         });
       }
     } else if (props.noc) {
+      setJourney(undefined);
+      setTrip(undefined);
       // operator mode
       if (props.noc === trip?.operator?.noc) {
         document.title = `Bus tracker map \u2013 ${trip.operator.name} \u2013 bustimes.org`;
@@ -653,6 +667,8 @@ export default function BigMap(
           loadVehicles(true);
         }
       } else {
+        setJourney(undefined);
+        setTrip(undefined);
         fetch(`${apiRoot}journeys/${props.journeyId}.json`).then((response) => {
           if (response.ok) {
             response.json().then((journey: VehicleJourney) => {
@@ -662,6 +678,8 @@ export default function BigMap(
         });
       }
     } else if (!props.vehicleId) {
+      setJourney(undefined);
+      setTrip(undefined);
       // slippy mode
       document.title = "Map \u2013 bustimes.org";
     } else {
@@ -847,7 +865,7 @@ export default function BigMap(
     }
   }
 
-  if (props.mode === MapMode.Journey && !journey) {
+  if (props.mode === MapMode.Journey && !journey && !mapRef.current) {
     return <LoadingSorry />;
   }
 
@@ -883,6 +901,39 @@ export default function BigMap(
           onMapInit={handleMapInit}
           interactiveLayerIds={["stops", "vehicles", "locations"]}
         >
+          {/* bounds on the map for debugging */}
+          {bounds ? (
+            <Source
+              type="geojson"
+              data={{
+                type: "Feature",
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [
+                    [
+                      [bounds.getWest(), bounds.getNorth()],
+                      [bounds.getEast(), bounds.getNorth()],
+                      [bounds.getEast(), bounds.getSouth()],
+                      [bounds.getWest(), bounds.getSouth()],
+                      [bounds.getWest(), bounds.getNorth()],
+                    ],
+                  ],
+                },
+              }}
+            >
+              <Layer
+                {...{
+                  id: "bounds",
+                  type: "line",
+                  paint: {
+                    "line-color": "#000",
+                    "line-width": 2,
+                  },
+                }}
+              />
+            </Source>
+          ) : null}
+
           {props.mode === MapMode.Trip && trip ? (
             <Route times={trip.times} />
           ) : null}
@@ -895,7 +946,7 @@ export default function BigMap(
             />
           ) : null}
 
-          {props.mode === MapMode.Slippy ? <SlippyMapHash /> : null}
+          {/* props.mode === MapMode.Slippy ? <SlippyMapHash /> : null */}
 
           {trip || (stops && showStops) ? (
             <Stops
