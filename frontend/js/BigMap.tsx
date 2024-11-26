@@ -238,6 +238,7 @@ function fetchJson(url: string) {
 type VehiclesProps = {
   vehicles: VehicleLocation[];
   tripId?: string;
+  journeyId?: string;
   clickedVehicleMarkerId?: number;
   setClickedVehicleMarker: (vehicleId?: number) => void;
 };
@@ -245,6 +246,7 @@ type VehiclesProps = {
 const Vehicles = memo(function Vehicles({
   vehicles,
   tripId,
+  journeyId,
   clickedVehicleMarkerId,
   setClickedVehicleMarker,
 }: VehiclesProps) {
@@ -293,7 +295,8 @@ const Vehicles = memo(function Vehicles({
           key={item.id}
           selected={
             item === clickedVehicle ||
-            (tripId && item.trip_id?.toString() === tripId) ||
+            (tripId && tripId === item.trip_id?.toString()) ||
+            (journeyId && journeyId === item.journey_id?.toString()) ||
             false
           }
           vehicle={item}
@@ -323,7 +326,11 @@ const Vehicles = memo(function Vehicles({
         <VehiclePopup
           item={clickedVehicle}
           activeLink={
-            tripId ? clickedVehicle.trip_id?.toString() === tripId : false
+            tripId
+              ? clickedVehicle.trip_id?.toString() === tripId
+              : journeyId
+                ? clickedVehicle.journey_id?.toString() === journeyId
+                : false
           }
           onClose={() => setClickedVehicleMarker()}
           snazzyTripLink
@@ -562,7 +569,12 @@ export default function BigMap(
           }
           break;
         case MapMode.Journey:
-          if (journey?.vehicle_id) {
+          if (journey?.service_id) {
+            url = `?service=${journey?.service_id}`;
+            if (journey.trip_id) {
+              url += `&trip_id=${journey.trip_id}`;
+            }
+          } else if (journey?.vehicle_id) {
             url = `?id=${journey.vehicle_id}`;
           }
           break;
@@ -634,7 +646,7 @@ export default function BigMap(
           // setLoadingBuses(false);
         });
     },
-    [props.mode, props.noc, trip, journey?.vehicle_id, props.vehicleId],
+    [props.mode, props.noc, trip, journey, props.vehicleId],
   );
 
   React.useEffect(() => {
@@ -902,7 +914,7 @@ export default function BigMap(
           interactiveLayerIds={["stops", "vehicles", "locations"]}
         >
           {/* bounds on the map for debugging */}
-          {bounds ? (
+          {/* bounds ? (
             <Source
               type="geojson"
               data={{
@@ -932,7 +944,7 @@ export default function BigMap(
                 }}
               />
             </Source>
-          ) : null}
+          ) : null*/}
 
           {props.mode === MapMode.Trip && trip ? (
             <Route times={trip.times} />
@@ -961,6 +973,7 @@ export default function BigMap(
             <Vehicles
               vehicles={vehicles}
               tripId={props.tripId}
+              journeyId={props.journeyId}
               clickedVehicleMarkerId={clickedVehicleMarkerId}
               setClickedVehicleMarker={setClickedVehicleMarker}
             />
@@ -981,7 +994,7 @@ export default function BigMap(
             </div>
           ) : null}
 
-          {props.mode === MapMode.Journey && journey && (
+          {props.mode === MapMode.Journey && journey?.locations && (
             <Locations locations={journey.locations} />
           )}
         </BusTimesMap>

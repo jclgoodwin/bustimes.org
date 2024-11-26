@@ -50,7 +50,7 @@ export type VehicleJourney = {
   destination: string;
   direction: string;
   stops?: StopTime[];
-  locations: VehicleJourneyLocation[];
+  locations?: VehicleJourneyLocation[];
   vehicle?: string;
   current: boolean;
   next: {
