@@ -596,7 +596,7 @@ def journeys_list(request, journeys, service=None, vehicle=None) -> dict:
             pass
         else:
             for journey, location in zip(journeys, locations):
-                journey.locations = location
+                journey.locations = bool(location)
 
     # "Track this bus" button
     if vehicle and vehicle.latest_journey_id:
