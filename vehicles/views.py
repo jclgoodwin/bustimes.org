@@ -1,4 +1,5 @@
 import datetime
+from http import HTTPStatus
 import json
 import logging
 from itertools import pairwise
@@ -488,13 +489,11 @@ def vehicles_json(request) -> JsonResponse:
     if journeys_to_cache_later:
         cache.set_many(journeys_to_cache_later, 3600)  # an hour
 
-    return respond_conditionally(
-        request,
-        JsonResponse(
-            locations,
-            safe=False,
-        ),
-    )
+    response = JsonResponse(locations, safe=False)
+    if not locations:
+        response.status_code = HTTPStatus.NOT_FOUND
+
+    return respond_conditionally(request, response)
 
 
 def get_dates(vehicle=None, service=None):
