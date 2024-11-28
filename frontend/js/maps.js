@@ -1,33 +1,36 @@
 import L from "leaflet";
 
-const tiles =
+var tiles =
   "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png";
-const attribution =
+var attribution =
   '<a href="https://stadiamaps.com/">© Stadia Maps</a> <a href="https://openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/about/">© OpenStreetMap contributors</a>';
 
 export function getTransform(heading, scale) {
   if (heading === null && !scale) {
     return "";
   }
-  let transform = "transform:";
+  var transform = "transform:";
   if (heading !== null) {
-    transform += ` rotate(${heading}deg)`;
+    transform += " rotate(" + heading + "deg)";
   }
   if (scale) {
     transform += " scale(1.5)";
   }
-  return `-webkit-${transform};${transform};`;
+  return "-webkit-" + transform + ";" + transform + ";";
 }
 
 export function getBusIcon(item, active) {
-  let className = "bus";
+  var className = "bus";
   if (active) {
     className += " selected";
   }
-  let heading = item.heading;
+  var heading = item.heading;
   if (heading !== null) {
-    heading = Number.parseInt(heading, 10);
-    const arrow = `<div class="arrow" style="${getTransform(heading + 90, active)}"></div>`;
+    heading = parseInt(heading, 10);
+    var arrow =
+      '<div class="arrow" style="' +
+      getTransform(heading + 90, active) +
+      '"></div>';
     if (heading < 180) {
       className += " right";
       heading -= 90;
@@ -35,32 +38,32 @@ export function getBusIcon(item, active) {
       heading -= 270;
     }
   }
-  let style = getTransform(heading, active);
+  var style = getTransform(heading, active);
 
   if (item.vehicle) {
     if (item.vehicle.livery) {
-      className += ` livery-${item.vehicle.livery}`;
+      className += " livery-" + item.vehicle.livery;
     } else if (item.vehicle.css) {
-      style += `background:${item.vehicle.css}`;
+      style += "background:" + item.vehicle.css;
       if (item.vehicle.text_colour) {
         className += " white-text";
       }
     }
   }
 
-  const svg = document.createElement("svg");
+  var svg = document.createElement("svg");
   svg.setAttribute("width", 24);
   svg.setAttribute("height", 16);
   svg.className = className;
   svg.style = style;
   if (item.service) {
-    const text = document.createElement("text");
+    var text = document.createElement("text");
     text.setAttribute("x", "50%");
     text.setAttribute("y", "80%");
     text.innerHTML = item.service.line_name;
     svg.appendChild(text);
   }
-  let html = svg.outerHTML;
+  var html = svg.outerHTML;
 
   if (arrow) {
     html += arrow;
@@ -72,35 +75,36 @@ export function getBusIcon(item, active) {
   });
 }
 
-let timestampTimeout;
+var timestampTimeout;
 
 function getTimeDelta(seconds) {
-  const minutes = Math.round(seconds / 60);
+  var minutes = Math.round(seconds / 60);
   if (minutes === 1) {
     return "1 minute";
   }
-  return `${minutes} minutes`;
+  return minutes + " minutes";
 }
 
-let popupContent; // cache popup content without ' ago' at the end
+var popupContent; // cache popup content without ' ago' at the end
 
 function getPopupContent(item) {
   if (item.service) {
-    let content = item.service.line_name;
+    var content = item.service.line_name;
     if (item.destination) {
-      content += ` to ${item.destination}`;
+      content += " to " + item.destination;
     }
     if (item.tfl_code) {
-      content = `<a href="/vehicles/tfl/${item.tfl_code}">${content}</a>`;
+      content =
+        '<a href="/vehicles/tfl/' + item.tfl_code + '">' + content + "</a>";
     } else if (item.trip_id) {
       if (item.trip_id !== window.TRIP_ID) {
-        content = `<a href="/trips/${item.trip_id}">${content}</a>`;
+        content = '<a href="/trips/' + item.trip_id + '">' + content + "</a>";
       }
     } else if (
       item.service.url &&
       item.service.url !== window.location.pathname
     ) {
-      content = `<a href="${item.service.url}">${content}</a>`;
+      content = '<a href="' + item.service.url + '">' + content + "</a>";
     }
   } else {
     content = "";
@@ -108,25 +112,36 @@ function getPopupContent(item) {
 
   if (item.vehicle) {
     if (item.vehicle.url) {
-      content += `<div class="vehicle"><a href="${item.vehicle.url}">${item.vehicle.name}</a></div>`;
+      content +=
+        '<div class="vehicle"><a href="' +
+        item.vehicle.url +
+        '">' +
+        item.vehicle.name +
+        "</a></div>";
 
       if (item.vehicle.features) {
-        content += `<div class="features">${item.vehicle.features}</div>`;
+        content += '<div class="features">' + item.vehicle.features + "</div>";
       }
     } else if (item.vehicle.name) {
-      content += `<div class="operator">${item.vehicle.name}</div>`;
+      content += '<div class="operator">' + item.vehicle.name + "</div>";
     }
   }
 
   if (item.seats) {
-    content += `<div class="occupancy"><img src="/static/svg/seat.svg" width="14" height="14" alt="seats"> ${item.seats}</div>`;
+    content +=
+      '<div class="occupancy"><img src="/static/svg/seat.svg" width="14" height="14" alt="seats"> ' +
+      item.seats +
+      "</div>";
   }
   if (item.wheelchair) {
-    content += `<div class="occupancy"><img src="/static/svg/wheelchair.svg" width="14" height="14" alt="wheelchair space"> ${item.wheelchair}</div>`;
+    content +=
+      '<div class="occupancy"><img src="/static/svg/wheelchair.svg" width="14" height="14" alt="wheelchair space"> ' +
+      item.wheelchair +
+      "</div>";
   }
 
   if (typeof item.delay !== "undefined") {
-    let delay = item.delay;
+    var delay = item.delay;
     if (-60 < delay && delay < 60) {
       delay = "On time";
     } else {
@@ -140,7 +155,7 @@ function getPopupContent(item) {
         delay += " late";
       }
     }
-    content += `<div>${delay}</div>`;
+    content += "<div>" + delay + "</div>";
   }
 
   popupContent = content;
@@ -149,32 +164,38 @@ function getPopupContent(item) {
 }
 
 function getTimestamp(datetime) {
-  const now = new Date();
-  const then = new Date(datetime);
-  const ago = Math.round((now.getTime() - then.getTime()) / 1000);
+  var now = new Date();
+  var then = new Date(datetime);
+  var ago = Math.round((now.getTime() - then.getTime()) / 1000);
 
   if (ago >= 1800) {
-    return `Updated at ${then.toTimeString().slice(0, 8)}`;
-  }
-  let content = `<time datetime="${datetime}" title="${then.toTimeString().slice(0, 8)}">`;
-  if (ago >= 59) {
-    content += getTimeDelta(ago);
-    timestampTimeout = setTimeout(updateTimestamp, (61 - (ago % 60)) * 1000);
+    return "Updated at " + then.toTimeString().slice(0, 8);
   } else {
-    if (ago === 1) {
-      content += "1 second";
+    var content =
+      '<time datetime="' +
+      datetime +
+      '" title="' +
+      then.toTimeString().slice(0, 8) +
+      '">';
+    if (ago >= 59) {
+      content += getTimeDelta(ago);
+      timestampTimeout = setTimeout(updateTimestamp, (61 - (ago % 60)) * 1000);
     } else {
-      content += `${ago} seconds`;
+      if (ago === 1) {
+        content += "1 second";
+      } else {
+        content += ago + " seconds";
+      }
+      timestampTimeout = setTimeout(updateTimestamp, 1000);
     }
-    timestampTimeout = setTimeout(updateTimestamp, 1000);
+    return content + " ago</time>";
   }
-  return `${content} ago</time>`;
 }
 
 function updateTimestamp() {
-  const marker = window.bustimes.vehicleMarkers[window.bustimes.clickedMarker];
+  var marker = window.bustimes.vehicleMarkers[window.bustimes.clickedMarker];
   if (marker) {
-    const item = marker.options.item;
+    var item = marker.options.item;
     marker.getPopup().setContent(popupContent + getTimestamp(item.datetime));
   }
 }
@@ -183,9 +204,9 @@ export function updatePopupContent() {
   if (timestampTimeout) {
     clearTimeout(timestampTimeout);
   }
-  const marker = window.bustimes.vehicleMarkers[window.bustimes.clickedMarker];
+  var marker = window.bustimes.vehicleMarkers[window.bustimes.clickedMarker];
   if (marker) {
-    const item = marker.options.item;
+    var item = marker.options.item;
     marker
       .getPopup()
       .setContent(getPopupContent(item) + getTimestamp(item.datetime));
@@ -193,8 +214,8 @@ export function updatePopupContent() {
 }
 
 function handlePopupOpen(event) {
-  const marker = event.target;
-  const item = marker.options.item;
+  var marker = event.target;
+  var item = marker.options.item;
 
   window.bustimes.clickedMarker = item.id;
   updatePopupContent();
@@ -213,13 +234,13 @@ function handlePopupClose(event) {
 }
 
 function handleVehicle(item) {
-  const isClickedMarker = item.id === window.bustimes.clickedMarker;
-  const icon = getBusIcon(item, isClickedMarker);
-  const latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
+  var isClickedMarker = item.id === window.bustimes.clickedMarker,
+    icon = getBusIcon(item, isClickedMarker),
+    latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
 
   if (item.id in window.bustimes.vehicleMarkers) {
     // update existing
-    const marker = window.bustimes.vehicleMarkers[item.id];
+    var marker = window.bustimes.vehicleMarkers[item.id];
     if (marker.options.item.datetime !== item.datetime) {
       marker.setLatLng(latLng);
       marker.setIcon(icon);
@@ -244,9 +265,9 @@ function handleVehicle(item) {
 }
 
 export function handleVehicles(items) {
-  const newMarkers = {};
-  for (let i = items.length - 1; i >= 0; i--) {
-    const item = items[i];
+  var newMarkers = {};
+  for (var i = items.length - 1; i >= 0; i--) {
+    var item = items[i];
     newMarkers[item.id] = handleVehicle(item);
   }
   // remove old markers

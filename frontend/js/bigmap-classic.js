@@ -5,8 +5,8 @@ import L from "leaflet"; // Import L from leaflet to start using the plugin
 import {
   doTileLayer,
   getBusIcon,
-  getTransform,
   updatePopupContent,
+  getTransform,
 } from "./maps.js";
 
 import "./bigmap-classic.css";
@@ -15,18 +15,18 @@ import debounce from "lodash/debounce";
 
 /* global reqwest, bustimes, INITIAL_VIEW_STATE */
 
-const map = L.map("hugemap", {
-  worldCopyJump: true,
-  tap: false,
-  minZoom: 6,
-  maxBounds: [
-    [48, -12],
-    [62, 3],
-  ],
-});
-const stopsGroup = L.layerGroup();
-const vehiclesGroup = L.layerGroup();
-let clickedTrip;
+var map = L.map("hugemap", {
+    worldCopyJump: true,
+    tap: false,
+    minZoom: 6,
+    maxBounds: [
+      [48, -12],
+      [62, 3],
+    ],
+  }),
+  stopsGroup = L.layerGroup(),
+  vehiclesGroup = L.layerGroup(),
+  clickedTrip;
 
 doTileLayer(map);
 
@@ -44,14 +44,14 @@ L.control
   )
   .addTo(map);
 
-let lastStopsReq;
-let stopsHighWater;
-let showStops = true;
-let bigStopMarkers;
-let bigVehicleMarkers = true;
+var lastStopsReq,
+  stopsHighWater,
+  showStops = true,
+  bigStopMarkers,
+  bigVehicleMarkers = true;
 
 if (document.referrer && document.referrer.indexOf("/stops/") > -1) {
-  let clickedStopMarker = `/stops/${document.referrer.split("/stops/")[1]}`;
+  var clickedStopMarker = "/stops/" + document.referrer.split("/stops/")[1];
   clickedStopMarker = clickedStopMarker.split("?")[0];
 } else {
   try {
@@ -64,7 +64,7 @@ if (document.referrer && document.referrer.indexOf("/stops/") > -1) {
 }
 
 stopsGroup
-  .on("add", () => {
+  .on("add", function () {
     if (map.getZoom() < 13) {
       map.setZoom(13); // loadStops will be called by moveend handler
     } else if (!showStops) {
@@ -77,7 +77,7 @@ stopsGroup
       // ok
     }
   })
-  .on("remove", () => {
+  .on("remove", function () {
     if (showStops) {
       // box was unchecked (not just a zoom out)
       showStops = false;
@@ -91,7 +91,7 @@ stopsGroup
 
 vehiclesGroup.addTo(map);
 
-const railIcon = L.divIcon({
+var railIcon = L.divIcon({
   iconSize: [18, 18],
   html: '<div class="rail"><svg xmlns="http://www.w3.org/2000/svg" width="12.4" height="7.8" viewBox="0 0 62 39"><g stroke="#fff" fill="none"><path d="M1,-8.9 46,12.4 16,26.6 61,47.9" stroke-width="6"/><path d="M0,12.4H62m0,14.2H0" stroke-width="6.4"/></g></svg></div>',
   popupAnchor: [0, -4],
@@ -106,10 +106,13 @@ function getStopIcon(properties) {
     return railIcon;
   }
 
-  let html = properties.icon || "";
-  const className = `stop stop-${html.length}`;
+  var html = properties.icon || "";
+  var className = "stop stop-" + html.length;
   if (properties.bearing !== null) {
-    html += `<div class="stop-arrow" style="${getTransform(properties.bearing + 45)}"></div>`;
+    html +=
+      '<div class="stop-arrow" style="' +
+      getTransform(properties.bearing + 45) +
+      '"></div>';
   } else {
     html += '<div class="stop-arrow no-direction"></div>';
   }
@@ -121,15 +124,15 @@ function getStopIcon(properties) {
   });
 }
 
-let stops = {};
+var stops = {};
 
 function handleStop(data) {
-  const latLng = L.latLng(
+  var latLng = L.latLng(
     data.geometry.coordinates[1],
     data.geometry.coordinates[0],
   );
   if (bigStopMarkers || data.properties.stop_type === "RLY") {
-    const marker = L.marker(
+    var marker = L.marker(
       L.latLng(data.geometry.coordinates[1], data.geometry.coordinates[0]),
       {
         icon: getStopIcon(data.properties),
@@ -145,12 +148,13 @@ function handleStop(data) {
       url: data.properties.url,
     });
   }
-  const a = document.createElement("a");
+  var a = document.createElement("a");
   a.className = "has-smalls";
 
-  a.innerHTML = `<span>${data.properties.name}</span>`;
+  a.innerHTML = "<span>" + data.properties.name + "</span>";
   if (data.properties.services) {
-    a.innerHTML += `<small>${data.properties.services.join("</small><small>")}</small>`;
+    a.innerHTML +=
+      "<small>" + data.properties.services.join("</small><small>") + "</small>";
   }
   a.href = data.properties.url;
 
@@ -166,7 +170,7 @@ function handleStop(data) {
 }
 
 function handleStopPopupOpen(event) {
-  const marker = event.target;
+  var marker = event.target;
   clickedStopMarker = marker.options.url;
 }
 
@@ -180,26 +184,34 @@ function loadStops() {
   if (lastStopsReq) {
     lastStopsReq.abort();
   }
-  const bounds = map.getBounds();
+  var bounds = map.getBounds();
   bigStopMarkers = map.getZoom() > 14;
-  if (stopsHighWater?.contains(bounds)) {
+  if (stopsHighWater && stopsHighWater.contains(bounds)) {
     if (!bigStopMarkers) {
       return;
     }
   }
-  const params = `?ymax=${round(bounds.getNorth())}&xmax=${round(bounds.getEast())}&ymin=${round(bounds.getSouth())}&xmin=${round(bounds.getWest())}`;
+  var params =
+    "?ymax=" +
+    round(bounds.getNorth()) +
+    "&xmax=" +
+    round(bounds.getEast()) +
+    "&ymin=" +
+    round(bounds.getSouth()) +
+    "&xmin=" +
+    round(bounds.getWest());
   lastStopsReq = reqwest({
-    url: `/stops.json${params}`,
-    success: (data) => {
-      if (data?.features) {
+    url: "/stops.json" + params,
+    success: function (data) {
+      if (data && data.features) {
         stopsHighWater = bounds;
         stopsGroup.clearLayers();
         stops = {};
-        for (let i = data.features.length - 1; i >= 0; i -= 1) {
+        for (var i = data.features.length - 1; i >= 0; i -= 1) {
           handleStop(data.features[i]);
         }
         if (clickedStopMarker) {
-          const stop = stops[clickedStopMarker];
+          var stop = stops[clickedStopMarker];
           if (stop) {
             stop.openPopup();
           }
@@ -209,12 +221,10 @@ function loadStops() {
   });
 }
 
-let lastVehiclesReq;
-let loadVehiclesTimeout;
-let vehiclesHighWater;
+var lastVehiclesReq, loadVehiclesTimeout, vehiclesHighWater;
 
 function loadVehicles(onMoveEnd) {
-  const bounds = map.getBounds();
+  var bounds = map.getBounds();
   if (
     onMoveEnd &&
     vehiclesHighWater &&
@@ -230,42 +240,50 @@ function loadVehicles(onMoveEnd) {
   if (loadVehiclesTimeout) {
     clearTimeout(loadVehiclesTimeout);
   }
-  let params = window.location.search;
+  var params = window.location.search;
   if (params) {
     params += "&";
   } else {
     params = "?";
   }
-  params += `ymax=${round(bounds.getNorth())}&xmax=${round(bounds.getEast())}&ymin=${round(bounds.getSouth())}&xmin=${round(bounds.getWest())}`;
+  params +=
+    "ymax=" +
+    round(bounds.getNorth()) +
+    "&xmax=" +
+    round(bounds.getEast()) +
+    "&ymin=" +
+    round(bounds.getSouth()) +
+    "&xmin=" +
+    round(bounds.getWest());
   if (clickedTrip) {
-    params += `&trip=${clickedTrip}`;
+    params += "&trip=" + clickedTrip;
   }
   lastVehiclesReq = reqwest({
-    url: `https://bustimes.org/vehicles.json${params}`,
+    url: "https://bustimes.org/vehicles.json" + params,
     crossOrigin: true,
-    success: (data) => {
+    success: function (data) {
       if (data) {
         vehiclesHighWater = bounds;
         processVehiclesData(data);
       }
       loadVehiclesTimeout = setTimeout(loadVehicles, 15000);
     },
-    error: () => {
+    error: function () {
       loadVehiclesTimeout = setTimeout(loadVehicles, 15000);
     },
   });
 }
 
 function processVehiclesData(data) {
-  const newMarkers = {};
-  const wasZoomedIn = bigVehicleMarkers;
+  var newMarkers = {};
+  var wasZoomedIn = bigVehicleMarkers;
   bigVehicleMarkers = map.getZoom() > 12 || data.length < 500;
   if (bigVehicleMarkers !== wasZoomedIn) {
     vehiclesGroup.clearLayers();
     bustimes.vehicleMarkers = {};
   }
-  for (let i = data.length - 1; i >= 0; i--) {
-    const item = data[i];
+  for (var i = data.length - 1; i >= 0; i--) {
+    var item = data[i];
     newMarkers[item.id] = processVehicle(item);
   }
   // remove old markers
@@ -279,7 +297,7 @@ function processVehiclesData(data) {
 
 function getVehicleMarker(latLng, item, isClickedMarker) {
   if (bigVehicleMarkers) {
-    const marker = L.marker(latLng, {
+    var marker = L.marker(latLng, {
       icon: getBusIcon(item, isClickedMarker),
       zIndexOffset: 1000,
     });
@@ -303,10 +321,10 @@ function getVehicleMarker(latLng, item, isClickedMarker) {
 
 // like handleVehicle in 'maps.js' but with support for varying marker size based on zoom level
 function processVehicle(item) {
-  const isClickedMarker = item.id === bustimes.clickedMarker;
-  const latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
+  var isClickedMarker = item.id === bustimes.clickedMarker;
+  var latLng = L.latLng(item.coordinates[1], item.coordinates[0]);
   if (item.id in bustimes.vehicleMarkers) {
-    const marker = bustimes.vehicleMarkers[item.id]; // existing marker
+    var marker = bustimes.vehicleMarkers[item.id]; // existing marker
     if (bigVehicleMarkers) {
       marker.setIcon(getBusIcon(item, isClickedMarker));
     }
@@ -324,8 +342,8 @@ function processVehicle(item) {
 }
 
 function handlePopupOpen(event) {
-  const marker = event.target;
-  const item = marker.options.item;
+  var marker = event.target;
+  var item = marker.options.item;
 
   bustimes.clickedMarker = item.id;
   clickedTrip = item.trip_id;
@@ -356,12 +374,12 @@ function round(number) {
 
 // update window location hash
 function updateLocation() {
-  const latLng = map.getCenter();
-  const string = `${map.getZoom()}/${round(latLng.lat)}/${round(latLng.lng)}`;
+  var latLng = map.getCenter(),
+    string = map.getZoom() + "/" + round(latLng.lat) + "/" + round(latLng.lng);
 
   if (window.history.replaceState) {
     try {
-      window.history.replaceState(null, null, `#${string}`);
+      window.history.replaceState(null, null, "#" + string);
     } catch (e) {
       // probably SecurityError (document is not fully active)
     }
@@ -373,11 +391,11 @@ function updateLocation() {
   }
 }
 
-const mapContainer = map.getContainer();
+var mapContainer = map.getContainer();
 
 map.on(
   "moveend",
-  debounce(() => {
+  debounce(function () {
     loadVehicles(true);
 
     if (map.getZoom() < 13) {
@@ -403,7 +421,7 @@ map.on(
   }, 500),
 );
 
-let parts;
+var parts;
 if (window.location.hash) {
   parts = window.location.hash.substring(1).split("/");
 } else {

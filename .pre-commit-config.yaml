@@ -32,4 +32,5 @@ repos:
         additional_dependencies:
           - '@biomejs/biome@1.9.4'
         files: frontend
+        exclude: frontend/*.js
         args: ['--unsafe']
