@@ -74,7 +74,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      726 |        2 |     99% | 1063-1066 |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
-| bustimes/models.py                                              |      318 |        7 |     98% |92, 182, 339, 342, 371, 408, 442 |
+| bustimes/models.py                                              |      318 |        6 |     98% |92, 339, 342, 371, 408, 442 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      638 |       48 |     92% |62, 102-115, 144, 241-242, 259, 327-330, 342, 355-360, 406, 413, 481, 484, 500-503, 530, 639-654, 740-741, 812, 958-960 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -151,7 +151,7 @@
 | vehicles/tests.py                                               |      441 |        0 |    100% |           |
 | vehicles/time\_aware\_polyline.py                               |       56 |       48 |     14% |11, 18, 25, 36, 48-75, 79, 87-98, 106-120 |
 | vehicles/urls.py                                                |        4 |        0 |    100% |           |
-| vehicles/utils.py                                               |      126 |        3 |     98% |41-42, 170 |
+| vehicles/utils.py                                               |      128 |        4 |     97% |41-42, 155, 172 |
 | vehicles/views.py                                               |      617 |       69 |     89% |343-344, 395, 422, 437-438, 457-458, 484-485, 510-515, 520-521, 552, 570-571, 573, 578, 594-595, 613-634, 714-715, 722, 736, 840, 842, 844, 849, 898-906, 923-929, 946-947, 988, 1044, 1047-1048, 1058, 1074-1079, 1119-1120, 1166, 1221-1260 |
 | vosa/\_\_init\_\_.py                                            |        0 |        0 |    100% |           |
 | vosa/admin.py                                                   |       36 |        0 |    100% |           |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15756** | **1052** | **93%** |           |
+|                                                       **TOTAL** | **15758** | **1052** | **93%** |           |
 
 
 ## Setup coverage badge
