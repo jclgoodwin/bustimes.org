@@ -151,8 +151,10 @@ def apply_revision(revision, features=None):
 
         elif field == "fleet number":
             vehicle.fleet_code = to_value
-            if vehicle.fleet_code.isdigit():
-                vehicle.fleet_number = int(vehicle.fleet_code)
+            if "/" in to_value:
+                to_value = to_value.split("/", 1)[1]
+            if to_value.isdigit():
+                vehicle.fleet_number = int(to_value)
             else:
                 vehicle.fleet_number = None
             changed_fields.append("fleet_number")
