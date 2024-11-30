@@ -42,7 +42,7 @@
                     timetableWrapper.innerHTML = response;
                     doStuff();
                     search = newSearch;
-                    history.pushState(null, null, newSearch);
+                    history.pushState(null, "", newSearch);
                 });
             };
         }

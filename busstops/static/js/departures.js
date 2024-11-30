@@ -46,9 +46,9 @@
 
                     if (window.location.search !== newSearch) {
                         if (newSearch) {
-                            history.pushState(null, null, newSearch);
+                            history.pushState(null, "", newSearch);
                         } else {
-                            history.pushState(null, null, '/stops/' + STOP_CODE);
+                            history.pushState(null, "", '/stops/' + STOP_CODE);
                         }
                     }
                 });
