@@ -59,8 +59,6 @@ SBDR:
   phone: 01525 220044
 PCLT:
   name: Rural Link
-MBGD:
-  url: https://uk.megabus.com
 MEGA:
   url: https://uk.megabus.com
 NSLA:
@@ -81,8 +79,6 @@ CNTY:
   name: Country Bus (Newton Abbot)
 MULB:
   url: http://www.mullanyscoaches.com
-TAFV:
-  url: http://tafvalleycoaches.co.uk
 HOGG:
   url: https://roadhoggs.co.uk/timetables/
 JTMT:
@@ -137,8 +133,6 @@ TPEN:
   url: https://www.transdevbus.co.uk/team-pennine/
 HRGT:
   url: https://www.transdevbus.co.uk/the-harrogate-bus-company/
-KDTR:
-  url: https://www.transdevbus.co.uk/the-keighley-bus-company/
 LNUD:
   url: https://www.transdevbus.co.uk/the-blackburn-bus-company/
 BPTR:
@@ -152,9 +146,6 @@ FECS:
     First_Excel
 GECL:
   twitter: GallowayLive
-ECLN:
-  url: https://edinburghcoachlines.com/service-13-2/
-  twitter: ECLTravel
 TOTN:
   name: Totnes Community Bus
 SWDC:
@@ -271,8 +262,6 @@ LNGS:
   url: https://www.lylescoaches.co.uk/
 YSTN:
   url: https://www.stationcoaches.co.uk/
-SPMW:
-  url: https://www.stringerscoaches.co.uk/
 UNOE:
   twitter: UnoHerts
 FCWL:
@@ -323,13 +312,9 @@ BNFM:
   name: Bee Network - First Manchester
 BNML:
   name: Bee Network - Metroline
-FTZL:
-  url: http://www.filers.co.uk/bus/
 AJTX:
   url: http://taxi-one.co.uk/
   twitter: AnthonyMullane
-TLYH:
-  url: https://www.tallyhoholidays.co.uk/Service-details
 HRBT:
   url: https://www.herbertstravel.co.uk/
 COEV:
