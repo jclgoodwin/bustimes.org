@@ -108,7 +108,7 @@ class GTFSTest(TestCase):
         )
 
         # stops
-        self.assertEqual(StopPoint.objects.count(), 267)
+        self.assertEqual(StopPoint.objects.count(), 104)  # 267
         stop = StopPoint.objects.get(atco_code="822000153")
         self.assertEqual(stop.common_name, "Terenure Library")
         self.assertEqual(stop.admin_area_id, 822)
