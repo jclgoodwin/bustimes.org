@@ -165,13 +165,13 @@ class Command(BaseCommand):
     def handle_zipfile(self, path):
         feed = gtfs_kit.read_feed(path, dist_units="km")
 
-        # exclude Dublin Express routes (they are in the NCSD dataset instead)
-        excluded_agencies = feed.agency[
-            feed.agency.agency_name == "Dublin Express"
-        ].agency_id
-        feed = feed.restrict_to_routes(
-            feed.routes[~feed.routes.agency_id.isin(excluded_agencies)].route_id
-        )
+        # # exclude Dublin Express routes (they are in the NCSD dataset instead)
+        # excluded_agencies = feed.agency[
+        #     feed.agency.agency_name == "Dublin Express"
+        # ].agency_id
+        # feed = feed.restrict_to_routes(
+        #     feed.routes[~feed.routes.agency_id.isin(excluded_agencies)].route_id
+        # )
 
         self.operators = {}
         self.routes = {}
