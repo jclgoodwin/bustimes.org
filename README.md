@@ -58,8 +58,8 @@
 | bustimes/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | bustimes/management/commands/import\_atco\_cif.py               |      235 |       25 |     89% |28-35, 40, 43-44, 66, 193, 195, 198, 200, 208, 214, 278, 311-316, 356-357, 424 |
 | bustimes/management/commands/import\_bod\_timetables.py         |      274 |       28 |     90% |48, 99, 103, 107-115, 120, 125-126, 146, 175, 185, 196, 264, 274-278, 294-295, 316, 332-333, 349 |
-| bustimes/management/commands/import\_gtfs.py                    |      235 |       23 |     90% |75, 79, 129-130, 146, 207, 209, 269-270, 272-273, 309-310, 316-317, 321-324, 332-334, 382, 404 |
-| bustimes/management/commands/import\_gtfs\_ember.py             |       89 |        0 |    100% |           |
+| bustimes/management/commands/import\_gtfs.py                    |      237 |       23 |     90% |75, 79, 129-130, 146, 215, 217, 277-278, 280-281, 317-318, 324-325, 329-332, 340-342, 390, 412 |
+| bustimes/management/commands/import\_gtfs\_ember.py             |       89 |        2 |     98% |     42-52 |
 | bustimes/management/commands/import\_gtfs\_flixbus.py           |      120 |        3 |     98% |     92-94 |
 | bustimes/management/commands/import\_ni.py                      |       31 |        0 |    100% |           |
 | bustimes/management/commands/import\_passenger.py               |      118 |       35 |     70% |51-54, 56-58, 102, 112-118, 146-179 |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15758** | **1052** | **93%** |           |
+|                                                       **TOTAL** | **15760** | **1054** | **93%** |           |
 
 
 ## Setup coverage badge
