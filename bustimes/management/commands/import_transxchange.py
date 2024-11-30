@@ -1008,6 +1008,9 @@ class Command(BaseCommand):
 
         operators = self.get_operators(transxchange, txc_service)
 
+        if "NATX-National_Express_Ireland" in filename:
+            return
+
         if self.is_tnds():
             if self.source.name != "L":
                 if operators and all(
