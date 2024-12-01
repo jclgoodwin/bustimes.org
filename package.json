@@ -38,6 +38,7 @@
     "react-map-gl": "^7.1.2",
     "react-timeago": "^7.1.0",
     "reqwest": "^2.0.5",
+    "wouter": "^3.3.5",
     "wouter-preact": "^3.3.5"
   },
   "targets": {
@@ -69,7 +70,6 @@
     "test": "TZ=UTC jest"
   },
   "alias": {
-    "wouter": "wouter-preact",
     "react": "preact/compat",
     "react-dom/test-utils": "preact/test-utils",
     "react-dom": "preact/compat",
