@@ -2,6 +2,7 @@
   "compilerOptions": {
     "lib": ["es6", "dom"],
     "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "esModuleInterop": true,
     "strict": true,
   },
