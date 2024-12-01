@@ -15,7 +15,7 @@ import {
   type ViewStateChangeEvent,
   useMap,
 } from "react-map-gl/maplibre";
-import { Link } from "wouter-preact";
+import { Link } from "wouter";
 
 import debounce from "lodash/debounce";
 

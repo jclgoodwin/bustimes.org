@@ -1,7 +1,7 @@
 import React, { type ReactNode } from "react";
 import { Popup, type PopupEvent } from "react-map-gl/maplibre";
 import TimeAgo from "react-timeago";
-import { Link } from "wouter-preact";
+import { Link } from "wouter";
 import type { Vehicle } from "./VehicleMarker";
 
 function getTimeDelta(seconds: number) {

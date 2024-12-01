@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch } from "wouter-preact";
+import { Route, Switch } from "wouter";
 
 import BigMap, { MapMode } from "./BigMap";
 import type { Trip } from "./TripTimetable";
