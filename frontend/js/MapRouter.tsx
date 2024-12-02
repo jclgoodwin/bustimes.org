@@ -10,6 +10,13 @@ if (tripDataElement) {
   tripData = JSON.parse(tripDataElement.textContent as string) as Trip;
 }
 
+declare global {
+  interface Window {
+    OPERATOR_ID?: string
+  }
+}
+
+
 export default function MapRouter() {
   return (
     <Switch>

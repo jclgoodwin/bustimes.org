@@ -45,7 +45,9 @@
     "default": {
       "source": [
         "frontend/css/style.scss",
-        "frontend/js/app.tsx"
+        "frontend/js/map-router.tsx",
+        "frontend/js/his-tory.tsx",
+        "frontend/js/service-map.tsx"
       ],
       "distDir": "busstops/static/dist",
       "engines": {

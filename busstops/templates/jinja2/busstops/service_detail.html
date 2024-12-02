@@ -5,7 +5,7 @@
 {% block head %}
     <meta property="og:title" content="{{ object }}">
     <meta property="og:description" content="{{ operators.0 }}">
-    <link rel="stylesheet" href="{{ static('dist/js/app.css') }}">
+    <link rel="stylesheet" href="{{ static('dist/js/service-map.css') }}">
 {% endblock head %}
 
 {% block bodyclass %}{% endblock %}
@@ -123,7 +123,7 @@
         EXTENT = [{{ object.geometry.extent|join(",") }}];
             LIVERIES_CSS_URL  = "/liveries.{{ liveries_css_version() }}.css";
     </script>
-    <script async src="{{ static('dist/js/app.js') }}"></script>
+    <script async src="{{ static('dist/js/service-map.js') }}"></script>
     {% else %}</script>{% endif %}
 
     <script src="{{ static('js/reqwest.min.js') }}"></script>

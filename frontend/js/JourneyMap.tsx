@@ -20,6 +20,12 @@ import VehicleMarker, {
 import VehiclePopup from "./VehiclePopup";
 import { getBounds } from "./utils";
 
+declare global {
+  interface Window {
+    VEHICLE_ID: number
+  }
+}
+
 type VehicleJourneyLocation = {
   id: number;
   coordinates: [number, number];
