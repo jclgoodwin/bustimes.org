@@ -10,11 +10,11 @@
 
 {% block head %}
     <meta property="og:title" content="Map – {{ object }}">
-    <link rel="stylesheet" href="{% static 'dist/js/app.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/js/map-router.css' %}">
     <link rel="stylesheet" media="print" href="/liveries.{{ liveries_css_version }}.css" onload="this.onload=null;this.removeAttribute('media')">
 {% endblock head %}
 
 {% block footer %}
     <script>OPERATOR_ID="{{ operator.noc }}";</script>
-    <script src="{% static 'dist/js/app.js' %}"></script>
+    <script src="{% static 'dist/js/map-router.js' %}"></script>
 {% endblock footer %}

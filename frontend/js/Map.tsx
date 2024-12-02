@@ -15,6 +15,9 @@ import MapGL, {
   type PopupEvent,
 } from "react-map-gl/maplibre";
 
+import "./maps.css";
+import "maplibre-gl/dist/maplibre-gl.css";
+
 import arrow from "data-url:../history-arrow.png";
 import routeStopMarkerCircle from "data-url:../route-stop-marker-circle.png";
 import routeStopMarkerDarkCircle from "data-url:../route-stop-marker-dark-circle.png";
