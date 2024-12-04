@@ -592,7 +592,7 @@ export default function BigMap(
       })
         .then(
           (response) => {
-            if (response.ok) {
+            if (response.ok || response.status === 404) {
               response.json().then((items: VehicleLocation[]) => {
                 vehiclesHighWaterMark.current = _bounds;
 
@@ -629,6 +629,7 @@ export default function BigMap(
                   setVehicles(items);
                 }
               });
+
               setLoadingBuses(false);
             }
 
