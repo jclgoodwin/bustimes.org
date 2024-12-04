@@ -11,7 +11,14 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.db.models import Count, Exists, OuterRef, Prefetch, prefetch_related_objects
+from django.db.models import (
+    Count,
+    Prefetch,
+    prefetch_related_objects,
+    F,
+    Q,
+    FilteredRelation,
+)
 from django.http import (
     FileResponse,
     Http404,
@@ -31,14 +38,12 @@ from pygments.lexers import JsonLexer, XmlLexer
 from rest_framework.renderers import JSONRenderer
 
 from api.serializers import TripSerializer
-from buses.utils import cache_page
 from busstops.models import (
     DataSource,
     Operator,
     Service,
     StopArea,
     StopPoint,
-    StopUsage,
 )
 from departures import avl, gtfsr, live
 from vehicles.models import Vehicle, VehicleCode
@@ -521,8 +526,24 @@ def trip_block(request, pk: int):
     )
 
 
+def tfl_vehicle_arrivals(reg: str):
+    reg = reg.upper()
+
+    cache_key = f"TflVehicle:{reg}"
+
+    if (cached := cache.get(cache_key)) is not None:
+        return cached
+
+    response = requests.get(
+        f"https://api.tfl.gov.uk/Vehicle/{reg}/Arrivals", params=settings.TFL, timeout=8
+    )
+    if response.ok:
+        data = response.json()
+        cache.set(cache_key, data, 60)
+        return data
+
+
 @require_GET
-@cache_page(60)
 def tfl_vehicle(request, reg: str):
     reg = reg.upper()
 
@@ -531,13 +552,7 @@ def tfl_vehicle(request, reg: str):
         vehiclecode__code=f"TFLO:{reg}", vehiclecode__scheme="BODS"
     ).first()
 
-    response = requests.get(
-        f"https://api.tfl.gov.uk/Vehicle/{reg}/Arrivals", params=settings.TFL, timeout=8
-    )
-    if response.ok:
-        data = response.json()
-    else:
-        data = None
+    data = tfl_vehicle_arrivals(reg)
 
     if not data:
         if vehicle:
@@ -546,6 +561,15 @@ def tfl_vehicle(request, reg: str):
             return redirect(vehicle)
         raise Http404
 
+    line_name = data[0]["lineName"]
+
+    try:
+        service = Service.objects.get(
+            line_name__iexact=line_name, current=True, source__name="L"
+        )
+    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
+        service = None
+
     atco_codes = []
     for item in data:
         atco_code = item["naptanId"]
@@ -553,17 +577,6 @@ def tfl_vehicle(request, reg: str):
         if atco_code[:3] == "370" and atco_code.isdigit():
             atco_codes.append(f"0{atco_code}")
         atco_codes.append(atco_code)
-
-    try:
-        service = Service.objects.get(
-            Exists(
-                StopUsage.objects.filter(stop_id__in=atco_codes, service=OuterRef("id"))
-            ),
-            line_name__iexact=data[0]["lineName"],
-            current=True,
-        )
-    except (Service.DoesNotExist, Service.MultipleObjectsReturned):
-        service = None
 
     if service:
         try:
@@ -577,7 +590,15 @@ def tfl_vehicle(request, reg: str):
                     vehicle=vehicle, code=f"TFLO:{reg}", scheme="BODS"
                 )
 
-    stops = StopPoint.objects.in_bulk(atco_codes)
+    stops = None
+    if service:
+        stops = StopPoint.objects.annotate(
+            stopusages=FilteredRelation(
+                "stopusage", condition=Q(stopusage__service=service)
+            ),
+            sequence=F("stopusages__order"),
+        ).in_bulk(atco_codes)
+
     if not stops:
         stops = StopArea.objects.in_bulk(atco_codes)
 
@@ -585,6 +606,24 @@ def tfl_vehicle(request, reg: str):
         (link.from_stop_id, link.to_stop_id): link
         for link in (service.routelink_set.all() if service else ())
     }
+
+    # sort by sequence, cos sometimes the arrival predictions are out of order
+    prev_sequence = prev_trip_sequence = 0
+    prev_destination = None
+    for item in data:
+        if item["destinationName"] != prev_destination:
+            prev_trip_sequence = prev_sequence
+
+        atco_code = item["naptanId"]
+
+        if stop := (stops.get(atco_code) or stops.get(f"0{atco_code}")):
+            item["sequence"] = getattr(stop, "sequence", 0) + prev_trip_sequence
+        else:
+            item["sequence"] = prev_sequence
+
+        prev_destination = item["destinationName"]
+        prev_sequence = item["sequence"]
+    data.sort(key=lambda item: item.get("sequence", 0))
 
     times = []
     prev_stop = None
@@ -600,9 +639,8 @@ def tfl_vehicle(request, reg: str):
             "expected_arrival_time": str(expected_arrival.time())[:5],
         }
         atco_code = item["naptanId"]
-        stop = stops.get(atco_code) or stops.get(f"0{atco_code}")
 
-        if stop:
+        if stop := (stops.get(atco_code) or stops.get(f"0{atco_code}")):
             if type(stop) is StopPoint:
                 time["stop"]["atco_code"] = stop.atco_code
                 time["stop"]["bearing"] = stop.get_heading()
