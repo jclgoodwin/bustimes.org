@@ -879,7 +879,7 @@ class Command(BaseCommand):
                 batch_size=1000,
             )
             existing_trips = [t.id for t in existing_trips]
-            (Trip.notes.through.objects.filter(trip__in=existing_trips).delete(),)
+            Trip.notes.through.objects.filter(trip__in=existing_trips).delete()
             StopTime.objects.filter(trip__in=existing_trips).delete()
         else:
             Trip.objects.bulk_create(trips, batch_size=1000)
