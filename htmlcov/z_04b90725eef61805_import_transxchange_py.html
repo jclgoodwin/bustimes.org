@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-01 16:05 +0000
+            created at 2024-12-06 06:02 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -961,7 +961,7 @@
     <p class="pln"><span class="n"><a id="t879" href="#t879">879</a></span><span class="t">                <span class="nam">batch_size</span><span class="op">=</span><span class="num">1000</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t880" href="#t880">880</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t881" href="#t881">881</a></span><span class="t">            <span class="nam">existing_trips</span> <span class="op">=</span> <span class="op">[</span><span class="nam">t</span><span class="op">.</span><span class="nam">id</span> <span class="key">for</span> <span class="nam">t</span> <span class="key">in</span> <span class="nam">existing_trips</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t882" href="#t882">882</a></span><span class="t">            <span class="op">(</span><span class="nam">Trip</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">trip__in</span><span class="op">=</span><span class="nam">existing_trips</span><span class="op">)</span><span class="op">.</span><span class="nam">delete</span><span class="op">(</span><span class="op">)</span><span class="op">,</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t882" href="#t882">882</a></span><span class="t">            <span class="nam">Trip</span><span class="op">.</span><span class="nam">notes</span><span class="op">.</span><span class="nam">through</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">trip__in</span><span class="op">=</span><span class="nam">existing_trips</span><span class="op">)</span><span class="op">.</span><span class="nam">delete</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t883" href="#t883">883</a></span><span class="t">            <span class="nam">StopTime</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">filter</span><span class="op">(</span><span class="nam">trip__in</span><span class="op">=</span><span class="nam">existing_trips</span><span class="op">)</span><span class="op">.</span><span class="nam">delete</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t884" href="#t884">884</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t885" href="#t885">885</a></span><span class="t">            <span class="nam">Trip</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">bulk_create</span><span class="op">(</span><span class="nam">trips</span><span class="op">,</span> <span class="nam">batch_size</span><span class="op">=</span><span class="num">1000</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -1576,7 +1576,7 @@
             <a class="nav" href="z_06bcf2d2e74f1893_test_import_atco_cif_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-01 16:05 +0000
+            created at 2024-12-06 06:02 +0000
         </p>
     </div>
 </footer>
