@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for bustimes/views.py: 82%</title>
+    <title>Coverage for bustimes/views.py: 79%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_8e611ae1.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>bustimes/views.py</b>:
-            <span class="pc_cov">82%</span>
+            <span class="pc_cov">79%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -55,8 +55,8 @@
         </aside>
         <h2>
             <span class="text">384 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">316<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">68<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">305<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">79<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-06 06:02 +0000
+            created at 2024-12-06 06:04 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -679,34 +679,34 @@
     <p class="pln"><span class="n"><a id="t597" href="#t597">597</a></span><span class="t">            <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t598" href="#t598">598</a></span><span class="t">            <span class="nam">sequence</span><span class="op">=</span><span class="nam">F</span><span class="op">(</span><span class="str">"stopusages__order"</span><span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t599" href="#t599">599</a></span><span class="t">        <span class="op">)</span><span class="op">.</span><span class="nam">in_bulk</span><span class="op">(</span><span class="nam">atco_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t600" href="#t600">600</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t601" href="#t601">601</a></span><span class="t">        <span class="nam">stops</span> <span class="op">=</span> <span class="nam">StopPoint</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">in_bulk</span><span class="op">(</span><span class="nam">atco_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t602" href="#t602">602</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t603" href="#t603">603</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">stops</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t604" href="#t604">604</a></span><span class="t">        <span class="nam">stops</span> <span class="op">=</span> <span class="nam">StopArea</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">in_bulk</span><span class="op">(</span><span class="nam">atco_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t605" href="#t605">605</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t606" href="#t606">606</a></span><span class="t">    <span class="nam">route_links</span> <span class="op">=</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t607" href="#t607">607</a></span><span class="t">        <span class="op">(</span><span class="nam">link</span><span class="op">.</span><span class="nam">from_stop_id</span><span class="op">,</span> <span class="nam">link</span><span class="op">.</span><span class="nam">to_stop_id</span><span class="op">)</span><span class="op">:</span> <span class="nam">link</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t608" href="#t608">608</a></span><span class="t">        <span class="key">for</span> <span class="nam">link</span> <span class="key">in</span> <span class="op">(</span><span class="nam">service</span><span class="op">.</span><span class="nam">routelink_set</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="op">)</span> <span class="key">if</span> <span class="nam">service</span> <span class="key">else</span> <span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t609" href="#t609">609</a></span><span class="t">    <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t610" href="#t610">610</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t611" href="#t611">611</a></span><span class="t">    <span class="com"># sort by sequence, cos sometimes the arrival predictions are out of order</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t612" href="#t612">612</a></span><span class="t">    <span class="nam">prev_sequence</span> <span class="op">=</span> <span class="nam">prev_trip_sequence</span> <span class="op">=</span> <span class="num">0</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t613" href="#t613">613</a></span><span class="t">    <span class="nam">prev_destination</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t614" href="#t614">614</a></span><span class="t">    <span class="key">for</span> <span class="nam">item</span> <span class="key">in</span> <span class="nam">data</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t615" href="#t615">615</a></span><span class="t">        <span class="key">if</span> <span class="nam">item</span><span class="op">[</span><span class="str">"destinationName"</span><span class="op">]</span> <span class="op">!=</span> <span class="nam">prev_destination</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t616" href="#t616">616</a></span><span class="t">            <span class="nam">prev_trip_sequence</span> <span class="op">=</span> <span class="nam">prev_sequence</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t617" href="#t617">617</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t618" href="#t618">618</a></span><span class="t">        <span class="nam">atco_code</span> <span class="op">=</span> <span class="nam">item</span><span class="op">[</span><span class="str">"naptanId"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t619" href="#t619">619</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t620" href="#t620">620</a></span><span class="t">        <span class="key">if</span> <span class="nam">stop</span> <span class="op">:=</span> <span class="op">(</span><span class="nam">stops</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">atco_code</span><span class="op">)</span> <span class="key">or</span> <span class="nam">stops</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="fst">f"</span><span class="fst">0</span><span class="op">{</span><span class="nam">atco_code</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t621" href="#t621">621</a></span><span class="t">            <span class="nam">item</span><span class="op">[</span><span class="str">"sequence"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">getattr</span><span class="op">(</span><span class="nam">stop</span><span class="op">,</span> <span class="str">"sequence"</span><span class="op">,</span> <span class="num">0</span><span class="op">)</span> <span class="op">+</span> <span class="nam">prev_trip_sequence</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t622" href="#t622">622</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t623" href="#t623">623</a></span><span class="t">            <span class="nam">item</span><span class="op">[</span><span class="str">"sequence"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">prev_sequence</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t624" href="#t624">624</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t625" href="#t625">625</a></span><span class="t">        <span class="nam">prev_destination</span> <span class="op">=</span> <span class="nam">item</span><span class="op">[</span><span class="str">"destinationName"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t626" href="#t626">626</a></span><span class="t">        <span class="nam">prev_sequence</span> <span class="op">=</span> <span class="nam">item</span><span class="op">[</span><span class="str">"sequence"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t627" href="#t627">627</a></span><span class="t">    <span class="nam">data</span><span class="op">.</span><span class="nam">sort</span><span class="op">(</span><span class="nam">key</span><span class="op">=</span><span class="key">lambda</span> <span class="nam">item</span><span class="op">:</span> <span class="nam">item</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"sequence"</span><span class="op">,</span> <span class="num">0</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t600" href="#t600">600</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t601" href="#t601">601</a></span><span class="t">        <span class="com"># sort by sequence, cos sometimes the arrival predictions are out of order</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t602" href="#t602">602</a></span><span class="t">        <span class="nam">prev_sequence</span> <span class="op">=</span> <span class="nam">prev_trip_sequence</span> <span class="op">=</span> <span class="num">0</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t603" href="#t603">603</a></span><span class="t">        <span class="nam">prev_destination</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t604" href="#t604">604</a></span><span class="t">        <span class="key">for</span> <span class="nam">item</span> <span class="key">in</span> <span class="nam">data</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t605" href="#t605">605</a></span><span class="t">            <span class="key">if</span> <span class="nam">item</span><span class="op">[</span><span class="str">"destinationName"</span><span class="op">]</span> <span class="op">!=</span> <span class="nam">prev_destination</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t606" href="#t606">606</a></span><span class="t">                <span class="nam">prev_trip_sequence</span> <span class="op">=</span> <span class="nam">prev_sequence</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t607" href="#t607">607</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t608" href="#t608">608</a></span><span class="t">            <span class="nam">atco_code</span> <span class="op">=</span> <span class="nam">item</span><span class="op">[</span><span class="str">"naptanId"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t609" href="#t609">609</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t610" href="#t610">610</a></span><span class="t">            <span class="key">if</span> <span class="nam">stop</span> <span class="op">:=</span> <span class="op">(</span><span class="nam">stops</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">atco_code</span><span class="op">)</span> <span class="key">or</span> <span class="nam">stops</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="fst">f"</span><span class="fst">0</span><span class="op">{</span><span class="nam">atco_code</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t611" href="#t611">611</a></span><span class="t">                <span class="nam">item</span><span class="op">[</span><span class="str">"sequence"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">getattr</span><span class="op">(</span><span class="nam">stop</span><span class="op">,</span> <span class="str">"sequence"</span><span class="op">,</span> <span class="num">0</span><span class="op">)</span> <span class="op">+</span> <span class="nam">prev_trip_sequence</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t612" href="#t612">612</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t613" href="#t613">613</a></span><span class="t">                <span class="nam">item</span><span class="op">[</span><span class="str">"sequence"</span><span class="op">]</span> <span class="op">=</span> <span class="nam">prev_sequence</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t614" href="#t614">614</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t615" href="#t615">615</a></span><span class="t">            <span class="nam">prev_destination</span> <span class="op">=</span> <span class="nam">item</span><span class="op">[</span><span class="str">"destinationName"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t616" href="#t616">616</a></span><span class="t">            <span class="nam">prev_sequence</span> <span class="op">=</span> <span class="nam">item</span><span class="op">[</span><span class="str">"sequence"</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t617" href="#t617">617</a></span><span class="t">        <span class="nam">data</span><span class="op">.</span><span class="nam">sort</span><span class="op">(</span><span class="nam">key</span><span class="op">=</span><span class="key">lambda</span> <span class="nam">item</span><span class="op">:</span> <span class="nam">item</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"sequence"</span><span class="op">,</span> <span class="num">0</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t618" href="#t618">618</a></span><span class="t">    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t619" href="#t619">619</a></span><span class="t">        <span class="nam">stops</span> <span class="op">=</span> <span class="nam">StopPoint</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">in_bulk</span><span class="op">(</span><span class="nam">atco_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t620" href="#t620">620</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t621" href="#t621">621</a></span><span class="t">    <span class="key">if</span> <span class="key">not</span> <span class="nam">stops</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t622" href="#t622">622</a></span><span class="t">        <span class="nam">stops</span> <span class="op">=</span> <span class="nam">StopArea</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">in_bulk</span><span class="op">(</span><span class="nam">atco_codes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t623" href="#t623">623</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t624" href="#t624">624</a></span><span class="t">    <span class="nam">route_links</span> <span class="op">=</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t625" href="#t625">625</a></span><span class="t">        <span class="op">(</span><span class="nam">link</span><span class="op">.</span><span class="nam">from_stop_id</span><span class="op">,</span> <span class="nam">link</span><span class="op">.</span><span class="nam">to_stop_id</span><span class="op">)</span><span class="op">:</span> <span class="nam">link</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t626" href="#t626">626</a></span><span class="t">        <span class="key">for</span> <span class="nam">link</span> <span class="key">in</span> <span class="op">(</span><span class="nam">service</span><span class="op">.</span><span class="nam">routelink_set</span><span class="op">.</span><span class="nam">all</span><span class="op">(</span><span class="op">)</span> <span class="key">if</span> <span class="nam">service</span> <span class="key">else</span> <span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t627" href="#t627">627</a></span><span class="t">    <span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t628" href="#t628">628</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t629" href="#t629">629</a></span><span class="t">    <span class="nam">times</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t630" href="#t630">630</a></span><span class="t">    <span class="nam">prev_stop</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
@@ -836,7 +836,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-06 06:02 +0000
+            created at 2024-12-06 06:04 +0000
         </p>
     </div>
 </footer>
