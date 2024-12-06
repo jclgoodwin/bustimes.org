@@ -597,6 +597,24 @@ def tfl_vehicle(request, reg: str):
             ),
             sequence=F("stopusages__order"),
         ).in_bulk(atco_codes)
+
+        # sort by sequence, cos sometimes the arrival predictions are out of order
+        prev_sequence = prev_trip_sequence = 0
+        prev_destination = None
+        for item in data:
+            if item["destinationName"] != prev_destination:
+                prev_trip_sequence = prev_sequence
+
+            atco_code = item["naptanId"]
+
+            if stop := (stops.get(atco_code) or stops.get(f"0{atco_code}")):
+                item["sequence"] = getattr(stop, "sequence", 0) + prev_trip_sequence
+            else:
+                item["sequence"] = prev_sequence
+
+            prev_destination = item["destinationName"]
+            prev_sequence = item["sequence"]
+        data.sort(key=lambda item: item.get("sequence", 0))
     else:
         stops = StopPoint.objects.in_bulk(atco_codes)
 
@@ -607,24 +625,6 @@ def tfl_vehicle(request, reg: str):
         (link.from_stop_id, link.to_stop_id): link
         for link in (service.routelink_set.all() if service else ())
     }
-
-    # sort by sequence, cos sometimes the arrival predictions are out of order
-    prev_sequence = prev_trip_sequence = 0
-    prev_destination = None
-    for item in data:
-        if item["destinationName"] != prev_destination:
-            prev_trip_sequence = prev_sequence
-
-        atco_code = item["naptanId"]
-
-        if stop := (stops.get(atco_code) or stops.get(f"0{atco_code}")):
-            item["sequence"] = getattr(stop, "sequence", 0) + prev_trip_sequence
-        else:
-            item["sequence"] = prev_sequence
-
-        prev_destination = item["destinationName"]
-        prev_sequence = item["sequence"]
-    data.sort(key=lambda item: item.get("sequence", 0))
 
     times = []
     prev_stop = None
