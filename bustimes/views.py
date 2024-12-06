@@ -549,7 +549,7 @@ def tfl_vehicle(request, reg: str):
 
     vehicles = Vehicle.objects.select_related("latest_journey")
     vehicle = vehicles.filter(
-        vehiclecode__code=f"TFLO:{reg}", vehiclecode__scheme="BODS"
+        code=reg, vehiclecode__code=f"TFLO:{reg}", vehiclecode__scheme="BODS"
     ).first()
 
     data = tfl_vehicle_arrivals(reg)
@@ -590,7 +590,6 @@ def tfl_vehicle(request, reg: str):
                     vehicle=vehicle, code=f"TFLO:{reg}", scheme="BODS"
                 )
 
-    stops = None
     if service:
         stops = StopPoint.objects.annotate(
             stopusages=FilteredRelation(
@@ -598,6 +597,8 @@ def tfl_vehicle(request, reg: str):
             ),
             sequence=F("stopusages__order"),
         ).in_bulk(atco_codes)
+    else:
+        stops = StopPoint.objects.in_bulk(atco_codes)
 
     if not stops:
         stops = StopArea.objects.in_bulk(atco_codes)
