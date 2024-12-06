@@ -10,4 +10,7 @@ def ad(request):
     ):
         return {"ad": False}
 
+    if getattr(request.user, "trusted", None):
+        return {"ad": False}
+
     return {"ad": True}
