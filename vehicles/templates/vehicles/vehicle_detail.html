@@ -181,7 +181,6 @@
             {% if vehicle %}VEHICLE_ID{% else %}SERVICE_ID{% endif %} = {{ object.id }};
             {% if not vehicle %}LIVERIES_CSS_URL = "/liveries.{{ liveries_css_version }}.css";{% endif %}
         </script>
-        <link rel="stylesheet" href="{% static 'dist/js/his-tory.css' %}">
         <script async src="{% static 'dist/js/his-tory.js' %}"></script>
         {% if vehicle.livery %}
         <style>{% for css in vehicle.livery.get_styles %}{{ css|safe }}{% endfor %}</style>
