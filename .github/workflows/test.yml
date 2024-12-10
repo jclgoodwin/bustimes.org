@@ -6,7 +6,7 @@ on:
 
 jobs:
   test-frontend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
 
     steps:
@@ -28,7 +28,7 @@ jobs:
         if-no-files-found: error
 
   test-backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     needs: test-frontend
 
