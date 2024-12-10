@@ -35,6 +35,8 @@
     "maplibre-gl": "^4.0.0",
     "preact": "^10.25.0",
     "process": "^0.11.10",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-map-gl": "^7.1.2",
     "react-timeago": "^7.1.0",
     "reqwest": "^2.0.5",
