@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-07 06:17 +0000
+            created at 2024-12-11 08:37 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -666,7 +666,7 @@
     <p class="mis show_mis"><span class="n"><a id="t584" href="#t584">584</a></span><span class="t">        <span class="key">except</span> <span class="op">(</span><span class="nam">Operator</span><span class="op">.</span><span class="nam">DoesNotExist</span><span class="op">,</span> <span class="nam">Operator</span><span class="op">.</span><span class="nam">MultipleObjectsReturned</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t585" href="#t585">585</a></span><span class="t">            <span class="nam">operator</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t586" href="#t586">586</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t587" href="#t587">587</a></span><span class="t">            <span class="key">if</span> <span class="key">not</span> <span class="nam">vehicle</span> <span class="key">and</span> <span class="key">not</span> <span class="nam">reg</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"TMP"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t587" href="#t587">587</a></span><span class="t">            <span class="key">if</span> <span class="nam">vehicle</span> <span class="key">is</span> <span class="key">None</span> <span class="key">and</span> <span class="key">not</span> <span class="op">(</span><span class="nam">reg</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"TMP"</span><span class="op">)</span> <span class="key">or</span> <span class="nam">len</span><span class="op">(</span><span class="nam">reg</span><span class="op">)</span> <span class="op">></span> <span class="num">10</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t588" href="#t588">588</a></span><span class="t">                <span class="nam">vehicle</span> <span class="op">=</span> <span class="nam">Vehicle</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">create</span><span class="op">(</span><span class="nam">code</span><span class="op">=</span><span class="nam">reg</span><span class="op">,</span> <span class="nam">reg</span><span class="op">=</span><span class="nam">reg</span><span class="op">,</span> <span class="nam">operator</span><span class="op">=</span><span class="nam">operator</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t589" href="#t589">589</a></span><span class="t">                <span class="nam">VehicleCode</span><span class="op">.</span><span class="nam">objects</span><span class="op">.</span><span class="nam">create</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t590" href="#t590">590</a></span><span class="t">                    <span class="nam">vehicle</span><span class="op">=</span><span class="nam">vehicle</span><span class="op">,</span> <span class="nam">code</span><span class="op">=</span><span class="fst">f"</span><span class="fst">TFLO:</span><span class="op">{</span><span class="nam">reg</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="nam">scheme</span><span class="op">=</span><span class="str">"BODS"</span>&nbsp;</span><span class="r"></span></p>
@@ -836,7 +836,7 @@
             <a class="nav" href="z_f5dba1c56a64fa65_avl_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-07 06:17 +0000
+            created at 2024-12-11 08:37 +0000
         </p>
     </div>
 </footer>
