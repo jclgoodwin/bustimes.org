@@ -584,7 +584,7 @@ def tfl_vehicle(request, reg: str):
         except (Operator.DoesNotExist, Operator.MultipleObjectsReturned):
             operator = None
         else:
-            if not vehicle and not reg.startswith("TMP"):
+            if vehicle is None and not (reg.startswith("TMP") or len(reg) > 10):
                 vehicle = Vehicle.objects.create(code=reg, reg=reg, operator=operator)
                 VehicleCode.objects.create(
                     vehicle=vehicle, code=f"TFLO:{reg}", scheme="BODS"
