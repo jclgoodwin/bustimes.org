@@ -102,13 +102,7 @@ def handle_file(command, path, qualify_filename=False):
                         # source has multiple versions (Passsenger) so add a prefix like 'gonortheast_123.zip/'
                         filename = str(Path(path) / filename)
                     try:
-                        try:
-                            command.handle_file(open_file, filename)
-                        except ET.ParseError:
-                            open_file.seek(0)
-                            content = open_file.read().decode("utf-16")
-                            fake_file = StringIO(content)
-                            command.handle_file(fake_file, filename)
+                        command.handle_file(open_file, filename)
                     except (ET.ParseError, ValueError, AttributeError, DataError) as e:
                         if filename.endswith(".xml"):
                             logger.info(filename)
