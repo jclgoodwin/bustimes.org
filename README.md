@@ -142,11 +142,11 @@
 | vehicles/management/tests/test\_siri\_post.py                   |       37 |        0 |    100% |           |
 | vehicles/management/tests/test\_stagecoach\_avl.py              |       33 |        0 |    100% |           |
 | vehicles/management/tests/test\_stats.py                        |       24 |        0 |    100% |           |
-| vehicles/models.py                                              |      527 |       29 |     94% |205, 249, 325, 331, 403, 409, 466, 487, 615-616, 629, 654-656, 664-665, 668-669, 674-675, 697, 759, 766-769, 811, 824, 833, 844 |
+| vehicles/models.py                                              |      520 |       29 |     94% |187, 231, 307, 313, 385, 391, 448, 469, 597-598, 611, 636-638, 646-647, 650-651, 656-657, 679, 741, 748-751, 793, 806, 815, 826 |
 | vehicles/rtpi.py                                                |       76 |        1 |     99% |        28 |
 | vehicles/signals.py                                             |       11 |        0 |    100% |           |
 | vehicles/tasks.py                                               |      127 |       22 |     83% |63-73, 80, 85, 95, 102-105, 108, 110, 119, 132, 150, 164, 177-178, 232-233, 236 |
-| vehicles/test\_models.py                                        |       69 |        0 |    100% |           |
+| vehicles/test\_models.py                                        |       65 |        0 |    100% |           |
 | vehicles/test\_schedule\_adherence.py                           |       75 |        0 |    100% |           |
 | vehicles/tests.py                                               |      441 |        0 |    100% |           |
 | vehicles/time\_aware\_polyline.py                               |       56 |       48 |     14% |11, 18, 25, 36, 48-75, 79, 87-98, 106-120 |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15782** | **1055** | **93%** |           |
+|                                                       **TOTAL** | **15771** | **1055** | **93%** |           |
 
 
 ## Setup coverage badge
