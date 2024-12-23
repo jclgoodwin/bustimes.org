@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_04b90725eef61805_import_gtfs_ember_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-19 13:14 +0000
+            created at 2024-12-23 02:25 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -84,9 +84,9 @@
     <p class="run"><span class="n"><a id="t2" href="#t2">2</a></span><span class="t"><span class="key">from</span> <span class="nam">pathlib</span> <span class="key">import</span> <span class="nam">Path</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t3" href="#t3">3</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t4" href="#t4">4</a></span><span class="t"><span class="key">import</span> <span class="nam">gtfs_kit</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t5" href="#t5">5</a></span><span class="t"><span class="key">from</span> <span class="nam">shapely</span><span class="op">.</span><span class="nam">errors</span> <span class="key">import</span> <span class="nam">EmptyPartError</span><span class="op">,</span> <span class="nam">GEOSException</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t"><span class="key">from</span> <span class="nam">zipfile</span> <span class="key">import</span> <span class="nam">BadZipFile</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t"><span class="key">from</span> <span class="nam">numpy</span> <span class="key">import</span> <span class="nam">nan</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t5" href="#t5">5</a></span><span class="t"><span class="key">import</span> <span class="nam">pandas</span> <span class="key">as</span> <span class="nam">pd</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t6" href="#t6">6</a></span><span class="t"><span class="key">from</span> <span class="nam">shapely</span><span class="op">.</span><span class="nam">errors</span> <span class="key">import</span> <span class="nam">EmptyPartError</span><span class="op">,</span> <span class="nam">GEOSException</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t7" href="#t7">7</a></span><span class="t"><span class="key">from</span> <span class="nam">zipfile</span> <span class="key">import</span> <span class="nam">BadZipFile</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t8" href="#t8">8</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">conf</span> <span class="key">import</span> <span class="nam">settings</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t9" href="#t9">9</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">contrib</span><span class="op">.</span><span class="nam">gis</span><span class="op">.</span><span class="nam">geos</span> <span class="key">import</span> <span class="nam">GEOSGeometry</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t10" href="#t10">10</a></span><span class="t"><span class="key">from</span> <span class="nam">django</span><span class="op">.</span><span class="nam">core</span><span class="op">.</span><span class="nam">management</span><span class="op">.</span><span class="nam">base</span> <span class="key">import</span> <span class="nam">BaseCommand</span>&nbsp;</span><span class="r"></span></p>
@@ -292,7 +292,7 @@
     <p class="pln"><span class="n"><a id="t210" href="#t210">210</a></span><span class="t">                <span class="nam">operator</span><span class="op">=</span><span class="nam">self</span><span class="op">.</span><span class="nam">route_operators</span><span class="op">[</span><span class="nam">line</span><span class="op">.</span><span class="nam">route_id</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t211" href="#t211">211</a></span><span class="t">            <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t212" href="#t212">212</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t213" href="#t213">213</a></span><span class="t">            <span class="key">if</span> <span class="op">(</span><span class="nam">headsign</span> <span class="op">:=</span> <span class="nam">line</span><span class="op">.</span><span class="nam">trip_headsign</span><span class="op">)</span> <span class="key">is</span> <span class="key">not</span> <span class="nam">nan</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t213" href="#t213">213</a></span><span class="t">            <span class="key">if</span> <span class="nam">pd</span><span class="op">.</span><span class="nam">notna</span><span class="op">(</span><span class="nam">headsign</span> <span class="op">:=</span> <span class="nam">line</span><span class="op">.</span><span class="nam">trip_headsign</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t214" href="#t214">214</a></span><span class="t">                <span class="key">if</span> <span class="nam">headsign</span><span class="op">.</span><span class="nam">endswith</span><span class="op">(</span><span class="str">" -"</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t215" href="#t215">215</a></span><span class="t">                    <span class="nam">headsign</span> <span class="op">=</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t216" href="#t216">216</a></span><span class="t">                <span class="key">elif</span> <span class="nam">headsign</span><span class="op">.</span><span class="nam">startswith</span><span class="op">(</span><span class="str">"- "</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -508,7 +508,7 @@
             <a class="nav" href="z_04b90725eef61805_import_gtfs_ember_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.6.4">coverage.py v7.6.4</a>,
-            created at 2024-12-19 13:14 +0000
+            created at 2024-12-23 02:25 +0000
         </p>
     </div>
 </footer>
