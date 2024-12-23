@@ -54,7 +54,7 @@ optional = true
 [tool.poetry.group.test.dependencies]
 asgiref = "^3.4.1"
 Shapely = "^2.0.1"
-gtfs-kit = "^8.0.0"
+gtfs-kit = "^10.0.0"
 websockets = "^14.0"
 requests-toolbelt = "^1.0.0"
 time-machine = "^2.4.0"

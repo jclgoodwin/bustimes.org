@@ -2,9 +2,9 @@ import logging
 from pathlib import Path
 
 import gtfs_kit
+import pandas as pd
 from shapely.errors import EmptyPartError, GEOSException
 from zipfile import BadZipFile
-from numpy import nan
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
@@ -210,7 +210,7 @@ class Command(BaseCommand):
                 operator=self.route_operators[line.route_id],
             )
 
-            if (headsign := line.trip_headsign) is not nan:
+            if pd.notna(headsign := line.trip_headsign):
                 if headsign.endswith(" -"):
                     headsign = None
                 elif headsign.startswith("- "):

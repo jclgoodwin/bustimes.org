@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+import pandas as pd
 from shapely.errors import EmptyPartError
 import gtfs_kit
 from django.conf import settings
@@ -159,8 +160,12 @@ class Command(BaseCommand):
                 departure=departure_time,
                 sequence=row.stop_sequence,
                 trip=trip,
-                timing_status="PTP" if row.timepoint else "OTH",
             )
+            if pd.notna(row.timepoint) and row.timepoint == 1:
+                stop_time.timing_status = "PTP"
+            else:
+                stop_time.timing_status = "OTH"
+
             if row.stop_id in stop_codes:
                 stop_time.stop_id = stop_codes[row.stop_id]
             else:
