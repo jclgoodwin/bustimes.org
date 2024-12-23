@@ -10,7 +10,7 @@ COPY tsconfig.json /app/
 RUN npm run lint && npm run build
 
 
-FROM python:3.13
+FROM python:3.12
 
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=off PIP_DISABLE_PIP_VERSION_CHECK=on
 

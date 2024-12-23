@@ -44,18 +44,19 @@ class VehicleModelTests(TestCase):
         livery.colours = "#7D287D #FDEE00 #FDEE00"
         livery.horizontal = True
         livery.save()
-        # self.assertEqual(
-        #     '<div style="height:1.5em;width:2.25em;background:linear-gradient'
-        #     + '(#fdee00 66%,#7d287d 66%)" title="Go-Coach"></div>',
-        #     livery.preview(),
-        # )
-        #         self.assertEqual(
-        #             livery.get_styles(),
-        #             [
-        #                 f""".livery-{livery.id} {{\n  background: linear-gradient(#fdee00 66%,#7d287d 66%);
-        #   color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""
-        #             ],
-        #         )
+        self.assertEqual(
+            '<div style="height:1.5em;width:2.25em;background:linear-gradient'
+            + '(#fdee00 66%,#7d287d 66%)" title="Go-Coach"></div>',
+            livery.preview(),
+        )
+        self.assertEqual(
+            livery.get_styles(),
+            [
+                f""".livery-{livery.id} {{
+  background: linear-gradient(#fdee00 66%,#7d287d 66%);
+  color:#c0c0c0;fill:#c0c0c0;stroke:#ffee99\n}}\n"""
+            ],
+        )
 
         livery.horizontal = False
         livery.angle = 45
@@ -79,8 +80,8 @@ class VehicleModelTests(TestCase):
 
         vehicle.livery.colours = "#c0c0c0"
         vehicle.livery.save()
-        # self.assertEqual("silver", vehicle.get_livery(200))
-        self.assertEqual("#c0c0c0", vehicle.get_livery(200))
+        self.assertEqual("silver", vehicle.get_livery(200))
+        # self.assertEqual("#c0c0c0", vehicle.get_livery(200))
 
         livery.css = "linear-gradient(45deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)"
         livery.set_css()

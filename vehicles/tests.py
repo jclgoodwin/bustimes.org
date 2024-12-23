@@ -252,8 +252,9 @@ class VehiclesTests(TestCase):
         self.assertEqual(200, response.status_code)
 
         # can't connect to redis - no drama
-        with override_settings(REDIS_URL="redis://localhose:69"), self.assertNumQueries(
-            3
+        with (
+            override_settings(REDIS_URL="redis://localhose:69"),
+            self.assertNumQueries(3),
         ):
             response = self.client.get(
                 f"/vehicles/{self.vehicle_1.id}/journeys/{self.journey.id}.json"
@@ -1017,10 +1018,10 @@ https://www.flickr.com/photos/goodwinjoshua/51046126023/ blah""",
                         "livery": {
                             "id": self.vehicle_2.livery_id,
                             "name": "black with lemon piping",
-                            # "left": "linear-gradient(90deg,red 50%,#00f 50%)",
-                            "left": "linear-gradient(90deg,#FF0000 50%,#0000FF 50%)",
-                            # "right": "linear-gradient(270deg,red 50%,#00f 50%)",
-                            "right": "linear-gradient(270deg,#FF0000 50%,#0000FF 50%)",
+                            "left": "linear-gradient(90deg,red 50%,#00f 50%)",
+                            # "left": "linear-gradient(90deg,#FF0000 50%,#0000FF 50%)",
+                            "right": "linear-gradient(270deg,red 50%,#00f 50%)",
+                            # "right": "linear-gradient(270deg,#FF0000 50%,#0000FF 50%)",
                         },
                         "branding": "",
                         "operator": {

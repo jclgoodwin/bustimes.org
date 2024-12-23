@@ -1,4 +1,5 @@
 import datetime
+import lightningcss
 import re
 import struct
 import uuid
@@ -126,9 +127,9 @@ class Livery(models.Model):
     colours = models.CharField(
         max_length=512,
         blank=True,
-        help_text="""Keep it simple.
-Simplicity (and being able to read the route number on the map) is much more important than 'accuracy'.""",
+        help_text="""Left and right CSS will be generated from this""",
     )
+    angle = models.PositiveSmallIntegerField(null=True, blank=True)
     css = models.CharField(
         max_length=1024,
         blank=True,
@@ -146,7 +147,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
         max_length=1024,
         blank=True,
         verbose_name="Right CSS",
-        help_text="Automatically generated from colours and angle",
+        help_text="Should be a mirror image of the left CSS",
     )
     white_text = models.BooleanField(default=False)
     text_colour = models.CharField(max_length=7, blank=True)
@@ -156,7 +157,6 @@ A livery can be adequately represented with a list of colours and an angle.""",
     horizontal = models.BooleanField(
         default=False, help_text="Equivalent to setting the angle to 90"
     )
-    angle = models.PositiveSmallIntegerField(null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
     published = models.BooleanField(
         help_text="Tick to include in the CSS and be able to apply this livery to vehicles"
@@ -175,8 +175,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def minify(css):
         prefix = ".livery{background:"
         suffix = "}"
-        # css = lightningcss.process_stylesheet(prefix + css + suffix)
-        css = prefix + css + suffix
+        css = lightningcss.process_stylesheet(prefix + css + suffix)
         assert css.startswith(prefix)
         assert css.endswith(suffix)
         return css[19:-1]
