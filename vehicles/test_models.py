@@ -81,18 +81,6 @@ class VehicleModelTests(TestCase):
         vehicle.livery.colours = "#c0c0c0"
         vehicle.livery.save()
         self.assertEqual("silver", vehicle.get_livery(200))
-        # self.assertEqual("#c0c0c0", vehicle.get_livery(200))
-
-        livery.css = "linear-gradient(45deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)"
-        livery.set_css()
-        self.assertEqual(
-            livery.left_css,
-            "linear-gradient(45deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)",
-        )
-        self.assertEqual(
-            livery.right_css,
-            "linear-gradient(315deg,#ed1b23 35%,#fff 35%,#fff 45%,#ed1b23 45%)",
-        )
 
     def test_livery_validation(self):
         livery = Livery()

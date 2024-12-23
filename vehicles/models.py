@@ -94,6 +94,7 @@ class VehicleTypeType(models.TextChoices):
     ARTICULATED = "articulated", "articulated"
     TRAIN = "train", "train"
     TRAM = "tram", "tram"
+    AMPHIBIOUS = "amphibious", "amphibious"
 
 
 class FuelType(models.TextChoices):
@@ -106,9 +107,6 @@ class FuelType(models.TextChoices):
 
 class VehicleType(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    # double_decker = models.BooleanField(null=True)
-    # coach = models.BooleanField(null=True)
-    # electric = models.BooleanField(null=True)
     style = models.CharField(choices=VehicleTypeType.choices, max_length=13, blank=True)
     fuel = models.CharField(choices=FuelType.choices, max_length=8, blank=True)
 
@@ -130,13 +128,6 @@ class Livery(models.Model):
         help_text="""Left and right CSS will be generated from this""",
     )
     angle = models.PositiveSmallIntegerField(null=True, blank=True)
-    css = models.CharField(
-        max_length=1024,
-        blank=True,
-        verbose_name="CSS",
-        help_text="""Leave this blank.
-A livery can be adequately represented with a list of colours and an angle.""",
-    )
     left_css = models.CharField(
         max_length=1024,
         blank=True,
@@ -181,16 +172,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
         return css[19:-1]
 
     def set_css(self):
-        if self.css:
-            css = self.css
-            self.left_css = self.css
-            for angle in re.findall(r"\((\d+)deg,", css):
-                replacement = 360 - int(angle)
-                css = css.replace(f"({angle}deg,", f"({replacement}deg,", 1)
-                # doesn't work with e.g. angles {a, b} where a = 360 - b
-            self.right_css = css.replace("left", "right")
-
-        elif self.colours:
+        if self.colours:
             self.left_css = get_css(
                 self.colours.split(), None, self.horizontal, self.angle
             )
@@ -225,7 +207,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
                 except ValueError as e:
                     raise ValidationError({attr: str(e)})
 
-        for attr in ("css", "left_css", "right_css"):
+        for attr in ("left_css", "right_css"):
             value = getattr(self, attr)
             if value.count("(") != value.count(")"):
                 raise ValidationError({attr: "Must contain equal numbers of ( and )"})
@@ -235,7 +217,7 @@ A livery can be adequately represented with a list of colours and an angle.""",
     def save(self, *args, update_fields=None, **kwargs):
         self.updated_at = timezone.now()
         if update_fields is None:
-            if self.css or self.colours:
+            if self.colours:
                 self.set_css()
                 if self.colours and not self.id:
                     self.white_text = get_text_colour(self.colours) == "#fff"
