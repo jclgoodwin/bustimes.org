@@ -207,6 +207,10 @@ link to a picture to prove it. Be polite.""",
             ):
                 del self.fields["colours"]
                 del self.fields["other_colour"]
+            if not vehicle.branding:
+                del self.fields["branding"]
+            if not vehicle.features:
+                del self.fields["features"]
 
 
 class DebuggerForm(forms.Form):
