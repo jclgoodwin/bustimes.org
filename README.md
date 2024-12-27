@@ -120,7 +120,7 @@
 | vehicles/context\_processors.py                                 |       14 |        0 |    100% |           |
 | vehicles/fields.py                                              |       15 |        0 |    100% |           |
 | vehicles/filters.py                                             |       18 |        0 |    100% |           |
-| vehicles/forms.py                                               |       96 |        2 |     98% |  137, 175 |
+| vehicles/forms.py                                               |      100 |        3 |     97% |137, 175, 213 |
 | vehicles/management/\_\_init\_\_.py                             |        0 |        0 |    100% |           |
 | vehicles/management/commands/\_\_init\_\_.py                    |        0 |        0 |    100% |           |
 | vehicles/management/commands/import\_bod\_avl.py                |      476 |       56 |     88% |50, 128, 144, 153-154, 197-200, 203-206, 258, 274, 293-294, 317-335, 389, 395, 448, 451, 455, 461, 476-477, 524-537, 566, 575-576, 595, 624, 657, 775, 850, 854 |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15771** | **1055** | **93%** |           |
+|                                                       **TOTAL** | **15775** | **1056** | **93%** |           |
 
 
 ## Setup coverage badge
