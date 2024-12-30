@@ -155,6 +155,9 @@ class Command(ImportLiveVehiclesCommand):
             vehicles = self.vehicles.filter(
                 Q(operator__in=operators) | Q(operator=None)
             )
+        elif operator_ref == "BNML" or operator_ref == "BNSM":
+            defaults["livery_id"] = 1502
+            )
         elif not operators:
             vehicles = self.vehicles.filter(operator=None)
         elif len(operators) == 1:
