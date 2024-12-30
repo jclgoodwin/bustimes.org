@@ -1179,8 +1179,6 @@ class ServiceDetailView(DetailView):
             ):
                 if "app" in method.name and method.url:
                     context["app"] = method
-                elif "fare cap" in method.name and method.url:
-                    context["fare_cap"] = method
                 else:
                     context["payment_methods"].append(method)
             for operator in operators:

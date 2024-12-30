@@ -158,15 +158,12 @@ class ViewsTests(TestCase):
             noc="VENT", name="Nu-Venture", vehicle_mode="bus", region_id="N"
         )
 
-        fare_cap = PaymentMethod.objects.create(
-            name="£2 fare cap", url="http://example.com"
-        )
         oyster = PaymentMethod.objects.create(
             name="oyster card", url="http://example.com"
         )
         euros = PaymentMethod.objects.create(name="euros")
 
-        cls.chariots.payment_methods.set([fare_cap, oyster, euros])
+        cls.chariots.payment_methods.set([oyster, euros])
         cls.service.operator.add(cls.chariots)
         cls.inactive_service.operator.add(cls.chariots)
 
@@ -405,7 +402,6 @@ class ViewsTests(TestCase):
         # payment methods:
         self.assertContains(response, "euros")
         self.assertContains(response, "Oyster card")
-        self.assertContains(response, ">Get around for £2<")
         self.assertContains(response, '"http://example.com"')
 
     def test_national_express_service(self):
