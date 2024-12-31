@@ -3,7 +3,7 @@ from django.db.models import Q
 
 
 class VehicleRevisionFilter(FilterSet):
-    operator = CharFilter(label="Operator ID", method="operator_filter")
+    operator = CharFilter(label="Operator Code", method="operator_filter")
     vehicle = NumberFilter(label="Vehicle ID")
     user = NumberFilter(label="User ID")
     approved_by = NumberFilter(label="(Dis)approver")
