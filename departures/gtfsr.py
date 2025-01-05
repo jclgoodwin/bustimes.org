@@ -17,7 +17,7 @@ def _get_feed():
             return
         url = "https://api.nationaltransport.ie/gtfsr/v2/TripUpdates"
         response = requests.get(
-            url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10, verify=False
+            url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10
         )
         if response.ok:
             feed = gtfs_realtime_pb2.FeedMessage()

@@ -35,10 +35,7 @@ class Command(ImportLiveVehiclesCommand):
     def get_items(self):
         assert settings.NTA_API_KEY
         response = self.session.get(
-            self.url,
-            headers={"x-api-key": settings.NTA_API_KEY},
-            timeout=10,
-            verify=False,
+            self.url, headers={"x-api-key": settings.NTA_API_KEY}, timeout=10
         )
         assert response.ok
 
