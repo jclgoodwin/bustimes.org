@@ -776,7 +776,6 @@ def edit_vehicle(request, **kwargs):
 
     if (
         vehicle.operator_id
-        and not request.user.trusted
         and User.operators.through.objects.filter(operator=vehicle.operator_id)
         .exclude(user=request.user)
         .exists()
