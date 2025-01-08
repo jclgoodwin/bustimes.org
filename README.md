@@ -74,7 +74,7 @@
 | bustimes/management/tests/test\_import\_passenger.py            |       23 |        0 |    100% |           |
 | bustimes/management/tests/test\_import\_transxchange.py         |      726 |        2 |     99% | 1063-1066 |
 | bustimes/management/tests/test\_tnds.py                         |       22 |        0 |    100% |           |
-| bustimes/models.py                                              |      318 |        6 |     98% |92, 339, 342, 371, 408, 442 |
+| bustimes/models.py                                              |      318 |        7 |     98% |92, 182, 339, 342, 371, 408, 442 |
 | bustimes/tests.py                                               |      130 |        0 |    100% |           |
 | bustimes/timetables.py                                          |      638 |       46 |     93% |62, 102-115, 144, 241-242, 259, 327-330, 342, 355-360, 406, 413, 481, 484, 500-503, 530, 639-654, 740-741, 812, 960 |
 | bustimes/urls.py                                                |        3 |        0 |    100% |           |
@@ -127,7 +127,7 @@
 | vehicles/management/commands/import\_bushub.py                  |       76 |       14 |     82% |22-23, 27-28, 31-32, 43, 46, 62-63, 72, 82, 101, 109 |
 | vehicles/management/commands/import\_edinburgh.py               |       72 |        4 |     94% |83, 87-90, 97 |
 | vehicles/management/commands/import\_gtfsr\_ember.py            |       86 |        7 |     92% |78-79, 102-104, 120, 141 |
-| vehicles/management/commands/import\_gtfsr\_ie.py               |      102 |        6 |     94% |74, 101, 146, 155, 162, 166 |
+| vehicles/management/commands/import\_gtfsr\_ie.py               |      102 |        6 |     94% |71, 98, 143, 152, 159, 163 |
 | vehicles/management/commands/import\_live\_jersey.py            |       33 |        0 |    100% |           |
 | vehicles/management/commands/import\_polar.py                   |       78 |       27 |     65% |13-14, 25, 28, 33-39, 45-47, 51, 55-56, 61-62, 65, 75-78, 81, 94, 101 |
 | vehicles/management/commands/import\_stagecoach\_avl.py         |       94 |       15 |     84% |105, 116-127, 155, 162, 167-168, 179-185, 207-215 |
@@ -161,7 +161,7 @@
 | vosa/tests.py                                                   |       60 |        0 |    100% |           |
 | vosa/urls.py                                                    |        3 |        0 |    100% |           |
 | vosa/views.py                                                   |       57 |        0 |    100% |           |
-|                                                       **TOTAL** | **15771** | **1056** | **93%** |           |
+|                                                       **TOTAL** | **15771** | **1057** | **93%** |           |
 
 
 ## Setup coverage badge
