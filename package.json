@@ -20,6 +20,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@preact/compat": "^18.3.1",
     "@sentry/react": "^8.33.1",
     "@types/lodash": "^4.14.197",
     "@types/node": "^20.5.0",
@@ -32,6 +33,7 @@
     "loadjs": "^4.2.0",
     "lodash": "^4.17.21",
     "maplibre-gl": "^4.0.0",
+    "preact": "^10.25.4",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -61,6 +63,10 @@
         "browsers": "ie >= 11"
       }
     }
+  },
+  "alias": {
+    "react": "preact/compat",
+    "react-dom": "preact/compat"
   },
   "scripts": {
     "watch": "API_ROOT=/ parcel watch",
